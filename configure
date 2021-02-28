@@ -1,0 +1,90 @@
+#!/bin/bash
+#----------------------------------------------------------------------------------------------------------------------
+# configure is part of Brewken, and is copyright the following authors 2009-2021:
+#   • Matt Young <mfsy@yahoo.com>
+#   • Philip Greggory Lee <rocketman768@gmail.com>
+#
+# Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------------------------------------------------
+
+# Stop when something failed
+set -e
+
+PREFIX=""
+CMAKEOPTIONS="-DDO_RELEASE_BUILD=ON"
+
+function printUsageAndExit {
+   echo -e "Usage\n" \
+           "   Options:\n" \
+           "      -m T   Set mac arch (\"i386;ppc\" for universal binary)\n" \
+           "      -p T   Set prefix to T.\n" \
+           "      -t     Update translation files (*.ts).\n" \
+           "      -v     Verbose compilation.\n" \
+           "      -h     Print this help message.\n"
+   exit 0
+}
+
+# Ensures cmake exists.
+function findCMake {
+
+   if [ -z $(which cmake) ]
+   then
+      echo "ERROR: cmake not installed"
+      exit 1
+   fi
+
+}
+
+findCMake
+
+# Get options.
+while getopts "m:p:t:h:v" option
+do
+   case $option in
+      m) CMAKEOPTIONS="$CMAKEOPTIONS -DCMAKE_OSX_ARCHITECTURES=$OPTARG";;
+      p) PREFIX="$OPTARG";;
+      t) CMAKEOPTIONS="$CMAKEOPTIONS -DUPDATE_TRANSLATIONS=ON";;
+      v) CMAKEOPTIONS="$CMAKEOPTIONS -DCMAKE_VERBOSE_MAKEFILE=TRUE";;
+      h) printUsageAndExit ;;
+   esac
+done
+
+# Cmake defaults CMAKE_INSTALL_PREFIX=/usr/local.
+# This is not good for debian, so try to detect debian/ubuntu.
+if [ `uname` == 'Linux' ]
+then
+   if grep -q -s -i -E -e 'ubuntu|debian' /etc/issue
+   then
+     PREFIX=/usr
+   fi
+fi
+
+echo "Prefix: $PREFIX"
+
+# If we have a prefix...
+if [ -n "$PREFIX" ]
+then
+   #...define the prefix.
+   CMAKEOPTIONS="$CMAKEOPTIONS -DCMAKE_INSTALL_PREFIX=$PREFIX"
+fi
+
+echo "CMAKEOPTIONS: $CMAKEOPTIONS"
+
+# Create dir only if needed
+mkdir -p build
+
+# Do all the building in build/
+cd build/
+cmake $CMAKEOPTIONS ../
+
+# Tell the user what to do (if everything went well...)
+echo -e "\n\n\tNow, cd to build/ and run \"make\"\n"

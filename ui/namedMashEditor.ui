@@ -1,0 +1,725 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>namedMashEditor</class>
+ <widget class="QDialog" name="namedMashEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>689</width>
+    <height>505</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Named Mash Editor</string>
+  </property>
+  <property name="configSection" stdset="0">
+   <string notr="true">namedMashEditor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_6">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_mashs">
+     <item>
+      <widget class="QLabel" name="label_mash">
+       <property name="text">
+        <string>Mash</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="mashComboBox">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_remove">
+       <property name="toolTip">
+        <string>Delete selected style</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../brewken.qrc">
+         <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_name">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Name</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_name</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_name">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Name</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="BtTemperatureLabel" name="label_grainTemp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="text">
+            <string>Initial grain temp</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_grainTemp</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="BtTemperatureEdit" name="lineEdit_grainTemp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Initial grain temp</string>
+           </property>
+           <property name="editField" stdset="0">
+            <string notr="true">grainTemp_c</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="BtTemperatureLabel" name="label_spargeTemp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="text">
+            <string>Sparge temp</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_spargeTemp</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="BtTemperatureEdit" name="lineEdit_spargeTemp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Sparge temp target</string>
+           </property>
+           <property name="editField" stdset="0">
+            <string notr="true">spargeTemp_c</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_spargePh">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Sparge pH</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_spargePh</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="BtGenericEdit" name="lineEdit_spargePh">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Sparge pH</string>
+           </property>
+           <property name="editField" stdset="0">
+            <string notr="true">ph</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Notes</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QTextEdit" name="textEdit_notes"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Tun</string>
+         </property>
+         <property name="configSection" stdset="0">
+          <string notr="true">namedMashEditor</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="BtTemperatureLabel" name="label_tunTemp">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <property name="text">
+               <string>Initial tun temp</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_tunTemp</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="BtTemperatureEdit" name="lineEdit_tunTemp">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Initial tun temp</string>
+              </property>
+              <property name="editField" stdset="0">
+               <string notr="true">tunTemp_c</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="label_equipment">
+              <property name="text">
+               <string>From Equipment</string>
+              </property>
+              <property name="buddy">
+               <cstring>equipmentComboBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="CustomComboBox" name="equipmentComboBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>30</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="BtMassLabel" name="label_tunMass">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <property name="text">
+               <string>Tun mass</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_tunMass</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="BtMassEdit" name="lineEdit_tunMass">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Tun mass</string>
+              </property>
+              <property name="editField" stdset="0">
+               <string notr="true">tunWeight_kg</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_tunSpHeat">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Tun sp. heat</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_tunSpHeat</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="BtGenericEdit" name="lineEdit_tunSpHeat">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Tun specific heat (cal/(g*K))</string>
+              </property>
+              <property name="editField" stdset="0">
+               <string notr="true">tunSpecificHeat_calGC</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_9">
+     <item>
+      <widget class="QTableView" name="mashStepTableWidget">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QPushButton" name="pushButton_addMashStep">
+         <property name="toolTip">
+          <string>Add mash step</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../brewken.qrc">
+           <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_removeMashStep">
+         <property name="toolTip">
+          <string>Remove selected mash step</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../brewken.qrc">
+           <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_mashUp">
+         <property name="toolTip">
+          <string>Mash step up</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../brewken.qrc">
+           <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_mashDown">
+         <property name="toolTip">
+          <string>Mash step down</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../brewken.qrc">
+           <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_save">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../brewken.qrc">
+         <normaloff>:/images/filesave.svg</normaloff>:/images/filesave.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_cancel">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../brewken.qrc">
+         <normaloff>:/images/exit.svg</normaloff>:/images/exit.svg</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BtTemperatureEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+   <slots>
+    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtTemperatureLabel</class>
+   <extends>QLabel</extends>
+   <header>BtLabel.h</header>
+   <slots>
+    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtMassLabel</class>
+   <extends>QLabel</extends>
+   <header>BtLabel.h</header>
+   <slots>
+    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+    <slot>popContextMenu(QPoint)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtMassEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+   <slots>
+    <signal>textModified()</signal>
+    <slot>lineChanged()</slot>
+    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtGenericEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustomComboBox</class>
+   <extends>QComboBox</extends>
+   <header>CustomComboBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../brewken.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>label_grainTemp</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_grainTemp</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>label_spargeTemp</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_spargeTemp</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>label_tunTemp</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_tunTemp</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>437</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>593</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>label_tunMass</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_tunMass</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>633</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

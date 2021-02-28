@@ -1,0 +1,52 @@
+/**
+ * config.in is part of Brewken, and is copyright the following authors 2009-2014:
+ *   • Aidan Roberts <aidanr67@gmail.com>
+ *   • Maxime Lavigne <duguigne@gmail.com>
+ *   • Philip Greggory Lee <rocketman768@gmail.com>
+ *
+ * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+#ifndef CONFIG_IN
+#define CONFIG_IN
+
+#define BTICON ":/images/brewken.svg"
+//#define ICON96 ":/images/BrewkenIcon_96.png"
+#define GLASS ":/images/glass2.png"
+#define SMALLBARLEY ":/images/smallBarley.svg"
+#define SMALLHOP ":/images/smallHop.svg"
+#define SMALLWATER ":/images/smallWater.svg"
+#define SMALLYEAST ":/images/smallYeast.svg"
+#define SMALLKETTLE ":/images/smallKettle.svg"
+#define SMALLQUESTION ":/images/smallQuestion.svg"
+#define SMALLSTYLE ":/images/smallStyle.svg"
+#define SMALLPLUS ":/images/smallPlus.svg"
+#define SMALLMINUS ":/images/smallMinus.svg"
+#define SMALLARROW ":/images/smallArrow.svg"
+#define SMALLINFO ":/images/smallInfo.svg"
+#define SMALLOUTARROW ":/images/smallOutArrow.svg"
+#define SHRED ":/images/editshred.svg"
+#define EXITPNG ":/images/exit.svg"
+#define SAVEPNG ":/images/filesave.svg"
+#define SAVEDIRTYPNG ":/images/filesavedirty.svg"
+#define CLOCKPNG ":/images/clock.svg"
+#define SOUND ":/images/sound.png"
+#define STOP ":/images/alarm_stop.png"
+
+//===Things that will get configured by cmake===
+
+// These two only get used by Linux OS version.
+#define CONFIGDATADIR "${CONFIGDATADIR}"
+#define CONFIGDOCDIR "${CONFIGDOCDIR}"
+
+#define VERSIONSTRING "${BREWKEN_VERSION_MAJOR}.${BREWKEN_VERSION_MINOR}.${BREWKEN_VERSION_PATCH}"
+
+#endif // CONFIG_IN
