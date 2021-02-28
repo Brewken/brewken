@@ -16,7 +16,7 @@
 
 #include "WaterSortFilterProxyModel.h"
 #include "WaterTableModel.h"
-#include "yeast.h"
+#include "model/Yeast.h"
 #include "Brewken.h"
 #include <iostream>
 

@@ -21,7 +21,7 @@
 #include <QPushButton>
 #include <QMetaProperty>
 #include <QVariant>
-#include "water.h"
+#include "model/Water.h"
 
 // Forward declarations.
 class Recipe;

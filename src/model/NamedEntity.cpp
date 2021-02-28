@@ -27,7 +27,7 @@
 #include <QMetaProperty>
 
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 
 static const char* kVersion = "version";
 

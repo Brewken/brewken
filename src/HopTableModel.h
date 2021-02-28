@@ -31,8 +31,8 @@ class HopItemDelegate;
 #include <QTableView>
 #include <QItemDelegate>
 #include <QVector>
-#include "hop.h"
-#include "recipe.h"
+#include "model/Hop.h"
+#include "model/Recipe.h"
 
 enum{HOPNAMECOL, HOPALPHACOL, HOPAMOUNTCOL, HOPINVENTORYCOL, HOPFORMCOL, HOPUSECOL, HOPTIMECOL, HOPNUMCOLS /*This one MUST be last*/};
 

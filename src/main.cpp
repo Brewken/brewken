@@ -28,7 +28,7 @@
 #include "config.h"
 #include "beerxml.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 
 void importFromXml(const QString & filename);
 void createBlankDb(const QString & filename);

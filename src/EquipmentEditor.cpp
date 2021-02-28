@@ -32,8 +32,8 @@
 #include "BtLineEdit.h"
 #include "BtLabel.h"
 
-#include "database.h"
-#include "equipment.h"
+#include "database/Database.h"
+#include "model/Equipment.h"
 #include "EquipmentEditor.h"
 #include "EquipmentListModel.h"
 #include "config.h"

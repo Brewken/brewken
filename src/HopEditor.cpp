@@ -21,9 +21,9 @@
 
 #include <QtGui>
 #include <QIcon>
-#include "hop.h"
+#include "model/Hop.h"
 #include "HopEditor.h"
-#include "database.h"
+#include "database/Database.h"
 #include "config.h"
 #include "unit.h"
 #include "Brewken.h"

@@ -25,7 +25,7 @@
 #include "unit.h"
 #include "Brewken.h"
 #include "Algorithms.h"
-#include "brewnote.h"
+#include "model/Brewnote.h"
 
 QMultiMap<QString, Unit*> Unit::nameToUnit;
 bool Unit::isMapSetup = false;

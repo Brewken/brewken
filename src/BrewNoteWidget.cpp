@@ -22,7 +22,7 @@
 #include <QDate>
 #include <QDebug>
 #include "BrewNoteWidget.h"
-#include "brewnote.h"
+#include "model/Brewnote.h"
 #include "Brewken.h"
 
 BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent)

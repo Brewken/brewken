@@ -17,8 +17,8 @@
  */
 
 #include "MashButton.h"
-#include "mash.h"
-#include "recipe.h"
+#include "model/Mash.h"
+#include "model/Recipe.h"
 #include <QWidget>
 #include <QDebug>
 

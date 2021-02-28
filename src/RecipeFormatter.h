@@ -30,7 +30,7 @@ class RecipeFormatter;
 #include <QTextBrowser>
 #include <QDialog>
 #include <QFile>
-#include "recipe.h"
+#include "model/Recipe.h"
 
 /*!
  * \class RecipeFormatter

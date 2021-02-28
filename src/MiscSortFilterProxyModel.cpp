@@ -20,7 +20,7 @@
 #include <QAbstractItemModel>
 #include "MiscSortFilterProxyModel.h"
 #include "MiscTableModel.h"
-#include "misc.h"
+#include "model/Misc.h"
 #include "Brewken.h"
 #include "unit.h"
 

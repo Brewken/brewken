@@ -22,8 +22,8 @@
 
 #include <QIcon>
 #include "FermentableEditor.h"
-#include "fermentable.h"
-#include "database.h"
+#include "model/Fermentable.h"
+#include "database/Database.h"
 #include "config.h"
 #include "unit.h"
 #include "Brewken.h"

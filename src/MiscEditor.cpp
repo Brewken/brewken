@@ -21,11 +21,11 @@
 #include <QtGui>
 #include <QIcon>
 #include "MiscEditor.h"
-#include "database.h"
+#include "database/Database.h"
 #include "config.h"
 #include "unit.h"
 #include "Brewken.h"
-#include "misc.h"
+#include "model/Misc.h"
 
 MiscEditor::MiscEditor( QWidget* parent )
    : QDialog(parent), obsMisc(nullptr)

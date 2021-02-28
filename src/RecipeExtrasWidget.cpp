@@ -24,7 +24,7 @@
 #include "RecipeExtrasWidget.h"
 #include "unit.h"
 #include "Brewken.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 #include "BtLabel.h"
 #include "MainWindow.h"
 

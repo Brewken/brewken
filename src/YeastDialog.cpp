@@ -24,10 +24,10 @@
 #include <QString>
 #include <QList>
 #include "YeastDialog.h"
-#include "database.h"
-#include "recipe.h"
+#include "database/Database.h"
+#include "model/Recipe.h"
 #include "MainWindow.h"
-#include "yeast.h"
+#include "model/Yeast.h"
 #include "YeastEditor.h"
 #include "YeastTableModel.h"
 #include "YeastSortFilterProxyModel.h"

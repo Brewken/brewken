@@ -19,7 +19,7 @@
 
 #include "YeastSortFilterProxyModel.h"
 #include "YeastTableModel.h"
-#include "yeast.h"
+#include "model/Yeast.h"
 #include "Brewken.h"
 #include <iostream>
 

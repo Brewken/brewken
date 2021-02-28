@@ -21,7 +21,7 @@
 #include "Brewken.h"
 #include "HopSortFilterProxyModel.h"
 #include "HopTableModel.h"
-#include "hop.h"
+#include "model/Hop.h"
 #include "unit.h"
 #include <iostream>
 

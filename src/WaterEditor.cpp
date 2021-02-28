@@ -22,9 +22,9 @@
 #include <QInputDialog>
 
 #include "WaterEditor.h"
-#include "WaterSchema.h"
-#include "TableSchemaConst.h"
-#include "water.h"
+#include "database/WaterSchema.h"
+#include "database/TableSchemaConst.h"
+#include "model/Water.h"
 #include "Brewken.h"
 
 WaterEditor::WaterEditor(QWidget *parent) : QDialog(parent), obs{nullptr} {

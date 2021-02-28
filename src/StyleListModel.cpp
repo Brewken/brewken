@@ -18,9 +18,9 @@
  */
 
 #include "StyleListModel.h"
-#include "style.h"
-#include "database.h"
-#include "recipe.h"
+#include "model/Style.h"
+#include "database/Database.h"
+#include "model/Recipe.h"
 
 StyleListModel::StyleListModel(QWidget* parent)
    : QAbstractListModel(parent), recipe(0)

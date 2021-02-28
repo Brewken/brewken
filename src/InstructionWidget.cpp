@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "instruction.h"
+#include "model/Instruction.h"
 #include "InstructionWidget.h"
 #include "TimerWidget.h"
 

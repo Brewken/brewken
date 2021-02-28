@@ -25,8 +25,8 @@
 #include <QDebug>
 
 #include "Brewken.h"
-#include "UnitSystems.h"
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystems.h"
+#include "unitSystems/UnitSystem.h"
 #include "unit.h"
 
 BtDigitWidget::BtDigitWidget(QWidget *parent, Unit::UnitType type, Unit* units) : QLabel(parent),

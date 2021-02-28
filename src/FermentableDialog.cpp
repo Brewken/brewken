@@ -27,10 +27,10 @@
 #include "FermentableDialog.h"
 #include "FermentableTableModel.h"
 #include "FermentableSortFilterProxyModel.h"
-#include "database.h"
-#include "recipe.h"
+#include "database/Database.h"
+#include "model/Recipe.h"
 #include "MainWindow.h"
-#include "fermentable.h"
+#include "model/Fermentable.h"
 
 
 

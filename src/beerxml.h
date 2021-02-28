@@ -38,8 +38,8 @@ class BeerXML;
 
 #include "model/NamedEntity.h"
 #include "Brewken.h"
-#include "database.h"
-#include "TableSchema.h"
+#include "database/Database.h"
+#include "database/TableSchema.h"
 
 class BrewNote;
 class Equipment;

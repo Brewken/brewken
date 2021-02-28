@@ -26,7 +26,7 @@
 
 #include <QLineEdit>
 #include "unit.h"
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 #include "model/NamedEntity.h"
 
 class BtGenericEdit;
