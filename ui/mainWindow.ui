@@ -1,0 +1,2537 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">Brewken - $VERSIONSTRING</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../brewken.qrc">
+    <normaloff>:/images/brewken.svg</normaloff>:/images/brewken.svg</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QSplitter" name="splitter_vertical">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="widget_tree" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QLabel" name="label_Brewken">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../brewken.qrc">:/images/BrewkenLogo.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="tabWidget_Trees">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+          <property name="tabPosition">
+           <enum>QTabWidget::West</enum>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <widget class="QWidget" name="tabTree_recipe">
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Recipes</string>
+           </property>
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/brewken.svg</normaloff>:/images/brewken.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Recipes</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="RecipeTreeView" name="treeView_recipe">
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_style">
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallStyle.svg</normaloff>:/images/smallStyle.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Styles</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="StyleTreeView" name="treeView_style">
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_equip">
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallKettle.svg</normaloff>:/images/smallKettle.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Equipment</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="EquipmentTreeView" name="treeView_equip"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_ferm">
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallBarley.svg</normaloff>:/images/smallBarley.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Fermentables</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="FermentableTreeView" name="treeView_ferm"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_hops">
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallHop.svg</normaloff>:/images/smallHop.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Hops</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="HopTreeView" name="treeView_hops"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_misc">
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallQuestion.svg</normaloff>:/images/smallQuestion.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Miscs</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="MiscTreeView" name="treeView_misc"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_yeast">
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallYeast.svg</normaloff>:/images/smallYeast.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Yeasts</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="YeastTreeView" name="treeView_yeast"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tabTree_water">
+           <attribute name="icon">
+            <iconset resource="../brewken.qrc">
+             <normaloff>:/images/smallWater.svg</normaloff>:/images/smallWater.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Water</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="WaterTreeView" name="treeView_water"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QSplitter" name="splitter_horizontal">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QScrollArea" name="scrollArea_tabs">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>684</width>
+           <height>532</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="BtTabWidget" name="tabWidget_recipeView">
+            <property name="acceptDrops">
+             <bool>true</bool>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <property name="mimeAccepted" stdset="0">
+             <string notr="true">application/x-brewken-recipe</string>
+            </property>
+            <widget class="QWidget" name="tab_recipe">
+             <property name="acceptDrops">
+              <bool>true</bool>
+             </property>
+             <property name="configSection" stdset="0">
+              <string>tab_recipe</string>
+             </property>
+             <attribute name="title">
+              <string>Recipe</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QGridLayout" name="gridLayout_header" columnstretch="0">
+                <item row="0" column="0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_name">
+                  <item>
+                   <widget class="QLabel" name="label">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>&amp;Name</string>
+                    </property>
+                    <property name="buddy">
+                     <cstring>lineEdit_name</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="lineEdit_name">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>360</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>Name of recipe</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_mainpanel">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_left">
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout_fields">
+                    <item row="5" column="0">
+                     <widget class="BtVolumeLabel" name="label_targetBoilSize">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Tar&amp;get Boil Size</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_boilSize</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="0">
+                     <widget class="BtTimeLabel" name="label_boiltime">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>&amp;Boil Time</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_boilTime</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="1">
+                     <widget class="BtVolumeEdit" name="lineEdit_batchSize">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>100</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="toolTip">
+                       <string>Target batch size</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">batchSize_l</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="1">
+                     <widget class="BtGenericEdit" name="lineEdit_efficiency">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>100</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::DefaultContextMenu</enum>
+                      </property>
+                      <property name="toolTip">
+                       <string>The extraction efficiency you expect</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">efficiency_pct</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="1">
+                     <widget class="BtTimeEdit" name="lineEdit_boilTime">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>100</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::DefaultContextMenu</enum>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">boilTime_min</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="styleLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>&amp;Style</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>styleButton</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="8" column="0">
+                     <widget class="BtDensityLabel" name="label_boilSg">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Boil SG</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_boilSg</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0">
+                     <widget class="QLabel" name="efficiencyLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>&amp;Efficiency (%)</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_efficiency</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="BtVolumeEdit" name="lineEdit_boilSize">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>100</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="toolTip">
+                       <string>Target boil size</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">boilSize_l</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="8" column="1">
+                     <widget class="BtDensityEdit" name="lineEdit_boilSg">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>16777214</height>
+                       </size>
+                      </property>
+                      <property name="mouseTracking">
+                       <bool>false</bool>
+                      </property>
+                      <property name="acceptDrops">
+                       <bool>false</bool>
+                      </property>
+                      <property name="frame">
+                       <bool>false</bool>
+                      </property>
+                      <property name="readOnly">
+                       <bool>true</bool>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">boilGrav</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_2">
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="EquipmentButton" name="equipmentButton">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="CustomComboBox" name="equipmentComboBox">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>30</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="9" column="0">
+                     <widget class="QLabel" name="label_caloriesper">
+                      <property name="text">
+                       <string>Calories/12oz</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="BtVolumeLabel" name="label_targetBatchSize">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Target Batch Si&amp;ze</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_batchSize</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="equipmentLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>E&amp;quipment</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>equipmentButton</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="9" column="1">
+                     <widget class="QLabel" name="label_calories">
+                      <property name="font">
+                       <font>
+                        <family>Sans Serif</family>
+                        <pointsize>9</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                        <kerning>true</kerning>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>1.0</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_11">
+                      <item>
+                       <widget class="StyleButton" name="styleButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>360</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="CustomComboBox" name="styleComboBox">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>30</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_brewIt">
+                    <property name="text">
+                     <string>Brew It!</string>
+                    </property>
+                    <property name="toolTip">
+                     <string>Record what happened on brew day</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_7">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="Line" name="line">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_lcd">
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout_sliders">
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="horizontalSpacing">
+                     <number>4</number>
+                    </property>
+                    <property name="verticalSpacing">
+                     <number>5</number>
+                    </property>
+                    <item row="4" column="1">
+                     <widget class="StyleRangeWidget" name="styleRangeWidget_srm" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="aBVLabel">
+                      <property name="text">
+                       <string>ABV</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="BtColorLabel" name="colorSRMLabel">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Color</string>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">color_srm</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="bitternessIBULabel">
+                      <property name="text">
+                       <string>Bitterness (IBU)</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="StyleRangeWidget" name="styleRangeWidget_og" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <widget class="BtDensityLabel" name="oGLabel">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>OG</string>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">og</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="BtDensityLabel" name="fGLabel">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>FG</string>
+                      </property>
+                      <property name="editField" stdset="0">
+                       <string notr="true">fg</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="0">
+                     <widget class="QLabel" name="label_ibugu">
+                      <property name="text">
+                       <string>IBU/GU</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0">
+                     <widget class="BtVolumeLabel" name="label_batchsize">
+                      <property name="text">
+                       <string>Batch Size</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>rangeWidget_batchsize</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="1">
+                     <widget class="StyleRangeWidget" name="rangeWidget_batchsize" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="0">
+                     <widget class="BtVolumeLabel" name="label_boilsize">
+                      <property name="text">
+                       <string>Boil Size</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>rangeWidget_boilsize</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="1">
+                     <widget class="StyleRangeWidget" name="rangeWidget_boilsize" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="StyleRangeWidget" name="styleRangeWidget_fg" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="StyleRangeWidget" name="styleRangeWidget_abv" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="StyleRangeWidget" name="styleRangeWidget_ibu" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="IbuGuSlider" name="ibuGuSlider" native="true">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>128</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_extras">
+             <attribute name="title">
+              <string>Extras</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="RecipeExtrasWidget" name="recipeExtrasWidget" native="true"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_brewday">
+             <attribute name="title">
+              <string>Brewday</string>
+             </attribute>
+             <layout class="QHBoxLayout" name="horizontalLayout_17">
+              <item>
+               <widget class="BrewDayScrollWidget" name="brewDayScrollWidget" native="true"/>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QScrollArea" name="scrollArea_tables">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>705</width>
+           <height>309</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="BtTabWidget" name="tabWidget_ingredients">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>200</height>
+             </size>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
+            <property name="acceptDrops">
+             <bool>true</bool>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <property name="mimeAccepted" stdset="0">
+             <string notr="true">application/x-brewken-ingredient</string>
+            </property>
+            <widget class="QWidget" name="fermentableTab">
+             <attribute name="title">
+              <string>Fermentables</string>
+             </attribute>
+             <layout class="QHBoxLayout" name="horizontalLayout_19">
+              <item>
+               <widget class="QTableView" name="fermentableTable">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::CustomContextMenu</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_ferm">
+                <property name="spacing">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="pushButton_addFerm">
+                  <property name="toolTip">
+                   <string>Add a fermentable</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_removeFerm">
+                  <property name="toolTip">
+                   <string>Remove selected fermentable</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_editFerm">
+                  <property name="toolTip">
+                   <string>Edit selected fermentable</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="hopsTab">
+             <attribute name="title">
+              <string>Hops</string>
+             </attribute>
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <item>
+               <widget class="QTableView" name="hopTable"/>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_hops">
+                <property name="spacing">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="pushButton_addHop">
+                  <property name="toolTip">
+                   <string>Add hop</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_removeHop">
+                  <property name="toolTip">
+                   <string>Remove selected hop</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_editHop">
+                  <property name="toolTip">
+                   <string>Edit selected hop</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="miscTab">
+             <attribute name="title">
+              <string>Miscellaneous</string>
+             </attribute>
+             <layout class="QHBoxLayout" name="horizontalLayout_21">
+              <item>
+               <widget class="QTableView" name="miscTable">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::CustomContextMenu</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_misc">
+                <property name="spacing">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="pushButton_addMisc">
+                  <property name="toolTip">
+                   <string>Add misc</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_removeMisc">
+                  <property name="toolTip">
+                   <string>Remove selected misc</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_editMisc">
+                  <property name="toolTip">
+                   <string>Edit selected misc</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="yeastTab">
+             <attribute name="title">
+              <string>Yeast</string>
+             </attribute>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <item>
+               <widget class="QTableView" name="yeastTable">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::CustomContextMenu</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_yeast">
+                <property name="spacing">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="pushButton_addYeast">
+                  <property name="toolTip">
+                   <string>Add yeast</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_removeYeast">
+                  <property name="toolTip">
+                   <string>Remove selected yeast</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_editYeast">
+                  <property name="toolTip">
+                   <string>Edit selected yeast</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="mashStepsTab">
+             <attribute name="title">
+              <string>Mash</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_mashes">
+                <item>
+                 <widget class="QTableView" name="mashStepTableWidget">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_mashbuttons">
+                  <property name="spacing">
+                   <number>1</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_addMashStep">
+                    <property name="toolTip">
+                     <string>Add mash step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_removeMashStep">
+                    <property name="toolTip">
+                     <string>Remove selected mash step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_editMashStep">
+                    <property name="toolTip">
+                     <string>Edit selected mash step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_editMash">
+                    <property name="toolTip">
+                     <string>Edit mash properties</string>
+                    </property>
+                    <property name="text">
+                     <string>Edit mash</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_mashDes">
+                    <property name="text">
+                     <string>Mash Des</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_mashWizard">
+                    <property name="toolTip">
+                     <string>Invoke the mash wizard</string>
+                    </property>
+                    <property name="text">
+                     <string>Mash wiz</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_mash">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Mashs</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="MashButton" name="mashButton">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="CustomComboBox" name="mashComboBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_mashRemove">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_mashUp">
+                  <property name="toolTip">
+                   <string>Mash step up</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_mashDown">
+                  <property name="toolTip">
+                   <string>Mash step down</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_saveMash">
+                  <property name="toolTip">
+                   <string>Save this mash profile</string>
+                  </property>
+                  <property name="text">
+                   <string>Save Mash</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1050</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>&amp;About</string>
+    </property>
+    <addaction name="actionManual"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout_Brewken"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuBrewday">
+     <property name="title">
+      <string>&amp;Brewday</string>
+     </property>
+     <addaction name="actionBrewdayPreview"/>
+     <addaction name="actionBrewdayPrint"/>
+     <addaction name="actionBrewdayHTML"/>
+    </widget>
+    <widget class="QMenu" name="menuRecipe">
+     <property name="title">
+      <string>&amp;Recipe</string>
+     </property>
+     <addaction name="actionRecipePreview"/>
+     <addaction name="actionRecipePrint"/>
+     <addaction name="actionRecipeHTML"/>
+     <addaction name="actionRecipeBBCode"/>
+    </widget>
+    <widget class="QMenu" name="menuDatabase">
+     <property name="title">
+      <string>&amp;Database</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../brewken.qrc">
+       <normaloff>:/images/server-database.png</normaloff>:/images/server-database.png</iconset>
+     </property>
+     <addaction name="actionBackup_Database"/>
+     <addaction name="actionRestore_Database"/>
+     <addaction name="actionMergeDatabases"/>
+    </widget>
+    <widget class="QMenu" name="menuInventory">
+     <property name="title">
+      <string>In&amp;ventory</string>
+     </property>
+     <addaction name="actionInventoryPreview"/>
+     <addaction name="actionInventoryPrint"/>
+     <addaction name="actionInventoryHTML"/>
+    </widget>
+    <addaction name="actionNewRecipe"/>
+    <addaction name="actionCopy_Recipe"/>
+    <addaction name="separator"/>
+    <addaction name="actionImportFromXml"/>
+    <addaction name="actionExportToXml"/>
+    <addaction name="menuDatabase"/>
+    <addaction name="separator"/>
+    <addaction name="menuBrewday"/>
+    <addaction name="menuRecipe"/>
+    <addaction name="separator"/>
+    <addaction name="menuInventory"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionEquipments"/>
+    <addaction name="actionStyles"/>
+    <addaction name="actionMashs"/>
+    <addaction name="separator"/>
+    <addaction name="actionFermentables"/>
+    <addaction name="actionHops"/>
+    <addaction name="actionMiscs"/>
+    <addaction name="actionYeasts"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionConvert_Units"/>
+    <addaction name="actionOG_Correction_Help"/>
+    <addaction name="actionPitch_Rate_Calculator"/>
+    <addaction name="actionPriming_Calculator"/>
+    <addaction name="action_recipeToTextClipboard"/>
+    <addaction name="actionRefractometer_Tools"/>
+    <addaction name="actionScale_Recipe"/>
+    <addaction name="actionHydrometer_Temp_Adjustment"/>
+    <addaction name="actionStrikeWater_Calculator"/>
+    <addaction name="actionWater_Chemistry"/>
+    <addaction name="actionTimers"/>
+    <addaction name="separator"/>
+    <addaction name="actionOptions"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNewRecipe"/>
+   <addaction name="actionDeleteSelected"/>
+   <addaction name="separator"/>
+   <addaction name="actionEquipments"/>
+   <addaction name="actionMashs"/>
+   <addaction name="actionStyles"/>
+   <addaction name="separator"/>
+   <addaction name="actionFermentables"/>
+   <addaction name="actionHops"/>
+   <addaction name="actionMiscs"/>
+   <addaction name="actionYeasts"/>
+   <addaction name="separator"/>
+   <addaction name="actionTimers"/>
+   <addaction name="action_recipeToTextClipboard"/>
+   <addaction name="actionPitch_Rate_Calculator"/>
+   <addaction name="actionRefractometer_Tools"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionAbout_Brewken">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallInfo.svg</normaloff>:/images/smallInfo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>About &amp;Brewken</string>
+   </property>
+   <property name="toolTip">
+    <string>About Brewken</string>
+   </property>
+  </action>
+  <action name="actionExportToXml">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallOutArrow.svg</normaloff>:/images/smallOutArrow.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Export to File</string>
+   </property>
+  </action>
+  <action name="actionFermentables">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallBarley.svg</normaloff>:/images/smallBarley.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Fermentables</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionHops">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallHop.svg</normaloff>:/images/smallHop.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Hops</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionMiscs">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallQuestion.svg</normaloff>:/images/smallQuestion.svg</iconset>
+   </property>
+   <property name="text">
+    <string>M&amp;iscs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionYeasts">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallYeast.svg</normaloff>:/images/smallYeast.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Yeasts</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionEquipments">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallKettle.svg</normaloff>:/images/smallKettle.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Equipments</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionStyles">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallStyle.svg</normaloff>:/images/smallStyle.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Styles</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/exit.svg</normaloff>:/images/exit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionImportFromXml">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallArrow.svg</normaloff>:/images/smallArrow.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Import from File</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/preferences-other.png</normaloff>:/images/preferences-other.png</iconset>
+   </property>
+   <property name="text">
+    <string>Optio&amp;ns</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/help-contents.png</normaloff>:/images/help-contents.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Manual</string>
+   </property>
+  </action>
+  <action name="actionScale_Recipe">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/kbruch.png</normaloff>:/images/kbruch.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Scale Recipe</string>
+   </property>
+  </action>
+  <action name="action_recipeToTextClipboard">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/clipboard.svg</normaloff>:/images/clipboard.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Recipe to Clipboard as &amp;Text</string>
+   </property>
+  </action>
+  <action name="actionOG_Correction_Help">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/hydrometer.svg</normaloff>:/images/hydrometer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;OG Correction Help</string>
+   </property>
+  </action>
+  <action name="actionConvert_Units">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/convert.svg</normaloff>:/images/convert.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Convert Units</string>
+   </property>
+  </action>
+  <action name="actionBackup_Database_old">
+   <property name="text">
+    <string>Backup Database</string>
+   </property>
+  </action>
+  <action name="actionRestore_Database_old">
+   <property name="text">
+    <string>Restore Database</string>
+   </property>
+  </action>
+  <action name="actionCopy_Recipe">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/edit-copy.png</normaloff>:/images/edit-copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy Recipe</string>
+   </property>
+  </action>
+  <action name="actionPriming_Calculator">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/bubbles.svg</normaloff>:/images/bubbles.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Pr&amp;iming Calculator</string>
+   </property>
+  </action>
+  <action name="actionRefractometer_Tools">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/refractometer.svg</normaloff>:/images/refractometer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Refractometer Tools</string>
+   </property>
+  </action>
+  <action name="actionPitch_Rate_Calculator">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/yeastVial.svg</normaloff>:/images/yeastVial.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Pitch Rate Calculator</string>
+   </property>
+  </action>
+  <action name="actionBrewdayPrint_old">
+   <property name="text">
+    <string>Brewday</string>
+   </property>
+  </action>
+  <action name="actionRecipePreview_old">
+   <property name="text">
+    <string>Recipe</string>
+   </property>
+  </action>
+  <action name="actionBrewdayPreview_old">
+   <property name="text">
+    <string>Brewday</string>
+   </property>
+  </action>
+  <action name="actionRecipePrint_old">
+   <property name="text">
+    <string>Recipe</string>
+   </property>
+  </action>
+  <action name="actionBrewdayHTML_old">
+   <property name="text">
+    <string>Brewday</string>
+   </property>
+  </action>
+  <action name="actionRecipeHTML_old">
+   <property name="text">
+    <string>Recipe</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Merge Databases</string>
+   </property>
+   <property name="toolTip">
+    <string>Select another database to merge into the current one.</string>
+   </property>
+  </action>
+  <action name="actionBrewdayPrint">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/printer.png</normaloff>:/images/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+  </action>
+  <action name="actionBrewdayPreview">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/document-print-preview.png</normaloff>:/images/document-print-preview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print Pre&amp;view</string>
+   </property>
+  </action>
+  <action name="actionBrewdayHTML">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/document-export.png</normaloff>:/images/document-export.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Export To HTML</string>
+   </property>
+  </action>
+  <action name="actionRecipePreview">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/document-print-preview.png</normaloff>:/images/document-print-preview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print Pre&amp;view</string>
+   </property>
+  </action>
+  <action name="actionRecipePrint">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/printer.png</normaloff>:/images/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+  </action>
+  <action name="actionRecipeHTML">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/document-export.png</normaloff>:/images/document-export.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Export to HTML</string>
+   </property>
+  </action>
+  <action name="actionBackup_Database">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/backup.png</normaloff>:/images/backup.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Backup</string>
+   </property>
+   <property name="toolTip">
+    <string>Save all recipes, ingredients, etc. to a backup folder</string>
+   </property>
+  </action>
+  <action name="actionRestore_Database">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/restore.svg</normaloff>:/images/restore.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Restore</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore recipes, ingredients, etc. from a previous backup</string>
+   </property>
+  </action>
+  <action name="actionMergeDatabases">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/merge.png</normaloff>:/images/merge.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Merge</string>
+   </property>
+   <property name="toolTip">
+    <string>Merge another set of recipes, ingredients, etc. into the current set</string>
+   </property>
+  </action>
+  <action name="actionNewRecipe">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New Recipe</string>
+   </property>
+  </action>
+  <action name="actionTimers">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/clock.svg</normaloff>:/images/clock.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Ti&amp;mers</string>
+   </property>
+   <property name="toolTip">
+    <string>Show timers</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/filesave.svg</normaloff>:/images/filesave.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionDeleteSelected">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete recipe</string>
+   </property>
+  </action>
+  <action name="actionMashs">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/mashpaddle.svg</normaloff>
+     <normalon>:/images/bubbles.svg</normalon>:/images/mashpaddle.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Mashs</string>
+   </property>
+   <property name="toolTip">
+    <string>Mashes</string>
+   </property>
+  </action>
+  <action name="actionStrikeWater_Calculator">
+   <property name="text">
+    <string>Strike &amp;Water Calculator</string>
+   </property>
+  </action>
+  <action name="actionRecipeBBCode">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/clipboard.svg</normaloff>:/images/clipboard.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export to &amp;BBCode</string>
+   </property>
+  </action>
+  <action name="actionHydrometer_Temp_Adjustment">
+   <property name="text">
+    <string>&amp;Hydrometer Temp Adjustment</string>
+   </property>
+  </action>
+  <action name="actionInventoryPreview">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/document-print-preview.png</normaloff>:/images/document-print-preview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print Pre&amp;view</string>
+   </property>
+  </action>
+  <action name="actionInventoryPrint">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/printer.png</normaloff>:/images/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+  </action>
+  <action name="actionInventoryHTML">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/document-export.png</normaloff>:/images/document-export.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Export to HTML</string>
+   </property>
+  </action>
+  <action name="actionWater_Chemistry">
+   <property name="text">
+    <string>Water &amp;Chemistry</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomComboBox</class>
+   <extends>QComboBox</extends>
+   <header>CustomComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyleRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>StyleRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtVolumeEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+   <slots>
+    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtVolumeLabel</class>
+   <extends>QLabel</extends>
+   <header>BtLabel.h</header>
+   <slots>
+    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtGenericEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MiscTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtDensityLabel</class>
+   <extends>QLabel</extends>
+   <header>BtLabel.h</header>
+   <slots>
+    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtDensityEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+   <slots>
+    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtColorLabel</class>
+   <extends>QLabel</extends>
+   <header>BtLabel.h</header>
+   <slots>
+    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtTimeEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+   <slots>
+    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtTimeLabel</class>
+   <extends>QLabel</extends>
+   <header>BtLabel.h</header>
+   <slots>
+    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>IbuGuSlider</class>
+   <extends>QWidget</extends>
+   <header>IbuGuSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BrewDayScrollWidget</class>
+   <extends>QWidget</extends>
+   <header>BrewDayScrollWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RecipeExtrasWidget</class>
+   <extends>QWidget</extends>
+   <header>RecipeExtrasWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EquipmentButton</class>
+   <extends>QPushButton</extends>
+   <header>EquipmentButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RecipeTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EquipmentTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FermentableTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HopTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>YeastTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyleButton</class>
+   <extends>QPushButton</extends>
+   <header>StyleButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MashButton</class>
+   <extends>QPushButton</extends>
+   <header>MashButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyleTreeView</class>
+   <extends>QTreeView</extends>
+   <header location="global">BtTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>BtTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WaterTreeView</class>
+   <extends>QTreeView</extends>
+   <header>BtTreeView.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget_Trees</tabstop>
+  <tabstop>treeView_recipe</tabstop>
+  <tabstop>treeView_style</tabstop>
+  <tabstop>treeView_equip</tabstop>
+  <tabstop>treeView_ferm</tabstop>
+  <tabstop>treeView_hops</tabstop>
+  <tabstop>treeView_misc</tabstop>
+  <tabstop>treeView_yeast</tabstop>
+  <tabstop>scrollArea_tabs</tabstop>
+  <tabstop>tabWidget_recipeView</tabstop>
+  <tabstop>lineEdit_name</tabstop>
+  <tabstop>styleButton</tabstop>
+  <tabstop>styleComboBox</tabstop>
+  <tabstop>equipmentButton</tabstop>
+  <tabstop>equipmentComboBox</tabstop>
+  <tabstop>lineEdit_batchSize</tabstop>
+  <tabstop>lineEdit_boilSize</tabstop>
+  <tabstop>lineEdit_efficiency</tabstop>
+  <tabstop>lineEdit_boilTime</tabstop>
+  <tabstop>scrollArea_tables</tabstop>
+  <tabstop>tabWidget_ingredients</tabstop>
+  <tabstop>fermentableTable</tabstop>
+  <tabstop>pushButton_addFerm</tabstop>
+  <tabstop>pushButton_removeFerm</tabstop>
+  <tabstop>pushButton_editFerm</tabstop>
+  <tabstop>hopTable</tabstop>
+  <tabstop>pushButton_addHop</tabstop>
+  <tabstop>pushButton_removeHop</tabstop>
+  <tabstop>pushButton_editHop</tabstop>
+  <tabstop>miscTable</tabstop>
+  <tabstop>pushButton_addMisc</tabstop>
+  <tabstop>pushButton_removeMisc</tabstop>
+  <tabstop>pushButton_editMisc</tabstop>
+  <tabstop>yeastTable</tabstop>
+  <tabstop>pushButton_addYeast</tabstop>
+  <tabstop>pushButton_removeYeast</tabstop>
+  <tabstop>pushButton_editYeast</tabstop>
+  <tabstop>mashStepTableWidget</tabstop>
+  <tabstop>pushButton_addMashStep</tabstop>
+  <tabstop>pushButton_removeMashStep</tabstop>
+  <tabstop>pushButton_editMashStep</tabstop>
+  <tabstop>pushButton_editMash</tabstop>
+  <tabstop>pushButton_mashDes</tabstop>
+  <tabstop>pushButton_mashWizard</tabstop>
+  <tabstop>mashButton</tabstop>
+  <tabstop>mashComboBox</tabstop>
+  <tabstop>pushButton_mashRemove</tabstop>
+  <tabstop>pushButton_mashUp</tabstop>
+  <tabstop>pushButton_mashDown</tabstop>
+  <tabstop>pushButton_saveMash</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../brewken.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>label_targetBoilSize</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_boilSize</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>536</x>
+     <y>245</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>label_boilSg</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_boilSg</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>536</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>337</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>label_boiltime</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_boilTime</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>588</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>label_targetBatchSize</sender>
+   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <receiver>lineEdit_batchSize</receiver>
+   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>536</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
