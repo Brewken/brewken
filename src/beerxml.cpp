@@ -37,7 +37,7 @@
 #include <QPair>
 
 #include "Algorithms.h"
-#include "DatabaseSchema.h"
+#include "database/DatabaseSchema.h"
 #include "model/Brewnote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -55,7 +55,7 @@
 #include "xml/XmlCoding.h"
 #include "xml/XmlRecord.h"
 
-#include "TableSchema.h"
+#include "database/TableSchema.h"
 //
 // Variables and constant definitions that we need only in this file
 //

@@ -27,9 +27,9 @@
 #include <QDebug>
 #include "Brewken.h"
 
-#include "TableSchemaConst.h"
-#include "YeastSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/YeastSchema.h"
+#include "database/Database.h"
 
 QStringList Yeast::types = QStringList() << "Ale" << "Lager" << "Wheat" << "Wine" << "Champagne";
 QStringList Yeast::forms = QStringList() << "Liquid" << "Dry" << "Slant" << "Culture";

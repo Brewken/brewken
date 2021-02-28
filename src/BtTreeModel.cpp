@@ -32,7 +32,7 @@
 #include "BtTreeModel.h"
 #include "BtTreeView.h"
 #include "RecipeFormatter.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"

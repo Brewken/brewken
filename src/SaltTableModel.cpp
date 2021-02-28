@@ -33,7 +33,7 @@
 #include <QObject>
 
 #include <QList>
-#include "database.h"
+#include "database/Database.h"
 #include "WaterDialog.h"
 #include "SaltTableModel.h"
 #include "model/Salt.h"

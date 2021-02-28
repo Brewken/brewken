@@ -22,7 +22,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "database.h"
+#include "database/Database.h"
 #include "MashDesigner.h"
 #include "HeatCalculations.h"
 #include "PhysicalConstants.h"

@@ -60,7 +60,7 @@
 
 #include "Brewken.h"
 #include "config.h"
-#include "database.h"
+#include "database/Database.h"
 #include "Algorithms.h"
 #include "model/Fermentable.h"
 #include "unitSystems/UnitSystem.h"

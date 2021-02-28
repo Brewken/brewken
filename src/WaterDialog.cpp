@@ -35,7 +35,7 @@
 #include "WaterTableModel.h"
 #include "BtDigitWidget.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
 #include "model/Mashstep.h"

@@ -17,7 +17,7 @@
 #include <QString>
 #include <QDebug>
 #include "Brewken.h"
-#include "PropertySchema.h"
+#include "database/PropertySchema.h"
 
 // this initializer is simple. It populates the m_properties QVector with
 // all the nullptr we need. Use this if initializing ALLDB doesn't present a

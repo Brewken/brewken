@@ -17,10 +17,10 @@
 #include <QString>
 #include <QStringBuilder>
 
-#include "TableSchema.h"
-#include "TableSchemaConst.h"
-#include "DatabaseSchema.h"
-#include "InstructionSchema.h"
+#include "database/TableSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/DatabaseSchema.h"
+#include "database/InstructionSchema.h"
 
 DatabaseSchema::DatabaseSchema()
 {

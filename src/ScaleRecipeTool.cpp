@@ -28,7 +28,7 @@
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "model/Water.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Equipment.h"
 #include "EquipmentListModel.h"
 #include "NamedEntitySortProxyModel.h"

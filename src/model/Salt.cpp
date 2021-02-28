@@ -23,9 +23,9 @@
 #include <QDebug>
 
 #include "Brewken.h"
-#include "TableSchemaConst.h"
-#include "SaltSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/SaltSchema.h"
+#include "database/Database.h"
 
 // TBD Not clear why we use this ordering for salts.  Let's see what happens if we let it use the default ordering (name) of NamedEntity
 //bool operator<(const Salt &s1, const Salt &s2)

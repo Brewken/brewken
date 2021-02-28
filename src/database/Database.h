@@ -52,9 +52,9 @@ class Database;
 #include "model/NamedEntity.h"
 #include "Brewken.h"
 #include "model/Recipe.h"
-#include "DatabaseSchema.h"
-#include "TableSchema.h"
-#include "TableSchemaConst.h"
+#include "database/DatabaseSchema.h"
+#include "database/TableSchema.h"
+#include "database/TableSchemaConst.h"
 
 // Forward declarations
 class BeerXML;

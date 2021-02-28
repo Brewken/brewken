@@ -22,9 +22,9 @@
 #include <QVector>
 #include <QDebug>
 #include "Brewken.h"
-#include "database.h"
-#include "TableSchemaConst.h"
-#include "MashStepSchema.h"
+#include "database/Database.h"
+#include "database/TableSchemaConst.h"
+#include "database/MashStepSchema.h"
 
 QStringList MashStep::types = QStringList() << "Infusion" << "Temperature" << "Decoction" << "Fly Sparge" << "Batch Sparge";
 QStringList MashStep::typesTr = QStringList() << QObject::tr("Infusion") << QObject::tr("Temperature") << QObject::tr("Decoction") << QObject::tr("Fly Sparge") << QObject::tr("Batch Sparge");

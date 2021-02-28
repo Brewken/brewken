@@ -30,7 +30,7 @@
 #include "BtTreeView.h"
 #include "BtTreeModel.h"
 #include "BtTreeFilterProxyModel.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Recipe.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"

@@ -38,9 +38,9 @@
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/Yeast.h"
-#include "database.h"
-#include "TableSchemaConst.h"
-#include "BrewNoteSchema.h"
+#include "database/Database.h"
+#include "database/TableSchemaConst.h"
+#include "database/BrewNoteSchema.h"
 
 // These belong here, because they really just are constant strings for
 // reaching into a hash

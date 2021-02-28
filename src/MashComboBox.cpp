@@ -19,7 +19,7 @@
 
 #include "MashComboBox.h"
 #include <QList>
-#include "database.h"
+#include "database/Database.h"
 #include "model/Mash.h"
 
 MashComboBox::MashComboBox(QWidget* parent)

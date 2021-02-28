@@ -20,7 +20,7 @@
 // class DatabaseSchema;
 
 #include "Brewken.h"
-#include "TableSchema.h"
+#include "database/TableSchema.h"
 
 #include <QString>
 

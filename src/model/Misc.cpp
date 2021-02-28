@@ -31,9 +31,9 @@
 #include <QObject>
 #include <QDebug>
 
-#include "TableSchemaConst.h"
-#include "MiscSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/MiscSchema.h"
+#include "database/Database.h"
 
 QStringList Misc::uses = QStringList() << "Boil" << "Mash" << "Primary" << "Secondary" << "Bottling";
 QStringList Misc::types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";

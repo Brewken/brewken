@@ -35,7 +35,7 @@
 #include <QLineEdit>
 #include <QHeaderView>
 
-#include "database.h"
+#include "database/Database.h"
 #include "model/Hop.h"
 #include <QString>
 #include <QVector>

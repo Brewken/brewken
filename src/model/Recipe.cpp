@@ -26,7 +26,7 @@
 
 #include "model/Instruction.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 
 #include <cmath> // For pow/log
 
@@ -55,8 +55,8 @@
 #include "PhysicalConstants.h"
 #include "QueuedMethod.h"
 
-#include "TableSchemaConst.h"
-#include "RecipeSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/RecipeSchema.h"
 
 static const QString kMashStepSection("mashStepTableModel");
 static const QString kMiscTableSection("miscTableModel");

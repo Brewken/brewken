@@ -31,7 +31,7 @@
 #include <QLineEdit>
 #include <QVector>
 #include <QHeaderView>
-#include "database.h"
+#include "database/Database.h"
 #include "model/Mashstep.h"
 #include "MashStepTableModel.h"
 #include "unit.h"

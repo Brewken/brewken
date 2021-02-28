@@ -19,7 +19,7 @@
 
 #include "MashListModel.h"
 #include "model/Style.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Recipe.h"
 #include "model/Mash.h"
 

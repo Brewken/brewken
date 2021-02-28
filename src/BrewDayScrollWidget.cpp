@@ -24,7 +24,7 @@
 #include "model/Instruction.h"
 #include "Brewken.h"
 #include "BrewDayScrollWidget.h"
-#include "database.h"
+#include "database/Database.h"
 #include "Html.h"
 #include <QListWidgetItem>
 #include <QPrinter>

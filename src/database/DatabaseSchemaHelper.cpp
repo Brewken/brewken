@@ -26,12 +26,12 @@
 #include <QDebug>
 #include <QSqlError>
 
-#include "DatabaseSchemaHelper.h"
-#include "TableSchema.h"
-#include "TableSchemaConst.h"
-#include "BrewNoteSchema.h"
-#include "SettingsSchema.h"
-#include "WaterSchema.h"
+#include "database/DatabaseSchemaHelper.h"
+#include "database/TableSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/BrewNoteSchema.h"
+#include "database/SettingsSchema.h"
+#include "database/WaterSchema.h"
 #include "model/Brewnote.h"
 #include "model/Water.h"
 

@@ -27,9 +27,9 @@
 #include <QDebug>
 #include "Brewken.h"
 
-#include "TableSchemaConst.h"
-#include "HopSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/HopSchema.h"
+#include "database/Database.h"
 
 QStringList Hop::types = QStringList() << "Bittering" << "Aroma" << "Both";
 QStringList Hop::forms = QStringList() << "Leaf" << "Pellet" << "Plug";

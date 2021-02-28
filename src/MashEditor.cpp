@@ -26,7 +26,7 @@
 #include "unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
-#include "database.h"
+#include "database/Database.h"
 
 MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr)
 {

@@ -16,7 +16,7 @@
 #ifndef _TABLESCHEMA_H
 #define _TABLESCHEMA_H
 
-#include "PropertySchema.h"
+#include "database/PropertySchema.h"
 #include "Brewken.h"
 #include <QString>
 

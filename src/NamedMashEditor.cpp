@@ -25,7 +25,7 @@
 #include "unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
-#include "database.h"
+#include "database/Database.h"
 
 #include "NamedMashEditor.h"
 

@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "database.h"
+#include "database/Database.h"
 #include "StyleEditor.h"
 #include <QInputDialog>
 #include "model/Style.h"

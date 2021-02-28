@@ -19,7 +19,7 @@
 #include "BtTabWidget.h"
 #include "BtTreeView.h"
 #include "BtTreeItem.h"
-#include "database.h"
+#include "database/Database.h"
 
 //! \brief set up the popup window.
 BtTabWidget::BtTabWidget(QWidget* parent) : QTabWidget(parent)

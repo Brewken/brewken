@@ -24,9 +24,9 @@
 #include <QObject>
 #include "Brewken.h"
 
-#include "TableSchemaConst.h"
-#include "WaterSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/WaterSchema.h"
+#include "database/Database.h"
 
 
 bool Water::isEqualTo(NamedEntity const & other) const {

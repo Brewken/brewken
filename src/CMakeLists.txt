@@ -105,9 +105,11 @@ SET( Brewken_SRCS
     ${SRCDIR}/ColorMethods.cpp
     ${SRCDIR}/ConverterTool.cpp
     ${SRCDIR}/CustomComboBox.cpp
-    ${SRCDIR}/database.cpp
-    ${SRCDIR}/DatabaseSchema.cpp
-    ${SRCDIR}/DatabaseSchemaHelper.cpp
+    ${SRCDIR}/database/Database.cpp
+    ${SRCDIR}/database/DatabaseSchema.cpp
+    ${SRCDIR}/database/DatabaseSchemaHelper.cpp
+    ${SRCDIR}/database/PropertySchema.cpp
+    ${SRCDIR}/database/TableSchema.cpp
     ${SRCDIR}/EquipmentButton.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
@@ -162,7 +164,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/PitchDialog.cpp
     ${SRCDIR}/PreInstruction.cpp
     ${SRCDIR}/PrimingDialog.cpp
-    ${SRCDIR}/PropertySchema.cpp
     ${SRCDIR}/QueuedMethod.cpp
     ${SRCDIR}/RadarChart.cpp
     ${SRCDIR}/RangedSlider.cpp
@@ -178,7 +179,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/StyleListModel.cpp
     ${SRCDIR}/StyleRangeWidget.cpp
     ${SRCDIR}/StyleSortFilterProxyModel.cpp
-    ${SRCDIR}/TableSchema.cpp
     ${SRCDIR}/TimerListDialog.cpp
     ${SRCDIR}/TimerMainDialog.cpp
     ${SRCDIR}/TimerWidget.cpp
@@ -222,33 +222,32 @@ SET( Brewken_SRCS
 # TODO: can I somehow have a separate CMakeLists.txt
 # in the ui/ directory instead of here?
 SET( Brewken_UIS
-    ${UIDIR}/brewDayWidget.ui
     ${UIDIR}/brewDayScrollWidget.ui
+    ${UIDIR}/brewDayWidget.ui
     ${UIDIR}/brewNoteWidget.ui
-    ${UIDIR}/mainWindow.ui
-    ${UIDIR}/mashStepEditor.ui
-    ${UIDIR}/miscEditor.ui
     ${UIDIR}/fermentableEditor.ui
     ${UIDIR}/hopEditor.ui
     ${UIDIR}/instructionWidget.ui
+    ${UIDIR}/mainWindow.ui
+    ${UIDIR}/mashDesigner.ui
     ${UIDIR}/mashEditor.ui
-    ${UIDIR}/namedMashEditor.ui
+    ${UIDIR}/mashStepEditor.ui
     ${UIDIR}/mashWizard.ui
+    ${UIDIR}/miscEditor.ui
+    ${UIDIR}/namedMashEditor.ui
     ${UIDIR}/ogAdjuster.ui
     ${UIDIR}/optionsDialog.ui
+    ${UIDIR}/pitchDialog.ui
     ${UIDIR}/primingDialog.ui
+    ${UIDIR}/recipeExtrasWidget.ui
     ${UIDIR}/refractoDialog.ui
     ${UIDIR}/strikeWaterDialog.ui
     ${UIDIR}/styleEditor.ui
     ${UIDIR}/timerMainDialog.ui
     ${UIDIR}/timerWidget.ui
-    ${UIDIR}/waterEditor.ui
     ${UIDIR}/waterDialog.ui
+    ${UIDIR}/waterEditor.ui
     ${UIDIR}/yeastEditor.ui
-    ${UIDIR}/mashDesigner.ui
-    ${UIDIR}/pitchDialog.ui
-    ${UIDIR}/brewDayScrollWidget.ui
-    ${UIDIR}/recipeExtrasWidget.ui
 )
 
 # The list of files that need to be moc'd.
@@ -261,9 +260,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/BrewDayScrollWidget.h
     ${SRCDIR}/BrewDayWidget.h
     ${SRCDIR}/Brewken.h
-    ${SRCDIR}/BrewNoteSchema.h
     ${SRCDIR}/BrewNoteWidget.h
-    ${SRCDIR}/BtAllTableSchema.h
     ${SRCDIR}/BtDatePopup.h
     ${SRCDIR}/BtDigitWidget.h
     ${SRCDIR}/BtFolder.h
@@ -277,27 +274,40 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/BtTreeView.h
     ${SRCDIR}/ConverterTool.h
     ${SRCDIR}/CustomComboBox.h
-    ${SRCDIR}/database.h
-    ${SRCDIR}/DatabaseSchema.h
+    ${SRCDIR}/database/BrewNoteSchema.h
+    ${SRCDIR}/database/BtAlldatabase/TableSchema.h
+    ${SRCDIR}/database/Database.h
+    ${SRCDIR}/database/DatabaseSchema.h
+    ${SRCDIR}/database/EquipmentSchema.h
+    ${SRCDIR}/database/FermentableSchema.h
+    ${SRCDIR}/database/HopSchema.h
+    ${SRCDIR}/database/InstructionSchema.h
+    ${SRCDIR}/database/MashSchema.h
+    ${SRCDIR}/database/MashStepSchema.h
+    ${SRCDIR}/database/MiscSchema.h
+    ${SRCDIR}/database/PropertySchema.h
+    ${SRCDIR}/database/RecipeSchema.h
+    ${SRCDIR}/database/SaltSchema.h
+    ${SRCDIR}/database/SettingsSchema.h
+    ${SRCDIR}/database/StyleSchema.h
+    ${SRCDIR}/database/TableSchema.h
+    ${SRCDIR}/database/WaterSchema.h
+    ${SRCDIR}/database/YeastSchema.h
     ${SRCDIR}/EquipmentButton.h
     ${SRCDIR}/EquipmentEditor.h
     ${SRCDIR}/equipment.h
     ${SRCDIR}/EquipmentListModel.h
-    ${SRCDIR}/EquipmentSchema.h
     ${SRCDIR}/FermentableDialog.h
     ${SRCDIR}/FermentableEditor.h
     ${SRCDIR}/fermentable.h
-    ${SRCDIR}/FermentableSchema.h
     ${SRCDIR}/FermentableSortFilterProxyModel.h
     ${SRCDIR}/FermentableTableModel.h
     ${SRCDIR}/HopDialog.h
     ${SRCDIR}/HopEditor.h
-    ${SRCDIR}/HopSchema.h
     ${SRCDIR}/HopSortFilterProxyModel.h
     ${SRCDIR}/HopTableModel.h
     ${SRCDIR}/HydrometerTool.h
     ${SRCDIR}/IbuGuSlider.h
-    ${SRCDIR}/InstructionSchema.h
     ${SRCDIR}/InstructionWidget.h
     ${SRCDIR}/Log.h
     ${SRCDIR}/MainWindow.h
@@ -305,15 +315,12 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/MashDesigner.h
     ${SRCDIR}/MashEditor.h
     ${SRCDIR}/MashListModel.h
-    ${SRCDIR}/MashSchema.h
     ${SRCDIR}/MashStepEditor.h
-    ${SRCDIR}/MashStepSchema.h
     ${SRCDIR}/MashStepTableModel.h
     ${SRCDIR}/MashStepTableWidget.h
     ${SRCDIR}/MashWizard.h
     ${SRCDIR}/MiscDialog.h
     ${SRCDIR}/MiscEditor.h
-    ${SRCDIR}/MiscSchema.h
     ${SRCDIR}/MiscSortFilterProxyModel.h
     ${SRCDIR}/MiscTableModel.h
     ${SRCDIR}/model/Brewnote.h
@@ -333,27 +340,21 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/OptionDialog.h
     ${SRCDIR}/PitchDialog.h
     ${SRCDIR}/PrimingDialog.h
-    ${SRCDIR}/PropertySchema.h
     ${SRCDIR}/QueuedMethod.h
     ${SRCDIR}/RadarChart.h
     ${SRCDIR}/RangedSlider.h
     ${SRCDIR}/RecipeExtrasWidget.h
     ${SRCDIR}/RecipeFormatter.h
-    ${SRCDIR}/RecipeSchema.h
     ${SRCDIR}/RefractoDialog.h
-    ${SRCDIR}/SaltSchema.h
     ${SRCDIR}/SaltTableModel.h
     ${SRCDIR}/ScaleRecipeTool.h
-    ${SRCDIR}/SettingsSchema.h
     ${SRCDIR}/StrikeWaterDialog.h
     ${SRCDIR}/StyleButton.h
     ${SRCDIR}/StyleEditor.h
     ${SRCDIR}/style.h
     ${SRCDIR}/StyleListModel.h
     ${SRCDIR}/StyleRangeWidget.h
-    ${SRCDIR}/StyleSchema.h
     ${SRCDIR}/StyleSortFilterProxyModel.h
-    ${SRCDIR}/TableSchema.h
     ${SRCDIR}/TimerListDialog.h
     ${SRCDIR}/TimerMainDialog.h
     ${SRCDIR}/TimerWidget.h
@@ -362,13 +363,11 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/WaterDialog.h
     ${SRCDIR}/WaterEditor.h
     ${SRCDIR}/WaterListModel.h
-    ${SRCDIR}/WaterSchema.h
     ${SRCDIR}/WaterSortFilterProxyModel.h
     ${SRCDIR}/WaterTableModel.h
     ${SRCDIR}/WaterTableWidget.h
     ${SRCDIR}/YeastDialog.h
     ${SRCDIR}/YeastEditor.h
-    ${SRCDIR}/YeastSchema.h
     ${SRCDIR}/YeastSortFilterProxyModel.h
     ${SRCDIR}/YeastTableModel.h
 

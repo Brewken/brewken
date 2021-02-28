@@ -20,7 +20,7 @@
  */
 
 #include "YeastEditor.h"
-#include "database.h"
+#include "database/Database.h"
 #include "config.h"
 #include "unit.h"
 #include "Brewken.h"

@@ -27,7 +27,7 @@
 #include <QVector>
 #include <QDir>
 #include <QDebug>
-#include "database.h"
+#include "database/Database.h"
 #include "InstructionWidget.h"
 #include "TimerWidget.h"
 #include "model/Instruction.h"

@@ -35,7 +35,7 @@
 #include <QVector>
 #include <QHeaderView>
 
-#include "database.h"
+#include "database/Database.h"
 #include "model/Yeast.h"
 #include "YeastTableModel.h"
 #include "unit.h"

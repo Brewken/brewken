@@ -19,10 +19,10 @@
 
 #include "model/Instruction.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 
-#include "TableSchemaConst.h"
-#include "InstructionSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/InstructionSchema.h"
 
 bool Instruction::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

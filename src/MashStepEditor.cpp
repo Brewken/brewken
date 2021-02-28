@@ -21,7 +21,7 @@
 #include "Brewken.h"
 #include "MashStepEditor.h"
 #include "model/Mashstep.h"
-#include "database.h"
+#include "database/Database.h"
 
 MashStepEditor::MashStepEditor(QWidget* parent)
    : QDialog(parent), obs(nullptr)

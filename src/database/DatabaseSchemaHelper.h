@@ -23,7 +23,7 @@
 #include <QString>
 #include <QSqlDatabase>
 
-#include "DatabaseSchema.h"
+#include "database/DatabaseSchema.h"
 
 
 /*!

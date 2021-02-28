@@ -29,10 +29,10 @@
 #include <QDebug>
 #include "model/Fermentable.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 
-#include "TableSchemaConst.h"
-#include "FermentableSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/FermentableSchema.h"
 #define SUPER NamedEntity
 
 QStringList Fermentable::types = QStringList() << "Grain" << "Sugar" << "Extract" << "Dry Extract" << "Adjunct";

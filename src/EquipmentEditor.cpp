@@ -32,7 +32,7 @@
 #include "BtLineEdit.h"
 #include "BtLabel.h"
 
-#include "database.h"
+#include "database/Database.h"
 #include "model/Equipment.h"
 #include "EquipmentEditor.h"
 #include "EquipmentListModel.h"

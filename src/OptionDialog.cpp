@@ -40,7 +40,7 @@
 #include "unitSystems/SgDensityUnitSystem.h"
 #include "unitSystems/DiastaticPowerUnitSystem.h"
 #include "unitSystems/CelsiusTempUnitSystem.h"
-#include "database.h"
+#include "database/Database.h"
 #include <QMessageBox>
 #include <QFileDialog>
 #include "MainWindow.h"

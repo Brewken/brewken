@@ -20,7 +20,7 @@
 #include "Html.h"
 #include "MainWindow.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 
 #include <QDate>
 #include <QDialog>

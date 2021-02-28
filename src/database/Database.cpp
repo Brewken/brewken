@@ -35,7 +35,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "database.h"
+#include "database/Database.h"
 
 #include <QList>
 #include <QDomDocument>
@@ -82,17 +82,17 @@
 #include "beerxml.h"
 #include "Brewken.h"
 #include "QueuedMethod.h"
-#include "DatabaseSchemaHelper.h"
-#include "DatabaseSchema.h"
-#include "TableSchema.h"
-#include "TableSchemaConst.h"
-#include "MashStepSchema.h"
-#include "InstructionSchema.h"
-#include "BrewNoteSchema.h"
-#include "RecipeSchema.h"
-#include "WaterSchema.h"
-#include "SaltSchema.h"
-#include "SettingsSchema.h"
+#include "database/DatabaseSchemaHelper.h"
+#include "database/DatabaseSchema.h"
+#include "database/TableSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/MashStepSchema.h"
+#include "database/InstructionSchema.h"
+#include "database/BrewNoteSchema.h"
+#include "database/RecipeSchema.h"
+#include "database/WaterSchema.h"
+#include "database/SaltSchema.h"
+#include "database/SettingsSchema.h"
 
 // Static members.
 Database* Database::dbInstance = nullptr;

@@ -24,13 +24,13 @@
 #include <QVector>
 #include "model/Mashstep.h"
 #include "Brewken.h"
-#include "database.h"
+#include "database/Database.h"
 #include <QDomElement>
 #include <QDomText>
 #include <QObject>
 
-#include "TableSchemaConst.h"
-#include "MashSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/MashSchema.h"
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

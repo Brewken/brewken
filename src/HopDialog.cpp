@@ -26,7 +26,7 @@
 #include <QString>
 #include <QList>
 #include "HopDialog.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Recipe.h"
 #include "MainWindow.h"
 #include "model/Hop.h"

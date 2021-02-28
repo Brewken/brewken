@@ -19,7 +19,7 @@
 
 #include "StyleListModel.h"
 #include "model/Style.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Recipe.h"
 
 StyleListModel::StyleListModel(QWidget* parent)

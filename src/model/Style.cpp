@@ -21,9 +21,9 @@
 #include "Brewken.h"
 #include <QDebug>
 
-#include "TableSchemaConst.h"
-#include "StyleSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/StyleSchema.h"
+#include "database/Database.h"
 
 QStringList Style::m_types = QStringList() << "Lager" << "Ale" << "Mead" << "Wheat" << "Mixed" << "Cider";
 

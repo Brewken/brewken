@@ -23,7 +23,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "database.h"
+#include "database/Database.h"
 #include "MashWizard.h"
 #include "model/Mash.h"
 #include "model/Mashstep.h"

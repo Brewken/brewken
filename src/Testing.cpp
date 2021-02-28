@@ -25,7 +25,7 @@
 #include <math.h>
 #include "model/Recipe.h"
 #include "model/Equipment.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Hop.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"

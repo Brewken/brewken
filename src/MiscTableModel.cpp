@@ -25,7 +25,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QHeaderView>
-#include "database.h"
+#include "database/Database.h"
 #include "model/Misc.h"
 #include "MiscTableModel.h"
 #include "unit.h"

@@ -25,7 +25,7 @@
 #include <QVariant>
 #include <QVector>
 
-#include "database.h"
+#include "database/Database.h"
 #include "model/Brewnote.h" ///
 #include "model/Instruction.h" ///
 

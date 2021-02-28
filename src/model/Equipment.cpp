@@ -25,9 +25,9 @@
 #include "Brewken.h"
 #include "HeatCalculations.h"
 
-#include "TableSchemaConst.h"
-#include "EquipmentSchema.h"
-#include "database.h"
+#include "database/TableSchemaConst.h"
+#include "database/EquipmentSchema.h"
+#include "database/Database.h"
 
 
 bool Equipment::isEqualTo(NamedEntity const & other) const {

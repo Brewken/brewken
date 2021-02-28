@@ -24,7 +24,7 @@
 #include <QString>
 #include <QList>
 #include "YeastDialog.h"
-#include "database.h"
+#include "database/Database.h"
 #include "model/Recipe.h"
 #include "MainWindow.h"
 #include "model/Yeast.h"

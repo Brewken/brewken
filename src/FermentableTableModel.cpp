@@ -34,7 +34,7 @@
 #include <QRect>
 #include <QDebug>
 
-#include "database.h"
+#include "database/Database.h"
 #include "Brewken.h"
 #include <QSize>
 #include <QComboBox>

@@ -79,7 +79,7 @@
 #include "model/Recipe.h"
 #include "MainWindow.h"
 #include "AboutDialog.h"
-#include "database.h"
+#include "database/Database.h"
 #include "YeastDialog.h"
 #include "config.h"
 #include "unit.h"
