@@ -88,9 +88,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/boiltime.cpp
     ${SRCDIR}/BrewDayScrollWidget.cpp
     ${SRCDIR}/BrewDayWidget.cpp
-    ${SRCDIR}/model/Brewnote.cpp
-    ${SRCDIR}/BrewNoteWidget.cpp
     ${SRCDIR}/Brewken.cpp
+    ${SRCDIR}/BrewNoteWidget.cpp
     ${SRCDIR}/BtDatePopup.cpp
     ${SRCDIR}/BtDigitWidget.cpp
     ${SRCDIR}/BtFolder.cpp
@@ -103,27 +102,20 @@ SET( Brewken_SRCS
     ${SRCDIR}/BtTreeItem.cpp
     ${SRCDIR}/BtTreeModel.cpp
     ${SRCDIR}/BtTreeView.cpp
-    ${SRCDIR}/CelsiusTempUnitSystem.cpp
     ${SRCDIR}/ColorMethods.cpp
     ${SRCDIR}/ConverterTool.cpp
     ${SRCDIR}/CustomComboBox.cpp
     ${SRCDIR}/database.cpp
     ${SRCDIR}/DatabaseSchema.cpp
     ${SRCDIR}/DatabaseSchemaHelper.cpp
-    ${SRCDIR}/DiastaticPowerUnitSystem.cpp
-    ${SRCDIR}/EbcColorUnitSystem.cpp
     ${SRCDIR}/EquipmentButton.cpp
-    ${SRCDIR}/model/Equipment.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
-    ${SRCDIR}/FahrenheitTempUnitSystem.cpp
-    ${SRCDIR}/model/Fermentable.cpp
     ${SRCDIR}/FermentableDialog.cpp
     ${SRCDIR}/FermentableEditor.cpp
     ${SRCDIR}/FermentableSortFilterProxyModel.cpp
     ${SRCDIR}/FermentableTableModel.cpp
     ${SRCDIR}/HeatCalculations.cpp
-    ${SRCDIR}/model/Hop.cpp
     ${SRCDIR}/HopDialog.cpp
     ${SRCDIR}/HopEditor.cpp
     ${SRCDIR}/HopSortFilterProxyModel.cpp
@@ -132,56 +124,56 @@ SET( Brewken_SRCS
     ${SRCDIR}/HydrometerTool.cpp
     ${SRCDIR}/IbuGuSlider.cpp
     ${SRCDIR}/IbuMethods.cpp
-    ${SRCDIR}/ImperialVolumeUnitSystem.cpp
-    ${SRCDIR}/model/NamedEntity.cpp
-    ${SRCDIR}/NamedEntitySortProxyModel.cpp
-    ${SRCDIR}/model/Instruction.cpp
     ${SRCDIR}/InstructionWidget.cpp
     ${SRCDIR}/InventoryFormatter.cpp
     ${SRCDIR}/Log.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
-    ${SRCDIR}/model/Mash.cpp
     ${SRCDIR}/MashDesigner.cpp
     ${SRCDIR}/MashEditor.cpp
     ${SRCDIR}/MashListModel.cpp
-    ${SRCDIR}/model/Mashstep.cpp
     ${SRCDIR}/MashStepEditor.cpp
     ${SRCDIR}/MashStepTableModel.cpp
     ${SRCDIR}/MashStepTableWidget.cpp
     ${SRCDIR}/MashWizard.cpp
     ${SRCDIR}/matrix.cpp
-    ${SRCDIR}/model/Misc.cpp
     ${SRCDIR}/MiscDialog.cpp
     ${SRCDIR}/MiscEditor.cpp
     ${SRCDIR}/MiscSortFilterProxyModel.cpp
     ${SRCDIR}/MiscTableModel.cpp
+    ${SRCDIR}/model/Brewnote.cpp
+    ${SRCDIR}/model/Equipment.cpp
+    ${SRCDIR}/model/Fermentable.cpp
+    ${SRCDIR}/model/Hop.cpp
+    ${SRCDIR}/model/Instruction.cpp
+    ${SRCDIR}/model/Mash.cpp
+    ${SRCDIR}/model/Mashstep.cpp
+    ${SRCDIR}/model/Misc.cpp
+    ${SRCDIR}/model/NamedEntity.cpp
+    ${SRCDIR}/model/Recipe.cpp
+    ${SRCDIR}/model/Salt.cpp
+    ${SRCDIR}/model/Style.cpp
+    ${SRCDIR}/model/Water.cpp
+    ${SRCDIR}/model/Yeast.cpp
+    ${SRCDIR}/NamedEntitySortProxyModel.cpp
     ${SRCDIR}/NamedMashEditor.cpp
     ${SRCDIR}/OgAdjuster.cpp
     ${SRCDIR}/OptionDialog.cpp
     ${SRCDIR}/PitchDialog.cpp
-    ${SRCDIR}/PlatoDensityUnitSystem.cpp
     ${SRCDIR}/PreInstruction.cpp
     ${SRCDIR}/PrimingDialog.cpp
     ${SRCDIR}/PropertySchema.cpp
     ${SRCDIR}/QueuedMethod.cpp
     ${SRCDIR}/RadarChart.cpp
     ${SRCDIR}/RangedSlider.cpp
-    ${SRCDIR}/model/Recipe.cpp
     ${SRCDIR}/RecipeExtrasWidget.cpp
     ${SRCDIR}/RecipeFormatter.cpp
     ${SRCDIR}/RefractoDialog.cpp
-    ${SRCDIR}/model/Salt.cpp
     ${SRCDIR}/SaltTableModel.cpp
     ${SRCDIR}/ScaleRecipeTool.cpp
-    ${SRCDIR}/SgDensityUnitSystem.cpp
     ${SRCDIR}/SimpleUndoableUpdate.cpp
-    ${SRCDIR}/SIVolumeUnitSystem.cpp
-    ${SRCDIR}/SIWeightUnitSystem.cpp
-    ${SRCDIR}/SrmColorUnitSystem.cpp
     ${SRCDIR}/StrikeWaterDialog.cpp
     ${SRCDIR}/StyleButton.cpp
-    ${SRCDIR}/model/Style.cpp
     ${SRCDIR}/StyleEditor.cpp
     ${SRCDIR}/StyleListModel.cpp
     ${SRCDIR}/StyleRangeWidget.cpp
@@ -190,32 +182,40 @@ SET( Brewken_SRCS
     ${SRCDIR}/TimerListDialog.cpp
     ${SRCDIR}/TimerMainDialog.cpp
     ${SRCDIR}/TimerWidget.cpp
-    ${SRCDIR}/TimeUnitSystem.cpp
     ${SRCDIR}/unit.cpp
-    ${SRCDIR}/UnitSystem.cpp
-    ${SRCDIR}/UnitSystems.cpp
-    ${SRCDIR}/USVolumeUnitSystem.cpp
-    ${SRCDIR}/USWeightUnitSystem.cpp
+    ${SRCDIR}/unitSystems/CelsiusTempUnitSystem.cpp
+    ${SRCDIR}/unitSystems/DiastaticPowerUnitSystem.cpp
+    ${SRCDIR}/unitSystems/EbcColorUnitSystem.cpp
+    ${SRCDIR}/unitSystems/FahrenheitTempUnitSystem.cpp
+    ${SRCDIR}/unitSystems/ImperialVolumeUnitSystem.cpp
+    ${SRCDIR}/unitSystems/PlatoDensityUnitSystem.cpp
+    ${SRCDIR}/unitSystems/SgDensityUnitSystem.cpp
+    ${SRCDIR}/unitSystems/SIVolumeUnitSystem.cpp
+    ${SRCDIR}/unitSystems/SIWeightUnitSystem.cpp
+    ${SRCDIR}/unitSystems/SrmColorUnitSystem.cpp
+    ${SRCDIR}/unitSystems/TimeUnitSystem.cpp
+    ${SRCDIR}/unitSystems/UnitSystem.cpp
+    ${SRCDIR}/unitSystems/UnitSystems.cpp
+    ${SRCDIR}/unitSystems/USVolumeUnitSystem.cpp
+    ${SRCDIR}/unitSystems/USWeightUnitSystem.cpp
     ${SRCDIR}/WaterButton.cpp
-    ${SRCDIR}/model/Water.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp
     ${SRCDIR}/WaterListModel.cpp
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
     ${SRCDIR}/WaterTableModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
-    ${SRCDIR}/model/Yeast.cpp
-    ${SRCDIR}/YeastDialog.cpp
-    ${SRCDIR}/YeastEditor.cpp
-    ${SRCDIR}/YeastSortFilterProxyModel.cpp
-    ${SRCDIR}/YeastTableModel.cpp
     ${SRCDIR}/xml/BtDomErrorHandler.cpp
     ${SRCDIR}/xml/XercesHelpers.cpp
     ${SRCDIR}/xml/XmlCoding.cpp
     ${SRCDIR}/xml/XmlMashStepRecord.cpp
     ${SRCDIR}/xml/XmlRecipeRecord.cpp
-    ${SRCDIR}/xml/XmlRecord.cpp
     ${SRCDIR}/xml/XmlRecordCount.cpp
+    ${SRCDIR}/xml/XmlRecord.cpp
+    ${SRCDIR}/YeastDialog.cpp
+    ${SRCDIR}/YeastEditor.cpp
+    ${SRCDIR}/YeastSortFilterProxyModel.cpp
+    ${SRCDIR}/YeastTableModel.cpp
 )
 
 # List of all the *.ui.
@@ -256,121 +256,121 @@ SET( Brewken_UIS
 SET( Brewken_MOC_HEADERS
     ${SRCDIR}/AboutDialog.h
     ${SRCDIR}/BeerColorWidget.h
-    ${SRCDIR}/ingredient.h
     ${SRCDIR}/beerxml.h
-    ${SRCDIR}/NamedEntitySortProxyModel.h
     ${SRCDIR}/boiltime.h
-    ${SRCDIR}/BrewDayWidget.h
     ${SRCDIR}/BrewDayScrollWidget.h
-    ${SRCDIR}/brewnote.h
+    ${SRCDIR}/BrewDayWidget.h
+    ${SRCDIR}/Brewken.h
+    ${SRCDIR}/BrewNoteSchema.h
     ${SRCDIR}/BrewNoteWidget.h
-    ${SRCDIR}/brewken.h
-    ${SRCDIR}/BtTabWidget.h
-    ${SRCDIR}/BtTreeModel.h
-    ${SRCDIR}/BtTreeView.h
-    ${SRCDIR}/BtTreeFilterProxyModel.h
-    ${SRCDIR}/BtDigitWidget.h
+    ${SRCDIR}/BtAllTableSchema.h
     ${SRCDIR}/BtDatePopup.h
+    ${SRCDIR}/BtDigitWidget.h
     ${SRCDIR}/BtFolder.h
     ${SRCDIR}/BtLabel.h
     ${SRCDIR}/BtLineEdit.h
-    ${SRCDIR}/BtTextEdit.h
     ${SRCDIR}/BtSplashScreen.h
+    ${SRCDIR}/BtTabWidget.h
+    ${SRCDIR}/BtTextEdit.h
+    ${SRCDIR}/BtTreeFilterProxyModel.h
+    ${SRCDIR}/BtTreeModel.h
+    ${SRCDIR}/BtTreeView.h
     ${SRCDIR}/ConverterTool.h
     ${SRCDIR}/CustomComboBox.h
     ${SRCDIR}/database.h
+    ${SRCDIR}/DatabaseSchema.h
     ${SRCDIR}/EquipmentButton.h
-    ${SRCDIR}/EquipmentListModel.h
     ${SRCDIR}/EquipmentEditor.h
-    ${SRCDIR}/FermentableEditor.h
+    ${SRCDIR}/equipment.h
+    ${SRCDIR}/EquipmentListModel.h
+    ${SRCDIR}/EquipmentSchema.h
     ${SRCDIR}/FermentableDialog.h
+    ${SRCDIR}/FermentableEditor.h
+    ${SRCDIR}/fermentable.h
+    ${SRCDIR}/FermentableSchema.h
     ${SRCDIR}/FermentableSortFilterProxyModel.h
     ${SRCDIR}/FermentableTableModel.h
     ${SRCDIR}/HopDialog.h
     ${SRCDIR}/HopEditor.h
+    ${SRCDIR}/HopSchema.h
     ${SRCDIR}/HopSortFilterProxyModel.h
     ${SRCDIR}/HopTableModel.h
     ${SRCDIR}/HydrometerTool.h
     ${SRCDIR}/IbuGuSlider.h
+    ${SRCDIR}/InstructionSchema.h
     ${SRCDIR}/InstructionWidget.h
     ${SRCDIR}/Log.h
     ${SRCDIR}/MainWindow.h
     ${SRCDIR}/MashButton.h
     ${SRCDIR}/MashDesigner.h
     ${SRCDIR}/MashEditor.h
-    ${SRCDIR}/NamedMashEditor.h
     ${SRCDIR}/MashListModel.h
+    ${SRCDIR}/MashSchema.h
     ${SRCDIR}/MashStepEditor.h
+    ${SRCDIR}/MashStepSchema.h
     ${SRCDIR}/MashStepTableModel.h
     ${SRCDIR}/MashStepTableWidget.h
     ${SRCDIR}/MashWizard.h
     ${SRCDIR}/MiscDialog.h
     ${SRCDIR}/MiscEditor.h
+    ${SRCDIR}/MiscSchema.h
     ${SRCDIR}/MiscSortFilterProxyModel.h
     ${SRCDIR}/MiscTableModel.h
+    ${SRCDIR}/model/Brewnote.h
+    ${SRCDIR}/model/Hop.h
+    ${SRCDIR}/model/Instruction.h
+    ${SRCDIR}/model/Mash.h
+    ${SRCDIR}/model/Mashstep.h
+    ${SRCDIR}/model/Misc.h
+    ${SRCDIR}/model/NamedEntity.h
+    ${SRCDIR}/model/Recipe.h
+    ${SRCDIR}/model/Salt.h
+    ${SRCDIR}/model/Water.h
+    ${SRCDIR}/model/Yeast.h
+    ${SRCDIR}/NamedEntitySortProxyModel.h
+    ${SRCDIR}/NamedMashEditor.h
     ${SRCDIR}/OgAdjuster.h
     ${SRCDIR}/OptionDialog.h
     ${SRCDIR}/PitchDialog.h
     ${SRCDIR}/PrimingDialog.h
+    ${SRCDIR}/PropertySchema.h
     ${SRCDIR}/QueuedMethod.h
     ${SRCDIR}/RadarChart.h
     ${SRCDIR}/RangedSlider.h
     ${SRCDIR}/RecipeExtrasWidget.h
     ${SRCDIR}/RecipeFormatter.h
+    ${SRCDIR}/RecipeSchema.h
     ${SRCDIR}/RefractoDialog.h
-    ${SRCDIR}/salt.h
+    ${SRCDIR}/SaltSchema.h
     ${SRCDIR}/SaltTableModel.h
     ${SRCDIR}/ScaleRecipeTool.h
+    ${SRCDIR}/SettingsSchema.h
     ${SRCDIR}/StrikeWaterDialog.h
     ${SRCDIR}/StyleButton.h
-    ${SRCDIR}/StyleListModel.h
     ${SRCDIR}/StyleEditor.h
+    ${SRCDIR}/style.h
+    ${SRCDIR}/StyleListModel.h
     ${SRCDIR}/StyleRangeWidget.h
+    ${SRCDIR}/StyleSchema.h
     ${SRCDIR}/StyleSortFilterProxyModel.h
+    ${SRCDIR}/TableSchema.h
     ${SRCDIR}/TimerListDialog.h
     ${SRCDIR}/TimerMainDialog.h
     ${SRCDIR}/TimerWidget.h
     ${SRCDIR}/unit.h
+    ${SRCDIR}/WaterButton.h
+    ${SRCDIR}/WaterDialog.h
+    ${SRCDIR}/WaterEditor.h
     ${SRCDIR}/WaterListModel.h
+    ${SRCDIR}/WaterSchema.h
+    ${SRCDIR}/WaterSortFilterProxyModel.h
     ${SRCDIR}/WaterTableModel.h
     ${SRCDIR}/WaterTableWidget.h
-    ${SRCDIR}/WaterButton.h
-    ${SRCDIR}/WaterEditor.h
-    ${SRCDIR}/WaterDialog.h
-    ${SRCDIR}/WaterSortFilterProxyModel.h
     ${SRCDIR}/YeastDialog.h
     ${SRCDIR}/YeastEditor.h
+    ${SRCDIR}/YeastSchema.h
     ${SRCDIR}/YeastSortFilterProxyModel.h
     ${SRCDIR}/YeastTableModel.h
-    ${SRCDIR}/equipment.h
-    ${SRCDIR}/fermentable.h
-    ${SRCDIR}/hop.h
-    ${SRCDIR}/instruction.h
-    ${SRCDIR}/mash.h
-    ${SRCDIR}/mashstep.h
-    ${SRCDIR}/misc.h
-    ${SRCDIR}/recipe.h
-    ${SRCDIR}/style.h
-    ${SRCDIR}/water.h
-    ${SRCDIR}/yeast.h
-    ${SRCDIR}/BrewNoteSchema.h
-    ${SRCDIR}/BtAllTableSchema.h
-    ${SRCDIR}/DatabaseSchema.h
-    ${SRCDIR}/EquipmentSchema.h
-    ${SRCDIR}/FermentableSchema.h
-    ${SRCDIR}/HopSchema.h
-    ${SRCDIR}/InstructionSchema.h
-    ${SRCDIR}/MashSchema.h
-    ${SRCDIR}/MashStepSchema.h
-    ${SRCDIR}/MiscSchema.h
-    ${SRCDIR}/PropertySchema.h
-    ${SRCDIR}/RecipeSchema.h
-    ${SRCDIR}/SaltSchema.h
-    ${SRCDIR}/SettingsSchema.h
-    ${SRCDIR}/StyleSchema.h
-    ${SRCDIR}/TableSchema.h
-    ${SRCDIR}/WaterSchema.h
-    ${SRCDIR}/YeastSchema.h
 
 )
 

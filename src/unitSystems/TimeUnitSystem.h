@@ -1,5 +1,5 @@
 /**
- * EbcColorUnitSystem.h is part of Brewken, and is copyright the following authors 2015:
+ * TimeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,25 +15,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EBCCOLORUNITSYSTEM_H
-#define _EBCCOLORUNITSYSTEM_H
+#ifndef _TIMEUNITSYSTEM_H
+#define _TIMEUNITSYSTEM_H
 
-class EbcColorUnitSystem;
+class TimeUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class EbcColorUnitSystem : public UnitSystem
+class TimeUnitSystem : public UnitSystem
 {
 public:
-   EbcColorUnitSystem();
-   Unit* thicknessUnit() { return 0; }
+   TimeUnitSystem();
+   Unit* thicknessUnit(){ return 0; }
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
-   Unit* unit();
 
+   Unit* unit();
 };
 
-#endif /*_EBCCOLORUNITSYSTEM_H*/
+#endif /*_TIMEUNITSYSTEM_H*/

@@ -1,6 +1,5 @@
 /**
- * SgDensityUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015-2021:
- *   • Matt Young <mfsy@yahoo.com>
+ * EbcColorUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,38 +15,37 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "SgDensityUnitSystem.h"
+#include "unitSystems/EbcColorUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
-#include "model/Brewnote.h"
 
-SgDensityUnitSystem::SgDensityUnitSystem()
+EbcColorUnitSystem::EbcColorUnitSystem()
    : UnitSystem()
 {
-   _type = Unit::Density;
+   _type = Unit::Color;
 }
 
-QMap<Unit::unitScale, Unit*> const& SgDensityUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& EbcColorUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::sp_grav);
+      _scaleToUnit.insert(Unit::scaleWithout, Units::ebc);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SgDensityUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& EbcColorUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert(PropertyNames::BrewNote::sg,Units::sp_grav);
+      _qstringToUnit.insert("ebc", Units::ebc);
    }
 
    return _qstringToUnit;
 }
 
-QString SgDensityUnitSystem::unitType() { return "Density"; }
-Unit* SgDensityUnitSystem::unit() { return Units::sp_grav; }
+QString EbcColorUnitSystem::unitType() { return "Color"; }
+Unit* EbcColorUnitSystem::unit() { return Units::ebc; }

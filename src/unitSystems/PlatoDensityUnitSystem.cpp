@@ -1,5 +1,5 @@
 /**
- * FahrenheitTempUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * PlatoDensityUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,37 +15,38 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "FahrenheitTempUnitSystem.h"
+#include "unitSystems/PlatoDensityUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
 
-FahrenheitTempUnitSystem::FahrenheitTempUnitSystem()
+PlatoDensityUnitSystem::PlatoDensityUnitSystem()
    : UnitSystem()
 {
-   _type = Unit::Temp;
+   _type = Unit::Density;
 }
 
-QMap<Unit::unitScale, Unit*> const& FahrenheitTempUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& PlatoDensityUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::fahrenheit);
+      _scaleToUnit.insert(Unit::scaleWithout, Units::plato);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& FahrenheitTempUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& PlatoDensityUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("F",Units::fahrenheit);
+      _qstringToUnit.insert("P", Units::plato);
    }
 
    return _qstringToUnit;
 }
 
-Unit* FahrenheitTempUnitSystem::unit() { return Units::fahrenheit; }
-QString FahrenheitTempUnitSystem::unitType() { return "Fahrenheit"; }
+
+QString PlatoDensityUnitSystem::unitType() { return "Density"; }
+Unit* PlatoDensityUnitSystem::unit() { return Units::plato; }

@@ -1,5 +1,6 @@
 /**
- * SIVolumeUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * SgDensityUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,46 +16,38 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "SIVolumeUnitSystem.h"
+#include "unitSystems/SgDensityUnitSystem.h"
 #include <QStringList>
-#include <cmath>
+#include "unit.h"
+#include "model/Brewnote.h"
 
-SIVolumeUnitSystem::SIVolumeUnitSystem()
+SgDensityUnitSystem::SgDensityUnitSystem()
    : UnitSystem()
 {
-   _type = Unit::Volume;
+   _type = Unit::Density;
 }
 
-Unit* SIVolumeUnitSystem::thicknessUnit()
-{
-   return Units::liters;
-}
-
-QMap<Unit::unitScale, Unit*> const& SIVolumeUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& SgDensityUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall, Units::milliliters);
-      _scaleToUnit.insert(Unit::scaleSmall, Units::liters);
+      _scaleToUnit.insert(Unit::scaleWithout,Units::sp_grav);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SIVolumeUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& SgDensityUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("mL", Units::milliliters);
-      _qstringToUnit.insert("ml", Units::milliliters);
-      _qstringToUnit.insert("L", Units::liters);
-      _qstringToUnit.insert("l", Units::liters);
+      _qstringToUnit.insert(PropertyNames::BrewNote::sg,Units::sp_grav);
    }
 
    return _qstringToUnit;
 }
 
-Unit* SIVolumeUnitSystem::unit() { return Units::liters; }
-QString SIVolumeUnitSystem::unitType() { return "SI"; }
+QString SgDensityUnitSystem::unitType() { return "Density"; }
+Unit* SgDensityUnitSystem::unit() { return Units::sp_grav; }

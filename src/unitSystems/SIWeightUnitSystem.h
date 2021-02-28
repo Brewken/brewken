@@ -1,5 +1,5 @@
 /**
- * SIVolumeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * SIWeightUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,18 +15,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SIVOLUMEUNITSYSTEM_H
-#define _SIVOLUMEUNITSYSTEM_H
+#ifndef _SIWEIGHTUNITSYSTEM_H
+#define _SIWEIGHTUNITSYSTEM_H
 
-class SIVolumeUnitSystem;
+class SIWeightUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
+class Unit;
 
-class SIVolumeUnitSystem : public UnitSystem
+class SIWeightUnitSystem : public UnitSystem
 {
 public:
-   SIVolumeUnitSystem();
+   SIWeightUnitSystem();
    Unit* thicknessUnit(); /* Inherited from UnitSystem */
    QString unitType();
 
@@ -35,4 +36,4 @@ public:
    Unit* unit();
 };
 
-#endif /*_SIVOLUMEUNITSYSTEM_H*/
+#endif /*_SIWEIGHTUNITSYSTEM_H*/

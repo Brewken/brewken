@@ -1,6 +1,7 @@
 /**
- * DiastaticPowerUnitSystem.h is part of Brewken, and is copyright the following authors 2016:
- *   • Mark de Wever <koraq@xs4all.nl>
+ * CelsiusTempUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ *   • Mik Firestone <mikfire@gmail.com>
+ *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,36 +15,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DIASTATICPOWERUNITSYSTEM_H
-#define DIASTATICPOWERUNITSYSTEM_H
+#ifndef _CELSIUSTEMPUNITSYSTEM_H
+#define _CELSIUSTEMPUNITSYSTEM_H
+
+class CelsiusTempUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class LintnerDiastaticPowerUnitSystem : public UnitSystem
+class CelsiusTempUnitSystem : public UnitSystem
 {
 public:
-   LintnerDiastaticPowerUnitSystem();
-   Unit* thicknessUnit() { return 0; }
+   CelsiusTempUnitSystem();
+   Unit* thicknessUnit(){ return 0; }
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
    Unit* unit();
-
 };
 
-class WkDiastaticPowerUnitSystem : public UnitSystem
-{
-public:
-   WkDiastaticPowerUnitSystem();
-   Unit* thicknessUnit() { return 0; }
-   QString unitType();
-
-   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
-   QMap<QString, Unit*> const& qstringToUnit();
-   Unit* unit();
-
-};
-
-#endif /* DIASTATICPOWERUNITSYSTEM_H */
+#endif /*_CELSIUSTEMPUNITSYSTEM_H*/

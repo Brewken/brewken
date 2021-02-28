@@ -1,5 +1,5 @@
 /**
- * FahrenheitTempUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * SIVolumeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,19 +15,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FAHRENHEITTEMPUNITSYSTEM_H
-#define _FAHRENHEITTEMPUNITSYSTEM_H
+#ifndef _SIVOLUMEUNITSYSTEM_H
+#define _SIVOLUMEUNITSYSTEM_H
 
-class FahrenheitTempUnitSystem;
+class SIVolumeUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class FahrenheitTempUnitSystem : public UnitSystem
+class SIVolumeUnitSystem : public UnitSystem
 {
 public:
-   FahrenheitTempUnitSystem();
-   Unit* thicknessUnit(){ return 0; }
+   SIVolumeUnitSystem();
+   Unit* thicknessUnit(); /* Inherited from UnitSystem */
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
@@ -35,4 +35,4 @@ public:
    Unit* unit();
 };
 
-#endif /*_FAHRENHEITTEMPUNITSYSTEM_H*/
+#endif /*_SIVOLUMEUNITSYSTEM_H*/

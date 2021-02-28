@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 #include "Brewken.h"
 #include <QRegExp>
 #include <QString>

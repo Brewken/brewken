@@ -21,8 +21,8 @@
 #include <QWidget>
 #include <QString>
 #include "unit.h"
-#include "UnitSystem.h"
-#include "UnitSystems.h"
+#include "unitSystems/UnitSystem.h"
+#include "unitSystems/UnitSystems.h"
 
 /*!
  * \class BtDigitWidget

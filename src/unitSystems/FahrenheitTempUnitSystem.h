@@ -1,5 +1,5 @@
 /**
- * TimeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * FahrenheitTempUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,25 +15,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TIMEUNITSYSTEM_H
-#define _TIMEUNITSYSTEM_H
+#ifndef _FAHRENHEITTEMPUNITSYSTEM_H
+#define _FAHRENHEITTEMPUNITSYSTEM_H
 
-class TimeUnitSystem;
+class FahrenheitTempUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class TimeUnitSystem : public UnitSystem
+class FahrenheitTempUnitSystem : public UnitSystem
 {
 public:
-   TimeUnitSystem();
+   FahrenheitTempUnitSystem();
    Unit* thicknessUnit(){ return 0; }
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
-
    Unit* unit();
 };
 
-#endif /*_TIMEUNITSYSTEM_H*/
+#endif /*_FAHRENHEITTEMPUNITSYSTEM_H*/

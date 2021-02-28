@@ -26,7 +26,7 @@
 #include <QAction>
 #include <QPoint>
 
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
 class BtLabel;
 class BtColorLabel;

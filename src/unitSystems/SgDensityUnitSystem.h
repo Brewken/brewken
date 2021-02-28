@@ -1,5 +1,5 @@
 /**
- * USWeightUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * SgDensityUnitSystem.h is part of Brewken, and is copyright the following authors 2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,23 +15,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USWEIGHTUNITSYSTEM_H
-#define _USWEIGHTUNITSYSTEM_H
+#ifndef _SGDENSITYUNITSYSTEM_H
+#define _SGDENSITYUNITSYSTEM_H
+
+class SgDensityUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class USWeightUnitSystem : public UnitSystem
+class SgDensityUnitSystem : public UnitSystem
 {
 public:
-   USWeightUnitSystem();
-   Unit* thicknessUnit(); /* Inherited from UnitSystem */
+   SgDensityUnitSystem();
+   Unit* thicknessUnit(){ return 0; }
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
-
    Unit* unit();
+
 };
 
-#endif /*_USWEIGHTUNITSYSTEM_H*/
+#endif /*_SGDENSITYUNITSYSTEM_H*/

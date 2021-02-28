@@ -1,5 +1,5 @@
 /**
- * PlatoDensityUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015:
+ * CelsiusTempUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,38 +15,38 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "PlatoDensityUnitSystem.h"
-#include <QStringList>
+#include "unitSystems/CelsiusTempUnitSystem.h"
 #include "unit.h"
+#include <QStringList>
 
-PlatoDensityUnitSystem::PlatoDensityUnitSystem()
-   : UnitSystem()
+CelsiusTempUnitSystem::CelsiusTempUnitSystem() :
+   UnitSystem()
 {
-   _type = Unit::Density;
+   _type = Unit::Temp;
 }
 
-QMap<Unit::unitScale, Unit*> const& PlatoDensityUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& CelsiusTempUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout, Units::plato);
+      _scaleToUnit.insert(Unit::scaleWithout,Units::celsius);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& PlatoDensityUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& CelsiusTempUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("P", Units::plato);
+      _qstringToUnit.insert("C",Units::celsius);
    }
 
    return _qstringToUnit;
 }
 
+Unit* CelsiusTempUnitSystem::unit() { return Units::celsius; }
 
-QString PlatoDensityUnitSystem::unitType() { return "Density"; }
-Unit* PlatoDensityUnitSystem::unit() { return Units::plato; }
+QString CelsiusTempUnitSystem::unitType() { return "SI"; }

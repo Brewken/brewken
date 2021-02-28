@@ -1,5 +1,5 @@
 /**
- * SIWeightUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * USWeightUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,47 +15,45 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "SIWeightUnitSystem.h"
+#include "unitSystems/USWeightUnitSystem.h"
 #include <QStringList>
 #include <cmath>
 #include "unit.h"
+#include <QDebug>
 
-SIWeightUnitSystem::SIWeightUnitSystem()
-   : UnitSystem()
+USWeightUnitSystem::USWeightUnitSystem()
 {
    _type = Unit::Mass;
 }
 
-QMap<Unit::unitScale, Unit*> const& SIWeightUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& USWeightUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall,Units::milligrams);
-      _scaleToUnit.insert(Unit::scaleSmall, Units::grams);
-      _scaleToUnit.insert(Unit::scaleMedium, Units::kilograms);
+      _scaleToUnit.insert(Unit::scaleExtraSmall,Units::ounces);
+      _scaleToUnit.insert(Unit::scaleSmall,Units::pounds);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SIWeightUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& USWeightUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("mg", Units::milligrams);
-      _qstringToUnit.insert( "g", Units::grams);
-      _qstringToUnit.insert("kg", Units::kilograms);
+      _qstringToUnit.insert("oz",Units::ounces);
+      _qstringToUnit.insert("lb",Units::pounds);
    }
 
    return _qstringToUnit;
 }
 
-Unit* SIWeightUnitSystem::thicknessUnit()
+Unit* USWeightUnitSystem::thicknessUnit()
 {
-   return Units::kilograms;
+   return Units::pounds;
 }
 
-Unit* SIWeightUnitSystem::unit() { return Units::kilograms; }
-QString SIWeightUnitSystem::unitType() { return "SI"; }
+Unit* USWeightUnitSystem::unit() { return Units::pounds; }
+QString USWeightUnitSystem::unitType() { return "USCustomary"; }

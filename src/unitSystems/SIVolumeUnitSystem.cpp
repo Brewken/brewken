@@ -1,5 +1,5 @@
 /**
- * SrmColorUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015:
+ * SIVolumeUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,36 +15,46 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "SrmColorUnitSystem.h"
+#include "unitSystems/SIVolumeUnitSystem.h"
 #include <QStringList>
+#include <cmath>
 
-SrmColorUnitSystem::SrmColorUnitSystem()
+SIVolumeUnitSystem::SIVolumeUnitSystem()
    : UnitSystem()
 {
-   _type = Unit::Color;
+   _type = Unit::Volume;
 }
 
-QMap<Unit::unitScale, Unit*> const& SrmColorUnitSystem::scaleToUnit()
+Unit* SIVolumeUnitSystem::thicknessUnit()
+{
+   return Units::liters;
+}
+
+QMap<Unit::unitScale, Unit*> const& SIVolumeUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::srm);
+      _scaleToUnit.insert(Unit::scaleExtraSmall, Units::milliliters);
+      _scaleToUnit.insert(Unit::scaleSmall, Units::liters);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SrmColorUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& SIVolumeUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("srm",Units::srm);
+      _qstringToUnit.insert("mL", Units::milliliters);
+      _qstringToUnit.insert("ml", Units::milliliters);
+      _qstringToUnit.insert("L", Units::liters);
+      _qstringToUnit.insert("l", Units::liters);
    }
 
    return _qstringToUnit;
 }
 
-QString SrmColorUnitSystem::unitType() { return "Color"; }
-Unit* SrmColorUnitSystem::unit() { return Units::srm; }
+Unit* SIVolumeUnitSystem::unit() { return Units::liters; }
+QString SIVolumeUnitSystem::unitType() { return "SI"; }

@@ -1,5 +1,5 @@
 /**
- * SgDensityUnitSystem.h is part of Brewken, and is copyright the following authors 2015:
+ * ImperialVolumeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,25 +15,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SGDENSITYUNITSYSTEM_H
-#define _SGDENSITYUNITSYSTEM_H
+#ifndef _IMPERIALVOLUMEUNITSYSTEM_H
+#define _IMPERIALVOLUMEUNITSYSTEM_H
 
-class SgDensityUnitSystem;
+class ImperialVolumeUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class SgDensityUnitSystem : public UnitSystem
+class ImperialVolumeUnitSystem : public UnitSystem
 {
 public:
-   SgDensityUnitSystem();
-   Unit* thicknessUnit(){ return 0; }
+   ImperialVolumeUnitSystem();
+   Unit* thicknessUnit(); /* Inherited from UnitSystem */
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
    Unit* unit();
-
 };
 
-#endif /*_SGDENSITYUNITSYSTEM_H*/
+#endif /*_IMPERIALVOLUMEUNITSYSTEM_H*/

@@ -1,5 +1,5 @@
 /**
- * CelsiusTempUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * FahrenheitTempUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,38 +15,37 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "CelsiusTempUnitSystem.h"
-#include "unit.h"
+#include "unitSystems/FahrenheitTempUnitSystem.h"
 #include <QStringList>
+#include "unit.h"
 
-CelsiusTempUnitSystem::CelsiusTempUnitSystem() :
-   UnitSystem()
+FahrenheitTempUnitSystem::FahrenheitTempUnitSystem()
+   : UnitSystem()
 {
    _type = Unit::Temp;
 }
 
-QMap<Unit::unitScale, Unit*> const& CelsiusTempUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& FahrenheitTempUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::celsius);
+      _scaleToUnit.insert(Unit::scaleWithout,Units::fahrenheit);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& CelsiusTempUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& FahrenheitTempUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("C",Units::celsius);
+      _qstringToUnit.insert("F",Units::fahrenheit);
    }
 
    return _qstringToUnit;
 }
 
-Unit* CelsiusTempUnitSystem::unit() { return Units::celsius; }
-
-QString CelsiusTempUnitSystem::unitType() { return "SI"; }
+Unit* FahrenheitTempUnitSystem::unit() { return Units::fahrenheit; }
+QString FahrenheitTempUnitSystem::unitType() { return "Fahrenheit"; }

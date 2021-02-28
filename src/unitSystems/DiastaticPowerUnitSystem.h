@@ -1,7 +1,6 @@
 /**
- * PlatoDensityUnitSystem.h is part of Brewken, and is copyright the following authors 2015:
- *   • Mik Firestone <mikfire@gmail.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
+ * DiastaticPowerUnitSystem.h is part of Brewken, and is copyright the following authors 2016:
+ *   • Mark de Wever <koraq@xs4all.nl>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -15,18 +14,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PLATODENSITYUNITSYSTEM_H
-#define _PLATODENSITYUNITSYSTEM_H
-
-class PlatoDensityUnitSystem;
+#ifndef DIASTATICPOWERUNITSYSTEM_H
+#define DIASTATICPOWERUNITSYSTEM_H
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class PlatoDensityUnitSystem : public UnitSystem
+class LintnerDiastaticPowerUnitSystem : public UnitSystem
 {
 public:
-   PlatoDensityUnitSystem();
+   LintnerDiastaticPowerUnitSystem();
    Unit* thicknessUnit() { return 0; }
    QString unitType();
 
@@ -36,4 +33,17 @@ public:
 
 };
 
-#endif /*_PLATODENSITYUNITSYSTEM_H*/
+class WkDiastaticPowerUnitSystem : public UnitSystem
+{
+public:
+   WkDiastaticPowerUnitSystem();
+   Unit* thicknessUnit() { return 0; }
+   QString unitType();
+
+   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
+   QMap<QString, Unit*> const& qstringToUnit();
+   Unit* unit();
+
+};
+
+#endif /* DIASTATICPOWERUNITSYSTEM_H */

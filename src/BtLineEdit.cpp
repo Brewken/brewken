@@ -23,8 +23,8 @@
 
 #include "BtLineEdit.h"
 #include "Brewken.h"
-#include "UnitSystems.h"
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystems.h"
+#include "unitSystems/UnitSystem.h"
 #include "unit.h"
 #include "Algorithms.h"
 #include <QSettings>

@@ -1,5 +1,5 @@
 /**
- * SIWeightUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * SrmColorUnitSystem.h is part of Brewken, and is copyright the following authors 2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,25 +15,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SIWEIGHTUNITSYSTEM_H
-#define _SIWEIGHTUNITSYSTEM_H
+#ifndef _SRMCOLORUNITSYSTEM_H
+#define _SRMCOLORUNITSYSTEM_H
 
-class SIWeightUnitSystem;
+class SrmColorUnitSystem;
 
 #include <QMap>
-#include "UnitSystem.h"
-class Unit;
+#include "unitSystems/UnitSystem.h"
 
-class SIWeightUnitSystem : public UnitSystem
+class SrmColorUnitSystem : public UnitSystem
 {
 public:
-   SIWeightUnitSystem();
-   Unit* thicknessUnit(); /* Inherited from UnitSystem */
-   QString unitType();
+   SrmColorUnitSystem();
+   Unit* thicknessUnit(){ return 0; }
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
+
+   QString unitType();
    Unit* unit();
+
 };
 
-#endif /*_SIWEIGHTUNITSYSTEM_H*/
+#endif /*_SRMCOLORUNITSYSTEM_H*/

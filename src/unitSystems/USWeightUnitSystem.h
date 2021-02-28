@@ -1,5 +1,5 @@
 /**
- * CelsiusTempUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * USWeightUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,24 +15,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CELSIUSTEMPUNITSYSTEM_H
-#define _CELSIUSTEMPUNITSYSTEM_H
-
-class CelsiusTempUnitSystem;
+#ifndef _USWEIGHTUNITSYSTEM_H
+#define _USWEIGHTUNITSYSTEM_H
 
 #include <QMap>
-#include "UnitSystem.h"
+#include "unitSystems/UnitSystem.h"
 
-class CelsiusTempUnitSystem : public UnitSystem
+class USWeightUnitSystem : public UnitSystem
 {
 public:
-   CelsiusTempUnitSystem();
-   Unit* thicknessUnit(){ return 0; }
+   USWeightUnitSystem();
+   Unit* thicknessUnit(); /* Inherited from UnitSystem */
    QString unitType();
 
    QMap<Unit::unitScale, Unit*> const& scaleToUnit();
    QMap<QString, Unit*> const& qstringToUnit();
+
    Unit* unit();
 };
 
-#endif /*_CELSIUSTEMPUNITSYSTEM_H*/
+#endif /*_USWEIGHTUNITSYSTEM_H*/

@@ -1,5 +1,5 @@
 /**
- * EbcColorUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015:
+ * SrmColorUnitSystem.cpp is part of Brewken, and is copyright the following authors 2015:
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,37 +15,36 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "EbcColorUnitSystem.h"
+#include "unitSystems/SrmColorUnitSystem.h"
 #include <QStringList>
-#include "unit.h"
 
-EbcColorUnitSystem::EbcColorUnitSystem()
+SrmColorUnitSystem::SrmColorUnitSystem()
    : UnitSystem()
 {
    _type = Unit::Color;
 }
 
-QMap<Unit::unitScale, Unit*> const& EbcColorUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit*> const& SrmColorUnitSystem::scaleToUnit()
 {
    static QMap<Unit::unitScale, Unit*> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout, Units::ebc);
+      _scaleToUnit.insert(Unit::scaleWithout,Units::srm);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& EbcColorUnitSystem::qstringToUnit()
+QMap<QString, Unit*> const& SrmColorUnitSystem::qstringToUnit()
 {
    static QMap<QString, Unit*> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("ebc", Units::ebc);
+      _qstringToUnit.insert("srm",Units::srm);
    }
 
    return _qstringToUnit;
 }
 
-QString EbcColorUnitSystem::unitType() { return "Color"; }
-Unit* EbcColorUnitSystem::unit() { return Units::ebc; }
+QString SrmColorUnitSystem::unitType() { return "Color"; }
+Unit* SrmColorUnitSystem::unit() { return Units::srm; }

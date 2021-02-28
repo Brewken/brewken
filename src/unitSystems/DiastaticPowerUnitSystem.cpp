@@ -14,7 +14,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "DiastaticPowerUnitSystem.h"
+#include "unitSystems/DiastaticPowerUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
 
