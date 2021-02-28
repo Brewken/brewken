@@ -32,8 +32,8 @@ class MashStepItemDelegate;
 #include <QVector>
 #include <QTableView>
 
-#include "mashstep.h"
-#include "mash.h"
+#include "model/Mashstep.h"
+#include "model/Mash.h"
 #include "unit.h"
 
 enum{ MASHSTEPNAMECOL, MASHSTEPTYPECOL, MASHSTEPAMOUNTCOL, MASHSTEPTEMPCOL, MASHSTEPTARGETTEMPCOL, MASHSTEPTIMECOL, MASHSTEPNUMCOLS /*This one MUST be last*/};

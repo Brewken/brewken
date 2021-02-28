@@ -24,7 +24,7 @@
 #include "model/NamedEntity.h"
 #include <QStringList>
 #include <QString>
-#include "mash.h"
+#include "model/Mash.h"
 
 namespace PropertyNames::MashStep { static char const * const stepNumber = "stepNumber"; /* previously kpropStepNumber */ }
 namespace PropertyNames::MashStep { static char const * const decoctionAmount_l = "decoctionAmount_l"; /* previously kpropDecoctAmt */ }

@@ -27,7 +27,7 @@
 #include <QVariant>
 #include <QObject>
 #include <QDebug>
-#include "fermentable.h"
+#include "model/Fermentable.h"
 #include "Brewken.h"
 #include "database.h"
 

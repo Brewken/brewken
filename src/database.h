@@ -51,7 +51,7 @@ class Database;
 #include <QMap>
 #include "model/NamedEntity.h"
 #include "Brewken.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 #include "DatabaseSchema.h"
 #include "TableSchema.h"
 #include "TableSchemaConst.h"

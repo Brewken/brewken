@@ -25,7 +25,7 @@ class BeerColorWidget;
 #include <QImage>
 #include <QMetaProperty>
 #include <QVariant>
-#include "recipe.h"
+#include "model/Recipe.h"
 
 /*!
  * \class BeerColorWidget

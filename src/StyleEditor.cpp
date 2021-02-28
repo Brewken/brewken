@@ -20,7 +20,7 @@
 #include "database.h"
 #include "StyleEditor.h"
 #include <QInputDialog>
-#include "style.h"
+#include "model/Style.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
 #include "unit.h"

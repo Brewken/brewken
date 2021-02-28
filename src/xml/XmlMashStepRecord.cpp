@@ -14,7 +14,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include "xml/XmlMashStepRecord.h"
-#include "mash.h"
+#include "model/Mash.h"
 
 XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(NamedEntity * containingEntity,
                                                                      QTextStream & userMessage,

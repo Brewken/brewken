@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "style.h"
+#include "model/Style.h"
 
 #include "Brewken.h"
 #include <QDebug>

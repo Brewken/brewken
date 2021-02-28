@@ -88,7 +88,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/boiltime.cpp
     ${SRCDIR}/BrewDayScrollWidget.cpp
     ${SRCDIR}/BrewDayWidget.cpp
-    ${SRCDIR}/brewnote.cpp
+    ${SRCDIR}/model/Brewnote.cpp
     ${SRCDIR}/BrewNoteWidget.cpp
     ${SRCDIR}/Brewken.cpp
     ${SRCDIR}/BtDatePopup.cpp
@@ -113,17 +113,17 @@ SET( Brewken_SRCS
     ${SRCDIR}/DiastaticPowerUnitSystem.cpp
     ${SRCDIR}/EbcColorUnitSystem.cpp
     ${SRCDIR}/EquipmentButton.cpp
-    ${SRCDIR}/equipment.cpp
+    ${SRCDIR}/model/Equipment.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
     ${SRCDIR}/FahrenheitTempUnitSystem.cpp
-    ${SRCDIR}/fermentable.cpp
+    ${SRCDIR}/model/Fermentable.cpp
     ${SRCDIR}/FermentableDialog.cpp
     ${SRCDIR}/FermentableEditor.cpp
     ${SRCDIR}/FermentableSortFilterProxyModel.cpp
     ${SRCDIR}/FermentableTableModel.cpp
     ${SRCDIR}/HeatCalculations.cpp
-    ${SRCDIR}/hop.cpp
+    ${SRCDIR}/model/Hop.cpp
     ${SRCDIR}/HopDialog.cpp
     ${SRCDIR}/HopEditor.cpp
     ${SRCDIR}/HopSortFilterProxyModel.cpp
@@ -135,23 +135,23 @@ SET( Brewken_SRCS
     ${SRCDIR}/ImperialVolumeUnitSystem.cpp
     ${SRCDIR}/model/NamedEntity.cpp
     ${SRCDIR}/NamedEntitySortProxyModel.cpp
-    ${SRCDIR}/instruction.cpp
+    ${SRCDIR}/model/Instruction.cpp
     ${SRCDIR}/InstructionWidget.cpp
     ${SRCDIR}/InventoryFormatter.cpp
     ${SRCDIR}/Log.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
-    ${SRCDIR}/mash.cpp
+    ${SRCDIR}/model/Mash.cpp
     ${SRCDIR}/MashDesigner.cpp
     ${SRCDIR}/MashEditor.cpp
     ${SRCDIR}/MashListModel.cpp
-    ${SRCDIR}/mashstep.cpp
+    ${SRCDIR}/model/Mashstep.cpp
     ${SRCDIR}/MashStepEditor.cpp
     ${SRCDIR}/MashStepTableModel.cpp
     ${SRCDIR}/MashStepTableWidget.cpp
     ${SRCDIR}/MashWizard.cpp
     ${SRCDIR}/matrix.cpp
-    ${SRCDIR}/misc.cpp
+    ${SRCDIR}/model/Misc.cpp
     ${SRCDIR}/MiscDialog.cpp
     ${SRCDIR}/MiscEditor.cpp
     ${SRCDIR}/MiscSortFilterProxyModel.cpp
@@ -167,11 +167,11 @@ SET( Brewken_SRCS
     ${SRCDIR}/QueuedMethod.cpp
     ${SRCDIR}/RadarChart.cpp
     ${SRCDIR}/RangedSlider.cpp
-    ${SRCDIR}/recipe.cpp
+    ${SRCDIR}/model/Recipe.cpp
     ${SRCDIR}/RecipeExtrasWidget.cpp
     ${SRCDIR}/RecipeFormatter.cpp
     ${SRCDIR}/RefractoDialog.cpp
-    ${SRCDIR}/salt.cpp
+    ${SRCDIR}/model/Salt.cpp
     ${SRCDIR}/SaltTableModel.cpp
     ${SRCDIR}/ScaleRecipeTool.cpp
     ${SRCDIR}/SgDensityUnitSystem.cpp
@@ -181,7 +181,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/SrmColorUnitSystem.cpp
     ${SRCDIR}/StrikeWaterDialog.cpp
     ${SRCDIR}/StyleButton.cpp
-    ${SRCDIR}/style.cpp
+    ${SRCDIR}/model/Style.cpp
     ${SRCDIR}/StyleEditor.cpp
     ${SRCDIR}/StyleListModel.cpp
     ${SRCDIR}/StyleRangeWidget.cpp
@@ -197,14 +197,14 @@ SET( Brewken_SRCS
     ${SRCDIR}/USVolumeUnitSystem.cpp
     ${SRCDIR}/USWeightUnitSystem.cpp
     ${SRCDIR}/WaterButton.cpp
-    ${SRCDIR}/water.cpp
+    ${SRCDIR}/model/Water.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp
     ${SRCDIR}/WaterListModel.cpp
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
     ${SRCDIR}/WaterTableModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
-    ${SRCDIR}/yeast.cpp
+    ${SRCDIR}/model/Yeast.cpp
     ${SRCDIR}/YeastDialog.cpp
     ${SRCDIR}/YeastEditor.cpp
     ${SRCDIR}/YeastSortFilterProxyModel.cpp

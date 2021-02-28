@@ -18,7 +18,7 @@
 #pragma once
 
 #include "xml/XmlNamedEntityRecord.h"
-#include "mashstep.h"
+#include "model/Mashstep.h"
 
 /**
  * \brief Loads a \b MashStep record in from an XML file.

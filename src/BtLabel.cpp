@@ -21,8 +21,8 @@
 #include "Brewken.h"
 #include <QSettings>
 #include <QDebug>
-#include "style.h"
-#include "recipe.h"
+#include "model/Style.h"
+#include "model/Recipe.h"
 
 /*! \brief Initialize the BtLabel with the parent and do some things with the type
  * \param parent - QWidget* to the parent object

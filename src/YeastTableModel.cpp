@@ -36,11 +36,11 @@
 #include <QHeaderView>
 
 #include "database.h"
-#include "yeast.h"
+#include "model/Yeast.h"
 #include "YeastTableModel.h"
 #include "unit.h"
 #include "Brewken.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 #include "MainWindow.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable)

@@ -29,7 +29,7 @@ class SaltItemDelegate;
 #include <QItemDelegate>
 #include <QList>
 #include <QTableView>
-#include "salt.h"
+#include "model/Salt.h"
 
 #include "unit.h"
 // Forward declarations.

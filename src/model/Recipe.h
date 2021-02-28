@@ -34,10 +34,10 @@
 #include <QMutex>
 
 #include "model/NamedEntity.h"
-#include "hop.h" // Dammit! Have to include these for Hop::Use and Misc::Use.
-#include "misc.h"
-#include "salt.h"
-#include "brewnote.h"
+#include "model/Hop.h" // Dammit! Have to include these for Hop::Use and Misc::Use.
+#include "model/Misc.h"
+#include "model/Salt.h"
+#include "model/Brewnote.h"
 namespace PropertyNames::Recipe { static char const * const fg = "fg"; /* previously kpropFG */ }
 namespace PropertyNames::Recipe { static char const * const og = "og"; /* previously kpropOG */ }
 namespace PropertyNames::Recipe { static char const * const boilTime_min = "boilTime_min"; /* previously kpropBoilTime */ }
@@ -256,7 +256,7 @@ public:
    //         looking at https://www.qxorm.com or similar for this.
    //            In the meantime, we cannot define a templated member function _in this header_ that calls
    //         Database::instance() (or indeed any other member function of Database) because that would require us to
-   //         #include "database.h" and database.h already needs to #include "recipe.h", so we'd be trapped in circular
+   //         #include "database.h" and database.h already needs to #include "model/Recipe.h", so we'd be trapped in circular
    //         dependencies.  Fortunately there is a trick that allows us to declare the function in the header and
    //         define it in the cpp file, even though it's templated.
 private:

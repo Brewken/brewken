@@ -24,7 +24,7 @@
 #include "config.h"
 #include "unit.h"
 #include "Brewken.h"
-#include "yeast.h"
+#include "model/Yeast.h"
 
 YeastEditor::YeastEditor( QWidget* parent )
    : QDialog(parent), obsYeast(nullptr)

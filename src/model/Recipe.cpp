@@ -22,9 +22,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "recipe.h"
+#include "model/Recipe.h"
 
-#include "instruction.h"
+#include "model/Instruction.h"
 #include "Brewken.h"
 #include "database.h"
 
@@ -37,16 +37,16 @@
 #include <QDebug>
 #include <QSharedPointer>
 
-#include "style.h"
-#include "misc.h"
-#include "mash.h"
-#include "mashstep.h"
-#include "hop.h"
-#include "fermentable.h"
-#include "equipment.h"
-#include "yeast.h"
-#include "water.h"
-#include "salt.h"
+#include "model/Style.h"
+#include "model/Misc.h"
+#include "model/Mash.h"
+#include "model/Mashstep.h"
+#include "model/Hop.h"
+#include "model/Fermentable.h"
+#include "model/Equipment.h"
+#include "model/Yeast.h"
+#include "model/Water.h"
+#include "model/Salt.h"
 #include "PreInstruction.h"
 #include "Algorithms.h"
 #include "IbuMethods.h"

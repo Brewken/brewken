@@ -20,11 +20,11 @@
 #include <QWidget>
 #include <QDebug>
 
-#include "mash.h"
+#include "model/Mash.h"
 #include "Brewken.h"
 #include "unit.h"
-#include "equipment.h"
-#include "recipe.h"
+#include "model/Equipment.h"
+#include "model/Recipe.h"
 #include "database.h"
 
 #include "NamedMashEditor.h"

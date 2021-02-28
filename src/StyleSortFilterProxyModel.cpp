@@ -16,7 +16,7 @@
 
 #include "StyleSortFilterProxyModel.h"
 #include "StyleListModel.h"
-#include "style.h"
+#include "model/Style.h"
 
 StyleSortFilterProxyModel::StyleSortFilterProxyModel(QObject* parent)
    : QSortFilterProxyModel(parent)

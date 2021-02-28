@@ -17,12 +17,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "mash.h"
+#include "model/Mash.h"
 
 #include <iostream>
 #include <string>
 #include <QVector>
-#include "mashstep.h"
+#include "model/Mashstep.h"
 #include "Brewken.h"
 #include "database.h"
 #include <QDomElement>

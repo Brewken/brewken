@@ -22,7 +22,7 @@
 #include "unit.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "FermentableTableModel.h"
-#include "fermentable.h"
+#include "model/Fermentable.h"
 #include "Brewken.h"
 #include <iostream>
 #include <QDebug>

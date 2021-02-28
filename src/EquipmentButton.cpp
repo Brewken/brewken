@@ -17,8 +17,8 @@
  */
 
 #include "EquipmentButton.h"
-#include "equipment.h"
-#include "recipe.h"
+#include "model/Equipment.h"
+#include "model/Recipe.h"
 #include <QWidget>
 
 EquipmentButton::EquipmentButton(QWidget* parent)

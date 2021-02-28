@@ -21,7 +21,7 @@
 #include <QDomElement>
 #include <QDomText>
 #include <QObject>
-#include "equipment.h"
+#include "model/Equipment.h"
 #include "Brewken.h"
 #include "HeatCalculations.h"
 

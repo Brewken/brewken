@@ -32,9 +32,9 @@
 #include "database.h"
 #include "WaterTableModel.h"
 #include "WaterTableWidget.h"
-#include "water.h"
+#include "model/Water.h"
 #include "unit.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 #include "Brewken.h"
 
 WaterTableModel::WaterTableModel(WaterTableWidget* parent)

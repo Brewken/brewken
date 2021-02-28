@@ -36,10 +36,10 @@
 #include <QHeaderView>
 
 #include "database.h"
-#include "hop.h"
+#include "model/Hop.h"
 #include <QString>
 #include <QVector>
-#include "hop.h"
+#include "model/Hop.h"
 #include "HopTableModel.h"
 #include "unit.h"
 #include "Brewken.h"

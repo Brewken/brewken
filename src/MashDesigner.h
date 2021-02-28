@@ -23,10 +23,10 @@
 class MashDesigner;
 
 #include "ui_mashDesigner.h"
-#include "recipe.h"
-#include "mash.h"
-#include "mashstep.h"
-#include "equipment.h"
+#include "model/Recipe.h"
+#include "model/Mash.h"
+#include "model/Mashstep.h"
+#include "model/Equipment.h"
 #include <QDialog>
 #include <QWidget>
 

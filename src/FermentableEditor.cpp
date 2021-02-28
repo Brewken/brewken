@@ -22,7 +22,7 @@
 
 #include <QIcon>
 #include "FermentableEditor.h"
-#include "fermentable.h"
+#include "model/Fermentable.h"
 #include "database.h"
 #include "config.h"
 #include "unit.h"

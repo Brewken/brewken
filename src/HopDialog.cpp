@@ -27,9 +27,9 @@
 #include <QList>
 #include "HopDialog.h"
 #include "database.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 #include "MainWindow.h"
-#include "hop.h"
+#include "model/Hop.h"
 #include "HopEditor.h"
 #include "HopTableModel.h"
 #include "HopTableModel.h"

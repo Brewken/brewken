@@ -26,11 +26,11 @@
 #include <QLineEdit>
 #include <QHeaderView>
 #include "database.h"
-#include "misc.h"
+#include "model/Misc.h"
 #include "MiscTableModel.h"
 #include "unit.h"
 #include "Brewken.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 #include "MainWindow.h"
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable)

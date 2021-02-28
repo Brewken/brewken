@@ -26,7 +26,7 @@
 #include <QVector>
 #include <QDomNode>
 #include "model/NamedEntity.h"
-#include "recipe.h"
+#include "model/Recipe.h"
 namespace PropertyNames::Instruction { static char const * const interval = "interval"; /* previously kpropInterval */ }
 namespace PropertyNames::Instruction { static char const * const completed = "completed"; /* previously kpropCompleted */ }
 namespace PropertyNames::Instruction { static char const * const timerValue = "timerValue"; /* previously kpropTimerValue */ }

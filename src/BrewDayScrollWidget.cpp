@@ -21,7 +21,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "instruction.h"
+#include "model/Instruction.h"
 #include "Brewken.h"
 #include "BrewDayScrollWidget.h"
 #include "database.h"
@@ -34,9 +34,9 @@
 #include <QDir>
 #include "InstructionWidget.h"
 #include "TimerWidget.h"
-#include "style.h"
-#include "equipment.h"
-#include "mash.h"
+#include "model/Style.h"
+#include "model/Equipment.h"
+#include "model/Mash.h"
 
 BrewDayScrollWidget::BrewDayScrollWidget(QWidget* parent)
    : QWidget(parent), doc(new QTextBrowser())
