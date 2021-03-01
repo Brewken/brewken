@@ -173,9 +173,9 @@ void YeastTableModel::removeAll()
    }
 }
 
-void YeastTableModel::changedInventory(Brewken::DBTable table, int invKey, QVariant val)
+void YeastTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
 {
-   if ( table == Brewken::YEASTTABLE ) {
+   if ( table == DatabaseConstants::YEASTTABLE ) {
       for( int i = 0; i < yeastObs.size(); ++i ) {
          Yeast* holdmybeer = yeastObs.at(i);
 

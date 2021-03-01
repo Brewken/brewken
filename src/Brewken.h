@@ -1,9 +1,10 @@
 /**
- * Brewken.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * Brewken.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -24,28 +25,29 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _BREWKEN_H
-#define _BREWKEN_H
+#ifndef BREWKEN_H
+#define BREWKEN_H
 
 #define CONFIG_VERSION 1
 
-// need to use this to turn on Mac keyboard shortcuts (see http://doc.qt.nokia.com/4.7-snapshot/qtglobal.html#qt_set_sequence_auto_mnemonic)
+// need to use this to turn on Mac keyboard shortcuts (see https://doc.qt.io/qt-5/qkeysequence.html#qt_set_sequence_auto_mnemonic)
 extern void qt_set_sequence_auto_mnemonic(bool b);
 
-#include <QObject>
 #include <QApplication>
-#include <QString>
-#include <QFile>
+#include <QDateTime>
+#include <QDebug>
 #include <QDir>
 #include <QDomDocument>
-#include <QTranslator>
-#include <QTextStream>
-#include <QDateTime>
-#include <QSettings>
+#include <QFile>
+#include <QList>
 #include <QMenu>
 #include <QMetaProperty>
-#include <QList>
-#include <QDebug>
+#include <QObject>
+#include <QSettings>
+#include <QString>
+#include <QTextStream>
+#include <QTranslator>
+
 #include "unitSystems/UnitSystem.h"
 #include "Log.h"
 
@@ -58,8 +60,9 @@ Q_DECLARE_METATYPE( QMetaProperty )
 /*!
  * \class Brewken
  *
- *
  * \brief The main class. Figures out stuff from the system, formats things appropriately, handles translation, etc.
+ *
+ * TODO: Lots of things in this class belong elsewhere...
  */
 class Brewken : public QObject
 {
@@ -101,66 +104,6 @@ public:
       COLOR
    };
 
-   //! \brief The database tables. These are heavily used by the TableSchema and DatabaseSchema classes
-   //! NOTE: If you add a table to this list, do NOT forget to update Brewken::dbTableToName with the
-   //! new name(s)
-   enum DBTable{
-      //! None of the tables. 0
-      NOTABLE,
-      // Meta tables first
-      SETTINGTABLE,
-
-      // BeerXML tables next
-      EQUIPTABLE,
-      FERMTABLE,
-      HOPTABLE,
-      MISCTABLE,
-      STYLETABLE,
-      YEASTTABLE,
-      WATERTABLE,
-      MASHTABLE,
-      MASHSTEPTABLE,
-      RECTABLE,
-      BREWNOTETABLE,
-      INSTRUCTIONTABLE,
-      SALTTABLE,
-
-      // then the bt_* tables
-      BT_EQUIPTABLE,
-      BT_FERMTABLE,
-      BT_HOPTABLE,
-      BT_MISCTABLE,
-      BT_STYLETABLE,
-      BT_YEASTTABLE,
-      BT_WATERTABLE,
-
-      // then the *_in_recipe tables
-      FERMINRECTABLE,
-      HOPINRECTABLE,
-      MISCINRECTABLE,
-      WATERINRECTABLE,
-      YEASTINRECTABLE,
-      INSTINRECTABLE,
-      SALTINRECTABLE,
-
-      // then the child tables
-      EQUIPCHILDTABLE,
-      FERMCHILDTABLE,
-      HOPCHILDTABLE,
-      MISCCHILDTABLE,
-      RECIPECHILDTABLE,
-      STYLECHILDTABLE,
-      WATERCHILDTABLE,
-      YEASTCHILDTABLE,
-
-      // finally the inventory tables
-      FERMINVTABLE,
-      HOPINVTABLE,
-      MISCINVTABLE,
-      YEASTINVTABLE
-   };
-
-   static QStringList dbTableToName;
    //! \brief Supported databases. I am not 100% sure I'm digging this
    //  solution, but this is more extensible than what I was doing previously
    enum DBTypes {
@@ -180,6 +123,7 @@ public:
    static QDir getUserDataDir();
    //! \return The System path for users applicationpath. on windows: c:\\users\\<USERNAME>\\AppData\\Roaming\\<APPNAME>
    static QDir getDefaultUserDataDir();
+
    /*!
     * \brief Blocking call that executes the application.
     * \param userDirectory If !isEmpty, overwrites the current settings.
@@ -460,7 +404,6 @@ private:
    static Unit::unitDisplay getDiastaticPowerUnit();
 };
 
-Q_DECLARE_METATYPE( Brewken::DBTable )
 
 /*!
  * \mainpage Brewken Source Code Documentation
@@ -468,9 +411,6 @@ Q_DECLARE_METATYPE( Brewken::DBTable )
  * \section secIntro Introduction
  *
  * Brewken is a cross-platform open source beer recipe software suite.
- * Our aim is to make "free as in beer" equal to "free as in speech" and
- * also to make a damn fine piece of software.
- *
  */
 
-#endif   /* _BREWKEN_H */
+#endif   // BREWKEN_H

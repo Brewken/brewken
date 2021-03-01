@@ -1,5 +1,5 @@
 /**
- * fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -63,7 +63,7 @@ QString Fermentable::classNameStr()
 }
 
 Fermentable::Fermentable(QString name, bool cache)
-   : NamedEntity(Brewken::FERMTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::FERMTABLE, -1, name, true),
      m_typeStr(QString()),
      m_type(static_cast<Fermentable::Type>(0)),
      m_amountKg(0.0),
@@ -87,7 +87,7 @@ Fermentable::Fermentable(QString name, bool cache)
 {
 }
 
-Fermentable::Fermentable(Brewken::DBTable table, int key)
+Fermentable::Fermentable(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true),
      m_typeStr(QString()),
      m_type(static_cast<Fermentable::Type>(0)),
@@ -112,7 +112,7 @@ Fermentable::Fermentable(Brewken::DBTable table, int key)
 {
 }
 
-Fermentable::Fermentable(Brewken::DBTable table, int key, QSqlRecord rec)
+Fermentable::Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
      m_typeStr(rec.value(kcolFermType).toString()),
      m_type(static_cast<Fermentable::Type>(types.indexOf(m_typeStr))),

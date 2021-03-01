@@ -1,5 +1,5 @@
 /**
- * TableSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/TableSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,12 +13,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _TABLESCHEMA_H
-#define _TABLESCHEMA_H
+#ifndef TABLESCHEMA_H
+#define TABLESCHEMA_H
+
+#include <QString>
 
 #include "database/PropertySchema.h"
 #include "Brewken.h"
-#include <QString>
 
 class TableSchema : QObject
 {
@@ -43,11 +44,11 @@ public:
 
    const QString tableName() const;
    const QString className() const;
-   Brewken::DBTable dbTable() const;
-   Brewken::DBTable childTable() const;
-   Brewken::DBTable inRecTable() const;
-   Brewken::DBTable invTable() const;
-   Brewken::DBTable btTable() const;
+   DatabaseConstants::DbTableId dbTable() const;
+   DatabaseConstants::DbTableId childTable() const;
+   DatabaseConstants::DbTableId inRecTable() const;
+   DatabaseConstants::DbTableId invTable() const;
+   DatabaseConstants::DbTableId btTable() const;
    const QMap<QString, PropertySchema*> properties() const;
    const QMap<QString, PropertySchema*> foreignKeys() const;
    const PropertySchema* key() const;
@@ -83,9 +84,9 @@ public:
    const QString foreignKeyToColumn(Brewken::DBTypes type = Brewken::ALLDB) const;
 
    // which table does this foreign key point to
-   Brewken::DBTable foreignTable(QString fkey, Brewken::DBTypes type = Brewken::ALLDB) const;
+   DatabaseConstants::DbTableId foreignTable(QString fkey, Brewken::DBTypes type = Brewken::ALLDB) const;
    // a lot of tables have one foreign key. This is a nice shortcut for that
-   Brewken::DBTable foreignTable(Brewken::DBTypes type = Brewken::ALLDB) const;
+   DatabaseConstants::DbTableId foreignTable(Brewken::DBTypes type = Brewken::ALLDB) const;
 
    const QStringList allForeignKeyNames(Brewken::DBTypes type = Brewken::ALLDB) const;
    const QStringList allForeignKeyColumnNames(Brewken::DBTypes type = Brewken::ALLDB) const;
@@ -127,18 +128,18 @@ private:
    // I only allow table schema to be made with a DBTable constant
    // It saves a lot of work, and I think the name to constant
    // mapping doesn't belong here -- it belongs in DatabaseSchema
-   TableSchema(Brewken::DBTable dbTable);
+   TableSchema(DatabaseConstants::DbTableId dbTable);
 
    QString m_tableName;
    QString m_className;
-   Brewken::DBTable m_dbTable;
+   DatabaseConstants::DbTableId m_dbTable;
    TableType m_type;
 
    // these are only set by the base tables
-   Brewken::DBTable m_childTable;
-   Brewken::DBTable m_inRecTable;
-   Brewken::DBTable m_invTable;
-   Brewken::DBTable m_btTable;
+   DatabaseConstants::DbTableId m_childTable;
+   DatabaseConstants::DbTableId m_inRecTable;
+   DatabaseConstants::DbTableId m_invTable;
+   DatabaseConstants::DbTableId m_btTable;
 
    QString m_trigger;
 
@@ -173,15 +174,15 @@ private:
    void defineSettingsTable();
 
    // and we can get away with one method for the child tables
-   void defineChildTable(Brewken::DBTable table);
+   void defineChildTable(DatabaseConstants::DbTableId table);
 
    // and almost one method for all the in_recipe tables
-   void defineInRecipeTable(QString childIdx, Brewken::DBTable table);
+   void defineInRecipeTable(QString childIdx, DatabaseConstants::DbTableId table);
    // Instructions in recipe actually carry information. Sigh.
-   void defineInstructionInRecipeTable( QString childIdx, Brewken::DBTable table);
+   void defineInstructionInRecipeTable( QString childIdx, DatabaseConstants::DbTableId table);
 
    // one method for all the bt_tables
-   void defineBtTable(QString childIdx, Brewken::DBTable table);
+   void defineBtTable(QString childIdx, DatabaseConstants::DbTableId table);
 
    // Inventory tables are strange and I didn't feel quite comfortable trying to make one
    // method for all of them;

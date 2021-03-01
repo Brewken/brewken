@@ -16,16 +16,17 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QStringList>
 #include <string>
 #include <iostream>
+
+#include <QStringList>
 #include <QRegExp>
 #include <QDebug>
+
 #include "unit.h"
 #include "Brewken.h"
 #include "Algorithms.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 
 QMultiMap<QString, Unit*> Unit::nameToUnit;
 bool Unit::isMapSetup = false;

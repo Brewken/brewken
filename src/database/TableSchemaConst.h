@@ -1,5 +1,5 @@
 /**
- * TableSchemaConst.h is part of Brewken, and is copyright the following authors 2019-2021:
+ * database/TableSchemaConst.h is part of Brewken, and is copyright the following authors 2019-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -14,10 +14,76 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include <QString>
+#ifndef TABLESCHEMACONST_H
+#define TABLESCHEMACONST_H
 
-#ifndef __TABLESCHEMACONSTH__
-#define __TABLESCHEMACONSTH__
+#include <QString>
+#include <QStringList>
+
+namespace DatabaseConstants {
+   extern QStringList const dbTableToName;
+
+   //! \brief The database tables. These are heavily used by the TableSchema and DatabaseSchema classes
+   //! NOTE: If you add a table to this list, do NOT forget to update dbTableToName with the
+   //! new name(s)
+   enum DbTableId {
+      //! None of the tables. 0
+      NOTABLE,
+      // Meta tables first
+      SETTINGTABLE,
+
+      // BeerXML tables next
+      EQUIPTABLE,
+      FERMTABLE,
+      HOPTABLE,
+      MISCTABLE,
+      STYLETABLE,
+      YEASTTABLE,
+      WATERTABLE,
+      MASHTABLE,
+      MASHSTEPTABLE,
+      RECTABLE,
+      BREWNOTETABLE,
+      INSTRUCTIONTABLE,
+      SALTTABLE,
+
+      // then the bt_* tables
+      BT_EQUIPTABLE,
+      BT_FERMTABLE,
+      BT_HOPTABLE,
+      BT_MISCTABLE,
+      BT_STYLETABLE,
+      BT_YEASTTABLE,
+      BT_WATERTABLE,
+
+      // then the *_in_recipe tables
+      FERMINRECTABLE,
+      HOPINRECTABLE,
+      MISCINRECTABLE,
+      WATERINRECTABLE,
+      YEASTINRECTABLE,
+      INSTINRECTABLE,
+      SALTINRECTABLE,
+
+      // then the child tables
+      EQUIPCHILDTABLE,
+      FERMCHILDTABLE,
+      HOPCHILDTABLE,
+      MISCCHILDTABLE,
+      RECIPECHILDTABLE,
+      STYLECHILDTABLE,
+      WATERCHILDTABLE,
+      YEASTCHILDTABLE,
+
+      // finally the inventory tables
+      FERMINVTABLE,
+      HOPINVTABLE,
+      MISCINVTABLE,
+      YEASTINVTABLE
+   };
+}
+
+
 // Define tables names first, because I need them first
 static const QString ktableSettings("settings");
 static const QString ktableEquipment("equipment");
@@ -32,7 +98,8 @@ static const QString ktableMash("mash");
 static const QString ktableMashStep("mashstep");
 static const QString ktableBrewnote("brewnote");
 static const QString ktableInstruction("instruction");
-static const QString ktableRecipe("recipe");
+//static const QString ktableRecipe("recipe");
+namespace DatabaseNames::Tables { static char const * const recipe = "recipe"; /* previously ktableRecipe */ }
 
 // BT default tables
 static const QString ktableBtEquipment("bt_equipment");

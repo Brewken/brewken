@@ -1,5 +1,5 @@
 /**
- * recipe.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -37,7 +37,7 @@
 #include "model/Hop.h" // Dammit! Have to include these for Hop::Use and Misc::Use.
 #include "model/Misc.h"
 #include "model/Salt.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 namespace PropertyNames::Recipe { static char const * const fg = "fg"; /* previously kpropFG */ }
 namespace PropertyNames::Recipe { static char const * const og = "og"; /* previously kpropOG */ }
 namespace PropertyNames::Recipe { static char const * const boilTime_min = "boilTime_min"; /* previously kpropBoilTime */ }
@@ -472,8 +472,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Recipe(Brewken::DBTable table, int key);
-   Recipe(Brewken::DBTable table, int key, QSqlRecord rec);
+   Recipe(DatabaseConstants::DbTableId table, int key);
+   Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Recipe(QString name, bool cache = true);
 private:

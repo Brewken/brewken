@@ -1,5 +1,5 @@
 /**
- * PropertySchema.cpp is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/PropertySchema.cpp is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ PropertySchema::PropertySchema( QString propName, QString colName,
    tmp->m_colType = colType;
    tmp->m_defaultValue = defaultValue;
    tmp->m_colSize = colSize;
-   tmp->m_ftable = Brewken::NOTABLE;
+   tmp->m_ftable = DatabaseConstants::NOTABLE;
 
    int i = static_cast<int>(Brewken::SQLITE);
    while ( i <= static_cast<int>(Brewken::ALLDB) ) {
@@ -54,7 +54,7 @@ PropertySchema::PropertySchema( QString propName, QString colName,
 }
 
 // Foreign key initializer, will set all the DB to this definition
-PropertySchema::PropertySchema(QString propName, QString colName, QString colType, Brewken::DBTable fTable)
+PropertySchema::PropertySchema(QString propName, QString colName, QString colType, DatabaseConstants::DbTableId fTable)
     : QObject(nullptr),
     m_properties(QVector<dbProp*>(1 + static_cast<int>(Brewken::ALLDB),nullptr))
 {
@@ -93,7 +93,7 @@ void PropertySchema::addProperty( QString propName, Brewken::DBTypes dbType,
    tmp->m_colType = colType;
    tmp->m_defaultValue = defaultValue;
    tmp->m_colSize = colSize;
-   tmp->m_ftable = Brewken::NOTABLE;
+   tmp->m_ftable = DatabaseConstants::NOTABLE;
 
    if ( dbType == Brewken::ALLDB ) {
       int i = static_cast<int>(Brewken::SQLITE);
@@ -111,7 +111,7 @@ void PropertySchema::addProperty( QString propName, Brewken::DBTypes dbType,
 
 // The other foreign key initializer does just ALLDB. use this to special case that
 void PropertySchema::addForeignKey(QString propName, Brewken::DBTypes dbType,
-                              QString colName, Brewken::DBTable fTable)
+                              QString colName, DatabaseConstants::DbTableId fTable)
 {
    dbProp* tmp = new dbProp;
 
@@ -173,7 +173,7 @@ int PropertySchema::colSize(Brewken::DBTypes dbType) const
    return m_properties[dbType]->m_colSize;
 }
 
-Brewken::DBTable PropertySchema::fTable(Brewken::DBTypes dbType) const
+DatabaseConstants::DbTableId PropertySchema::fTable(Brewken::DBTypes dbType) const
 {
    return m_properties[dbType]->m_ftable;
 }
@@ -208,7 +208,7 @@ void PropertySchema::setColSize(int size, Brewken::DBTypes dbType)
    m_properties[dbType]->m_colSize = size;
 }
 
-void PropertySchema::setFTable(Brewken::DBTable ftable, Brewken::DBTypes dbType)
+void PropertySchema::setFTable(DatabaseConstants::DbTableId ftable, Brewken::DBTypes dbType)
 {
    m_properties[dbType]->m_ftable = ftable;
 }

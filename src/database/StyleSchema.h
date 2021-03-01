@@ -1,5 +1,5 @@
 /**
- * StyleSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/StyleSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,10 +13,10 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef STYLESCHEMA_H
+#define STYLESCHEMA_H
 
 #include <QString>
-#ifndef _STYLETABLESCHEMA_H
-#define _STYLETABLESCHEMA_H
 
 // Columns for the style table
 static const QString kcolStyleType("s_type");
@@ -63,4 +63,4 @@ static const QString kxmlPropProfile("PROFILE");
 static const QString kxmlPropIngreds("INGREDIENTS");
 static const QString kxmlPropExamples("EXAMPLES");
 
-#endif // _STYLETABLESCHEMA_H
+#endif // STYLESCHEMA_H

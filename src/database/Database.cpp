@@ -1,5 +1,5 @@
 /**
- * database.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * database/Database.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -64,13 +64,13 @@
 #include <QPair>
 
 #include "Algorithms.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
@@ -368,20 +368,20 @@ bool Database::load()
    }
 
    // Create and store all pointers.
-   populateElements( allBrewNotes, Brewken::BREWNOTETABLE );
-   populateElements( allEquipments, Brewken::EQUIPTABLE );
-   populateElements( allFermentables, Brewken::FERMTABLE );
-   populateElements( allHops, Brewken::HOPTABLE );
-   populateElements( allInstructions, Brewken::INSTRUCTIONTABLE );
-   populateElements( allMashs, Brewken::MASHTABLE );
-   populateElements( allMashSteps, Brewken::MASHSTEPTABLE );
-   populateElements( allMiscs, Brewken::MISCTABLE );
-   populateElements( allStyles, Brewken::STYLETABLE );
-   populateElements( allWaters, Brewken::WATERTABLE );
-   populateElements( allSalts, Brewken::SALTTABLE );
-   populateElements( allYeasts, Brewken::YEASTTABLE );
+   populateElements( allBrewNotes, DatabaseConstants::BREWNOTETABLE );
+   populateElements( allEquipments, DatabaseConstants::EQUIPTABLE );
+   populateElements( allFermentables, DatabaseConstants::FERMTABLE );
+   populateElements( allHops, DatabaseConstants::HOPTABLE );
+   populateElements( allInstructions, DatabaseConstants::INSTRUCTIONTABLE );
+   populateElements( allMashs, DatabaseConstants::MASHTABLE );
+   populateElements( allMashSteps, DatabaseConstants::MASHSTEPTABLE );
+   populateElements( allMiscs, DatabaseConstants::MISCTABLE );
+   populateElements( allStyles, DatabaseConstants::STYLETABLE );
+   populateElements( allWaters, DatabaseConstants::WATERTABLE );
+   populateElements( allSalts, DatabaseConstants::SALTTABLE );
+   populateElements( allYeasts, DatabaseConstants::YEASTTABLE );
 
-   populateElements( allRecipes, Brewken::RECTABLE );
+   populateElements( allRecipes, DatabaseConstants::RECTABLE );
 
    // Connect fermentable,hop changed signals to their parent recipe.
    QHash<int,Recipe*>::iterator i;
@@ -569,7 +569,7 @@ QSqlDatabase Database::sqlDatabase()
 }
 
 
-template <class T> void Database::populateElements( QHash<int,T*>& hash, Brewken::DBTable table )
+template <class T> void Database::populateElements( QHash<int,T*>& hash, DatabaseConstants::DbTableId table )
 {
    QSqlQuery q(sqlDatabase());
    TableSchema* tbl = dbDefn->table(table);
@@ -601,7 +601,7 @@ template <class T> void Database::populateElements( QHash<int,T*>& hash, Brewken
 
 template <class T> bool Database::getElements(QList<T*>& list,
                                               QString filter,
-                                              Brewken::DBTable table,
+                                              DatabaseConstants::DbTableId table,
                                               QHash<int,T*> allElements,
                                               QString id)
 {
@@ -845,13 +845,13 @@ int Database::getParentNamedEntityKey(NamedEntity const & ingredient) {
 
    const QMetaObject* meta = ingredient.metaObject();
 
-   Brewken::DBTable parentToChildTableId =
+   DatabaseConstants::DbTableId parentToChildTableId =
       this->dbDefn->table(
          this->dbDefn->classNameToTable(meta->className())
       )->childTable();
 
    // Don't do this if no child table is defined (like instructions)
-   if (parentToChildTableId != Brewken::NOTABLE) {
+   if (parentToChildTableId != DatabaseConstants::NOTABLE) {
       TableSchema * parentToChildTable = this->dbDefn->table(parentToChildTableId);
 
       QString findParentNamedEntity =
@@ -1022,10 +1022,10 @@ void Database::removeFromRecipe( Recipe* rec, Instruction* ins )
 
 void Database::removeFrom( Mash* mash, MashStep* step )
 {
-   TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
    // Just mark the step as deleted.
    try {
-      sqlUpdate( Brewken::MASHSTEPTABLE,
+      sqlUpdate( DatabaseConstants::MASHSTEPTABLE,
                QString("%1 = %2").arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted)).arg(Brewken::dbTrue()),
                QString("%1 = %2").arg(tbl->keyName()).arg(step->_key));
    }
@@ -1040,7 +1040,7 @@ void Database::removeFrom( Mash* mash, MashStep* step )
 Recipe* Database::getParentRecipe( BrewNote const* note )
 {
    int key;
-   TableSchema* tbl = dbDefn->table(Brewken::BREWNOTETABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::BREWNOTETABLE);
    // SELECT recipe_id FROM brewnote WHERE id = [key]
    QString query = QString("SELECT %1 FROM %2 WHERE %3 = %4")
            .arg( tbl->recipeIndexName())
@@ -1083,7 +1083,7 @@ Water*       Database::water(int key)       { return allWaters[key]; }
 
 void Database::swapMashStepOrder(MashStep* m1, MashStep* m2)
 {
-   TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
    // maybe this wasn't such a good idear?
    // UPDATE mashstep SET step_number = CASE id
    //    WHEN [m1->key] then [m2->stepnumber]
@@ -1127,7 +1127,7 @@ void Database::swapMashStepOrder(MashStep* m1, MashStep* m2)
 
 void Database::swapInstructionOrder(Instruction* in1, Instruction* in2)
 {
-   TableSchema* tbl = dbDefn->table(Brewken::INSTINRECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::INSTINRECTABLE);
 
    // UPDATE instruction_in_recipe SET instruction_number = CASE instruction_id
    //    WHEN [in1->key] THEN [in2->instructionNumber]
@@ -1173,7 +1173,7 @@ void Database::swapInstructionOrder(Instruction* in1, Instruction* in2)
 void Database::insertInstruction(Instruction* in, int pos)
 {
    int parentRecipeKey;
-   TableSchema* tbl = dbDefn->table( Brewken::INSTINRECTABLE );
+   TableSchema* tbl = dbDefn->table( DatabaseConstants::INSTINRECTABLE );
    // SELECT recipe_id FROM instruction_in_recipe WHERE instruction_id=[key]
    QString query = QString("SELECT %1 FROM %2 WHERE %3=%4")
                    .arg( tbl->recipeIndexName())
@@ -1266,7 +1266,7 @@ void Database::insertInstruction(Instruction* in, int pos)
 QList<BrewNote*> Database::brewNotes(Recipe const* parent)
 {
    QList<BrewNote*> ret;
-   TableSchema* tbl = dbDefn->table(Brewken::BREWNOTETABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::BREWNOTETABLE);
 
    //  recipe_id = [parent->key] AND deleted = false
    QString filterString = QString("%1 = %2 AND %3 = %4")
@@ -1275,7 +1275,7 @@ QList<BrewNote*> Database::brewNotes(Recipe const* parent)
            .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
 
-   getElements(ret, filterString, Brewken::BREWNOTETABLE, allBrewNotes);
+   getElements(ret, filterString, DatabaseConstants::BREWNOTETABLE, allBrewNotes);
 
    return ret;
 }
@@ -1283,11 +1283,11 @@ QList<BrewNote*> Database::brewNotes(Recipe const* parent)
 QList<Fermentable*> Database::fermentables(Recipe const* parent)
 {
    QList<Fermentable*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::FERMINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::FERMINRECTABLE);
    // recipe_id = [parent->key]
    QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
 
-   getElements(ret,filter, Brewken::FERMINRECTABLE, allFermentables, inrec->inRecIndexName());
+   getElements(ret,filter, DatabaseConstants::FERMINRECTABLE, allFermentables, inrec->inRecIndexName());
 
    return ret;
 }
@@ -1295,10 +1295,10 @@ QList<Fermentable*> Database::fermentables(Recipe const* parent)
 QList<Hop*> Database::hops(Recipe const* parent)
 {
    QList<Hop*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::HOPINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::HOPINRECTABLE);
    QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
 
-   getElements(ret,filter, Brewken::HOPINRECTABLE, allHops, inrec->inRecIndexName());
+   getElements(ret,filter, DatabaseConstants::HOPINRECTABLE, allHops, inrec->inRecIndexName());
 
    return ret;
 }
@@ -1306,17 +1306,17 @@ QList<Hop*> Database::hops(Recipe const* parent)
 QList<Misc*> Database::miscs(Recipe const* parent)
 {
    QList<Misc*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::MISCINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::MISCINRECTABLE);
    QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
 
-   getElements(ret,filter, Brewken::MISCINRECTABLE, allMiscs, inrec->inRecIndexName());
+   getElements(ret,filter, DatabaseConstants::MISCINRECTABLE, allMiscs, inrec->inRecIndexName());
 
    return ret;
 }
 
 Equipment* Database::equipment(Recipe const* parent)
 {
-   TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
    int id = get( tbl, parent->key(), tbl->foreignKeyToColumn(kpropEquipmentId)).toInt();
 
    if( allEquipments.contains(id) )
@@ -1327,7 +1327,7 @@ Equipment* Database::equipment(Recipe const* parent)
 
 Style* Database::style(Recipe const* parent)
 {
-   TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
    int id = get( tbl, parent->key(), tbl->foreignKeyToColumn(kpropStyleId)).toInt();
 
    if( allStyles.contains(id) )
@@ -1346,7 +1346,7 @@ Style* Database::styleById(int styleId )
 
 Mash* Database::mash( Recipe const* parent )
 {
-   TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
    int mashId = get( tbl, parent->key(), tbl->foreignKeyToColumn(kpropMashId)).toInt();
 
    if( allMashs.contains(mashId) )
@@ -1358,7 +1358,7 @@ Mash* Database::mash( Recipe const* parent )
 QList<MashStep*> Database::mashSteps(Mash const* parent)
 {
    QList<MashStep*> ret;
-   TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
 
    // mash_id = [parent->key] AND deleted = false order by step_number ASC
    QString filterString = QString("%1 = %2 AND %3 = %4 order by %5 ASC")
@@ -1368,7 +1368,7 @@ QList<MashStep*> Database::mashSteps(Mash const* parent)
          .arg(Brewken::dbFalse())
          .arg(tbl->propertyToColumn(PropertyNames::MashStep::stepNumber));
 
-   getElements(ret, filterString, Brewken::MASHSTEPTABLE, allMashSteps);
+   getElements(ret, filterString, DatabaseConstants::MASHSTEPTABLE, allMashSteps);
 
    return ret;
 }
@@ -1376,14 +1376,14 @@ QList<MashStep*> Database::mashSteps(Mash const* parent)
 QList<Instruction*> Database::instructions( Recipe const* parent )
 {
    QList<Instruction*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::INSTINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::INSTINRECTABLE);
    // recipe_id = [parent->key] ORDER BY instruction_number ASC
    QString filter = QString("%1 = %2 ORDER BY %3 ASC")
          .arg( inrec->recipeIndexName())
          .arg(parent->_key)
          .arg( inrec->propertyToColumn(kpropInstructionNumber));
 
-   getElements(ret,filter,Brewken::INSTINRECTABLE,allInstructions,inrec->inRecIndexName());
+   getElements(ret,filter,DatabaseConstants::INSTINRECTABLE,allInstructions,inrec->inRecIndexName());
 
    return ret;
 }
@@ -1391,10 +1391,10 @@ QList<Instruction*> Database::instructions( Recipe const* parent )
 QList<Water*> Database::waters(Recipe const* parent)
 {
    QList<Water*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::WATERINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::WATERINRECTABLE);
    QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
 
-   getElements(ret,filter,Brewken::WATERINRECTABLE,allWaters,inrec->inRecIndexName());
+   getElements(ret,filter,DatabaseConstants::WATERINRECTABLE,allWaters,inrec->inRecIndexName());
 
    return ret;
 }
@@ -1402,10 +1402,10 @@ QList<Water*> Database::waters(Recipe const* parent)
 QList<Salt*> Database::salts(Recipe const* parent)
 {
    QList<Salt*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::SALTINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::SALTINRECTABLE);
    QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
 
-   getElements(ret,filter,Brewken::SALTINRECTABLE,allSalts,inrec->inRecIndexName());
+   getElements(ret,filter,DatabaseConstants::SALTINRECTABLE,allSalts,inrec->inRecIndexName());
 
    return ret;
 }
@@ -1413,10 +1413,10 @@ QList<Salt*> Database::salts(Recipe const* parent)
 QList<Yeast*> Database::yeasts(Recipe const* parent)
 {
    QList<Yeast*> ret;
-   TableSchema* inrec = dbDefn->table(Brewken::YEASTINRECTABLE);
+   TableSchema* inrec = dbDefn->table(DatabaseConstants::YEASTINRECTABLE);
    QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
 
-   getElements(ret,filter,Brewken::YEASTINRECTABLE,allYeasts,inrec->inRecIndexName());
+   getElements(ret,filter,DatabaseConstants::YEASTINRECTABLE,allYeasts,inrec->inRecIndexName());
 
    return ret;
 }
@@ -1443,9 +1443,9 @@ BrewNote* Database::newBrewNote(Recipe* parent, bool signal)
 
    try {
       tmp = newNamedEntity(&allBrewNotes);
-      TableSchema* tbl = dbDefn->table(Brewken::BREWNOTETABLE);
+      TableSchema* tbl = dbDefn->table(DatabaseConstants::BREWNOTETABLE);
 
-      sqlUpdate( Brewken::BREWNOTETABLE,
+      sqlUpdate( DatabaseConstants::BREWNOTETABLE,
                QString("%1=%2").arg(tbl->recipeIndexName()).arg(parent->_key),
                QString("%1=%2").arg(tbl->keyName()).arg(tmp->_key) );
 
@@ -1503,7 +1503,7 @@ Fermentable* Database::newFermentable(Fermentable* other)
          sqlDatabase().transaction();
          transact = true;
          tmp = newNamedEntity(&allFermentables);
-         int invkey = newInventory( dbDefn->table(Brewken::FERMTABLE));
+         int invkey = newInventory( dbDefn->table(DatabaseConstants::FERMTABLE));
          tmp->setInventoryId(invkey);
       }
    }
@@ -1540,7 +1540,7 @@ Hop* Database::newHop(Hop* other)
          sqlDatabase().transaction();
          transact = true;
          tmp = newNamedEntity(&allHops);
-         int invkey = newInventory( dbDefn->table(Brewken::HOPTABLE));
+         int invkey = newInventory( dbDefn->table(DatabaseConstants::HOPTABLE));
          tmp->setInventoryId(invkey);
       }
    }
@@ -1597,7 +1597,7 @@ Instruction* Database::newInstruction(Recipe* rec)
 // needs fixed
 int Database::instructionNumber(Instruction const* in)
 {
-   TableSchema* tbl = dbDefn->table(Brewken::INSTINRECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::INSTINRECTABLE);
    QString colName = tbl->propertyToColumn(kpropInstructionNumber);
    // SELECT instruction_number FROM instruction_in_recipe WHERE instruction_id=[in->key]
    QString query = QString("SELECT %1 FROM %2 WHERE %3=%4")
@@ -1635,8 +1635,8 @@ Mash* Database::newMash(Mash* other, bool displace)
          // This doesn't really work. It simply orphans the old mash and its
          // steps.
          if( displace ) {
-            TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
-            sqlUpdate( Brewken::RECTABLE,
+            TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
+            sqlUpdate( DatabaseConstants::RECTABLE,
                        QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(tmp->_key),
                        QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(other->_key));
          }
@@ -1670,8 +1670,8 @@ Mash* Database::newMash(Recipe* parent, bool transact)
       tmp = newNamedEntity(&allMashs);
 
       // Connect tmp to parent, removing any existing mash in parent.
-      TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
-      sqlUpdate( Brewken::RECTABLE,
+      TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
+      sqlUpdate( DatabaseConstants::RECTABLE,
                  QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(tmp->_key),
                  QString("%1=%2").arg(tbl->keyName()).arg(parent->_key));
    }
@@ -1700,7 +1700,7 @@ MashStep* Database::newMashStep(Mash* mash, bool connected)
    // NOTE: we have unique(mash_id,step_number) constraints on this table,
    // so may have to pay special attention when creating the new record.
    MashStep* tmp;
-   TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
    // step_number = (SELECT COALESCE(MAX(step_number)+1,0) FROM mashstep
    // WHERE deleted=false AND mash_id=[mash->key] )
    QString coalesce = QString( "%1 = (SELECT COALESCE(MAX(%1)+1,0) FROM %2 "
@@ -1723,7 +1723,7 @@ MashStep* Database::newMashStep(Mash* mash, bool connected)
       tmp = newNamedEntity(&allMashSteps);
 
       // we need to set the mash_id first
-      sqlUpdate( Brewken::MASHSTEPTABLE,
+      sqlUpdate( DatabaseConstants::MASHSTEPTABLE,
                  QString("%1=%2 ").arg(tbl->foreignKeyToColumn()).arg(mash->_key),
                  QString("%1=%2").arg(tbl->keyName()).arg(tmp->_key)
                );
@@ -1731,7 +1731,7 @@ MashStep* Database::newMashStep(Mash* mash, bool connected)
       // Just sets the step number within the mash to the next available number.
       // we need coalesce here instead of isnull. coalesce is SQL standard, so
       // should be more widely supported than isnull
-      sqlUpdate( Brewken::MASHSTEPTABLE,
+      sqlUpdate( DatabaseConstants::MASHSTEPTABLE,
                  coalesce,
                  QString("%1=%2").arg(tbl->keyName()).arg(tmp->_key));
    }
@@ -1764,7 +1764,7 @@ Misc* Database::newMisc(Misc* other)
          sqlDatabase().transaction();
          transact = true;
          tmp = newNamedEntity(&allMiscs);
-         int invkey = newInventory( dbDefn->table(Brewken::MISCTABLE));
+         int invkey = newInventory( dbDefn->table(DatabaseConstants::MISCTABLE));
          tmp->setInventoryId(invkey);
       }
    }
@@ -1970,7 +1970,7 @@ Yeast* Database::newYeast(Yeast* other)
          sqlDatabase().transaction();
          transact = true;
          tmp = newNamedEntity(&allYeasts);
-         int invkey = newInventory( dbDefn->table(Brewken::YEASTTABLE));
+         int invkey = newInventory( dbDefn->table(DatabaseConstants::YEASTTABLE));
          tmp->setInventoryId(invkey);
       }
    }
@@ -2011,7 +2011,7 @@ int Database::insertElement(NamedEntity * ins)
    QTextStream sqlParametersConcat(&sqlParameters);
    foreach (QString prop, allProps) {
       QVariant val_to_ins = ins->property(prop.toUtf8().data());
-      if ( ins->table() == Brewken::BREWNOTETABLE && prop == PropertyNames::BrewNote::brewDate ) {
+      if ( ins->table() == DatabaseConstants::BREWNOTETABLE && prop == PropertyNames::BrewNote::brewDate ) {
          val_to_ins = val_to_ins.toString();
       }
       // I've arranged it such that the bindings are on the property names. It simplifies a lot
@@ -2080,7 +2080,7 @@ int Database::insertFermentable(Fermentable* ins)
       ins->setCacheOnly(false);
       // I think this must go here -- we need the inventory id value written
       // to the db, and we don't have the fermentable id until now
-      int invKey = newInventory(dbDefn->table(Brewken::FERMTABLE));
+      int invKey = newInventory(dbDefn->table(DatabaseConstants::FERMTABLE));
       ins->setInventoryId(invKey);
    }
    catch( QString e ) {
@@ -2103,7 +2103,7 @@ int Database::insertHop(Hop* ins)
    try {
       key = insertElement(ins);
       ins->setCacheOnly(false);
-      int invKey = newInventory(dbDefn->table(Brewken::HOPTABLE));
+      int invKey = newInventory(dbDefn->table(DatabaseConstants::HOPTABLE));
       ins->setInventoryId(invKey);
    }
    catch( QString e ) {
@@ -2161,7 +2161,7 @@ int Database::insertMash(Mash* ins)
 // mash
 int Database::insertMashStep(MashStep* ins, Mash* parent)
 {
-   TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
    // step_number = (SELECT COALESCE(MAX(step_number)+1,0) FROM mashstep WHERE deleted=false AND mash_id=[key] )
    QString coalesce = QString( "%1 = (SELECT COALESCE(MAX(%1)+1,0) FROM %2 WHERE %3=%4 AND %5=%6 )")
                         .arg(tbl->propertyToColumn(PropertyNames::MashStep::stepNumber))
@@ -2178,7 +2178,7 @@ int Database::insertMashStep(MashStep* ins, Mash* parent)
       key = insertElement(ins);
       ins->setCacheOnly(false);
 
-      sqlUpdate( Brewken::MASHSTEPTABLE,
+      sqlUpdate( DatabaseConstants::MASHSTEPTABLE,
                  QString("%1=%2 ").arg(tbl->foreignKeyToColumn()).arg(parent->_key),
                  QString("%1=%2").arg(tbl->keyName()).arg(ins->_key)
                );
@@ -2186,7 +2186,7 @@ int Database::insertMashStep(MashStep* ins, Mash* parent)
       // Just sets the step number within the mash to the next available number.
       // we need coalesce here instead of isnull. coalesce is SQL standard, so
       // should be more widely supported than isnull
-      sqlUpdate( Brewken::MASHSTEPTABLE,
+      sqlUpdate( DatabaseConstants::MASHSTEPTABLE,
                  coalesce,
                  QString("%1=%2").arg(tbl->keyName()).arg(ins->_key));
    }
@@ -2217,7 +2217,7 @@ int Database::insertMisc(Misc* ins)
       key = insertElement(ins);
       ins->setCacheOnly(false);
 
-      int invKey = newInventory(dbDefn->table(Brewken::MISCTABLE));
+      int invKey = newInventory(dbDefn->table(DatabaseConstants::MISCTABLE));
       ins->setInventoryId(invKey);
    }
    catch( QString e ) {
@@ -2253,7 +2253,7 @@ int Database::insertYeast(Yeast* ins)
    try {
       key = insertElement(ins);
       ins->setCacheOnly(false);
-      int invKey = newInventory(dbDefn->table(Brewken::YEASTTABLE));
+      int invKey = newInventory(dbDefn->table(DatabaseConstants::YEASTTABLE));
       ins->setInventoryId(invKey);
    }
    catch( QString e ) {
@@ -2302,7 +2302,7 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
    Q_ASSERT(nullptr != ins);
 
    int key;
-   TableSchema* tbl = dbDefn->table(Brewken::BREWNOTETABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::BREWNOTETABLE);
    sqlDatabase().transaction();
 
    try {
@@ -2312,7 +2312,7 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
       QString const setClause = QString("%1=%2").arg(tbl->foreignKeyToColumn()).arg(parent->_key);
       QString const whereClause = QString("%1=%2").arg(tbl->keyName()).arg(key);
 
-      sqlUpdate(Brewken::BREWNOTETABLE, setClause, whereClause);
+      sqlUpdate(DatabaseConstants::BREWNOTETABLE, setClause, whereClause);
 
    }
    catch (QString e) {
@@ -2460,7 +2460,7 @@ template<class T> T* Database::addNamedEntityToRecipe(
 
       //Put this in the <ing_type>_children table.
       // instructions and salts have no children.
-      if( inrec->dbTable() != Brewken::INSTINRECTABLE && inrec->dbTable() != Brewken::SALTINRECTABLE ) {
+      if( inrec->dbTable() != DatabaseConstants::INSTINRECTABLE && inrec->dbTable() != DatabaseConstants::SALTINRECTABLE ) {
          /*
           * The parent to link to depends on where the ingredient is copied from:
           * - A fermentable from the fermentable table -> the ID of the fermentable.
@@ -2531,10 +2531,10 @@ void Database::duplicateMashSteps(Mash *oldMash, Mash *newMash)
       {
          // Copy the old mash step.
          MashStep* newStep = copy<MashStep>(*ms,&allMashSteps);
-         TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+         TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
 
          // Put it in the new mash.
-         sqlUpdate( Brewken::MASHSTEPTABLE,
+         sqlUpdate( DatabaseConstants::MASHSTEPTABLE,
                       QString("%1=%2").arg(tbl->foreignKeyToColumn()).arg(newMash->key()),
                       QString("%1=%2").arg(tbl->keyName()).arg(newStep->key())
                   );
@@ -2685,7 +2685,7 @@ void Database::updateEntry( NamedEntity* object, QString propName, QVariant valu
 }
 
 
-QVariant Database::get( Brewken::DBTable table, int key, QString col_name )
+QVariant Database::get( DatabaseConstants::DbTableId table, int key, QString col_name )
 {
    QSqlQuery q;
    TableSchema* tbl = dbDefn->table(table);
@@ -2727,7 +2727,7 @@ QVariant Database::get( TableSchema* tbl, int key, QString col_name )
 
 //This links ingredients with the same name.
 //The first displayed ingredient in the database is assumed to be the parent.
-void Database::populateChildTablesByName(Brewken::DBTable table)
+void Database::populateChildTablesByName(DatabaseConstants::DbTableId table)
 {
    TableSchema* tbl = dbDefn->table(table);
    TableSchema* cld = dbDefn->childTable( table );
@@ -2812,10 +2812,10 @@ void Database::populateChildTablesByName()
       // the populateChildTablesByName methods need these hashes populated
       // early and there is no easy way to untangle them. Yes, this results in
       // the work being done twice. Such is life.
-      populateChildTablesByName(Brewken::FERMTABLE);
-      populateChildTablesByName(Brewken::HOPTABLE);
-      populateChildTablesByName(Brewken::MISCTABLE);
-      populateChildTablesByName(Brewken::YEASTTABLE);
+      populateChildTablesByName(DatabaseConstants::FERMTABLE);
+      populateChildTablesByName(DatabaseConstants::HOPTABLE);
+      populateChildTablesByName(DatabaseConstants::MISCTABLE);
+      populateChildTablesByName(DatabaseConstants::YEASTTABLE);
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -2823,7 +2823,7 @@ void Database::populateChildTablesByName()
    }
 }
 
-QVariant Database::getInventoryAmt(QString col_name, Brewken::DBTable table, int key)
+QVariant Database::getInventoryAmt(QString col_name, DatabaseConstants::DbTableId table, int key)
 {
    QVariant val = QVariant(0.0);
    TableSchema* tbl = dbDefn->table(table);
@@ -2863,7 +2863,7 @@ int Database::newInventory(TableSchema* schema) {
    return newKey;
 }
 
-QMap<int, double> Database::getInventory(const Brewken::DBTable table) const
+QMap<int, double> Database::getInventory(const DatabaseConstants::DbTableId table) const
 {
    QMap<int, double> result;
    TableSchema* tbl = dbDefn->table(table);
@@ -2901,7 +2901,7 @@ QMap<int, double> Database::getInventory(const Brewken::DBTable table) const
 void Database::addToRecipe( Recipe* rec, Equipment* e, bool noCopy, bool transact )
 {
    Equipment* newEquip = e;
-   TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
 
    if( e == nullptr )
       return;
@@ -2916,7 +2916,7 @@ void Database::addToRecipe( Recipe* rec, Equipment* e, bool noCopy, bool transac
       }
 
       // Update equipment_id
-      sqlUpdate(Brewken::RECTABLE,
+      sqlUpdate(DatabaseConstants::RECTABLE,
                 QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropEquipmentId)).arg(newEquip->key()),
                 QString("%1=%2").arg(tbl->keyName()).arg(rec->_key));
 
@@ -3046,7 +3046,7 @@ void Database::addToRecipe( Recipe* rec, QList<Hop*>hops, bool transact )
 Mash * Database::addToRecipe( Recipe* rec, Mash* m, bool noCopy, bool transact )
 {
    Mash* newMash = m;
-   TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
 
    if ( transact )
       sqlDatabase().transaction();
@@ -3060,7 +3060,7 @@ Mash * Database::addToRecipe( Recipe* rec, Mash* m, bool noCopy, bool transact )
       }
 
       // Update mash_id
-      sqlUpdate(Brewken::RECTABLE,
+      sqlUpdate(DatabaseConstants::RECTABLE,
                QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId) ).arg(newMash->key()),
                QString("%1=%2").arg(tbl->keyName()).arg(rec->_key));
    }
@@ -3148,7 +3148,7 @@ Salt * Database::addToRecipe( Recipe* rec, Salt* s, bool noCopy, bool transact )
 Style * Database::addToRecipe( Recipe* rec, Style* s, bool noCopy, bool transact )
 {
    Style* newStyle = s;
-   TableSchema* tbl = dbDefn->table(Brewken::RECTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::RECTABLE);
 
    if ( s == nullptr )
       return nullptr;
@@ -3160,7 +3160,7 @@ Style * Database::addToRecipe( Recipe* rec, Style* s, bool noCopy, bool transact
       if ( ! noCopy )
          newStyle = copy<Style>(s, &allStyles, false);
 
-      sqlUpdate(Brewken::RECTABLE,
+      sqlUpdate(DatabaseConstants::RECTABLE,
                 QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropStyleId)).arg(newStyle->key()),
                 QString("%1=%2").arg(tbl->keyName()).arg(rec->_key));
    }
@@ -3234,7 +3234,7 @@ template<class T> T* Database::copy( NamedEntity const* object, QHash<int,T*>* k
    QString holder, fields;
    T* newOne;
 
-   Brewken::DBTable t = dbDefn->classNameToTable(object->metaObject()->className());
+   DatabaseConstants::DbTableId t = dbDefn->classNameToTable(object->metaObject()->className());
    TableSchema* tbl = dbDefn->table(t);
 
    QString tName = tbl->tableName();
@@ -3319,7 +3319,7 @@ template<class T> T* Database::copy( NamedEntity const* object, QHash<int,T*>* k
 
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-void Database::sqlUpdate( Brewken::DBTable table, QString const& setClause, QString const& whereClause )
+void Database::sqlUpdate( DatabaseConstants::DbTableId table, QString const& setClause, QString const& whereClause )
 {
    QString update = QString("UPDATE %1 SET %2 WHERE %3")
                 .arg(dbDefn->tableName(table))
@@ -3340,7 +3340,7 @@ void Database::sqlUpdate( Brewken::DBTable table, QString const& setClause, QStr
    q.finish();
 }
 
-void Database::sqlDelete( Brewken::DBTable table, QString const& whereClause )
+void Database::sqlDelete( DatabaseConstants::DbTableId table, QString const& whereClause )
 {
    QString del = QString("DELETE FROM %1 WHERE %2")
                 .arg(dbDefn->tableName(table))
@@ -3364,7 +3364,7 @@ QList<BrewNote*> Database::brewNotes()
 {
    QList<BrewNote*> tmp;
 
-   getElements( tmp, QString("deleted=%1").arg(Brewken::dbFalse()), Brewken::BREWNOTETABLE, allBrewNotes );
+   getElements( tmp, QString("deleted=%1").arg(Brewken::dbFalse()), DatabaseConstants::BREWNOTETABLE, allBrewNotes );
    return tmp;
 }
 
@@ -3372,9 +3372,9 @@ QList<Equipment*> Database::equipments()
 {
    QList<Equipment*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::EQUIPTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::EQUIPTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::EQUIPTABLE, allEquipments);
+   getElements( tmp, query, DatabaseConstants::EQUIPTABLE, allEquipments);
    return tmp;
 }
 
@@ -3382,9 +3382,9 @@ QList<Fermentable*> Database::fermentables()
 {
    QList<Fermentable*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::FERMTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::FERMTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::FERMTABLE, allFermentables);
+   getElements( tmp, query, DatabaseConstants::FERMTABLE, allFermentables);
    return tmp;
 }
 
@@ -3392,9 +3392,9 @@ QList<Hop*> Database::hops()
 {
    QList<Hop*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::HOPTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::HOPTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::HOPTABLE, allHops);
+   getElements( tmp, query, DatabaseConstants::HOPTABLE, allHops);
    return tmp;
 }
 
@@ -3402,22 +3402,22 @@ QList<Mash*> Database::mashs()
 {
    QList<Mash*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::MASHTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::MASHTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
    //! Mashs and mashsteps are the odd balls.
-   getElements( tmp, query, Brewken::MASHTABLE, allMashs);
+   getElements( tmp, query, DatabaseConstants::MASHTABLE, allMashs);
    return tmp;
 }
 
 QList<MashStep*> Database::mashSteps()
 {
    QList<MashStep*> tmp;
-   TableSchema* tbl = dbDefn->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = dbDefn->table(DatabaseConstants::MASHSTEPTABLE);
    QString query = QString("%1=%2 order by %3")
            .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse())
            .arg(tbl->propertyToColumn(PropertyNames::MashStep::stepNumber));
-   getElements( tmp, query, Brewken::MASHSTEPTABLE, allMashSteps);
+   getElements( tmp, query, DatabaseConstants::MASHSTEPTABLE, allMashSteps);
    return tmp;
 }
 
@@ -3425,9 +3425,9 @@ QList<Misc*> Database::miscs()
 {
    QList<Misc*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::MISCTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::MISCTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::MISCTABLE, allMiscs );
+   getElements( tmp, query, DatabaseConstants::MISCTABLE, allMiscs );
    return tmp;
 }
 
@@ -3435,10 +3435,10 @@ QList<Recipe*> Database::recipes()
 {
    QList<Recipe*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::RECTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::RECTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
    // This is gonna kill me.
-   getElements( tmp, query, Brewken::RECTABLE, allRecipes );
+   getElements( tmp, query, DatabaseConstants::RECTABLE, allRecipes );
    return tmp;
 }
 
@@ -3446,9 +3446,9 @@ QList<Style*> Database::styles()
 {
    QList<Style*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::STYLETABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::STYLETABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::STYLETABLE, allStyles );
+   getElements( tmp, query, DatabaseConstants::STYLETABLE, allStyles );
    return tmp;
 }
 
@@ -3456,9 +3456,9 @@ QList<Water*> Database::waters()
 {
    QList<Water*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::WATERTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::WATERTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::WATERTABLE, allWaters );
+   getElements( tmp, query, DatabaseConstants::WATERTABLE, allWaters );
    return tmp;
 }
 
@@ -3466,9 +3466,9 @@ QList<Salt*> Database::salts()
 {
    QList<Salt*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::SALTTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::SALTTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::SALTTABLE, allSalts );
+   getElements( tmp, query, DatabaseConstants::SALTTABLE, allSalts );
    return tmp;
 }
 
@@ -3476,9 +3476,9 @@ QList<Yeast*> Database::yeasts()
 {
    QList<Yeast*> tmp;
    QString query = QString("%1=%2")
-           .arg(dbDefn->table(Brewken::YEASTTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
+           .arg(dbDefn->table(DatabaseConstants::YEASTTABLE)->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
-   getElements( tmp, query, Brewken::YEASTTABLE, allYeasts );
+   getElements( tmp, query, DatabaseConstants::YEASTTABLE, allYeasts );
    return tmp;
 }
 
@@ -3924,7 +3924,7 @@ void Database::copyDatabase( Brewken::DBTypes oldType, Brewken::DBTypes newType,
 
             // All that's left is to bind
             for(int i = 0; i < here.count(); ++i) {
-               if ( table->dbTable() == Brewken::BREWNOTETABLE
+               if ( table->dbTable() == DatabaseConstants::BREWNOTETABLE
                     && here.fieldName(i) == PropertyNames::BrewNote::brewDate ) {
                   QVariant helpme(here.field(i).value().toString());
                   upsertNew.bindValue(":brewdate",helpme);
@@ -3945,7 +3945,7 @@ void Database::copyDatabase( Brewken::DBTypes oldType, Brewken::DBTypes newType,
          // here, but it makes sense to wait until after we've inserted all
          // the data. The increment trigger happens on insert, and I suspect
          // bad things would happen if it were in place before we inserted all our data.
-         if ( table->dbTable() == Brewken::INSTINRECTABLE ) {
+         if ( table->dbTable() == DatabaseConstants::INSTINRECTABLE ) {
             QString trigger = table->generateIncrementTrigger(newType);
             if ( trigger.isEmpty() ) {
                qCritical() << QString("No increment triggers found for %1").arg(table->tableName());

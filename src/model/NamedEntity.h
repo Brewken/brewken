@@ -1,5 +1,5 @@
 /**
- * NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -34,6 +34,8 @@
 #include <QDateTime>
 #include <QSqlRecord>
 #include "Brewken.h"
+#include "database/DatabaseSchema.h"
+
 namespace PropertyNames::NamedEntity { static char const * const folder = "folder"; /* previously kpropFolder */ }
 namespace PropertyNames::NamedEntity { static char const * const display = "display"; /* previously kpropDisplay */ }
 namespace PropertyNames::NamedEntity { static char const * const deleted = "deleted"; /* previously kpropDeleted */ }
@@ -76,7 +78,7 @@ class NamedEntity : public QObject
    friend class Database;
    friend class BeerXML;
 public:
-   NamedEntity(Brewken::DBTable table, int key, QString t_name = QString(),
+   NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name = QString(),
                   bool t_display = false, QString folder = QString());
    NamedEntity( NamedEntity const& other );
 
@@ -113,7 +115,7 @@ public:
    Q_PROPERTY( QString folder READ folder WRITE setFolder )
 
    Q_PROPERTY( int key READ key )
-   Q_PROPERTY( Brewken::DBTable table READ table )
+   Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
 
    //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
@@ -141,7 +143,7 @@ public:
    //! \returns our key in the table we are stored in.
    int key() const;
    //! \returns the table we are stored in.
-   Brewken::DBTable table() const;
+   DatabaseConstants::DbTableId table() const;
    //! \returns the BeerXML version of this element.
    int version() const;
    //! Convenience method to get a meta property by name.
@@ -227,7 +229,7 @@ protected:
    //! The key of this entity in its table.
    int _key;
    //! The table where this entity is stored.
-   Brewken::DBTable _table;
+   DatabaseConstants::DbTableId _table;
    // This is 0 if there is no parent (or parent is not yet known)
    int parentKey;
 

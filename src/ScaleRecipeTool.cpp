@@ -23,7 +23,7 @@
 #include "model/Recipe.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Hop.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"

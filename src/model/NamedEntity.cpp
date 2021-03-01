@@ -1,5 +1,5 @@
 /**
- * NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -29,9 +29,11 @@
 #include "Brewken.h"
 #include "database/Database.h"
 
-static const char* kVersion = "version";
+namespace {
+ char const * const kVersion = "version";
+}
 
-NamedEntity::NamedEntity(Brewken::DBTable table, int key, QString t_name, bool t_display, QString folder)
+NamedEntity::NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name, bool t_display, QString folder)
    : QObject(nullptr),
      _key(key),
      _table(table),
@@ -185,7 +187,7 @@ int NamedEntity::key() const
    return _key;
 }
 
-Brewken::DBTable NamedEntity::table() const
+DatabaseConstants::DbTableId NamedEntity::table() const
 {
    return _table;
 }

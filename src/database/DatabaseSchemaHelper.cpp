@@ -1,5 +1,5 @@
 /**
- * DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,7 +17,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #include "Brewken.h"
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -32,7 +31,7 @@
 #include "database/BrewNoteSchema.h"
 #include "database/SettingsSchema.h"
 #include "database/WaterSchema.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 #include "model/Water.h"
 
 const int DatabaseSchemaHelper::dbVersion = 9;
@@ -91,13 +90,13 @@ bool DatabaseSchemaHelper::create(QSqlDatabase db, DatabaseSchema* defn, Brewken
                .arg(q.lastError().text());
       }
       // We need to create the increment and decrement things for the instructions_in_recipe table.
-      if ( table->dbTable() == Brewken::INSTINRECTABLE ) {
+      if ( table->dbTable() == DatabaseConstants::INSTINRECTABLE ) {
          q.exec(table->generateIncrementTrigger(dbType));
          q.exec(table->generateDecrementTrigger(dbType));
       }
 
    }
-   TableSchema* settings = defn->table(Brewken::SETTINGTABLE);
+   TableSchema* settings = defn->table(DatabaseConstants::SETTINGTABLE);
 
    // since we create from scratch, it will always be at the most
    // recent version
@@ -129,7 +128,7 @@ bool DatabaseSchemaHelper::migrateNext(int oldVersion, QSqlDatabase db )
    QSqlQuery q(db);
    bool ret = true;
    DatabaseSchema* defn = new DatabaseSchema();
-   TableSchema* tbl = defn->table(Brewken::SETTINGTABLE);
+   TableSchema* tbl = defn->table(DatabaseConstants::SETTINGTABLE);
 
    // NOTE: use this to debug your migration
 #define CHECKQUERY if(!ret) qDebug() << QString("ERROR: %1\nQUERY: %2").arg(q.lastError().text()).arg(q.lastQuery());
@@ -218,7 +217,7 @@ bool DatabaseSchemaHelper::migrate(int oldVersion, int newVersion, QSqlDatabase 
 int DatabaseSchemaHelper::currentVersion(QSqlDatabase db)
 {
    QVariant ver;
-   TableSchema* tbl = new TableSchema(Brewken::SETTINGTABLE);
+   TableSchema* tbl = new TableSchema(DatabaseConstants::SETTINGTABLE);
    QSqlQuery q(
       SELECT + SEP + tbl->propertyToColumn(kpropSettingsVersion) + " FROM " + tbl->tableName() + " WHERE id=1",
       db
@@ -260,7 +259,7 @@ int DatabaseSchemaHelper::currentVersion(QSqlDatabase db)
 bool DatabaseSchemaHelper::migrate_to_202(QSqlQuery q, DatabaseSchema* defn)
 {
    bool ret = true;
-   TableSchema *tbl = defn->table(Brewken::BREWNOTETABLE);
+   TableSchema *tbl = defn->table(DatabaseConstants::BREWNOTETABLE);
 
    // Add "projected_ferm_points" to brewnote table
    ret &= q.exec(
@@ -274,7 +273,7 @@ bool DatabaseSchemaHelper::migrate_to_202(QSqlQuery q, DatabaseSchema* defn)
       SET + SEP + tbl->propertyColumnType(PropertyNames::BrewNote::projFermPoints) + " = -1.0"
    );
 
-   tbl = defn->table(Brewken::SETTINGTABLE);
+   tbl = defn->table(DatabaseConstants::SETTINGTABLE);
 
    // Add the settings table
    ret &= q.exec(tbl->generateCreateTable());
@@ -294,14 +293,14 @@ bool DatabaseSchemaHelper::migrate_to_210(QSqlQuery q, DatabaseSchema* defn)
             );
    }
 
-   TableSchema* tbl = defn->table(Brewken::RECTABLE);
+   TableSchema* tbl = defn->table(DatabaseConstants::RECTABLE);
    // Put the "Bt:.*" recipes into /brewken folder
    ret &= q.exec(
       UPDATE + SEP + tbl->tableName() + SEP +
       SET + SEP + tbl->propertyToColumn(PropertyNames::NamedEntity::folder) + "='/brewken' WHERE name LIKE 'Bt:%'"
    );
 
-   tbl = defn->table(Brewken::SETTINGTABLE);
+   tbl = defn->table(DatabaseConstants::SETTINGTABLE);
    // Update version to 2.1.0
    ret &= q.exec(
       UPDATE + SEP + tbl->tableName() + SEP + SET + SEP +
@@ -348,7 +347,7 @@ bool DatabaseSchemaHelper::migrate_to_210(QSqlQuery q, DatabaseSchema* defn)
 bool DatabaseSchemaHelper::migrate_to_4(QSqlQuery q, DatabaseSchema* defn)
 {
    bool ret = true;
-   TableSchema* tbl = defn->table(Brewken::SETTINGTABLE);
+   TableSchema* tbl = defn->table(DatabaseConstants::SETTINGTABLE);
 
    // Save old settings
    ret &= q.exec( ALTERTABLE + SEP + tbl->tableName() + SEP + "RENAME TO oldsettings");
@@ -373,7 +372,7 @@ bool DatabaseSchemaHelper::migrate_to_4(QSqlQuery q, DatabaseSchema* defn)
 bool DatabaseSchemaHelper::migrate_to_5(QSqlQuery q, DatabaseSchema* defn)
 {
    bool ret = true;
-   TableSchema *tbl = defn->table(Brewken::INSTINRECTABLE);
+   TableSchema *tbl = defn->table(DatabaseConstants::INSTINRECTABLE);
    // Drop the previous bugged TRIGGER
    ret &= q.exec( QString("DROP TRIGGER dec_ins_num") );
 
@@ -395,7 +394,7 @@ bool DatabaseSchemaHelper::migrate_to_6(QSqlQuery q, DatabaseSchema* defn)
 bool DatabaseSchemaHelper::migrate_to_7(QSqlQuery q, DatabaseSchema* defn)
 {
    bool ret = true;
-   TableSchema* tbl = defn->table(Brewken::BREWNOTETABLE);
+   TableSchema* tbl = defn->table(DatabaseConstants::BREWNOTETABLE);
 
    // Add "attenuation" to brewnote table
    ret &= q.exec(
@@ -410,7 +409,7 @@ bool DatabaseSchemaHelper::migrate_to_7(QSqlQuery q, DatabaseSchema* defn)
 
 // Note. I think we need to drop this hop_id column (and it's brethern in the other tables)
 // when we are done. It is circular and an inventory row never really cares who points to it?
-bool DatabaseSchemaHelper::migration_aide_8(QSqlQuery q, DatabaseSchema *defn, Brewken::DBTable table )
+bool DatabaseSchemaHelper::migration_aide_8(QSqlQuery q, DatabaseSchema *defn, DatabaseConstants::DbTableId table )
 {
    // get all the tables first
    bool ret = true;
@@ -586,17 +585,17 @@ bool DatabaseSchemaHelper::migrate_to_8(QSqlQuery q, DatabaseSchema* defn)
    bool ret = true;
 
    // these columns are used nowhere I can find and they are breaking things.
-   ret = drop_columns(q,defn->table(Brewken::BREWNOTETABLE),QStringList() << "predicted_og" << "predicted_abv");
+   ret = drop_columns(q,defn->table(DatabaseConstants::BREWNOTETABLE),QStringList() << "predicted_og" << "predicted_abv");
 
    // Now that we've had that fun, let's have this fun
    qInfo() << QString("rearranging inventory");
-   ret &= migration_aide_8(q, defn, Brewken::FERMTABLE);
+   ret &= migration_aide_8(q, defn, DatabaseConstants::FERMTABLE);
    if ( ret )
-      ret &= migration_aide_8(q, defn, Brewken::HOPTABLE);
+      ret &= migration_aide_8(q, defn, DatabaseConstants::HOPTABLE);
    if ( ret )
-      ret &= migration_aide_8(q, defn, Brewken::MISCTABLE);
+      ret &= migration_aide_8(q, defn, DatabaseConstants::MISCTABLE);
    if ( ret )
-      ret &= migration_aide_8(q, defn, Brewken::YEASTTABLE);
+      ret &= migration_aide_8(q, defn, DatabaseConstants::YEASTTABLE);
 
    // We need to drop the appropriate columns from the inventory tables
    // Scary, innit? The changes above basically reverse the relation.
@@ -605,16 +604,16 @@ bool DatabaseSchemaHelper::migrate_to_8(QSqlQuery q, DatabaseSchema* defn)
    // will cause circular references
    qInfo() << QString("dropping inventory columns");
    if ( ret ) {
-      ret &= drop_columns(q, defn->table(Brewken::FERMINVTABLE),  QStringList() << "fermentable_id");
+      ret &= drop_columns(q, defn->table(DatabaseConstants::FERMINVTABLE),  QStringList() << "fermentable_id");
    }
    if ( ret ) {
-      ret &= drop_columns(q, defn->table(Brewken::HOPINVTABLE),   QStringList() << "hop_id");
+      ret &= drop_columns(q, defn->table(DatabaseConstants::HOPINVTABLE),   QStringList() << "hop_id");
    }
    if ( ret ) {
-      ret &= drop_columns(q, defn->table(Brewken::MISCINVTABLE),  QStringList() << "misc_id");
+      ret &= drop_columns(q, defn->table(DatabaseConstants::MISCINVTABLE),  QStringList() << "misc_id");
    }
    if ( ret ) {
-      ret &= drop_columns(q, defn->table(Brewken::YEASTINVTABLE), QStringList() << "yeast_id");
+      ret &= drop_columns(q, defn->table(DatabaseConstants::YEASTINVTABLE), QStringList() << "yeast_id");
    }
 
    // Finally, the btalltables table isn't needed, so drop it
@@ -630,7 +629,7 @@ bool DatabaseSchemaHelper::migrate_to_8(QSqlQuery q, DatabaseSchema* defn)
 bool DatabaseSchemaHelper::migrate_to_9(QSqlQuery q, DatabaseSchema* defn)
 {
    bool ret = true;
-   TableSchema* tbl = defn->table(Brewken::WATERTABLE);
+   TableSchema* tbl = defn->table(DatabaseConstants::WATERTABLE);
    ret &= q.exec(
             ALTERTABLE + SEP + tbl->tableName() + SEP +
             ADDCOLUMN  + SEP + tbl->propertyToColumn(PropertyNames::Water::type) +
@@ -661,8 +660,8 @@ bool DatabaseSchemaHelper::migrate_to_9(QSqlQuery q, DatabaseSchema* defn)
                          SEP + tbl->propertyColumnType(PropertyNames::Water::mashRO) +
                          SEP + DEFAULT + SEP + tbl->propertyColumnDefault(PropertyNames::Water::mashRO).toString()
    );
-   ret &= q.exec(defn->generateCreateTable(Brewken::SALTTABLE));
-   ret &= q.exec(defn->generateCreateTable(Brewken::SALTINRECTABLE));
+   ret &= q.exec(defn->generateCreateTable(DatabaseConstants::SALTTABLE));
+   ret &= q.exec(defn->generateCreateTable(DatabaseConstants::SALTINRECTABLE));
 
    return ret;
 }

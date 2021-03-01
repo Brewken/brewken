@@ -43,7 +43,7 @@ static QString createInventoryTableFermentable()
    QString result;
 
    const QMap<int, double> inventory =
-         Database::instance().getInventory(Brewken::FERMTABLE);
+         Database::instance().getInventory(DatabaseConstants::FERMTABLE);
 
    if (!inventory.empty())
    {
@@ -88,7 +88,7 @@ static QString createInventoryTableHop()
 {
    QString result;
    const QMap<int, double> inventory =
-         Database::instance().getInventory(Brewken::HOPTABLE);
+         Database::instance().getInventory(DatabaseConstants::HOPTABLE);
 
    if (!inventory.empty())
    {
@@ -135,7 +135,7 @@ static QString createInventoryTableMiscellaneous()
 {
    QString result;
    const QMap<int, double> inventory =
-         Database::instance().getInventory(Brewken::MISCTABLE);
+         Database::instance().getInventory(DatabaseConstants::MISCTABLE);
 
    if (!inventory.empty())
    {
@@ -181,7 +181,7 @@ static QString createInventoryTableYeast()
 {
    QString result;
    const QMap<int, double> inventory =
-         Database::instance().getInventory(Brewken::YEASTTABLE);
+         Database::instance().getInventory(DatabaseConstants::YEASTTABLE);
 
    if (!inventory.empty())
    {

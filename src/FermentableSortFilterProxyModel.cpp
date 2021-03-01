@@ -23,6 +23,7 @@
 #include "FermentableSortFilterProxyModel.h"
 #include "FermentableTableModel.h"
 #include "model/Fermentable.h"
+#include "database/TableSchemaConst.h"
 #include "Brewken.h"
 #include <iostream>
 #include <QDebug>

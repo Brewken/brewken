@@ -13,12 +13,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _XML_XMLMASHSTEPRECORD_H
-#define _XML_XMLMASHSTEPRECORD_H
+#ifndef XML_XMLMASHSTEPRECORD_H
+#define XML_XMLMASHSTEPRECORD_H
 #pragma once
 
 #include "xml/XmlNamedEntityRecord.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 
 /**
  * \brief Loads a \b MashStep record in from an XML file.

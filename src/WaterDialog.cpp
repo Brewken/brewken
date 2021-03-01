@@ -18,29 +18,28 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <limits>
+
 #include <Algorithms.h>
 #include <QComboBox>
 #include <QFont>
 #include <QInputDialog>
 
 #include "WaterDialog.h"
-#include "WaterListModel.h"
-#include "WaterSortFilterProxyModel.h"
-#include "WaterButton.h"
-#include "WaterEditor.h"
-#include "WaterTableModel.h"
-#include "WaterButton.h"
-// #include "SaltEditor.h"
-#include "SaltTableModel.h"
-#include "WaterTableModel.h"
-#include "BtDigitWidget.h"
+
 #include "Brewken.h"
+#include "BtDigitWidget.h"
+#include "ColorMethods.h"
 #include "database/Database.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Salt.h"
-#include "ColorMethods.h"
+#include "SaltTableModel.h"
+#include "WaterButton.h"
+#include "WaterEditor.h"
+#include "WaterListModel.h"
+#include "WaterSortFilterProxyModel.h"
+#include "WaterTableModel.h"
 
 WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
    m_ppm_digits( QVector<BtDigitWidget*>(Water::numIons) ),

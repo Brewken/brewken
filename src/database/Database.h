@@ -1,5 +1,5 @@
 /**
- * database.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * database/Database.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -132,12 +132,12 @@ public:
    void updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify = true, bool transact = false );
 
    //! \brief Get the contents of the cell specified by table/key/col_name
-   QVariant get( Brewken::DBTable table, int key, QString col_name );
+   QVariant get( DatabaseConstants::DbTableId table, int key, QString col_name );
 
    QVariant get( TableSchema* tbl, int key, QString col_name );
 
    //! Get a table view.
-   QTableView* createView( Brewken::DBTable table );
+   QTableView* createView( DatabaseConstants::DbTableId table );
 
    // Named constructors ======================================================
    //! Create new brew note attached to \b parent.
@@ -145,7 +145,7 @@ public:
    template<class T> T* newNamedEntity(QHash<int,T*>* all) {
       int key;
       // To quote the talking heads, my god what have I done?
-      Brewken::DBTable table = dbDefn->classNameToTable( T::classNameStr() );
+      DatabaseConstants::DbTableId table = dbDefn->classNameToTable( T::classNameStr() );
       QString insert = QString("INSERT INTO %1 DEFAULT VALUES").arg(dbDefn->tableName(table));
 
       QSqlQuery q(sqlDatabase());
@@ -255,7 +255,7 @@ public:
    /* This links ingredients with the same name.
    * The first displayed ingredient in the database is assumed to be the parent.
    */
-   void populateChildTablesByName(Brewken::DBTable table);
+   void populateChildTablesByName(DatabaseConstants::DbTableId table);
 
    // Runs populateChildTablesByName for each
    void populateChildTablesByName();
@@ -273,9 +273,9 @@ public:
    void setInventory(NamedEntity* ins, QVariant value, int invKey = 0, bool notify=true );
 
    //! \returns The entire inventory for a table.
-   QMap<int, double> getInventory(const Brewken::DBTable table) const;
+   QMap<int, double> getInventory(const DatabaseConstants::DbTableId table) const;
 
-   QVariant getInventoryAmt(QString col_name, Brewken::DBTable table, int key);
+   QVariant getInventoryAmt(QString col_name, DatabaseConstants::DbTableId table, int key);
 
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -364,9 +364,9 @@ public:
 
       const QMetaObject *meta = ing->metaObject();
       char const * propName = "";
-      Brewken::DBTable ingTable = dbDefn->classNameToTable(meta->className());
+      DatabaseConstants::DbTableId ingTable = dbDefn->classNameToTable(meta->className());
 
-      if ( ingTable == Brewken::BREWNOTETABLE ) {
+      if ( ingTable == DatabaseConstants::BREWNOTETABLE ) {
          emitSignal = false;
       }
 
@@ -391,7 +391,7 @@ public:
       if ( emitSignal )
          emit changed( metaProperty(propName), QVariant() );
       // This was screaming until I needed to emit a freaking signal
-      if ( ingTable != Brewken::MASHSTEPTABLE )
+      if ( ingTable != DatabaseConstants::MASHSTEPTABLE )
          emit deletedSignal(ing);
    }
 
@@ -533,7 +533,7 @@ signals:
    void newMashStepSignal(MashStep*);
 
    // Sigh
-   void changedInventory(Brewken::DBTable,int,QVariant);
+   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
 
 private slots:
    //! Load database from file.
@@ -594,11 +594,11 @@ private:
    static QSqlDatabase sqlDatabase();
 
    //! Helper to populate all* hashes. T should be a NamedEntity subclass.
-   template <class T> void populateElements( QHash<int,T*>& hash, Brewken::DBTable table );
+   template <class T> void populateElements( QHash<int,T*>& hash, DatabaseConstants::DbTableId table );
 
    //! we search by name enough that this is actually not a bad idea
    // Although this is private, it needs to be defined in the header as it's called from BeerXML
-   template <class T> bool getElementsByName( QList<T*>& list, Brewken::DBTable table, QString name, QHash<int,T*> allElements, QString id=QString("") )
+   template <class T> bool getElementsByName( QList<T*>& list, DatabaseConstants::DbTableId table, QString name, QHash<int,T*> allElements, QString id=QString("") )
    {
       QSqlQuery q(sqlDatabase());
       TableSchema* tbl = dbDefn->table( table );
@@ -639,7 +639,7 @@ private:
    }
 
    //! Helper to populate the list using the given filter.
-   template <class T> bool getElements( QList<T*>& list, QString filter, Brewken::DBTable table,
+   template <class T> bool getElements( QList<T*>& list, QString filter, DatabaseConstants::DbTableId table,
                                         QHash<int,T*> allElements, QString id=QString() );
 
 
@@ -699,10 +699,10 @@ private:
    template<class T> T* copy( NamedEntity const* object, QHash<int,T*>* keyHash, bool displayed = true );
 
    // Do an sql update.
-   void sqlUpdate( Brewken::DBTable table, QString const& setClause, QString const& whereClause );
+   void sqlUpdate( DatabaseConstants::DbTableId table, QString const& setClause, QString const& whereClause );
 
    // Do an sql delete.
-   void sqlDelete( Brewken::DBTable table, QString const& whereClause );
+   void sqlDelete( DatabaseConstants::DbTableId table, QString const& whereClause );
 
    int getQualifiedHopTypeIndex(QString type, Hop* hop);
    int getQualifiedMiscTypeIndex(QString type, Misc* misc);

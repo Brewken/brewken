@@ -17,31 +17,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QAbstractTableModel>
 #include <QAbstractItemModel>
-#include <QStandardItemModel>
-#include <QWidget>
+#include <QAbstractTableModel>
 #include <QComboBox>
 #include <QHeaderView>
-#include <QModelIndex>
-#include <QVariant>
 #include <QItemDelegate>
-#include <QStyleOptionViewItem>
 #include <QLineEdit>
-#include <QString>
-#include <QObject>
-
 #include <QList>
-#include "database/Database.h"
-#include "WaterDialog.h"
-#include "SaltTableModel.h"
-#include "model/Salt.h"
-#include "unit.h"
-#include "model/Recipe.h"
-#include "model/Mash.h"
-#include "model/Mashstep.h"
+#include <QModelIndex>
+#include <QObject>
+#include <QStandardItemModel>
+#include <QString>
+#include <QStyleOptionViewItem>
+#include <QVariant>
+#include <QWidget>
+
 #include "Brewken.h"
+#include "database/Database.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Recipe.h"
+#include "model/Salt.h"
+#include "SaltTableModel.h"
+#include "unit.h"
+#include "WaterDialog.h"
 
 static QStringList addToName = QStringList() << QObject::tr("Never")
                                              << QObject::tr("Mash")

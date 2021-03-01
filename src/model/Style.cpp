@@ -1,5 +1,5 @@
 /**
- * style.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -50,7 +50,7 @@ QString Style::classNameStr()
 
 // suitable for something that will be written to the db later
 Style::Style(QString t_name, bool cacheOnly)
-   : NamedEntity(Brewken::STYLETABLE, -1, t_name, true),
+   : NamedEntity(DatabaseConstants::STYLETABLE, -1, t_name, true),
      m_category(QString()),
      m_categoryNumber(QString()),
      m_styleLetter(QString()),
@@ -79,7 +79,7 @@ Style::Style(QString t_name, bool cacheOnly)
 
 // suitable for something that needs to be created in the db when the object is, but all the other
 // fields will be filled in later (shouldn't be used that much)
-Style::Style(Brewken::DBTable table, int key)
+Style::Style(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true),
      m_category(QString()),
      m_categoryNumber(QString()),
@@ -108,7 +108,7 @@ Style::Style(Brewken::DBTable table, int key)
 }
 
 // suitable for creating a Style from a database record
-Style::Style(Brewken::DBTable table, int key, QSqlRecord rec)
+Style::Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
      m_category(rec.value(kcolStyleCat).toString()),
      m_categoryNumber(rec.value(kcolStyleCatNum).toString()),

@@ -1,5 +1,5 @@
 /**
- * BtAllTableSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/BtAllTableSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,8 +14,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _BTALLTABLESCHEMA_H
-#define _BTALLTABLESCHEMA_H
+#ifndef BTALLTABLESCHEMA_H
+#define BTALLTABLESCHEMA_H
 
 // Columns for the btall table
 static const QString kcolBtAllClassName("class_name");
@@ -28,4 +28,4 @@ static const QString kcolBtAllTableId("table_id");
 // this table is a meta table. It has no object and no XML schemas. Weird,
 // innit?
 //
-#endif // _BTALLTABLESCHEMA_H
+#endif // BTALLTABLESCHEMA_H

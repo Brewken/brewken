@@ -1,5 +1,5 @@
 /**
- * InstructionSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/InstructionSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _INSTRUCTIONTABLESCHEMA_H
-#define _INSTRUCTIONTABLESCHEMA_H
+#ifndef INSTRUCTIONSCHEMA_H
+#define INSTRUCTIONSCHEMA_H
 
 #include <QString>
 // Columns for the instruction table
@@ -35,6 +34,6 @@ static const QString kxmlPropInterval("interval");
 
 // small cheat here. InstructionInRecipe tables have a spare column. Rather
 // than define a unique header file, I am including it here.
- static char const * const kpropInstructionNumber = "instruction_number";
+static char const * const kpropInstructionNumber = "instruction_number";
 static const QString kcolInstructionNumber("instruction_number");
-#endif // _INSTRUCTIONTABLESCHEMA_H
+#endif // INSTRUCTIONSCHEMA_H

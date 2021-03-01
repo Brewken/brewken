@@ -1,5 +1,5 @@
 /**
- * equipment.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -167,11 +167,11 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Equipment(Brewken::DBTable table, int key);
+   Equipment(DatabaseConstants::DbTableId table, int key);
 public:
    Equipment(QString t_name, bool cacheOnly = true);
 private:
-   Equipment(Brewken::DBTable table, int key, QSqlRecord rec);
+   Equipment(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Equipment( Equipment const& other);
 
    double m_boilSize_l;

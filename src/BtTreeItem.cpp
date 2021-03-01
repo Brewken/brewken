@@ -30,7 +30,7 @@
 #include <QDebug>
 
 #include "BtTreeItem.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 #include "Brewken.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"

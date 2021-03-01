@@ -1,5 +1,5 @@
 /**
- * YeastSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/YeastSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,8 +14,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _YEASTTABLESCHEMA_H
-#define _YEASTTABLESCHEMA_H
+#ifndef YEASTSCHEMA_H
+#define YEASTSCHEMA_H
 
 #include <QString>
 // Columns for the yeast table
@@ -37,7 +37,7 @@ static const QString kcolYeastMaxReuse("max_reuse");
 static const QString kcolYeastAddToSec("add_to_secondary");
 
 // properties for objects
- static char const * const kpropQuanta = "quanta";
+static char const * const kpropQuanta = "quanta";
 
 // XML properties
 // Note -- no XML props for type, form and flocculation
@@ -51,4 +51,4 @@ static const QString kxmlPropMaxReuse("MAX_REUSE");
 static const QString kxmlPropAddToSec("ADD_TO_SECONDARY");
 static const QString kxmlPropFloc("FLOCCULATION");
 
-#endif // _YEASTTABLESCHEMA_H
+#endif // YEASTSCHEMA_H

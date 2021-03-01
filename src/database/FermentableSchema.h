@@ -1,5 +1,5 @@
 /**
- * FermentableSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/FermentableSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef FERMENTABLESCHEMA_H
+#define FERMENTABLESCHEMA_H
 
-#ifndef _FERMTABLESCHEMA_H
-#define _FERMTABLESCHEMA_H
 // These will collide, so I define them once in the TableSchemaConst file
 // const QString kcolEquipName("name");
 // const QString kcolEquipNotes("notes");
@@ -67,4 +67,4 @@ static const QString kxmlPropRecommendMash("RECOMMEND_MASH");
 static const QString kxmlPropIsMashed("IS_MASHED");
 static const QString kxmlPropIBUGalPerLb("IBU_GAL_PER_LB");
 
-#endif // define _FERMTABLESCHEMA_H
+#endif // FERMENTABLESCHEMA_H

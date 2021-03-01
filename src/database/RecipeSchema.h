@@ -1,5 +1,5 @@
 /**
- * RecipeSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/RecipeSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _RECIPETABLESCHEMA_H
-#define _RECIPETABLESCHEMA_H
+#ifndef RECIPESCHEMA_H
+#define RECIPESCHEMA_H
 
 #include <QString>
 // Columns for the recipe table
@@ -80,4 +79,4 @@ static const QString kxmlPropCarbTemp("CARBONATION_TEMP");
 static const QString kxmlPropPrimSugEquiv("PRIMING_SUGAR_EQUIV");
 static const QString kxmlPropKegPrimFact("KEG_PRIMING_FACTOR");
 
-#endif // _RECIPETABLESCHEMA_H
+#endif // RECIPESCHEMA_H

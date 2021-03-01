@@ -38,13 +38,13 @@
 
 #include "Algorithms.h"
 #include "database/DatabaseSchema.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
@@ -711,7 +711,7 @@ void BeerXML::toXml( BrewNote* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::BREWNOTETABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::BREWNOTETABLE);
 
    node = doc.createElement("BREWNOTE");
 
@@ -737,7 +737,7 @@ void BeerXML::toXml( Equipment* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::EQUIPTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::EQUIPTABLE);
 
    node = doc.createElement("EQUIPMENT");
 
@@ -763,7 +763,7 @@ void BeerXML::toXml( Fermentable* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::FERMTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::FERMTABLE);
 
    node = doc.createElement("FERMENTABLE");
 
@@ -791,7 +791,7 @@ void BeerXML::toXml( Hop* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::HOPTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::HOPTABLE);
 
    node = doc.createElement("HOP");
 
@@ -819,7 +819,7 @@ void BeerXML::toXml( Instruction* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::INSTRUCTIONTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::INSTRUCTIONTABLE);
 
    node = doc.createElement("INSTRUCTION");
 
@@ -848,7 +848,7 @@ void BeerXML::toXml( Mash* a, QDomDocument& doc, QDomNode& parent )
    QDomElement tmpElement;
    QDomText tmpText;
    int i, size;
-   TableSchema* tbl = m_tables->table(Brewken::MASHTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::MASHTABLE);
 
    node = doc.createElement("MASH");
 
@@ -883,7 +883,7 @@ void BeerXML::toXml( MashStep* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::MASHSTEPTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::MASHSTEPTABLE);
 
    node = doc.createElement("MASH_STEP");
 
@@ -924,7 +924,7 @@ void BeerXML::toXml( Misc* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::MISCTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::MISCTABLE);
 
    node = doc.createElement("MISC");
 
@@ -950,7 +950,7 @@ void BeerXML::toXml( Recipe* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::RECTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::RECTABLE);
 
    int i;
 
@@ -1032,7 +1032,7 @@ void BeerXML::toXml( Style* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::STYLETABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::STYLETABLE);
 
    node = doc.createElement("STYLE");
 
@@ -1058,7 +1058,7 @@ void BeerXML::toXml( Water* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::WATERTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::WATERTABLE);
 
    node = doc.createElement("WATER");
 
@@ -1085,7 +1085,7 @@ void BeerXML::toXml( Yeast* a, QDomDocument& doc, QDomNode& parent )
    QDomElement node;
    QDomElement tmpElement;
    QDomText tmpText;
-   TableSchema* tbl = m_tables->table(Brewken::YEASTTABLE);
+   TableSchema* tbl = m_tables->table(DatabaseConstants::YEASTTABLE);
 
    node = doc.createElement("YEAST");
 

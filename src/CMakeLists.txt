@@ -110,6 +110,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
     ${SRCDIR}/database/PropertySchema.cpp
     ${SRCDIR}/database/TableSchema.cpp
+    ${SRCDIR}/database/TableSchemaConst.cpp
     ${SRCDIR}/EquipmentButton.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
@@ -143,13 +144,13 @@ SET( Brewken_SRCS
     ${SRCDIR}/MiscEditor.cpp
     ${SRCDIR}/MiscSortFilterProxyModel.cpp
     ${SRCDIR}/MiscTableModel.cpp
-    ${SRCDIR}/model/Brewnote.cpp
+    ${SRCDIR}/model/BrewNote.cpp
     ${SRCDIR}/model/Equipment.cpp
     ${SRCDIR}/model/Fermentable.cpp
     ${SRCDIR}/model/Hop.cpp
     ${SRCDIR}/model/Instruction.cpp
     ${SRCDIR}/model/Mash.cpp
-    ${SRCDIR}/model/Mashstep.cpp
+    ${SRCDIR}/model/MashStep.cpp
     ${SRCDIR}/model/Misc.cpp
     ${SRCDIR}/model/NamedEntity.cpp
     ${SRCDIR}/model/Recipe.cpp
@@ -323,11 +324,11 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/MiscEditor.h
     ${SRCDIR}/MiscSortFilterProxyModel.h
     ${SRCDIR}/MiscTableModel.h
-    ${SRCDIR}/model/Brewnote.h
+    ${SRCDIR}/model/BrewNote.h
     ${SRCDIR}/model/Hop.h
     ${SRCDIR}/model/Instruction.h
     ${SRCDIR}/model/Mash.h
-    ${SRCDIR}/model/Mashstep.h
+    ${SRCDIR}/model/MashStep.h
     ${SRCDIR}/model/Misc.h
     ${SRCDIR}/model/NamedEntity.h
     ${SRCDIR}/model/Recipe.h

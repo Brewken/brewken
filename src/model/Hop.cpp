@@ -1,5 +1,5 @@
 /**
- * hop.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -75,7 +75,7 @@ QString Hop::classNameStr()
    return name;
 }
 
-Hop::Hop(Brewken::DBTable table, int key)
+Hop::Hop(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString()),
      m_useStr(QString()),
      m_use(static_cast<Hop::Use>(0)),
@@ -102,7 +102,7 @@ Hop::Hop(Brewken::DBTable table, int key)
 }
 
 Hop::Hop(QString name, bool cache)
-   : NamedEntity(Brewken::HOPTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::HOPTABLE, -1, name, true),
      m_useStr(QString()),
      m_use(static_cast<Hop::Use>(0)),
      m_typeStr(QString()),
@@ -127,7 +127,7 @@ Hop::Hop(QString name, bool cache)
 {
 }
 
-Hop::Hop(Brewken::DBTable table, int key, QSqlRecord rec)
+Hop::Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
      m_useStr(rec.value(kcolUse).toString()),
      m_use(static_cast<Hop::Use>(uses.indexOf(m_useStr))),

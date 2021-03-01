@@ -1,5 +1,5 @@
 /**
- * yeast.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -174,8 +174,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Yeast(Brewken::DBTable table, int key);
-   Yeast(Brewken::DBTable table, int key, QSqlRecord rec);
+   Yeast(DatabaseConstants::DbTableId table, int key);
+   Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Yeast(QString name, bool cache = true);
 private:

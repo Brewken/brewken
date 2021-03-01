@@ -1,5 +1,5 @@
 /**
- * mash.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -139,8 +139,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Mash(Brewken::DBTable table, int key);
-   Mash(Brewken::DBTable table, int key, QSqlRecord rec);
+   Mash(DatabaseConstants::DbTableId table, int key);
+   Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Mash( Mash const& other );
 public:
    Mash( QString name, bool cache = true );

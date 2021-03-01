@@ -1,5 +1,5 @@
 /**
- * fermentable.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -201,8 +201,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Fermentable(Brewken::DBTable table, int key);
-   Fermentable(Brewken::DBTable table, int key, QSqlRecord rec);
+   Fermentable(DatabaseConstants::DbTableId table, int key);
+   Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Fermentable( Fermentable &other );
 public:
    Fermentable( QString name, bool cache = true );

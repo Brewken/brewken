@@ -1,5 +1,5 @@
 /**
- * SaltSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/SaltSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,11 +14,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SALTSCHEMA_H
-#define _SALTSCHEMA_H
+#ifndef SALTSCHEMA_H
+#define SALTSCHEMA_H
 
 #include <QString>
-// Columns for the yeast table
+// Columns for the salt table
 // What isn't here (like name) is defined in TableSchemaConstants
 static const QString kcolSaltType("stype");
 static const QString kcolSaltAddTo("addTo");
@@ -31,4 +31,4 @@ static const QString kcolSaltIsAcid("is_acid");
 
 // XML properties
 
-#endif // _SALTSCHEMA_H
+#endif // SALTSCHEMA_H

@@ -22,27 +22,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <QAbstractTableModel>
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
-#include <QHeaderView>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QItemEditorFactory>
-#include <QStyle>
-#include <QRect>
+#include <QAbstractTableModel>
+#include <QComboBox>
 #include <QDebug>
+#include <QHeaderView>
+#include <QItemEditorFactory>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QModelIndex>
+#include <QRect>
+#include <QSize>
+#include <QString>
+#include <QStyle>
+#include <QVariant>
+#include <QVector>
+#include <QWidget>
 
 #include "database/Database.h"
 #include "Brewken.h"
-#include <QSize>
-#include <QComboBox>
-#include <QListWidget>
-#include <QLineEdit>
-#include <QString>
-#include <QVector>
-#include <QHeaderView>
 #include "model/Fermentable.h"
 #include "FermentableTableModel.h"
 #include "unit.h"
@@ -213,10 +212,10 @@ void FermentableTableModel::setDisplayPercentages(bool var)
    displayPercentages = var;
 }
 
-void FermentableTableModel::changedInventory(Brewken::DBTable table, int invKey, QVariant val)
+void FermentableTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
 {
 
-   if ( table == Brewken::FERMTABLE ) {
+   if ( table == DatabaseConstants::FERMTABLE ) {
       for( int i = 0; i < fermObs.size(); ++i ) {
          Fermentable* holdmybeer = fermObs.at(i);
 

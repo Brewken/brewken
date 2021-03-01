@@ -21,18 +21,19 @@
  */
 
 #include <QAbstractTableModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QTableView>
-#include <QItemDelegate>
-#include <QObject>
 #include <QComboBox>
-#include <QLineEdit>
-#include <QVector>
 #include <QHeaderView>
+#include <QItemDelegate>
+#include <QLineEdit>
+#include <QModelIndex>
+#include <QObject>
+#include <QTableView>
+#include <QVariant>
+#include <QVector>
+#include <QWidget>
+
 #include "database/Database.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "MashStepTableModel.h"
 #include "unit.h"
 #include "Brewken.h"

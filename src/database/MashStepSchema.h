@@ -1,5 +1,5 @@
 /**
- * MashStepSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/MashStepSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _MASHSTEPTABLESCHEMA_H
-#define _MASHSTEPTABLESCHEMA_H
+#ifndef MASHSTEPSCHEMA_H
+#define MASHSTEPSCHEMA_H
 
 #include <QString>
 // Columns for the mash table
@@ -38,4 +37,4 @@ static const QString kxmlPropEndTemp("END_TEMP");
 static const QString kxmlPropInfuseTemp("INFUSE_TEMP");
 static const QString kxmlPropDecoctAmt("DECOCTION_AMOUNT");
 static const QString kxmlPropStepType("STEP_TYPE");
-#endif // _MASHSTEPTABLESCHEMA_H
+#endif // MASHSTEPSCHEMA_H
