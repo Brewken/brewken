@@ -1,5 +1,5 @@
 /**
- * DatabaseSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/DatabaseSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,10 +14,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DATABASESCHEMA_H
-#define _DATABASESCHEMA_H
-
-// class DatabaseSchema;
+#ifndef DATABASESCHEMA_H
+#define DATABASESCHEMA_H
 
 #include "Brewken.h"
 #include "database/TableSchema.h"
@@ -57,17 +55,17 @@ public:
 
    // For those that just want the TableSchema
    TableSchema* table(QString tableName);
-   TableSchema* table(Brewken::DBTable table);
-   QString tableName(Brewken::DBTable table);
+   TableSchema* table(DatabaseConstants::DbTableId table);
+   QString tableName(DatabaseConstants::DbTableId table);
 
    // These generate SQL strings
-   const QString generateCreateTable(Brewken::DBTable table, QString name = QString());
-   const QString generateInsertRow(Brewken::DBTable table);
-   const QString generateUpdateRow(Brewken::DBTable table, int key);
-   const QString generateCopyTable(Brewken::DBTable src, QString dest, Brewken::DBTypes type);
+   const QString generateCreateTable(DatabaseConstants::DbTableId table, QString name = QString());
+   const QString generateInsertRow(DatabaseConstants::DbTableId table);
+   const QString generateUpdateRow(DatabaseConstants::DbTableId table, int key);
+   const QString generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Brewken::DBTypes type);
 
    // these translate from a class to a table or its name
-   Brewken::DBTable classNameToTable(QString className) const;
+   DatabaseConstants::DbTableId classNameToTable(QString className) const;
    const QString classNameToTableName(QString className) const;
 
    // ways to get different types of tables
@@ -82,17 +80,17 @@ public:
    // inRec, child, inventory or bt table. I am thinking I will calculate these for
    // now, but I am wondering if I shouldn't store that info in the table? If
    // I change my mind later, these can all be pretty simple lookups
-   TableSchema* inRecTable(Brewken::DBTable dbTable);
-   TableSchema* childTable(Brewken::DBTable dbTable);
-   TableSchema* invTable(Brewken::DBTable dbTable);
-   TableSchema* btTable(Brewken::DBTable dbTable);
+   TableSchema* inRecTable(DatabaseConstants::DbTableId dbTable);
+   TableSchema* childTable(DatabaseConstants::DbTableId dbTable);
+   TableSchema* invTable(DatabaseConstants::DbTableId dbTable);
+   TableSchema* btTable(DatabaseConstants::DbTableId dbTable);
 
    // I seem to be needing these frequently, so lets take code from 100 places and put it here
    // It can't go into the TableSchema because it doesn't know the db
-   const QString childTableName(Brewken::DBTable dbTable);
-   const QString inRecTableName(Brewken::DBTable dbTable);
-   const QString invTableName(Brewken::DBTable dbTable);
-   const QString btTableName(Brewken::DBTable dbTable);
+   const QString childTableName(DatabaseConstants::DbTableId dbTable);
+   const QString inRecTableName(DatabaseConstants::DbTableId dbTable);
+   const QString invTableName(DatabaseConstants::DbTableId dbTable);
+   const QString btTableName(DatabaseConstants::DbTableId dbTable);
 
 private:
    QVector<TableSchema*> m_tables;
@@ -106,4 +104,6 @@ private:
 
 };
 
-#endif // _DATABASESCHEMA_H
+Q_DECLARE_METATYPE( DatabaseConstants::DbTableId )
+
+#endif // DATABASESCHEMA_H

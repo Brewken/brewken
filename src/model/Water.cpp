@@ -1,5 +1,5 @@
 /**
- * water.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -50,7 +50,7 @@ QString Water::classNameStr()
    return name;
 }
 
-Water::Water(Brewken::DBTable table, int key)
+Water::Water(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
    m_amount(0.0),
    m_calcium_ppm(0.0),
@@ -71,7 +71,7 @@ Water::Water(Brewken::DBTable table, int key)
 }
 
 Water::Water(QString name, bool cache)
-   : NamedEntity(Brewken::WATERTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::WATERTABLE, -1, name, true),
    m_amount(0.0),
    m_calcium_ppm(0.0),
    m_bicarbonate_ppm(0.0),
@@ -91,7 +91,7 @@ Water::Water(QString name, bool cache)
 }
 
 Water::Water(Water const& other, bool cache)
-   : NamedEntity(Brewken::WATERTABLE, -1, other.name(), true),
+   : NamedEntity(DatabaseConstants::WATERTABLE, -1, other.name(), true),
    m_amount(other.m_amount),
    m_calcium_ppm(other.m_calcium_ppm),
    m_bicarbonate_ppm(other.m_bicarbonate_ppm),
@@ -110,7 +110,7 @@ Water::Water(Water const& other, bool cache)
 {
 }
 
-Water::Water(Brewken::DBTable table, int key, QSqlRecord rec)
+Water::Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
    m_amount(rec.value(kcolAmount).toDouble()),
    m_calcium_ppm(rec.value(kcolWaterCalcium).toDouble()),

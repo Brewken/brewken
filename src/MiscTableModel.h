@@ -19,9 +19,6 @@
 #ifndef MISCTABLEMODEL_H
 #define MISCTABLEMODEL_H
 
-class MiscTableModel;
-class MiscItemDelegate;
-
 #include <QAbstractTableModel>
 #include <QAbstractItemModel>
 #include <QWidget>
@@ -35,8 +32,12 @@ class MiscItemDelegate;
 
 #include "unit.h"
 #include "Brewken.h"
+#include "database/TableSchemaConst.h"
+
 
 // Forward declarations.
+class MiscTableModel;
+class MiscItemDelegate;
 class Misc;
 class MiscTableWidget;
 class Recipe;
@@ -104,7 +105,7 @@ public slots:
 private slots:
    //! \brief Catch changes to Recipe, Database, and Misc.
    void changed(QMetaProperty, QVariant);
-   void changedInventory(Brewken::DBTable,int,QVariant);
+   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
 
 private:
    bool editable;

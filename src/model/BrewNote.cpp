@@ -1,5 +1,5 @@
 /**
- * brewnote.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -30,10 +30,10 @@
 #include <QDebug>
 #include <QLocale>
 #include <QString>
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 #include "Brewken.h"
 #include "Algorithms.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
@@ -69,7 +69,7 @@ bool BrewNote::isEqualTo(NamedEntity const & other) const {
 }
 
 // Initializers
-BrewNote::BrewNote(Brewken::DBTable table, int key)
+BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
      loading(false),
      m_brewDate(QDateTime()),
@@ -111,7 +111,7 @@ BrewNote::BrewNote(QString name, bool cache) : BrewNote(QDateTime(), cache, name
 }
 
 BrewNote::BrewNote(QDateTime dateNow, bool cache, QString const & name)
-   : NamedEntity(Brewken::BREWNOTETABLE,-1,name,true),
+   : NamedEntity(DatabaseConstants::BREWNOTETABLE,-1,name,true),
      loading(false),
      m_brewDate(dateNow),
      m_fermentDate(QDateTime()),
@@ -147,7 +147,7 @@ BrewNote::BrewNote(QDateTime dateNow, bool cache, QString const & name)
 {
 }
 
-BrewNote::BrewNote(Brewken::DBTable table, int key, QSqlRecord rec)
+BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolBNoteFermDate).toString(), rec.value(kcolDisplay).toBool()),
      m_brewDate(QDateTime::fromString(rec.value(kcolBNoteBrewDate).toString(), Qt::ISODate)),
      m_fermentDate(QDateTime::fromString(rec.value(kcolBNoteFermDate).toString(), Qt::ISODate)),

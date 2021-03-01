@@ -33,6 +33,7 @@
  */
 
 #include <iostream>
+
 #include <QFile>
 #include <QIODevice>
 #include <QString>
@@ -58,35 +59,34 @@
 #include <QSettings>
 #include <QDebug>
 
+
+#include "Algorithms.h"
 #include "Brewken.h"
+#include "BtSplashScreen.h"
 #include "config.h"
 #include "database/Database.h"
-#include "Algorithms.h"
+#include "MainWindow.h"
 #include "model/Fermentable.h"
+#include "model/Instruction.h"
+#include "model/Mash.h"
+#include "model/Salt.h"
+#include "model/Water.h"
+#include "unit.h"
+#include "unitSystems/CelsiusTempUnitSystem.h"
+#include "unitSystems/DiastaticPowerUnitSystem.h"
+#include "unitSystems/EbcColorUnitSystem.h"
+#include "unitSystems/FahrenheitTempUnitSystem.h"
+#include "unitSystems/ImperialVolumeUnitSystem.h"
+#include "unitSystems/PlatoDensityUnitSystem.h"
+#include "unitSystems/SgDensityUnitSystem.h"
+#include "unitSystems/SIVolumeUnitSystem.h"
+#include "unitSystems/SIWeightUnitSystem.h"
+#include "unitSystems/SrmColorUnitSystem.h"
+#include "unitSystems/TimeUnitSystem.h"
 #include "unitSystems/UnitSystem.h"
 #include "unitSystems/UnitSystems.h"
-#include "unit.h"
-#include "unitSystems/USWeightUnitSystem.h"
 #include "unitSystems/USVolumeUnitSystem.h"
-#include "unitSystems/FahrenheitTempUnitSystem.h"
-#include "unitSystems/TimeUnitSystem.h"
-#include "unitSystems/SIWeightUnitSystem.h"
-#include "unitSystems/SIVolumeUnitSystem.h"
-#include "unitSystems/CelsiusTempUnitSystem.h"
-#include "unitSystems/ImperialVolumeUnitSystem.h"
-
-#include "unitSystems/EbcColorUnitSystem.h"
-#include "unitSystems/SrmColorUnitSystem.h"
-#include "unitSystems/SgDensityUnitSystem.h"
-#include "unitSystems/PlatoDensityUnitSystem.h"
-#include "unitSystems/DiastaticPowerUnitSystem.h"
-
-#include "BtSplashScreen.h"
-#include "MainWindow.h"
-#include "model/Mash.h"
-#include "model/Instruction.h"
-#include "model/Water.h"
-#include "model/Salt.h"
+#include "unitSystems/USWeightUnitSystem.h"
 
 // Needed for kill(2)
 #if defined(Q_OS_UNIX)
@@ -94,54 +94,6 @@
 #include <signal.h>
 #endif
 
-// These HAVE to be in the same order as they are listed in
-// Brewken::DBTable
-QStringList Brewken::dbTableToName  = QStringList() <<
-   QString("none") <<  // need to handle the NOTABLE index
-   ktableSettings <<
-   ktableEquipment <<
-   ktableFermentable <<
-   ktableHop <<
-   ktableMisc <<
-   ktableStyle <<
-   ktableYeast <<
-   ktableWater <<
-   ktableMash <<
-   ktableMashStep <<
-   ktableRecipe <<
-   ktableBrewnote <<
-   ktableInstruction <<
-   ktableSalt <<
-// Now for BT internal tables
-   ktableBtEquipment <<
-   ktableBtFermentable <<
-   ktableBtHop <<
-   ktableBtMisc <<
-   ktableBtStyle <<
-   ktableBtYeast <<
-   ktableBtWater <<
-// Now the in_recipe tables
-   ktableFermInRec <<
-   ktableHopInRec <<
-   ktableMiscInRec <<
-   ktableWaterInRec <<
-   ktableYeastInRec <<
-   ktableInsInRec <<
-   ktableSaltInRec <<
-// child tables next
-   ktableEquipChildren <<
-   ktableFermChildren <<
-   ktableHopChildren <<
-   ktableMiscChildren <<
-   ktableRecChildren <<
-   ktableStyleChildren <<
-   ktableWaterChildren <<
-   ktableYeastChildren <<
-// inventory tables last
-   ktableFermInventory <<
-   ktableHopInventory <<
-   ktableMiscInventory <<
-   ktableYeastInventory;
 
 MainWindow* Brewken::_mainWindow = nullptr;
 QDomDocument* Brewken::optionsDoc;
@@ -458,7 +410,7 @@ bool Brewken::initialize(const QString &userDirectory)
    qRegisterMetaType<Mash*>();
    qRegisterMetaType<Style*>();
    qRegisterMetaType<Salt*>();
-   qRegisterMetaType<Brewken::DBTable>();
+   qRegisterMetaType<DatabaseConstants::DbTableId>();
    qRegisterMetaType< QList<BrewNote*> >();
    qRegisterMetaType< QList<Hop*> >();
    qRegisterMetaType< QList<Instruction*> >();

@@ -196,9 +196,9 @@ void HopTableModel::removeAll()
    }
 }
 
-void HopTableModel::changedInventory(Brewken::DBTable table, int invKey, QVariant val)
+void HopTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
 {
-   if ( table == Brewken::HOPTABLE ) {
+   if ( table == DatabaseConstants::HOPTABLE ) {
       for( int i = 0; i < hopObs.size(); ++i ) {
          Hop* holdmybeer = hopObs.at(i);
 

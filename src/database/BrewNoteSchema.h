@@ -1,5 +1,5 @@
 /**
- * BrewNoteSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/BrewNoteSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,8 +14,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _BREWNOTESCHEMA_H
-#define _BREWNOTESCHEMA_H
+#ifndef BREWNOTESCHEMA_H
+#define BREWNOTESCHEMA_H
 
 #include <QString>
 // I am putting this here in the vain hopes I do not forget about it. There
@@ -90,4 +90,4 @@ static const QString kxmlPropProjAtten("PROJECTED_ATTEN");
 static const QString kxmlPropBoilOff("BOIL_OFF");
 static const QString kxmlPropFinVol("FINAL_VOLUME");
 
-#endif // _BREWNOTESCHEMA_H
+#endif // BREWNOTESCHEMA_H

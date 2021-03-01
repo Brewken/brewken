@@ -1,5 +1,5 @@
 /**
- * SettingsSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/SettingsSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _SETTINGSTABLESCHEMA_H
-#define _SETTINGSTABLESCHEMA_H
+#ifndef SETTINGSSCHEMA_H
+#define SETTINGSSCHEMA_H
 
 // this is kind of weird, as this table has no properties. But I've decided
 // that all of the propertyTo* calls should only take kprops.
@@ -28,4 +27,4 @@ static const QString kcolSettingsRepopulate("repopulatechildrenonnextstart");
 // this table is a meta table. It has no object and no XML schemas. Weird,
 // innit?
 //
-#endif // _SETTINGSTABLESCHEMA_H
+#endif // SETTINGSSCHEMA_H

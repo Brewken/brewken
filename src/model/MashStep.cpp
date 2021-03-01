@@ -1,5 +1,5 @@
 /**
- * mashstep.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/MashStep.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 
 #include <QVector>
 #include <QDebug>
@@ -54,7 +54,7 @@ QString MashStep::classNameStr()
 
 //==============================CONSTRUCTORS====================================
 
-MashStep::MashStep(Brewken::DBTable table, int key)
+MashStep::MashStep(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true),
      m_typeStr(QString()),
      m_type(static_cast<MashStep::Type>(0)),
@@ -71,7 +71,7 @@ MashStep::MashStep(Brewken::DBTable table, int key)
 }
 
 MashStep::MashStep(QString name, bool cache)
-   : NamedEntity(Brewken::MASHSTEPTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::MASHSTEPTABLE, -1, name, true),
      m_typeStr(QString()),
      m_type(static_cast<MashStep::Type>(0)),
      m_infuseAmount_l(0.0),
@@ -86,7 +86,7 @@ MashStep::MashStep(QString name, bool cache)
 {
 }
 
-MashStep::MashStep(Brewken::DBTable table, int key, QSqlRecord rec)
+MashStep::MashStep(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
      m_typeStr(rec.value(kcolMashstepType).toString()),
      m_type(static_cast<MashStep::Type>(types.indexOf(m_typeStr))),

@@ -1,5 +1,5 @@
 /**
- * instruction.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -92,8 +92,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Instruction(Brewken::DBTable table, int key);
-   Instruction(Brewken::DBTable table, int key, QSqlRecord rec);
+   Instruction(DatabaseConstants::DbTableId table, int key);
+   Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Instruction( QString name, bool cache = true );
 private:

@@ -1,5 +1,5 @@
 /**
- * misc.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -56,7 +56,7 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
 }
 
 //============================CONSTRUCTORS======================================
-Misc::Misc(Brewken::DBTable table, int key)
+Misc::Misc(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
    m_typeString(QString()),
    m_type(static_cast<Misc::Type>(0)),
@@ -73,7 +73,7 @@ Misc::Misc(Brewken::DBTable table, int key)
 {
 }
 
-Misc::Misc(Brewken::DBTable table, int key, QSqlRecord rec)
+Misc::Misc(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
    m_typeString(rec.value(kcolMiscType).toString()),
    m_type(static_cast<Misc::Type>(types.indexOf(m_typeString))),
@@ -107,7 +107,7 @@ Misc::Misc(Misc & other) : NamedEntity(other),
 }
 
 Misc::Misc(QString name, bool cache)
-   : NamedEntity(Brewken::MISCTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::MISCTABLE, -1, name, true),
    m_typeString(QString()),
    m_type(static_cast<Misc::Type>(0)),
    m_useString(QString()),

@@ -22,17 +22,19 @@
 class FermentableTableModel;
 class FermentableItemDelegate;
 
-#include <QAbstractTableModel>
-#include <QTableView>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QMetaProperty>
-#include <QItemDelegate>
 #include <QAbstractItemDelegate>
+#include <QAbstractTableModel>
+#include <QItemDelegate>
 #include <QList>
+#include <QMetaProperty>
+#include <QModelIndex>
+#include <QTableView>
+#include <QVariant>
+#include <QWidget>
+
 #include "Brewken.h"
 #include "unit.h"
+#include "database/TableSchemaConst.h"
 
 // Forward declarations.
 class Fermentable;
@@ -104,7 +106,7 @@ private slots:
    //! \brief Catch changes to Recipe, Database, and Fermentable.
    void changed(QMetaProperty, QVariant);
    //! \brief Catches changes to inventory
-   void changedInventory(Brewken::DBTable,int,QVariant);
+   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
 
 private:
    //! \brief Recalculate the total amount of grains in the model.

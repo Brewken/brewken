@@ -1,5 +1,5 @@
 /**
- * recipe.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -40,7 +40,7 @@
 #include "model/Style.h"
 #include "model/Misc.h"
 #include "model/Mash.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Hop.h"
 #include "model/Fermentable.h"
 #include "model/Equipment.h"
@@ -115,7 +115,7 @@ QString Recipe::classNameStr()
    return name;
 }
 
-Recipe::Recipe(Brewken::DBTable table, int key)
+Recipe::Recipe(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
    m_type(QString("All Grain")),
    m_brewer(QString("")),
@@ -151,7 +151,7 @@ Recipe::Recipe(Brewken::DBTable table, int key)
 }
 
 Recipe::Recipe(QString name, bool cache)
-   : NamedEntity(Brewken::RECTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::RECTABLE, -1, name, true),
    m_type(QString("All Grain")),
    m_brewer(QString("")),
    m_asstBrewer(QString("Brewken: free beer software")),
@@ -185,7 +185,7 @@ Recipe::Recipe(QString name, bool cache)
 {
 }
 
-Recipe::Recipe(Brewken::DBTable table, int key, QSqlRecord rec)
+Recipe::Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
    m_type(rec.value(kcolRecipeType).toString()),
    m_brewer(rec.value(kcolRecipeBrewer).toString()),

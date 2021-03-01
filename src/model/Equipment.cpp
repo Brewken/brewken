@@ -1,5 +1,5 @@
 /**
- * equipment.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -54,7 +54,7 @@ bool Equipment::isEqualTo(NamedEntity const & other) const {
 
 //=============================CONSTRUCTORS=====================================
 Equipment::Equipment(QString t_name, bool cacheOnly)
-   : NamedEntity(Brewken::EQUIPTABLE, -1, t_name, true),
+   : NamedEntity(DatabaseConstants::EQUIPTABLE, -1, t_name, true),
    m_boilSize_l(22.927),
    m_batchSize_l(18.927),
    m_tunVolume_l(0.0),
@@ -76,7 +76,7 @@ Equipment::Equipment(QString t_name, bool cacheOnly)
 {
 }
 
-Equipment::Equipment(Brewken::DBTable table, int key)
+Equipment::Equipment(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true ),
    m_boilSize_l(22.927),
    m_batchSize_l(18.927),
@@ -99,7 +99,7 @@ Equipment::Equipment(Brewken::DBTable table, int key)
 {
 }
 
-Equipment::Equipment(Brewken::DBTable table, int key, QSqlRecord rec)
+Equipment::Equipment(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
    m_boilSize_l(rec.value(kcolEquipBoilSize).toDouble()),
    m_batchSize_l(rec.value(kcolEquipBatchSize).toDouble()),

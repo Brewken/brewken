@@ -1,5 +1,5 @@
 /**
- * instruction.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -42,7 +42,7 @@ QString Instruction::classNameStr()
    return name;
 }
 
-Instruction::Instruction(Brewken::DBTable table, int key)
+Instruction::Instruction(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true),
      m_directions(QString()),
      m_hasTimer  (false),
@@ -55,7 +55,7 @@ Instruction::Instruction(Brewken::DBTable table, int key)
 }
 
 Instruction::Instruction(QString name, bool cache)
-   : NamedEntity(Brewken::INSTRUCTIONTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::INSTRUCTIONTABLE, -1, name, true),
      m_directions(QString()),
      m_hasTimer  (false),
      m_timerValue(QString()),
@@ -66,7 +66,7 @@ Instruction::Instruction(QString name, bool cache)
 {
 }
 
-Instruction::Instruction(Brewken::DBTable table, int key, QSqlRecord rec)
+Instruction::Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool() ),
      m_directions(rec.value(kcolInstructionDirections).toString()),
      m_hasTimer  (rec.value(kcolInstructionHasTimer).toBool()),

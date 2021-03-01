@@ -37,7 +37,7 @@
 #include "model/Hop.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
-#include "model/Brewnote.h"
+#include "model/BrewNote.h"
 #include "model/Style.h"
 #include "model/Water.h"
 #include "FermentableDialog.h"

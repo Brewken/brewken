@@ -95,7 +95,7 @@ public:
    QString generateName(int column) const;
 public slots:
    void changed(QMetaProperty, QVariant);
-   void changedInventory(Brewken::DBTable,int,QVariant);
+   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
    //! \brief Add a hop to the model.
    void addHop(Hop* hop);
    //! \returns true if "hop" is successfully found and removed.

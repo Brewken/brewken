@@ -1,5 +1,5 @@
 /**
- * DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,9 +15,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _DATABASESCHEMAHELPER_H
-#define _DATABASESCHEMAHELPER_H
+#ifndef DATABASESCHEMAHELPER_H
+#define DATABASESCHEMAHELPER_H
 
 #include "Brewken.h"
 #include <QString>
@@ -96,7 +95,7 @@ private:
    static bool migrate_to_5(QSqlQuery q, DatabaseSchema *defn);
    static bool migrate_to_6(QSqlQuery q, DatabaseSchema *defn);
    static bool migrate_to_7(QSqlQuery q, DatabaseSchema *defn);
-   static bool migration_aide_8(QSqlQuery q, DatabaseSchema* defn, Brewken::DBTable table );
+   static bool migration_aide_8(QSqlQuery q, DatabaseSchema* defn, DatabaseConstants::DbTableId table );
    static bool migrate_to_8(QSqlQuery q, DatabaseSchema *defn);
    static bool migrate_to_9(QSqlQuery q, DatabaseSchema *defn);
 };

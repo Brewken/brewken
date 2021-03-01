@@ -20,7 +20,7 @@
 #include "unit.h"
 #include "Brewken.h"
 #include "MashStepEditor.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "database/Database.h"
 
 MashStepEditor::MashStepEditor(QWidget* parent)

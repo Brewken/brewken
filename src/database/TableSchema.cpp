@@ -1,5 +1,5 @@
 /**
- * TableSchema.cpp is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/TableSchema.cpp is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -15,46 +15,46 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "Brewken.h"
 #include "database/Database.h"
 #include <QString>
-#include "database/PropertySchema.h"
-#include "database/TableSchema.h"
 
-#include "database/TableSchemaConst.h"
-#include "database/StyleSchema.h"
+#include "Brewken.h"
+#include "database/BrewNoteSchema.h"
 #include "database/EquipmentSchema.h"
 #include "database/FermentableSchema.h"
 #include "database/HopSchema.h"
+#include "database/InstructionSchema.h"
 #include "database/MashSchema.h"
 #include "database/MashStepSchema.h"
 #include "database/MiscSchema.h"
-#include "database/InstructionSchema.h"
+#include "database/PropertySchema.h"
 #include "database/RecipeSchema.h"
-#include "database/YeastSchema.h"
-#include "database/WaterSchema.h"
 #include "database/SaltSchema.h"
-#include "database/BrewNoteSchema.h"
 #include "database/SettingsSchema.h"
+#include "database/StyleSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/TableSchema.h"
+#include "database/WaterSchema.h"
+#include "database/YeastSchema.h"
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Instruction.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
-#include "model/Mashstep.h"
-#include "model/Mash.h"
-#include "model/Instruction.h"
-#include "model/Fermentable.h"
-#include "model/Equipment.h"
-#include "model/Style.h"
 
 static const QString kDefault("DEFAULT");
 
-TableSchema::TableSchema(Brewken::DBTable table)
+TableSchema::TableSchema(DatabaseConstants::DbTableId table)
     : QObject(nullptr),
-      m_tableName( Brewken::dbTableToName[ static_cast<int>(table) ] ),
+      m_tableName( DatabaseConstants::dbTableToName[ static_cast<int>(table) ] ),
       m_dbTable(table),
-      m_childTable(Brewken::NOTABLE),
-      m_inRecTable(Brewken::NOTABLE),
-      m_invTable(Brewken::NOTABLE),
-      m_btTable(Brewken::NOTABLE),
+      m_childTable(DatabaseConstants::NOTABLE),
+      m_inRecTable(DatabaseConstants::NOTABLE),
+      m_invTable(DatabaseConstants::NOTABLE),
+      m_btTable(DatabaseConstants::NOTABLE),
       m_trigger(QString()),
       m_defType(Brewken::dbType())
 {
@@ -66,11 +66,11 @@ TableSchema::TableSchema(Brewken::DBTable table)
 
 const QString TableSchema::tableName() const { return m_tableName; }
 const QString TableSchema::className() const { return m_className; }
-Brewken::DBTable TableSchema::dbTable() const { return m_dbTable; }
-Brewken::DBTable TableSchema::childTable() const  { return m_childTable; }
-Brewken::DBTable TableSchema::inRecTable() const { return m_inRecTable; }
-Brewken::DBTable TableSchema::invTable() const { return m_invTable; }
-Brewken::DBTable TableSchema::btTable() const { return m_btTable; }
+DatabaseConstants::DbTableId TableSchema::dbTable() const { return m_dbTable; }
+DatabaseConstants::DbTableId TableSchema::childTable() const  { return m_childTable; }
+DatabaseConstants::DbTableId TableSchema::inRecTable() const { return m_inRecTable; }
+DatabaseConstants::DbTableId TableSchema::invTable() const { return m_invTable; }
+DatabaseConstants::DbTableId TableSchema::btTable() const { return m_btTable; }
 const QString TableSchema::triggerProperty() const { return m_trigger; }
 
 const QMap<QString,PropertySchema*> TableSchema::properties() const { return m_properties; }
@@ -253,10 +253,10 @@ int TableSchema::propertyColumnSize(QString prop, Brewken::DBTypes type) const
    }
 }
 
-Brewken::DBTable TableSchema::foreignTable(QString fkey, Brewken::DBTypes type) const
+DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Brewken::DBTypes type) const
 {
    Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
-   Brewken::DBTable retval = Brewken::NOTABLE;
+   DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    if ( m_foreignKeys.contains(fkey) ) {
       retval =  m_foreignKeys.value(fkey)->fTable(selected);
@@ -265,10 +265,10 @@ Brewken::DBTable TableSchema::foreignTable(QString fkey, Brewken::DBTypes type) 
 
 }
 
-Brewken::DBTable TableSchema::foreignTable(Brewken::DBTypes type) const
+DatabaseConstants::DbTableId TableSchema::foreignTable(Brewken::DBTypes type) const
 {
    Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
-   Brewken::DBTable retval = Brewken::NOTABLE;
+   DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    if ( m_foreignKeys.size() == 1 ) {
       retval =  m_foreignKeys.first()->fTable(selected);
@@ -396,7 +396,7 @@ const QString TableSchema::generateCreateTable(Brewken::DBTypes type, QString tm
 
       retKeys.append( QString(", FOREIGN KEY(%1) REFERENCES %2(id)")
                        .arg( key->colName(selected) )
-                       .arg( Brewken::dbTableToName[ key->fTable() ] )
+                       .arg( DatabaseConstants::dbTableToName[ key->fTable() ] )
       );
    }
 
@@ -631,124 +631,124 @@ const QString TableSchema::generateDecrementTrigger(Brewken::DBTypes type)
 void TableSchema::defineTable()
 {
    switch( m_dbTable ) {
-      case Brewken::SETTINGTABLE:
+      case DatabaseConstants::SETTINGTABLE:
          defineSettingsTable();
          break;
-      case Brewken::BREWNOTETABLE:
+      case DatabaseConstants::BREWNOTETABLE:
          defineBrewnoteTable();
          break;
-      case Brewken::STYLETABLE:
+      case DatabaseConstants::STYLETABLE:
          defineStyleTable();
          break;
-      case Brewken::EQUIPTABLE:
+      case DatabaseConstants::EQUIPTABLE:
          defineEquipmentTable();
          break;
-      case Brewken::FERMTABLE:
+      case DatabaseConstants::FERMTABLE:
          defineFermentableTable();
          break;
-      case Brewken::HOPTABLE:
+      case DatabaseConstants::HOPTABLE:
          defineHopTable();
          break;
-      case Brewken::INSTRUCTIONTABLE:
+      case DatabaseConstants::INSTRUCTIONTABLE:
          defineInstructionTable();
          break;
-      case Brewken::MASHTABLE:
+      case DatabaseConstants::MASHTABLE:
          defineMashTable();
          break;
-      case Brewken::MASHSTEPTABLE:
+      case DatabaseConstants::MASHSTEPTABLE:
          defineMashstepTable();
          break;
-      case Brewken::MISCTABLE:
+      case DatabaseConstants::MISCTABLE:
          defineMiscTable();
          break;
-      case Brewken::RECTABLE:
+      case DatabaseConstants::RECTABLE:
          defineRecipeTable();
          break;
-      case Brewken::YEASTTABLE:
+      case DatabaseConstants::YEASTTABLE:
          defineYeastTable();
          break;
-      case Brewken::WATERTABLE:
+      case DatabaseConstants::WATERTABLE:
          defineWaterTable();
          break;
-      case Brewken::SALTTABLE:
+      case DatabaseConstants::SALTTABLE:
          defineSaltTable();
          break;
-      case Brewken::BT_EQUIPTABLE:
-         defineBtTable(kcolEquipmentId, Brewken::EQUIPTABLE);
+      case DatabaseConstants::BT_EQUIPTABLE:
+         defineBtTable(kcolEquipmentId, DatabaseConstants::EQUIPTABLE);
          break;
-      case Brewken::BT_FERMTABLE:
-         defineBtTable(kcolFermentableId, Brewken::FERMTABLE);
+      case DatabaseConstants::BT_FERMTABLE:
+         defineBtTable(kcolFermentableId, DatabaseConstants::FERMTABLE);
          break;
-      case Brewken::BT_HOPTABLE:
-         defineBtTable(kcolHopId, Brewken::HOPTABLE);
+      case DatabaseConstants::BT_HOPTABLE:
+         defineBtTable(kcolHopId, DatabaseConstants::HOPTABLE);
          break;
-      case Brewken::BT_MISCTABLE:
-         defineBtTable(kcolMiscId, Brewken::MISCTABLE);
+      case DatabaseConstants::BT_MISCTABLE:
+         defineBtTable(kcolMiscId, DatabaseConstants::MISCTABLE);
          break;
-      case Brewken::BT_STYLETABLE:
-         defineBtTable(kcolStyleId, Brewken::STYLETABLE);
+      case DatabaseConstants::BT_STYLETABLE:
+         defineBtTable(kcolStyleId, DatabaseConstants::STYLETABLE);
          break;
-      case Brewken::BT_WATERTABLE:
-         defineBtTable(kcolWaterId, Brewken::WATERTABLE);
+      case DatabaseConstants::BT_WATERTABLE:
+         defineBtTable(kcolWaterId, DatabaseConstants::WATERTABLE);
          break;
-      case Brewken::BT_YEASTTABLE:
-         defineBtTable(kcolYeastId, Brewken::YEASTTABLE);
+      case DatabaseConstants::BT_YEASTTABLE:
+         defineBtTable(kcolYeastId, DatabaseConstants::YEASTTABLE);
          break;
-      case Brewken::EQUIPCHILDTABLE:
-         defineChildTable(Brewken::EQUIPTABLE);
+      case DatabaseConstants::EQUIPCHILDTABLE:
+         defineChildTable(DatabaseConstants::EQUIPTABLE);
          break;
-      case Brewken::FERMCHILDTABLE:
-         defineChildTable(Brewken::FERMTABLE);
+      case DatabaseConstants::FERMCHILDTABLE:
+         defineChildTable(DatabaseConstants::FERMTABLE);
          break;
-      case Brewken::HOPCHILDTABLE:
-         defineChildTable(Brewken::HOPTABLE);
+      case DatabaseConstants::HOPCHILDTABLE:
+         defineChildTable(DatabaseConstants::HOPTABLE);
          break;
-      case Brewken::MISCCHILDTABLE:
-         defineChildTable(Brewken::MISCTABLE);
+      case DatabaseConstants::MISCCHILDTABLE:
+         defineChildTable(DatabaseConstants::MISCTABLE);
          break;
-      case Brewken::RECIPECHILDTABLE:
-         defineChildTable(Brewken::RECTABLE);
+      case DatabaseConstants::RECIPECHILDTABLE:
+         defineChildTable(DatabaseConstants::RECTABLE);
          break;
-      case Brewken::STYLECHILDTABLE:
-         defineChildTable(Brewken::STYLETABLE);
+      case DatabaseConstants::STYLECHILDTABLE:
+         defineChildTable(DatabaseConstants::STYLETABLE);
          break;
-      case Brewken::WATERCHILDTABLE:
-         defineChildTable(Brewken::WATERTABLE);
+      case DatabaseConstants::WATERCHILDTABLE:
+         defineChildTable(DatabaseConstants::WATERTABLE);
          break;
-      case Brewken::YEASTCHILDTABLE:
-         defineChildTable(Brewken::YEASTTABLE);
+      case DatabaseConstants::YEASTCHILDTABLE:
+         defineChildTable(DatabaseConstants::YEASTTABLE);
          break;
-      case Brewken::FERMINRECTABLE:
-         defineInRecipeTable(kcolFermentableId, Brewken::FERMTABLE);
+      case DatabaseConstants::FERMINRECTABLE:
+         defineInRecipeTable(kcolFermentableId, DatabaseConstants::FERMTABLE);
          break;
-      case Brewken::HOPINRECTABLE:
-         defineInRecipeTable(kcolHopId, Brewken::HOPTABLE);
+      case DatabaseConstants::HOPINRECTABLE:
+         defineInRecipeTable(kcolHopId, DatabaseConstants::HOPTABLE);
          break;
-      case Brewken::INSTINRECTABLE:
-         defineInstructionInRecipeTable( kcolInstructionId, Brewken::INSTRUCTIONTABLE);
+      case DatabaseConstants::INSTINRECTABLE:
+         defineInstructionInRecipeTable( kcolInstructionId, DatabaseConstants::INSTRUCTIONTABLE);
          break;
-      case Brewken::MISCINRECTABLE:
-         defineInRecipeTable(kcolMiscId, Brewken::MISCTABLE);
+      case DatabaseConstants::MISCINRECTABLE:
+         defineInRecipeTable(kcolMiscId, DatabaseConstants::MISCTABLE);
          break;
-      case Brewken::WATERINRECTABLE:
-         defineInRecipeTable(kcolWaterId, Brewken::WATERTABLE);
+      case DatabaseConstants::WATERINRECTABLE:
+         defineInRecipeTable(kcolWaterId, DatabaseConstants::WATERTABLE);
          break;
-      case Brewken::SALTINRECTABLE:
-         defineInRecipeTable(kcolSaltId, Brewken::SALTTABLE);
+      case DatabaseConstants::SALTINRECTABLE:
+         defineInRecipeTable(kcolSaltId, DatabaseConstants::SALTTABLE);
          break;
-      case Brewken::YEASTINRECTABLE:
-         defineInRecipeTable(kcolYeastId, Brewken::YEASTTABLE);
+      case DatabaseConstants::YEASTINRECTABLE:
+         defineInRecipeTable(kcolYeastId, DatabaseConstants::YEASTTABLE);
          break;
-      case Brewken::FERMINVTABLE:
+      case DatabaseConstants::FERMINVTABLE:
          defineFermInventoryTable();
          break;
-      case Brewken::HOPINVTABLE:
+      case DatabaseConstants::HOPINVTABLE:
          defineHopInventoryTable();
          break;
-      case Brewken::MISCINVTABLE:
+      case DatabaseConstants::MISCINVTABLE:
          defineMiscInventoryTable();
          break;
-      case Brewken::YEASTINVTABLE:
+      case DatabaseConstants::YEASTINVTABLE:
          defineYeastInventoryTable();
          break;
       default:
@@ -764,8 +764,8 @@ void TableSchema::defineStyleTable()
 {
    m_type = BASE;
    m_className = QString("Style");
-   m_childTable = Brewken::STYLECHILDTABLE;
-   m_btTable = Brewken::BT_STYLETABLE;
+   m_childTable = DatabaseConstants::STYLECHILDTABLE;
+   m_btTable = DatabaseConstants::BT_STYLETABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -804,8 +804,8 @@ void TableSchema::defineEquipmentTable()
 {
    m_type = BASE;
    m_className = QString("Equipment");
-   m_childTable = Brewken::EQUIPCHILDTABLE;
-   m_btTable = Brewken::BT_EQUIPTABLE;
+   m_childTable = DatabaseConstants::EQUIPCHILDTABLE;
+   m_btTable = DatabaseConstants::BT_EQUIPTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -840,10 +840,10 @@ void TableSchema::defineFermentableTable()
 {
    m_type = BASE;
    m_className = QString("Fermentable");
-   m_childTable = Brewken::FERMCHILDTABLE;
-   m_inRecTable = Brewken::FERMINRECTABLE;
-   m_invTable   = Brewken::FERMINVTABLE;
-   m_btTable    = Brewken::BT_FERMTABLE;
+   m_childTable = DatabaseConstants::FERMCHILDTABLE;
+   m_inRecTable = DatabaseConstants::FERMINRECTABLE;
+   m_invTable   = DatabaseConstants::FERMINVTABLE;
+   m_btTable    = DatabaseConstants::BT_FERMTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -880,10 +880,10 @@ void TableSchema::defineHopTable()
 {
    m_type = BASE;
    m_className = QString("Hop");
-   m_childTable = Brewken::HOPCHILDTABLE;
-   m_inRecTable = Brewken::HOPINRECTABLE;
-   m_invTable   = Brewken::HOPINVTABLE;
-   m_btTable    = Brewken::BT_HOPTABLE;
+   m_childTable = DatabaseConstants::HOPCHILDTABLE;
+   m_inRecTable = DatabaseConstants::HOPINRECTABLE;
+   m_invTable   = DatabaseConstants::HOPINVTABLE;
+   m_btTable    = DatabaseConstants::BT_HOPTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -918,7 +918,7 @@ void TableSchema::defineInstructionTable()
 {
    m_type = BASE;
    m_className = QString("Instruction");
-   m_inRecTable = Brewken::INSTINRECTABLE;
+   m_inRecTable = DatabaseConstants::INSTINRECTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -985,7 +985,7 @@ void TableSchema::defineMashstepTable()
    m_properties[PropertyNames::NamedEntity::display]    = new PropertySchema( PropertyNames::NamedEntity::display,    kcolDisplay,            QString(),          QString("boolean"), QVariant(true));
    m_properties[PropertyNames::NamedEntity::deleted]    = new PropertySchema( PropertyNames::NamedEntity::deleted,    kcolDeleted,            QString(),          QString("boolean"), QVariant(false));
 
-   m_foreignKeys[kpropMashId]    = new PropertySchema( kpropMashId,     kcolMashId,       QString("integer"), Brewken::MASHTABLE);
+   m_foreignKeys[kpropMashId]    = new PropertySchema( kpropMashId,     kcolMashId,       QString("integer"), DatabaseConstants::MASHTABLE);
 
 }
 
@@ -993,10 +993,10 @@ void TableSchema::defineMiscTable()
 {
    m_type = BASE;
    m_className = QString("Misc");
-   m_childTable = Brewken::MISCCHILDTABLE;
-   m_inRecTable = Brewken::MISCINRECTABLE;
-   m_invTable   = Brewken::MISCINVTABLE;
-   m_btTable    = Brewken::BT_MISCTABLE;
+   m_childTable = DatabaseConstants::MISCCHILDTABLE;
+   m_inRecTable = DatabaseConstants::MISCINRECTABLE;
+   m_invTable   = DatabaseConstants::MISCINVTABLE;
+   m_btTable    = DatabaseConstants::BT_MISCTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -1023,7 +1023,7 @@ void TableSchema::defineRecipeTable()
 {
    m_type = BASE;
    m_className = QString("Recipe");
-   m_childTable = Brewken::RECIPECHILDTABLE;
+   m_childTable = DatabaseConstants::RECIPECHILDTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -1066,20 +1066,20 @@ void TableSchema::defineRecipeTable()
 
    // enough properties, now some foreign keys
 
-   m_foreignKeys[kpropEquipmentId] = new PropertySchema( kpropEquipmentId, kcolRecipeEquipmentId, QString("integer"), Brewken::EQUIPTABLE);
-   m_foreignKeys[kpropMashId]      = new PropertySchema( kpropMashId,      kcolMashId,            QString("integer"), Brewken::MASHTABLE);
-   m_foreignKeys[kpropStyleId]     = new PropertySchema( kpropStyleId,     kcolStyleId,           QString("integer"), Brewken::STYLETABLE);
-   m_foreignKeys[kpropAncestorId]  = new PropertySchema( kpropAncestorId,  kcolRecipeAncestorId,  QString("integer"), Brewken::RECTABLE);
+   m_foreignKeys[kpropEquipmentId] = new PropertySchema( kpropEquipmentId, kcolRecipeEquipmentId, QString("integer"), DatabaseConstants::EQUIPTABLE);
+   m_foreignKeys[kpropMashId]      = new PropertySchema( kpropMashId,      kcolMashId,            QString("integer"), DatabaseConstants::MASHTABLE);
+   m_foreignKeys[kpropStyleId]     = new PropertySchema( kpropStyleId,     kcolStyleId,           QString("integer"), DatabaseConstants::STYLETABLE);
+   m_foreignKeys[kpropAncestorId]  = new PropertySchema( kpropAncestorId,  kcolRecipeAncestorId,  QString("integer"), DatabaseConstants::RECTABLE);
 }
 
 void TableSchema::defineYeastTable()
 {
    m_type = BASE;
    m_className = QString("Yeast");
-   m_childTable = Brewken::YEASTCHILDTABLE;
-   m_inRecTable = Brewken::YEASTINRECTABLE;
-   m_invTable   = Brewken::YEASTINVTABLE;
-   m_btTable    = Brewken::BT_YEASTTABLE;
+   m_childTable = DatabaseConstants::YEASTCHILDTABLE;
+   m_inRecTable = DatabaseConstants::YEASTINRECTABLE;
+   m_invTable   = DatabaseConstants::YEASTINVTABLE;
+   m_btTable    = DatabaseConstants::BT_YEASTTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -1156,7 +1156,7 @@ void TableSchema::defineBrewnoteTable()
    m_properties[PropertyNames::NamedEntity::deleted]         = new PropertySchema( PropertyNames::NamedEntity::deleted,         kcolDeleted,              QString(),               QString("boolean"), QVariant(false));
    m_properties[PropertyNames::NamedEntity::folder]          = new PropertySchema( PropertyNames::NamedEntity::folder,          kcolFolder,              QString(),               QString("text"), QString("''"));
 
-   m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), Brewken::RECTABLE);
+   m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), DatabaseConstants::RECTABLE);
 
 }
 
@@ -1164,9 +1164,9 @@ void TableSchema::defineWaterTable()
 {
    m_type = BASE;
    m_className = QString("Water");
-   m_childTable = Brewken::WATERCHILDTABLE;
-   m_inRecTable = Brewken::WATERINRECTABLE;
-   m_btTable    = Brewken::BT_WATERTABLE;
+   m_childTable = DatabaseConstants::WATERCHILDTABLE;
+   m_inRecTable = DatabaseConstants::WATERINRECTABLE;
+   m_btTable    = DatabaseConstants::BT_WATERTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -1200,7 +1200,7 @@ void TableSchema::defineSaltTable()
 {
    m_type = BASE;
    m_className = QString("Salt");
-   m_inRecTable = Brewken::SALTINRECTABLE;
+   m_inRecTable = DatabaseConstants::SALTINRECTABLE;
 
    m_key                        = new PropertySchema();
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
@@ -1220,10 +1220,10 @@ void TableSchema::defineSaltTable()
    m_properties[PropertyNames::NamedEntity::deleted]  = new PropertySchema( PropertyNames::NamedEntity::deleted, kcolDeleted,   QString(), QString("boolean"), QVariant(false));
    m_properties[PropertyNames::NamedEntity::folder]   = new PropertySchema( PropertyNames::NamedEntity::folder,  kcolFolder,    QString(), QString("text"),    QString("''"));
 
-   m_foreignKeys[kpropMiscId]  = new PropertySchema( kpropMiscId, kcolMiscId, QString("integer"), Brewken::MISCTABLE);
+   m_foreignKeys[kpropMiscId]  = new PropertySchema( kpropMiscId, kcolMiscId, QString("integer"), DatabaseConstants::MISCTABLE);
 }
 
-void TableSchema::defineChildTable(Brewken::DBTable table)
+void TableSchema::defineChildTable(DatabaseConstants::DbTableId table)
 {
    m_type = CHILD;
 
@@ -1236,7 +1236,7 @@ void TableSchema::defineChildTable(Brewken::DBTable table)
 
 }
 
-void TableSchema::defineInRecipeTable(QString childIdx, Brewken::DBTable table)
+void TableSchema::defineInRecipeTable(QString childIdx, DatabaseConstants::DbTableId table)
 {
    m_type = INREC;
 
@@ -1244,14 +1244,14 @@ void TableSchema::defineInRecipeTable(QString childIdx, Brewken::DBTable table)
    m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
    m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
-   m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), Brewken::RECTABLE);
+   m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), DatabaseConstants::RECTABLE);
    m_foreignKeys[childIdx]      = new PropertySchema( childIdx,      childIdx,     QString("integer"), table);
 
 }
 
 // instruction in rec has an extra field. I could have cheated, but we will try
 // playing it straight first.
-void TableSchema::defineInstructionInRecipeTable(QString childIdx, Brewken::DBTable table)
+void TableSchema::defineInstructionInRecipeTable(QString childIdx, DatabaseConstants::DbTableId table)
 {
    m_type = INREC;
    m_trigger = kpropInstructionNumber;
@@ -1264,12 +1264,12 @@ void TableSchema::defineInstructionInRecipeTable(QString childIdx, Brewken::DBTa
    // so it is now kprop all the time
    m_properties[kpropInstructionNumber] = new PropertySchema( kpropInstructionNumber, kcolInstructionNumber, QString(""), QString("int"), QVariant(0));
 
-   m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), Brewken::RECTABLE);
+   m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), DatabaseConstants::RECTABLE);
    m_foreignKeys[childIdx]      = new PropertySchema( childIdx,      childIdx,     QString("integer"), table);
 
 }
 
-void TableSchema::defineBtTable(QString childIdx, Brewken::DBTable table)
+void TableSchema::defineBtTable(QString childIdx, DatabaseConstants::DbTableId table)
 {
    m_type = BT;
 

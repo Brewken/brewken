@@ -33,6 +33,7 @@ class YeastItemDelegate;
 
 #include "unit.h"
 #include "Brewken.h"
+#include "database/TableSchemaConst.h"
 
 // Forward declarations.
 class Yeast;
@@ -101,7 +102,7 @@ public slots:
 private slots:
    //! \brief Catch changes to Recipe, Database, and Yeast.
    void changed(QMetaProperty, QVariant);
-   void changedInventory(Brewken::DBTable,int,QVariant);
+   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
 
 private:
    bool editable;

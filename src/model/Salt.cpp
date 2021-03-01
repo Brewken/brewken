@@ -1,5 +1,5 @@
 /**
- * salt.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -27,12 +27,6 @@
 #include "database/SaltSchema.h"
 #include "database/Database.h"
 
-// TBD Not clear why we use this ordering for salts.  Let's see what happens if we let it use the default ordering (name) of NamedEntity
-//bool operator<(const Salt &s1, const Salt &s2)
-//{
-//   return s1.m_add_to < s2.m_add_to;
-//}
-
 bool Salt::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Salt const & rhs = static_cast<Salt const &>(other);
@@ -49,7 +43,7 @@ QString Salt::classNameStr()
    return name;
 }
 
-Salt::Salt(Brewken::DBTable table, int key)
+Salt::Salt(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
    m_amount(0.0),
    m_add_to(NEVER),
@@ -63,7 +57,7 @@ Salt::Salt(Brewken::DBTable table, int key)
 }
 
 Salt::Salt(QString name, bool cache)
-   : NamedEntity(Brewken::SALTTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::SALTTABLE, -1, name, true),
    m_amount(0.0),
    m_add_to(NEVER),
    m_type(NONE),
@@ -76,7 +70,7 @@ Salt::Salt(QString name, bool cache)
 }
 
 Salt::Salt(Salt & other)
-   : NamedEntity(Brewken::SALTTABLE, -1, other.name(), true),
+   : NamedEntity(DatabaseConstants::SALTTABLE, -1, other.name(), true),
    m_amount(other.m_amount),
    m_add_to(other.m_add_to),
    m_type(other.m_type),
@@ -88,7 +82,7 @@ Salt::Salt(Salt & other)
 {
 }
 
-Salt::Salt(Brewken::DBTable table, int key, QSqlRecord rec)
+Salt::Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
    m_amount(rec.value(kcolAmount).toDouble()),
    m_add_to(static_cast<Salt::WhenToAdd>(rec.value(kcolSaltAddTo).toInt())),

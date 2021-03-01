@@ -1,5 +1,5 @@
 /**
- * MiscSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/MiscSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,11 +13,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef MISCSCHEMA_H
+#define MISCSCHEMA_H
 
 #include <QString>
 
-#ifndef _MISCTABLESCHEMA_H
-#define _MISCTABLESCHEMA_H
 // Columns for the misc table
 // Everything else is globally defined. A little depressing, actually
 static const QString kcolMiscType("mtype");
@@ -27,4 +27,4 @@ static const QString kcolMiscUseFor("use_for");
 //static const QString kpropTypeStr("typeString"); // Commented as unused
 
 static const QString kxmlPropUseFor("USE_FOR");
-#endif // _MISCTABLESCHEMA_H
+#endif // MISCSCHEMA_H

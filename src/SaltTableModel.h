@@ -18,24 +18,24 @@
 #ifndef SALTTABLEMODEL_H
 #define SALTTABLEMODEL_H
 
-class SaltTableModel;
-class SaltItemDelegate;
-
 #include <QAbstractTableModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QMetaProperty>
-#include <QVariant>
 #include <QItemDelegate>
 #include <QList>
+#include <QMetaProperty>
+#include <QModelIndex>
 #include <QTableView>
+#include <QVariant>
+#include <QWidget>
+
 #include "model/Salt.h"
+#include "model/Water.h"
 
 #include "unit.h"
 // Forward declarations.
 class Recipe;
 class WaterDialog;
 class Mash;
+class SaltItemDelegate;
 
 enum{ SALTNAMECOL,
       SALTAMOUNTCOL,

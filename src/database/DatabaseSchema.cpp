@@ -1,5 +1,5 @@
 /**
- * DatabaseSchema.cpp is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/DatabaseSchema.cpp is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 #include "database/DatabaseSchema.h"
 #include "database/InstructionSchema.h"
 
+
 DatabaseSchema::DatabaseSchema()
 {
    loadTables();
@@ -32,15 +33,15 @@ void DatabaseSchema::loadTables()
 {
    int it;
 
-   for ( it = Brewken::NOTABLE; it <= Brewken::YEASTINVTABLE; it++ ) {
-      TableSchema* tmp = new TableSchema(static_cast<Brewken::DBTable>(it));
+   for ( it = DatabaseConstants::NOTABLE; it <= DatabaseConstants::YEASTINVTABLE; it++ ) {
+      TableSchema* tmp = new TableSchema(static_cast<DatabaseConstants::DbTableId>(it));
       m_tables.append(tmp);
    }
 }
 
-TableSchema *DatabaseSchema::table(Brewken::DBTable table)
+TableSchema *DatabaseSchema::table(DatabaseConstants::DbTableId table)
 {
-   if ( table > Brewken::NOTABLE && table < m_tables.size() ) {
+   if ( table > DatabaseConstants::NOTABLE && table < m_tables.size() ) {
       return m_tables.at(table);
    }
 
@@ -49,8 +50,8 @@ TableSchema *DatabaseSchema::table(Brewken::DBTable table)
 
 TableSchema *DatabaseSchema::table(QString tableName)
 {
-   if ( Brewken::dbTableToName.contains(tableName) ) {
-      return m_tables.value( static_cast<Brewken::DBTable>(Brewken::dbTableToName.indexOf(tableName)));
+   if ( DatabaseConstants::dbTableToName.contains(tableName) ) {
+      return m_tables.value( static_cast<DatabaseConstants::DbTableId>(DatabaseConstants::dbTableToName.indexOf(tableName)));
    }
    else {
       qDebug() << "Could not find table for " + tableName;
@@ -58,9 +59,9 @@ TableSchema *DatabaseSchema::table(QString tableName)
    return nullptr;
 }
 
-QString DatabaseSchema::tableName(Brewken::DBTable table)
+QString DatabaseSchema::tableName(DatabaseConstants::DbTableId table)
 {
-   if ( table > Brewken::NOTABLE && table < m_tables.size() ) {
+   if ( table > DatabaseConstants::NOTABLE && table < m_tables.size() ) {
       return m_tables.at(table)->tableName();
    }
 
@@ -69,9 +70,9 @@ QString DatabaseSchema::tableName(Brewken::DBTable table)
 
 // I believe one method replaces EVERY create_ method in DatabaseSchemaHelper.
 // It is so beautiful, it must be evil.
-const QString DatabaseSchema::generateCreateTable(Brewken::DBTable table, QString name)
+const QString DatabaseSchema::generateCreateTable(DatabaseConstants::DbTableId table, QString name)
 {
-   if ( table <= Brewken::NOTABLE || table > m_tables.size() ) {
+   if ( table <= DatabaseConstants::NOTABLE || table > m_tables.size() ) {
       return QString();
    }
 
@@ -81,27 +82,27 @@ const QString DatabaseSchema::generateCreateTable(Brewken::DBTable table, QStrin
 }
 
 // these two basically just pass the call to the proper table
-const QString DatabaseSchema::generateInsertRow(Brewken::DBTable table)
+const QString DatabaseSchema::generateInsertRow(DatabaseConstants::DbTableId table)
 {
    TableSchema* tSchema = m_tables.value(table);
    return tSchema->generateInsertRow(m_type);
 }
 
-const QString DatabaseSchema::generateCopyTable(Brewken::DBTable src, QString dest, Brewken::DBTypes type)
+const QString DatabaseSchema::generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Brewken::DBTypes type)
 {
    TableSchema* tSchema = m_tables.value(src);
    return tSchema->generateCopyTable(dest,type);
 }
 
-const QString DatabaseSchema::generateUpdateRow(Brewken::DBTable table, int key)
+const QString DatabaseSchema::generateUpdateRow(DatabaseConstants::DbTableId table, int key)
 {
    TableSchema* tSchema = m_tables.value(table);
    return tSchema->generateUpdateRow(key, m_type);
 }
 
-Brewken::DBTable DatabaseSchema::classNameToTable(QString className) const
+DatabaseConstants::DbTableId DatabaseSchema::classNameToTable(QString className) const
 {
-   Brewken::DBTable retval = Brewken::NOTABLE;
+   DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    foreach( TableSchema* here, m_tables ) {
       if ( here->className() == className ) {
@@ -198,8 +199,8 @@ QVector<TableSchema*>  DatabaseSchema::allTables(bool createOrder)
     // inventory tables happen before the base tables. otherwise, we will
     // get constraint violations because the inventory_id has nothing to point
     // to
-    for( int i = 1; i < Brewken::dbTableToName.size(); ++i ) {
-       TableSchema* tmp = m_tables.value( static_cast<Brewken::DBTable>(i));
+    for( int i = 1; i < DatabaseConstants::dbTableToName.size(); ++i ) {
+       TableSchema* tmp = m_tables.value( static_cast<DatabaseConstants::DbTableId>(i));
        if ( createOrder && tmp->isInventoryTable() ) {
           retval.prepend(tmp);
        }
@@ -210,76 +211,76 @@ QVector<TableSchema*>  DatabaseSchema::allTables(bool createOrder)
     return retval;
 }
 
-TableSchema* DatabaseSchema::childTable(Brewken::DBTable dbTable)
+TableSchema* DatabaseSchema::childTable(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* tbl = table(dbTable);
     TableSchema* retVal = nullptr;
 
     if ( tbl != nullptr ) {
-       Brewken::DBTable idx = tbl->childTable();
+       DatabaseConstants::DbTableId idx = tbl->childTable();
        retVal = table( idx );
     }
     return retVal;
 }
 
-TableSchema* DatabaseSchema::inRecTable(Brewken::DBTable dbTable)
+TableSchema* DatabaseSchema::inRecTable(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* tbl = table(dbTable);
     TableSchema* retVal = nullptr;
 
     if ( tbl != nullptr ) {
-       Brewken::DBTable idx = tbl->inRecTable();
+       DatabaseConstants::DbTableId idx = tbl->inRecTable();
        retVal = table( idx );
     }
     return retVal;
 }
 
-TableSchema* DatabaseSchema::invTable(Brewken::DBTable dbTable)
+TableSchema* DatabaseSchema::invTable(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* tbl = table(dbTable);
     TableSchema* retVal = nullptr;
 
     if ( tbl != nullptr ) {
-       Brewken::DBTable idx = tbl->invTable();
+       DatabaseConstants::DbTableId idx = tbl->invTable();
        retVal = table( idx );
     }
     return retVal;
 }
 
-TableSchema* DatabaseSchema::btTable(Brewken::DBTable dbTable)
+TableSchema* DatabaseSchema::btTable(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* tbl = table(dbTable);
     TableSchema* retVal = nullptr;
 
     if ( tbl != nullptr ) {
-       Brewken::DBTable idx = tbl->btTable();
+       DatabaseConstants::DbTableId idx = tbl->btTable();
        retVal = table( idx );
     }
     return retVal;
 }
 
-const QString DatabaseSchema::childTableName(Brewken::DBTable dbTable)
+const QString DatabaseSchema::childTableName(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* chld = childTable(dbTable);
 
     return chld == nullptr ? QString() : chld->tableName();
 }
 
-const QString DatabaseSchema::inRecTableName(Brewken::DBTable dbTable)
+const QString DatabaseSchema::inRecTableName(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* chld = inRecTable(dbTable);
 
     return chld == nullptr ? QString() : chld->tableName();
 }
 
-const QString DatabaseSchema::invTableName(Brewken::DBTable dbTable)
+const QString DatabaseSchema::invTableName(DatabaseConstants::DbTableId dbTable)
 {
     TableSchema* chld = invTable(dbTable);
 
     return chld == nullptr ? QString() : chld->tableName();
 }
 
-const QString DatabaseSchema::btTableName(Brewken::DBTable dbTable)
+const QString DatabaseSchema::btTableName(DatabaseConstants::DbTableId dbTable)
 {
    TableSchema* chld = btTable(dbTable);
 

@@ -1,5 +1,5 @@
 /**
- * brewnote.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _BREWNOTE_H
-#define _BREWNOTE_H
+#ifndef BREWNOTE_H
+#define BREWNOTE_H
 
 #include <QDomNode>
 #include <QDomDocument>
@@ -65,7 +65,6 @@ class Recipe;
 
 /*!
  * \class BrewNote
- *
  *
  * \brief Model for a brewnote record, which records what you did on brewday.
  */
@@ -223,8 +222,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   BrewNote(Brewken::DBTable table, int key);
-   BrewNote(Brewken::DBTable table, int key, QSqlRecord rec);
+   BrewNote(DatabaseConstants::DbTableId table, int key);
+   BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    BrewNote(QString name, bool cache = true);
 private:
@@ -269,7 +268,7 @@ private:
 };
 
 Q_DECLARE_METATYPE( QList<BrewNote*> )
-
+/*
 inline bool BrewNotePtrLt( BrewNote* lhs, BrewNote* rhs)
 {
    return *lhs < *rhs;
@@ -295,5 +294,5 @@ struct BrewNote_ptr_equals
       return *lhs == *rhs;
    }
 };
-
-#endif /* _BREWNOTE_H */
+*/
+#endif // BREWNOTE_H

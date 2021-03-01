@@ -1,5 +1,5 @@
 /**
- * style.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Style.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -173,11 +173,11 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Style(Brewken::DBTable table, int key);
+   Style(DatabaseConstants::DbTableId table, int key);
 public:
    Style(QString t_name, bool cacheOnly = true);
 private:
-   Style(Brewken::DBTable table, int key, QSqlRecord rec);
+   Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Style( Style const& other );
 
    QString m_category;

@@ -19,30 +19,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include "RecipeFormatter.h"
-#include "model/Style.h"
-#include "model/Brewnote.h"
-#include "model/Fermentable.h"
-#include "model/Equipment.h"
-#include "model/Hop.h"
-#include "Html.h"
-#include "model/Instruction.h"
-#include "model/Misc.h"
-#include "model/Yeast.h"
-#include "model/Mash.h"
-#include "model/Mashstep.h"
-#include "unit.h"
-#include "Brewken.h"
-#include "MainWindow.h"
 #include <QClipboard>
-#include <QObject>
-#include <QPrinter>
-#include <QPrintDialog>
-#include <QTextDocument>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QObject>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QPushButton>
+#include <QTextDocument>
+#include <QVBoxLayout>
+
+#include "Brewken.h"
+#include "Html.h"
+#include "MainWindow.h"
+#include "model/BrewNote.h"
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Instruction.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Misc.h"
+#include "model/Style.h"
+#include "model/Yeast.h"
+#include "RecipeFormatter.h"
+#include "unit.h"
 
 RecipeFormatter::RecipeFormatter(QObject* parent)
    : QObject(parent)

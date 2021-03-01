@@ -19,9 +19,6 @@
 #ifndef MASHSTEPTABLEMODEL_H
 #define MASHSTEPTABLEMODEL_H
 
-class MashStepTableModel;
-class MashStepItemDelegate;
-
 #include <QAbstractTableModel>
 #include <QWidget>
 #include <QModelIndex>
@@ -32,9 +29,11 @@ class MashStepItemDelegate;
 #include <QVector>
 #include <QTableView>
 
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Mash.h"
 #include "unit.h"
+
+class MashStepItemDelegate;
 
 enum{ MASHSTEPNAMECOL, MASHSTEPTYPECOL, MASHSTEPAMOUNTCOL, MASHSTEPTEMPCOL, MASHSTEPTARGETTEMPCOL, MASHSTEPTIMECOL, MASHSTEPNUMCOLS /*This one MUST be last*/};
 

@@ -1,5 +1,5 @@
 /**
- * yeast.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -55,7 +55,7 @@ QString Yeast::classNameStr()
 }
 
 //============================CONSTRUCTORS======================================
-Yeast::Yeast(Brewken::DBTable table, int key)
+Yeast::Yeast(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true ),
      m_typeString(QString()),
      m_type(static_cast<Yeast::Type>(0)),
@@ -82,7 +82,7 @@ Yeast::Yeast(Brewken::DBTable table, int key)
 }
 
 Yeast::Yeast(QString name, bool cache )
-   : NamedEntity(Brewken::YEASTTABLE, -1, name, true ),
+   : NamedEntity(DatabaseConstants::YEASTTABLE, -1, name, true ),
      m_typeString(QString()),
      m_type(static_cast<Yeast::Type>(0)),
      m_formString(QString()),
@@ -107,7 +107,7 @@ Yeast::Yeast(QString name, bool cache )
 {
 }
 
-Yeast::Yeast(Brewken::DBTable table, int key, QSqlRecord rec)
+Yeast::Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
      m_typeString(rec.value(kcolYeastType).toString()),
      m_type(static_cast<Yeast::Type>(types.indexOf(m_typeString))),

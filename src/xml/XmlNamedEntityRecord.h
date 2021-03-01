@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _XML_XMLNAMEDENTITYRECORD_H
-#define _XML_XMLNAMEDENTITYRECORD_H
+#ifndef XML_XMLNAMEDENTITYRECORD_H
+#define XML_XMLNAMEDENTITYRECORD_H
 #pragma once
 
 #include <memory> // For smart pointers
@@ -26,8 +26,8 @@
 #include <QVector>
 
 #include "database/Database.h"
-#include "model/Brewnote.h" ///
-#include "model/Instruction.h" ///
+#include "model/BrewNote.h"
+#include "model/Instruction.h"
 
 #include "model/NamedEntity.h"
 #include "xml/XQString.h"

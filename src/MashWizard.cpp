@@ -22,18 +22,18 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include "database/Database.h"
-#include "MashWizard.h"
-#include "model/Mash.h"
-#include "model/Mashstep.h"
-#include "model/Fermentable.h"
-#include <QMessageBox>
 #include <QButtonGroup>
-#include "HeatCalculations.h"
-#include "model/Equipment.h"
-#include "PhysicalConstants.h"
+#include <QMessageBox>
+
 #include "Algorithms.h"
+#include "database/Database.h"
+#include "HeatCalculations.h"
+#include "MashWizard.h"
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "PhysicalConstants.h"
 
 MashWizard::MashWizard(QWidget* parent) : QDialog(parent)
 {

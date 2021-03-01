@@ -1,5 +1,5 @@
 /**
- * mash.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -22,7 +22,7 @@
 #include <iostream>
 #include <string>
 #include <QVector>
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "Brewken.h"
 #include "database/Database.h"
 #include <QDomElement>
@@ -53,7 +53,7 @@ QString Mash::classNameStr()
    return name;
 }
 
-Mash::Mash(Brewken::DBTable table, int key)
+Mash::Mash(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true),
      m_grainTemp_c(0.0),
      m_notes(QString()),
@@ -68,7 +68,7 @@ Mash::Mash(Brewken::DBTable table, int key)
 }
 
 Mash::Mash(QString name, bool cache)
-   : NamedEntity(Brewken::MASHTABLE, -1, name, true),
+   : NamedEntity(DatabaseConstants::MASHTABLE, -1, name, true),
      m_grainTemp_c(0.0),
      m_notes(QString()),
      m_tunTemp_c(0.0),
@@ -81,7 +81,7 @@ Mash::Mash(QString name, bool cache)
 {
 }
 
-Mash::Mash(Brewken::DBTable table, int key, QSqlRecord rec)
+Mash::Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
      m_grainTemp_c(rec.value(kcolMashGrainTemp).toDouble()),
      m_notes(rec.value(kcolNotes).toString()),

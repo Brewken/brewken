@@ -1,5 +1,5 @@
 /**
- * EquipmentSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/EquipmentSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _EQUIPTABLESCHEMA_H
-#define _EQUIPTABLESCHEMA_H
+#ifndef EQUIPMENTSCHEMA_H
+#define EQUIPMENTSCHEMA_H
 
 // Column names
 static const QString kcolEquipBoilSize("boil_size");
@@ -55,4 +54,4 @@ static const QString kxmlPropHopUtil("HOP_UTILIZATION");
 static const QString kxmlPropGrainAbsorption("ABSORPTION");
 static const QString kxmlPropBoilingPoint("BOILING_POINT");
 
-#endif // define _EQUIPTABLESCHEMA_H
+#endif // EQUIPMENTSCHEMA_H

@@ -381,9 +381,9 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
    return true;
 }
 
-void MiscTableModel::changedInventory(Brewken::DBTable table, int invKey, QVariant val)
+void MiscTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
 {
-   if ( table == Brewken::MISCTABLE ) {
+   if ( table == DatabaseConstants::MISCTABLE ) {
       for( int i = 0; i < miscObs.size(); ++i ) {
          Misc* holdmybeer = miscObs.at(i);
 

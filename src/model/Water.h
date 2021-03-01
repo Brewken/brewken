@@ -1,5 +1,5 @@
 /**
- * water.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Water.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -150,8 +150,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Water(Brewken::DBTable table, int key);
-   Water(Brewken::DBTable table, int key, QSqlRecord rec);
+   Water(DatabaseConstants::DbTableId table, int key);
+   Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Water(Water const& other, bool cache = true);
 public:
    Water(QString name, bool cache = true);

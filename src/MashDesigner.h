@@ -16,23 +16,20 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef MASHDESIGNER_H
 #define MASHDESIGNER_H
 
-class MashDesigner;
+#include <QDialog>
+#include <QWidget>
 
 #include "ui_mashDesigner.h"
 #include "model/Recipe.h"
 #include "model/Mash.h"
-#include "model/Mashstep.h"
+#include "model/MashStep.h"
 #include "model/Equipment.h"
-#include <QDialog>
-#include <QWidget>
 
 /*!
  * \class MashDesigner
- *
  *
  * \brief View/controller dialog that gives you more control over mash design than MashWizard does.
  */

@@ -18,24 +18,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include <math.h>
 
 #include <xercesc/util/PlatformUtils.hpp>
-
-#include "Testing.h"
-#include <math.h>
-#include "model/Recipe.h"
-#include "model/Equipment.h"
-#include "database/Database.h"
-#include "model/Hop.h"
-#include "model/Fermentable.h"
-#include "model/Mash.h"
-#include "model/Mashstep.h"
-#include "Log.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QString>
 #include <QtTest/QtTest>
+
+#include "Testing.h"
+#include "database/Database.h"
+#include "Log.h"
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Recipe.h"
 
 QTEST_MAIN(Testing)
 

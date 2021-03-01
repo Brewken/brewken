@@ -1,5 +1,5 @@
 /**
- * salt.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -129,8 +129,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   Salt(Brewken::DBTable table, int key);
-   Salt(Brewken::DBTable table, int key, QSqlRecord rec);
+   Salt(DatabaseConstants::DbTableId table, int key);
+   Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Salt(Salt & other );
    Salt(QString name, bool cache = true);
 
