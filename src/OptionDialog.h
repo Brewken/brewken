@@ -1,7 +1,8 @@
 /**
- * OptionDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * OptionDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Rob Taylor <robtaylor@floopily.org>
@@ -17,34 +18,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef OPTIONDIALOG_H
+#define OPTIONDIALOG_H
 
-#ifndef _OPTIONDIALOG_H
-#define   _OPTIONDIALOG_H
-
-class OptionDialog;
-
-#include <QDialog>
-#include <QWidget>
 #include <QAbstractButton>
+#include <QCheckBox>
+#include <QDialog>
+#include <QIcon>
 #include <QMap>
 #include <QString>
 #include <QVector>
-#include <QIcon>
-#include <QCheckBox>
+#include <QWidget>
+
 #include "BtLineEdit.h"
 #include "ui_optionsDialog.h"
 #include "unit.h"
-#include "Log.h"
+#include "Logging.h"
 
 /*!
  * \class OptionDialog
  *
- *
  * \brief View/controller dialog to manage options.
  */
-class OptionDialog : public QDialog, public Ui::optionsDialog
-{
-   Q_OBJECT
+class OptionDialog : public QDialog, public Ui::optionsDialog {
+
 public:
    //! \brief Default constructor.
    OptionDialog(QWidget *parent=0);
@@ -110,8 +107,6 @@ public slots:
    //! \brief handle the dialogs for saving passwords
    void savePassword(bool state);
 
-   //! \brief enables/disables controls in Loggingtab based on checkboxes.
-   void setLoggingControlsState(bool state);
    void setFileLocationState(bool state);
 
 protected:
@@ -139,4 +134,4 @@ private:
    QVector<QIcon> langIcons;
 };
 
-#endif   /* _OPTIONDIALOG_H */
+#endif

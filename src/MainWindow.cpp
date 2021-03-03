@@ -87,6 +87,7 @@
 #include "FermentableSortFilterProxyModel.h"
 #include "FermentableTableModel.h"
 #include "FermentableTableModel.h"
+#include "HelpDialog.h"
 #include "HopDialog.h"
 #include "HopEditor.h"
 #include "HopSortFilterProxyModel.h"
@@ -232,9 +233,11 @@ public:
       return;
    }
 
+   // TODO Try making this a smart pointer
+   HelpDialog * helpDialog;
+
 private:
    QFileDialog* fileOpener;
-
    QString fileOpenDirectory;
 };
 
@@ -420,6 +423,7 @@ void MainWindow::setupCSS()
 void MainWindow::setupDialogs()
 {
    dialog_about = new AboutDialog(this);
+   this->pimpl->helpDialog = new HelpDialog(this);
    equipEditor = new EquipmentEditor(this);
    singleEquipEditor = new EquipmentEditor(this, true);
    fermDialog = new FermentableDialog(this);
@@ -702,6 +706,8 @@ void MainWindow::setupTriggers()
    // Connect actions defined in *.ui files to methods in code
    connect( actionExit, &QAction::triggered, this, &QWidget::close );                                                   // > File > Exit
    connect( actionAbout_Brewken, &QAction::triggered, dialog_about, &QWidget::show );                                // > About > About Brewken
+   connect( actionHelp, &QAction::triggered, this->pimpl->helpDialog, &QWidget::show );                                // > About > Help
+
    connect( actionNewRecipe, &QAction::triggered, this, &MainWindow::newRecipe );                                       // > File > New Recipe
    connect( actionImportFromXml, &QAction::triggered, this, &MainWindow::importFiles );                                // > File > Import Recipes
    connect( actionExportToXml, &QAction::triggered, this, &MainWindow::exportRecipe );                                 // > File > Export Recipes

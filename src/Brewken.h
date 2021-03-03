@@ -30,6 +30,29 @@
 
 #define CONFIG_VERSION 1
 
+#define BTICON ":/images/brewken.svg"
+//#define ICON96 ":/images/BrewkenIcon_96.png"
+#define GLASS ":/images/glass2.png"
+#define SMALLBARLEY ":/images/smallBarley.svg"
+#define SMALLHOP ":/images/smallHop.svg"
+#define SMALLWATER ":/images/smallWater.svg"
+#define SMALLYEAST ":/images/smallYeast.svg"
+#define SMALLKETTLE ":/images/smallKettle.svg"
+#define SMALLQUESTION ":/images/smallQuestion.svg"
+#define SMALLSTYLE ":/images/smallStyle.svg"
+#define SMALLPLUS ":/images/smallPlus.svg"
+#define SMALLMINUS ":/images/smallMinus.svg"
+#define SMALLARROW ":/images/smallArrow.svg"
+#define SMALLINFO ":/images/smallInfo.svg"
+#define SMALLOUTARROW ":/images/smallOutArrow.svg"
+#define SHRED ":/images/editshred.svg"
+#define EXITPNG ":/images/exit.svg"
+#define SAVEPNG ":/images/filesave.svg"
+#define SAVEDIRTYPNG ":/images/filesavedirty.svg"
+#define CLOCKPNG ":/images/clock.svg"
+#define SOUND ":/images/sound.png"
+#define STOP ":/images/alarm_stop.png"
+
 // need to use this to turn on Mac keyboard shortcuts (see https://doc.qt.io/qt-5/qkeysequence.html#qt_set_sequence_auto_mnemonic)
 extern void qt_set_sequence_auto_mnemonic(bool b);
 
@@ -49,7 +72,7 @@ extern void qt_set_sequence_auto_mnemonic(bool b);
 #include <QTranslator>
 
 #include "unitSystems/UnitSystem.h"
-#include "Log.h"
+#include "Logging.h"
 
 class NamedEntity;
 class MainWindow;
@@ -413,4 +436,4 @@ private:
  * Brewken is a cross-platform open source beer recipe software suite.
  */
 
-#endif   // BREWKEN_H
+#endif

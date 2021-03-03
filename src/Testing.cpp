@@ -1,7 +1,8 @@
 /**
- * Testing.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * Testing.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mike Evans <mikee@saxicola.co.uk>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -29,7 +30,7 @@
 
 #include "Testing.h"
 #include "database/Database.h"
-#include "Log.h"
+#include "Logging.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -101,12 +102,8 @@ void Testing::initTestCase()
    //Log test setup
    //Verify that the Logging initializes normally
    qDebug() << "Initiallizing Logging module";
-   Log::initializeLog();
-   //turning on logging to file
-   Log::loggingEnabled = true;
-   //turning off logging to stderr console, this is so you won't have to watch 100k rows generate in the console.
-   Log::isLoggingToStderr = false;
-   Log::logLevel = Log::LogType_DEBUG;
+   Logging::initializeLogging();
+   Logging::logLevel = Logging::LogLevel_DEBUG;
    qDebug() << "logging initialized";
 }
 
@@ -265,8 +262,6 @@ void Testing::postBoilLossOgTest()
 
 void Testing::testLogRotation()
 {
-   QCOMPARE(Log::loggingEnabled, true);
-
    //generate 40 000 log rows giving roughly 10 files with dummy/random logs
    // This should have to log rotate a few times leaving 5 log files in the directory which we can test for size and number of files.
    for (int i=0; i < 8000; i++)
@@ -277,31 +272,28 @@ void Testing::testLogRotation()
       qInfo() << QString("iteration %1-4; (%2)").arg(i).arg(randomStringGenerator());
    }
 
-   QFileInfoList fileList = Log::getLogFileList();
+   QFileInfoList fileList = Logging::getLogFileList();
    //There is always a "logFileCount" number of old files + 1 current file
-   QCOMPARE(fileList.size(), Log::logFileCount + 1);
+   QCOMPARE(fileList.size(), Logging::logFileCount + 1);
 
    for (int i = 0; i < fileList.size(); i++)
    {
       QFile f(QString(fileList.at(i).canonicalFilePath()));
       //Here we test if the file is more than 10% bigger than the specified logFileSize", if so, fail.
-      QVERIFY2(f.size() <= (Log::logFileSize * 1.1), "Wrong Sized file");
+      QVERIFY2(f.size() <= (Logging::logFileSize * 1.1), "Wrong Sized file");
    }
+   return;
 }
 
 void Testing::cleanupTestCase()
 {
    Brewken::cleanup();
-   QMutexLocker locker(&Log::mutex);
-   //Close the log file to avoind leaving hanging connections when removing all the files.
-   Log::closeLogFile();
-   //Clean up the jibberich logs from disk by removing the
-   QFileInfoList fileList = Log::getLogFileList();
-   for (int i = 0; i < fileList.size(); i++)
-   {
+   Logging::terminateLogging();
+   //Clean up the gibberish logs from disk by removing the
+   QFileInfoList fileList = Logging::getLogFileList();
+   for (int i = 0; i < fileList.size(); i++) {
       QFile(QString(fileList.at(i).canonicalFilePath())).remove();
    }
-   Log::logFilePath.rmdir(Log::logFilePath.canonicalPath());
 
    // Clear all persistent properties linked with this test suite.
    // It will clear all settings that are application specific, user-scoped, and in the Brewken namespace.
