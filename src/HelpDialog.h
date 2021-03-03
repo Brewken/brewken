@@ -1,8 +1,6 @@
 /**
- * config.in is part of Brewken, and is copyright the following authors 2009-2014:
- *   • Aidan Roberts <aidanr67@gmail.com>
- *   • Maxime Lavigne <duguigne@gmail.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
+ * HelpDialog.h is part of Brewken, and is copyright the following authors 2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -15,15 +13,31 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef CONFIG_IN
-#define CONFIG_IN
+#ifndef HELPDIALOG_H
+#define HELPDIALOG_H
 
-//===Things that will get configured by cmake===
+#include <memory> // For PImpl
 
-// These two only get used by Linux OS version.
-#define CONFIGDATADIR "${CONFIGDATADIR}"
-#define CONFIGDOCDIR "${CONFIGDOCDIR}"
+#include <QDialog>
+#include <QEvent>
 
-#define VERSIONSTRING "${BREWKEN_VERSION_MAJOR}.${BREWKEN_VERSION_MINOR}.${BREWKEN_VERSION_PATCH}"
+/*!
+ * \class HelpDialog
+ *
+ * \brief Gives user info on file locations and links to Brewken website(s).
+ */
+class HelpDialog : public QDialog {
+
+public:
+   HelpDialog(QWidget * parent = nullptr);
+   ~HelpDialog();
+
+   virtual void changeEvent(QEvent * event);
+
+private:
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
+};
 
 #endif

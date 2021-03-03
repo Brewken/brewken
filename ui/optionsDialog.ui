@@ -392,9 +392,6 @@
        </item>
        <item row="3" column="0">
         <widget class="QGroupBox" name="groupBox_LogFileLocation">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -446,13 +443,6 @@
            </layout>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBox_enableLogging">
-         <property name="text">
-          <string>Enable logging</string>
-         </property>
         </widget>
        </item>
        <item row="4" column="0">

@@ -119,6 +119,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/FermentableSortFilterProxyModel.cpp
     ${SRCDIR}/FermentableTableModel.cpp
     ${SRCDIR}/HeatCalculations.cpp
+    ${SRCDIR}/HelpDialog.cpp
     ${SRCDIR}/HopDialog.cpp
     ${SRCDIR}/HopEditor.cpp
     ${SRCDIR}/HopSortFilterProxyModel.cpp
@@ -129,7 +130,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/IbuMethods.cpp
     ${SRCDIR}/InstructionWidget.cpp
     ${SRCDIR}/InventoryFormatter.cpp
-    ${SRCDIR}/Log.cpp
+    ${SRCDIR}/Logging.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
     ${SRCDIR}/MashDesigner.cpp
@@ -296,13 +297,14 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/database/YeastSchema.h
     ${SRCDIR}/EquipmentButton.h
     ${SRCDIR}/EquipmentEditor.h
-    ${SRCDIR}/equipment.h
+    ${SRCDIR}/model/Equipment.h
     ${SRCDIR}/EquipmentListModel.h
     ${SRCDIR}/FermentableDialog.h
     ${SRCDIR}/FermentableEditor.h
     ${SRCDIR}/fermentable.h
     ${SRCDIR}/FermentableSortFilterProxyModel.h
     ${SRCDIR}/FermentableTableModel.h
+    ${SRCDIR}/HelpDialog.h
     ${SRCDIR}/HopDialog.h
     ${SRCDIR}/HopEditor.h
     ${SRCDIR}/HopSortFilterProxyModel.h
@@ -310,7 +312,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/HydrometerTool.h
     ${SRCDIR}/IbuGuSlider.h
     ${SRCDIR}/InstructionWidget.h
-    ${SRCDIR}/Log.h
+#    ${SRCDIR}/Logging.h
     ${SRCDIR}/MainWindow.h
     ${SRCDIR}/MashButton.h
     ${SRCDIR}/MashDesigner.h

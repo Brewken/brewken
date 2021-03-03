@@ -1666,6 +1666,8 @@
     </property>
     <addaction name="actionManual"/>
     <addaction name="separator"/>
+    <addaction name="actionHelp"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout_Brewken"/>
    </widget>
    <widget class="QMenu" name="menuFile">
@@ -1802,6 +1804,18 @@
    <addaction name="actionRefractometer_Tools"/>
    <addaction name="separator"/>
   </widget>
+  <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="../brewken.qrc">
+     <normaloff>:/images/smallQuestion.svg</normaloff>:/images/smallQuestion.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Help</string>
+   </property>
+   <property name="toolTip">
+    <string>Help</string>
+   </property>
+  </action>
   <action name="actionAbout_Brewken">
    <property name="icon">
     <iconset resource="../brewken.qrc">

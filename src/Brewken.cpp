@@ -34,30 +34,29 @@
 
 #include <iostream>
 
+#include <QDebug>
+#include <QDesktopServices>
+#include <QDomElement>
+#include <QDomNode>
+#include <QDomNodeList>
+#include <QDomText>
+#include <QEventLoop>
 #include <QFile>
 #include <QIODevice>
-#include <QString>
-#include <QDomNode>
-#include <QDomElement>
-#include <QDomText>
-#include <QDomNodeList>
-#include <QTextStream>
-#include <QObject>
-#include <QLocale>
 #include <QLibraryInfo>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QEventLoop>
-#include <QUrl>
-#include <QtNetwork/QNetworkReply>
-#include <QObject>
+#include <QLocale>
 #include <QMessageBox>
-#include <QDesktopServices>
-#include <QSharedPointer>
-#include <QtNetwork/QNetworkRequest>
+#include <QObject>
 #include <QPixmap>
-#include <QSplashScreen>
 #include <QSettings>
-#include <QDebug>
+#include <QSharedPointer>
+#include <QSplashScreen>
+#include <QString>
+#include <QTextStream>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QUrl>
 
 
 #include "Algorithms.h"
@@ -424,7 +423,7 @@ bool Brewken::initialize(const QString &userDirectory)
     * this is to get the really early logging out put to the console.
     * further down we read in the users settings and then update the settings in the logging library
     */
-   Log::initializeLog();
+   Logging::initializeLogging();
 
    // Use overwride if present.
    if (!userDirectory.isEmpty() && QDir(userDirectory).exists()) {
@@ -447,12 +446,10 @@ bool Brewken::initialize(const QString &userDirectory)
    if ( option("hadOldConfig", false).toBool() )
       convertPersistentOptions();
 
+   // This call will set the proper location of the logging directory (along with lots of other config options)
    readSystemOptions();
+
    loadMap();
-   /* Here we update the settings opening the file at the location specified in the Application settings and users settings.
-    * the readSystemOptions(); will update the the logFilePath in the Log library, then we run the changeDirectory to apply the settings.
-    */
-   Log::changeDirectory();
 
    // Make sure all the necessary directories and files we need exist before starting.
    ensureDirectoriesExist();
@@ -1012,17 +1009,12 @@ void Brewken::readSystemOptions()
    _dbType = static_cast<Brewken::DBTypes>(option("dbType",Brewken::SQLITE).toInt());
 
    //======================Logging options =======================
-   Log::loggingEnabled = option("LoggingEnabled", false).toBool();
-   Log::logLevel = Log::getLogTypeFromString(QString(option("LoggingLevel", "INFO").toString()));
-   Log::logFilePath = QDir(option("LogFilePath", getUserDataDir().canonicalPath()).toString());
-   Log::logUseConfigDir = option("LoggingUseConfigDir", true).toBool();
-   if( Log::logUseConfigDir )
+   Logging::logLevel = Logging::getLogLevelFromString(QString(option("LoggingLevel", "INFO").toString()));
+   Logging::setDirectory(QDir(option("LogFilePath", getUserDataDir().canonicalPath()).toString()));
+   Logging::logUseConfigDir = option("LoggingUseConfigDir", true).toBool();
+   if( Logging::logUseConfigDir )
    {
-#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-      Log::logFilePath = getUserDataDir().canonicalPath();
-#else
-      Log::logFilePath.setPath(getUserDataDir().canonicalPath());
-#endif
+      Logging::setDirectory(getUserDataDir().canonicalPath());
    }
 }
 
@@ -1086,10 +1078,9 @@ void Brewken::saveSystemOptions()
          break;
    }
 
-   setOption("LoggingEnabled", Log::loggingEnabled);
-   setOption("LoggingLevel", Log::getTypeName(Log::logLevel));
-   setOption("LogFilePath", Log::logFilePath.absolutePath());
-   setOption("LoggingUseConfigDir", Log::logUseConfigDir);
+   setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
+   setOption("LogFilePath", Logging::getDirectory().canonicalPath());
+   setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
 }
 
 // the defaults come from readSystemOptions. This just fleshes out the hash

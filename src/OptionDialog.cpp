@@ -1,11 +1,12 @@
 /**
- * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Idar Lund <idarlund@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -23,6 +24,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include "OptionDialog.h"
 #include "Brewken.h"
@@ -41,8 +44,6 @@
 #include "unitSystems/DiastaticPowerUnitSystem.h"
 #include "unitSystems/CelsiusTempUnitSystem.h"
 #include "database/Database.h"
-#include <QMessageBox>
-#include <QFileDialog>
 #include "MainWindow.h"
 
 OptionDialog::OptionDialog(QWidget* parent)
@@ -158,16 +159,13 @@ OptionDialog::OptionDialog(QWidget* parent)
    connect( buttonBox, &QDialogButtonBox::rejected, this, &OptionDialog::cancel );
 
    //Populate options on the "Logging" tab
-   loggingLevelComboBox->addItem(tr("Information"), QVariant(Log::LogType_INFO));
-   loggingLevelComboBox->addItem(tr("Warning"), QVariant(Log::LogType_WARNING));
-   loggingLevelComboBox->addItem(tr("Error"), QVariant(Log::LogType_ERROR));
-   loggingLevelComboBox->addItem(tr("Debug"), QVariant(Log::LogType_DEBUG));
-   loggingLevelComboBox->setCurrentIndex(Log::logLevel);
-   checkBox_enableLogging->setChecked(Log::loggingEnabled);
-   checkBox_LogFileLocationUseDefault->setChecked(Log::logUseConfigDir);
-   lineEdit_LogFileLocation->setText(Log::logFilePath.absolutePath());
-   setLoggingControlsState(Log::loggingEnabled);
-   setFileLocationState(Log::logUseConfigDir);
+   for (auto ii : Logging::levelDetails) {
+      loggingLevelComboBox->addItem(ii.description, QVariant(ii.level));
+   }
+   loggingLevelComboBox->setCurrentIndex(Logging::logLevel);
+   checkBox_LogFileLocationUseDefault->setChecked(Logging::logUseConfigDir);
+   lineEdit_LogFileLocation->setText(Logging::getDirectory().absolutePath());
+   setFileLocationState(Logging::logUseConfigDir);
 
    // database panel stuff
    comboBox_engine->addItem( tr("SQLite (default)"), QVariant(Brewken::SQLITE));
@@ -181,7 +179,6 @@ OptionDialog::OptionDialog(QWidget* parent)
 
    // Set the signals
    connect( checkBox_savePassword, &QAbstractButton::clicked, this, &OptionDialog::savePassword);
-   connect( checkBox_enableLogging, &QAbstractButton::clicked, this, &OptionDialog::setLoggingControlsState);
    connect( checkBox_LogFileLocationUseDefault, &QAbstractButton::clicked, this, &OptionDialog::setFileLocationState);
 
    connect( btStringEdit_hostname, &BtLineEdit::textModified, this, &OptionDialog::testRequired);
@@ -483,19 +480,16 @@ void OptionDialog::saveAndClose()
    Brewken::setOption("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
 
    // Saving Logging Options to the Log object
-   Log::loggingEnabled = checkBox_enableLogging->isChecked();
-   Log::logLevel = static_cast<Log::LogType>(loggingLevelComboBox->currentData().toInt());
-   Log::logFilePath = QDir(lineEdit_LogFileLocation->text());
-   Log::logUseConfigDir = checkBox_LogFileLocationUseDefault->isChecked();
-   if ( Log::logUseConfigDir )
+   Logging::logLevel = static_cast<Logging::Level>(loggingLevelComboBox->currentData().toInt());
+   Logging::setDirectory(QDir(lineEdit_LogFileLocation->text()));
+   Logging::logUseConfigDir = checkBox_LogFileLocationUseDefault->isChecked();
+   if ( Logging::logUseConfigDir )
    {
-      Log::logFilePath = Brewken::getConfigDir();
+      Logging::setDirectory(Brewken::getConfigDir());
    }
-   Brewken::setOption("LoggingEnabled", Log::loggingEnabled);
-   Brewken::setOption("LoggingLevel", Log::getTypeName(Log::logLevel));
-   Brewken::setOption("LogFilePath", Log::logFilePath.absolutePath());
-   Brewken::setOption("LoggingUseConfigDir", Log::logUseConfigDir);
-   Log::changeDirectory();
+   Brewken::setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
+   Brewken::setOption("LogFilePath", Logging::getDirectory().absolutePath());
+   Brewken::setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
    // Make sure the main window updates.
    if( Brewken::mainWindow() )
       Brewken::mainWindow()->showChanges();
@@ -894,12 +888,6 @@ void OptionDialog::savePassword(bool state)
       QMessageBox::warning(nullptr, QObject::tr("Plaintext"),
                               QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the password. By enabling this option, you take full responsibility for any potential problems."));
    }
-}
-
-void OptionDialog::setLoggingControlsState(bool state)
-{
-   groupBox_loggingLevels->setEnabled(state);
-   groupBox_LogFileLocation->setEnabled(state);
 }
 
 void OptionDialog::setFileLocationState(bool state)

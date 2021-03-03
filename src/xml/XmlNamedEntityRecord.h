@@ -80,8 +80,8 @@ protected:
          Q_FUNC_INFO << "Searching list of " << listOfAllStored.size() << " existing " << this->namedEntityClassName <<
          " objects for duplicate with the one we are reading in";
       auto matchingEntity = std::find_if(listOfAllStored.begin(),
-                                                      listOfAllStored.end(),
-                                                      [currentEntity](NE * ne) {return *ne == *currentEntity;});
+                                         listOfAllStored.end(),
+                                         [currentEntity](NE * ne) {return *ne == *currentEntity;});
       if (matchingEntity != listOfAllStored.end()) {
          qDebug() << Q_FUNC_INFO << "Found a match for " << this->namedEntity->name();
          // Set our pointer to the Hop/Yeast/Fermentable/etc that we already have stored in the database, so that any
