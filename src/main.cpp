@@ -18,23 +18,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xalanc/Include/PlatformDefinitions.hpp>
 
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QMessageBox>
 #include <QSharedMemory>
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xalanc/Include/PlatformDefinitions.hpp>
-#include "config.h"
+
 #include "beerxml.h"
 #include "Brewken.h"
+#include "config.h"
 #include "database/Database.h"
+#include "PersistentSettings.h"
 
 void importFromXml(const QString & filename);
 void createBlankDb(const QString & filename);
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
 
    // Initialize Xerces XML tools
@@ -165,7 +166,7 @@ void importFromXml(const QString & filename) {
       exit(1);
    }
     Database::dropInstance();
-    Brewken::setOption("converted", QDate().currentDate().toString());
+    PersistentSettings::setOption("converted", QDate().currentDate().toString());
     exit(0);
 }
 

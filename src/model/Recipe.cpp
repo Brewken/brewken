@@ -1,5 +1,5 @@
 /**
- * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -24,39 +24,38 @@
  */
 #include "model/Recipe.h"
 
-#include "model/Instruction.h"
-#include "Brewken.h"
-#include "database/Database.h"
-
 #include <cmath> // For pow/log
 
-#include <QList>
 #include <QDate>
-#include <QInputDialog>
-#include <QObject>
 #include <QDebug>
+#include <QInputDialog>
+#include <QList>
+#include <QObject>
 #include <QSharedPointer>
 
-#include "model/Style.h"
-#include "model/Misc.h"
+#include "Algorithms.h"
+#include "Brewken.h"
+#include "ColorMethods.h"
+#include "database/Database.h"
+#include "database/RecipeSchema.h"
+#include "database/TableSchemaConst.h"
+#include "HeatCalculations.h"
+#include "IbuMethods.h"
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Instruction.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
-#include "model/Hop.h"
-#include "model/Fermentable.h"
-#include "model/Equipment.h"
-#include "model/Yeast.h"
-#include "model/Water.h"
+#include "model/Misc.h"
 #include "model/Salt.h"
-#include "PreInstruction.h"
-#include "Algorithms.h"
-#include "IbuMethods.h"
-#include "ColorMethods.h"
-#include "HeatCalculations.h"
+#include "model/Style.h"
+#include "model/Water.h"
+#include "model/Yeast.h"
+#include "PersistentSettings.h"
 #include "PhysicalConstants.h"
+#include "PreInstruction.h"
 #include "QueuedMethod.h"
-
-#include "database/TableSchemaConst.h"
-#include "database/RecipeSchema.h"
 
 static const QString kMashStepSection("mashStepTableModel");
 static const QString kMiscTableSection("miscTableModel");
@@ -2118,8 +2117,8 @@ double Recipe::ibuFromHop(Hop const* hop)
 {
    Equipment* equip = equipment();
    double ibus = 0.0;
-   double fwhAdjust = Brewken::toDouble(Brewken::option("firstWortHopAdjustment", 1.1).toString(), "Recipe::ibmFromHop()");
-   double mashHopAdjust = Brewken::toDouble(Brewken::option("mashHopAdjustment", 0).toString(), "Recipe::ibmFromHop()");
+   double fwhAdjust = Brewken::toDouble(PersistentSettings::option("firstWortHopAdjustment", 1.1).toString(), "Recipe::ibmFromHop()");
+   double mashHopAdjust = Brewken::toDouble(PersistentSettings::option("mashHopAdjustment", 0).toString(), "Recipe::ibmFromHop()");
 
    if( hop == nullptr )
       return 0.0;

@@ -109,8 +109,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/DatabaseSchema.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
     ${SRCDIR}/database/PropertySchema.cpp
-    ${SRCDIR}/database/TableSchema.cpp
     ${SRCDIR}/database/TableSchemaConst.cpp
+    ${SRCDIR}/database/TableSchema.cpp
     ${SRCDIR}/EquipmentButton.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
@@ -163,6 +163,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/NamedMashEditor.cpp
     ${SRCDIR}/OgAdjuster.cpp
     ${SRCDIR}/OptionDialog.cpp
+    ${SRCDIR}/PersistentSettings.cpp
     ${SRCDIR}/PitchDialog.cpp
     ${SRCDIR}/PreInstruction.cpp
     ${SRCDIR}/PrimingDialog.cpp

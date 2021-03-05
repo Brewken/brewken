@@ -17,9 +17,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _UNIT_H
-#define _UNIT_H
+#ifndef UNIT_H
+#define UNIT_H
 
 class Unit;
 class Units; // A container of instances.
@@ -467,7 +466,7 @@ public:
 
 // ================ Density =======================
 // Specific gravity (aka, Sg) will be the standard unit, since that is how we
-// store things in teh database.
+// store things in the database.
 //
 class SgUnit : public Unit
 {
@@ -560,4 +559,4 @@ public:
    static WKUnit *wk;
 };
 
-#endif // _UNIT_H
+#endif

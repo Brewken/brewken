@@ -1,5 +1,5 @@
 /**
- * BtLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2020::
+ * BtLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -20,16 +20,18 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "BtLineEdit.h"
-#include "Brewken.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/UnitSystem.h"
-#include "unit.h"
-#include "Algorithms.h"
+
 #include <QSettings>
 #include <QDebug>
 #include <QStyle>
+
+#include "Algorithms.h"
+#include "Brewken.h"
+#include "PersistentSettings.h"
+#include "unitSystems/UnitSystems.h"
+#include "unitSystems/UnitSystem.h"
+#include "unit.h"
 
 BtLineEdit::BtLineEdit(QWidget *parent, Unit::UnitType type, QString const & maximalDisplayString) :
    QLineEdit(parent),
@@ -128,19 +130,18 @@ double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool 
       if ( _forceUnit != Unit::noUnit )
          dspUnit = _forceUnit;
       else
-         dspUnit   = (Unit::unitDisplay)Brewken::option(_editField, Unit::noUnit, _section, Brewken::UNIT).toInt();
+         dspUnit   = static_cast<Unit::unitDisplay>(PersistentSettings::option(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
 
       // If the display scale is forced, use this scale as the default one.
       if( _forceScale != Unit::noScale )
          dspScale = _forceScale;
       else
-         dspScale  = (Unit::unitScale)Brewken::option(_editField, Unit::noScale, _section, Brewken::SCALE).toInt();
+         dspScale  = static_cast<Unit::unitScale>(PersistentSettings::option(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
    }
 
    // Find the unit system containing dspUnit
-   temp = Brewken::findUnitSystem(_units,dspUnit);
-   if ( temp )
-   {
+   temp = Brewken::findUnitSystem(_units, dspUnit);
+   if ( temp ) {
       // If we found it, find the unit referred by dspScale
       works = temp->scaleUnit(dspScale);
       if (! works )
@@ -170,12 +171,13 @@ QString BtLineEdit::displayAmount( double amount, int precision)
    Unit::unitDisplay unitDsp;
    Unit::unitScale scale;
 
-   if ( _forceUnit != Unit::noUnit )
+   if ( _forceUnit != Unit::noUnit ) {
       unitDsp = _forceUnit;
-   else
-      unitDsp  = (Unit::unitDisplay)Brewken::option(_editField, Unit::noUnit, _section, Brewken::UNIT).toInt();
+   } else {
+      unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::option(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+   }
 
-   scale    = (Unit::unitScale)Brewken::option(_editField, Unit::noScale, _section, Brewken::SCALE).toInt();
+   scale = static_cast<Unit::unitScale>(PersistentSettings::option(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the

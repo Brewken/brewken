@@ -1,5 +1,5 @@
 /**
- * YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -21,27 +21,28 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QAbstractTableModel>
-#include <QAbstractItemModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QItemDelegate>
-#include <QStyleOptionViewItem>
-#include <QComboBox>
-#include <QLineEdit>
-#include <QString>
-#include <QVector>
-#include <QHeaderView>
-
-#include "database/Database.h"
-#include "model/Yeast.h"
 #include "YeastTableModel.h"
-#include "unit.h"
+
+#include <QAbstractItemModel>
+#include <QAbstractTableModel>
+#include <QComboBox>
+#include <QHeaderView>
+#include <QItemDelegate>
+#include <QLineEdit>
+#include <QModelIndex>
+#include <QString>
+#include <QStyleOptionViewItem>
+#include <QVariant>
+#include <QVector>
+#include <QWidget>
+
 #include "Brewken.h"
-#include "model/Recipe.h"
+#include "database/Database.h"
 #include "MainWindow.h"
+#include "model/Recipe.h"
+#include "model/Yeast.h"
+#include "PersistentSettings.h"
+#include "unit.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable)
    : QAbstractTableModel(parent),
@@ -439,7 +440,7 @@ Unit::unitDisplay YeastTableModel::displayUnit(int column) const
    if ( attribute.isEmpty() )
       return Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::option(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
 Unit::unitScale YeastTableModel::displayScale(int column) const
@@ -449,7 +450,7 @@ Unit::unitScale YeastTableModel::displayScale(int column) const
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::option(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -464,8 +465,8 @@ void YeastTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayUnit,this->objectName(),Brewken::UNIT);
-   Brewken::setOption(attribute,Unit::noScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::setOption(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
+   PersistentSettings::setOption(attribute,Unit::noScale,this->objectName(),PersistentSettings::SCALE);
 
    /* Disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )
@@ -486,7 +487,7 @@ void YeastTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::setOption(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
 
    /* disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )

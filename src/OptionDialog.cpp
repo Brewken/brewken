@@ -24,27 +24,29 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include <QMessageBox>
-#include <QFileDialog>
-
 #include "OptionDialog.h"
+
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "Brewken.h"
 #include "BtLineEdit.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/USWeightUnitSystem.h"
-#include "unitSystems/SIWeightUnitSystem.h"
-#include "unitSystems/ImperialVolumeUnitSystem.h"
-#include "unitSystems/USVolumeUnitSystem.h"
-#include "unitSystems/SIVolumeUnitSystem.h"
-#include "unitSystems/FahrenheitTempUnitSystem.h"
-#include "unitSystems/EbcColorUnitSystem.h"
-#include "unitSystems/SrmColorUnitSystem.h"
-#include "unitSystems/PlatoDensityUnitSystem.h"
-#include "unitSystems/SgDensityUnitSystem.h"
-#include "unitSystems/DiastaticPowerUnitSystem.h"
-#include "unitSystems/CelsiusTempUnitSystem.h"
 #include "database/Database.h"
 #include "MainWindow.h"
+#include "PersistentSettings.h"
+#include "unitSystems/CelsiusTempUnitSystem.h"
+#include "unitSystems/DiastaticPowerUnitSystem.h"
+#include "unitSystems/EbcColorUnitSystem.h"
+#include "unitSystems/FahrenheitTempUnitSystem.h"
+#include "unitSystems/ImperialVolumeUnitSystem.h"
+#include "unitSystems/PlatoDensityUnitSystem.h"
+#include "unitSystems/SgDensityUnitSystem.h"
+#include "unitSystems/SIVolumeUnitSystem.h"
+#include "unitSystems/SIWeightUnitSystem.h"
+#include "unitSystems/SrmColorUnitSystem.h"
+#include "unitSystems/UnitSystems.h"
+#include "unitSystems/USVolumeUnitSystem.h"
+#include "unitSystems/USWeightUnitSystem.h"
 
 OptionDialog::OptionDialog(QWidget* parent)
 {
@@ -174,7 +176,7 @@ OptionDialog::OptionDialog(QWidget* parent)
    connect( pushButton_testConnection, &QAbstractButton::clicked, this, &OptionDialog::testConnection);
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(Brewken::option("dbType", Brewken::SQLITE).toInt());
+   int idx = comboBox_engine->findData(PersistentSettings::option("dbType", Brewken::SQLITE).toInt());
    setDbDialog(static_cast<Brewken::DBTypes>(idx));
 
    // Set the signals
@@ -309,14 +311,14 @@ void OptionDialog::saveAndClose()
          }
          // Database engine stuff
          int engine = comboBox_engine->currentData().toInt();
-         Brewken::setOption("dbType", engine);
+         PersistentSettings::setOption("dbType", engine);
          // only write these changes when switching TO pgsql
          if ( engine == Brewken::PGSQL ) {
-            Brewken::setOption("dbHostname", btStringEdit_hostname->text());
-            Brewken::setOption("dbPortnum", btStringEdit_portnum->text());
-            Brewken::setOption("dbSchema", btStringEdit_schema->text());
-            Brewken::setOption("dbName", btStringEdit_dbname->text());
-            Brewken::setOption("dbUsername", btStringEdit_username->text());
+            PersistentSettings::setOption("dbHostname", btStringEdit_hostname->text());
+            PersistentSettings::setOption("dbPortnum", btStringEdit_portnum->text());
+            PersistentSettings::setOption("dbSchema", btStringEdit_schema->text());
+            PersistentSettings::setOption("dbName", btStringEdit_dbname->text());
+            PersistentSettings::setOption("dbUsername", btStringEdit_username->text());
          }
          QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken to connect to the new database"));
       }
@@ -327,10 +329,10 @@ void OptionDialog::saveAndClose()
    }
 
    if ( saveDbConfig && checkBox_savePassword->checkState() == Qt::Checked ) {
-      Brewken::setOption("dbPassword", btStringEdit_password->text());
+      PersistentSettings::setOption("dbPassword", btStringEdit_password->text());
    }
    else {
-      Brewken::removeOption("dbPassword");
+      PersistentSettings::removeOption("dbPassword");
    }
 
    switch (weightComboBox->itemData(weightComboBox->currentIndex()).toInt(&okay))
@@ -463,7 +465,7 @@ void OptionDialog::saveAndClose()
          }
 
          Brewken::userDataDir.setPath(newUserDataDir);
-         Brewken::setOption("user_data_dir", newUserDataDir);
+         PersistentSettings::setOption("user_data_dir", newUserDataDir);
          QMessageBox::information(
             this,
             tr("Restart"),
@@ -471,13 +473,13 @@ void OptionDialog::saveAndClose()
          );
       }
 
-      Brewken::setOption("maximum", spinBox_numBackups->value(), "backups");
-      Brewken::setOption("frequency", spinBox_frequency->value(), "backups");
-      Brewken::setOption("directory", btStringEdit_backupDir->text(), "backups");
+      PersistentSettings::setOption("maximum", spinBox_numBackups->value(), "backups");
+      PersistentSettings::setOption("frequency", spinBox_frequency->value(), "backups");
+      PersistentSettings::setOption("directory", btStringEdit_backupDir->text(), "backups");
    }
 
-   Brewken::setOption("mashHopAdjustment", ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
-   Brewken::setOption("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
+   PersistentSettings::setOption("mashHopAdjustment", ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
+   PersistentSettings::setOption("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
 
    // Saving Logging Options to the Log object
    Logging::logLevel = static_cast<Logging::Level>(loggingLevelComboBox->currentData().toInt());
@@ -487,9 +489,9 @@ void OptionDialog::saveAndClose()
    {
       Logging::setDirectory(Brewken::getConfigDir());
    }
-   Brewken::setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
-   Brewken::setOption("LogFilePath", Logging::getDirectory().absolutePath());
-   Brewken::setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
+   PersistentSettings::setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
+   PersistentSettings::setOption("LogFilePath", Logging::getDirectory().absolutePath());
+   PersistentSettings::setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
    // Make sure the main window updates.
    if( Brewken::mainWindow() )
       Brewken::mainWindow()->showChanges();
@@ -525,29 +527,29 @@ void OptionDialog::showChanges()
    btStringEdit_dataDir->setText(Brewken::getUserDataDir().canonicalPath());
 
    // Backup stuff
-   btStringEdit_backupDir->setText( Brewken::option("directory", Brewken::getUserDataDir().canonicalPath(), "backups").toString() );
-   spinBox_numBackups->setValue( Brewken::option("maximum", 10, "backups").toInt() );
-   spinBox_frequency->setValue( Brewken::option("frequency", 4, "backups").toInt() );
+   btStringEdit_backupDir->setText( PersistentSettings::option("directory", Brewken::getUserDataDir().canonicalPath(), "backups").toString() );
+   spinBox_numBackups->setValue( PersistentSettings::option("maximum", 10, "backups").toInt() );
+   spinBox_frequency->setValue( PersistentSettings::option("frequency", 4, "backups").toInt() );
 
    // The IBU modifications. These will all be calculated from a 60 min boil. This is gonna get confusing.
-   double amt = Brewken::toDouble(Brewken::option("mashHopAdjustment",0).toString(), "OptionDialog::showChanges()");
+   double amt = Brewken::toDouble(PersistentSettings::option("mashHopAdjustment",0).toString(), "OptionDialog::showChanges()");
    ibuAdjustmentMashHopDoubleSpinBox->setValue(amt*100);
 
-   amt = Brewken::toDouble(Brewken::option("firstWortHopAdjustment",1.1).toString(), "OptionDialog::showChanges()");
+   amt = Brewken::toDouble(PersistentSettings::option("firstWortHopAdjustment",1.1).toString(), "OptionDialog::showChanges()");
    ibuAdjustmentFirstWortDoubleSpinBox->setValue(amt*100);
 
    // Database stuff -- this looks weird, but trust me. We want SQLITE to be
    // the default for this field
-   int tmp = Brewken::option("dbType",Brewken::SQLITE).toInt() - 1;
+   int tmp = PersistentSettings::option("dbType",Brewken::SQLITE).toInt() - 1;
    comboBox_engine->setCurrentIndex(tmp);
 
-   btStringEdit_hostname->setText(Brewken::option("dbHostname","localhost").toString());
-   btStringEdit_portnum->setText(Brewken::option("dbPort","5432").toString());
-   btStringEdit_schema->setText(Brewken::option("dbSchema","public").toString());
-   btStringEdit_dbname->setText(Brewken::option("dbName","brewken").toString());
-   btStringEdit_username->setText(Brewken::option("dbUsername","brewken").toString());
-   btStringEdit_password->setText(Brewken::option("dbPassword","").toString());
-   checkBox_savePassword->setChecked( Brewken::hasOption("dbPassword") );
+   btStringEdit_hostname->setText(PersistentSettings::option("dbHostname","localhost").toString());
+   btStringEdit_portnum->setText(PersistentSettings::option("dbPort","5432").toString());
+   btStringEdit_schema->setText(PersistentSettings::option("dbSchema","public").toString());
+   btStringEdit_dbname->setText(PersistentSettings::option("dbName","brewken").toString());
+   btStringEdit_username->setText(PersistentSettings::option("dbUsername","brewken").toString());
+   btStringEdit_password->setText(PersistentSettings::option("dbPassword","").toString());
+   checkBox_savePassword->setChecked( PersistentSettings::hasOption("dbPassword") );
 
    status = OptionDialog::NOCHANGE;
    changeColors();

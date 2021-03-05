@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "Testing.h"
+
 #include <math.h>
 
 #include <xercesc/util/PlatformUtils.hpp>
@@ -28,7 +30,6 @@
 #include <QString>
 #include <QtTest/QtTest>
 
-#include "Testing.h"
 #include "database/Database.h"
 #include "Logging.h"
 #include "model/Equipment.h"
@@ -37,6 +38,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
+#include "PersistentSettings.h"
 
 QTEST_MAIN(Testing)
 
@@ -57,9 +59,9 @@ void Testing::initTestCase()
    QCoreApplication::setApplicationName("brewken-test");
 
    // Set options so that any data modification does not affect any other data
-   Brewken::setOption("user_data_dir", QDir::tempPath());
-   Brewken::setOption("color_formula", "morey");
-   Brewken::setOption("ibu_formula", "tinseth");
+   PersistentSettings::setOption("user_data_dir", QDir::tempPath());
+   PersistentSettings::setOption("color_formula", "morey");
+   PersistentSettings::setOption("ibu_formula", "tinseth");
 
    // Tell Brewken not to require any "user" input on starting
    Brewken::setInteractive(false);

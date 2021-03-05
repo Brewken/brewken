@@ -70,6 +70,7 @@
 #include "model/Mash.h"
 #include "model/Salt.h"
 #include "model/Water.h"
+#include "PersistentSettings.h"
 #include "unit.h"
 #include "unitSystems/CelsiusTempUnitSystem.h"
 #include "unitSystems/DiastaticPowerUnitSystem.h"
@@ -425,26 +426,26 @@ bool Brewken::initialize(const QString &userDirectory)
     */
    Logging::initializeLogging();
 
-   // Use overwride if present.
+   // If a specific user data directory was specified via command-line parameter, we use that.  Otherwise we look for a
+   // value remembered from the last run of the program.  And failing that we use the default.
    if (!userDirectory.isEmpty() && QDir(userDirectory).exists()) {
       userDataDir.setPath(QDir(userDirectory).canonicalPath());
-   }
-   // Use directory from app settings.
-   else if (hasOption("user_data_dir") && QDir(option("user_data_dir","").toString()).exists()) {
-      userDataDir.setPath( QDir(option("user_data_dir","").toString()).canonicalPath());
+   } else if (PersistentSettings::hasOption("user_data_dir") &&
+              QDir(PersistentSettings::option("user_data_dir","").toString()).exists()) {
+      userDataDir.setPath(
+         QDir(PersistentSettings::option("user_data_dir", "").toString()).canonicalPath()
+      );
 
-   }
-   // Guess where to put it.
-   else {
+   } else {
       qWarning() << QString("User data directory not specified or doesn't exist - using default.");
-      userDataDir = getDefaultUserDataDir();
+      userDataDir = Brewken::getDefaultUserDataDir();
    }
 
    // If the old options file exists, convert it. Otherwise, just get the
    // system options. I *think* this will work. The installer copies the old
    // one into the new place on Windows.
-   if ( option("hadOldConfig", false).toBool() )
-      convertPersistentOptions();
+//   if ( option("hadOldConfig", false).toBool() )
+//      convertPersistentOptions();
 
    // This call will set the proper location of the logging directory (along with lots of other config options)
    readSystemOptions();
@@ -457,8 +458,8 @@ bool Brewken::initialize(const QString &userDirectory)
    // If the directory doesn't exist, canonicalPath() will return an empty
    // string. By waiting until after we know the directory is created, we
    // make sure it isn't empty
-   if ( ! hasOption("user_data_dir") ) {
-      setOption("user_data_dir", userDataDir.canonicalPath());
+   if (!PersistentSettings::hasOption("user_data_dir")) {
+      PersistentSettings::setOption("user_data_dir", userDataDir.canonicalPath());
    }
 
    loadTranslations(); // Do internationalization.
@@ -484,7 +485,7 @@ bool Brewken::initialize(const QString &userDirectory)
 Brewken::DBTypes Brewken::dbType()
 {
    if ( _dbType == Brewken::NODB )
-      _dbType = static_cast<Brewken::DBTypes>(option("dbType", Brewken::SQLITE).toInt());
+      _dbType = static_cast<Brewken::DBTypes>(PersistentSettings::option("dbType", Brewken::SQLITE).toInt());
    return _dbType;
 }
 
@@ -601,6 +602,7 @@ int Brewken::run(const QString &userDirectory)
    return ret;
 }
 
+/*
 // Read the old options.xml file one more time, then move it out of the way.
 void Brewken::convertPersistentOptions()
 {
@@ -818,6 +820,7 @@ void Brewken::convertPersistentOptions()
    QSettings().remove("hadOldConfig");
 }
 
+
 QString Brewken::getOptionValue(const QDomDocument& optionsDoc, const QString& option, bool* hasOption)
 {
    QDomNode node, child;
@@ -842,19 +845,19 @@ QString Brewken::getOptionValue(const QDomDocument& optionsDoc, const QString& o
       return textNode.nodeValue();
    }
 }
-
+*/
 void Brewken::updateConfig()
 {
-   int cVersion = option("config_version", QVariant(0)).toInt();
+   int cVersion = PersistentSettings::option("config_version", QVariant(0)).toInt();
    while ( cVersion < CONFIG_VERSION ) {
       switch ( ++cVersion ) {
          case 1:
             // Update the dbtype, because I had to increase the NODB value from -1 to 0
-            int newType = static_cast<Brewken::DBTypes>(option("dbType",Brewken::NODB).toInt() + 1);
+            int newType = static_cast<Brewken::DBTypes>(PersistentSettings::option("dbType",Brewken::NODB).toInt() + 1);
             // Write that back to the config file
-            setOption("dbType", static_cast<int>(newType));
+            PersistentSettings::setOption("dbType", static_cast<int>(newType));
             // and make sure we don't do it again.
-            setOption("config_version", QVariant(cVersion));
+            PersistentSettings::setOption("config_version", QVariant(cVersion));
             break;
       }
    }
@@ -868,18 +871,18 @@ void Brewken::readSystemOptions()
    updateConfig();
 
    //================Version Checking========================
-   checkVersion = option("check_version", QVariant(false)).toBool();
+   checkVersion = PersistentSettings::option("check_version", QVariant(false)).toBool();
 
    //=====================Last DB Merge Request======================
-   if( hasOption("last_db_merge_req"))
-      lastDbMergeRequest = QDateTime::fromString(option("last_db_merge_req","").toString(), Qt::ISODate);
+   if( PersistentSettings::hasOption("last_db_merge_req"))
+      lastDbMergeRequest = QDateTime::fromString(PersistentSettings::option("last_db_merge_req","").toString(), Qt::ISODate);
 
    //=====================Language====================
-   if( hasOption("language") )
-      setLanguage(option("language","").toString());
+   if( PersistentSettings::hasOption("language") )
+      setLanguage(PersistentSettings::option("language","").toString());
 
    //=======================Weight=====================
-   text = option("weight_unit_system", "SI").toString();
+   text = PersistentSettings::option("weight_unit_system", "SI").toString();
    if( text == "Imperial" )
    {
       weightUnitSystem = Imperial;
@@ -897,7 +900,7 @@ void Brewken::readSystemOptions()
    }
 
    //===========================Volume=======================
-   text = option("volume_unit_system", "SI").toString();
+   text = PersistentSettings::option("volume_unit_system", "SI").toString();
    if( text == "Imperial" )
    {
       volumeUnitSystem = Imperial;
@@ -915,7 +918,7 @@ void Brewken::readSystemOptions()
    }
 
    //=======================Temp======================
-   text = option("temperature_scale", "SI").toString();
+   text = PersistentSettings::option("temperature_scale", "SI").toString();
    if( text == "Fahrenheit" )
    {
       tempScale = Fahrenheit;
@@ -932,7 +935,7 @@ void Brewken::readSystemOptions()
    thingToUnitSystem.insert(Unit::Time,UnitSystems::timeUnitSystem());
 
    //===================IBU===================
-   text = option("ibu_formula", "tinseth").toString();
+   text = PersistentSettings::option("ibu_formula", "tinseth").toString();
    if( text == "tinseth" )
       ibuFormula = TINSETH;
    else if( text == "rager" )
@@ -945,7 +948,7 @@ void Brewken::readSystemOptions()
    }
 
    //========================Color Formula======================
-   text = option("color_formula", "morey").toString();
+   text = PersistentSettings::option("color_formula", "morey").toString();
    if( text == "morey" )
       colorFormula = MOREY;
    else if( text == "daniel" )
@@ -959,7 +962,7 @@ void Brewken::readSystemOptions()
 
    //========================Density==================
 
-   if ( option("use_plato", false).toBool() )
+   if ( PersistentSettings::option("use_plato", false).toBool() )
    {
       densityUnit = PLATO;
       thingToUnitSystem.insert(Unit::Density,UnitSystems::platoDensityUnitSystem());
@@ -971,7 +974,7 @@ void Brewken::readSystemOptions()
    }
 
    //=======================Color unit===================
-   text = option("color_unit", "srm").toString();
+   text = PersistentSettings::option("color_unit", "srm").toString();
    if( text == "srm" )
    {
       colorUnit = SRM;
@@ -986,7 +989,7 @@ void Brewken::readSystemOptions()
       qWarning() << QString("Bad color_unit type: %1").arg(text);
 
    //=======================Diastatic power unit===================
-   text = option("diastatic_power_unit", "Lintner").toString();
+   text = PersistentSettings::option("diastatic_power_unit", "Lintner").toString();
    if( text == "Lintner" )
    {
       diastaticPowerUnit = LINTNER;
@@ -1003,84 +1006,84 @@ void Brewken::readSystemOptions()
    }
 
    //=======================Date format===================
-   dateFormat = static_cast<Unit::unitDisplay>(option("date_format",Unit::displaySI).toInt());
+   dateFormat = static_cast<Unit::unitDisplay>(PersistentSettings::option("date_format",Unit::displaySI).toInt());
 
    //=======================Database type ================
-   _dbType = static_cast<Brewken::DBTypes>(option("dbType",Brewken::SQLITE).toInt());
+   _dbType = static_cast<Brewken::DBTypes>(PersistentSettings::option("dbType",Brewken::SQLITE).toInt());
 
    //======================Logging options =======================
-   Logging::logLevel = Logging::getLogLevelFromString(QString(option("LoggingLevel", "INFO").toString()));
-   Logging::setDirectory(QDir(option("LogFilePath", getUserDataDir().canonicalPath()).toString()));
-   Logging::logUseConfigDir = option("LoggingUseConfigDir", true).toBool();
+   Logging::logLevel = Logging::getLogLevelFromString(QString(PersistentSettings::option("LoggingLevel", "INFO").toString()));
+   Logging::setDirectory(QDir(PersistentSettings::option("LogFilePath", getUserDataDir().canonicalPath()).toString()));
+   Logging::logUseConfigDir = PersistentSettings::option("LoggingUseConfigDir", true).toBool();
    if( Logging::logUseConfigDir )
    {
       Logging::setDirectory(getUserDataDir().canonicalPath());
    }
 }
 
-void Brewken::saveSystemOptions()
-{
+void Brewken::saveSystemOptions() {
    QString text;
 
-   setOption("check_version", checkVersion);
-   setOption("last_db_merge_req", lastDbMergeRequest.toString(Qt::ISODate));
-   setOption("language", getCurrentLanguage());
+   PersistentSettings::setOption("check_version", checkVersion);
+   PersistentSettings::setOption("last_db_merge_req", lastDbMergeRequest.toString(Qt::ISODate));
+   PersistentSettings::setOption("language", getCurrentLanguage());
    //setOption("user_data_dir", userDataDir);
-   setOption("weight_unit_system", thingToUnitSystem.value(Unit::Mass)->unitType());
-   setOption("volume_unit_system",thingToUnitSystem.value(Unit::Volume)->unitType());
-   setOption("temperature_scale", thingToUnitSystem.value(Unit::Temp)->unitType());
-   setOption("use_plato", densityUnit == PLATO);
-   setOption("date_format", dateFormat);
+   PersistentSettings::setOption("weight_unit_system", thingToUnitSystem.value(Unit::Mass)->unitType());
+   PersistentSettings::setOption("volume_unit_system",thingToUnitSystem.value(Unit::Volume)->unitType());
+   PersistentSettings::setOption("temperature_scale", thingToUnitSystem.value(Unit::Temp)->unitType());
+   PersistentSettings::setOption("use_plato", densityUnit == PLATO);
+   PersistentSettings::setOption("date_format", dateFormat);
 
    switch(ibuFormula)
    {
       case TINSETH:
-         setOption("ibu_formula", "tinseth");
+         PersistentSettings::setOption("ibu_formula", "tinseth");
          break;
       case RAGER:
-         setOption("ibu_formula", "rager");
+         PersistentSettings::setOption("ibu_formula", "rager");
          break;
       case NOONAN:
-         setOption("ibu_formula", "noonan");
+         PersistentSettings::setOption("ibu_formula", "noonan");
          break;
    }
 
    switch(colorFormula)
    {
       case MOREY:
-         setOption("color_formula", "morey");
+         PersistentSettings::setOption("color_formula", "morey");
          break;
       case DANIEL:
-         setOption("color_formula", "daniel");
+         PersistentSettings::setOption("color_formula", "daniel");
          break;
       case MOSHER:
-         setOption("color_formula", "mosher");
+         PersistentSettings::setOption("color_formula", "mosher");
          break;
    }
 
    switch(colorUnit)
    {
       case SRM:
-         setOption("color_unit", "srm");
+         PersistentSettings::setOption("color_unit", "srm");
          break;
       case EBC:
-         setOption("color_unit", "ebc");
+         PersistentSettings::setOption("color_unit", "ebc");
          break;
    }
 
    switch(diastaticPowerUnit)
    {
       case LINTNER:
-         setOption("diastatic_power_unit", "Lintner");
+         PersistentSettings::setOption("diastatic_power_unit", "Lintner");
          break;
       case WK:
-         setOption("diastatic_power_unit", "WK");
+         PersistentSettings::setOption("diastatic_power_unit", "WK");
          break;
    }
 
-   setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
-   setOption("LogFilePath", Logging::getDirectory().canonicalPath());
-   setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
+   PersistentSettings::setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
+   PersistentSettings::setOption("LogFilePath", Logging::getDirectory().canonicalPath());
+   PersistentSettings::setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
+   return;
 }
 
 // the defaults come from readSystemOptions. This just fleshes out the hash
@@ -1223,8 +1226,8 @@ QString Brewken::displayAmount(NamedEntity* element, QObject* object, QString at
                .arg(Q_FUNC_INFO)
                .arg(value);
       // Get the display units and scale
-      dispUnit  = static_cast<Unit::unitDisplay>(option(attribute, Unit::noUnit,  object->objectName(), UNIT).toInt());
-      dispScale = static_cast<Unit::unitScale>(option(  attribute, Unit::noScale, object->objectName(), SCALE).toInt());
+      dispUnit  = static_cast<Unit::unitDisplay>(option(attribute, Unit::noUnit,  object->objectName(), PersistentSettings::UNIT).toInt());
+      dispScale = static_cast<Unit::unitScale>(option(  attribute, Unit::noScale, object->objectName(), PersistentSettings::SCALE).toInt());
 
       return displayAmount(amount, units, precision, dispUnit, dispScale);
    }
@@ -1239,8 +1242,8 @@ QString Brewken::displayAmount(double amt, QString section, QString attribute, U
    Unit::unitDisplay dispUnit;
 
    // Get the display units and scale
-   dispUnit  = static_cast<Unit::unitDisplay>(Brewken::option(attribute, Unit::noUnit,  section, UNIT).toInt());
-   dispScale = static_cast<Unit::unitScale>(Brewken::option(  attribute, Unit::noScale, section, SCALE).toInt());
+   dispUnit  = static_cast<Unit::unitDisplay>(PersistentSettings::option(attribute, Unit::noUnit,  section, PersistentSettings::UNIT).toInt());
+   dispScale = static_cast<Unit::unitScale>(PersistentSettings::option(  attribute, Unit::noScale, section, PersistentSettings::SCALE).toInt());
 
    return displayAmount(amt, units, precision, dispUnit, dispScale);
 
@@ -1289,8 +1292,8 @@ double Brewken::amountDisplay(NamedEntity* element, QObject* object, QString att
       if ( ! ok )
          qWarning() << QString("Brewken::amountDisplay(NamedEntity*,QObject*,QString,Unit*,int) could not convert %1 to double").arg(value);
       // Get the display units and scale
-      dispUnit  = static_cast<Unit::unitDisplay>(option(attribute, Unit::noUnit,  object->objectName(), UNIT).toInt());
-      dispScale = static_cast<Unit::unitScale>(option(  attribute, Unit::noScale, object->objectName(), SCALE).toInt());
+      dispUnit  = static_cast<Unit::unitDisplay>(option(attribute, Unit::noUnit,  object->objectName(), PersistentSettings::UNIT).toInt());
+      dispScale = static_cast<Unit::unitScale>(option(  attribute, Unit::noScale, object->objectName(), PersistentSettings::SCALE).toInt());
 
       return amountDisplay(amount, units, precision, dispUnit, dispScale);
    }
@@ -1439,7 +1442,7 @@ QPair<double,double> Brewken::displayRange(QObject *object, QString attribute, d
    QPair<double,double> range;
    Unit::unitDisplay displayUnit;
 
-   displayUnit = static_cast<Unit::unitDisplay>(option(attribute, Unit::noUnit, object->objectName(), UNIT).toInt());
+   displayUnit = static_cast<Unit::unitDisplay>(option(attribute, Unit::noUnit, object->objectName(), PersistentSettings::UNIT).toInt());
 
    if ( _type == DENSITY )
    {
@@ -1475,65 +1478,6 @@ QString Brewken::displayDateUserFormated(QDate const &date) {
          format = "yyyy-MM-dd";
    }
    return date.toString(format);
-}
-
-bool Brewken::hasOption(QString attribute, const QString section, iUnitOps ops)
-{
-   QString name;
-
-   if ( section.isNull() )
-      name = attribute;
-   else
-      name = generateName(attribute,section,ops);
-
-   return QSettings().contains(name);
-}
-
-void Brewken::setOption(QString attribute, QVariant value, const QString section, iUnitOps ops)
-{
-   QString name;
-
-   if ( section.isNull() )
-      name = attribute;
-   else
-      name = generateName(attribute,section,ops);
-
-   QSettings().setValue(name,value);
-}
-
-QVariant Brewken::option(QString attribute, QVariant default_value, QString section, iUnitOps ops)
-{
-   QString name;
-
-   if ( section.isNull() )
-      name = attribute;
-   else
-      name = generateName(attribute,section,ops);
-
-   return QSettings().value(name,default_value);
-}
-
-void Brewken::removeOption(QString attribute, QString section)
-{
-   QString name;
-
-   if ( section.isNull() )
-      name = attribute;
-   else
-      name = generateName(attribute,section,NOOP);
-
-   if ( hasOption(name) )
-        QSettings().remove(name);
-}
-
-QString Brewken::generateName(QString attribute, const QString section, iUnitOps ops)
-{
-   QString ret = QString("%1/%2").arg(section).arg(attribute);
-
-   if ( ops != NOOP )
-      ret += ops == UNIT ? "_unit" : "_scale";
-
-   return ret;
 }
 
 // These are used in at least two places. I hate cut'n'paste coding so I am

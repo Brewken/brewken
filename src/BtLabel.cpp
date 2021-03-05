@@ -1,7 +1,8 @@
 /**
- * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,15 +17,19 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "BtLabel.h"
-#include "Brewken.h"
+
 #include <QSettings>
 #include <QDebug>
+
+#include "Brewken.h"
 #include "model/Style.h"
 #include "model/Recipe.h"
+#include "PersistentSettings.h"
 
-/*! \brief Initialize the BtLabel with the parent and do some things with the type
+/*!
+ * \brief Initialize the BtLabel with the parent and do some things with the type
+ *
  * \param parent - QWidget* to the parent object
  * \param lType - the type of label: none, gravity, mass or volume
  * \return the initialized widget
@@ -40,7 +45,7 @@ BtLabel::BtLabel(QWidget *parent, LabelType lType) :
    _menu = 0;
 
    connect(this, &QWidget::customContextMenuRequested, this, &BtLabel::popContextMenu);
-
+   return;
 }
 
 void BtLabel::initializeSection()
@@ -94,8 +99,8 @@ void BtLabel::initializeMenu()
    if ( _menu )
       return;
 
-   unit  = (Unit::unitDisplay)Brewken::option(propertyName, Unit::noUnit, _section, Brewken::UNIT).toInt();
-   scale = (Unit::unitScale)Brewken::option(propertyName, Unit::noScale, _section, Brewken::SCALE).toInt();
+   unit  = static_cast<Unit::unitDisplay>(PersistentSettings::option(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+   scale = static_cast<Unit::unitScale>(PersistentSettings::option(propertyName, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
 
    switch( whatAmI )
    {
@@ -150,44 +155,38 @@ void BtLabel::popContextMenu(const QPoint& point)
    initializeMenu();
 
    invoked = _menu->exec(widgie->mapToGlobal(point));
-   Unit::unitDisplay unit = (Unit::unitDisplay)Brewken::option(propertyName, Unit::noUnit, _section, Brewken::UNIT).toInt();
-   Unit::unitScale scale  = (Unit::unitScale)Brewken::option(propertyName, Unit::noUnit, _section, Brewken::SCALE).toInt();
+   Unit::unitDisplay unit = static_cast<Unit::unitDisplay>(PersistentSettings::option(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+   Unit::unitScale scale  = static_cast<Unit::unitScale>(PersistentSettings::option(propertyName, Unit::noUnit, _section, PersistentSettings::SCALE).toInt());
 
    if ( invoked == 0 )
       return;
 
    QWidget* pMenu = invoked->parentWidget();
-   if ( pMenu == _menu )
-   {
-      Brewken::setOption(propertyName, invoked->data(), _section, Brewken::UNIT);
+   if ( pMenu == _menu ) {
+      PersistentSettings::setOption(propertyName, invoked->data(), _section, PersistentSettings::UNIT);
       // reset the scale if required
-      if ( Brewken::hasOption(propertyName, _section, Brewken::SCALE) )
-         Brewken::setOption(propertyName, Unit::noScale, _section, Brewken::SCALE);
+      if (PersistentSettings::hasOption(propertyName, _section, PersistentSettings::SCALE) ) {
+         PersistentSettings::setOption(propertyName, Unit::noScale, _section, PersistentSettings::SCALE);
+      }
+   } else {
+      PersistentSettings::setOption(propertyName, invoked->data(), _section, PersistentSettings::SCALE);
    }
-   else
-      Brewken::setOption(propertyName, invoked->data(), _section, Brewken::SCALE);
 
    // To make this all work, I need to set ogMin and ogMax when og is set.
-   if ( propertyName == "og" )
-   {
-      Brewken::setOption(PropertyNames::Style::ogMin, invoked->data(),_section, Brewken::UNIT);
-      Brewken::setOption(PropertyNames::Style::ogMax, invoked->data(),_section, Brewken::UNIT);
-   }
-   else if ( propertyName == "fg" )
-   {
-      Brewken::setOption(PropertyNames::Style::fgMin, invoked->data(),_section, Brewken::UNIT);
-      Brewken::setOption(PropertyNames::Style::fgMax, invoked->data(),_section, Brewken::UNIT);
-   }
-   else if ( propertyName == "color_srm" )
-   {
-      Brewken::setOption(PropertyNames::Style::colorMin_srm, invoked->data(),_section, Brewken::UNIT);
-      Brewken::setOption(PropertyNames::Style::colorMax_srm, invoked->data(),_section, Brewken::UNIT);
+   if ( propertyName == "og" ) {
+      PersistentSettings::setOption(PropertyNames::Style::ogMin, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::setOption(PropertyNames::Style::ogMax, invoked->data(),_section, PersistentSettings::UNIT);
+   } else if ( propertyName == "fg" ) {
+      PersistentSettings::setOption(PropertyNames::Style::fgMin, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::setOption(PropertyNames::Style::fgMax, invoked->data(),_section, PersistentSettings::UNIT);
+   } else if ( propertyName == "color_srm" ) {
+      PersistentSettings::setOption(PropertyNames::Style::colorMin_srm, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::setOption(PropertyNames::Style::colorMax_srm, invoked->data(),_section, PersistentSettings::UNIT);
    }
 
    // Hmm. For the color fields, I want to include the ecb or srm in the label
    // text here.
-   if ( whatAmI == COLOR )
-   {
+   if ( whatAmI == COLOR ) {
       Unit::unitDisplay disp = (Unit::unitDisplay)invoked->data().toInt();
       setText( tr("Color (%1)").arg(Brewken::colorUnitName(disp)));
    }

@@ -1,7 +1,8 @@
 /**
- * PitchDialog.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * PitchDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -17,13 +18,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "PitchDialog.h"
-#include <QChar>
-#include "Brewken.h"
-#include "Algorithms.h"
-#include "unit.h"
+
 #include <math.h>
+
+#include <QChar>
+
+#include "Algorithms.h"
+#include "Brewken.h"
+#include "PersistentSettings.h"
+#include "unit.h"
 
 PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent)
 {
@@ -58,7 +62,7 @@ void PitchDialog::updateProductionDate(Unit::unitDisplay dsp, Unit::unitScale sc
 {
    QString format;
    // I need the new unit, not the old
-   Unit::unitDisplay unitDsp = (Unit::unitDisplay)Brewken::option("productionDate", Brewken::getDateFormat(), "pitchRateCalc", Brewken::UNIT).toInt();
+   Unit::unitDisplay unitDsp = (Unit::unitDisplay)PersistentSettings::option("productionDate", Brewken::getDateFormat(), "pitchRateCalc", PersistentSettings::UNIT).toInt();
 
    switch(unitDsp)
    {

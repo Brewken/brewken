@@ -4,6 +4,7 @@
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -19,6 +20,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "RecipeFormatter.h"
+
 #include <QClipboard>
 #include <QHBoxLayout>
 #include <QObject>
@@ -41,7 +44,7 @@
 #include "model/Misc.h"
 #include "model/Style.h"
 #include "model/Yeast.h"
-#include "RecipeFormatter.h"
+#include "PersistentSettings.h"
 #include "unit.h"
 
 RecipeFormatter::RecipeFormatter(QObject* parent)
@@ -1538,26 +1541,26 @@ QString RecipeFormatter::getLabelToolTip() {
    // First row -- hostname and port
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
          .arg(tr("Hostname"))
-         .arg(Brewken::option("dbHostname").toString());
+         .arg(PersistentSettings::option("dbHostname").toString());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
          .arg(tr("Port"))
-         .arg(Brewken::option("dbPortnum").toInt());
+         .arg(PersistentSettings::option("dbPortnum").toInt());
    // Second row -- schema and database
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
          .arg(tr("Schema"))
-         .arg(Brewken::option("dbSchema").toString());
+         .arg(PersistentSettings::option("dbSchema").toString());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
          .arg(tr("Database"))
-         .arg(Brewken::option("dbName").toString());
+         .arg(PersistentSettings::option("dbName").toString());
 
    // third row -- username and is the password saved (NOTE: NOT THE
    // PASSWORD ITSELF)
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
          .arg(tr("Username"))
-         .arg(Brewken::option("dbUsername").toString());
+         .arg(PersistentSettings::option("dbUsername").toString());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
          .arg(tr("Saved Password"))
-         .arg( Brewken::hasOption("dbPassword") ? "Yes" : "No");
+         .arg( PersistentSettings::hasOption("dbPassword") ? "Yes" : "No");
 
 
    body += "</table></body></html>";

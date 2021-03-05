@@ -1,5 +1,5 @@
 /**
- * EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • David Grundberg <individ@acc.umu.se>
@@ -22,34 +22,33 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QInputDialog>
-#include <QIcon>
-#include <QMessageBox>
-#include <QDebug>
-#include <QCloseEvent>
-
-#include "BtLineEdit.h"
-#include "BtLabel.h"
-
-#include "database/Database.h"
-#include "model/Equipment.h"
 #include "EquipmentEditor.h"
-#include "EquipmentListModel.h"
-#include "config.h"
-#include "unit.h"
+
+#include <QCloseEvent>
+#include <QDebug>
+#include <QIcon>
+#include <QInputDialog>
+#include <QMessageBox>
+
 #include "Brewken.h"
+#include "BtLabel.h"
+#include "BtLineEdit.h"
+#include "config.h"
+#include "database/Database.h"
+#include "EquipmentListModel.h"
 #include "HeatCalculations.h"
-#include "PhysicalConstants.h"
+#include "model/Equipment.h"
 #include "NamedEntitySortProxyModel.h"
+#include "PersistentSettings.h"
+#include "PhysicalConstants.h"
+#include "unit.h"
 
 EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor)
    : QDialog(parent)
 {
    doLayout();
 
-   if( singleEquipEditor )
-   {
+   if (singleEquipEditor) {
       //horizontalLayout_equipments->setVisible(false);
       for(int i = 0; i < horizontalLayout_equipments->count(); ++i)
       {
@@ -766,10 +765,11 @@ void EquipmentEditor::showChanges()
 
    lineEdit_hopUtilization->setText(e);
    checkBox_defaultEquipment->blockSignals(true);
-   if ( Brewken::option("defaultEquipmentKey",-1) == e->key() )
+   if (PersistentSettings::option("defaultEquipmentKey", -1) == e->key()) {
       checkBox_defaultEquipment->setCheckState(Qt::Checked);
-   else
+   } else {
       checkBox_defaultEquipment->setCheckState(Qt::Unchecked);
+   }
    checkBox_defaultEquipment->blockSignals(false);
 }
 
@@ -801,14 +801,11 @@ void EquipmentEditor::updateDefaultEquipment(int state)
 {
    QString optionName = "defaultEquipmentKey";
 
-   QVariant currentDefault = Brewken::option(optionName, -1);
-   if ( state == Qt::Checked )
-   {
-      Brewken::setOption(optionName, obsEquip->key());
-   }
-   else if ( currentDefault == obsEquip->key() )
-   {
-      Brewken::setOption(optionName,-1);
+   QVariant currentDefault = PersistentSettings::option(optionName, -1);
+   if ( state == Qt::Checked ) {
+      PersistentSettings::setOption(optionName, obsEquip->key());
+   } else if ( currentDefault == obsEquip->key() ) {
+      PersistentSettings::setOption(optionName, -1);
    }
 }
 

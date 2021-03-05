@@ -1,7 +1,8 @@
 /**
- * WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Tim Payne <swstim@gmail.com>
@@ -17,25 +18,26 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QAbstractTableModel>
-#include <QAbstractItemModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QItemDelegate>
-#include <QStyleOptionViewItem>
-#include <QLineEdit>
-#include <QString>
-
-#include <QList>
-#include "database/Database.h"
 #include "WaterTableModel.h"
-#include "WaterTableWidget.h"
-#include "model/Water.h"
-#include "unit.h"
-#include "model/Recipe.h"
+
+#include <QAbstractItemModel>
+#include <QAbstractTableModel>
+#include <QItemDelegate>
+#include <QLineEdit>
+#include <QList>
+#include <QModelIndex>
+#include <QString>
+#include <QStyleOptionViewItem>
+#include <QVariant>
+#include <QWidget>
+
 #include "Brewken.h"
+#include "database/Database.h"
+#include "model/Recipe.h"
+#include "model/Water.h"
+#include "PersistentSettings.h"
+#include "unit.h"
+#include "WaterTableWidget.h"
 
 WaterTableModel::WaterTableModel(WaterTableWidget* parent)
    : QAbstractTableModel(parent), recObs(nullptr), parentTableWidget(parent)
@@ -334,7 +336,7 @@ Unit::unitDisplay WaterTableModel::displayUnit(int column) const
    if ( attribute.isEmpty() )
       return Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::option(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
 Unit::unitScale WaterTableModel::displayScale(int column) const
@@ -344,7 +346,7 @@ Unit::unitScale WaterTableModel::displayScale(int column) const
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::option(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -359,8 +361,8 @@ void WaterTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayUnit,this->objectName(),Brewken::UNIT);
-   Brewken::setOption(attribute,Unit::noScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::setOption(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
+   PersistentSettings::setOption(attribute,Unit::noScale,this->objectName(),PersistentSettings::SCALE);
 
    /* Disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )
@@ -381,7 +383,7 @@ void WaterTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::setOption(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
 
    /* disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )

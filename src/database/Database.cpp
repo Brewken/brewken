@@ -1,5 +1,5 @@
 /**
- * database/Database.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * database/Database.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -34,36 +34,50 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "database/Database.h"
 
-#include <QList>
-#include <QDomDocument>
-#include <QIODevice>
-#include <QDomNodeList>
-#include <QDomNode>
-#include <QTextStream>
-#include <QTextCodec>
-#include <QObject>
-#include <QString>
-#include <QStringBuilder>
-#include <QFileInfo>
-#include <QFile>
-#include <QMessageBox>
-#include <QSqlQuery>
-#include <QSqlIndex>
-#include <QSqlError>
-#include <QSqlField>
-#include <QThread>
+#include <QCryptographicHash>
 #include <QDebug>
+#include <QDomDocument>
+#include <QDomNode>
+#include <QDomNodeList>
+#include <QFile>
+#include <QFileInfo>
+#include <QInputDialog>
+#include <QIODevice>
+#include <QList>
+#include <QMessageBox>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QPushButton>
-#include <QInputDialog>
-#include <QCryptographicHash>
+#include <QObject>
 #include <QPair>
+#include <QPushButton>
+#include <QSqlError>
+#include <QSqlField>
+#include <QSqlIndex>
+#include <QSqlQuery>
+#include <QString>
+#include <QStringBuilder>
+#include <QTextCodec>
+#include <QTextStream>
+#include <QThread>
+
 
 #include "Algorithms.h"
+#include "beerxml.h"
+#include "Brewken.h"
+#include "config.h"
+#include "database/BrewNoteSchema.h"
+#include "database/DatabaseSchema.h"
+#include "database/DatabaseSchemaHelper.h"
+#include "database/InstructionSchema.h"
+#include "database/MashStepSchema.h"
+#include "database/RecipeSchema.h"
+#include "database/SaltSchema.h"
+#include "database/SettingsSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/TableSchema.h"
+#include "database/WaterSchema.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -73,26 +87,13 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
+#include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
-#include "model/Salt.h"
 #include "model/Yeast.h"
-
-#include "config.h"
-#include "beerxml.h"
-#include "Brewken.h"
+#include "PersistentSettings.h"
 #include "QueuedMethod.h"
-#include "database/DatabaseSchemaHelper.h"
-#include "database/DatabaseSchema.h"
-#include "database/TableSchema.h"
-#include "database/TableSchemaConst.h"
-#include "database/MashStepSchema.h"
-#include "database/InstructionSchema.h"
-#include "database/BrewNoteSchema.h"
-#include "database/RecipeSchema.h"
-#include "database/WaterSchema.h"
-#include "database/SaltSchema.h"
-#include "database/SettingsSchema.h"
+
 
 // Static members.
 Database* Database::dbInstance = nullptr;
@@ -243,15 +244,15 @@ bool Database::loadPgSQL()
    bool dbIsOpen;
    QSqlDatabase sqldb;
 
-   dbHostname = Brewken::option("dbHostname").toString();
-   dbPortnum  = Brewken::option("dbPortnum").toInt();
-   dbName     = Brewken::option("dbName").toString();
-   dbSchema   = Brewken::option("dbSchema").toString();
+   dbHostname = PersistentSettings::option("dbHostname").toString();
+   dbPortnum  = PersistentSettings::option("dbPortnum").toInt();
+   dbName     = PersistentSettings::option("dbName").toString();
+   dbSchema   = PersistentSettings::option("dbSchema").toString();
 
-   dbUsername = Brewken::option("dbUsername").toString();
+   dbUsername = PersistentSettings::option("dbUsername").toString();
 
-   if ( Brewken::hasOption("dbPassword") ) {
-      dbPassword = Brewken::option("dbPassword").toString();
+   if ( PersistentSettings::hasOption("dbPassword") ) {
+      dbPassword = PersistentSettings::option("dbPassword").toString();
    }
    else {
       bool isOk = false;
@@ -506,7 +507,7 @@ void Database::convertFromXml()
          }
       }
    }
-   Brewken::setOption("converted", QDate().currentDate().toString());
+   PersistentSettings::setOption("converted", QDate().currentDate().toString());
 }
 
 bool Database::isConverted()
@@ -665,16 +666,15 @@ void Database::unload()
    }
 }
 
-void Database::automaticBackup()
-{
-   int count = Brewken::option("count",0,"backups").toInt() + 1;
-   int frequency = Brewken::option("frequency",4,"backups").toInt();
-   int maxBackups = Brewken::option("maximum",10,"backups").toInt();
+void Database::automaticBackup() {
+   int count = PersistentSettings::option("count",0,"backups").toInt() + 1;
+   int frequency = PersistentSettings::option("frequency",4,"backups").toInt();
+   int maxBackups = PersistentSettings::option("maximum",10,"backups").toInt();
 
    // The most common case is update the counter and nothing else
    // A frequency of 1 means backup every time. Which this statisfies
    if ( count % frequency != 0 ) {
-      Brewken::setOption( "count", count, "backups");
+      PersistentSettings::setOption( "count", count, "backups");
       return;
    }
 
@@ -685,8 +685,8 @@ void Database::automaticBackup()
       return;
    }
 
-   QString backupDir = Brewken::option("directory", Brewken::getConfigDir().canonicalPath(),"backups").toString();
-   QString listOfFiles = Brewken::option("files",QVariant(),"backups").toString();
+   QString backupDir = PersistentSettings::option("directory", Brewken::getConfigDir().canonicalPath(),"backups").toString();
+   QString listOfFiles = PersistentSettings::option("files",QVariant(),"backups").toString();
 #if QT_VERSION < QT_VERSION_CHECK(5,15,0)
    QStringList fileNames = listOfFiles.split(",", QString::SkipEmptyParts);
 #else
@@ -713,7 +713,7 @@ void Database::automaticBackup()
    // If we have maxBackups == -1, it means never clean. It also means we
    // don't track the filenames.
    if ( maxBackups == -1 )  {
-      Brewken::removeOption("files","backups");
+      PersistentSettings::removeOption("files", "backups");
       return;
    }
 
@@ -742,8 +742,8 @@ void Database::automaticBackup()
    listOfFiles = fileNames.join(",");
 
    // finally, reset the counter and save the new list of files
-   Brewken::setOption( "count", 0, "backups");
-   Brewken::setOption( "files", listOfFiles, "backups");
+   PersistentSettings::setOption("count", 0, "backups");
+   PersistentSettings::setOption("files", listOfFiles, "backups");
 }
 
 Database& Database::instance()
@@ -3782,7 +3782,7 @@ QSqlDatabase Database::openPostgres(QString const& Hostname, QString const& DbNa
                                     QString const& Username, QString const& Password,
                                     int Portnum)
 {
-   QSqlDatabase newDb = QSqlDatabase::addDatabase("QPSQL","altdb");
+   QSqlDatabase newDb = QSqlDatabase::addDatabase("QPSQL", "altdb");
 
    try {
       newDb.setHostName(Hostname);
@@ -3807,7 +3807,7 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
 {
    QSqlDatabase newDb;
 
-   Brewken::DBTypes oldType = static_cast<Brewken::DBTypes>(Brewken::option("dbType",Brewken::SQLITE).toInt());
+   Brewken::DBTypes oldType = static_cast<Brewken::DBTypes>(PersistentSettings::option("dbType", Brewken::SQLITE).toInt());
 
    try {
       if ( newType == Brewken::NODB ) {

@@ -1,8 +1,9 @@
 /**
- * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -18,30 +19,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QString>
-#include <QModelIndex>
-#include <QVariant>
-#include <Qt>
-#include <QDateTime>
-#include <QString>
-#include <QObject>
-#include <QVector>
-#include <QDebug>
-
 #include "BtTreeItem.h"
-#include "model/BrewNote.h"
+
+#include <QDateTime>
+#include <QDebug>
+#include <QModelIndex>
+#include <QObject>
+#include <QString>
+#include <Qt>
+#include <QVariant>
+#include <QVector>
+
 #include "Brewken.h"
+#include "BtFolder.h"
+#include "FermentableTableModel.h"
+#include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
-#include "model/Recipe.h"
 #include "model/Misc.h"
-#include "model/Yeast.h"
+#include "model/Recipe.h"
 #include "model/Style.h"
-#include "BtFolder.h"
 #include "model/Water.h"
-#include "FermentableTableModel.h"
+#include "model/Yeast.h"
+#include "PersistentSettings.h"
 
 bool operator==(BtTreeItem& lhs, BtTreeItem& rhs)
 {
@@ -258,13 +259,16 @@ QVariant BtTreeItem::dataFermentable(int column)
       case FERMENTABLECOLORCOL:
          if ( ferm ) {
             return QVariant(
-                     Brewken::displayAmount( ferm->color_srm(),
-                                                Units::srm,
-                                                0,
-                                                (Unit::unitDisplay)Brewken::option("color_srm",
-                                                                                      QVariant(-1),
-                                                                                      nullptr,
-                                                                                      Brewken::UNIT).toInt()));
+               Brewken::displayAmount(
+                  ferm->color_srm(),
+                  Units::srm,
+                  0,
+                  static_cast<Unit::unitDisplay>(PersistentSettings::option("color_srm",
+                                                                            QVariant(-1),
+                                                                            nullptr,
+                                                                            PersistentSettings::UNIT).toInt())
+               )
+            );
          }
          break;
       default :
