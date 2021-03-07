@@ -765,7 +765,7 @@ void EquipmentEditor::showChanges()
 
    lineEdit_hopUtilization->setText(e);
    checkBox_defaultEquipment->blockSignals(true);
-   if (PersistentSettings::option("defaultEquipmentKey", -1) == e->key()) {
+   if (PersistentSettings::value("defaultEquipmentKey", -1) == e->key()) {
       checkBox_defaultEquipment->setCheckState(Qt::Checked);
    } else {
       checkBox_defaultEquipment->setCheckState(Qt::Unchecked);
@@ -801,11 +801,11 @@ void EquipmentEditor::updateDefaultEquipment(int state)
 {
    QString optionName = "defaultEquipmentKey";
 
-   QVariant currentDefault = PersistentSettings::option(optionName, -1);
+   QVariant currentDefault = PersistentSettings::value(optionName, -1);
    if ( state == Qt::Checked ) {
-      PersistentSettings::setOption(optionName, obsEquip->key());
+      PersistentSettings::insert(optionName, obsEquip->key());
    } else if ( currentDefault == obsEquip->key() ) {
-      PersistentSettings::setOption(optionName, -1);
+      PersistentSettings::insert(optionName, -1);
    }
 }
 

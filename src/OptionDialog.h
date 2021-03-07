@@ -65,7 +65,7 @@ public:
    QCheckBox *checkBox_savePassword;
    // SQLite things
    QLabel *label_dataDir;
-   BtStringEdit *btStringEdit_dataDir;
+   BtStringEdit *btStringEdit_userDataDir;
    QPushButton *pushButton_browseDataDir;
    QLabel *label_backupDir;
    BtStringEdit *btStringEdit_backupDir;

@@ -130,13 +130,13 @@ double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool 
       if ( _forceUnit != Unit::noUnit )
          dspUnit = _forceUnit;
       else
-         dspUnit   = static_cast<Unit::unitDisplay>(PersistentSettings::option(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+         dspUnit   = static_cast<Unit::unitDisplay>(PersistentSettings::value(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
 
       // If the display scale is forced, use this scale as the default one.
       if( _forceScale != Unit::noScale )
          dspScale = _forceScale;
       else
-         dspScale  = static_cast<Unit::unitScale>(PersistentSettings::option(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+         dspScale  = static_cast<Unit::unitScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
    }
 
    // Find the unit system containing dspUnit
@@ -174,10 +174,10 @@ QString BtLineEdit::displayAmount( double amount, int precision)
    if ( _forceUnit != Unit::noUnit ) {
       unitDsp = _forceUnit;
    } else {
-      unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::option(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+      unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::value(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
    }
 
-   scale = static_cast<Unit::unitScale>(PersistentSettings::option(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+   scale = static_cast<Unit::unitScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the

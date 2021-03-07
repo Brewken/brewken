@@ -99,8 +99,8 @@ void BtLabel::initializeMenu()
    if ( _menu )
       return;
 
-   unit  = static_cast<Unit::unitDisplay>(PersistentSettings::option(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
-   scale = static_cast<Unit::unitScale>(PersistentSettings::option(propertyName, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+   unit  = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+   scale = static_cast<Unit::unitScale>(PersistentSettings::value(propertyName, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
 
    switch( whatAmI )
    {
@@ -155,33 +155,33 @@ void BtLabel::popContextMenu(const QPoint& point)
    initializeMenu();
 
    invoked = _menu->exec(widgie->mapToGlobal(point));
-   Unit::unitDisplay unit = static_cast<Unit::unitDisplay>(PersistentSettings::option(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
-   Unit::unitScale scale  = static_cast<Unit::unitScale>(PersistentSettings::option(propertyName, Unit::noUnit, _section, PersistentSettings::SCALE).toInt());
+   Unit::unitDisplay unit = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+   Unit::unitScale scale  = static_cast<Unit::unitScale>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::SCALE).toInt());
 
    if ( invoked == 0 )
       return;
 
    QWidget* pMenu = invoked->parentWidget();
    if ( pMenu == _menu ) {
-      PersistentSettings::setOption(propertyName, invoked->data(), _section, PersistentSettings::UNIT);
+      PersistentSettings::insert(propertyName, invoked->data(), _section, PersistentSettings::UNIT);
       // reset the scale if required
-      if (PersistentSettings::hasOption(propertyName, _section, PersistentSettings::SCALE) ) {
-         PersistentSettings::setOption(propertyName, Unit::noScale, _section, PersistentSettings::SCALE);
+      if (PersistentSettings::contains(propertyName, _section, PersistentSettings::SCALE) ) {
+         PersistentSettings::insert(propertyName, Unit::noScale, _section, PersistentSettings::SCALE);
       }
    } else {
-      PersistentSettings::setOption(propertyName, invoked->data(), _section, PersistentSettings::SCALE);
+      PersistentSettings::insert(propertyName, invoked->data(), _section, PersistentSettings::SCALE);
    }
 
    // To make this all work, I need to set ogMin and ogMax when og is set.
    if ( propertyName == "og" ) {
-      PersistentSettings::setOption(PropertyNames::Style::ogMin, invoked->data(),_section, PersistentSettings::UNIT);
-      PersistentSettings::setOption(PropertyNames::Style::ogMax, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::ogMin, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::ogMax, invoked->data(),_section, PersistentSettings::UNIT);
    } else if ( propertyName == "fg" ) {
-      PersistentSettings::setOption(PropertyNames::Style::fgMin, invoked->data(),_section, PersistentSettings::UNIT);
-      PersistentSettings::setOption(PropertyNames::Style::fgMax, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::fgMin, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::fgMax, invoked->data(),_section, PersistentSettings::UNIT);
    } else if ( propertyName == "color_srm" ) {
-      PersistentSettings::setOption(PropertyNames::Style::colorMin_srm, invoked->data(),_section, PersistentSettings::UNIT);
-      PersistentSettings::setOption(PropertyNames::Style::colorMax_srm, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::colorMin_srm, invoked->data(),_section, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::colorMax_srm, invoked->data(),_section, PersistentSettings::UNIT);
    }
 
    // Hmm. For the color fields, I want to include the ecb or srm in the label

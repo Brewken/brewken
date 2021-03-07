@@ -643,9 +643,9 @@ void MainWindow::setupTables()
 void MainWindow::restoreSavedState() {
 
    // If we saved a size the last time we ran, use it
-   if (PersistentSettings::hasOption("geometry")) {
-      restoreGeometry(PersistentSettings::option("geometry").toByteArray());
-      restoreState(PersistentSettings::option("windowState").toByteArray());
+   if (PersistentSettings::contains("geometry")) {
+      restoreGeometry(PersistentSettings::value("geometry").toByteArray());
+      restoreState(PersistentSettings::value("windowState").toByteArray());
    } else {
       // otherwise, guess a reasonable size at 1/4 of the screen.
       QDesktopWidget *desktop = QApplication::desktop();
@@ -658,8 +658,8 @@ void MainWindow::restoreSavedState() {
    }
 
    // If we saved the selected recipe name the last time we ran, select it and show it.
-   if (PersistentSettings::hasOption("recipeKey")) {
-      int key = PersistentSettings::option("recipeKey").toInt();
+   if (PersistentSettings::contains("recipeKey")) {
+      int key = PersistentSettings::value("recipeKey").toInt();
       recipeObs = Database::instance().recipe( key );
       QModelIndex rIdx = treeView_recipe->findElement(recipeObs);
 
@@ -672,26 +672,26 @@ void MainWindow::restoreSavedState() {
    }
 
    //UI restore state
-   if (PersistentSettings::hasOption("MainWindow/splitter_vertical_State"))
-      splitter_vertical->restoreState(PersistentSettings::option("MainWindow/splitter_vertical_State").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/splitter_horizontal_State"))
-      splitter_horizontal->restoreState(PersistentSettings::option("MainWindow/splitter_horizontal_State").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_recipe_headerState"))
-      treeView_recipe->header()->restoreState(PersistentSettings::option("MainWindow/treeView_recipe_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_style_headerState"))
-      treeView_style->header()->restoreState(PersistentSettings::option("MainWindow/treeView_style_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_equip_headerState"))
-      treeView_equip->header()->restoreState(PersistentSettings::option("MainWindow/treeView_equip_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_ferm_headerState"))
-      treeView_ferm->header()->restoreState(PersistentSettings::option("MainWindow/treeView_ferm_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_hops_headerState"))
-      treeView_hops->header()->restoreState(PersistentSettings::option("MainWindow/treeView_hops_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_misc_headerState"))
-      treeView_misc->header()->restoreState(PersistentSettings::option("MainWindow/treeView_misc_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/treeView_yeast_headerState"))
-      treeView_yeast->header()->restoreState(PersistentSettings::option("MainWindow/treeView_yeast_headerState").toByteArray());
-   if (PersistentSettings::hasOption("MainWindow/mashStepTableWidget_headerState"))
-      mashStepTableWidget->horizontalHeader()->restoreState(PersistentSettings::option("MainWindow/mashStepTableWidget_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/splitter_vertical_State"))
+      splitter_vertical->restoreState(PersistentSettings::value("MainWindow/splitter_vertical_State").toByteArray());
+   if (PersistentSettings::contains("MainWindow/splitter_horizontal_State"))
+      splitter_horizontal->restoreState(PersistentSettings::value("MainWindow/splitter_horizontal_State").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_recipe_headerState"))
+      treeView_recipe->header()->restoreState(PersistentSettings::value("MainWindow/treeView_recipe_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_style_headerState"))
+      treeView_style->header()->restoreState(PersistentSettings::value("MainWindow/treeView_style_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_equip_headerState"))
+      treeView_equip->header()->restoreState(PersistentSettings::value("MainWindow/treeView_equip_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_ferm_headerState"))
+      treeView_ferm->header()->restoreState(PersistentSettings::value("MainWindow/treeView_ferm_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_hops_headerState"))
+      treeView_hops->header()->restoreState(PersistentSettings::value("MainWindow/treeView_hops_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_misc_headerState"))
+      treeView_misc->header()->restoreState(PersistentSettings::value("MainWindow/treeView_misc_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/treeView_yeast_headerState"))
+      treeView_yeast->header()->restoreState(PersistentSettings::value("MainWindow/treeView_yeast_headerState").toByteArray());
+   if (PersistentSettings::contains("MainWindow/mashStepTableWidget_headerState"))
+      mashStepTableWidget->horizontalHeader()->restoreState(PersistentSettings::value("MainWindow/mashStepTableWidget_headerState").toByteArray());
 }
 
 // anything with a SIGNAL of triggered() should go in here.
@@ -1144,7 +1144,7 @@ void MainWindow::changed(QMetaProperty prop, QVariant value)
 
 void MainWindow::updateDensitySlider(QString attribute, RangedSlider* slider, double max)
 {
-   Unit::unitDisplay dispUnit = static_cast<Unit::unitDisplay>(PersistentSettings::option(attribute, Unit::noUnit, "tab_recipe", PersistentSettings::UNIT).toInt());
+   Unit::unitDisplay dispUnit = static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, "tab_recipe", PersistentSettings::UNIT).toInt());
 
    if ( dispUnit == Unit::noUnit )
       dispUnit = Brewken::densityUnit == Brewken::PLATO ? Unit::displayPlato : Unit::displaySg;
@@ -1166,7 +1166,7 @@ void MainWindow::updateDensitySlider(QString attribute, RangedSlider* slider, do
 
 void MainWindow::updateColorSlider(QString attribute, RangedSlider* slider)
 {
-   Unit::unitDisplay dispUnit = static_cast<Unit::unitDisplay>(PersistentSettings::option(attribute, Unit::noUnit, "tab_recipe", PersistentSettings::UNIT).toInt());
+   Unit::unitDisplay dispUnit = static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, "tab_recipe", PersistentSettings::UNIT).toInt());
 
    if ( dispUnit == Unit::noUnit )
       dispUnit = Brewken::colorUnit == Brewken::SRM ? Unit::displaySrm : Unit::displayEbc;
@@ -2000,7 +2000,7 @@ void MainWindow::newRecipe()
 {
    QString name = QInputDialog::getText(this, tr("Recipe name"),
                                           tr("Recipe name:"));
-   QVariant defEquipKey = PersistentSettings::option("defaultEquipmentKey", -1);
+   QVariant defEquipKey = PersistentSettings::value("defaultEquipmentKey", -1);
    QObject* selection = sender();
 
    if( name.isEmpty() )
@@ -2527,22 +2527,22 @@ void MainWindow::removeMash()
 void MainWindow::closeEvent(QCloseEvent* /*event*/)
 {
    Brewken::saveSystemOptions();
-   PersistentSettings::setOption("geometry", saveGeometry());
-   PersistentSettings::setOption("windowState", saveState());
+   PersistentSettings::insert("geometry", saveGeometry());
+   PersistentSettings::insert("windowState", saveState());
    if ( recipeObs )
-      PersistentSettings::setOption("recipeKey", recipeObs->key());
+      PersistentSettings::insert("recipeKey", recipeObs->key());
 
    //UI save state
-   PersistentSettings::setOption("MainWindow/splitter_vertical_State", splitter_vertical->saveState());
-   PersistentSettings::setOption("MainWindow/splitter_horizontal_State", splitter_horizontal->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_recipe_headerState", treeView_recipe->header()->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_style_headerState", treeView_style->header()->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_equip_headerState", treeView_equip->header()->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_ferm_headerState", treeView_ferm->header()->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_hops_headerState", treeView_hops->header()->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_misc_headerState", treeView_misc->header()->saveState());
-   PersistentSettings::setOption("MainWindow/treeView_yeast_headerState", treeView_yeast->header()->saveState());
-   PersistentSettings::setOption("MainWindow/mashStepTableWidget_headerState", mashStepTableWidget->horizontalHeader()->saveState());
+   PersistentSettings::insert("MainWindow/splitter_vertical_State", splitter_vertical->saveState());
+   PersistentSettings::insert("MainWindow/splitter_horizontal_State", splitter_horizontal->saveState());
+   PersistentSettings::insert("MainWindow/treeView_recipe_headerState", treeView_recipe->header()->saveState());
+   PersistentSettings::insert("MainWindow/treeView_style_headerState", treeView_style->header()->saveState());
+   PersistentSettings::insert("MainWindow/treeView_equip_headerState", treeView_equip->header()->saveState());
+   PersistentSettings::insert("MainWindow/treeView_ferm_headerState", treeView_ferm->header()->saveState());
+   PersistentSettings::insert("MainWindow/treeView_hops_headerState", treeView_hops->header()->saveState());
+   PersistentSettings::insert("MainWindow/treeView_misc_headerState", treeView_misc->header()->saveState());
+   PersistentSettings::insert("MainWindow/treeView_yeast_headerState", treeView_yeast->header()->saveState());
+   PersistentSettings::insert("MainWindow/mashStepTableWidget_headerState", mashStepTableWidget->horizontalHeader()->saveState());
 
    // After unloading the database, can't make any more queries to it, so first
    // make the main window disappear so that redraw events won't inadvertently
@@ -2863,7 +2863,7 @@ void MainWindow::updateDatabase()
    // Select the db to merge with.
    otherDb = QFileDialog::getOpenFileName( this,
                                            tr("Select Database File"),
-                                           Brewken::getUserDataDir().canonicalPath(),
+                                           PersistentSettings::getUserDataDir().canonicalPath(),
                                            tr("Brewken Database (*.sqlite)") );
 
    // Merge.
@@ -2962,16 +2962,6 @@ void MainWindow::showStyleEditor()
       singleStyleEditor->setStyle(recipeObs->style());
       singleStyleEditor->show();
    }
-}
-
-void MainWindow::convertedMsg()
-{
-
-   QMessageBox msgBox;
-   msgBox.setText( tr("The database has been converted/upgraded."));
-   msgBox.setInformativeText( tr("The original XML files can be found in ") + Brewken::getUserDataDir().canonicalPath() + "obsolete");
-   msgBox.exec();
-
 }
 
 void MainWindow::changeBrewDate()

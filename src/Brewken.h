@@ -130,23 +130,21 @@ public:
       ALLDB      // Keep this one the last one, or bad things will happen
    };
 
-   //! \return the data directory
-   static QDir getDataDir();
-   //! \return the doc directory
-   static QDir getDocDir();
-   //! \return the config directory
-   static const QDir getConfigDir();
-   //! \return user-specified directory where the database files reside.
-   static QDir getUserDataDir();
-   //! \return The System path for users applicationpath. on windows: c:\\users\\<USERNAME>\\AppData\\Roaming\\<APPNAME>
-   static QDir getDefaultUserDataDir();
+   /**
+    * \return the resource directory where some files that ship with Brewken live (default DB, sounds, translations)
+    *
+    *         Most resources are compiled into the app with the Qt Resource System (see
+    *         https://doc.qt.io/qt-5/resources.html) but, for some files, we want the user also to be able to access
+    *         the file directly.  Such files are stored in this directory.
+    */
+   static QDir getResourceDir();
 
    /*!
     * \brief Blocking call that executes the application.
     * \param userDirectory If !isEmpty, overwrites the current settings.
     * \return Exit code from the application.
     */
-   static int run(const QString &userDirectory = QString());
+   static int run();
 
    static double toDouble(QString text, bool* ok = nullptr);
    static double toDouble(const NamedEntity* element, QString attribute, QString caller);
@@ -322,9 +320,6 @@ private:
     */
    static QDateTime lastDbMergeRequest;
 
-   //! \brief Where the user says the database files are
-   static QDir userDataDir;
-
    // Options to be edited ONLY by the OptionDialog============================
    // Whether or not to display plato instead of SG.
 
@@ -347,20 +342,20 @@ private:
    /*!
     * \brief Run before showing MainWindow, does all system setup.
     *
-    * Creates a PID file, sets config directory, reads system options,
+    * Creates a PID file, reads system options,
     * ensures the data directories and files exist, loads translations,
     * and loads database.
     *
     * \returns false if anything goes awry, true if it's ok to start MainWindow
     */
-   static bool initialize(const QString &userDirectory = QString());
+   static bool initialize();
 
    /*!
     * \brief Run after QApplication exits to clean up shit, close database, etc.
     */
    static void cleanup();
 
-
+public:
    /*!
     * \brief If false, run Brewken in a way that requires no user interaction
     *
@@ -371,6 +366,7 @@ private:
    //! \brief Set the mode to an interactive or non-interactive state
    static void setInteractive(bool val);
 
+private:
    /*!
     *  \brief Helper to get option values from XML.
     *
@@ -387,10 +383,6 @@ private:
     */
    static bool copyDataFiles(const QDir newPath);
 
-   //! \brief Ensure our directories exist.
-   static bool ensureDirectoriesExist();
-   //! \brief Create a directory if it doesn't exist, popping a error dialog if creation fails
-   static bool createDir(QDir dir, QString errText = nullptr);
 
    //! \brief Load translation files.
    static void loadTranslations();

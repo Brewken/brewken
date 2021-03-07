@@ -1541,26 +1541,26 @@ QString RecipeFormatter::getLabelToolTip() {
    // First row -- hostname and port
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
          .arg(tr("Hostname"))
-         .arg(PersistentSettings::option("dbHostname").toString());
+         .arg(PersistentSettings::value("dbHostname").toString());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
          .arg(tr("Port"))
-         .arg(PersistentSettings::option("dbPortnum").toInt());
+         .arg(PersistentSettings::value("dbPortnum").toInt());
    // Second row -- schema and database
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
          .arg(tr("Schema"))
-         .arg(PersistentSettings::option("dbSchema").toString());
+         .arg(PersistentSettings::value("dbSchema").toString());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
          .arg(tr("Database"))
-         .arg(PersistentSettings::option("dbName").toString());
+         .arg(PersistentSettings::value("dbName").toString());
 
    // third row -- username and is the password saved (NOTE: NOT THE
    // PASSWORD ITSELF)
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
          .arg(tr("Username"))
-         .arg(PersistentSettings::option("dbUsername").toString());
+         .arg(PersistentSettings::value("dbUsername").toString());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
          .arg(tr("Saved Password"))
-         .arg( PersistentSettings::hasOption("dbPassword") ? "Yes" : "No");
+         .arg( PersistentSettings::contains("dbPassword") ? "Yes" : "No");
 
 
    body += "</table></body></html>";

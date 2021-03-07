@@ -478,7 +478,7 @@ Unit::unitDisplay FermentableTableModel::displayUnit(int column) const
    if ( attribute.isEmpty() )
       return Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(PersistentSettings::option(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
 Unit::unitScale FermentableTableModel::displayScale(int column) const
@@ -488,7 +488,7 @@ Unit::unitScale FermentableTableModel::displayScale(int column) const
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(PersistentSettings::option(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -503,8 +503,8 @@ void FermentableTableModel::setDisplayUnit(int column, Unit::unitDisplay display
    if ( attribute.isEmpty() )
       return;
 
-   PersistentSettings::setOption(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-   PersistentSettings::setOption(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
+   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
+   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
 
    /* Disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )
@@ -525,7 +525,7 @@ void FermentableTableModel::setDisplayScale(int column, Unit::unitScale displayS
    if ( attribute.isEmpty() )
       return;
 
-   PersistentSettings::setOption(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
+   PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
 
    /* disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )

@@ -488,9 +488,6 @@ public:
     * database file.
     */
    void updateDatabase(QString const& filename);
-   void convertFromXml();
-
-   bool isConverted();
 
    //! \brief Figures out what databases we are copying to and from, opens what
    //   needs opens and then calls the appropriate workhorse to get it done.
@@ -566,7 +563,6 @@ private:
 
    // Instance variables.
    bool loadWasSuccessful;
-   bool converted;
    bool createFromScratch;
    bool schemaUpdated;
    BeerXML* m_beerxml;

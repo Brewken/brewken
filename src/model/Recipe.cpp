@@ -2117,8 +2117,8 @@ double Recipe::ibuFromHop(Hop const* hop)
 {
    Equipment* equip = equipment();
    double ibus = 0.0;
-   double fwhAdjust = Brewken::toDouble(PersistentSettings::option("firstWortHopAdjustment", 1.1).toString(), "Recipe::ibmFromHop()");
-   double mashHopAdjust = Brewken::toDouble(PersistentSettings::option("mashHopAdjustment", 0).toString(), "Recipe::ibmFromHop()");
+   double fwhAdjust = Brewken::toDouble(PersistentSettings::value("firstWortHopAdjustment", 1.1).toString(), "Recipe::ibmFromHop()");
+   double mashHopAdjust = Brewken::toDouble(PersistentSettings::value("mashHopAdjustment", 0).toString(), "Recipe::ibmFromHop()");
 
    if( hop == nullptr )
       return 0.0;

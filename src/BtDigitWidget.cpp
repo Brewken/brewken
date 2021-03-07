@@ -286,8 +286,8 @@ QString BtDigitWidget::displayAmount(double amount, int precision)
    Unit::unitDisplay unitDsp;
    Unit::unitScale scale;
 
-   unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::option(m_editField, Unit::noUnit, m_section, PersistentSettings::UNIT).toInt());
-   scale    = static_cast<Unit::unitScale>(PersistentSettings::option(m_editField, Unit::noScale, m_section, PersistentSettings::SCALE).toInt());
+   unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::value(m_editField, Unit::noUnit, m_section, PersistentSettings::UNIT).toInt());
+   scale    = static_cast<Unit::unitScale>(PersistentSettings::value(m_editField, Unit::noScale, m_section, PersistentSettings::SCALE).toInt());
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the

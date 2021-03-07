@@ -19,6 +19,8 @@
 #define LOGGING_H
 #pragma once
 
+#include <optional>
+
 #include <QDir>
 #include <QFileInfoList>
 #include <QString>
@@ -75,19 +77,44 @@ namespace Logging {
    extern Level getLogLevelFromString(QString const level = QString("INFO"));
 
    /**
-    * Current logging level
+    * \brief Get current logging level
     */
-   extern Level logLevel;
-   extern bool logUseConfigDir;
+   extern Level getLogLevel();
+
+   /**
+    * \brief Set logging level
+    */
+   extern void setLogLevel(Level newLevel);
+
+   /**
+    * \return \b true if we are logging in the config dir (the default), \b false if we are logging in a directory
+    *         configured via \c Logging::setDirectory()
+    */
+   extern bool getLogInConfigDir();
+
    extern int const logFileSize;
    extern int const logFileCount;
 
    /**
-    * \brief Sets the directory in which log files are stored
-    * \param newDirectory
+    * \brief Sets the directory in which log files are stored.  Note however that this setting, whilst remembered, is
+    *        ignored if we are configured to log in the config directory.
+    * \param newDirectory  If set, specifies where to write log files.  If not set, then use the default location,
+    *                      which is the config directory.
+    *
+    *                      Although it's not strictly obvious that config (or rather persistent settings) and log files
+    *                      go in the same directory, it is pragmatic for a couple of reasons:
+    *                        - If we want end users to supply diagnostic info with bug reports, then it's easier for
+    *                          them not to have too many different locations to go looking for that data.
+    *                        - Qt provides canonical application-specific locations for user data and for config data,
+    *                          but not for log files.  (This is perhaps because there is not always an obvious
+    *                          "standard" location for application log files.)  Whilst we could put log files with user
+    *                          data (eg in a "logging" sub-directory), that's also not ideal as we'd like to be able to
+    *                          tell end users that the user data directory contains everything that they need to take
+    *                          backups of.
+    *
     * \return true if succeeds, false otherwise
     */
-   extern bool setDirectory(QDir newDirectory);
+   extern bool setDirectory(std::optional<QDir> newDirectory);
 
    /**
     * \brief Gets the directory in which log files are stored
@@ -97,9 +124,7 @@ namespace Logging {
 
    /**
     * \brief  Initialize logging to utilize the built in logging functionality in QT5
-    *         This has to be called before any logging is done.  Should be self contained and not depend on anything
-    *         being loaded.  Although user settings may alter location of files, this module will always start logging
-    *         at the default application data path i.e. on linux: ~/.config/brewken or on Windows %APPDATA% path.
+    *         This has to be called before any logging is done, but after PersistentSettings::initialise() is called.
     * \return
     */
    extern bool initializeLogging();

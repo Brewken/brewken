@@ -42,8 +42,8 @@
 
 QTEST_MAIN(Testing)
 
-void Testing::initTestCase()
-{
+void Testing::initTestCase() {
+
    // Initialize Xerces XML tools
    // NB: This is also where where we would initialise xalanc::XalanTransformer if we were using it
    try {
@@ -54,14 +54,17 @@ void Testing::initTestCase()
    }
 
    // Create a different set of options to avoid clobbering real options
-   QCoreApplication::setOrganizationName("Brewken-test");
    QCoreApplication::setOrganizationDomain("brewken.com/test");
    QCoreApplication::setApplicationName("brewken-test");
 
    // Set options so that any data modification does not affect any other data
-   PersistentSettings::setOption("user_data_dir", QDir::tempPath());
-   PersistentSettings::setOption("color_formula", "morey");
-   PersistentSettings::setOption("ibu_formula", "tinseth");
+   PersistentSettings::initialise(QDir::tempPath());
+   Logging::initializeLogging();
+
+   qDebug() << Q_FUNC_INFO << "Initialised";
+
+   PersistentSettings::insert("color_formula", "morey");
+   PersistentSettings::insert("ibu_formula", "tinseth");
 
    // Tell Brewken not to require any "user" input on starting
    Brewken::setInteractive(false);
@@ -105,7 +108,7 @@ void Testing::initTestCase()
    //Verify that the Logging initializes normally
    qDebug() << "Initiallizing Logging module";
    Logging::initializeLogging();
-   Logging::logLevel = Logging::LogLevel_DEBUG;
+   Logging::setLogLevel(Logging::LogLevel_DEBUG);
    qDebug() << "logging initialized";
 }
 

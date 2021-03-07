@@ -119,7 +119,6 @@ Database::Database()
    //.setUndoLimit(100);
    // Lock this here until we actually construct the first database connection.
    _threadToConnectionMutex.lock();
-   converted = false;
    dbDefn = new DatabaseSchema();
    m_beerxml = new BeerXML(dbDefn);
 
@@ -156,8 +155,8 @@ bool Database::loadSQLite()
    QSqlDatabase sqldb;
 
    // Set file names.
-   dbFileName = Brewken::getUserDataDir().filePath("database.sqlite");
-   dataDbFileName = Brewken::getDataDir().filePath("default_db.sqlite");
+   dbFileName = PersistentSettings::getUserDataDir().filePath("database.sqlite");
+   dataDbFileName = Brewken::getResourceDir().filePath("default_db.sqlite");
    qDebug() << QString("Database::loadSQLite() - dbFileName = \"%1\"\nDatabase::loadSQLite() - dataDbFileName=\"%2\"").arg(dbFileName).arg(dataDbFileName);
    // Set the files.
    dbFile.setFileName(dbFileName);
@@ -244,15 +243,15 @@ bool Database::loadPgSQL()
    bool dbIsOpen;
    QSqlDatabase sqldb;
 
-   dbHostname = PersistentSettings::option("dbHostname").toString();
-   dbPortnum  = PersistentSettings::option("dbPortnum").toInt();
-   dbName     = PersistentSettings::option("dbName").toString();
-   dbSchema   = PersistentSettings::option("dbSchema").toString();
+   dbHostname = PersistentSettings::value("dbHostname").toString();
+   dbPortnum  = PersistentSettings::value("dbPortnum").toInt();
+   dbName     = PersistentSettings::value("dbName").toString();
+   dbSchema   = PersistentSettings::value("dbSchema").toString();
 
-   dbUsername = PersistentSettings::option("dbUsername").toString();
+   dbUsername = PersistentSettings::value("dbUsername").toString();
 
-   if ( PersistentSettings::hasOption("dbPassword") ) {
-      dbPassword = PersistentSettings::option("dbPassword").toString();
+   if ( PersistentSettings::contains("dbPassword") ) {
+      dbPassword = PersistentSettings::value("dbPassword").toString();
    }
    else {
       bool isOk = false;
@@ -466,55 +465,6 @@ bool Database::loadSuccessful()
    return loadWasSuccessful;
 }
 
-void Database::convertFromXml()
-{
-
-   // We have two use cases to consider here. The first is a BT
-   // 1.x user running BT 2 for the first time. The second is a BT 2 clean
-   // install. I am also trying to protect the developers from double imports.
-   // If the old "obsolete" directory exists, don't do anything other than
-   // set the converted flag
-   QDir dir(Brewken::getUserDataDir());
-
-   // Checking for non-existence is redundant with the new "converted" setting,
-   // but better safe than sorry.
-   if( !dir.exists("obsolete") )
-   {
-      dir.mkdir("obsolete");
-      dir.cd("obsolete");
-
-      QStringList oldFiles = QStringList() << "database.xml" << "mashs.xml" << "recipes.xml";
-      for ( int i = 0; i < oldFiles.size(); ++i )
-      {
-         QFile oldXmlFile(Brewken::getUserDataDir().filePath(oldFiles[i]));
-         // If the old file exists, import.
-         if( oldXmlFile.exists() )
-         {
-            QString errorMessage;
-            QTextStream errorMessageAsStream{&errorMessage};
-            if (!m_beerxml->importFromXML( oldXmlFile.fileName(), errorMessageAsStream )) {
-               QString exceptionMessage = QString("Error importing old XML file: %1").arg(errorMessage);
-               qCritical() << exceptionMessage;
-               throw std::runtime_error(exceptionMessage.toLocal8Bit().constData());
-            }
-
-            // Move to obsolete/ directory.
-            if( oldXmlFile.copy(dir.filePath(oldFiles[i])) )
-               oldXmlFile.remove();
-
-            // Let us know something was converted
-            converted = true;
-         }
-      }
-   }
-   PersistentSettings::setOption("converted", QDate().currentDate().toString());
-}
-
-bool Database::isConverted()
-{
-   return converted;
-}
-
 QSqlDatabase Database::sqlDatabase()
 {
    // Need a unique database connection for each thread.
@@ -667,14 +617,14 @@ void Database::unload()
 }
 
 void Database::automaticBackup() {
-   int count = PersistentSettings::option("count",0,"backups").toInt() + 1;
-   int frequency = PersistentSettings::option("frequency",4,"backups").toInt();
-   int maxBackups = PersistentSettings::option("maximum",10,"backups").toInt();
+   int count = PersistentSettings::value("count",0,"backups").toInt() + 1;
+   int frequency = PersistentSettings::value("frequency",4,"backups").toInt();
+   int maxBackups = PersistentSettings::value("maximum",10,"backups").toInt();
 
    // The most common case is update the counter and nothing else
    // A frequency of 1 means backup every time. Which this statisfies
    if ( count % frequency != 0 ) {
-      PersistentSettings::setOption( "count", count, "backups");
+      PersistentSettings::insert( "count", count, "backups");
       return;
    }
 
@@ -685,15 +635,15 @@ void Database::automaticBackup() {
       return;
    }
 
-   QString backupDir = PersistentSettings::option("directory", Brewken::getConfigDir().canonicalPath(),"backups").toString();
-   QString listOfFiles = PersistentSettings::option("files",QVariant(),"backups").toString();
+   QString backupDir = PersistentSettings::value("directory", PersistentSettings::getUserDataDir().canonicalPath(), "backups").toString();
+   QString listOfFiles = PersistentSettings::value("files", QVariant(), "backups").toString();
 #if QT_VERSION < QT_VERSION_CHECK(5,15,0)
    QStringList fileNames = listOfFiles.split(",", QString::SkipEmptyParts);
 #else
    QStringList fileNames = listOfFiles.split(",", Qt::SkipEmptyParts);
 #endif
 
-   QString halfName = QString("%1.%2").arg("bt_database").arg(QDate::currentDate().toString("yyyyMMdd"));
+   QString halfName = QString("%1.%2").arg("databaseBackup").arg(QDate::currentDate().toString("yyyyMMdd"));
    QString newName = halfName;
    // Unique filenames are a pain in the ass. In the case you open Brewken
    // twice in a day, this loop makes sure we don't over write (or delete) the
@@ -713,7 +663,7 @@ void Database::automaticBackup() {
    // If we have maxBackups == -1, it means never clean. It also means we
    // don't track the filenames.
    if ( maxBackups == -1 )  {
-      PersistentSettings::removeOption("files", "backups");
+      PersistentSettings::remove("files", "backups");
       return;
    }
 
@@ -731,9 +681,13 @@ void Database::automaticBackup() {
       // Make sure it exists, and make sure it is a file before we
       // try remove it
       if ( fileThing->exists() && fileThing->isFile() ) {
+         qInfo() <<
+            Q_FUNC_INFO << "Removing oldest database backup file," << victim << "as more than" << maxBackups <<
+            "files in" << backupDir;
          // If we can't remove it, give a warning.
          if (! file->remove() ) {
-            qWarning() << QString("%1 : could not remove %2 (%3).").arg(Q_FUNC_INFO).arg(victim).arg(file->error());
+            qWarning() <<
+               Q_FUNC_INFO << "Could not remove old database backup file " << victim << ".  Error:" << file->error();
          }
       }
    }
@@ -742,8 +696,8 @@ void Database::automaticBackup() {
    listOfFiles = fileNames.join(",");
 
    // finally, reset the counter and save the new list of files
-   PersistentSettings::setOption("count", 0, "backups");
-   PersistentSettings::setOption("files", listOfFiles, "backups");
+   PersistentSettings::insert("count", 0, "backups");
+   PersistentSettings::insert("files", listOfFiles, "backups");
 }
 
 Database& Database::instance()
@@ -3756,7 +3710,7 @@ bool Database::verifyDbConnection(Brewken::DBTypes testDb, QString const& hostna
 
 QSqlDatabase Database::openSQLite()
 {
-   QString filePath = Brewken::getUserDataDir().filePath("database.sqlite");
+   QString filePath = PersistentSettings::getUserDataDir().filePath("database.sqlite");
    QSqlDatabase newDb = QSqlDatabase::addDatabase("QSQLITE", "altdb");
 
    try {
@@ -3807,7 +3761,7 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
 {
    QSqlDatabase newDb;
 
-   Brewken::DBTypes oldType = static_cast<Brewken::DBTypes>(PersistentSettings::option("dbType", Brewken::SQLITE).toInt());
+   Brewken::DBTypes oldType = static_cast<Brewken::DBTypes>(PersistentSettings::value("dbType", Brewken::SQLITE).toInt());
 
    try {
       if ( newType == Brewken::NODB ) {
