@@ -38,8 +38,6 @@
 
 
 namespace {
-
-
    //
    // Most of the PersistentSettings functions should not be called until after PersistentSettings::initialise()
    //

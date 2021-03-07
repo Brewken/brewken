@@ -51,9 +51,6 @@ namespace {
    // Stores the path to the log files
    QDir logDirectory;
 
-   // Whether to automatically set the logDirectory to the config directory
-   bool logUseConfigDir{true};
-
    // Template for the log messages
    QString const logMessageFormat{"[%1] %2 : %3"};
 
@@ -281,7 +278,7 @@ void Logging::setLogLevel(Level newLevel) {
 }
 
 bool Logging::getLogInConfigDir() {
-   return logUseConfigDir;
+   return PersistentSettings::getConfigDir().canonicalPath() == logDirectory.canonicalPath();
 }
 
 namespace Logging {
@@ -323,13 +320,11 @@ bool Logging::setDirectory(std::optional<QDir> newDirectory) {
    QDir oldDirectory = logDirectory;
 
    // Supplying no directory in the parameter means use the default location, ie the config directory
-   logUseConfigDir = !newDirectory.has_value();
-   if (logUseConfigDir) {
-      logDirectory = PersistentSettings::getConfigDir();
-   } else {
+   if (newDirectory.has_value()) {
       logDirectory = *newDirectory;
+   } else {
+      logDirectory = PersistentSettings::getConfigDir();
    }
-
 
    // Check if the new directory exists, if not create it.
    QString errorReason;
