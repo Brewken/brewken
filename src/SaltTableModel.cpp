@@ -1,5 +1,5 @@
 /**
- * SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "SaltTableModel.h"
+
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
 #include <QComboBox>
@@ -38,7 +40,7 @@
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
-#include "SaltTableModel.h"
+#include "PersistentSettings.h"
 #include "unit.h"
 #include "WaterDialog.h"
 
@@ -556,7 +558,7 @@ Unit::unitDisplay SaltTableModel::displayUnit(int column) const
    if ( attribute.isEmpty() )
       return Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
 Unit::unitScale SaltTableModel::displayScale(int column) const
@@ -566,7 +568,7 @@ Unit::unitScale SaltTableModel::displayScale(int column) const
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 void SaltTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
@@ -576,8 +578,8 @@ void SaltTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayUnit,this->objectName(),Brewken::UNIT);
-   Brewken::setOption(attribute,Unit::noScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
+   PersistentSettings::insert(attribute,Unit::noScale,this->objectName(),PersistentSettings::SCALE);
 
 }
 
@@ -590,7 +592,7 @@ void SaltTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
 
 }
 

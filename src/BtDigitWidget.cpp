@@ -1,6 +1,7 @@
 /**
- * BtDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -25,6 +26,7 @@
 #include <QDebug>
 
 #include "Brewken.h"
+#include "PersistentSettings.h"
 #include "unitSystems/UnitSystems.h"
 #include "unitSystems/UnitSystem.h"
 #include "unit.h"
@@ -284,8 +286,8 @@ QString BtDigitWidget::displayAmount(double amount, int precision)
    Unit::unitDisplay unitDsp;
    Unit::unitScale scale;
 
-   unitDsp  = static_cast<Unit::unitDisplay>(Brewken::option(m_editField, Unit::noUnit, m_section, Brewken::UNIT).toInt());
-   scale    = static_cast<Unit::unitScale>(Brewken::option(m_editField, Unit::noScale, m_section, Brewken::SCALE).toInt());
+   unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::value(m_editField, Unit::noUnit, m_section, PersistentSettings::UNIT).toInt());
+   scale    = static_cast<Unit::unitScale>(PersistentSettings::value(m_editField, Unit::noScale, m_section, PersistentSettings::SCALE).toInt());
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the

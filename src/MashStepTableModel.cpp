@@ -1,5 +1,5 @@
 /**
- * MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -19,6 +19,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "MashStepTableModel.h"
 
 #include <QAbstractTableModel>
 #include <QComboBox>
@@ -32,13 +33,13 @@
 #include <QVector>
 #include <QWidget>
 
-#include "database/Database.h"
-#include "model/MashStep.h"
-#include "MashStepTableModel.h"
-#include "unit.h"
 #include "Brewken.h"
-#include "SimpleUndoableUpdate.h"
+#include "database/Database.h"
 #include "MainWindow.h"
+#include "model/MashStep.h"
+#include "PersistentSettings.h"
+#include "SimpleUndoableUpdate.h"
+#include "unit.h"
 
 MashStepTableModel::MashStepTableModel(QTableView* parent)
    : QAbstractTableModel(parent),
@@ -432,7 +433,7 @@ Unit::unitDisplay MashStepTableModel::displayUnit(int column) const
    if ( attribute.isEmpty() )
       return Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(Brewken::option(attribute, Unit::noUnit, this->objectName(), Brewken::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
 Unit::unitScale MashStepTableModel::displayScale(int column) const
@@ -442,7 +443,7 @@ Unit::unitScale MashStepTableModel::displayScale(int column) const
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(Brewken::option(attribute, Unit::noScale, this->objectName(), Brewken::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -457,8 +458,8 @@ void MashStepTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUni
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayUnit,this->objectName(),Brewken::UNIT);
-   Brewken::setOption(attribute,Unit::noScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
+   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
 
    /* Disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )
@@ -479,7 +480,7 @@ void MashStepTableModel::setDisplayScale(int column, Unit::unitScale displayScal
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::insert(attribute,displayScale, this->objectName(), PersistentSettings::SCALE);
 
    /* disabled cell-specific code
    for (int i = 0; i < rowCount(); ++i )

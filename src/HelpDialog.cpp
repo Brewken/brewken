@@ -24,9 +24,9 @@
 
 #include "Brewken.h"
 #include "Logging.h"
+#include "PersistentSettings.h"
 
-
-// This private implementation class holds all private non-virtual members of BeerXML
+// This private implementation class holds all private non-virtual members of HelpDialog
 class HelpDialog::impl {
 public:
 
@@ -81,20 +81,20 @@ public:
          "</p>"
          "<h2>" << tr("Your Data") << "</h2>"
          "<p>" <<
-         tr("Important data is stored in the following folders (which are configurable via the 'Tools > Options' menu):") <<
+         tr("Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the 'Tools > Options' menu):") <<
          "</p>"
          "<ul>"
-         "<li>" << tr("Configuration:") << " <pre>" << this->makeClickableDirLink(Brewken::getConfigDir().canonicalPath()) << "</pre></li>"
-         "<li>" << tr("Data:") << " <pre>" << this->makeClickableDirLink(Brewken::getUserDataDir().canonicalPath()) << "</pre></li>"
+         "<li><pre>" << this->makeClickableDirLink(PersistentSettings::getUserDataDir().canonicalPath()) << "</pre></li>"
          "</ul>"
-         "<p>" << tr("It is a good idea to take regular backups of the contents of these directories.") << "</p>"
-         "<h2>" << tr("Log files") << "</h2>"
+         "<p>" << tr("It is a good idea to take regular backups of this folder.") << "</p>"
+         "<h2>" << tr("Settings and Log files") << "</h2>"
          "<p>" <<
-         tr("Log files are in the following folder (this is also configurable via the 'Tools > Options' menu):") <<
+         tr("The contents of the following folder(s) can be helpful for diagnosing problems:") <<
          "<ul>"
-         "<li><pre>" << this->makeClickableDirLink(Logging::getDirectory().absolutePath()) << "</pre></li>"
+         "<li>" << tr("Configuration:") << "<pre>" << this->makeClickableDirLink(PersistentSettings::getConfigDir().canonicalPath()) << "</pre></li>"
+         "<li>" << tr("Logs:") << "<pre>" << this->makeClickableDirLink(Logging::getDirectory().absolutePath()) << "</pre></li>"
          "</ul>" <<
-         tr("The contents of the log files can be helpful for diagnosing problems.") <<
+         tr("The location of the log files can be configured via the 'Tools > Options' menu.") <<
          "</p>"
          "</html>";
       this->label->setText(mainText);
@@ -113,7 +113,6 @@ public:
 
    std::unique_ptr<QLabel> label;
    std::unique_ptr<QVBoxLayout> layout;
-
 
 };
 

@@ -115,12 +115,6 @@ public:
    enum DiastaticPowerUnitType {LINTNER, WK};
    //! \brief The formula used to get IBUs.
    enum IbuType {TINSETH, RAGER, NOONAN};
-   //! \brief Controls how units and scales are stored in the options file
-   enum iUnitOps {
-      NOOP = -1 ,
-      SCALE,
-      UNIT
-   };
 
    enum RangeType {
       DENSITY,
@@ -136,23 +130,21 @@ public:
       ALLDB      // Keep this one the last one, or bad things will happen
    };
 
-   //! \return the data directory
-   static QDir getDataDir();
-   //! \return the doc directory
-   static QDir getDocDir();
-   //! \return the config directory
-   static const QDir getConfigDir();
-   //! \return user-specified directory where the database files reside.
-   static QDir getUserDataDir();
-   //! \return The System path for users applicationpath. on windows: c:\\users\\<USERNAME>\\AppData\\Roaming\\<APPNAME>
-   static QDir getDefaultUserDataDir();
+   /**
+    * \return the resource directory where some files that ship with Brewken live (default DB, sounds, translations)
+    *
+    *         Most resources are compiled into the app with the Qt Resource System (see
+    *         https://doc.qt.io/qt-5/resources.html) but, for some files, we want the user also to be able to access
+    *         the file directly.  Such files are stored in this directory.
+    */
+   static QDir getResourceDir();
 
    /*!
     * \brief Blocking call that executes the application.
     * \param userDirectory If !isEmpty, overwrites the current settings.
     * \return Exit code from the application.
     */
-   static int run(const QString &userDirectory = QString());
+   static int run();
 
    static double toDouble(QString text, bool* ok = nullptr);
    static double toDouble(const NamedEntity* element, QString attribute, QString caller);
@@ -248,7 +240,7 @@ public:
 
    //! \brief Read options from file. This is deprecated, but we need it
    // around for the conversion
-   static void convertPersistentOptions();
+//   static void convertPersistentOptions();
    //! \brief Every so often, we need to update the config file itself. This does that.
    static void updateConfig();
    //! \brief Read options from options. This replaces readPersistentOptions()
@@ -277,12 +269,6 @@ public:
     */
    static const QString& getSystemLanguage();
 
-   static bool  hasOption(QString attribute, const QString section = QString(), iUnitOps ops = NOOP);
-   static void  setOption(QString attribute, QVariant value, const QString section = QString(), iUnitOps ops = NOOP);
-   static QVariant option(QString attribute, QVariant default_value = QVariant(), QString section = QString(), iUnitOps = NOOP);
-   static void removeOption(QString attribute, QString section=QString());
-
-   static QString generateName(QString attribute, const QString section, iUnitOps ops);
 
    // Grr. Shortcuts never, ever pay  off
    static QMenu* setupColorMenu(QWidget* parent, Unit::unitDisplay unit);
@@ -334,9 +320,6 @@ private:
     */
    static QDateTime lastDbMergeRequest;
 
-   //! \brief Where the user says the database files are
-   static QDir userDataDir;
-
    // Options to be edited ONLY by the OptionDialog============================
    // Whether or not to display plato instead of SG.
 
@@ -359,26 +342,20 @@ private:
    /*!
     * \brief Run before showing MainWindow, does all system setup.
     *
-    * Creates a PID file, sets config directory, reads system options,
+    * Creates a PID file, reads system options,
     * ensures the data directories and files exist, loads translations,
     * and loads database.
     *
     * \returns false if anything goes awry, true if it's ok to start MainWindow
     */
-   static bool initialize(const QString &userDirectory = QString());
+   static bool initialize();
+
    /*!
     * \brief Run after QApplication exits to clean up shit, close database, etc.
     */
    static void cleanup();
 
-
-   /*!
-    * \brief Checks if another instance is already running.
-    *
-    * Currently only works on Unix systems.
-    */
-   static bool instanceRunning();
-
+public:
    /*!
     * \brief If false, run Brewken in a way that requires no user interaction
     *
@@ -389,26 +366,23 @@ private:
    //! \brief Set the mode to an interactive or non-interactive state
    static void setInteractive(bool val);
 
+private:
    /*!
     *  \brief Helper to get option values from XML.
     *
     *  If \b hasOption is not null,
     *  is set to true iff the option exists in the document.
     */
-   static QString getOptionValue(const QDomDocument& optionsDoc,
+/*   static QString getOptionValue(const QDomDocument& optionsDoc,
                                  const QString& option,
                                  bool* hasOption = nullptr);
-
+*/
    /*!
-    *  \brief Copies the user xml files to another directory.
+    *  \brief Copies the SQLite database file to another directory.
     *  \returns false iff the copy is unsuccessful.
     */
    static bool copyDataFiles(const QDir newPath);
 
-   //! \brief Ensure our directories exist.
-   static bool ensureDirectoriesExist();
-   //! \brief Create a directory if it doesn't exist, popping a error dialog if creation fails
-   static bool createDir(QDir dir, QString errText = nullptr);
 
    //! \brief Load translation files.
    static void loadTranslations();

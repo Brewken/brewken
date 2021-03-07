@@ -1,5 +1,5 @@
 /**
- * HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Luke Vincent <luke.r.vincent@gmail.com>
@@ -23,27 +23,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "HopTableModel.h"
 
-#include <QAbstractTableModel>
 #include <QAbstractItemModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QItemDelegate>
-#include <QStyleOptionViewItem>
+#include <QAbstractTableModel>
 #include <QComboBox>
-#include <QLineEdit>
 #include <QHeaderView>
+#include <QItemDelegate>
+#include <QLineEdit>
+#include <QModelIndex>
+#include <QStyleOptionViewItem>
+#include <QVariant>
+#include <QWidget>
 
+#include "Brewken.h"
 #include "database/Database.h"
+#include "MainWindow.h"
 #include "model/Hop.h"
+#include "PersistentSettings.h"
 #include <QString>
 #include <QVector>
-#include "model/Hop.h"
-#include "HopTableModel.h"
 #include "unit.h"
-#include "Brewken.h"
-#include "MainWindow.h"
 
 HopTableModel::HopTableModel(QTableView* parent, bool editable)
    : QAbstractTableModel(parent),
@@ -388,9 +388,9 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          retVal = value.canConvert(QVariant::String);
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     PropertyNames::NamedEntity::name,
-                                                     value.toString(),
-                                                     tr("Change Hop Name"));
+                                                  PropertyNames::NamedEntity::name,
+                                                  value.toString(),
+                                                  tr("Change Hop Name"));
          }
          break;
       case HOPALPHACOL:
@@ -401,9 +401,9 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
             if ( ! retVal )
                qWarning() << QString("HopTableModel::setData() could not convert %1 to double").arg(value.toString());
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     PropertyNames::Hop::alpha_pct,
-                                                     amt,
-                                                     tr("Change Hop Alpha %"));
+                                                  PropertyNames::Hop::alpha_pct,
+                                                  amt,
+                                                  tr("Change Hop Alpha %"));
          }
          break;
 
@@ -411,45 +411,45 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          retVal = value.canConvert(QVariant::String);
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     "inventoryAmount",
-                                                     Brewken::qStringToSI(value.toString(),Units::kilograms, displayUnit(HOPINVENTORYCOL)),
-                                                     tr("Change Hop Inventory Amount"));
+                                                  "inventoryAmount",
+                                                  Brewken::qStringToSI(value.toString(),Units::kilograms, displayUnit(HOPINVENTORYCOL)),
+                                                  tr("Change Hop Inventory Amount"));
          }
          break;
       case HOPAMOUNTCOL:
          retVal = value.canConvert(QVariant::String);
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     "amount_kg",
-                                                     Brewken::qStringToSI(value.toString(), Units::kilograms, dspUnit, dspScl),
-                                                     tr("Change Hop Amount"));
+                                                  PropertyNames::Hop::amount_kg,
+                                                  Brewken::qStringToSI(value.toString(), Units::kilograms, dspUnit, dspScl),
+                                                  tr("Change Hop Amount"));
          }
          break;
       case HOPUSECOL:
          retVal = value.canConvert(QVariant::Int);
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     "use",
-                                                     static_cast<Hop::Use>(value.toInt()),
-                                                     tr("Change Hop Use"));
+                                                  PropertyNames::Hop::use,
+                                                  static_cast<Hop::Use>(value.toInt()),
+                                                  tr("Change Hop Use"));
          }
          break;
       case HOPFORMCOL:
          retVal = value.canConvert(QVariant::Int);
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     "form",
-                                                     static_cast<Hop::Form>(value.toInt()),
-                                                     tr("Change Hop Form"));
+                                                  PropertyNames::Hop::form,
+                                                  static_cast<Hop::Form>(value.toInt()),
+                                                  tr("Change Hop Form"));
          }
          break;
       case HOPTIMECOL:
          retVal = value.canConvert(QVariant::String);
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     PropertyNames::Hop::time_min,
-                                                     Brewken::qStringToSI(value.toString(),Units::minutes,dspUnit,dspScl),
-                                                     tr("Change Hop Time"));
+                                                  PropertyNames::Hop::time_min,
+                                                  Brewken::qStringToSI(value.toString(),Units::minutes,dspUnit,dspScl),
+                                                  tr("Change Hop Time"));
          }
          break;
       default:
@@ -469,7 +469,7 @@ Unit::unitDisplay HopTableModel::displayUnit(int column) const
    if ( attribute.isEmpty() )
       return Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
 Unit::unitScale HopTableModel::displayScale(int column) const
@@ -479,7 +479,7 @@ Unit::unitScale HopTableModel::displayScale(int column) const
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(Brewken::option(attribute, QVariant(-1), this->objectName(), Brewken::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -494,8 +494,8 @@ void HopTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayUnit,this->objectName(),Brewken::UNIT);
-   Brewken::setOption(attribute,Unit::noScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
+   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
 
 }
 
@@ -509,7 +509,7 @@ void HopTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
    if ( attribute.isEmpty() )
       return;
 
-   Brewken::setOption(attribute,displayScale,this->objectName(),Brewken::SCALE);
+   PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
 
 }
 

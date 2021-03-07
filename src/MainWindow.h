@@ -465,8 +465,6 @@ private:
    void updateDensitySlider(QString attribute, RangedSlider* slider, double max);
    void updateColorSlider(QString attribute, RangedSlider* slider);
 
-   void convertedMsg();
-
 };
 
-#endif   /* MAINWINDOW_H */
+#endif

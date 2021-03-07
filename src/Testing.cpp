@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "Testing.h"
+
 #include <math.h>
 
 #include <xercesc/util/PlatformUtils.hpp>
@@ -28,7 +30,6 @@
 #include <QString>
 #include <QtTest/QtTest>
 
-#include "Testing.h"
 #include "database/Database.h"
 #include "Logging.h"
 #include "model/Equipment.h"
@@ -37,11 +38,12 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
+#include "PersistentSettings.h"
 
 QTEST_MAIN(Testing)
 
-void Testing::initTestCase()
-{
+void Testing::initTestCase() {
+
    // Initialize Xerces XML tools
    // NB: This is also where where we would initialise xalanc::XalanTransformer if we were using it
    try {
@@ -52,14 +54,17 @@ void Testing::initTestCase()
    }
 
    // Create a different set of options to avoid clobbering real options
-   QCoreApplication::setOrganizationName("Brewken-test");
    QCoreApplication::setOrganizationDomain("brewken.com/test");
    QCoreApplication::setApplicationName("brewken-test");
 
    // Set options so that any data modification does not affect any other data
-   Brewken::setOption("user_data_dir", QDir::tempPath());
-   Brewken::setOption("color_formula", "morey");
-   Brewken::setOption("ibu_formula", "tinseth");
+   PersistentSettings::initialise(QDir::tempPath());
+   Logging::initializeLogging();
+
+   qDebug() << Q_FUNC_INFO << "Initialised";
+
+   PersistentSettings::insert("color_formula", "morey");
+   PersistentSettings::insert("ibu_formula", "tinseth");
 
    // Tell Brewken not to require any "user" input on starting
    Brewken::setInteractive(false);
@@ -103,7 +108,7 @@ void Testing::initTestCase()
    //Verify that the Logging initializes normally
    qDebug() << "Initiallizing Logging module";
    Logging::initializeLogging();
-   Logging::logLevel = Logging::LogLevel_DEBUG;
+   Logging::setLogLevel(Logging::LogLevel_DEBUG);
    qDebug() << "logging initialized";
 }
 

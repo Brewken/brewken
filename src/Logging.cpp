@@ -27,6 +27,8 @@
 #include <QTextStream>
 #include <QTime>
 
+#include "PersistentSettings.h"
+
 // Qt has changed how you do endl in writing to a QTextStream
 #if QT_VERSION < QT_VERSION_CHECK(5,14,0)
 #define END_OF_LINE endl
@@ -39,13 +41,18 @@
 //
 namespace {
 
+   Logging::Level currentLoggingLevel = Logging::LogLevel_INFO;
+
    // We decompose the log filename into its body and suffix for log rotation
    // The _current_ log file is always "brewken.log"
    QString const logFilename{"brewken"};
    QString const logFilenameExtension{"log"};
 
    // Stores the path to the log files
-   QDir logDirectory{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)};
+   QDir logDirectory;
+
+   // Whether to automatically set the logDirectory to the config directory
+   bool logUseConfigDir{true};
 
    // Template for the log messages
    QString const logMessageFormat{"[%1] %2 : %3"};
@@ -135,16 +142,16 @@ namespace {
 
    /**
     * \brief initializes the log file and opens the stream for writing.
-    *        This was moved to its own function as this has to be called everytime logs are being pruned.
+    *        This was moved to its own function as this has to be called every time logs are being pruned.
     */
-   bool initlogFile() {
+   bool openLogFile() {
       //first check if it's time to rotate the log file
       if (logFile.size() > Logging::logFileSize) {
          // Acquire lock due to the file mangling below.  NB: This means we do not want to use Qt logging in this
          // block, as we'd end up attempting to acquire the same mutex in the doLog() function above!  So, any errors
          // between here and the closing brace need to go to stderr
          QMutexLocker locker(&mutex);
-         //Doublecheck that the stream is not initiated, if so, kill it.
+         // Double check that the stream is not initiated, if so, kill it.
          closeLogFile();
          if (!renameLogFileWithTimestamp(logDirectory)) {
             errStream <<
@@ -213,7 +220,7 @@ namespace {
       //
 
       // Check that we're set to log this level, this is set by the user options.
-      if (logLevelOfMessage < Logging::logLevel) {
+      if (logLevelOfMessage < currentLoggingLevel) {
          return;
       }
 
@@ -223,7 +230,7 @@ namespace {
       if (stream) {
          if (logFile.size() >= Logging::logFileSize) {
             pruneLogFiles();
-            initlogFile();
+            openLogFile();
          }
       }
 
@@ -263,16 +270,24 @@ Logging::Level Logging::getLogLevelFromString(QString const name) {
    return match->level;
 }
 
-// Parameters that client code can set and read directly
-Logging::Level Logging::logLevel = Logging::LogLevel_INFO;
+Logging::Level Logging::getLogLevel() {
+   return currentLoggingLevel;
+}
+
+void Logging::setLogLevel(Level newLevel) {
+   currentLoggingLevel = newLevel;
+   PersistentSettings::insert("LoggingLevel", Logging::getStringFromLogLevel(currentLoggingLevel));
+   return;
+}
+
+bool Logging::getLogInConfigDir() {
+   return logUseConfigDir;
+}
 
 namespace Logging {
 
 
    // Options set by the end user.
-   // Set to true if you want Brewken to figure out where to put the logs.
-   // TODO Not sure this needs to be here!
-   bool logUseConfigDir = true;
    // Set the log file size for the rotation.
    int const logFileSize = 500 * 1024;
    // set the number of files to keep when rotating.
@@ -289,36 +304,70 @@ bool Logging::initializeLogging() {
       // Turning off logging to stderr console, this is so you won't have to watch 100k rows generate in the console.
       isLoggingToStderr = false;
    }
+
+   currentLoggingLevel = Logging::getLogLevelFromString(PersistentSettings::value("LoggingLevel", "INFO").toString());
+   Logging::setDirectory(
+      PersistentSettings::contains("LogDirectory") ?
+         std::optional<QDir>(PersistentSettings::value("LogDirectory").toString()) : std::optional<QDir>(std::nullopt)
+   );
+
    qInstallMessageHandler(logMessageHandler);
-   qDebug() << Q_FUNC_INFO << "Logging initialized";
+   qDebug() << Q_FUNC_INFO << "Logging initialized.  Logs will be written to" << logDirectory;
    return true;
 }
 
 
-bool Logging::setDirectory(QDir newDirectory) {
+bool Logging::setDirectory(std::optional<QDir> newDirectory) {
    qDebug() << Q_FUNC_INFO;
-   // If it's the same, just return, no need to do anything.
-   if (newDirectory.canonicalPath() == logDirectory.canonicalPath()) {
-      return true;
+
+   QDir oldDirectory = logDirectory;
+
+   // Supplying no directory in the parameter means use the default location, ie the config directory
+   logUseConfigDir = !newDirectory.has_value();
+   if (logUseConfigDir) {
+      logDirectory = PersistentSettings::getConfigDir();
+   } else {
+      logDirectory = *newDirectory;
    }
 
+
    // Check if the new directory exists, if not create it.
-   if (!newDirectory.exists()) {
-      qDebug() << Q_FUNC_INFO << newDirectory.canonicalPath() << "does not exist, creating";
-      if (!newDirectory.mkpath(newDirectory.canonicalPath())) {
-         qCritical() << "Could not create directory as location" << newDirectory.canonicalPath();
-         return false;
+   QString errorReason;
+   if (!logDirectory.exists()) {
+      qDebug() << Q_FUNC_INFO << logDirectory.canonicalPath() << "does not exist, creating";
+      if (!logDirectory.mkpath(logDirectory.canonicalPath())) {
+         errorReason = QObject::tr("Could not create new log file directory");
       }
    }
 
+   // Check the new directory is usable
+   if (errorReason.isEmpty()) {
+      if (!logDirectory.isReadable()) {
+         errorReason = QObject::tr("Could not read new log file directory");
+      } else if (!logDirectory.isReadable()) {
+         errorReason = QObject::tr("Could not write to new log file directory");
+      }
+   }
+
+   if (!errorReason.isEmpty()) {
+      qCritical() <<
+         errorReason << logDirectory.canonicalPath() << QObject::tr(" reverting to ") <<
+         oldDirectory.canonicalPath();
+      logDirectory = oldDirectory;
+      return false;
+   }
+
+   // At this point, enough has succeeded that we're OK to commit to using the new directory
+   PersistentSettings::insert("LogDirectory", logDirectory.absolutePath());
+
    //
-   // If the file is already initialized, it needs to be closed and moved
+   // If we are already writing to a log file in the old directory, it needs to be closed and moved to the new one
    //
-   // Note! This only copies the current Logfile, the older ones will be left behind.
-   // May be a later refraction/development though.
+   // NB: This only moves the current Logfile, the older ones will be left behind.
    //
-   if (stream) {
-      // NB Don't try to log inside this if statement.  We are moving the log file!
+   if (stream && logDirectory.canonicalPath() != oldDirectory.canonicalPath()) {
+
+      // NB Don't try to log inside this if statement.  We are moving the log file!  Errors need to go to stderr.
       QMutexLocker locker(&mutex);
 
       // Close the file if open and reset the stream.
@@ -340,33 +389,29 @@ bool Logging::setDirectory(QDir newDirectory) {
       // The first check is whether there's anything to move!
       //
       QString fileName = logFileFullName();
-      if (logDirectory.exists(fileName)) {
+      if (oldDirectory.exists(fileName)) {
          //
-         // In principle, we could check first whether brewken.log.bak exists and then try to rename that etc, but it
-         // seems of small benefit for the additional code complexity.
+         // Make a reasonable effort to move out the way anything we might otherwise be about to stomp on
          //
-         if (newDirectory.exists(fileName)) {
-            if (!renameLogFileWithTimestamp(newDirectory)) {
+         if (logDirectory.exists(fileName)) {
+            if (!renameLogFileWithTimestamp(logDirectory)) {
                errStream <<
-                  Q_FUNC_INFO << "Unable to rename " << fileName << " in directory " << newDirectory.canonicalPath() <<
+                  Q_FUNC_INFO << "Unable to rename " << fileName << " in directory " << logDirectory.canonicalPath() <<
                   END_OF_LINE;
                return false;
             }
          }
-         if (!logFile.rename(newDirectory.filePath(fileName))) {
+         if (!logFile.rename(logDirectory.filePath(fileName))) {
             errStream <<
-               Q_FUNC_INFO << "Unable to move " << fileName << " from " << logDirectory.canonicalPath() << " to " <<
-               newDirectory.canonicalPath() << END_OF_LINE;
+               Q_FUNC_INFO << "Unable to move " << fileName << " from " << oldDirectory.canonicalPath() << " to " <<
+               logDirectory.canonicalPath() << END_OF_LINE;
             return false;
          }
       }
    }
 
-   // At this point, enough has succeeded that we're OK to set the new directory
-   logDirectory = newDirectory;
-
-   // Generate a new filename to save the logs in
-   if (!initlogFile()) {
+   // Now make sure the log file in the new directory is open for writing
+   if (!openLogFile()) {
       qWarning() << Q_FUNC_INFO << QString("Could not open/create a log file");
       return false;
    }

@@ -24,27 +24,29 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include <QMessageBox>
-#include <QFileDialog>
-
 #include "OptionDialog.h"
+
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "Brewken.h"
 #include "BtLineEdit.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/USWeightUnitSystem.h"
-#include "unitSystems/SIWeightUnitSystem.h"
-#include "unitSystems/ImperialVolumeUnitSystem.h"
-#include "unitSystems/USVolumeUnitSystem.h"
-#include "unitSystems/SIVolumeUnitSystem.h"
-#include "unitSystems/FahrenheitTempUnitSystem.h"
-#include "unitSystems/EbcColorUnitSystem.h"
-#include "unitSystems/SrmColorUnitSystem.h"
-#include "unitSystems/PlatoDensityUnitSystem.h"
-#include "unitSystems/SgDensityUnitSystem.h"
-#include "unitSystems/DiastaticPowerUnitSystem.h"
-#include "unitSystems/CelsiusTempUnitSystem.h"
 #include "database/Database.h"
 #include "MainWindow.h"
+#include "PersistentSettings.h"
+#include "unitSystems/CelsiusTempUnitSystem.h"
+#include "unitSystems/DiastaticPowerUnitSystem.h"
+#include "unitSystems/EbcColorUnitSystem.h"
+#include "unitSystems/FahrenheitTempUnitSystem.h"
+#include "unitSystems/ImperialVolumeUnitSystem.h"
+#include "unitSystems/PlatoDensityUnitSystem.h"
+#include "unitSystems/SgDensityUnitSystem.h"
+#include "unitSystems/SIVolumeUnitSystem.h"
+#include "unitSystems/SIWeightUnitSystem.h"
+#include "unitSystems/SrmColorUnitSystem.h"
+#include "unitSystems/UnitSystems.h"
+#include "unitSystems/USVolumeUnitSystem.h"
+#include "unitSystems/USWeightUnitSystem.h"
 
 OptionDialog::OptionDialog(QWidget* parent)
 {
@@ -162,10 +164,10 @@ OptionDialog::OptionDialog(QWidget* parent)
    for (auto ii : Logging::levelDetails) {
       loggingLevelComboBox->addItem(ii.description, QVariant(ii.level));
    }
-   loggingLevelComboBox->setCurrentIndex(Logging::logLevel);
-   checkBox_LogFileLocationUseDefault->setChecked(Logging::logUseConfigDir);
+   loggingLevelComboBox->setCurrentIndex(Logging::getLogLevel());
+   checkBox_LogFileLocationUseDefault->setChecked(Logging::getLogInConfigDir());
    lineEdit_LogFileLocation->setText(Logging::getDirectory().absolutePath());
-   setFileLocationState(Logging::logUseConfigDir);
+   this->setFileLocationState(Logging::getLogInConfigDir());
 
    // database panel stuff
    comboBox_engine->addItem( tr("SQLite (default)"), QVariant(Brewken::SQLITE));
@@ -174,7 +176,7 @@ OptionDialog::OptionDialog(QWidget* parent)
    connect( pushButton_testConnection, &QAbstractButton::clicked, this, &OptionDialog::testConnection);
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(Brewken::option("dbType", Brewken::SQLITE).toInt());
+   int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Brewken::SQLITE).toInt());
    setDbDialog(static_cast<Brewken::DBTypes>(idx));
 
    // Set the signals
@@ -242,23 +244,25 @@ void OptionDialog::show()
 
 void OptionDialog::setDataDir()
 {
-   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), Brewken::getUserDataDir().canonicalPath(), QFileDialog::ShowDirsOnly);
+   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), PersistentSettings::getUserDataDir().canonicalPath(), QFileDialog::ShowDirsOnly);
    if( ! dir.isEmpty() )
-      btStringEdit_dataDir->setText( dir );
+      btStringEdit_userDataDir->setText( dir );
 }
 
 void OptionDialog::setBackupDir()
 {
-   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), Brewken::getUserDataDir().canonicalPath(), QFileDialog::ShowDirsOnly);
+   // .:TODO:. This seems wrong...
+   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), PersistentSettings::getUserDataDir().canonicalPath(), QFileDialog::ShowDirsOnly);
    if( ! dir.isEmpty() )
       btStringEdit_backupDir->setText( dir );
 }
 
-void OptionDialog::setLogDir()
-{
-   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), Brewken::getUserDataDir().canonicalPath(), QFileDialog::ShowDirsOnly);
-   if( ! dir.isEmpty() )
+void OptionDialog::setLogDir() {
+   // .:TODO:. This seems wrong...
+   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), PersistentSettings::getUserDataDir().canonicalPath(), QFileDialog::ShowDirsOnly);
+   if( ! dir.isEmpty() ) {
       lineEdit_LogFileLocation->setText( dir );
+   }
 }
 
 void OptionDialog::resetToDefault()
@@ -274,8 +278,8 @@ void OptionDialog::resetToDefault()
       checkBox_savePassword->setChecked(false);
    }
    else {
-      btStringEdit_dataDir->setText( Brewken::getConfigDir().canonicalPath() );
-      btStringEdit_backupDir->setText( Brewken::getConfigDir().canonicalPath() );
+      btStringEdit_userDataDir->setText( PersistentSettings::getConfigDir().canonicalPath() );
+      btStringEdit_backupDir->setText( PersistentSettings::getConfigDir().canonicalPath() );
       spinBox_frequency->setValue(4);
       spinBox_numBackups->setValue(10);
    }
@@ -309,14 +313,14 @@ void OptionDialog::saveAndClose()
          }
          // Database engine stuff
          int engine = comboBox_engine->currentData().toInt();
-         Brewken::setOption("dbType", engine);
+         PersistentSettings::insert("dbType", engine);
          // only write these changes when switching TO pgsql
          if ( engine == Brewken::PGSQL ) {
-            Brewken::setOption("dbHostname", btStringEdit_hostname->text());
-            Brewken::setOption("dbPortnum", btStringEdit_portnum->text());
-            Brewken::setOption("dbSchema", btStringEdit_schema->text());
-            Brewken::setOption("dbName", btStringEdit_dbname->text());
-            Brewken::setOption("dbUsername", btStringEdit_username->text());
+            PersistentSettings::insert("dbHostname", btStringEdit_hostname->text());
+            PersistentSettings::insert("dbPortnum", btStringEdit_portnum->text());
+            PersistentSettings::insert("dbSchema", btStringEdit_schema->text());
+            PersistentSettings::insert("dbName", btStringEdit_dbname->text());
+            PersistentSettings::insert("dbUsername", btStringEdit_username->text());
          }
          QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken to connect to the new database"));
       }
@@ -327,10 +331,10 @@ void OptionDialog::saveAndClose()
    }
 
    if ( saveDbConfig && checkBox_savePassword->checkState() == Qt::Checked ) {
-      Brewken::setOption("dbPassword", btStringEdit_password->text());
+      PersistentSettings::insert("dbPassword", btStringEdit_password->text());
    }
    else {
-      Brewken::removeOption("dbPassword");
+      PersistentSettings::remove("dbPassword");
    }
 
    switch (weightComboBox->itemData(weightComboBox->currentIndex()).toInt(&okay))
@@ -444,12 +448,12 @@ void OptionDialog::saveAndClose()
    // Check the new userDataDir.
    Brewken::DBTypes dbEngine = static_cast<Brewken::DBTypes>(comboBox_engine->currentData().toInt());
    if ( dbEngine == Brewken::SQLITE ) {
-      QString newUserDataDir = btStringEdit_dataDir->text();
+      QString newUserDataDir = btStringEdit_userDataDir->text();
       QDir userDirectory(newUserDataDir);
 
       // I think this is redundant and could be handled as just a simple db
       // transfer using the testPassed loop above.
-      if( userDirectory != Brewken::getUserDataDir() )
+      if( userDirectory != PersistentSettings::getUserDataDir() )
       {
          // If there are no data files present...
          if( ! QFileInfo(userDirectory, "database.sqlite").exists() )
@@ -462,8 +466,7 @@ void OptionDialog::saveAndClose()
             Brewken::copyDataFiles(newUserDataDir);
          }
 
-         Brewken::userDataDir.setPath(newUserDataDir);
-         Brewken::setOption("user_data_dir", newUserDataDir);
+         PersistentSettings::setUserDataDir(newUserDataDir);
          QMessageBox::information(
             this,
             tr("Restart"),
@@ -471,30 +474,26 @@ void OptionDialog::saveAndClose()
          );
       }
 
-      Brewken::setOption("maximum", spinBox_numBackups->value(), "backups");
-      Brewken::setOption("frequency", spinBox_frequency->value(), "backups");
-      Brewken::setOption("directory", btStringEdit_backupDir->text(), "backups");
+      PersistentSettings::insert("maximum", spinBox_numBackups->value(), "backups");
+      PersistentSettings::insert("frequency", spinBox_frequency->value(), "backups");
+      PersistentSettings::insert("directory", btStringEdit_backupDir->text(), "backups");
    }
 
-   Brewken::setOption("mashHopAdjustment", ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
-   Brewken::setOption("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
+   PersistentSettings::insert("mashHopAdjustment", ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
+   PersistentSettings::insert("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
 
    // Saving Logging Options to the Log object
-   Logging::logLevel = static_cast<Logging::Level>(loggingLevelComboBox->currentData().toInt());
-   Logging::setDirectory(QDir(lineEdit_LogFileLocation->text()));
-   Logging::logUseConfigDir = checkBox_LogFileLocationUseDefault->isChecked();
-   if ( Logging::logUseConfigDir )
-   {
-      Logging::setDirectory(Brewken::getConfigDir());
-   }
-   Brewken::setOption("LoggingLevel", Logging::getStringFromLogLevel(Logging::logLevel));
-   Brewken::setOption("LogFilePath", Logging::getDirectory().absolutePath());
-   Brewken::setOption("LoggingUseConfigDir", Logging::logUseConfigDir);
+   Logging::setLogLevel(static_cast<Logging::Level>(loggingLevelComboBox->currentData().toInt()));
+   Logging::setDirectory(
+      checkBox_LogFileLocationUseDefault->isChecked() ?
+         std::optional<QDir>(std::nullopt) : std::optional<QDir>(lineEdit_LogFileLocation->text())
+   );
    // Make sure the main window updates.
-   if( Brewken::mainWindow() )
+   if (Brewken::mainWindow()) {
       Brewken::mainWindow()->showChanges();
-
+   }
    setVisible(false);
+   return;
 }
 
 void OptionDialog::cancel()
@@ -521,33 +520,33 @@ void OptionDialog::showChanges()
    colorFormulaComboBox->setCurrentIndex(colorFormulaComboBox->findData(Brewken::colorFormula));
    ibuFormulaComboBox->setCurrentIndex(ibuFormulaComboBox->findData(Brewken::ibuFormula));
 
-   // Data directory
-   btStringEdit_dataDir->setText(Brewken::getUserDataDir().canonicalPath());
+   // User data directory
+   btStringEdit_userDataDir->setText(PersistentSettings::getUserDataDir().canonicalPath());
 
    // Backup stuff
-   btStringEdit_backupDir->setText( Brewken::option("directory", Brewken::getUserDataDir().canonicalPath(), "backups").toString() );
-   spinBox_numBackups->setValue( Brewken::option("maximum", 10, "backups").toInt() );
-   spinBox_frequency->setValue( Brewken::option("frequency", 4, "backups").toInt() );
+   btStringEdit_backupDir->setText( PersistentSettings::value("directory", PersistentSettings::getUserDataDir().canonicalPath(), "backups").toString() );
+   spinBox_numBackups->setValue( PersistentSettings::value("maximum", 10, "backups").toInt() );
+   spinBox_frequency->setValue( PersistentSettings::value("frequency", 4, "backups").toInt() );
 
    // The IBU modifications. These will all be calculated from a 60 min boil. This is gonna get confusing.
-   double amt = Brewken::toDouble(Brewken::option("mashHopAdjustment",0).toString(), "OptionDialog::showChanges()");
+   double amt = Brewken::toDouble(PersistentSettings::value("mashHopAdjustment",0).toString(), "OptionDialog::showChanges()");
    ibuAdjustmentMashHopDoubleSpinBox->setValue(amt*100);
 
-   amt = Brewken::toDouble(Brewken::option("firstWortHopAdjustment",1.1).toString(), "OptionDialog::showChanges()");
+   amt = Brewken::toDouble(PersistentSettings::value("firstWortHopAdjustment",1.1).toString(), "OptionDialog::showChanges()");
    ibuAdjustmentFirstWortDoubleSpinBox->setValue(amt*100);
 
    // Database stuff -- this looks weird, but trust me. We want SQLITE to be
    // the default for this field
-   int tmp = Brewken::option("dbType",Brewken::SQLITE).toInt() - 1;
+   int tmp = PersistentSettings::value("dbType",Brewken::SQLITE).toInt() - 1;
    comboBox_engine->setCurrentIndex(tmp);
 
-   btStringEdit_hostname->setText(Brewken::option("dbHostname","localhost").toString());
-   btStringEdit_portnum->setText(Brewken::option("dbPort","5432").toString());
-   btStringEdit_schema->setText(Brewken::option("dbSchema","public").toString());
-   btStringEdit_dbname->setText(Brewken::option("dbName","brewken").toString());
-   btStringEdit_username->setText(Brewken::option("dbUsername","brewken").toString());
-   btStringEdit_password->setText(Brewken::option("dbPassword","").toString());
-   checkBox_savePassword->setChecked( Brewken::hasOption("dbPassword") );
+   btStringEdit_hostname->setText(PersistentSettings::value("dbHostname","localhost").toString());
+   btStringEdit_portnum->setText(PersistentSettings::value("dbPort","5432").toString());
+   btStringEdit_schema->setText(PersistentSettings::value("dbSchema","public").toString());
+   btStringEdit_dbname->setText(PersistentSettings::value("dbName","brewken").toString());
+   btStringEdit_username->setText(PersistentSettings::value("dbUsername","brewken").toString());
+   btStringEdit_password->setText(PersistentSettings::value("dbPassword","").toString());
+   checkBox_savePassword->setChecked( PersistentSettings::contains("dbPassword") );
 
    status = OptionDialog::NOCHANGE;
    changeColors();
@@ -574,7 +573,7 @@ void OptionDialog::postgresVisible(bool canSee)
 void OptionDialog::sqliteVisible(bool canSee)
 {
    label_dataDir->setVisible(canSee);
-   btStringEdit_dataDir->setVisible(canSee);
+   btStringEdit_userDataDir->setVisible(canSee);
 
    pushButton_browseDataDir->setVisible(canSee);
    label_backupDir->setVisible(canSee);
@@ -623,7 +622,7 @@ void OptionDialog::setDbDialog(Brewken::DBTypes db)
       sqliteVisible(true);
 
       gridLayout->addWidget(label_dataDir,0,0);
-      gridLayout->addWidget(btStringEdit_dataDir,0,1,1,2);
+      gridLayout->addWidget(btStringEdit_userDataDir,0,1,1,2);
       gridLayout->addWidget(pushButton_browseDataDir,0,3);
 
       gridLayout->addWidget(label_backupDir,1,0);
@@ -701,8 +700,8 @@ void OptionDialog::createSQLiteElements()
    label_dataDir = new QLabel(groupBox_dbConfig);
    label_dataDir->setObjectName(QStringLiteral("label_dataDir"));
 
-   btStringEdit_dataDir = new BtStringEdit(groupBox_dbConfig);
-   btStringEdit_dataDir->setObjectName(QStringLiteral("btStringEdit_dataDir"));
+   btStringEdit_userDataDir = new BtStringEdit(groupBox_dbConfig);
+   btStringEdit_userDataDir->setObjectName(QStringLiteral("btStringEdit_userDataDir"));
 
    pushButton_browseDataDir = new QPushButton(groupBox_dbConfig);
    pushButton_browseDataDir->setObjectName(QStringLiteral("button_browseDataDir"));
@@ -825,7 +824,7 @@ void OptionDialog::testConnection()
          success = Database::verifyDbConnection(newType,hostname,port,schema,database,username,password);
          break;
       default:
-         hostname = QString("%1/%2").arg(btStringEdit_dataDir->text()).arg("database.sqlite");
+         hostname = QString("%1/%2").arg(btStringEdit_userDataDir->text()).arg("database.sqlite");
          success = Database::verifyDbConnection(newType,hostname);
    }
 
@@ -890,8 +889,8 @@ void OptionDialog::savePassword(bool state)
    }
 }
 
-void OptionDialog::setFileLocationState(bool state)
-{
-   lineEdit_LogFileLocation->setEnabled( ! state );
-   pushButton_LogFileLocationBrowse->setEnabled( ! state );
+void OptionDialog::setFileLocationState(bool state) {
+   this->lineEdit_LogFileLocation->setEnabled( ! state );
+   this->pushButton_LogFileLocationBrowse->setEnabled( ! state );
+   return;
 }

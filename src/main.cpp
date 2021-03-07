@@ -18,24 +18,80 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xalanc/Include/PlatformDefinitions.hpp>
 
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QMessageBox>
 #include <QSharedMemory>
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xalanc/Include/PlatformDefinitions.hpp>
-#include "config.h"
+
 #include "beerxml.h"
 #include "Brewken.h"
+#include "config.h"
 #include "database/Database.h"
+#include "PersistentSettings.h"
 
 void importFromXml(const QString & filename);
 void createBlankDb(const QString & filename);
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+
+   //
+   // Various bits of Qt initialisation need to be done straight away for other Qt functionality to work correctly
+   //
+   // You might think that it would be possible to specify application and organization name etc entirely at compile
+   // time, but it seems these run-time calls are always required.
+   //
+   // We take advantage of this to allow different persistent settings in debug mode, so that changes made will not
+   // interfere with another installed instance of Brewken
+   //
+   // We deliberately do not call app.setOrganizationName() as it just creates an extra level of directories in the Qt
+   // default file locations (eg on Linux config location is ~/.config/orgName/appName if both organization and
+   // application name are set on the QApplication object, but omitting the call to setOrganizationName() takes out the
+   // extra directory layer).
+   //
+   QApplication app(argc, argv);
+   app.setOrganizationDomain("brewken.com");
+   app.setApplicationName(
+#ifdef QT_DEBUG
+      "brewken-debug"
+#else
+      "brewken"
+#endif
+   );
+   app.setApplicationVersion(VERSIONSTRING);
+
+   // Process command-line options relatively early as some may override other settings
+   QCommandLineParser parser;
+   QCommandLineOption const importFromXmlOption("from-xml", "Imports DB from XML in <file>", "file");
+   parser.addOption(importFromXmlOption);
+   QCommandLineOption const createBlankDBOption("create-blank", "Creates an empty database in <file>", "file");
+   parser.addOption(createBlankDBOption);
+   /*!
+    * \brief Forces the application to a specific user directory.
+    *
+    * If this directory exists, it will replace the user directory taken from QSettings.
+    *
+    * This is mostly useful for developers who want to have an easy way of running an instance of the app against a
+    * test database without messing anything up with their real database.
+    */
+   QCommandLineOption const userDirectoryOption("user-dir", "Override the user data directory used by the application with <directory>", "directory", QString());
+   parser.addOption(userDirectoryOption);
+   parser.addHelpOption();
+   parser.addVersionOption();
+   parser.process(app);
+
+   //
+   // Having initialised various QApplication settings and read command line options, we can now allow Qt to work out where to get config from
+   //
+   PersistentSettings::initialise(parser.value(userDirectoryOption));
+
+   //
+   // And once we have config, we can initialise logging
+   //
+   Logging::initializeLogging();
 
    // Initialize Xerces XML tools
    // NB: This is also where where we would initialise xalanc::XalanTransformer if we were using it
@@ -45,20 +101,6 @@ int main(int argc, char **argv)
       qCritical() << Q_FUNC_INFO << "Xerces XML Parser Initialisation Failed: " << xercesInitException.getMessage();
       return 1;
    }
-
-   QApplication app(argc, argv);
-   app.setOrganizationName("Brewken");
-   app.setOrganizationDomain("brewken.com");
-
-   // Allows a different set of QTSettings while in debug mode.
-   // Settings changed whilst debugging will not interfere with other installed instance of BT.
-#ifdef QT_DEBUG
-   app.setApplicationName("brewken-debug");
-#else
-   app.setApplicationName("brewken");
-#endif
-
-   app.setApplicationVersion(VERSIONSTRING);
 
    //
    // Check whether another instance of Brewken is running.  We want to avoid two instances running at the same time
@@ -92,32 +134,13 @@ int main(int argc, char **argv)
       }
    }
 
-   QCommandLineParser parser;
-   parser.addHelpOption();
-   parser.addVersionOption();
-
-   const QCommandLineOption importFromXmlOption("from-xml", "Imports DB from XML in <file>", "file");
-   const QCommandLineOption createBlankDBOption("create-blank", "Creates an empty database in <file>", "file");
-   /*!
-    * \brief Forces the application to a specific user directory.
-    *
-    * If this directory exists, it will replace the user directory taken
-    * from QSettings.
-    */
-   const QCommandLineOption userDirectoryOption("user-dir", "Overwrite the directory used by the application with <directory>", "directory", QString());
-
-   parser.addOption(importFromXmlOption);
-   parser.addOption(createBlankDBOption);
-   parser.addOption(userDirectoryOption);
-
-   parser.process(app);
 
    if (parser.isSet(importFromXmlOption)) importFromXml(parser.value(importFromXmlOption));
    if (parser.isSet(createBlankDBOption)) createBlankDb(parser.value(createBlankDBOption));
 
    try
    {
-      auto mainAppReturnValue = Brewken::run(parser.value(userDirectoryOption));
+      auto mainAppReturnValue = Brewken::run();
 
       //
       // Clean exit of Xerces XML tools
@@ -165,7 +188,7 @@ void importFromXml(const QString & filename) {
       exit(1);
    }
     Database::dropInstance();
-    Brewken::setOption("converted", QDate().currentDate().toString());
+///    PersistentSettings::insert("converted", QDate().currentDate().toString());
     exit(0);
 }
 
