@@ -21,19 +21,12 @@
 #ifndef OPTIONDIALOG_H
 #define OPTIONDIALOG_H
 
-#include <QAbstractButton>
-#include <QCheckBox>
+#include <memory> // For PImpl
+
 #include <QDialog>
-#include <QIcon>
-#include <QMap>
-#include <QString>
-#include <QVector>
 #include <QWidget>
 
-#include "BtLineEdit.h"
 #include "ui_optionsDialog.h"
-#include "unit.h"
-#include "Logging.h"
 
 /*!
  * \class OptionDialog
@@ -45,43 +38,7 @@ class OptionDialog : public QDialog, public Ui::optionsDialog {
 public:
    //! \brief Default constructor.
    OptionDialog(QWidget *parent=0);
-
-   // UI stuff to make this work as I want
-   // Postgres things
-   QLabel *label_hostname;
-   BtStringEdit *btStringEdit_hostname;
-   QLabel *label_portnum;
-   BtStringEdit *btStringEdit_portnum;
-   QLabel *label_schema;
-   BtStringEdit *btStringEdit_schema;
-   QLabel *label_dbName;
-   BtStringEdit *btStringEdit_dbname;
-   QLabel *label_username;
-   BtStringEdit *btStringEdit_username;
-   QLabel *label_password;
-   BtStringEdit *btStringEdit_password;
-   QHBoxLayout *horizontalLayout_7;
-   QSpacerItem *horizontalSpacer_3;
-   QCheckBox *checkBox_savePassword;
-   // SQLite things
-   QLabel *label_dataDir;
-   BtStringEdit *btStringEdit_userDataDir;
-   QPushButton *pushButton_browseDataDir;
-   QLabel *label_backupDir;
-   BtStringEdit *btStringEdit_backupDir;
-   QPushButton *pushButton_browseBackupDir;
-   QLabel *label_numBackups;
-   QSpinBox *spinBox_numBackups;
-   QLabel *label_frequency;
-   QSpinBox *spinBox_frequency;
-
-   void createPostgresElements();
-   void createSQLiteElements();
-   void clearLayout();
-   void setDbDialog(Brewken::DBTypes db);
-   void retranslateDbDialog(QDialog *optionsDialog);
-   void sqliteVisible(bool canSee);
-   void postgresVisible(bool canSee);
+   ~OptionDialog();
 
 public slots:
    //! \brief Show the dialog.
@@ -115,23 +72,9 @@ protected:
    virtual void changeEvent(QEvent* e);
 
 private:
-   enum testStates {
-      NOCHANGE,
-      NEEDSTEST,
-      TESTFAILED,
-      TESTPASSED
-   };
-
-   testStates status;
-   // Update UI strings according to current language.
-   void retranslate();
-   // Update dialog with current options.
-   void showChanges();
-   //
-   void changeColors();
-   QButtonGroup *colorGroup, *ibuGroup;
-   QStringList ndxToLangCode;
-   QVector<QIcon> langIcons;
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
 #endif

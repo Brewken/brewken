@@ -37,7 +37,7 @@
 #endif
 
 //
-// Private implementation details
+// Anonymous namespace for constants, global variables and functions used only in this file
 //
 namespace {
 
@@ -283,8 +283,7 @@ bool Logging::getLogInConfigDir() {
 
 namespace Logging {
 
-
-   // Options set by the end user.
+   // .:TODO:. Make these configurable by the end user in OptionDialog
    // Set the log file size for the rotation.
    int const logFileSize = 500 * 1024;
    // set the number of files to keep when rotating.

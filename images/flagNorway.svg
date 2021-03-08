@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Created by Idar Lund (https://github.com/idarlund) -->
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="65" height="65" id="flagNorway.svg">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="65" height="65" id="flagNorway">
 
 <!-- Code for the actual flag -->
 <rect width="65" height="65" fill="#ef2b2d" rx="4" ry="4"/> <!-- Red background -->
