@@ -36,10 +36,10 @@
 #include <QSettings>
 #include <QStandardPaths>
 
-
+//
+// Anonymous namespace for constants, global variables and functions used only in this file
+//
 namespace {
-
-
    //
    // Most of the PersistentSettings functions should not be called until after PersistentSettings::initialise()
    //
