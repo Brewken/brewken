@@ -69,10 +69,11 @@ namespace {
    };
 
    struct LanguageInfo {
-      char const * const iso639_1Code;
+      QString            iso639_1Code;       // What we need to pass to Brewken::setLanguage()
       QIcon              countryFlag;        // Yes, we know some languages are spoken in more than one country...
-      char const * const nameInEnglish;
-      QString            nameInCurrentLang;
+      char const *       nameInEnglish;
+      QString            nameInCurrentLang;  // Don't strictly need to store this, but having the hard-coded tr() calls
+                                             // in the initialisation flag up what language names need translating
    };
 }
 
@@ -83,30 +84,56 @@ public:
    /**
     * Constructor
     */
-   impl(OptionDialog & optionDialog) : qFileDialog                {&optionDialog},
-                                       label_pgHostname           {optionDialog.groupBox_dbConfig},
-                                       input_pgHostname           {optionDialog.groupBox_dbConfig},
-                                       label_pgPortNum            {optionDialog.groupBox_dbConfig},
-                                       input_pgPortNum            {optionDialog.groupBox_dbConfig},
-                                       label_pgSchema             {optionDialog.groupBox_dbConfig},
-                                       input_pgSchema             {optionDialog.groupBox_dbConfig},
-                                       label_pgDbName             {optionDialog.groupBox_dbConfig},
-                                       input_pgDbName             {optionDialog.groupBox_dbConfig},
-                                       label_pgUsername           {optionDialog.groupBox_dbConfig},
-                                       input_pgUsername           {optionDialog.groupBox_dbConfig},
-                                       label_pgPassword           {optionDialog.groupBox_dbConfig},
-                                       input_pgPassword           {optionDialog.groupBox_dbConfig},
-                                       checkBox_savePgPassword    {optionDialog.groupBox_dbConfig},
-                                       label_userDataDir          {optionDialog.groupBox_dbConfig},
-                                       input_userDataDir          {optionDialog.groupBox_dbConfig},
-                                       pushButton_browseDataDir   {optionDialog.groupBox_dbConfig},
-                                       label_backupDir            {optionDialog.groupBox_dbConfig},
-                                       input_backupDir            {optionDialog.groupBox_dbConfig},
-                                       pushButton_browseBackupDir {optionDialog.groupBox_dbConfig},
-                                       label_numBackups           {optionDialog.groupBox_dbConfig},
-                                       spinBox_numBackups         {optionDialog.groupBox_dbConfig},
-                                       label_frequency            {optionDialog.groupBox_dbConfig},
-                                       spinBox_frequency          {optionDialog.groupBox_dbConfig} {
+   impl(OptionDialog & optionDialog) :
+      qFileDialog                {&optionDialog},
+      label_pgHostname           {optionDialog.groupBox_dbConfig},
+      input_pgHostname           {optionDialog.groupBox_dbConfig},
+      label_pgPortNum            {optionDialog.groupBox_dbConfig},
+      input_pgPortNum            {optionDialog.groupBox_dbConfig},
+      label_pgSchema             {optionDialog.groupBox_dbConfig},
+      input_pgSchema             {optionDialog.groupBox_dbConfig},
+      label_pgDbName             {optionDialog.groupBox_dbConfig},
+      input_pgDbName             {optionDialog.groupBox_dbConfig},
+      label_pgUsername           {optionDialog.groupBox_dbConfig},
+      input_pgUsername           {optionDialog.groupBox_dbConfig},
+      label_pgPassword           {optionDialog.groupBox_dbConfig},
+      input_pgPassword           {optionDialog.groupBox_dbConfig},
+      checkBox_savePgPassword    {optionDialog.groupBox_dbConfig},
+      label_userDataDir          {optionDialog.groupBox_dbConfig},
+      input_userDataDir          {optionDialog.groupBox_dbConfig},
+      pushButton_browseDataDir   {optionDialog.groupBox_dbConfig},
+      label_backupDir            {optionDialog.groupBox_dbConfig},
+      input_backupDir            {optionDialog.groupBox_dbConfig},
+      pushButton_browseBackupDir {optionDialog.groupBox_dbConfig},
+      label_numBackups           {optionDialog.groupBox_dbConfig},
+      spinBox_numBackups         {optionDialog.groupBox_dbConfig},
+      label_frequency            {optionDialog.groupBox_dbConfig},
+      spinBox_frequency          {optionDialog.groupBox_dbConfig},
+      languageInfo {
+         {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
+         {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
+         {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
+         {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
+         {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
+         {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
+         {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
+         {"et", QIcon(),                              "Estonian",         tr("Estonian")         },
+         {"eu", QIcon(),                              "Basque",           tr("Basque")           },
+         {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
+         {"gl", QIcon(),                              "Galician",         tr("Galician")         },
+         {"hu", QIcon(),                              "Hungarian",        tr("Hungarian")        },
+         {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
+         {"lv", QIcon(),                              "Latvian",          tr("Latvian")          },
+         {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
+         {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
+         {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
+         {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
+         {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
+         {"sr", QIcon(),                              "Serbian",          tr("Serbian")          },
+         {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
+         {"tr", QIcon(),                              "Turkish",          tr("Turkish")          },
+         {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
+      } {
       //
       // Optimise the select file dialog to select directories
       //
@@ -158,61 +185,9 @@ public:
 
    void initLangs(OptionDialog & optionDialog) {
 
-      ndxToLangCode <<
-         "ca" <<
-         "cs" <<
-         "da" <<
-         "de" <<
-         "el" <<
-         "en" <<
-         "es" <<
-         "et" <<
-         "eu" <<
-         "fr" <<
-         "gl" <<
-         "hu" <<
-         "it" <<
-         "lv" <<
-         "nb" <<
-         "nl" <<
-         "pl" <<
-         "pt" <<
-         "ru" <<
-         "sr" <<
-         "sv" <<
-         "tr" <<
-         "zh";
-
-      // Do this just to have model indices to set icons.
-      optionDialog.comboBox_lang->addItems(ndxToLangCode);
-      // MUST correspond to ndxToLangCode.
-      langIcons <<
-         /*ca*/ QIcon(":images/flagCatalonia.svg") <<
-         /*cs*/ QIcon(":images/flagCzech.svg") <<
-         /*da*/ QIcon(":images/flagDenmark.svg") <<
-         /*de*/ QIcon(":images/flagGermany.svg") <<
-         /*el*/ QIcon(":images/flagGreece.svg") <<
-         /*en*/ QIcon(":images/flagUK.svg") <<
-         /*es*/ QIcon(":images/flagSpain.svg") <<
-         /*et*/ QIcon() <<
-         /*eu*/ QIcon() <<
-         /*fr*/ QIcon(":images/flagFrance.svg") <<
-         /*gl*/ QIcon() <<
-         /*hu*/ QIcon() <<
-         /*it*/ QIcon(":images/flagItaly.svg") <<
-         /*lv*/ QIcon() <<
-         /*nb*/ QIcon(":images/flagNorway.svg") <<
-         /*nl*/ QIcon(":images/flagNetherlands.svg") <<
-         /*pl*/ QIcon(":images/flagPoland.svg") <<
-         /*pt*/ QIcon(":images/flagBrazil.svg") <<
-         /*ru*/ QIcon(":images/flagRussia.svg") <<
-         /*sr*/ QIcon() <<
-         /*sv*/ QIcon(":images/flagSweden.svg") <<
-         /*tr*/ QIcon() <<
-         /*zh*/ QIcon(":images/flagChina.svg");
-      // Set icons.
-      for(int i = 0; i < langIcons.size(); ++i )
-         optionDialog.comboBox_lang->setItemIcon(i, langIcons[i]);
+      for (auto langInfo : this->languageInfo) {
+         optionDialog.comboBox_lang->addItem(langInfo.countryFlag, langInfo.nameInCurrentLang, langInfo.iso639_1Code);
+      }
 
       return;
    }
@@ -340,7 +315,7 @@ public:
       this->label_frequency.setText(QApplication::translate("optionsDialog", "Frequency of Backups", nullptr));
 
       // set up the tooltips if we are using them
-   #ifndef QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
       this->input_pgHostname.setToolTip(QApplication::translate("optionsDialog", "PostgresSQL's host name or IP address", nullptr));
       this->input_pgPortNum.setToolTip(QApplication::translate("optionsDialog", "Port the PostgreSQL is listening on", nullptr));
       this->input_pgSchema.setToolTip(QApplication::translate("optionsDialog", "The schema containing the database", nullptr));
@@ -352,7 +327,7 @@ public:
       this->label_numBackups.setToolTip(QApplication::translate("optionsDialog", "Number of backups to keep: -1 means never remove, 0 means never backup", nullptr));
       // Actually the backups happen after every X times the program is closed, but the tooltip is already long enough!
       this->label_frequency.setToolTip(QApplication::translate("optionsDialog", "How many times Brewken needs to be run to trigger another backup: 1 means always backup", nullptr));
-   #endif
+#endif
       return;
    }
 
@@ -365,35 +340,10 @@ public:
       this->retranslateDbDialog();
 
       // Retranslate the language combobox.
-      // NOTE: the indices MUST correspond to ndxToLangCode.
-      QStringList langStrings;
-      langStrings <<
-         /*ca*/ tr("Catalan") <<
-         /*cs*/ tr("Czech") <<
-         /*da*/ tr("Danish") <<
-         /*de*/ tr("German") <<
-         /*el*/ tr("Greek") <<
-         /*en*/ tr("English") <<
-         /*es*/ tr("Spanish") <<
-         /*et*/ tr("Estonian") <<
-         /*eu*/ tr("Basque") <<
-         /*fr*/ tr("French") <<
-         /*gl*/ tr("Galician") <<
-         /*hu*/ tr("Hungarian") <<
-         /*it*/ tr("Italian") <<
-         /*lv*/ tr("Latvian") <<
-         /*nb*/ tr("Norwegian Bokmål") <<
-         /*nl*/ tr("Dutch") <<
-         /*pl*/ tr("Polish") <<
-         /*pt*/ tr("Portuguese") <<
-         /*ru*/ tr("Russian") <<
-         /*sr*/ tr("Serbian") <<
-         /*sv*/ tr("Swedish") <<
-         /*tr*/ tr("Turkish") <<
-         /*zh*/ tr("Chinese");
-      int i;
-      for( i = 0; i < langStrings.size(); ++i )
-         optionDialog.comboBox_lang->setItemText(i, langStrings[i]);
+      for (int ii = 0; ii < this->languageInfo.size(); ++ii) {
+         this->languageInfo[ii].nameInCurrentLang = tr(this->languageInfo[ii].nameInEnglish);
+         optionDialog.comboBox_lang->setItemText(ii, this->languageInfo[ii].nameInCurrentLang);
+      }
       return;
    }
 
@@ -403,7 +353,7 @@ public:
       // Green when the test passed
       // Black otherwise.
 
-      switch(status)
+      switch(dbConnectionTestState)
       {
          case NEEDS_TEST:
             optionDialog.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -431,9 +381,9 @@ public:
    // Update dialog with current options.
    void showChanges(OptionDialog & optionDialog) {
       // Set the right language
-      int ndx = ndxToLangCode.indexOf( Brewken::getCurrentLanguage() );
-      if (ndx >= 0) {
-         optionDialog.comboBox_lang->setCurrentIndex(ndx);
+      int index = optionDialog.comboBox_lang->findData(Brewken::getCurrentLanguage());
+      if (index >= 0) {
+         optionDialog.comboBox_lang->setCurrentIndex(index);
       }
 
       optionDialog.weightComboBox->setCurrentIndex(optionDialog.weightComboBox->findData(Brewken::weightUnitSystem));
@@ -476,7 +426,7 @@ public:
       this->input_pgPassword.setText(PersistentSettings::value("dbPassword","").toString());
       this->checkBox_savePgPassword.setChecked( PersistentSettings::contains("dbPassword") );
 
-      this->status = NO_CHANGE;
+      this->dbConnectionTestState = NO_CHANGE;
       this->changeColors(optionDialog);
       return;
    }
@@ -511,12 +461,9 @@ public:
    QLabel      label_frequency;
    QSpinBox    spinBox_frequency;
 
-   DbConnectionTestStates status;
+   DbConnectionTestStates dbConnectionTestState;
 
-//   QButtonGroup *colorGroup, *ibuGroup;
-   QStringList ndxToLangCode;
-   QVector<QIcon> langIcons;
-
+   QVector<LanguageInfo> languageInfo;
 
 };
 
@@ -679,7 +626,7 @@ void OptionDialog::saveAndClose()
    bool saveDbConfig = true;
 
    // TODO:: FIX THIS UI. I am really not sure what the best approach is here.
-   if ( this->pimpl->status == NEEDS_TEST || this->pimpl->status == TEST_FAILED ) {
+   if ( this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED ) {
       QMessageBox::critical(nullptr,
             tr("Test connection or cancel"),
             tr("Saving the options without testing the connection can cause Brewken to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.")
@@ -687,7 +634,7 @@ void OptionDialog::saveAndClose()
       return;
    }
 
-   if ( this->pimpl->status == TEST_PASSED ) {
+   if ( this->pimpl->dbConnectionTestState == TEST_PASSED ) {
       // This got unpleasant. There are multiple possible transfer paths.
       // SQLite->Pgsql, Pgsql->Pgsql and Pgsql->SQLite. This will ensure we
       // preserve the information required.
@@ -833,7 +780,7 @@ void OptionDialog::saveAndClose()
    Brewken::colorFormula = static_cast<Brewken::ColorType>(ndx);
 
    // Set the right language.
-   Brewken::setLanguage( this->pimpl->ndxToLangCode[ comboBox_lang->currentIndex() ] );
+   Brewken::setLanguage(this->comboBox_lang->currentData().toString());
 
    // Check the new userDataDir.
    Brewken::DBTypes dbEngine = static_cast<Brewken::DBTypes>(comboBox_engine->currentData().toInt());
@@ -923,7 +870,7 @@ void OptionDialog::testConnection() {
 
    Brewken::DBTypes newType = static_cast<Brewken::DBTypes>(comboBox_engine->currentData().toInt());
    // Do nothing if nothing is required.
-   if ( this->pimpl->status == NO_CHANGE || this->pimpl->status == TEST_PASSED) {
+   if ( this->pimpl->dbConnectionTestState == NO_CHANGE || this->pimpl->dbConnectionTestState == TEST_PASSED) {
       return;
    }
 
@@ -948,17 +895,17 @@ void OptionDialog::testConnection() {
                            QObject::tr("Connection Test"),
                            QString(QObject::tr("Connection to database was successful"))
                            );
-      this->pimpl->status = TEST_PASSED;
+      this->pimpl->dbConnectionTestState = TEST_PASSED;
    } else {
       // Database::testConnection already popped the dialog
-      this->pimpl->status = TEST_FAILED;
+      this->pimpl->dbConnectionTestState = TEST_FAILED;
    }
    this->pimpl->changeColors(*this);
    return;
 }
 
 void OptionDialog::testRequired() {
-   this->pimpl->status = NEEDS_TEST;
+   this->pimpl->dbConnectionTestState = NEEDS_TEST;
    this->pimpl->changeColors(*this);
    return;
 }
