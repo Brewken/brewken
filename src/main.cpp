@@ -194,6 +194,6 @@ void importFromXml(const QString & filename) {
 
 //! \brief Creates a blank database using the given filename.
 void createBlankDb(const QString & filename) {
-    Database::createBlank(filename);
+    Database::instance().createBlank(filename);
     exit(0);
 }
