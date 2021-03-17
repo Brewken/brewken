@@ -100,15 +100,12 @@ namespace {
       return db.metaObject()->property(db.metaObject()->indexOfProperty(name));
    }
 
-///   Database* dbInstance; // The singleton object
-
    //QThread* _thread;
    // These are for SQLite databases
    QFile dbFile;
    QString dbFileName;
    QFile dataDbFile;
    QString dataDbFileName;
-   QString dbConName;
 
    // And these are for Postgres databases -- are these really required? Are
    // the sqlite ones really required?
@@ -264,7 +261,6 @@ namespace {
       return tmp;
    }
 
-
 }
 
 //
@@ -276,7 +272,10 @@ public:
    /**
     * Constructor
     */
-   impl() : dbDefn{} {
+   impl() : dbDefn{},
+            dbConName{},
+            loaded{false},
+            loadWasSuccessful{false} {
       this->m_beerxml = new BeerXML(&this->dbDefn);
       return;
    }
@@ -408,7 +407,8 @@ public:
       sqldb = QSqlDatabase::addDatabase("QSQLITE",conName);
       sqldb.setDatabaseName(dbFileName);
       dbIsOpen = sqldb.open();
-      dbConName = sqldb.connectionName();
+      this->dbConName = sqldb.connectionName();
+      qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
       if( ! dbIsOpen )
       {
@@ -440,7 +440,7 @@ public:
             this->createFromScratch = sqldb.tables().size() == 0;
 
             // Associate this db with the current thread.
-            _threadToConnection.insert(QThread::currentThread(), dbConName);
+            _threadToConnection.insert(QThread::currentThread(), this->dbConName);
          }
          catch(QString e) {
             qCritical() << QString("%1: %2 (%3)").arg(Q_FUNC_INFO).arg(e).arg(pragma.lastError().text());
@@ -489,7 +489,8 @@ public:
       sqldb.setPassword( dbPassword );
 
       dbIsOpen = sqldb.open();
-      dbConName = sqldb.connectionName();
+      this->dbConName = sqldb.connectionName();
+      qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
       if( ! dbIsOpen ) {
          qCritical() << QString("Could not open %1 for reading.\n%2").arg(dbFileName).arg(sqldb.lastError().text());
@@ -1243,10 +1244,12 @@ public:
       return;
    }
 
-
    DatabaseSchema dbDefn;
+   QString dbConName;
 
    BeerXML* m_beerxml;
+
+   bool loaded;
 
    // Instance variables.
    bool loadWasSuccessful;
@@ -1279,10 +1282,13 @@ Database::Database() : pimpl{ new impl{} } {
 }
 
 Database::~Database() {
+   qDebug() << Q_FUNC_INFO << "dbConName=" << this->pimpl->dbConName;
 
    // If we have not explicitly unloaded, do so now and discard changes.
-   if( QSqlDatabase::database( dbConName, false ).isOpen() )
-      unload();
+   if (this->pimpl->loaded) {
+///   if( QSqlDatabase::database(this->pimpl->dbConName, false ).isOpen() ) {
+      this->unload();
+   }
 
    // Delete all the ingredients floating around.
    qDeleteAll(this->pimpl->allBrewNotes);
@@ -1303,8 +1309,7 @@ Database::~Database() {
 }
 
 
-bool Database::load()
-{
+bool Database::load() {
    bool dbIsOpen;
    QSqlDatabase sqldb;
 
@@ -1320,8 +1325,11 @@ bool Database::load()
    }
 
    _threadToConnectionMutex.unlock();
-   if ( ! dbIsOpen )
+   if ( ! dbIsOpen ) {
       return false;
+   }
+
+   this->pimpl->loaded = true;
 
    sqldb = sqlDatabase();
 
@@ -1330,7 +1338,7 @@ bool Database::load()
       bool success = DatabaseSchemaHelper::create(sqldb,&this->pimpl->dbDefn,Brewken::dbType());
       if( !success ) {
          qCritical() << "DatabaseSchemaHelper::create() failed";
-         return success;
+         return false;
       }
    }
 
@@ -1354,8 +1362,7 @@ bool Database::load()
    // Don't do this if we JUST copied the dataspace database.
    if( dataDbFile.fileName() != dbFile.fileName()
       && ! Brewken::userDatabaseDidNotExist
-      && QFileInfo(dataDbFile).lastModified() > Brewken::lastDbMergeRequest )
-   {
+      && QFileInfo(dataDbFile).lastModified() > Brewken::lastDbMergeRequest ) {
       if( Brewken::isInteractive() &&
          QMessageBox::question(
             nullptr,
@@ -1396,7 +1403,6 @@ bool Database::load()
    QList<Yeast*>::iterator l;
    QList<Mash*>::iterator m;
    QList<MashStep*>::iterator n;
-
 
    for( i = this->pimpl->allRecipes.begin(); i != this->pimpl->allRecipes.end(); i++ )
    {
@@ -1469,8 +1475,9 @@ bool Database::loadSuccessful()
 }
 
 
-void Database::unload()
-{
+void Database::unload() {
+   qDebug() << Q_FUNC_INFO;
+
    // this->pimpl->selectSome saves context. If we close the database before we tear that
    // context down, core gets dumped
    this->pimpl->selectSome.clear();
@@ -1482,11 +1489,15 @@ void Database::unload()
       QSqlDatabase::removeDatabase( conName );
    }
 
-   if (this->pimpl->loadWasSuccessful && Brewken::dbType() == Brewken::SQLITE )
-   {
+   if (this->pimpl->loadWasSuccessful && Brewken::dbType() == Brewken::SQLITE ) {
       dbFile.close();
       this->pimpl->automaticBackup();
    }
+
+   this->pimpl->loaded = false;
+   this->pimpl->loadWasSuccessful = false;
+
+   return;
 }
 
 
@@ -1522,6 +1533,7 @@ void Database::dropInstance()
 ///   delete dbInstance;
 ///   dbInstance=nullptr;
    mutex.unlock();
+   return;
 
 }
 
