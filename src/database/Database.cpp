@@ -64,7 +64,7 @@
 
 
 #include "Algorithms.h"
-#include "beerxml.h"
+#include "xml/BeerXml.h"
 #include "Brewken.h"
 #include "config.h"
 #include "database/BrewNoteSchema.h"
@@ -276,7 +276,6 @@ public:
             dbConName{},
             loaded{false},
             loadWasSuccessful{false} {
-      this->m_beerxml = new BeerXML(&this->dbDefn);
       return;
    }
 
@@ -1246,8 +1245,6 @@ public:
 
    DatabaseSchema dbDefn;
    QString dbConName;
-
-   BeerXML* m_beerxml;
 
    bool loaded;
 
@@ -4089,7 +4086,6 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
    }
 }
 
-
-BeerXML * Database::getBeerXml() {
-   return this->pimpl->m_beerxml;
+DatabaseSchema & Database::getDatabaseSchema() {
+   return this->pimpl->dbDefn;
 }

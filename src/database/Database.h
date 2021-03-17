@@ -431,7 +431,7 @@ public:
                         QString const& Username, QString const& Password,
                         int Portnum, Brewken::DBTypes newType);
 
-   BeerXML* getBeerXml();
+   DatabaseSchema & getDatabaseSchema();
 
 signals:
    void changed(QMetaProperty prop, QVariant value);

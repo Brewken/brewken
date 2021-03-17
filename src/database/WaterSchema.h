@@ -84,32 +84,10 @@ static const QString kxmlPropMagnesium("MAGNESIUM");
 //    */
 //   NamedEntity * removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* ing );
 //
-//   //! Helper to populate all* hashes. T should be a NamedEntity subclass.
 //   template <class T> void populateElements( QHash<int,T*>& hash, DatabaseConstants::DbTableId table );
 //
-//   //! we search by name enough that this is actually not a bad idea
-//   // Although this is private, it needs to be defined in the header as it's called from BeerXML
 //   template <class T> bool getElementsByName( QList<T*>& list, DatabaseConstants::DbTableId table, QString name, QHash<int,T*> allElements, QString id=QString("") )
-//   //! Mark the \b object in \b table as deleted.
 //   void deleteRecord( NamedEntity* object );
-//   // Note -- this has to happen on a transactional boundary. We are touching
-//   // something like four tables, and just sort of hoping it all works.
-//   /*!
-//    * Create a \e copy (by default) of \b ing and add the copy to \b recipe where \b ing's
-//    * key is \b ingKeyName and the relational table is \b relTableName.
-//    *
-//    * \tparam T the type of ingredient. Must inherit NamedEntity.
-//    * \param rec the recipe to add the ingredient to
-//    * \param ing the ingredient to add to the recipe
-//    * \param propName the Recipe property that will change when we add \c ing to it
-//    * \param relTableName the name of the relational table, perhaps "ingredient_in_recipe"
-//    * \param ingKeyName the name of the key in the ingredient table corresponding to \c ing
-//    * \param noCopy By default, we create a copy of the ingredient. If true,
-//    *               add the ingredient directly.
-//    * \param keyHash if not null, add the new (key, \c ing) pair to it
-//    * \param doNotDisplay if true (default), calls \c setDisplay(\c false) on the new ingredient
-//    * \returns the new ingredient.
-//    */
 //   template<class T> T* addNamedEntityToRecipe(
 //      Recipe* rec,
 //      NamedEntity* ing,

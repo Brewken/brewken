@@ -84,7 +84,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/AboutDialog.cpp
     ${SRCDIR}/Algorithms.cpp
     ${SRCDIR}/BeerColorWidget.cpp
-    ${SRCDIR}/beerxml.cpp
+    ${SRCDIR}/xml/BeerXml.cpp
     ${SRCDIR}/boiltime.cpp
     ${SRCDIR}/BrewDayScrollWidget.cpp
     ${SRCDIR}/BrewDayWidget.cpp
@@ -258,7 +258,7 @@ SET( Brewken_UIS
 SET( Brewken_MOC_HEADERS
     ${SRCDIR}/AboutDialog.h
     ${SRCDIR}/BeerColorWidget.h
-    ${SRCDIR}/beerxml.h
+    ${SRCDIR}/xml/BeerXml.h
     ${SRCDIR}/boiltime.h
     ${SRCDIR}/BrewDayScrollWidget.h
     ${SRCDIR}/BrewDayWidget.h

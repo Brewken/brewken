@@ -26,7 +26,7 @@
 #include <QMessageBox>
 #include <QSharedMemory>
 
-#include "beerxml.h"
+#include "xml/BeerXml.h"
 #include "Brewken.h"
 #include "config.h"
 #include "database/Database.h"
@@ -183,7 +183,7 @@ void importFromXml(const QString & filename) {
 
    QString errorMessage;
    QTextStream errorMessageAsStream{&errorMessage};
-   if (!Database::instance().getBeerXml()->importFromXML(filename, errorMessageAsStream)) {
+   if (!BeerXML::getInstance().importFromXML(filename, errorMessageAsStream)) {
       qCritical() << "Unable to import" << filename << "Error: " << errorMessage;
       exit(1);
    }
