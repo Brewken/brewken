@@ -1,5 +1,6 @@
 /**
- * TimeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * unitSystems/TimeUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -27,13 +28,13 @@ class TimeUnitSystem : public UnitSystem
 {
 public:
    TimeUnitSystem();
-   Unit* thicknessUnit(){ return 0; }
+   Unit const * thicknessUnit(){ return 0; }
    QString unitType();
 
-   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
-   QMap<QString, Unit*> const& qstringToUnit();
+   QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
+   QMap<QString, Unit const *> const& qstringToUnit();
 
-   Unit* unit();
+   Unit const * unit();
 };
 
 #endif /*_TIMEUNITSYSTEM_H*/

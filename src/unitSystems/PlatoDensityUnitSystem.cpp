@@ -25,23 +25,23 @@ PlatoDensityUnitSystem::PlatoDensityUnitSystem()
    _type = Unit::Density;
 }
 
-QMap<Unit::unitScale, Unit*> const& PlatoDensityUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& PlatoDensityUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout, Units::plato);
+      _scaleToUnit.insert(Unit::scaleWithout, &Units::plato);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& PlatoDensityUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& PlatoDensityUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("P", Units::plato);
+      _qstringToUnit.insert("P", &Units::plato);
    }
 
    return _qstringToUnit;
@@ -49,4 +49,4 @@ QMap<QString, Unit*> const& PlatoDensityUnitSystem::qstringToUnit()
 
 
 QString PlatoDensityUnitSystem::unitType() { return "Density"; }
-Unit* PlatoDensityUnitSystem::unit() { return Units::plato; }
+Unit const * PlatoDensityUnitSystem::unit() { return &Units::plato; }

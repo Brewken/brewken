@@ -30,29 +30,18 @@
 
 #include <memory> // For PImpl
 
-#include <functional>
-
 #include <QDebug>
-#include <QDomDocument>
-#include <QDomNode>
-#include <QFile>
-#include <QHash>
 #include <QList>
 #include <QMap>
 #include <QMetaProperty>
 #include <QObject>
-#include <QPair>
-#include <QRegExp>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QSqlRecord>
 #include <QString>
 #include <QTableView>
-#include <QUndoStack>
 #include <QVariant>
 
 #include "Brewken.h"
 #include "database/DatabaseSchema.h"
+#include "database/DbNamedEntityRecords.h"
 #include "database/TableSchemaConst.h"
 #include "database/TableSchema.h"
 #include "model/NamedEntity.h"
@@ -93,11 +82,8 @@ class Yeast;
  * the relevant registry "give me Yeast X".  If we then create a new Yeast (either via the UI or by reading it in from
  * a BeerXML file) we can then ask for it to be saved in the database.
  */
-class Database : public QObject
-{
+class Database : public QObject {
    Q_OBJECT
-
-   friend class BeerXML;
 
 public:
 
@@ -105,6 +91,10 @@ public:
    static Database& instance();
    //! Call this to delete the internal instance.
    static void dropInstance();
+
+   //! Get the right database connection for the calling thread.
+   QSqlDatabase sqlDatabase() const;
+
    //! \brief Should be called when we are about to close down.
    void unload();
 
@@ -129,6 +119,8 @@ public:
                                    QString const& username="brewken",
                                    QString const& password="brewken");
    bool loadSuccessful();
+
+   template<class NE> DbNamedEntityRecords<NE> & getRecords() const;
 
    void updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify = true, bool transact = false );
 
@@ -219,7 +211,7 @@ public:
    Style* style(int key);
    Yeast* yeast(int key);
    Salt* salt(int key);
-   Water* water(int key);
+///   Water* water(int key);
 
    // Add a COPY of these ingredients to a recipe, then call the changed()
    // signal corresponding to the appropriate QList
@@ -269,21 +261,20 @@ public:
 
    // Or you can mark whole lists as deleted.
    // ONE METHOD TO CALL THEM ALL AND IN DARKNESS BIND THEM!
-   template<class T> void remove(QList<T*> list)
-   {
-      if ( list.empty() )
+   template<class T> void remove(QList<T*> list) {
+      if ( list.empty() ) {
          return;
-
-      int ndx;
-      bool emitSignal;
+      }
 
       foreach(T* toBeDeleted, list) {
          const QMetaObject* meta = toBeDeleted->metaObject();
-         ndx = meta->indexOfClassInfo("signal");
-         emitSignal = ndx != -1 ? true : false;
+         int ndx = meta->indexOfClassInfo("signal");
+         bool emitSignal = (ndx != -1);
 
          remove(toBeDeleted, emitSignal);
       }
+
+      return;
    }
 
    template <class T>void remove(T* ing, bool emitSignal = true)
@@ -326,7 +317,7 @@ public:
       // This was screaming until I needed to emit a freaking signal
 ///      if ( ingTable != DatabaseConstants::MASHSTEPTABLE )
 ///         emit deletedSignal(ing);
-      if ( meta->className() == QString("MashStep") ) {
+      if ( meta->className() != QString("MashStep") ) {
          emit deletedSignal(ing);
       }
    }
@@ -414,7 +405,7 @@ public:
    //! Return a list of all the steps in a mash.
    QList<MashStep*> mashSteps(Mash const* parent);
 
-   QString textFromValue(QVariant value, QString type);
+//   QString textFromValue(QVariant value, QString type);
 
    //! Get the file where this database was loaded from.
    static QString getDbFileName();

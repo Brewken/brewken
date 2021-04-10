@@ -84,7 +84,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/AboutDialog.cpp
     ${SRCDIR}/Algorithms.cpp
     ${SRCDIR}/BeerColorWidget.cpp
-    ${SRCDIR}/xml/BeerXml.cpp
     ${SRCDIR}/boiltime.cpp
     ${SRCDIR}/BrewDayScrollWidget.cpp
     ${SRCDIR}/BrewDayWidget.cpp
@@ -108,6 +107,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/Database.cpp
     ${SRCDIR}/database/DatabaseSchema.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
+    ${SRCDIR}/database/DbNamedEntityRecords.cpp
+    ${SRCDIR}/database/DbRecords.cpp
     ${SRCDIR}/database/PropertySchema.cpp
     ${SRCDIR}/database/TableSchemaConst.cpp
     ${SRCDIR}/database/TableSchema.cpp
@@ -154,6 +155,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/model/MashStep.cpp
     ${SRCDIR}/model/Misc.cpp
     ${SRCDIR}/model/NamedEntity.cpp
+    ${SRCDIR}/model/NamedParameterBundle.cpp
     ${SRCDIR}/model/Recipe.cpp
     ${SRCDIR}/model/Salt.cpp
     ${SRCDIR}/model/Style.cpp
@@ -208,6 +210,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
     ${SRCDIR}/WaterTableModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
+    ${SRCDIR}/xml/BeerXml.cpp
     ${SRCDIR}/xml/BtDomErrorHandler.cpp
     ${SRCDIR}/xml/XercesHelpers.cpp
     ${SRCDIR}/xml/XmlCoding.cpp
@@ -253,12 +256,17 @@ SET( Brewken_UIS
     ${UIDIR}/yeastEditor.ui
 )
 
+#
 # The list of files that need to be moc'd.
 # In other words, classes that have Q_OBJECT declarations and stuff.
+# NB: This is NOT a list of ALL header files!
+#
+# You can recreate the body of this list by running the following from the bash prompt in the build directory:
+#    grep -rl Q_OBJECT ../src | sort | sed 's+^../src+    ${SRCDIR}+'
+#
 SET( Brewken_MOC_HEADERS
     ${SRCDIR}/AboutDialog.h
     ${SRCDIR}/BeerColorWidget.h
-    ${SRCDIR}/xml/BeerXml.h
     ${SRCDIR}/boiltime.h
     ${SRCDIR}/BrewDayScrollWidget.h
     ${SRCDIR}/BrewDayWidget.h
@@ -275,37 +283,19 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/BtTreeFilterProxyModel.h
     ${SRCDIR}/BtTreeModel.h
     ${SRCDIR}/BtTreeView.h
+    ${SRCDIR}/CMakeLists.txt
     ${SRCDIR}/ConverterTool.h
     ${SRCDIR}/CustomComboBox.h
-    ${SRCDIR}/database/BrewNoteSchema.h
-    ${SRCDIR}/database/BtAlldatabase/TableSchema.h
     ${SRCDIR}/database/Database.h
-    ${SRCDIR}/database/DatabaseSchema.h
-    ${SRCDIR}/database/EquipmentSchema.h
-    ${SRCDIR}/database/FermentableSchema.h
-    ${SRCDIR}/database/HopSchema.h
-    ${SRCDIR}/database/InstructionSchema.h
-    ${SRCDIR}/database/MashSchema.h
-    ${SRCDIR}/database/MashStepSchema.h
-    ${SRCDIR}/database/MiscSchema.h
     ${SRCDIR}/database/PropertySchema.h
-    ${SRCDIR}/database/RecipeSchema.h
-    ${SRCDIR}/database/SaltSchema.h
-    ${SRCDIR}/database/SettingsSchema.h
-    ${SRCDIR}/database/StyleSchema.h
     ${SRCDIR}/database/TableSchema.h
-    ${SRCDIR}/database/WaterSchema.h
-    ${SRCDIR}/database/YeastSchema.h
     ${SRCDIR}/EquipmentButton.h
     ${SRCDIR}/EquipmentEditor.h
-    ${SRCDIR}/model/Equipment.h
     ${SRCDIR}/EquipmentListModel.h
     ${SRCDIR}/FermentableDialog.h
     ${SRCDIR}/FermentableEditor.h
-    ${SRCDIR}/fermentable.h
     ${SRCDIR}/FermentableSortFilterProxyModel.h
     ${SRCDIR}/FermentableTableModel.h
-    ${SRCDIR}/HelpDialog.h
     ${SRCDIR}/HopDialog.h
     ${SRCDIR}/HopEditor.h
     ${SRCDIR}/HopSortFilterProxyModel.h
@@ -313,9 +303,9 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/HydrometerTool.h
     ${SRCDIR}/IbuGuSlider.h
     ${SRCDIR}/InstructionWidget.h
-#    ${SRCDIR}/Logging.h
     ${SRCDIR}/MainWindow.h
     ${SRCDIR}/MashButton.h
+    ${SRCDIR}/MashComboBox.h
     ${SRCDIR}/MashDesigner.h
     ${SRCDIR}/MashEditor.h
     ${SRCDIR}/MashListModel.h
@@ -328,6 +318,8 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/MiscSortFilterProxyModel.h
     ${SRCDIR}/MiscTableModel.h
     ${SRCDIR}/model/BrewNote.h
+    ${SRCDIR}/model/Equipment.h
+    ${SRCDIR}/model/Fermentable.h
     ${SRCDIR}/model/Hop.h
     ${SRCDIR}/model/Instruction.h
     ${SRCDIR}/model/Mash.h
@@ -336,29 +328,29 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/model/NamedEntity.h
     ${SRCDIR}/model/Recipe.h
     ${SRCDIR}/model/Salt.h
+    ${SRCDIR}/model/Style.h
     ${SRCDIR}/model/Water.h
     ${SRCDIR}/model/Yeast.h
     ${SRCDIR}/NamedEntitySortProxyModel.h
     ${SRCDIR}/NamedMashEditor.h
     ${SRCDIR}/OgAdjuster.h
-    ${SRCDIR}/OptionDialog.h
     ${SRCDIR}/PitchDialog.h
     ${SRCDIR}/PrimingDialog.h
     ${SRCDIR}/QueuedMethod.h
-    ${SRCDIR}/RadarChart.h
     ${SRCDIR}/RangedSlider.h
     ${SRCDIR}/RecipeExtrasWidget.h
     ${SRCDIR}/RecipeFormatter.h
     ${SRCDIR}/RefractoDialog.h
     ${SRCDIR}/SaltTableModel.h
     ${SRCDIR}/ScaleRecipeTool.h
+    ${SRCDIR}/SimpleUndoableUpdate.h
     ${SRCDIR}/StrikeWaterDialog.h
     ${SRCDIR}/StyleButton.h
     ${SRCDIR}/StyleEditor.h
-    ${SRCDIR}/style.h
     ${SRCDIR}/StyleListModel.h
     ${SRCDIR}/StyleRangeWidget.h
     ${SRCDIR}/StyleSortFilterProxyModel.h
+    ${SRCDIR}/Testing.h
     ${SRCDIR}/TimerListDialog.h
     ${SRCDIR}/TimerMainDialog.h
     ${SRCDIR}/TimerWidget.h
@@ -374,7 +366,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/YeastEditor.h
     ${SRCDIR}/YeastSortFilterProxyModel.h
     ${SRCDIR}/YeastTableModel.h
-
 )
 
 SET( FILES_TO_TRANSLATE

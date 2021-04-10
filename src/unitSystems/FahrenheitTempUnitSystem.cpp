@@ -25,27 +25,27 @@ FahrenheitTempUnitSystem::FahrenheitTempUnitSystem()
    _type = Unit::Temp;
 }
 
-QMap<Unit::unitScale, Unit*> const& FahrenheitTempUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& FahrenheitTempUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::fahrenheit);
+      _scaleToUnit.insert(Unit::scaleWithout,&Units::fahrenheit);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& FahrenheitTempUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& FahrenheitTempUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("F",Units::fahrenheit);
+      _qstringToUnit.insert("F",&Units::fahrenheit);
    }
 
    return _qstringToUnit;
 }
 
-Unit* FahrenheitTempUnitSystem::unit() { return Units::fahrenheit; }
+Unit const * FahrenheitTempUnitSystem::unit() { return &Units::fahrenheit; }
 QString FahrenheitTempUnitSystem::unitType() { return "Fahrenheit"; }

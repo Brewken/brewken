@@ -46,8 +46,8 @@ public slots:
 
 private:
    Recipe* recObs;
-   Unit *weightUnit;
-   Unit *volumeUnit;
+   Unit const * weightUnit;
+   Unit const * volumeUnit;
 
    //!brief just need a holder for the three buttons
    QButtonGroup* bGroup;

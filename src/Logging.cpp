@@ -1,7 +1,7 @@
 /**
  * Logging.cpp is part of Brewken, and is copyright the following authors 2009-2021:
- *   • Matt Young <mfsy@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -231,11 +231,25 @@ namespace {
          }
       }
 
-      // Writing the actual log.
-      doLog(logLevelOfMessage, QString("%1, in %2").arg(message).arg(context.line));
+      // Writing the actual log
+      //
+      // QMessageLogContext members are a bit hard to find in Qt documentation so noted here:
+      //    category : const char *
+      //    file : const char *      -- full path of the source file
+      //    function : const char *  -- same as what gets written out by Q_FUNC_INFO
+      //    line : int
+      //    version : int
+      //
+      // We don't want to log the full path of the source file, because that might contain private info about the
+      // directory structure on the machine on which the build was done.  We could just show the filename with:
+      //    QString sourceFile = QFileInfo(context.file).fileName();
+      // But we'd like to show the relative path under the src directory (eg database/Database.cpp rather than just
+      // Database.cpp).  (The code here assumes there will not be any subdirectory of src that is also called src,
+      // which seems pretty reasonable.)
+      QString sourceFile = QString{context.file}.split("/src/").last();
+      doLog(logLevelOfMessage, QString("%1  [%2:%3]").arg(message).arg(sourceFile).arg(context.line));
       return;
    }
-
 
 }
 

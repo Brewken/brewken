@@ -21,23 +21,11 @@
 
 #include <QDomDocument>
 #include <QDomNode>
-#include <QList>
-#include <QHash>
-#include <QFile>
 #include <QString>
 #include <QVariant>
-#include <QMetaProperty>
-#include <QUndoStack>
 #include <QObject>
-#include <QPair>
-#include <QDebug>
-#include <QRegExp>
-#include <QMap>
 
-#include "model/NamedEntity.h"
-#include "Brewken.h"
-#include "database/Database.h"
-#include "database/TableSchema.h"
+#include "database/DatabaseSchema.h"
 
 class BrewNote;
 class Equipment;
@@ -55,14 +43,9 @@ class Yeast;
 /*!
  * \class BeerXML
  *
- *
  * \brief Singleton that handles all translations to and from BeerXML
- *
  */
-class BeerXML : public QObject {
-//   Q_OBJECT
-
-//   friend class Database;
+class BeerXML {
 public:
 
    /**
@@ -86,15 +69,6 @@ public:
    void toXml( Water* a, QDomDocument& doc, QDomNode& parent );
    void toXml( Yeast* a, QDomDocument& doc, QDomNode& parent );
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-   /*! Populates the \b element with properties. This must be a class that
-    *  simple properties only (no subelements).
-    * \param element is the element you want to populate.
-    * \param xmlTagsToProperties is a hash from xml tags to meta property names.
-    * \param elementNode is the root node of the element we are reading from.
-    */
-   void fromXml(NamedEntity* element, QHash<QString,QString> const& xmlTagsToProperties, QDomNode const& elementNode);
-   void fromXml(NamedEntity* element, QDomNode const& elementNode);
 
    /*! Import ingredients, recipes, etc from BeerXML documents.
     * \param filename

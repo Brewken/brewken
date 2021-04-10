@@ -27,12 +27,12 @@ class SIVolumeUnitSystem : public UnitSystem
 {
 public:
    SIVolumeUnitSystem();
-   Unit* thicknessUnit(); /* Inherited from UnitSystem */
+   Unit const * thicknessUnit(); /* Inherited from UnitSystem */
    QString unitType();
 
-   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
-   QMap<QString, Unit*> const& qstringToUnit();
-   Unit* unit();
+   QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
+   QMap<QString, Unit const *> const& qstringToUnit();
+   Unit const * unit();
 };
 
 #endif /*_SIVOLUMEUNITSYSTEM_H*/

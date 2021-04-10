@@ -1,6 +1,7 @@
 /**
- * BtTreeModel.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * BtTreeModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -16,23 +17,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "BtTreeModel.h"
 
-#include <QModelIndex>
-#include <QMessageBox>
-#include <QVariant>
-#include <QList>
 #include <QAbstractItemModel>
-#include <Qt>
+#include <QList>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QModelIndex>
 #include <QObject>
 #include <QStringBuilder>
-#include <QMimeData>
+#include <Qt>
+#include <QVariant>
 
 #include "Brewken.h"
 #include "BtTreeItem.h"
-#include "BtTreeModel.h"
 #include "BtTreeView.h"
 #include "RecipeFormatter.h"
 #include "database/Database.h"
+#include "database/DbNamedEntityRecords.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -1460,7 +1462,11 @@ bool BtTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
             elem = Database::instance().yeast(id);
             break;
          case BtTreeItem::WATER:
-            elem = Database::instance().water(id);
+         {
+            // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
+            auto result = DbNamedEntityRecords<Water>::getInstance().getById(id);
+            elem = result.has_value() ? result->get() : nullptr;
+         }
             break;
          case BtTreeItem::FOLDER:
             break;

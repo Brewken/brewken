@@ -31,7 +31,7 @@
 #include "unitSystems/UnitSystem.h"
 #include "unit.h"
 
-BtDigitWidget::BtDigitWidget(QWidget *parent, Unit::UnitType type, Unit* units) : QLabel(parent),
+BtDigitWidget::BtDigitWidget(QWidget *parent, Unit::UnitType type, Unit const * units) : QLabel(parent),
    m_type(type),
    m_forceUnit( Unit::noUnit ),
    m_forceScale( Unit::noScale ),
@@ -327,5 +327,5 @@ void BtDigitWidget::setText(double amount, int precision)
    QLabel::setText( displayAmount(amount,precision) );
 }
 
-BtMassDigit::BtMassDigit(QWidget* parent) : BtDigitWidget(parent,Unit::Mass,Units::kilograms) {}
+BtMassDigit::BtMassDigit(QWidget* parent) : BtDigitWidget(parent,Unit::Mass,&Units::kilograms) {}
 BtGenericDigit::BtGenericDigit(QWidget* parent): BtDigitWidget(parent,Unit::None,nullptr) {}

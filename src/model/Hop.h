@@ -1,5 +1,5 @@
 /**
- * model/Hop.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Hop.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -19,12 +19,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _HOP_H
-#define _HOP_H
+#ifndef MODEL_HOP_H
+#define MODEL_HOP_H
+#pragma once
 
 #include <QString>
 #include <QStringList>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
 namespace PropertyNames::Hop { static char const * const form = "form"; /* previously kpropForm */ }
 namespace PropertyNames::Hop { static char const * const time_min = "time_min"; /* previously kpropTime */ }

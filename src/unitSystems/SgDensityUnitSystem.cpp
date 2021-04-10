@@ -27,27 +27,27 @@ SgDensityUnitSystem::SgDensityUnitSystem()
    _type = Unit::Density;
 }
 
-QMap<Unit::unitScale, Unit*> const& SgDensityUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& SgDensityUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::sp_grav);
+      _scaleToUnit.insert(Unit::scaleWithout,&Units::sp_grav);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SgDensityUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& SgDensityUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert(PropertyNames::BrewNote::sg,Units::sp_grav);
+      _qstringToUnit.insert(PropertyNames::BrewNote::sg,&Units::sp_grav);
    }
 
    return _qstringToUnit;
 }
 
 QString SgDensityUnitSystem::unitType() { return "Density"; }
-Unit* SgDensityUnitSystem::unit() { return Units::sp_grav; }
+Unit const * SgDensityUnitSystem::unit() { return &Units::sp_grav; }

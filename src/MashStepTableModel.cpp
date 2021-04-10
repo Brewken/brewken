@@ -247,19 +247,19 @@ QVariant MashStepTableModel::data( const QModelIndex& index, int role ) const
          scale = displayScale(col);
 
          return (row->type() == MashStep::Decoction)
-                ? QVariant( Brewken::displayAmount(row->decoctionAmount_l(), Units::liters, 3, unit, scale ) )
-                : QVariant( Brewken::displayAmount(row->infuseAmount_l(), Units::liters, 3, unit, scale) );
+                ? QVariant( Brewken::displayAmount(row->decoctionAmount_l(), &Units::liters, 3, unit, scale ) )
+                : QVariant( Brewken::displayAmount(row->infuseAmount_l(), &Units::liters, 3, unit, scale) );
       case MASHSTEPTEMPCOL:
          unit = displayUnit(col);
          return (row->type() == MashStep::Decoction)
                 ? QVariant("---")
-                : QVariant( Brewken::displayAmount(row->infuseTemp_c(), Units::celsius, 3, unit, Unit::noScale) );
+                : QVariant( Brewken::displayAmount(row->infuseTemp_c(), &Units::celsius, 3, unit, Unit::noScale) );
       case MASHSTEPTARGETTEMPCOL:
          unit = displayUnit(col);
-         return QVariant( Brewken::displayAmount(row->stepTemp_c(), Units::celsius,3, unit, Unit::noScale) );
+         return QVariant( Brewken::displayAmount(row->stepTemp_c(), &Units::celsius,3, unit, Unit::noScale) );
       case MASHSTEPTIMECOL:
          scale = displayScale(col);
-         return QVariant( Brewken::displayAmount(row->stepTime_min(), Units::minutes,3,Unit::noUnit,scale) );
+         return QVariant( Brewken::displayAmount(row->stepTime_min(), &Units::minutes,3,Unit::noUnit,scale) );
       default :
          qWarning() << tr("Bad column: %1").arg(index.column());
          return QVariant();
@@ -350,12 +350,12 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
             if( row->type() == MashStep::Decoction ) {
                Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                         PropertyNames::MashStep::decoctionAmount_l,
-                                                        Brewken::qStringToSI(value.toString(),Units::liters,dspUnit,dspScl),
+                                                        Brewken::qStringToSI(value.toString(),&Units::liters,dspUnit,dspScl),
                                                         tr("Change Mash Step Decoction Amount"));
             } else {
                Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                         PropertyNames::MashStep::infuseAmount_l,
-                                                        Brewken::qStringToSI(value.toString(),Units::liters,dspUnit,dspScl),
+                                                        Brewken::qStringToSI(value.toString(),&Units::liters,dspUnit,dspScl),
                                                         tr("Change Mash Step Infuse Amount"));
             }
             return true;
@@ -367,7 +367,7 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
          {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                       PropertyNames::MashStep::infuseTemp_c,
-                                                      Brewken::qStringToSI(value.toString(),Units::celsius,dspUnit,dspScl),
+                                                      Brewken::qStringToSI(value.toString(),&Units::celsius,dspUnit,dspScl),
                                                       tr("Change Mash Step Infuse Temp"));
             return true;
          }
@@ -382,11 +382,11 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
             // constructor, it gets linked to the first one, which then "owns" it.
             auto targetTempUpdate = new SimpleUndoableUpdate(*row,
                                                              PropertyNames::MashStep::stepTemp_c,
-                                                             Brewken::qStringToSI(value.toString(),Units::celsius,dspUnit,dspScl),
+                                                             Brewken::qStringToSI(value.toString(),&Units::celsius,dspUnit,dspScl),
                                                              tr("Change Mash Step Temp"));
             new SimpleUndoableUpdate(*row,
                                      PropertyNames::MashStep::endTemp_c,
-                                     Brewken::qStringToSI(value.toString(),Units::celsius,dspUnit,dspScl),
+                                     Brewken::qStringToSI(value.toString(),&Units::celsius,dspUnit,dspScl),
                                      tr("Change Mash Step End Temp"),
                                      targetTempUpdate);
             Brewken::mainWindow()->doOrRedoUpdate(targetTempUpdate);
@@ -399,7 +399,7 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
          {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                       PropertyNames::MashStep::stepTime_min,
-                                                      Brewken::qStringToSI(value.toString(),Units::minutes,dspUnit,dspScl),
+                                                      Brewken::qStringToSI(value.toString(),&Units::minutes,dspUnit,dspScl),
                                                       tr("Change Mash Step Time"));
             return true;
          }

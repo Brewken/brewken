@@ -25,43 +25,43 @@ USVolumeUnitSystem::USVolumeUnitSystem()
    _type = Unit::Volume;
 }
 
-QMap<Unit::unitScale, Unit*> const& USVolumeUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& USVolumeUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall,Units::us_teaspoons);
-      _scaleToUnit.insert(Unit::scaleSmall,Units::us_tablespoons);
-      _scaleToUnit.insert(Unit::scaleMedium,Units::us_cups);
-      _scaleToUnit.insert(Unit::scaleLarge,Units::us_quarts);
-      _scaleToUnit.insert(Unit::scaleExtraLarge,Units::us_gallons);
-      _scaleToUnit.insert(Unit::scaleHuge,Units::us_barrels);
+      _scaleToUnit.insert(Unit::scaleExtraSmall,&Units::us_teaspoons);
+      _scaleToUnit.insert(Unit::scaleSmall,&Units::us_tablespoons);
+      _scaleToUnit.insert(Unit::scaleMedium,&Units::us_cups);
+      _scaleToUnit.insert(Unit::scaleLarge,&Units::us_quarts);
+      _scaleToUnit.insert(Unit::scaleExtraLarge,&Units::us_gallons);
+      _scaleToUnit.insert(Unit::scaleHuge,&Units::us_barrels);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& USVolumeUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& USVolumeUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("tsp",Units::us_teaspoons);
-      _qstringToUnit.insert("tbs",Units::us_tablespoons);
-      _qstringToUnit.insert("cup",Units::us_cups);
-      _qstringToUnit.insert("qt",Units::us_quarts);
-      _qstringToUnit.insert("gal",Units::us_gallons);
-      _qstringToUnit.insert("bbl",Units::us_barrels);
+      _qstringToUnit.insert("tsp",&Units::us_teaspoons);
+      _qstringToUnit.insert("tbs",&Units::us_tablespoons);
+      _qstringToUnit.insert("cup",&Units::us_cups);
+      _qstringToUnit.insert("qt",&Units::us_quarts);
+      _qstringToUnit.insert("gal",&Units::us_gallons);
+      _qstringToUnit.insert("bbl",&Units::us_barrels);
    }
 
    return _qstringToUnit;
 }
 
-Unit* USVolumeUnitSystem::thicknessUnit()
+Unit const * USVolumeUnitSystem::thicknessUnit()
 {
-   return Units::us_quarts;
+   return &Units::us_quarts;
 }
 
-Unit* USVolumeUnitSystem::unit() { return Units::us_gallons; }
+Unit const * USVolumeUnitSystem::unit() { return &Units::us_gallons; }
 
 QString USVolumeUnitSystem::unitType() { return "USCustomary"; }

@@ -26,42 +26,42 @@ ImperialVolumeUnitSystem::ImperialVolumeUnitSystem()
    _type = Unit::Volume;
 }
 
-QMap<Unit::unitScale, Unit*> const& ImperialVolumeUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& ImperialVolumeUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall,Units::imperial_teaspoons);
-      _scaleToUnit.insert(Unit::scaleSmall,Units::imperial_tablespoons);
-      _scaleToUnit.insert(Unit::scaleMedium,Units::imperial_cups);
-      _scaleToUnit.insert(Unit::scaleLarge,Units::imperial_quarts);
-      _scaleToUnit.insert(Unit::scaleExtraLarge,Units::imperial_gallons);
-      _scaleToUnit.insert(Unit::scaleHuge,Units::imperial_barrels);
+      _scaleToUnit.insert(Unit::scaleExtraSmall,&Units::imperial_teaspoons);
+      _scaleToUnit.insert(Unit::scaleSmall,&Units::imperial_tablespoons);
+      _scaleToUnit.insert(Unit::scaleMedium,&Units::imperial_cups);
+      _scaleToUnit.insert(Unit::scaleLarge,&Units::imperial_quarts);
+      _scaleToUnit.insert(Unit::scaleExtraLarge,&Units::imperial_gallons);
+      _scaleToUnit.insert(Unit::scaleHuge,&Units::imperial_barrels);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& ImperialVolumeUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& ImperialVolumeUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("tsp",Units::imperial_teaspoons);
-      _qstringToUnit.insert("tbs",Units::imperial_tablespoons);
-      _qstringToUnit.insert("cup",Units::imperial_cups);
-      _qstringToUnit.insert("qt",Units::imperial_quarts);
-      _qstringToUnit.insert("gal",Units::imperial_gallons);
-      _qstringToUnit.insert("bbl",Units::imperial_barrels);
+      _qstringToUnit.insert("tsp",&Units::imperial_teaspoons);
+      _qstringToUnit.insert("tbs",&Units::imperial_tablespoons);
+      _qstringToUnit.insert("cup",&Units::imperial_cups);
+      _qstringToUnit.insert("qt",&Units::imperial_quarts);
+      _qstringToUnit.insert("gal",&Units::imperial_gallons);
+      _qstringToUnit.insert("bbl",&Units::imperial_barrels);
    }
 
    return _qstringToUnit;
 }
 
-Unit* ImperialVolumeUnitSystem::thicknessUnit()
+Unit const * ImperialVolumeUnitSystem::thicknessUnit()
 {
-   return Units::imperial_quarts;
+   return &Units::imperial_quarts;
 }
 
-Unit* ImperialVolumeUnitSystem::unit() { return Units::imperial_gallons; }
+Unit const * ImperialVolumeUnitSystem::unit() { return &Units::imperial_gallons; }
 QString ImperialVolumeUnitSystem::unitType() { return "Imperial"; }

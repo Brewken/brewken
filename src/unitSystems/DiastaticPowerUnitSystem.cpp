@@ -24,30 +24,30 @@ LintnerDiastaticPowerUnitSystem::LintnerDiastaticPowerUnitSystem()
    _type = Unit::DiastaticPower;
 }
 
-QMap<Unit::unitScale, Unit*> const& LintnerDiastaticPowerUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& LintnerDiastaticPowerUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout, Units::lintner);
+      _scaleToUnit.insert(Unit::scaleWithout, &Units::lintner);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& LintnerDiastaticPowerUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& LintnerDiastaticPowerUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("lintner", Units::lintner);
+      _qstringToUnit.insert("lintner", &Units::lintner);
    }
 
    return _qstringToUnit;
 }
 
 QString LintnerDiastaticPowerUnitSystem::unitType() { return "DiastaticPower"; }
-Unit* LintnerDiastaticPowerUnitSystem::unit() { return Units::lintner; }
+Unit const * LintnerDiastaticPowerUnitSystem::unit() { return &Units::lintner; }
 
 
 WkDiastaticPowerUnitSystem::WkDiastaticPowerUnitSystem()
@@ -56,27 +56,27 @@ WkDiastaticPowerUnitSystem::WkDiastaticPowerUnitSystem()
    _type = Unit::DiastaticPower;
 }
 
-QMap<Unit::unitScale, Unit*> const& WkDiastaticPowerUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& WkDiastaticPowerUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout, Units::wk);
+      _scaleToUnit.insert(Unit::scaleWithout, &Units::wk);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& WkDiastaticPowerUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& WkDiastaticPowerUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("wk", Units::wk);
+      _qstringToUnit.insert("wk", &Units::wk);
    }
 
    return _qstringToUnit;
 }
 
 QString WkDiastaticPowerUnitSystem::unitType() { return "DiastaticPower"; }
-Unit* WkDiastaticPowerUnitSystem::unit() { return Units::wk; }
+Unit const * WkDiastaticPowerUnitSystem::unit() { return &Units::wk; }

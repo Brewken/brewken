@@ -1,5 +1,5 @@
 /**
- * xml/BeerXml.cpp is part of Brewken, and is copyright the following authors 2020:
+ * xml/BeerXml.cpp is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -19,25 +19,16 @@
 
 #include <stdexcept>
 
-#include <QList>
-#include <QDomDocument>
-#include <QIODevice>
-#include <QDomNodeList>
-#include <QDomNode>
-#include <QTextStream>
-#include <QTextCodec>
-#include <QObject>
-#include <QString>
-#include <QStringBuilder>
-#include <QFileInfo>
-#include <QFile>
-#include <QMessageBox>
-#include <QThread>
 #include <QDebug>
-#include <QPair>
+#include <QDomNodeList>
+#include <QFile>
+#include <QHash>
+#include <QList>
+#include <QTextStream>
 
-#include "Algorithms.h"
-#include "database/DatabaseSchema.h"
+#include "Brewken.h"
+#include "database/Database.h"
+#include "database/TableSchema.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -46,16 +37,16 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
+#include "model/NamedEntity.h"
 #include "model/Recipe.h"
+#include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
-#include "model/Salt.h"
 #include "model/Yeast.h"
 #include "xml/BtDomErrorHandler.h"
 #include "xml/XmlCoding.h"
 #include "xml/XmlRecord.h"
 
-#include "database/TableSchema.h"
 //
 // Variables and constant definitions that we need only in this file
 //
@@ -690,8 +681,7 @@ BeerXML & BeerXML::getInstance() {
 }
 
 
-BeerXML::BeerXML() : QObject{},
-                     pimpl{ new impl{} },
+BeerXML::BeerXML() : pimpl{ new impl{} },
                      m_tables{Database::instance().getDatabaseSchema()} {
    return;
 }

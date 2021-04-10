@@ -41,7 +41,7 @@ bool HopSortFilterProxyModel::lessThan(const QModelIndex &left,
     int lUse, rUse;
     double lAlpha, rAlpha;
     bool ok = false;
-    Unit* unit = Units::kilograms;
+    Unit const * unit = &Units::kilograms;
 
    switch( left.column() )
    {
@@ -73,7 +73,7 @@ bool HopSortFilterProxyModel::lessThan(const QModelIndex &left,
         lUse = uses.indexOf( (sourceModel()->data(lSibling)).toString() );
         rUse = uses.indexOf( (sourceModel()->data(rSibling)).toString() );
 
-        unit = Units::minutes; // not Units::kilogram
+        unit = &Units::minutes; // not &Units::kilogram
         if ( lUse == rUse )
             return Brewken::qStringToSI(leftHop.toString(),unit) < Brewken::qStringToSI(rightHop.toString(),unit);
 

@@ -17,13 +17,9 @@
 #define XML_XMLNAMEDENTITYRECORD_H
 #pragma once
 
-#include <memory> // For smart pointers
-
-#include <QHash>
-#include <QMetaType>
+#include <QDebug>
 #include <QString>
-#include <QVariant>
-#include <QVector>
+#include <QList>
 
 #include "database/Database.h"
 #include "model/BrewNote.h"

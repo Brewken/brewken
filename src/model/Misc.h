@@ -1,5 +1,5 @@
 /**
- * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -20,10 +20,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _MISC_H
-#define _MISC_H
+#ifndef MODEL_MISC_H
+#define MODEL_MISC_H
+#pragma once
 
 #include <QString>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
 namespace PropertyNames::Misc { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Misc { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }

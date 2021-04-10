@@ -1,5 +1,5 @@
 /**
- * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -21,23 +21,25 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _RECIPE_H
-#define _RECIPE_H
+#ifndef MODEL_RECIPE_H
+#define MODEL_RECIPE_H
 
 #include <QColor>
-#include <QVariant>
-#include <QList>
-#include <QDomNode>
-#include <QDomDocument>
-#include <QString>
 #include <QDate>
+#include <QDomDocument>
+#include <QDomNode>
+#include <QList>
 #include <QMutex>
+#include <QSqlRecord>
+#include <QString>
+#include <QVariant>
 
 #include "model/NamedEntity.h"
 #include "model/Hop.h" // Dammit! Have to include these for Hop::Use and Misc::Use.
 #include "model/Misc.h"
 #include "model/Salt.h"
 #include "model/BrewNote.h"
+
 namespace PropertyNames::Recipe { static char const * const fg = "fg"; /* previously kpropFG */ }
 namespace PropertyNames::Recipe { static char const * const og = "og"; /* previously kpropOG */ }
 namespace PropertyNames::Recipe { static char const * const boilTime_min = "boilTime_min"; /* previously kpropBoilTime */ }

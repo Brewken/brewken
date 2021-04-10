@@ -1,5 +1,5 @@
 /**
- * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -19,12 +19,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef YEAST_H
-#define YEAST_H
+#ifndef MODEL_YEAST_H
+#define MODEL_YEAST_H
 
-#include "model/NamedEntity.h"
+#include <QSqlRecord>
 #include <QString>
 #include <QStringList>
+
+#include "model/NamedEntity.h"
+
 namespace PropertyNames::Yeast { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Yeast { static char const * const form = "form"; /* previously kpropForm */ }
 namespace PropertyNames::Yeast { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }

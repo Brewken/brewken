@@ -77,7 +77,7 @@ static QString createInventoryTableFermentable()
                          .arg(fermentable->name())
                          .arg(Brewken::displayAmount(itor.value(),
                                "fermentableTable", "inventory_kg",
-                               Units::kilograms));
+                               &Units::kilograms));
       }
       result += "</table>";
    }
@@ -124,7 +124,7 @@ static QString createInventoryTableHop()
                          .arg(hop->name())
                          .arg(hop->alpha_pct())
                          .arg(Brewken::displayAmount(itor.value(),
-                               "hopTable", "inventory_kg", Units::kilograms));
+                               "hopTable", "inventory_kg", &Units::kilograms));
       }
       result += "</table>";
    }
@@ -163,8 +163,8 @@ static QString createInventoryTableMiscellaneous()
 
          const QString displayAmount =
                Brewken::displayAmount(itor.value(), "miscTable", "amount",
-                     miscellaneous->amountIsWeight() ? (Unit*)Units::kilograms
-                                                     : (Unit*)Units::liters);
+                     miscellaneous->amountIsWeight() ? (Unit*)&Units::kilograms
+                                                     : (Unit*)&Units::liters);
          result += QString("<tr>"
                            "<td>%1</td>"
                            "<td>%2</td>"
@@ -208,8 +208,8 @@ static QString createInventoryTableYeast()
 
          const QString displayAmount =
                Brewken::displayAmount(itor.value(), "yeastTable", "quanta",
-                     yeast->amountIsWeight() ? (Unit*)Units::kilograms
-                                             : (Unit*)Units::liters);
+                     yeast->amountIsWeight() ? (Unit*)&Units::kilograms
+                                             : (Unit*)&Units::liters);
 
          result += QString("<tr>"
                            "<td>%1</td>"

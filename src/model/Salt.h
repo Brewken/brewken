@@ -1,5 +1,5 @@
 /**
- * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,11 +17,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef SALT_H
-#define SALT_H
+#ifndef MODEL_SALT_H
+#define MODEL_SALT_H
+#pragma once
 
 #include <QString>
+#include <QSqlRecord>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
+
 namespace PropertyNames::Salt { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Salt { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
 namespace PropertyNames::Salt { static char const * const type = "type"; /* previously kpropType */ }

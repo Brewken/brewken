@@ -289,7 +289,7 @@ QVariant YeastTableModel::data( const QModelIndex& index, int role ) const
 
          return QVariant(
                            Brewken::displayAmount( row->amount(),
-                                                      row->amountIsWeight() ? static_cast<Unit*>(Units::kilograms) : static_cast<Unit*>(Units::liters),
+                                                      row->amountIsWeight() ? &Units::kilograms : &Units::liters,
                                                       3,
                                                       unit,
                                                       Unit::noScale
@@ -349,7 +349,7 @@ Qt::ItemFlags YeastTableModel::flags(const QModelIndex& index ) const
 bool YeastTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
 {
    Yeast *row;
-   Unit* unit;
+   Unit const * unit;
 
    if( index.row() >= static_cast<int>(yeastObs.size()) || role != Qt::EditRole )
       return false;
@@ -413,7 +413,7 @@ bool YeastTableModel::setData( const QModelIndex& index, const QVariant& value, 
          if( ! value.canConvert(QVariant::String) )
             return false;
 
-         unit = row->amountIsWeight() ? static_cast<Unit*>(Units::kilograms) : static_cast<Unit*>(Units::liters);
+         unit = row->amountIsWeight() ? &Units::kilograms : &Units::liters;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   "amount",

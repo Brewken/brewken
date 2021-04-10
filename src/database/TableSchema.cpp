@@ -1173,26 +1173,26 @@ void TableSchema::defineWaterTable()
    m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
-   m_properties[PropertyNames::NamedEntity::name]        = new PropertySchema( PropertyNames::NamedEntity::name,        kcolName,             kxmlPropName,        QString("text"),    QString("''"), QString("not null"));
-   m_properties[PropertyNames::Water::notes]       = new PropertySchema( PropertyNames::Water::notes,       kcolNotes,            kxmlPropNotes,       QString("text"),    QString("''"));
-   m_properties[PropertyNames::Water::amount]      = new PropertySchema( PropertyNames::Water::amount,      kcolAmount,           kxmlPropAmount,      QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::NamedEntity::name]       = new PropertySchema(PropertyNames::NamedEntity::name,       kcolName,             kxmlPropName,        QString("text"),    QString("''"), QString("not null"));
+   m_properties[PropertyNames::Water::notes]            = new PropertySchema(PropertyNames::Water::notes,            kcolNotes,            kxmlPropNotes,       QString("text"),    QString("''"));
+   m_properties[PropertyNames::Water::amount]           = new PropertySchema(PropertyNames::Water::amount,           kcolAmount,           kxmlPropAmount,      QString("real"),    QVariant(0.0));
 
-   m_properties[PropertyNames::Water::calcium_ppm]     = new PropertySchema( PropertyNames::Water::calcium_ppm,     kcolWaterCalcium,     kxmlPropCalcium,     QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::bicarbonate_ppm] = new PropertySchema( PropertyNames::Water::bicarbonate_ppm, kcolWaterBiCarbonate, kxmlPropBiCarbonate, QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::sulfate_ppm]     = new PropertySchema( PropertyNames::Water::sulfate_ppm,     kcolWaterSulfate,     kxmlPropSulfate,     QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::sodium_ppm]      = new PropertySchema( PropertyNames::Water::sodium_ppm,      kcolWaterSodium,      kxmlPropSodium,      QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::chloride_ppm]    = new PropertySchema( PropertyNames::Water::chloride_ppm,    kcolWaterChloride,    kxmlPropChloride,    QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::magnesium_ppm]   = new PropertySchema( PropertyNames::Water::magnesium_ppm,   kcolWaterMagnesium,   kxmlPropMagnesium,   QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::ph]          = new PropertySchema( PropertyNames::Water::ph,          kcolPH,               kxmlPropPH,          QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::alkalinity]  = new PropertySchema( PropertyNames::Water::alkalinity,  kcolWaterAlkalinity,  QString(),           QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::type]        = new PropertySchema( PropertyNames::Water::type,        kcolWaterType,        QString(),           QString("int"),     QVariant(0));
-   m_properties[PropertyNames::Water::mashRO]      = new PropertySchema( PropertyNames::Water::mashRO,      kcolWaterMashRO,      QString(),           QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::spargeRO]    = new PropertySchema( PropertyNames::Water::spargeRO,    kcolWaterSpargeRO,    QString(),           QString("real"),    QVariant(0.0));
-   m_properties[PropertyNames::Water::alkalinityAsHCO3]      = new PropertySchema( PropertyNames::Water::alkalinityAsHCO3,      kcolWaterAsHCO3,      QString(),           QString("boolean"), QVariant(true));
+   m_properties[PropertyNames::Water::calcium_ppm]      = new PropertySchema(PropertyNames::Water::calcium_ppm,      kcolWaterCalcium,     kxmlPropCalcium,     QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::bicarbonate_ppm]  = new PropertySchema(PropertyNames::Water::bicarbonate_ppm,  kcolWaterBiCarbonate, kxmlPropBiCarbonate, QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::sulfate_ppm]      = new PropertySchema(PropertyNames::Water::sulfate_ppm,      kcolWaterSulfate,     kxmlPropSulfate,     QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::sodium_ppm]       = new PropertySchema(PropertyNames::Water::sodium_ppm,       kcolWaterSodium,      kxmlPropSodium,      QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::chloride_ppm]     = new PropertySchema(PropertyNames::Water::chloride_ppm,     kcolWaterChloride,    kxmlPropChloride,    QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::magnesium_ppm]    = new PropertySchema(PropertyNames::Water::magnesium_ppm,    kcolWaterMagnesium,   kxmlPropMagnesium,   QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::ph]               = new PropertySchema(PropertyNames::Water::ph,               kcolPH,               kxmlPropPH,          QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::alkalinity]       = new PropertySchema(PropertyNames::Water::alkalinity,       kcolWaterAlkalinity,  QString(),           QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::type]             = new PropertySchema(PropertyNames::Water::type,             kcolWaterType,        QString(),           QString("int"),     QVariant(0));
+   m_properties[PropertyNames::Water::mashRO]           = new PropertySchema(PropertyNames::Water::mashRO,           kcolWaterMashRO,      QString(),           QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::spargeRO]         = new PropertySchema(PropertyNames::Water::spargeRO,         kcolWaterSpargeRO,    QString(),           QString("real"),    QVariant(0.0));
+   m_properties[PropertyNames::Water::alkalinityAsHCO3] = new PropertySchema(PropertyNames::Water::alkalinityAsHCO3, kcolWaterAsHCO3,      QString(),           QString("boolean"), QVariant(true));
 
-   m_properties[PropertyNames::NamedEntity::display]     = new PropertySchema( PropertyNames::NamedEntity::display,     kcolDisplay,          QString(),           QString("boolean"), QVariant(true));
-   m_properties[PropertyNames::NamedEntity::deleted]     = new PropertySchema( PropertyNames::NamedEntity::deleted,     kcolDeleted,          QString(),           QString("boolean"), QVariant(false));
-   m_properties[PropertyNames::NamedEntity::folder]      = new PropertySchema( PropertyNames::NamedEntity::folder,      kcolFolder,           QString(),           QString("text"),    QString("''"));
+   m_properties[PropertyNames::NamedEntity::display]    = new PropertySchema(PropertyNames::NamedEntity::display,    kcolDisplay,          QString(),           QString("boolean"), QVariant(true));
+   m_properties[PropertyNames::NamedEntity::deleted]    = new PropertySchema(PropertyNames::NamedEntity::deleted,    kcolDeleted,          QString(),           QString("boolean"), QVariant(false));
+   m_properties[PropertyNames::NamedEntity::folder]     = new PropertySchema(PropertyNames::NamedEntity::folder,     kcolFolder,           QString(),           QString("text"),    QString("''"));
 
 }
 

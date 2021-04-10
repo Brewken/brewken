@@ -26,36 +26,36 @@ SIWeightUnitSystem::SIWeightUnitSystem()
    _type = Unit::Mass;
 }
 
-QMap<Unit::unitScale, Unit*> const& SIWeightUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& SIWeightUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall,Units::milligrams);
-      _scaleToUnit.insert(Unit::scaleSmall, Units::grams);
-      _scaleToUnit.insert(Unit::scaleMedium, Units::kilograms);
+      _scaleToUnit.insert(Unit::scaleExtraSmall,&Units::milligrams);
+      _scaleToUnit.insert(Unit::scaleSmall, &Units::grams);
+      _scaleToUnit.insert(Unit::scaleMedium, &Units::kilograms);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SIWeightUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& SIWeightUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("mg", Units::milligrams);
-      _qstringToUnit.insert( "g", Units::grams);
-      _qstringToUnit.insert("kg", Units::kilograms);
+      _qstringToUnit.insert("mg", &Units::milligrams);
+      _qstringToUnit.insert( "g", &Units::grams);
+      _qstringToUnit.insert("kg", &Units::kilograms);
    }
 
    return _qstringToUnit;
 }
 
-Unit* SIWeightUnitSystem::thicknessUnit()
+Unit const * SIWeightUnitSystem::thicknessUnit()
 {
-   return Units::kilograms;
+   return &Units::kilograms;
 }
 
-Unit* SIWeightUnitSystem::unit() { return Units::kilograms; }
+Unit const * SIWeightUnitSystem::unit() { return &Units::kilograms; }
 QString SIWeightUnitSystem::unitType() { return "SI"; }

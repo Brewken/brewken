@@ -1225,25 +1225,25 @@ void MainWindow::showChanges(QMetaProperty* prop)
    lineEdit_boilSg->setText(recipeObs);
 
    updateDensitySlider("og", styleRangeWidget_og, 1.120);
-   styleRangeWidget_og->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"og",Units::sp_grav,0));
+   styleRangeWidget_og->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"og",&Units::sp_grav,0));
 
    updateDensitySlider("fg", styleRangeWidget_fg, 1.03);
-   styleRangeWidget_fg->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"fg",Units::sp_grav,0));
+   styleRangeWidget_fg->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"fg",&Units::sp_grav,0));
 
    styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
    styleRangeWidget_ibu->setValue(recipeObs->IBU());
 
-   rangeWidget_batchsize->setRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"batchSize_l", Units::liters,0));
-   rangeWidget_batchsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"finalVolume_l", Units::liters,0));
-   rangeWidget_batchsize->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"finalVolume_l", Units::liters,0));
+   rangeWidget_batchsize->setRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"batchSize_l", &Units::liters,0));
+   rangeWidget_batchsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"finalVolume_l", &Units::liters,0));
+   rangeWidget_batchsize->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"finalVolume_l", &Units::liters,0));
 
-   rangeWidget_boilsize->setRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"boilSize_l", Units::liters,0));
-   rangeWidget_boilsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"boilVolume_l", Units::liters,0));
-   rangeWidget_boilsize->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"boilVolume_l", Units::liters,0));
+   rangeWidget_boilsize->setRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"boilSize_l", &Units::liters,0));
+   rangeWidget_boilsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"boilVolume_l", &Units::liters,0));
+   rangeWidget_boilsize->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"boilVolume_l", &Units::liters,0));
 
    /* Colors need the same basic treatment as gravity */
    updateColorSlider("color_srm", styleRangeWidget_srm);
-   styleRangeWidget_srm->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"color_srm",Units::srm,0));
+   styleRangeWidget_srm->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"color_srm",&Units::srm,0));
 
    // In some, incomplete, recipes, OG is approximately 1.000, which then makes GU close to 0 and thus IBU/GU insanely
    // large.  Besides being meaningless, such a large number takes up a lot of space.  So, where gravity units are
@@ -1485,7 +1485,7 @@ void MainWindow::updateRecipeBoilTime()
       return;
 
    kit = recipeObs->equipment();
-   boilTime = Brewken::qStringToSI( lineEdit_boilTime->text(),Units::minutes );
+   boilTime = Brewken::qStringToSI( lineEdit_boilTime->text(),&Units::minutes );
 
    // Here, we rely on a signal/slot connection to propagate the equipment
    // changes to recipeObs->boilTime_min and maybe recipeObs->boilSize_l

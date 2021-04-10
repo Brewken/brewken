@@ -261,7 +261,7 @@ QVariant BtTreeItem::dataFermentable(int column)
             return QVariant(
                Brewken::displayAmount(
                   ferm->color_srm(),
-                  Units::srm,
+                  &Units::srm,
                   0,
                   static_cast<Unit::unitDisplay>(PersistentSettings::value("color_srm",
                                                                             QVariant(-1),

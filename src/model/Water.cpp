@@ -1,5 +1,5 @@
 /**
- * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -18,16 +18,16 @@
  */
 #include "model/Water.h"
 
-#include <QVector>
 #include <QDomElement>
 #include <QDomText>
 #include <QObject>
-#include "Brewken.h"
+#include <QVector>
 
+#include "Brewken.h"
+#include "database/Database.h"
+#include "database/DbNamedEntityRecords.h"
 #include "database/TableSchemaConst.h"
 #include "database/WaterSchema.h"
-#include "database/Database.h"
-
 
 bool Water::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -128,6 +128,10 @@ Water::Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    m_sparge_ro(rec.value(kcolWaterSpargeRO).toDouble()),
    m_alkalinity_as_hco3(rec.value(kcolWaterAsHCO3).toBool())
 {
+}
+
+Water::Water(NamedParameterBundle & namedParameterBundle) : NamedEntity(namedParameterBundle, DatabaseConstants::WATERTABLE) {
+   return;
 }
 
 //================================"SET" METHODS=================================
@@ -291,7 +295,9 @@ NamedEntity * Water::getParent() {
 
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
-      myParent = Database::instance().water(this->parentKey);
+      // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
+      auto result = DbNamedEntityRecords<Water>::getInstance().getById(this->parentKey);
+      myParent = result.has_value() ? result->get() : nullptr;
    }
 
    // Return whatever we got

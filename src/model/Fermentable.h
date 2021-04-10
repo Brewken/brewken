@@ -1,5 +1,5 @@
 /**
- * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -22,13 +22,17 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _FERMENTABLE_H
-#define _FERMENTABLE_H
+#ifndef MODEL_FERMENTABLE_H
+#define MODEL_FERMENTABLE_H
+#pragma once
 
 #include <QStringList>
 #include <QString>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
 #include "unit.h"
+
 namespace PropertyNames::Fermentable { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
 namespace PropertyNames::Fermentable { static char const * const origin = "origin"; /* previously kpropOrigin */ }
 namespace PropertyNames::Fermentable { static char const * const amount_kg = "amount_kg"; /* previously kpropAmountKg */ }

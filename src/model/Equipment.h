@@ -1,5 +1,5 @@
 /**
- * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -18,11 +18,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef EQUIPMENT_H
-#define EQUIPMENT_H
+#ifndef MODEL_EQUIPMENT_H
+#define MODEL_EQUIPMENT_H
+#pragma once
 
 #include <QDomNode>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
+
 namespace PropertyNames::Equipment { static char const * const boilTime_min = "boilTime_min"; /* previously kpropBoilTime */ }
 namespace PropertyNames::Equipment { static char const * const boilSize_l = "boilSize_l"; /* previously kpropBoilSize */ }
 namespace PropertyNames::Equipment { static char const * const batchSize_l = "batchSize_l"; /* previously kpropBatchSize */ }
