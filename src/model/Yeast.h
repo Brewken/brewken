@@ -181,6 +181,7 @@ private:
    Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Yeast(QString name, bool cache = true);
+   Yeast(NamedParameterBundle & namedParameterBundle);
 private:
    Yeast(Yeast & other);
 

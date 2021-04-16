@@ -34,7 +34,9 @@ private:
     * \param fieldDefinitions  First in the list should be the primary key
     */
    DbNamedEntityRecords(char const * const tableName,
-                        FieldDefinitions const & fieldDefinitions) : DbRecords(tableName, fieldDefinitions) {
+                        FieldDefinitions const & fieldDefinitions,
+                        AssociativeEntities const & associativeEntities) :
+      DbRecords(tableName, fieldDefinitions, associativeEntities) {
       return;
    }
 
@@ -80,6 +82,39 @@ public:
    virtual void hardDelete(int id) {
       this->hardOrSoftDelete(id, true);
       return;
+   }
+
+   /**
+    * \brief Allow searching of the set of all cached objects with a lambda.
+    *
+    * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
+    *
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
+    *         none does
+    */
+   std::optional< std::shared_ptr<NE> > findMatching(std::function<bool(NE *)> const & matchFunction) {
+      //
+      // Caller has provided us with a lambda function that takes a pointer to NE (ie Water, Hop, Yeast, Recipe, etc)
+      // and returns true or false depending on whether it's a match for whatever condition the caller requires.
+      //
+      // The base class findMatching() expects a lambda function that takes a std::shared_ptr<QObject> parameter.
+      //
+      // So, to call the base class findMatching(), we need to create our own "wrapper" lambda that receives a
+      // std::shared_ptr<QObject> parameter, extracts the raw pointer from it (which we know will always be valid) and
+      // downcasts it from "QObject *" to "NE *".
+      //
+      // We don't need shared pointers for the lambda because it's a short-lived function that isn't doing anything to
+      // its parameter.  Base class uses a shared_ptr parameter to its lambda instead of just "QObject *" as otherwise
+      // it would have to create its own lambda wrapper to search its internal data structure, which seems like one
+      // wrapper too many!
+      //
+      auto result = this->DbRecords::findMatching(
+         [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
+      );
+      if (!result.has_value()) {
+         return std::nullopt;
+      }
+      return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(result.value())};
    }
 
 

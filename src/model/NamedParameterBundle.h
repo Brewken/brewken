@@ -35,6 +35,16 @@ public:
     *        operator[] of QHash because we want "parameter not found" to be an error.)
     */
    QVariant operator()(char const * const parameterName);
+
+   /**
+    * \brief Get and store the value of a parameter that is required to be present
+    *
+    *        (NB: There is no general implementation of this templated function, just specific specialisations)
+    *
+    * \param parameterName
+    * \param storeIn
+    */
+   template <class T> void operator()(char const * const parameterName, T & storeIn);
 };
 
 #endif

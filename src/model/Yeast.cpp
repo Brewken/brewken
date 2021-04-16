@@ -1,5 +1,5 @@
 /**
- * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -106,6 +106,30 @@ Yeast::Yeast(QString name, bool cache )
      m_cacheOnly(cache)
 {
 }
+
+Yeast::Yeast(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity       {namedParameterBundle, DatabaseConstants::YEASTTABLE},
+   m_type            {static_cast<Yeast::Type>(namedParameterBundle(PropertyNames::Yeast::type).toInt())},
+   m_form            {static_cast<Yeast::Form>(namedParameterBundle(PropertyNames::Yeast::form).toInt())},
+   m_flocculation    {static_cast<Yeast::Flocculation>(namedParameterBundle(PropertyNames::Yeast::flocculation).toInt())},
+   m_amount          {namedParameterBundle(PropertyNames::Yeast::amount).toDouble()},
+   m_amountIsWeight  {namedParameterBundle(PropertyNames::Yeast::amountIsWeight).toBool()},
+   m_laboratory      {namedParameterBundle(PropertyNames::Yeast::laboratory).toString()},
+   m_productID       {namedParameterBundle(PropertyNames::Yeast::productID).toString()},
+   m_minTemperature_c{namedParameterBundle(PropertyNames::Yeast::minTemperature_c).toDouble()},
+   m_maxTemperature_c{namedParameterBundle(PropertyNames::Yeast::maxTemperature_c).toDouble()},
+   m_attenuation_pct {namedParameterBundle(PropertyNames::Yeast::attenuation_pct).toDouble()},
+   m_notes           {namedParameterBundle(PropertyNames::Yeast::notes).toString()},
+   m_bestFor         {namedParameterBundle(PropertyNames::Yeast::bestFor).toString()},
+   m_timesCultured   {namedParameterBundle(PropertyNames::Yeast::timesCultured).toInt()},
+   m_maxReuse        {namedParameterBundle(PropertyNames::Yeast::maxReuse).toInt()},
+   m_addToSecondary  {namedParameterBundle(PropertyNames::Yeast::addToSecondary).toBool()},
+   m_inventory       {-1},
+   m_inventory_id    {0},
+   m_cacheOnly       {false} {
+   return;
+}
+
 
 Yeast::Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),

@@ -229,6 +229,7 @@ private:
    BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    BrewNote(QString name, bool cache = true);
+   BrewNote(NamedParameterBundle & namedParameterBundle);
 private:
    BrewNote(QDateTime dateNow, bool cache = true, QString const & name = "");
    BrewNote(BrewNote const& other);

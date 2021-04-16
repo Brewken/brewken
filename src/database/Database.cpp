@@ -1402,7 +1402,15 @@ bool Database::load() {
 
    this->pimpl->populateElements(*this, this->pimpl->allRecipes, DatabaseConstants::RECTABLE );
 
+   DbNamedEntityRecords<BrewNote>::getInstance().loadAll(sqlDatabase());
+   DbNamedEntityRecords<Equipment>::getInstance().loadAll(sqlDatabase());
+   DbNamedEntityRecords<Fermentable>::getInstance().loadAll(sqlDatabase());
+   DbNamedEntityRecords<Hop>::getInstance().loadAll(sqlDatabase());
+   DbNamedEntityRecords<Instruction>::getInstance().loadAll(sqlDatabase());
+
+   DbNamedEntityRecords<Style>::getInstance().loadAll(sqlDatabase());
    DbNamedEntityRecords<Water>::getInstance().loadAll(sqlDatabase());
+   DbNamedEntityRecords<Yeast>::getInstance().loadAll(sqlDatabase());
 
    // Connect fermentable,hop changed signals to their parent recipe.
    QHash<int,Recipe*>::iterator i;

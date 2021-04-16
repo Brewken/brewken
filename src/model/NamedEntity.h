@@ -39,6 +39,7 @@ namespace PropertyNames::NamedEntity { static char const * const display = "disp
 namespace PropertyNames::NamedEntity { static char const * const deleted = "deleted"; /* previously kpropDeleted */ }
 namespace PropertyNames::NamedEntity { static char const * const name = "name"; /* previously kpropName */ }
 namespace PropertyNames::NamedEntity { static char const * const key = "key"; }
+namespace PropertyNames::NamedEntity { static char const * const parentKey = "parentKey"; }
 
 // Make uintptr_t available in QVariant.
 Q_DECLARE_METATYPE( uintptr_t )
@@ -115,6 +116,7 @@ public:
    Q_PROPERTY( QString folder READ folder WRITE setFolder )
 
    Q_PROPERTY( int key READ key WRITE setKey )
+   Q_PROPERTY( int parentKey READ getParentKey WRITE setParentKey )
    Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
 
    //! Convenience method to determine if we are deleted or displayed
@@ -144,6 +146,9 @@ public:
    int key() const;
 
    void setKey(int key);
+
+   int getParentKey() const;
+   void setParentKey(int parentKey);
 
    // .:TODO:. MY 2021-03-23 Ultimately we shouldn't need to know this
    //! \returns the table we are stored in.

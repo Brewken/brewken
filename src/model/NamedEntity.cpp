@@ -199,6 +199,15 @@ void NamedEntity::setKey(int key) {
    return;
 }
 
+int NamedEntity::getParentKey() const {
+   return this->parentKey;
+}
+
+void NamedEntity::setParentKey(int parentKey) {
+   this->parentKey = parentKey;
+   return;
+}
+
 DatabaseConstants::DbTableId NamedEntity::table() const
 {
    return _table;

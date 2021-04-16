@@ -26,6 +26,57 @@
 
 #include "database/Database.h"
 
+// Private implementation details that don't need access to class member variables
+namespace {
+   /**
+    * Given a (QVariant-wrapped) string value pulled out of the DB for an enum, look up and return its internal
+    * numerical enum equivalent
+    */
+   int stringToEnum(DbRecords::FieldDefinition const & fieldDefn, QVariant const & valueFromDb) {
+      // It's a coding error if we called this function for a non-enum field
+      Q_ASSERT(fieldDefn.fieldType == DbRecords::Enum);
+      Q_ASSERT(fieldDefn.enumMapping != nullptr);
+
+      QString stringValue = valueFromDb.toString();
+      auto match = std::find_if(
+         fieldDefn.enumMapping->begin(),
+         fieldDefn.enumMapping->end(),
+         [stringValue](DbRecords::EnumAndItsDbString const & ii){return stringValue == ii.string;}
+      );
+
+      // If we didn't find a match, its either a coding error or someone messed with the DB data
+      if (match == fieldDefn.enumMapping->end()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Could not decode " << stringValue << " to enum when mapping column " <<
+            fieldDefn.columnName << " to property " << fieldDefn.propertyName << " so using 0";
+         return 0;
+      }
+      return match->native;
+   }
+
+   /**
+    * Given a (QVariant-wrapped) int value of a native enum, look up and return the corresponding string we use to
+    * store it in the DB
+    */
+   QString enumToString(DbRecords::FieldDefinition const & fieldDefn, QVariant const & propertyValue) {
+      // It's a coding error if we called this function for a non-enum field
+      Q_ASSERT(fieldDefn.fieldType == DbRecords::Enum);
+      Q_ASSERT(fieldDefn.enumMapping != nullptr);
+
+      int nativeValue = propertyValue.toInt();
+      auto match = std::find_if(
+         fieldDefn.enumMapping->begin(),
+         fieldDefn.enumMapping->end(),
+         [nativeValue](DbRecords::EnumAndItsDbString const & ii){return nativeValue == ii.native;}
+      );
+
+      // It's a coding error if we couldn't find a match
+      Q_ASSERT(match != fieldDefn.enumMapping->end());
+
+      return match->string;
+   }
+}
+
 // This private implementation class holds all private non-virtual members of BeerXML
 class DbRecords::impl {
 public:
@@ -34,9 +85,11 @@ public:
     * Constructor
     */
    impl(char const * const tableName,
-        FieldDefinitions const & fieldDefinitions) : tableName{tableName},
-                                                     fieldDefinitions{fieldDefinitions},
-                                                     allObjects{} {
+        FieldDefinitions const & fieldDefinitions,
+        AssociativeEntities const & associativeEntities) : tableName{tableName},
+                                                           fieldDefinitions{fieldDefinitions},
+                                                           associativeEntities{associativeEntities},
+                                                           allObjects{} {
       return;
    }
 
@@ -77,12 +130,15 @@ public:
 
    char const * const tableName;
    FieldDefinitions const & fieldDefinitions;
+   AssociativeEntities const & associativeEntities;
    QHash<int, std::shared_ptr<QObject> > allObjects;
 };
 
 
 DbRecords::DbRecords(char const * const tableName,
-                     FieldDefinitions const & fieldDefinitions) : pimpl{ new impl{tableName, fieldDefinitions} } {
+                     FieldDefinitions const & fieldDefinitions,
+                     AssociativeEntities const & associativeEntities) :
+   pimpl{ new impl{tableName, fieldDefinitions, associativeEntities} } {
    return;
 }
 
@@ -152,8 +208,8 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       // later after calling lots of setters.  In particular, it is hard (without adding lots of complexity) for the
       // object class to enforce mandatory construction parameters with this approach.
       //
-      // Method (ii) is therefore our preferred approach.  We use a simple QHash for now but note that, in future,
-      // it would be possible to extend this to something akin to the Named Parameter Idiom.
+      // Method (ii) is therefore our preferred approach.  We use NamedParameterBundle, which is a simple extension of
+      // QHash.
       //
       NamedParameterBundle namedParameterBundle;
       int primaryKey = -1;
@@ -167,7 +223,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       //
       bool readPrimaryKey = false;
       for (auto const & fieldDefn : this->pimpl->fieldDefinitions) {
-         qDebug() << Q_FUNC_INFO << "Reading " << fieldDefn.columnName << " into " << fieldDefn.propertyName;
+         //qDebug() << Q_FUNC_INFO << "Reading " << fieldDefn.columnName << " into " << fieldDefn.propertyName;
          QVariant fieldValue = sqlQuery.value(fieldDefn.columnName);
          if (!fieldValue.isValid()) {
             qCritical() <<
@@ -175,6 +231,11 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
                ") from database table " << this->pimpl->tableName << ". SQL error message: " <<
                sqlQuery.lastError().text();
             break;
+         }
+
+         // Enums need to be converted from their string representation in the DB to a numeric value
+         if (fieldDefn.fieldType == DbRecords::Enum) {
+            fieldValue = QVariant(stringToEnum(fieldDefn, fieldValue));
          }
 
          // It's a coding error if we got the same parameter twice
@@ -198,6 +259,77 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       qDebug() << Q_FUNC_INFO << "Stored #" << primaryKey;
    }
 
+   //
+   // Now we load the data from the junction tables.  This, pretty much by definition, isn't needed for the object's
+   // constructor, so we're OK to pull it out separately.  Otherwise we'd have to do a LEFT JOIN for each junction
+   // table in the query above.  Since we're caching everything in memory, and we're not overly worried about
+   // optimising every single SQL query (because the amount of data in the DB is not enormous), we prefer the
+   // simplicity of separate queries.
+   //
+   for (auto const & associativeEntity : this->pimpl->associativeEntities) {
+      qDebug() <<
+         Q_FUNC_INFO << "Reading junction table " << associativeEntity.tableName << " into " <<
+         associativeEntity.propertyName;
+
+      queryString = "SELECT ";
+      queryStringAsStream <<
+         associativeEntity.thisObjectPrimaryKeyColumnName << ", " <<
+         associativeEntity.otherObjectPrimaryKeyColumnName <<
+         " FROM " << associativeEntity.tableName <<
+         " ORDER BY " << associativeEntity.thisObjectPrimaryKeyColumnName << ";";
+      if (!sqlQuery.exec(queryString)) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return;
+      }
+
+      qDebug() << Q_FUNC_INFO << "Reading rows from database query " << queryString;
+
+      //
+      // The simplest way to process the data is first to build the raw ID-to-ID map in memory...
+      //
+      QMultiHash<int, QVariant> thisToOtherKeys;
+      while (sqlQuery.next()) {
+         thisToOtherKeys.insert(sqlQuery.value(associativeEntity.thisObjectPrimaryKeyColumnName).toInt(),
+                                sqlQuery.value(associativeEntity.otherObjectPrimaryKeyColumnName));
+      }
+
+      //
+      // ...then loop through the map to pass the data to the relevant objects
+      //
+      for (int const currentKey : thisToOtherKeys.uniqueKeys()) {
+         //
+         // It's probably a coding error somewhere if there's an associative entry for an object that doesn't exist,
+         // but we can recover by ignoring the associative entry
+         //
+         if (!this->contains(currentKey)) {
+            qCritical() <<
+               Q_FUNC_INFO << "Ignoring record in table " << associativeEntity.tableName <<
+               " for non-existent object with primary key " << currentKey;
+            continue;
+         }
+
+         auto currentObject = this->getById(currentKey);
+
+         //
+         // Normally we'd pass a list of all the "other" keys for each "this" object, but if we've been told to assume
+         // there is at most one "other" per "this", then we'll pass just the first one we get back for each "this".
+         //
+         auto otherKeys = thisToOtherKeys.values(currentKey);
+         if (associativeEntity.assumeMaxOneEntry) {
+            qDebug() <<
+               Q_FUNC_INFO << "Object #" << currentKey << ", " << associativeEntity.propertyName << "=" <<
+               otherKeys.first().toInt();
+            currentObject->setProperty(associativeEntity.propertyName, otherKeys.first());
+         } else {
+            //
+            // The setProperty function always takes a QVariant, so we need to create one from QList<QVariant>
+            //
+            currentObject->setProperty(associativeEntity.propertyName, QVariant{otherKeys});
+         }
+      }
+   }
+
    return;
 }
 
@@ -209,7 +341,7 @@ std::shared_ptr<QObject> DbRecords::getById(int id) {
    return this->pimpl->allObjects.value(id);
 }
 
-void DbRecords::insert(std::shared_ptr<QObject> newObject) {
+void DbRecords::insert(std::shared_ptr<QObject> object) {
    //
    // Construct the SQL, which will be of the form
    //
@@ -242,7 +374,14 @@ void DbRecords::insert(std::shared_ptr<QObject> newObject) {
          primaryKeyParameter = fieldDefn.propertyName;
       } else {
          QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
-         sqlQuery.bindValue(bindName, newObject->property(fieldDefn.propertyName));
+         QVariant bindValue{object->property(fieldDefn.propertyName)};
+
+         // Enums need to be converted to strings first
+         if (fieldDefn.fieldType == DbRecords::Enum) {
+            bindValue = QVariant{enumToString(fieldDefn, bindValue)};
+         }
+
+         sqlQuery.bindValue(bindName, bindValue);
       }
    }
 
@@ -266,7 +405,7 @@ void DbRecords::insert(std::shared_ptr<QObject> newObject) {
    Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
    auto primaryKey = sqlQuery.lastInsertId();
 
-   newObject->setProperty(primaryKeyParameter, primaryKey);
+   object->setProperty(primaryKeyParameter, primaryKey);
    qDebug() << Q_FUNC_INFO << "Object with ID" << primaryKey.toInt() << "inserted in database using" << queryString;
 
    //
@@ -274,7 +413,7 @@ void DbRecords::insert(std::shared_ptr<QObject> newObject) {
    // this ID to already exist in that list).
    //
    Q_ASSERT(!this->pimpl->allObjects.contains(primaryKey.toInt()));
-   this->pimpl->allObjects.insert(primaryKey.toInt(), newObject);
+   this->pimpl->allObjects.insert(primaryKey.toInt(), object);
 
    //
    // Tell any bits of the UI that need to know that there's a new object
@@ -324,7 +463,14 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    QSqlQuery sqlQuery{queryString, Database::instance().sqlDatabase()};
    for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
       QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
-      sqlQuery.bindValue(bindName, object->property(fieldDefn.propertyName));
+      QVariant bindValue{object->property(fieldDefn.propertyName)};
+
+      // Enums need to be converted to strings first
+      if (fieldDefn.fieldType == DbRecords::Enum) {
+         bindValue = QVariant{enumToString(fieldDefn, bindValue)};
+      }
+
+      sqlQuery.bindValue(bindName, bindValue);
    }
 
    //
@@ -371,7 +517,19 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
    // Bind the values
    //
    QSqlQuery sqlQuery{queryString, Database::instance().sqlDatabase()};
-   sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), object->property(propertyToUpdateInDb));
+   QVariant propertyBindValue{object->property(propertyToUpdateInDb)};
+   // Enums need to be converted to strings first
+   auto fieldDefn = std::find_if(
+      this->pimpl->fieldDefinitions.begin(),
+      this->pimpl->fieldDefinitions.end(),
+      [propertyToUpdateInDb](FieldDefinition const & fd){return propertyToUpdateInDb == fd.propertyName;}
+   );
+   // It's a coding error if we're trying to update a property that's not in the field definitions
+   Q_ASSERT(fieldDefn != this->pimpl->fieldDefinitions.end());
+   if (fieldDefn->fieldType == DbRecords::Enum) {
+      propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
+   }
+   sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
    sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), object->property(primaryKeyProperty));
 
    //
@@ -430,4 +588,13 @@ void DbRecords::hardDelete(int id) {
    this->pimpl->allObjects.remove(id);
 
    return;
+}
+
+
+std::optional< std::shared_ptr<QObject> > DbRecords::findMatching(std::function<bool(std::shared_ptr<QObject>)> const & matchFunction) {
+   auto result = std::find_if(this->pimpl->allObjects.begin(), this->pimpl->allObjects.end(), matchFunction);
+   if (result == this->pimpl->allObjects.end()) {
+      return std::nullopt;
+   }
+   return *result;
 }

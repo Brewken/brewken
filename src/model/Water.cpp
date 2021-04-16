@@ -130,7 +130,23 @@ Water::Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
 {
 }
 
-Water::Water(NamedParameterBundle & namedParameterBundle) : NamedEntity(namedParameterBundle, DatabaseConstants::WATERTABLE) {
+Water::Water(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity         {namedParameterBundle, DatabaseConstants::WATERTABLE},
+   m_amount            {namedParameterBundle(PropertyNames::Water::amount).toDouble()},
+   m_calcium_ppm       {namedParameterBundle(PropertyNames::Water::calcium_ppm).toDouble()},
+   m_bicarbonate_ppm   {namedParameterBundle(PropertyNames::Water::bicarbonate_ppm).toDouble()},
+   m_sulfate_ppm       {namedParameterBundle(PropertyNames::Water::sulfate_ppm).toDouble()},
+   m_chloride_ppm      {namedParameterBundle(PropertyNames::Water::chloride_ppm).toDouble()},
+   m_sodium_ppm        {namedParameterBundle(PropertyNames::Water::sodium_ppm).toDouble()},
+   m_magnesium_ppm     {namedParameterBundle(PropertyNames::Water::magnesium_ppm).toDouble()},
+   m_ph                {namedParameterBundle(PropertyNames::Water::ph).toDouble()},
+   m_alkalinity        {namedParameterBundle(PropertyNames::Water::alkalinity).toDouble()},
+   m_notes             {namedParameterBundle(PropertyNames::Water::notes).toString()},
+   m_cacheOnly         {false},
+   m_type              {static_cast<Water::Types>(namedParameterBundle(PropertyNames::Water::type).toInt())},
+   m_mash_ro           {namedParameterBundle(PropertyNames::Water::mashRO).toDouble()},
+   m_sparge_ro         {namedParameterBundle(PropertyNames::Water::spargeRO).toDouble()},
+   m_alkalinity_as_hco3{namedParameterBundle(PropertyNames::Water::alkalinityAsHCO3).toBool()} {
    return;
 }
 

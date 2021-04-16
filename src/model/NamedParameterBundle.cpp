@@ -49,3 +49,21 @@ QVariant NamedParameterBundle::operator()(char const * const parameterName) {
    }
    return returnValue;
 }
+
+
+template <> void NamedParameterBundle::operator()<QString>(char const * const parameterName, QString & storeIn) {
+   storeIn = this->operator()(parameterName).toString();
+   return;
+}
+template <> void NamedParameterBundle::operator()<bool>(char const * const parameterName, bool & storeIn) {
+   storeIn = this->operator()(parameterName).toBool();
+   return;
+}
+template <> void NamedParameterBundle::operator()<int>(char const * const parameterName, int & storeIn) {
+   storeIn = this->operator()(parameterName).toInt();
+   return;
+}
+template <> void NamedParameterBundle::operator()<double>(char const * const parameterName, double & storeIn) {
+   storeIn = this->operator()(parameterName).toDouble();
+   return;
+}

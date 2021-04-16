@@ -180,6 +180,7 @@ private:
    Style(DatabaseConstants::DbTableId table, int key);
 public:
    Style(QString t_name, bool cacheOnly = true);
+   Style(NamedParameterBundle & namedParameterBundle);
 private:
    Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Style( Style const& other );

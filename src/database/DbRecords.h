@@ -41,6 +41,9 @@ class DbRecords : QObject {
    Q_OBJECT
 
 public:
+   /**
+    * \brief The different field types that can be stored directly in an object's DB table.
+    */
    enum FieldType {
       Bool,
       Int,
@@ -48,25 +51,70 @@ public:
       Double,
       String,
       Date,
-      Enum,
-      Record
+      Enum   // Stored as a string in the DB
    };
 
+   /**
+    * \brief Associates an enum value with a string representation in the DB.  This is more robust than just storing
+    *        the raw numerical value of the enum.
+    */
+   struct EnumAndItsDbString {
+      QString string;
+      int     native;
+   };
+
+   /**
+    * \brief We don't actually bother creating hashmaps or similar between enum values and string representations
+    *        because it's usually going to be a short list that we can search through pretty quickly (probably faster
+    *        than calculating the hash of a key!)
+    */
+   typedef QVector<EnumAndItsDbString> EnumStringMapping;
+
    struct FieldDefinition {
-      FieldType           fieldType;
-      QString             columnName;
-      char const * const  propertyName;
+      FieldType                 fieldType;
+      QString                   columnName;
+      char const * const        propertyName;
+      EnumStringMapping const * enumMapping = nullptr; // only needed if fieldType is Enum
    };
 
    typedef QVector<FieldDefinition> FieldDefinitions;
+
+   /**
+    * \brief Cross-references to other objects that are stored in a junction table.  (See
+    *        https://en.wikipedia.org/wiki/Associative_entity)  Eg, for a Recipe, there are several junction tables
+    *        (fermentable_in_recipe, hop_in_recipe, etc) to store info where potentially many other objects
+    *        (Fermentable, Hop, etc) are associated with a single recipe.
+    *
+    *        We assume that each junction table contains only two columns of interest to us, both of which are foreign
+    *        keys to other objects, and both of which are integers.  When passing the results to-and-from the object
+    *        itself, we'll normally pass a list of integers.  However, if \c assumeMaxOneEntry is set to \c true, then
+    *        we'll pull at most one matching row and pass an integer (wrapped in QVariant and thus 0 if no row
+    *        returned).
+    *
+    *        .:TBD:. For reasons that are not entirely clear, the parent-child relationship between various objects is
+    *        also stored in junction tables.  Although we could change this, it's more likely we will just drop the
+    *        parent-child stuff.
+    */
+   struct AssociativeEntity {
+      char const * const tableName;
+      QString thisObjectPrimaryKeyColumnName;
+      QString otherObjectPrimaryKeyColumnName;
+      char const * const propertyName;
+      bool assumeMaxOneEntry = false;
+   };
+
+   typedef QVector<AssociativeEntity> AssociativeEntities;
 
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
     * \param tableName
     * \param fieldDefinitions  First in the list should be the primary key
+    * \param associativeEntities
     */
-   DbRecords(char const * const tableName, FieldDefinitions const & fieldDefinitions);
+   DbRecords(char const * const tableName,
+             FieldDefinitions const & fieldDefinitions,
+             AssociativeEntities const & associativeEntities);
 
    ~DbRecords();
 
@@ -84,7 +132,7 @@ public:
    /**
     * \brief Insert a new object in the DB (and in our cache list)
     */
-   void insert(std::shared_ptr<QObject> newObject);
+   void insert(std::shared_ptr<QObject> object);
 
    /**
     * \brief Update an existing object in the DB
@@ -163,14 +211,34 @@ signals:
 protected:
    /**
     * \brief Return pointer to the object with the specified key (or pointer to null if no object exists for the key,
-    *        though callers should ideally check this first via \c contains()  Subclasses are expected to override this
-    *        to downcast the QObject shared pointer to a more specific one.
+    *        though callers should ideally check this first via \c contains()  Subclasses are expected to provide a
+    *        public override of this function to downcast the QObject shared pointer to a more specific one.
     *
-    *        NB: This is not virtual because we want subclasses to be able to have a different return type.  (We don't
-    *            need virtual here anyway as external callers will not be upcasting subclasses of DbRecords, and even,
-    *            if they did, they'd still get the "right" result by calling this base class function.)
+    *        NB: This is private and non-virtual because we want subclasses to be able to have a different return type.
+    *            You can't change the return type on a virtual function because, by definition, callers need to know
+    *            the return type of the function without knowing which version of it is called - hence "invalid
+    *            covariant return type" compiler errors if you try.
+    *
+    *            We in any case don't need virtual here anyway as external callers will not be upcasting subclasses of
+    *            DbRecords.
     */
    std::shared_ptr<QObject> getById(int id);
+
+   /**
+    * \brief Allow searching of the set of all cached objects (of a given type) with a lambda.  Subclasses are
+    *        expected to provide a public override of this function that implements a class-specific interface.
+    *
+    *        NB: This is private and non-virtual for the same reasons as \c getById()
+    *
+    * \param matchFunction Takes a shared pointer to object and returns \c true if it's a match or \c false otherwise.
+    *
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
+    *         none does
+    */
+   std::optional< std::shared_ptr<QObject> > findMatching(
+      std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
+   );
+
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

@@ -174,6 +174,7 @@ private:
    Equipment(DatabaseConstants::DbTableId table, int key);
 public:
    Equipment(QString t_name, bool cacheOnly = true);
+   Equipment(NamedParameterBundle & namedParameterBundle);
 private:
    Equipment(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Equipment( Equipment const& other);

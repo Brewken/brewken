@@ -104,6 +104,7 @@ protected:
       QString currentName = this->namedEntity->name();
       QList<NE *> listOfAllStored = Database::instance().getAll<NE>();
 
+      // .:TODO:. Change this to use findMatching once we switch to DbNamedEntityRecords
       for (auto matchingEntity = std::find_if(listOfAllStored.begin(),
                                                       listOfAllStored.end(),
                                                       [currentName](NE * ne) {return ne->name() == currentName;});

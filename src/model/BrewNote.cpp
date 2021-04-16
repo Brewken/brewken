@@ -1,5 +1,5 @@
 /**
- * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -109,6 +109,44 @@ BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key)
 BrewNote::BrewNote(QString name, bool cache) : BrewNote(QDateTime(), cache, name) {
    return;
 }
+
+BrewNote::BrewNote(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::BREWNOTETABLE},
+   loading            {false},
+   m_brewDate         {namedParameterBundle(PropertyNames::BrewNote::brewDate         ).toDate()},
+   m_fermentDate      {namedParameterBundle(PropertyNames::BrewNote::fermentDate      ).toDate()},
+   m_notes            {namedParameterBundle(PropertyNames::BrewNote::notes            ).toString()},
+   m_sg               {namedParameterBundle(PropertyNames::BrewNote::sg               ).toDouble()},
+   m_abv              {namedParameterBundle(PropertyNames::BrewNote::abv              ).toDouble()},
+   m_effIntoBK_pct    {namedParameterBundle(PropertyNames::BrewNote::effIntoBK_pct    ).toDouble()},
+   m_brewhouseEff_pct {namedParameterBundle(PropertyNames::BrewNote::brewhouseEff_pct ).toDouble()},
+   m_volumeIntoBK_l   {namedParameterBundle(PropertyNames::BrewNote::volumeIntoBK_l   ).toDouble()},
+   m_strikeTemp_c     {namedParameterBundle(PropertyNames::BrewNote::strikeTemp_c     ).toDouble()},
+   m_mashFinTemp_c    {namedParameterBundle(PropertyNames::BrewNote::mashFinTemp_c    ).toDouble()},
+   m_og               {namedParameterBundle(PropertyNames::BrewNote::og               ).toDouble()},
+   m_postBoilVolume_l {namedParameterBundle(PropertyNames::BrewNote::postBoilVolume_l ).toDouble()},
+   m_volumeIntoFerm_l {namedParameterBundle(PropertyNames::BrewNote::volumeIntoFerm_l ).toDouble()},
+   m_pitchTemp_c      {namedParameterBundle(PropertyNames::BrewNote::pitchTemp_c      ).toDouble()},
+   m_fg               {namedParameterBundle(PropertyNames::BrewNote::fg               ).toDouble()},
+   m_attenuation      {namedParameterBundle(PropertyNames::BrewNote::attenuation      ).toDouble()},
+   m_finalVolume_l    {namedParameterBundle(PropertyNames::BrewNote::finalVolume_l    ).toDouble()},
+   m_boilOff_l        {namedParameterBundle(PropertyNames::BrewNote::boilOff_l        ).toDouble()},
+   m_projBoilGrav     {namedParameterBundle(PropertyNames::BrewNote::projBoilGrav     ).toDouble()},
+   m_projVolIntoBK_l  {namedParameterBundle(PropertyNames::BrewNote::projVolIntoBK_l  ).toDouble()},
+   m_projStrikeTemp_c {namedParameterBundle(PropertyNames::BrewNote::projStrikeTemp_c ).toDouble()},
+   m_projMashFinTemp_c{namedParameterBundle(PropertyNames::BrewNote::projMashFinTemp_c).toDouble()},
+   m_projOg           {namedParameterBundle(PropertyNames::BrewNote::projOg           ).toDouble()},
+   m_projVolIntoFerm_l{namedParameterBundle(PropertyNames::BrewNote::projVolIntoFerm_l).toDouble()},
+   m_projFg           {namedParameterBundle(PropertyNames::BrewNote::projFg           ).toDouble()},
+   m_projEff_pct      {namedParameterBundle(PropertyNames::BrewNote::projEff_pct      ).toDouble()},
+   m_projABV_pct      {namedParameterBundle(PropertyNames::BrewNote::projABV_pct      ).toDouble()},
+   m_projPoints       {namedParameterBundle(PropertyNames::BrewNote::projPoints       ).toDouble()},
+   m_projFermPoints   {namedParameterBundle(PropertyNames::BrewNote::projFermPoints   ).toDouble()},
+   m_projAtten        {namedParameterBundle(PropertyNames::BrewNote::projAtten        ).toDouble()},
+   m_cacheOnly        {false} {
+   return;
+}
+
 
 BrewNote::BrewNote(QDateTime dateNow, bool cache, QString const & name)
    : NamedEntity(DatabaseConstants::BREWNOTETABLE,-1,name,true),
