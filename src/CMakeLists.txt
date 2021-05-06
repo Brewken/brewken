@@ -115,8 +115,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/DbNamedEntityRecords.cpp
     ${SRCDIR}/database/DbRecords.cpp
     ${SRCDIR}/database/PropertySchema.cpp
-    ${SRCDIR}/database/TableSchemaConst.cpp
     ${SRCDIR}/database/TableSchema.cpp
+    ${SRCDIR}/database/TableSchemaConst.cpp
     ${SRCDIR}/EquipmentButton.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
