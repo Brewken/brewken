@@ -1,5 +1,5 @@
 /**
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -19,20 +19,23 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _MASH_H
-#define _MASH_H
+#ifndef MODEL_MASH_H
+#define MODEL_MASH_H
+#pragma once
+
+#include <QSqlRecord>
+#include <QVector>
 
 #include "model/NamedEntity.h"
-namespace PropertyNames::Mash { static char const * const ph = "ph"; /* previously kpropPH */ }
-namespace PropertyNames::Mash { static char const * const tunSpecificHeat_calGC = "tunSpecificHeat_calGC"; /* previously kpropTunSpecHeat */ }
-namespace PropertyNames::Mash { static char const * const tunWeight_kg = "tunWeight_kg"; /* previously kpropTunWeight */ }
-namespace PropertyNames::MashStep { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
-namespace PropertyNames::MashStep { static char const * const type = "type"; /* previously kpropType */ }
-namespace PropertyNames::Mash { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Mash { static char const * const equipAdjust = "equipAdjust"; /* previously kpropEquipAdjust */ }
-namespace PropertyNames::Mash { static char const * const spargeTemp_c = "spargeTemp_c"; /* previously kpropSpargeTemp */ }
-namespace PropertyNames::Mash { static char const * const tunTemp_c = "tunTemp_c"; /* previously kpropTunTemp */ }
 namespace PropertyNames::Mash { static char const * const grainTemp_c = "grainTemp_c"; /* previously kpropGrainTemp */ }
+namespace PropertyNames::Mash { static char const * const mashStepIds = "mashStepIds"; }
+namespace PropertyNames::Mash { static char const * const notes = "notes"; /* previously kpropNotes */ }
+namespace PropertyNames::Mash { static char const * const ph = "ph"; /* previously kpropPH */ }
+namespace PropertyNames::Mash { static char const * const spargeTemp_c = "spargeTemp_c"; /* previously kpropSpargeTemp */ }
+namespace PropertyNames::Mash { static char const * const tunSpecificHeat_calGC = "tunSpecificHeat_calGC"; /* previously kpropTunSpecHeat */ }
+namespace PropertyNames::Mash { static char const * const tunTemp_c = "tunTemp_c"; /* previously kpropTunTemp */ }
+namespace PropertyNames::Mash { static char const * const tunWeight_kg = "tunWeight_kg"; /* previously kpropTunWeight */ }
 
 // Forward declarations.
 class MashStep;
@@ -77,6 +80,7 @@ public:
    Q_PROPERTY( double totalTime READ totalTime /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
   // Q_PROPERTY( double tunMass_kg READ tunMass_kg  WRITE setTunMass_kg /*NOTIFY changed*/ /*changedTotalTime*/ )
    //! \brief The individual mash steps.
+   Q_PROPERTY( QList<int> mashStepIds READ getMashStepIds WRITE setMashStepIds )
    Q_PROPERTY( QList<MashStep*> mashSteps  READ mashSteps /*WRITE*/ /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
 
    // Setters
@@ -89,6 +93,7 @@ public:
    void setTunSpecificHeat_calGC( double var );
    void setEquipAdjust( bool var );
    void setCacheOnly( bool cache );
+   void setMashStepIds(QList<int> ids);
 
    // Getters
    double grainTemp_c() const;
@@ -101,6 +106,7 @@ public:
    double tunSpecificHeat_calGC() const;
    bool equipAdjust() const;
    bool cacheOnly() const;
+   QList<int> getMashStepIds() const;
 
    // Calculated getters
    //! \brief all the mash water, sparge and strike
@@ -144,6 +150,7 @@ private:
    Mash( Mash const& other );
 public:
    Mash( QString name, bool cache = true );
+   Mash(NamedParameterBundle & namedParameterBundle);
 
 private:
    double m_grainTemp_c;
@@ -157,6 +164,7 @@ private:
    bool m_cacheOnly;
 
    QList<MashStep*> m_mashSteps;
+   QVector<int> mashStepIds;
 
 };
 
@@ -188,4 +196,4 @@ struct Mash_ptr_equals
    }
 };
 */
-#endif //_MASH_H
+#endif

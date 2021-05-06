@@ -290,7 +290,7 @@ QVariant HopTableModel::data( const QModelIndex& index, int role ) const
          unit = displayUnit(col);
          scale = displayScale(col);
 
-         return QVariant(Brewken::displayAmount(row->inventory(), Units::kilograms, 3, unit, scale));
+         return QVariant(Brewken::displayAmount(row->inventory(), &Units::kilograms, 3, unit, scale));
 
       case HOPAMOUNTCOL:
          if( role != Qt::DisplayRole )
@@ -298,7 +298,7 @@ QVariant HopTableModel::data( const QModelIndex& index, int role ) const
          unit = displayUnit(col);
          scale = displayScale(col);
 
-         return QVariant(Brewken::displayAmount(row->amount_kg(), Units::kilograms, 3, unit, scale));
+         return QVariant(Brewken::displayAmount(row->amount_kg(), &Units::kilograms, 3, unit, scale));
 
       case HOPUSECOL:
          if( role == Qt::DisplayRole )
@@ -313,7 +313,7 @@ QVariant HopTableModel::data( const QModelIndex& index, int role ) const
 
          scale = displayScale(col);
 
-         return QVariant( Brewken::displayAmount(row->time_min(), Units::minutes, 3, Unit::noUnit, scale) );
+         return QVariant( Brewken::displayAmount(row->time_min(), &Units::minutes, 3, Unit::noUnit, scale) );
       case HOPFORMCOL:
         if ( role == Qt::DisplayRole )
           return QVariant( row->formStringTr() );
@@ -412,7 +412,7 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   "inventoryAmount",
-                                                  Brewken::qStringToSI(value.toString(),Units::kilograms, displayUnit(HOPINVENTORYCOL)),
+                                                  Brewken::qStringToSI(value.toString(),&Units::kilograms, displayUnit(HOPINVENTORYCOL)),
                                                   tr("Change Hop Inventory Amount"));
          }
          break;
@@ -421,7 +421,7 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::amount_kg,
-                                                  Brewken::qStringToSI(value.toString(), Units::kilograms, dspUnit, dspScl),
+                                                  Brewken::qStringToSI(value.toString(), &Units::kilograms, dspUnit, dspScl),
                                                   tr("Change Hop Amount"));
          }
          break;
@@ -448,7 +448,7 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          if( retVal ) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::time_min,
-                                                  Brewken::qStringToSI(value.toString(),Units::minutes,dspUnit,dspScl),
+                                                  Brewken::qStringToSI(value.toString(),&Units::minutes,dspUnit,dspScl),
                                                   tr("Change Hop Time"));
          }
          break;

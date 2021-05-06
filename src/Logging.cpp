@@ -1,7 +1,7 @@
 /**
  * Logging.cpp is part of Brewken, and is copyright the following authors 2009-2021:
- *   • Matt Young <mfsy@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QStandardPaths>
 #include <QTextStream>
+#include <QThread>
 #include <QTime>
 
 #include "PersistentSettings.h"
@@ -51,9 +52,6 @@ namespace {
    // Stores the path to the log files
    QDir logDirectory;
 
-   // Template for the log messages
-   QString const logMessageFormat{"[%1] %2 : %3"};
-
    // Time format to use in log messages
    QString const timeFormat{"hh:mm:ss.zzz"};
 
@@ -62,6 +60,16 @@ namespace {
    bool isLoggingToStderr{true};
    QTextStream errStream{stderr};
    QTextStream * stream;
+
+   //
+   // It's useful to include the thread ID in log messages.  We don't care what the actual ID is, we just need to be
+   // able to differentiate between log messages from different threads.  Qt gives us thread ID as void *, which we
+   // turn into a base-36 string.  (This is the most concise encoding that we can trivially get from QString.)
+   //
+   // We only need to create the string representation of a thread ID once per thread.  Since C++11, we can use
+   // thread_local to define thread-specific variables that are initialized "before first use"
+   //
+   thread_local QString const threadId{QString{"%1"}.arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)};
 
    //
    // We use the Qt functions (qDebug(), qInfo(), etc) do our logging but we need to convert from QtMsgType to our own
@@ -81,13 +89,13 @@ namespace {
    }
 
    void doLog(const Logging::Level level, const QString message) {
+      QString logEntry = QString{"[%1] (%2) %3 : %4"}.arg(QTime::currentTime().toString(timeFormat))
+                                                     .arg(threadId)
+                                                     .arg(Logging::getStringFromLogLevel(level))
+                                                     .arg(message);
       QMutexLocker locker(&mutex);
-      QString logEntry = logMessageFormat.arg(QTime::currentTime().toString(timeFormat))
-                                         .arg(Logging::getStringFromLogLevel(level))
-                                         .arg(message);
-
-      if (isLoggingToStderr) errStream << logEntry << END_OF_LINE;
-      if (stream)              *stream << logEntry << END_OF_LINE;
+      if (isLoggingToStderr) { errStream << logEntry << END_OF_LINE; }
+      if (stream)            {   *stream << logEntry << END_OF_LINE; }
       return;
    }
 
@@ -231,11 +239,25 @@ namespace {
          }
       }
 
-      // Writing the actual log.
-      doLog(logLevelOfMessage, QString("%1, in %2").arg(message).arg(context.line));
+      // Writing the actual log
+      //
+      // QMessageLogContext members are a bit hard to find in Qt documentation so noted here:
+      //    category : const char *
+      //    file : const char *      -- full path of the source file
+      //    function : const char *  -- same as what gets written out by Q_FUNC_INFO
+      //    line : int
+      //    version : int
+      //
+      // We don't want to log the full path of the source file, because that might contain private info about the
+      // directory structure on the machine on which the build was done.  We could just show the filename with:
+      //    QString sourceFile = QFileInfo(context.file).fileName();
+      // But we'd like to show the relative path under the src directory (eg database/Database.cpp rather than just
+      // Database.cpp).  (The code here assumes there will not be any subdirectory of src that is also called src,
+      // which seems pretty reasonable.)
+      QString sourceFile = QString{context.file}.split("/src/").last();
+      doLog(logLevelOfMessage, QString("%1  [%2:%3]").arg(message).arg(sourceFile).arg(context.line));
       return;
    }
-
 
 }
 

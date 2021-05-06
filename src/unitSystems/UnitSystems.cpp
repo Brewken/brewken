@@ -1,5 +1,6 @@
 /**
- * UnitSystems.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * unitSystems/UnitSystems.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>

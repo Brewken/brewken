@@ -25,36 +25,36 @@ SIVolumeUnitSystem::SIVolumeUnitSystem()
    _type = Unit::Volume;
 }
 
-Unit* SIVolumeUnitSystem::thicknessUnit()
+Unit const * SIVolumeUnitSystem::thicknessUnit()
 {
-   return Units::liters;
+   return &Units::liters;
 }
 
-QMap<Unit::unitScale, Unit*> const& SIVolumeUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& SIVolumeUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall, Units::milliliters);
-      _scaleToUnit.insert(Unit::scaleSmall, Units::liters);
+      _scaleToUnit.insert(Unit::scaleExtraSmall, &Units::milliliters);
+      _scaleToUnit.insert(Unit::scaleSmall, &Units::liters);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SIVolumeUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& SIVolumeUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("mL", Units::milliliters);
-      _qstringToUnit.insert("ml", Units::milliliters);
-      _qstringToUnit.insert("L", Units::liters);
-      _qstringToUnit.insert("l", Units::liters);
+      _qstringToUnit.insert("mL", &Units::milliliters);
+      _qstringToUnit.insert("ml", &Units::milliliters);
+      _qstringToUnit.insert("L", &Units::liters);
+      _qstringToUnit.insert("l", &Units::liters);
    }
 
    return _qstringToUnit;
 }
 
-Unit* SIVolumeUnitSystem::unit() { return Units::liters; }
+Unit const * SIVolumeUnitSystem::unit() { return &Units::liters; }
 QString SIVolumeUnitSystem::unitType() { return "SI"; }

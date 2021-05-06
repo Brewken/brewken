@@ -1,5 +1,6 @@
 /**
- * database/WaterSchema.h is part of Brewken, and is copyright the following authors 2019-2020:
+ * database/WaterSchema.h is part of Brewken, and is copyright the following authors 2019-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,11 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef WATERSCHEMA_H
-#define WATERSCHEMA_H
+#ifndef DATABASE_WATERSCHEMA_H
+#define DATABASE_WATERSCHEMA_H
+#pragma once
 
 #include <QString>
+
+#include "model/Water.h"
 // Columns for the yeast table
 // What isn't here (like name) is defined in TableSchemaConstants
 static const QString kcolWaterCalcium("calcium");
@@ -42,4 +45,5 @@ static const QString kxmlPropChloride("CHLORIDE");
 static const QString kxmlPropSodium("SODIUM");
 static const QString kxmlPropMagnesium("MAGNESIUM");
 
-#endif // WATERSCHEMA_H
+
+#endif

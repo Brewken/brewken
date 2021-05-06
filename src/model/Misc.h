@@ -1,5 +1,5 @@
 /**
- * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -20,21 +20,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _MISC_H
-#define _MISC_H
+#ifndef MODEL_MISC_H
+#define MODEL_MISC_H
+#pragma once
 
 #include <QString>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
 namespace PropertyNames::Misc { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Misc { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
 namespace PropertyNames::Misc { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
-namespace PropertyNames::Misc { static char const * const useString = "useString"; /* previously kpropUseString */ }
-namespace PropertyNames::Misc { static char const * const use = "use"; /* previously kpropUse */ }
-namespace PropertyNames::Misc { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
-namespace PropertyNames::Misc { static char const * const type = "type"; /* previously kpropType */ }
 namespace PropertyNames::Misc { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Misc { static char const * const time = "time"; /* previously kpropMiscTime */ }
+namespace PropertyNames::Misc { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
+namespace PropertyNames::Misc { static char const * const type = "type"; /* previously kpropType */ }
 namespace PropertyNames::Misc { static char const * const useFor = "useFor"; /* previously kpropUseFor */ }
+namespace PropertyNames::Misc { static char const * const useString = "useString"; /* previously kpropUseString */ }
+namespace PropertyNames::Misc { static char const * const use = "use"; /* previously kpropUse */ }
 
 /*!
  * \class Misc
@@ -148,6 +151,7 @@ private:
    Misc(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Misc(QString name, bool cache = true);
+   Misc(NamedParameterBundle & namedParameterBundle);
 private:
    Misc(Misc & other);
 

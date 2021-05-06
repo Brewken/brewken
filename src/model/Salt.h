@@ -1,5 +1,5 @@
 /**
- * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,11 +17,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef SALT_H
-#define SALT_H
+#ifndef MODEL_SALT_H
+#define MODEL_SALT_H
+#pragma once
 
 #include <QString>
+#include <QSqlRecord>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
+
 namespace PropertyNames::Salt { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Salt { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
 namespace PropertyNames::Salt { static char const * const type = "type"; /* previously kpropType */ }
@@ -86,7 +91,7 @@ public:
    Q_PROPERTY( double percentAcid READ percentAcid WRITE setPercentAcid /*NOTIFY changed*/ /*changedPercentAcid*/ )
    //! \brief Is this an acid or salt?
    Q_PROPERTY( bool isAcid READ isAcid WRITE setIsAcid /*NOTIFY changed*/ /*changedIsAcid*/ )
-   //! \brief A link to the salt in the MISC table. Not sure I'm going to use this
+   //! \brief A link to the salt in the MISC table. Not sure I'm going to use this. .:TODO:. Think this can be removed
    Q_PROPERTY( int miscId READ miscId /* WRITE setMiscId*/ /*NOTIFY changed*/ /*changedSulfate_ppm*/ )
    //! \brief To cache or not to cache
    Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ /*changedSulfate_ppm*/ )
@@ -132,7 +137,10 @@ private:
    Salt(DatabaseConstants::DbTableId table, int key);
    Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Salt(Salt & other );
+public:
    Salt(QString name, bool cache = true);
+   Salt(NamedParameterBundle & namedParameterBundle);
+private:
 
    double m_amount;
    Salt::WhenToAdd m_add_to;
@@ -178,4 +186,4 @@ struct Salt_ptr_equals
    }
 };
 
-#endif   // SALT_H
+#endif

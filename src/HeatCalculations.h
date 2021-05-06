@@ -1,5 +1,6 @@
 /**
- * HeatCalculations.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * HeatCalculations.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,8 +15,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HEATCALCULATIONS_H
-#define   _HEATCALCULATIONS_H
+#ifndef HEATCALCULATIONS_H
+#define HEATCALCULATIONS_H
 
 class HeatCalculations;
 
@@ -34,9 +35,9 @@ public:
 
    /***Specific heats***/
    // Water's specific heat.
-   static double Cw_JKgK;
-   static double Cw_calGC;
-   static double Cgrain_calGC;
+   static double const Cw_JKgK;
+   static double const Cw_calGC;
+   static double const Cgrain_calGC;
 };
 
 #endif   /* _HEATCALCULATIONS_H */

@@ -24,27 +24,27 @@ SrmColorUnitSystem::SrmColorUnitSystem()
    _type = Unit::Color;
 }
 
-QMap<Unit::unitScale, Unit*> const& SrmColorUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& SrmColorUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::srm);
+      _scaleToUnit.insert(Unit::scaleWithout,&Units::srm);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& SrmColorUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& SrmColorUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("srm",Units::srm);
+      _qstringToUnit.insert("srm",&Units::srm);
    }
 
    return _qstringToUnit;
 }
 
 QString SrmColorUnitSystem::unitType() { return "Color"; }
-Unit* SrmColorUnitSystem::unit() { return Units::srm; }
+Unit const * SrmColorUnitSystem::unit() { return &Units::srm; }

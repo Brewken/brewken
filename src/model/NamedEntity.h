@@ -17,29 +17,29 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _MODEL_NAMEDENTITY_H
-#define _MODEL_NAMEDENTITY_H
+#ifndef MODEL_NAMEDENTITY_H
+#define MODEL_NAMEDENTITY_H
 #pragma once
 
 #include <cstdint>
-#include <QDomText>
-#include <QDomNode>
-#include <QDomDocument>
-#include <QList>
-#include <QString>
-#include <QObject>
-#include <QMetaProperty>
-#include <QVariant>
+
 #include <QDateTime>
-#include <QSqlRecord>
+#include <QDomText>
+#include <QList>
+#include <QMetaProperty>
+#include <QObject>
+#include <QVariant>
+
 #include "Brewken.h"
 #include "database/DatabaseSchema.h"
+#include "model/NamedParameterBundle.h"
 
 namespace PropertyNames::NamedEntity { static char const * const folder = "folder"; /* previously kpropFolder */ }
 namespace PropertyNames::NamedEntity { static char const * const display = "display"; /* previously kpropDisplay */ }
 namespace PropertyNames::NamedEntity { static char const * const deleted = "deleted"; /* previously kpropDeleted */ }
 namespace PropertyNames::NamedEntity { static char const * const name = "name"; /* previously kpropName */ }
+namespace PropertyNames::NamedEntity { static char const * const key = "key"; }
+namespace PropertyNames::NamedEntity { static char const * const parentKey = "parentKey"; }
 
 // Make uintptr_t available in QVariant.
 Q_DECLARE_METATYPE( uintptr_t )
@@ -81,6 +81,7 @@ public:
    NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name = QString(),
                   bool t_display = false, QString folder = QString());
    NamedEntity( NamedEntity const& other );
+   NamedEntity(NamedParameterBundle & namedParameterBundle, DatabaseConstants::DbTableId table);
 
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
@@ -114,7 +115,8 @@ public:
    Q_PROPERTY( bool display   READ display WRITE setDisplay )
    Q_PROPERTY( QString folder READ folder WRITE setFolder )
 
-   Q_PROPERTY( int key READ key )
+   Q_PROPERTY( int key READ key WRITE setKey )
+   Q_PROPERTY( int parentKey READ getParentKey WRITE setParentKey )
    Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
 
    //! Convenience method to determine if we are deleted or displayed
@@ -142,6 +144,13 @@ public:
 
    //! \returns our key in the table we are stored in.
    int key() const;
+
+   void setKey(int key);
+
+   int getParentKey() const;
+   void setParentKey(int parentKey);
+
+   // .:TODO:. MY 2021-03-23 Ultimately we shouldn't need to know this
    //! \returns the table we are stored in.
    DatabaseConstants::DbTableId table() const;
    //! \returns the BeerXML version of this element.
@@ -151,6 +160,7 @@ public:
    //! Convenience method to get a meta property by name.
    QMetaProperty metaProperty(QString const& name) const;
 
+   // .:TODO:. MY 2021-03-23 These don't really belong here
    // Some static helpers to convert to/from text.
    static double getDouble( const QDomText& textNode );
    static bool getBool( const QDomText& textNode );
@@ -251,13 +261,15 @@ protected:
    /*!
     * \param col_name - The database column of the attribute we want to get.
     * Returns the value of the attribute specified by key/table/col_name.
+    *
+    * .:TODO:. MY 2021-03-21 Would be nice if NamedEntity didn't need to know such DB details
     */
    QVariant get( const QString& col_name ) const;
 
    void setInventory( const QVariant& value, int invKey = 0, bool notify=true );
    QVariant getInventory( const QString& col_name ) const;
 
-   QVariantMap getColumnValueMap() const;
+//   QVariantMap getColumnValueMap() const;
 
 private:
   mutable QString _folder;

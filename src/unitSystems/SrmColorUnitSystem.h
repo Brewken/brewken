@@ -27,13 +27,13 @@ class SrmColorUnitSystem : public UnitSystem
 {
 public:
    SrmColorUnitSystem();
-   Unit* thicknessUnit(){ return 0; }
+   Unit const * thicknessUnit(){ return 0; }
 
-   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
-   QMap<QString, Unit*> const& qstringToUnit();
+   QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
+   QMap<QString, Unit const *> const& qstringToUnit();
 
    QString unitType();
-   Unit* unit();
+   Unit const * unit();
 
 };
 

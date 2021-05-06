@@ -1,5 +1,6 @@
 /**
- * USWeightUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * unitSystems/USWeightUnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,44 +17,47 @@
  */
 
 #include "unitSystems/USWeightUnitSystem.h"
-#include <QStringList>
+
 #include <cmath>
-#include "unit.h"
+
 #include <QDebug>
+#include <QStringList>
+
+#include "unit.h"
 
 USWeightUnitSystem::USWeightUnitSystem()
 {
    _type = Unit::Mass;
 }
 
-QMap<Unit::unitScale, Unit*> const& USWeightUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& USWeightUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleExtraSmall,Units::ounces);
-      _scaleToUnit.insert(Unit::scaleSmall,Units::pounds);
+      _scaleToUnit.insert(Unit::scaleExtraSmall,&Units::ounces);
+      _scaleToUnit.insert(Unit::scaleSmall,&Units::pounds);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& USWeightUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& USWeightUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("oz",Units::ounces);
-      _qstringToUnit.insert("lb",Units::pounds);
+      _qstringToUnit.insert("oz",&Units::ounces);
+      _qstringToUnit.insert("lb",&Units::pounds);
    }
 
    return _qstringToUnit;
 }
 
-Unit* USWeightUnitSystem::thicknessUnit()
+Unit const * USWeightUnitSystem::thicknessUnit()
 {
-   return Units::pounds;
+   return &Units::pounds;
 }
 
-Unit* USWeightUnitSystem::unit() { return Units::pounds; }
+Unit const * USWeightUnitSystem::unit() { return &Units::pounds; }
 QString USWeightUnitSystem::unitType() { return "USCustomary"; }

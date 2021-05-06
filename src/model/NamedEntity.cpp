@@ -59,6 +59,14 @@ NamedEntity::NamedEntity(NamedEntity const& other)
    return;
 }
 
+NamedEntity::NamedEntity(NamedParameterBundle & namedParameterBundle, DatabaseConstants::DbTableId table) :
+   QObject{nullptr},
+   _key{namedParameterBundle(PropertyNames::NamedEntity::key).toInt()},
+   _table(table),
+   _name{namedParameterBundle(PropertyNames::NamedEntity::name).toString()} {
+   return;
+}
+
 
 QRegExp const & NamedEntity::getDuplicateNameNumberMatcher() {
    //
@@ -182,9 +190,22 @@ void NamedEntity::setName(const QString var, bool cachedOnly)
    }
 }
 
-int NamedEntity::key() const
-{
-   return _key;
+int NamedEntity::key() const {
+   return this->_key;
+}
+
+void NamedEntity::setKey(int key) {
+   this->_key = key;
+   return;
+}
+
+int NamedEntity::getParentKey() const {
+   return this->parentKey;
+}
+
+void NamedEntity::setParentKey(int parentKey) {
+   this->parentKey = parentKey;
+   return;
 }
 
 DatabaseConstants::DbTableId NamedEntity::table() const
@@ -354,10 +375,10 @@ void NamedEntity::setParent(NamedEntity const & parentNamedEntity)
    return;
 }
 
-QVariantMap NamedEntity::getColumnValueMap() const
+/*QVariantMap NamedEntity::getColumnValueMap() const
 {
    QVariantMap map;
    map.insert(PropertyNames::NamedEntity::folder, folder());
    map.insert(PropertyNames::NamedEntity::name, name());
    return map;
-}
+}*/

@@ -43,7 +43,7 @@ class BtDigitWidget : public QLabel
 public:
    enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
 
-   BtDigitWidget(QWidget* parent = 0, Unit::UnitType type = Unit::None, Unit* units = nullptr );
+   BtDigitWidget(QWidget* parent = 0, Unit::UnitType type = Unit::None, Unit const * units = nullptr );
 
    //! \brief Displays the given \c num with precision \c prec.
    void display( double num, int prec = 0 );
@@ -96,7 +96,7 @@ private:
    Unit::UnitType m_type;
    Unit::unitDisplay m_forceUnit;
    Unit::unitScale m_forceScale;
-   Unit* m_units;
+   Unit const * m_units;
    QWidget* m_parent;
 
    unsigned int m_rgblow;

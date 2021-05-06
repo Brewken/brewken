@@ -1,6 +1,7 @@
 /**
- * UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * unitSystems/UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -16,11 +17,10 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef UNITSYSTEMS_UNITSYSTEM_H
+#define UNITSYSTEMS_UNITSYSTEM_H
+#pragma once
 
-#ifndef _UNITSYSTEM_H
-#define _UNITSYSTEM_H
-
-class UnitSystem;
 class UnitSystems;
 
 #include <QString>
@@ -44,30 +44,30 @@ public:
     * 'amount' of type 'units' in this UnitSystem. This string should also
     * be recognized by qstringToSI()
     */
-   QString displayAmount( double amount, Unit* units, int precision = -1, Unit::unitScale scale = Unit::noScale );
+   QString displayAmount( double amount, Unit const * units, int precision = -1, Unit::unitScale scale = Unit::noScale );
 
    /*!
     * amountDisplay() should return the double representing the appropriate
     * unit and scale. Similar in nature to displayAmount(), but just returning
     * raw doubles.
     */
-   double amountDisplay( double amount, Unit* units, Unit::unitScale scale = Unit::noScale );
+   double amountDisplay( double amount, Unit const * units, Unit::unitScale scale = Unit::noScale );
 
    /*!
     * qstringToSI() should convert 'qstr' (consisting of a decimal amount,
     * followed by a unit string) to the appropriate SI amount under this
     * UnitSystem.
     */
-   double qstringToSI(QString qstr, Unit* defUnit = 0, bool force = false, Unit::unitScale scale = Unit::noScale);
+   double qstringToSI(QString qstr, Unit const * defUnit = nullptr, bool force = false, Unit::unitScale scale = Unit::noScale);
 
-   Unit* scaleUnit(Unit::unitScale scale);
+   Unit const * scaleUnit(Unit::unitScale scale);
    /*!
     * Returns the unit associated with thickness. If this unit system is
     * US weight, it would return lb. If it were US volume, it would return
     * quarts.
     */
-   virtual Unit* thicknessUnit() = 0;
-   virtual Unit* unit() = 0;
+   virtual Unit const * thicknessUnit() = 0;
+   virtual Unit const * unit() = 0;
 
    /*!
     * \brief Map from a \c Unit::unitScale to a concrete \c Unit
@@ -76,10 +76,10 @@ public:
     *    the map such that the units are inserted from smallest
     *    to largest.
     */
-   virtual QMap<Unit::unitScale, Unit*> const& scaleToUnit() = 0;
+   virtual QMap<Unit::unitScale, Unit const *> const& scaleToUnit() = 0;
 
    //! \brief Map from SI abbreviation to a concrete \c Unit
-   virtual QMap<QString, Unit*> const& qstringToUnit() = 0;
+   virtual QMap<QString, Unit const *> const& qstringToUnit() = 0;
 
    // \brief Returns the name of the unit
    virtual QString unitType() = 0;
@@ -93,4 +93,4 @@ protected:
    QRegExp amtUnit;
 };
 
-#endif /*_UNITSYSTEM_H*/
+#endif

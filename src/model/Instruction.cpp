@@ -1,5 +1,5 @@
 /**
- * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,13 +16,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "model/Instruction.h"
+
 #include "Brewken.h"
 #include "database/Database.h"
-
-#include "database/TableSchemaConst.h"
 #include "database/InstructionSchema.h"
+#include "database/TableSchemaConst.h"
 
 bool Instruction::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -64,6 +63,18 @@ Instruction::Instruction(QString name, bool cache)
      m_cacheOnly(cache),
      m_recipe   (nullptr)
 {
+}
+
+Instruction::Instruction(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::INSTRUCTIONTABLE},
+   m_directions{namedParameterBundle(PropertyNames::Instruction::directions).toString()},
+   m_hasTimer  {namedParameterBundle(PropertyNames::Instruction::hasTimer  ).toBool()},
+   m_timerValue{namedParameterBundle(PropertyNames::Instruction::timerValue).toString()},
+   m_completed {namedParameterBundle(PropertyNames::Instruction::completed ).toBool()},
+   m_interval  {namedParameterBundle(PropertyNames::Instruction::interval  ).toDouble()},
+   m_cacheOnly {false},
+   m_recipe    {nullptr} {
+   return;
 }
 
 Instruction::Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)

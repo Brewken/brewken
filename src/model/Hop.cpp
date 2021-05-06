@@ -127,6 +127,30 @@ Hop::Hop(QString name, bool cache)
 {
 }
 
+Hop::Hop(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity        {namedParameterBundle, DatabaseConstants::HOPTABLE},
+   m_use              {static_cast<Hop::Use>(namedParameterBundle(PropertyNames::Hop::use).toInt())},
+   m_type             {static_cast<Hop::Type>(namedParameterBundle(PropertyNames::Hop::type).toInt())},
+   m_form             {static_cast<Hop::Form>(namedParameterBundle(PropertyNames::Hop::form).toInt())},
+   m_alpha_pct        {namedParameterBundle(PropertyNames::Hop::alpha_pct).toDouble()},
+   m_amount_kg        {namedParameterBundle(PropertyNames::Hop::amount_kg).toDouble()},
+   m_time_min         {namedParameterBundle(PropertyNames::Hop::time_min).toDouble()},
+   m_notes            {namedParameterBundle(PropertyNames::Hop::notes).toString()},
+   m_beta_pct         {namedParameterBundle(PropertyNames::Hop::beta_pct).toDouble()},
+   m_hsi_pct          {namedParameterBundle(PropertyNames::Hop::hsi_pct).toDouble()},
+   m_origin           {namedParameterBundle(PropertyNames::Hop::origin).toString()},
+   m_substitutes      {namedParameterBundle(PropertyNames::Hop::substitutes).toString()},
+   m_humulene_pct     {namedParameterBundle(PropertyNames::Hop::humulene_pct).toDouble()},
+   m_caryophyllene_pct{namedParameterBundle(PropertyNames::Hop::caryophyllene_pct).toDouble()},
+   m_cohumulone_pct   {namedParameterBundle(PropertyNames::Hop::cohumulone_pct).toDouble()},
+   m_myrcene_pct      {namedParameterBundle(PropertyNames::Hop::myrcene_pct).toDouble()},
+   m_inventory        {-1.0}, /**/
+   m_inventory_id     {0}, /**/
+   m_cacheOnly        {false} /**/ {
+   return;
+}
+
+
 Hop::Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
      m_useStr(rec.value(kcolUse).toString()),

@@ -44,14 +44,14 @@ bool MiscSortFilterProxyModel::lessThan(const QModelIndex &left,
    switch( left.column() )
    {
    case MISCINVENTORYCOL:
-         if (Brewken::qStringToSI(leftMisc.toString(), Units::kilograms) == 0.0 && this->sortOrder() == Qt::AscendingOrder)
+         if (Brewken::qStringToSI(leftMisc.toString(), &Units::kilograms) == 0.0 && this->sortOrder() == Qt::AscendingOrder)
             return false;
          else
-            return Brewken::qStringToSI(leftMisc.toString(), Units::kilograms) < Brewken::qStringToSI(rightMisc.toString(), Units::kilograms);
+            return Brewken::qStringToSI(leftMisc.toString(), &Units::kilograms) < Brewken::qStringToSI(rightMisc.toString(), &Units::kilograms);
    case MISCAMOUNTCOL:
-         return Brewken::qStringToSI(leftMisc.toString(), Units::kilograms) < Brewken::qStringToSI(rightMisc.toString(), Units::kilograms);
+         return Brewken::qStringToSI(leftMisc.toString(), &Units::kilograms) < Brewken::qStringToSI(rightMisc.toString(), &Units::kilograms);
    case MISCTIMECOL:
-      return Brewken::qStringToSI(leftMisc.toString(), Units::minutes) < Brewken::qStringToSI(rightMisc.toString(), Units::minutes);
+      return Brewken::qStringToSI(leftMisc.toString(), &Units::minutes) < Brewken::qStringToSI(rightMisc.toString(), &Units::minutes);
     default:
       return leftMisc.toString() < rightMisc.toString();
    }

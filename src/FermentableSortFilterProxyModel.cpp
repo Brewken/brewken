@@ -41,8 +41,8 @@ bool FermentableSortFilterProxyModel::lessThan(const QModelIndex &left,
    QVariant rightFermentable = sourceModel()->data(right);
    double leftDouble, rightDouble;
 
-   Unit* unit = Units::kilograms;
-   Unit* colorunit = Units::srm;
+   Unit const * unit = &Units::kilograms;
+   Unit const * colorunit = &Units::srm;
 
    switch( left.column() )
    {

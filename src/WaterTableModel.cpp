@@ -215,7 +215,7 @@ QVariant WaterTableModel::data( const QModelIndex& index, int role ) const
       case WATERNAMECOL:
          return QVariant(row->name());
       case WATERAMOUNTCOL:
-         return QVariant( Brewken::displayAmount(row->amount(), Units::liters) );
+         return QVariant( Brewken::displayAmount(row->amount(), &Units::liters) );
       case WATERCALCIUMCOL:
          return QVariant( Brewken::displayAmount(row->calcium_ppm(), nullptr) );
       case WATERBICARBONATECOL:
@@ -301,7 +301,7 @@ bool WaterTableModel::setData( const QModelIndex& index, const QVariant& value, 
          row->setName(value.toString());
          break;
       case WATERAMOUNTCOL:
-         row->setAmount( Brewken::qStringToSI(value.toString(), Units::liters, dspUnit, dspScl) );
+         row->setAmount( Brewken::qStringToSI(value.toString(), &Units::liters, dspUnit, dspScl) );
          break;
       case WATERCALCIUMCOL:
          row->setCalcium_ppm( Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));

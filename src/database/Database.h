@@ -1,5 +1,5 @@
 /**
- * database/Database.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * database/Database.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -28,33 +28,25 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-class Database;
+#include <memory> // For PImpl
 
-#include <functional>
-#include <QDomDocument>
-#include <QDomNode>
-#include <QList>
-#include <QHash>
-#include <QFile>
-#include <QString>
-#include <QSqlRecord>
-#include <QSqlQuery>
-#include <QVariant>
-#include <QMetaProperty>
-#include <QUndoStack>
-#include <QObject>
-#include <QPair>
-#include <QTableView>
-#include <QSqlError>
 #include <QDebug>
-#include <QRegExp>
+#include <QList>
 #include <QMap>
-#include "model/NamedEntity.h"
+#include <QMetaProperty>
+#include <QObject>
+#include <QSqlDatabase>
+#include <QString>
+#include <QTableView>
+#include <QVariant>
+
 #include "Brewken.h"
-#include "model/Recipe.h"
 #include "database/DatabaseSchema.h"
-#include "database/TableSchema.h"
+#include "database/DbNamedEntityRecords.h"
 #include "database/TableSchemaConst.h"
+#include "database/TableSchema.h"
+#include "model/NamedEntity.h"
+#include "model/Recipe.h"
 
 // Forward declarations
 class BeerXML;
@@ -70,7 +62,6 @@ class Misc;
 class Style;
 class Water;
 class Yeast;
-class QThread;
 
 /*!
  * \class Database
@@ -92,11 +83,8 @@ class QThread;
  * the relevant registry "give me Yeast X".  If we then create a new Yeast (either via the UI or by reading it in from
  * a BeerXML file) we can then ask for it to be saved in the database.
  */
-class Database : public QObject
-{
+class Database : public QObject {
    Q_OBJECT
-
-   friend class BeerXML;
 
 public:
 
@@ -104,11 +92,40 @@ public:
    static Database& instance();
    //! Call this to delete the internal instance.
    static void dropInstance();
+
+   /*! \brief Get the right database connection for the calling thread.
+    *
+    *         Note the following from https://doc.qt.io/qt-5/qsqldatabase.html#database:
+    *            "An instance of QSqlDatabase represents [a] connection ... to the database. ... It is highly
+    *            recommended that you do not keep a copy of [a] QSqlDatabase [object] around as a member of a class,
+    *            as this will prevent the instance from being correctly cleaned up on shutdown."
+    *
+    *         Moreover, there can be multiple instances of a QSqlDatabase object for a single connection.  (Copying
+    *         the object does not create a new connection, it just creates a new object that references the same
+    *         underlying connection.)
+    *
+    *         Per https://doc.qt.io/qt-5/qsqldatabase.html#removeDatabase, ALL QSqlDatabase objects (and QSqlQuery
+    *         objects) for a given database connection MUST be destroyed BEFORE the underlying database connection is
+    *         removed from Qt's list of database connections (via QSqlDatabase::removeDatabase() static function),
+    *         otherwise errors of the form "QSqlDatabasePrivate::removeDatabase: connection ... is still in use, all
+    *         queries will cease to work" will be logged followed by messy raw data dumps (ie where binary data is
+    *         written to the logs without interpretation).
+    *
+    *         Thus, all this function does really is (a) generate a thread-specific name for this thread's connection,
+    *         (b) have create and register a new connection for this thread if none exists, (c) return a new stack-
+    *         allocated QSqlDatabase object for this thread's DB connection.
+    *
+    *         Callers should not copy the returned QSqlDatabase object nor retain it for longer than is necessary.
+    *
+    * \return A stack-allocated \c QSqlDatabase object through which this thread's database connection can be accessed.
+    */
+   QSqlDatabase sqlDatabase() const;
+
    //! \brief Should be called when we are about to close down.
    void unload();
 
    //! \brief Create a blank database in the given file
-   static bool createBlank(QString const& filename);
+   bool createBlank(QString const& filename);
 
    static char const * getDefaultBackupFileName();
 
@@ -129,6 +146,8 @@ public:
                                    QString const& password="brewken");
    bool loadSuccessful();
 
+   template<class NE> DbNamedEntityRecords<NE> & getRecords() const;
+
    void updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify = true, bool transact = false );
 
    //! \brief Get the contents of the cell specified by table/key/col_name
@@ -138,70 +157,6 @@ public:
 
    //! Get a table view.
    QTableView* createView( DatabaseConstants::DbTableId table );
-
-   // Named constructors ======================================================
-   //! Create new brew note attached to \b parent.
-   // maybe I should have never learned templates?
-   template<class T> T* newNamedEntity(QHash<int,T*>* all) {
-      int key;
-      // To quote the talking heads, my god what have I done?
-      DatabaseConstants::DbTableId table = dbDefn->classNameToTable( T::classNameStr() );
-      QString insert = QString("INSERT INTO %1 DEFAULT VALUES").arg(dbDefn->tableName(table));
-
-      QSqlQuery q(sqlDatabase());
-
-      // q.setForwardOnly(true);
-
-      try {
-         if ( ! q.exec(insert) )
-            throw QString("could not insert a record into");
-
-         key = q.lastInsertId().toInt();
-         q.finish();
-      }
-      catch (QString e) {
-         qCritical() << Q_FUNC_INFO << e << q.lastError().text();
-         throw; // rethrow the error until somebody cares
-      }
-
-      T* tmp = new T(table, key);
-      all->insert(tmp->_key,tmp);
-
-      return tmp;
-   }
-
-   template<class T> T* newNamedEntity(QString name, QHash<int,T*>* all) {
-      int key;
-      // To quote the talking heads, my god what have I done?
-      TableSchema* tbl = dbDefn->table(dbDefn->classNameToTable(T::classNameStr()));
-      QString insert = QString("INSERT INTO %1 (%2) VALUES (:name)")
-              .arg(tbl->tableName())
-              .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name));
-
-      QSqlQuery q(sqlDatabase());
-
-      q.prepare(insert);
-      q.bindValue(":name",name);
-
-      q.setForwardOnly(true);
-
-      try {
-         if ( ! q.exec() )
-            throw QString("could not insert a record into");
-
-         key = q.lastInsertId().toInt();
-         q.finish();
-      }
-      catch (QString e) {
-         qCritical() << Q_FUNC_INFO << e << q.lastError().text();
-         throw; // rethrow the error until somebody cares
-      }
-
-      T* tmp = new T(tbl->dbTable(), key);
-      all->insert(tmp->_key,tmp);
-
-      return tmp;
-   }
 
    BrewNote* newBrewNote(Recipe* parent, bool signal = true);
    //! Create new instruction attached to \b parent.
@@ -251,15 +206,6 @@ public:
    int    insertInstruction(Instruction* ins, Recipe *parent);
    int    insertMashStep(MashStep* ins, Mash *parent);
 
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   /* This links ingredients with the same name.
-   * The first displayed ingredient in the database is assumed to be the parent.
-   */
-   void populateChildTablesByName(DatabaseConstants::DbTableId table);
-
-   // Runs populateChildTablesByName for each
-   void populateChildTablesByName();
-
    //! \returns the key of the parent ingredient
    int getParentID(TableSchema* table, int childKey);
 
@@ -291,7 +237,7 @@ public:
    Style* style(int key);
    Yeast* yeast(int key);
    Salt* salt(int key);
-   Water* water(int key);
+///   Water* water(int key);
 
    // Add a COPY of these ingredients to a recipe, then call the changed()
    // signal corresponding to the appropriate QList
@@ -341,21 +287,20 @@ public:
 
    // Or you can mark whole lists as deleted.
    // ONE METHOD TO CALL THEM ALL AND IN DARKNESS BIND THEM!
-   template<class T> void remove(QList<T*> list)
-   {
-      if ( list.empty() )
+   template<class T> void remove(QList<T*> list) {
+      if ( list.empty() ) {
          return;
-
-      int ndx;
-      bool emitSignal;
+      }
 
       foreach(T* toBeDeleted, list) {
          const QMetaObject* meta = toBeDeleted->metaObject();
-         ndx = meta->indexOfClassInfo("signal");
-         emitSignal = ndx != -1 ? true : false;
+         int ndx = meta->indexOfClassInfo("signal");
+         bool emitSignal = (ndx != -1);
 
          remove(toBeDeleted, emitSignal);
       }
+
+      return;
    }
 
    template <class T>void remove(T* ing, bool emitSignal = true)
@@ -364,9 +309,12 @@ public:
 
       const QMetaObject *meta = ing->metaObject();
       char const * propName = "";
-      DatabaseConstants::DbTableId ingTable = dbDefn->classNameToTable(meta->className());
 
-      if ( ingTable == DatabaseConstants::BREWNOTETABLE ) {
+///      DatabaseConstants::DbTableId ingTable = dbDefn->classNameToTable(meta->className());
+///      if ( ingTable == DatabaseConstants::BREWNOTETABLE ) {
+///         emitSignal = false;
+///      }
+      if ( meta->className() == QString("BrewNote") ) {
          emitSignal = false;
       }
 
@@ -381,21 +329,30 @@ public:
       }
 
       try {
-         deleteRecord(ing);
+         //! Mark the \b object in \b table as deleted.
+         updateEntry( ing, PropertyNames::NamedEntity::deleted, Brewken::dbTrue(), true);
       }
       catch (QString e) {
+         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
          throw;
       }
 
       // Brewnotes are weird and don't emit a metapropery change
       if ( emitSignal )
-         emit changed( metaProperty(propName), QVariant() );
+         emit changed( metaObject()->property(metaObject()->indexOfProperty(propName)), QVariant() );
       // This was screaming until I needed to emit a freaking signal
-      if ( ingTable != DatabaseConstants::MASHSTEPTABLE )
+///      if ( ingTable != DatabaseConstants::MASHSTEPTABLE )
+///         emit deletedSignal(ing);
+      if ( meta->className() != QString("MashStep") ) {
          emit deletedSignal(ing);
+      }
    }
 
-   //! Get the recipe that this \b note is part of.
+   //! Get the recipe that this \b ing is part of.
+   Recipe* getParentRecipe(NamedEntity const * ing);
+
+   //! Get the recipe that this \b note is part of.  (BrewNotes are stored differently so we need a different function
+   //  for them.)
    Recipe* getParentRecipe( BrewNote const* note );
 
    //! Interchange the step orders of the two steps. Must be in same mash.
@@ -478,7 +435,7 @@ public:
    //! Return a list of all the steps in a mash.
    QList<MashStep*> mashSteps(Mash const* parent);
 
-   QString textFromValue(QVariant value, QString type);
+//   QString textFromValue(QVariant value, QString type);
 
    //! Get the file where this database was loaded from.
    static QString getDbFileName();
@@ -495,7 +452,7 @@ public:
                         QString const& Username, QString const& Password,
                         int Portnum, Brewken::DBTypes newType);
 
-   BeerXML* getBeerXml() { return m_beerxml; }
+   DatabaseSchema & getDatabaseSchema();
 
 signals:
    void changed(QMetaProperty prop, QVariant value);
@@ -537,107 +494,9 @@ private slots:
    bool load();
 
 private:
-   static Database* dbInstance; // The singleton object
-   static DatabaseSchema* dbDefn;
-
-   //QThread* _thread;
-   // These are for SQLite databases
-   static QFile dbFile;
-   static QString dbFileName;
-   static QFile dataDbFile;
-   static QString dataDbFileName;
-   static QString dbConName;
-
-   // And these are for Postgres databases -- are these really required? Are
-   // the sqlite ones really required?
-   static QString dbHostname;
-   static int dbPortnum;
-   static QString dbName;
-   static QString dbSchema;
-   static QString dbUsername;
-   static QString dbPassword;
-
-   // Each thread should have its own connection to QSqlDatabase.
-   static QHash< QThread*, QString > _threadToConnection;
-   static QMutex _threadToConnectionMutex;
-
-   // Instance variables.
-   bool loadWasSuccessful;
-   bool createFromScratch;
-   bool schemaUpdated;
-   BeerXML* m_beerxml;
-
-   // Don't know where to put this, so it goes here for right now
-   bool loadSQLite();
-   bool loadPgSQL();
-
-   QHash< int, BrewNote* > allBrewNotes;
-   QHash< int, Equipment* > allEquipments;
-   QHash< int, Fermentable* > allFermentables;
-   QHash< int, Hop* > allHops;
-   QHash< int, Instruction* > allInstructions;
-   QHash< int, Mash* > allMashs;
-   QHash< int, MashStep* > allMashSteps;
-   QHash< int, Misc* > allMiscs;
-   QHash< int, Recipe* > allRecipes;
-   QHash< int, Style* > allStyles;
-   QHash< int, Water* > allWaters;
-   QHash< int, Salt* > allSalts;
-   QHash< int, Yeast* > allYeasts;
-   QHash<QString,QSqlQuery> selectSome;
-
-   //! Get the right database connection for the calling thread.
-   static QSqlDatabase sqlDatabase();
-
-   //! Helper to populate all* hashes. T should be a NamedEntity subclass.
-   template <class T> void populateElements( QHash<int,T*>& hash, DatabaseConstants::DbTableId table );
-
-   //! we search by name enough that this is actually not a bad idea
-   // Although this is private, it needs to be defined in the header as it's called from BeerXML
-   template <class T> bool getElementsByName( QList<T*>& list, DatabaseConstants::DbTableId table, QString name, QHash<int,T*> allElements, QString id=QString("") )
-   {
-      QSqlQuery q(sqlDatabase());
-      TableSchema* tbl = dbDefn->table( table );
-      q.setForwardOnly(true);
-      QString queryString;
-
-      if ( id.isEmpty() )
-         id = tbl->keyName(Brewken::dbType());
-      else
-         id = tbl->propertyToColumn(id);
-
-      queryString = QString("SELECT %1 as id FROM %2 WHERE %3=:name")
-            .arg(id)
-            .arg(tbl->tableName())
-            .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name));
-
-      try {
-         q.prepare(queryString);
-         q.bindValue(":name", name);
-         if ( ! q.exec() )
-            throw QString("could not execute query: %2 : %3").arg(queryString).arg(q.lastError().text());
-      }
-      catch (QString e) {
-         qCritical() << Q_FUNC_INFO << e;
-         q.finish();
-         throw;
-      }
-
-      while( q.next() )
-      {
-         int key = q.record().value("id").toInt();
-         if( allElements.contains(key) )
-            list.append( allElements[key] );
-      }
-
-      q.finish();
-      return true;
-   }
-
-   //! Helper to populate the list using the given filter.
-   template <class T> bool getElements( QList<T*>& list, QString filter, DatabaseConstants::DbTableId table,
-                                        QHash<int,T*> allElements, QString id=QString() );
-
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 
    //! Hidden constructor.
    Database();
@@ -648,86 +507,7 @@ private:
    //! Destructor hidden.
    ~Database();
 
-   //! Helper to more easily get QMetaProperties.
-   QMetaProperty metaProperty(const char* name);
-
-   //! Mark the \b object in \b table as deleted.
-   void deleteRecord( NamedEntity* object );
-
-   // Note -- this has to happen on a transactional boundary. We are touching
-   // something like four tables, and just sort of hoping it all works.
-   /*!
-    * Create a \e copy (by default) of \b ing and add the copy to \b recipe where \b ing's
-    * key is \b ingKeyName and the relational table is \b relTableName.
-    *
-    * \tparam T the type of ingredient. Must inherit NamedEntity.
-    * \param rec the recipe to add the ingredient to
-    * \param ing the ingredient to add to the recipe
-    * \param propName the Recipe property that will change when we add \c ing to it
-    * \param relTableName the name of the relational table, perhaps "ingredient_in_recipe"
-    * \param ingKeyName the name of the key in the ingredient table corresponding to \c ing
-    * \param noCopy By default, we create a copy of the ingredient. If true,
-    *               add the ingredient directly.
-    * \param keyHash if not null, add the new (key, \c ing) pair to it
-    * \param doNotDisplay if true (default), calls \c setDisplay(\c false) on the new ingredient
-    * \returns the new ingredient.
-    */
-   template<class T> T* addNamedEntityToRecipe(
-      Recipe* rec,
-      NamedEntity* ing,
-      bool noCopy = false,
-      QHash<int,T*>* keyHash = 0,
-      bool doNotDisplay = true,
-      bool transact = true
-   );
-
-   /*!
-    * \brief Create a deep copy of the \b object.
-    * \em T must be a subclass of \em NamedEntity.
-    * \returns a pointer to the new copy. You must manually emit the changed()
-    * signal after a copy() call. Also, does not insert things magically into
-    * allHop or allInstructions etc. hashes. This just simply duplicates a
-    * row in a table, unless you provide \em keyHash.
-    * \param object is the thing you want to copy.
-    * \param displayed is true if you want the \em displayed column set to true.
-    * \param keyHash if nonzero, inserts the new (key,T*) pair into the hash.
-    */
-   template<class T> T* copy( NamedEntity const* object, QHash<int,T*>* keyHash, bool displayed = true );
-
-   // Do an sql update.
-   void sqlUpdate( DatabaseConstants::DbTableId table, QString const& setClause, QString const& whereClause );
-
-   // Do an sql delete.
-   void sqlDelete( DatabaseConstants::DbTableId table, QString const& whereClause );
-
-   int getQualifiedHopTypeIndex(QString type, Hop* hop);
-   int getQualifiedMiscTypeIndex(QString type, Misc* misc);
-   int getQualifiedMiscUseIndex(QString use, Misc* misc);
-   int getQualifiedHopUseIndex(QString use, Hop* hop);
-
-   QMap<QString, std::function<NamedEntity*(QString name)> > makeTableParams();
-
-   // Returns true if the schema gets updated, false otherwise.
-   // If err != 0, set it to true if an error occurs, false otherwise.
-   bool updateSchema(bool* err = nullptr);
-
-   // May St. Stevens intercede on my behalf.
-   //
-   //! \brief opens an SQLite db for transfer
-   QSqlDatabase openSQLite();
-
-   //! \brief opens a PostgreSQL db for transfer. I need
-   QSqlDatabase openPostgres(QString const& Hostname, QString const& DbName,
-                             QString const& Username, QString const& Password,
-                             int Portnum);
-
-   //! \brief converts sqlite values (mostly booleans) into something postgres wants
-   QVariant convertValue(Brewken::DBTypes newType, QSqlField field);
-
-   //! \brief does the heavy lifting to copy the contents from one db to the next
-   void copyDatabase( Brewken::DBTypes oldType, Brewken::DBTypes newType, QSqlDatabase oldDb);
-   void automaticBackup();
 
 };
 
-#endif   // DATABASE_H
+#endif

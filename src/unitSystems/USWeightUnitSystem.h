@@ -1,5 +1,6 @@
 /**
- * USWeightUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * unitSystems/USWeightUnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,23 +16,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _USWEIGHTUNITSYSTEM_H
-#define _USWEIGHTUNITSYSTEM_H
+#ifndef UNITSYSTEMS_USWEIGHTUNITSYSTEM_H
+#define UNITSYSTEMS_USWEIGHTUNITSYSTEM_H
+#pragma once
 
 #include <QMap>
 #include "unitSystems/UnitSystem.h"
 
-class USWeightUnitSystem : public UnitSystem
-{
+class USWeightUnitSystem : public UnitSystem {
 public:
    USWeightUnitSystem();
-   Unit* thicknessUnit(); /* Inherited from UnitSystem */
+   Unit const * thicknessUnit(); /* Inherited from UnitSystem */
    QString unitType();
 
-   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
-   QMap<QString, Unit*> const& qstringToUnit();
+   QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
+   QMap<QString, Unit const *> const& qstringToUnit();
 
-   Unit* unit();
+   Unit const * unit();
 };
 
-#endif /*_USWEIGHTUNITSYSTEM_H*/
+#endif

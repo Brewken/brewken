@@ -1,5 +1,5 @@
 /**
- * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -75,6 +75,30 @@ Equipment::Equipment(QString t_name, bool cacheOnly)
    m_cacheOnly(cacheOnly)
 {
 }
+
+Equipment::Equipment(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::EQUIPTABLE},
+   m_boilSize_l           {namedParameterBundle(PropertyNames::Equipment::boilSize_l           ).toDouble()},
+   m_batchSize_l          {namedParameterBundle(PropertyNames::Equipment::batchSize_l          ).toDouble()},
+   m_tunVolume_l          {namedParameterBundle(PropertyNames::Equipment::tunVolume_l          ).toDouble()},
+   m_tunWeight_kg         {namedParameterBundle(PropertyNames::Equipment::tunWeight_kg         ).toDouble()},
+   m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Equipment::tunSpecificHeat_calGC).toDouble()},
+   m_topUpWater_l         {namedParameterBundle(PropertyNames::Equipment::topUpWater_l         ).toDouble()},
+   m_trubChillerLoss_l    {namedParameterBundle(PropertyNames::Equipment::trubChillerLoss_l    ).toDouble()},
+   m_evapRate_pctHr       {namedParameterBundle(PropertyNames::Equipment::evapRate_pctHr       ).toDouble()},
+   m_evapRate_lHr         {namedParameterBundle(PropertyNames::Equipment::evapRate_lHr         ).toDouble()},
+   m_boilTime_min         {namedParameterBundle(PropertyNames::Equipment::boilTime_min         ).toDouble()},
+   m_calcBoilVolume       {namedParameterBundle(PropertyNames::Equipment::calcBoilVolume       ).toBool()},
+   m_lauterDeadspace_l    {namedParameterBundle(PropertyNames::Equipment::lauterDeadspace_l    ).toDouble()},
+   m_topUpKettle_l        {namedParameterBundle(PropertyNames::Equipment::topUpKettle_l        ).toDouble()},
+   m_hopUtilization_pct   {namedParameterBundle(PropertyNames::Equipment::hopUtilization_pct   ).toDouble()},
+   m_notes                {namedParameterBundle(PropertyNames::Equipment::notes                ).toString()},
+   m_grainAbsorption_LKg  {namedParameterBundle(PropertyNames::Equipment::grainAbsorption_LKg  ).toDouble()},
+   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c       ).toDouble()},
+   m_cacheOnly            {false} {
+   return;
+}
+
 
 Equipment::Equipment(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true ),

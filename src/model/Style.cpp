@@ -1,5 +1,5 @@
 /**
- * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -75,6 +75,34 @@ Style::Style(QString t_name, bool cacheOnly)
      m_examples(QString()),
      m_cacheOnly(cacheOnly)
 {
+}
+
+Style::Style(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::STYLETABLE},
+   m_category      {namedParameterBundle(PropertyNames::Style::category      ).toString()},
+   m_categoryNumber{namedParameterBundle(PropertyNames::Style::categoryNumber).toString()},
+   m_styleLetter   {namedParameterBundle(PropertyNames::Style::styleLetter   ).toString()},
+   m_styleGuide    {namedParameterBundle(PropertyNames::Style::styleGuide    ).toString()},
+   //m_typeStr(QString()),
+   m_type          (static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())),
+   m_ogMin         {namedParameterBundle(PropertyNames::Style::ogMin         ).toDouble()},
+   m_ogMax         {namedParameterBundle(PropertyNames::Style::ogMax         ).toDouble()},
+   m_fgMin         {namedParameterBundle(PropertyNames::Style::fgMin         ).toDouble()},
+   m_fgMax         {namedParameterBundle(PropertyNames::Style::fgMax         ).toDouble()},
+   m_ibuMin        {namedParameterBundle(PropertyNames::Style::ibuMin        ).toDouble()},
+   m_ibuMax        {namedParameterBundle(PropertyNames::Style::ibuMax        ).toDouble()},
+   m_colorMin_srm  {namedParameterBundle(PropertyNames::Style::colorMin_srm  ).toDouble()},
+   m_colorMax_srm  {namedParameterBundle(PropertyNames::Style::colorMax_srm  ).toDouble()},
+   m_carbMin_vol   {namedParameterBundle(PropertyNames::Style::carbMin_vol   ).toDouble()},
+   m_carbMax_vol   {namedParameterBundle(PropertyNames::Style::carbMax_vol   ).toDouble()},
+   m_abvMin_pct    {namedParameterBundle(PropertyNames::Style::abvMin_pct    ).toDouble()},
+   m_abvMax_pct    {namedParameterBundle(PropertyNames::Style::abvMax_pct    ).toDouble()},
+   m_notes         {namedParameterBundle(PropertyNames::Style::notes         ).toString()},
+   m_profile       {namedParameterBundle(PropertyNames::Style::profile       ).toString()},
+   m_ingredients   {namedParameterBundle(PropertyNames::Style::ingredients   ).toString()},
+   m_examples      {namedParameterBundle(PropertyNames::Style::examples      ).toString()},
+   m_cacheOnly     {false} {
+   return;
 }
 
 // suitable for something that needs to be created in the db when the object is, but all the other

@@ -1,5 +1,5 @@
 /**
- * model/Water.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Water.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -18,10 +18,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef WATER_H
-#define WATER_H
+#ifndef MODEL_WATER_H
+#define MODEL_WATER_H
 
 #include <QString>
+#include <QSqlRecord>
+
 #include "model/NamedEntity.h"
 namespace PropertyNames::Water { static char const * const ph = "ph"; /* previously kpropPH */ }
 namespace PropertyNames::Water { static char const * const amount = "amount"; /* previously kpropAmount */ }
@@ -72,7 +74,7 @@ public:
 
    Q_ENUM(Types Ions)
 
-   virtual ~Water() {}
+   virtual ~Water() = default;
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
    //! \brief The amount in liters.
@@ -155,6 +157,7 @@ private:
    Water(Water const& other, bool cache = true);
 public:
    Water(QString name, bool cache = true);
+   Water(NamedParameterBundle & namedParameterBundle);
 
 private:
    double m_amount;

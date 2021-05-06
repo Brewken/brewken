@@ -25,28 +25,28 @@ CelsiusTempUnitSystem::CelsiusTempUnitSystem() :
    _type = Unit::Temp;
 }
 
-QMap<Unit::unitScale, Unit*> const& CelsiusTempUnitSystem::scaleToUnit()
+QMap<Unit::unitScale, Unit const *> const& CelsiusTempUnitSystem::scaleToUnit()
 {
-   static QMap<Unit::unitScale, Unit*> _scaleToUnit;
+   static QMap<Unit::unitScale, Unit const *> _scaleToUnit;
    if( _scaleToUnit.empty() )
    {
-      _scaleToUnit.insert(Unit::scaleWithout,Units::celsius);
+      _scaleToUnit.insert(Unit::scaleWithout,&Units::celsius);
    }
 
    return _scaleToUnit;
 }
 
-QMap<QString, Unit*> const& CelsiusTempUnitSystem::qstringToUnit()
+QMap<QString, Unit const *> const& CelsiusTempUnitSystem::qstringToUnit()
 {
-   static QMap<QString, Unit*> _qstringToUnit;
+   static QMap<QString, Unit const *> _qstringToUnit;
    if( _qstringToUnit.empty() )
    {
-      _qstringToUnit.insert("C",Units::celsius);
+      _qstringToUnit.insert("C",&Units::celsius);
    }
 
    return _qstringToUnit;
 }
 
-Unit* CelsiusTempUnitSystem::unit() { return Units::celsius; }
+Unit const * CelsiusTempUnitSystem::unit() { return &Units::celsius; }
 
 QString CelsiusTempUnitSystem::unitType() { return "SI"; }

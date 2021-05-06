@@ -1,5 +1,5 @@
 /**
- * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,26 +17,28 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef INSTRUCTION_H
-#define INSTRUCTION_H
-
-// This class is completely outside the BeerXML spec.
+#ifndef MODEL_INSTRUCTION_H
+#define MODEL_INSTRUCTION_H
+#pragma once
 
 #include <QString>
 #include <QVector>
 #include <QDomNode>
 #include "model/NamedEntity.h"
 #include "model/Recipe.h"
-namespace PropertyNames::Instruction { static char const * const interval = "interval"; /* previously kpropInterval */ }
-namespace PropertyNames::Instruction { static char const * const completed = "completed"; /* previously kpropCompleted */ }
-namespace PropertyNames::Instruction { static char const * const timerValue = "timerValue"; /* previously kpropTimerValue */ }
-namespace PropertyNames::Instruction { static char const * const hasTimer = "hasTimer"; /* previously kpropHasTimer */ }
+
+namespace PropertyNames::Instruction { static char const * const completed  = "completed"; /* previously kpropCompleted */ }
 namespace PropertyNames::Instruction { static char const * const directions = "directions"; /* previously kpropDirections */ }
+namespace PropertyNames::Instruction { static char const * const hasTimer   = "hasTimer"; /* previously kpropHasTimer */ }
+namespace PropertyNames::Instruction { static char const * const interval   = "interval"; /* previously kpropInterval */ }
+namespace PropertyNames::Instruction { static char const * const timerValue = "timerValue"; /* previously kpropTimerValue */ }
 
 /*!
  * \class Instruction
  *
  * \brief Model class for an instruction record in the database.
+ *
+ *        This class is completely outside the BeerXML spec.
  */
 class Instruction : public NamedEntity
 {
@@ -96,6 +98,7 @@ private:
    Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Instruction( QString name, bool cache = true );
+   Instruction(NamedParameterBundle & namedParameterBundle);
 private:
    Instruction( Instruction const& other );
 

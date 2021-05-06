@@ -27,12 +27,12 @@ class CelsiusTempUnitSystem : public UnitSystem
 {
 public:
    CelsiusTempUnitSystem();
-   Unit* thicknessUnit(){ return 0; }
+   Unit const * thicknessUnit(){ return 0; }
    QString unitType();
 
-   QMap<Unit::unitScale, Unit*> const& scaleToUnit();
-   QMap<QString, Unit*> const& qstringToUnit();
-   Unit* unit();
+   QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
+   QMap<QString, Unit const *> const& qstringToUnit();
+   Unit const * unit();
 };
 
 #endif /*_CELSIUSTEMPUNITSYSTEM_H*/

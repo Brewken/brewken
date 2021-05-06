@@ -169,8 +169,8 @@ Brewken::DBTypes Brewken::_dbType = Brewken::NODB;
 
 bool Brewken::checkVersion = true;
 
-iUnitSystem Brewken::weightUnitSystem = SI;
-iUnitSystem Brewken::volumeUnitSystem = SI;
+SystemOfMeasurement Brewken::weightUnitSystem = SI;
+SystemOfMeasurement Brewken::volumeUnitSystem = SI;
 
 TempScale Brewken::tempScale = Celsius;
 Unit::unitDisplay Brewken::dateFormat = Unit::displaySI;
@@ -248,12 +248,12 @@ const QString& Brewken::getCurrentLanguage()
    return currentLanguage;
 }
 
-iUnitSystem Brewken::getWeightUnitSystem()
+SystemOfMeasurement Brewken::getWeightUnitSystem()
 {
    return weightUnitSystem;
 }
 
-iUnitSystem Brewken::getVolumeUnitSystem()
+SystemOfMeasurement Brewken::getVolumeUnitSystem()
 {
    return volumeUnitSystem;
 }
@@ -460,8 +460,7 @@ QString Brewken::dbBoolean(bool flag, Brewken::DBTypes type)
    return retval;
 }
 
-void Brewken::cleanup()
-{
+void Brewken::cleanup() {
    qDebug() << "Brewken is cleaning up.";
    // Should I do qApp->removeTranslator() first?
    delete defaultTrans;
@@ -469,7 +468,7 @@ void Brewken::cleanup()
    delete _mainWindow;
 
    Database::dropInstance();
-
+   return;
 }
 
 bool Brewken::isInteractive()
@@ -505,6 +504,8 @@ int Brewken::run() {
    } while (ret == 1000);
 
    cleanup();
+
+   qDebug() << Q_FUNC_INFO << "Cleaned up.  Returning " << ret;
 
    return ret;
 }
@@ -1075,7 +1076,7 @@ double Brewken::toDouble(QString text, QString caller)
 
 // Displays "amount" of units "units" in the proper format.
 // If "units" is null, just return the amount.
-QString Brewken::displayAmount( double amount, Unit* units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale)
+QString Brewken::displayAmount( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale)
 {
    int fieldWidth = 0;
    char format = 'f';
@@ -1104,7 +1105,7 @@ QString Brewken::displayAmount( double amount, Unit* units, int precision, Unit:
    return ret;
 }
 
-QString Brewken::displayAmount(NamedEntity* element, QObject* object, QString attribute, Unit* units, int precision )
+QString Brewken::displayAmount(NamedEntity* element, QObject* object, QString attribute, Unit const * units, int precision )
 {
    double amount = 0.0;
    QString value;
@@ -1132,7 +1133,7 @@ QString Brewken::displayAmount(NamedEntity* element, QObject* object, QString at
 
 }
 
-QString Brewken::displayAmount(double amt, QString section, QString attribute, Unit* units, int precision )
+QString Brewken::displayAmount(double amt, QString section, QString attribute, Unit const * units, int precision )
 {
    Unit::unitScale dispScale;
    Unit::unitDisplay dispUnit;
@@ -1145,7 +1146,7 @@ QString Brewken::displayAmount(double amt, QString section, QString attribute, U
 
 }
 
-double Brewken::amountDisplay( double amount, Unit* units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale)
+double Brewken::amountDisplay( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale)
 {
    UnitSystem* temp;
 
@@ -1172,7 +1173,7 @@ double Brewken::amountDisplay( double amount, Unit* units, int precision, Unit::
    return ret;
 }
 
-double Brewken::amountDisplay(NamedEntity* element, QObject* object, QString attribute, Unit* units, int precision )
+double Brewken::amountDisplay(NamedEntity* element, QObject* object, QString attribute, Unit const * units, int precision )
 {
    double amount = 0.0;
    QString value;
@@ -1197,7 +1198,7 @@ double Brewken::amountDisplay(NamedEntity* element, QObject* object, QString att
       return -1.0;
 }
 
-UnitSystem* Brewken::findUnitSystem(Unit* unit, Unit::unitDisplay display)
+UnitSystem* Brewken::findUnitSystem(Unit const * unit, Unit::unitDisplay display)
 {
    if ( ! unit )
       return nullptr;
@@ -1215,7 +1216,7 @@ UnitSystem* Brewken::findUnitSystem(Unit* unit, Unit::unitDisplay display)
    return nullptr;
 }
 
-void Brewken::getThicknessUnits( Unit** volumeUnit, Unit** weightUnit )
+void Brewken::getThicknessUnits( Unit const ** volumeUnit, Unit const ** weightUnit )
 {
    *volumeUnit = thingToUnitSystem.value(Unit::Volume | Unit::displayDef)->thicknessUnit();
    *weightUnit = thingToUnitSystem.value(Unit::Mass   | Unit::displayDef)->thicknessUnit();
@@ -1227,8 +1228,8 @@ QString Brewken::displayThickness( double thick_lkg, bool showUnits )
    char format = 'f';
    int precision = 2;
 
-   Unit* volUnit    = thingToUnitSystem.value(Unit::Volume | Unit::displayDef)->thicknessUnit();
-   Unit* weightUnit = thingToUnitSystem.value(Unit::Mass   | Unit::displayDef)->thicknessUnit();
+   Unit const * volUnit    = thingToUnitSystem.value(Unit::Volume | Unit::displayDef)->thicknessUnit();
+   Unit const * weightUnit = thingToUnitSystem.value(Unit::Mass   | Unit::displayDef)->thicknessUnit();
 
    double num = volUnit->fromSI(thick_lkg);
    double den = weightUnit->fromSI(1.0);
@@ -1239,7 +1240,7 @@ QString Brewken::displayThickness( double thick_lkg, bool showUnits )
       return QString("%L1").arg(num/den, fieldWidth, format, precision).arg(volUnit->getUnitName()).arg(weightUnit->getUnitName());
 }
 
-double Brewken::qStringToSI(QString qstr, Unit* unit, Unit::unitDisplay dispUnit, Unit::unitScale dispScale)
+double Brewken::qStringToSI(QString qstr, Unit const * unit, Unit::unitDisplay dispUnit, Unit::unitScale dispScale)
 {
    UnitSystem* temp = findUnitSystem(unit, dispUnit);
    return temp->qstringToSI(qstr,temp->unit(),false,dispScale);
@@ -1321,13 +1322,13 @@ QPair<double,double> Brewken::displayRange(NamedEntity* element, QObject *object
    }
    else if ( _type != DENSITY )
    {
-      range.first  = amountDisplay(element, object, PropertyNames::Style::colorMin_srm, Units::srm,0);
-      range.second = amountDisplay(element, object, PropertyNames::Style::colorMax_srm, Units::srm,0);
+      range.first  = amountDisplay(element, object, PropertyNames::Style::colorMin_srm, &Units::srm,0);
+      range.second = amountDisplay(element, object, PropertyNames::Style::colorMax_srm, &Units::srm,0);
    }
    else
    {
-      range.first  = amountDisplay(element, object, minName, Units::sp_grav,0);
-      range.second = amountDisplay(element, object, maxName, Units::sp_grav,0);
+      range.first  = amountDisplay(element, object, minName, &Units::sp_grav,0);
+      range.second = amountDisplay(element, object, maxName, &Units::sp_grav,0);
    }
 
    return range;
@@ -1342,13 +1343,13 @@ QPair<double,double> Brewken::displayRange(QObject *object, QString attribute, d
 
    if ( _type == DENSITY )
    {
-      range.first  = amountDisplay(min, Units::sp_grav, 0, displayUnit );
-      range.second = amountDisplay(max, Units::sp_grav, 0, displayUnit );
+      range.first  = amountDisplay(min, &Units::sp_grav, 0, displayUnit );
+      range.second = amountDisplay(max, &Units::sp_grav, 0, displayUnit );
    }
    else
    {
-      range.first  = amountDisplay(min, Units::srm, 0, displayUnit );
-      range.second = amountDisplay(max, Units::srm, 0, displayUnit );
+      range.first  = amountDisplay(min, &Units::srm, 0, displayUnit );
+      range.second = amountDisplay(max, &Units::srm, 0, displayUnit );
    }
 
    return range;

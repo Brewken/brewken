@@ -118,7 +118,7 @@ void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale
 double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool force)
 {
    UnitSystem* temp;
-   Unit*       works;
+   Unit const *       works;
    Unit::unitDisplay dspUnit  = oldUnit;
    Unit::unitScale   dspScale = oldScale;
 
@@ -388,37 +388,37 @@ BtGenericEdit::BtGenericEdit(QWidget *parent)
 BtMassEdit::BtMassEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::Mass)
 {
-   _units = Units::kilograms;
+   _units = &Units::kilograms;
 }
 
 BtVolumeEdit::BtVolumeEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::Volume)
 {
-   _units = Units::liters;
+   _units = &Units::liters;
 }
 
 BtTemperatureEdit::BtTemperatureEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::Temp)
 {
-   _units = Units::celsius;
+   _units = &Units::celsius;
 }
 
 BtTimeEdit::BtTimeEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::Time)
 {
-   _units = Units::minutes;
+   _units = &Units::minutes;
 }
 
 BtDensityEdit::BtDensityEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::Density)
 {
-   _units = Units::sp_grav;
+   _units = &Units::sp_grav;
 }
 
 BtColorEdit::BtColorEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::Color)
 {
-   _units = Units::srm;
+   _units = &Units::srm;
 }
 
 BtStringEdit::BtStringEdit(QWidget *parent)
@@ -432,7 +432,7 @@ BtMixedEdit::BtMixedEdit(QWidget *parent)
 {
    // This is probably pure evil I will later regret
    _type = Unit::Volume;
-   _units = Units::liters;
+   _units = &Units::liters;
 }
 
 void BtMixedEdit::setIsWeight(bool state)
@@ -441,12 +441,12 @@ void BtMixedEdit::setIsWeight(bool state)
    if (state)
    {
       _type = Unit::Mass;
-      _units = Units::kilograms;
+      _units = &Units::kilograms;
    }
    else
    {
       _type = Unit::Volume;
-      _units = Units::liters;
+      _units = &Units::liters;
    }
 
    // maybe? My head hurts now
@@ -456,5 +456,5 @@ void BtMixedEdit::setIsWeight(bool state)
 BtDiastaticPowerEdit::BtDiastaticPowerEdit(QWidget *parent)
    : BtLineEdit(parent,Unit::DiastaticPower)
 {
-   _units = Units::lintner;
+   _units = &Units::lintner;
 }

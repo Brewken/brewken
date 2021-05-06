@@ -1,5 +1,5 @@
 /**
- * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -19,16 +19,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BREWNOTE_H
-#define BREWNOTE_H
+#ifndef MODEL_BREWNOTE_H
+#define MODEL_BREWNOTE_H
+#pragma once
 
-#include <QDomNode>
+#include <QDate>
 #include <QDomDocument>
+#include <QDomNode>
+#include <QSqlRecord>
 #include <QString>
 #include <QStringList>
-#include <QDate>
 
 #include "model/NamedEntity.h"
+
 namespace PropertyNames::BrewNote { static char const * const fg = "fg"; /* previously kpropFG */ }
 namespace PropertyNames::BrewNote { static char const * const og = "og"; /* previously kpropOG */ }
 namespace PropertyNames::BrewNote { static char const * const notes = "notes"; /* previously kpropNotes */ }
@@ -226,6 +229,7 @@ private:
    BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    BrewNote(QString name, bool cache = true);
+   BrewNote(NamedParameterBundle & namedParameterBundle);
 private:
    BrewNote(QDateTime dateNow, bool cache = true, QString const & name = "");
    BrewNote(BrewNote const& other);
