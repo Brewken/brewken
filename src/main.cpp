@@ -162,6 +162,8 @@ int main(int argc, char **argv) {
       //
       xercesc::XMLPlatformUtils::Terminate();
 
+      qDebug() << Q_FUNC_INFO << "Xerces terminated cleanly.  Returning " << mainAppReturnValue;
+
       return mainAppReturnValue;
    }
    catch (const QString &error)

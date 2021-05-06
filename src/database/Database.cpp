@@ -120,11 +120,20 @@ namespace {
    QString dbUsername;
    QString dbPassword;
 
-   // Each thread should have its own connection to QSqlDatabase.
-   QHash< QThread*, QString > _threadToConnection;
-   QMutex _threadToConnectionMutex;
-
-
+   //
+   // Each thread has its own connection to the database, and each connection has to have a unique name (otherwise,
+   // calling QSqlDatabase::addDatabase() with the same name as an existing connection will replace that existing
+   // connection with the new one created by that function).  We just create a unique connection name from the thread
+   // ID in the same way that we do in the Logging module.
+   //
+   // We only need to store the name of the connection here.  (See header file comment for Database::sqlDatabase() for
+   // more details of why it would be unhelpful to store a QSqlDatabase object in thread-local storage.)
+   //
+   // Since C++11, we can use thread_local to define thread-specific variables that are initialized "before first use"
+   //
+   thread_local QString const dbConnectionNameForThisThread {
+      QString{"%1"}.arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)
+   };
 
    //! \brief converts sqlite values (mostly booleans) into something postgres wants
    QVariant convertValue(Brewken::DBTypes newType, QSqlField field) {
@@ -311,15 +320,13 @@ public:
    }
 
    // Don't know where to put this, so it goes here for right now
-   bool loadSQLite() {
+   bool loadSQLite(Database & database) {
       qDebug() << "Loading SQLITE...";
-      bool dbIsOpen;
-      QSqlDatabase sqldb;
 
       // Set file names.
       dbFileName = PersistentSettings::getUserDataDir().filePath("database.sqlite");
       dataDbFileName = Brewken::getResourceDir().filePath("default_db.sqlite");
-      qDebug() << QString("Database::loadSQLite() - dbFileName = \"%1\"\nDatabase::loadSQLite() - dataDbFileName=\"%2\"").arg(dbFileName).arg(dataDbFileName);
+      qDebug() << Q_FUNC_INFO << QString("dbFileName = \"%1\"\nDatabase::loadSQLite() - dataDbFileName=\"%2\"").arg(dbFileName).arg(dataDbFileName);
       // Set the files.
       dbFile.setFileName(dbFileName);
       dataDbFile.setFileName(dataDbFileName);
@@ -352,58 +359,42 @@ public:
          Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
       }
 
-      // Open SQLite db.
-      QString conName = QString("0x%1").arg(reinterpret_cast<uintptr_t>(QThread::currentThread()), 0, 16);
+      // Open SQLite DB
+      // It's a coding error if we didn't already establish that SQLite is the type of DB we're talking to, so assert
+      // that and then call the generic code to get a connection
+      Q_ASSERT(Brewken::dbType() == Brewken::SQLITE);
+      QSqlDatabase sqldb = database.sqlDatabase();
 
-      sqldb = QSqlDatabase::addDatabase("QSQLITE",conName);
-      sqldb.setDatabaseName(dbFileName);
-      dbIsOpen = sqldb.open();
       this->dbConName = sqldb.connectionName();
       qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
-      if( ! dbIsOpen )
-      {
-         qCritical() << QString("Could not open %1 for reading.\n%2").arg(dbFileName).arg(sqldb.lastError().text());
-         if (Brewken::isInteractive()) {
-            QMessageBox::critical(
-               nullptr,
-               QObject::tr("Database Failure"),
-               QString(QObject::tr("Failed to open the database '%1'.").arg(dbFileName))
-            );
-         }
+      // NOTE: synchronous=off reduces query time by an order of magnitude!
+      QSqlQuery pragma(sqldb);
+      if ( ! pragma.exec( "PRAGMA synchronous = off" ) ) {
+         qCritical() << Q_FUNC_INFO << "Could not disable synchronous writes: " << pragma.lastError().text();
+         return false;
       }
-      else
-      {
-         // NOTE: synchronous=off reduces query time by an order of magnitude!
-         QSqlQuery pragma(sqldb);
-         try {
-            if ( ! pragma.exec( "PRAGMA synchronous = off" ) )
-               throw QString("could not disable synchronous writes");
-            if ( ! pragma.exec( "PRAGMA foreign_keys = on"))
-               throw QString("could not enable foreign keys");
-            if ( ! pragma.exec( "PRAGMA locking_mode = EXCLUSIVE"))
-               throw QString("could not enable exclusive locks");
-            if ( ! pragma.exec("PRAGMA temp_store = MEMORY") )
-               throw QString("could not enable temporary memory");
-
-            // older sqlite databases may not have a settings table. I think I will
-            // just check to see if anything is in there.
-            this->createFromScratch = sqldb.tables().size() == 0;
-
-            // Associate this db with the current thread.
-            _threadToConnection.insert(QThread::currentThread(), this->dbConName);
-         }
-         catch(QString e) {
-            qCritical() << QString("%1: %2 (%3)").arg(Q_FUNC_INFO).arg(e).arg(pragma.lastError().text());
-            dbIsOpen = false;
-         }
+      if ( ! pragma.exec( "PRAGMA foreign_keys = on")) {
+         qCritical() << Q_FUNC_INFO << "Could not enable foreign keys: " << pragma.lastError().text();
+         return false;
       }
-      return dbIsOpen;
+      if ( ! pragma.exec( "PRAGMA locking_mode = EXCLUSIVE")) {
+         qCritical() << Q_FUNC_INFO << "Could not enable exclusive locks: " << pragma.lastError().text();
+         return false;
+      }
+      if ( ! pragma.exec("PRAGMA temp_store = MEMORY") ) {
+         qCritical() << Q_FUNC_INFO << "Could not enable temporary memory: " << pragma.lastError().text();
+         return false;
+      }
+
+      // older sqlite databases may not have a settings table. I think I will
+      // just check to see if anything is in there.
+      this->createFromScratch = sqldb.tables().size() == 0;
+
+      return true;
    }
 
-   bool loadPgSQL() {
-      bool dbIsOpen;
-      QSqlDatabase sqldb;
+   bool loadPgSQL(Database & database) {
 
       dbHostname = PersistentSettings::value("dbHostname").toString();
       dbPortnum  = PersistentSettings::value("dbPortnum").toInt();
@@ -430,34 +421,18 @@ public:
          }
       }
 
-      QString conName = QString("0x%1").arg(reinterpret_cast<uintptr_t>(QThread::currentThread()), 0, 16);
+      // It's a coding error if we didn't already establish that PostgreSQL is the type of DB we're talking to, so assert
+      // that and then call the generic code to get a connection
+      Q_ASSERT(Brewken::dbType() == Brewken::PGSQL);
+      QSqlDatabase sqldb = database.sqlDatabase();
 
-      sqldb = QSqlDatabase::addDatabase("QPSQL",conName);
-      sqldb.setHostName( dbHostname );
-      sqldb.setDatabaseName( dbName );
-      sqldb.setUserName( dbUsername );
-      sqldb.setPort( dbPortnum );
-      sqldb.setPassword( dbPassword );
-
-      dbIsOpen = sqldb.open();
       this->dbConName = sqldb.connectionName();
       qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
-      if( ! dbIsOpen ) {
-         qCritical() << QString("Could not open %1 for reading.\n%2").arg(dbFileName).arg(sqldb.lastError().text());
-         QMessageBox::critical(nullptr,
-                              QObject::tr("Database Failure"),
-                              QString(QObject::tr("Failed to open the database '%1'.").arg(dbHostname))
-                              );
-      }
-      else {
-         // by the time we had pgsql support, there is a settings table
-         this->createFromScratch = ! sqldb.tables().contains("settings");
-         // Associate this db with the current thread.
-         _threadToConnection.insert(QThread::currentThread(), sqldb.connectionName());
-      }
+      // by the time we had pgsql support, there is a settings table
+      this->createFromScratch = ! sqldb.tables().contains("settings");
 
-      return dbIsOpen;
+      return true;
    }
 
    // Note -- this has to happen on a transactional boundary. We are touching
@@ -1227,13 +1202,12 @@ public:
 
 Database::Database() : pimpl{ new impl{} } {
    //.setUndoLimit(100);
-   // Lock this here until we actually construct the first database connection.
-   _threadToConnectionMutex.lock();
    return;
 }
 
 Database::~Database() {
-   qDebug() << Q_FUNC_INFO << "dbConName=" << this->pimpl->dbConName;
+   // Don't try and log in this function as it's called pretty close to the program exiting, at the end of main(), at
+   // which point the objects used by the logging module may be in a weird state.
 
    // If we have not explicitly unloaded, do so now and discard changes.
    if (this->pimpl->loaded) {
@@ -1264,80 +1238,97 @@ QSqlDatabase Database::sqlDatabase() const {
    // Need a unique database connection for each thread.
    //http://www.linuxjournal.com/article/9602
 
-   QThread* t = QThread::currentThread();
-   QSqlDatabase sqldb;
-
-   _threadToConnectionMutex.lock();
-   // If this thread already has a connection, return it.
-   if( _threadToConnection.contains(t) )
-   {
-      QSqlDatabase ret = QSqlDatabase::database(_threadToConnection[t]);
-      _threadToConnectionMutex.unlock();
-      return ret;
+   //
+   // If we already created a valid DB connection for this thread, this call will get it, and we can just return it to
+   // the caller.  Otherwise, we'll just get an invalid connection.
+   //
+   Q_ASSERT(!dbConnectionNameForThisThread.isEmpty());
+   QSqlDatabase connection = QSqlDatabase::database(dbConnectionNameForThisThread);
+   if (connection.isValid()) {
+      qDebug() << Q_FUNC_INFO << "Returning connection " << dbConnectionNameForThisThread;
+      return connection;
    }
-   // Create a unique connection name, just containing the addy of the thread.
-   QString conName = QString("0x%1").arg(reinterpret_cast<uintptr_t>(t), 0, 16);
 
-   // Create the new connection.
-   try {
-      if ( Brewken::dbType() == Brewken::PGSQL ) {
-         sqldb = QSqlDatabase::addDatabase("QPSQL",conName);
+   //
+   // Create a new connection in Qt's register of connections.  (NB: The call to QSqlDatabase::addDatabase() is thread-
+   // safe, so we don't need to worry about mutexes here.)
+   //
+   QString driverType{Brewken::dbType() == Brewken::PGSQL ? "QPSQL" : "QSQLITE"};
+   qDebug() <<
+      Q_FUNC_INFO << "Creating connection " << dbConnectionNameForThisThread << " with " << driverType << " driver";
+   connection = QSqlDatabase::addDatabase(driverType, dbConnectionNameForThisThread);
+   if (!connection.isValid()) {
+      //
+      // If the connection is not valid, it means the specified driver type is not available or could not be loaded
+      // Log an error here in the knowledge that we'll also throw an exception below
+      //
+      qCritical() << Q_FUNC_INFO << "Unable to load " << driverType << " database driver";
+   }
 
-         sqldb.setHostName( dbHostname );
-         sqldb.setDatabaseName( dbName );
-         sqldb.setUserName( dbUsername );
-         sqldb.setPort( dbPortnum );
-         sqldb.setPassword( dbPassword );
+   //
+   // Initialisation parameters depend on the DB type
+   //
+   if (Brewken::dbType() == Brewken::PGSQL) {
+      connection.setHostName(dbHostname);
+      connection.setDatabaseName(dbName);
+      connection.setUserName(dbUsername);
+      connection.setPort(dbPortnum);
+      connection.setPassword(dbPassword);
+   } else {
+      connection.setDatabaseName(dbFileName);
+   }
 
-         if( ! sqldb.open() ) {
-            throw QString("Could not open %1 for reading.\n%2")
-            .arg(dbHostname).arg(sqldb.lastError().text());
-         }
+   //
+   // The moment of truth is when we try to open the new connection
+   //
+   if (!connection.open()) {
+      QString errorMessage;
+      if (Brewken::dbType() == Brewken::PGSQL) {
+         errorMessage = QString{
+            QObject::tr("Could not open PostgreSQL DB connection to %1.\n%2")
+         }.arg(dbHostname).arg(connection.lastError().text());
+      } else {
+         errorMessage = QString{
+            QObject::tr("Could not open SQLite DB file %1.\n%2")
+         }.arg(dbFileName).arg(connection.lastError().text());
       }
-      else {
-         sqldb = QSqlDatabase::addDatabase("QSQLITE",conName);
-         sqldb.setDatabaseName(dbFileName);
-         if( ! sqldb.open() )
-            throw QString("Could not open %1 for reading.\n%2")
-            .arg(dbFileName).arg(sqldb.lastError().text());
+      qCritical() << Q_FUNC_INFO << errorMessage;
+
+      if (Brewken::isInteractive()) {
+         QMessageBox::critical(nullptr,
+                               QObject::tr("Database Failure"),
+                               errorMessage);
       }
-   }
-   catch (QString e) {
-      qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-      _threadToConnectionMutex.unlock();
-      throw;
+
+      // If we can't talk to the DB, there's not much we can do to recover
+      throw errorMessage;
    }
 
-   // Put new connection in the hash.
-   _threadToConnection.insert(t,conName);
-   _threadToConnectionMutex.unlock();
-   return sqldb;
+   return connection;
 }
 
 
 bool Database::load() {
    bool dbIsOpen;
-   QSqlDatabase sqldb;
 
    this->pimpl->createFromScratch=false;
    this->pimpl->schemaUpdated=false;
    this->pimpl->loadWasSuccessful = false;
 
    if ( Brewken::dbType() == Brewken::PGSQL ) {
-      dbIsOpen = this->pimpl->loadPgSQL();
+      dbIsOpen = this->pimpl->loadPgSQL(*this);
    }
    else {
-      dbIsOpen = this->pimpl->loadSQLite();
+      dbIsOpen = this->pimpl->loadSQLite(*this);
    }
 
-   _threadToConnectionMutex.unlock();
    if ( ! dbIsOpen ) {
       return false;
    }
 
    this->pimpl->loaded = true;
 
-   sqldb = sqlDatabase();
+   QSqlDatabase sqldb = this->sqlDatabase();
 
    // This should work regardless of the db being used.
    if( this->pimpl->createFromScratch ) {
@@ -1387,6 +1378,7 @@ bool Database::load() {
    }
 
    // Create and store all pointers.
+   qDebug() << Q_FUNC_INFO << "Loading objects from DB";
    this->pimpl->populateElements(*this, this->pimpl->allBrewNotes, DatabaseConstants::BREWNOTETABLE );
    this->pimpl->populateElements(*this, this->pimpl->allEquipments, DatabaseConstants::EQUIPTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allFermentables, DatabaseConstants::FERMTABLE );
@@ -1402,25 +1394,24 @@ bool Database::load() {
 
    this->pimpl->populateElements(*this, this->pimpl->allRecipes, DatabaseConstants::RECTABLE );
 
-   DbNamedEntityRecords<BrewNote>::getInstance().loadAll(sqlDatabase());
-   DbNamedEntityRecords<Equipment>::getInstance().loadAll(sqlDatabase());
-   DbNamedEntityRecords<Fermentable>::getInstance().loadAll(sqlDatabase());
-   DbNamedEntityRecords<Hop>::getInstance().loadAll(sqlDatabase());
-   DbNamedEntityRecords<Instruction>::getInstance().loadAll(sqlDatabase());
+   qDebug() << Q_FUNC_INFO << "Loading objects from DB - new classes";
+   DbNamedEntityRecords<BrewNote>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Equipment>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Fermentable>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Hop>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Instruction>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Mash>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<MashStep>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Misc>::getInstance().loadAll(this->sqlDatabase());
+/*   DbNamedEntityRecords<Recipe>::getInstance().loadAll(this->sqlDatabase()); */ // .:TODO:.
+   DbNamedEntityRecords<Salt>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Style>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Water>::getInstance().loadAll(this->sqlDatabase());
+   DbNamedEntityRecords<Yeast>::getInstance().loadAll(this->sqlDatabase());
+   qDebug() << Q_FUNC_INFO << "Objects loaded";
 
-   DbNamedEntityRecords<Style>::getInstance().loadAll(sqlDatabase());
-   DbNamedEntityRecords<Water>::getInstance().loadAll(sqlDatabase());
-   DbNamedEntityRecords<Yeast>::getInstance().loadAll(sqlDatabase());
-
-   // Connect fermentable,hop changed signals to their parent recipe.
-   QHash<int,Recipe*>::iterator i;
-   QList<Fermentable*>::iterator j;
-   QList<Hop*>::iterator k;
-   QList<Yeast*>::iterator l;
-   QList<Mash*>::iterator m;
-   QList<MashStep*>::iterator n;
-
-   for( i = this->pimpl->allRecipes.begin(); i != this->pimpl->allRecipes.end(); i++ )
+   // Connect fermentable, hop changed signals to their parent recipe.
+   for( QHash<int,Recipe*>::iterator i = this->pimpl->allRecipes.begin(); i != this->pimpl->allRecipes.end(); i++ )
    {
       Equipment* e = equipment(*i);
       if( e )
@@ -1431,17 +1422,17 @@ bool Database::load() {
       }
 
       QList<Fermentable*> tmpF = fermentables(*i);
-      for( j = tmpF.begin(); j != tmpF.end(); ++j ) {
+      for( QList<Fermentable*>::iterator j = tmpF.begin(); j != tmpF.end(); ++j ) {
          connect( *j, SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptFermChange(QMetaProperty,QVariant)) );
       }
 
       QList<Hop*> tmpH = hops(*i);
-      for( k = tmpH.begin(); k != tmpH.end(); ++k ) {
+      for( QList<Hop*>::iterator k = tmpH.begin(); k != tmpH.end(); ++k ) {
          connect( *k, SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptHopChange(QMetaProperty,QVariant)) );
       }
 
       QList<Yeast*> tmpY = yeasts(*i);
-      for( l = tmpY.begin(); l != tmpY.end(); ++l ) {
+      for( QList<Yeast*>::iterator l = tmpY.begin(); l != tmpY.end(); ++l ) {
          connect( *l, SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptYeastChange(QMetaProperty,QVariant)) );
       }
 
@@ -1452,10 +1443,10 @@ bool Database::load() {
    }
 
    QList<Mash*> tmpM = mashs();
-   for( m = tmpM.begin(); m != tmpM.end(); ++m )
+   for( QList<Mash*>::iterator m = tmpM.begin(); m != tmpM.end(); ++m )
    {
       QList<MashStep*> tmpMS = mashSteps(*m);
-      for( n=tmpMS.begin(); n != tmpMS.end(); ++n) {
+      for( QList<MashStep*>::iterator n = tmpMS.begin(); n != tmpMS.end(); ++n) {
          connect( *n, SIGNAL(changed(QMetaProperty,QVariant)), *m, SLOT(acceptMashStepChange(QMetaProperty,QVariant)) );
       }
    }
@@ -1492,7 +1483,6 @@ bool Database::loadSuccessful()
 
 
 void Database::unload() {
-   qDebug() << Q_FUNC_INFO;
 
    // this->pimpl->selectSome saves context. If we close the database before we tear that
    // context down, core gets dumped
@@ -1500,10 +1490,24 @@ void Database::unload() {
 
    // so far, it seems we only create one connection to the db. This is
    // likely overkill
-   foreach( QString conName, _threadToConnection.values() ) {
-      QSqlDatabase::database( conName, false ).close();
-      QSqlDatabase::removeDatabase( conName );
+   QStringList allConnectionNames{QSqlDatabase::connectionNames()};
+   for (QString conName : allConnectionNames) {
+      qDebug() << Q_FUNC_INFO << "Closing connection " << conName;
+      {
+         //
+         // Extra braces here are to ensure that this QSqlDatabase object is out of scope before the call to
+         // QSqlDatabase::removeDatabase() below
+         //
+         QSqlDatabase connectionToClose = QSqlDatabase::database(conName, false);
+         if (connectionToClose.isOpen()) {
+            connectionToClose.rollback();
+            connectionToClose.close();
+         }
+      }
+      QSqlDatabase::removeDatabase(conName);
    }
+
+   qDebug() << Q_FUNC_INFO << "DB connections all closed";
 
    if (this->pimpl->loadWasSuccessful && Brewken::dbType() == Brewken::SQLITE ) {
       dbFile.close();
@@ -1549,6 +1553,7 @@ void Database::dropInstance()
 ///   delete dbInstance;
 ///   dbInstance=nullptr;
    mutex.unlock();
+   qDebug() << Q_FUNC_INFO << "Drop Instance done";
    return;
 
 }
@@ -1803,9 +1808,37 @@ void Database::removeFrom( Mash* mash, MashStep* step )
    emit mash->mashStepsChanged();
 }
 
-Recipe* Database::getParentRecipe( BrewNote const* note )
-{
-   int key;
+Recipe* Database::getParentRecipe(NamedEntity const * ing) {
+
+   QMetaObject const * meta = ing->metaObject();
+   TableSchema* table = this->pimpl->dbDefn.table( this->pimpl->dbDefn.classNameToTable(meta->className()) );
+   TableSchema* inrec = this->pimpl->dbDefn.table( table->inRecTable() );
+
+   QString select = QString("SELECT %4 from %1 WHERE %2=%3")
+                        .arg(inrec->tableName())
+                        .arg(inrec->inRecIndexName())
+                        .arg(ing->_key)
+                        .arg(inrec->recipeIndexName());
+   qDebug() << Q_FUNC_INFO << "NamedEntity in recipe search:" << select;
+   QSqlQuery q(sqlDatabase());
+   if (! q.exec(select) ) {
+      throw QString("Couldn't execute ingredient in recipe search: Query: %1 error: %2")
+         .arg(q.lastQuery()).arg(q.lastError().text());
+   }
+
+   Recipe * parent = nullptr;
+
+   if ( q.next() ) {
+      int key = q.record().value(inrec->recipeIndexName()).toInt();
+      parent = this->pimpl->allRecipes[key];
+   }
+
+   q.finish();
+   return parent;
+}
+
+Recipe* Database::getParentRecipe( BrewNote const* note ) {
+
    TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::BREWNOTETABLE);
    // SELECT recipe_id FROM brewnote WHERE id = [key]
    QString query = QString("SELECT %1 FROM %2 WHERE %3 = %4")
@@ -1831,7 +1864,7 @@ Recipe* Database::getParentRecipe( BrewNote const* note )
    }
 
    q.next();
-   key = q.record().value(tbl->recipeIndexName()).toInt();
+   int key = q.record().value(tbl->recipeIndexName()).toInt();
    q.finish();
 
    return this->pimpl->allRecipes[key];

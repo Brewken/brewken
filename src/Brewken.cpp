@@ -460,8 +460,7 @@ QString Brewken::dbBoolean(bool flag, Brewken::DBTypes type)
    return retval;
 }
 
-void Brewken::cleanup()
-{
+void Brewken::cleanup() {
    qDebug() << "Brewken is cleaning up.";
    // Should I do qApp->removeTranslator() first?
    delete defaultTrans;
@@ -469,7 +468,7 @@ void Brewken::cleanup()
    delete _mainWindow;
 
    Database::dropInstance();
-
+   return;
 }
 
 bool Brewken::isInteractive()
@@ -505,6 +504,8 @@ int Brewken::run() {
    } while (ret == 1000);
 
    cleanup();
+
+   qDebug() << Q_FUNC_INFO << "Cleaned up.  Returning " << ret;
 
    return ret;
 }

@@ -123,6 +123,22 @@ Misc::Misc(QString name, bool cache)
 {
 }
 
+Misc::Misc(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::MISCTABLE},
+   m_type          {static_cast<Misc::Type>(namedParameterBundle(PropertyNames::Misc::type).toInt())},
+   m_use           {static_cast<Misc::Use>(namedParameterBundle(PropertyNames::Misc::use).toInt())},
+   m_time          {namedParameterBundle(PropertyNames::Misc::time          ).toDouble()},
+   m_amount        {namedParameterBundle(PropertyNames::Misc::amount        ).toDouble()},
+   m_amountIsWeight{namedParameterBundle(PropertyNames::Misc::amountIsWeight).toBool()},
+   m_useFor        {namedParameterBundle(PropertyNames::Misc::useFor        ).toString()},
+   m_notes         {namedParameterBundle(PropertyNames::Misc::notes         ).toString()},
+   m_inventory     {-1.0},
+   m_inventory_id  {0},
+   m_cacheOnly     {false} {
+   return;
+}
+
+
 //============================"GET" METHODS=====================================
 Misc::Type Misc::type() const { return m_type; }
 

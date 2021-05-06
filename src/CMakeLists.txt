@@ -79,7 +79,12 @@ MACRO (ADD_PCH_RULE  _header_filename _src_list)
                       DEPENDS ${_header})
 ENDMACRO(ADD_PCH_RULE _src_list _header_filename)
 
+#
 # Variable that contains all the .cpp files in this project.
+#
+# You can recreate the body of this list by running the following from the bash prompt in the build directory:
+#    find ../src -name '*.cpp' | sort  | sed 's+^../src+    ${SRCDIR}+' | grep -v Testing.cpp | grep -v main.cpp
+#
 SET( Brewken_SRCS
     ${SRCDIR}/AboutDialog.cpp
     ${SRCDIR}/Algorithms.cpp
@@ -403,13 +408,13 @@ ADD_CUSTOM_TARGET(translations DEPENDS ${QM_FILES})
 SET(Brewken_ICON "")
 
 IF( WIN32 AND MINGW )
-  ADD_CUSTOM_COMMAND(OUTPUT ${WINDIR}/icon.o
+  ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_BINARY_DIR}/src/icon.o
                      COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR}
                      -i${RCFILE}
-                     -o${WINDIR}/icon.o
+                     -o${CMAKE_BINARY_DIR}/src/icon.o
                      DEPENDS ${RCFILE}
   )
-  SET(Brewken_ICON ${WINDIR}/icon.o)
+  SET(Brewken_ICON ${CMAKE_BINARY_DIR}/src/icon.o)
 ELSEIF(WIN32)
   SET(Brewken_ICON ${RCFILE})
 ENDIF()

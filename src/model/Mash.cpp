@@ -1,5 +1,5 @@
 /**
- * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -21,14 +21,12 @@
 
 #include <iostream>
 #include <string>
-#include <QVector>
+
+#include <QObject>
+
 #include "model/MashStep.h"
 #include "Brewken.h"
 #include "database/Database.h"
-#include <QDomElement>
-#include <QDomText>
-#include <QObject>
-
 #include "database/TableSchemaConst.h"
 #include "database/MashSchema.h"
 
@@ -43,6 +41,7 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
       this->m_ph                    == rhs.m_ph                    &&
       this->m_tunWeight_kg          == rhs.m_tunWeight_kg          &&
       this->m_tunSpecificHeat_calGC == rhs.m_tunSpecificHeat_calGC
+      // .:TBD:. Should we check MashSteps too?
    );
 }
 
@@ -79,6 +78,20 @@ Mash::Mash(QString name, bool cache)
      m_equipAdjust(true),
      m_cacheOnly(cache)
 {
+}
+
+Mash::Mash(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::MASHTABLE},
+     m_grainTemp_c          {namedParameterBundle(PropertyNames::Mash::grainTemp_c          ).toDouble()},
+     m_notes                {namedParameterBundle(PropertyNames::Mash::notes                ).toString()},
+     m_tunTemp_c            {namedParameterBundle(PropertyNames::Mash::tunTemp_c            ).toDouble()},
+     m_spargeTemp_c         {namedParameterBundle(PropertyNames::Mash::spargeTemp_c         ).toDouble()},
+     m_ph                   {namedParameterBundle(PropertyNames::Mash::ph                   ).toDouble()},
+     m_tunWeight_kg         {namedParameterBundle(PropertyNames::Mash::tunWeight_kg         ).toDouble()},
+     m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Mash::tunSpecificHeat_calGC).toDouble()},
+     m_equipAdjust          {namedParameterBundle(PropertyNames::Mash::equipAdjust          ).toBool()},
+     m_cacheOnly{false} {
+   return;
 }
 
 Mash::Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
@@ -183,6 +196,12 @@ void Mash::setTunSpecificHeat_calGC( double var )
    }
 }
 
+void Mash::setMashStepIds(QList<int> ids) {
+   this->mashStepIds = ids.toVector();
+   return;
+}
+
+
 void Mash::removeAllMashSteps()
 {
    int i, size;
@@ -282,6 +301,10 @@ bool Mash::hasSparge() const
    }
 
    return false;
+}
+
+QList<int> Mash::getMashStepIds() const {
+   return this->mashStepIds.toList();
 }
 
 QList<MashStep*> Mash::mashSteps() const

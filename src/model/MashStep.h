@@ -18,22 +18,26 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _MASHSTEP_H
-#define _MASHSTEP_H
+#ifndef MODEL_MASHSTEP_H
+#define MODEL_MASHSTEP_H
+#pragma once
 
-#include "model/NamedEntity.h"
-#include <QStringList>
 #include <QString>
-#include "model/Mash.h"
+#include <QStringList>
 
-namespace PropertyNames::MashStep { static char const * const stepNumber = "stepNumber"; /* previously kpropStepNumber */ }
+#include "model/Mash.h"
+#include "model/NamedEntity.h"
+
 namespace PropertyNames::MashStep { static char const * const decoctionAmount_l = "decoctionAmount_l"; /* previously kpropDecoctAmt */ }
-namespace PropertyNames::MashStep { static char const * const infuseTemp_c = "infuseTemp_c"; /* previously kpropInfuseTemp */ }
 namespace PropertyNames::MashStep { static char const * const endTemp_c = "endTemp_c"; /* previously kpropEndTemp */ }
-namespace PropertyNames::MashStep { static char const * const rampTime_min = "rampTime_min"; /* previously kpropRampTime */ }
-namespace PropertyNames::MashStep { static char const * const stepTime_min = "stepTime_min"; /* previously kpropStepTime */ }
-namespace PropertyNames::MashStep { static char const * const stepTemp_c = "stepTemp_c"; /* previously kpropStepTemp */ }
 namespace PropertyNames::MashStep { static char const * const infuseAmount_l = "infuseAmount_l"; /* previously kpropInfuseAmt */ }
+namespace PropertyNames::MashStep { static char const * const infuseTemp_c = "infuseTemp_c"; /* previously kpropInfuseTemp */ }
+namespace PropertyNames::MashStep { static char const * const rampTime_min = "rampTime_min"; /* previously kpropRampTime */ }
+namespace PropertyNames::MashStep { static char const * const stepNumber = "stepNumber"; /* previously kpropStepNumber */ }
+namespace PropertyNames::MashStep { static char const * const stepTemp_c = "stepTemp_c"; /* previously kpropStepTemp */ }
+namespace PropertyNames::MashStep { static char const * const stepTime_min = "stepTime_min"; /* previously kpropStepTime */ }
+namespace PropertyNames::MashStep { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
+namespace PropertyNames::MashStep { static char const * const type = "type"; /* previously kpropType */ }
 
 /*!
  * \class MashStep
@@ -133,6 +137,7 @@ private:
    MashStep( MashStep const& other );
 public:
    MashStep(QString name, bool cache = true);
+   MashStep(NamedParameterBundle & namedParameterBundle);
 
 private:
    QString m_typeStr;
@@ -180,4 +185,4 @@ struct MashStep_ptr_equals
    }
 };
 */
-#endif //_MASHSTEP_H
+#endif

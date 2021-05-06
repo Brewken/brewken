@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QStandardPaths>
 #include <QTextStream>
+#include <QThread>
 #include <QTime>
 
 #include "PersistentSettings.h"
@@ -51,9 +52,6 @@ namespace {
    // Stores the path to the log files
    QDir logDirectory;
 
-   // Template for the log messages
-   QString const logMessageFormat{"[%1] %2 : %3"};
-
    // Time format to use in log messages
    QString const timeFormat{"hh:mm:ss.zzz"};
 
@@ -62,6 +60,16 @@ namespace {
    bool isLoggingToStderr{true};
    QTextStream errStream{stderr};
    QTextStream * stream;
+
+   //
+   // It's useful to include the thread ID in log messages.  We don't care what the actual ID is, we just need to be
+   // able to differentiate between log messages from different threads.  Qt gives us thread ID as void *, which we
+   // turn into a base-36 string.  (This is the most concise encoding that we can trivially get from QString.)
+   //
+   // We only need to create the string representation of a thread ID once per thread.  Since C++11, we can use
+   // thread_local to define thread-specific variables that are initialized "before first use"
+   //
+   thread_local QString const threadId{QString{"%1"}.arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)};
 
    //
    // We use the Qt functions (qDebug(), qInfo(), etc) do our logging but we need to convert from QtMsgType to our own
@@ -81,13 +89,13 @@ namespace {
    }
 
    void doLog(const Logging::Level level, const QString message) {
+      QString logEntry = QString{"[%1] (%2) %3 : %4"}.arg(QTime::currentTime().toString(timeFormat))
+                                                     .arg(threadId)
+                                                     .arg(Logging::getStringFromLogLevel(level))
+                                                     .arg(message);
       QMutexLocker locker(&mutex);
-      QString logEntry = logMessageFormat.arg(QTime::currentTime().toString(timeFormat))
-                                         .arg(Logging::getStringFromLogLevel(level))
-                                         .arg(message);
-
-      if (isLoggingToStderr) errStream << logEntry << END_OF_LINE;
-      if (stream)              *stream << logEntry << END_OF_LINE;
+      if (isLoggingToStderr) { errStream << logEntry << END_OF_LINE; }
+      if (stream)            {   *stream << logEntry << END_OF_LINE; }
       return;
    }
 

@@ -75,6 +75,35 @@ namespace {
 
       return match->string;
    }
+
+   /**
+    * RAII wrapper for transaction(), commit(), rollback() member functions of QSqlDatabase
+    */
+   class DbTransaction {
+   public:
+      DbTransaction(QSqlDatabase & databaseConnection) : databaseConnection(databaseConnection), committed(false) {
+         bool succeeded = this->databaseConnection.transaction();
+         qDebug() << Q_FUNC_INFO << "Database transaction begin: " << (succeeded ? "succeeded" : "failed");
+         return;
+      }
+      ~DbTransaction() {
+         qDebug() << Q_FUNC_INFO;
+         if (!committed) {
+            bool succeeded = this->databaseConnection.rollback();
+            qDebug() << Q_FUNC_INFO << "Database transaction rollback: " << (succeeded ? "succeeded" : "failed");
+         }
+         return;
+      }
+      bool commit() {
+         this->committed = databaseConnection.commit();
+         qDebug() << Q_FUNC_INFO << "Database transaction commit: " << (this->committed ? "succeeded" : "failed");
+         return this->committed;
+      }
+   private:
+      // This is intended to be a short-lived object, so it's OK to store a reference to a QSqlDatabase object
+      QSqlDatabase & databaseConnection;
+      bool committed;
+   };
 }
 
 // This private implementation class holds all private non-virtual members of BeerXML
@@ -146,13 +175,63 @@ DbRecords::DbRecords(char const * const tableName,
 // header file)
 DbRecords::~DbRecords() = default;
 
+void DbRecords::createTables() {
+   // .:TODO:.
+   QString queryString{"CREATE TABLE "};
+   QTextStream queryStringAsStream{&queryString};
+   queryStringAsStream << this->pimpl->tableName << " (\n";
+   bool firstFieldOutput = false;
+   for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
+      if (!firstFieldOutput) {
+         firstFieldOutput = true;
+      } else {
+         queryStringAsStream << ", \n";
+      }
+      queryStringAsStream << fieldDefn.columnName << " ";
+      // **************************************************************************************************************
+      // .:TODO:. In order to finish this, we need a SQL data type mapper, because different DBs have different data
+      // types with different names.  This should be hidden from this class, as it shouldn't need to know the specifics
+      // of individual databases.
+      // **************************************************************************************************************
+      switch (fieldDefn.fieldType) {
+         case DbRecords::FieldType::Bool:
+            break;
+         case DbRecords::FieldType::Int:
+            break;
+         case DbRecords::FieldType::UInt:
+            break;
+         case DbRecords::FieldType::Double:
+            break;
+         case DbRecords::FieldType::String:
+            break;
+         case DbRecords::FieldType::Date:
+            break;
+         case DbRecords::FieldType::Enum:
+            break;
+         default:
+            break;
+      }
+   }
+   queryStringAsStream << "\n);";
+
+   // *****************************************************************************************************************
+   // .:TODO:. Junction tables
+   // *****************************************************************************************************************
+   return;
+}
+
 void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    //
-   // Note the following from https://doc.qt.io/qt-5/qsqldatabase.html#database:
-   //    "An instance of QSqlDatabase represents [a] connection ... to the database. ... It is highly recommended that
-   //    you do not keep a copy of [a] QSqlDatabase [object] around as a member of a class, as this will prevent the
-   //    instance from being correctly cleaned up on shutdown."
+   // NB: We need to have QSqlDatabase passed in because we can't call Database::instance().sqlDatabase() because we
+   // are ourselves being called from the first call to Database::instance() which invokes Database::load()
    //
+   // .:TBD:. One day we should change where the loadAll calls are made from so that the Database class has no
+   //         knowledge of DbRecords / DbNamedEntityRecords classes.
+   //
+
+   // Start transaction
+   // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   DbTransaction dbTransaction{databaseConnection};
 
    //
    // Using QSqlTableModel would save us having to write a SELECT statement, however it is a bit hard to use it to
@@ -167,7 +246,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    QString queryString{"SELECT "};
    QTextStream queryStringAsStream{&queryString};
    this->pimpl->appendColumNames(queryStringAsStream, true, false);
-   queryStringAsStream << " FROM " << this->pimpl->tableName << ";";
+   queryStringAsStream << "\n FROM " << this->pimpl->tableName << ";";
    QSqlQuery sqlQuery{queryString, databaseConnection};
    if (!sqlQuery.exec()) {
       qCritical() <<
@@ -175,7 +254,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       return;
    }
 
-   qDebug() << Q_FUNC_INFO << "Reading rows from database query " << queryString;
+   qDebug() << Q_FUNC_INFO << "Reading main table rows from database query " << queryString;
 
    while (sqlQuery.next()) {
       //
@@ -271,27 +350,37 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          Q_FUNC_INFO << "Reading junction table " << associativeEntity.tableName << " into " <<
          associativeEntity.propertyName;
 
+      //
+      // Order first by the object we're adding the other IDs to, then order either by the other IDs or by another
+      // column if one is specified.
+      //
       queryString = "SELECT ";
       queryStringAsStream <<
-         associativeEntity.thisObjectPrimaryKeyColumnName << ", " <<
-         associativeEntity.otherObjectPrimaryKeyColumnName <<
+         associativeEntity.thisPrimaryKeyColumnName << ", " <<
+         associativeEntity.otherPrimaryKeyColumnName <<
          " FROM " << associativeEntity.tableName <<
-         " ORDER BY " << associativeEntity.thisObjectPrimaryKeyColumnName << ";";
+         " ORDER BY " << associativeEntity.thisPrimaryKeyColumnName << ", ";
+      if (associativeEntity.orderByColumnName != "") {
+         queryStringAsStream << associativeEntity.orderByColumnName;
+      } else {
+         queryStringAsStream << associativeEntity.otherPrimaryKeyColumnName;
+      }
+      queryStringAsStream << ";";
       if (!sqlQuery.exec(queryString)) {
          qCritical() <<
             Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
          return;
       }
 
-      qDebug() << Q_FUNC_INFO << "Reading rows from database query " << queryString;
+      qDebug() << Q_FUNC_INFO << "Reading junction table rows from database query " << queryString;
 
       //
       // The simplest way to process the data is first to build the raw ID-to-ID map in memory...
       //
       QMultiHash<int, QVariant> thisToOtherKeys;
       while (sqlQuery.next()) {
-         thisToOtherKeys.insert(sqlQuery.value(associativeEntity.thisObjectPrimaryKeyColumnName).toInt(),
-                                sqlQuery.value(associativeEntity.otherObjectPrimaryKeyColumnName));
+         thisToOtherKeys.insert(sqlQuery.value(associativeEntity.thisPrimaryKeyColumnName).toInt(),
+                                sqlQuery.value(associativeEntity.otherPrimaryKeyColumnName));
       }
 
       //
@@ -323,13 +412,15 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
             currentObject->setProperty(associativeEntity.propertyName, otherKeys.first());
          } else {
             //
-            // The setProperty function always takes a QVariant, so we need to create one from QList<QVariant>
+            // The setProperty function always takes a QVariant, so we need to create one from the QList<QVariant> we
+            // have.
             //
             currentObject->setProperty(associativeEntity.propertyName, QVariant{otherKeys});
          }
       }
    }
 
+   dbTransaction.commit();
    return;
 }
 
@@ -342,6 +433,11 @@ std::shared_ptr<QObject> DbRecords::getById(int id) {
 }
 
 void DbRecords::insert(std::shared_ptr<QObject> object) {
+   // Start transaction
+   // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
+   DbTransaction dbTransaction{databaseConnection};
+
    //
    // Construct the SQL, which will be of the form
    //
@@ -361,10 +457,12 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    this->pimpl->appendColumNames(queryStringAsStream, false, true);
    queryStringAsStream << ");";
 
+   qDebug() << Q_FUNC_INFO << "Inserting main table row with database query " << queryString;
+
    //
    // Bind the values
    //
-   QSqlQuery sqlQuery{queryString, Database::instance().sqlDatabase()};
+   QSqlQuery sqlQuery{queryString, databaseConnection};
    bool skippedPrimaryKey = false;
    char const * primaryKeyParameter{nullptr};
    for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
@@ -384,6 +482,14 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
          sqlQuery.bindValue(bindName, bindValue);
       }
    }
+
+   //
+   // The object we are inserting should not already have a valid primary key.
+   //
+   // .:TBD:. Maybe if we're doing undelete, this is the place to handle that case.
+   //
+   int currentPrimaryKey = object->property(primaryKeyParameter).toInt();
+   Q_ASSERT(currentPrimaryKey <= 0);
 
    //
    // Run the query
@@ -416,14 +522,91 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    this->pimpl->allObjects.insert(primaryKey.toInt(), object);
 
    //
+   // Now save data to the junction tables
+   //
+   // We may be inserting more than one row.  In theory we COULD combine all the rows into a single insert statement
+   // using either QSqlQuery::execBatch() or directly constructing one of the common (but technically non-standard)
+   // syntaxes, eg the following works on a lot of databases (including PostgreSQL and newer versions of SQLite) for
+   // up to 1000 rows):
+   //    INSERT INTO table (columnA, columnB, ..., columnN)
+   //         VALUES       (r1_valA, r1_valB, ..., r1_valN),
+   //                      (r2_valA, r2_valB, ..., r2_valN),
+   //                      ...,
+   //                      (rm_valA, rm_valB, ..., rm_valN);
+   // However, we DON"T do this.  The variable binding is more complicated/error-prone than when just doing
+   // individual inserts.  (Even with QSqlQuery::execBatch(), we'd have to loop to construct the lists of bind
+   // parameters.)  And there's likely no noticeable performance benefit given that we're typically inserting only
+   // a handful of rows at a time (eg all the Hops in a Recipe).
+   //
+   // So instead, we just do individual inserts.  Note that orderByColumnName column is only used if specified, and
+   // that, if it is, we assume it's an integer type and that we create the values ourselves.
+   //
+   for (auto const & associativeEntity : this->pimpl->associativeEntities) {
+      qDebug() <<
+         Q_FUNC_INFO << "Writing property " << associativeEntity.propertyName << " into junction table " <<
+         associativeEntity.tableName;
+
+      // Construct the query
+      queryString = "INSERT INTO ";
+      queryStringAsStream << associativeEntity.tableName << " (" <<
+         associativeEntity.thisPrimaryKeyColumnName << ", " <<
+         associativeEntity.otherPrimaryKeyColumnName;
+      if (associativeEntity.orderByColumnName != "") {
+         queryStringAsStream << ", " << associativeEntity.orderByColumnName;
+      }
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(associativeEntity.thisPrimaryKeyColumnName);
+      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(associativeEntity.otherPrimaryKeyColumnName);
+      QString const orderByBindName         = QString{":%1"}.arg(associativeEntity.orderByColumnName);
+      queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
+      if (associativeEntity.orderByColumnName != "") {
+         queryStringAsStream << ", " << orderByBindName;
+      }
+      queryStringAsStream << ");";
+
+      // Get the list of data to bind to it
+      QVariant bindValues = object->property(associativeEntity.propertyName);
+      if (associativeEntity.assumeMaxOneEntry) {
+         // If it's single entry only, just turn it into a one-item list so that the remaining processing is the same
+         bindValues = QVariant{QList<QVariant>{bindValues}};
+      }
+
+      // Now loop through and bind/run the insert query once for each item in the list
+      int itemNumber = 1;
+      QList<QVariant> list = bindValues.toList();
+      for (auto curValue : list ) {
+         sqlQuery.bindValue(thisPrimaryKeyBindName, QVariant{primaryKey});
+         sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
+         if (associativeEntity.orderByColumnName != "") {
+            sqlQuery.bindValue(orderByBindName, QVariant{itemNumber});
+         }
+         qDebug() <<
+            Q_FUNC_INFO << itemNumber << ": " << associativeEntity.thisPrimaryKeyColumnName << " #" << primaryKey <<
+            " <-> " << associativeEntity.otherPrimaryKeyColumnName << " #" << curValue.toInt();
+
+         if (!sqlQuery.exec()) {
+            qCritical() <<
+               Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+            return;
+         }
+         ++itemNumber;
+      }
+   }
+
+   //
    // Tell any bits of the UI that need to know that there's a new object
    //
    emit this->signalObjectInserted(primaryKey.toInt());
 
+   dbTransaction.commit();
    return;
 }
 
 void DbRecords::update(std::shared_ptr<QObject> object) {
+   // Start transaction
+   // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
+   DbTransaction dbTransaction{databaseConnection};
+
    //
    // Construct the SQL, which will be of the form
    //
@@ -460,7 +643,7 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    //
    // Bind the values
    //
-   QSqlQuery sqlQuery{queryString, Database::instance().sqlDatabase()};
+   QSqlQuery sqlQuery{queryString, databaseConnection};
    for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
       QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
       QVariant bindValue{object->property(fieldDefn.propertyName)};
@@ -482,10 +665,38 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
       return;
    }
 
+   //
+   // Now update data in the junction tables .:TODO:.
+   //
+   for (auto const & associativeEntity : this->pimpl->associativeEntities) {
+      qDebug() <<
+         Q_FUNC_INFO << "Updating property " << associativeEntity.propertyName << " in junction table " <<
+         associativeEntity.tableName;
+      //
+      // The simplest thing to do with each junction table is to blat any rows relating to the current object and then
+      // write out data based on the current property values.  This may often mean we're deleting rows and rewriting
+      // them but, for the small quantity of data we're talking about, it doesn't seem worth the complexity of
+      // optimising (eg read what's in the DB, compare with what's in the object property, work out what deletes,
+      // inserts and updates are needed to sync them, etc.
+      //
+//////////////////////////////////      ...
+   }
+
+   dbTransaction.commit();
    return;
 }
 
 void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * const propertyToUpdateInDb) {
+   // Start transaction
+   // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
+   DbTransaction dbTransaction{databaseConnection};
+
+   //
+   // Check whether property is actually stored in a junction table .:TODO:.
+   //
+
+
    //
    // Construct the SQL, which will be of the form
    //
@@ -516,7 +727,7 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
    //
    // Bind the values
    //
-   QSqlQuery sqlQuery{queryString, Database::instance().sqlDatabase()};
+   QSqlQuery sqlQuery{queryString, databaseConnection};
    QVariant propertyBindValue{object->property(propertyToUpdateInDb)};
    // Enums need to be converted to strings first
    auto fieldDefn = std::find_if(
@@ -541,6 +752,7 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
       return;
    }
 
+   dbTransaction.commit();
    return;
 }
 
@@ -552,6 +764,9 @@ void DbRecords::softDelete(int id) {
 
 //
 void DbRecords::hardDelete(int id) {
+   QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
+   DbTransaction dbTransaction{databaseConnection};
+
    //
    // Construct the SQL, which will be of the form
    //
@@ -569,7 +784,7 @@ void DbRecords::hardDelete(int id) {
    //
    // Bind the value
    //
-   QSqlQuery sqlQuery{queryString, Database::instance().sqlDatabase()};
+   QSqlQuery sqlQuery{queryString, databaseConnection};
    QString bindName = QString{":%1"}.arg(primaryKeyColumn);
    sqlQuery.bindValue(bindName, QVariant(id));
 
@@ -583,10 +798,16 @@ void DbRecords::hardDelete(int id) {
    }
 
    //
+   // Now remove data in the junction tables .:TODO:.
+   //
+
+
+   //
    // Remove the object from the cache
    //
    this->pimpl->allObjects.remove(id);
 
+   dbTransaction.commit();
    return;
 }
 

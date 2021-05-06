@@ -86,6 +86,22 @@ MashStep::MashStep(QString name, bool cache)
 {
 }
 
+MashStep::MashStep(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::MASHSTEPTABLE},
+   m_type             {static_cast<MashStep::Type>(namedParameterBundle(PropertyNames::MashStep::type).toInt())},
+   m_infuseAmount_l   {namedParameterBundle(PropertyNames::MashStep::infuseAmount_l   ).toDouble()},
+   m_stepTemp_c       {namedParameterBundle(PropertyNames::MashStep::stepTemp_c       ).toDouble()},
+   m_stepTime_min     {namedParameterBundle(PropertyNames::MashStep::stepTime_min     ).toDouble()},
+   m_rampTime_min     {namedParameterBundle(PropertyNames::MashStep::rampTime_min     ).toDouble()},
+   m_endTemp_c        {namedParameterBundle(PropertyNames::MashStep::endTemp_c        ).toDouble()},
+   m_infuseTemp_c     {namedParameterBundle(PropertyNames::MashStep::infuseTemp_c     ).toDouble()},
+   m_decoctionAmount_l{namedParameterBundle(PropertyNames::MashStep::decoctionAmount_l).toDouble()},
+   m_stepNumber       {namedParameterBundle(PropertyNames::MashStep::stepNumber       ).toInt()},
+   m_cacheOnly        {false} {
+   return;
+}
+
+
 MashStep::MashStep(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
      m_typeStr(rec.value(kcolMashstepType).toString()),

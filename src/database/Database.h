@@ -35,6 +35,7 @@
 #include <QMap>
 #include <QMetaProperty>
 #include <QObject>
+#include <QSqlDatabase>
 #include <QString>
 #include <QTableView>
 #include <QVariant>
@@ -92,7 +93,32 @@ public:
    //! Call this to delete the internal instance.
    static void dropInstance();
 
-   //! Get the right database connection for the calling thread.
+   /*! \brief Get the right database connection for the calling thread.
+    *
+    *         Note the following from https://doc.qt.io/qt-5/qsqldatabase.html#database:
+    *            "An instance of QSqlDatabase represents [a] connection ... to the database. ... It is highly
+    *            recommended that you do not keep a copy of [a] QSqlDatabase [object] around as a member of a class,
+    *            as this will prevent the instance from being correctly cleaned up on shutdown."
+    *
+    *         Moreover, there can be multiple instances of a QSqlDatabase object for a single connection.  (Copying
+    *         the object does not create a new connection, it just creates a new object that references the same
+    *         underlying connection.)
+    *
+    *         Per https://doc.qt.io/qt-5/qsqldatabase.html#removeDatabase, ALL QSqlDatabase objects (and QSqlQuery
+    *         objects) for a given database connection MUST be destroyed BEFORE the underlying database connection is
+    *         removed from Qt's list of database connections (via QSqlDatabase::removeDatabase() static function),
+    *         otherwise errors of the form "QSqlDatabasePrivate::removeDatabase: connection ... is still in use, all
+    *         queries will cease to work" will be logged followed by messy raw data dumps (ie where binary data is
+    *         written to the logs without interpretation).
+    *
+    *         Thus, all this function does really is (a) generate a thread-specific name for this thread's connection,
+    *         (b) have create and register a new connection for this thread if none exists, (c) return a new stack-
+    *         allocated QSqlDatabase object for this thread's DB connection.
+    *
+    *         Callers should not copy the returned QSqlDatabase object nor retain it for longer than is necessary.
+    *
+    * \return A stack-allocated \c QSqlDatabase object through which this thread's database connection can be accessed.
+    */
    QSqlDatabase sqlDatabase() const;
 
    //! \brief Should be called when we are about to close down.
@@ -322,7 +348,11 @@ public:
       }
    }
 
-   //! Get the recipe that this \b note is part of.
+   //! Get the recipe that this \b ing is part of.
+   Recipe* getParentRecipe(NamedEntity const * ing);
+
+   //! Get the recipe that this \b note is part of.  (BrewNotes are stored differently so we need a different function
+   //  for them.)
    Recipe* getParentRecipe( BrewNote const* note );
 
    //! Interchange the step orders of the two steps. Must be in same mash.

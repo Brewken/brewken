@@ -20,11 +20,16 @@
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Instruction.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Misc.h"
+#include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
 
 // .:TODO:. Create tables
+// .:TBD:. Do we care about foreign keys?
 
 namespace {
 
@@ -115,8 +120,8 @@ namespace {
    DbRecords::FieldDefinitions const FERMENTABLE_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",             PropertyNames::NamedEntity::name},
-      {DbRecords::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
       {DbRecords::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
+      {DbRecords::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
       {DbRecords::FieldType::String, "folder",           PropertyNames::NamedEntity::folder},
       {DbRecords::FieldType::Bool,   "add_after_boil",   PropertyNames::Fermentable::addAfterBoil},
       {DbRecords::FieldType::Double, "amount",           PropertyNames::Fermentable::amount_kg},
@@ -209,24 +214,222 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Mash
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   DbRecords::FieldDefinitions const MASH_SIMPLE_FIELDS {
+      {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key},
+      {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name},
+      {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted},
+      {DbRecords::FieldType::Bool,   "display",           PropertyNames::NamedEntity::display},
+      {DbRecords::FieldType::String, "folder",            PropertyNames::NamedEntity::folder},
+      {DbRecords::FieldType::Bool,   "equip_adjust",      PropertyNames::Mash::equipAdjust},
+      {DbRecords::FieldType::Double, "grain_temp",        PropertyNames::Mash::grainTemp_c},
+      {DbRecords::FieldType::String, "notes",             PropertyNames::Mash::notes},
+      {DbRecords::FieldType::Double, "ph",                PropertyNames::Mash::ph},
+      {DbRecords::FieldType::Double, "sparge_temp",       PropertyNames::Mash::spargeTemp_c},
+      {DbRecords::FieldType::Double, "tun_specific_heat", PropertyNames::Mash::tunSpecificHeat_calGC},
+      {DbRecords::FieldType::Double, "tun_temp",          PropertyNames::Mash::tunTemp_c},
+      {DbRecords::FieldType::Double, "tun_weight",        PropertyNames::Mash::tunWeight_kg},
+   };
+   DbRecords::AssociativeEntities const MASH_MULTI_FIELDS {
+      // Mashes don't have children, but they do have MashSteps
+      {"mashstep", "mash_id", "id", PropertyNames::Mash::mashStepIds}  // .:TODO:. Still need to do the lazy-loading code in Mash.cpp to turn IDs into object pointers
+   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for MashStep
+   // NB: MashSteps don't get folders, because they don't separate from their Mash
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+   DbRecords::EnumStringMapping const MASH_STEP_TYPE_ENUM {
+      {"Infusion",     MashStep::Infusion},
+      {"Temperature",  MashStep::Temperature},
+      {"Decoction",    MashStep::Decoction},
+      {"FlySparge",    MashStep::flySparge},
+      {"BatchSparge",  MashStep::batchSparge}
+   };
+   DbRecords::FieldDefinitions const MASH_STEP_SIMPLE_FIELDS {
+      {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key            },
+      {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name           },
+      {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted        },
+      {DbRecords::FieldType::Bool,   "display",           PropertyNames::NamedEntity::display        },
+      {DbRecords::FieldType::String, "folder",            PropertyNames::NamedEntity::folder         },
+      {DbRecords::FieldType::Double,  "decoction_amount", PropertyNames::MashStep::decoctionAmount_l },
+      {DbRecords::FieldType::Double,  "end_temp",         PropertyNames::MashStep::endTemp_c         },
+      {DbRecords::FieldType::Double,  "infuse_amount",    PropertyNames::MashStep::infuseAmount_l    },
+      {DbRecords::FieldType::Double,  "infuse_temp",      PropertyNames::MashStep::infuseTemp_c      },
+      {DbRecords::FieldType::Enum,    "mstype",           PropertyNames::MashStep::type,             &MASH_STEP_TYPE_ENUM},
+      {DbRecords::FieldType::Double,  "ramp_time",        PropertyNames::MashStep::rampTime_min      },
+      {DbRecords::FieldType::Int,     "step_number",      PropertyNames::MashStep::stepNumber        },
+      {DbRecords::FieldType::Double,  "step_temp",        PropertyNames::MashStep::stepTemp_c        },
+      {DbRecords::FieldType::Double,  "step_time",        PropertyNames::MashStep::stepTime_min      }
+//      {DbRecords::FieldType::Int,    "mash_id",                PropertyNames::MashStep::x},
+   };
+   DbRecords::AssociativeEntities const MASH_STEP_MULTI_FIELDS {
+      // MashSteps don't have children
+   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Misc
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+   DbRecords::EnumStringMapping const MISC_TYPE_ENUM {
+      {"Spice",       Misc::Spice},
+      {"Fining",      Misc::Fining},
+      {"Water Agent", Misc::Water_Agent},
+      {"Herb",        Misc::Herb},
+      {"Flavor",      Misc::Flavor},
+      {"Other",       Misc::Other}
+   };
+   DbRecords::EnumStringMapping const MISC_USE_ENUM {
+      {"Boil",      Misc::Boil},
+      {"Mash",      Misc::Mash},
+      {"Primary",   Misc::Primary},
+      {"Secondary", Misc::Secondary},
+      {"Bottling",  Misc::Bottling}
+   };
+   DbRecords::FieldDefinitions const MISC_SIMPLE_FIELDS {
+      {DbRecords::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
+      {DbRecords::FieldType::String, "name",             PropertyNames::NamedEntity::name},
+      {DbRecords::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
+      {DbRecords::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
+      {DbRecords::FieldType::String, "folder",           PropertyNames::NamedEntity::folder},
+      {DbRecords::FieldType::Enum,   "mtype",            PropertyNames::Misc::type,           &MISC_TYPE_ENUM},
+      {DbRecords::FieldType::Enum,   "use",              PropertyNames::Misc::use,            &MISC_USE_ENUM},
+      {DbRecords::FieldType::Double, "time",             PropertyNames::Misc::time           },
+      {DbRecords::FieldType::Double, "amount",           PropertyNames::Misc::amount         },
+      {DbRecords::FieldType::Bool,   "amount_is_weight", PropertyNames::Misc::amountIsWeight },
+      {DbRecords::FieldType::String, "use_for",          PropertyNames::Misc::useFor         },
+      {DbRecords::FieldType::String, "notes",            PropertyNames::Misc::notes          }
+      //, inventory_id REFERENCES misc_in_inventory (id))      <<< TODO
+   };
+   DbRecords::AssociativeEntities const MISC_MULTI_FIELDS {
+      {"misc_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
+   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Recipe
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*   DbRecords::EnumStringMapping const RECIPE_STEP_TYPE_ENUM {
+      {"Extract",      Recipe::Extract},
+      {"Partial Mash", Recipe::PartialMash},
+      {"All Grain",    Recipe::AllGrain}
+   };
+   DbRecords::FieldDefinitions const RECIPE_SIMPLE_FIELDS {
+      {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key},
+      {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name},
+      {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted},
+      {DbRecords::FieldType::Bool,   "display",           PropertyNames::NamedEntity::display},
+      {DbRecords::FieldType::String, "folder",            PropertyNames::NamedEntity::folder},
+      {DbRecords::FieldType::Double,  "age",                 PropertyNames::Recipe::age,                },
+      {DbRecords::FieldType::Double,  "age_temp",            PropertyNames::Recipe::ageTemp_c,          },
+      {DbRecords::FieldType::String,  "assistant_brewer",    PropertyNames::Recipe::asstBrewer,         },
+      {DbRecords::FieldType::Double,  "batch_size",          PropertyNames::Recipe::batchSize_l,        },
+      {DbRecords::FieldType::Double,  "boil_size",           PropertyNames::Recipe::boilSize_l,         },
+      {DbRecords::FieldType::Double,  "boil_time",           PropertyNames::Recipe::boilTime_min,       },
+      {DbRecords::FieldType::String,  "brewer",              PropertyNames::Recipe::brewer,             },
+      {DbRecords::FieldType::Double,  "carb_volume",         PropertyNames::Recipe::carbonation_vols,   },
+      {DbRecords::FieldType::Double,  "carbonationtemp_c",   PropertyNames::Recipe::carbonationTemp_c,  },
+      {DbRecords::FieldType::Date,    "date",                PropertyNames::Recipe::date,               },
+      {DbRecords::FieldType::Double,  "efficiency",          PropertyNames::Recipe::efficiency_pct,     },
+      {DbRecords::FieldType::Int,     "equipment_id",        PropertyNames::Recipe::equipmentId,        }, <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      {DbRecords::FieldType::UInt,    "fermentation_stages", PropertyNames::Recipe::fermentationStages, },
+      {DbRecords::FieldType::Double,  "fg",                  PropertyNames::Recipe::fg,                 },
+      {DbRecords::FieldType::Bool,    "forced_carb",         PropertyNames::Recipe::forcedCarbonation,  },
+      {DbRecords::FieldType::Double,  "keg_priming_factor",  PropertyNames::Recipe::kegPrimingFactor,   },
+      {DbRecords::FieldType::Int,     "mash_id",             PropertyNames::Recipe::mashId,             },  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      {DbRecords::FieldType::String,  "notes",               PropertyNames::Recipe::notes,              },
+      {DbRecords::FieldType::Double,  "og",                  PropertyNames::Recipe::og,                 },
+      {DbRecords::FieldType::Double,  "primary_age",         PropertyNames::Recipe::primaryAge_days,    },
+      {DbRecords::FieldType::Double,  "primary_temp",        PropertyNames::Recipe::primaryTemp_c,      },
+      {DbRecords::FieldType::Double,  "priming_sugar_equiv", PropertyNames::Recipe::primingSugarEquiv,  },
+      {DbRecords::FieldType::String,  "priming_sugar_name",  PropertyNames::Recipe::primingSugarName,   },
+      {DbRecords::FieldType::Double,  "secondary_age",       PropertyNames::Recipe::secondaryAge_days,  },
+      {DbRecords::FieldType::Double,  "secondary_temp",      PropertyNames::Recipe::secondaryTemp_c,    },
+      {DbRecords::FieldType::Int,     "style_id",            PropertyNames::Recipe::styleId,            },  <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      {DbRecords::FieldType::String,  "taste_notes",         PropertyNames::Recipe::tasteNotes,         },
+      {DbRecords::FieldType::Double,  "taste_rating",        PropertyNames::Recipe::tasteRating,        },
+      {DbRecords::FieldType::Double,  "tertiary_age",        PropertyNames::Recipe::tertiaryAge_days,   },
+      {DbRecords::FieldType::Double,  "tertiary_temp",       PropertyNames::Recipe::tertiaryTemp_c,     },
+      {DbRecords::FieldType::Enum,    "type",                PropertyNames::Recipe::recipeType,         &RECIPE_STEP_TYPE_ENUM},
+
+      {DbRecords::FieldType::Record,  "BREWNOTES/BREWNOTE",       nullptr,                                   }, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h
+      {DbRecords::FieldType::Record,  "FERMENTABLES/FERMENTABLE", nullptr,                                   }, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
+      {DbRecords::FieldType::Record,  "HOPS/HOP",                 nullptr,                                   }, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
+      {DbRecords::FieldType::Record,  "INSTRUCTIONS/INSTRUCTION", nullptr,                                   }, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
+      {DbRecords::FieldType::Record,  "MISCS/MISC",               nullptr,                                   }, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
+      {DbRecords::FieldType::Record,  "WATERS/WATER",             nullptr,                                   }, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
+      {DbRecords::FieldType::Record,  "YEASTS/YEAST",             nullptr,                                   }, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
+
+CREATE TABLE recipe(
+   age real DEFAULT 0.0,
+   age_temp real DEFAULT 20.0,
+   assistant_brewer varchar(1024) DEFAULT 'Brewtarget: free beer software',
+   batch_size real DEFAULT 0.0,
+   boil_size real DEFAULT 0.0,
+   boil_time real DEFAULT 0.0,
+   brewer varchar(1024) DEFAULT '',
+   carbonationTemp_c real DEFAULT 20.0,
+   carb_volume real DEFAULT 0.0,
+   date date  DEFAULT CURRENT_DATE,
+   efficiency real DEFAULT 70.0,
+   fermentation_stages int DEFAULT 1,
+   fg real DEFAULT 1.0,
+   forced_carb boolean DEFAULT 0,
+   keg_priming_factor real DEFAULT 1.0,
+   notes text DEFAULT '',
+   og real DEFAULT 1.0,
+   primary_age real DEFAULT 0.0,
+   primary_temp real DEFAULT 20.0,
+   priming_sugar_equiv real DEFAULT 1.0,
+   priming_sugar_name varchar(128) DEFAULT '',
+   secondary_age real DEFAULT 0.0,
+   secondary_temp real DEFAULT 20.0,
+   taste_notes text DEFAULT '',
+   taste_rating real DEFAULT 0.0,
+   tertiary_age real DEFAULT 0.0,
+   tertiary_temp real DEFAULT 20.0,
+   type varchar(32) DEFAULT 'All Grain',
+
+   -- Relational members
+   style_id integer,
+   mash_id integer,
+   equipment_id integer,
+   foreign key(style_id) references style(id),
+   foreign key(mash_id) references mash(id),
+   foreign key(equipment_id) references equipment(id)
+)
+
+   };
+   DbRecords::AssociativeEntities const RECIPE_MULTI_FIELDS {
+      // Not clear whether recipe_children table is used
+      // fermentable_in_recipe
+      // hop_in_recipe
+      // instruction_in_recipe
+      // misc_in_recipe
+      // salt_in_recipe
+      // water_in_recipe
+      // yeast_in_recipe
+
+   };
+*/
+
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Salt
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   DbRecords::FieldDefinitions const SALT_SIMPLE_FIELDS {
+      {DbRecords::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
+      {DbRecords::FieldType::String, "name",             PropertyNames::NamedEntity::name},
+      {DbRecords::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
+      {DbRecords::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
+      {DbRecords::FieldType::String, "folder",           PropertyNames::NamedEntity::folder},
+      {DbRecords::FieldType::Int,    "addTo",            PropertyNames::Salt::addTo          }, // TODO: Really an Enum.  Would be less fragile to store this as text than a number
+      {DbRecords::FieldType::Double, "amount",           PropertyNames::Salt::amount         },
+      {DbRecords::FieldType::Bool,   "amount_is_weight", PropertyNames::Salt::amountIsWeight },
+      {DbRecords::FieldType::Bool,   "is_acid",          PropertyNames::Salt::isAcid         },
+      {DbRecords::FieldType::Double, "percent_acid",     PropertyNames::Salt::percentAcid    },
+      {DbRecords::FieldType::Int,    "stype",            PropertyNames::Salt::type           }    // TODO: Really an Enum.  Would be less fragile to store this as text than a number
+   };
+   DbRecords::AssociativeEntities const SALT_MULTI_FIELDS {
+      // Salts don't have children
+   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Style
@@ -327,22 +530,22 @@ namespace {
       {DbRecords::FieldType::Bool,   "display",     PropertyNames::NamedEntity::display},
       {DbRecords::FieldType::Bool,   "deleted",     PropertyNames::NamedEntity::deleted},
       {DbRecords::FieldType::String, "folder",      PropertyNames::NamedEntity::folder},
-      {DbRecords::FieldType::String, "notes",       PropertyNames::Yeast::notes},
-      {DbRecords::FieldType::Enum,   "ytype",       PropertyNames::Yeast::type, &DB_YEAST_TYPE_ENUM},
-      {DbRecords::FieldType::Enum,   "form",        PropertyNames::Yeast::form, &DB_YEAST_FORM_ENUM},
-      {DbRecords::FieldType::Double,   "amount",      PropertyNames::Yeast::amount},
-      {DbRecords::FieldType::Bool,   "amount_is_weight",           PropertyNames::Yeast::amountIsWeight},
-      {DbRecords::FieldType::String,   "laboratory",           PropertyNames::Yeast::laboratory},
-      {DbRecords::FieldType::String,   "product_id",           PropertyNames::Yeast::productID},
-      {DbRecords::FieldType::Double,   "min_temperature",           PropertyNames::Yeast::minTemperature_c},
-      {DbRecords::FieldType::Double,   "max_temperature",           PropertyNames::Yeast::maxTemperature_c},
-      {DbRecords::FieldType::Enum,   "flocculation",           PropertyNames::Yeast::flocculation, &DB_YEAST_FLOCCULATION_ENUM},
-      {DbRecords::FieldType::Double,   "attenuation",           PropertyNames::Yeast::attenuation_pct},
-      {DbRecords::FieldType::String,   "notes",           PropertyNames::Yeast::notes},
-      {DbRecords::FieldType::String,   "best_for",           PropertyNames::Yeast::bestFor},
-      {DbRecords::FieldType::Int,   "times_cultured",           PropertyNames::Yeast::timesCultured},
-      {DbRecords::FieldType::Int,   "max_reuse",           PropertyNames::Yeast::maxReuse},
-      {DbRecords::FieldType::Bool,   "add_to_secondary",           PropertyNames::Yeast::addToSecondary}
+      {DbRecords::FieldType::String, "notes",            PropertyNames::Yeast::notes},
+      {DbRecords::FieldType::Enum,   "ytype",            PropertyNames::Yeast::type,           &DB_YEAST_TYPE_ENUM},
+      {DbRecords::FieldType::Enum,   "form",             PropertyNames::Yeast::form,           &DB_YEAST_FORM_ENUM},
+      {DbRecords::FieldType::Double, "amount",           PropertyNames::Yeast::amount},
+      {DbRecords::FieldType::Bool,   "amount_is_weight", PropertyNames::Yeast::amountIsWeight},
+      {DbRecords::FieldType::String, "laboratory",       PropertyNames::Yeast::laboratory},
+      {DbRecords::FieldType::String, "product_id",       PropertyNames::Yeast::productID},
+      {DbRecords::FieldType::Double, "min_temperature",  PropertyNames::Yeast::minTemperature_c},
+      {DbRecords::FieldType::Double, "max_temperature",  PropertyNames::Yeast::maxTemperature_c},
+      {DbRecords::FieldType::Enum,   "flocculation",     PropertyNames::Yeast::flocculation,   &DB_YEAST_FLOCCULATION_ENUM},
+      {DbRecords::FieldType::Double, "attenuation",      PropertyNames::Yeast::attenuation_pct},
+      {DbRecords::FieldType::String, "notes",            PropertyNames::Yeast::notes},
+      {DbRecords::FieldType::String, "best_for",         PropertyNames::Yeast::bestFor},
+      {DbRecords::FieldType::Int,    "times_cultured",   PropertyNames::Yeast::timesCultured},
+      {DbRecords::FieldType::Int,    "max_reuse",        PropertyNames::Yeast::maxReuse},
+      {DbRecords::FieldType::Bool,   "add_to_secondary", PropertyNames::Yeast::addToSecondary}
    };
    DbRecords::AssociativeEntities const YEAST_MULTI_FIELDS {
       {"yeast_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
@@ -371,6 +574,31 @@ template<> DbNamedEntityRecords<Hop> & DbNamedEntityRecords<Hop>::getInstance() 
 
 template<> DbNamedEntityRecords<Instruction> & DbNamedEntityRecords<Instruction>::getInstance() {
    static DbNamedEntityRecords<Instruction> singleton{"instruction", INSTRUCTION_SIMPLE_FIELDS, INSTRUCTION_MULTI_FIELDS};
+   return singleton;
+}
+
+template<> DbNamedEntityRecords<Mash> & DbNamedEntityRecords<Mash>::getInstance() {
+   static DbNamedEntityRecords<Mash> singleton{"mash", MASH_SIMPLE_FIELDS, MASH_MULTI_FIELDS};
+   return singleton;
+}
+
+template<> DbNamedEntityRecords<MashStep> & DbNamedEntityRecords<MashStep>::getInstance() {
+   static DbNamedEntityRecords<MashStep> singleton{"mashstep", MASH_STEP_SIMPLE_FIELDS, MASH_STEP_MULTI_FIELDS};
+   return singleton;
+}
+
+template<> DbNamedEntityRecords<Misc> & DbNamedEntityRecords<Misc>::getInstance() {
+   static DbNamedEntityRecords<Misc> singleton{"misc", MISC_SIMPLE_FIELDS, MISC_MULTI_FIELDS};
+   return singleton;
+}
+/*
+template<> DbNamedEntityRecords<Recipe> & DbNamedEntityRecords<Recipe>::getInstance() {
+   static DbNamedEntityRecords<Recipe> singleton{"recipe", RECIPE_SIMPLE_FIELDS, RECIPE_MULTI_FIELDS};
+   return singleton;
+}
+*/
+template<> DbNamedEntityRecords<Salt> & DbNamedEntityRecords<Salt>::getInstance() {
+   static DbNamedEntityRecords<Salt> singleton{"salt", SALT_SIMPLE_FIELDS, SALT_MULTI_FIELDS};
    return singleton;
 }
 

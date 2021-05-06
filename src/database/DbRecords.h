@@ -94,13 +94,23 @@ public:
     *        .:TBD:. For reasons that are not entirely clear, the parent-child relationship between various objects is
     *        also stored in junction tables.  Although we could change this, it's more likely we will just drop the
     *        parent-child stuff.
+    *
+    * \param tableName
+    * \param thisPrimaryKeyColumnName
+    * \param otherPrimaryKeyColumnName
+    * \param propertyName
+    * \param assumeMaxOneEntry
+    * \param orderByColumnName  If not empty string, this is the column that orders the elements (eg instruction
+    *                           number for instructions_in_recipe).  Otherwise the elements are assumed to be an
+    *                           unordered set (and pulled out in ID order by default).
     */
    struct AssociativeEntity {
       char const * const tableName;
-      QString thisObjectPrimaryKeyColumnName;
-      QString otherObjectPrimaryKeyColumnName;
+      QString thisPrimaryKeyColumnName;
+      QString otherPrimaryKeyColumnName;
       char const * const propertyName;
       bool assumeMaxOneEntry = false;
+      QString orderByColumnName = QString{};
    };
 
    typedef QVector<AssociativeEntity> AssociativeEntities;
@@ -117,6 +127,13 @@ public:
              AssociativeEntities const & associativeEntities);
 
    ~DbRecords();
+
+   /**
+    * \brief Create the table(s) for the objects handled by this store
+    *
+    * NB: THIS IS NOT YET IMPLEMENTED
+    */
+   void createTables();
 
    /**
     * \brief Load from database all objects handled by this store

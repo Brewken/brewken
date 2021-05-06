@@ -91,7 +91,7 @@ public:
    Q_PROPERTY( double percentAcid READ percentAcid WRITE setPercentAcid /*NOTIFY changed*/ /*changedPercentAcid*/ )
    //! \brief Is this an acid or salt?
    Q_PROPERTY( bool isAcid READ isAcid WRITE setIsAcid /*NOTIFY changed*/ /*changedIsAcid*/ )
-   //! \brief A link to the salt in the MISC table. Not sure I'm going to use this
+   //! \brief A link to the salt in the MISC table. Not sure I'm going to use this. .:TODO:. Think this can be removed
    Q_PROPERTY( int miscId READ miscId /* WRITE setMiscId*/ /*NOTIFY changed*/ /*changedSulfate_ppm*/ )
    //! \brief To cache or not to cache
    Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ /*changedSulfate_ppm*/ )
@@ -137,7 +137,10 @@ private:
    Salt(DatabaseConstants::DbTableId table, int key);
    Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
    Salt(Salt & other );
+public:
    Salt(QString name, bool cache = true);
+   Salt(NamedParameterBundle & namedParameterBundle);
+private:
 
    double m_amount;
    Salt::WhenToAdd m_add_to;
@@ -183,4 +186,4 @@ struct Salt_ptr_equals
    }
 };
 
-#endif   // SALT_H
+#endif
