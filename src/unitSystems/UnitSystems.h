@@ -1,5 +1,5 @@
 /**
- * unitSystems/UnitSystems.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * unitSystems/UnitSystems.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,49 +16,10 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef UNITSYSTEMS_UNITSYSTEMS_H
+#define UNITSYSTEMS_UNITSYSTEMS_H
 
-#ifndef UNITSYSTEMS_H
-#define UNITSYSTEMS_H
+#include "unitSystems/UnitSystem.h"
 
-class USWeightUnitSystem;
-class SIWeightUnitSystem;
-class ImperialVolumeUnitSystem;
-class USVolumeUnitSystem;
-class SIVolumeUnitSystem;
-class CelsiusTempUnitSystem;
-class FahrenheitTempUnitSystem;
-class TimeUnitSystem;
-class EbcColorUnitSystem;
-class SrmColorUnitSystem;
-class SgDensityUnitSystem;
-class PlatoDensityUnitSystem;
-class LintnerDiastaticPowerUnitSystem;
-class WkDiastaticPowerUnitSystem;
 
-class UnitSystems
-{
-public:
-   static USWeightUnitSystem* usWeightUnitSystem();
-   static SIWeightUnitSystem* siWeightUnitSystem();
-
-   static ImperialVolumeUnitSystem* imperialVolumeUnitSystem();
-   static USVolumeUnitSystem* usVolumeUnitSystem();
-   static SIVolumeUnitSystem* siVolumeUnitSystem();
-
-   static CelsiusTempUnitSystem* celsiusTempUnitSystem();
-   static FahrenheitTempUnitSystem* fahrenheitTempUnitSystem();
-
-   static TimeUnitSystem* timeUnitSystem();
-
-   // You know? I badly want to rewrite this stuff. It is painful
-   static SrmColorUnitSystem* srmColorUnitSystem();
-   static EbcColorUnitSystem* ebcColorUnitSystem();
-
-   static SgDensityUnitSystem* sgDensityUnitSystem();
-   static PlatoDensityUnitSystem* platoDensityUnitSystem();
-
-   static LintnerDiastaticPowerUnitSystem* lintnerDiastaticPowerUnitSystem();
-   static WkDiastaticPowerUnitSystem* wkDiastaticPowerUnitSystem();
-};
-
-#endif /*UNITSYSTEMS_H*/
+#endif

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/USVolumeUnitSystem.h"
 #include <QStringList>
 #include <cmath>
@@ -65,3 +65,4 @@ Unit const * USVolumeUnitSystem::thicknessUnit()
 Unit const * USVolumeUnitSystem::unit() { return &Units::us_gallons; }
 
 QString USVolumeUnitSystem::unitType() { return "USCustomary"; }
+*/

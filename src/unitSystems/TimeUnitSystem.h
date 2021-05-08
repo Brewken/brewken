@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef _TIMEUNITSYSTEM_H
 #define _TIMEUNITSYSTEM_H
 
@@ -37,4 +37,4 @@ public:
    Unit const * unit();
 };
 
-#endif /*_TIMEUNITSYSTEM_H*/
+#endif */

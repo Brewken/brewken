@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/PlatoDensityUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
@@ -50,3 +50,4 @@ QMap<QString, Unit const *> const& PlatoDensityUnitSystem::qstringToUnit()
 
 QString PlatoDensityUnitSystem::unitType() { return "Density"; }
 Unit const * PlatoDensityUnitSystem::unit() { return &Units::plato; }
+*/

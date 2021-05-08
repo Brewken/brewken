@@ -366,7 +366,8 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          queryStringAsStream << associativeEntity.otherPrimaryKeyColumnName;
       }
       queryStringAsStream << ";";
-      if (!sqlQuery.exec(queryString)) {
+      sqlQuery = QSqlQuery(queryString, databaseConnection);
+      if (!sqlQuery.exec()) {
          qCritical() <<
             Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
          return;
@@ -562,6 +563,7 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
          queryStringAsStream << ", " << orderByBindName;
       }
       queryStringAsStream << ");";
+      sqlQuery = QSqlQuery(queryString, databaseConnection);
 
       // Get the list of data to bind to it
       QVariant bindValues = object->property(associativeEntity.propertyName);
@@ -620,14 +622,16 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName << " SET ";
 
-   QString primaryKeyColumn;
+   // By convention the first field is the primary key
+   QString const &    primaryKeyColumn   {this->pimpl->fieldDefinitions[0].columnName};
+   char const * const primaryKeyProperty {this->pimpl->fieldDefinitions[0].propertyName};
+   QVariant const     primaryKey         {object->property(primaryKeyProperty)};
+
    bool skippedPrimaryKey = false;
    bool firstFieldOutput = false;
    for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
       if (!skippedPrimaryKey) {
-         // By convention the first field is the primary key
          skippedPrimaryKey = true;
-         primaryKeyColumn = fieldDefn.columnName;
       } else {
          if (!firstFieldOutput) {
             firstFieldOutput = true;
@@ -642,6 +646,8 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
 
    //
    // Bind the values
+   // Note that, because we're using bind names, it doesn't matter that the order in which we do the binds is different
+   // than the order in which the fields appear in the query.
    //
    QSqlQuery sqlQuery{queryString, databaseConnection};
    for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
@@ -679,7 +685,28 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
       // optimising (eg read what's in the DB, compare with what's in the object property, work out what deletes,
       // inserts and updates are needed to sync them, etc.
       //
-//////////////////////////////////      ...
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(associativeEntity.thisPrimaryKeyColumnName);
+
+      // Construct the DELETE query
+      queryString = "DELETE FROM ";
+      queryStringAsStream <<
+         associativeEntity.tableName << " WHERE " << associativeEntity.thisPrimaryKeyColumnName << " = " <<
+         thisPrimaryKeyBindName << ";";
+      sqlQuery = QSqlQuery(queryString, databaseConnection);
+
+      // Bind the primary key value
+      sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
+
+      // Run the query
+      if (!sqlQuery.exec()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return;
+      }
+
+      // Now insert the current data from the object
+
+//////////////////////////////////      ... <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    }
 
    dbTransaction.commit();
@@ -708,8 +735,10 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName << " SET ";
 
-   QString const &    primaryKeyColumn   = this->pimpl->fieldDefinitions[0].columnName;
-   char const * const primaryKeyProperty = this->pimpl->fieldDefinitions[0].propertyName;
+   // By convention the first field is the primary key
+   QString const &    primaryKeyColumn   {this->pimpl->fieldDefinitions[0].columnName};
+   char const * const primaryKeyProperty {this->pimpl->fieldDefinitions[0].propertyName};
+   QVariant const     primaryKey         {object->property(primaryKeyProperty)};
 
    auto matchingFieldDefn = std::find_if(
       this->pimpl->fieldDefinitions.begin(),
@@ -741,7 +770,7 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
       propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
    }
    sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
-   sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), object->property(primaryKeyProperty));
+   sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), primaryKey);
 
    //
    // Run the query

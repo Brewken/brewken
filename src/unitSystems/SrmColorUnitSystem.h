@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef _SRMCOLORUNITSYSTEM_H
 #define _SRMCOLORUNITSYSTEM_H
 
@@ -37,4 +37,4 @@ public:
 
 };
 
-#endif /*_SRMCOLORUNITSYSTEM_H*/
+#endif */

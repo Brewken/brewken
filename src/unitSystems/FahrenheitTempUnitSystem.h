@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef _FAHRENHEITTEMPUNITSYSTEM_H
 #define _FAHRENHEITTEMPUNITSYSTEM_H
 
@@ -35,4 +35,4 @@ public:
    Unit const * unit();
 };
 
-#endif /*_FAHRENHEITTEMPUNITSYSTEM_H*/
+#endif */

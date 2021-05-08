@@ -18,7 +18,7 @@
 #include "unitSystems/CelsiusTempUnitSystem.h"
 #include "unit.h"
 #include <QStringList>
-
+/*
 CelsiusTempUnitSystem::CelsiusTempUnitSystem() :
    UnitSystem()
 {
@@ -50,3 +50,4 @@ QMap<QString, Unit const *> const& CelsiusTempUnitSystem::qstringToUnit()
 Unit const * CelsiusTempUnitSystem::unit() { return &Units::celsius; }
 
 QString CelsiusTempUnitSystem::unitType() { return "SI"; }
+*/

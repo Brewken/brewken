@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef _SIWEIGHTUNITSYSTEM_H
 #define _SIWEIGHTUNITSYSTEM_H
 
@@ -28,7 +28,7 @@ class SIWeightUnitSystem : public UnitSystem
 {
 public:
    SIWeightUnitSystem();
-   Unit const * thicknessUnit(); /* Inherited from UnitSystem */
+   Unit const * thicknessUnit(); // Inherited from UnitSystem
    QString unitType();
 
    QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
@@ -36,4 +36,4 @@ public:
    Unit const * unit();
 };
 
-#endif /*_SIWEIGHTUNITSYSTEM_H*/
+#endif */

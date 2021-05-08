@@ -257,12 +257,14 @@ public:
    // NOTE: not possible in this format.
    //void addToRecipe( Recipe* rec, Instruction* ins );
    //
+private:
    //! \brief bulk add to a recipe.
    void addToRecipe(Recipe* rec, QList<Fermentable*> ferms, bool transact = true);
    void addToRecipe(Recipe* rec, QList<Hop*> hops, bool transact = true);
    void addToRecipe(Recipe* rec, QList<Misc*> miscs, bool transact = true);
    void addToRecipe(Recipe* rec, QList<Yeast*> yeasts, bool transact = true);
 
+public:
    /**
    * \brief  This function is intended to be called by an ingredient that has not already cached its parent's key
    * \return Key of parent ingredient if there is one, 0 otherwise

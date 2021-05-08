@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/USWeightUnitSystem.h"
 
 #include <cmath>
@@ -61,3 +61,4 @@ Unit const * USWeightUnitSystem::thicknessUnit()
 
 Unit const * USWeightUnitSystem::unit() { return &Units::pounds; }
 QString USWeightUnitSystem::unitType() { return "USCustomary"; }
+*/

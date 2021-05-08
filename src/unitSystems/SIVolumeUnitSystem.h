@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef _SIVOLUMEUNITSYSTEM_H
 #define _SIVOLUMEUNITSYSTEM_H
 
@@ -27,7 +27,7 @@ class SIVolumeUnitSystem : public UnitSystem
 {
 public:
    SIVolumeUnitSystem();
-   Unit const * thicknessUnit(); /* Inherited from UnitSystem */
+   Unit const * thicknessUnit(); // Inherited from UnitSystem
    QString unitType();
 
    QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
@@ -35,4 +35,4 @@ public:
    Unit const * unit();
 };
 
-#endif /*_SIVOLUMEUNITSYSTEM_H*/
+#endif */

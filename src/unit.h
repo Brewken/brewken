@@ -95,6 +95,9 @@ public:
       None           = 0x000000
    };
 
+   /**
+    * \brief Construct a type of unit
+    */
    Unit(UnitType const unitType,
         SystemOfMeasurement const systemOfMeasurement,
         QString const unitName,
@@ -170,7 +173,7 @@ namespace Units {
    // === Temperature ===
    extern Unit const celsius;
    extern Unit const fahrenheit;
-   extern Unit const kelvin;
+   extern Unit const kelvin; // .:TBD:. MY 2021-05-07 Does anyone really use this in brewing?
    // === Color ===
    extern Unit const srm;
    extern Unit const ebc;

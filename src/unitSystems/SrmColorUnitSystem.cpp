@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/SrmColorUnitSystem.h"
 #include <QStringList>
 
@@ -48,3 +48,4 @@ QMap<QString, Unit const *> const& SrmColorUnitSystem::qstringToUnit()
 
 QString SrmColorUnitSystem::unitType() { return "Color"; }
 Unit const * SrmColorUnitSystem::unit() { return &Units::srm; }
+*/

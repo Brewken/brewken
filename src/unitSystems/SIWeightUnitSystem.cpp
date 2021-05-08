@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/SIWeightUnitSystem.h"
 #include <QStringList>
 #include <cmath>
@@ -59,3 +59,4 @@ Unit const * SIWeightUnitSystem::thicknessUnit()
 
 Unit const * SIWeightUnitSystem::unit() { return &Units::kilograms; }
 QString SIWeightUnitSystem::unitType() { return "SI"; }
+*/

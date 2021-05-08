@@ -27,7 +27,6 @@
 #include "unit.h"
 #include "Brewken.h"
 #include "Algorithms.h"
-//#include "model/BrewNote.h"
 
 namespace {
 

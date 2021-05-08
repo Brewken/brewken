@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/SgDensityUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
@@ -51,3 +51,4 @@ QMap<QString, Unit const *> const& SgDensityUnitSystem::qstringToUnit()
 
 QString SgDensityUnitSystem::unitType() { return "Density"; }
 Unit const * SgDensityUnitSystem::unit() { return &Units::sp_grav; }
+*/

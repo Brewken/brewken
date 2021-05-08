@@ -1,5 +1,5 @@
 /**
- * unitSystems/UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * unitSystems/UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -21,8 +21,6 @@
 #define UNITSYSTEMS_UNITSYSTEM_H
 #pragma once
 
-class UnitSystems;
-
 #include <QString>
 #include <QRegExp>
 #include "unit.h"
@@ -30,67 +28,145 @@ class UnitSystems;
 /*!
  * \class UnitSystem
  *
- *
  * \brief A unit system handles the display and format of physical quantities.
  */
-class UnitSystem
-{
+class UnitSystem {
 public:
-   UnitSystem();
-   virtual ~UnitSystem() {}
-
    /*!
-    * displayAmount() should return a string appropriately displaying
-    * 'amount' of type 'units' in this UnitSystem. This string should also
-    * be recognized by qstringToSI()
-    */
-   QString displayAmount( double amount, Unit const * units, int precision = -1, Unit::unitScale scale = Unit::noScale );
-
-   /*!
-    * amountDisplay() should return the double representing the appropriate
-    * unit and scale. Similar in nature to displayAmount(), but just returning
-    * raw doubles.
-    */
-   double amountDisplay( double amount, Unit const * units, Unit::unitScale scale = Unit::noScale );
-
-   /*!
-    * qstringToSI() should convert 'qstr' (consisting of a decimal amount,
-    * followed by a unit string) to the appropriate SI amount under this
-    * UnitSystem.
-    */
-   double qstringToSI(QString qstr, Unit const * defUnit = nullptr, bool force = false, Unit::unitScale scale = Unit::noScale);
-
-   Unit const * scaleUnit(Unit::unitScale scale);
-   /*!
-    * Returns the unit associated with thickness. If this unit system is
-    * US weight, it would return lb. If it were US volume, it would return
-    * quarts.
-    */
-   virtual Unit const * thicknessUnit() = 0;
-   virtual Unit const * unit() = 0;
-
-   /*!
-    * \brief Map from a \c Unit::unitScale to a concrete \c Unit
+    * \brief Constructor
     *
-    * \note The implementing subclass is required to create
-    *    the map such that the units are inserted from smallest
-    *    to largest.
+    * \param type
+    * \param thickness
+    * \param defaultUnit
+    * \param scaleToUnitEntries Note these need to be listed in order from smallest to largest
+    * \param
     */
-   virtual QMap<Unit::unitScale, Unit const *> const& scaleToUnit() = 0;
+   UnitSystem(Unit::UnitType type,
+              Unit const * thickness,
+              Unit const * defaultUnit,
+              std::initializer_list<std::pair<Unit::unitScale, Unit const *> > scaleToUnitEntries,
+              std::initializer_list<std::pair<QString, Unit const *> > qstringToUnitEntries,
+              char const * name);
 
-   //! \brief Map from SI abbreviation to a concrete \c Unit
-   virtual QMap<QString, Unit const *> const& qstringToUnit() = 0;
+   ~UnitSystem() = default;
 
-   // \brief Returns the name of the unit
-   virtual QString unitType() = 0;
+   /*!
+    * \brief Returns a string appropriately displaying 'amount' of type 'units' in this UnitSystem.  This string should
+    *        also be recognized by \c qstringToSI()
+    *
+    * \param amount
+    * \param units
+    * \param precision
+    * \param scale
+    *
+    * \return
+    */
+   QString displayAmount(double amount, Unit const * units, int precision = -1, Unit::unitScale scale = Unit::noScale) const;
+
+   /*!
+    * \brief Returns the double representing the appropriate unit and scale. Similar in nature to \c displayAmount(),
+    *        but just returning raw doubles.
+    *
+    * \param amount
+    * \param units
+    * \param scale
+    *
+    * \return
+    */
+   double amountDisplay(double amount, Unit const * units, Unit::unitScale scale = Unit::noScale) const;
+
+   /*!
+    * \brief Converts 'qstr' (consisting of a decimal amount, followed by a unit string) to the appropriate SI amount
+    *        under this UnitSystem.
+    *
+    * \param qstr
+    * \param defUnit
+    * \param force
+    * \param scale
+    *
+    * \return
+    */
+   double qstringToSI(QString qstr, Unit const * defUnit = nullptr, bool force = false, Unit::unitScale scale = Unit::noScale) const;
+
+   /*!
+    * \brief
+    */
+   Unit const * scaleUnit(Unit::unitScale scale) const;
+
+   /*!
+    * \brief Returns the unit associated with thickness. If this unit system is US weight, it would return lb. If it
+    *        were US volume, it would return quarts.
+    *
+    * \return \c nullptr if thickness does not apply to this unit system (eg a temperature system)
+    */
+   Unit const * thicknessUnit() const;
+
+   /*!
+    * \brief Returns the default unit to use in this system - eg minutes for time, pounds for US weight
+    */
+   Unit const * unit() const;
+
+   /*!
+    * \brief Map from a \c Unit::unitScale to a concrete \c Unit - eg in the US weight UnitSystem,
+    *        Unit::scaleExtraSmall maps to Units::ounces and Unit::scaleSmall maps to Units::pounds
+    *
+    * \note The implementing subclass is required to create the map such that the units are inserted from smallest to
+    *       largest.
+    */
+   QMap<Unit::unitScale, Unit const *> const& scaleToUnit() const;
+
+   /*!
+    * \brief Map from SI abbreviation to a concrete \c Unit
+    */
+   QMap<QString, Unit const *> const& qstringToUnit() const;
+
+   /*!
+    * \brief Returns the name of the system of measurement for this unit system
+    *
+    * .:TODO:.  This is a bit confusing.  It can be a string representation of either
+    *           Unit::SystemOfMeasurement, Unit::TempScale or Unit::UnitType!
+    */
+   QString const & unitType() const;
 
 protected:
-   static const int fieldWidth;
-   static const char format;
-   static const int precision;
+   int const fieldWidth;
+   char const format;
+   int const precision;
 
-   Unit::UnitType _type;
-   QRegExp amtUnit;
+   Unit::UnitType const type;
+   Unit const * thickness;
+   Unit const * defaultUnit;
+
+   QMap<Unit::unitScale, Unit const *> const scaleToUnitMap;
+   QMap<QString, Unit const *> const qstringToUnitMap;
+
+   QString const name;
+
+   QRegExp const amtUnit;
 };
+
+
+namespace UnitSystems {
+   extern UnitSystem const usWeightUnitSystem;
+   extern UnitSystem const siWeightUnitSystem;
+
+   extern UnitSystem const imperialVolumeUnitSystem;
+   extern UnitSystem const usVolumeUnitSystem;
+   extern UnitSystem const siVolumeUnitSystem;
+
+   extern UnitSystem const celsiusTempUnitSystem;
+   extern UnitSystem const fahrenheitTempUnitSystem;
+
+   extern UnitSystem const timeUnitSystem;
+
+   extern UnitSystem const srmColorUnitSystem;
+   extern UnitSystem const ebcColorUnitSystem;
+
+   extern UnitSystem const sgDensityUnitSystem;
+   extern UnitSystem const platoDensityUnitSystem;
+
+   extern UnitSystem const lintnerDiastaticPowerUnitSystem;
+   extern UnitSystem const wkDiastaticPowerUnitSystem;
+}
 
 #endif

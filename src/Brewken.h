@@ -223,7 +223,7 @@ public:
    static QString colorFormulaName();
 
    // One method to rule them all, and in darkness bind them
-   static UnitSystem* findUnitSystem(Unit const * unit, Unit::unitDisplay display);
+   static UnitSystem const * findUnitSystem(Unit const * unit, Unit::unitDisplay display);
    static QString colorUnitName(Unit::unitDisplay display);
    static QString diastaticPowerUnitName(Unit::unitDisplay display);
 
@@ -328,7 +328,7 @@ private:
 
    // Sigh. You knew this was coming right? But I think I can clean a lot of
    // shit up with some clever work.
-   static QHash<int, UnitSystem*> thingToUnitSystem;
+   static QHash<int, UnitSystem const *> thingToUnitSystem;
 
    static TempScale tempScale;
    static ColorType colorFormula;

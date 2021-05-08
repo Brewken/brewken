@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+/*
 #include "unitSystems/TimeUnitSystem.h"
 
 #include <cmath>
@@ -57,3 +58,4 @@ QMap<QString, Unit const *> const& TimeUnitSystem::qstringToUnit()
 
 Unit const * TimeUnitSystem::unit() { return &Units::minutes; }
 QString TimeUnitSystem::unitType() { return "entropy"; }
+*/

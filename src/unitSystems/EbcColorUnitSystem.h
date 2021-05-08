@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef _EBCCOLORUNITSYSTEM_H
 #define _EBCCOLORUNITSYSTEM_H
 
@@ -36,4 +36,4 @@ public:
 
 };
 
-#endif /*_EBCCOLORUNITSYSTEM_H*/
+#endif */

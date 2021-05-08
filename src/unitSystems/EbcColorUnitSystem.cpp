@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/EbcColorUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
@@ -49,3 +49,4 @@ QMap<QString, Unit const *> const& EbcColorUnitSystem::qstringToUnit()
 
 QString EbcColorUnitSystem::unitType() { return "Color"; }
 Unit const * EbcColorUnitSystem::unit() { return &Units::ebc; }
+*/

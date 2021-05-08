@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/DiastaticPowerUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
@@ -80,3 +80,4 @@ QMap<QString, Unit const *> const& WkDiastaticPowerUnitSystem::qstringToUnit()
 
 QString WkDiastaticPowerUnitSystem::unitType() { return "DiastaticPower"; }
 Unit const * WkDiastaticPowerUnitSystem::unit() { return &Units::wk; }
+*/

@@ -3487,6 +3487,7 @@ Fermentable * Database::addToRecipe( Recipe* rec, Fermentable* ferm, bool noCopy
    }
 }
 
+
 void Database::addToRecipe( Recipe* rec, QList<Fermentable*>ferms, bool transact )
 {
    if ( ferms.size() == 0 )
@@ -3515,6 +3516,7 @@ void Database::addToRecipe( Recipe* rec, QList<Fermentable*>ferms, bool transact
       rec->recalcAll();
    }
 }
+
 
 Hop * Database::addToRecipe( Recipe* rec, Hop* hop, bool noCopy, bool transact )
 {

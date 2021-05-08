@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef UNITSYSTEMS_USWEIGHTUNITSYSTEM_H
 #define UNITSYSTEMS_USWEIGHTUNITSYSTEM_H
 #pragma once
@@ -26,7 +26,7 @@
 class USWeightUnitSystem : public UnitSystem {
 public:
    USWeightUnitSystem();
-   Unit const * thicknessUnit(); /* Inherited from UnitSystem */
+   Unit const * thicknessUnit(); // Inherited from UnitSystem
    QString unitType();
 
    QMap<Unit::unitScale, Unit const *> const& scaleToUnit();
@@ -35,4 +35,4 @@ public:
    Unit const * unit();
 };
 
-#endif
+#endif */

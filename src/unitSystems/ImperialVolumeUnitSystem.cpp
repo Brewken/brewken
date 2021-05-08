@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/ImperialVolumeUnitSystem.h"
 #include <QStringList>
 #include <cmath>
@@ -65,3 +65,4 @@ Unit const * ImperialVolumeUnitSystem::thicknessUnit()
 
 Unit const * ImperialVolumeUnitSystem::unit() { return &Units::imperial_gallons; }
 QString ImperialVolumeUnitSystem::unitType() { return "Imperial"; }
+*/

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "unitSystems/FahrenheitTempUnitSystem.h"
 #include <QStringList>
 #include "unit.h"
@@ -49,3 +49,4 @@ QMap<QString, Unit const *> const& FahrenheitTempUnitSystem::qstringToUnit()
 
 Unit const * FahrenheitTempUnitSystem::unit() { return &Units::fahrenheit; }
 QString FahrenheitTempUnitSystem::unitType() { return "Fahrenheit"; }
+*/

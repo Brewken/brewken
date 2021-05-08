@@ -17,7 +17,7 @@
 
 #ifndef _CELSIUSTEMPUNITSYSTEM_H
 #define _CELSIUSTEMPUNITSYSTEM_H
-
+/*
 class CelsiusTempUnitSystem;
 
 #include <QMap>
@@ -34,5 +34,5 @@ public:
    QMap<QString, Unit const *> const& qstringToUnit();
    Unit const * unit();
 };
-
+*/
 #endif /*_CELSIUSTEMPUNITSYSTEM_H*/
