@@ -36,7 +36,7 @@
 #include "model/Recipe.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 #include "WaterTableWidget.h"
 
 WaterTableModel::WaterTableModel(WaterTableWidget* parent)

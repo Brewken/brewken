@@ -33,7 +33,7 @@
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable)
    : QAbstractTableModel(parent),

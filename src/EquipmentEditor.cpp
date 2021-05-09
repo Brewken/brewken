@@ -41,7 +41,7 @@
 #include "NamedEntitySortProxyModel.h"
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
-#include "unit.h"
+#include "Unit.h"
 
 EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor)
    : QDialog(parent)

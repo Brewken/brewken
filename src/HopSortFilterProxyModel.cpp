@@ -22,7 +22,7 @@
 #include "HopSortFilterProxyModel.h"
 #include "HopTableModel.h"
 #include "model/Hop.h"
-#include "unit.h"
+#include "Unit.h"
 #include <iostream>
 
 HopSortFilterProxyModel::HopSortFilterProxyModel(QObject *parent, bool filt)

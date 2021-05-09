@@ -1,5 +1,5 @@
 /**
- * unitSystems/UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,13 +17,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef UNITSYSTEMS_UNITSYSTEM_H
-#define UNITSYSTEMS_UNITSYSTEM_H
+#ifndef UNITSYSTEM_H
+#define UNITSYSTEM_H
 #pragma once
 
+#include <QMap>
 #include <QString>
-#include <QRegExp>
-#include "unit.h"
+#include "Unit.h"
 
 /*!
  * \class UnitSystem
@@ -38,8 +38,9 @@ public:
     * \param type
     * \param thickness
     * \param defaultUnit
-    * \param scaleToUnitEntries Note these need to be listed in order from smallest to largest
-    * \param
+    * \param scaleToUnitEntries
+    * \param qstringToUnitEntries
+    * \param name
     */
    UnitSystem(Unit::UnitType type,
               Unit const * thickness,
@@ -52,7 +53,7 @@ public:
 
    /*!
     * \brief Returns a string appropriately displaying 'amount' of type 'units' in this UnitSystem.  This string should
-    *        also be recognized by \c qstringToSI()
+    *        also be recognised by \c qstringToSI()
     *
     * \param amount
     * \param units
@@ -107,20 +108,6 @@ public:
    Unit const * unit() const;
 
    /*!
-    * \brief Map from a \c Unit::unitScale to a concrete \c Unit - eg in the US weight UnitSystem,
-    *        Unit::scaleExtraSmall maps to Units::ounces and Unit::scaleSmall maps to Units::pounds
-    *
-    * \note The implementing subclass is required to create the map such that the units are inserted from smallest to
-    *       largest.
-    */
-   QMap<Unit::unitScale, Unit const *> const& scaleToUnit() const;
-
-   /*!
-    * \brief Map from SI abbreviation to a concrete \c Unit
-    */
-   QMap<QString, Unit const *> const& qstringToUnit() const;
-
-   /*!
     * \brief Returns the name of the system of measurement for this unit system
     *
     * .:TODO:.  This is a bit confusing.  It can be a string representation of either
@@ -128,21 +115,24 @@ public:
     */
    QString const & unitType() const;
 
-protected:
-   int const fieldWidth;
-   char const format;
-   int const precision;
+private:
+   // This does most of the work for displayAmount() and amountDisplay()
+   std::pair<double, QString> displayableAmount(double amount, Unit const * units, Unit::unitScale scale) const;
 
    Unit::UnitType const type;
    Unit const * thickness;
    Unit const * defaultUnit;
 
-   QMap<Unit::unitScale, Unit const *> const scaleToUnitMap;
-   QMap<QString, Unit const *> const qstringToUnitMap;
+   // Map from a Unit::unitScale to a concrete Unit - eg in the US weight UnitSystem,
+   // Unit::scaleExtraSmall maps to Units::ounces and Unit::scaleSmall maps to Units::pounds
+   //
+   // Because it's a map, when we iterate over it, we'll traverse from smallest to largest.
+   QMap<Unit::unitScale, Unit const *> const scaleToUnit;
+
+   // Map from SI abbreviation to a concrete \c Unit
+   QMap<QString, Unit const *> const qstringToUnit;
 
    QString const name;
-
-   QRegExp const amtUnit;
 };
 
 

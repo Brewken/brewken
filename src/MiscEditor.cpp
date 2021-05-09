@@ -23,7 +23,7 @@
 #include "MiscEditor.h"
 #include "database/Database.h"
 #include "config.h"
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 #include "model/Misc.h"
 

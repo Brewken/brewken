@@ -17,7 +17,7 @@
  */
 
 #include "HydrometerTool.h"
-#include "unit.h"
+#include "Unit.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFormLayout>

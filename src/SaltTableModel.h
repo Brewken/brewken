@@ -30,7 +30,7 @@
 #include "model/Salt.h"
 #include "model/Water.h"
 
-#include "unit.h"
+#include "Unit.h"
 // Forward declarations.
 class Recipe;
 class WaterDialog;

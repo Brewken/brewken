@@ -71,7 +71,7 @@ extern void qt_set_sequence_auto_mnemonic(bool b);
 #include <QTextStream>
 #include <QTranslator>
 
-#include "unitSystems/UnitSystem.h"
+#include "UnitSystem.h"
 #include "Logging.h"
 
 class NamedEntity;

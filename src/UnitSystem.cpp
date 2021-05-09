@@ -1,6 +1,7 @@
 /**
- * unitSystems/UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -16,15 +17,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "unitSystems/UnitSystem.h"
+#include "UnitSystem.h"
 
 #include <QDebug>
 #include <QLocale>
 #include <QRegExp>
-#include <QString>
 
 #include "Brewken.h"
-#include "unit.h"
+#include "Unit.h"
+
+namespace {
+   int const fieldWidth = 0;
+   char const format = 'f';
+   int const defaultPrecision = 3;
+
+   // All functions in QRegExp are reentrant, so it should be safe to use as a shared const in multi-threaded code.
+   QRegExp const amtUnit {
+      // Make sure we get the right decimal point (. or ,) and the right grouping separator (, or .).  Some locales
+      // write 1.000,10 and others write 1,000.10.  We need to catch both.
+      "((?:\\d+" + QRegExp::escape(QLocale::system().groupSeparator()) + ")?\\d+(?:" +
+      QRegExp::escape(QLocale::system().decimalPoint()) + "\\d+)?|" +
+      QRegExp::escape(QLocale::system().decimalPoint()) + "\\d+)\\s*(\\w+)?",
+      Qt::CaseInsensitive
+   };
+}
 
 UnitSystem::UnitSystem(Unit::UnitType type,
                        Unit const * thickness,
@@ -32,30 +48,12 @@ UnitSystem::UnitSystem(Unit::UnitType type,
                        std::initializer_list<std::pair<Unit::unitScale, Unit const *> > scaleToUnitEntries,
                        std::initializer_list<std::pair<QString, Unit const *> > qstringToUnitEntries,
                        char const * name) :
-   fieldWidth{0},
-   format{'f'},
-   precision{3},
    type{type},
    thickness{thickness},
    defaultUnit{defaultUnit},
-   scaleToUnitMap{scaleToUnitEntries},
-   qstringToUnitMap{qstringToUnitEntries},
-   name{name},
-   amtUnit{
-      // Make sure we get the right decimal point (. or ,) and the right grouping separator (, or .).  Some locales
-      // write 1.000,10 and others write 1,000.10.  We need to catch both.
-      "((?:\\d+" + QRegExp::escape(QLocale::system().groupSeparator()) + ")?\\d+(?:" +
-      QRegExp::escape(QLocale::system().decimalPoint()) + "\\d+)?|" +
-      QRegExp::escape(QLocale::system().decimalPoint()) + "\\d+)\\s*(\\w+)?",
-      Qt::CaseInsensitive
-   } {
-
-/*   QString decimal = QRegExp::escape( QLocale::system().decimalPoint());
-   QString grouping = QRegExp::escape(QLocale::system().groupSeparator());
-
-   this->amtUnit.setPattern("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
-   this->amtUnit.setCaseSensitivity(Qt::CaseInsensitive);
-   */
+   scaleToUnit{scaleToUnitEntries},
+   qstringToUnit{qstringToUnitEntries},
+   name{name} {
    return;
 }
 
@@ -64,8 +62,7 @@ double UnitSystem::qstringToSI(QString qstr, Unit const * defUnit, bool force, U
    Unit const * found = 0;
 
    // make sure we can parse the string
-   if (amtUnit.indexIn(qstr) == -1)
-   {
+   if (amtUnit.indexIn(qstr) == -1) {
       return 0.0;
    }
 
@@ -80,27 +77,23 @@ double UnitSystem::qstringToSI(QString qstr, Unit const * defUnit, bool force, U
    // 3.17 US qt. If you mean 3 US qt, you are SOL unless you mark the field
    // as US Customary.
 
-   if ( ! unit.isEmpty() ) {
-      found = qstringToUnit().value(unit);
-   }
-   else if ( scale != Unit::noScale ) {
-      found = scaleToUnit().value(scale);
+   if (!unit.isEmpty()) {
+      found = this->qstringToUnit.value(unit);
+   } else if (scale != Unit::noScale) {
+      found = this->scaleToUnit.value(scale);
    }
 
-   if ( ! found )
-      found = Unit::getUnit(unit,false);
+   if (!found) {
+      found = Unit::getUnit(unit, false);
+   }
 
-   // If the calling method isn't overriding the search and we actually found
-   // something, use it
-   if ( ! force && found )
-   {
+   // If the calling method isn't overriding the search and we actually found something, use it
+   if (!force && found) {
       u = found;
    }
 
-   // It is possible for u to be NULL at this point, so make sure we handle
-   // that case
-   if ( u == 0 )
-   {
+   // It is possible for u to be NULL at this point, so make sure we handle that case
+   if (u == nullptr) {
       return -1.0;
    }
 
@@ -110,101 +103,25 @@ double UnitSystem::qstringToSI(QString qstr, Unit const * defUnit, bool force, U
 QString UnitSystem::displayAmount(double amount, Unit const * units, int precision, Unit::unitScale scale) const {
    // If the precision is not specified, we take the default one
    if (precision < 0) {
-      precision = this->precision;
+      precision = defaultPrecision;
    }
 
-   // Special cases. Make sure the unit isn't null and that we're
-   // dealing with volume.
-   if (units == 0 || units->getUnitType() != this->type) {
-      return QString("%L1").arg(amount, fieldWidth, format, precision);
+   auto result = this->displayableAmount(amount, units, scale);
+
+   if (result.second.isEmpty()) {
+      return QString("%L1").arg(this->amountDisplay(result.first, units, scale), fieldWidth, format, precision);
    }
 
-   // We really shouldn't ever reference something that could be null until
-   // after we have verified it isn't.
-   double SIAmount    = units->toSI( amount );
-   double absSIAmount = qAbs(SIAmount);
-   Unit const * last = 0;
-
-   // Don't loop if the 'without' key is defined
-   if ( scaleToUnit().contains(Unit::scaleWithout) )
-      scale = Unit::scaleWithout;
-
-   // If a specific scale is provided, just use that and don't loop.
-   if ( scaleToUnit().contains(scale) )
-   {
-      Unit const * bob = scaleToUnit().value(scale);
-      return QString("%L1 %2").arg(bob->fromSI(SIAmount), fieldWidth, format, precision).arg(bob->getUnitName());
-   }
-
-   // scaleToUnit() is a QMap which means we loop in the  order in which the
-   // items were inserted. Order counts, and this map has to be
-   // created from smallest to largest scale (e.g., mg, g, kg).
-   QMap<Unit::unitScale, Unit const *>::const_iterator it;
-   for( it = scaleToUnit().begin(); it != scaleToUnit().end(); ++it)
-   {
-      Unit const * bob = it.value();
-      double boundary = bob->boundary();
-
-      // This is a nice bit of work, if I may say so myself. If we've been
-      // through the loop at least once already, and the boundary condition is
-      // met, use the Unit const * from the last loop.
-      if ( last && absSIAmount < bob->toSI(boundary) )
-         return QString("%L1 %2").arg(last->fromSI(SIAmount), fieldWidth, format, precision).arg(last->getUnitName());
-
-      // If we get all the way through the map, this will be the largest unit
-      // available
-      last = bob;
-   }
-
-   // If we get here, use the largest unit available
-   if (last) {
-      return QString("%L1 %2").arg(last->fromSI(SIAmount), fieldWidth, format, precision).arg(last->getUnitName());
-   }
-
-   return QString("nounit"); // Should never happen, so be obvious if it does
+   return QString("%L1 %2").arg(result.first, fieldWidth, format, precision).arg(result.second);
 }
 
-double UnitSystem::amountDisplay( double amount, Unit const * units, Unit::unitScale scale) const {
-   // Special cases. Make sure the unit isn't null and that we're
-   // dealing with volume.
-   if (units == nullptr || units->getUnitType() != this->type) {
-      return amount;
-   }
-
-   double SIAmount = units->toSI( amount );
-   double absSIAmount = qAbs(SIAmount);
-   Unit const * last = nullptr;
-
-   // Short circuit if the 'without' key is defined
-   if (scaleToUnit().contains(Unit::scaleWithout) ) {
-      scale = Unit::scaleWithout;
-   }
-
-   if (scaleToUnit().contains(scale) ) {
-      Unit const * bob = scaleToUnit().value(scale);
-      return bob->fromSI(SIAmount);
-   }
-
-   QMap<Unit::unitScale, Unit const *>::const_iterator it;
-   for (it = scaleToUnit().begin(); it != scaleToUnit().end(); ++it) {
-      Unit const * bob = it.value();
-      double boundary = bob->boundary();
-
-      if ( last && absSIAmount < bob->toSI(boundary) )
-         return last->fromSI(SIAmount);
-
-      last = bob;
-   }
-   // If we get here, use the largest unit available
-   if (last) {
-      return last->fromSI(SIAmount);
-   }
-
-   return -42.42; // Should never happen, so be obvious if it does
+double UnitSystem::amountDisplay(double amount, Unit const * units, Unit::unitScale scale) const {
+   // Essentially we're just returning the numeric part of the displayable amount
+   return this->displayableAmount(amount, units, scale).first;
 }
 
 Unit const * UnitSystem::scaleUnit(Unit::unitScale scale) const {
-   return this->scaleToUnit().contains(scale) ?  scaleToUnit().value(scale) : 0;
+   return this->scaleToUnit.contains(scale) ? this->scaleToUnit.value(scale) : nullptr;
 }
 
 Unit const * UnitSystem::thicknessUnit() const {
@@ -215,18 +132,46 @@ Unit const * UnitSystem::unit() const {
    return this->defaultUnit;
 }
 
-QMap<Unit::unitScale, Unit const *> const & UnitSystem::scaleToUnit() const {
-   return this->scaleToUnitMap;
-}
-
-QMap<QString, Unit const *> const & UnitSystem::qstringToUnit() const {
-   return this->qstringToUnitMap;
-}
-
 QString const & UnitSystem::unitType() const {
    return this->name;
 }
 
+std::pair<double, QString> UnitSystem::displayableAmount(double amount, Unit const * units, Unit::unitScale scale) const {
+   // Special cases
+   if (units == nullptr || units->getUnitType() != this->type) {
+      return std::pair(amount, "");
+   }
+
+   // Short circuit if the 'without' key is defined
+   if (this->scaleToUnit.contains(Unit::scaleWithout)) {
+      scale = Unit::scaleWithout;
+   }
+
+   double SIAmount = units->toSI( amount );
+
+   // If a specific scale is provided, just use that and don't loop.
+   if (this->scaleToUnit.contains(scale) ) {
+      Unit const * bb = this->scaleToUnit.value(scale);
+      return std::pair(bb->fromSI(SIAmount), bb->getUnitName());
+   }
+
+   // Search for the smallest measure in this system that's not too big to show the supplied value
+   // QMap guarantees that we iterate in the order of its keys, thus here we'll loop from smallest to largest scale
+   // (e.g., mg, g, kg).
+   Unit const * last  = nullptr;
+   for (auto it : this->scaleToUnit) {
+      if (last != nullptr && qAbs(SIAmount) < it->toSI(it->boundary())) {
+         // Stop looping as we've found a unit that's too big to use (so we'll return the last one, ie the one smaller,
+         // below)
+         break;
+      }
+      last = it;
+   }
+
+   // It is a programming error if the map was empty (ie we didn't go through the loop at all)
+   Q_ASSERT(last != nullptr);
+   return std::pair(last->fromSI(SIAmount), last->getUnitName());
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 //

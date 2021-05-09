@@ -33,7 +33,7 @@ class FermentableItemDelegate;
 #include <QWidget>
 
 #include "Brewken.h"
-#include "unit.h"
+#include "Unit.h"
 #include "database/TableSchemaConst.h"
 
 // Forward declarations.

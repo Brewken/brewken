@@ -41,8 +41,8 @@
 #include "Logging.h"
 #include "MainWindow.h"
 #include "PersistentSettings.h"
-#include "unit.h"
-#include "unitSystems/UnitSystem.h"
+#include "Unit.h"
+#include "UnitSystem.h"
 
 //
 // Anonymous namespace for constants, global variables and functions used only in this file

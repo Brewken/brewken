@@ -18,7 +18,7 @@
 #include "TimerMainDialog.h"
 #include <QMessageBox>
 #include <QToolTip>
-#include "unit.h"
+#include "Unit.h"
 
 TimerMainDialog::TimerMainDialog(MainWindow* parent) : QDialog(parent),
     mainWindow(parent),

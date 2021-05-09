@@ -45,7 +45,7 @@
 #include "model/Style.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 
 RecipeFormatter::RecipeFormatter(QObject* parent)
    : QObject(parent)

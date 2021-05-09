@@ -1,5 +1,5 @@
 /**
- * YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -18,13 +18,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "YeastEditor.h"
-#include "database/Database.h"
-#include "config.h"
-#include "unit.h"
+
 #include "Brewken.h"
+#include "config.h"
+#include "database/Database.h"
 #include "model/Yeast.h"
+#include "Unit.h"
 
 YeastEditor::YeastEditor( QWidget* parent )
    : QDialog(parent), obsYeast(nullptr)

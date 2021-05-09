@@ -31,7 +31,7 @@ class YeastItemDelegate;
 #include <QList>
 #include <QTableView>
 
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 #include "database/TableSchemaConst.h"
 

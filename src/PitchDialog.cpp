@@ -27,7 +27,7 @@
 #include "Algorithms.h"
 #include "Brewken.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 
 PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent)
 {

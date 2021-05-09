@@ -42,7 +42,7 @@
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable)
    : QAbstractTableModel(parent),

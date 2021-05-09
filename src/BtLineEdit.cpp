@@ -29,9 +29,8 @@
 #include "Algorithms.h"
 #include "Brewken.h"
 #include "PersistentSettings.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/UnitSystem.h"
-#include "unit.h"
+#include "UnitSystem.h"
+#include "Unit.h"
 
 BtLineEdit::BtLineEdit(QWidget *parent, Unit::UnitType type, QString const & maximalDisplayString) :
    QLineEdit(parent),

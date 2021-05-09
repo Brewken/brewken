@@ -71,8 +71,8 @@
 #include "model/Salt.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
-#include "unit.h"
-#include "unitSystems/UnitSystem.h"
+#include "Unit.h"
+#include "UnitSystem.h"
 
 // Needed for kill(2)
 #if defined(Q_OS_UNIX)

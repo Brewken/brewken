@@ -15,15 +15,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _WATERDIALOG_H
-#define _WATERDIALOG_H
+#ifndef WATERDIALOG_H
+#define WATERDIALOG_H
 
 #include <QDialog>
 #include <QWidget>
 #include <QButtonGroup>
 #include <QVector>
 #include "ui_waterDialog.h"
-#include "unit.h"
+#include "Unit.h"
 #include "model/Water.h"
 #include "model/Salt.h"
 

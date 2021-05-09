@@ -39,7 +39,7 @@
 #include "model/MashStep.h"
 #include "PersistentSettings.h"
 #include "SimpleUndoableUpdate.h"
-#include "unit.h"
+#include "Unit.h"
 
 MashStepTableModel::MashStepTableModel(QTableView* parent)
    : QAbstractTableModel(parent),
