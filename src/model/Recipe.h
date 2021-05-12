@@ -26,8 +26,6 @@
 
 #include <QColor>
 #include <QDate>
-#include <QDomDocument>
-#include <QDomNode>
 #include <QList>
 #include <QMutex>
 #include <QSqlRecord>
@@ -40,68 +38,68 @@
 #include "model/Salt.h"
 #include "model/BrewNote.h"
 
-namespace PropertyNames::Recipe { static char const * const fg = "fg"; /* previously kpropFG */ }
-namespace PropertyNames::Recipe { static char const * const og = "og"; /* previously kpropOG */ }
-namespace PropertyNames::Recipe { static char const * const boilTime_min = "boilTime_min"; /* previously kpropBoilTime */ }
-namespace PropertyNames::Recipe { static char const * const boilSize_l = "boilSize_l"; /* previously kpropBoilSize */ }
-namespace PropertyNames::Recipe { static char const * const batchSize_l = "batchSize_l"; /* previously kpropBatchSize */ }
-namespace PropertyNames::Recipe { static char const * const type = "type"; /* previously kpropType */ }
-namespace PropertyNames::Recipe { static char const * const notes = "notes"; /* previously kpropNotes */ }
-namespace PropertyNames::Recipe { static char const * const kegPrimingFactor = "kegPrimingFactor"; /* previously kpropKegPrimFact */ }
-namespace PropertyNames::Recipe { static char const * const primingSugarEquiv = "primingSugarEquiv"; /* previously kpropPrimSugEquiv */ }
-namespace PropertyNames::Recipe { static char const * const carbonationTemp_c = "carbonationTemp_c"; /* previously kpropCarbTemp */ }
-namespace PropertyNames::Recipe { static char const * const primingSugarName = "primingSugarName"; /* previously kpropPrimSugName */ }
-namespace PropertyNames::Recipe { static char const * const forcedCarbonation = "forcedCarbonation"; /* previously kpropForcedCarb */ }
-namespace PropertyNames::Recipe { static char const * const carbonation_vols = "carbonation_vols"; /* previously kpropCarbVols */ }
-namespace PropertyNames::Recipe { static char const * const points = "points"; /* previously kpropPoints */ }
-namespace PropertyNames::Recipe { static char const * const date = "date"; /* previously kpropDate */ }
-namespace PropertyNames::Recipe { static char const * const ageTemp_c = "ageTemp_c"; /* previously kpropAgeTemp */ }
-namespace PropertyNames::Recipe { static char const * const age = "age"; /* previously kpropAge */ }
-namespace PropertyNames::Recipe { static char const * const tertiaryTemp_c = "tertiaryTemp_c"; /* previously kpropTertTemp */ }
-namespace PropertyNames::Recipe { static char const * const tertiaryAge_days = "tertiaryAge_days"; /* previously kpropTertAgeDays */ }
-namespace PropertyNames::Recipe { static char const * const secondaryTemp_c = "secondaryTemp_c"; /* previously kpropSecTemp */ }
-namespace PropertyNames::Recipe { static char const * const secondaryAge_days = "secondaryAge_days"; /* previously kpropSecAgeDays */ }
-namespace PropertyNames::Recipe { static char const * const primaryTemp_c = "primaryTemp_c"; /* previously kpropPrimTemp */ }
-namespace PropertyNames::Recipe { static char const * const primaryAge_days = "primaryAge_days"; /* previously kpropPrimAgeDays */ }
-namespace PropertyNames::Recipe { static char const * const fermentationStages = "fermentationStages"; /* previously kpropFermStages */ }
-namespace PropertyNames::Recipe { static char const * const tasteRating = "tasteRating"; /* previously kpropTasteRating */ }
-namespace PropertyNames::Recipe { static char const * const tasteNotes = "tasteNotes"; /* previously kpropTasteNotes */ }
-namespace PropertyNames::Recipe { static char const * const asstBrewer = "asstBrewer"; /* previously kpropAsstBrewer */ }
-namespace PropertyNames::Recipe { static char const * const efficiency_pct = "efficiency_pct"; /* previously kpropEffPct */ }
-namespace PropertyNames::Recipe { static char const * const brewer = "brewer"; /* previously kpropBrewer */ }
-namespace PropertyNames::Recipe { static char const * const color_srm = "color_srm"; /* previously kpropColor */ }
-namespace PropertyNames::Recipe { static char const * const postBoilVolume_l = "postBoilVolume_l"; /* previously kpropPostBoilVol */ }
-namespace PropertyNames::Recipe { static char const * const finalVolume_l = "finalVolume_l"; /* previously kpropFinVol */ }
-
-namespace PropertyNames::Recipe { static char const * const recipeType = "recipeType"; }
-namespace PropertyNames::Recipe { static char const * const style = "style"; }
-namespace PropertyNames::Recipe { static char const * const equipment  = "equipment"; }
-namespace PropertyNames::Recipe { static char const * const mash = "mash"; }
-
 
 namespace PropertyNames::Recipe { static char const * const ABV_pct = "ABV_pct"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const age = "age"; /* previously kpropAge */ }
+namespace PropertyNames::Recipe { static char const * const ageTemp_c = "ageTemp_c"; /* previously kpropAgeTemp */ }
+namespace PropertyNames::Recipe { static char const * const asstBrewer = "asstBrewer"; /* previously kpropAsstBrewer */ }
+namespace PropertyNames::Recipe { static char const * const batchSize_l = "batchSize_l"; /* previously kpropBatchSize */ }
 namespace PropertyNames::Recipe { static char const * const boilGrav = "boilGrav"; /* not stored */ }
-namespace PropertyNames::Recipe { static char const * const IBU = "IBU"; /* not stored */ }
-namespace PropertyNames::Recipe { static char const * const IBUs = "IBUs"; /* not stored */ }
-namespace PropertyNames::Recipe { static char const * const wortFromMash_l = "wortFromMash_l"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const boilSize_l = "boilSize_l"; /* previously kpropBoilSize */ }
+namespace PropertyNames::Recipe { static char const * const boilTime_min = "boilTime_min"; /* previously kpropBoilTime */ }
 namespace PropertyNames::Recipe { static char const * const boilVolume_l = "boilVolume_l"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const brewer = "brewer"; /* previously kpropBrewer */ }
 namespace PropertyNames::Recipe { static char const * const calories = "calories"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const carbonationTemp_c = "carbonationTemp_c"; /* previously kpropCarbTemp */ }
+namespace PropertyNames::Recipe { static char const * const carbonation_vols = "carbonation_vols"; /* previously kpropCarbVols */ }
+namespace PropertyNames::Recipe { static char const * const color_srm = "color_srm"; /* previously kpropColor */ }
+namespace PropertyNames::Recipe { static char const * const date = "date"; /* previously kpropDate */ }
+namespace PropertyNames::Recipe { static char const * const efficiency_pct = "efficiency_pct"; /* previously kpropEffPct */ }
+namespace PropertyNames::Recipe { static char const * const equipment = "equipment"; }
+namespace PropertyNames::Recipe { static char const * const equipmentId = "equipmentId"; }
+namespace PropertyNames::Recipe { static char const * const fermentationStages = "fermentationStages"; /* previously kpropFermStages */ }
+namespace PropertyNames::Recipe { static char const * const fg = "fg"; /* previously kpropFG */ }
+namespace PropertyNames::Recipe { static char const * const finalVolume_l = "finalVolume_l"; /* previously kpropFinVol */ }
+namespace PropertyNames::Recipe { static char const * const forcedCarbonation = "forcedCarbonation"; /* previously kpropForcedCarb */ }
 namespace PropertyNames::Recipe { static char const * const grainsInMash_kg = "grainsInMash_kg"; /* not stored */ }
 namespace PropertyNames::Recipe { static char const * const grains_kg = "grains_kg"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const IBU = "IBU"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const IBUs = "IBUs"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const kegPrimingFactor = "kegPrimingFactor"; /* previously kpropKegPrimFact */ }
+namespace PropertyNames::Recipe { static char const * const mash = "mash"; }
+namespace PropertyNames::Recipe { static char const * const mashId = "mashId"; }
+namespace PropertyNames::Recipe { static char const * const notes = "notes"; /* previously kpropNotes */ }
+namespace PropertyNames::Recipe { static char const * const og = "og"; /* previously kpropOG */ }
+namespace PropertyNames::Recipe { static char const * const points = "points"; /* previously kpropPoints */ }
+namespace PropertyNames::Recipe { static char const * const postBoilVolume_l = "postBoilVolume_l"; /* previously kpropPostBoilVol */ }
+namespace PropertyNames::Recipe { static char const * const primaryAge_days = "primaryAge_days"; /* previously kpropPrimAgeDays */ }
+namespace PropertyNames::Recipe { static char const * const primaryTemp_c = "primaryTemp_c"; /* previously kpropPrimTemp */ }
+namespace PropertyNames::Recipe { static char const * const primingSugarEquiv = "primingSugarEquiv"; /* previously kpropPrimSugEquiv */ }
+namespace PropertyNames::Recipe { static char const * const primingSugarName = "primingSugarName"; /* previously kpropPrimSugName */ }
+namespace PropertyNames::Recipe { static char const * const recipeType = "recipeType"; }
+namespace PropertyNames::Recipe { static char const * const secondaryAge_days = "secondaryAge_days"; /* previously kpropSecAgeDays */ }
+namespace PropertyNames::Recipe { static char const * const secondaryTemp_c = "secondaryTemp_c"; /* previously kpropSecTemp */ }
 namespace PropertyNames::Recipe { static char const * const SRMColor = "SRMColor"; /* not stored */ }
+namespace PropertyNames::Recipe { static char const * const style = "style"; }
+namespace PropertyNames::Recipe { static char const * const styleId = "styleId"; }
+namespace PropertyNames::Recipe { static char const * const tasteNotes = "tasteNotes"; /* previously kpropTasteNotes */ }
+namespace PropertyNames::Recipe { static char const * const tasteRating = "tasteRating"; /* previously kpropTasteRating */ }
+namespace PropertyNames::Recipe { static char const * const tertiaryAge_days = "tertiaryAge_days"; /* previously kpropTertAgeDays */ }
+namespace PropertyNames::Recipe { static char const * const tertiaryTemp_c = "tertiaryTemp_c"; /* previously kpropTertTemp */ }
+namespace PropertyNames::Recipe { static char const * const type = "type"; /* previously kpropType */ }
+namespace PropertyNames::Recipe { static char const * const wortFromMash_l = "wortFromMash_l"; /* not stored */ }
 
 
 // Forward declarations.
-class Style;
-class Mash;
-class Fermentable;
 class Equipment;
-class Yeast;
-class Water;
+class Fermentable;
 class Instruction;
-class PreInstruction;
-class BrewNote;
+class Mash;
 class MashStep;
+class PreInstruction;
+class Style;
+class Water;
+class Yeast;
 
 
 /*!
@@ -110,8 +108,7 @@ class MashStep;
  *
  * \brief Model class for recipe records in the database.
  */
-class Recipe : public NamedEntity
-{
+class Recipe : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "recipes")
 
@@ -123,10 +120,6 @@ class Recipe : public NamedEntity
 public:
 
    virtual ~Recipe() {}
-
-   // NOTE: move to database?
-   //! \brief Retains only the name, but sets everything else to defaults.
-   void clear();
 
    //! \brief The type of recipe
    enum Type { Extract, PartialMash, AllGrain };
@@ -229,11 +222,16 @@ public:
 
    // Relational properties.
    //! \brief The mash.
-   Q_PROPERTY( Mash* mash READ mash WRITE setMash /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(Mash * mash   READ mash      WRITE setMash /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(int    mashId READ getMashId WRITE setMashId)
+
    //! \brief The equipment.
-   Q_PROPERTY( Equipment* equipment READ equipment WRITE setEquipment /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(Equipment * equipment   READ equipment      WRITE setEquipment /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(int         equipmentId READ getEquipmentId WRITE setEquipmentId)
    //! \brief The style.
-   Q_PROPERTY( Style* style READ style WRITE setStyle /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(Style * style   READ style      WRITE setStyle /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(int     styleId READ getStyleId WRITE setStyleId)
+
    // These QList properties should only emit changed() when their size changes, or when
    // one of their elements is replaced by another with a different key.
    //! \brief The brew notes.
@@ -271,6 +269,7 @@ private:
     * \brief Remove \c var from the recipe and return what was removed - ie \c var
     */
    NamedEntity * removeNamedEntity( NamedEntity *var);
+   template<class T> T * addNamedEntity(T * var);
 
 public:
    /*!
@@ -279,10 +278,7 @@ public:
     * We want callers to use this strongly-typed version because it makes the implementation of Undo/Redo easier (by
     * making add and remove more symmetric).
     */
-   template<class T> T * remove(T * var) {
-//      qDebug() << QString("%1").arg(Q_FUNC_INFO);
-      return static_cast<T *>(this->removeNamedEntity(var));
-   }
+   template<class T> T * remove(T * var);
 
    /*!
     * \brief Add a copy of \c var from the recipe and return the copy
@@ -309,8 +305,8 @@ public:
     */
    template<class T> T * add(T * var);
 
-   void removeBrewNote(BrewNote* var);
-   void removeInstruction( Instruction* ins );
+   //void removeBrewNote(BrewNote* var);
+   //void removeInstruction( Instruction* ins );
    /*!
     * \brief Swap instructions \c ins1 and \c ins2
     */
@@ -391,13 +387,19 @@ public:
    QList<BrewNote*> brewNotes() const;
 
    Mash* mash() const;
+   int getMashId() const;
    Equipment* equipment() const;
+   int getEquipmentId() const;
    Style* style();
+   int getStyleId() const;
 
    // Relational setters
    void setStyle(Style * style);
+   void setStyleId(int styleId);
    void setEquipment(Equipment * equipment);
+   void setEquipmentId(int equipmentId);
    void setMash(Mash * var);
+   void setMashId(int mashId);
 
    // Other junk.
    QVector<PreInstruction> mashInstructions(double timeRemaining, double totalWaterAdded_l, unsigned int size);
@@ -483,6 +485,7 @@ private:
    Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 public:
    Recipe(QString name, bool cache = true);
+   Recipe(NamedParameterBundle & namedParameterBundle);
 private:
    Recipe(Recipe const& other);
 
@@ -514,6 +517,9 @@ private:
    QString m_tasteNotes;
    double m_tasteRating;
    int m_style_id;
+
+   int mashId;
+   int equipmentId;
 
    // Calculated properties.
    double m_ABV_pct;
@@ -615,4 +621,4 @@ struct Recipe_ptr_equals
    }
 };
 */
-#endif /* _RECIPE_H */
+#endif

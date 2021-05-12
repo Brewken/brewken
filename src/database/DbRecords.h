@@ -85,6 +85,11 @@ public:
     *        (fermentable_in_recipe, hop_in_recipe, etc) to store info where potentially many other objects
     *        (Fermentable, Hop, etc) are associated with a single recipe.
     *
+    *        NB: What we are storing here is the junction table from the point of view of one class.  Eg
+    *        fermentable_in_recipe could be seen from the point of view of the Recipe or of the Fermentable.  In this
+    *        particular example, it will be configured from the point of view of the Recipe because the Recipe class
+    *        knows about which Hops it uses (but the Hop class does not know about which Recipes it is used in).
+    *
     *        We assume that each junction table contains only two columns of interest to us, both of which are foreign
     *        keys to other objects, and both of which are integers.  When passing the results to-and-from the object
     *        itself, we'll normally pass a list of integers.  However, if \c assumeMaxOneEntry is set to \c true, then
@@ -96,35 +101,35 @@ public:
     *        parent-child stuff.
     *
     * \param tableName
-    * \param thisPrimaryKeyColumnName
-    * \param otherPrimaryKeyColumnName
+    * \param thisPrimaryKeyColumn
+    * \param otherPrimaryKeyColumn
     * \param propertyName
     * \param assumeMaxOneEntry
-    * \param orderByColumnName  If not empty string, this is the column that orders the elements (eg instruction
+    * \param orderByColumn      If not empty string, this is the column that orders the elements (eg instruction
     *                           number for instructions_in_recipe).  Otherwise the elements are assumed to be an
     *                           unordered set (and pulled out in ID order by default).
     */
-   struct AssociativeEntity {
+   struct JunctionTable {
       char const * const tableName;
-      QString thisPrimaryKeyColumnName;
-      QString otherPrimaryKeyColumnName;
+      QString thisPrimaryKeyColumn;
+      QString otherPrimaryKeyColumn;
       char const * const propertyName;
       bool assumeMaxOneEntry = false;
-      QString orderByColumnName = QString{};
+      QString orderByColumn = QString{};
    };
 
-   typedef QVector<AssociativeEntity> AssociativeEntities;
+   typedef QVector<JunctionTable> JunctionTables;
 
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
     * \param tableName
     * \param fieldDefinitions  First in the list should be the primary key
-    * \param associativeEntities
+    * \param junctionTables
     */
    DbRecords(char const * const tableName,
              FieldDefinitions const & fieldDefinitions,
-             AssociativeEntities const & associativeEntities);
+             JunctionTables const & junctionTables);
 
    ~DbRecords();
 

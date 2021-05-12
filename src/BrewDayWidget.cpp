@@ -97,7 +97,7 @@ void BrewDayWidget::removeSelectedInstruction()
       return;
    listWidget->takeItem(row);
    repopulateListWidget();
-   recObs->removeInstruction(recObs->instructions()[row]);
+   recObs->remove(recObs->instructions()[row]);
 }
 
 void BrewDayWidget::pushInstructionUp()

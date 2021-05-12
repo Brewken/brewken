@@ -34,7 +34,7 @@ public:
     *        This is a convenience function to make the call to extract parameters concise.  (We don't want to use the
     *        operator[] of QHash because we want "parameter not found" to be an error.)
     */
-   QVariant operator()(char const * const parameterName);
+   QVariant operator()(char const * const parameterName) const;
 
    /**
     * \brief Get and store the value of a parameter that is required to be present
@@ -44,7 +44,7 @@ public:
     * \param parameterName
     * \param storeIn
     */
-   template <class T> void operator()(char const * const parameterName, T & storeIn);
+   template <class T> void operator()(char const * const parameterName, T & storeIn) const;
 };
 
 #endif

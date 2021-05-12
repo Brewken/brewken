@@ -1,5 +1,5 @@
 /**
- * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -769,7 +769,7 @@ void MainWindow::setupTriggers() {
       });
    });
    connect(actionBrewdayPreview, &QAction::triggered, [this]() {
-      brewDayScrollWidget->print(printer, RecipeFormatter::PREVIEW);
+      this->brewDayScrollWidget->print(printer, RecipeFormatter::PREVIEW);
    });
    connect(actionBrewdayHTML, &QAction::triggered, this, [this]() {
       exportHTML([this](QFile* file) {

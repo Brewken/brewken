@@ -35,8 +35,8 @@ private:
     */
    DbNamedEntityRecords(char const * const tableName,
                         FieldDefinitions const & fieldDefinitions,
-                        AssociativeEntities const & associativeEntities) :
-      DbRecords(tableName, fieldDefinitions, associativeEntities) {
+                        JunctionTables const & junctionTables) :
+      DbRecords(tableName, fieldDefinitions, junctionTables) {
       return;
    }
 

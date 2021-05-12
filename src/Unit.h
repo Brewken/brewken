@@ -20,6 +20,7 @@
  */
 #ifndef UNIT_H
 #define UNIT_H
+#pragma once
 
 #include <QMultiMap>
 #include <QObject>

@@ -104,6 +104,118 @@ namespace {
       QSqlDatabase & databaseConnection;
       bool committed;
    };
+
+   //
+   // Insert data from an object property to a junction table
+   //
+   // We may be inserting more than one row.  In theory we COULD combine all the rows into a single insert statement
+   // using either QSqlQuery::execBatch() or directly constructing one of the common (but technically non-standard)
+   // syntaxes, eg the following works on a lot of databases (including PostgreSQL and newer versions of SQLite) for
+   // up to 1000 rows):
+   //    INSERT INTO table (columnA, columnB, ..., columnN)
+   //         VALUES       (r1_valA, r1_valB, ..., r1_valN),
+   //                      (r2_valA, r2_valB, ..., r2_valN),
+   //                      ...,
+   //                      (rm_valA, rm_valB, ..., rm_valN);
+   // However, we DON"T do this.  The variable binding is more complicated/error-prone than when just doing
+   // individual inserts.  (Even with QSqlQuery::execBatch(), we'd have to loop to construct the lists of bind
+   // parameters.)  And there's likely no noticeable performance benefit given that we're typically inserting only
+   // a handful of rows at a time (eg all the Hops in a Recipe).
+   //
+   // So instead, we just do individual inserts.  Note that orderByColumn column is only used if specified, and
+   // that, if it is, we assume it's an integer type and that we create the values ourselves.
+   //
+   bool insertIntoJunctionTable(DbRecords::JunctionTable const & junctionTable,
+                                QObject const & object,
+                                QVariant const & primaryKey,
+                                QSqlDatabase & databaseConnection) {
+      qDebug() <<
+         Q_FUNC_INFO << "Writing property " << junctionTable.propertyName << " into junction table " <<
+         junctionTable.tableName;
+
+      // Construct the query
+      QString queryString{"INSERT INTO "};
+      QTextStream queryStringAsStream{&queryString};
+      queryStringAsStream << junctionTable.tableName << " (" <<
+         junctionTable.thisPrimaryKeyColumn << ", " <<
+         junctionTable.otherPrimaryKeyColumn;
+      if (junctionTable.orderByColumn != "") {
+         queryStringAsStream << ", " << junctionTable.orderByColumn;
+      }
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(junctionTable.thisPrimaryKeyColumn);
+      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(junctionTable.otherPrimaryKeyColumn);
+      QString const orderByBindName         = QString{":%1"}.arg(junctionTable.orderByColumn);
+      queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
+      if (junctionTable.orderByColumn != "") {
+         queryStringAsStream << ", " << orderByBindName;
+      }
+      queryStringAsStream << ");";
+
+      QSqlQuery sqlQuery{queryString, databaseConnection};
+
+      // Get the list of data to bind to it
+      QVariant bindValues = object.property(junctionTable.propertyName);
+      if (junctionTable.assumeMaxOneEntry) {
+         // If it's single entry only, just turn it into a one-item list so that the remaining processing is the same
+         bindValues = QVariant{QList<QVariant>{bindValues}};
+      }
+
+      // Now loop through and bind/run the insert query once for each item in the list
+      int itemNumber = 1;
+      QList<QVariant> list = bindValues.toList();
+      for (auto curValue : list ) {
+         sqlQuery.bindValue(thisPrimaryKeyBindName, QVariant{primaryKey});
+         sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
+         if (junctionTable.orderByColumn != "") {
+            sqlQuery.bindValue(orderByBindName, QVariant{itemNumber});
+         }
+         qDebug() <<
+            Q_FUNC_INFO << itemNumber << ": " << junctionTable.thisPrimaryKeyColumn << " #" << primaryKey <<
+            " <-> " << junctionTable.otherPrimaryKeyColumn << " #" << curValue.toInt();
+
+         if (!sqlQuery.exec()) {
+            qCritical() <<
+               Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+            return false;
+         }
+         ++itemNumber;
+      }
+
+      return true;
+   }
+
+   bool deleteFromJunctionTable(DbRecords::JunctionTable const & junctionTable,
+                                QVariant const & primaryKey,
+                                QSqlDatabase & databaseConnection) {
+
+      qDebug() <<
+         Q_FUNC_INFO << "Deleting property " << junctionTable.propertyName << " in junction table " <<
+         junctionTable.tableName;
+
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(junctionTable.thisPrimaryKeyColumn);
+
+      // Construct the DELETE query
+      QString queryString{"DELETE FROM "};
+      QTextStream queryStringAsStream{&queryString};
+      queryStringAsStream <<
+         junctionTable.tableName << " WHERE " << junctionTable.thisPrimaryKeyColumn << " = " <<
+         thisPrimaryKeyBindName << ";";
+
+      QSqlQuery sqlQuery{queryString, databaseConnection};
+
+      // Bind the primary key value
+      sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
+
+      // Run the query
+      if (!sqlQuery.exec()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return false;
+      }
+
+      return true;
+   }
+
 }
 
 // This private implementation class holds all private non-virtual members of BeerXML
@@ -115,9 +227,9 @@ public:
     */
    impl(char const * const tableName,
         FieldDefinitions const & fieldDefinitions,
-        AssociativeEntities const & associativeEntities) : tableName{tableName},
+        JunctionTables const & junctionTables) : tableName{tableName},
                                                            fieldDefinitions{fieldDefinitions},
-                                                           associativeEntities{associativeEntities},
+                                                           junctionTables{junctionTables},
                                                            allObjects{} {
       return;
    }
@@ -159,15 +271,15 @@ public:
 
    char const * const tableName;
    FieldDefinitions const & fieldDefinitions;
-   AssociativeEntities const & associativeEntities;
+   JunctionTables const & junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
 };
 
 
 DbRecords::DbRecords(char const * const tableName,
                      FieldDefinitions const & fieldDefinitions,
-                     AssociativeEntities const & associativeEntities) :
-   pimpl{ new impl{tableName, fieldDefinitions, associativeEntities} } {
+                     JunctionTables const & junctionTables) :
+   pimpl{ new impl{tableName, fieldDefinitions, junctionTables} } {
    return;
 }
 
@@ -345,10 +457,10 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    // optimising every single SQL query (because the amount of data in the DB is not enormous), we prefer the
    // simplicity of separate queries.
    //
-   for (auto const & associativeEntity : this->pimpl->associativeEntities) {
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
       qDebug() <<
-         Q_FUNC_INFO << "Reading junction table " << associativeEntity.tableName << " into " <<
-         associativeEntity.propertyName;
+         Q_FUNC_INFO << "Reading junction table " << junctionTable.tableName << " into " <<
+         junctionTable.propertyName;
 
       //
       // Order first by the object we're adding the other IDs to, then order either by the other IDs or by another
@@ -356,14 +468,14 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       //
       queryString = "SELECT ";
       queryStringAsStream <<
-         associativeEntity.thisPrimaryKeyColumnName << ", " <<
-         associativeEntity.otherPrimaryKeyColumnName <<
-         " FROM " << associativeEntity.tableName <<
-         " ORDER BY " << associativeEntity.thisPrimaryKeyColumnName << ", ";
-      if (associativeEntity.orderByColumnName != "") {
-         queryStringAsStream << associativeEntity.orderByColumnName;
+         junctionTable.thisPrimaryKeyColumn << ", " <<
+         junctionTable.otherPrimaryKeyColumn <<
+         " FROM " << junctionTable.tableName <<
+         " ORDER BY " << junctionTable.thisPrimaryKeyColumn << ", ";
+      if (junctionTable.orderByColumn != "") {
+         queryStringAsStream << junctionTable.orderByColumn;
       } else {
-         queryStringAsStream << associativeEntity.otherPrimaryKeyColumnName;
+         queryStringAsStream << junctionTable.otherPrimaryKeyColumn;
       }
       queryStringAsStream << ";";
       sqlQuery = QSqlQuery(queryString, databaseConnection);
@@ -380,8 +492,8 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       //
       QMultiHash<int, QVariant> thisToOtherKeys;
       while (sqlQuery.next()) {
-         thisToOtherKeys.insert(sqlQuery.value(associativeEntity.thisPrimaryKeyColumnName).toInt(),
-                                sqlQuery.value(associativeEntity.otherPrimaryKeyColumnName));
+         thisToOtherKeys.insert(sqlQuery.value(junctionTable.thisPrimaryKeyColumn).toInt(),
+                                sqlQuery.value(junctionTable.otherPrimaryKeyColumn));
       }
 
       //
@@ -394,7 +506,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          //
          if (!this->contains(currentKey)) {
             qCritical() <<
-               Q_FUNC_INFO << "Ignoring record in table " << associativeEntity.tableName <<
+               Q_FUNC_INFO << "Ignoring record in table " << junctionTable.tableName <<
                " for non-existent object with primary key " << currentKey;
             continue;
          }
@@ -406,17 +518,17 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          // there is at most one "other" per "this", then we'll pass just the first one we get back for each "this".
          //
          auto otherKeys = thisToOtherKeys.values(currentKey);
-         if (associativeEntity.assumeMaxOneEntry) {
+         if (junctionTable.assumeMaxOneEntry) {
             qDebug() <<
-               Q_FUNC_INFO << "Object #" << currentKey << ", " << associativeEntity.propertyName << "=" <<
+               Q_FUNC_INFO << "Object #" << currentKey << ", " << junctionTable.propertyName << "=" <<
                otherKeys.first().toInt();
-            currentObject->setProperty(associativeEntity.propertyName, otherKeys.first());
+            currentObject->setProperty(junctionTable.propertyName, otherKeys.first());
          } else {
             //
             // The setProperty function always takes a QVariant, so we need to create one from the QList<QVariant> we
             // have.
             //
-            currentObject->setProperty(associativeEntity.propertyName, QVariant{otherKeys});
+            currentObject->setProperty(junctionTable.propertyName, QVariant{otherKeys});
          }
       }
    }
@@ -434,6 +546,8 @@ std::shared_ptr<QObject> DbRecords::getById(int id) {
 }
 
 void DbRecords::insert(std::shared_ptr<QObject> object) {
+   /// .:TBD:. Do we want parameter to be shared pointer or just a const reference?
+
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
@@ -525,73 +639,8 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    //
    // Now save data to the junction tables
    //
-   // We may be inserting more than one row.  In theory we COULD combine all the rows into a single insert statement
-   // using either QSqlQuery::execBatch() or directly constructing one of the common (but technically non-standard)
-   // syntaxes, eg the following works on a lot of databases (including PostgreSQL and newer versions of SQLite) for
-   // up to 1000 rows):
-   //    INSERT INTO table (columnA, columnB, ..., columnN)
-   //         VALUES       (r1_valA, r1_valB, ..., r1_valN),
-   //                      (r2_valA, r2_valB, ..., r2_valN),
-   //                      ...,
-   //                      (rm_valA, rm_valB, ..., rm_valN);
-   // However, we DON"T do this.  The variable binding is more complicated/error-prone than when just doing
-   // individual inserts.  (Even with QSqlQuery::execBatch(), we'd have to loop to construct the lists of bind
-   // parameters.)  And there's likely no noticeable performance benefit given that we're typically inserting only
-   // a handful of rows at a time (eg all the Hops in a Recipe).
-   //
-   // So instead, we just do individual inserts.  Note that orderByColumnName column is only used if specified, and
-   // that, if it is, we assume it's an integer type and that we create the values ourselves.
-   //
-   for (auto const & associativeEntity : this->pimpl->associativeEntities) {
-      qDebug() <<
-         Q_FUNC_INFO << "Writing property " << associativeEntity.propertyName << " into junction table " <<
-         associativeEntity.tableName;
-
-      // Construct the query
-      queryString = "INSERT INTO ";
-      queryStringAsStream << associativeEntity.tableName << " (" <<
-         associativeEntity.thisPrimaryKeyColumnName << ", " <<
-         associativeEntity.otherPrimaryKeyColumnName;
-      if (associativeEntity.orderByColumnName != "") {
-         queryStringAsStream << ", " << associativeEntity.orderByColumnName;
-      }
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(associativeEntity.thisPrimaryKeyColumnName);
-      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(associativeEntity.otherPrimaryKeyColumnName);
-      QString const orderByBindName         = QString{":%1"}.arg(associativeEntity.orderByColumnName);
-      queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
-      if (associativeEntity.orderByColumnName != "") {
-         queryStringAsStream << ", " << orderByBindName;
-      }
-      queryStringAsStream << ");";
-      sqlQuery = QSqlQuery(queryString, databaseConnection);
-
-      // Get the list of data to bind to it
-      QVariant bindValues = object->property(associativeEntity.propertyName);
-      if (associativeEntity.assumeMaxOneEntry) {
-         // If it's single entry only, just turn it into a one-item list so that the remaining processing is the same
-         bindValues = QVariant{QList<QVariant>{bindValues}};
-      }
-
-      // Now loop through and bind/run the insert query once for each item in the list
-      int itemNumber = 1;
-      QList<QVariant> list = bindValues.toList();
-      for (auto curValue : list ) {
-         sqlQuery.bindValue(thisPrimaryKeyBindName, QVariant{primaryKey});
-         sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
-         if (associativeEntity.orderByColumnName != "") {
-            sqlQuery.bindValue(orderByBindName, QVariant{itemNumber});
-         }
-         qDebug() <<
-            Q_FUNC_INFO << itemNumber << ": " << associativeEntity.thisPrimaryKeyColumnName << " #" << primaryKey <<
-            " <-> " << associativeEntity.otherPrimaryKeyColumnName << " #" << curValue.toInt();
-
-         if (!sqlQuery.exec()) {
-            qCritical() <<
-               Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
-            return;
-         }
-         ++itemNumber;
-      }
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      insertIntoJunctionTable(junctionTable, *object, primaryKey, databaseConnection);
    }
 
    //
@@ -672,12 +721,13 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    }
 
    //
-   // Now update data in the junction tables .:TODO:.
+   // Now update data in the junction tables
    //
-   for (auto const & associativeEntity : this->pimpl->associativeEntities) {
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
       qDebug() <<
-         Q_FUNC_INFO << "Updating property " << associativeEntity.propertyName << " in junction table " <<
-         associativeEntity.tableName;
+         Q_FUNC_INFO << "Updating property " << junctionTable.propertyName << " in junction table " <<
+         junctionTable.tableName;
+
       //
       // The simplest thing to do with each junction table is to blat any rows relating to the current object and then
       // write out data based on the current property values.  This may often mean we're deleting rows and rewriting
@@ -685,28 +735,12 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
       // optimising (eg read what's in the DB, compare with what's in the object property, work out what deletes,
       // inserts and updates are needed to sync them, etc.
       //
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(associativeEntity.thisPrimaryKeyColumnName);
-
-      // Construct the DELETE query
-      queryString = "DELETE FROM ";
-      queryStringAsStream <<
-         associativeEntity.tableName << " WHERE " << associativeEntity.thisPrimaryKeyColumnName << " = " <<
-         thisPrimaryKeyBindName << ";";
-      sqlQuery = QSqlQuery(queryString, databaseConnection);
-
-      // Bind the primary key value
-      sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
-
-      // Run the query
-      if (!sqlQuery.exec()) {
-         qCritical() <<
-            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+      if (!deleteFromJunctionTable(junctionTable, primaryKey, databaseConnection)) {
          return;
       }
-
-      // Now insert the current data from the object
-
-//////////////////////////////////      ... <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      if (!insertIntoJunctionTable(junctionTable, *object, primaryKey, databaseConnection)) {
+         return;
+      }
    }
 
    dbTransaction.commit();
@@ -719,68 +753,94 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
    DbTransaction dbTransaction{databaseConnection};
 
-   //
-   // Check whether property is actually stored in a junction table .:TODO:.
-   //
-
-
-   //
-   // Construct the SQL, which will be of the form
-   //
-   //    UPDATE tablename
-   //    SET columnName = :columnName
-   //    WHERE primaryKeyColumn = :primaryKeyColumn;
-   //
-   QString queryString{"UPDATE "};
-   QTextStream queryStringAsStream{&queryString};
-   queryStringAsStream << this->pimpl->tableName << " SET ";
-
    // By convention the first field is the primary key
+   // We'll need some of this info even if it's a junction table property we're updating
    QString const &    primaryKeyColumn   {this->pimpl->fieldDefinitions[0].columnName};
    char const * const primaryKeyProperty {this->pimpl->fieldDefinitions[0].propertyName};
-   QVariant const     primaryKey         {object->property(primaryKeyProperty)};
+   QVariant const primaryKey{object->property(primaryKeyProperty)};
 
+   //
+   // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
+   //
    auto matchingFieldDefn = std::find_if(
       this->pimpl->fieldDefinitions.begin(),
       this->pimpl->fieldDefinitions.end(),
       [propertyToUpdateInDb](FieldDefinition const & fd) {return 0 == std::strcmp(fd.propertyName, propertyToUpdateInDb);}
    );
 
-   // It's a coding error if the property isn't one we store in the DB for this type of object
-   Q_ASSERT(matchingFieldDefn != this->pimpl->fieldDefinitions.end());
-   QString const & columnToUpdateInDb = matchingFieldDefn->columnName;
+   if (matchingFieldDefn != this->pimpl->fieldDefinitions.end()) {
+      //
+      // We're updating a simple property
+      //
+      // Construct the SQL, which will be of the form
+      //
+      //    UPDATE tablename
+      //    SET columnName = :columnName
+      //    WHERE primaryKeyColumn = :primaryKeyColumn;
+      //
+      QString queryString{"UPDATE "};
+      QTextStream queryStringAsStream{&queryString};
+      queryStringAsStream << this->pimpl->tableName << " SET ";
 
-   queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
-   queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
 
-   //
-   // Bind the values
-   //
-   QSqlQuery sqlQuery{queryString, databaseConnection};
-   QVariant propertyBindValue{object->property(propertyToUpdateInDb)};
-   // Enums need to be converted to strings first
-   auto fieldDefn = std::find_if(
-      this->pimpl->fieldDefinitions.begin(),
-      this->pimpl->fieldDefinitions.end(),
-      [propertyToUpdateInDb](FieldDefinition const & fd){return propertyToUpdateInDb == fd.propertyName;}
-   );
-   // It's a coding error if we're trying to update a property that's not in the field definitions
-   Q_ASSERT(fieldDefn != this->pimpl->fieldDefinitions.end());
-   if (fieldDefn->fieldType == DbRecords::Enum) {
-      propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
+      QString const & columnToUpdateInDb = matchingFieldDefn->columnName;
+
+      queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
+      queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
+
+      //
+      // Bind the values
+      //
+      QSqlQuery sqlQuery{queryString, databaseConnection};
+      QVariant propertyBindValue{object->property(propertyToUpdateInDb)};
+      // Enums need to be converted to strings first
+      auto fieldDefn = std::find_if(
+         this->pimpl->fieldDefinitions.begin(),
+         this->pimpl->fieldDefinitions.end(),
+         [propertyToUpdateInDb](FieldDefinition const & fd){return propertyToUpdateInDb == fd.propertyName;}
+      );
+      // It's a coding error if we're trying to update a property that's not in the field definitions
+      Q_ASSERT(fieldDefn != this->pimpl->fieldDefinitions.end());
+      if (fieldDefn->fieldType == DbRecords::Enum) {
+         propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
+      }
+      sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
+      sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), primaryKey);
+
+      //
+      // Run the query
+      //
+      if (!sqlQuery.exec()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return;
+      }
+   } else {
+      //
+      // The property we've been given isn't a simple property, so look for it in the ones we store in junction tables
+      //
+      auto matchingJunctionTableDefn = std::find_if(
+         this->pimpl->junctionTables.begin(),
+         this->pimpl->junctionTables.end(),
+         [propertyToUpdateInDb](JunctionTable const & jt) {return 0 == std::strcmp(jt.propertyName, propertyToUpdateInDb);}
+      );
+
+      // It's a coding error if we couldn't find the property either as a simple field or an associative entity
+      Q_ASSERT(matchingJunctionTableDefn != this->pimpl->junctionTables.end());
+
+      //
+      // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
+      // write out data based on the current property values.
+      //
+      if (!deleteFromJunctionTable(*matchingJunctionTableDefn, primaryKey, databaseConnection)) {
+         return;
+      }
+      if (!insertIntoJunctionTable(*matchingJunctionTableDefn, *object, primaryKey, databaseConnection)) {
+         return;
+      }
    }
-   sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
-   sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), primaryKey);
 
-   //
-   // Run the query
-   //
-   if (!sqlQuery.exec()) {
-      qCritical() <<
-         Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
-      return;
-   }
-
+   // If we made it this far then everything worked and we can commit the transaction
    dbTransaction.commit();
    return;
 }
@@ -813,9 +873,10 @@ void DbRecords::hardDelete(int id) {
    //
    // Bind the value
    //
+   QVariant primaryKey{id};
    QSqlQuery sqlQuery{queryString, databaseConnection};
    QString bindName = QString{":%1"}.arg(primaryKeyColumn);
-   sqlQuery.bindValue(bindName, QVariant(id));
+   sqlQuery.bindValue(bindName, primaryKey);
 
    //
    // Run the query
@@ -827,9 +888,13 @@ void DbRecords::hardDelete(int id) {
    }
 
    //
-   // Now remove data in the junction tables .:TODO:.
+   // Now remove data in the junction tables
    //
-
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      if (!deleteFromJunctionTable(junctionTable, primaryKey, databaseConnection)) {
+         return;
+      }
+   }
 
    //
    // Remove the object from the cache

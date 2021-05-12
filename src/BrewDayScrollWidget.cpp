@@ -165,11 +165,11 @@ void BrewDayScrollWidget::print(QPrinter *mainPrinter,
 
    pDoc += "</body></html>";
 
-   doc->setHtml(pDoc);
-   if ( action == PREVIEW )
-      doc->show();
-   else if ( action == HTML )
-   {
+   this->doc->setHtml(pDoc);
+   if ( action == PREVIEW ) {
+      this->doc->adjustSize();
+      this->doc->show();
+   } else if ( action == HTML ) {
       QTextStream out(outFile);
       out << pDoc;
       outFile->close();
