@@ -1034,6 +1034,42 @@ void Recipe::setMash(Mash * var) {
 
 void Recipe::setMashId(int id) {
    this->mashId = id;
+   return;
+}
+
+void Recipe::setFermentableIds(QVector<int> fermentableIds) {
+   this->fermentableIds = fermentableIds;
+   return;
+}
+
+void Recipe::setHopIds(QVector<int> hopIds) {
+   this->hopIds = hopIds;
+   return;
+}
+
+void Recipe::setInstructionIds(QVector<int> instructionIds) {
+   this->instructionIds = instructionIds;
+   return;
+}
+
+void Recipe::setMiscIds(QVector<int> miscIds) {
+   this->miscIds = miscIds;
+   return;
+}
+
+void Recipe::setSaltIds(QVector<int> saltIds) {
+   this->saltIds = saltIds;
+   return;
+}
+
+void Recipe::setWaterIds(QVector<int> waterIds) {
+   this->waterIds = waterIds;
+   return;
+}
+
+void Recipe::setYeastIds(QVector<int> yeastIds) {
+   this->yeastIds = yeastIds;
+   return;
 }
 
 //==============================="SET" METHODS=================================
@@ -1604,13 +1640,20 @@ Equipment* Recipe::equipment() const { return Database::instance().equipment(thi
 int Recipe::getEquipmentId() const { return this->equipmentId; }
 
 QList<Instruction*> Recipe::instructions() const { return Database::instance().instructions(this); }
+QVector<int> Recipe::getInstructionIds() const { return this->instructionIds; }
 QList<BrewNote*> Recipe::brewNotes() const { return Database::instance().brewNotes(this); }
 QList<Hop*> Recipe::hops() const { return Database::instance().hops(this); }
+QVector<int> Recipe::getHopIds() const { return this->hopIds; }
 QList<Fermentable*> Recipe::fermentables() const { return Database::instance().fermentables(this); }
+QVector<int> Recipe::getFermentableIds() const { return this->fermentableIds; }
 QList<Misc*> Recipe::miscs() const { return Database::instance().miscs(this); }
+QVector<int> Recipe::getMiscIds() const { return this->miscIds; }
 QList<Yeast*> Recipe::yeasts() const { return Database::instance().yeasts(this); }
+QVector<int> Recipe::getYeastIds() const { return this->yeastIds; }
 QList<Water*> Recipe::waters() const { return Database::instance().waters(this); }
+QVector<int> Recipe::getWaterIds() const { return this->waterIds; }
 QList<Salt*> Recipe::salts() const { return Database::instance().salts(this); }
+QVector<int> Recipe::getSaltIds() const { return this->saltIds; }
 
 //==============================Getters===================================
 Recipe::Type Recipe::recipeType() const {

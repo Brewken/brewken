@@ -27,8 +27,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-class MainWindow;
-
 #include <memory> // For PImpl
 
 #include <QWidget>
@@ -263,7 +261,7 @@ public slots:
     * Asks the user to select a file and then calls the @p functor with the
     * selected file.
     */
-   void exportHTML(std::function<void(QFile* file)> functor);
+   void exportHtml(std::function<void(QFile* file)> functor);
 
    //! \brief draws a context menu, the exact nature of which depends on which
    //tree is focused

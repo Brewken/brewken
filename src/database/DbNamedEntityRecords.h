@@ -31,12 +31,12 @@ private:
     * \brief Constructor sets up mappings but does not read in data from DB.  Private because singleton.
     *
     * \param tableName
-    * \param fieldDefinitions  First in the list should be the primary key
+    * \param fieldSimpleDefns  First in the list should be the primary key
     */
    DbNamedEntityRecords(char const * const tableName,
-                        FieldDefinitions const & fieldDefinitions,
-                        JunctionTables const & junctionTables) :
-      DbRecords(tableName, fieldDefinitions, junctionTables) {
+                        FieldSimpleDefns const & fieldSimpleDefns,
+                        FieldManyToManyDefns const & fieldManyToManyDefns) :
+      DbRecords(tableName, fieldSimpleDefns, fieldManyToManyDefns) {
       return;
    }
 

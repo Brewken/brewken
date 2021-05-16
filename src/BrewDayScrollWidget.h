@@ -1,7 +1,8 @@
 /**
- * BrewDayScrollWidget.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BrewDayScrollWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mark de Wever <koraq@xs4all.nl>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -18,17 +19,17 @@
  */
 #ifndef BREWDAYSCROLLWIDGET_H
 #define BREWDAYSCROLLWIDGET_H
-
-class BrewDayScrollWidget;
+#pragma once
 
 #include "ui_brewDayScrollWidget.h"
-#include <QWidget>
-#include <QSize>
-#include <QTextBrowser>
-#include <QPrinter>
-#include <QPrintDialog>
+
 #include <QFile>
+#include <QPrinter>
+#include <QSize>
+#include <QWidget>
+
 #include "model/Recipe.h"
+#include "BtPrintPreview.h"
 
 /*!
  * \class BrewDayScrollWidget
@@ -36,24 +37,34 @@ class BrewDayScrollWidget;
  *
  * \brief Widget that displays the brewday info in a scrollable area.
  */
-class BrewDayScrollWidget : public QWidget, public Ui::brewDayScrollWidget
-{
+class BrewDayScrollWidget : public QWidget, public Ui::brewDayScrollWidget {
    Q_OBJECT
 public:
-   enum { PRINT, PREVIEW, HTML, NUMACTIONS };
-
    BrewDayScrollWidget(QWidget* parent=nullptr);
-   virtual ~BrewDayScrollWidget() {}
+   virtual ~BrewDayScrollWidget() = default;
+
    //! \brief Sets the observed recipe.
    void setRecipe(Recipe* rec);
 
    virtual QSize sizeHint() const; // From QWidget
 
    /*!
-    *  \brief Prints a paper version of the info in this dialog.
-    *  Should be moved to its own view class.
+    * \brief Show the print preview
     */
-   void print(QPrinter* mainPrinter, int action = PRINT, QFile* outFile = nullptr);
+   void printPreview();
+
+   /*!
+    * \brief Print
+    * \param printer The printer to print to, should not be @c NULL
+    */
+   void print(QPrinter* printer);
+
+   /*!
+    * \brief Export to an HTML document
+    * \param file The output file opened for writing
+    */
+   void exportHtml(QFile* file);
+
 
 public slots:
    //! Automatically generate a new list of instructions.
@@ -83,19 +94,18 @@ private:
    QString buildTitleTable(bool includeImage = true);
    QString buildInstructionTable();
    QString buildFooterTable();
+   void buildHtml(bool includeImage);
 
    Recipe* recObs;
-   QPrinter* printer;
-   QTextBrowser* doc;
+   BtPrintPreview* btPrintPreview;
    //! Internal list of recipe instructions, always sorted by instruction number.
    QList<Instruction*> recIns;
 
    QString cssName;
 
 private slots:
-   bool loadComplete(bool ok);
    void showInstruction(int insNdx);
    void saveInstruction();
 };
 
-#endif  /* BREWDAYSCROLLWIDGET_H */
+#endif

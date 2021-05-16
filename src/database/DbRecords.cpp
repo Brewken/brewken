@@ -32,7 +32,7 @@ namespace {
     * Given a (QVariant-wrapped) string value pulled out of the DB for an enum, look up and return its internal
     * numerical enum equivalent
     */
-   int stringToEnum(DbRecords::FieldDefinition const & fieldDefn, QVariant const & valueFromDb) {
+   int stringToEnum(DbRecords::FieldSimpleDefn const & fieldDefn, QVariant const & valueFromDb) {
       // It's a coding error if we called this function for a non-enum field
       Q_ASSERT(fieldDefn.fieldType == DbRecords::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
@@ -58,7 +58,7 @@ namespace {
     * Given a (QVariant-wrapped) int value of a native enum, look up and return the corresponding string we use to
     * store it in the DB
     */
-   QString enumToString(DbRecords::FieldDefinition const & fieldDefn, QVariant const & propertyValue) {
+   QString enumToString(DbRecords::FieldSimpleDefn const & fieldDefn, QVariant const & propertyValue) {
       // It's a coding error if we called this function for a non-enum field
       Q_ASSERT(fieldDefn.fieldType == DbRecords::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
@@ -125,28 +125,28 @@ namespace {
    // So instead, we just do individual inserts.  Note that orderByColumn column is only used if specified, and
    // that, if it is, we assume it's an integer type and that we create the values ourselves.
    //
-   bool insertIntoJunctionTable(DbRecords::JunctionTable const & junctionTable,
+   bool insertIntoFieldManyToManyDefn(DbRecords::FieldManyToManyDefn const & fieldManyToManyDefn,
                                 QObject const & object,
                                 QVariant const & primaryKey,
                                 QSqlDatabase & databaseConnection) {
       qDebug() <<
-         Q_FUNC_INFO << "Writing property " << junctionTable.propertyName << " into junction table " <<
-         junctionTable.tableName;
+         Q_FUNC_INFO << "Writing property " << fieldManyToManyDefn.propertyName << " into junction table " <<
+         fieldManyToManyDefn.tableName;
 
       // Construct the query
       QString queryString{"INSERT INTO "};
       QTextStream queryStringAsStream{&queryString};
-      queryStringAsStream << junctionTable.tableName << " (" <<
-         junctionTable.thisPrimaryKeyColumn << ", " <<
-         junctionTable.otherPrimaryKeyColumn;
-      if (junctionTable.orderByColumn != "") {
-         queryStringAsStream << ", " << junctionTable.orderByColumn;
+      queryStringAsStream << fieldManyToManyDefn.tableName << " (" <<
+         fieldManyToManyDefn.thisPrimaryKeyColumn << ", " <<
+         fieldManyToManyDefn.otherPrimaryKeyColumn;
+      if (fieldManyToManyDefn.orderByColumn != "") {
+         queryStringAsStream << ", " << fieldManyToManyDefn.orderByColumn;
       }
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(junctionTable.thisPrimaryKeyColumn);
-      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(junctionTable.otherPrimaryKeyColumn);
-      QString const orderByBindName         = QString{":%1"}.arg(junctionTable.orderByColumn);
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(fieldManyToManyDefn.thisPrimaryKeyColumn);
+      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(fieldManyToManyDefn.otherPrimaryKeyColumn);
+      QString const orderByBindName         = QString{":%1"}.arg(fieldManyToManyDefn.orderByColumn);
       queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
-      if (junctionTable.orderByColumn != "") {
+      if (fieldManyToManyDefn.orderByColumn != "") {
          queryStringAsStream << ", " << orderByBindName;
       }
       queryStringAsStream << ");";
@@ -154,8 +154,8 @@ namespace {
       QSqlQuery sqlQuery{queryString, databaseConnection};
 
       // Get the list of data to bind to it
-      QVariant bindValues = object.property(junctionTable.propertyName);
-      if (junctionTable.assumeMaxOneEntry) {
+      QVariant bindValues = object.property(fieldManyToManyDefn.propertyName);
+      if (fieldManyToManyDefn.assumeMaxOneEntry) {
          // If it's single entry only, just turn it into a one-item list so that the remaining processing is the same
          bindValues = QVariant{QList<QVariant>{bindValues}};
       }
@@ -166,12 +166,12 @@ namespace {
       for (auto curValue : list ) {
          sqlQuery.bindValue(thisPrimaryKeyBindName, QVariant{primaryKey});
          sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
-         if (junctionTable.orderByColumn != "") {
+         if (fieldManyToManyDefn.orderByColumn != "") {
             sqlQuery.bindValue(orderByBindName, QVariant{itemNumber});
          }
          qDebug() <<
-            Q_FUNC_INFO << itemNumber << ": " << junctionTable.thisPrimaryKeyColumn << " #" << primaryKey <<
-            " <-> " << junctionTable.otherPrimaryKeyColumn << " #" << curValue.toInt();
+            Q_FUNC_INFO << itemNumber << ": " << fieldManyToManyDefn.thisPrimaryKeyColumn << " #" << primaryKey <<
+            " <-> " << fieldManyToManyDefn.otherPrimaryKeyColumn << " #" << curValue.toInt();
 
          if (!sqlQuery.exec()) {
             qCritical() <<
@@ -184,21 +184,21 @@ namespace {
       return true;
    }
 
-   bool deleteFromJunctionTable(DbRecords::JunctionTable const & junctionTable,
+   bool deleteFromFieldManyToManyDefn(DbRecords::FieldManyToManyDefn const & fieldManyToManyDefn,
                                 QVariant const & primaryKey,
                                 QSqlDatabase & databaseConnection) {
 
       qDebug() <<
-         Q_FUNC_INFO << "Deleting property " << junctionTable.propertyName << " in junction table " <<
-         junctionTable.tableName;
+         Q_FUNC_INFO << "Deleting property " << fieldManyToManyDefn.propertyName << " in junction table " <<
+         fieldManyToManyDefn.tableName;
 
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(junctionTable.thisPrimaryKeyColumn);
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(fieldManyToManyDefn.thisPrimaryKeyColumn);
 
       // Construct the DELETE query
       QString queryString{"DELETE FROM "};
       QTextStream queryStringAsStream{&queryString};
       queryStringAsStream <<
-         junctionTable.tableName << " WHERE " << junctionTable.thisPrimaryKeyColumn << " = " <<
+         fieldManyToManyDefn.tableName << " WHERE " << fieldManyToManyDefn.thisPrimaryKeyColumn << " = " <<
          thisPrimaryKeyBindName << ";";
 
       QSqlQuery sqlQuery{queryString, databaseConnection};
@@ -218,7 +218,7 @@ namespace {
 
 }
 
-// This private implementation class holds all private non-virtual members of BeerXML
+// This private implementation class holds all private non-virtual members of DbRecords
 class DbRecords::impl {
 public:
 
@@ -226,10 +226,10 @@ public:
     * Constructor
     */
    impl(char const * const tableName,
-        FieldDefinitions const & fieldDefinitions,
-        JunctionTables const & junctionTables) : tableName{tableName},
-                                                           fieldDefinitions{fieldDefinitions},
-                                                           junctionTables{junctionTables},
+        FieldSimpleDefns const & fieldSimpleDefns,
+        FieldManyToManyDefns const & fieldManyToManyDefns) : tableName{tableName},
+                                                           fieldSimpleDefns{fieldSimpleDefns},
+                                                           fieldManyToManyDefns{fieldManyToManyDefns},
                                                            allObjects{} {
       return;
    }
@@ -241,7 +241,7 @@ public:
 
    /**
     * \brief Append, to the supplied query string we are constructing, a comma-separated list of all the column names
-    *        for the table, in the order of this->fieldDefinitions
+    *        for the table, in the order of this->fieldSimpleDefns
     *
     * \param queryStringAsStream
     * \param includePrimaryKey  Usually \c true for SELECT and UPDATE, and \c false for INSERT
@@ -250,7 +250,7 @@ public:
    void appendColumNames(QTextStream & queryStringAsStream, bool includePrimaryKey, bool prependColons) {
       bool skippedPrimaryKey = false;
       bool firstFieldOutput = false;
-      for (auto const & fieldDefn: this->fieldDefinitions) {
+      for (auto const & fieldDefn: this->fieldSimpleDefns) {
          if (!includePrimaryKey && !skippedPrimaryKey) {
             // By convention the first field is the primary key
             skippedPrimaryKey = true;
@@ -270,16 +270,16 @@ public:
    }
 
    char const * const tableName;
-   FieldDefinitions const & fieldDefinitions;
-   JunctionTables const & junctionTables;
+   FieldSimpleDefns const & fieldSimpleDefns;
+   FieldManyToManyDefns const & fieldManyToManyDefns;
    QHash<int, std::shared_ptr<QObject> > allObjects;
 };
 
 
 DbRecords::DbRecords(char const * const tableName,
-                     FieldDefinitions const & fieldDefinitions,
-                     JunctionTables const & junctionTables) :
-   pimpl{ new impl{tableName, fieldDefinitions, junctionTables} } {
+                     FieldSimpleDefns const & fieldSimpleDefns,
+                     FieldManyToManyDefns const & fieldManyToManyDefns) :
+   pimpl{ new impl{tableName, fieldSimpleDefns, fieldManyToManyDefns} } {
    return;
 }
 
@@ -293,7 +293,7 @@ void DbRecords::createTables() {
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName << " (\n";
    bool firstFieldOutput = false;
-   for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
+   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
       if (!firstFieldOutput) {
          firstFieldOutput = true;
       } else {
@@ -323,6 +323,10 @@ void DbRecords::createTables() {
          default:
             break;
       }
+
+      //
+      // .:TODO:. Primary key is "id INTEGER PRIMARY KEY autoincrement"
+      //
    }
    queryStringAsStream << "\n);";
 
@@ -413,7 +417,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       //     allow a wider range of types.
       //
       bool readPrimaryKey = false;
-      for (auto const & fieldDefn : this->pimpl->fieldDefinitions) {
+      for (auto const & fieldDefn : this->pimpl->fieldSimpleDefns) {
          //qDebug() << Q_FUNC_INFO << "Reading " << fieldDefn.columnName << " into " << fieldDefn.propertyName;
          QVariant fieldValue = sqlQuery.value(fieldDefn.columnName);
          if (!fieldValue.isValid()) {
@@ -447,7 +451,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       // It's a coding error if we have two objects with the same primary key
       Q_ASSERT(!this->pimpl->allObjects.contains(primaryKey));
       this->pimpl->allObjects.insert(primaryKey, object);
-      qDebug() << Q_FUNC_INFO << "Stored #" << primaryKey;
+      qDebug() << Q_FUNC_INFO << "Stored " << object->metaObject()->className() << " #" << primaryKey;
    }
 
    //
@@ -457,10 +461,10 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    // optimising every single SQL query (because the amount of data in the DB is not enormous), we prefer the
    // simplicity of separate queries.
    //
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
+   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
       qDebug() <<
-         Q_FUNC_INFO << "Reading junction table " << junctionTable.tableName << " into " <<
-         junctionTable.propertyName;
+         Q_FUNC_INFO << "Reading junction table " << fieldManyToManyDefn.tableName << " into " <<
+         fieldManyToManyDefn.propertyName;
 
       //
       // Order first by the object we're adding the other IDs to, then order either by the other IDs or by another
@@ -468,14 +472,14 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       //
       queryString = "SELECT ";
       queryStringAsStream <<
-         junctionTable.thisPrimaryKeyColumn << ", " <<
-         junctionTable.otherPrimaryKeyColumn <<
-         " FROM " << junctionTable.tableName <<
-         " ORDER BY " << junctionTable.thisPrimaryKeyColumn << ", ";
-      if (junctionTable.orderByColumn != "") {
-         queryStringAsStream << junctionTable.orderByColumn;
+         fieldManyToManyDefn.thisPrimaryKeyColumn << ", " <<
+         fieldManyToManyDefn.otherPrimaryKeyColumn <<
+         " FROM " << fieldManyToManyDefn.tableName <<
+         " ORDER BY " << fieldManyToManyDefn.thisPrimaryKeyColumn << ", ";
+      if (fieldManyToManyDefn.orderByColumn != "") {
+         queryStringAsStream << fieldManyToManyDefn.orderByColumn;
       } else {
-         queryStringAsStream << junctionTable.otherPrimaryKeyColumn;
+         queryStringAsStream << fieldManyToManyDefn.otherPrimaryKeyColumn;
       }
       queryStringAsStream << ";";
       sqlQuery = QSqlQuery(queryString, databaseConnection);
@@ -492,8 +496,8 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
       //
       QMultiHash<int, QVariant> thisToOtherKeys;
       while (sqlQuery.next()) {
-         thisToOtherKeys.insert(sqlQuery.value(junctionTable.thisPrimaryKeyColumn).toInt(),
-                                sqlQuery.value(junctionTable.otherPrimaryKeyColumn));
+         thisToOtherKeys.insert(sqlQuery.value(fieldManyToManyDefn.thisPrimaryKeyColumn).toInt(),
+                                sqlQuery.value(fieldManyToManyDefn.otherPrimaryKeyColumn));
       }
 
       //
@@ -506,7 +510,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          //
          if (!this->contains(currentKey)) {
             qCritical() <<
-               Q_FUNC_INFO << "Ignoring record in table " << junctionTable.tableName <<
+               Q_FUNC_INFO << "Ignoring record in table " << fieldManyToManyDefn.tableName <<
                " for non-existent object with primary key " << currentKey;
             continue;
          }
@@ -518,18 +522,21 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          // there is at most one "other" per "this", then we'll pass just the first one we get back for each "this".
          //
          auto otherKeys = thisToOtherKeys.values(currentKey);
-         if (junctionTable.assumeMaxOneEntry) {
+         if (fieldManyToManyDefn.assumeMaxOneEntry) {
             qDebug() <<
-               Q_FUNC_INFO << "Object #" << currentKey << ", " << junctionTable.propertyName << "=" <<
-               otherKeys.first().toInt();
-            currentObject->setProperty(junctionTable.propertyName, otherKeys.first());
+               Q_FUNC_INFO << currentObject->metaObject()->className() << " #" << currentKey << ", " <<
+               fieldManyToManyDefn.propertyName << "=" << otherKeys.first().toInt();
+            currentObject->setProperty(fieldManyToManyDefn.propertyName, otherKeys.first());
          } else {
             //
             // The setProperty function always takes a QVariant, so we need to create one from the QList<QVariant> we
             // have.
             //
-            currentObject->setProperty(junctionTable.propertyName, QVariant{otherKeys});
+            currentObject->setProperty(fieldManyToManyDefn.propertyName, QVariant{otherKeys});
          }
+         qDebug() <<
+            Q_FUNC_INFO << "Stored " << fieldManyToManyDefn.propertyName << " for " <<
+            currentObject->metaObject()->className() << " #" << currentKey;
       }
    }
 
@@ -580,7 +587,7 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    QSqlQuery sqlQuery{queryString, databaseConnection};
    bool skippedPrimaryKey = false;
    char const * primaryKeyParameter{nullptr};
-   for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
+   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
       if (!skippedPrimaryKey) {
          // By convention the first field is the primary key
          skippedPrimaryKey = true;
@@ -639,8 +646,8 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    //
    // Now save data to the junction tables
    //
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
-      insertIntoJunctionTable(junctionTable, *object, primaryKey, databaseConnection);
+   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
+      insertIntoFieldManyToManyDefn(fieldManyToManyDefn, *object, primaryKey, databaseConnection);
    }
 
    //
@@ -672,13 +679,13 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    queryStringAsStream << this->pimpl->tableName << " SET ";
 
    // By convention the first field is the primary key
-   QString const &    primaryKeyColumn   {this->pimpl->fieldDefinitions[0].columnName};
-   char const * const primaryKeyProperty {this->pimpl->fieldDefinitions[0].propertyName};
+   QString const &    primaryKeyColumn   {this->pimpl->fieldSimpleDefns[0].columnName};
+   char const * const primaryKeyProperty {this->pimpl->fieldSimpleDefns[0].propertyName};
    QVariant const     primaryKey         {object->property(primaryKeyProperty)};
 
    bool skippedPrimaryKey = false;
    bool firstFieldOutput = false;
-   for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
+   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
       if (!skippedPrimaryKey) {
          skippedPrimaryKey = true;
       } else {
@@ -699,7 +706,7 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    // than the order in which the fields appear in the query.
    //
    QSqlQuery sqlQuery{queryString, databaseConnection};
-   for (auto const & fieldDefn: this->pimpl->fieldDefinitions) {
+   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
       QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
       QVariant bindValue{object->property(fieldDefn.propertyName)};
 
@@ -723,10 +730,10 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    //
    // Now update data in the junction tables
    //
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
+   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
       qDebug() <<
-         Q_FUNC_INFO << "Updating property " << junctionTable.propertyName << " in junction table " <<
-         junctionTable.tableName;
+         Q_FUNC_INFO << "Updating property " << fieldManyToManyDefn.propertyName << " in junction table " <<
+         fieldManyToManyDefn.tableName;
 
       //
       // The simplest thing to do with each junction table is to blat any rows relating to the current object and then
@@ -735,10 +742,10 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
       // optimising (eg read what's in the DB, compare with what's in the object property, work out what deletes,
       // inserts and updates are needed to sync them, etc.
       //
-      if (!deleteFromJunctionTable(junctionTable, primaryKey, databaseConnection)) {
+      if (!deleteFromFieldManyToManyDefn(fieldManyToManyDefn, primaryKey, databaseConnection)) {
          return;
       }
-      if (!insertIntoJunctionTable(junctionTable, *object, primaryKey, databaseConnection)) {
+      if (!insertIntoFieldManyToManyDefn(fieldManyToManyDefn, *object, primaryKey, databaseConnection)) {
          return;
       }
    }
@@ -755,20 +762,20 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
 
    // By convention the first field is the primary key
    // We'll need some of this info even if it's a junction table property we're updating
-   QString const &    primaryKeyColumn   {this->pimpl->fieldDefinitions[0].columnName};
-   char const * const primaryKeyProperty {this->pimpl->fieldDefinitions[0].propertyName};
+   QString const &    primaryKeyColumn   {this->pimpl->fieldSimpleDefns[0].columnName};
+   char const * const primaryKeyProperty {this->pimpl->fieldSimpleDefns[0].propertyName};
    QVariant const primaryKey{object->property(primaryKeyProperty)};
 
    //
    // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
    //
    auto matchingFieldDefn = std::find_if(
-      this->pimpl->fieldDefinitions.begin(),
-      this->pimpl->fieldDefinitions.end(),
-      [propertyToUpdateInDb](FieldDefinition const & fd) {return 0 == std::strcmp(fd.propertyName, propertyToUpdateInDb);}
+      this->pimpl->fieldSimpleDefns.begin(),
+      this->pimpl->fieldSimpleDefns.end(),
+      [propertyToUpdateInDb](FieldSimpleDefn const & fd) {return 0 == std::strcmp(fd.propertyName, propertyToUpdateInDb);}
    );
 
-   if (matchingFieldDefn != this->pimpl->fieldDefinitions.end()) {
+   if (matchingFieldDefn != this->pimpl->fieldSimpleDefns.end()) {
       //
       // We're updating a simple property
       //
@@ -795,12 +802,12 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
       QVariant propertyBindValue{object->property(propertyToUpdateInDb)};
       // Enums need to be converted to strings first
       auto fieldDefn = std::find_if(
-         this->pimpl->fieldDefinitions.begin(),
-         this->pimpl->fieldDefinitions.end(),
-         [propertyToUpdateInDb](FieldDefinition const & fd){return propertyToUpdateInDb == fd.propertyName;}
+         this->pimpl->fieldSimpleDefns.begin(),
+         this->pimpl->fieldSimpleDefns.end(),
+         [propertyToUpdateInDb](FieldSimpleDefn const & fd){return propertyToUpdateInDb == fd.propertyName;}
       );
       // It's a coding error if we're trying to update a property that's not in the field definitions
-      Q_ASSERT(fieldDefn != this->pimpl->fieldDefinitions.end());
+      Q_ASSERT(fieldDefn != this->pimpl->fieldSimpleDefns.end());
       if (fieldDefn->fieldType == DbRecords::Enum) {
          propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
       }
@@ -819,23 +826,23 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
       //
       // The property we've been given isn't a simple property, so look for it in the ones we store in junction tables
       //
-      auto matchingJunctionTableDefn = std::find_if(
-         this->pimpl->junctionTables.begin(),
-         this->pimpl->junctionTables.end(),
-         [propertyToUpdateInDb](JunctionTable const & jt) {return 0 == std::strcmp(jt.propertyName, propertyToUpdateInDb);}
+      auto matchingFieldManyToManyDefnDefn = std::find_if(
+         this->pimpl->fieldManyToManyDefns.begin(),
+         this->pimpl->fieldManyToManyDefns.end(),
+         [propertyToUpdateInDb](FieldManyToManyDefn const & jt) {return 0 == std::strcmp(jt.propertyName, propertyToUpdateInDb);}
       );
 
       // It's a coding error if we couldn't find the property either as a simple field or an associative entity
-      Q_ASSERT(matchingJunctionTableDefn != this->pimpl->junctionTables.end());
+      Q_ASSERT(matchingFieldManyToManyDefnDefn != this->pimpl->fieldManyToManyDefns.end());
 
       //
       // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
       // write out data based on the current property values.
       //
-      if (!deleteFromJunctionTable(*matchingJunctionTableDefn, primaryKey, databaseConnection)) {
+      if (!deleteFromFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, primaryKey, databaseConnection)) {
          return;
       }
-      if (!insertIntoJunctionTable(*matchingJunctionTableDefn, *object, primaryKey, databaseConnection)) {
+      if (!insertIntoFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, *object, primaryKey, databaseConnection)) {
          return;
       }
    }
@@ -867,7 +874,7 @@ void DbRecords::hardDelete(int id) {
    QString queryString{"DELETE FROM "};
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName;
-   QString const & primaryKeyColumn = this->pimpl->fieldDefinitions[0].columnName;
+   QString const & primaryKeyColumn = this->pimpl->fieldSimpleDefns[0].columnName;
    queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
 
    //
@@ -890,8 +897,8 @@ void DbRecords::hardDelete(int id) {
    //
    // Now remove data in the junction tables
    //
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
-      if (!deleteFromJunctionTable(junctionTable, primaryKey, databaseConnection)) {
+   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
+      if (!deleteFromFieldManyToManyDefn(fieldManyToManyDefn, primaryKey, databaseConnection)) {
          return;
       }
    }

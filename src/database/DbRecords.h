@@ -70,14 +70,14 @@ public:
     */
    typedef QVector<EnumAndItsDbString> EnumStringMapping;
 
-   struct FieldDefinition {
+   struct FieldSimpleDefn {
       FieldType                 fieldType;
       QString                   columnName;
       char const * const        propertyName;
       EnumStringMapping const * enumMapping = nullptr; // only needed if fieldType is Enum
    };
 
-   typedef QVector<FieldDefinition> FieldDefinitions;
+   typedef QVector<FieldSimpleDefn> FieldSimpleDefns;
 
    /**
     * \brief Cross-references to other objects that are stored in a junction table.  (See
@@ -109,7 +109,7 @@ public:
     *                           number for instructions_in_recipe).  Otherwise the elements are assumed to be an
     *                           unordered set (and pulled out in ID order by default).
     */
-   struct JunctionTable {
+   struct FieldManyToManyDefn {
       char const * const tableName;
       QString thisPrimaryKeyColumn;
       QString otherPrimaryKeyColumn;
@@ -118,18 +118,18 @@ public:
       QString orderByColumn = QString{};
    };
 
-   typedef QVector<JunctionTable> JunctionTables;
+   typedef QVector<FieldManyToManyDefn> FieldManyToManyDefns;
 
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
     * \param tableName
-    * \param fieldDefinitions  First in the list should be the primary key
-    * \param junctionTables
+    * \param fieldSimpleDefns  First in the list should be the primary key
+    * \param fieldManyToManyDefns
     */
    DbRecords(char const * const tableName,
-             FieldDefinitions const & fieldDefinitions,
-             JunctionTables const & junctionTables);
+             FieldSimpleDefns const & fieldSimpleDefns,
+             FieldManyToManyDefns const & fieldManyToManyDefns);
 
    ~DbRecords();
 

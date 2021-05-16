@@ -99,6 +99,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/BtFolder.cpp
     ${SRCDIR}/BtLabel.cpp
     ${SRCDIR}/BtLineEdit.cpp
+    ${SRCDIR}/BtPrintPreview.cpp
     ${SRCDIR}/BtSplashScreen.cpp
     ${SRCDIR}/BtTabWidget.cpp
     ${SRCDIR}/BtTextEdit.cpp

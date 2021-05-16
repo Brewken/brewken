@@ -1427,7 +1427,7 @@ bool Database::load() {
    DbNamedEntityRecords<Mash>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<MashStep>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Misc>::getInstance().loadAll(this->sqlDatabase());
-/*   DbNamedEntityRecords<Recipe>::getInstance().loadAll(this->sqlDatabase()); */ // .:TODO:.
+   DbNamedEntityRecords<Recipe>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Salt>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Style>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Water>::getInstance().loadAll(this->sqlDatabase());

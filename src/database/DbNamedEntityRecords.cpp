@@ -37,7 +37,7 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for BrewNote
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   DbRecords::FieldDefinitions const BREWNOTE_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const BREWNOTE_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",                      PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",                    PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",                 PropertyNames::NamedEntity::display},
@@ -75,12 +75,12 @@ namespace {
       {DbRecords::FieldType::Double, "volume_into_fermenter",   PropertyNames::BrewNote::volumeIntoFerm_l} //,
       //{DbRecords::FieldType::Int   , "recipe_id",               PropertyNames::BrewNote::recipeId}  <<<<<<<<<<<<<<<<<<<<<<<<<<<<TODO
    };
-   DbRecords::JunctionTables const BREWNOTE_MULTI_FIELDS{};
+   DbRecords::FieldManyToManyDefns const BREWNOTE_MULTI_FIELDS{};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Equipment
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   DbRecords::FieldDefinitions const EQUIPMENT_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const EQUIPMENT_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",           PropertyNames::NamedEntity::display},
@@ -104,7 +104,7 @@ namespace {
       {DbRecords::FieldType::Double, "tun_volume",        PropertyNames::Equipment::tunVolume_l},
       {DbRecords::FieldType::Double, "tun_weight",        PropertyNames::Equipment::tunWeight_kg}
    };
-   DbRecords::JunctionTables const EQUIPMENT_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const EQUIPMENT_MULTI_FIELDS {
       // Objects store their parents not their children, so this view of the junction table is from the child's point of view
       {"equipment_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
@@ -119,7 +119,7 @@ namespace {
       {"Dry Extract", Fermentable::Dry_Extract},
       {"Adjunct",     Fermentable::Adjunct}
    };
-   DbRecords::FieldDefinitions const FERMENTABLE_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const FERMENTABLE_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",             PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
@@ -143,7 +143,7 @@ namespace {
       {DbRecords::FieldType::Double, "yield",            PropertyNames::Fermentable::yield_pct}
       /// inventory_id REFERENCES fermentable_in_inventory (id))      <<< TODO
    };
-   DbRecords::JunctionTables const FERMENTABLE_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const FERMENTABLE_MULTI_FIELDS {
       {"fermentable_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
 
@@ -167,7 +167,7 @@ namespace {
       {"Plug",   Hop::Plug},
       {"Leaf",   Hop::Leaf}
    };
-   DbRecords::FieldDefinitions const HOP_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const HOP_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",            PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",          PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",       PropertyNames::NamedEntity::display},
@@ -190,7 +190,7 @@ namespace {
       {DbRecords::FieldType::Enum,   "htype",         PropertyNames::Hop::type,              &DB_HOP_TYPE_ENUM},
       {DbRecords::FieldType::Enum,   "use",           PropertyNames::Hop::use,               &DB_HOP_USE_ENUM}
    };
-   DbRecords::JunctionTables const HOP_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const HOP_MULTI_FIELDS {
       {"hop_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
 
@@ -198,7 +198,7 @@ namespace {
    // Database field mappings for Instruction
    // NB: instructions aren't displayed in trees, and get no folder
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   DbRecords::FieldDefinitions const INSTRUCTION_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const INSTRUCTION_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",         PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",       PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",    PropertyNames::NamedEntity::display},
@@ -209,14 +209,14 @@ namespace {
       {DbRecords::FieldType::Bool,   "completed",  PropertyNames::Instruction::completed  },
       {DbRecords::FieldType::Double, "interval",   PropertyNames::Instruction::interval   }
    };
-   DbRecords::JunctionTables const INSTRUCTION_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const INSTRUCTION_MULTI_FIELDS {
       // Instructions don't have children
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Mash
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   DbRecords::FieldDefinitions const MASH_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const MASH_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted},
@@ -231,7 +231,7 @@ namespace {
       {DbRecords::FieldType::Double, "tun_temp",          PropertyNames::Mash::tunTemp_c},
       {DbRecords::FieldType::Double, "tun_weight",        PropertyNames::Mash::tunWeight_kg},
    };
-   DbRecords::JunctionTables const MASH_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const MASH_MULTI_FIELDS {
       // Mashes don't have children, but they do have MashSteps
       {"mashstep", "mash_id", "id", PropertyNames::Mash::mashStepIds}  // .:TODO:. Still need to do the lazy-loading code in Mash.cpp to turn IDs into object pointers
    };
@@ -247,7 +247,7 @@ namespace {
       {"FlySparge",    MashStep::flySparge},
       {"BatchSparge",  MashStep::batchSparge}
    };
-   DbRecords::FieldDefinitions const MASH_STEP_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const MASH_STEP_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key            },
       {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name           },
       {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted        },
@@ -264,7 +264,7 @@ namespace {
       {DbRecords::FieldType::Double,  "step_time",        PropertyNames::MashStep::stepTime_min      }
 //      {DbRecords::FieldType::Int,    "mash_id",                PropertyNames::MashStep::x},
    };
-   DbRecords::JunctionTables const MASH_STEP_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const MASH_STEP_MULTI_FIELDS {
       // MashSteps don't have children
    };
 
@@ -286,7 +286,7 @@ namespace {
       {"Secondary", Misc::Secondary},
       {"Bottling",  Misc::Bottling}
    };
-   DbRecords::FieldDefinitions const MISC_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const MISC_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",             PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
@@ -301,7 +301,7 @@ namespace {
       {DbRecords::FieldType::String, "notes",            PropertyNames::Misc::notes          }
       //, inventory_id REFERENCES misc_in_inventory (id))      <<< TODO
    };
-   DbRecords::JunctionTables const MISC_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const MISC_MULTI_FIELDS {
       {"misc_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
 
@@ -313,7 +313,7 @@ namespace {
       {"Partial Mash", Recipe::PartialMash},
       {"All Grain",    Recipe::AllGrain}
    };
-   DbRecords::FieldDefinitions const RECIPE_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const RECIPE_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",                PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted},
@@ -350,76 +350,23 @@ namespace {
       {DbRecords::FieldType::Double, "tertiary_age",        PropertyNames::Recipe::tertiaryAge_days,   },
       {DbRecords::FieldType::Double, "tertiary_temp",       PropertyNames::Recipe::tertiaryTemp_c,     },
       {DbRecords::FieldType::Enum,   "type",                PropertyNames::Recipe::recipeType,         &RECIPE_STEP_TYPE_ENUM},
-/*
-
-CREATE TABLE recipe(
-   age real DEFAULT 0.0,
-   age_temp real DEFAULT 20.0,
-   assistant_brewer varchar(1024) DEFAULT 'Brewtarget: free beer software',
-   batch_size real DEFAULT 0.0,
-   boil_size real DEFAULT 0.0,
-   boil_time real DEFAULT 0.0,
-   brewer varchar(1024) DEFAULT '',
-   carbonationTemp_c real DEFAULT 20.0,
-   carb_volume real DEFAULT 0.0,
-   date date  DEFAULT CURRENT_DATE,
-   efficiency real DEFAULT 70.0,
-   fermentation_stages int DEFAULT 1,
-   fg real DEFAULT 1.0,
-   forced_carb boolean DEFAULT 0,
-   keg_priming_factor real DEFAULT 1.0,
-   notes text DEFAULT '',
-   og real DEFAULT 1.0,
-   primary_age real DEFAULT 0.0,
-   primary_temp real DEFAULT 20.0,
-   priming_sugar_equiv real DEFAULT 1.0,
-   priming_sugar_name varchar(128) DEFAULT '',
-   secondary_age real DEFAULT 0.0,
-   secondary_temp real DEFAULT 20.0,
-   taste_notes text DEFAULT '',
-   taste_rating real DEFAULT 0.0,
-   tertiary_age real DEFAULT 0.0,
-   tertiary_temp real DEFAULT 20.0,
-   type varchar(32) DEFAULT 'All Grain',
-
-   -- Relational members
-   style_id integer,
-   mash_id integer,
-   equipment_id integer,
-   foreign key(style_id) references style(id),
-   foreign key(mash_id) references mash(id),
-   foreign key(equipment_id) references equipment(id)
-)
-*/
    };
-   DbRecords::JunctionTables const RECIPE_MULTI_FIELDS {
-      // .:TODO:. Each BrewNote is owned by a single Recipe, so Recipe class does not need to store "What are my Brewnotes?" but instead, ask DbNamedEntityRecords<BrewNote> for them
-//      {"fermentable_in_recipe", "recipe_id", "fermentable_id", PropertyNames::NamedEntity::fermentableIds}
-/*
-      {DbRecords::FieldType::Record, "BREWNOTES/BREWNOTE",       nullptr,                                   }, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h
-      {DbRecords::FieldType::Record, "FERMENTABLES/FERMENTABLE", nullptr,                                   }, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
-      {DbRecords::FieldType::Record, "HOPS/HOP",                 nullptr,                                   }, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
-      {DbRecords::FieldType::Record, "INSTRUCTIONS/INSTRUCTION", nullptr,                                   }, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
-      {DbRecords::FieldType::Record, "MISCS/MISC",               nullptr,                                   }, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
-      {DbRecords::FieldType::Record, "WATERS/WATER",             nullptr,                                   }, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
-      {DbRecords::FieldType::Record, "YEASTS/YEAST",             nullptr,                                   }, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
-*/
-
-      // Not clear whether recipe_children table is used
-      // fermentable_in_recipe
-      // hop_in_recipe
-      // instruction_in_recipe
-      // misc_in_recipe
-      // salt_in_recipe
-      // water_in_recipe
-      // yeast_in_recipe
+   DbRecords::FieldManyToManyDefns const RECIPE_MULTI_FIELDS {
+      // .:TODO:. BrewNote table stores its recipe ID, so there isn't a brewnote junction table
+      {"fermentable_in_recipe", "recipe_id", "fermentable_id", PropertyNames::Recipe::fermentableIds},
+      {"hop_in_recipe",         "recipe_id", "hop_id",         PropertyNames::Recipe::hopIds},
+      {"instruction_in_recipe", "recipe_id", "instruction_id", PropertyNames::Recipe::instructionIds, false, "instruction_number"},
+      {"misc_in_recipe",        "recipe_id", "misc_id",        PropertyNames::Recipe::miscIds},
+      {"salt_in_recipe",        "recipe_id", "salt_id",        PropertyNames::Recipe::saltIds},
+      {"water_in_recipe",       "recipe_id", "water_id",       PropertyNames::Recipe::waterIds},
+      {"yeast_in_recipe",       "recipe_id", "yeast_id",       PropertyNames::Recipe::yeastIds}
 
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Salt
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   DbRecords::FieldDefinitions const SALT_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const SALT_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",             PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
@@ -432,7 +379,7 @@ CREATE TABLE recipe(
       {DbRecords::FieldType::Double, "percent_acid",     PropertyNames::Salt::percentAcid    },
       {DbRecords::FieldType::Int,    "stype",            PropertyNames::Salt::type           }    // TODO: Really an Enum.  Would be less fragile to store this as text than a number
    };
-   DbRecords::JunctionTables const SALT_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const SALT_MULTI_FIELDS {
       // Salts don't have children
    };
 
@@ -447,7 +394,7 @@ CREATE TABLE recipe(
       {"Mixed", Style::Mixed},
       {"Cider", Style::Cider}
    };
-   DbRecords::FieldDefinitions const STYLE_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const STYLE_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",              PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",            PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",         PropertyNames::NamedEntity::display},
@@ -475,14 +422,14 @@ CREATE TABLE recipe(
       {DbRecords::FieldType::String, "style_letter",    PropertyNames::Style::styleLetter},
       {DbRecords::FieldType::Enum,   "s_type",          PropertyNames::Style::type,           &STYLE_TYPE_ENUM}
    };
-   DbRecords::JunctionTables const STYLE_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const STYLE_MULTI_FIELDS {
       {"style_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Water
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   DbRecords::FieldDefinitions const WATER_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const WATER_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",          PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",        PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",     PropertyNames::NamedEntity::display},
@@ -503,7 +450,7 @@ CREATE TABLE recipe(
       {DbRecords::FieldType::Double, "sparge_ro",   PropertyNames::Water::spargeRO},
       {DbRecords::FieldType::Bool,   "as_hco3",     PropertyNames::Water::alkalinityAsHCO3}
    };
-   DbRecords::JunctionTables const WATER_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const WATER_MULTI_FIELDS {
       {"water_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
 
@@ -529,7 +476,7 @@ CREATE TABLE recipe(
       {"High",      Yeast::High},
       {"Very High", Yeast::Very_High}
    };
-   DbRecords::FieldDefinitions const YEAST_SIMPLE_FIELDS {
+   DbRecords::FieldSimpleDefns const YEAST_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",          PropertyNames::NamedEntity::key},
       {DbRecords::FieldType::String, "name",        PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",     PropertyNames::NamedEntity::display},
@@ -552,9 +499,18 @@ CREATE TABLE recipe(
       {DbRecords::FieldType::Int,    "max_reuse",        PropertyNames::Yeast::maxReuse},
       {DbRecords::FieldType::Bool,   "add_to_secondary", PropertyNames::Yeast::addToSecondary}
    };
-   DbRecords::JunctionTables const YEAST_MULTI_FIELDS {
+   DbRecords::FieldManyToManyDefns const YEAST_MULTI_FIELDS {
       {"yeast_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
    };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for Inventory
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*   CREATE TABLE "fermentable_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
+   CREATE TABLE "hop_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
+   CREATE TABLE "misc_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
+   CREATE TABLE water_in_recipe( id integer PRIMARY KEY autoincrement, water_id integer, recipe_id integer, foreign key(water_id) references water(id), foreign key(recipe_id) references recipe(id))
+   CREATE TABLE "yeast_in_inventory" (id INTEGER PRIMARY KEY autoincrement , quanta real  DEFAULT 0) */
 }
 
 template<> DbNamedEntityRecords<BrewNote> & DbNamedEntityRecords<BrewNote>::getInstance() {
