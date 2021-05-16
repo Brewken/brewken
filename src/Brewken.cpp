@@ -71,22 +71,8 @@
 #include "model/Salt.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
-#include "unit.h"
-#include "unitSystems/CelsiusTempUnitSystem.h"
-#include "unitSystems/DiastaticPowerUnitSystem.h"
-#include "unitSystems/EbcColorUnitSystem.h"
-#include "unitSystems/FahrenheitTempUnitSystem.h"
-#include "unitSystems/ImperialVolumeUnitSystem.h"
-#include "unitSystems/PlatoDensityUnitSystem.h"
-#include "unitSystems/SgDensityUnitSystem.h"
-#include "unitSystems/SIVolumeUnitSystem.h"
-#include "unitSystems/SIWeightUnitSystem.h"
-#include "unitSystems/SrmColorUnitSystem.h"
-#include "unitSystems/TimeUnitSystem.h"
-#include "unitSystems/UnitSystem.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/USVolumeUnitSystem.h"
-#include "unitSystems/USWeightUnitSystem.h"
+#include "Unit.h"
+#include "UnitSystem.h"
 
 // Needed for kill(2)
 #if defined(Q_OS_UNIX)
@@ -181,7 +167,7 @@ Brewken::ColorUnitType Brewken::colorUnit = Brewken::SRM;
 Brewken::DensityUnitType Brewken::densityUnit = Brewken::SG;
 Brewken::DiastaticPowerUnitType Brewken::diastaticPowerUnit = Brewken::LINTNER;
 
-QHash<int, UnitSystem*> Brewken::thingToUnitSystem;
+QHash<int, UnitSystem const *> Brewken::thingToUnitSystem;
 
 
 
@@ -562,17 +548,17 @@ void Brewken::convertPersistentOptions()
       if( text == "Imperial" )
       {
          weightUnitSystem = Imperial;
-         thingToUnitSystem.insert(Unit::Mass,UnitSystems::usWeightUnitSystem());
+         thingToUnitSystem.insert(Unit::Mass,&UnitSystems::usWeightUnitSystem);
       }
       else if (text == "USCustomary")
       {
          weightUnitSystem = USCustomary;
-         thingToUnitSystem.insert(Unit::Mass,UnitSystems::usWeightUnitSystem());
+         thingToUnitSystem.insert(Unit::Mass,&UnitSystems::usWeightUnitSystem);
       }
       else
       {
          weightUnitSystem = SI;
-         thingToUnitSystem.insert(Unit::Mass,UnitSystems::siWeightUnitSystem());
+         thingToUnitSystem.insert(Unit::Mass,&UnitSystems::siWeightUnitSystem);
       }
    }
 
@@ -583,17 +569,17 @@ void Brewken::convertPersistentOptions()
       if( text == "Imperial" )
       {
          volumeUnitSystem = Imperial;
-         thingToUnitSystem.insert(Unit::Volume,UnitSystems::imperialVolumeUnitSystem());
+         thingToUnitSystem.insert(Unit::Volume,&UnitSystems::imperialVolumeUnitSystem);
       }
       else if (text == "USCustomary")
       {
          volumeUnitSystem = USCustomary;
-         thingToUnitSystem.insert(Unit::Volume,UnitSystems::usVolumeUnitSystem());
+         thingToUnitSystem.insert(Unit::Volume,&UnitSystems::usVolumeUnitSystem);
       }
       else
       {
          volumeUnitSystem = SI;
-         thingToUnitSystem.insert(Unit::Volume,UnitSystems::siVolumeUnitSystem());
+         thingToUnitSystem.insert(Unit::Volume,&UnitSystems::siVolumeUnitSystem);
       }
    }
 
@@ -604,18 +590,18 @@ void Brewken::convertPersistentOptions()
       if( text == "Fahrenheit" )
       {
          tempScale = Fahrenheit;
-         thingToUnitSystem.insert(Unit::Temp,UnitSystems::fahrenheitTempUnitSystem());
+         thingToUnitSystem.insert(Unit::Temp,&UnitSystems::fahrenheitTempUnitSystem);
       }
       else
       {
          tempScale = Celsius;
-         thingToUnitSystem.insert(Unit::Temp,UnitSystems::celsiusTempUnitSystem());
+         thingToUnitSystem.insert(Unit::Temp,&UnitSystems::celsiusTempUnitSystem);
       }
    }
 
    //======================Time======================
    // Set the one and only time system.
-   thingToUnitSystem.insert(Unit::Time,UnitSystems::timeUnitSystem());
+   thingToUnitSystem.insert(Unit::Time,&UnitSystems::timeUnitSystem);
 
    //===================IBU===================
    text = getOptionValue(*optionsDoc, "ibu_formula", &hasOption);
@@ -656,12 +642,12 @@ void Brewken::convertPersistentOptions()
       if( text == "true" )
       {
          densityUnit = PLATO;
-         thingToUnitSystem.insert(Unit::Density,UnitSystems::platoDensityUnitSystem());
+         thingToUnitSystem.insert(Unit::Density,&UnitSystems::platoDensityUnitSystem);
       }
       else if( text == "false" )
       {
          densityUnit = SG;
-         thingToUnitSystem.insert(Unit::Density,UnitSystems::sgDensityUnitSystem());
+         thingToUnitSystem.insert(Unit::Density,&UnitSystems::sgDensityUnitSystem);
       }
       else
       {
@@ -676,12 +662,12 @@ void Brewken::convertPersistentOptions()
       if( text == "srm" )
       {
          colorUnit = SRM;
-         thingToUnitSystem.insert(Unit::Color,UnitSystems::srmColorUnitSystem());
+         thingToUnitSystem.insert(Unit::Color,&UnitSystems::srmColorUnitSystem);
       }
       else if( text == "ebc" )
       {
          colorUnit = EBC;
-         thingToUnitSystem.insert(Unit::Color,UnitSystems::ebcColorUnitSystem());
+         thingToUnitSystem.insert(Unit::Color,&UnitSystems::ebcColorUnitSystem);
       }
       else
          qWarning() << QString("Bad color_unit type: %1").arg(text);
@@ -694,12 +680,12 @@ void Brewken::convertPersistentOptions()
       if( text == "Lintner" )
       {
          diastaticPowerUnit = LINTNER;
-         thingToUnitSystem.insert(Unit::DiastaticPower,UnitSystems::lintnerDiastaticPowerUnitSystem());
+         thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::lintnerDiastaticPowerUnitSystem);
       }
       else if( text == "WK" )
       {
          diastaticPowerUnit = WK;
-         thingToUnitSystem.insert(Unit::DiastaticPower,UnitSystems::wkDiastaticPowerUnitSystem());
+         thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::wkDiastaticPowerUnitSystem);
       }
       else
       {
@@ -794,17 +780,17 @@ void Brewken::readSystemOptions()
    if( text == "Imperial" )
    {
       weightUnitSystem = Imperial;
-      thingToUnitSystem.insert(Unit::Mass,UnitSystems::usWeightUnitSystem());
+      thingToUnitSystem.insert(Unit::Mass,&UnitSystems::usWeightUnitSystem);
    }
    else if (text == "USCustomary")
    {
       weightUnitSystem = USCustomary;
-      thingToUnitSystem.insert(Unit::Mass,UnitSystems::usWeightUnitSystem());
+      thingToUnitSystem.insert(Unit::Mass,&UnitSystems::usWeightUnitSystem);
    }
    else
    {
       weightUnitSystem = SI;
-      thingToUnitSystem.insert(Unit::Mass,UnitSystems::siWeightUnitSystem());
+      thingToUnitSystem.insert(Unit::Mass,&UnitSystems::siWeightUnitSystem);
    }
 
    //===========================Volume=======================
@@ -812,17 +798,17 @@ void Brewken::readSystemOptions()
    if( text == "Imperial" )
    {
       volumeUnitSystem = Imperial;
-      thingToUnitSystem.insert(Unit::Volume,UnitSystems::imperialVolumeUnitSystem());
+      thingToUnitSystem.insert(Unit::Volume,&UnitSystems::imperialVolumeUnitSystem);
    }
    else if (text == "USCustomary")
    {
       volumeUnitSystem = USCustomary;
-      thingToUnitSystem.insert(Unit::Volume,UnitSystems::usVolumeUnitSystem());
+      thingToUnitSystem.insert(Unit::Volume,&UnitSystems::usVolumeUnitSystem);
    }
    else
    {
       volumeUnitSystem = SI;
-      thingToUnitSystem.insert(Unit::Volume,UnitSystems::siVolumeUnitSystem());
+      thingToUnitSystem.insert(Unit::Volume,&UnitSystems::siVolumeUnitSystem);
    }
 
    //=======================Temp======================
@@ -830,17 +816,17 @@ void Brewken::readSystemOptions()
    if( text == "Fahrenheit" )
    {
       tempScale = Fahrenheit;
-      thingToUnitSystem.insert(Unit::Temp,UnitSystems::fahrenheitTempUnitSystem());
+      thingToUnitSystem.insert(Unit::Temp,&UnitSystems::fahrenheitTempUnitSystem);
    }
    else
    {
       tempScale = Celsius;
-      thingToUnitSystem.insert(Unit::Temp,UnitSystems::celsiusTempUnitSystem());
+      thingToUnitSystem.insert(Unit::Temp,&UnitSystems::celsiusTempUnitSystem);
    }
 
    //======================Time======================
    // Set the one and only time system.
-   thingToUnitSystem.insert(Unit::Time,UnitSystems::timeUnitSystem());
+   thingToUnitSystem.insert(Unit::Time,&UnitSystems::timeUnitSystem);
 
    //===================IBU===================
    text = PersistentSettings::value("ibu_formula", "tinseth").toString();
@@ -873,12 +859,12 @@ void Brewken::readSystemOptions()
    if ( PersistentSettings::value("use_plato", false).toBool() )
    {
       densityUnit = PLATO;
-      thingToUnitSystem.insert(Unit::Density,UnitSystems::platoDensityUnitSystem());
+      thingToUnitSystem.insert(Unit::Density,&UnitSystems::platoDensityUnitSystem);
    }
    else
    {
       densityUnit = SG;
-      thingToUnitSystem.insert(Unit::Density,UnitSystems::sgDensityUnitSystem());
+      thingToUnitSystem.insert(Unit::Density,&UnitSystems::sgDensityUnitSystem);
    }
 
    //=======================Color unit===================
@@ -886,12 +872,12 @@ void Brewken::readSystemOptions()
    if( text == "srm" )
    {
       colorUnit = SRM;
-      thingToUnitSystem.insert(Unit::Color,UnitSystems::srmColorUnitSystem());
+      thingToUnitSystem.insert(Unit::Color,&UnitSystems::srmColorUnitSystem);
    }
    else if( text == "ebc" )
    {
       colorUnit = EBC;
-      thingToUnitSystem.insert(Unit::Color,UnitSystems::ebcColorUnitSystem());
+      thingToUnitSystem.insert(Unit::Color,&UnitSystems::ebcColorUnitSystem);
    }
    else
       qWarning() << QString("Bad color_unit type: %1").arg(text);
@@ -901,12 +887,12 @@ void Brewken::readSystemOptions()
    if( text == "Lintner" )
    {
       diastaticPowerUnit = LINTNER;
-      thingToUnitSystem.insert(Unit::DiastaticPower,UnitSystems::lintnerDiastaticPowerUnitSystem());
+      thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::lintnerDiastaticPowerUnitSystem);
    }
    else if( text == "WK" )
    {
       diastaticPowerUnit = WK;
-      thingToUnitSystem.insert(Unit::DiastaticPower,UnitSystems::wkDiastaticPowerUnitSystem());
+      thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::wkDiastaticPowerUnitSystem);
    }
    else
    {
@@ -988,32 +974,32 @@ void Brewken::saveSystemOptions() {
 void Brewken::loadMap()
 {
    // ==== mass ====
-   thingToUnitSystem.insert(Unit::Mass | Unit::displaySI, UnitSystems::siWeightUnitSystem() );
-   thingToUnitSystem.insert(Unit::Mass | Unit::displayUS, UnitSystems::usWeightUnitSystem() );
-   thingToUnitSystem.insert(Unit::Mass | Unit::displayImp,UnitSystems::usWeightUnitSystem() );
+   thingToUnitSystem.insert(Unit::Mass | Unit::displaySI, &UnitSystems::siWeightUnitSystem );
+   thingToUnitSystem.insert(Unit::Mass | Unit::displayUS, &UnitSystems::usWeightUnitSystem );
+   thingToUnitSystem.insert(Unit::Mass | Unit::displayImp,&UnitSystems::usWeightUnitSystem );
 
    // ==== volume ====
-   thingToUnitSystem.insert(Unit::Volume | Unit::displaySI, UnitSystems::siVolumeUnitSystem() );
-   thingToUnitSystem.insert(Unit::Volume | Unit::displayUS, UnitSystems::usVolumeUnitSystem() );
-   thingToUnitSystem.insert(Unit::Volume | Unit::displayImp,UnitSystems::imperialVolumeUnitSystem() );
+   thingToUnitSystem.insert(Unit::Volume | Unit::displaySI, &UnitSystems::siVolumeUnitSystem );
+   thingToUnitSystem.insert(Unit::Volume | Unit::displayUS, &UnitSystems::usVolumeUnitSystem );
+   thingToUnitSystem.insert(Unit::Volume | Unit::displayImp,&UnitSystems::imperialVolumeUnitSystem );
 
    // ==== time is empty ==== (this zen moment was free)
 
    // ==== temp ====
-   thingToUnitSystem.insert(Unit::Temp | Unit::displaySI,UnitSystems::celsiusTempUnitSystem() );
-   thingToUnitSystem.insert(Unit::Temp | Unit::displayUS,UnitSystems::fahrenheitTempUnitSystem() );
+   thingToUnitSystem.insert(Unit::Temp | Unit::displaySI,&UnitSystems::celsiusTempUnitSystem );
+   thingToUnitSystem.insert(Unit::Temp | Unit::displayUS,&UnitSystems::fahrenheitTempUnitSystem );
 
    // ==== color ====
-   thingToUnitSystem.insert(Unit::Color | Unit::displaySrm,UnitSystems::srmColorUnitSystem() );
-   thingToUnitSystem.insert(Unit::Color | Unit::displayEbc,UnitSystems::ebcColorUnitSystem() );
+   thingToUnitSystem.insert(Unit::Color | Unit::displaySrm,&UnitSystems::srmColorUnitSystem );
+   thingToUnitSystem.insert(Unit::Color | Unit::displayEbc,&UnitSystems::ebcColorUnitSystem );
 
    // ==== density ====
-   thingToUnitSystem.insert(Unit::Density | Unit::displaySg,   UnitSystems::sgDensityUnitSystem() );
-   thingToUnitSystem.insert(Unit::Density | Unit::displayPlato,UnitSystems::platoDensityUnitSystem() );
+   thingToUnitSystem.insert(Unit::Density | Unit::displaySg,   &UnitSystems::sgDensityUnitSystem );
+   thingToUnitSystem.insert(Unit::Density | Unit::displayPlato,&UnitSystems::platoDensityUnitSystem );
 
    // ==== diastatic power ====
-   thingToUnitSystem.insert(Unit::DiastaticPower | Unit::displayLintner,UnitSystems::lintnerDiastaticPowerUnitSystem() );
-   thingToUnitSystem.insert(Unit::DiastaticPower | Unit::displayWK,UnitSystems::wkDiastaticPowerUnitSystem() );
+   thingToUnitSystem.insert(Unit::DiastaticPower | Unit::displayLintner,&UnitSystems::lintnerDiastaticPowerUnitSystem );
+   thingToUnitSystem.insert(Unit::DiastaticPower | Unit::displayWK,&UnitSystems::wkDiastaticPowerUnitSystem );
 }
 
 /* Qt5 changed how QString::toDouble() works in that it will always convert
@@ -1080,7 +1066,6 @@ QString Brewken::displayAmount( double amount, Unit const * units, int precision
 {
    int fieldWidth = 0;
    char format = 'f';
-   UnitSystem* temp;
 
    // Check for insane values.
    if( Algorithms::isNan(amount) || Algorithms::isInf(amount) )
@@ -1095,7 +1080,7 @@ QString Brewken::displayAmount( double amount, Unit const * units, int precision
    QString ret;
 
    // convert to the current unit system (s).
-   temp = findUnitSystem(units, displayUnits);
+   UnitSystem const * temp = findUnitSystem(units, displayUnits);
    // If we cannot find a unit system
    if ( temp == nullptr )
       ret = QString("%L1 %2").arg(SIAmount, fieldWidth, format, precision).arg(SIUnitName);
@@ -1146,9 +1131,7 @@ QString Brewken::displayAmount(double amt, QString section, QString attribute, U
 
 }
 
-double Brewken::amountDisplay( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale)
-{
-   UnitSystem* temp;
+double Brewken::amountDisplay( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale) {
 
    // Check for insane values.
    if( Algorithms::isNan(amount) || Algorithms::isInf(amount) )
@@ -1163,7 +1146,7 @@ double Brewken::amountDisplay( double amount, Unit const * units, int precision,
    double ret;
 
    // convert to the current unit system (s).
-   temp = findUnitSystem(units, displayUnits);
+   UnitSystem const * temp = findUnitSystem(units, displayUnits);
    // If we cannot find a unit system
    if ( temp == nullptr )
       ret = SIAmount;
@@ -1198,8 +1181,7 @@ double Brewken::amountDisplay(NamedEntity* element, QObject* object, QString att
       return -1.0;
 }
 
-UnitSystem* Brewken::findUnitSystem(Unit const * unit, Unit::unitDisplay display)
-{
+UnitSystem const * Brewken::findUnitSystem(Unit const * unit, Unit::unitDisplay display) {
    if ( ! unit )
       return nullptr;
 
@@ -1242,7 +1224,7 @@ QString Brewken::displayThickness( double thick_lkg, bool showUnits )
 
 double Brewken::qStringToSI(QString qstr, Unit const * unit, Unit::unitDisplay dispUnit, Unit::unitScale dispScale)
 {
-   UnitSystem* temp = findUnitSystem(unit, dispUnit);
+   UnitSystem const * temp = findUnitSystem(unit, dispUnit);
    return temp->qstringToSI(qstr,temp->unit(),false,dispScale);
 }
 
@@ -1436,7 +1418,7 @@ QMenu* Brewken::setupMassMenu(QWidget* parent, Unit::unitDisplay unit, Unit::uni
 
    if ( unit == Unit::noUnit )
    {
-      if ( thingToUnitSystem.value(Unit::Mass) == UnitSystems::usWeightUnitSystem() )
+      if ( thingToUnitSystem.value(Unit::Mass) == &UnitSystems::usWeightUnitSystem )
          unit = Unit::displayUS;
       else
          unit = Unit::displaySI;
@@ -1511,9 +1493,9 @@ QMenu* Brewken::setupVolumeMenu(QWidget* parent, Unit::unitDisplay unit, Unit::u
 
    if ( unit == Unit::noUnit )
    {
-      if ( thingToUnitSystem.value(Unit::Volume) == UnitSystems::usVolumeUnitSystem() )
+      if ( thingToUnitSystem.value(Unit::Volume) == &UnitSystems::usVolumeUnitSystem )
          unit = Unit::displayUS;
-      else if ( thingToUnitSystem.value(Unit::Volume) == UnitSystems::imperialVolumeUnitSystem() )
+      else if ( thingToUnitSystem.value(Unit::Volume) == &UnitSystems::imperialVolumeUnitSystem )
          unit = Unit::displayImp;
       else
          unit = Unit::displaySI;

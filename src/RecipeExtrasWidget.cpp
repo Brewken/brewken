@@ -22,7 +22,7 @@
 #include <QWidget>
 #include <QDebug>
 #include "RecipeExtrasWidget.h"
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 #include "model/Recipe.h"
 #include "BtLabel.h"

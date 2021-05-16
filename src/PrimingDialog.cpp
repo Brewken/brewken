@@ -19,7 +19,7 @@
 
 #include <cmath>
 #include "PrimingDialog.h"
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 
 PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent)

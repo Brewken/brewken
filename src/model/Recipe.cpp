@@ -97,17 +97,6 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
 }
 
 
-void Recipe::clear()
-{
-   // TODO: implement.
-   /*
-   QString name = getName();
-   setDefaults();
-   setName(name);
-   hasChanged();
-   */
-}
-
 QString Recipe::classNameStr()
 {
    static const QString name("Recipe");
@@ -143,6 +132,7 @@ Recipe::Recipe(DatabaseConstants::DbTableId table, int key)
    m_tasteNotes(QString("")),
    m_tasteRating(0.0),
    m_style_id(0),
+   equipmentId(-1),
    m_og(1.0),
    m_fg(1.0),
    m_cacheOnly(false)
@@ -178,6 +168,7 @@ Recipe::Recipe(QString name, bool cache)
    m_tasteNotes(QString("")),
    m_tasteRating(0.0),
    m_style_id(0),
+   equipmentId(-1),
    m_og(1.0),
    m_fg(1.0),
    m_cacheOnly(cache)
@@ -202,7 +193,7 @@ Recipe::Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    m_tertiaryTemp_c(rec.value(kcolRecipeTertTemp).toDouble()),
    m_age(rec.value(kcolRecipeAge).toDouble()),
    m_ageTemp_c(rec.value(kcolRecipeAgeTemp).toDouble()),
-   m_date(QDate::fromString(rec.value(kcolRecipeDate).toString(), QString("d/M/yyyy"))),
+   m_date(QDate::fromString(rec.value(kcolRecipeDate).toString(), Qt::ISODate)),
    m_carbonation_vols(rec.value(kcolRecipeCarbVols).toDouble()),
    m_forcedCarbonation(rec.value(kcolRecipeForcedCarb).toBool()),
    m_primingSugarName(rec.value(kcolRecipePrimSugName).toString()),
@@ -213,11 +204,53 @@ Recipe::Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    m_tasteNotes(rec.value(kcolRecipeTasteNotes).toString()),
    m_tasteRating(rec.value(kcolRecipeTasteRating).toDouble()),
    m_style_id(rec.value(kcolRecipeStyleId).toInt()),
+   equipmentId(-1),
    m_og(rec.value(kcolRecipeOG).toDouble()),
    m_fg(rec.value(kcolRecipeFG).toDouble()),
    m_cacheOnly(false)
 {
 }
+
+Recipe::Recipe(NamedParameterBundle & namedParameterBundle) :
+   NamedEntity{namedParameterBundle, DatabaseConstants::RECTABLE},
+   m_type              {
+      // .:TODO:. Change so we store enum not string!
+      RECIPE_TYPE_STRING_TO_TYPE.key(static_cast<Recipe::Type>(namedParameterBundle(PropertyNames::Recipe::recipeType).toInt()))
+   },
+   m_brewer            {namedParameterBundle(PropertyNames::Recipe::brewer            ).toString()},
+   m_asstBrewer        {namedParameterBundle(PropertyNames::Recipe::asstBrewer        ).toString()},
+   m_batchSize_l       {namedParameterBundle(PropertyNames::Recipe::batchSize_l       ).toDouble()},
+   m_boilSize_l        {namedParameterBundle(PropertyNames::Recipe::boilSize_l        ).toDouble()},
+   m_boilTime_min      {namedParameterBundle(PropertyNames::Recipe::boilTime_min      ).toDouble()},
+   m_efficiency_pct    {namedParameterBundle(PropertyNames::Recipe::efficiency_pct    ).toDouble()},
+   m_fermentationStages{namedParameterBundle(PropertyNames::Recipe::fermentationStages).toInt()},
+   m_primaryAge_days   {namedParameterBundle(PropertyNames::Recipe::primaryAge_days   ).toDouble()},
+   m_primaryTemp_c     {namedParameterBundle(PropertyNames::Recipe::primaryTemp_c     ).toDouble()},
+   m_secondaryAge_days {namedParameterBundle(PropertyNames::Recipe::secondaryAge_days ).toDouble()},
+   m_secondaryTemp_c   {namedParameterBundle(PropertyNames::Recipe::secondaryTemp_c   ).toDouble()},
+   m_tertiaryAge_days  {namedParameterBundle(PropertyNames::Recipe::tertiaryAge_days  ).toDouble()},
+   m_tertiaryTemp_c    {namedParameterBundle(PropertyNames::Recipe::tertiaryTemp_c    ).toDouble()},
+   m_age               {namedParameterBundle(PropertyNames::Recipe::age               ).toDouble()},
+   m_ageTemp_c         {namedParameterBundle(PropertyNames::Recipe::ageTemp_c         ).toDouble()},
+   m_date              {namedParameterBundle(PropertyNames::Recipe::date              ).toDate()},
+   m_carbonation_vols  {namedParameterBundle(PropertyNames::Recipe::carbonation_vols  ).toDouble()},
+   m_forcedCarbonation {namedParameterBundle(PropertyNames::Recipe::forcedCarbonation ).toBool()},
+   m_primingSugarName  {namedParameterBundle(PropertyNames::Recipe::primingSugarName  ).toString()},
+   m_carbonationTemp_c {namedParameterBundle(PropertyNames::Recipe::carbonationTemp_c ).toDouble()},
+   m_primingSugarEquiv {namedParameterBundle(PropertyNames::Recipe::primingSugarEquiv ).toDouble()},
+   m_kegPrimingFactor  {namedParameterBundle(PropertyNames::Recipe::kegPrimingFactor  ).toDouble()},
+   m_notes             {namedParameterBundle(PropertyNames::Recipe::notes             ).toString()},
+   m_tasteNotes        {namedParameterBundle(PropertyNames::Recipe::tasteNotes        ).toString()},
+   m_tasteRating       {namedParameterBundle(PropertyNames::Recipe::tasteRating       ).toDouble()},
+   m_style_id          {namedParameterBundle(PropertyNames::Recipe::styleId           ).toInt()},
+   mashId              {namedParameterBundle(PropertyNames::Recipe::mashId            ).toInt()},
+   equipmentId         {namedParameterBundle(PropertyNames::Recipe::equipmentId       ).toInt()},
+   m_og                {namedParameterBundle(PropertyNames::Recipe::og                ).toDouble()},
+   m_fg                {namedParameterBundle(PropertyNames::Recipe::fg                ).toDouble()},
+   m_cacheOnly         {false} {
+   return;
+}
+
 
 Recipe::Recipe( Recipe const& other ) : NamedEntity(other),
    m_type(other.m_type),
@@ -247,42 +280,12 @@ Recipe::Recipe( Recipe const& other ) : NamedEntity(other),
    m_tasteNotes(other.m_tasteNotes),
    m_tasteRating(other.m_tasteRating),
    m_style_id(other.m_style_id),
+   equipmentId(other.equipmentId),
    m_og(other.m_og),
    m_fg(other.m_fg),
    m_cacheOnly(other.m_cacheOnly)
 {
    setObjectName("Recipe");
-}
-
-void Recipe::removeInstruction(Instruction* ins)
-{
-   Database::instance().removeFromRecipe( this, ins );
-}
-
-void Recipe::swapInstructions( Instruction* ins1, Instruction* ins2 )
-{
-   QList<Instruction*> ins = instructions();
-   if( !(ins.contains(ins1) && ins.contains(ins2)) )
-      return;
-
-   Database::instance().swapInstructionOrder(ins1, ins2);
-}
-
-void Recipe::clearInstructions()
-{
-   QList<Instruction*> ins = instructions();
-   int i, size;
-   size = ins.size();
-   for( i = 0; i < size; ++i )
-      removeInstruction(ins[i]);
-}
-
-void Recipe::insertInstruction(Instruction* ins, int pos)
-{
-   if( ins == nullptr || !(instructions().contains(ins)) )
-      return;
-
-   Database::instance().insertInstruction(ins,pos);
 }
 
 Instruction* Recipe::mashFermentableIns()
@@ -924,10 +927,10 @@ QString Recipe::nextAddToBoil(double& time)
 // member function of Database in the header without creating circular dependencies), and hence why we need the
 // subsequent lines as a "trick" to ensure all the right versions of the template are instantiated in an externally-
 // visible way.
-template<class T> T * Recipe::add(T * var) {
+template<class T> T * Recipe::addNamedEntity(T * var) {
    // If the supplied parameter has no parent then we need to make a copy of it - or rather tell the Database object
    // to make a copy.  We'll then get back a pointer to the copy.  If it does have a parent then we need to check
-   // whether it's already in used in another recipe.  If not, wee can just add it directly, and we'll get back the
+   // whether it's already in used in another recipe.  If not, we can just add it directly, and we'll get back the
    // same pointer we passed in.  Otherwise we get its parent and make another copy of that.
    T * parentOfVar = static_cast<T *>(var->getParent());
    if (parentOfVar != nullptr) {
@@ -947,29 +950,127 @@ template<class T> T * Recipe::add(T * var) {
    // Parameter has no parent, so add a copy of it
    return Database::instance().addToRecipe(this, var, false);
 }
-template Hop *         Recipe::add(Hop *         var);
-template Fermentable * Recipe::add(Fermentable * var);
-template Misc *        Recipe::add(Misc *        var);
-template Yeast *       Recipe::add(Yeast *       var);
-template Water *       Recipe::add(Water *       var);
-template Salt *        Recipe::add(Salt *        var);
+template<> Hop *         Recipe::add(Hop *         var) { return this->addNamedEntity(var); }
+template<> Fermentable * Recipe::add(Fermentable * var) { return this->addNamedEntity(var); }
+template<> Misc *        Recipe::add(Misc *        var) { return this->addNamedEntity(var); }
+template<> Yeast *       Recipe::add(Yeast *       var) { return this->addNamedEntity(var); }
+template<> Water *       Recipe::add(Water *       var) { return this->addNamedEntity(var); }
+template<> Salt *        Recipe::add(Salt *        var) { return this->addNamedEntity(var); }
 
+NamedEntity * Recipe::removeNamedEntity( NamedEntity *var )
+{
+//   qDebug() << QString("%1").arg(Q_FUNC_INFO);
+
+   // brewnotes a bit odd
+   if ( dynamic_cast<BrewNote*>(var) ) {
+      // the cast is required to force the template to gets it thing right
+      Database::instance().remove(qobject_cast<BrewNote*>(var));
+      return var;
+   } else {
+      return Database::instance().removeNamedEntityFromRecipe( this, var );
+   }
+}
+
+template<> Hop *         Recipe::remove(Hop *         var) { return static_cast<Hop *        >(this->removeNamedEntity(var)); }
+template<> Fermentable * Recipe::remove(Fermentable * var) { return static_cast<Fermentable *>(this->removeNamedEntity(var)); }
+template<> Misc *        Recipe::remove(Misc *        var) { return static_cast<Misc *       >(this->removeNamedEntity(var)); }
+template<> Yeast *       Recipe::remove(Yeast *       var) { return static_cast<Yeast *      >(this->removeNamedEntity(var)); }
+template<> Water *       Recipe::remove(Water *       var) { return static_cast<Water *      >(this->removeNamedEntity(var)); }
+template<> Salt *        Recipe::remove(Salt *        var) { return static_cast<Salt *       >(this->removeNamedEntity(var)); }
+template<> Instruction * Recipe::remove(Instruction * var) { Database::instance().removeFromRecipe(this, var); return var; }
+
+void Recipe::swapInstructions( Instruction* ins1, Instruction* ins2 )
+{
+   QList<Instruction*> ins = instructions();
+   if( !(ins.contains(ins1) && ins.contains(ins2)) )
+      return;
+
+   Database::instance().swapInstructionOrder(ins1, ins2);
+}
+
+void Recipe::clearInstructions()
+{
+   QList<Instruction*> ins = instructions();
+   int i, size;
+   size = ins.size();
+   for( i = 0; i < size; ++i ) {
+      this->remove(ins[i]);
+   }
+}
+
+void Recipe::insertInstruction(Instruction* ins, int pos)
+{
+   if( ins == nullptr || !(instructions().contains(ins)) )
+      return;
+
+   Database::instance().insertInstruction(ins,pos);
+}
 
 void Recipe::setStyle(Style * var)
 {
    Database::instance().addToRecipe( this, var );
+   this->m_style_id = var->key();
+}
+
+void Recipe::setStyleId(int id) {
+   this->m_style_id = id;
 }
 
 void Recipe::setEquipment(Equipment * var)
 {
    Database::instance().addToRecipe( this, var );
+   this->equipmentId = var->key();
+}
+
+void Recipe::setEquipmentId(int id) {
+   this->equipmentId = id;
 }
 
 void Recipe::setMash(Mash * var) {
    bool noCopy = (var->getParent() != nullptr);
    Database::instance().addToRecipe(this, var, noCopy);
+   this->mashId = var->key();
 }
 
+void Recipe::setMashId(int id) {
+   this->mashId = id;
+   return;
+}
+
+void Recipe::setFermentableIds(QVector<int> fermentableIds) {
+   this->fermentableIds = fermentableIds;
+   return;
+}
+
+void Recipe::setHopIds(QVector<int> hopIds) {
+   this->hopIds = hopIds;
+   return;
+}
+
+void Recipe::setInstructionIds(QVector<int> instructionIds) {
+   this->instructionIds = instructionIds;
+   return;
+}
+
+void Recipe::setMiscIds(QVector<int> miscIds) {
+   this->miscIds = miscIds;
+   return;
+}
+
+void Recipe::setSaltIds(QVector<int> saltIds) {
+   this->saltIds = saltIds;
+   return;
+}
+
+void Recipe::setWaterIds(QVector<int> waterIds) {
+   this->waterIds = waterIds;
+   return;
+}
+
+void Recipe::setYeastIds(QVector<int> yeastIds) {
+   this->yeastIds = yeastIds;
+   return;
+}
 
 //==============================="SET" METHODS=================================
 void Recipe::setRecipeType(Recipe::Type var) {
@@ -1300,13 +1401,10 @@ void Recipe::setAgeTemp_c( double var )
    }
 }
 
-void Recipe::setDate( const QDate &var )
-{
+void Recipe::setDate( const QDate &var ) {
    m_date = var;
-   // do not like this. I thought we had everything in ISO format
    if ( ! m_cacheOnly ) {
-      static const QString dateFormat("d/M/yyyy");
-      setEasy(PropertyNames::Recipe::date, var.toString(dateFormat) );
+      setEasy(PropertyNames::Recipe::date, var.toString(Qt::ISODate));
    }
 }
 
@@ -1533,19 +1631,29 @@ Style* Recipe::style()
    }
    return tmp;
 }
+int Recipe::getStyleId() const { return this->m_style_id; }
 
 // I wonder if we could cache any of this. It is an awful lot of back and forth to the db
 Mash* Recipe::mash() const { return Database::instance().mash( this ); }
+int Recipe::getMashId() const { return this->mashId; }
 Equipment* Recipe::equipment() const { return Database::instance().equipment(this); }
+int Recipe::getEquipmentId() const { return this->equipmentId; }
 
 QList<Instruction*> Recipe::instructions() const { return Database::instance().instructions(this); }
+QVector<int> Recipe::getInstructionIds() const { return this->instructionIds; }
 QList<BrewNote*> Recipe::brewNotes() const { return Database::instance().brewNotes(this); }
 QList<Hop*> Recipe::hops() const { return Database::instance().hops(this); }
+QVector<int> Recipe::getHopIds() const { return this->hopIds; }
 QList<Fermentable*> Recipe::fermentables() const { return Database::instance().fermentables(this); }
+QVector<int> Recipe::getFermentableIds() const { return this->fermentableIds; }
 QList<Misc*> Recipe::miscs() const { return Database::instance().miscs(this); }
+QVector<int> Recipe::getMiscIds() const { return this->miscIds; }
 QList<Yeast*> Recipe::yeasts() const { return Database::instance().yeasts(this); }
+QVector<int> Recipe::getYeastIds() const { return this->yeastIds; }
 QList<Water*> Recipe::waters() const { return Database::instance().waters(this); }
+QVector<int> Recipe::getWaterIds() const { return this->waterIds; }
 QList<Salt*> Recipe::salts() const { return Database::instance().salts(this); }
+QVector<int> Recipe::getSaltIds() const { return this->saltIds; }
 
 //==============================Getters===================================
 Recipe::Type Recipe::recipeType() const {
@@ -1581,19 +1689,6 @@ bool Recipe::cacheOnly() const { return m_cacheOnly; }
 
 //=============================Adders and Removers========================================
 
-NamedEntity * Recipe::removeNamedEntity( NamedEntity *var )
-{
-//   qDebug() << QString("%1").arg(Q_FUNC_INFO);
-
-   // brewnotes a bit odd
-   if ( dynamic_cast<BrewNote*>(var) ) {
-      // the cast is required to force the template to gets it thing right
-      Database::instance().remove(qobject_cast<BrewNote*>(var));
-      return var;
-   } else {
-      return Database::instance().removeNamedEntityFromRecipe( this, var );
-   }
-}
 
 double Recipe::batchSizeNoLosses_l()
 {

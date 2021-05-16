@@ -25,7 +25,7 @@
 #include "HopEditor.h"
 #include "database/Database.h"
 #include "config.h"
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 
 HopEditor::HopEditor( QWidget* parent )

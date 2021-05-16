@@ -99,6 +99,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/BtFolder.cpp
     ${SRCDIR}/BtLabel.cpp
     ${SRCDIR}/BtLineEdit.cpp
+    ${SRCDIR}/BtPrintPreview.cpp
     ${SRCDIR}/BtSplashScreen.cpp
     ${SRCDIR}/BtTabWidget.cpp
     ${SRCDIR}/BtTextEdit.cpp
@@ -192,22 +193,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/TimerListDialog.cpp
     ${SRCDIR}/TimerMainDialog.cpp
     ${SRCDIR}/TimerWidget.cpp
-    ${SRCDIR}/unit.cpp
-    ${SRCDIR}/unitSystems/CelsiusTempUnitSystem.cpp
-    ${SRCDIR}/unitSystems/DiastaticPowerUnitSystem.cpp
-    ${SRCDIR}/unitSystems/EbcColorUnitSystem.cpp
-    ${SRCDIR}/unitSystems/FahrenheitTempUnitSystem.cpp
-    ${SRCDIR}/unitSystems/ImperialVolumeUnitSystem.cpp
-    ${SRCDIR}/unitSystems/PlatoDensityUnitSystem.cpp
-    ${SRCDIR}/unitSystems/SgDensityUnitSystem.cpp
-    ${SRCDIR}/unitSystems/SIVolumeUnitSystem.cpp
-    ${SRCDIR}/unitSystems/SIWeightUnitSystem.cpp
-    ${SRCDIR}/unitSystems/SrmColorUnitSystem.cpp
-    ${SRCDIR}/unitSystems/TimeUnitSystem.cpp
-    ${SRCDIR}/unitSystems/UnitSystem.cpp
-    ${SRCDIR}/unitSystems/UnitSystems.cpp
-    ${SRCDIR}/unitSystems/USVolumeUnitSystem.cpp
-    ${SRCDIR}/unitSystems/USWeightUnitSystem.cpp
+    ${SRCDIR}/Unit.cpp
+    ${SRCDIR}/UnitSystem.cpp
     ${SRCDIR}/WaterButton.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp

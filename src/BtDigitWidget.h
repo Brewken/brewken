@@ -20,9 +20,8 @@
 #include <QLabel>
 #include <QWidget>
 #include <QString>
-#include "unit.h"
-#include "unitSystems/UnitSystem.h"
-#include "unitSystems/UnitSystems.h"
+#include "Unit.h"
+#include "UnitSystem.h"
 
 /*!
  * \class BtDigitWidget

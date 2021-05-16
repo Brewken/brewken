@@ -41,20 +41,8 @@
 #include "Logging.h"
 #include "MainWindow.h"
 #include "PersistentSettings.h"
-#include "unit.h"
-#include "unitSystems/CelsiusTempUnitSystem.h"
-#include "unitSystems/DiastaticPowerUnitSystem.h"
-#include "unitSystems/EbcColorUnitSystem.h"
-#include "unitSystems/FahrenheitTempUnitSystem.h"
-#include "unitSystems/ImperialVolumeUnitSystem.h"
-#include "unitSystems/PlatoDensityUnitSystem.h"
-#include "unitSystems/SgDensityUnitSystem.h"
-#include "unitSystems/SIVolumeUnitSystem.h"
-#include "unitSystems/SIWeightUnitSystem.h"
-#include "unitSystems/SrmColorUnitSystem.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/USVolumeUnitSystem.h"
-#include "unitSystems/USWeightUnitSystem.h"
+#include "Unit.h"
+#include "UnitSystem.h"
 
 //
 // Anonymous namespace for constants, global variables and functions used only in this file
@@ -679,15 +667,15 @@ void OptionDialog::saveAndClose()
       case SI:
       default:
          Brewken::weightUnitSystem = SI;
-         Brewken::thingToUnitSystem.insert(Unit::Mass, UnitSystems::siWeightUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::siWeightUnitSystem);
          break;
       case USCustomary:
          Brewken::weightUnitSystem  = USCustomary;
-         Brewken::thingToUnitSystem.insert(Unit::Mass, UnitSystems::usWeightUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::usWeightUnitSystem);
          break;
       case Imperial:
          Brewken::weightUnitSystem  = Imperial;
-         Brewken::thingToUnitSystem.insert(Unit::Mass, UnitSystems::usWeightUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::usWeightUnitSystem);
          break;
    }
 
@@ -696,11 +684,11 @@ void OptionDialog::saveAndClose()
       case Celsius:
       default:
          Brewken::tempScale = Celsius;
-         Brewken::thingToUnitSystem.insert(Unit::Temp,UnitSystems::celsiusTempUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Temp,&UnitSystems::celsiusTempUnitSystem);
          break;
       case Fahrenheit:
          Brewken::tempScale = Fahrenheit;
-         Brewken::thingToUnitSystem.insert(Unit::Temp,UnitSystems::fahrenheitTempUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Temp,&UnitSystems::fahrenheitTempUnitSystem);
          break;
    }
 
@@ -709,15 +697,15 @@ void OptionDialog::saveAndClose()
       case SI:
       default:
          Brewken::volumeUnitSystem = SI;
-         Brewken::thingToUnitSystem.insert(Unit::Volume,UnitSystems::siVolumeUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Volume,&UnitSystems::siVolumeUnitSystem);
          break;
       case USCustomary:
          Brewken::volumeUnitSystem = USCustomary;
-         Brewken::thingToUnitSystem.insert(Unit::Volume,UnitSystems::usVolumeUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Volume,&UnitSystems::usVolumeUnitSystem);
          break;
       case Imperial:
          Brewken::volumeUnitSystem = Imperial;
-         Brewken::thingToUnitSystem.insert(Unit::Volume,UnitSystems::imperialVolumeUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Volume,&UnitSystems::imperialVolumeUnitSystem);
          break;
    }
 
@@ -726,11 +714,11 @@ void OptionDialog::saveAndClose()
       case Brewken::SG:
       default:
          Brewken::densityUnit = Brewken::SG;
-         Brewken::thingToUnitSystem.insert(Unit::Density, UnitSystems::sgDensityUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Density, &UnitSystems::sgDensityUnitSystem);
          break;
       case Brewken::PLATO:
          Brewken::densityUnit = Brewken::PLATO;
-         Brewken::thingToUnitSystem.insert(Unit::Density, UnitSystems::platoDensityUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Density, &UnitSystems::platoDensityUnitSystem);
          break;
    }
 
@@ -752,11 +740,11 @@ void OptionDialog::saveAndClose()
    {
       case Brewken::SRM:
       default:
-         Brewken::thingToUnitSystem.insert(Unit::Color,UnitSystems::srmColorUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Color,&UnitSystems::srmColorUnitSystem);
          Brewken::colorUnit = Brewken::SRM;
          break;
       case Brewken::EBC:
-         Brewken::thingToUnitSystem.insert(Unit::Color,UnitSystems::ebcColorUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::Color,&UnitSystems::ebcColorUnitSystem);
          Brewken::colorUnit = Brewken::EBC;
          break;
    }
@@ -765,11 +753,11 @@ void OptionDialog::saveAndClose()
    {
       case Brewken::LINTNER:
       default:
-         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower,UnitSystems::lintnerDiastaticPowerUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::lintnerDiastaticPowerUnitSystem);
          Brewken::diastaticPowerUnit = Brewken::LINTNER;
          break;
       case Brewken::WK:
-         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower,UnitSystems::wkDiastaticPowerUnitSystem());
+         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::wkDiastaticPowerUnitSystem);
          Brewken::diastaticPowerUnit = Brewken::WK;
          break;
    }

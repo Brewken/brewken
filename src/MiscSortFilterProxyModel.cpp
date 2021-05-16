@@ -22,7 +22,7 @@
 #include "MiscTableModel.h"
 #include "model/Misc.h"
 #include "Brewken.h"
-#include "unit.h"
+#include "Unit.h"
 
 MiscSortFilterProxyModel::MiscSortFilterProxyModel(QObject *parent, bool filt)
 : QSortFilterProxyModel(parent)

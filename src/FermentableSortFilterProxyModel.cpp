@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "unit.h"
+#include "Unit.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "FermentableTableModel.h"
 #include "model/Fermentable.h"

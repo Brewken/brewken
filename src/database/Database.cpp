@@ -855,6 +855,7 @@ public:
             throw QString("%1 %2").arg(popchildq.lastQuery()).arg(popchildq.lastError().text());
 
          if(repopChild == 1) {
+            qDebug() << Q_FUNC_INFO << "calling populateChildTablesByName()";
             this->populateChildTablesByName(database);
 
             QSqlQuery popchildq( "UPDATE settings SET repopulateChildrenOnNextStart = 0", database.sqlDatabase() );
@@ -887,12 +888,17 @@ public:
          bool mustPrepare = true;
          int maxid = -1;
 
-         QString findAllQuery = QString("SELECT * FROM %1 order by %2 asc").arg(tname).arg(table->keyName(oldType));
+         // select * from [table] order by id asc
+         QString findAllQuery = QString("SELECT * FROM %1 order by %2 asc")
+                                    .arg(tname)
+                                    .arg(table->keyName(oldType)); // make sure we specify the right db type
+         qDebug() << Q_FUNC_INFO << "FIND ALL:" << findAllQuery;
          try {
-            if (! readOld.exec(findAllQuery) )
+            if (! readOld.exec(findAllQuery) ) {
                throw QString("Could not execute %1 : %2")
                   .arg(readOld.lastQuery())
                   .arg(readOld.lastError().text());
+            }
 
             newDb.transaction();
 
@@ -921,6 +927,7 @@ public:
                   mustPrepare = false;
                }
 
+               qDebug() << Q_FUNC_INFO << "INSERT:" << upsertQuery;
                // All that's left is to bind
                for(int i = 0; i < here.count(); ++i) {
                   if ( table->dbTable() == DatabaseConstants::BREWNOTETABLE
@@ -934,10 +941,11 @@ public:
                   }
                }
                // and execute
-               if ( ! upsertNew.exec() )
+               if ( ! upsertNew.exec() ) {
                   throw QString("Could not insert new row %1 : %2")
                      .arg(upsertNew.lastQuery())
                      .arg(upsertNew.lastError().text());
+               }
             }
             // We need to create the increment and decrement things for the
             // instructions_in_recipe table. This seems a little weird to do this
@@ -950,12 +958,14 @@ public:
                   qCritical() << QString("No increment triggers found for %1").arg(table->tableName());
                }
                else {
+                  qDebug() << "INC TRIGGER:" << trigger;
                   upsertNew.exec(trigger);
                   trigger =  table->generateDecrementTrigger(newType);
                   if ( trigger.isEmpty() ) {
                      qCritical() << QString("No decrement triggers found for %1").arg(table->tableName());
                   }
                   else {
+                     qDebug() << "DEC TRIGGER:" << trigger;
                      if ( ! upsertNew.exec(trigger) ) {
                         throw QString("Could not insert new row %1 : %2")
                            .arg(upsertNew.lastQuery())
@@ -964,11 +974,15 @@ public:
                   }
                }
             }
-            // We need to manually reset the sequences
+            // We need to manually reset the sequences in postgresql
             if ( newType == Brewken::PGSQL ) {
                // this probably should be fixed somewhere, but this is enough for now?
                //
-               QString seq = QString("SELECT setval('%1_%2_seq',(SELECT MAX(id) FROM %1))").arg(table->tableName()).arg(table->keyName());
+               // SELECT setval(hop_id_seq,(SELECT MAX(id) from hop))
+               QString seq = QString("SELECT setval('%1_%2_seq',(SELECT MAX(%2) FROM %1))")
+                                             .arg(table->tableName())
+                                             .arg(table->keyName());
+               qDebug() << "SEQ reset: " << seq;
 
                if ( ! upsertNew.exec(seq) )
                   throw QString("Could not reset the sequences: %1 %2")
@@ -978,7 +992,7 @@ public:
          catch (QString e) {
             qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
             newDb.rollback();
-            throw;
+            abort();
          }
 
          newDb.commit();
@@ -1083,44 +1097,51 @@ public:
          QString queryString = QString("SELECT DISTINCT %1 FROM %2")
                .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name)).arg(tbl->tableName());
 
+         qDebug() << Q_FUNC_INFO << "DISTINCT:" << queryString;
          QSqlQuery nameq( queryString, database.sqlDatabase() );
 
-         if ( ! nameq.isActive() )
+         if ( ! nameq.exec() ) {
             throw QString("%1 %2").arg(nameq.lastQuery()).arg(nameq.lastError().text());
+         }
 
          while (nameq.next()) {
             QString name = nameq.record().value(0).toString();
-            queryString = QString( "SELECT %1 FROM %2 WHERE ( %3=:name AND %4=:boolean ) ORDER BY %1 ASC LIMIT 1")
+            // select id from [tablename] where ( name = :name and display = :boolean ) order by id asc
+            queryString = QString( "SELECT %1 FROM %2 WHERE ( %3=:name AND %4=:boolean ) ORDER BY %1")
                         .arg(tbl->keyName())
                         .arg(tbl->tableName())
                         .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name))
                         .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::display));
             QSqlQuery query( database.sqlDatabase() );
 
+            qDebug() << Q_FUNC_INFO << "FIND:" << queryString;
+
+            // find the first element with display set true (assumed parent)
             query.prepare(queryString);
             query.bindValue(":name", name);
             query.bindValue(":boolean",Brewken::dbTrue());
-            query.exec();
 
-            if ( !query.isActive() )
+            if ( !query.exec() ) {
                throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
+            }
 
             query.first();
             QString parentID = query.record().value(tbl->keyName()).toString();
 
+            // find the every element with display set false (assumed children)
             query.bindValue(":name", name);
             query.bindValue(":boolean", Brewken::dbFalse());
-            query.exec();
 
-            if ( !query.isActive() )
+            if ( !query.exec() ) {
                throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
+            }
             // Postgres uses a more verbose upsert syntax. I don't like this, but
             // I'm not seeing a better way yet.
             while (query.next()) {
                QString childID = query.record().value(tbl->keyName()).toString();
                switch( Brewken::dbType() ) {
                   case Brewken::PGSQL:
-                  //  INSERT INTO %1 (parent_id, child_id) VALUES (%2, %3) ON CONFLICT(child_id) DO UPDATE set parent_id = EXCLUDED.parent_id
+                     //  INSERT INTO [child table] (parent_id, child_id) VALUES (:parentid, child_id) ON CONFLICT(child_id) DO UPDATE set parent_id = EXCLUDED.parent_id
                      queryString = QString("INSERT INTO %1 (%2, %3) VALUES (%4, %5) ON CONFLICT(%3) DO UPDATE set %2 = EXCLUDED.%2")
                            .arg(this->dbDefn.childTableName((table)))
                            .arg(cld->parentIndexName())
@@ -1129,6 +1150,7 @@ public:
                            .arg(childID);
                      break;
                   default:
+                     // insert or replace into [child table] (parent_id, child_id) values (:parentid,:childid)
                      queryString = QString("INSERT OR REPLACE INTO %1 (%2, %3) VALUES (%4, %5)")
                                  .arg(this->dbDefn.childTableName(table))
                                  .arg(cld->parentIndexName())
@@ -1136,15 +1158,17 @@ public:
                                  .arg(parentID)
                                  .arg(childID);
                }
+               qDebug() << Q_FUNC_INFO << "UPSERT:" << queryString;
                QSqlQuery insertq( queryString, database.sqlDatabase() );
-               if ( !insertq.isActive() )
+               if ( !insertq.exec() ) {
                   throw QString("%1 %2").arg(insertq.lastQuery()).arg(insertq.lastError().text());
+               }
             }
          }
       }
       catch (QString e) {
          qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         throw QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
+         abort();
       }
 
       return;
@@ -1403,7 +1427,7 @@ bool Database::load() {
    DbNamedEntityRecords<Mash>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<MashStep>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Misc>::getInstance().loadAll(this->sqlDatabase());
-/*   DbNamedEntityRecords<Recipe>::getInstance().loadAll(this->sqlDatabase()); */ // .:TODO:.
+   DbNamedEntityRecords<Recipe>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Salt>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Style>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Water>::getInstance().loadAll(this->sqlDatabase());
@@ -2800,7 +2824,7 @@ int Database::insertElement(NamedEntity * ins)
 
    TableSchema* schema = this->pimpl->dbDefn.table(ins->table());
    QString insertQ = schema->generateInsertProperties(Brewken::dbType());
-   QStringList allProps = schema->allPropertyNames(Brewken::dbType());
+   QStringList allProps = schema->allProperties();
 
    qDebug() << Q_FUNC_INFO << "SQL:" << insertQ;
    q.prepare(insertQ);
@@ -2808,7 +2832,8 @@ int Database::insertElement(NamedEntity * ins)
    QString sqlParameters;
    QTextStream sqlParametersConcat(&sqlParameters);
    foreach (QString prop, allProps) {
-      QVariant val_to_ins = ins->property(prop.toUtf8().data());
+      QString pname = schema->propertyName(prop);
+      QVariant val_to_ins = ins->property(pname.toUtf8().data());
       if ( ins->table() == DatabaseConstants::BREWNOTETABLE && prop == PropertyNames::BrewNote::brewDate ) {
          val_to_ins = val_to_ins.toString();
       }
@@ -3287,7 +3312,7 @@ void Database::updateEntry( NamedEntity* object, QString propName, QVariant valu
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
       if ( transact )
          sqlDatabase().rollback();
-      throw;
+      abort();
    }
 
    if ( transact )
@@ -3487,6 +3512,7 @@ Fermentable * Database::addToRecipe( Recipe* rec, Fermentable* ferm, bool noCopy
    }
 }
 
+
 void Database::addToRecipe( Recipe* rec, QList<Fermentable*>ferms, bool transact )
 {
    if ( ferms.size() == 0 )
@@ -3515,6 +3541,7 @@ void Database::addToRecipe( Recipe* rec, QList<Fermentable*>ferms, bool transact
       rec->recalcAll();
    }
 }
+
 
 Hop * Database::addToRecipe( Recipe* rec, Hop* hop, bool noCopy, bool transact )
 {

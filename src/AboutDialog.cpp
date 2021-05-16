@@ -16,12 +16,15 @@
  */
 #include "AboutDialog.h"
 
-#include <QWidget>
+#include <QEvent>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
+#include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSpacerItem>
+#include <QVBoxLayout>
+#include <QWidget>
+
 #include "config.h"
 
 AboutDialog::AboutDialog(QWidget * parent) :

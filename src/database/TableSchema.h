@@ -42,15 +42,25 @@ public:
       META
    };
 
+   //!brief get this TableSchema's name
    const QString tableName() const;
+   //!brief get the class associated with this table, if any
    const QString className() const;
+   //!brief get the table ID for this TableSchema
    DatabaseConstants::DbTableId dbTable() const;
+   //!brief get the table ID for this TableSchema's child table, if any
    DatabaseConstants::DbTableId childTable() const;
+   //!brief get the table ID for this TableSchema's _in_recipe table, if any
    DatabaseConstants::DbTableId inRecTable() const;
+   //!brief get the table ID for this TableSchema's _inventory table, if any
    DatabaseConstants::DbTableId invTable() const;
+   //!brief get the table ID for this TableSchema's bt_ table, if any
    DatabaseConstants::DbTableId btTable() const;
+   //!brief get all the properties in this schema as a map <name,PropertySchema>
    const QMap<QString, PropertySchema*> properties() const;
+   //!brief get all the foreign keys in this schema as a map <name,PropertySchema>
    const QMap<QString, PropertySchema*> foreignKeys() const;
+   //!brief get the PropertySchema for the unique id
    const PropertySchema* key() const;
 
    // Things to do for properties
@@ -74,8 +84,12 @@ public:
    // returns the property to be used for the increment/decrement triggers
    const QString triggerProperty() const;
 
+   //!brief get all the property names
    const QStringList allPropertyNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   //!brief get all the database column names
    const QStringList allColumnNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   //!brief get keys for the properties
+   const QStringList allProperties() const;
 
    // things to do on foreign keys
    // get a specific foreign key column name
@@ -88,8 +102,12 @@ public:
    // a lot of tables have one foreign key. This is a nice shortcut for that
    DatabaseConstants::DbTableId foreignTable(Brewken::DBTypes type = Brewken::ALLDB) const;
 
+   //!brief get all the foreign key property names
    const QStringList allForeignKeyNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   //!brief get all the foreign key column names
    const QStringList allForeignKeyColumnNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   //!brief get keys for the foreign keys
+   const QStringList allForeignKeys() const;
 
    //!brief Use this to get the not recipe_id index from an inrec table
    const QString inRecIndexName(Brewken::DBTypes type = Brewken::ALLDB);

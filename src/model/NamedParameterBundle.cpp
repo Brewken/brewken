@@ -28,7 +28,7 @@ NamedParameterBundle::NamedParameterBundle() : QHash<char const * const, QVarian
 NamedParameterBundle::~NamedParameterBundle() = default;
 
 
-QVariant NamedParameterBundle::operator()(char const * const parameterName) {
+QVariant NamedParameterBundle::operator()(char const * const parameterName) const {
    if (!this->contains(parameterName)) {
       //
       // We want to throw an exception here because it's a lot less code than checking a return value on every call
@@ -51,19 +51,19 @@ QVariant NamedParameterBundle::operator()(char const * const parameterName) {
 }
 
 
-template <> void NamedParameterBundle::operator()<QString>(char const * const parameterName, QString & storeIn) {
+template <> void NamedParameterBundle::operator()<QString>(char const * const parameterName, QString & storeIn) const {
    storeIn = this->operator()(parameterName).toString();
    return;
 }
-template <> void NamedParameterBundle::operator()<bool>(char const * const parameterName, bool & storeIn) {
+template <> void NamedParameterBundle::operator()<bool>(char const * const parameterName, bool & storeIn) const {
    storeIn = this->operator()(parameterName).toBool();
    return;
 }
-template <> void NamedParameterBundle::operator()<int>(char const * const parameterName, int & storeIn) {
+template <> void NamedParameterBundle::operator()<int>(char const * const parameterName, int & storeIn) const {
    storeIn = this->operator()(parameterName).toInt();
    return;
 }
-template <> void NamedParameterBundle::operator()<double>(char const * const parameterName, double & storeIn) {
+template <> void NamedParameterBundle::operator()<double>(char const * const parameterName, double & storeIn) const {
    storeIn = this->operator()(parameterName).toDouble();
    return;
 }

@@ -1,5 +1,5 @@
 /**
- * unit.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * Unit.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -20,6 +20,7 @@
  */
 #ifndef UNIT_H
 #define UNIT_H
+#pragma once
 
 #include <QMultiMap>
 #include <QObject>
@@ -95,6 +96,9 @@ public:
       None           = 0x000000
    };
 
+   /**
+    * \brief Construct a type of unit
+    */
    Unit(UnitType const unitType,
         SystemOfMeasurement const systemOfMeasurement,
         QString const unitName,
@@ -122,6 +126,14 @@ public:
    Unit::UnitType getUnitType() const;
    SystemOfMeasurement getUnitOrTempSystem() const;
 
+   /**
+    * \brief Used by \c UnitSystem
+    *
+    *        Returns the threshold below which a smaller unit (of the same type) should be used.  Normally it's 1, eg a
+    *        length of time less than a minute should be shown in seconds.  But it can be larger, eg we show minutes for
+    *        any length of time below 2 hours.  And it can be smaller, eg a US/imperial volume measure can be as small
+    *        as a quarter of cup before we drop down to showing tablespoons.
+    */
    double boundary() const;
 
    static Unit const * getUnit(QString& name, bool matchCurrentSystem = true);
@@ -170,7 +182,7 @@ namespace Units {
    // === Temperature ===
    extern Unit const celsius;
    extern Unit const fahrenheit;
-   extern Unit const kelvin;
+   extern Unit const kelvin; // .:TBD:. MY 2021-05-07 Does anyone really use this in brewing?
    // === Color ===
    extern Unit const srm;
    extern Unit const ebc;

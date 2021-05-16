@@ -1,5 +1,5 @@
 /**
- * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -129,7 +129,7 @@
 #include "TimerMainDialog.h"
 #include "UndoableAddOrRemove.h"
 #include "UndoableAddOrRemoveList.h"
-#include "unit.h"
+#include "Unit.h"
 #include "WaterDialog.h"
 #include "WaterEditor.h"
 #include "WaterListModel.h"
@@ -747,16 +747,18 @@ void MainWindow::setupTriggers() {
    // Refactoring is good.  It's like a rye saison fermenting away
    connect(actionRecipePrint, &QAction::triggered, [this]() {
       print([this](QPrinter* printer) {
-         recipeFormatter->print(
-               printer,  RecipeFormatter::PRINT);
+//         recipeFormatter->print(printer,  RecipeFormatter::PRINT);
+         recipeFormatter->print(printer);
       });
    });
    connect(actionRecipePreview, &QAction::triggered, [this]() {
-      recipeFormatter->print(printer, RecipeFormatter::PREVIEW);
+//      recipeFormatter->print(printer, RecipeFormatter::PREVIEW);
+      recipeFormatter->printPreview();
    });
    connect(actionRecipeHTML, &QAction::triggered, this, [this]() {
-      exportHTML([this](QFile* file) {
-         recipeFormatter->print(printer, RecipeFormatter::HTML, file);
+      exportHtml([this](QFile* file) {
+//         recipeFormatter->print(printer, RecipeFormatter::HTML, file);
+         recipeFormatter->exportHtml(file);
       });
    });
    connect(actionRecipeBBCode, &QAction::triggered, [this]() {
@@ -764,16 +766,15 @@ void MainWindow::setupTriggers() {
    });
    connect(actionBrewdayPrint, &QAction::triggered, [this]() {
       print([this](QPrinter* printer) {
-         brewDayScrollWidget->print(
-               printer,  BrewDayScrollWidget::PRINT);
+         brewDayScrollWidget->print(printer);
       });
    });
    connect(actionBrewdayPreview, &QAction::triggered, [this]() {
-      brewDayScrollWidget->print(printer, RecipeFormatter::PREVIEW);
+      this->brewDayScrollWidget->printPreview();
    });
    connect(actionBrewdayHTML, &QAction::triggered, this, [this]() {
-      exportHTML([this](QFile* file) {
-         brewDayScrollWidget->print(printer,BrewDayScrollWidget::PRINT,file);
+      exportHtml([this](QFile* file) {
+         brewDayScrollWidget->exportHtml(file);
       });
    });
    connect(actionInventoryPrint, &QAction::triggered, [this]() {
@@ -783,8 +784,8 @@ void MainWindow::setupTriggers() {
    connect(actionInventoryPreview, &QAction::triggered,
          []() { InventoryFormatter::printPreview(); });
    connect(actionInventoryHTML, &QAction::triggered, [this]() {
-      exportHTML(
-            [](QFile* file) { InventoryFormatter::exportHTML(file); });
+      exportHtml(
+            [](QFile* file) { InventoryFormatter::exportHtml(file); });
    });
 }
 
@@ -2640,7 +2641,7 @@ void MainWindow::print(std::function<void(QPrinter* printer)> functor)
    }
 }
 
-void MainWindow::exportHTML(std::function<void(QFile* file)> functor)
+void MainWindow::exportHtml(std::function<void(QFile* file)> functor)
 {
    if (!functor)
    {

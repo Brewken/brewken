@@ -41,7 +41,7 @@
 #include "model/Recipe.h"
 #include "model/Salt.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 #include "WaterDialog.h"
 
 static QStringList addToName = QStringList() << QObject::tr("Never")

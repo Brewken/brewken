@@ -18,22 +18,22 @@
 #ifndef WATERTABLEMODEL_H
 #define WATERTABLEMODEL_H
 
-class WaterTableModel;
-class WaterItemDelegate;
-
 #include <QAbstractTableModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QMetaProperty>
-#include <QVariant>
 #include <QItemDelegate>
 #include <QList>
+#include <QMetaProperty>
+#include <QModelIndex>
+#include <QVariant>
+#include <QWidget>
 
-#include "unit.h"
+#include "Unit.h"
 // Forward declarations.
 class Water;
 class WaterTableWidget;
 class Recipe;
+
+class WaterTableModel;
+class WaterItemDelegate;
 
 enum{ WATERNAMECOL, WATERAMOUNTCOL, WATERCALCIUMCOL, WATERBICARBONATECOL,
       WATERSULFATECOL, WATERCHLORIDECOL, WATERSODIUMCOL, WATERMAGNESIUMCOL,

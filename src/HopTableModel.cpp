@@ -43,7 +43,7 @@
 #include "PersistentSettings.h"
 #include <QString>
 #include <QVector>
-#include "unit.h"
+#include "Unit.h"
 
 HopTableModel::HopTableModel(QTableView* parent, bool editable)
    : QAbstractTableModel(parent),

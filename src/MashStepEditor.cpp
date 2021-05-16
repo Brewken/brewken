@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 #include "MashStepEditor.h"
 #include "model/MashStep.h"

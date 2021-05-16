@@ -27,9 +27,8 @@
 
 #include "Brewken.h"
 #include "PersistentSettings.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/UnitSystem.h"
-#include "unit.h"
+#include "UnitSystem.h"
+#include "Unit.h"
 
 BtDigitWidget::BtDigitWidget(QWidget *parent, Unit::UnitType type, Unit const * units) : QLabel(parent),
    m_type(type),

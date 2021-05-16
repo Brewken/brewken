@@ -22,7 +22,7 @@
 
 #include "model/Mash.h"
 #include "Brewken.h"
-#include "unit.h"
+#include "Unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
 #include "database/Database.h"

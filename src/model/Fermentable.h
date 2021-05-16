@@ -31,7 +31,7 @@
 #include <QSqlRecord>
 
 #include "model/NamedEntity.h"
-#include "unit.h"
+#include "Unit.h"
 
 namespace PropertyNames::Fermentable { static char const * const addAfterBoil = "addAfterBoil"; /* previously kpropAddAfterBoil */ }
 namespace PropertyNames::Fermentable { static char const * const amount_kg = "amount_kg"; /* previously kpropAmountKg */ }

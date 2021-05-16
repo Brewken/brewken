@@ -21,7 +21,7 @@
 #include <QWidget>
 #include <QButtonGroup>
 #include "ui_strikeWaterDialog.h"
-#include "unit.h"
+#include "Unit.h"
 
 /*!
  * \class StrikeWaterDialog

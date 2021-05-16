@@ -28,6 +28,7 @@
 #include <QSqlRecord>
 
 #include "model/NamedEntity.h"
+
 namespace PropertyNames::Hop { static char const * const alpha_pct = "alpha_pct"; /* previously kpropAlpha */ }
 namespace PropertyNames::Hop { static char const * const amount_kg = "amount_kg"; /* previously kpropAmountKg */ }
 namespace PropertyNames::Hop { static char const * const beta_pct = "beta_pct"; /* previously kpropBeta */ }
@@ -47,7 +48,6 @@ namespace PropertyNames::Hop { static char const * const typeString = "typeStrin
 namespace PropertyNames::Hop { static char const * const type = "type"; /* previously kpropType */ }
 namespace PropertyNames::Hop { static char const * const useString = "useString"; /* previously kpropUseString */ }
 namespace PropertyNames::Hop { static char const * const use = "use"; /* previously kpropUse */ }
-
 
 /*!
  * \class Hop

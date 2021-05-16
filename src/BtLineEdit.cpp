@@ -29,9 +29,8 @@
 #include "Algorithms.h"
 #include "Brewken.h"
 #include "PersistentSettings.h"
-#include "unitSystems/UnitSystems.h"
-#include "unitSystems/UnitSystem.h"
-#include "unit.h"
+#include "UnitSystem.h"
+#include "Unit.h"
 
 BtLineEdit::BtLineEdit(QWidget *parent, Unit::UnitType type, QString const & maximalDisplayString) :
    QLineEdit(parent),
@@ -115,9 +114,7 @@ void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale
    }
 }
 
-double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool force)
-{
-   UnitSystem* temp;
+double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool force) {
    Unit const *       works;
    Unit::unitDisplay dspUnit  = oldUnit;
    Unit::unitScale   dspScale = oldScale;
@@ -140,7 +137,7 @@ double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool 
    }
 
    // Find the unit system containing dspUnit
-   temp = Brewken::findUnitSystem(_units, dspUnit);
+   UnitSystem const * temp = Brewken::findUnitSystem(_units, dspUnit);
    if ( temp ) {
       // If we found it, find the unit referred by dspScale
       works = temp->scaleUnit(dspScale);

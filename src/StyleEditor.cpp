@@ -23,7 +23,7 @@
 #include "model/Style.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
-#include "unit.h"
+#include "Unit.h"
 #include "Brewken.h"
 
 StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor)

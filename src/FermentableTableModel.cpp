@@ -47,7 +47,7 @@
 #include "model/Fermentable.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
-#include "unit.h"
+#include "Unit.h"
 
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable)

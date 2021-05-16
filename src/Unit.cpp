@@ -1,5 +1,5 @@
 /**
- * unit.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * Unit.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "Unit.h"
+
 #include <string>
 #include <iostream>
 
@@ -24,10 +26,8 @@
 #include <QRegExp>
 #include <QDebug>
 
-#include "unit.h"
 #include "Brewken.h"
 #include "Algorithms.h"
-//#include "model/BrewNote.h"
 
 namespace {
 
@@ -228,7 +228,8 @@ Unit const Units::ebc                  = Unit{Unit::Color,          SI,         
 // Specific gravity (aka, Sg) will be the standard unit, since that is how we store things in the database.
 Unit const Units::sp_grav              = Unit{Unit::Density,        Any,         "sg",   "sg",  [](double x){return x;},               [](double y){return y;},                1.0};
 Unit const Units::plato                = Unit{Unit::Density,        Any,         "P",    "sg",  [](double x){return x == 0.0 ? 0.0 : Algorithms::PlatoToSG_20C20C(x);},
-                                                                                                [](double y){return y == 0.0 ? 0.0 : Algorithms::SG_20C20C_toPlato(y);},      1.0};
+                                                                                                                                       [](double y){return y == 0.0 ? 0.0 : Algorithms::SG_20C20C_toPlato(y);},
+                                                                                                                                                                               1.0};
 // == Diastatic power ==
 // Lintner will be the standard unit, since that is how we store things in the database.
 Unit const Units::lintner              = Unit{Unit::DiastaticPower, Any,         "L",    "L",   [](double x){return x;},               [](double y){return y;},                1.0};
