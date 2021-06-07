@@ -1,5 +1,5 @@
 /**
- * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -55,6 +55,10 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Misc::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Misc>::getInstance();
+}
+
 //============================CONSTRUCTORS======================================
 Misc::Misc(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
@@ -90,7 +94,8 @@ Misc::Misc(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
 {
 }
 
-Misc::Misc(Misc & other) : NamedEntity(other),
+Misc::Misc(Misc const & other) :
+   NamedEntity(other),
    m_typeString(other.m_typeString),
    m_type(other.m_type),
    m_useString(other.m_useString),
@@ -102,8 +107,8 @@ Misc::Misc(Misc & other) : NamedEntity(other),
    m_notes(other.m_notes),
    m_inventory(other.m_inventory),
    m_inventory_id(other.m_inventory_id),
-   m_cacheOnly(other.m_cacheOnly)
-{
+   m_cacheOnly(other.m_cacheOnly) {
+   return;
 }
 
 Misc::Misc(QString name, bool cache)
@@ -345,12 +350,4 @@ NamedEntity * Misc::getParent() {
 
    // Return whatever we got
    return myParent;
-}
-
-int Misc::insertInDatabase() {
-   return Database::instance().insertMisc(this);
-}
-
-void Misc::removeFromDatabase() {
-   Database::instance().remove(this);
 }

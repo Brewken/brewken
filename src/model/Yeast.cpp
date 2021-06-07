@@ -48,6 +48,10 @@ bool Yeast::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Yeast::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Yeast>::getInstance();
+}
+
 QString Yeast::classNameStr()
 {
    static const QString name("Yeast");
@@ -157,29 +161,30 @@ Yeast::Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
 {
 }
 
-Yeast::Yeast(Yeast & other) : NamedEntity(other),
-     m_typeString(other.m_typeString),
-     m_type(other.m_type),
-     m_formString(other.m_formString),
-     m_form(other.m_form),
-     m_flocculationString(other.m_flocculationString),
-     m_flocculation(other.m_flocculation),
-     m_amount(other.m_amount),
-     m_amountIsWeight(other.m_amountIsWeight),
-     m_laboratory(other.m_laboratory),
-     m_productID(other.m_productID),
-     m_minTemperature_c(other.m_minTemperature_c),
-     m_maxTemperature_c(other.m_maxTemperature_c),
-     m_attenuation_pct(other.m_attenuation_pct),
-     m_notes(other.m_notes),
-     m_bestFor(other.m_bestFor),
-     m_timesCultured(other.m_timesCultured),
-     m_maxReuse(other.m_maxReuse),
-     m_addToSecondary(other.m_addToSecondary),
-     m_inventory(other.m_inventory),
-     m_inventory_id(other.m_inventory_id),
-     m_cacheOnly(other.m_cacheOnly)
-{
+Yeast::Yeast(Yeast const & other) :
+   NamedEntity(other),
+   m_typeString(other.m_typeString),
+   m_type(other.m_type),
+   m_formString(other.m_formString),
+   m_form(other.m_form),
+   m_flocculationString(other.m_flocculationString),
+   m_flocculation(other.m_flocculation),
+   m_amount(other.m_amount),
+   m_amountIsWeight(other.m_amountIsWeight),
+   m_laboratory(other.m_laboratory),
+   m_productID(other.m_productID),
+   m_minTemperature_c(other.m_minTemperature_c),
+   m_maxTemperature_c(other.m_maxTemperature_c),
+   m_attenuation_pct(other.m_attenuation_pct),
+   m_notes(other.m_notes),
+   m_bestFor(other.m_bestFor),
+   m_timesCultured(other.m_timesCultured),
+   m_maxReuse(other.m_maxReuse),
+   m_addToSecondary(other.m_addToSecondary),
+   m_inventory(other.m_inventory),
+   m_inventory_id(other.m_inventory_id),
+   m_cacheOnly(other.m_cacheOnly) {
+   return;
 }
 
 //============================="GET" METHODS====================================
@@ -502,12 +507,4 @@ NamedEntity * Yeast::getParent() {
 
    // Return whatever we got
    return myParent;
-}
-
-int Yeast::insertInDatabase() {
-   return Database::instance().insertYeast(this);
-}
-
-void Yeast::removeFromDatabase() {
-   Database::instance().remove(this);
 }

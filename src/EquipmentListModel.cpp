@@ -1,6 +1,7 @@
 /**
- * EquipmentListModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * EquipmentListModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Tim Payne <swstim@gmail.com>
@@ -16,10 +17,10 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "EquipmentListModel.h"
-#include "model/Equipment.h"
+
 #include "database/Database.h"
+#include "model/Equipment.h"
 #include "model/Recipe.h"
 
 EquipmentListModel::EquipmentListModel(QWidget* parent)
@@ -129,10 +130,10 @@ void EquipmentListModel::recChanged(QMetaProperty prop, QVariant val)
    }
 }
 
-void EquipmentListModel::repopulateList()
-{
+void EquipmentListModel::repopulateList() {
    removeAll();
-   addEquipments( Database::instance().equipments() );
+   addEquipments( DbNamedEntityRecords<Equipment>::getInstance().getAllRaw() );
+   return;
 }
 
 Equipment* EquipmentListModel::at(int ndx)

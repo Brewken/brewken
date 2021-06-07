@@ -23,6 +23,50 @@
 #include "database/InstructionSchema.h"
 #include "database/TableSchemaConst.h"
 
+// This private implementation class holds all private non-virtual members of Instruction
+class Instruction::impl {
+public:
+
+   /**
+    * Constructor
+    */
+   impl(Instruction & instruction) :
+      instruction{instruction},
+      recipe{} {
+      return;
+   }
+
+   /**
+    * Destructor
+    */
+   ~impl() = default;
+
+   std::shared_ptr<Recipe> getRecipe() {
+      // If we already know which recipe we're in, we just return that...
+      if (this->recipe) {
+         return this->recipe;
+      }
+
+      // ...otherwise we have to ask the recipe object store to find our recipe
+      auto result = DbNamedEntityRecords<Recipe>::getInstance().findFirstMatching(
+         [this](std::shared_ptr<Recipe> rec) {return rec->uses(instruction);}
+      );
+
+      if (!result.has_value()) {
+         qCritical() << Q_FUNC_INFO << "Unable to find Recipe for Instruction #" << this->instruction.key();
+         return nullptr;
+      }
+
+      this->recipe = result.value();
+
+      return result.value();
+   }
+
+private:
+   Instruction & instruction;
+   std::shared_ptr<Recipe> recipe;
+};
+
 bool Instruction::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Instruction const & rhs = static_cast<Instruction const &>(other);
@@ -34,6 +78,10 @@ bool Instruction::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Instruction::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Instruction>::getInstance();
+}
+
 
 QString Instruction::classNameStr()
 {
@@ -43,51 +91,67 @@ QString Instruction::classNameStr()
 
 Instruction::Instruction(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key, QString(), true),
+   pimpl{new impl{*this}},
      m_directions(QString()),
      m_hasTimer  (false),
      m_timerValue(QString()),
      m_completed (false),
      m_interval  (0.0),
-     m_cacheOnly(false),
-     m_recipe   (nullptr)
-{
+     m_cacheOnly(false) {
+   return;
+}
+
+Instruction::Instruction(Instruction const & other) :
+     NamedEntity(other),
+   pimpl{new impl{*this}},
+     m_directions{other.m_directions},
+     m_hasTimer  {other.m_hasTimer  },
+     m_timerValue{other.m_timerValue},
+     m_completed {other.m_completed },
+     m_interval  {other.m_interval  },
+     m_cacheOnly {other.m_cacheOnly } {
+   return;
 }
 
 Instruction::Instruction(QString name, bool cache)
    : NamedEntity(DatabaseConstants::INSTRUCTIONTABLE, -1, name, true),
+   pimpl{new impl{*this}},
      m_directions(QString()),
      m_hasTimer  (false),
      m_timerValue(QString()),
      m_completed (false),
      m_interval  (0.0),
-     m_cacheOnly(cache),
-     m_recipe   (nullptr)
-{
+     m_cacheOnly(cache) {
+   return;
 }
 
 Instruction::Instruction(NamedParameterBundle & namedParameterBundle) :
    NamedEntity{namedParameterBundle, DatabaseConstants::INSTRUCTIONTABLE},
+   pimpl{new impl{*this}},
    m_directions{namedParameterBundle(PropertyNames::Instruction::directions).toString()},
    m_hasTimer  {namedParameterBundle(PropertyNames::Instruction::hasTimer  ).toBool()},
    m_timerValue{namedParameterBundle(PropertyNames::Instruction::timerValue).toString()},
    m_completed {namedParameterBundle(PropertyNames::Instruction::completed ).toBool()},
    m_interval  {namedParameterBundle(PropertyNames::Instruction::interval  ).toDouble()},
-   m_cacheOnly {false},
-   m_recipe    {nullptr} {
+   m_cacheOnly {false} {
    return;
 }
 
 Instruction::Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
    : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool() ),
+   pimpl{new impl{*this}},
      m_directions(rec.value(kcolInstructionDirections).toString()),
      m_hasTimer  (rec.value(kcolInstructionHasTimer).toBool()),
      m_timerValue(rec.value(kcolInstructionTimerValue).toString()),
      m_completed (rec.value(kcolInstructionCompleted).toBool()),
      m_interval  (rec.value(kcolInstructionInterval).toDouble()),
-     m_cacheOnly(false),
-     m_recipe   (nullptr)
-{
+     m_cacheOnly(false) {
+   return;
 }
+
+// See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
+// header file)
+Instruction::~Instruction() = default;
 
 // Setters ====================================================================
 void Instruction::setDirections(const QString& dir)
@@ -143,8 +207,6 @@ void Instruction::addReagent(const QString& reagent)
    m_reagents.append(reagent);
 }
 
-void Instruction::setRecipe(Recipe * const recipe) { this->m_recipe = recipe; }
-
 void Instruction::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 // Accessors ==================================================================
 QString Instruction::directions() { return m_directions; }
@@ -159,17 +221,8 @@ QList<QString> Instruction::reagents() { return m_reagents; }
 
 double Instruction::interval() { return m_interval; }
 
-int Instruction::instructionNumber() const { return Database::instance().instructionNumber(this); }
+int Instruction::instructionNumber() const {
+   return this->pimpl->getRecipe()->instructionNumber(*this);
+}
 
 bool Instruction::cacheOnly() { return m_cacheOnly; }
-
-int Instruction::insertInDatabase() {
-   qDebug() << Q_FUNC_INFO << "this->m_recipe:" << static_cast<void *>(this->m_recipe);
-//   return Database::instance().insertInstruction(this, this->m_recipe);
-   return Database::instance().insertElement(this);
-
-}
-
-void Instruction::removeFromDatabase() {
-   Database::instance().remove(this);
-}

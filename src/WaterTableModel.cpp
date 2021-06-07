@@ -60,21 +60,18 @@ void WaterTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void WaterTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void WaterTableModel::observeDatabase(bool val) {
+   if( val ) {
       observeRecipe(nullptr);
       removeAll();
       connect( &(Database::instance()), &Database::newWaterSignal, this, &WaterTableModel::addWater );
       connect( &(Database::instance()), SIGNAL(deletedSignal(Water*)), this, SLOT(removeWater(Water*)) );
-      addWaters( Database::instance().waters() );
-   }
-   else
-   {
+      addWaters( DbNamedEntityRecords<Water>::getInstance().getAllRaw() );
+   } else {
       removeAll();
       disconnect( &(Database::instance()), nullptr, this, nullptr );
    }
+   return;
 }
 
 void WaterTableModel::addWater(Water* water)

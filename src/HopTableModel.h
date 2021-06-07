@@ -1,6 +1,7 @@
 /**
- * HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Markus Mårtensson <mackan.90@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -97,9 +98,11 @@ public slots:
    void changed(QMetaProperty, QVariant);
    void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
    //! \brief Add a hop to the model.
-   void addHop(Hop* hop);
+//   void addHop(Hop* hop);
+   void addHop(int hopId);
    //! \returns true if "hop" is successfully found and removed.
    bool removeHop(Hop* hop);
+   bool removeHop(int hopId);
 
    void contextMenu(const QPoint &point);
 

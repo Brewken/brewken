@@ -23,6 +23,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
+#include "model/Recipe.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -31,6 +32,13 @@
 // .:TODO:. Create tables
 // .:TBD:. Do we care about foreign keys?
 // .:TBD:. What about inventory?
+// .:TBD:. What about read-only fields, eg if we want an Instruction to pull its Recipe ID from instruction_in_recipe
+//
+// .:TBD:. At the moment, each table name is used pretty much once, but if that changes then we might want to add
+//        constants along the following lines:
+// namespace DatabaseNames::Tables { static char const * const brewnote            = "brewnote"; }
+// plus something similar for column names
+
 
 namespace {
 
@@ -72,8 +80,8 @@ namespace {
       {DbRecords::FieldType::Double, "sg",                      PropertyNames::BrewNote::sg},
       {DbRecords::FieldType::Double, "strike_temp",             PropertyNames::BrewNote::strikeTemp_c},
       {DbRecords::FieldType::Double, "volume_into_bk",          PropertyNames::BrewNote::volumeIntoBK_l},
-      {DbRecords::FieldType::Double, "volume_into_fermenter",   PropertyNames::BrewNote::volumeIntoFerm_l} //,
-      //{DbRecords::FieldType::Int   , "recipe_id",               PropertyNames::BrewNote::recipeId}  <<<<<<<<<<<<<<<<<<<<<<<<<<<<TODO
+      {DbRecords::FieldType::Double, "volume_into_fermenter",   PropertyNames::BrewNote::volumeIntoFerm_l},
+      {DbRecords::FieldType::Int   , "recipe_id",               PropertyNames::BrewNote::recipeId}
    };
    DbRecords::FieldManyToManyDefns const BREWNOTE_MULTI_FIELDS{};
 
@@ -577,113 +585,3 @@ template<> DbNamedEntityRecords<Yeast> & DbNamedEntityRecords<Yeast>::getInstanc
    static DbNamedEntityRecords<Yeast> singleton{"yeast", HOP_SIMPLE_FIELDS, HOP_MULTI_FIELDS};
    return singleton;
 }
-
-
-//
-// Functions to extract from Database class:
-//
-//   Water* newWater(Water* other = nullptr);
-//   int    insertWater(Water* ins);
-//   Water* water(int key); AKA getWater(int key)
-//      Water * addToRecipe( Recipe* rec, Water* w, bool noCopy = false, bool transact = true);
-//   Q_PROPERTY( QList<Water*> waters READ waters /*WRITE*/ NOTIFY changed STORED false )
-//   QList<Water*> waters();
-//   //! Return a list of all the waters in a recipe.
-//   QList<Water*> waters( Recipe const* parent );
-// signals:
-//   void changed(QMetaProperty prop, QVariant value);
-//   void newWaterSignal(Water*);
-//   void deletedSignal(Water*);
-//   QHash< int, Water* > allWaters;
-//
-//   // This is called only from NamedEntity::setEasy() and from Database::remove<T>()
-//   void updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify = true, bool transact = false );
-//
-//   template<class T> T* newNamedEntity(QHash<int,T*>* all) {...}
-//   template<class T> T* newNamedEntity(QString name, QHash<int,T*>* all) {...}
-//
-//   // Mostly called from Database::insertWater() and corresponding functions
-//   int    insertElement(NamedEntity* ins);
-//
-//   // Called only from Database::insertElement() to check if the element is already stored
-//   //! \returns true if this ingredient is stored in the DB, false otherwise
-//   bool isStored(NamedEntity const & ingredient);
-//
-//
-//   void setInventory(NamedEntity* ins, QVariant value, int invKey = 0, bool notify=true );
-//
-//
-//   Short term we should just load this in when the object is loaded in
-//   /**
-//   * \brief  This function is intended to be called by an ingredient that has not already cached its parent's key
-//   * \return Key of parent ingredient if there is one, 0 otherwise
-//   */
-//   int getParentNamedEntityKey(NamedEntity const & ingredient);
-//
-//   /*! \brief Removes the specified ingredient from the recipe, then calls the changed()
-//    *         signal corresponding to the appropriate QList
-//    *         of ingredients in rec.
-//    *  \param rec
-//    *  \param ing
-//    *  \returns the parent of the ingredient deleted (which is needed to be able to undo the removal)
-//    */
-//   NamedEntity * removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* ing );
-//
-//   template <class T> void populateElements( QHash<int,T*>& hash, DatabaseConstants::DbTableId table );
-//
-//   template <class T> bool getElementsByName( QList<T*>& list, DatabaseConstants::DbTableId table, QString name, QHash<int,T*> allElements, QString id=QString("") )
-//   void deleteRecord( NamedEntity* object );
-//   template<class T> T* addNamedEntityToRecipe(
-//      Recipe* rec,
-//      NamedEntity* ing,
-//      bool noCopy = false,
-//      QHash<int,T*>* keyHash = 0,
-//      bool doNotDisplay = true,
-//      bool transact = true
-//   );
-//   /*!
-//    * \brief Create a deep copy of the \b object.
-//    * \em T must be a subclass of \em NamedEntity.
-//    * \returns a pointer to the new copy. You must manually emit the changed()
-//    * signal after a copy() call. Also, does not insert things magically into
-//    * allHop or allInstructions etc. hashes. This just simply duplicates a
-//    * row in a table, unless you provide \em keyHash.
-//    * \param object is the thing you want to copy.
-//    * \param displayed is true if you want the \em displayed column set to true.
-//    * \param keyHash if nonzero, inserts the new (key,T*) pair into the hash.
-//    */
-//   template<class T> T* copy( NamedEntity const* object, QHash<int,T*>* keyHash, bool displayed = true );
-//   // Do an sql update.
-//   void sqlUpdate( DatabaseConstants::DbTableId table, QString const& setClause, QString const& whereClause );
-//
-//   // Do an sql delete.
-//   void sqlDelete( DatabaseConstants::DbTableId table, QString const& whereClause );
-//   QMap<QString, std::function<NamedEntity*(QString name)> > makeTableParams();
-//
-
-//
-
-
-//
-// Water table name "water"
-// Int "id" "key"
-/* CREATE TABLE water(
-   id integer PRIMARY KEY autoincrement,
-   -- BeerXML properties
-   name varchar(256) not null DEFAULT '',
-   amount real DEFAULT 0.0,
-   calcium real DEFAULT 0.0,
-   bicarbonate real DEFAULT 0.0,
-   sulfate real DEFAULT 0.0,
-   chloride real DEFAULT 0.0,
-   sodium real DEFAULT 0.0,
-   magnesium real DEFAULT 0.0,
-   ph real DEFAULT 7.0,
-   notes text DEFAULT '',
-   -- metadata
-   deleted boolean DEFAULT 0,
-   display boolean DEFAULT 1,
-   folder varchar(256) DEFAULT ''
-, wtype int DEFAULT 0, alkalinity real DEFAULT 0, as_hco3 boolean DEFAULT true, sparge_ro real DEFAULT 0, mash_ro real DEFAULT 0)
-*/
-//

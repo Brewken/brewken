@@ -647,14 +647,13 @@ void SaltTableModel::contextMenu(const QPoint &point)
 
 }
 
-void SaltTableModel::saveAndClose()
-{
+void SaltTableModel::saveAndClose() {
    // all of the writes should have been instantaneous unless
    // we've added a new salt. Wonder if this will work?
-   foreach( Salt* i, saltObs ) {
+   for (Salt* i : saltObs) {
       if ( i->cacheOnly() && i->type() != Salt::NONE && i->addTo() != Salt::NEVER ) {
          i->insertInDatabase();
-         Database::instance().addToRecipe(m_rec,i,true);
+         this->m_rec->add(i);
       }
    }
 }

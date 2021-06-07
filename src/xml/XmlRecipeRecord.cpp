@@ -28,7 +28,9 @@ namespace {
    // functions.
    //
    template<typename CNE>
-   void setAmountsEtc(CNE & ingredient, NamedParameterBundle const & npb);
+   void setAmountsEtc(CNE & ingredient, NamedParameterBundle const & npb) {
+      return;
+   }
    template<> void setAmountsEtc(Hop & hop, NamedParameterBundle const & npb) {
       hop.setAmount_kg(npb(PropertyNames::Hop::amount_kg).toDouble());
       hop.setTime_min( npb(PropertyNames::Hop::time_min).toDouble());
@@ -137,6 +139,9 @@ XmlRecord::ProcessingResult XmlRecipeRecord::normaliseAndStoreInDb(NamedEntity *
    this->addChildren<Misc>();
    this->addChildren<Yeast>();
    this->addChildren<Water>();
+
+   this->addChildren<Instruction>();
+
 
    // BrewNotes and Instructions are a bit different than some of the other fields.  Each BrewNote and each Instruction
    // relate to only one Recipe, but the Recipe class does not (currently) have an interface for adding BrewNotes or

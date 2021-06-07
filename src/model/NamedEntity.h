@@ -31,6 +31,7 @@
 #include <QVariant>
 
 #include "Brewken.h"
+#include "database/DbRecords.h"
 #include "database/DatabaseSchema.h"
 #include "model/NamedParameterBundle.h"
 
@@ -69,6 +70,10 @@ Q_DECLARE_METATYPE( uintptr_t )
  * \b Yeast) are ingredients in the normal sense of the word, others (eg \b Instruction, \b Equipment, \b Style,
  * \b Mash) are not really.  Equally, the fact that derived classes can be instantiated from BeerXML is not their
  * defining characteristic.
+ *
+ * NB: We cannot make this a template class (eg to use
+ * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
+ * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
  */
 class NamedEntity : public QObject
 {
@@ -93,6 +98,12 @@ public:
     *        overload) the protected virtual isEqualTo() function.
     */
    bool operator==(NamedEntity const & other) const;
+
+   /**
+    * \brief We don't have a need to assign one NamedEntity to another, and the compiler implementation of this would
+    *        be wrong, so we delete it.
+    */
+   NamedEntity & operator=(NamedEntity const &) = delete;
 
    /**
     * \brief This generic version of operator!= should work for subclasses provided they correctly _override_ (NB not
@@ -205,13 +216,13 @@ public:
     *        undelete, it's helpful for the caller not to have to know what subclass of NamedEntity we are resurrecting.
     * \return Key of element inserted in database.
     */
-   virtual int insertInDatabase() = 0;
+   int insertInDatabase();
 
    /*!
     * \brief If we can put something in the database, then we also need to be able to remove it.
     *        Note that, once removed from the DB, the caller is responsible for deleting this object.
     */
-   virtual void removeFromDatabase() = 0;
+   void removeFromDatabase();
 
 signals:
    /*!
@@ -236,6 +247,13 @@ protected:
     */
    virtual bool isEqualTo(NamedEntity const & other) const = 0;
 
+   /**
+    * \brief Subclasses need to override this function to return the appropriate instance of \c DbNamedEntityRecords.
+    *        This allows us in this base class to access \c DbNamedEntityRecords<Hop> for \c Hop,
+    *        \c DbNamedEntityRecords<Fermentable> for \c Fermentable, etc.
+    */
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const = 0;
+
    //! The key of this entity in its table.
    int _key;
    //! The table where this entity is stored.
@@ -256,7 +274,7 @@ protected:
    void set( const char* prop_name, const char* col_name, QVariant const& value, bool notify = true );
    void set( const QString& prop_name, const QString& col_name, const QVariant& value, bool notify = true );
    */
-   void setEasy( QString prop_name, QVariant value, bool notify = true );
+   void setEasy(char const * const prop_name, QVariant value, bool notify = true);
 
    /*!
     * \param col_name - The database column of the attribute we want to get.

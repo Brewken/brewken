@@ -24,6 +24,8 @@
 #ifndef MODEL_RECIPE_H
 #define MODEL_RECIPE_H
 
+#include <memory> // For PImpl
+
 #include <QColor>
 #include <QDate>
 #include <QList>
@@ -32,11 +34,11 @@
 #include <QString>
 #include <QVariant>
 
-#include "model/NamedEntity.h"
-#include "model/Hop.h" // Dammit! Have to include these for Hop::Use and Misc::Use.
-#include "model/Misc.h"
-#include "model/Salt.h"
 #include "model/BrewNote.h"
+#include "model/NamedEntity.h"
+#include "model/Hop.h" // Dammit! Have to include these for Hop::Use (see hopSteps()) and Misc::Use (see miscSteps()).
+#include "model/Misc.h"
+#include "model/Salt.h"  // Needed for Salt::WhenToAdd (see getReagents())
 
 namespace PropertyNames::Recipe { static char const * const ABV_pct            = "ABV_pct"; /* not stored */ }
 namespace PropertyNames::Recipe { static char const * const age                = "age"; /* previously kpropAge */ }
@@ -96,7 +98,7 @@ namespace PropertyNames::Recipe { static char const * const wortFromMash_l     =
 namespace PropertyNames::Recipe { static char const * const yeastIds           = "yeastIds"; }
 
 
-// Forward declarations.
+// Forward declarations
 class Equipment;
 class Fermentable;
 class Instruction;
@@ -125,7 +127,15 @@ class Recipe : public NamedEntity {
    friend class WaterDialog;
 public:
 
-   virtual ~Recipe() {}
+private:
+   Recipe(DatabaseConstants::DbTableId table, int key);
+   Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
+public:
+   Recipe(QString name, bool cache = true);
+   Recipe(NamedParameterBundle & namedParameterBundle);
+   Recipe(Recipe const& other);
+
+   virtual ~Recipe();
 
    //! \brief The type of recipe
    enum Type { Extract, PartialMash, AllGrain };
@@ -229,14 +239,14 @@ public:
    // Relational properties.
    //! \brief The mash.
    Q_PROPERTY(Mash * mash   READ mash      WRITE setMash /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int    mashId READ getMashId WRITE setMashId)
+   Q_PROPERTY(int    mashId READ getMashId)
 
    //! \brief The equipment.
    Q_PROPERTY(Equipment * equipment   READ equipment      WRITE setEquipment /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int         equipmentId READ getEquipmentId WRITE setEquipmentId)
+   Q_PROPERTY(int         equipmentId READ getEquipmentId)
    //! \brief The style.
    Q_PROPERTY(Style * style   READ style      WRITE setStyle /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int     styleId READ getStyleId WRITE setStyleId)
+   Q_PROPERTY(int     styleId READ getStyleId)
 
    // These QList properties should only emit changed() when their size changes, or when
    // one of their elements is replaced by another with a different key.
@@ -244,26 +254,36 @@ public:
    Q_PROPERTY( QList<BrewNote*> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false )
    //! \brief The hops.
    Q_PROPERTY(QList<Hop*>  hops   READ hops /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int> hopIds READ getHopIds WRITE setHopIds)
+   Q_PROPERTY(QVector<int> hopIds READ getHopIds)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction*> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>        instructionIds READ getInstructionIds WRITE setInstructionIds)
+   Q_PROPERTY(QVector<int>        instructionIds READ getInstructionIds)
    //! \brief The fermentables.
    Q_PROPERTY(QList<Fermentable*> fermentables   READ fermentables /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>        fermentableIds READ getFermentableIds WRITE setFermentableIds)
+   Q_PROPERTY(QVector<int>        fermentableIds READ getFermentableIds)
 
    //! \brief The miscs.
    Q_PROPERTY(QList<Misc*> miscs   READ miscs /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int> miscIds READ getMiscIds WRITE setMiscIds)
+   Q_PROPERTY(QVector<int> miscIds READ getMiscIds)
    //! \brief The yeasts.
    Q_PROPERTY(QList<Yeast*> yeasts   READ yeasts /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>  yeastIds READ getYeastIds WRITE setYeastIds)
+   Q_PROPERTY(QVector<int>  yeastIds READ getYeastIds)
    //! \brief The waters.
    Q_PROPERTY(QList<Water*> waters   READ waters /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>  waterIds READ getWaterIds WRITE setWaterIds)
+   Q_PROPERTY(QVector<int>  waterIds READ getWaterIds)
    //! \brief The salts.
    Q_PROPERTY(QList<Salt*> salts   READ salts /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int> saltIds READ getSaltIds WRITE setSaltIds)
+   Q_PROPERTY(QVector<int> saltIds READ getSaltIds)
+
+   /**
+    * \brief Connect Fermentable, Hop changed signals etc to their parent Recipes.
+    *
+    *        This is needed because each Recipe needs to know when one of its constituent parts has been modified, eg
+    *        if the alpha acid on a hop is modified then that will affect the recipe's IBU.
+    *
+    *        Needs to be called \b after all the calls to DbNamedEntityRecords<FooBar>::getInstance().loadAll()
+    */
+   static void connectSignals();
 
    // Relational setters.
    // NOTE: do these add/remove methods belong here? Should they only exist in Database?
@@ -319,8 +339,15 @@ public:
     */
    template<class T> T * add(T * var);
 
+   /*!
+    * \brief Returns whether \c var is used in this recipe
+    *
+    */
+   template<class T> bool uses(T const & var) const;
+
    //void removeBrewNote(BrewNote* var);
    //void removeInstruction( Instruction* ins );
+   int instructionNumber(Instruction const & ins) const;
    /*!
     * \brief Swap instructions \c ins1 and \c ins2
     */
@@ -415,12 +442,14 @@ public:
    int getStyleId() const;
 
    // Relational setters
-   void setStyle(Style * style);
-   void setStyleId(int styleId);
    void setEquipment(Equipment * equipment);
-   void setEquipmentId(int equipmentId);
    void setMash(Mash * var);
+   void setStyle(Style * style);
+
+/*
+   void setEquipmentId(int equipmentId);
    void setMashId(int mashId);
+   void setStyleId(int styleId);
 
    void setFermentableIds(QVector<int> fermentableIds);
    void setHopIds(QVector<int> hopIds);
@@ -429,7 +458,7 @@ public:
    void setSaltIds(QVector<int> saltIds);
    void setWaterIds(QVector<int> waterIds);
    void setYeastIds(QVector<int> yeastIds);
-
+*/
 
    // Other junk.
    QVector<PreInstruction> mashInstructions(double timeRemaining, double totalWaterAdded_l, unsigned int size);
@@ -490,15 +519,15 @@ public:
    void setCacheOnly( bool cache );
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 public slots:
+   void acceptChangeToContainedObject(QMetaProperty prop, QVariant val);
+
    void acceptEquipChange(QMetaProperty prop, QVariant val);
    void acceptFermChange(QMetaProperty prop, QVariant val);
-   void acceptHopChange(QMetaProperty prop, QVariant val);
+//   void acceptHopChange(QMetaProperty prop, QVariant val);
    void acceptYeastChange(QMetaProperty prop, QVariant val);
    void acceptMashChange(QMetaProperty prop, QVariant val);
 
@@ -509,15 +538,12 @@ public slots:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
-   Recipe(DatabaseConstants::DbTableId table, int key);
-   Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   Recipe(QString name, bool cache = true);
-   Recipe(NamedParameterBundle & namedParameterBundle);
-private:
-   Recipe(Recipe const& other);
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 
    // Cached properties that are written directly to db
    QString m_type;
@@ -546,18 +572,10 @@ private:
    QString m_notes;
    QString m_tasteNotes;
    double m_tasteRating;
-   int m_style_id;
+   int styleId;
 
    int mashId;
    int equipmentId;
-
-   QVector<int> fermentableIds;
-   QVector<int> hopIds;
-   QVector<int> instructionIds;
-   QVector<int> miscIds;
-   QVector<int> saltIds;
-   QVector<int> waterIds;
-   QVector<int> yeastIds;
 
    // Calculated properties.
    double m_ABV_pct;
@@ -620,13 +638,13 @@ private:
    Q_INVOKABLE void recalcOgFg();
 
    // Adds instructions to the recipe.
-   Instruction* postboilFermentablesIns();
-   Instruction* postboilIns();
-   Instruction* mashFermentableIns();
-   Instruction* mashWaterIns();
-   Instruction* firstWortHopsIns();
-   Instruction* topOffIns();
-   Instruction* saltWater(Salt::WhenToAdd when);
+   void postboilFermentablesIns();
+   void postboilIns();
+   void mashFermentableIns();
+   void mashWaterIns();
+   void firstWortHopsIns();
+   void topOffIns();
+   void saltWater(Salt::WhenToAdd when);
 
    //void setDefaults();
    void addPreinstructions( QVector<PreInstruction> preins );

@@ -1,5 +1,5 @@
 /**
- * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2017:
+ * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -21,14 +21,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "MashDesigner.h"
+
+#include <QInputDialog>
+#include <QMessageBox>
 
 #include "database/Database.h"
-#include "MashDesigner.h"
 #include "HeatCalculations.h"
 #include "PhysicalConstants.h"
 #include "model/Fermentable.h"
-#include <QMessageBox>
-#include <QInputDialog>
 
 MashDesigner::MashDesigner(QWidget* parent) : QDialog(parent)
 {
@@ -168,7 +169,7 @@ void MashDesigner::saveStep()
    }
 
    if ( mashStep->cacheOnly() ) {
-      mashStep->setMash(mash);
+//      mashStep->setMash(mash);
       mashStep->insertInDatabase();
    }
 }
@@ -380,7 +381,7 @@ bool MashDesigner::initializeMash()
 
    if ( mash->cacheOnly() ) {
        mash->insertInDatabase();
-       Database::instance().addToRecipe(recObs, mash, true);
+       this->recObs->setMash(mash);
    }
    return true;
 }

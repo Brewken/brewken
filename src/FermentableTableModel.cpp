@@ -99,7 +99,7 @@ void FermentableTableModel::observeDatabase(bool val)
       removeAll();
       connect( &(Database::instance()), &Database::newFermentableSignal, this, &FermentableTableModel::addFermentable );
       connect( &(Database::instance()), SIGNAL(deletedSignal(Fermentable*)), this, SLOT(removeFermentable(Fermentable*)) );
-      addFermentables( Database::instance().fermentables() );
+      addFermentables( DbNamedEntityRecords<Fermentable>::getInstance().getAllRaw() );
    }
    else
    {

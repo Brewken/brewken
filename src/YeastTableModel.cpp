@@ -102,19 +102,15 @@ void YeastTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void YeastTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void YeastTableModel::observeDatabase(bool val) {
+   if( val ) {
       observeRecipe(nullptr);
 
       removeAll();
       connect( &(Database::instance()), &Database::newYeastSignal, this, &YeastTableModel::addYeast );
       connect( &(Database::instance()), SIGNAL(deletedSignal(Yeast*)), this, SLOT(removeYeast(Yeast*)) );
-      addYeasts( Database::instance().yeasts() );
-   }
-   else
-   {
+      addYeasts( DbNamedEntityRecords<Yeast>::getInstance().getAllRaw() );
+   } else {
       removeAll();
       disconnect( &(Database::instance()), nullptr, this, nullptr );
    }

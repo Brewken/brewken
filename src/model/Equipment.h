@@ -61,8 +61,11 @@ class Equipment : public NamedEntity
    friend class EquipmentEditor;
 
 public:
+   Equipment(QString t_name = "", bool cacheOnly = true);
+   Equipment(NamedParameterBundle & namedParameterBundle);
+   Equipment(Equipment const& other);
 
-   virtual ~Equipment() {}
+   virtual ~Equipment() = default;
 
    //! \brief The boil size in liters.
    Q_PROPERTY( double boilSize_l            READ boilSize_l            WRITE setBoilSize_l            NOTIFY changedBoilSize_l )
@@ -145,8 +148,6 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
    void changedBoilSize_l(double);
@@ -169,15 +170,11 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Equipment(DatabaseConstants::DbTableId table, int key);
-public:
-   Equipment(QString t_name, bool cacheOnly = true);
-   Equipment(NamedParameterBundle & namedParameterBundle);
-private:
    Equipment(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Equipment( Equipment const& other);
 
    double m_boilSize_l;
    double m_batchSize_l;

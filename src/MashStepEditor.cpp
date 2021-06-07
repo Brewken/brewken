@@ -115,15 +115,14 @@ void MashStepEditor::changed(QMetaProperty prop, QVariant /*val*/)
    showChanges(&prop);
 }
 
-void MashStepEditor::setMashStep(MashStep* step)
-{
-   if( obs )
-      disconnect( obs, nullptr, this, nullptr );
+void MashStepEditor::setMashStep(MashStep* step) {
+   if (this->obs) {
+      disconnect(this->obs, nullptr, this, nullptr );
+   }
 
-   if( step )
-   {
-      obs = step;
-      connect( obs, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
+   if (step) {
+      this->obs = step;
+      connect(this->obs, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
       showChanges();
    }
 }

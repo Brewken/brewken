@@ -1,5 +1,5 @@
 /**
- * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -61,7 +61,11 @@ public:
    enum Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
    Q_ENUMS( Type )
 
-   virtual ~MashStep() {}
+   MashStep(QString name = "", bool cache = true);
+   MashStep(NamedParameterBundle & namedParameterBundle);
+   MashStep( MashStep const& other );
+
+   virtual ~MashStep() = default;
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
@@ -95,7 +99,7 @@ public:
    void setInfuseTemp_c( double var);
    void setDecoctionAmount_l( double var);
    void setCacheOnly(bool cache);
-   void setMash(Mash * mash);
+//   void setMash(Mash * mash);
 
    Type type() const;
    const QString typeString() const;
@@ -108,7 +112,7 @@ public:
    double infuseTemp_c() const;
    double decoctionAmount_l() const;
    bool cacheOnly() const;
-   Mash * mash() const;
+//   Mash * mash() const;
 
    //! What number this step is in the mash.
    int stepNumber() const;
@@ -123,23 +127,17 @@ public:
 
    // MashStep objects do not have parents
    NamedEntity * getParent() { return nullptr; }
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    MashStep(DatabaseConstants::DbTableId table, int key);
    MashStep(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   MashStep( MashStep const& other );
-public:
-   MashStep(QString name, bool cache = true);
-   MashStep(NamedParameterBundle & namedParameterBundle);
 
-private:
    QString m_typeStr;
    Type m_type;
    double m_infuseAmount_l;
@@ -151,7 +149,7 @@ private:
    double m_decoctionAmount_l;
    int m_stepNumber;
    bool m_cacheOnly;
-   Mash * m_mash;
+//   Mash * m_mash;
 
    bool isValidType( const QString &str ) const;
 

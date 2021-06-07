@@ -51,6 +51,10 @@ bool Equipment::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Equipment::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Equipment>::getInstance();
+}
+
 
 //=============================CONSTRUCTORS=====================================
 Equipment::Equipment(QString t_name, bool cacheOnly)
@@ -505,12 +509,4 @@ NamedEntity * Equipment::getParent() {
 
    // Return whatever we got
    return myParent;
-}
-
-int Equipment::insertInDatabase() {
-   return Database::instance().insertEquipment(this);
-}
-
-void Equipment::removeFromDatabase() {
-   Database::instance().remove(this);
 }

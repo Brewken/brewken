@@ -55,6 +55,10 @@ bool Fermentable::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Fermentable::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Fermentable>::getInstance();
+}
+
 
 QString Fermentable::classNameStr()
 {
@@ -162,48 +166,29 @@ Fermentable::Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord
 {
 }
 
-Fermentable::Fermentable( Fermentable &other )
-        : NamedEntity( other ),
-     m_typeStr(other.m_typeStr),
-     m_type(other.m_type),
-     m_amountKg(other.m_amountKg),
-     m_yieldPct(other.m_yieldPct),
-     m_colorSrm(other.m_colorSrm),
-     m_isAfterBoil(other.m_isAfterBoil),
-     m_origin(other.m_origin),
-     m_supplier(other.m_supplier),
-     m_notes(other.m_notes),
-     m_coarseFineDiff(other.m_coarseFineDiff),
-     m_moisturePct(other.m_moisturePct),
-     m_diastaticPower(other.m_diastaticPower),
-     m_proteinPct(other.m_proteinPct),
-     m_maxInBatchPct(other.m_maxInBatchPct),
-     m_recommendMash(other.m_recommendMash),
-     m_ibuGalPerLb(other.m_ibuGalPerLb),
-     m_inventory(other.m_inventory),
-     m_inventory_id(other.m_inventory_id),
-     m_isMashed(other.m_isMashed),
-     m_cacheOnly(other.m_cacheOnly)
-{
-   setType( other.type() );
-   setAmount_kg( other.amount_kg() );
-   setInventoryAmount( other.inventory() );
-   setYield_pct( other.yield_pct() );
-   setColor_srm( other.color_srm() );
-   setAddAfterBoil( other.addAfterBoil() );
-   setOrigin( other.origin() );
-   setSupplier( other.supplier() );
-   setNotes( other.notes() );
-   setCoarseFineDiff_pct( other.coarseFineDiff_pct() );
-   setMoisture_pct( other.moisture_pct() );
-   setDiastaticPower_lintner( other.diastaticPower_lintner() );
-   setProtein_pct( other.protein_pct() );
-   setMaxInBatch_pct( other.maxInBatch_pct() );
-   setRecommendMash( other.recommendMash() );
-   setInventoryAmount( other.inventory() );
-   setInventoryId( other.inventoryId() );
-   setIbuGalPerLb( other.ibuGalPerLb() );
-   setIsMashed(other.isMashed());
+Fermentable::Fermentable(Fermentable const & other) :
+   NamedEntity( other ),
+   m_typeStr       (other.m_typeStr),
+   m_type            (other.m_type),
+   m_amountKg      (other.m_amountKg),
+   m_yieldPct      (other.m_yieldPct),
+   m_colorSrm      (other.m_colorSrm),
+   m_isAfterBoil   (other.m_isAfterBoil),
+   m_origin        (other.m_origin),
+   m_supplier      (other.m_supplier),
+   m_notes         (other.m_notes),
+   m_coarseFineDiff(other.m_coarseFineDiff),
+   m_moisturePct   (other.m_moisturePct),
+   m_diastaticPower(other.m_diastaticPower),
+   m_proteinPct    (other.m_proteinPct),
+   m_maxInBatchPct (other.m_maxInBatchPct),
+   m_recommendMash (other.m_recommendMash),
+   m_ibuGalPerLb   (other.m_ibuGalPerLb),
+   m_inventory     (other.m_inventory),
+   m_inventory_id  (other.m_inventory_id),
+   m_isMashed      (other.m_isMashed),
+   m_cacheOnly     (other.m_cacheOnly) {
+   return;
 }
 
 // Gets
@@ -581,12 +566,4 @@ NamedEntity * Fermentable::getParent() {
 
    // Return whatever we got
    return myParent;
-}
-
-int Fermentable::insertInDatabase() {
-   return Database::instance().insertFermentable(this);
-}
-
-void Fermentable::removeFromDatabase() {
-   Database::instance().remove(this);
 }

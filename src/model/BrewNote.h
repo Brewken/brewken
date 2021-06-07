@@ -57,6 +57,7 @@ namespace PropertyNames::BrewNote { static char const * const projPoints = "proj
 namespace PropertyNames::BrewNote { static char const * const projStrikeTemp_c = "projStrikeTemp_c"; /* previously kpropProjStrikeTemp */ }
 namespace PropertyNames::BrewNote { static char const * const projVolIntoBK_l = "projVolIntoBK_l"; /* previously kpropProjVolIntoBoil */ }
 namespace PropertyNames::BrewNote { static char const * const projVolIntoFerm_l = "projVolIntoFerm_l"; /* previously kpropProjVolIntoFerm */ }
+namespace PropertyNames::BrewNote { static char const * const recipeId = "recipeId"; }
 namespace PropertyNames::BrewNote { static char const * const sg = "sg"; /* previously kpropSG */ }
 namespace PropertyNames::BrewNote { static char const * const strikeTemp_c = "strikeTemp_c"; /* previously kpropStrikeTemp */ }
 namespace PropertyNames::BrewNote { static char const * const volumeIntoBK_l = "volumeIntoBK_l"; /* previously kpropVolIntoBoil */ }
@@ -77,6 +78,11 @@ class BrewNote : public NamedEntity
    friend class BeerXML;
 
 public:
+   BrewNote(QString name = "", bool cache = true);
+   BrewNote(Recipe const & recipe);
+   BrewNote(NamedParameterBundle & namedParameterBundle);
+   BrewNote(BrewNote const& other);
+
    virtual ~BrewNote() = default;
 
    bool operator<(BrewNote const & other) const;
@@ -114,6 +120,7 @@ public:
    Q_PROPERTY( double projPoints READ projPoints WRITE setProjPoints /*NOTIFY changed*/ STORED false )
    Q_PROPERTY( double projFermPoints READ projFermPoints WRITE setProjFermPoints /*NOTIFY changed*/ STORED false )
    Q_PROPERTY( double projAtten READ projAtten WRITE setProjAtten /*NOTIFY changed*/ STORED false )
+   Q_PROPERTY( int    recipeId  READ getRecipeId WRITE setRecipeId STORED false )
 
    // Setters
    void setABV(double var);
@@ -139,6 +146,7 @@ public:
    void recalculateEff(Recipe* parent);
    void setLoading(bool flag);
    void setCacheOnly(bool cache);
+   void setRecipeId(int recipeId);
    void setRecipe(Recipe * recipe);
 
    // Getters
@@ -168,11 +176,16 @@ public:
    double finalVolume_l() const;
    double boilOff_l() const;
    QString notes() const;
+   int getRecipeId() const;
+
+/*
+ * .:TBD:. Think we can comment this out and rely on same function in base class!
+ *
    // ick, but I don't see another way. I need a unique key that has *nothing*
    // to do with the data entered. The best one I can think of is the
    // database's key
    int key() const;
-
+*/
    // Calculations
    double calculateEffIntoBK_pct();
    double calculateOg();
@@ -214,24 +227,19 @@ public:
 
    // BrewNote objects do not have parents
    NamedEntity * getParent() { return nullptr; }
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
    void brewDateChanged(const QDateTime&);
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    BrewNote(DatabaseConstants::DbTableId table, int key);
    BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   BrewNote(QString name, bool cache = true);
-   BrewNote(NamedParameterBundle & namedParameterBundle);
-private:
    BrewNote(QDateTime dateNow, bool cache = true, QString const & name = "");
-   BrewNote(BrewNote const& other);
+
    bool loading;
 
    QDateTime m_brewDate;
@@ -264,8 +272,8 @@ private:
    double m_projPoints;
    double m_projFermPoints;
    double m_projAtten;
+   int  m_recipeId;
    bool m_cacheOnly;
-   Recipe * m_recipe;
 
 ///   QHash<QString,double> info;
 };
@@ -298,4 +306,4 @@ struct BrewNote_ptr_equals
    }
 };
 */
-#endif // BREWNOTE_H
+#endif

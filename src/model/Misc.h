@@ -62,7 +62,11 @@ public:
    enum AmountType { AmountType_Weight, AmountType_Volume };
    Q_ENUMS( Type Use AmountType )
 
-   virtual ~Misc() {}
+   Misc(QString name = "", bool cache = true);
+   Misc(NamedParameterBundle & namedParameterBundle);
+   Misc(Misc const & other);
+
+   virtual ~Misc() = default;
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
@@ -134,8 +138,6 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
@@ -145,15 +147,11 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Misc(DatabaseConstants::DbTableId table, int key);
    Misc(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   Misc(QString name, bool cache = true);
-   Misc(NamedParameterBundle & namedParameterBundle);
-private:
-   Misc(Misc & other);
 
    QString m_typeString;
    Type m_type;

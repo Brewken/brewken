@@ -1,6 +1,7 @@
 /**
- * MashListModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * MashListModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Tim Payne <swstim@gmail.com>
@@ -16,12 +17,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "MashListModel.h"
-#include "model/Style.h"
+
 #include "database/Database.h"
-#include "model/Recipe.h"
 #include "model/Mash.h"
+#include "model/Recipe.h"
+#include "model/Style.h"
 
 MashListModel::MashListModel(QWidget* parent)
    : QAbstractListModel(parent), recipe(0)
@@ -111,10 +112,9 @@ void MashListModel::mashChanged(QMetaProperty prop, QVariant val)
    }
 }
 
-void MashListModel::repopulateList()
-{
+void MashListModel::repopulateList() {
    removeAll();
-   addMashes( Database::instance().mashs() );
+   addMashes( DbNamedEntityRecords<Mash>::getInstance().getAllRaw() );
 }
 
 Mash* MashListModel::at(int ndx)

@@ -1,5 +1,5 @@
 /**
- * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -17,14 +17,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "WaterDialog.h"
+
 #include <limits>
 
 #include <Algorithms.h>
 #include <QComboBox>
 #include <QFont>
 #include <QInputDialog>
-
-#include "WaterDialog.h"
 
 #include "Brewken.h"
 #include "BtDigitWidget.h"
@@ -498,11 +498,11 @@ void WaterDialog::saveAndClose()
    m_salt_table_model->saveAndClose();
    if ( m_base != nullptr && m_base->cacheOnly() ) {
       m_base->insertInDatabase();
-      Database::instance().addToRecipe(m_rec,m_base,true);
+      this->m_rec->add(this->m_base);
    }
    if ( m_target != nullptr && m_target->cacheOnly() ) {
       m_target->insertInDatabase();
-      Database::instance().addToRecipe(m_rec,m_target,true);
+      this->m_rec->add(this->m_target);
    }
 
    setVisible(false);

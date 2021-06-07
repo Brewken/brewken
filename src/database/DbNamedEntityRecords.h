@@ -48,16 +48,97 @@ public:
    static DbNamedEntityRecords<NE> & getInstance();
 
    /**
+    * \brief Insert a new object in the DB (and in our cache list)
+    */
+   virtual std::shared_ptr<NE> insert(std::shared_ptr<NE> ne) {
+      // The base class does all the work, we just need to cast the pointer
+      // (We don't want to force callers to use std::shared_ptr<QObject>, as they would anyway have to recast it.  Eg
+      // if you created a new Hop, you're going to need a std::shared_ptr<Hop> etc to be able to access Hop-specific
+      // member functions)
+      this->DbRecords::insert(std::static_pointer_cast<QObject>(ne));
+      return ne;
+   }
+
+   /**
+    * \brief Insert a copy of an existing object in the DB (and in our cache list)
+    *
+    * \param id  The ID of the object we want to copy
+    */
+   std::shared_ptr<NE> insertCopyOf(int id) {
+      // We could do this all on one line, but we break it down a bit here to make clear what's going on
+
+      // From the supplied ID, get a shared pointer to the object we want to copy
+      auto otherNe = this->getById(id);
+      if (!otherNe) {
+         qWarning() << Q_FUNC_INFO << "Unable to find object #" << id;
+      }
+
+      // If we found an object with the supplied ID, make a copy, using the copy constructor (which should do the right
+      // thing about parentage etc).  If not, which shouldn't really happen, make a default object.
+      auto copyNe = otherNe ? std::make_shared<NE>(*otherNe->get()) : std::make_shared<NE>();
+
+      // Add the copied object to the database and our object cache, and return it to the caller
+      return this->insert(copyNe);
+   }
+
+   /**
+    * \brief Raw pointer version of \c insert()
+    *        Ideally the caller would already have a shared pointer to the object they want to insert, but, until we
+    *        have refactored all the calling code, this wrapper function will be useful.
+    *
+    * \return ID of the newly-inserted object in the database
+    */
+   int insert(NE * ne) {
+      std::shared_ptr<NE> nePointer{ne};
+      this->insert(nePointer);
+      return ne->key();
+   }
+
+   /**
+    * \brief Convenience function that calls either \c insert or \c update, depending on whether the object is already
+    *        stored.
+    *
+    * \return What was inserted or updated
+    */
+   virtual std::shared_ptr<NE> insertOrUpdate(std::shared_ptr<NE> ne) {
+      this->DbRecords::insertOrUpdate(std::static_pointer_cast<QObject>(ne));
+      return ne;
+   }
+
+   /**
     * \brief Return an object for the specified key
     *
     *        This overrides the base-class function of the same name, enabling us (by virtue of the fact that these
     *        particular functions do NOT need to be virtual) to template the return type.
     */
-   std::optional< std::shared_ptr<NE> > getById(int id) {
+   std::optional< std::shared_ptr<NE> > getById(int id) const {
       if (!this->contains(id)) {
          return std::nullopt;
       }
       return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(this->DbRecords::getById(id))};
+   }
+
+   /**
+    * \brief Raw pointer version of \c getById
+    */
+   NE * getByIdRaw(int id) const {
+      auto result = this->getById(id);
+      return result ? result->get() : nullptr;
+   }
+
+   /**
+    * \brief Similar to \c getById but returns a list of cached objects matching a supplied list of IDs
+    */
+   QList<std::shared_ptr<NE> > getByIds(QVector<int> const & listOfIds) const {
+      // Base class will give us QList<std::shared_ptr<QObject> >, which we convert to QList<std::shared_ptr<NE> >
+      return this->convertShared(this->DbRecords::getByIds(listOfIds));
+   }
+
+   /**
+    * \brief Raw pointer version of \c getByIds
+    */
+   QList<NE *> getByIdsRaw(QVector<int> const & listOfIds) const {
+      return this->convertRaw(this->DbRecords::getByIds(listOfIds));
    }
 
    /**
@@ -85,14 +166,39 @@ public:
    }
 
    /**
-    * \brief Allow searching of the set of all cached objects with a lambda.
+    * \brief Search the set of all cached objects with a lambda.
     *
     * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
     *
     * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
     *         none does
     */
-   std::optional< std::shared_ptr<NE> > findMatching(std::function<bool(NE *)> const & matchFunction) {
+   std::optional< std::shared_ptr<NE> > findFirstMatching(std::function<bool(std::shared_ptr<NE>)> const & matchFunction) const {
+      //
+      // Caller has provided us with a lambda function that takes a shared pointer to NE (ie Water, Hop, Yeast, Recipe,
+      // etc) and returns true or false depending on whether it's a match for whatever condition the caller requires.
+      //
+      // The base class findMatching() expects a lambda function that takes a std::shared_ptr<QObject> parameter.
+      //
+      // So, to call the base class findMatching(), we need to create our own "wrapper" lambda that receives a
+      // std::shared_ptr<QObject> parameter and casts it to std::shared_ptr<NE>.
+      //
+      auto result = this->DbRecords::findFirstMatching(
+         [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(std::static_pointer_cast<NE>(obj));}
+      );
+      if (!result.has_value()) {
+         return std::nullopt;
+      }
+      return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(result.value())};
+   }
+
+   /**
+    * \brief Alternate version of \c findFirstMatching that uses raw pointers
+    *
+    * \return Pointer to the first object that gives a \c true result to \c matchFunction, or \c nullptr if
+    *         none does
+    */
+   NE * findFirstMatching(std::function<bool(NE *)> const & matchFunction) const {
       //
       // Caller has provided us with a lambda function that takes a pointer to NE (ie Water, Hop, Yeast, Recipe, etc)
       // and returns true or false depending on whether it's a match for whatever condition the caller requires.
@@ -103,20 +209,61 @@ public:
       // std::shared_ptr<QObject> parameter, extracts the raw pointer from it (which we know will always be valid) and
       // downcasts it from "QObject *" to "NE *".
       //
-      // We don't need shared pointers for the lambda because it's a short-lived function that isn't doing anything to
-      // its parameter.  Base class uses a shared_ptr parameter to its lambda instead of just "QObject *" as otherwise
-      // it would have to create its own lambda wrapper to search its internal data structure, which seems like one
-      // wrapper too many!
-      //
-      auto result = this->DbRecords::findMatching(
+      auto result = this->DbRecords::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
       );
       if (!result.has_value()) {
-         return std::nullopt;
+         return nullptr;
       }
-      return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(result.value())};
+      return static_cast<NE *>(result.value().get());
    }
 
+   /**
+    * \brief Search the set of all cached objects with a lambda.
+    *
+    * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
+    *
+    * \return List of shared pointers to all the objects that give a \c true result to \c matchFunction (and thus an
+    *         empty list if none does).
+    */
+   QList<std::shared_ptr<NE> > findAllMatching(
+      std::function<bool(std::shared_ptr<NE>)> const & matchFunction
+   ) const {
+      // Base class will give us QList<std::shared_ptr<QObject> >, which we convert to QList<std::shared_ptr<NE> >
+      return this->convertShared(
+         // As per above, we make a wrapper around the supplied lambda to do the necessary casting
+         this->DbRecords::findAllMatching(
+            [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(std::static_pointer_cast<NE>(obj));}
+         )
+      );
+   }
+
+   /**
+    * \brief Alternate version of \c findAllMatching that uses raw pointers
+    *
+    * \return List of pointers to all the objects that give a \c true result to \c matchFunction (and thus an
+    *         empty list if none does).
+    */
+   QList<NE *> findAllMatching(std::function<bool(NE *)> const & matchFunction) const {
+      return this->convertRaw(
+         this->DbRecords::findAllMatching(
+            [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
+         )
+      );
+   }
+
+   /**
+    * \brief Special case of \c findAllMatching that returns a list of all cached objects of a given type
+    */
+   QList<std::shared_ptr<NE> > getAll() {
+      return this->convertShared(this->DbRecords::getAll());
+   }
+   /**
+    * \brief Raw pointer version of \c getAll
+    */
+   QList<NE *> getAllRaw() {
+      return this->convertRaw(this->DbRecords::getAll());
+   }
 
 protected:
    /**
@@ -154,10 +301,79 @@ private:
       } else {
          // Base class softDelete() actually does too much for the soft delete case; we just want to store the
          // "deleted" flag in the object's DB record
-         this->updateProperty(ne, PropertyNames::NamedEntity::deleted);
+         this->updateProperty(*ne, PropertyNames::NamedEntity::deleted);
+
+         // Because we're not calling the base class, we need to be the ones to tell any bits of the UI that need to
+         // know that an object was deleted
+         emit this->signalObjectDeleted(id);
       }
       return;
    }
+
+   /**
+    * \brief Convert QList<std::shared_ptr<QObject> > to QList<std::shared_ptr<NE> >
+    */
+   QList<std::shared_ptr<NE> > convertShared(QList<std::shared_ptr<QObject> > const results) const {
+      // We can't just cast the resulting QList<std::shared_ptr<QObject> > to QList<std::shared_ptr<NE> >, so we need
+      // to create a new QList of the type we want and copy the elements across.
+      QList<std::shared_ptr<NE> > convertedResults;
+      convertedResults.reserve(results.size());
+      std::transform(results.cbegin(),
+                     results.cend(),
+                     std::back_inserter(convertedResults),
+                     [](auto & sharedPointer) { return std::static_pointer_cast<NE>(sharedPointer); });
+      return convertedResults;
+   }
+
+   /**
+    * \brief Convert QList<std::shared_ptr<QObject> > to QList<NE *>
+    */
+   QList<NE *> convertRaw(QList<std::shared_ptr<QObject> > const results) const {
+      // We can't just cast the resulting QList<std::shared_ptr<QObject> > to QList<std::shared_ptr<NE> >, so we need
+      // to create a new QList of the type we want and copy the elements across.
+      QList<NE *> convertedResults;
+      convertedResults.reserve(results.size());
+      std::transform(results.cbegin(),
+                     results.cend(),
+                     std::back_inserter(convertedResults),
+                     [](auto & sharedPointer) { return static_cast<NE *>(sharedPointer.get()); });
+      return convertedResults;
+   }
+
 };
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/**
+ * \brief Namespace containing convenience functions for accessing member functions of appropriate DbNamedEntityRecords
+ *        instances via template argument deduction
+ */
+namespace ObjectStoreWrapper {
+   template<class NE> std::shared_ptr<NE> copy(NE const & ne) {
+      return std::make_shared<NE>(ne);
+   }
+
+   template<class NE> std::shared_ptr<NE> insert(std::shared_ptr<NE> ne) {
+      return DbNamedEntityRecords<NE>::getInstance().insert(ne);
+   }
+
+   template<class NE> std::shared_ptr<NE> insertCopyOf(NE const & ne) {
+      return DbNamedEntityRecords<NE>::getInstance().insertCopyOf(ne.key());
+   }
+
+   template<class NE> void updateProperty(NE const & ne, char const * const propertyToUpdateInDb) {
+      DbNamedEntityRecords<NE>::getInstance().updateProperty(ne, propertyToUpdateInDb);
+      return;
+   }
+
+   template<class NE> void softDelete(NE const & ne) {
+      DbNamedEntityRecords<NE>::getInstance().softDelete(ne.key());
+      return;
+   }
+
+}
 
 #endif

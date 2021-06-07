@@ -44,6 +44,10 @@ bool Water::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Water::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Water>::getInstance();
+}
+
 QString Water::classNameStr()
 {
    static const QString name("Water");
@@ -318,12 +322,4 @@ NamedEntity * Water::getParent() {
 
    // Return whatever we got
    return myParent;
-}
-
-int Water::insertInDatabase() {
-   return Database::instance().insertWater(this);
-}
-
-void Water::removeFromDatabase() {
-   Database::instance().remove(this);
 }

@@ -157,7 +157,7 @@ public:
 
    //! Get a table view.
    QTableView* createView( DatabaseConstants::DbTableId table );
-
+/*
    BrewNote* newBrewNote(Recipe* parent, bool signal = true);
    //! Create new instruction attached to \b parent.
    Instruction* newInstruction(Recipe* parent);
@@ -175,21 +175,22 @@ public:
    BrewNote* newBrewNote(BrewNote* other, bool signal = true);
    Equipment* newEquipment(Equipment* other = nullptr);
    Fermentable* newFermentable(Fermentable* other = nullptr);
-   Hop* newHop(Hop* other = nullptr);
+//   Hop* newHop(Hop* other = nullptr);
    //! \returns a copy of the given recipe.
-   Recipe* newRecipe(Recipe* other);
+//   Recipe* newRecipe(Recipe* other);
+*/
    /*! \returns a copy of the given mash. Displaces the mash currently in the
     * parent recipe unless \b displace is false.
     */
-   Misc* newMisc(Misc* other = nullptr);
+/*   Misc* newMisc(Misc* other = nullptr);
 
    Style* newStyle(Style* other);
    Style* newStyle(QString name);
    Water* newWater(Water* other = nullptr);
    Salt* newSalt(Salt* other = nullptr);
    Yeast* newYeast(Yeast* other = nullptr);
-
-   int    insertElement(NamedEntity* ins);
+*/
+/*   int    insertElement(NamedEntity* ins);
    int    insertEquipment(Equipment* ins);
    int    insertFermentable(Fermentable* ins);
    int    insertHop(Hop* ins);
@@ -205,7 +206,7 @@ public:
    int    insertBrewNote(BrewNote* ins, Recipe *parent);
    int    insertInstruction(Instruction* ins, Recipe *parent);
    int    insertMashStep(MashStep* ins, Mash *parent);
-
+*/
    //! \returns the key of the parent ingredient
    int getParentID(TableSchema* table, int childKey);
 
@@ -226,7 +227,7 @@ public:
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
    //! \brief Copies all of the mashsteps from \c oldMash to \c newMash
-   void duplicateMashSteps(Mash *oldMash, Mash *newMash);
+//   void duplicateMashSteps(Mash *oldMash, Mash *newMash);
 
    //! Get anything by key value.
    Recipe* recipe(int key);
@@ -243,7 +244,7 @@ public:
    // signal corresponding to the appropriate QList
    // of ingredients in rec. If noCopy is true, then don't copy, and set
    // the ingredient's display parameter to 0 (don't display in lists).
-   void addToRecipe( Recipe* rec, Equipment* e, bool noCopy = false, bool transact = true );
+/*   void addToRecipe( Recipe* rec, Equipment* e, bool noCopy = false, bool transact = true );
    Hop * addToRecipe( Recipe* rec, Hop* hop, bool noCopy = false, bool transact = true);
    Fermentable * addToRecipe( Recipe* rec, Fermentable* ferm, bool noCopy = false, bool transact = true);
    //! Add a mash, displacing any current mash.
@@ -260,10 +261,10 @@ public:
 private:
    //! \brief bulk add to a recipe.
    void addToRecipe(Recipe* rec, QList<Fermentable*> ferms, bool transact = true);
-   void addToRecipe(Recipe* rec, QList<Hop*> hops, bool transact = true);
+//   void addToRecipe(Recipe* rec, QList<Hop*> hops, bool transact = true);
    void addToRecipe(Recipe* rec, QList<Misc*> miscs, bool transact = true);
    void addToRecipe(Recipe* rec, QList<Yeast*> yeasts, bool transact = true);
-
+*/
 public:
    /**
    * \brief  This function is intended to be called by an ingredient that has not already cached its parent's key
@@ -356,7 +357,7 @@ public:
    //! Get the recipe that this \b note is part of.  (BrewNotes are stored differently so we need a different function
    //  for them.)
    Recipe* getParentRecipe( BrewNote const* note );
-
+/*
    //! Interchange the step orders of the two steps. Must be in same mash.
    void swapMashStepOrder(MashStep* m1, MashStep* m2);
    //! Interchange the instruction orders. Must be in same recipe.
@@ -365,22 +366,22 @@ public:
    void insertInstruction(Instruction* in, int pos);
    //! \brief The instruction number of an instruction.
    int instructionNumber(Instruction const* in);
-
-   Q_PROPERTY( QList<BrewNote*> brewNotes READ brewNotes /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Equipment*> equipments READ equipments /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Fermentable*> fermentables READ fermentables /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Hop*> hops READ hops /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Mash*> mashs READ mashs /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<MashStep*> mashSteps READ mashSteps /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Misc*> miscs READ miscs /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Recipe*> recipes READ recipes /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Style*> styles READ styles /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Water*> waters READ waters /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Salt*> salts READ salts /*WRITE*/ NOTIFY changed STORED false )
-   Q_PROPERTY( QList<Yeast*> yeasts READ yeasts /*WRITE*/ NOTIFY changed STORED false )
+*/
+//   Q_PROPERTY( QList<BrewNote*> brewNotes READ brewNotes /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Equipment*> equipments READ equipments /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Fermentable*> fermentables READ fermentables /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Hop*> hops READ hops /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Mash*> mashs READ mashs /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<MashStep*> mashSteps READ mashSteps /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Misc*> miscs READ miscs /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Recipe*> recipes READ recipes /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Style*> styles READ styles /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Water*> waters READ waters /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Salt*> salts READ salts /*WRITE*/ NOTIFY changed STORED false )
+//   Q_PROPERTY( QList<Yeast*> yeasts READ yeasts /*WRITE*/ NOTIFY changed STORED false )
 
    // Returns non-deleted NamedEntitys.
-   QList<BrewNote*> brewNotes();
+/*   QList<BrewNote*> brewNotes();
    QList<Equipment*> equipments();
    QList<Fermentable*> fermentables();
    QList<Hop*> hops();
@@ -391,7 +392,7 @@ public:
    QList<Style*> styles();
    QList<Water*> waters();
    QList<Salt*> salts();
-   QList<Yeast*> yeasts();
+   QList<Yeast*> yeasts();*/
 
    /**
     * Templated static versions of the above functions, so other parts of the code can call Database::getAll<Hop>,
@@ -409,33 +410,33 @@ public:
     * here in the header file to compile, and the specific implementations of getAll<BrewNote>(), getAll<Equipment>()
     * are only required by the linker.
     */
-   template<class S> QList<S *> getAll();
+//   template<class S> QList<S *> getAll();
 
    //! \b returns a list of the brew notes in a recipe.
-   QList<BrewNote*> brewNotes(Recipe const* parent);
+//   QList<BrewNote*> brewNotes(Recipe const* parent);
    //! Return a list of all the fermentables in a recipe.
-   QList<Fermentable*> fermentables(Recipe const* parent);
+//   QList<Fermentable*> fermentables(Recipe const* parent);
    //! Return a list of all the hops in a recipe.
-   QList<Hop*> hops( Recipe const* parent );
+//   QList<Hop*> hops( Recipe const* parent );
    //! Return a list of all the instructions in a recipe.
-   QList<Instruction*> instructions( Recipe const* parent );
+//   QList<Instruction*> instructions( Recipe const* parent );
    //! Return a list of all the miscs in a recipe.
-   QList<Misc*> miscs( Recipe const* parent );
+//   QList<Misc*> miscs( Recipe const* parent );
    //! Return a list of all the waters in a recipe.
-   QList<Water*> waters( Recipe const* parent );
+//   QList<Water*> waters( Recipe const* parent );
    //! Return a list of all the salts in a recipe.
-   QList<Salt*> salts( Recipe const* parent );
+//   QList<Salt*> salts( Recipe const* parent );
    //! Return a list of all the yeasts in a recipe.
-   QList<Yeast*> yeasts( Recipe const* parent );
+//   QList<Yeast*> yeasts( Recipe const* parent );
    //! Get recipe's equipment.
-   Equipment* equipment(Recipe const* parent);
+//   Equipment* equipment(Recipe const* parent);
    //! Get the recipe's mash.
-   Mash* mash( Recipe const* parent );
+//   Mash* mash( Recipe const* parent );
    //! Get recipe's style.
-   Style* style(Recipe const* parent);
-   Style* styleById(int styleId );
+//   Style* style(Recipe const* parent);
+//   Style* styleById(int styleId );
    //! Return a list of all the steps in a mash.
-   QList<MashStep*> mashSteps(Mash const* parent);
+//   QList<MashStep*> mashSteps(Mash const* parent);
 
 //   QString textFromValue(QVariant value, QString type);
 
@@ -460,7 +461,7 @@ signals:
    void changed(QMetaProperty prop, QVariant value);
    void newEquipmentSignal(Equipment*);
    void newFermentableSignal(Fermentable*);
-   void newHopSignal(Hop*);
+//   void newHopSignal(Hop*);
    void newMashSignal(Mash*);
    void newMiscSignal(Misc*);
    void newRecipeSignal(Recipe*);

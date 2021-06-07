@@ -45,8 +45,7 @@ class MashStep;
  *
  * \brief Model class for a mash record in the database.
  */
-class Mash : public NamedEntity
-{
+class Mash : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashs")
 
@@ -55,8 +54,11 @@ class Mash : public NamedEntity
    friend class MashDesigner;
    friend class MashEditor;
 public:
+   Mash(QString name = "", bool cache = true);
+   Mash(NamedParameterBundle & namedParameterBundle);
+   Mash(Mash const& other);
 
-   virtual ~Mash() {}
+   virtual ~Mash() = default;
 
    //! \brief The initial grain temp in Celsius.
    Q_PROPERTY( double grainTemp_c READ grainTemp_c WRITE setGrainTemp_c /*NOTIFY changed*/ /*changedGrainTemp_c*/ )
@@ -82,6 +84,13 @@ public:
    //! \brief The individual mash steps.
    Q_PROPERTY( QList<int> mashStepIds READ getMashStepIds WRITE setMashStepIds )
    Q_PROPERTY( QList<MashStep*> mashSteps  READ mashSteps /*WRITE*/ /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
+
+   /**
+    * \brief Connect MashStep changed signals to their parent Mashes.
+    *
+    *        Needs to be called \b after all the calls to DbNamedEntityRecords<FooBar>::getInstance().loadAll()
+    */
+   static void connectSignals();
 
    // Setters
    void setGrainTemp_c( double var );
@@ -122,15 +131,17 @@ public:
    // Relational getters
    QList<MashStep*> mashSteps() const;
 
-   // NOTE: should this be completely in Database?
+   /*!
+    * \brief Swap MashSteps \c ms1 and \c ms2
+    */
+   void swapMashSteps(MashStep const & ms1, MashStep const & ms2);
+
    void removeAllMashSteps();
 
    static QString classNameStr();
 
    // Mash objects do not have parents
    NamedEntity * getParent() { return nullptr; }
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 public slots:
    void acceptMashStepChange(QMetaProperty, QVariant);
@@ -143,16 +154,12 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Mash(DatabaseConstants::DbTableId table, int key);
    Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Mash( Mash const& other );
-public:
-   Mash( QString name, bool cache = true );
-   Mash(NamedParameterBundle & namedParameterBundle);
 
-private:
    double m_grainTemp_c;
    QString m_notes;
    double m_tunTemp_c;
@@ -163,7 +170,7 @@ private:
    bool m_equipAdjust;
    bool m_cacheOnly;
 
-   QList<MashStep*> m_mashSteps;
+//   QList<MashStep*> m_mashSteps;
    QVector<int> mashStepIds;
 
 };

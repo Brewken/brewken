@@ -76,7 +76,11 @@ public:
 
    Q_ENUMS(WhenToAdd Types)
 
-   virtual ~Salt() {}
+   Salt(QString name = "", bool cache = true);
+   Salt(NamedParameterBundle & namedParameterBundle);
+   Salt(Salt & other );
+
+   virtual ~Salt() = default;
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
    //! \brief The amount of salt to be added (always a weight)
@@ -125,22 +129,16 @@ public:
 
    // Salt objects do not have parents
    NamedEntity * getParent() { return nullptr; }
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Salt(DatabaseConstants::DbTableId table, int key);
    Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Salt(Salt & other );
-public:
-   Salt(QString name, bool cache = true);
-   Salt(NamedParameterBundle & namedParameterBundle);
-private:
 
    double m_amount;
    Salt::WhenToAdd m_add_to;

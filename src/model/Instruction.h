@@ -21,11 +21,13 @@
 #define MODEL_INSTRUCTION_H
 #pragma once
 
+#include <memory> // For PImpl
+
+#include <QDomNode>
 #include <QString>
 #include <QVector>
-#include <QDomNode>
+
 #include "model/NamedEntity.h"
-#include "model/Recipe.h"
 
 namespace PropertyNames::Instruction { static char const * const completed  = "completed"; /* previously kpropCompleted */ }
 namespace PropertyNames::Instruction { static char const * const directions = "directions"; /* previously kpropDirections */ }
@@ -46,9 +48,13 @@ class Instruction : public NamedEntity
    Q_CLASSINFO("signal", "instructions")
    friend class Database;
    friend class BeerXML;
-public:
 
-   virtual ~Instruction() {}
+public:
+   Instruction(QString name = "", bool cache = true);
+   Instruction(NamedParameterBundle & namedParameterBundle);
+   Instruction(Instruction const & other);
+
+   virtual ~Instruction();
 
    Q_PROPERTY( QString directions READ directions WRITE setDirections /*NOTIFY changed*/ /*changedDirections*/ )
    Q_PROPERTY( bool hasTimer READ hasTimer WRITE setHasTimer /*NOTIFY changed*/ /*changedHasTimer*/ )
@@ -67,7 +73,6 @@ public:
    void setInterval(double interval);
    void setCacheOnly(bool cache);
    void addReagent(const QString& reagent);
-   void setRecipe(Recipe * const recipe);
 
    // "get" methods.
    QString directions();
@@ -85,22 +90,20 @@ public:
 
    // Instruction objects do not have parents
    NamedEntity * getParent() { return nullptr; }
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
+
    Instruction(DatabaseConstants::DbTableId table, int key);
    Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   Instruction( QString name, bool cache = true );
-   Instruction(NamedParameterBundle & namedParameterBundle);
-private:
-   Instruction( Instruction const& other );
 
    QString m_directions;
    bool    m_hasTimer;
@@ -108,7 +111,6 @@ private:
    bool    m_completed;
    double  m_interval;
    bool    m_cacheOnly;
-   Recipe * m_recipe;
 
    QList<QString> m_reagents;
 };
@@ -121,4 +123,4 @@ inline bool insPtrLtByNumber( Instruction* lhs, Instruction* rhs)
    return lhs->instructionNumber() < rhs->instructionNumber();
 }
 
-#endif   // INSTRUCTION_H
+#endif

@@ -1,5 +1,5 @@
 /**
- * BrewDayWidget.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BrewDayWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -19,22 +19,23 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "BrewDayWidget.h"
 
-#include <QListWidgetItem>
-#include <QPrinter>
-#include <QPrintDialog>
 #include <QDate>
-#include <QVector>
-#include <QDir>
 #include <QDebug>
+#include <QDir>
+#include <QListWidgetItem>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QVector>
+
+#include "Brewken.h"
 #include "database/Database.h"
 #include "InstructionWidget.h"
-#include "TimerWidget.h"
 #include "model/Instruction.h"
-#include "Brewken.h"
-#include "BrewDayWidget.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
+#include "TimerWidget.h"
 
 // NOTE: QPrinter has no parent? Will it get destroyed properly?
 BrewDayWidget::BrewDayWidget(QWidget* parent) :
@@ -68,21 +69,22 @@ QSize BrewDayWidget::sizeHint() const
    return QSize(0,0);
 }
 
-void BrewDayWidget::insertInstruction()
-{
+void BrewDayWidget::insertInstruction() {
    if( recObs == 0 )
       return;
 
    int pos = lineEdit_step->text().toInt();
    int size = recObs->instructions().size();
-   if( pos < 0 || pos > size )
+   if( pos < 0 || pos > size ) {
       pos = size;
+   }
 
-   Instruction* ins = Database::instance().newInstruction(recObs);
+   auto ins = std::make_shared<Instruction>();
    ins->setName(lineEdit_name->text());
+   ObjectStoreWrapper::insert(ins);
 
    // TODO: figure out how to do ordering of ingredients.
-   recObs->insertInstruction( ins, pos );
+   this->recObs->insertInstruction(ins.get() , pos);
    //listWidget->insertItem(pos, ins->text(false));
    repopulateListWidget();
 }

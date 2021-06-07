@@ -46,16 +46,20 @@ NamedEntity::NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_
    return;
 }
 
-NamedEntity::NamedEntity(NamedEntity const& other)
-   : QObject(nullptr),
-     _key(other._key),
-     _table(other._table),
-     parentKey(other.parentKey),
-     _folder(other._folder),
-     _name(QString()),
-     _display(other._display),
-     _deleted(other._deleted)
-{
+NamedEntity::NamedEntity(NamedEntity const & other) : QObject(nullptr),
+                                                      _key(-1), // We don't want to copy the other object's key/ID
+                                                      _table(other._table),
+                                                      parentKey(other.parentKey),
+                                                      _folder(other._folder),
+                                                      _name(QString()),
+                                                      _display(other._display),
+                                                      _deleted(other._deleted) {
+   // If the object we're copying has no parent, then we make it our parent, on the assumption that it's the master
+   // version of this Hop/Fermentable/etc
+   if (this->parentKey <= 0) {
+      this->parentKey = other._key;
+   }
+
    return;
 }
 
@@ -346,9 +350,27 @@ QString NamedEntity::text(QDate const& val)
    return val.toString(Qt::ISODate);
 }
 
-void NamedEntity::setEasy(QString prop_name, QVariant value, bool notify)
-{
-   Database::instance().updateEntry(this,prop_name,value,notify);
+void NamedEntity::setEasy(char const * const prop_name, QVariant value, bool notify) {
+
+   // NB: It's the caller's responsibility to have actually updated the property here, we're just telling the object
+   //     store it got updated.  (You might think we can just call this->setProperty(prop_name, value), but that's
+   //     going to result in an object setter function getting called, which in turn is going to call this function,
+   //     which will then lead us to infinite recursion.)
+
+   // Update the object store, but only if we're already stored there
+   // (We don't pass the value as it will get read out of the object via prop_name)
+   if (this->_key > 0) {
+      this->getDbNamedEntityRecordsInstance().updateProperty(*this, prop_name);
+   }
+
+   // Send a signal if needed
+   if (notify) {
+      int idx = this->metaObject()->indexOfProperty(prop_name);
+      QMetaProperty mProp = this->metaObject()->property(idx);
+      emit this->changed(mProp,value);
+   }
+
+   return;
 }
 
 
@@ -374,6 +396,16 @@ void NamedEntity::setParent(NamedEntity const & parentNamedEntity)
    this->parentKey = parentNamedEntity._key;
    return;
 }
+
+int NamedEntity::insertInDatabase() {
+   return this->getDbNamedEntityRecordsInstance().insertOrUpdate(this);
+}
+
+void NamedEntity::removeFromDatabase() {
+   this->getDbNamedEntityRecordsInstance().softDelete(this->_key);
+   return;
+}
+
 
 /*QVariantMap NamedEntity::getColumnValueMap() const
 {

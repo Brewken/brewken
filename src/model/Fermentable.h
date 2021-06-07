@@ -77,7 +77,11 @@ public:
    enum AdditionTime {Normal, Late};
    Q_ENUMS( Type AdditionMethod AdditionTime )
 
-   virtual ~Fermentable() {}
+   Fermentable( QString name = "", bool cache = true );
+   Fermentable(NamedParameterBundle & namedParameterBundle);
+   Fermentable(Fermentable const & other);
+
+   virtual ~Fermentable() = default;
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type                     READ type                   WRITE setType                   /*NOTIFY changed*/ /*changedType*/ )
@@ -196,22 +200,16 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Fermentable(DatabaseConstants::DbTableId table, int key);
    Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Fermentable( Fermentable &other );
-public:
-   Fermentable( QString name, bool cache = true );
-   Fermentable(NamedParameterBundle & namedParameterBundle);
-private:
 
    static bool isValidType( const QString& str );
    static QStringList types;

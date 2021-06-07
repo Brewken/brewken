@@ -40,6 +40,10 @@ bool Style::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Style::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Style>::getInstance();
+}
+
 QString Style::classNameStr()
 {
    static const QString name("Style");
@@ -77,6 +81,35 @@ Style::Style(QString t_name, bool cacheOnly)
 {
 }
 
+Style::Style(Style const & other) :
+   NamedEntity{other},
+   m_category      {other.m_category      },
+   m_categoryNumber{other.m_categoryNumber},
+   m_styleLetter   {other.m_styleLetter   },
+   m_styleGuide    {other.m_styleGuide    },
+   m_typeStr       {other.m_typeStr       },
+   m_type          {other.m_type          },
+   m_ogMin         {other.m_ogMin         },
+   m_ogMax         {other.m_ogMax         },
+   m_fgMin         {other.m_fgMin         },
+   m_fgMax         {other.m_fgMax         },
+   m_ibuMin        {other.m_ibuMin        },
+   m_ibuMax        {other.m_ibuMax        },
+   m_colorMin_srm  {other.m_colorMin_srm  },
+   m_colorMax_srm  {other.m_colorMax_srm  },
+   m_carbMin_vol   {other.m_carbMin_vol   },
+   m_carbMax_vol   {other.m_carbMax_vol   },
+   m_abvMin_pct    {other.m_abvMin_pct    },
+   m_abvMax_pct    {other.m_abvMax_pct    },
+   m_notes         {other.m_notes         },
+   m_profile       {other.m_profile       },
+   m_ingredients   {other.m_ingredients   },
+   m_examples      {other.m_examples      },
+   m_cacheOnly     {other.m_cacheOnly     } {
+   return;
+}
+
+
 Style::Style(NamedParameterBundle & namedParameterBundle) :
    NamedEntity{namedParameterBundle, DatabaseConstants::STYLETABLE},
    m_category      {namedParameterBundle(PropertyNames::Style::category      ).toString()},
@@ -84,7 +117,7 @@ Style::Style(NamedParameterBundle & namedParameterBundle) :
    m_styleLetter   {namedParameterBundle(PropertyNames::Style::styleLetter   ).toString()},
    m_styleGuide    {namedParameterBundle(PropertyNames::Style::styleGuide    ).toString()},
    //m_typeStr(QString()),
-   m_type          (static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())),
+   m_type          {static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())},
    m_ogMin         {namedParameterBundle(PropertyNames::Style::ogMin         ).toDouble()},
    m_ogMax         {namedParameterBundle(PropertyNames::Style::ogMax         ).toDouble()},
    m_fgMin         {namedParameterBundle(PropertyNames::Style::fgMin         ).toDouble()},
@@ -453,12 +486,4 @@ NamedEntity * Style::getParent() {
 
    // Return whatever we got
    return myParent;
-}
-
-int Style::insertInDatabase() {
-   return Database::instance().insertStyle(this);
-}
-
-void Style::removeFromDatabase() {
-   Database::instance().remove(this);
 }

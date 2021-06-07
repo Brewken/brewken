@@ -68,6 +68,10 @@ bool BrewNote::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & BrewNote::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<BrewNote>::getInstance();
+}
+
 // Initializers
 BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key)
    : NamedEntity(table, key),
@@ -110,6 +114,12 @@ BrewNote::BrewNote(QString name, bool cache) : BrewNote(QDateTime(), cache, name
    return;
 }
 
+BrewNote::BrewNote(Recipe const & recipe) :
+   BrewNote(QDateTime(), true, "") {
+   this->m_recipeId = recipe.key();
+   return;
+}
+
 BrewNote::BrewNote(NamedParameterBundle & namedParameterBundle) :
    NamedEntity{namedParameterBundle, DatabaseConstants::BREWNOTETABLE},
    loading            {false},
@@ -143,6 +153,7 @@ BrewNote::BrewNote(NamedParameterBundle & namedParameterBundle) :
    m_projPoints       {namedParameterBundle(PropertyNames::BrewNote::projPoints       ).toDouble()},
    m_projFermPoints   {namedParameterBundle(PropertyNames::BrewNote::projFermPoints   ).toDouble()},
    m_projAtten        {namedParameterBundle(PropertyNames::BrewNote::projAtten        ).toDouble()},
+   m_recipeId         {namedParameterBundle(PropertyNames::BrewNote::recipeId         ).toInt()},
    m_cacheOnly        {false} {
    return;
 }
@@ -223,7 +234,7 @@ BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
 
 void BrewNote::populateNote(Recipe* parent)
 {
-   this->m_recipe = parent;
+   this->m_recipeId = parent->key();
    Equipment* equip = parent->equipment();
    Mash* mash = parent->mash();
    QList<MashStep*> steps;
@@ -316,7 +327,7 @@ void BrewNote::populateNote(Recipe* parent)
 // This should allow the users to redo those calculations
 void BrewNote::recalculateEff(Recipe* parent)
 {
-   this->m_recipe = parent;
+   this->m_recipeId = parent->key();
 
    QHash<QString,double> sugars;
 
@@ -677,9 +688,15 @@ void BrewNote::setBoilOff_l(double var)
    }
 }
 
+void BrewNote::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }
+void BrewNote::setRecipe(Recipe * recipe) {
+   Q_ASSERT(nullptr != recipe);
+   this->m_recipeId = recipe->key();
+   return;
+}
+
 void BrewNote::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 
-void BrewNote::setRecipe(Recipe * recipe) { this->m_recipe = recipe; }
 
 
 // Getters
@@ -721,11 +738,12 @@ double BrewNote::projPoints() const { return m_projPoints; }
 double BrewNote::projFermPoints() const { return m_projFermPoints; }
 double BrewNote::projAtten() const { return m_projAtten; }
 double BrewNote::boilOff_l() const { return m_boilOff_l; }
+int    BrewNote::getRecipeId() const { return this->m_recipeId; }
 
-int BrewNote::key() const
+/*int BrewNote::key() const
 {
    return _key;
-}
+}*/
 
 // calculators -- these kind of act as both setters and getters.  Likely bad
 // form
@@ -822,12 +840,4 @@ double BrewNote::calculateAttenuation_pct()
     setAttenuation(attenuation);
 
     return attenuation;
-}
-
-int BrewNote::insertInDatabase() {
-   return Database::instance().insertBrewNote(this, this->m_recipe);
-}
-
-void BrewNote::removeFromDatabase() {
-   Database::instance().remove(this);
 }

@@ -40,6 +40,41 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 
+namespace {
+
+   //! \brief True iff. a <= c <= b
+   static bool inRange( double c, double a, double b )
+   {
+      return (a <= c) && (c <= b);
+   }
+
+   //! \brief True iff. b-tol <= a <= b+tol
+   static bool fuzzyComp( double a, double b, double tol )
+   {
+      bool ret = inRange( a, b-tol, b+tol );
+      if( !ret )
+         qDebug() << QString("a: %1, b: %2, tol: %3").arg(a).arg(b).arg(tol);
+      return ret;
+   }
+
+   // method to fill dummy logs with content to build size
+   static QString randomStringGenerator()
+   {
+      QString posChars = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwwxyz";
+      int randomcharLength = 64;
+
+      QString randSTR;
+      for (int i = 0; i < randomcharLength; i++)
+      {
+         int index = QRandomGenerator().generate64() % posChars.length();
+         QChar nChar = posChars.at(index);
+         randSTR.append(nChar);
+      }
+      return randSTR;
+   }
+
+}
+
 QTEST_MAIN(Testing)
 
 void Testing::initTestCase() {
@@ -71,38 +106,40 @@ void Testing::initTestCase() {
    QVERIFY( Brewken::initialize() );
 
    // 5 gallon equipment
-   equipFiveGalNoLoss = Database::instance().newEquipment();
-   equipFiveGalNoLoss->setName("5 gal No Loss");
-   equipFiveGalNoLoss->setBoilSize_l(24.0);
-   equipFiveGalNoLoss->setBatchSize_l(20.0);
-   equipFiveGalNoLoss->setTunVolume_l(40.0);
-   equipFiveGalNoLoss->setTopUpWater_l(0);
-   equipFiveGalNoLoss->setTrubChillerLoss_l(0);
-   equipFiveGalNoLoss->setEvapRate_lHr(4.0);
-   equipFiveGalNoLoss->setBoilTime_min(60);
-   equipFiveGalNoLoss->setLauterDeadspace_l(0);
-   equipFiveGalNoLoss->setTopUpKettle_l(0);
-   equipFiveGalNoLoss->setHopUtilization_pct(100);
-   equipFiveGalNoLoss->setGrainAbsorption_LKg(1.0);
-   equipFiveGalNoLoss->setBoilingPoint_c(100);
+   this->equipFiveGalNoLoss = std::make_shared<Equipment>();
+   this->equipFiveGalNoLoss->setName("5 gal No Loss");
+   this->equipFiveGalNoLoss->setBoilSize_l(24.0);
+   this->equipFiveGalNoLoss->setBatchSize_l(20.0);
+   this->equipFiveGalNoLoss->setTunVolume_l(40.0);
+   this->equipFiveGalNoLoss->setTopUpWater_l(0);
+   this->equipFiveGalNoLoss->setTrubChillerLoss_l(0);
+   this->equipFiveGalNoLoss->setEvapRate_lHr(4.0);
+   this->equipFiveGalNoLoss->setBoilTime_min(60);
+   this->equipFiveGalNoLoss->setLauterDeadspace_l(0);
+   this->equipFiveGalNoLoss->setTopUpKettle_l(0);
+   this->equipFiveGalNoLoss->setHopUtilization_pct(100);
+   this->equipFiveGalNoLoss->setGrainAbsorption_LKg(1.0);
+   this->equipFiveGalNoLoss->setBoilingPoint_c(100);
 
    // Cascade pellets at 4% AA
-   cascade_4pct = Database::instance().newHop();
-   cascade_4pct->setName("Cascade 4pct");
-   cascade_4pct->setAlpha_pct(4.0);
-   cascade_4pct->setUse(Hop::Boil);
-   cascade_4pct->setTime_min(60);
-   cascade_4pct->setType(Hop::Both);
-   cascade_4pct->setForm(Hop::Leaf);
+///   cascade_4pct = Database::instance().newHop();
+   this->cascade_4pct = std::make_shared<Hop>();
+   this->cascade_4pct->insertInDatabase();
+   this->cascade_4pct->setName("Cascade 4pct");
+   this->cascade_4pct->setAlpha_pct(4.0);
+   this->cascade_4pct->setUse(Hop::Boil);
+   this->cascade_4pct->setTime_min(60);
+   this->cascade_4pct->setType(Hop::Both);
+   this->cascade_4pct->setForm(Hop::Leaf);
 
    // 70% yield, no moisture, 2 SRM
-   twoRow = Database::instance().newFermentable();
-   twoRow->setName("Two Row");
-   twoRow->setType(Fermentable::Grain);
-   twoRow->setYield_pct(70.0);
-   twoRow->setColor_srm(2.0);
-   twoRow->setMoisture_pct(0);
-   twoRow->setIsMashed(true);
+   this->twoRow = std::make_shared<Fermentable>();
+   this->twoRow->setName("Two Row");
+   this->twoRow->setType(Fermentable::Grain);
+   this->twoRow->setYield_pct(70.0);
+   this->twoRow->setColor_srm(2.0);
+   this->twoRow->setMoisture_pct(0);
+   this->twoRow->setIsMashed(true);
 
    //Log test setup
    //Verify that the Logging initializes normally
@@ -117,45 +154,46 @@ void Testing::recipeCalcTest_allGrain()
    return;
    double const grain_kg = 5.0;
    double const conversion_l = grain_kg * 2.8; // 2.8 L/kg mash thickness
-   Recipe* rec = Database::instance().newRecipe(QString("TestRecipe"));
-   Equipment* e = equipFiveGalNoLoss;
+   Recipe* rec = new Recipe(QString("TestRecipe"));
 
    // Basic recipe parameters
-   rec->setBatchSize_l(e->batchSize_l());
-   rec->setBoilSize_l(e->boilSize_l());
+   rec->setBatchSize_l(equipFiveGalNoLoss->batchSize_l());
+   rec->setBoilSize_l(equipFiveGalNoLoss->boilSize_l());
    rec->setEfficiency_pct(70.0);
 
    // Single conversion, single sparge
-   Mash* singleConversion = Database::instance().newMash();
+   Mash* singleConversion = new Mash();
    singleConversion->setName("Single Conversion");
    singleConversion->setGrainTemp_c(20.0);
    singleConversion->setSpargeTemp_c(80.0);
-   MashStep* singleConversion_convert = Database::instance().newMashStep(singleConversion);
+   MashStep* singleConversion_convert = new MashStep();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Infusion);
    singleConversion_convert->setInfuseAmount_l(conversion_l);
-   MashStep* singleConversion_sparge = Database::instance().newMashStep(singleConversion);
+   singleConversion->addMashStep(singleConversion_convert);
+   MashStep* singleConversion_sparge = new MashStep();
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Infusion);
    singleConversion_sparge->setInfuseAmount_l(
       rec->boilSize_l()
-      + e->grainAbsorption_LKg() * grain_kg // Grain absorption
+      + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
+   singleConversion->addMashStep(singleConversion_sparge);
 
    // Add equipment
-   Database::instance().addToRecipe(rec, e);
+   rec->setEquipment(equipFiveGalNoLoss.get());
 
    // Add hops (85g)
    cascade_4pct->setAmount_kg(0.085);
-   Database::instance().addToRecipe(rec, cascade_4pct);
+   rec->add(cascade_4pct.get());
 
    // Add grain
    twoRow->setAmount_kg(grain_kg);
-   rec->add<Fermentable>(twoRow);
+   rec->add<Fermentable>(twoRow.get());
 
    // Add mash
-   Database::instance().addToRecipe(rec, singleConversion);
+   rec->setMash(singleConversion);
 
    // Malt color units
    double mcus =
@@ -200,20 +238,19 @@ void Testing::postBoilLossOgTest()
 {
    return;
    double const grain_kg = 5.0;
-   Recipe* recNoLoss = Database::instance().newRecipe(QString("TestRecipe_noLoss"));
-   Recipe* recLoss = Database::instance().newRecipe(QString("TestRecipe_loss"));
-   Equipment* eNoLoss = equipFiveGalNoLoss;
-   Equipment* eLoss = Database::instance().newEquipment(eNoLoss);
+   Recipe* recNoLoss = new Recipe(QString("TestRecipe_noLoss"));
+   Recipe* recLoss = new Recipe(QString("TestRecipe_loss"));
+   Equipment* eLoss = new Equipment(*equipFiveGalNoLoss.get());
 
    // Only difference between the recipes:
    // - 2 L of post-boil loss
    // - 2 L extra of boil size (to hit the same batch size)
    eLoss->setTrubChillerLoss_l(2.0);
-   eLoss->setBoilSize_l(eNoLoss->boilSize_l() + eLoss->trubChillerLoss_l());
+   eLoss->setBoilSize_l(equipFiveGalNoLoss->boilSize_l() + eLoss->trubChillerLoss_l());
 
    // Basic recipe parameters
-   recNoLoss->setBatchSize_l(eNoLoss->batchSize_l());
-   recNoLoss->setBoilSize_l(eNoLoss->boilSize_l());
+   recNoLoss->setBatchSize_l(equipFiveGalNoLoss->batchSize_l());
+   recNoLoss->setBoilSize_l(equipFiveGalNoLoss->boilSize_l());
    recNoLoss->setEfficiency_pct(70.0);
 
    recLoss->setBatchSize_l(eLoss->batchSize_l() - eLoss->trubChillerLoss_l()); // Adjust for trub losses
@@ -221,38 +258,39 @@ void Testing::postBoilLossOgTest()
    recLoss->setEfficiency_pct(70.0);
 
    double mashWaterNoLoss_l = recNoLoss->boilSize_l()
-      + eNoLoss->grainAbsorption_LKg() * grain_kg
+      + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg
    ;
    double mashWaterLoss_l = recLoss->boilSize_l()
       + eLoss->grainAbsorption_LKg() * grain_kg
    ;
 
    // Add equipment
-   Database::instance().addToRecipe(recNoLoss, eNoLoss);
-   Database::instance().addToRecipe(recLoss, eLoss);
+   recNoLoss->setEquipment(equipFiveGalNoLoss.get());
+   recLoss->setEquipment(eLoss);
 
    // Add grain
    twoRow->setAmount_kg(grain_kg);
-   recNoLoss->add<Fermentable>(twoRow);
-   recLoss->add<Fermentable>(twoRow);
+   recNoLoss->add<Fermentable>(twoRow.get());
+   recLoss->add<Fermentable>(twoRow.get());
 
    // Single conversion, no sparge
-   Mash* singleConversion = Database::instance().newMash();
+   Mash* singleConversion = new Mash();
    singleConversion->setName("Single Conversion");
    singleConversion->setGrainTemp_c(20.0);
    singleConversion->setSpargeTemp_c(80.0);
 
-   MashStep* singleConversion_convert = Database::instance().newMashStep(singleConversion);
+   MashStep* singleConversion_convert = new MashStep();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Infusion);
+   singleConversion->addMashStep(singleConversion_convert);
 
    // Infusion for recNoLoss
    singleConversion_convert->setInfuseAmount_l(mashWaterNoLoss_l);
-   Database::instance().addToRecipe(recNoLoss, singleConversion);
+   recNoLoss->setMash(singleConversion);
 
    // Infusion for recLoss
    singleConversion_convert->setInfuseAmount_l(mashWaterLoss_l);
-   Database::instance().addToRecipe(recLoss, singleConversion);
+   recLoss->setMash(singleConversion);
 
    // Verify we hit the right boil/final volumes (that the test is sane)
    QVERIFY2( fuzzyComp(recNoLoss->boilVolume_l(),  recNoLoss->boilSize_l(),  0.1),     "Wrong boil volume calculation (recNoLoss)" );
@@ -313,4 +351,33 @@ void Testing::cleanupTestCase()
    //
    xercesc::XMLPlatformUtils::Terminate();
 
+   return;
+}
+
+
+void Testing::pstdintTest() {
+   QVERIFY( sizeof(int8_t) == 1 );
+   QVERIFY( sizeof(int16_t) == 2 );
+   QVERIFY( sizeof(int32_t) == 4 );
+#ifdef stdint_int64_defined
+   QVERIFY( sizeof(int64_t) == 8 );
+#endif
+
+   QVERIFY( sizeof(uint8_t) == 1 );
+   QVERIFY( sizeof(uint16_t) == 2 );
+   QVERIFY( sizeof(uint32_t) == 4 );
+#ifdef stdint_int64_defined
+   QVERIFY( sizeof(uint64_t) == 8 );
+#endif
+   return;
+}
+
+
+void Testing::runTest()
+{
+   QVERIFY( 1==1 );
+   /*
+   MainWindow* mw = Brewken::mainWindow();
+   QVERIFY( mw );
+   */
 }

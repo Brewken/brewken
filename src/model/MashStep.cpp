@@ -46,6 +46,10 @@ bool MashStep::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & MashStep::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<MashStep>::getInstance();
+}
+
 QString MashStep::classNameStr()
 {
    static const QString name("MashStep");
@@ -98,6 +102,21 @@ MashStep::MashStep(NamedParameterBundle & namedParameterBundle) :
    m_decoctionAmount_l{namedParameterBundle(PropertyNames::MashStep::decoctionAmount_l).toDouble()},
    m_stepNumber       {namedParameterBundle(PropertyNames::MashStep::stepNumber       ).toInt()},
    m_cacheOnly        {false} {
+   return;
+}
+
+MashStep::MashStep(MashStep const & other) :
+   NamedEntity(other),
+   m_type             {other.m_type             },
+   m_infuseAmount_l   {other.m_infuseAmount_l   },
+   m_stepTemp_c       {other.m_stepTemp_c       },
+   m_stepTime_min     {other.m_stepTime_min     },
+   m_rampTime_min     {other.m_rampTime_min     },
+   m_endTemp_c        {other.m_endTemp_c        },
+   m_infuseTemp_c     {other.m_infuseTemp_c     },
+   m_decoctionAmount_l{other.m_decoctionAmount_l},
+   m_stepNumber       {other.m_stepNumber       },
+   m_cacheOnly        {other.m_cacheOnly        } {
    return;
 }
 
@@ -227,7 +246,7 @@ void MashStep::setDecoctionAmount_l(double var )
 
 void MashStep::setCacheOnly( bool cache ) { m_cacheOnly = cache; }
 
-void MashStep::setMash( Mash * mash ) { this->m_mash = mash; }
+//void MashStep::setMash( Mash * mash ) { this->m_mash = mash; }
 
 //============================="GET" METHODS====================================
 MashStep::Type MashStep::type() const { return m_type; }
@@ -247,7 +266,7 @@ double MashStep::endTemp_c() const { return m_endTemp_c; }
 double MashStep::decoctionAmount_l() const { return m_decoctionAmount_l; }
 int MashStep::stepNumber() const { return m_stepNumber; }
 bool MashStep::cacheOnly( ) const { return m_cacheOnly; }
-Mash * MashStep::mash( ) const { return m_mash; }
+//Mash * MashStep::mash( ) const { return m_mash; }
 
 bool MashStep::isInfusion() const
 {
@@ -276,12 +295,4 @@ bool MashStep::isDecoction() const
 bool MashStep::isValidType( const QString &str ) const
 {
    return MashStep::types.contains(str);
-}
-
-int MashStep::insertInDatabase() {
-   return Database::instance().insertMashStep(this, this->m_mash);
-}
-
-void MashStep::removeFromDatabase() {
-   Database::instance().remove(this);
 }

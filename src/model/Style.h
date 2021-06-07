@@ -66,8 +66,11 @@ class Style : public NamedEntity
    friend class BeerXML;
    friend class StyleEditor;
 public:
+   Style(QString t_name = "", bool cacheOnly = true);
+   Style(NamedParameterBundle & namedParameterBundle);
+   Style( Style const& other );
 
-   virtual ~Style() {}
+   virtual ~Style() = default;
 
    //! \brief The type of beverage.
    enum Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
@@ -168,22 +171,16 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Style(DatabaseConstants::DbTableId table, int key);
-public:
-   Style(QString t_name, bool cacheOnly = true);
-   Style(NamedParameterBundle & namedParameterBundle);
-private:
    Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Style( Style const& other );
 
    QString m_category;
    QString m_categoryNumber;

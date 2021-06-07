@@ -1,5 +1,5 @@
 /**
- * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -35,6 +35,10 @@ bool Salt::isEqualTo(NamedEntity const & other) const {
       this->m_add_to == rhs.m_add_to &&
       this->m_type   == rhs.m_type
    );
+}
+
+DbRecords & Salt::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Salt>::getInstance();
 }
 
 QString Salt::classNameStr()
@@ -264,12 +268,4 @@ double Salt::SO4() const
       case Salt::MGSO4: return 389.0 * m_amount * 1000.0;
       default: return 0.0;
    }
-}
-
-int Salt::insertInDatabase() {
-   return Database::instance().insertSalt(this);
-}
-
-void Salt::removeFromDatabase() {
-   Database::instance().remove(this);
 }

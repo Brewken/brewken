@@ -45,6 +45,9 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+DbRecords & Mash::getDbNamedEntityRecordsInstance() const {
+   return DbNamedEntityRecords<Mash>::getInstance();
+}
 
 QString Mash::classNameStr()
 {
@@ -80,6 +83,33 @@ Mash::Mash(QString name, bool cache)
 {
 }
 
+Mash::Mash(Mash const & other) :
+   NamedEntity{other},
+   m_grainTemp_c          {other.m_grainTemp_c          },
+   m_notes                {other.m_notes                },
+   m_tunTemp_c            {other.m_tunTemp_c            },
+   m_spargeTemp_c         {other.m_spargeTemp_c         },
+   m_ph                   {other.m_ph                   },
+   m_tunWeight_kg         {other.m_tunWeight_kg         },
+   m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
+   m_equipAdjust          {other.m_equipAdjust          },
+   m_cacheOnly            {other.m_cacheOnly            } {
+
+   // Deep copy of MashSteps
+   for (int mashStepId : other.mashStepIds) {
+      // Make and store a copy of the current MashStep object we're looking at in the other Mash
+      auto mashStepToAdd = DbNamedEntityRecords<MashStep>::getInstance().insertCopyOf(mashStepId);
+      // Store the ID of the copy in our recipe
+      this->mashStepIds.append(mashStepToAdd->key());
+      // Connect signals so that we are notified when there are changes to the MashStep we just added to
+      // our Mash.
+      connect(mashStepToAdd.get(), &NamedEntity::changed, this, &Mash::acceptMashStepChange);
+   }
+
+   return;
+}
+
+
 Mash::Mash(NamedParameterBundle & namedParameterBundle) :
    NamedEntity{namedParameterBundle, DatabaseConstants::MASHTABLE},
      m_grainTemp_c          {namedParameterBundle(PropertyNames::Mash::grainTemp_c          ).toDouble()},
@@ -106,6 +136,15 @@ Mash::Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
      m_equipAdjust(rec.value(kcolMashEquipAdjust).toBool()),
      m_cacheOnly(false)
 {
+}
+
+void Mash::connectSignals() {
+   for (auto mash : DbNamedEntityRecords<Mash>::getInstance().getAllRaw()) {
+      for (auto mashStep : mash->mashSteps()) {
+         connect(mashStep, SIGNAL(changed(QMetaProperty,QVariant)), mash, SLOT(acceptMashStepChange(QMetaProperty,QVariant)) );
+      }
+   }
+   return;
 }
 
 void Mash::setGrainTemp_c( double var )
@@ -198,6 +237,26 @@ void Mash::setTunSpecificHeat_calGC( double var )
 
 void Mash::setMashStepIds(QList<int> ids) {
    this->mashStepIds = ids.toVector();
+   return;
+}
+
+void Mash::swapMashSteps(MashStep const & ms1, MashStep const & ms2) {
+   int indexOf1 = this->mashStepIds.indexOf(ms1.key());
+   int indexOf2 = this->mashStepIds.indexOf(ms2.key());
+
+   // We can't swap them if we can't find both of them
+   // There's no point swapping them if they're the same
+   if (-1 == indexOf1 || -1 == indexOf2 || indexOf1 == indexOf2) {
+      return;
+   }
+
+   // As of Qt 5.14 we could write:
+   //    this->mashStepIds.swapItemsAt(indexOf1, indexOf2);
+   // However, we still need to support slightly older versions of Qt (5.12 in particular), hence the more cumbersome
+   // way here.
+   std::swap(this->mashStepIds[indexOf1], this->mashStepIds[indexOf2]);
+
+   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
    return;
 }
 
@@ -307,44 +366,41 @@ QList<int> Mash::getMashStepIds() const {
    return this->mashStepIds.toList();
 }
 
-QList<MashStep*> Mash::mashSteps() const
-{
-   return Database::instance().mashSteps(this);
+QList<MashStep*> Mash::mashSteps() const {
+   return DbNamedEntityRecords<MashStep>::getInstance().getByIdsRaw(this->mashStepIds);
 }
 
-void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/)
-{
-   int i;
+void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
    MashStep* stepSender = qobject_cast<MashStep*>(sender());
    if( stepSender == 0 )
       return;
 
    // If one of our mash steps changed, our calculated properties
    // may also change, so we need to emit some signals.
-   i = mashSteps().indexOf(stepSender);
-   if( i >= 0 )
-   {
+   int i = mashSteps().indexOf(stepSender);
+   if( i >= 0 ) {
       emit changed(metaProperty("totalMashWater_l"), QVariant());
       emit changed(metaProperty("totalTime"), QVariant());
    }
 }
 
 MashStep * Mash::addMashStep(MashStep * mashStep) {
-   mashStep->setMash(this);
-   mashStep->insertInDatabase();
+   this->mashStepIds.append(mashStep->key());
+   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
    return mashStep;
 }
 
 MashStep * Mash::removeMashStep(MashStep * mashStep) {
-   Database::instance().removeFrom(this, mashStep);
+   int indexOfStep = this->mashStepIds.indexOf(mashStep->key());
+   if (indexOfStep < 0 ) {
+      // This shouldn't happen, but it doesn't inherently break anything, so just log a warning and carry on
+      qWarning() <<
+         Q_FUNC_INFO << "Tried to remove MashStep #" << mashStep->key() << " (from Mash #" << this->key() <<
+         ") but couldn't find it";
+      return mashStep;
+   }
+
+   this->mashStepIds.removeAt(indexOfStep);
+   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
    return mashStep;
-}
-
-
-int Mash::insertInDatabase() {
-   return Database::instance().insertMash(this);
-}
-
-void Mash::removeFromDatabase() {
-   Database::instance().remove(this);
 }

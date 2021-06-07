@@ -75,7 +75,15 @@ public:
    enum Use {Mash, First_Wort, Boil, UseAroma, Dry_Hop }; // NOTE: way bad. We have a duplicate enum (Aroma)
    Q_ENUMS( Type Form Use )
 
-   virtual ~Hop() {}
+   Hop(QString name = "", bool cache = true);
+   Hop(NamedParameterBundle & namedParameterBundle);
+   Hop(Hop const & other);
+private:
+   Hop(DatabaseConstants::DbTableId table, int key);
+   Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
+public:
+
+   virtual ~Hop() = default;
 
    //! \brief The percent alpha.
    Q_PROPERTY( double alpha_pct READ alpha_pct WRITE setAlpha_pct /*NOTIFY changed*/ /*changedAlpha_pct*/ )
@@ -174,22 +182,14 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
-   Hop(DatabaseConstants::DbTableId table, int key);
-   Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   Hop(QString name, bool cache = true);
-   Hop(NamedParameterBundle & namedParameterBundle);
-private:
-   Hop( Hop & other );
 
    QString m_useStr;
    Use m_use;

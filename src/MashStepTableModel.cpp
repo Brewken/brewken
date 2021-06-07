@@ -127,6 +127,11 @@ void MashStepTableModel::setMash( Mash* m )
    }
 }
 
+Mash * MashStepTableModel::getMash() const {
+   return this->mashObs;
+}
+
+
 void MashStepTableModel::reorderMashStep(MashStep* step, int current)
 {
    // doSomething will be -1 if we are moving up and 1 if we are moving down
@@ -410,20 +415,22 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
    }
 }
 
-void MashStepTableModel::moveStepUp(int i)
-{
-   if( mashObs == nullptr || i == 0 || i >= steps.size() )
+void MashStepTableModel::moveStepUp(int i) {
+   if( this->mashObs == nullptr || i == 0 || i >= this->steps.size() ) {
       return;
+   }
 
-   Database::instance().swapMashStepOrder( steps[i], steps[i-1] );
+   this->mashObs->swapMashSteps(*this->steps[i], *this->steps[i-1]);
+   return;
 }
 
-void MashStepTableModel::moveStepDown(int i)
-{
-   if( mashObs == nullptr ||  i+1 >= steps.size() )
+void MashStepTableModel::moveStepDown(int i) {
+   if( this->mashObs == nullptr ||  i+1 >= steps.size() ) {
       return;
+   }
 
-   Database::instance().swapMashStepOrder( steps[i], steps[i+1] );
+   this->mashObs->swapMashSteps(*this->steps[i], *this->steps[i+1]);
+   return;
 }
 
 Unit::unitDisplay MashStepTableModel::displayUnit(int column) const

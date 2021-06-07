@@ -32,8 +32,10 @@
 #include <QItemDelegate>
 #include <QLineEdit>
 #include <QModelIndex>
+#include <QString>
 #include <QStyleOptionViewItem>
 #include <QVariant>
+#include <QVector>
 #include <QWidget>
 
 #include "Brewken.h"
@@ -41,133 +43,152 @@
 #include "MainWindow.h"
 #include "model/Hop.h"
 #include "PersistentSettings.h"
-#include <QString>
-#include <QVector>
 #include "Unit.h"
 
-HopTableModel::HopTableModel(QTableView* parent, bool editable)
+HopTableModel::HopTableModel(QTableView * parent, bool editable)
    : QAbstractTableModel(parent),
      colFlags(HOPNUMCOLS),
      _inventoryEditable(false),
      recObs(nullptr),
      parentTableWidget(parent),
-     showIBUs(false)
-{
-   hopObs.clear();
-   setObjectName("hopTable");
+     showIBUs(false) {
+   this->hopObs.clear();
+   this->setObjectName("hopTable");
 
-   int i;
-   for( i = 0; i < HOPNUMCOLS; ++i )
-   {
-      if( i == HOPNAMECOL )
+   for (int i = 0; i < HOPNUMCOLS; ++i) {
+      if (i == HOPNAMECOL) {
          colFlags[i] = Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
-      else if( i == HOPINVENTORYCOL )
+      } else if (i == HOPINVENTORYCOL) {
          colFlags[i] = Qt::ItemIsEnabled;
-      else
+      } else
          colFlags[i] = Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled |
-            Qt::ItemIsEnabled;
+                       Qt::ItemIsEnabled;
    }
 
-   QHeaderView* headerView = parentTableWidget->horizontalHeader();
+   QHeaderView * headerView = parentTableWidget->horizontalHeader();
    headerView->setContextMenuPolicy(Qt::CustomContextMenu);
    parentTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &HopTableModel::contextMenu);
-   connect( &(Database::instance()), &Database::changedInventory, this, &HopTableModel::changedInventory );
+   connect(&(Database::instance()), &Database::changedInventory, this, &HopTableModel::changedInventory);
 }
 
-HopTableModel::~HopTableModel()
-{
-   hopObs.clear();
+HopTableModel::~HopTableModel() {
+   this->hopObs.clear();
 }
 
-void HopTableModel::observeRecipe(Recipe* rec)
-{
-   if( recObs )
-   {
-      disconnect( recObs, nullptr, this, nullptr );
+void HopTableModel::observeRecipe(Recipe * rec) {
+   if (this->recObs) {
+      disconnect(this->recObs, nullptr, this, nullptr);
       removeAll();
    }
 
-   recObs = rec;
-   if( recObs )
-   {
-      connect( recObs, &NamedEntity::changed, this, &HopTableModel::changed );
-      addHops( recObs->hops() );
+   this->recObs = rec;
+   if (this->recObs) {
+      connect(this->recObs, &NamedEntity::changed, this, &HopTableModel::changed);
+      this->addHops(this->recObs->hops());
    }
 }
 
-void HopTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void HopTableModel::observeDatabase(bool val) {
+   if (val) {
       observeRecipe(nullptr);
       removeAll();
-      connect( &(Database::instance()), &Database::newHopSignal, this, &HopTableModel::addHop );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Hop*)), this, SLOT(removeHop(Hop*)) );
-      addHops( Database::instance().hops() );
-   }
-   else
-   {
+//      connect(&(Database::instance()), &Database::newHopSignal, this, &HopTableModel::addHop);
+      connect(&DbNamedEntityRecords<Hop>::getInstance(), &DbNamedEntityRecords<Hop>::signalObjectInserted, this, &HopTableModel::addHop);
+//      connect(&(Database::instance()), SIGNAL(deletedSignal(Hop *)), this, SLOT(removeHop(Hop *)));
+      connect(&DbNamedEntityRecords<Hop>::getInstance(),
+              &DbNamedEntityRecords<Hop>::signalObjectDeleted,
+              this,
+              static_cast<bool (HopTableModel::*)(int)>(&HopTableModel::removeHop)); // static_cast is needed here because removeHop is overloaded
+      this->addHops(DbNamedEntityRecords<Hop>::getInstance().getAllRaw());
+   } else {
       removeAll();
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
+      disconnect(&(Database::instance()), nullptr, this, nullptr);
    }
 }
 
-void HopTableModel::addHop(Hop* hop)
-{
-   if( hop == nullptr || hopObs.contains(hop) )
+/*void HopTableModel::addHop(Hop * hop) {
+   if (hop == nullptr || hopObs.contains(hop)) {
       return;
+   }
 
    // If we are observing the database, ensure that the item is undeleted and
    // fit to display.
-   if( recObs == nullptr && ( hop->deleted() || !hop->display() ) )
+   if (recObs == nullptr && (hop->deleted() || !hop->display())) {
       return;
+   }
 
    int size = hopObs.size();
-   beginInsertRows( QModelIndex(), size, size );
+   beginInsertRows(QModelIndex(), size, size);
    hopObs.append(hop);
-   connect( hop, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
+   connect(hop, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
+   //reset(); // Tell everybody that the table has changed.
+   endInsertRows();
+}*/
+void HopTableModel::addHop(int hopId) {
+   auto hopAdded = DbNamedEntityRecords<Hop>::getInstance().getById(hopId);
+   if (!hopAdded) {
+      // Not sure this should ever happen in practice, but, if there ever is no hop with the specified ID, there's not
+      // a lot we can do.
+      qWarning() << Q_FUNC_INFO << "Received signal that Hop ID" << hopId << "added, but unable to retrieve the Hop";
+      return;
+   }
+
+   // .:TODO:. For the moment at least, the rest of this class uses raw pointers, but would be good to refactor to use
+   // shared pointers.
+   Hop * hop = hopAdded->get();
+   if (this->hopObs.contains(hop)) {
+      return;
+   }
+
+   // If we are observing the database, ensure that the item is undeleted and
+   // fit to display.
+   if (recObs == nullptr && (hop->deleted() || !hop->display())) {
+      return;
+   }
+
+   int size = hopObs.size();
+   beginInsertRows(QModelIndex(), size, size);
+   hopObs.append(hop);
+   connect(hop, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
    //reset(); // Tell everybody that the table has changed.
    endInsertRows();
 }
 
-void HopTableModel::addHops(QList<Hop*> hops)
-{
-   QList<Hop*>::iterator i;
-   QList<Hop*> tmp;
+void HopTableModel::addHops(QList<Hop *> hops) {
+   QList<Hop *>::iterator i;
+   QList<Hop *> tmp;
 
-   for( i = hops.begin(); i != hops.end(); i++ )
-   {
-      if( recObs == nullptr && ( (*i)->deleted() || !(*i)->display() ) )
+   for (i = hops.begin(); i != hops.end(); i++) {
+      if (recObs == nullptr && ((*i)->deleted() || !(*i)->display())) {
          continue;
-      if( !hopObs.contains(*i) )
+      }
+      if (!hopObs.contains(*i)) {
          tmp.append(*i);
+      }
    }
 
    int size = hopObs.size();
-   if (size+tmp.size())
-   {
-      beginInsertRows( QModelIndex(), size, size+tmp.size()-1 );
+   if (size + tmp.size()) {
+      beginInsertRows(QModelIndex(), size, size + tmp.size() - 1);
       hopObs.append(tmp);
 
-      for( i = tmp.begin(); i != tmp.end(); i++ )
-         connect( *i, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
+      for (i = tmp.begin(); i != tmp.end(); i++) {
+         connect(*i, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
+      }
 
       endInsertRows();
    }
 }
 
-bool HopTableModel::removeHop(Hop* hop)
-{
-   int i;
-   i = hopObs.indexOf(hop);
-   if( i >= 0 )
-   {
-      beginRemoveRows( QModelIndex(), i, i );
-      disconnect( hop, nullptr, this, nullptr );
+bool HopTableModel::removeHop(Hop * hop) {
+   int i = hopObs.indexOf(hop);
+   if (i >= 0) {
+      beginRemoveRows(QModelIndex(), i, i);
+      disconnect(hop, nullptr, this, nullptr);
       hopObs.removeAt(i);
       //reset(); // Tell everybody the table has changed.
       endRemoveRows();
@@ -178,161 +199,164 @@ bool HopTableModel::removeHop(Hop* hop)
    return false;
 }
 
-void HopTableModel::setShowIBUs( bool var )
-{
+bool HopTableModel::removeHop(int hopId) {
+   auto match = std::find_if(this->hopObs.begin(),
+                             this->hopObs.end(),
+                             [hopId](Hop * current){return hopId == current->key();});
+   if (match == this->hopObs.cend()) {
+      // We didn't find the deleted Hop in our list
+      return false;
+   }
+   return this->removeHop(*match);
+}
+
+void HopTableModel::setShowIBUs(bool var) {
    showIBUs = var;
 }
 
-void HopTableModel::removeAll()
-{
-   if (hopObs.size())
-   {
-      beginRemoveRows( QModelIndex(), 0, hopObs.size()-1 );
-      while( !hopObs.isEmpty() )
-      {
-         disconnect( hopObs.takeLast(), nullptr, this, nullptr );
+void HopTableModel::removeAll() {
+   if (hopObs.size()) {
+      beginRemoveRows(QModelIndex(), 0, hopObs.size() - 1);
+      while (!hopObs.isEmpty()) {
+         disconnect(hopObs.takeLast(), nullptr, this, nullptr);
       }
       endRemoveRows();
    }
 }
 
-void HopTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
-{
-   if ( table == DatabaseConstants::HOPTABLE ) {
-      for( int i = 0; i < hopObs.size(); ++i ) {
-         Hop* holdmybeer = hopObs.at(i);
+void HopTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val) {
+   if (table == DatabaseConstants::HOPTABLE) {
+      for (int i = 0; i < hopObs.size(); ++i) {
+         Hop * holdmybeer = hopObs.at(i);
 
-         if ( invKey == holdmybeer->inventoryId() ) {
+         if (invKey == holdmybeer->inventoryId()) {
             holdmybeer->setCacheOnly(true);
             holdmybeer->setInventoryAmount(val.toDouble());
             holdmybeer->setCacheOnly(false);
-            emit dataChanged( QAbstractItemModel::createIndex(i,HOPINVENTORYCOL),
-                              QAbstractItemModel::createIndex(i,HOPINVENTORYCOL) );
+            emit dataChanged(QAbstractItemModel::createIndex(i, HOPINVENTORYCOL),
+                             QAbstractItemModel::createIndex(i, HOPINVENTORYCOL));
          }
       }
    }
 }
 
-void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/)
-{
+void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    int i;
 
    // Find the notifier in the list
-   Hop* hopSender = qobject_cast<Hop*>(sender());
-   if( hopSender )
-   {
+   Hop * hopSender = qobject_cast<Hop *>(sender());
+   if (hopSender) {
       i = hopObs.indexOf(hopSender);
-      if( i < 0 )
+      if (i < 0) {
          return;
+      }
 
-      emit dataChanged( QAbstractItemModel::createIndex(i, 0),
-                        QAbstractItemModel::createIndex(i, HOPNUMCOLS-1));
-      emit headerDataChanged( Qt::Vertical, i, i );
+      emit dataChanged(QAbstractItemModel::createIndex(i, 0),
+                       QAbstractItemModel::createIndex(i, HOPNUMCOLS - 1));
+      emit headerDataChanged(Qt::Vertical, i, i);
       return;
    }
 
    // See if sender is our recipe.
-   Recipe* recSender = qobject_cast<Recipe*>(sender());
-   if( recSender && recSender == recObs )
-   {
-      if( QString(prop.name()) == "hops" )
-      {
+   Recipe * recSender = qobject_cast<Recipe *>(sender());
+   if (recSender && recSender == recObs) {
+      if (QString(prop.name()) == "hops") {
          removeAll();
-         addHops( recObs->hops() );
+         addHops(recObs->hops());
       }
-      if( rowCount() > 0 )
-         emit headerDataChanged( Qt::Vertical, 0, rowCount()-1 );
+      if (rowCount() > 0) {
+         emit headerDataChanged(Qt::Vertical, 0, rowCount() - 1);
+      }
       return;
    }
 }
 
-int HopTableModel::rowCount(const QModelIndex& /*parent*/) const
-{
+int HopTableModel::rowCount(const QModelIndex & /*parent*/) const {
    return hopObs.size();
 }
 
-int HopTableModel::columnCount(const QModelIndex& /*parent*/) const
-{
+int HopTableModel::columnCount(const QModelIndex & /*parent*/) const {
    return HOPNUMCOLS;
 }
 
-QVariant HopTableModel::data( const QModelIndex& index, int role ) const
-{
-   Hop* row;
+QVariant HopTableModel::data(const QModelIndex & index, int role) const {
+   Hop * row;
    int col = index.column();
    Unit::unitScale scale;
    Unit::unitDisplay unit;
 
    // Ensure the row is ok.
-   if( index.row() >= static_cast<int>(hopObs.size() ))
-   {
+   if (index.row() >= static_cast<int>(hopObs.size())) {
       qWarning() << QString("Bad model index. row = %1").arg(index.row());
       return QVariant();
-   }
-   else
+   } else {
       row = hopObs[index.row()];
+   }
 
-   switch( index.column() )
-   {
+   switch (index.column()) {
       case HOPNAMECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->name());
-         else
+         } else {
             return QVariant();
+         }
       case HOPALPHACOL:
-         if( role == Qt::DisplayRole )
-            return QVariant( Brewken::displayAmount(row->alpha_pct(), nullptr) );
-         else
+         if (role == Qt::DisplayRole) {
+            return QVariant(Brewken::displayAmount(row->alpha_pct(), nullptr));
+         } else {
             return QVariant();
+         }
       case HOPINVENTORYCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
          unit = displayUnit(col);
          scale = displayScale(col);
 
          return QVariant(Brewken::displayAmount(row->inventory(), &Units::kilograms, 3, unit, scale));
 
       case HOPAMOUNTCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
          unit = displayUnit(col);
          scale = displayScale(col);
 
          return QVariant(Brewken::displayAmount(row->amount_kg(), &Units::kilograms, 3, unit, scale));
 
       case HOPUSECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->useStringTr());
-         else if( role == Qt::UserRole )
+         } else if (role == Qt::UserRole) {
             return QVariant(row->use());
-         else
+         } else {
             return QVariant();
+         }
       case HOPTIMECOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
 
          scale = displayScale(col);
 
-         return QVariant( Brewken::displayAmount(row->time_min(), &Units::minutes, 3, Unit::noUnit, scale) );
+         return QVariant(Brewken::displayAmount(row->time_min(), &Units::minutes, 3, Unit::noUnit, scale));
       case HOPFORMCOL:
-        if ( role == Qt::DisplayRole )
-          return QVariant( row->formStringTr() );
-        else if ( role == Qt::UserRole )
-           return QVariant( row->form());
-        else
-           return QVariant();
+         if (role == Qt::DisplayRole) {
+            return QVariant(row->formStringTr());
+         } else if (role == Qt::UserRole) {
+            return QVariant(row->form());
+         } else {
+            return QVariant();
+         }
       default :
          qWarning() << QString("HopTableModel::data Bad column: %1").arg(index.column());
          return QVariant();
    }
 }
 
-QVariant HopTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
-{
-   if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-   {
-      switch( section )
-      {
+QVariant HopTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      switch (section) {
          case HOPNAMECOL:
             return QVariant(tr("Name"));
          case HOPALPHACOL:
@@ -351,42 +375,39 @@ QVariant HopTableModel::headerData( int section, Qt::Orientation orientation, in
             qWarning() << QString("HopTableModel::headerdata Bad column: %1").arg(section);
             return QVariant();
       }
-   }
-   else if( showIBUs && recObs && orientation == Qt::Vertical && role == Qt::DisplayRole )
-   {
+   } else if (showIBUs && recObs && orientation == Qt::Vertical && role == Qt::DisplayRole) {
       QList<double> ibus = recObs->IBUs();
 
-      if ( ibus.size() > section )
-         return QVariant( QString("%L1 IBU").arg( ibus.at(section), 0, 'f', 1 ) );
+      if (ibus.size() > section) {
+         return QVariant(QString("%L1 IBU").arg(ibus.at(section), 0, 'f', 1));
+      }
    }
    return QVariant();
 }
 
-Qt::ItemFlags HopTableModel::flags(const QModelIndex& index ) const
-{
+Qt::ItemFlags HopTableModel::flags(const QModelIndex & index) const {
    int col = index.column();
 
    return colFlags[col];
 }
 
-bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   Hop *row;
+bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, int role) {
+   Hop * row;
    bool retVal = false;
    double amt;
 
-   if( index.row() >= static_cast<int>(hopObs.size()) || role != Qt::EditRole )
+   if (index.row() >= static_cast<int>(hopObs.size()) || role != Qt::EditRole) {
       return false;
+   }
 
    row = hopObs[index.row()];
 
    Unit::unitDisplay dspUnit = displayUnit(index.column());
    Unit::unitScale   dspScl  = displayScale(index.column());
-   switch( index.column() )
-   {
+   switch (index.column()) {
       case HOPNAMECOL:
          retVal = value.canConvert(QVariant::String);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntity::name,
                                                   value.toString(),
@@ -395,11 +416,11 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          break;
       case HOPALPHACOL:
          retVal = value.canConvert(QVariant::Double);
-         if( retVal )
-         {
-            amt = Brewken::toDouble( value.toString(), &retVal );
-            if ( ! retVal )
+         if (retVal) {
+            amt = Brewken::toDouble(value.toString(), &retVal);
+            if (! retVal) {
                qWarning() << QString("HopTableModel::setData() could not convert %1 to double").arg(value.toString());
+            }
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::alpha_pct,
                                                   amt,
@@ -409,16 +430,16 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
 
       case HOPINVENTORYCOL:
          retVal = value.canConvert(QVariant::String);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   "inventoryAmount",
-                                                  Brewken::qStringToSI(value.toString(),&Units::kilograms, displayUnit(HOPINVENTORYCOL)),
+                                                  Brewken::qStringToSI(value.toString(), &Units::kilograms, displayUnit(HOPINVENTORYCOL)),
                                                   tr("Change Hop Inventory Amount"));
          }
          break;
       case HOPAMOUNTCOL:
          retVal = value.canConvert(QVariant::String);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::amount_kg,
                                                   Brewken::qStringToSI(value.toString(), &Units::kilograms, dspUnit, dspScl),
@@ -427,7 +448,7 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          break;
       case HOPUSECOL:
          retVal = value.canConvert(QVariant::Int);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::use,
                                                   static_cast<Hop::Use>(value.toInt()),
@@ -436,7 +457,7 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          break;
       case HOPFORMCOL:
          retVal = value.canConvert(QVariant::Int);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::form,
                                                   static_cast<Hop::Form>(value.toInt()),
@@ -445,10 +466,10 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          break;
       case HOPTIMECOL:
          retVal = value.canConvert(QVariant::String);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::time_min,
-                                                  Brewken::qStringToSI(value.toString(),&Units::minutes,dspUnit,dspScl),
+                                                  Brewken::qStringToSI(value.toString(), &Units::minutes, dspUnit, dspScl),
                                                   tr("Change Hop Time"));
          }
          break;
@@ -456,43 +477,46 @@ bool HopTableModel::setData( const QModelIndex& index, const QVariant& value, in
          qWarning() << QString("HopTableModel::setdata Bad column: %1").arg(index.column());
          return false;
    }
-   if ( retVal )
-      headerDataChanged( Qt::Vertical, index.row(), index.row() ); // Need to re-show header (IBUs).
+   if (retVal) {
+      headerDataChanged(Qt::Vertical, index.row(), index.row());   // Need to re-show header (IBUs).
+   }
 
    return retVal;
 }
 
-Unit::unitDisplay HopTableModel::displayUnit(int column) const
-{
+Unit::unitDisplay HopTableModel::displayUnit(int column) const {
    QString attribute = generateName(column);
 
-   if ( attribute.isEmpty() )
+   if (attribute.isEmpty()) {
       return Unit::noUnit;
+   }
 
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
+   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(),
+                                                                   PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale HopTableModel::displayScale(int column) const
-{
+Unit::unitScale HopTableModel::displayScale(int column) const {
    QString attribute = generateName(column);
 
-   if ( attribute.isEmpty() )
+   if (attribute.isEmpty()) {
       return Unit::noScale;
+   }
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(),
+                                                                 PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
 //   o clear the custom scale if set
 //   o clear any custom unit from the rows
 //      o which should have the side effect of clearing any scale
-void HopTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
-{
+void HopTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit) {
    // Hop* row; // disabled per-cell magic
    QString attribute = generateName(column);
 
-   if ( attribute.isEmpty() )
+   if (attribute.isEmpty()) {
       return;
+   }
 
    PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
    PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
@@ -500,25 +524,23 @@ void HopTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
 }
 
 // Setting the scale should clear any cell-level scaling options
-void HopTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
-{
+void HopTableModel::setDisplayScale(int column, Unit::unitScale displayScale) {
    // Fermentable* row; //disabled per-cell magic
 
    QString attribute = generateName(column);
 
-   if ( attribute.isEmpty() )
+   if (attribute.isEmpty()) {
       return;
+   }
 
    PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
 
 }
 
-QString HopTableModel::generateName(int column) const
-{
+QString HopTableModel::generateName(int column) const {
    QString attribute;
 
-   switch(column)
-   {
+   switch (column) {
       case HOPINVENTORYCOL:
          attribute = "inventory_kg";
          break;
@@ -534,10 +556,9 @@ QString HopTableModel::generateName(int column) const
    return attribute;
 }
 
-void HopTableModel::contextMenu(const QPoint &point)
-{
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
+void HopTableModel::contextMenu(const QPoint & point) {
+   QObject * calledBy = sender();
+   QHeaderView * hView = qobject_cast<QHeaderView *>(calledBy);
 
    int selected = hView->logicalIndexAt(point);
    Unit::unitDisplay currentUnit;
@@ -548,57 +569,57 @@ void HopTableModel::contextMenu(const QPoint &point)
    currentUnit  = displayUnit(selected);
    currentScale = displayScale(selected);
 
-   QMenu* menu;
-   QAction* invoked;
+   QMenu * menu;
+   QAction * invoked;
 
-   switch(selected)
-   {
+   switch (selected) {
       case HOPINVENTORYCOL:
       case HOPAMOUNTCOL:
-         menu = Brewken::setupMassMenu(parentTableWidget,currentUnit, currentScale);
+         menu = Brewken::setupMassMenu(parentTableWidget, currentUnit, currentScale);
          break;
       case HOPTIMECOL:
-         menu = Brewken::setupTimeMenu(parentTableWidget,currentScale);
+         menu = Brewken::setupTimeMenu(parentTableWidget, currentScale);
          break;
       default:
          return;
    }
 
    invoked = menu->exec(hView->mapToGlobal(point));
-   if ( invoked == nullptr )
+   if (invoked == nullptr) {
       return;
+   }
 
-   QWidget* pMenu = invoked->parentWidget();
-   if ( selected != HOPTIMECOL && pMenu == menu )
-      setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
-   else
-      setDisplayScale(selected,static_cast<Unit::unitScale>(invoked->data().toInt()));
+   QWidget * pMenu = invoked->parentWidget();
+   if (selected != HOPTIMECOL && pMenu == menu) {
+      setDisplayUnit(selected, static_cast<Unit::unitDisplay>(invoked->data().toInt()));
+   } else {
+      setDisplayScale(selected, static_cast<Unit::unitScale>(invoked->data().toInt()));
+   }
 
 }
 
 // Returns null on failure.
-Hop* HopTableModel::getHop(int i) {
-    if(!(hopObs.isEmpty())) {
-        if(i >= 0 && i < hopObs.size())
-            return hopObs[i];
-    }
-    else
-       qWarning() << QString("HopTableModel::getHop( %1/%2 )").arg(i).arg(hopObs.size());
-    return nullptr;
+Hop * HopTableModel::getHop(int i) {
+   if (!(hopObs.isEmpty())) {
+      if (i >= 0 && i < hopObs.size()) {
+         return hopObs[i];
+      }
+   } else {
+      qWarning() << QString("HopTableModel::getHop( %1/%2 )").arg(i).arg(hopObs.size());
+   }
+   return nullptr;
 }
 
 //==========================CLASS HopItemDelegate===============================
 
-HopItemDelegate::HopItemDelegate(QObject* parent)
-        : QItemDelegate(parent)
-{
+HopItemDelegate::HopItemDelegate(QObject * parent)
+   : QItemDelegate(parent) {
 }
 
-QWidget* HopItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem& /*option*/, const QModelIndex &index) const
-{
-   if ( index.column() == HOPUSECOL )
-   {
-      QComboBox *box = new QComboBox(parent);
+QWidget * HopItemDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & /*option*/,
+                                        const QModelIndex & index) const {
+   if (index.column() == HOPUSECOL) {
+      QComboBox * box = new QComboBox(parent);
 
       // NOTE: these need to be in the same order as the Hop::Use enum.
       box->addItem(tr("Mash"));
@@ -610,10 +631,8 @@ QWidget* HopItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
       return box;
-   }
-   else if ( index.column() == HOPFORMCOL )
-   {
-      QComboBox *box = new QComboBox(parent);
+   } else if (index.column() == HOPFORMCOL) {
+      QComboBox * box = new QComboBox(parent);
 
       box->addItem(tr("Leaf"));
       box->addItem(tr("Pellet"));
@@ -622,65 +641,54 @@ QWidget* HopItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
       return box;
-   }
-   else
-   {
+   } else {
       return new QLineEdit(parent);
    }
 }
 
-void HopItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-   if (index.column() == HOPUSECOL )
-   {
-      QComboBox* box = static_cast<QComboBox*>(editor);
+void HopItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const {
+   if (index.column() == HOPUSECOL) {
+      QComboBox * box = static_cast<QComboBox *>(editor);
       int ndx = index.model()->data(index, Qt::UserRole).toInt();
 
       box->setCurrentIndex(ndx);
-   }
-   else if ( index.column() == HOPFORMCOL )
-   {
-      QComboBox* box = static_cast<QComboBox*>(editor);
-      int ndx = index.model()->data(index,Qt::UserRole).toInt();
+   } else if (index.column() == HOPFORMCOL) {
+      QComboBox * box = static_cast<QComboBox *>(editor);
+      int ndx = index.model()->data(index, Qt::UserRole).toInt();
 
       box->setCurrentIndex(ndx);
-   }
-   else
-   {
-       QLineEdit* line = static_cast<QLineEdit*>(editor);
-       line->setText(index.model()->data(index, Qt::DisplayRole).toString());
+   } else {
+      QLineEdit * line = static_cast<QLineEdit *>(editor);
+      line->setText(index.model()->data(index, Qt::DisplayRole).toString());
    }
 }
 
-void HopItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-   if ( index.column() == HOPUSECOL )
-   {
-      QComboBox* box = static_cast<QComboBox*>(editor);
+void HopItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const {
+   if (index.column() == HOPUSECOL) {
+      QComboBox * box = static_cast<QComboBox *>(editor);
       int value = box->currentIndex();
       int ndx = model->data(index, Qt::UserRole).toInt();
 
-      if ( value != ndx )
+      if (value != ndx) {
          model->setData(index, value, Qt::EditRole);
-   }
-   else if (index.column() == HOPFORMCOL )
-   {
-      QComboBox* box = static_cast<QComboBox*>(editor);
+      }
+   } else if (index.column() == HOPFORMCOL) {
+      QComboBox * box = static_cast<QComboBox *>(editor);
       int value = box->currentIndex();
       int ndx = model->data(index, Qt::UserRole).toInt();
 
-      if ( value != ndx )
+      if (value != ndx) {
          model->setData(index, value, Qt::EditRole);
-   }
-   else
-   {
-      QLineEdit* line = static_cast<QLineEdit*>(editor);
-      if ( line->isModified() )
+      }
+   } else {
+      QLineEdit * line = static_cast<QLineEdit *>(editor);
+      if (line->isModified()) {
          model->setData(index, line->text(), Qt::EditRole);
+      }
    }
 }
 
-void HopItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex& /*index*/) const
-{
+void HopItemDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option,
+                                           const QModelIndex & /*index*/) const {
    editor->setGeometry(option.rect);
 }

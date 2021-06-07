@@ -71,21 +71,18 @@ void MiscTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void MiscTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void MiscTableModel::observeDatabase(bool val) {
+   if (val) {
       observeRecipe(nullptr);
       removeAll();
       connect( &(Database::instance()), &Database::newMiscSignal, this, &MiscTableModel::addMisc );
       connect( &(Database::instance()), SIGNAL(deletedSignal(Misc*)), this, SLOT(removeMisc(Misc*)) );
-      addMiscs( Database::instance().miscs() );
-   }
-   else
-   {
+      addMiscs( DbNamedEntityRecords<Misc>::getInstance().getAllRaw() );
+   } else {
       removeAll();
       disconnect( &(Database::instance()), nullptr, this, nullptr );
    }
+   return;
 }
 
 void MiscTableModel::addMisc(Misc* misc)
@@ -430,10 +427,10 @@ void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/)
    }
 
    // See if sender is the database.
-   if( sender() == &(Database::instance()) && QString(prop.name()) == "miscs" )
-   {
+   // .:TODO:. Look at this, as sender won't be the DB now
+   if ( sender() == &(Database::instance()) && QString(prop.name()) == "miscs" ) {
       removeAll();
-      addMiscs( Database::instance().miscs() );
+      addMiscs( DbNamedEntityRecords<Misc>::getInstance().getAllRaw() );
       return;
    }
 }

@@ -74,6 +74,10 @@ public:
 
    Q_ENUM(Types Ions)
 
+   Water(QString name = "", bool cache = true);
+   Water(NamedParameterBundle & namedParameterBundle);
+   Water(Water const & other, bool cache = true);
+
    virtual ~Water() = default;
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
@@ -143,23 +147,17 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Water(DatabaseConstants::DbTableId table, int key);
    Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Water(Water const& other, bool cache = true);
-public:
-   Water(QString name, bool cache = true);
-   Water(NamedParameterBundle & namedParameterBundle);
 
-private:
    double m_amount;
    double m_calcium_ppm;
    double m_bicarbonate_ppm;

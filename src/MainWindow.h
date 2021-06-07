@@ -1,5 +1,5 @@
 /**
- * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -211,7 +211,7 @@ public slots:
    //! \brief Edit currently selected mash step.
    void editSelectedMashStep();
    //! \brief Set the current recipe's mash to the one selected in the mash combo box.
-   void setMashToCurrentlySelected();
+   //void setMashToCurrentlySelected();
    //! \brief Save the current recipe's mash to be used in other recipes.
    void saveMash();
    //! \brief Remove the current mash from the recipe, and replace with a blank one.

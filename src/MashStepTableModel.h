@@ -1,5 +1,5 @@
 /**
- * MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -49,9 +49,13 @@ class MashStepTableModel : public QAbstractTableModel
 
 public:
    MashStepTableModel(QTableView* parent=0);
-   virtual ~MashStepTableModel() {}
+   virtual ~MashStepTableModel() = default;
+
    //! Set the mash whose mash steps we want to model.
    void setMash( Mash* m );
+
+   Mash * getMash() const;
+
    //! \returns the mash step at model index \b i.
    MashStep* getMashStep(unsigned int i);
 
@@ -87,6 +91,7 @@ public slots:
 
    void contextMenu(const QPoint &point);
 
+
 private:
    Mash* mashObs;
    QTableView* parentTableWidget;
@@ -118,4 +123,4 @@ public:
 private:
 };
 
-#endif   /* MASHSTEPTABLEMODEL_H */
+#endif

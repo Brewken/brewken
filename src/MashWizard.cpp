@@ -1,5 +1,5 @@
 /**
- * MashWizard.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * MashWizard.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Adam Hawes <ach@hawes.net.au>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • David Grundberg <individ@acc.umu.se>
@@ -377,7 +377,7 @@ void MashWizard::wizardry()
             mashStep->setEndTemp_c(tw);
             mashStep->setStepTemp_c(tf);
             mashStep->setStepTime_min(15);
-            mashStep->setMash(mash);
+            //mashStep->setMash(mash);
             mashStep->insertInDatabase();
             steps.append(mashStep);
             emit mashStep->changed(
@@ -399,7 +399,7 @@ void MashWizard::wizardry()
          mashStep->setEndTemp_c(tw);
          mashStep->setStepTemp_c(tf);
          mashStep->setStepTime_min(15);
-         mashStep->setMash(mash);
+         //mashStep->setMash(mash);
          mashStep->insertInDatabase();
          steps.append(mashStep);
          emit mashStep->changed(

@@ -203,7 +203,7 @@ namespace {
       return newDb;
    }
 
-
+/*
    QMap<QString, std::function<NamedEntity*(QString name)> > makeTableParams(Database & db) {
       QMap<QString, std::function<NamedEntity*(QString name)> > tmp;
       //=============================Equipment====================================
@@ -219,7 +219,7 @@ namespace {
 
       return tmp;
    }
-
+*/
 }
 
 //
@@ -1208,7 +1208,7 @@ public:
    QHash< int, BrewNote* > allBrewNotes;
    QHash< int, Equipment* > allEquipments;
    QHash< int, Fermentable* > allFermentables;
-   QHash< int, Hop* > allHops;
+////   QHash< int, Hop* > allHops;  ////!!!!
    QHash< int, Instruction* > allInstructions;
    QHash< int, Mash* > allMashs;
    QHash< int, MashStep* > allMashSteps;
@@ -1243,7 +1243,7 @@ Database::~Database() {
    qDeleteAll(this->pimpl->allBrewNotes);
    qDeleteAll(this->pimpl->allEquipments);
    qDeleteAll(this->pimpl->allFermentables);
-   qDeleteAll(this->pimpl->allHops);
+////   qDeleteAll(this->pimpl->allHops);  ////!!!
    qDeleteAll(this->pimpl->allInstructions);
    qDeleteAll(this->pimpl->allMashSteps);
    qDeleteAll(this->pimpl->allMashs);
@@ -1406,7 +1406,7 @@ bool Database::load() {
    this->pimpl->populateElements(*this, this->pimpl->allBrewNotes, DatabaseConstants::BREWNOTETABLE );
    this->pimpl->populateElements(*this, this->pimpl->allEquipments, DatabaseConstants::EQUIPTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allFermentables, DatabaseConstants::FERMTABLE );
-   this->pimpl->populateElements(*this, this->pimpl->allHops, DatabaseConstants::HOPTABLE );
+///   this->pimpl->populateElements(*this, this->pimpl->allHops, DatabaseConstants::HOPTABLE ); ////!!!!!
    this->pimpl->populateElements(*this, this->pimpl->allInstructions, DatabaseConstants::INSTRUCTIONTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allMashs, DatabaseConstants::MASHTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allMashSteps, DatabaseConstants::MASHSTEPTABLE );
@@ -1434,46 +1434,11 @@ bool Database::load() {
    DbNamedEntityRecords<Yeast>::getInstance().loadAll(this->sqlDatabase());
    qDebug() << Q_FUNC_INFO << "Objects loaded";
 
-   // Connect fermentable, hop changed signals to their parent recipe.
-   for( QHash<int,Recipe*>::iterator i = this->pimpl->allRecipes.begin(); i != this->pimpl->allRecipes.end(); i++ )
-   {
-      Equipment* e = equipment(*i);
-      if( e )
-      {
-         connect( e, &NamedEntity::changed, *i, &Recipe::acceptEquipChange );
-         connect( e, &Equipment::changedBoilSize_l, *i, &Recipe::setBoilSize_l);
-         connect( e, &Equipment::changedBoilTime_min, *i, &Recipe::setBoilTime_min);
-      }
+   Recipe::connectSignals();
+   qDebug() << Q_FUNC_INFO << "Recipe signals connected";
 
-      QList<Fermentable*> tmpF = fermentables(*i);
-      for( QList<Fermentable*>::iterator j = tmpF.begin(); j != tmpF.end(); ++j ) {
-         connect( *j, SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptFermChange(QMetaProperty,QVariant)) );
-      }
-
-      QList<Hop*> tmpH = hops(*i);
-      for( QList<Hop*>::iterator k = tmpH.begin(); k != tmpH.end(); ++k ) {
-         connect( *k, SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptHopChange(QMetaProperty,QVariant)) );
-      }
-
-      QList<Yeast*> tmpY = yeasts(*i);
-      for( QList<Yeast*>::iterator l = tmpY.begin(); l != tmpY.end(); ++l ) {
-         connect( *l, SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptYeastChange(QMetaProperty,QVariant)) );
-      }
-
-      // a recipe may not have a mash. Can't connect what doesn't exist
-      if ( mash(*i) != nullptr ) {
-         connect( mash(*i), SIGNAL(changed(QMetaProperty,QVariant)), *i, SLOT(acceptMashChange(QMetaProperty,QVariant)) );
-      }
-   }
-
-   QList<Mash*> tmpM = mashs();
-   for( QList<Mash*>::iterator m = tmpM.begin(); m != tmpM.end(); ++m )
-   {
-      QList<MashStep*> tmpMS = mashSteps(*m);
-      for( QList<MashStep*>::iterator n = tmpMS.begin(); n != tmpMS.end(); ++n) {
-         connect( *n, SIGNAL(changed(QMetaProperty,QVariant)), *m, SLOT(acceptMashStepChange(QMetaProperty,QVariant)) );
-      }
-   }
+   Mash::connectSignals();
+   qDebug() << Q_FUNC_INFO << "Mash signals connected";
 
    this->pimpl->loadWasSuccessful = true;
    return this->pimpl->loadWasSuccessful;
@@ -1897,12 +1862,17 @@ Recipe* Database::getParentRecipe( BrewNote const* note ) {
 Recipe*      Database::recipe(int key)      { return this->pimpl->allRecipes[key]; }
 Equipment*   Database::equipment(int key)   { return this->pimpl->allEquipments[key]; }
 Fermentable* Database::fermentable(int key) { return this->pimpl->allFermentables[key]; }
-Hop*         Database::hop(int key)         { return this->pimpl->allHops[key]; }
+////Hop*         Database::hop(int key)         { return this->pimpl->allHops[key]; }
+Hop*         Database::hop(int key)         {
+   auto result = DbNamedEntityRecords<Hop>::getInstance().getById(key);
+   return result ? result.value().get() : nullptr;
+}
+
 Misc*        Database::misc(int key)        { return this->pimpl->allMiscs[key]; }
 Style*       Database::style(int key)       { return this->pimpl->allStyles[key]; }
 Yeast*       Database::yeast(int key)       { return this->pimpl->allYeasts[key]; }
 Salt*        Database::salt(int key)        { return this->pimpl->allSalts[key]; }
-
+/*
 void Database::swapMashStepOrder(MashStep* m1, MashStep* m2)
 {
    TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::MASHSTEPTABLE);
@@ -2084,7 +2054,8 @@ void Database::insertInstruction(Instruction* in, int pos)
 
    emit in->changed( in->metaProperty("instructionNumber"), pos );
 }
-
+*/
+/*
 QList<BrewNote*> Database::brewNotes(Recipe const* parent)
 {
    QList<BrewNote*> ret;
@@ -2114,6 +2085,7 @@ QList<Fermentable*> Database::fermentables(Recipe const* parent)
    return ret;
 }
 
+
 QList<Hop*> Database::hops(Recipe const* parent)
 {
    QList<Hop*> ret;
@@ -2124,6 +2096,7 @@ QList<Hop*> Database::hops(Recipe const* parent)
 
    return ret;
 }
+
 
 QList<Misc*> Database::miscs(Recipe const* parent)
 {
@@ -2242,9 +2215,9 @@ QList<Yeast*> Database::yeasts(Recipe const* parent)
 
    return ret;
 }
-
+*/
 // Named constructors =========================================================
-
+/*
 BrewNote* Database::newBrewNote(BrewNote* other, bool signal)
 {
    BrewNote* tmp = this->pimpl->copy<BrewNote>(*this, other, &this->pimpl->allBrewNotes);
@@ -3152,7 +3125,7 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
    emit newBrewNoteSignal(ins);
 
    return key;
-}
+}*/
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
@@ -3160,7 +3133,7 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
 // NOTE: This really should be in a transaction, but I am going to leave that
 // as the responsibility of the calling method. I am not comfortable with this
 // idea.
-void Database::duplicateMashSteps(Mash *oldMash, Mash *newMash)
+/*void Database::duplicateMashSteps(Mash *oldMash, Mash *newMash)
 {
    QList<MashStep*> tmpMS = mashSteps(oldMash);
    QList<MashStep*>::iterator ms;
@@ -3190,7 +3163,7 @@ void Database::duplicateMashSteps(Mash *oldMash, Mash *newMash)
    emit changed( metaProperty(*this, "mashs"), QVariant() );
    emit newMash->mashStepsChanged();
 
-}
+}*/
 
 QString Database::getDbFileName()
 {
@@ -3441,6 +3414,7 @@ QMap<int, double> Database::getInventory(const DatabaseConstants::DbTableId tabl
 }
 
 // Add to recipe ==============================================================
+/*
 void Database::addToRecipe( Recipe* rec, Equipment* e, bool noCopy, bool transact )
 {
    Equipment* newEquip = e;
@@ -3588,6 +3562,7 @@ void Database::addToRecipe( Recipe* rec, QList<Hop*>hops, bool transact )
    }
 }
 
+
 Mash * Database::addToRecipe( Recipe* rec, Mash* m, bool noCopy, bool transact )
 {
    Mash* newMash = m;
@@ -3720,7 +3695,7 @@ Style * Database::addToRecipe( Recipe* rec, Style* s, bool noCopy, bool transact
       sqlDatabase().commit();
    }
    // Emit a changed signal.
-   rec->m_style_id = newStyle->key();
+   rec->styleId = newStyle->key();
    emit rec->changed( rec->metaProperty("style"), NamedEntity::qVariantFromPtr(newStyle) );
    return newStyle;
 }
@@ -3770,13 +3745,13 @@ void Database::addToRecipe( Recipe* rec, QList<Yeast*>yeasts, bool transact )
       rec->recalcABV_pct();
    }
 }
-
+*/
 
 
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
+/*
 QList<BrewNote*> Database::brewNotes()
 {
    QList<BrewNote*> tmp;
@@ -3907,7 +3882,7 @@ QList<Yeast*> Database::yeasts()
 template<> QList<BrewNote*>    Database::getAll<BrewNote>()    { return this->brewNotes();    }
 template<> QList<Equipment*>   Database::getAll<Equipment>()   { return this->equipments();   }
 template<> QList<Fermentable*> Database::getAll<Fermentable>() { return this->fermentables(); }
-template<> QList<Hop*>         Database::getAll<Hop>()         { return this->hops();         }
+//template<> QList<Hop*>         Database::getAll<Hop>()         { return this->hops();         }
 template<> QList<Mash*>        Database::getAll<Mash>()        { return this->mashs();        }
 template<> QList<MashStep*>    Database::getAll<MashStep>()    { return this->mashSteps();    }
 template<> QList<Misc*>        Database::getAll<Misc>()        { return this->miscs();        }
@@ -3916,13 +3891,15 @@ template<> QList<Style*>       Database::getAll<Style>()       { return this->st
 template<> QList<Water*>       Database::getAll<Water>()       { return this->waters();       }
 template<> QList<Salt*>        Database::getAll<Salt>()        { return this->salts();        }
 template<> QList<Yeast*>       Database::getAll<Yeast>()       { return this->yeasts();       }
-
+*/
 
 
 
 
 void Database::updateDatabase(QString const& filename)
 {
+   throw QString("Not implemented");
+/*
    // In the naming here "old" means our local database, and
    // "new" means the database coming from 'filename'.
 
@@ -4063,6 +4040,7 @@ void Database::updateDatabase(QString const& filename)
       sqlDatabase().rollback();
       abort();
    }
+   */
 }
 
 bool Database::verifyDbConnection(Brewken::DBTypes testDb, QString const& hostname, int portnum, QString const& schema,

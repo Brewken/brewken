@@ -262,15 +262,15 @@ void BrewDayScrollWidget::insertInstruction() {
       pos = lineEdit_step->text().toInt();
       lineEdit_step->clear();
    }
-   Instruction* ins = Database::instance().newInstruction(recObs);
-
-   pos = qBound(1, pos, recIns.size());
-
+   auto ins = std::make_shared<Instruction>();
    ins->setName(lineEdit_name->text());
+   ObjectStoreWrapper::insert(ins);
    lineEdit_name->clear();
 
-  this->recObs->insertInstruction( ins, pos );
+   pos = qBound(1, pos, this->recIns.size());
+   this->recObs->insertInstruction(ins.get(), pos);
    listWidget->setCurrentRow(pos-1);
+   return;
 }
 
 void BrewDayScrollWidget::acceptChanges(QMetaProperty prop, QVariant /*value*/) {

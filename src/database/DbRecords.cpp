@@ -269,6 +269,23 @@ public:
       return;
    }
 
+   /**
+    * \brief Get the name of the DB column that holds the primary key
+    */
+   QString const & getPrimaryKeyColumn() {
+      // By convention the first field is the primary key
+      return this->fieldSimpleDefns[0].columnName;
+   };
+
+   /**
+    * \brief Extract the primary key from an object
+    */
+   QVariant getPrimaryKey(QObject const & object) {
+      // By convention the first field is the primary key
+      char const * const primaryKeyProperty {this->fieldSimpleDefns[0].propertyName};
+      return object.property(primaryKeyProperty);
+   }
+
    char const * const tableName;
    FieldSimpleDefns const & fieldSimpleDefns;
    FieldManyToManyDefns const & fieldManyToManyDefns;
@@ -279,7 +296,7 @@ public:
 DbRecords::DbRecords(char const * const tableName,
                      FieldSimpleDefns const & fieldSimpleDefns,
                      FieldManyToManyDefns const & fieldManyToManyDefns) :
-   pimpl{ new impl{tableName, fieldSimpleDefns, fieldManyToManyDefns} } {
+   pimpl{ std::make_unique<impl>(tableName, fieldSimpleDefns, fieldManyToManyDefns) } {
    return;
 }
 
@@ -544,17 +561,28 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    return;
 }
 
-bool DbRecords::contains(int id) {
+bool DbRecords::contains(int id) const {
    return this->pimpl->allObjects.contains(id);
 }
 
-std::shared_ptr<QObject> DbRecords::getById(int id) {
+std::shared_ptr<QObject> DbRecords::getById(int id) const {
    return this->pimpl->allObjects.value(id);
 }
 
-void DbRecords::insert(std::shared_ptr<QObject> object) {
-   /// .:TBD:. Do we want parameter to be shared pointer or just a const reference?
+QList<std::shared_ptr<QObject> > DbRecords::getByIds(QVector<int> const & listOfIds) const {
+   QList<std::shared_ptr<QObject> > listToReturn;
+   for (auto id : listOfIds) {
+      if (this->pimpl->allObjects.contains(id)) {
+         listToReturn.append(this->pimpl->allObjects.value(id));
+      } else {
+         qWarning() << Q_FUNC_INFO << "Unable to find object with ID " << id;
+      }
+   }
+   return listToReturn;
+}
 
+
+std::shared_ptr<QObject> DbRecords::insert(std::shared_ptr<QObject> object) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
@@ -619,7 +647,7 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    if (!sqlQuery.exec()) {
       qCritical() <<
          Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
-      return;
+      return object;
    }
 
    //
@@ -656,7 +684,7 @@ void DbRecords::insert(std::shared_ptr<QObject> object) {
    emit this->signalObjectInserted(primaryKey.toInt());
 
    dbTransaction.commit();
-   return;
+   return object;
 }
 
 void DbRecords::update(std::shared_ptr<QObject> object) {
@@ -678,10 +706,8 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName << " SET ";
 
-   // By convention the first field is the primary key
-   QString const &    primaryKeyColumn   {this->pimpl->fieldSimpleDefns[0].columnName};
-   char const * const primaryKeyProperty {this->pimpl->fieldSimpleDefns[0].propertyName};
-   QVariant const     primaryKey         {object->property(primaryKeyProperty)};
+   QString const & primaryKeyColumn {this->pimpl->getPrimaryKeyColumn()};
+   QVariant const  primaryKey       {this->pimpl->getPrimaryKey(*object)};
 
    bool skippedPrimaryKey = false;
    bool firstFieldOutput = false;
@@ -754,17 +780,33 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    return;
 }
 
-void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * const propertyToUpdateInDb) {
+
+std::shared_ptr<QObject> DbRecords::insertOrUpdate(std::shared_ptr<QObject> object) {
+   QVariant const primaryKey = this->pimpl->getPrimaryKey(*object);
+   if (primaryKey.toInt() > 0) {
+      this->update(object);
+      return object;
+   }
+   return this->insert(object);
+}
+
+
+int DbRecords::insertOrUpdate(QObject * object) {
+   auto sharedPointer = std::make_shared<QObject>(object);
+   this->insertOrUpdate(sharedPointer);
+   return this->pimpl->getPrimaryKey(*object).toInt();
+}
+
+
+void DbRecords::updateProperty(QObject const & object, char const * const propertyToUpdateInDb) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
    DbTransaction dbTransaction{databaseConnection};
 
-   // By convention the first field is the primary key
    // We'll need some of this info even if it's a junction table property we're updating
-   QString const &    primaryKeyColumn   {this->pimpl->fieldSimpleDefns[0].columnName};
-   char const * const primaryKeyProperty {this->pimpl->fieldSimpleDefns[0].propertyName};
-   QVariant const primaryKey{object->property(primaryKeyProperty)};
+   QString const &  primaryKeyColumn {this->pimpl->getPrimaryKeyColumn()};
+   QVariant const   primaryKey       {this->pimpl->getPrimaryKey(object)};
 
    //
    // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
@@ -799,7 +841,7 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
       // Bind the values
       //
       QSqlQuery sqlQuery{queryString, databaseConnection};
-      QVariant propertyBindValue{object->property(propertyToUpdateInDb)};
+      QVariant propertyBindValue{object.property(propertyToUpdateInDb)};
       // Enums need to be converted to strings first
       auto fieldDefn = std::find_if(
          this->pimpl->fieldSimpleDefns.begin(),
@@ -842,7 +884,7 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
       if (!deleteFromFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, primaryKey, databaseConnection)) {
          return;
       }
-      if (!insertIntoFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, *object, primaryKey, databaseConnection)) {
+      if (!insertIntoFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, object, primaryKey, databaseConnection)) {
          return;
       }
    }
@@ -853,8 +895,15 @@ void DbRecords::updateProperty(std::shared_ptr<QObject> object, char const * con
 }
 
 
+//
+// .:TODO:. For this and for hardDelete, we need to work out how to do cascading deletes for Recipe - ie delete the objects it owns (Hops, Fermentables, etc)
+//
 void DbRecords::softDelete(int id) {
    this->pimpl->allObjects.remove(id);
+
+   // Tell any bits of the UI that need to know that an object was deleted
+   emit this->signalObjectDeleted(id);
+
    return;
 }
 
@@ -874,7 +923,7 @@ void DbRecords::hardDelete(int id) {
    QString queryString{"DELETE FROM "};
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName;
-   QString const & primaryKeyColumn = this->pimpl->fieldSimpleDefns[0].columnName;
+   QString const & primaryKeyColumn = this->pimpl->getPrimaryKeyColumn();
    queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
 
    //
@@ -909,14 +958,76 @@ void DbRecords::hardDelete(int id) {
    this->pimpl->allObjects.remove(id);
 
    dbTransaction.commit();
+
+   // Tell any bits of the UI that need to know that an object was deleted
+   emit this->signalObjectDeleted(id);
+
    return;
 }
 
 
-std::optional< std::shared_ptr<QObject> > DbRecords::findMatching(std::function<bool(std::shared_ptr<QObject>)> const & matchFunction) {
-   auto result = std::find_if(this->pimpl->allObjects.begin(), this->pimpl->allObjects.end(), matchFunction);
+std::optional< std::shared_ptr<QObject> > DbRecords::findFirstMatching(
+   std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
+) const {
+   auto result = std::find_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), matchFunction);
    if (result == this->pimpl->allObjects.end()) {
       return std::nullopt;
    }
    return *result;
+}
+
+std::optional< QObject * > DbRecords::findFirstMatching(std::function<bool(QObject *)> const & matchFunction) const {
+   // std::find_if on this->pimpl->allObjects is going to need a lambda that takes shared pointer to QObject
+   // We create a wrapper lambda with this profile that just extracts the raw pointer and passes it through to the
+   // caller's lambda
+   auto wrapperMatchFunction {
+      [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(obj.get());}
+   };
+   auto result = std::find_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), wrapperMatchFunction);
+   if (result == this->pimpl->allObjects.end()) {
+      return std::nullopt;
+   }
+   return result->get();
+}
+
+QList<std::shared_ptr<QObject> > DbRecords::findAllMatching(
+   std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
+) const {
+   // Before Qt 6, it would be more efficient to use QVector than QList.  However, we use QList because (a) lots of the
+   // rest of the code expects it and (b) from Qt 6, QList will become the same as QVector (see
+   // https://www.qt.io/blog/qlist-changes-in-qt-6)
+   QList<std::shared_ptr<QObject> > results;
+   std::copy_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), std::back_inserter(results), matchFunction);
+   return results;
+}
+
+QList<QObject *> DbRecords::findAllMatching(std::function<bool(QObject *)> const & matchFunction) const {
+   // Call the shared pointer overload of this function, with a suitable wrapper round the supplied lambda
+   QList<std::shared_ptr<QObject> > results = this->findAllMatching(
+      [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(obj.get());}
+   );
+
+   // Now convert the list of shared pointers to a list of raw pointers
+   QList<QObject *> convertedResults;
+   convertedResults.reserve(results.size());
+   std::transform(results.cbegin(),
+                  results.cend(),
+                  std::back_inserter(convertedResults),
+                  [](auto & sharedPointer) { return sharedPointer.get(); });
+   return convertedResults;
+}
+
+QList<std::shared_ptr<QObject> > DbRecords::getAll() const {
+   // QHash already knows how to return a QList of its values
+   return this->pimpl->allObjects.values();
+}
+
+QList<QObject *> DbRecords::getAllRaw() const {
+   QList<QObject *> listToReturn;
+   listToReturn.reserve(this->pimpl->allObjects.size());
+   std::transform(this->pimpl->allObjects.cbegin(),
+                  this->pimpl->allObjects.cend(),
+                  std::back_inserter(listToReturn),
+                  [](auto & sharedPointer) { return sharedPointer.get(); });
+   return listToReturn;
 }

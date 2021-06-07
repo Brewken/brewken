@@ -70,7 +70,11 @@ public:
    enum Flocculation {Low, Medium, High, Very_High}; // NOTE: BeerXML expects a space in "Very High", but not possible with enum. What to do?
    Q_ENUMS( Type Form Flocculation )
 
-   virtual ~Yeast() {}
+   Yeast(QString name = "", bool cache = true);
+   Yeast(NamedParameterBundle & namedParameterBundle);
+   Yeast(Yeast const & other);
+
+   virtual ~Yeast() = default;
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
@@ -168,22 +172,16 @@ public:
    static QString classNameStr();
 
    NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
 
 private:
    Yeast(DatabaseConstants::DbTableId table, int key);
    Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   Yeast(QString name, bool cache = true);
-   Yeast(NamedParameterBundle & namedParameterBundle);
-private:
-   Yeast(Yeast & other);
 
    QString m_typeString;
    Type m_type;

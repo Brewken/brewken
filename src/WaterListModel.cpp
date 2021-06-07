@@ -1,5 +1,6 @@
 /**
- * WaterListModel.cpp is part of Brewken, and is copyright the following authors 2020:
+ * WaterListModel.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,11 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "WaterListModel.h"
-#include "model/Water.h"
+
 #include "database/Database.h"
 #include "model/Recipe.h"
+#include "model/Water.h"
 
 WaterListModel::WaterListModel(QWidget* parent)
    : QAbstractListModel(parent), m_recipe(nullptr)
@@ -115,10 +116,10 @@ void WaterListModel::recChanged(QMetaProperty prop, QVariant val)
    }
 }
 
-void WaterListModel::repopulateList()
-{
+void WaterListModel::repopulateList() {
    removeAll();
-   addWaters( Database::instance().waters() );
+   addWaters( DbNamedEntityRecords<Water>::getInstance().getAllRaw() );
+   return;
 }
 
 Water* WaterListModel::at(int ndx)
