@@ -44,12 +44,10 @@ namespace PropertyNames::Misc { static char const * const use = "use"; /* previo
  *
  * \brief Model for a misc record in the database.
  */
-class Misc : public NamedEntity
-{
+class Misc : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "miscs")
 
-   friend class Database;
    friend class BeerXML;
    friend class MiscDialog;
 public:

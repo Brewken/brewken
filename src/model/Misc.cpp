@@ -345,7 +345,7 @@ NamedEntity * Misc::getParent() {
 
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
-      myParent = Database::instance().misc(this->parentKey);
+      myParent = ObjectStoreWrapper::getByIdRaw<Misc>(this->parentKey);
    }
 
    // Return whatever we got

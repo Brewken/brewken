@@ -58,14 +58,12 @@ namespace PropertyNames::Fermentable { static char const * const yield_pct = "yi
  *
  * \brief Model for a fermentable record in the database.
  */
-class Fermentable : public NamedEntity
-{
+class Fermentable : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "fermentables")
 
    friend class Brewken;
    friend class BeerXML;
-   friend class Database;
    friend class FermentableDialog;
 public:
 

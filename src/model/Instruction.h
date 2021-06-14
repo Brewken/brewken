@@ -42,11 +42,9 @@ namespace PropertyNames::Instruction { static char const * const timerValue = "t
  *
  *        This class is completely outside the BeerXML spec.
  */
-class Instruction : public NamedEntity
-{
+class Instruction : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "instructions")
-   friend class Database;
    friend class BeerXML;
 
 public:

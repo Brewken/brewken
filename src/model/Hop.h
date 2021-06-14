@@ -54,12 +54,10 @@ namespace PropertyNames::Hop { static char const * const use = "use"; /* previou
  *
  * \brief Model class for a hop record in the database.
  */
-class Hop : public NamedEntity
-{
+class Hop : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "hops")
 
-   friend class Database;
    friend class BeerXML;
    friend class HopDialog;
 public:

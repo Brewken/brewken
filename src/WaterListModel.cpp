@@ -20,16 +20,18 @@
 #include "model/Recipe.h"
 #include "model/Water.h"
 
-WaterListModel::WaterListModel(QWidget* parent)
-   : QAbstractListModel(parent), m_recipe(nullptr)
-{
-   connect( &(Database::instance()), &Database::newWaterSignal, this, &WaterListModel::addWater );
-   connect( &(Database::instance()), SIGNAL(deletedSignal(Water*)), this, SLOT(removeWater(Water*)) );
+WaterListModel::WaterListModel(QWidget* parent) :
+   QAbstractListModel(parent),
+   m_recipe(nullptr) {
+   connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectInserted, this, &WaterListModel::addWater);
+   connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectDeleted,  this, &WaterListModel::removeWater);
    repopulateList();
+   return;
 }
 
-void WaterListModel::addWater(Water* water)
-{
+void WaterListModel::addWater(int waterId) {
+   Water* water = ObjectStoreWrapper::getByIdRaw<Water>(waterId);
+
    if ( !water || m_waters.contains(water) || water->deleted() || !water->display() ) {
       return;
    }
@@ -67,8 +69,12 @@ void WaterListModel::addWaters(QList<Water*> waters)
    }
 }
 
-void WaterListModel::removeWater(Water* water)
-{
+void WaterListModel::removeWater(int waterId, std::shared_ptr<QObject> object) {
+   this->remove(std::static_pointer_cast<Water>(object).get());
+   return;
+}
+
+void WaterListModel::remove(Water* water) {
    int ndx = m_waters.indexOf(water);
    if( ndx > 0 ) {
       beginRemoveRows( QModelIndex(), ndx, ndx );

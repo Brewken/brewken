@@ -1,5 +1,6 @@
 /**
- * BtTabWidget.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTabWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,12 +15,20 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "BtTabWidget.h"
 
 #include <QtGui>
-#include "BtTabWidget.h"
+
 #include "BtTreeView.h"
 #include "BtTreeItem.h"
 #include "database/Database.h"
+#include "database/DbNamedEntityRecords.h"
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Style.h"
+#include "model/Yeast.h"
+
 
 //! \brief set up the popup window.
 BtTabWidget::BtTabWidget(QWidget* parent) : QTabWidget(parent)
@@ -42,9 +51,7 @@ void BtTabWidget::dragEnterEvent(QDragEnterEvent *event)
  * the remaining drops adn this should pretty much work as envisioned when I
  * started.
  */
-void BtTabWidget::dropEvent(QDropEvent *event)
-{
-   const QMimeData* mData;
+void BtTabWidget::dropEvent(QDropEvent *event) {
    int _type;
    QString name;
    int id;
@@ -59,7 +66,7 @@ void BtTabWidget::dropEvent(QDropEvent *event)
    if (! event->mimeData()->hasFormat(acceptMime) )
       return;
 
-   mData = event->mimeData();
+   const QMimeData* mData = event->mimeData();
    QByteArray itemData = mData->data(acceptMime);
    QDataStream dStream(&itemData,QIODevice::ReadOnly);
 
@@ -69,27 +76,27 @@ void BtTabWidget::dropEvent(QDropEvent *event)
       switch( _type ) {
          case BtTreeItem::RECIPE:
             event->acceptProposedAction();
-            emit setRecipe(Database::instance().recipe(id));
+            emit setRecipe(ObjectStoreWrapper::getById<Recipe>(id).get());
             return;
          case BtTreeItem::EQUIPMENT:
             event->acceptProposedAction();
-            emit setEquipment(Database::instance().equipment(id));
+            emit setEquipment(ObjectStoreWrapper::getById<Equipment>(id).get());
             return;
          case BtTreeItem::STYLE:
             event->acceptProposedAction();
-            emit setStyle(Database::instance().style(id));
+            emit setStyle(ObjectStoreWrapper::getById<Style>(id).get());
             return;
          case BtTreeItem::FERMENTABLE:
-            ferms.append( Database::instance().fermentable(id));
+            ferms.append(ObjectStoreWrapper::getById<Fermentable>(id).get());
             break;
          case BtTreeItem::HOP:
-            hops.append( Database::instance().hop(id));
+            hops.append(ObjectStoreWrapper::getById<Hop>(id).get());
             break;
          case BtTreeItem::MISC:
-            miscs.append( Database::instance().misc(id));
+            miscs.append(ObjectStoreWrapper::getById<Misc>(id).get());
             break;
          case BtTreeItem::YEAST:
-            yeasts.append( Database::instance().yeast(id));
+            yeasts.append(ObjectStoreWrapper::getById<Yeast>(id).get());
             break;
       }
    }

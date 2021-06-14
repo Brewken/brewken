@@ -96,11 +96,20 @@ Mash::Mash(Mash const & other) :
    m_cacheOnly            {other.m_cacheOnly            } {
 
    // Deep copy of MashSteps
-   for (int mashStepId : other.mashStepIds) {
-      // Make and store a copy of the current MashStep object we're looking at in the other Mash
-      auto mashStepToAdd = DbNamedEntityRecords<MashStep>::getInstance().insertCopyOf(mashStepId);
-      // Store the ID of the copy in our recipe
+   for (auto mashStep : other.mashSteps()) {
+      // Make a copy of the current MashStep object we're looking at in the other Mash
+      auto mashStepToAdd = std::make_shared<MashStep>(*mashStep);
+
+      // This is where things get a bit tricky.
+      // We don't have an ID yet, so we can't give it to the new MashStep
+      mashStepToAdd->setMashId(-1);
+
+      // However, if we insert the new MashStep in the object store, that will give it its own ID
+      ObjectStoreWrapper::insert(mashStepToAdd);
+
+      // Store the ID of the copy MashStep
       this->mashStepIds.append(mashStepToAdd->key());
+
       // Connect signals so that we are notified when there are changes to the MashStep we just added to
       // our Mash.
       connect(mashStepToAdd.get(), &NamedEntity::changed, this, &Mash::acceptMashStepChange);
@@ -120,7 +129,7 @@ Mash::Mash(NamedParameterBundle & namedParameterBundle) :
      m_tunWeight_kg         {namedParameterBundle(PropertyNames::Mash::tunWeight_kg         ).toDouble()},
      m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Mash::tunSpecificHeat_calGC).toDouble()},
      m_equipAdjust          {namedParameterBundle(PropertyNames::Mash::equipAdjust          ).toBool()},
-     m_cacheOnly{false} {
+     m_cacheOnly            {false} {
    return;
 }
 
@@ -146,6 +155,17 @@ void Mash::connectSignals() {
    }
    return;
 }
+
+void Mash::setKey(int key) {
+   // First call the base class function
+   this->NamedEntity::setKey(key);
+   // Now give our ID (key) to our MashSteps
+   for (auto mashStep : this->mashSteps()) {
+      mashStep->setMashId(this->key());
+   }
+   return;
+}
+
 
 void Mash::setGrainTemp_c( double var )
 {
@@ -235,13 +255,24 @@ void Mash::setTunSpecificHeat_calGC( double var )
    }
 }
 
-void Mash::setMashStepIds(QList<int> ids) {
+/*void Mash::setMashStepIds(QList<int> ids) {
    this->mashStepIds = ids.toVector();
    return;
-}
+}*/
 
-void Mash::swapMashSteps(MashStep const & ms1, MashStep const & ms2) {
-   int indexOf1 = this->mashStepIds.indexOf(ms1.key());
+void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
+   // It's a coding error if either of the steps does not belong to this mash
+   Q_ASSERT(ms1.getMashId() == this->key());
+   Q_ASSERT(ms2.getMashId() == this->key());
+
+   // It's also a coding error if we're trying to swap a step with itself
+   Q_ASSERT(ms1.key() != ms2.key());
+
+   int temp = ms1.stepNumber();
+   ms1.setStepNumber(ms2.stepNumber());
+   ms2.setStepNumber(temp);
+
+/*   int indexOf1 = this->mashStepIds.indexOf(ms1.key());
    int indexOf2 = this->mashStepIds.indexOf(ms2.key());
 
    // We can't swap them if we can't find both of them
@@ -257,18 +288,19 @@ void Mash::swapMashSteps(MashStep const & ms1, MashStep const & ms2) {
    std::swap(this->mashStepIds[indexOf1], this->mashStepIds[indexOf2]);
 
    ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
+*/
    return;
 }
 
 
-void Mash::removeAllMashSteps()
-{
-   int i, size;
-   QList<MashStep*> tmpSteps = mashSteps();
-   size = tmpSteps.size();
-   for( i = 0; i < size; ++i )
-      Database::instance().removeFrom(this, tmpSteps[i]);
+void Mash::removeAllMashSteps() {
+   for (int ii : this->mashStepIds) {
+      DbNamedEntityRecords<MashStep>::getInstance().softDelete(ii);
+   }
+   this->mashStepIds.clear();
+//   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
    emit mashStepsChanged();
+   return;
 }
 
 void Mash::setCacheOnly(bool cache) { m_cacheOnly = cache; }
@@ -362,12 +394,24 @@ bool Mash::hasSparge() const
    return false;
 }
 
-QList<int> Mash::getMashStepIds() const {
+/*QList<int> Mash::getMashStepIds() const {
    return this->mashStepIds.toList();
-}
+}*/
 
 QList<MashStep*> Mash::mashSteps() const {
-   return DbNamedEntityRecords<MashStep>::getInstance().getByIdsRaw(this->mashStepIds);
+   // The Mash owns its MashSteps, but, for the moment at least, it's the MashStep that knows which Mash it's in
+   // (and in what order) rather than the Mash which knows which MashSteps it has, so we have to ask.
+   int const mashId = this->key();
+   QList<MashStep*> mashSteps = DbNamedEntityRecords<MashStep>::getInstance().findAllMatching(
+      [mashId](MashStep const * ms) {return ms->getMashId() == mashId;}
+   );
+
+   // Now we've got the MashSteps, we need to make sure they're in the right order
+   std::sort(mashSteps.begin(),
+             mashSteps.end(),
+             [](MashStep const * lhs, MashStep const * rhs) { return lhs->stepNumber() < rhs->stepNumber(); });
+
+   return mashSteps;
 }
 
 void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
@@ -385,13 +429,18 @@ void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
 }
 
 MashStep * Mash::addMashStep(MashStep * mashStep) {
-   this->mashStepIds.append(mashStep->key());
-   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
+   if (this->key() > 0) {
+      mashStep->setMashId(this->key());
+   } else {
+      this->mashStepIds.append(mashStep->key());
+   }
    return mashStep;
 }
 
 MashStep * Mash::removeMashStep(MashStep * mashStep) {
-   int indexOfStep = this->mashStepIds.indexOf(mashStep->key());
+   mashStep->setMashId(-1);
+
+/*   int indexOfStep = this->mashStepIds.indexOf(mashStep->key());
    if (indexOfStep < 0 ) {
       // This shouldn't happen, but it doesn't inherently break anything, so just log a warning and carry on
       qWarning() <<
@@ -402,5 +451,6 @@ MashStep * Mash::removeMashStep(MashStep * mashStep) {
 
    this->mashStepIds.removeAt(indexOfStep);
    ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
+*/
    return mashStep;
 }

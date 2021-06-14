@@ -535,10 +535,10 @@ void EquipmentEditor::setEquipment( Equipment* e )
    }
 }
 
-void EquipmentEditor::removeEquipment()
-{
-   if( obsEquip )
-      Database::instance().remove(obsEquip);
+void EquipmentEditor::removeEquipment() {
+   if( this->obsEquip ) {
+      ObjectStoreWrapper::softDelete(*this->obsEquip);
+   }
 
    equipmentComboBox->setCurrentIndex(-1);
    setEquipment(nullptr);

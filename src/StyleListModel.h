@@ -1,5 +1,6 @@
 /**
- * StyleListModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * StyleListModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,6 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef STYLELISTMODEL_H
+#define STYLELISTMODEL_H
+#pragma once
+
+#include <memory>
 
 #include <QAbstractListModel>
 #include <QModelIndex>
@@ -27,37 +33,38 @@ class Recipe;
 /*!
  * \class StyleListModel
  *
- *
  * \brief Model for a list of styles.
  */
-class StyleListModel : public QAbstractListModel
-{
+class StyleListModel : public QAbstractListModel {
    Q_OBJECT
 
-   public:
-      StyleListModel(QWidget* parent = 0);
+public:
+   StyleListModel(QWidget* parent = 0);
 
-      //! Reimplemented from QAbstractListModel.
-      virtual int rowCount( QModelIndex const& parent = QModelIndex() ) const;
-      //! Reimplemented from QAbstractListModel.
-      virtual QVariant data( QModelIndex const& index, int role = Qt::DisplayRole ) const;
-      //! Reimplemented from QAbstractListModel.
-      virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+   //! Reimplemented from QAbstractListModel.
+   virtual int rowCount( QModelIndex const& parent = QModelIndex() ) const;
+   //! Reimplemented from QAbstractListModel.
+   virtual QVariant data( QModelIndex const& index, int role = Qt::DisplayRole ) const;
+   //! Reimplemented from QAbstractListModel.
+   virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
-      void addStyles(QList<Style*> s);
-      void removeAll();
+   void addStyles(QList<Style*> s);
+   void removeAll();
 
-      Style* at(int ndx);
-      int indexOf(Style* s);
+   Style* at(int ndx);
+   int indexOf(Style* s);
+   void remove(Style*);
 
-   public slots:
-      void styleChanged(QMetaProperty,QVariant);
-      void addStyle(Style*);
-      void removeStyle(Style*);
+public slots:
+   void styleChanged(QMetaProperty,QVariant);
+   void addStyle(int styleId);
+   void removeStyle(int styleId, std::shared_ptr<QObject> object);
 
-   private:
-      QList<Style*> styles;
-      Recipe* recipe;
+private:
+   QList<Style*> styles;
+   Recipe* recipe;
 
-      void repopulateList();
+   void repopulateList();
 };
+
+#endif

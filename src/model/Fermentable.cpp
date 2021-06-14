@@ -561,7 +561,7 @@ NamedEntity * Fermentable::getParent() {
 
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
-      myParent = Database::instance().fermentable(this->parentKey);
+      myParent = ObjectStoreWrapper::getByIdRaw<Fermentable>(this->parentKey);
    }
 
    // Return whatever we got

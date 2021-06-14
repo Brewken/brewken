@@ -24,27 +24,29 @@
 #include "model/Recipe.h"
 #include "model/Style.h"
 
-MashListModel::MashListModel(QWidget* parent)
-   : QAbstractListModel(parent), recipe(0)
-{
-   connect( &(Database::instance()), &Database::newMashSignal, this, &MashListModel::addMash );
-   connect( &(Database::instance()), SIGNAL(deletedSignal(Mash*)), this, SLOT(removeMash(Mash*)) );
-   repopulateList();
+MashListModel::MashListModel(QWidget* parent) :
+   QAbstractListModel(parent),
+   recipe(0) {
+   connect(&DbNamedEntityRecords<Mash>::getInstance(), &DbNamedEntityRecords<Mash>::signalObjectInserted, this, &MashListModel::addMash);
+   connect(&DbNamedEntityRecords<Mash>::getInstance(), &DbNamedEntityRecords<Mash>::signalObjectDeleted,  this, &MashListModel::removeMash);
+   this->repopulateList();
+   return;
 }
 
-void MashListModel::addMash(Mash* m)
-{
-   if( !m || !m->display() || m->deleted() )
+void MashListModel::addMash(int mashId) {
+   Mash* m = ObjectStoreWrapper::getByIdRaw<Mash>(mashId);
+   if (!m || !m->display() || m->deleted()) {
       return;
+   }
 
-   if( !mashes.contains(m) )
-   {
+   if ( !mashes.contains(m) ) {
       int size = mashes.size();
       beginInsertRows( QModelIndex(), size, size );
       mashes.append(m);
       connect( m, &NamedEntity::changed, this, &MashListModel::mashChanged );
       endInsertRows();
    }
+   return;
 }
 
 void MashListModel::addMashes(QList<Mash*> m)
@@ -71,8 +73,9 @@ void MashListModel::addMashes(QList<Mash*> m)
    }
 }
 
-void MashListModel::removeMash(Mash* mash)
-{
+void MashListModel::removeMash(int mashId, std::shared_ptr<QObject> object) {
+
+   Mash* mash = std::static_pointer_cast<Mash>(object).get();
    int ndx = mashes.indexOf(mash);
    if( ndx >= 0 )
    {

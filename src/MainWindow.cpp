@@ -77,6 +77,7 @@
 #include "BrewNoteWidget.h"
 #include "BtDatePopup.h"
 #include "BtDigitWidget.h"
+#include "BtFolder.h"
 #include "config.h"
 #include "ConverterTool.h"
 #include "database/Database.h"
@@ -660,7 +661,7 @@ void MainWindow::restoreSavedState() {
    // If we saved the selected recipe name the last time we ran, select it and show it.
    if (PersistentSettings::contains("recipeKey")) {
       int key = PersistentSettings::value("recipeKey").toInt();
-      recipeObs = Database::instance().recipe( key );
+      this->recipeObs = ObjectStoreWrapper::getByIdRaw<Recipe>(key);
       QModelIndex rIdx = treeView_recipe->findElement(recipeObs);
 
       setRecipe(recipeObs);
@@ -1006,7 +1007,7 @@ void MainWindow::setBrewNoteByIndex(const QModelIndex &index)
    }
    // THERE
 
-   Recipe* parent  = Database::instance().getParentRecipe(bNote);
+   Recipe* parent  = ObjectStoreWrapper::getByIdRaw<Recipe>(bNote->getRecipeId());
    // I think this means a brew note for a different recipe has been selected.
    // We need to select that recipe, which will clear the current tabs
    if (  parent != recipeObs )
@@ -1823,15 +1824,15 @@ void MainWindow::removeHop(Hop * itemToRemove) {
    return;
 }
 void MainWindow::removeFermentable(Fermentable * itemToRemove) {
-   this->fermTableModel->removeFermentable(itemToRemove);
+   this->fermTableModel->remove(itemToRemove);
    return;
 }
 void MainWindow::removeMisc(Misc * itemToRemove) {
-   this->miscTableModel->removeMisc(itemToRemove);
+   this->miscTableModel->remove(itemToRemove);
    return;
 }
 void MainWindow::removeYeast(Yeast * itemToRemove) {
-   this->yeastTableModel->removeYeast(itemToRemove);
+   this->yeastTableModel->remove(itemToRemove);
    return;
 }
 
@@ -2052,7 +2053,7 @@ void MainWindow::newRecipe()
    // we need a valid key, so insert the recipe before we add equipment
    if ( defEquipKey != -1 )
    {
-      Equipment *e = Database::instance().equipment(defEquipKey.toInt());
+      Equipment *e = ObjectStoreWrapper::getByIdRaw<Equipment>(defEquipKey.toInt());
       // I really want to do this before we've written the object to the
       // database
       if ( e ) {
@@ -2198,28 +2199,35 @@ void MainWindow::renameFolder()
    active->renameFolder(victim,newName);
 }
 
-void MainWindow::setTreeSelection(QModelIndex item)
-{
-   BtTreeView *active = qobject_cast<BtTreeView*>(tabWidget_Trees->currentWidget()->focusWidget());
+void MainWindow::setTreeSelection(QModelIndex item) {
+   qDebug() << Q_FUNC_INFO;
 
-   if (! item.isValid())
+   if (! item.isValid()) {
+      qDebug() << Q_FUNC_INFO << "Item not valid";
       return;
+   }
 
-   if ( active == nullptr )
+   BtTreeView *active = qobject_cast<BtTreeView*>(tabWidget_Trees->currentWidget()->focusWidget());
+   if ( active == nullptr ) {
       active = qobject_cast<BtTreeView*>(treeView_recipe);
+   }
 
    // Couldn't cast the active item to a BtTreeView
-   if ( active == nullptr )
+   if ( active == nullptr ) {
+      qDebug() << Q_FUNC_INFO << "Couldn't cast the active item to a BtTreeView";
       return;
+   }
 
    QModelIndex parent = active->parent(item);
 
    active->setCurrentIndex(item);
-   if ( active->type(parent) == BtTreeItem::FOLDER && ! active->isExpanded(parent) )
-      active->setExpanded(parent,true);
+   if ( active->type(parent) == BtTreeItem::FOLDER && ! active->isExpanded(parent) ) {
+      active->setExpanded(parent, true);
+   }
    active->scrollTo(item,QAbstractItemView::PositionAtCenter);
-
+   return;
 }
+
 // reduces the inventory by the selected recipes
 void MainWindow::reduceInventory(){
 
@@ -3068,7 +3076,7 @@ void MainWindow::updateStatus(const QString status) {
 
 void MainWindow::closeBrewNote(BrewNote* b)
 {
-   Recipe* parent = Database::instance().getParentRecipe(b);
+   Recipe* parent = ObjectStoreWrapper::getByIdRaw<Recipe>(b->getRecipeId());
 
    // If this isn't the focused recipe, do nothing because there are no tabs
    // to close.

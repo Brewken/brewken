@@ -22,13 +22,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "MashWizard.h"
+
 #include <QButtonGroup>
 #include <QMessageBox>
 
 #include "Algorithms.h"
 #include "database/Database.h"
 #include "HeatCalculations.h"
-#include "MashWizard.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
@@ -197,7 +198,8 @@ void MashWizard::wizardry()
    for( i = 0; i < steps.size(); ++i) {
       MashStep* step = steps[i];
       if( step->isSparge() ) {
-         Database::instance().removeFrom(mash,step);
+         mash->removeMashStep(step);
+         ObjectStoreWrapper::softDelete(*step);
       }
       else {
           tmp.append(step);

@@ -71,10 +71,8 @@ class Recipe;
  *
  * \brief Model for a brewnote record, which records what you did on brewday.
  */
-class BrewNote : public NamedEntity
-{
+class BrewNote : public NamedEntity {
    Q_OBJECT
-   friend class Database;
    friend class BeerXML;
 
 public:

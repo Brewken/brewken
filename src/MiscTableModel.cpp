@@ -75,20 +75,23 @@ void MiscTableModel::observeDatabase(bool val) {
    if (val) {
       observeRecipe(nullptr);
       removeAll();
-      connect( &(Database::instance()), &Database::newMiscSignal, this, &MiscTableModel::addMisc );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Misc*)), this, SLOT(removeMisc(Misc*)) );
+      connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectInserted, this, &MiscTableModel::addMisc);
+      connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectDeleted,  this, &MiscTableModel::removeMisc);
       addMiscs( DbNamedEntityRecords<Misc>::getInstance().getAllRaw() );
    } else {
       removeAll();
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
+      disconnect(&DbNamedEntityRecords<Misc>::getInstance(), nullptr, this, nullptr );
    }
    return;
 }
 
-void MiscTableModel::addMisc(Misc* misc)
-{
-   if( miscObs.contains(misc) )
+void MiscTableModel::addMisc(int miscId) {
+   Misc* misc = ObjectStoreWrapper::getByIdRaw<Misc>(miscId);
+
+   if( miscObs.contains(misc) ) {
       return;
+   }
+
    // If we are observing the database, ensure that the item is undeleted and
    // fit to display.
    if(
@@ -97,8 +100,9 @@ void MiscTableModel::addMisc(Misc* misc)
          misc->deleted() ||
          !misc->display()
       )
-   )
+   ) {
       return;
+   }
 
    int size = miscObs.size();
    beginInsertRows( QModelIndex(), size, size );
@@ -106,6 +110,7 @@ void MiscTableModel::addMisc(Misc* misc)
    connect( misc, &NamedEntity::changed, this, &MiscTableModel::changed );
    //reset(); // Tell everybody that the table has changed.
    endInsertRows();
+   return;
 }
 
 void MiscTableModel::addMiscs(QList<Misc*> miscs)
@@ -135,13 +140,14 @@ void MiscTableModel::addMiscs(QList<Misc*> miscs)
 }
 
 // Returns true when misc is successfully found and removed.
-bool MiscTableModel::removeMisc(Misc* misc)
-{
-   int i;
+void MiscTableModel::removeMisc(int miscId, std::shared_ptr<QObject> object) {
+   this->remove(std::static_pointer_cast<Misc>(object).get());
+   return;
+}
 
-   i = miscObs.indexOf(misc);
-   if( i >= 0 )
-   {
+bool MiscTableModel::remove(Misc * misc) {
+   int i = miscObs.indexOf(misc);
+   if( i >= 0 ) {
       beginRemoveRows( QModelIndex(), i, i );
       disconnect( misc, nullptr, this, nullptr );
       miscObs.removeAt(i);

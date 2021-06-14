@@ -1,5 +1,6 @@
 /**
- * BtTreeModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTreeModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,20 +16,18 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef BTTREEMODEL_H_
 #define BTTREEMODEL_H_
 
-class BtTreeModel;
+#include <memory>
 
-#include <QModelIndex>
-#include <QVariant>
-#include <QList>
 #include <QAbstractItemModel>
+#include <QList>
 #include <QMetaProperty>
-#include <QVariant>
+#include <QModelIndex>
 #include <QObject>
 #include <QSqlRelationalTableModel>
+#include <QVariant>
 
 // Forward declarations
 class NamedEntity;
@@ -199,27 +198,27 @@ private slots:
 
    //! \brief This is as best as I can see to do it. Qt signaling mechanism is
    //   doing, as I recall, string compares on the signatures. Sigh.
-   void elementAdded(Recipe* victim);
-   void elementAdded(Equipment* victim);
-   void elementAdded(Fermentable* victim);
-   void elementAdded(Hop* victim);
-   void elementAdded(Misc* victim);
-   void elementAdded(Style* victim);
-   void elementAdded(Yeast* victim);
-   void elementAdded(BrewNote* victim);
-   void elementAdded(Water* victim);
+   void elementAddedRecipe     (int victimId);
+   void elementAddedEquipment  (int victimId);
+   void elementAddedFermentable(int victimId);
+   void elementAddedHop        (int victimId);
+   void elementAddedMisc       (int victimId);
+   void elementAddedStyle      (int victimId);
+   void elementAddedYeast      (int victimId);
+   void elementAddedBrewNote   (int victimId);
+   void elementAddedWater      (int victimId);
 
    void elementChanged();
 
-   void elementRemoved(Recipe* victim);
-   void elementRemoved(Equipment* victim);
-   void elementRemoved(Fermentable* victim);
-   void elementRemoved(Hop* victim);
-   void elementRemoved(Misc* victim);
-   void elementRemoved(Style* victim);
-   void elementRemoved(Yeast* victim);
-   void elementRemoved(BrewNote* victim);
-   void elementRemoved(Water* victim);
+   void elementRemovedRecipe     (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedEquipment  (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedFermentable(int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedHop        (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedMisc       (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedStyle      (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedYeast      (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedBrewNote   (int victimId, std::shared_ptr<QObject> victim);
+   void elementRemovedWater      (int victimId, std::shared_ptr<QObject> victim);
 
 signals:
    void expandFolder(BtTreeModel::TypeMasks kindofThing, QModelIndex fIdx);
@@ -278,4 +277,4 @@ private:
 
 };
 
-#endif /* RECEIPTREEMODEL_H_ */
+#endif

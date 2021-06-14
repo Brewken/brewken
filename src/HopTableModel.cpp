@@ -139,7 +139,7 @@ void HopTableModel::addHop(int hopId) {
 
    // .:TODO:. For the moment at least, the rest of this class uses raw pointers, but would be good to refactor to use
    // shared pointers.
-   Hop * hop = hopAdded->get();
+   Hop * hop = hopAdded.get();
    if (this->hopObs.contains(hop)) {
       return;
    }

@@ -50,13 +50,11 @@ namespace PropertyNames::Equipment { static char const * const tunVolume_l = "tu
  *
  * \brief Model representing a single equipment record.
  */
-class Equipment : public NamedEntity
-{
+class Equipment : public NamedEntity {
    Q_OBJECT
 
    Q_CLASSINFO("signal", "equipments")
 
-   friend class Database;
    friend class BeerXML;
    friend class EquipmentEditor;
 

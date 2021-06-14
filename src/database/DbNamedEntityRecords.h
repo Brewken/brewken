@@ -16,6 +16,8 @@
 #ifndef DATABASE_DBNAMEDENTITYRECORDS_H
 #define DATABASE_DBNAMEDENTITYRECORDS_H
 #pragma once
+#include <memory>
+
 #include <QDebug>
 
 #include "database/DbRecords.h"
@@ -75,7 +77,7 @@ public:
 
       // If we found an object with the supplied ID, make a copy, using the copy constructor (which should do the right
       // thing about parentage etc).  If not, which shouldn't really happen, make a default object.
-      auto copyNe = otherNe ? std::make_shared<NE>(*otherNe->get()) : std::make_shared<NE>();
+      auto copyNe = otherNe ? std::make_shared<NE>(*otherNe) : std::make_shared<NE>();
 
       // Add the copied object to the database and our object cache, and return it to the caller
       return this->insert(copyNe);
@@ -111,19 +113,11 @@ public:
     *        This overrides the base-class function of the same name, enabling us (by virtue of the fact that these
     *        particular functions do NOT need to be virtual) to template the return type.
     */
-   std::optional< std::shared_ptr<NE> > getById(int id) const {
+   std::shared_ptr<NE> getById(int id) const {
       if (!this->contains(id)) {
-         return std::nullopt;
+         return nullptr;
       }
-      return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(this->DbRecords::getById(id))};
-   }
-
-   /**
-    * \brief Raw pointer version of \c getById
-    */
-   NE * getByIdRaw(int id) const {
-      auto result = this->getById(id);
-      return result ? result->get() : nullptr;
+      return std::static_pointer_cast<NE>(this->DbRecords::getById(id));
    }
 
    /**
@@ -293,7 +287,8 @@ private:
          return;
       }
 
-      std::shared_ptr<NE> ne{std::static_pointer_cast<NE>(this->DbRecords::getById(id))};
+      auto object = this->DbRecords::getById(id);
+      std::shared_ptr<NE> ne = std::static_pointer_cast<NE>(object);
       ne->setDeleted(true);
       if (hard) {
          // Base class does the heavy lifting
@@ -305,7 +300,7 @@ private:
 
          // Because we're not calling the base class, we need to be the ones to tell any bits of the UI that need to
          // know that an object was deleted
-         emit this->signalObjectDeleted(id);
+         emit this->signalObjectDeleted(id, object);
       }
       return;
    }
@@ -352,6 +347,17 @@ private:
  *        instances via template argument deduction
  */
 namespace ObjectStoreWrapper {
+   template<class NE> std::shared_ptr<NE> getById(int id) {
+      return DbNamedEntityRecords<NE>::getInstance().getById(id);
+   }
+
+   /**
+    * \brief Raw pointer version of \c getById
+    */
+   template<class NE> NE * getByIdRaw(int id) {
+      return DbNamedEntityRecords<NE>::getInstance().getById(id).get();
+   }
+
    template<class NE> std::shared_ptr<NE> copy(NE const & ne) {
       return std::make_shared<NE>(ne);
    }
@@ -371,6 +377,11 @@ namespace ObjectStoreWrapper {
 
    template<class NE> void softDelete(NE const & ne) {
       DbNamedEntityRecords<NE>::getInstance().softDelete(ne.key());
+      return;
+   }
+
+   template<class NE> void hardDelete(NE const & ne) {
+      DbNamedEntityRecords<NE>::getInstance().hardDelete(ne.key());
       return;
    }
 

@@ -316,8 +316,7 @@ NamedEntity * Water::getParent() {
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
       // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
-      auto result = DbNamedEntityRecords<Water>::getInstance().getById(this->parentKey);
-      myParent = result.has_value() ? result->get() : nullptr;
+      myParent = ObjectStoreWrapper::getByIdRaw<Water>(this->parentKey);
    }
 
    // Return whatever we got

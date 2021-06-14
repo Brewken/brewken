@@ -254,6 +254,8 @@ signals:
     *        seems a bit clunky.  So, we send the ID of the object, which the recipient can either easily check against
     *        the ID of anything they are holding or use to request an instance of the object.
     *
+    *        (In contrast, see below, for \c signalObjectDeleted we do currently have to send the object pointer.)
+    *
     * \param id The primary key of the newly inserted object.  (For the moment we assume all primary keys are integers.
     *           If we want to extend this in future then we'd change this param to a QVariant.)
     */
@@ -276,10 +278,12 @@ signals:
     *            void Database::deletedSignal(BrewNote*);
     *            void Database::deletedSignal(MashStep*);
     *
-    * \param id The primary key of the newly inserted object.  (For the moment we assume all primary keys are integers.
+    * \param id The primary key of the deleted object.  (For the moment we assume all primary keys are integers.
     *           If we want to extend this in future then we'd change this param to a QVariant.)
+    * \param object Shared pointer to the deleted object.  (Some recipients currently need the deleted object, and they
+    *               won't be able to get it from the ID because ... it's deleted.
     */
-   void signalObjectDeleted(int id);
+   void signalObjectDeleted(int id, std::shared_ptr<QObject> object);
 
 protected:
    /**
@@ -294,6 +298,7 @@ protected:
     *
     *            We in any case don't need virtual here anyway as external callers will not be upcasting subclasses of
     *            DbRecords.
+    * \return \c nullptr if the object with the specified ID cannot be found
     */
    std::shared_ptr<QObject> getById(int id) const;
 

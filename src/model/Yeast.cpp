@@ -502,7 +502,7 @@ NamedEntity * Yeast::getParent() {
 
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
-      myParent = Database::instance().yeast(this->parentKey);
+      myParent = ObjectStoreWrapper::getByIdRaw<Yeast>(this->parentKey);
    }
 
    // Return whatever we got

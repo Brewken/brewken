@@ -24,7 +24,10 @@
 #include "MainWindow.h"
 #include "Brewken.h"
 #include "database/Database.h"
-
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Misc.h"
+#include "model/Yeast.h"
 #include "BtPrintPreview.h"
 
 
@@ -56,13 +59,10 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto itor = inventory.begin(); itor != inventory.end(); ++itor) {
-            const Fermentable* fermentable =
-                  Database::instance().fermentable(itor.key());
-
+            auto fermentable = ObjectStoreWrapper::getById<Fermentable>(itor.key());
             if (!fermentable) {
-               qCritical() << QString("The fermentable %1 has a record in the "
-                                       "inventory, but does not exist.")
-                                    .arg(itor.key());
+               qCritical() <<
+                  Q_FUNC_INFO << "Fermentable #" << itor.key() << "has a record in the inventory, but does not exist.";
                continue;
             }
 
@@ -102,8 +102,7 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto itor = inventory.begin(); itor != inventory.end(); ++itor) {
-            const Hop* hop = Database::instance().hop(itor.key());
-
+            auto hop = ObjectStoreWrapper::getById<Hop>(itor.key());
             if (!hop) {
                qCritical() << QString("The hop %1 has a record in the "
                                        "inventory, but does not exist.")
@@ -146,8 +145,7 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto itor = inventory.begin(); itor != inventory.end(); ++itor) {
-            const Misc* miscellaneous = Database::instance().misc(itor.key());
-
+            auto miscellaneous = ObjectStoreWrapper::getById<Misc>(itor.key());
             if (!miscellaneous) {
                qCritical() << QString("The miscellaneous %1 has a record in the "
                                        "inventory, but does not exist.")
@@ -190,8 +188,7 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto itor = inventory.begin(); itor != inventory.end(); ++itor) {
-            const Yeast* yeast = Database::instance().yeast(itor.key());
-
+            auto yeast = ObjectStoreWrapper::getById<Yeast>(itor.key());
             if (!yeast) {
                qCritical() << QString("The yeast %1 has a record in the "
                                        "inventory, but does not exist.")

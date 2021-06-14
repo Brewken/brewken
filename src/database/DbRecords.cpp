@@ -151,7 +151,13 @@ namespace {
       }
       queryStringAsStream << ");";
 
-      QSqlQuery sqlQuery{queryString, databaseConnection};
+      //
+      // Note that, when we are using bind values, we do NOT want to call the
+      // QSqlQuery::QSqlQuery(const QString &, QSqlDatabase db) version of the QSqlQuery constructor because that would
+      // result in the supplied query being executed immediately (ie before we've had a chance to bind parameters).
+      //
+      QSqlQuery sqlQuery{databaseConnection};
+      sqlQuery.prepare(queryString);
 
       // Get the list of data to bind to it
       QVariant bindValues = object.property(fieldManyToManyDefn.propertyName);
@@ -201,7 +207,8 @@ namespace {
          fieldManyToManyDefn.tableName << " WHERE " << fieldManyToManyDefn.thisPrimaryKeyColumn << " = " <<
          thisPrimaryKeyBindName << ";";
 
-      QSqlQuery sqlQuery{queryString, databaseConnection};
+      QSqlQuery sqlQuery{databaseConnection};
+      sqlQuery.prepare(queryString);
 
       // Bind the primary key value
       sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
@@ -380,7 +387,8 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    QTextStream queryStringAsStream{&queryString};
    this->pimpl->appendColumNames(queryStringAsStream, true, false);
    queryStringAsStream << "\n FROM " << this->pimpl->tableName << ";";
-   QSqlQuery sqlQuery{queryString, databaseConnection};
+   QSqlQuery sqlQuery{databaseConnection};
+   sqlQuery.prepare(queryString);
    if (!sqlQuery.exec()) {
       qCritical() <<
          Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
@@ -499,7 +507,9 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          queryStringAsStream << fieldManyToManyDefn.otherPrimaryKeyColumn;
       }
       queryStringAsStream << ";";
-      sqlQuery = QSqlQuery(queryString, databaseConnection);
+
+      sqlQuery = QSqlQuery{databaseConnection};
+      sqlQuery.prepare(queryString);
       if (!sqlQuery.exec()) {
          qCritical() <<
             Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
@@ -612,7 +622,8 @@ std::shared_ptr<QObject> DbRecords::insert(std::shared_ptr<QObject> object) {
    //
    // Bind the values
    //
-   QSqlQuery sqlQuery{queryString, databaseConnection};
+   QSqlQuery sqlQuery{databaseConnection};
+   sqlQuery.prepare(queryString);
    bool skippedPrimaryKey = false;
    char const * primaryKeyParameter{nullptr};
    for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
@@ -727,11 +738,11 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
    queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
 
    //
-   // Bind the values
-   // Note that, because we're using bind names, it doesn't matter that the order in which we do the binds is different
-   // than the order in which the fields appear in the query.
+   // Bind the values.  Note that, because we're using bind names, it doesn't matter that the order in which we do the
+   // binds is different than the order in which the fields appear in the query.
    //
-   QSqlQuery sqlQuery{queryString, databaseConnection};
+   QSqlQuery sqlQuery{databaseConnection};
+   sqlQuery.prepare(queryString);
    for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
       QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
       QVariant bindValue{object->property(fieldDefn.propertyName)};
@@ -840,7 +851,8 @@ void DbRecords::updateProperty(QObject const & object, char const * const proper
       //
       // Bind the values
       //
-      QSqlQuery sqlQuery{queryString, databaseConnection};
+      QSqlQuery sqlQuery{databaseConnection};
+      sqlQuery.prepare(queryString);
       QVariant propertyBindValue{object.property(propertyToUpdateInDb)};
       // Enums need to be converted to strings first
       auto fieldDefn = std::find_if(
@@ -899,10 +911,11 @@ void DbRecords::updateProperty(QObject const & object, char const * const proper
 // .:TODO:. For this and for hardDelete, we need to work out how to do cascading deletes for Recipe - ie delete the objects it owns (Hops, Fermentables, etc)
 //
 void DbRecords::softDelete(int id) {
+   auto object = this->pimpl->allObjects.value(id);
    this->pimpl->allObjects.remove(id);
 
    // Tell any bits of the UI that need to know that an object was deleted
-   emit this->signalObjectDeleted(id);
+   emit this->signalObjectDeleted(id, object);
 
    return;
 }
@@ -930,7 +943,8 @@ void DbRecords::hardDelete(int id) {
    // Bind the value
    //
    QVariant primaryKey{id};
-   QSqlQuery sqlQuery{queryString, databaseConnection};
+   QSqlQuery sqlQuery{databaseConnection};
+   sqlQuery.prepare(queryString);
    QString bindName = QString{":%1"}.arg(primaryKeyColumn);
    sqlQuery.bindValue(bindName, primaryKey);
 
@@ -955,12 +969,13 @@ void DbRecords::hardDelete(int id) {
    //
    // Remove the object from the cache
    //
+   auto object = this->pimpl->allObjects.value(id);
    this->pimpl->allObjects.remove(id);
 
    dbTransaction.commit();
 
    // Tell any bits of the UI that need to know that an object was deleted
-   emit this->signalObjectDeleted(id);
+   emit this->signalObjectDeleted(id, object);
 
    return;
 }

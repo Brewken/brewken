@@ -30,10 +30,10 @@
 #include <QVariant>
 
 #include "Brewken.h"
+#include "BtFolder.h"
 #include "BtTreeItem.h"
 #include "BtTreeView.h"
 #include "RecipeFormatter.h"
-#include "database/Database.h"
 #include "database/DbNamedEntityRecords.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -49,69 +49,69 @@
 // ============================ CLASS STUFF ================================
 // =========================================================================
 
-BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type)
-   : QAbstractItemModel(parent) {
+BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
+   QAbstractItemModel(parent) {
    // Initialize the tree structure
    int items = 0;
-   rootItem = new BtTreeItem();
+   this->rootItem = new BtTreeItem();
 
    switch (type) {
       case RECIPEMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::RECIPE);
-         connect(&(Database::instance()), SIGNAL(newRecipeSignal(Recipe *)), this, SLOT(elementAdded(Recipe *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Recipe *)), this, SLOT(elementRemoved(Recipe *)));
+         connect(&DbNamedEntityRecords<Recipe>::getInstance(), &DbNamedEntityRecords<Recipe>::signalObjectInserted, this,   &BtTreeModel::elementAddedRecipe);
+         connect(&DbNamedEntityRecords<Recipe>::getInstance(), &DbNamedEntityRecords<Recipe>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedRecipe);
          // Brewnotes need love too!
-         connect(&(Database::instance()), SIGNAL(newBrewNoteSignal(BrewNote *)), this, SLOT(elementAdded(BrewNote *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(BrewNote *)), this, SLOT(elementRemoved(BrewNote *)));
+         connect(&DbNamedEntityRecords<BrewNote>::getInstance(), &DbNamedEntityRecords<BrewNote>::signalObjectInserted, this,   &BtTreeModel::elementAddedBrewNote);
+         connect(&DbNamedEntityRecords<BrewNote>::getInstance(), &DbNamedEntityRecords<BrewNote>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedBrewNote);
          _type = BtTreeItem::RECIPE;
          _mimeType = "application/x-brewken-recipe";
          break;
       case EQUIPMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::EQUIPMENT);
-         connect(&(Database::instance()), SIGNAL(newEquipmentSignal(Equipment *)), this, SLOT(elementAdded(Equipment *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Equipment *)), this, SLOT(elementRemoved(Equipment *)));
+         connect(&DbNamedEntityRecords<Equipment>::getInstance(), &DbNamedEntityRecords<Equipment>::signalObjectInserted, this,   &BtTreeModel::elementAddedEquipment);
+         connect(&DbNamedEntityRecords<Equipment>::getInstance(), &DbNamedEntityRecords<Equipment>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedEquipment);
          _type = BtTreeItem::EQUIPMENT;
          _mimeType = "application/x-brewken-recipe";
          break;
       case FERMENTMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::FERMENTABLE);
-         connect(&(Database::instance()), SIGNAL(newFermentableSignal(Fermentable *)), this, SLOT(elementAdded(Fermentable *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Fermentable *)), this, SLOT(elementRemoved(Fermentable *)));
+         connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectInserted, this,   &BtTreeModel::elementAddedFermentable);
+         connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedFermentable);
          _type = BtTreeItem::FERMENTABLE;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case HOPMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::HOP);
-         connect(&(Database::instance()), SIGNAL(newHopSignal(Hop *)), this, SLOT(elementAdded(Hop *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Hop *)), this, SLOT(elementRemoved(Hop *)));
+         connect(&DbNamedEntityRecords<Hop>::getInstance(), &DbNamedEntityRecords<Hop>::signalObjectInserted, this,   &BtTreeModel::elementAddedHop);
+         connect(&DbNamedEntityRecords<Hop>::getInstance(), &DbNamedEntityRecords<Hop>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedHop);
          _type = BtTreeItem::HOP;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case MISCMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::MISC);
-         connect(&(Database::instance()), SIGNAL(newMiscSignal(Misc *)), this, SLOT(elementAdded(Misc *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Misc *)), this, SLOT(elementRemoved(Misc *)));
+         connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectInserted, this,   &BtTreeModel::elementAddedMisc);
+         connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedMisc);
          _type = BtTreeItem::MISC;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case STYLEMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::STYLE);
-         connect(&(Database::instance()), SIGNAL(newStyleSignal(Style *)), this, SLOT(elementAdded(Style *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Style *)), this, SLOT(elementRemoved(Style *)));
+         connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectInserted, this,   &BtTreeModel::elementAddedStyle);
+         connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedStyle);
          _type = BtTreeItem::STYLE;
          _mimeType = "application/x-brewken-recipe";
          break;
       case YEASTMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::YEAST);
-         connect(&(Database::instance()), SIGNAL(newYeastSignal(Yeast *)), this, SLOT(elementAdded(Yeast *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Yeast *)), this, SLOT(elementRemoved(Yeast *)));
+         connect(&DbNamedEntityRecords<Yeast>::getInstance(), &DbNamedEntityRecords<Yeast>::signalObjectInserted, this,   &BtTreeModel::elementAddedYeast);
+         connect(&DbNamedEntityRecords<Yeast>::getInstance(), &DbNamedEntityRecords<Yeast>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedYeast);
          _type = BtTreeItem::YEAST;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case WATERMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::WATER);
-         connect(&(Database::instance()), SIGNAL(newWaterSignal(Water *)), this, SLOT(elementAdded(Water *)));
-         connect(&(Database::instance()), SIGNAL(deletedSignal(Water *)), this, SLOT(elementRemoved(Water *)));
+         connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectInserted, this,   &BtTreeModel::elementAddedWater);
+         connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedWater);
          _type = BtTreeItem::WATER;
          _mimeType = "application/x-brewken-ingredient";
          break;
@@ -119,9 +119,10 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type)
          qWarning() << QString("Invalid treemask: %1").arg(type);
    }
 
-   treeMask = type;
-   parentTree = parent;
-   loadTreeModel();
+   this->treeMask = type;
+   this->parentTree = parent;
+   this->loadTreeModel();
+   return;
 }
 
 BtTreeModel::~BtTreeModel() {
@@ -146,10 +147,12 @@ BtTreeItem * BtTreeModel::item(const QModelIndex & index) const {
 
 int BtTreeModel::rowCount(const QModelIndex & parent) const {
    if (! parent.isValid()) {
-      return rootItem->childCount();
+//      qDebug() << Q_FUNC_INFO << "No parent. Root item has" << this->rootItem->childCount() << "children";
+      return this->rootItem->childCount();
    }
 
-   return item(parent)->childCount();
+//   qDebug() << Q_FUNC_INFO << "Parent has" << this->item(parent)->childCount() << "children";
+   return this->item(parent)->childCount();
 }
 
 int BtTreeModel::columnCount(const QModelIndex & parent) const {
@@ -573,7 +576,11 @@ QModelIndex BtTreeModel::findElement(NamedEntity * thing, BtTreeItem * parent) {
 
 QList<NamedEntity *> BtTreeModel::elements() {
    QList<NamedEntity *> elements;
-   switch (treeMask) {
+   //
+   // .:TBD:. This switch would not work if more than one flag were set in the mask, but I don't know if that ever
+   // happens.  OTOH, if not, why bother having a set of flags and not just an enum?
+   //
+   switch (this->treeMask) {
       case RECIPEMASK:
          for (NamedEntity * elem : DbNamedEntityRecords<Recipe>::getInstance().getAllRaw()) {
             elements.append(elem);
@@ -625,7 +632,9 @@ void BtTreeModel::loadTreeModel() {
 
    QModelIndex ndxLocal;
    BtTreeItem * local = nullptr;
-   QList<NamedEntity *> elems = elements();
+   QList<NamedEntity *> elems = this->elements();
+
+   qDebug() << Q_FUNC_INFO << "Got " << elems.length() << "elements matching type mask" << this->treeMask;
 
    foreach (NamedEntity * elem, elems) {
 
@@ -644,14 +653,14 @@ void BtTreeModel::loadTreeModel() {
          ndxLocal = createIndex(i, 0, local);
       }
 
-      if (! insertRow(i, ndxLocal, elem, _type)) {
+      if (!this->insertRow(i, ndxLocal, elem, _type)) {
          qWarning() << "Insert failed in loadTreeModel()";
          continue;
       }
 
       // If we have brewnotes, set them up here.
-      if (treeMask & RECIPEMASK) {
-         addBrewNoteSubTree(qobject_cast<Recipe *>(elem), i, local);
+      if (this->treeMask & RECIPEMASK) {
+         this->addBrewNoteSubTree(qobject_cast<Recipe *>(elem), i, local);
       }
 
       observeElement(elem);
@@ -860,31 +869,31 @@ void BtTreeModel::deleteSelected(QModelIndexList victims) {
       QModelIndex ndx = toBeDeleted.takeFirst();
       switch (type(ndx)) {
          case BtTreeItem::EQUIPMENT:
-            Database::instance().remove(equipment(ndx));
+            ObjectStoreWrapper::softDelete(*equipment(ndx));
             break;
          case BtTreeItem::FERMENTABLE:
-            Database::instance().remove(fermentable(ndx));
+            ObjectStoreWrapper::softDelete(*fermentable(ndx));
             break;
          case BtTreeItem::HOP:
-            Database::instance().remove(hop(ndx));
+            ObjectStoreWrapper::softDelete(*hop(ndx));
             break;
          case BtTreeItem::MISC:
-            Database::instance().remove(misc(ndx));
+            ObjectStoreWrapper::softDelete(*misc(ndx));
             break;
          case BtTreeItem::RECIPE:
-            Database::instance().remove(recipe(ndx));
+            ObjectStoreWrapper::softDelete(*recipe(ndx));
             break;
          case BtTreeItem::STYLE:
-            Database::instance().remove(style(ndx));
+            ObjectStoreWrapper::softDelete(*style(ndx));
             break;
          case BtTreeItem::YEAST:
-            Database::instance().remove(yeast(ndx));
+            ObjectStoreWrapper::softDelete(*yeast(ndx));
             break;
          case BtTreeItem::BREWNOTE:
-            Database::instance().remove(brewNote(ndx));
+            ObjectStoreWrapper::softDelete(*brewNote(ndx));
             break;
          case BtTreeItem::WATER:
-            Database::instance().remove(water(ndx));
+            ObjectStoreWrapper::softDelete(*water(ndx));
             break;
          case BtTreeItem::FOLDER:
             // This one is weird.
@@ -1229,33 +1238,15 @@ void BtTreeModel::elementChanged() {
  * liners is required to give the right signature and to be able to call
  * addElement() properly
  */
-void BtTreeModel::elementAdded(Recipe * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Equipment * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Fermentable * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Hop * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Misc * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Style * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Yeast * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(BrewNote * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementAdded(Water * victim) {
-   elementAdded(qobject_cast<NamedEntity *>(victim));
-}
+void BtTreeModel::elementAddedRecipe     (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Recipe     >(victimId))); }
+void BtTreeModel::elementAddedEquipment  (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Equipment  >(victimId))); }
+void BtTreeModel::elementAddedFermentable(int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Fermentable>(victimId))); }
+void BtTreeModel::elementAddedHop        (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Hop        >(victimId))); }
+void BtTreeModel::elementAddedMisc       (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Misc       >(victimId))); }
+void BtTreeModel::elementAddedStyle      (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Style      >(victimId))); }
+void BtTreeModel::elementAddedYeast      (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Yeast      >(victimId))); }
+void BtTreeModel::elementAddedBrewNote   (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<BrewNote   >(victimId))); }
+void BtTreeModel::elementAddedWater      (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Water      >(victimId))); }
 
 // I guess this isn't too bad. Better than this same function copied 7 times
 void BtTreeModel::elementAdded(NamedEntity * victim) {
@@ -1267,7 +1258,9 @@ void BtTreeModel::elementAdded(NamedEntity * victim) {
    }
 
    if (qobject_cast<BrewNote *>(victim)) {
-      pIdx = findElement(Database::instance().getParentRecipe(qobject_cast<BrewNote *>(victim)));
+      auto brewNote = qobject_cast<BrewNote *>(victim);
+      Recipe * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(brewNote->getRecipeId());
+      pIdx = findElement(recipe);
       lType = BtTreeItem::BREWNOTE;
    } else {
       pIdx = createIndex(0, 0, rootItem->child(0));
@@ -1300,33 +1293,15 @@ void BtTreeModel::elementAdded(NamedEntity * victim) {
    observeElement(victim);
 }
 
-void BtTreeModel::elementRemoved(Recipe * victim)      {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Equipment * victim)   {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Fermentable * victim) {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Hop * victim)         {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Misc * victim)        {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Style * victim)       {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Yeast * victim)       {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(BrewNote * victim)    {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
-void BtTreeModel::elementRemoved(Water * victim)       {
-   elementRemoved(qobject_cast<NamedEntity *>(victim));
-}
+void BtTreeModel::elementRemovedRecipe     (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedEquipment  (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedFermentable(int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedHop        (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedMisc       (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedStyle      (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedYeast      (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedBrewNote   (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedWater      (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
 
 void BtTreeModel::elementRemoved(NamedEntity * victim) {
    QModelIndex index, pIndex;
@@ -1415,32 +1390,30 @@ bool BtTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action,
       NamedEntity * elem = nullptr;
       switch (oType) {
          case BtTreeItem::RECIPE:
-            elem = Database::instance().recipe(id);
+            // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
+            elem = ObjectStoreWrapper::getById<Recipe>(id).get();
             break;
          case BtTreeItem::EQUIPMENT:
-            elem = Database::instance().equipment(id);
+            elem = ObjectStoreWrapper::getById<Equipment>(id).get();
             break;
          case BtTreeItem::FERMENTABLE:
-            elem = Database::instance().fermentable(id);
+            elem = ObjectStoreWrapper::getById<Fermentable>(id).get();
             break;
          case BtTreeItem::HOP:
-            elem = Database::instance().hop(id);
+            elem = ObjectStoreWrapper::getById<Hop>(id).get();
             break;
          case BtTreeItem::MISC:
-            elem = Database::instance().misc(id);
+            elem = ObjectStoreWrapper::getById<Misc>(id).get();
             break;
          case BtTreeItem::STYLE:
-            elem = Database::instance().style(id);
+            elem = ObjectStoreWrapper::getById<Style>(id).get();
             break;
          case BtTreeItem::YEAST:
-            elem = Database::instance().yeast(id);
+            elem = ObjectStoreWrapper::getById<Yeast>(id).get();
             break;
-         case BtTreeItem::WATER: {
-            // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
-            auto result = DbNamedEntityRecords<Water>::getInstance().getById(id);
-            elem = result.has_value() ? result->get() : nullptr;
-         }
-         break;
+         case BtTreeItem::WATER:
+            elem = ObjectStoreWrapper::getById<Water>(id).get();
+            break;
          case BtTreeItem::FOLDER:
             break;
          default:

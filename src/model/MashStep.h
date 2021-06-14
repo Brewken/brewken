@@ -32,6 +32,7 @@ namespace PropertyNames::MashStep { static char const * const decoctionAmount_l 
 namespace PropertyNames::MashStep { static char const * const endTemp_c = "endTemp_c"; /* previously kpropEndTemp */ }
 namespace PropertyNames::MashStep { static char const * const infuseAmount_l = "infuseAmount_l"; /* previously kpropInfuseAmt */ }
 namespace PropertyNames::MashStep { static char const * const infuseTemp_c = "infuseTemp_c"; /* previously kpropInfuseTemp */ }
+namespace PropertyNames::MashStep { static char const * const mashId = "mashId";}
 namespace PropertyNames::MashStep { static char const * const rampTime_min = "rampTime_min"; /* previously kpropRampTime */ }
 namespace PropertyNames::MashStep { static char const * const stepNumber = "stepNumber"; /* previously kpropStepNumber */ }
 namespace PropertyNames::MashStep { static char const * const stepTemp_c = "stepTemp_c"; /* previously kpropStepTemp */ }
@@ -44,12 +45,10 @@ namespace PropertyNames::MashStep { static char const * const type = "type"; /* 
  *
  * \brief Model for a mash step record in the database.
  */
-class MashStep : public NamedEntity
-{
+class MashStep : public NamedEntity {
    Q_OBJECT
 
    // this seems to be a class with a lot of friends
-   friend class Database;
    friend class BeerXML;
    friend class MashStepItemDelegate;
    friend class MashWizard;
@@ -88,7 +87,9 @@ public:
    //! \brief The decoction amount in liters.
    Q_PROPERTY( double decoctionAmount_l READ decoctionAmount_l WRITE setDecoctionAmount_l /*NOTIFY changed*/ /*changedDecoctionAmount_l*/ )
    //! \brief The step number in a sequence of other steps.
-   Q_PROPERTY( int stepNumber READ stepNumber /*WRITE*/ /*NOTIFY changed*/ STORED false )
+   Q_PROPERTY( int stepNumber READ stepNumber WRITE setStepNumber /*NOTIFY changed*/ STORED false )
+   //! \brief The Mash to which this MashStep belongs
+   Q_PROPERTY( int mashId READ getMashId WRITE setMashId )
 
    void setType( Type t);
    void setInfuseAmount_l( double var);
@@ -99,6 +100,8 @@ public:
    void setInfuseTemp_c( double var);
    void setDecoctionAmount_l( double var);
    void setCacheOnly(bool cache);
+   void setStepNumber(int stepNumber);
+   void setMashId(int mashId);
 //   void setMash(Mash * mash);
 
    Type type() const;
@@ -112,6 +115,7 @@ public:
    double infuseTemp_c() const;
    double decoctionAmount_l() const;
    bool cacheOnly() const;
+   int getMashId() const;
 //   Mash * mash() const;
 
    //! What number this step is in the mash.
@@ -148,8 +152,9 @@ private:
    double m_infuseTemp_c;
    double m_decoctionAmount_l;
    int m_stepNumber;
-   bool m_cacheOnly;
+   int mashId;
 //   Mash * m_mash;
+   bool m_cacheOnly;
 
    bool isValidType( const QString &str ) const;
 

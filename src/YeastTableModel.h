@@ -1,6 +1,7 @@
 /**
- * YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Samuel Östling <MrOstling@gmail.com>
@@ -18,26 +19,27 @@
  */
 #ifndef YEASTTABLEMODEL_H
 #define YEASTTABLEMODEL_H
+#pragma once
 
-class YeastTableModel;
-class YeastItemDelegate;
+#include <memory>
 
 #include <QAbstractTableModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QMetaProperty>
-#include <QVariant>
 #include <QItemDelegate>
 #include <QList>
+#include <QMetaProperty>
+#include <QModelIndex>
 #include <QTableView>
+#include <QVariant>
+#include <QWidget>
 
-#include "Unit.h"
 #include "Brewken.h"
 #include "database/TableSchemaConst.h"
+#include "Unit.h"
 
 // Forward declarations.
 class Yeast;
 class YeastTableWidget;
+class YeastItemDelegate;
 class Recipe;
 
 enum{ YEASTNAMECOL, YEASTLABCOL, YEASTPRODIDCOL, YEASTTYPECOL, YEASTFORMCOL, YEASTAMOUNTCOL, YEASTINVENTORYCOL, YEASTNUMCOLS /*This one MUST be last*/};
@@ -45,11 +47,9 @@ enum{ YEASTNAMECOL, YEASTLABCOL, YEASTPRODIDCOL, YEASTTYPECOL, YEASTFORMCOL, YEA
 /*!
  * \class YeastTableModel
  *
- *
  * \brief Table model for yeasts.
  */
-class YeastTableModel : public QAbstractTableModel
-{
+class YeastTableModel : public QAbstractTableModel {
    Q_OBJECT
 
 public:
@@ -91,12 +91,13 @@ public:
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
    void setDisplayScale(int column, Unit::unitScale displayScale);
    QString generateName(int column) const;
+   void remove(Yeast * yeast);
 
 public slots:
    //! \brief Add a \c yeast to the model.
-   void addYeast(Yeast* yeast);
+   void addYeast(int yeastId);
    //! \brief Remove a \c yeast from the model.
-   void removeYeast(Yeast* yeast);
+   void removeYeast(int yeastId, std::shared_ptr<QObject> object);
 
    void contextMenu(const QPoint &point);
 private slots:

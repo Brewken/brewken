@@ -45,12 +45,10 @@ namespace PropertyNames::Water { static char const * const calcium_ppm = "calciu
  *
  * \brief Model for water records in the database.
  */
-class Water : public NamedEntity
-{
+class Water : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "waters")
 
-   friend class Database;
    friend class BeerXML;
    friend class WaterDialog;
    friend class WaterEditor;

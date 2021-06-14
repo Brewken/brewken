@@ -1,5 +1,5 @@
 /**
- * MiscDialog.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * MiscDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,13 +17,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "MiscDialog.h"
 
-#include <QWidget>
 #include <QDialog>
 #include <QInputDialog>
-#include <QString>
 #include <QList>
-#include "MiscDialog.h"
+#include <QString>
+#include <QWidget>
+
 #include "database/Database.h"
 #include "model/Recipe.h"
 #include "MainWindow.h"
@@ -135,7 +136,8 @@ void MiscDialog::removeMisc()
    }
 
    Misc* m = miscTableModel->getMisc(miscTableProxy->mapToSource(selected[0]).row());
-   Database::instance().remove(m);
+   ObjectStoreWrapper::softDelete(*m);
+   return;
 }
 
 void MiscDialog::addMisc(const QModelIndex& index)

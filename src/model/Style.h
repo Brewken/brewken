@@ -57,12 +57,10 @@ namespace PropertyNames::Style { static char const * const category = "category"
  *
  * \brief Model for style records in the database.
  */
-class Style : public NamedEntity
-{
+class Style : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "styles")
 
-   friend class Database;
    friend class BeerXML;
    friend class StyleEditor;
 public:

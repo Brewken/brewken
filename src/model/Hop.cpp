@@ -515,7 +515,7 @@ NamedEntity * Hop::getParent() {
 
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
-      myParent = Database::instance().hop(this->parentKey);
+      myParent = ObjectStoreWrapper::getByIdRaw<Hop>(this->parentKey);
    }
 
    // Return whatever we got

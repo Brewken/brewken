@@ -23,16 +23,17 @@
 #include "database/Database.h"
 #include "model/Recipe.h"
 
-StyleListModel::StyleListModel(QWidget* parent)
-   : QAbstractListModel(parent), recipe(0)
-{
-   connect( &(Database::instance()), &Database::newStyleSignal, this, &StyleListModel::addStyle );
-   connect( &(Database::instance()), SIGNAL(deletedSignal(Style*)), this, SLOT(removeStyle(Style*)) );
+StyleListModel::StyleListModel(QWidget* parent) :
+   QAbstractListModel(parent),
+   recipe(0) {
+   connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectInserted, this, &StyleListModel::addStyle);
+   connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectDeleted,  this, &StyleListModel::removeStyle);
    repopulateList();
+   return;
 }
 
-void StyleListModel::addStyle(Style* s)
-{
+void StyleListModel::addStyle(int styleId) {
+   Style* s = ObjectStoreWrapper::getByIdRaw<Style>(styleId);
    if( !s || !s->display() || s->deleted() )
       return;
 
@@ -44,6 +45,7 @@ void StyleListModel::addStyle(Style* s)
       connect( s, &NamedEntity::changed, this, &StyleListModel::styleChanged );
       endInsertRows();
    }
+   return;
 }
 
 void StyleListModel::addStyles(QList<Style*> s)
@@ -70,7 +72,12 @@ void StyleListModel::addStyles(QList<Style*> s)
    }
 }
 
-void StyleListModel::removeStyle(Style* style)
+void StyleListModel::removeStyle(int styleId, std::shared_ptr<QObject> object) {
+   this->remove(std::static_pointer_cast<Style>(object).get());
+   return;
+}
+
+void StyleListModel::remove(Style* style)
 {
    int ndx = styles.indexOf(style);
    if( ndx >= 0 )

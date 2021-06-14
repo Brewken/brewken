@@ -41,12 +41,10 @@ namespace PropertyNames::Salt { static char const * const addTo = "addTo"; /* pr
  *
  * \brief Model for salt records in the database.
  */
-class Salt : public NamedEntity
-{
+class Salt : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "salts")
 
-   friend class Database;
    friend class BeerXML;
    friend class WaterDialog;
    friend class SaltTableModel;

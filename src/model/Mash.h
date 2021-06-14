@@ -29,7 +29,6 @@
 #include "model/NamedEntity.h"
 namespace PropertyNames::Mash { static char const * const equipAdjust = "equipAdjust"; /* previously kpropEquipAdjust */ }
 namespace PropertyNames::Mash { static char const * const grainTemp_c = "grainTemp_c"; /* previously kpropGrainTemp */ }
-namespace PropertyNames::Mash { static char const * const mashStepIds = "mashStepIds"; }
 namespace PropertyNames::Mash { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Mash { static char const * const ph = "ph"; /* previously kpropPH */ }
 namespace PropertyNames::Mash { static char const * const spargeTemp_c = "spargeTemp_c"; /* previously kpropSpargeTemp */ }
@@ -49,7 +48,6 @@ class Mash : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashs")
 
-   friend class Database;
    friend class BeerXML;
    friend class MashDesigner;
    friend class MashEditor;
@@ -82,7 +80,6 @@ public:
    Q_PROPERTY( double totalTime READ totalTime /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
   // Q_PROPERTY( double tunMass_kg READ tunMass_kg  WRITE setTunMass_kg /*NOTIFY changed*/ /*changedTotalTime*/ )
    //! \brief The individual mash steps.
-   Q_PROPERTY( QList<int> mashStepIds READ getMashStepIds WRITE setMashStepIds )
    Q_PROPERTY( QList<MashStep*> mashSteps  READ mashSteps /*WRITE*/ /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
 
    /**
@@ -91,6 +88,8 @@ public:
     *        Needs to be called \b after all the calls to DbNamedEntityRecords<FooBar>::getInstance().loadAll()
     */
    static void connectSignals();
+
+   virtual void setKey(int key);
 
    // Setters
    void setGrainTemp_c( double var );
@@ -102,7 +101,6 @@ public:
    void setTunSpecificHeat_calGC( double var );
    void setEquipAdjust( bool var );
    void setCacheOnly( bool cache );
-   void setMashStepIds(QList<int> ids);
 
    // Getters
    double grainTemp_c() const;
@@ -115,7 +113,6 @@ public:
    double tunSpecificHeat_calGC() const;
    bool equipAdjust() const;
    bool cacheOnly() const;
-   QList<int> getMashStepIds() const;
 
    // Calculated getters
    //! \brief all the mash water, sparge and strike
@@ -134,7 +131,7 @@ public:
    /*!
     * \brief Swap MashSteps \c ms1 and \c ms2
     */
-   void swapMashSteps(MashStep const & ms1, MashStep const & ms2);
+   void swapMashSteps(MashStep & ms1, MashStep & ms2);
 
    void removeAllMashSteps();
 

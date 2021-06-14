@@ -1,5 +1,5 @@
 /**
- * model/MashStep.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/MashStep.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -70,6 +70,7 @@ MashStep::MashStep(DatabaseConstants::DbTableId table, int key)
      m_infuseTemp_c(0.0),
      m_decoctionAmount_l(0.0),
      m_stepNumber(0.0),
+     mashId(-1),
      m_cacheOnly(false)
 {
 }
@@ -86,6 +87,7 @@ MashStep::MashStep(QString name, bool cache)
      m_infuseTemp_c(0.0),
      m_decoctionAmount_l(0.0),
      m_stepNumber(0.0),
+     mashId(-1),
      m_cacheOnly(cache)
 {
 }
@@ -101,6 +103,7 @@ MashStep::MashStep(NamedParameterBundle & namedParameterBundle) :
    m_infuseTemp_c     {namedParameterBundle(PropertyNames::MashStep::infuseTemp_c     ).toDouble()},
    m_decoctionAmount_l{namedParameterBundle(PropertyNames::MashStep::decoctionAmount_l).toDouble()},
    m_stepNumber       {namedParameterBundle(PropertyNames::MashStep::stepNumber       ).toInt()},
+   mashId             {namedParameterBundle(PropertyNames::MashStep::mashId           ).toInt()},
    m_cacheOnly        {false} {
    return;
 }
@@ -116,6 +119,7 @@ MashStep::MashStep(MashStep const & other) :
    m_infuseTemp_c     {other.m_infuseTemp_c     },
    m_decoctionAmount_l{other.m_decoctionAmount_l},
    m_stepNumber       {other.m_stepNumber       },
+   mashId             {other.mashId             },
    m_cacheOnly        {other.m_cacheOnly        } {
    return;
 }
@@ -244,9 +248,19 @@ void MashStep::setDecoctionAmount_l(double var )
    }
 }
 
+
+void MashStep::setStepNumber(int stepNumber) {
+   this->m_stepNumber = stepNumber;
+   if ( ! m_cacheOnly ) {
+      setEasy(PropertyNames::MashStep::stepNumber, stepNumber);
+   }
+   return;
+}
+
 void MashStep::setCacheOnly( bool cache ) { m_cacheOnly = cache; }
 
 //void MashStep::setMash( Mash * mash ) { this->m_mash = mash; }
+void MashStep::setMashId(int mashId) { this->mashId = mashId; }
 
 //============================="GET" METHODS====================================
 MashStep::Type MashStep::type() const { return m_type; }
@@ -267,6 +281,7 @@ double MashStep::decoctionAmount_l() const { return m_decoctionAmount_l; }
 int MashStep::stepNumber() const { return m_stepNumber; }
 bool MashStep::cacheOnly( ) const { return m_cacheOnly; }
 //Mash * MashStep::mash( ) const { return m_mash; }
+int MashStep::getMashId() const { return this->mashId; }
 
 bool MashStep::isInfusion() const
 {

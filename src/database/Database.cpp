@@ -244,7 +244,7 @@ public:
    ~impl() = default;
 
    //! Helper to populate all* hashes. T should be a NamedEntity subclass.
-   template <class T> void populateElements(Database & database, QHash<int,T*>& hash, DatabaseConstants::DbTableId table ) {
+/*   template <class T> void populateElements(Database & database, QHash<int,T*>& hash, DatabaseConstants::DbTableId table ) {
       QSqlQuery q(database.sqlDatabase());
       TableSchema* tbl = this->dbDefn.table(table);
       q.setForwardOnly(true);
@@ -318,7 +318,7 @@ public:
       q.finish();
       return true;
    }
-
+*/
    // Don't know where to put this, so it goes here for right now
    bool loadSQLite(Database & database) {
       qDebug() << "Loading SQLITE...";
@@ -453,7 +453,7 @@ public:
     * \param doNotDisplay if true (default), calls \c setDisplay(\c false) on the new ingredient
     * \returns the new ingredient.
     */
-   template<class T> T* addNamedEntityToRecipe(
+/*   template<class T> T* addNamedEntityToRecipe(
       Database & db,
       Recipe* rec,
       NamedEntity* ing,
@@ -499,8 +499,8 @@ public:
          QString select = QString("SELECT %5 from %1 WHERE %2=%3 AND %5=%4")
                               .arg(inrec->tableName())
                               .arg(inrec->inRecIndexName())
-                              .arg(ing->_key)
-                              .arg(reinterpret_cast<NamedEntity*>(rec)->_key)
+                              .arg(ing->key())
+                              .arg(reinterpret_cast<NamedEntity*>(rec)->key())
                               .arg(inrec->recipeIndexName());
          qDebug() << Q_FUNC_INFO << "NamedEntity in recipe search:" << select;
          if (! q.exec(select) ) {
@@ -547,9 +547,9 @@ public:
 
          q.prepare(insert);
          q.bindValue(":ingredient", newIng->key());
-         q.bindValue(":recipe", rec->_key);
+         q.bindValue(":recipe", rec->key());
 
-         qDebug() << QString("%1 Link ingredient to recipe: %2 with args %3, %4").arg(Q_FUNC_INFO).arg(insert).arg(newIng->key()).arg(rec->_key);
+         qDebug() << QString("%1 Link ingredient to recipe: %2 with args %3, %4").arg(Q_FUNC_INFO).arg(insert).arg(newIng->key()).arg(rec->key());
 
          if ( ! q.exec() ) {
             throw QString("%2 : %1.").arg(q.lastQuery()).arg(q.lastError().text());
@@ -562,15 +562,15 @@ public:
          //Put this in the <ing_type>_children table.
          // instructions and salts have no children.
          if( inrec->dbTable() != DatabaseConstants::INSTINRECTABLE && inrec->dbTable() != DatabaseConstants::SALTINRECTABLE ) {
-            /*
-            * The parent to link to depends on where the ingredient is copied from:
-            * - A fermentable from the fermentable table -> the ID of the fermentable.
-            * - An ingredient from another recipe -> the ID of the ingredient's parent.
-            *
-            * This is required:
-            * - When deleting the ingredient from the original recipe no longer fails.
-            *   Else if fails due to a foreign key constrain.
-            */
+            //
+            // The parent to link to depends on where the ingredient is copied from:
+            // - A fermentable from the fermentable table -> the ID of the fermentable.
+            // - An ingredient from another recipe -> the ID of the ingredient's parent.
+            //
+            // This is required:
+            // - When deleting the ingredient from the original recipe no longer fails.
+            //   Else if fails due to a foreign key constrain.
+            //
             int key = ing->key();
             QString parentChildSql = QString("SELECT %1 FROM %2 WHERE %3=%4")
                   .arg(child->parentIndexName())
@@ -616,11 +616,11 @@ public:
 
       return newIng;
    }
-
+*/
    // Named constructors ======================================================
    //! Create new brew note attached to \b parent.
    // maybe I should have never learned templates?
-   template<class T> T* newNamedEntity(Database & database, QHash<int,T*>* all) {
+/*   template<class T> T* newNamedEntity(Database & database, QHash<int,T*>* all) {
       int key;
       // To quote the talking heads, my god what have I done?
       DatabaseConstants::DbTableId table = this->dbDefn.classNameToTable( T::classNameStr() );
@@ -643,7 +643,7 @@ public:
       }
 
       T* tmp = new T(table, key);
-      all->insert(tmp->_key,tmp);
+      all->insert(tmp->key(),tmp);
 
       return tmp;
    }
@@ -676,11 +676,11 @@ public:
       }
 
       T* tmp = new T(tbl->dbTable(), key);
-      all->insert(tmp->_key,tmp);
+      all->insert(tmp->key(),tmp);
 
       return tmp;
    }
-
+*/
    /*!
     * \brief Create a deep copy of the \b object.
     * \em T must be a subclass of \em NamedEntity.
@@ -692,7 +692,7 @@ public:
     * \param displayed is true if you want the \em displayed column set to true.
     * \param keyHash if nonzero, inserts the new (key,T*) pair into the hash.
     */
-   template<class T> T* copy(Database & database, NamedEntity const* object, QHash<int,T*>* keyHash, bool displayed = true ) {
+/*   template<class T> T* copy(Database & database, NamedEntity const* object, QHash<int,T*>* keyHash, bool displayed = true ) {
       int newKey;
       int i;
       QString holder, fields;
@@ -706,7 +706,7 @@ public:
       QSqlQuery q(database.sqlDatabase());
 
       try {
-         QString select = QString("SELECT * FROM %1 WHERE id = %2").arg(tName).arg(object->_key);
+         QString select = QString("SELECT * FROM %1 WHERE id = %2").arg(tName).arg(object->key());
 
          qDebug() << Q_FUNC_INFO << "SELECT SQL:" << select;
 
@@ -780,9 +780,9 @@ public:
       q.finish();
       return newOne;
    }
-
+*/
    // Do an sql update.
-   void sqlUpdate(Database & database, DatabaseConstants::DbTableId table, QString const& setClause, QString const& whereClause ) {
+/*   void sqlUpdate(Database & database, DatabaseConstants::DbTableId table, QString const& setClause, QString const& whereClause ) {
       QString update = QString("UPDATE %1 SET %2 WHERE %3")
                   .arg(this->dbDefn.tableName(table))
                   .arg(setClause)
@@ -801,7 +801,7 @@ public:
 
       q.finish();
    }
-
+*/
    // Do an sql delete.
 /*
    void sqlDelete(Database & database, DatabaseConstants::DbTableId table, QString const& whereClause ) {
@@ -1205,10 +1205,10 @@ public:
    bool createFromScratch;
    bool schemaUpdated;
 
-   QHash< int, BrewNote* > allBrewNotes;
+/*   QHash< int, BrewNote* > allBrewNotes;
    QHash< int, Equipment* > allEquipments;
    QHash< int, Fermentable* > allFermentables;
-////   QHash< int, Hop* > allHops;  ////!!!!
+   QHash< int, Hop* > allHops;  ////!!!!
    QHash< int, Instruction* > allInstructions;
    QHash< int, Mash* > allMashs;
    QHash< int, MashStep* > allMashSteps;
@@ -1218,7 +1218,8 @@ public:
    QHash< int, Water* > allWaters;
    QHash< int, Salt* > allSalts;
    QHash< int, Yeast* > allYeasts;
-   QHash<QString,QSqlQuery> selectSome;
+*/
+//   QHash<QString,QSqlQuery> selectSome;
 
 
 };
@@ -1240,10 +1241,10 @@ Database::~Database() {
    }
 
    // Delete all the ingredients floating around.
-   qDeleteAll(this->pimpl->allBrewNotes);
+/*   qDeleteAll(this->pimpl->allBrewNotes);
    qDeleteAll(this->pimpl->allEquipments);
    qDeleteAll(this->pimpl->allFermentables);
-////   qDeleteAll(this->pimpl->allHops);  ////!!!
+   qDeleteAll(this->pimpl->allHops);  ////!!!
    qDeleteAll(this->pimpl->allInstructions);
    qDeleteAll(this->pimpl->allMashSteps);
    qDeleteAll(this->pimpl->allMashs);
@@ -1253,7 +1254,7 @@ Database::~Database() {
    qDeleteAll(this->pimpl->allSalts);
    qDeleteAll(this->pimpl->allYeasts);
    qDeleteAll(this->pimpl->allRecipes);
-
+*/
    return;
 }
 
@@ -1402,11 +1403,11 @@ bool Database::load() {
    }
 
    // Create and store all pointers.
-   qDebug() << Q_FUNC_INFO << "Loading objects from DB";
+/*   qDebug() << Q_FUNC_INFO << "Loading objects from DB";
    this->pimpl->populateElements(*this, this->pimpl->allBrewNotes, DatabaseConstants::BREWNOTETABLE );
    this->pimpl->populateElements(*this, this->pimpl->allEquipments, DatabaseConstants::EQUIPTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allFermentables, DatabaseConstants::FERMTABLE );
-///   this->pimpl->populateElements(*this, this->pimpl->allHops, DatabaseConstants::HOPTABLE ); ////!!!!!
+   this->pimpl->populateElements(*this, this->pimpl->allHops, DatabaseConstants::HOPTABLE ); ////!!!!!
    this->pimpl->populateElements(*this, this->pimpl->allInstructions, DatabaseConstants::INSTRUCTIONTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allMashs, DatabaseConstants::MASHTABLE );
    this->pimpl->populateElements(*this, this->pimpl->allMashSteps, DatabaseConstants::MASHSTEPTABLE );
@@ -1417,7 +1418,7 @@ bool Database::load() {
    this->pimpl->populateElements(*this, this->pimpl->allYeasts, DatabaseConstants::YEASTTABLE );
 
    this->pimpl->populateElements(*this, this->pimpl->allRecipes, DatabaseConstants::RECTABLE );
-
+*/
    qDebug() << Q_FUNC_INFO << "Loading objects from DB - new classes";
    DbNamedEntityRecords<BrewNote>::getInstance().loadAll(this->sqlDatabase());
    DbNamedEntityRecords<Equipment>::getInstance().loadAll(this->sqlDatabase());
@@ -1475,7 +1476,7 @@ void Database::unload() {
 
    // this->pimpl->selectSome saves context. If we close the database before we tear that
    // context down, core gets dumped
-   this->pimpl->selectSome.clear();
+//   this->pimpl->selectSome.clear();
 
    // so far, it seems we only create one connection to the db. This is
    // likely overkill
@@ -1674,7 +1675,7 @@ bool Database::isStored(NamedEntity const & ingredient) {
 
 
 // removeFromRecipe ===========================================================
-NamedEntity * Database::removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* ing )
+/*NamedEntity * Database::removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* ing )
 {
    NamedEntity * parentNamedEntity = ing->getParent();
 
@@ -1689,7 +1690,7 @@ NamedEntity * Database::removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* i
    sqlDatabase().transaction();
    QSqlQuery q(sqlDatabase());
 
-   qDebug() << QString("%1 Deleting NamedEntity %2 #%3").arg(Q_FUNC_INFO).arg(meta->className()).arg(ing->_key);
+   qDebug() << QString("%1 Deleting NamedEntity %2 #%3").arg(Q_FUNC_INFO).arg(meta->className()).arg(ing->key());
 
    try {
       if ( ndx != -1 ) {
@@ -1709,16 +1710,16 @@ NamedEntity * Database::removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* i
       QString deleteFromInRecipe = QString("DELETE FROM %1 WHERE %2=%3 AND %4=%5")
                                  .arg(inrec->tableName() )
                                  .arg(inrec->inRecIndexName())
-                                 .arg(ing->_key)
+                                 .arg(ing->key())
                                  .arg(inrec->recipeIndexName())
-                                 .arg(rec->_key);
+                                 .arg(rec->key());
       qDebug() << QString("Delete From In Recipe SQL: %1").arg(deleteFromInRecipe);
 
       // delete from misc where id = [misc key]
       QString deleteNamedEntity = QString("DELETE FROM %1 where %2=%3")
                                  .arg(table->tableName())
                                  .arg(table->keyName())
-                                 .arg(ing->_key);
+                                 .arg(ing->key());
       qDebug() << QString("Delete NamedEntity SQL: %1").arg(deleteNamedEntity);
 
       q.setForwardOnly(true);
@@ -1729,7 +1730,7 @@ NamedEntity * Database::removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* i
          QString deleteFromChildren = QString("DELETE FROM %1 WHERE %2=%3")
                                     .arg(child->tableName())
                                     .arg( child->childIndexName() )
-                                    .arg(ing->_key);
+                                    .arg(ing->key());
          qDebug() << QString("Delete From Children SQL: %1").arg(deleteFromChildren);
          if ( ! q.exec( deleteFromChildren ) ) {
             throw QString("failed to delete children.");
@@ -1774,20 +1775,20 @@ void Database::removeFromRecipe( Recipe* rec, Instruction* ins )
       throw; //up the stack!
    }
 
-   this->pimpl->allInstructions.remove(ins->_key);
+   this->pimpl->allInstructions.remove(ins->key());
    emit changed( metaProperty(*this, "instructions"), QVariant() );
 }
-
+*/
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-void Database::removeFrom( Mash* mash, MashStep* step )
+/*void Database::removeFrom( Mash* mash, MashStep* step )
 {
    TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::MASHSTEPTABLE);
    // Just mark the step as deleted.
    try {
       this->pimpl->sqlUpdate(*this, DatabaseConstants::MASHSTEPTABLE,
                QString("%1 = %2").arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted)).arg(Brewken::dbTrue()),
-               QString("%1 = %2").arg(tbl->keyName()).arg(step->_key));
+               QString("%1 = %2").arg(tbl->keyName()).arg(step->key()));
    }
    catch ( QString e ) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -1796,7 +1797,8 @@ void Database::removeFrom( Mash* mash, MashStep* step )
 
    emit mash->mashStepsChanged();
 }
-
+*/
+/*
 Recipe* Database::getParentRecipe(NamedEntity const * ing) {
 
    QMetaObject const * meta = ing->metaObject();
@@ -1806,7 +1808,7 @@ Recipe* Database::getParentRecipe(NamedEntity const * ing) {
    QString select = QString("SELECT %4 from %1 WHERE %2=%3")
                         .arg(inrec->tableName())
                         .arg(inrec->inRecIndexName())
-                        .arg(ing->_key)
+                        .arg(ing->key())
                         .arg(inrec->recipeIndexName());
    qDebug() << Q_FUNC_INFO << "NamedEntity in recipe search:" << select;
    QSqlQuery q(sqlDatabase());
@@ -1834,7 +1836,7 @@ Recipe* Database::getParentRecipe( BrewNote const* note ) {
            .arg( tbl->recipeIndexName())
            .arg( tbl->tableName() )
            .arg( tbl->keyName() )
-           .arg(note->_key);
+           .arg(note->key());
 
    QSqlQuery q(sqlDatabase());
 
@@ -1857,12 +1859,13 @@ Recipe* Database::getParentRecipe( BrewNote const* note ) {
    q.finish();
 
    return this->pimpl->allRecipes[key];
-}
+}*/
 
+/*
 Recipe*      Database::recipe(int key)      { return this->pimpl->allRecipes[key]; }
 Equipment*   Database::equipment(int key)   { return this->pimpl->allEquipments[key]; }
 Fermentable* Database::fermentable(int key) { return this->pimpl->allFermentables[key]; }
-////Hop*         Database::hop(int key)         { return this->pimpl->allHops[key]; }
+Hop*         Database::hop(int key)         { return this->pimpl->allHops[key]; }
 Hop*         Database::hop(int key)         {
    auto result = DbNamedEntityRecords<Hop>::getInstance().getById(key);
    return result ? result.value().get() : nullptr;
@@ -1872,8 +1875,8 @@ Misc*        Database::misc(int key)        { return this->pimpl->allMiscs[key];
 Style*       Database::style(int key)       { return this->pimpl->allStyles[key]; }
 Yeast*       Database::yeast(int key)       { return this->pimpl->allYeasts[key]; }
 Salt*        Database::salt(int key)        { return this->pimpl->allSalts[key]; }
-/*
-void Database::swapMashStepOrder(MashStep* m1, MashStep* m2)
+*/
+/*void Database::swapMashStepOrder(MashStep* m1, MashStep* m2)
 {
    TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::MASHSTEPTABLE);
    // maybe this wasn't such a good idear?
@@ -1890,9 +1893,9 @@ void Database::swapMashStepOrder(MashStep* m1, MashStep* m2)
                 .arg(tbl->tableName() )
                 .arg(tbl->propertyToColumn(PropertyNames::MashStep::stepNumber))
                 .arg(tbl->keyName())
-                .arg(m1->_key)
+                .arg(m1->key())
                 .arg(m2->stepNumber())
-                .arg(m2->_key)
+                .arg(m2->key())
                 .arg(m1->stepNumber());
 
    QSqlQuery q(sqlDatabase() );
@@ -1935,9 +1938,9 @@ void Database::swapInstructionOrder(Instruction* in1, Instruction* in2)
       .arg(tbl->tableName())
       .arg(tbl->propertyToColumn(kpropInstructionNumber))
       .arg(tbl->inRecIndexName())
-      .arg(in1->_key)
+      .arg(in1->key())
       .arg(in2->instructionNumber())
-      .arg(in2->_key)
+      .arg(in2->key())
       .arg(in1->instructionNumber());
 
    QSqlQuery q( sqlDatabase());
@@ -1971,7 +1974,7 @@ void Database::insertInstruction(Instruction* in, int pos)
                    .arg( tbl->recipeIndexName())
                    .arg( tbl->tableName() )
                    .arg( tbl->inRecIndexName() )
-                   .arg(in->_key);
+                   .arg(in->key());
    QString update;
 
    sqlDatabase().transaction();
@@ -2032,7 +2035,7 @@ void Database::insertInstruction(Instruction* in, int pos)
          .arg(tbl->propertyToColumn(kpropInstructionNumber))
          .arg(pos)
          .arg( tbl->inRecIndexName() )
-         .arg(in->_key);
+         .arg(in->key());
       qDebug() << Q_FUNC_INFO << "Update 2 SQL:" << update;
 
       if ( !q.exec(update) )
@@ -2064,7 +2067,7 @@ QList<BrewNote*> Database::brewNotes(Recipe const* parent)
    //  recipe_id = [parent->key] AND deleted = false
    QString filterString = QString("%1 = %2 AND %3 = %4")
            .arg( tbl->recipeIndexName() )
-           .arg(parent->_key)
+           .arg(parent->key())
            .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted))
            .arg(Brewken::dbFalse());
 
@@ -2078,7 +2081,7 @@ QList<Fermentable*> Database::fermentables(Recipe const* parent)
    QList<Fermentable*> ret;
    TableSchema* inrec = this->pimpl->dbDefn.table(DatabaseConstants::FERMINRECTABLE);
    // recipe_id = [parent->key]
-   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
+   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->key());
 
    this->pimpl->getElements(*this, ret,filter, DatabaseConstants::FERMINRECTABLE, this->pimpl->allFermentables, inrec->inRecIndexName());
 
@@ -2090,7 +2093,7 @@ QList<Hop*> Database::hops(Recipe const* parent)
 {
    QList<Hop*> ret;
    TableSchema* inrec = this->pimpl->dbDefn.table(DatabaseConstants::HOPINRECTABLE);
-   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
+   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->key());
 
    this->pimpl->getElements(*this, ret,filter, DatabaseConstants::HOPINRECTABLE, this->pimpl->allHops, inrec->inRecIndexName());
 
@@ -2102,7 +2105,7 @@ QList<Misc*> Database::miscs(Recipe const* parent)
 {
    QList<Misc*> ret;
    TableSchema* inrec = this->pimpl->dbDefn.table(DatabaseConstants::MISCINRECTABLE);
-   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
+   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->key());
 
    this->pimpl->getElements(*this, ret,filter, DatabaseConstants::MISCINRECTABLE, this->pimpl->allMiscs, inrec->inRecIndexName());
 
@@ -2158,7 +2161,7 @@ QList<MashStep*> Database::mashSteps(Mash const* parent)
    // mash_id = [parent->key] AND deleted = false order by step_number ASC
    QString filterString = QString("%1 = %2 AND %3 = %4 order by %5 ASC")
          .arg(tbl->foreignKeyToColumn())
-         .arg(parent->_key)
+         .arg(parent->key())
          .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted))
          .arg(Brewken::dbFalse())
          .arg(tbl->propertyToColumn(PropertyNames::MashStep::stepNumber));
@@ -2175,7 +2178,7 @@ QList<Instruction*> Database::instructions( Recipe const* parent )
    // recipe_id = [parent->key] ORDER BY instruction_number ASC
    QString filter = QString("%1 = %2 ORDER BY %3 ASC")
          .arg( inrec->recipeIndexName())
-         .arg(parent->_key)
+         .arg(parent->key())
          .arg( inrec->propertyToColumn(kpropInstructionNumber));
 
    this->pimpl->getElements(*this, ret,filter,DatabaseConstants::INSTINRECTABLE,this->pimpl->allInstructions,inrec->inRecIndexName());
@@ -2187,7 +2190,7 @@ QList<Water*> Database::waters(Recipe const* parent)
 {
    QList<Water*> ret;
    TableSchema* inrec = this->pimpl->dbDefn.table(DatabaseConstants::WATERINRECTABLE);
-   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
+   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->key());
 
    this->pimpl->getElements(*this, ret,filter,DatabaseConstants::WATERINRECTABLE,this->pimpl->allWaters,inrec->inRecIndexName());
 
@@ -2198,7 +2201,7 @@ QList<Salt*> Database::salts(Recipe const* parent)
 {
    QList<Salt*> ret;
    TableSchema* inrec = this->pimpl->dbDefn.table(DatabaseConstants::SALTINRECTABLE);
-   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
+   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->key());
 
    this->pimpl->getElements(*this, ret,filter,DatabaseConstants::SALTINRECTABLE,this->pimpl->allSalts,inrec->inRecIndexName());
 
@@ -2209,7 +2212,7 @@ QList<Yeast*> Database::yeasts(Recipe const* parent)
 {
    QList<Yeast*> ret;
    TableSchema* inrec = this->pimpl->dbDefn.table(DatabaseConstants::YEASTINRECTABLE);
-   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->_key);
+   QString filter = QString("%1 = %2").arg(inrec->recipeIndexName()).arg(parent->key());
 
    this->pimpl->getElements(*this, ret,filter,DatabaseConstants::YEASTINRECTABLE,this->pimpl->allYeasts,inrec->inRecIndexName());
 
@@ -2241,8 +2244,8 @@ BrewNote* Database::newBrewNote(Recipe* parent, bool signal)
       TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::BREWNOTETABLE);
 
       this->pimpl->sqlUpdate(*this, DatabaseConstants::BREWNOTETABLE,
-               QString("%1=%2").arg(tbl->recipeIndexName()).arg(parent->_key),
-               QString("%1=%2").arg(tbl->keyName()).arg(tmp->_key) );
+               QString("%1=%2").arg(tbl->recipeIndexName()).arg(parent->key()),
+               QString("%1=%2").arg(tbl->keyName()).arg(tmp->key()) );
 
    }
    catch (QString e) {
@@ -2432,8 +2435,8 @@ Mash* Database::newMash(Mash* other, bool displace)
          if( displace ) {
             TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::RECTABLE);
             this->pimpl->sqlUpdate(*this, DatabaseConstants::RECTABLE,
-                       QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(tmp->_key),
-                       QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(other->_key));
+                       QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(tmp->key()),
+                       QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(other->key()));
          }
       }
    }
@@ -2467,8 +2470,8 @@ Mash* Database::newMash(Recipe* parent, bool transact)
       // Connect tmp to parent, removing any existing mash in parent.
       TableSchema* tbl = this->pimpl->dbDefn.table(DatabaseConstants::RECTABLE);
       this->pimpl->sqlUpdate(*this, DatabaseConstants::RECTABLE,
-                 QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(tmp->_key),
-                 QString("%1=%2").arg(tbl->keyName()).arg(parent->_key));
+                 QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId)).arg(tmp->key()),
+                 QString("%1=%2").arg(tbl->keyName()).arg(parent->key()));
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -2505,7 +2508,7 @@ MashStep* Database::newMashStep(Mash* mash, bool connected)
                         .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted))
                         .arg(Brewken::dbFalse())
                         .arg(tbl->foreignKeyToColumn())
-                        .arg(mash->_key);
+                        .arg(mash->key());
 
    sqlDatabase().transaction();
 
@@ -2519,8 +2522,8 @@ MashStep* Database::newMashStep(Mash* mash, bool connected)
 
       // we need to set the mash_id first
       this->pimpl->sqlUpdate(*this, DatabaseConstants::MASHSTEPTABLE,
-                 QString("%1=%2 ").arg(tbl->foreignKeyToColumn()).arg(mash->_key),
-                 QString("%1=%2").arg(tbl->keyName()).arg(tmp->_key)
+                 QString("%1=%2 ").arg(tbl->foreignKeyToColumn()).arg(mash->key()),
+                 QString("%1=%2").arg(tbl->keyName()).arg(tmp->key())
                );
 
       // Just sets the step number within the mash to the next available number.
@@ -2528,7 +2531,7 @@ MashStep* Database::newMashStep(Mash* mash, bool connected)
       // should be more widely supported than isnull
       this->pimpl->sqlUpdate(*this, DatabaseConstants::MASHSTEPTABLE,
                  coalesce,
-                 QString("%1=%2").arg(tbl->keyName()).arg(tmp->_key));
+                 QString("%1=%2").arg(tbl->keyName()).arg(tmp->key()));
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -2832,7 +2835,7 @@ int Database::insertElement(NamedEntity * ins)
       qCritical() << QString("%1 %2 %3").arg(Q_FUNC_INFO).arg(e).arg( q.lastError().text());
       abort();
    }
-   ins->_key = key;
+   ins->key() = key;
 
    return key;
 }
@@ -2965,7 +2968,7 @@ int Database::insertMashStep(MashStep* ins, Mash* parent)
                         .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::deleted))
                         .arg(Brewken::dbFalse())
                         .arg(tbl->foreignKeyToColumn())
-                        .arg(parent->_key);
+                        .arg(parent->key());
    int key;
 
    sqlDatabase().transaction();
@@ -2975,8 +2978,8 @@ int Database::insertMashStep(MashStep* ins, Mash* parent)
       ins->setCacheOnly(false);
 
       this->pimpl->sqlUpdate(*this, DatabaseConstants::MASHSTEPTABLE,
-                 QString("%1=%2 ").arg(tbl->foreignKeyToColumn()).arg(parent->_key),
-                 QString("%1=%2").arg(tbl->keyName()).arg(ins->_key)
+                 QString("%1=%2 ").arg(tbl->foreignKeyToColumn()).arg(parent->key()),
+                 QString("%1=%2").arg(tbl->keyName()).arg(ins->key())
                );
 
       // Just sets the step number within the mash to the next available number.
@@ -2984,7 +2987,7 @@ int Database::insertMashStep(MashStep* ins, Mash* parent)
       // should be more widely supported than isnull
       this->pimpl->sqlUpdate(*this, DatabaseConstants::MASHSTEPTABLE,
                  coalesce,
-                 QString("%1=%2").arg(tbl->keyName()).arg(ins->_key));
+                 QString("%1=%2").arg(tbl->keyName()).arg(ins->key()));
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -3105,7 +3108,7 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
       key = insertElement(ins);
       ins->setCacheOnly(false);
 
-      QString const setClause = QString("%1=%2").arg(tbl->foreignKeyToColumn()).arg(parent->_key);
+      QString const setClause = QString("%1=%2").arg(tbl->foreignKeyToColumn()).arg(parent->key());
       QString const whereClause = QString("%1=%2").arg(tbl->keyName()).arg(key);
 
       this->pimpl->sqlUpdate(*this, DatabaseConstants::BREWNOTETABLE, setClause, whereClause);
@@ -3244,7 +3247,7 @@ void Database::setInventory(NamedEntity* ins, QVariant value, int invKey, bool n
    }
 }
 
-void Database::updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify, bool transact )
+/*void Database::updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify, bool transact )
 {
    TableSchema* schema =this->pimpl->dbDefn.table( object->table() );
    int idx = object->metaObject()->indexOfProperty(propName.toUtf8().data());
@@ -3294,10 +3297,10 @@ void Database::updateEntry( NamedEntity* object, QString propName, QVariant valu
    if ( notify )
       emit object->changed(mProp,value);
 
-}
+}*/
 
 
-QVariant Database::get( DatabaseConstants::DbTableId table, int key, QString col_name )
+/*QVariant Database::get( DatabaseConstants::DbTableId table, int key, QString col_name )
 {
    QSqlQuery q;
    TableSchema* tbl = this->pimpl->dbDefn.table(table);
@@ -3332,7 +3335,7 @@ QVariant Database::get( DatabaseConstants::DbTableId table, int key, QString col
 QVariant Database::get( TableSchema* tbl, int key, QString col_name )
 {
    return get( tbl->dbTable(), key, col_name.toUtf8().data());
-}
+}*/
 
 
 // Inventory functions ========================================================
@@ -3435,7 +3438,7 @@ void Database::addToRecipe( Recipe* rec, Equipment* e, bool noCopy, bool transac
       // Update equipment_id
       this->pimpl->sqlUpdate(*this, DatabaseConstants::RECTABLE,
                 QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropEquipmentId)).arg(newEquip->key()),
-                QString("%1=%2").arg(tbl->keyName()).arg(rec->_key));
+                QString("%1=%2").arg(tbl->keyName()).arg(rec->key()));
 
    }
    catch (QString e ) {
@@ -3582,7 +3585,7 @@ Mash * Database::addToRecipe( Recipe* rec, Mash* m, bool noCopy, bool transact )
       // Update mash_id
       this->pimpl->sqlUpdate(*this, DatabaseConstants::RECTABLE,
                QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropMashId) ).arg(newMash->key()),
-               QString("%1=%2").arg(tbl->keyName()).arg(rec->_key));
+               QString("%1=%2").arg(tbl->keyName()).arg(rec->key()));
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -3682,7 +3685,7 @@ Style * Database::addToRecipe( Recipe* rec, Style* s, bool noCopy, bool transact
 
       this->pimpl->sqlUpdate(*this, DatabaseConstants::RECTABLE,
                 QString("%1=%2").arg(tbl->foreignKeyToColumn(kpropStyleId)).arg(newStyle->key()),
-                QString("%1=%2").arg(tbl->keyName()).arg(rec->_key));
+                QString("%1=%2").arg(tbl->keyName()).arg(rec->key()));
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -4007,7 +4010,7 @@ void Database::updateDatabase(QString const& filename)
             // the new table, then into the new bt_ table.
             else {
                // Create a new ingredient.
-               oldid = makeObject.value(tbl->tableName())(qNewBtIng.record().value(PropertyNames::NamedEntity::name).toString())->_key;
+               oldid = makeObject.value(tbl->tableName())(qNewBtIng.record().value(PropertyNames::NamedEntity::name).toString())->key();
 
                // Copy in the new data.
                qUpdateOldIng.bindValue( ":id", oldid );

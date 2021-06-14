@@ -120,7 +120,6 @@ class Recipe : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "recipes")
 
-   friend class Database;
    friend class BeerXML;
    friend class RecipeFormatter;
    friend class MainWindow;
@@ -302,7 +301,7 @@ private:
    /*!
     * \brief Remove \c var from the recipe and return what was removed - ie \c var
     */
-   NamedEntity * removeNamedEntity( NamedEntity *var);
+//   NamedEntity * removeNamedEntity( NamedEntity *var);
    template<class T> T * addNamedEntity(T * var);
 
 public:

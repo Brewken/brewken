@@ -26,77 +26,79 @@
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#pragma once
 
+#include <functional>
 #include <memory> // For PImpl
 
-#include <QWidget>
-#include <QMainWindow>
-#include <QString>
-#include <QVariant>
-#include <QFileDialog>
-#include <QPalette>
 #include <QCloseEvent>
-#include <QPrinter>
+#include <QFileDialog>
+#include <QMainWindow>
+#include <QPalette>
 #include <QPrintDialog>
+#include <QPrinter>
+#include <QString>
 #include <QTimer>
 #include <QUndoStack>
+#include <QVariant>
+#include <QWidget>
+
 #include "ui_mainWindow.h"
 #include "SimpleUndoableUpdate.h"
 
-#include <functional>
 
 // Forward Declarations
-class FermentableDialog;
-class HopDialog;
-class MiscDialog;
-class YeastDialog;
+
 class AboutDialog;
-class Recipe;
 class BeerColorWidget;
-class FermentableEditor;
-class MiscEditor;
-class HopEditor;
-class YeastEditor;
-class EquipmentEditor;
-class StyleEditor;
-class OptionDialog;
-class MashEditor;
-class MashStepEditor;
-class MashWizard;
 class BrewDayScrollWidget;
-class HtmlViewer;
-class ScaleRecipeTool;
-class RecipeFormatter;
-class OgAdjuster;
-class ConverterTool;
-class HydrometerTool;
-class TimerMainDialog;
-class PrimingDialog;
-class StrikeWaterDialog;
-class RecipeExtrasWidget;
-class RefractoDialog;
-class MashDesigner;
-class MashListModel;
-class PitchDialog;
 class BrewNoteWidget;
-class FermentableTableModel;
-class FermentableSortFilterProxyModel;
-class HopTableModel;
-class HopSortFilterProxyModel;
-class MiscTableModel;
-class MiscSortFilterProxyModel;
-class YeastTableModel;
-class YeastSortFilterProxyModel;
-class MashStepTableModel;
+class BtDatePopup;
+class ConverterTool;
+class EquipmentEditor;
 class EquipmentListModel;
+class FermentableDialog;
+class FermentableEditor;
+class FermentableSortFilterProxyModel;
+class FermentableTableModel;
+class HopDialog;
+class HopEditor;
+class HopSortFilterProxyModel;
+class HopTableModel;
+class HtmlViewer;
+class HydrometerTool;
+class MashDesigner;
+class MashEditor;
+class MashListModel;
+class MashStepEditor;
+class MashStepTableModel;
+class MashWizard;
+class MiscDialog;
+class MiscEditor;
+class MiscSortFilterProxyModel;
+class MiscTableModel;
+class NamedMashEditor;
+class OgAdjuster;
+class OptionDialog;
+class PitchDialog;
+class PrimingDialog;
+class Recipe;
+class RecipeExtrasWidget;
+class RecipeFormatter;
+class RefractoDialog;
+class ScaleRecipeTool;
+class StrikeWaterDialog;
+class StyleEditor;
 class StyleListModel;
 class StyleSortFilterProxyModel;
-class NamedMashEditor;
-class BtDatePopup;
-
+class TimerMainDialog;
 class WaterDialog;
-class WaterListModel;
 class WaterEditor;
+class WaterListModel;
+class YeastDialog;
+class YeastEditor;
+class YeastSortFilterProxyModel;
+class YeastTableModel;
 
 /*!
  * \class MainWindow

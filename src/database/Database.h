@@ -50,7 +50,7 @@
 
 // Forward declarations
 class BeerXML;
-class BrewNote;
+/*class BrewNote;
 class Equipment;
 class Fermentable;
 class Hop;
@@ -58,10 +58,11 @@ class Instruction;
 class Mash;
 class MashStep;
 class Misc;
-//class Recipe;
+class Recipe;
 class Style;
 class Water;
 class Yeast;
+*/
 
 /*!
  * \class Database
@@ -146,7 +147,7 @@ public:
                                    QString const& password="brewken");
    bool loadSuccessful();
 
-   template<class NE> DbNamedEntityRecords<NE> & getRecords() const;
+/*   template<class NE> DbNamedEntityRecords<NE> & getRecords() const;
 
    void updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify = true, bool transact = false );
 
@@ -154,7 +155,7 @@ public:
    QVariant get( DatabaseConstants::DbTableId table, int key, QString col_name );
 
    QVariant get( TableSchema* tbl, int key, QString col_name );
-
+*/
    //! Get a table view.
    QTableView* createView( DatabaseConstants::DbTableId table );
 /*
@@ -230,7 +231,7 @@ public:
 //   void duplicateMashSteps(Mash *oldMash, Mash *newMash);
 
    //! Get anything by key value.
-   Recipe* recipe(int key);
+/*   Recipe* recipe(int key);
    Equipment* equipment(int key);
    Fermentable* fermentable(int key);
    Hop* hop(int key);
@@ -238,8 +239,8 @@ public:
    Style* style(int key);
    Yeast* yeast(int key);
    Salt* salt(int key);
-///   Water* water(int key);
-
+   Water* water(int key);
+*/
    // Add a COPY of these ingredients to a recipe, then call the changed()
    // signal corresponding to the appropriate QList
    // of ingredients in rec. If noCopy is true, then don't copy, and set
@@ -279,18 +280,18 @@ public:
     *  \param ing
     *  \returns the parent of the ingredient deleted (which is needed to be able to undo the removal)
     */
-   NamedEntity * removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* ing );
+   //NamedEntity * removeNamedEntityFromRecipe( Recipe* rec, NamedEntity* ing );
 
    // An odd ball I can't resolve quite yet. But I will.
    // This one isn't even needed. remove does it
-   void removeFromRecipe( Recipe* rec, Instruction* ins );
+   //void removeFromRecipe( Recipe* rec, Instruction* ins );
 
    //! Remove \b step from \b mash.
-   void removeFrom( Mash* mash, MashStep* step );
+//   void removeFrom( Mash* mash, MashStep* step );
 
    // Or you can mark whole lists as deleted.
    // ONE METHOD TO CALL THEM ALL AND IN DARKNESS BIND THEM!
-   template<class T> void remove(QList<T*> list) {
+/*   template<class T> void remove(QList<T*> list) {
       if ( list.empty() ) {
          return;
       }
@@ -350,13 +351,13 @@ public:
          emit deletedSignal(ing);
       }
    }
-
+*/
    //! Get the recipe that this \b ing is part of.
-   Recipe* getParentRecipe(NamedEntity const * ing);
+///   Recipe* getParentRecipe(NamedEntity const * ing);
 
    //! Get the recipe that this \b note is part of.  (BrewNotes are stored differently so we need a different function
    //  for them.)
-   Recipe* getParentRecipe( BrewNote const* note );
+///   Recipe* getParentRecipe( BrewNote const* note );
 /*
    //! Interchange the step orders of the two steps. Must be in same mash.
    void swapMashStepOrder(MashStep* m1, MashStep* m2);
@@ -459,9 +460,9 @@ public:
 
 signals:
    void changed(QMetaProperty prop, QVariant value);
-   void newEquipmentSignal(Equipment*);
+/*   void newEquipmentSignal(Equipment*);
    void newFermentableSignal(Fermentable*);
-//   void newHopSignal(Hop*);
+   void newHopSignal(Hop*);
    void newMashSignal(Mash*);
    void newMiscSignal(Misc*);
    void newRecipeSignal(Recipe*);
@@ -488,7 +489,7 @@ signals:
 
    // MashSteps need signals too
    void newMashStepSignal(MashStep*);
-
+*/
    // Sigh
    void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
 

@@ -80,7 +80,6 @@ class NamedEntity : public QObject
    Q_OBJECT
    Q_CLASSINFO("version","1")
 
-   friend class Database;
    friend class BeerXML;
 public:
    NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name = QString(),
@@ -156,7 +155,12 @@ public:
    //! \returns our key in the table we are stored in.
    int key() const;
 
-   void setKey(int key);
+   /**
+    * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
+    *
+    *        This is virtual because, in some cases, subclasses are going to want to do additional work here
+    */
+   virtual void setKey(int key);
 
    int getParentKey() const;
    void setParentKey(int parentKey);
@@ -172,6 +176,7 @@ public:
    QMetaProperty metaProperty(QString const& name) const;
 
    // .:TODO:. MY 2021-03-23 These don't really belong here
+   // Should be able to get rid of them when we finish refactoring BeerXml.cpp
    // Some static helpers to convert to/from text.
    static double getDouble( const QDomText& textNode );
    static bool getBool( const QDomText& textNode );
@@ -292,8 +297,8 @@ protected:
 private:
   mutable QString _folder;
   mutable QString _name;
-  mutable QVariant _display;
-  mutable QVariant _deleted;
+  mutable bool _display;
+  mutable bool _deleted;
 
 };
 

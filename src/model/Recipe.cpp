@@ -1203,7 +1203,7 @@ template<class NE> NE * Recipe::add(NE * var) {
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
-// means, amongst other things, that we can reference the pimpl.
+// means, amongst other things, that we can reference the pimpl.)
 //
 template Hop *         Recipe::add(Hop *         var);
 template Fermentable * Recipe::add(Fermentable * var);
@@ -1230,7 +1230,7 @@ template<> bool Recipe::uses<Equipment> (Equipment  const & var) const { return 
 template<> bool Recipe::uses<Mash>      (Mash       const & var) const { return var.key() == this->mashId; }
 template<> bool Recipe::uses<Style>     (Style      const & var) const { return var.key() == this->styleId; }
 
-NamedEntity * Recipe::removeNamedEntity( NamedEntity *var )
+/*NamedEntity * Recipe::removeNamedEntity( NamedEntity *var )
 {
 //   qDebug() << QString("%1").arg(Q_FUNC_INFO);
 
@@ -1242,7 +1242,7 @@ NamedEntity * Recipe::removeNamedEntity( NamedEntity *var )
    } else {
       return Database::instance().removeNamedEntityFromRecipe( this, var );
    }
-}
+}*/
 
 template<class NE> NE * Recipe::remove(NE * var) {
    int idToLookFor = var->key();
@@ -1946,30 +1946,11 @@ double Recipe::points()
 }
 
 //=========================Relational Getters=============================
-Style* Recipe::style()
-{
-/*   Style *tmp;
-   if ( styleId != 0 ) {
-      tmp =  Database::instance().styleById(styleId);
-   }
-   else {
-      tmp = Database::instance().style(this);
-      if ( tmp ) {
-         styleId = tmp->key();
-      }
-      else {
-         styleId = 0;
-      }
-   }
-   return tmp;*/
-   return DbNamedEntityRecords<Style>::getInstance().getByIdRaw(this->styleId);
-}
+Style* Recipe::style() { return ObjectStoreWrapper::getByIdRaw<Style>(this->styleId); }
 int Recipe::getStyleId() const { return this->styleId; }
-
-// I wonder if we could cache any of this. It is an awful lot of back and forth to the db
-Mash* Recipe::mash() const { return DbNamedEntityRecords<Mash>::getInstance().getByIdRaw(this->mashId); }
+Mash* Recipe::mash() const { return ObjectStoreWrapper::getByIdRaw<Mash>(this->mashId); }
 int Recipe::getMashId() const { return this->mashId; }
-Equipment* Recipe::equipment() const { return DbNamedEntityRecords<Equipment>::getInstance().getByIdRaw(this->equipmentId); }
+Equipment* Recipe::equipment() const { return ObjectStoreWrapper::getByIdRaw<Equipment>(this->equipmentId); }
 int Recipe::getEquipmentId() const { return this->equipmentId; }
 
 QList<Instruction*> Recipe::instructions() const { return this->pimpl->getAllMyRaw<Instruction>(); }
@@ -2871,7 +2852,7 @@ NamedEntity * Recipe::getParent() {
 
    // If we (now) know our parent, get a pointer to it
    if (this->parentKey) {
-      myParent = Database::instance().recipe(this->parentKey);
+      myParent = ObjectStoreWrapper::getByIdRaw<Recipe>(this->parentKey);
    }
 
    // Return whatever we got

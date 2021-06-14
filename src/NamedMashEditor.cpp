@@ -233,8 +233,7 @@ bool NamedMashEditor::justOne(QModelIndexList selected)
    return true;
 }
 
-void NamedMashEditor::removeMashStep()
-{
+void NamedMashEditor::removeMashStep() {
    if ( ! mashObs )
       return;
 
@@ -243,7 +242,8 @@ void NamedMashEditor::removeMashStep()
       return;
 
    MashStep* step = mashStepTableModel->getMashStep(selected[0].row());
-   Database::instance().removeFrom(mashObs, step);
+   this->mashObs->removeMashStep(step);
+   return;
 }
 
 void NamedMashEditor::moveMashStepUp()
@@ -311,8 +311,11 @@ void NamedMashEditor::removeMash()
    disconnect(mashObs, 0, this, 0);
    // Delete the mashsteps
    QList<MashStep*> steps = mashObs->mashSteps();
-   Database::instance().remove(steps);
+   for (auto step : steps) {
+      ObjectStoreWrapper::softDelete(*step);
+   }
    // and delete the mash itself
-   Database::instance().remove(mashObs);
+   ObjectStoreWrapper::softDelete(*this->mashObs);
    setMash(mashListModel->at(newMash));
+   return;
 }

@@ -1,5 +1,6 @@
 /**
- * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,16 +15,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef BTTREEVIEW_H_
-#define BTTREEVIEW_H_
-
-class BtTreeView;
+#ifndef BTTREEVIEW_H
+#define BTTREEVIEW_H
+#pragma once
 
 #include <QTreeView>
 #include <QWidget>
 #include <QPoint>
 #include <QMouseEvent>
+
 #include "BtTreeItem.h"
 #include "BtTreeFilterProxyModel.h"
 
@@ -42,14 +42,13 @@ class Water;
 /*!
  * \class BtTreeItem
  *
- *
  * \brief View class for BtTreeModel.
  */
 class BtTreeView : public QTreeView
 {
    Q_OBJECT
 public:
-   //! \brief The standard contructor
+   //! \brief The standard constructor
    BtTreeView(QWidget *parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::RECIPEMASK);
    //! \brief returns the model associated with this tree
    BtTreeModel* model();
@@ -257,4 +256,4 @@ public:
    WaterTreeView(QWidget *parent = nullptr);
 
 };
-#endif /* BREWKENTREEVIEW_H_ */
+#endif

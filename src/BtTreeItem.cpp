@@ -23,6 +23,7 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QHash>
 #include <QModelIndex>
 #include <QObject>
 #include <QString>
@@ -44,6 +45,21 @@
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 
+namespace {
+   QHash<BtTreeItem::ITEMTYPE, char const *> const ItemTypeToName {
+      {BtTreeItem::RECIPE,      "RECIPE"     },
+      {BtTreeItem::EQUIPMENT,   "EQUIPMENT"  },
+      {BtTreeItem::FERMENTABLE, "FERMENTABLE"},
+      {BtTreeItem::HOP,         "HOP"        },
+      {BtTreeItem::MISC,        "MISC"       },
+      {BtTreeItem::YEAST,       "YEAST"      },
+      {BtTreeItem::BREWNOTE,    "BREWNOTE"   },
+      {BtTreeItem::STYLE,       "STYLE"      },
+      {BtTreeItem::FOLDER,      "FOLDER"     },
+      {BtTreeItem::WATER,       "WATER"      }
+   };
+}
+
 bool operator==(BtTreeItem& lhs, BtTreeItem& rhs)
 {
    // Things of different types are not equal
@@ -61,13 +77,14 @@ BtTreeItem::BtTreeItem(int _type, BtTreeItem *parent)
 
 BtTreeItem::~BtTreeItem()
 {
-   qDeleteAll(childItems);
+   qDeleteAll(this->childItems);
 }
 
 BtTreeItem* BtTreeItem::child(int number)
 {
-   if ( number < childItems.count() )
-      return childItems.value(number);
+   if ( number < this->childItems.count() ) {
+      return this->childItems.value(number);
+   }
 
    return nullptr;
 }
@@ -84,7 +101,7 @@ int BtTreeItem::type()
 
 int BtTreeItem::childCount() const
 {
-   return childItems.count();
+   return this->childItems.count();
 }
 
 int BtTreeItem::columnCount(int _type) const
@@ -167,14 +184,18 @@ QVariant BtTreeItem::data(int column)
    return data(type(),column);
 }
 
-bool BtTreeItem::insertChildren(int position, int count, int _type)
-{
-   if ( position < 0  || position > childItems.size())
+bool BtTreeItem::insertChildren(int position, int count, int _type) {
+   qDebug() <<
+      Q_FUNC_INFO << "Inserting" << count << "children of type" << _type << "(" <<
+      this->itemTypeToString(static_cast<BtTreeItem::ITEMTYPE>(_type)) << ") at position" << position;
+   if ( position < 0  || position > this->childItems.size()) {
+      qWarning() << Q_FUNC_INFO << "Position" << position << "outside range (0, " << this->childItems.size() << ")";
       return false;
+   }
 
    for (int row = 0; row < count; ++row) {
       BtTreeItem *newItem = new BtTreeItem(_type, this);
-      childItems.insert(position + row, newItem);
+      this->childItems.insert(position + row, newItem);
    }
 
    return true;
@@ -182,11 +203,11 @@ bool BtTreeItem::insertChildren(int position, int count, int _type)
 
 bool BtTreeItem::removeChildren(int position, int count)
 {
-   if ( position < 0 || position + count > childItems.count() )
+   if ( position < 0 || position + count > this->childItems.count() )
       return false;
 
    for (int row = 0; row < count; ++row)
-      delete childItems.takeAt(position);
+      delete this->childItems.takeAt(position);
       // FIXME: memory leak here. With delete, it's a concurrency/memory
       // access error, due to the fact that these pointers are floating around.
       //childItems.takeAt(position);
@@ -532,4 +553,11 @@ QString BtTreeItem::name()
       return QString();
    tmp = qobject_cast<NamedEntity*>(_thing);
    return tmp->name();
+}
+
+char const * const BtTreeItem::itemTypeToString(BtTreeItem::ITEMTYPE itemType) {
+   if (ItemTypeToName.contains(itemType)) {
+      return ItemTypeToName.value(itemType);
+   }
+   return "Unknown!";
 }

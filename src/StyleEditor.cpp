@@ -1,5 +1,5 @@
 /**
- * StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,15 +16,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include "database/Database.h"
 #include "StyleEditor.h"
+
 #include <QInputDialog>
+
+#include "Brewken.h"
+#include "database/Database.h"
 #include "model/Style.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
 #include "Unit.h"
-#include "Brewken.h"
 
 StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor)
    : QDialog(parent), obsStyle(0)
@@ -72,12 +73,13 @@ void StyleEditor::setStyle( Style* s )
    styleComboBox->setCurrentIndex(styleListModel->indexOf(obsStyle));
 }
 
-void StyleEditor::removeStyle()
-{
-   if( obsStyle )
-      Database::instance().remove(obsStyle);
+void StyleEditor::removeStyle() {
+   if (this->obsStyle) {
+      ObjectStoreWrapper::softDelete(*this->obsStyle);
+   }
 
    setStyle(0);
+   return;
 }
 
 void StyleEditor::styleSelected( const QString& /*text*/ )

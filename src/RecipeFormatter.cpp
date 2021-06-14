@@ -38,6 +38,7 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Style.h"
+#include "model/Water.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "Unit.h"

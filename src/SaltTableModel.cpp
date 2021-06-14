@@ -350,8 +350,10 @@ void SaltTableModel::removeSalts(QList<int>deadSalts)
 
          // Dead salts do not malinger in the database. This will
          // delete the thing, not just mark it deleted
-         if ( ! zombie->cacheOnly() )
-            Database::instance().removeNamedEntityFromRecipe(m_rec,zombie);
+         if ( ! zombie->cacheOnly() ) {
+            this->m_rec->remove(zombie);
+            ObjectStoreWrapper::hardDelete(*zombie);
+         }
       }
    }
    emit newTotals();

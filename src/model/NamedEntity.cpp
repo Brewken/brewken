@@ -1,5 +1,5 @@
 /**
- * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "model/NamedEntity.h"
 
 #include <typeinfo>
@@ -41,7 +40,7 @@ NamedEntity::NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_
      _folder(folder),
      _name(t_name),
      _display(t_display),
-     _deleted(QVariant())
+     _deleted(false)
 {
    return;
 }
@@ -64,10 +63,14 @@ NamedEntity::NamedEntity(NamedEntity const & other) : QObject(nullptr),
 }
 
 NamedEntity::NamedEntity(NamedParameterBundle & namedParameterBundle, DatabaseConstants::DbTableId table) :
-   QObject{nullptr},
-   _key{namedParameterBundle(PropertyNames::NamedEntity::key).toInt()},
-   _table(table),
-   _name{namedParameterBundle(PropertyNames::NamedEntity::name).toString()} {
+   QObject  {nullptr},
+   _key     {namedParameterBundle(PropertyNames::NamedEntity::key).toInt()},
+   _table   {table},
+   parentKey{namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)},     // Not all subclasses have parents
+   _folder  {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
+   _name    {namedParameterBundle(PropertyNames::NamedEntity::name).toString()},
+   _display {namedParameterBundle(PropertyNames::NamedEntity::display).toBool()},
+   _deleted {namedParameterBundle(PropertyNames::NamedEntity::deleted).toBool()} {
    return;
 }
 
@@ -138,14 +141,12 @@ bool NamedEntity::operator!=(NamedEntity const & other) const {
 bool NamedEntity::operator<(const NamedEntity & other) const { return (this->_name < other._name); }
 bool NamedEntity::operator>(const NamedEntity & other) const { return (this->_name > other._name); }
 
-bool NamedEntity::deleted() const
-{
-   return _deleted.toBool();
+bool NamedEntity::deleted() const {
+   return this->_deleted;
 }
 
-bool NamedEntity::display() const
-{
-   return _display.toBool();
+bool NamedEntity::display() const {
+   return this->_display;
 }
 
 // Sigh. New databases, more complexity
@@ -374,10 +375,10 @@ void NamedEntity::setEasy(char const * const prop_name, QVariant value, bool not
 }
 
 
-QVariant NamedEntity::get( const QString& col_name ) const
+/*QVariant NamedEntity::get( const QString& col_name ) const
 {
    return Database::instance().get( _table, _key, col_name );
-}
+}*/
 
 void NamedEntity::setInventory( const QVariant& value, int invKey, bool notify )
 {

@@ -53,12 +53,10 @@ namespace PropertyNames::Yeast { static char const * const formString = "formStr
  *
  * \brief Model for yeast records in the database.
  */
-class Yeast : public NamedEntity
-{
+class Yeast : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "yeasts")
 
-   friend class Database;
    friend class BeerXML;
    friend class YeastDialog;
 public:

@@ -47,7 +47,8 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    DbRecords::FieldSimpleDefns const BREWNOTE_SIMPLE_FIELDS {
       {DbRecords::FieldType::Int,    "id",                      PropertyNames::NamedEntity::key},
-      {DbRecords::FieldType::String, "name",                    PropertyNames::NamedEntity::name},
+      // NB: BrewNotes don't have names in DB {DbRecords::FieldType::String, "name",                    PropertyNames::NamedEntity::name},
+      {DbRecords::FieldType::String, "'Dummy name'",                    PropertyNames::NamedEntity::name},
       {DbRecords::FieldType::Bool,   "display",                 PropertyNames::NamedEntity::display},
       {DbRecords::FieldType::Bool,   "deleted",                 PropertyNames::NamedEntity::deleted},
       {DbRecords::FieldType::String, "folder",                  PropertyNames::NamedEntity::folder},
@@ -60,6 +61,7 @@ namespace {
       {DbRecords::FieldType::Date,   "fermentdate",             PropertyNames::BrewNote::fermentDate},
       {DbRecords::FieldType::Double, "fg",                      PropertyNames::BrewNote::fg},
       {DbRecords::FieldType::Double, "final_volume",            PropertyNames::BrewNote::finalVolume_l},
+      // NB: BrewNotes don't have folders, as each one is owned by a Recipe
       {DbRecords::FieldType::Double, "mash_final_temp",         PropertyNames::BrewNote::mashFinTemp_c},
       {DbRecords::FieldType::String, "notes",                   PropertyNames::BrewNote::notes},
       {DbRecords::FieldType::Double, "og",                      PropertyNames::BrewNote::og},
@@ -240,8 +242,7 @@ namespace {
       {DbRecords::FieldType::Double, "tun_weight",        PropertyNames::Mash::tunWeight_kg},
    };
    DbRecords::FieldManyToManyDefns const MASH_MULTI_FIELDS {
-      // Mashes don't have children, but they do have MashSteps
-      {"mashstep", "mash_id", "id", PropertyNames::Mash::mashStepIds}  // .:TODO:. Still need to do the lazy-loading code in Mash.cpp to turn IDs into object pointers
+      // Mashes don't have children, and the link with their MashSteps is stored in the MashStep (as between Recipe and BrewNotes)
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,17 +261,17 @@ namespace {
       {DbRecords::FieldType::String, "name",              PropertyNames::NamedEntity::name           },
       {DbRecords::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted        },
       {DbRecords::FieldType::Bool,   "display",           PropertyNames::NamedEntity::display        },
-      {DbRecords::FieldType::String, "folder",            PropertyNames::NamedEntity::folder         },
+      // NB: MashSteps don't have folders, as each one is owned by a Mash
       {DbRecords::FieldType::Double,  "decoction_amount", PropertyNames::MashStep::decoctionAmount_l },
       {DbRecords::FieldType::Double,  "end_temp",         PropertyNames::MashStep::endTemp_c         },
       {DbRecords::FieldType::Double,  "infuse_amount",    PropertyNames::MashStep::infuseAmount_l    },
       {DbRecords::FieldType::Double,  "infuse_temp",      PropertyNames::MashStep::infuseTemp_c      },
+      {DbRecords::FieldType::Int,     "mash_id",          PropertyNames::MashStep::mashId            },
       {DbRecords::FieldType::Enum,    "mstype",           PropertyNames::MashStep::type,             &MASH_STEP_TYPE_ENUM},
       {DbRecords::FieldType::Double,  "ramp_time",        PropertyNames::MashStep::rampTime_min      },
       {DbRecords::FieldType::Int,     "step_number",      PropertyNames::MashStep::stepNumber        },
       {DbRecords::FieldType::Double,  "step_temp",        PropertyNames::MashStep::stepTemp_c        },
       {DbRecords::FieldType::Double,  "step_time",        PropertyNames::MashStep::stepTime_min      }
-//      {DbRecords::FieldType::Int,    "mash_id",                PropertyNames::MashStep::x},
    };
    DbRecords::FieldManyToManyDefns const MASH_STEP_MULTI_FIELDS {
       // MashSteps don't have children
@@ -490,22 +491,21 @@ namespace {
       {DbRecords::FieldType::Bool,   "display",     PropertyNames::NamedEntity::display},
       {DbRecords::FieldType::Bool,   "deleted",     PropertyNames::NamedEntity::deleted},
       {DbRecords::FieldType::String, "folder",      PropertyNames::NamedEntity::folder},
-      {DbRecords::FieldType::String, "notes",            PropertyNames::Yeast::notes},
-      {DbRecords::FieldType::Enum,   "ytype",            PropertyNames::Yeast::type,           &DB_YEAST_TYPE_ENUM},
-      {DbRecords::FieldType::Enum,   "form",             PropertyNames::Yeast::form,           &DB_YEAST_FORM_ENUM},
-      {DbRecords::FieldType::Double, "amount",           PropertyNames::Yeast::amount},
+      {DbRecords::FieldType::Bool,   "add_to_secondary", PropertyNames::Yeast::addToSecondary},
       {DbRecords::FieldType::Bool,   "amount_is_weight", PropertyNames::Yeast::amountIsWeight},
-      {DbRecords::FieldType::String, "laboratory",       PropertyNames::Yeast::laboratory},
-      {DbRecords::FieldType::String, "product_id",       PropertyNames::Yeast::productID},
-      {DbRecords::FieldType::Double, "min_temperature",  PropertyNames::Yeast::minTemperature_c},
-      {DbRecords::FieldType::Double, "max_temperature",  PropertyNames::Yeast::maxTemperature_c},
-      {DbRecords::FieldType::Enum,   "flocculation",     PropertyNames::Yeast::flocculation,   &DB_YEAST_FLOCCULATION_ENUM},
+      {DbRecords::FieldType::Double, "amount",           PropertyNames::Yeast::amount},
       {DbRecords::FieldType::Double, "attenuation",      PropertyNames::Yeast::attenuation_pct},
-      {DbRecords::FieldType::String, "notes",            PropertyNames::Yeast::notes},
-      {DbRecords::FieldType::String, "best_for",         PropertyNames::Yeast::bestFor},
-      {DbRecords::FieldType::Int,    "times_cultured",   PropertyNames::Yeast::timesCultured},
+      {DbRecords::FieldType::Double, "max_temperature",  PropertyNames::Yeast::maxTemperature_c},
+      {DbRecords::FieldType::Double, "min_temperature",  PropertyNames::Yeast::minTemperature_c},
+      {DbRecords::FieldType::Enum,   "flocculation",     PropertyNames::Yeast::flocculation,   &DB_YEAST_FLOCCULATION_ENUM},
+      {DbRecords::FieldType::Enum,   "form",             PropertyNames::Yeast::form,           &DB_YEAST_FORM_ENUM},
+      {DbRecords::FieldType::Enum,   "ytype",            PropertyNames::Yeast::type,           &DB_YEAST_TYPE_ENUM},
       {DbRecords::FieldType::Int,    "max_reuse",        PropertyNames::Yeast::maxReuse},
-      {DbRecords::FieldType::Bool,   "add_to_secondary", PropertyNames::Yeast::addToSecondary}
+      {DbRecords::FieldType::Int,    "times_cultured",   PropertyNames::Yeast::timesCultured},
+      {DbRecords::FieldType::String, "best_for",         PropertyNames::Yeast::bestFor},
+      {DbRecords::FieldType::String, "laboratory",       PropertyNames::Yeast::laboratory},
+      {DbRecords::FieldType::String, "notes",            PropertyNames::Yeast::notes},
+      {DbRecords::FieldType::String, "product_id",       PropertyNames::Yeast::productID}
    };
    DbRecords::FieldManyToManyDefns const YEAST_MULTI_FIELDS {
       {"yeast_children", "child_id", "parent_id", PropertyNames::NamedEntity::parentKey, true}
@@ -582,6 +582,6 @@ template<> DbNamedEntityRecords<Water> & DbNamedEntityRecords<Water>::getInstanc
 }
 
 template<> DbNamedEntityRecords<Yeast> & DbNamedEntityRecords<Yeast>::getInstance() {
-   static DbNamedEntityRecords<Yeast> singleton{"yeast", HOP_SIMPLE_FIELDS, HOP_MULTI_FIELDS};
+   static DbNamedEntityRecords<Yeast> singleton{"yeast", YEAST_SIMPLE_FIELDS, YEAST_MULTI_FIELDS};
    return singleton;
 }

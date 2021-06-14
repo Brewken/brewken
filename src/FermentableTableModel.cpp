@@ -89,27 +89,23 @@ void FermentableTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void FermentableTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void FermentableTableModel::observeDatabase(bool val) {
+   if ( val ) {
       // Observing a database and a recipe are mutually exclusive.
-      observeRecipe(nullptr);
+      this->observeRecipe(nullptr);
 
-      removeAll();
-      connect( &(Database::instance()), &Database::newFermentableSignal, this, &FermentableTableModel::addFermentable );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Fermentable*)), this, SLOT(removeFermentable(Fermentable*)) );
+      this->removeAll();
+      connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectInserted, this, &FermentableTableModel::addFermentable);
+      connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectDeleted,  this, &FermentableTableModel::removeFermentable);
       addFermentables( DbNamedEntityRecords<Fermentable>::getInstance().getAllRaw() );
-   }
-   else
-   {
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
-      removeAll();
+   } else {
+      disconnect(&DbNamedEntityRecords<Fermentable>::getInstance(), nullptr, this, nullptr);
+      this->removeAll();
    }
 }
 
-void FermentableTableModel::addFermentable(Fermentable* ferm)
-{
+void FermentableTableModel::addFermentable(int fermId) {
+   Fermentable * ferm = ObjectStoreWrapper::getByIdRaw<Fermentable>(fermId);
    qDebug() << QString("FermentableTableModel::addFermentable() \"%1\"").arg(ferm->name());
 
    //Check to see if it's already in the list
@@ -129,22 +125,25 @@ void FermentableTableModel::addFermentable(Fermentable* ferm)
    endInsertRows();
 }
 
-void FermentableTableModel::addFermentables(QList<Fermentable*> ferms)
-{
-   qDebug() << QString("FermentableTableModel::addFermentables() Add up to %1 fermentables to existing list of %2").arg(ferms.size()).arg(this->fermObs.size());
+void FermentableTableModel::addFermentables(QList<Fermentable*> ferms) {
+   qDebug() << Q_FUNC_INFO << QString("Add up to %1 fermentables to existing list of %2").arg(ferms.size()).arg(this->fermObs.size());
 
    QList<Fermentable*>::iterator i;
    QList<Fermentable*> tmp;
 
-   for( i = ferms.begin(); i != ferms.end(); i++ ) {
-      if ( recObs == nullptr  && ( (*i)->deleted() || !(*i)->display() ) ) {
+   for (auto ii : ferms) {
+      qDebug() <<
+         Q_FUNC_INFO << "Fermentable #" << ii->key() << (ii->deleted() ? "" : "not") << "deleted, display=" << (ii->display() ? "on" : "off");
+      if ( recObs == nullptr  && ( ii->deleted() || !ii->display() ) ) {
+
             continue;
       }
-      if( !fermObs.contains(*i) )
-         tmp.append(*i);
+      if( !fermObs.contains(ii) ) {
+         tmp.append(ii);
+      }
    }
 
-   qDebug() << QString("FermentableTableModel::addFermentables() After de-duping, adding %1 fermentables").arg(tmp.size());
+   qDebug() << Q_FUNC_INFO << QString("After de-duping, adding %1 fermentables").arg(tmp.size());
 
    int size = fermObs.size();
    if (size+tmp.size()) {
@@ -161,15 +160,17 @@ void FermentableTableModel::addFermentables(QList<Fermentable*> ferms)
    }
 }
 
-bool FermentableTableModel::removeFermentable(Fermentable* ferm)
-{
-   int i;
+void FermentableTableModel::removeFermentable(int fermId, std::shared_ptr<QObject> object) {
+   this->remove(std::static_pointer_cast<Fermentable>(object).get());
+   return;
+}
 
-   i = fermObs.indexOf(ferm);
+bool FermentableTableModel::remove(Fermentable * ferm) {
+   int i = fermObs.indexOf(ferm);
    if( i >= 0 )
    {
       beginRemoveRows( QModelIndex(), i, i );
-      disconnect( ferm, nullptr, this, nullptr );
+      disconnect(ferm, nullptr, this, nullptr);
       fermObs.removeAt(i);
 
       totalFermMass_kg -= ferm->amount_kg();

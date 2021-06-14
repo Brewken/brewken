@@ -64,18 +64,18 @@ void WaterTableModel::observeDatabase(bool val) {
    if( val ) {
       observeRecipe(nullptr);
       removeAll();
-      connect( &(Database::instance()), &Database::newWaterSignal, this, &WaterTableModel::addWater );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Water*)), this, SLOT(removeWater(Water*)) );
-      addWaters( DbNamedEntityRecords<Water>::getInstance().getAllRaw() );
+      connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectInserted, this, &WaterTableModel::addWater);
+      connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectDeleted,  this, &WaterTableModel::removeWater);
+      this->addWaters( DbNamedEntityRecords<Water>::getInstance().getAllRaw() );
    } else {
       removeAll();
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
+      disconnect(&DbNamedEntityRecords<Water>::getInstance(), nullptr, this, nullptr);
    }
    return;
 }
 
-void WaterTableModel::addWater(Water* water)
-{
+void WaterTableModel::addWater(int waterId) {
+   Water* water = ObjectStoreWrapper::getByIdRaw<Water>(waterId);
    if( waterObs.contains(water) )
       return;
    // If we are observing the database, ensure that the item is undeleted and
@@ -132,11 +132,9 @@ void WaterTableModel::addWaters(QList<Water*> waters)
 
 }
 
-void WaterTableModel::removeWater(Water* water)
-{
-   int i;
-
-   i = waterObs.indexOf(water);
+void WaterTableModel::removeWater(int waterId, std::shared_ptr<QObject> object) {
+   Water* water = std::static_pointer_cast<Water>(object).get();
+   int i = waterObs.indexOf(water);
    if( i >= 0 )
    {
       beginRemoveRows( QModelIndex(), i, i );

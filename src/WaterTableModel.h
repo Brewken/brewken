@@ -1,6 +1,7 @@
 /**
- * WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -17,6 +18,9 @@
  */
 #ifndef WATERTABLEMODEL_H
 #define WATERTABLEMODEL_H
+#pragma once
+
+#include <memory>
 
 #include <QAbstractTableModel>
 #include <QItemDelegate>
@@ -32,7 +36,6 @@ class Water;
 class WaterTableWidget;
 class Recipe;
 
-class WaterTableModel;
 class WaterItemDelegate;
 
 enum{ WATERNAMECOL, WATERAMOUNTCOL, WATERCALCIUMCOL, WATERBICARBONATECOL,
@@ -41,7 +44,6 @@ enum{ WATERNAMECOL, WATERAMOUNTCOL, WATERCALCIUMCOL, WATERBICARBONATECOL,
 
 /*!
  * \class WaterTableModel
- *
  *
  * \brief Table model for waters.
  */
@@ -72,8 +74,8 @@ public:
 
 public slots:
    void changed(QMetaProperty,QVariant);
-   void addWater(Water* water);
-   void removeWater(Water* water);
+   void addWater(int waterId);
+   void removeWater(int waterId, std::shared_ptr<QObject> object);
 
 private:
    QList<Water*> waterObs;
@@ -109,4 +111,4 @@ public:
 private:
 };
 
-#endif   // WATERTABLEMODEL_H
+#endif
