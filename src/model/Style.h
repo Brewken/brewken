@@ -65,8 +65,8 @@ class Style : public NamedEntity {
    friend class StyleEditor;
 public:
    Style(QString t_name = "", bool cacheOnly = true);
-   Style(NamedParameterBundle & namedParameterBundle);
-   Style( Style const& other );
+   Style(NamedParameterBundle const & namedParameterBundle);
+   Style( Style const & other );
 
    virtual ~Style() = default;
 
@@ -168,18 +168,13 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Style(DatabaseConstants::DbTableId table, int key);
-   Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    QString m_category;
    QString m_categoryNumber;
    QString m_styleLetter;

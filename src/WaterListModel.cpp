@@ -16,15 +16,15 @@
  */
 #include "WaterListModel.h"
 
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"
 #include "model/Water.h"
 
 WaterListModel::WaterListModel(QWidget* parent) :
    QAbstractListModel(parent),
    m_recipe(nullptr) {
-   connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectInserted, this, &WaterListModel::addWater);
-   connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectDeleted,  this, &WaterListModel::removeWater);
+   connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this, &WaterListModel::addWater);
+   connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &WaterListModel::removeWater);
    repopulateList();
    return;
 }
@@ -124,7 +124,7 @@ void WaterListModel::recChanged(QMetaProperty prop, QVariant val)
 
 void WaterListModel::repopulateList() {
    removeAll();
-   addWaters( DbNamedEntityRecords<Water>::getInstance().getAllRaw() );
+   addWaters( ObjectStoreTyped<Water>::getInstance().getAllRaw() );
    return;
 }
 

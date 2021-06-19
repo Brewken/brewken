@@ -61,7 +61,7 @@ public:
    Q_ENUMS( Type )
 
    MashStep(QString name = "", bool cache = true);
-   MashStep(NamedParameterBundle & namedParameterBundle);
+   MashStep(NamedParameterBundle const & namedParameterBundle);
    MashStep( MashStep const& other );
 
    virtual ~MashStep() = default;
@@ -136,12 +136,9 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   MashStep(DatabaseConstants::DbTableId table, int key);
-   MashStep(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    QString m_typeStr;
    Type m_type;
    double m_infuseAmount_l;

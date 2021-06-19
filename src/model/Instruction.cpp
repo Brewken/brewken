@@ -19,9 +19,8 @@
 #include "model/Instruction.h"
 
 #include "Brewken.h"
-#include "database/Database.h"
-#include "database/InstructionSchema.h"
-#include "database/TableSchemaConst.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Recipe.h"
 
 // This private implementation class holds all private non-virtual members of Instruction
 class Instruction::impl {
@@ -48,7 +47,7 @@ public:
       }
 
       // ...otherwise we have to ask the recipe object store to find our recipe
-      auto result = DbNamedEntityRecords<Recipe>::getInstance().findFirstMatching(
+      auto result = ObjectStoreTyped<Recipe>::getInstance().findFirstMatching(
          [this](std::shared_ptr<Recipe> rec) {return rec->uses(instruction);}
       );
 
@@ -78,8 +77,8 @@ bool Instruction::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Instruction::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Instruction>::getInstance();
+ObjectStore & Instruction::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Instruction>::getInstance();
 }
 
 
@@ -89,63 +88,39 @@ QString Instruction::classNameStr()
    return name;
 }
 
-Instruction::Instruction(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-   pimpl{new impl{*this}},
-     m_directions(QString()),
-     m_hasTimer  (false),
-     m_timerValue(QString()),
-     m_completed (false),
-     m_interval  (0.0),
-     m_cacheOnly(false) {
-   return;
-}
-
 Instruction::Instruction(Instruction const & other) :
-     NamedEntity(other),
-   pimpl{new impl{*this}},
-     m_directions{other.m_directions},
-     m_hasTimer  {other.m_hasTimer  },
-     m_timerValue{other.m_timerValue},
-     m_completed {other.m_completed },
-     m_interval  {other.m_interval  },
-     m_cacheOnly {other.m_cacheOnly } {
+   NamedEntity {other},
+   pimpl       {new impl{*this}},
+   m_directions{other.m_directions},
+   m_hasTimer  {other.m_hasTimer  },
+   m_timerValue{other.m_timerValue},
+   m_completed {other.m_completed },
+   m_interval  {other.m_interval  },
+   m_cacheOnly {other.m_cacheOnly } {
    return;
 }
 
-Instruction::Instruction(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::INSTRUCTIONTABLE, -1, name, true),
-   pimpl{new impl{*this}},
-     m_directions(QString()),
-     m_hasTimer  (false),
-     m_timerValue(QString()),
-     m_completed (false),
-     m_interval  (0.0),
-     m_cacheOnly(cache) {
+Instruction::Instruction(QString name, bool cache) :
+   NamedEntity (-1, name, true),
+   pimpl       {new impl{*this}},
+   m_directions(QString()),
+   m_hasTimer  (false),
+   m_timerValue(QString()),
+   m_completed (false),
+   m_interval  (0.0),
+   m_cacheOnly (cache) {
    return;
 }
 
-Instruction::Instruction(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::INSTRUCTIONTABLE},
-   pimpl{new impl{*this}},
+Instruction::Instruction(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity {namedParameterBundle},
+   pimpl       {new impl{*this}},
    m_directions{namedParameterBundle(PropertyNames::Instruction::directions).toString()},
    m_hasTimer  {namedParameterBundle(PropertyNames::Instruction::hasTimer  ).toBool()},
    m_timerValue{namedParameterBundle(PropertyNames::Instruction::timerValue).toString()},
    m_completed {namedParameterBundle(PropertyNames::Instruction::completed ).toBool()},
    m_interval  {namedParameterBundle(PropertyNames::Instruction::interval  ).toDouble()},
    m_cacheOnly {false} {
-   return;
-}
-
-Instruction::Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool() ),
-   pimpl{new impl{*this}},
-     m_directions(rec.value(kcolInstructionDirections).toString()),
-     m_hasTimer  (rec.value(kcolInstructionHasTimer).toBool()),
-     m_timerValue(rec.value(kcolInstructionTimerValue).toString()),
-     m_completed (rec.value(kcolInstructionCompleted).toBool()),
-     m_interval  (rec.value(kcolInstructionInterval).toDouble()),
-     m_cacheOnly(false) {
    return;
 }
 

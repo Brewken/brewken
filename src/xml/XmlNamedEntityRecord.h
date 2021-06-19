@@ -21,7 +21,7 @@
 #include <QString>
 #include <QList>
 
-#include "database/DbNamedEntityRecords.h"
+#include "database/ObjectStoreTyped.h"
 #include "model/BrewNote.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
@@ -73,7 +73,7 @@ protected:
     */
    virtual bool isDuplicate() {
       auto currentEntity = this->namedEntity;
-      auto matchResult = DbNamedEntityRecords<NE>::getInstance().findFirstMatching(
+      auto matchResult = ObjectStoreTyped<NE>::getInstance().findFirstMatching(
          [currentEntity](std::shared_ptr<NE> ne) {return *ne == *currentEntity;}
       );
       if (matchResult) {
@@ -102,7 +102,7 @@ protected:
       QString currentName = this->namedEntity->name();
 
       while (
-         auto matchResult = DbNamedEntityRecords<NE>::getInstance().findFirstMatching(
+         auto matchResult = ObjectStoreTyped<NE>::getInstance().findFirstMatching(
             [currentName](std::shared_ptr<NE> ne) {return ne->name() == currentName;}
          )
       ) {

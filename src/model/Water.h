@@ -73,7 +73,7 @@ public:
    Q_ENUM(Types Ions)
 
    Water(QString name = "", bool cache = true);
-   Water(NamedParameterBundle & namedParameterBundle);
+   Water(NamedParameterBundle const & namedParameterBundle);
    Water(Water const & other, bool cache = true);
 
    virtual ~Water() = default;
@@ -144,18 +144,13 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Water(DatabaseConstants::DbTableId table, int key);
-   Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    double m_amount;
    double m_calcium_ppm;
    double m_bicarbonate_ppm;

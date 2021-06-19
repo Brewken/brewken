@@ -31,9 +31,9 @@
 #include <QVariant>
 
 #include "Brewken.h"
-#include "database/DbRecords.h"
-#include "database/DatabaseSchema.h"
 #include "model/NamedParameterBundle.h"
+
+class ObjectStore;
 
 namespace PropertyNames::NamedEntity { static char const * const folder = "folder"; /* previously kpropFolder */ }
 namespace PropertyNames::NamedEntity { static char const * const display = "display"; /* previously kpropDisplay */ }
@@ -75,17 +75,15 @@ Q_DECLARE_METATYPE( uintptr_t )
  * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
  * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
  */
-class NamedEntity : public QObject
-{
+class NamedEntity : public QObject {
    Q_OBJECT
    Q_CLASSINFO("version","1")
 
    friend class BeerXML;
 public:
-   NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name = QString(),
-                  bool t_display = false, QString folder = QString());
-   NamedEntity( NamedEntity const& other );
-   NamedEntity(NamedParameterBundle & namedParameterBundle, DatabaseConstants::DbTableId table);
+   NamedEntity(int key, QString t_name = QString(), bool t_display = false, QString folder = QString());
+   NamedEntity(NamedEntity const & other);
+   NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
@@ -127,7 +125,7 @@ public:
 
    Q_PROPERTY( int key READ key WRITE setKey )
    Q_PROPERTY( int parentKey READ getParentKey WRITE setParentKey )
-   Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
+//   Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
 
    //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
@@ -165,9 +163,16 @@ public:
    int getParentKey() const;
    void setParentKey(int parentKey);
 
+   /**
+    * \brief Get the IDs of this object's parent, children and siblings (plus the ID of the object itself).
+    *        A child object is just a copy of the parent that's being used in a Recipe.  Not all NamedEntity subclasses
+    *        have children, just Equipment, Fermentable, Hop, Misc and Yeast.
+    */
+   QVector<int> getParentAndChildrenIds() const;
+
    // .:TODO:. MY 2021-03-23 Ultimately we shouldn't need to know this
    //! \returns the table we are stored in.
-   DatabaseConstants::DbTableId table() const;
+//   DatabaseConstants::DbTableId table() const;
    //! \returns the BeerXML version of this element.
    int version() const;
    //! Convenience method to get a meta property by name.
@@ -212,7 +217,7 @@ public:
     *        us to access that parent.
     * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent exists.
     */
-   virtual NamedEntity * getParent() = 0;
+   NamedEntity * getParent() const;
 
    void setParent(NamedEntity const & parentNamedEntity);
 
@@ -253,23 +258,21 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const = 0;
 
    /**
-    * \brief Subclasses need to override this function to return the appropriate instance of \c DbNamedEntityRecords.
-    *        This allows us in this base class to access \c DbNamedEntityRecords<Hop> for \c Hop,
-    *        \c DbNamedEntityRecords<Fermentable> for \c Fermentable, etc.
+    * \brief Subclasses need to override this function to return the appropriate instance of \c ObjectStoreTyped.
+    *        This allows us in this base class to access \c ObjectStoreTyped<Hop> for \c Hop,
+    *        \c ObjectStoreTyped<Fermentable> for \c Fermentable, etc.
     */
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const = 0;
+   virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
 
    //! The key of this entity in its table.
    int _key;
-   //! The table where this entity is stored.
-   DatabaseConstants::DbTableId _table;
    // This is 0 if there is no parent (or parent is not yet known)
    int parentKey;
 
    /*!
     * \param prop_name A meta-property name
     * \param col_name The appropriate column in the table.
-    * \param value the new value
+    * \param value the new value  .:TODO:. We don't need this as wew should be able to read it out of the object
     * \param notify true to call NOTIFY method associated with \c prop_name
     * Should do the following:
     * 1) Set the appropriate value in the appropriate table row.
@@ -291,8 +294,6 @@ protected:
 
    void setInventory( const QVariant& value, int invKey = 0, bool notify=true );
    QVariant getInventory( const QString& col_name ) const;
-
-//   QVariantMap getColumnValueMap() const;
 
 private:
   mutable QString _folder;

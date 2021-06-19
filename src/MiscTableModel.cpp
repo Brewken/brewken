@@ -29,6 +29,7 @@
 
 #include "Brewken.h"
 #include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
@@ -75,12 +76,12 @@ void MiscTableModel::observeDatabase(bool val) {
    if (val) {
       observeRecipe(nullptr);
       removeAll();
-      connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectInserted, this, &MiscTableModel::addMisc);
-      connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectDeleted,  this, &MiscTableModel::removeMisc);
-      addMiscs( DbNamedEntityRecords<Misc>::getInstance().getAllRaw() );
+      connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectInserted, this, &MiscTableModel::addMisc);
+      connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectDeleted,  this, &MiscTableModel::removeMisc);
+      addMiscs( ObjectStoreTyped<Misc>::getInstance().getAllRaw() );
    } else {
       removeAll();
-      disconnect(&DbNamedEntityRecords<Misc>::getInstance(), nullptr, this, nullptr );
+      disconnect(&ObjectStoreTyped<Misc>::getInstance(), nullptr, this, nullptr );
    }
    return;
 }
@@ -436,7 +437,7 @@ void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/)
    // .:TODO:. Look at this, as sender won't be the DB now
    if ( sender() == &(Database::instance()) && QString(prop.name()) == "miscs" ) {
       removeAll();
-      addMiscs( DbNamedEntityRecords<Misc>::getInstance().getAllRaw() );
+      addMiscs( ObjectStoreTyped<Misc>::getInstance().getAllRaw() );
       return;
    }
 }

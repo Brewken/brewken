@@ -29,7 +29,8 @@
 #include <QVector>
 
 #include "Brewken.h"
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "Html.h"
 #include "InstructionWidget.h"
 #include "model/Equipment.h"

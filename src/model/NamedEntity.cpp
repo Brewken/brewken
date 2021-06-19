@@ -26,28 +26,25 @@
 #include <QMetaProperty>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStore.h"
 
 namespace {
  char const * const kVersion = "version";
 }
 
-NamedEntity::NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name, bool t_display, QString folder)
-   : QObject(nullptr),
-     _key(key),
-     _table(table),
-     parentKey(0),
-     _folder(folder),
-     _name(t_name),
-     _display(t_display),
-     _deleted(false)
-{
+NamedEntity::NamedEntity(int key, QString t_name, bool t_display, QString folder) :
+   QObject(nullptr),
+   _key(key),
+   parentKey(0),
+   _folder(folder),
+   _name(t_name),
+   _display(t_display),
+   _deleted(false) {
    return;
 }
 
 NamedEntity::NamedEntity(NamedEntity const & other) : QObject(nullptr),
                                                       _key(-1), // We don't want to copy the other object's key/ID
-                                                      _table(other._table),
                                                       parentKey(other.parentKey),
                                                       _folder(other._folder),
                                                       _name(QString()),
@@ -62,13 +59,12 @@ NamedEntity::NamedEntity(NamedEntity const & other) : QObject(nullptr),
    return;
 }
 
-NamedEntity::NamedEntity(NamedParameterBundle & namedParameterBundle, DatabaseConstants::DbTableId table) :
+NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject  {nullptr},
    _key     {namedParameterBundle(PropertyNames::NamedEntity::key).toInt()},
-   _table   {table},
    parentKey{namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)},     // Not all subclasses have parents
    _folder  {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
-   _name    {namedParameterBundle(PropertyNames::NamedEntity::name).toString()},
+   _name    {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})},   // One subclass, BrewNote, does not have a name
    _display {namedParameterBundle(PropertyNames::NamedEntity::display).toBool()},
    _deleted {namedParameterBundle(PropertyNames::NamedEntity::deleted).toBool()} {
    return;
@@ -213,10 +209,37 @@ void NamedEntity::setParentKey(int parentKey) {
    return;
 }
 
-DatabaseConstants::DbTableId NamedEntity::table() const
-{
-   return _table;
+QVector<int> NamedEntity::getParentAndChildrenIds() const {
+   QVector<int> results;
+   NamedEntity const * parent = this->getParent();
+   if (nullptr == parent) {
+      parent = this;
+   }
+
+   // We are assuming that grandparents do not exist - ie that it's a coding error if they do
+   // We want more than just an assert in that case as debugging would be a lot harder without knowing which
+   // NamedEntity has the unexpected data.
+   if (parent->parentKey > 0) {
+      qCritical() <<
+         Q_FUNC_INFO << this->metaObject()->className() << "#" << this->_key << "has parent #" << this->parentKey <<
+         "with parent #" << parent->parentKey;
+      Q_ASSERT(false);
+   }
+
+   // We've got the parent ingredient...
+   results.append(parent->_key);
+
+   // ...now find all the children, ie all the other ingredients of this type whose parent is the ingredient we just
+   // found
+   QList<std::shared_ptr<QObject> > children = this->getObjectStoreTypedInstance().findAllMatching(
+      [parent](std::shared_ptr<QObject> obj) { return std::static_pointer_cast<NamedEntity>(obj)->getParentKey() == parent->key(); }
+   );
+   for (auto child : children) {
+      results.append(std::static_pointer_cast<NamedEntity>(child)->key());
+   }
+   return results;
 }
+
 
 int NamedEntity::version() const
 {
@@ -361,7 +384,7 @@ void NamedEntity::setEasy(char const * const prop_name, QVariant value, bool not
    // Update the object store, but only if we're already stored there
    // (We don't pass the value as it will get read out of the object via prop_name)
    if (this->_key > 0) {
-      this->getDbNamedEntityRecordsInstance().updateProperty(*this, prop_name);
+      this->getObjectStoreTypedInstance().updateProperty(*this, prop_name);
    }
 
    // Send a signal if needed
@@ -382,28 +405,38 @@ void NamedEntity::setEasy(char const * const prop_name, QVariant value, bool not
 
 void NamedEntity::setInventory( const QVariant& value, int invKey, bool notify )
 {
-   Database::instance().setInventory( this, value, invKey, notify );
+//   Database::instance().setInventory( this, value, invKey, notify );
 }
 
 QVariant NamedEntity::getInventory( const QString& col_name ) const
 {
    QVariant val = 0.0;
-   val = Database::instance().getInventoryAmt(col_name, _table, _key);
+//   val = Database::instance().getInventoryAmt(col_name, _table, _key);
    return val;
 }
+
+NamedEntity * NamedEntity::getParent() const {
+   if (this->parentKey <=0) {
+      return nullptr;
+   }
+
+   return static_cast<NamedEntity *>(this->getObjectStoreTypedInstance().getById(this->parentKey).get());
+}
+
 
 void NamedEntity::setParent(NamedEntity const & parentNamedEntity)
 {
    this->parentKey = parentNamedEntity._key;
+   this->setEasy(PropertyNames::NamedEntity::parentKey, this->parentKey);
    return;
 }
 
 int NamedEntity::insertInDatabase() {
-   return this->getDbNamedEntityRecordsInstance().insertOrUpdate(this);
+   return this->getObjectStoreTypedInstance().insertOrUpdate(this);
 }
 
 void NamedEntity::removeFromDatabase() {
-   this->getDbNamedEntityRecordsInstance().softDelete(this->_key);
+   this->getObjectStoreTypedInstance().softDelete(this->_key);
    return;
 }
 

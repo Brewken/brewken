@@ -20,16 +20,12 @@
  */
 #include "model/Yeast.h"
 
-#include <QDomNode>
-#include <QDomElement>
-#include <QDomText>
 #include <QObject>
 #include <QDebug>
-#include "Brewken.h"
 
-#include "database/TableSchemaConst.h"
-#include "database/YeastSchema.h"
-#include "database/Database.h"
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Inventory.h"
 
 QStringList Yeast::types = QStringList() << "Ale" << "Lager" << "Wheat" << "Wine" << "Champagne";
 QStringList Yeast::forms = QStringList() << "Liquid" << "Dry" << "Slant" << "Culture";
@@ -48,8 +44,8 @@ bool Yeast::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Yeast::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Yeast>::getInstance();
+ObjectStore & Yeast::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Yeast>::getInstance();
 }
 
 QString Yeast::classNameStr()
@@ -59,34 +55,9 @@ QString Yeast::classNameStr()
 }
 
 //============================CONSTRUCTORS======================================
-Yeast::Yeast(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true ),
-     m_typeString(QString()),
-     m_type(static_cast<Yeast::Type>(0)),
-     m_formString(QString()),
-     m_form(static_cast<Yeast::Form>(0)),
-     m_flocculationString(QString()),
-     m_flocculation(static_cast<Yeast::Flocculation>(0)),
-     m_amount(0.0),
-     m_amountIsWeight(false),
-     m_laboratory(QString()),
-     m_productID(QString()),
-     m_minTemperature_c(0.0),
-     m_maxTemperature_c(0.0),
-     m_attenuation_pct(0.0),
-     m_notes(QString()),
-     m_bestFor(QString()),
-     m_timesCultured(0),
-     m_maxReuse(0),
-     m_addToSecondary(false),
-     m_inventory(-1.0),
-     m_inventory_id(0),
-     m_cacheOnly(false)
-{
-}
 
-Yeast::Yeast(QString name, bool cache )
-   : NamedEntity(DatabaseConstants::YEASTTABLE, -1, name, true ),
+Yeast::Yeast(QString name, bool cache ) :
+   NamedEntity(-1, name, true ),
      m_typeString(QString()),
      m_type(static_cast<Yeast::Type>(0)),
      m_formString(QString()),
@@ -105,14 +76,13 @@ Yeast::Yeast(QString name, bool cache )
      m_timesCultured(0),
      m_maxReuse(0),
      m_addToSecondary(false),
-     m_inventory(-1),
-     m_inventory_id(0),
+     m_inventory_id(-1),
      m_cacheOnly(cache)
 {
 }
 
-Yeast::Yeast(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity       {namedParameterBundle, DatabaseConstants::YEASTTABLE},
+Yeast::Yeast(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity       {namedParameterBundle},
    m_type            {static_cast<Yeast::Type>(namedParameterBundle(PropertyNames::Yeast::type).toInt())},
    m_form            {static_cast<Yeast::Form>(namedParameterBundle(PropertyNames::Yeast::form).toInt())},
    m_flocculation    {static_cast<Yeast::Flocculation>(namedParameterBundle(PropertyNames::Yeast::flocculation).toInt())},
@@ -128,62 +98,33 @@ Yeast::Yeast(NamedParameterBundle & namedParameterBundle) :
    m_timesCultured   {namedParameterBundle(PropertyNames::Yeast::timesCultured).toInt()},
    m_maxReuse        {namedParameterBundle(PropertyNames::Yeast::maxReuse).toInt()},
    m_addToSecondary  {namedParameterBundle(PropertyNames::Yeast::addToSecondary).toBool()},
-   m_inventory       {-1},
    m_inventory_id    {0},
    m_cacheOnly       {false} {
    return;
 }
 
-
-Yeast::Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-     m_typeString(rec.value(kcolYeastType).toString()),
-     m_type(static_cast<Yeast::Type>(types.indexOf(m_typeString))),
-     m_formString(rec.value(kcolYeastForm).toString()),
-     m_form(static_cast<Yeast::Form>(forms.indexOf(m_formString))),
-     m_flocculationString(rec.value(kcolYeastFloc).toString()),
-     m_flocculation(static_cast<Yeast::Flocculation>(flocculations.indexOf(m_flocculationString))),
-     m_amount(rec.value(kcolYeastAmount).toDouble()),
-     m_amountIsWeight(rec.value(kcolYeastAmtIsWgt).toBool()),
-     m_laboratory(rec.value(kcolYeastLab).toString()),
-     m_productID(rec.value(kcolYeastProductID).toString()),
-     m_minTemperature_c(rec.value(kcolYeastMinTemp).toDouble()),
-     m_maxTemperature_c(rec.value(kcolYeastMaxTemp).toDouble()),
-     m_attenuation_pct(rec.value(kcolYeastAtten).toDouble()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_bestFor(rec.value(kcolYeastBestFor).toString()),
-     m_timesCultured(rec.value(kcolYeastTimesCultd).toInt()),
-     m_maxReuse(rec.value(kcolYeastMaxReuse).toInt()),
-     m_addToSecondary(rec.value(kcolYeastAddToSec).toBool()),
-     m_inventory(-1),
-     m_inventory_id(rec.value(kcolInventoryId).toInt()),
-     m_cacheOnly(false)
-{
-}
-
 Yeast::Yeast(Yeast const & other) :
-   NamedEntity(other),
-   m_typeString(other.m_typeString),
-   m_type(other.m_type),
-   m_formString(other.m_formString),
-   m_form(other.m_form),
-   m_flocculationString(other.m_flocculationString),
-   m_flocculation(other.m_flocculation),
-   m_amount(other.m_amount),
-   m_amountIsWeight(other.m_amountIsWeight),
-   m_laboratory(other.m_laboratory),
-   m_productID(other.m_productID),
-   m_minTemperature_c(other.m_minTemperature_c),
-   m_maxTemperature_c(other.m_maxTemperature_c),
-   m_attenuation_pct(other.m_attenuation_pct),
-   m_notes(other.m_notes),
-   m_bestFor(other.m_bestFor),
-   m_timesCultured(other.m_timesCultured),
-   m_maxReuse(other.m_maxReuse),
-   m_addToSecondary(other.m_addToSecondary),
-   m_inventory(other.m_inventory),
-   m_inventory_id(other.m_inventory_id),
-   m_cacheOnly(other.m_cacheOnly) {
+   NamedEntity         {other                     },
+   m_typeString        {other.m_typeString        },
+   m_type              {other.m_type              },
+   m_formString        {other.m_formString        },
+   m_form              {other.m_form              },
+   m_flocculationString{other.m_flocculationString},
+   m_flocculation      {other.m_flocculation      },
+   m_amount            {other.m_amount            },
+   m_amountIsWeight    {other.m_amountIsWeight    },
+   m_laboratory        {other.m_laboratory        },
+   m_productID         {other.m_productID         },
+   m_minTemperature_c  {other.m_minTemperature_c  },
+   m_maxTemperature_c  {other.m_maxTemperature_c  },
+   m_attenuation_pct   {other.m_attenuation_pct   },
+   m_notes             {other.m_notes             },
+   m_bestFor           {other.m_bestFor           },
+   m_timesCultured     {other.m_timesCultured     },
+   m_maxReuse          {other.m_maxReuse          },
+   m_addToSecondary    {other.m_addToSecondary    },
+   m_inventory_id      {-1}, // Don't copy Inventory ID as new Yeast should have its own inventory
+   m_cacheOnly         {other.m_cacheOnly         } {
    return;
 }
 
@@ -210,11 +151,8 @@ double Yeast::maxTemperature_c() const { return m_maxTemperature_c; }
 
 double Yeast::attenuation_pct() const { return m_attenuation_pct; }
 
-int Yeast::inventory() {
-   if ( m_inventory < 0 ) {
-      m_inventory = getInventory(PropertyNames::Yeast::inventory).toInt();
-   }
-   return m_inventory;
+double Yeast::inventory() const {
+   return InventoryUtils::getAmount(*this);
 }
 
 int Yeast::inventoryId() const { return m_inventory_id; }
@@ -310,24 +248,25 @@ void Yeast::setAmount( double var )
    }
 }
 
-void Yeast::setInventoryQuanta( int var )
-{
-   if( var < 0.0 ) {
-      qWarning() << QString("Yeast: inventory < 0: %1").arg(var);
-   }
-   else {
-      m_inventory = var;
-      if ( ! m_cacheOnly ) {
-         setInventory(var,m_inventory_id);
-      }
-   }
+void Yeast::setInventoryAmount(double var) {
+   InventoryUtils::setAmount(*this, var);
+   return;
 }
+
+// .:TBD:. I'm not wild about using "quanta" here (presumably to mean number of packets or number of cultures)
+//         Storing an int in a double is safe, so, for now, just leave this in place but as a wrapper around the more
+//         generic setInventoryAmount().
+void Yeast::setInventoryQuanta(int var) {
+   this->setInventoryAmount(var);
+   return;
+}
+
 
 void Yeast::setInventoryId( int key )
 {
    m_inventory_id = key;
    if ( ! m_cacheOnly ) {
-      setEasy(kpropInventoryId, key);
+      setEasy(PropertyNames::Yeast::inventoryId, key);
    }
 }
 
@@ -490,21 +429,4 @@ bool Yeast::isValidFlocculation(const QString& str) const
          return true;
 
    return false;
-}
-
-NamedEntity * Yeast::getParent() {
-   Yeast * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = ObjectStoreWrapper::getByIdRaw<Yeast>(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
 }

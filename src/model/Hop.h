@@ -39,6 +39,7 @@ namespace PropertyNames::Hop { static char const * const formString = "formStrin
 namespace PropertyNames::Hop { static char const * const hsi_pct = "hsi_pct"; /* previously kpropHSI */ }
 namespace PropertyNames::Hop { static char const * const humulene_pct = "humulene_pct"; /* previously kpropHumulene */ }
 namespace PropertyNames::Hop { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
+namespace PropertyNames::Hop { static char const * const inventoryId = "inventoryId"; /* previously kpropInventoryId */ }
 namespace PropertyNames::Hop { static char const * const myrcene_pct = "myrcene_pct"; /* previously kpropMyrcene */ }
 namespace PropertyNames::Hop { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Hop { static char const * const origin = "origin"; /* previously kpropOrigin */ }
@@ -74,12 +75,8 @@ public:
    Q_ENUMS( Type Form Use )
 
    Hop(QString name = "", bool cache = true);
-   Hop(NamedParameterBundle & namedParameterBundle);
+   Hop(NamedParameterBundle const & namedParameterBundle);
    Hop(Hop const & other);
-private:
-   Hop(DatabaseConstants::DbTableId table, int key);
-   Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
 
    virtual ~Hop() = default;
 
@@ -126,7 +123,7 @@ public:
 
    double alpha_pct() const;
    double amount_kg() const;
-   double inventory();
+   double inventory() const;
    int inventoryId() const;
    // Use in enumerated, untranslated and translated versions
    Use use() const;
@@ -179,13 +176,11 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
 
@@ -207,7 +202,6 @@ private:
    double m_caryophyllene_pct;
    double m_cohumulone_pct;
    double m_myrcene_pct;
-   double m_inventory;
    int m_inventory_id;
    bool m_cacheOnly;
 
@@ -262,4 +256,4 @@ struct Hop_ptr_equals
    }
 };
 */
-#endif // _HOP_H
+#endif

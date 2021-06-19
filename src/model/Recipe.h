@@ -126,13 +126,9 @@ class Recipe : public NamedEntity {
    friend class WaterDialog;
 public:
 
-private:
-   Recipe(DatabaseConstants::DbTableId table, int key);
-   Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
    Recipe(QString name, bool cache = true);
-   Recipe(NamedParameterBundle & namedParameterBundle);
-   Recipe(Recipe const& other);
+   Recipe(NamedParameterBundle const & namedParameterBundle);
+   Recipe(Recipe const & other);
 
    virtual ~Recipe();
 
@@ -280,7 +276,7 @@ public:
     *        This is needed because each Recipe needs to know when one of its constituent parts has been modified, eg
     *        if the alpha acid on a hop is modified then that will affect the recipe's IBU.
     *
-    *        Needs to be called \b after all the calls to DbNamedEntityRecords<FooBar>::getInstance().loadAll()
+    *        Needs to be called \b after all the calls to ObjectStoreTyped<FooBar>::getInstance().loadAll()
     */
    static void connectSignals();
 
@@ -517,8 +513,6 @@ public:
    void setKegPrimingFactor( double var );
    void setCacheOnly( bool cache );
 
-   NamedEntity * getParent();
-
 signals:
 
 public slots:
@@ -537,7 +531,7 @@ public slots:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

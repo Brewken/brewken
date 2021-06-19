@@ -33,6 +33,7 @@
 #include "model/Fermentable.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
+#include "model/Recipe.h"
 #include "model/Salt.h"
 #include "SaltTableModel.h"
 #include "WaterButton.h"

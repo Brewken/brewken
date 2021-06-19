@@ -1,5 +1,5 @@
 /**
- * model/Fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -21,19 +21,20 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "model/Fermentable.h"
 
+#include <QDebug>
 #include <QDomElement>
 #include <QDomText>
-#include <QVariant>
 #include <QObject>
-#include <QDebug>
-#include "model/Fermentable.h"
-#include "Brewken.h"
-#include "database/Database.h"
+#include <QVariant>
 
-#include "database/TableSchemaConst.h"
-#include "database/FermentableSchema.h"
-#define SUPER NamedEntity
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Inventory.h"
+
+// .:TBD:. I think (and hope) that we can dispense with the following line!
+//#define SUPER NamedEntity
 
 QStringList Fermentable::types = QStringList() << "Grain" << "Sugar" << "Extract" << "Dry Extract" << "Adjunct";
 
@@ -55,8 +56,8 @@ bool Fermentable::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Fermentable::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Fermentable>::getInstance();
+ObjectStore & Fermentable::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Fermentable>::getInstance();
 }
 
 
@@ -66,33 +67,33 @@ QString Fermentable::classNameStr()
    return name;
 }
 
-Fermentable::Fermentable(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::FERMTABLE, -1, name, true),
-     m_typeStr(QString()),
-     m_type(static_cast<Fermentable::Type>(0)),
-     m_amountKg(0.0),
-     m_yieldPct(0.0),
-     m_colorSrm(0.0),
-     m_isAfterBoil(false),
-     m_origin(QString()),
-     m_supplier(QString()),
-     m_notes(QString()),
-     m_coarseFineDiff(0.0),
-     m_moisturePct(0.0),
-     m_diastaticPower(0.0),
-     m_proteinPct(0.0),
-     m_maxInBatchPct(100.0),
-     m_recommendMash(false),
-     m_ibuGalPerLb(0.0),
-     m_inventory(-1.0),
-     m_inventory_id(0),
-     m_isMashed(false),
-     m_cacheOnly(cache)
-{
+Fermentable::Fermentable(QString name, bool cache) :
+   NamedEntity     {-1, name, true},
+   m_typeStr       {QString()         },
+   m_type          {Fermentable::Grain},
+   m_amountKg      {0.0               },
+   m_yieldPct      {0.0               },
+   m_colorSrm      {0.0               },
+   m_isAfterBoil   {false             },
+   m_origin        {QString()         },
+   m_supplier      {QString()         },
+   m_notes         {QString()         },
+   m_coarseFineDiff{0.0               },
+   m_moisturePct   {0.0               },
+   m_diastaticPower{0.0               },
+   m_proteinPct    {0.0               },
+   m_maxInBatchPct {100.0             },
+   m_recommendMash {false             },
+   m_ibuGalPerLb   {0.0               },
+   m_inventory_id  {-1                },
+   m_isMashed      {false             },
+   m_cacheOnly     {cache             } {
+   return;
 }
 
-Fermentable::Fermentable(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity(namedParameterBundle, DatabaseConstants::FERMTABLE),
+Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity     {namedParameterBundle},
+   m_typeStr       {QString()                        },
    m_type          {static_cast<Fermentable::Type>(namedParameterBundle(PropertyNames::Fermentable::type).toInt())},
    m_amountKg      {namedParameterBundle(PropertyNames::Fermentable::amount_kg             ).toDouble()},
    m_yieldPct      {namedParameterBundle(PropertyNames::Fermentable::yield_pct             ).toDouble()},
@@ -108,86 +109,33 @@ Fermentable::Fermentable(NamedParameterBundle & namedParameterBundle) :
    m_maxInBatchPct {namedParameterBundle(PropertyNames::Fermentable::maxInBatch_pct        ).toDouble()},
    m_recommendMash {namedParameterBundle(PropertyNames::Fermentable::recommendMash         ).toBool()},
    m_ibuGalPerLb   {namedParameterBundle(PropertyNames::Fermentable::ibuGalPerLb           ).toDouble()},
-   //m_inventory     {namedParameterBundle(PropertyNames::Fermentable::inventory             ).toDouble()},
-   //m_inventory_id  {namedParameterBundle(PropertyNames::Fermentable::inventory_id          ).toInt()},
+   m_inventory_id  {namedParameterBundle(PropertyNames::Fermentable::inventoryId           ).toInt()},
    m_isMashed      {namedParameterBundle(PropertyNames::Fermentable::isMashed              ).toBool()},
    m_cacheOnly     {false} {
    return;
 }
 
-
-Fermentable::Fermentable(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-     m_typeStr(QString()),
-     m_type(static_cast<Fermentable::Type>(0)),
-     m_amountKg(0.0),
-     m_yieldPct(0.0),
-     m_colorSrm(0.0),
-     m_isAfterBoil(false),
-     m_origin(QString()),
-     m_supplier(QString()),
-     m_notes(QString()),
-     m_coarseFineDiff(0.0),
-     m_moisturePct(0.0),
-     m_diastaticPower(0.0),
-     m_proteinPct(0.0),
-     m_maxInBatchPct(0.0),
-     m_recommendMash(true),
-     m_ibuGalPerLb(0.0),
-     m_inventory(-1.0),
-     m_inventory_id(0),
-     m_isMashed(true),
-     m_cacheOnly(false)
-{
-}
-
-Fermentable::Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-     m_typeStr(rec.value(kcolFermType).toString()),
-     m_type(static_cast<Fermentable::Type>(types.indexOf(m_typeStr))),
-     m_amountKg(rec.value(kcolFermAmount).toDouble()),
-     m_yieldPct(rec.value(kcolFermYield).toDouble()),
-     m_colorSrm(rec.value(kcolFermColor).toDouble()),
-     m_isAfterBoil(rec.value(kcolFermAddAfterBoil).toBool()),
-     m_origin(rec.value(kcolFermOrigin).toString()),
-     m_supplier(rec.value(kcolFermSupplier).toString()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_coarseFineDiff(rec.value(kcolFermCoarseFineDiff).toDouble()),
-     m_moisturePct(rec.value(kcolFermMoisture).toDouble()),
-     m_diastaticPower(rec.value(kcolFermDiastaticPower).toDouble()),
-     m_proteinPct(rec.value(kcolFermProtein).toDouble()),
-     m_maxInBatchPct(rec.value(kcolFermMaxInBatch).toDouble()),
-     m_recommendMash(rec.value(kcolFermRecommendMash).toBool()),
-     m_ibuGalPerLb(rec.value(kcolFermIBUGalPerLb).toDouble()),
-     m_inventory(-1.0),
-     m_inventory_id(rec.value(kcolInventoryId).toInt()),
-     m_isMashed(rec.value(kcolFermIsMashed).toBool()),
-     m_cacheOnly(false)
-{
-}
-
 Fermentable::Fermentable(Fermentable const & other) :
-   NamedEntity( other ),
-   m_typeStr       (other.m_typeStr),
-   m_type            (other.m_type),
-   m_amountKg      (other.m_amountKg),
-   m_yieldPct      (other.m_yieldPct),
-   m_colorSrm      (other.m_colorSrm),
-   m_isAfterBoil   (other.m_isAfterBoil),
-   m_origin        (other.m_origin),
-   m_supplier      (other.m_supplier),
-   m_notes         (other.m_notes),
-   m_coarseFineDiff(other.m_coarseFineDiff),
-   m_moisturePct   (other.m_moisturePct),
-   m_diastaticPower(other.m_diastaticPower),
-   m_proteinPct    (other.m_proteinPct),
-   m_maxInBatchPct (other.m_maxInBatchPct),
-   m_recommendMash (other.m_recommendMash),
-   m_ibuGalPerLb   (other.m_ibuGalPerLb),
-   m_inventory     (other.m_inventory),
-   m_inventory_id  (other.m_inventory_id),
-   m_isMashed      (other.m_isMashed),
-   m_cacheOnly     (other.m_cacheOnly) {
+   NamedEntity     {other                 },
+   m_typeStr       {other.m_typeStr       },
+   m_type          {other.m_type          },
+   m_amountKg      {other.m_amountKg      },
+   m_yieldPct      {other.m_yieldPct      },
+   m_colorSrm      {other.m_colorSrm      },
+   m_isAfterBoil   {other.m_isAfterBoil   },
+   m_origin        {other.m_origin        },
+   m_supplier      {other.m_supplier      },
+   m_notes         {other.m_notes         },
+   m_coarseFineDiff{other.m_coarseFineDiff},
+   m_moisturePct   {other.m_moisturePct   },
+   m_diastaticPower{other.m_diastaticPower},
+   m_proteinPct    {other.m_proteinPct    },
+   m_maxInBatchPct {other.m_maxInBatchPct },
+   m_recommendMash {other.m_recommendMash },
+   m_ibuGalPerLb   {other.m_ibuGalPerLb   },
+   m_inventory_id  {-1}, // Don't copy Inventory ID as new Fermentable should have its own inventory
+   m_isMashed      {other.m_isMashed      },
+   m_cacheOnly     {other.m_cacheOnly     } {
    return;
 }
 
@@ -385,60 +333,41 @@ double Fermentable::equivSucrose_kg() const
       return ret;
 }
 
-void Fermentable::setAmount_kg( double num )
-{
-   if( num < 0.0 )
-   {
+void Fermentable::setAmount_kg( double num ) {
+   if ( num < 0.0 ) {
       qWarning() << QString("Fermentable: negative amount: %1").arg(num);
       return;
    }
-   else
-   {
-      m_amountKg = num;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Fermentable::amount_kg, num);
-      }
+
+   m_amountKg = num;
+   if ( ! m_cacheOnly ) {
+      setEasy( PropertyNames::Fermentable::amount_kg, num);
    }
+   return;
 }
 
-void Fermentable::setInventoryAmount( double num )
-{
-   if( num < 0.0 ) {
-      qWarning() << QString("Fermentable: negative inventory: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_inventory = num;
-      if ( ! m_cacheOnly )
-         setInventory(num,m_inventory_id);
-   }
+void Fermentable::setInventoryAmount(double num) {
+   InventoryUtils::setAmount(*this, num);
+   return;
 }
 
-void Fermentable::setInventoryId( int key )
-{
+void Fermentable::setInventoryId(int key) {
    if( key < 1 ) {
       qWarning() << QString("Fermentable: bad inventory id: %1").arg(key);
       return;
    }
-   else
-   {
-      m_inventory_id = key;
-      if ( ! m_cacheOnly )
-         setEasy(kpropInventoryId,key);
+   m_inventory_id = key;
+   if ( ! m_cacheOnly ) {
+      setEasy(PropertyNames::Fermentable::inventoryId, key);
    }
+   return;
 }
 
-double Fermentable::inventory()
-{
-   if ( m_inventory < 0 ) {
-      m_inventory = getInventory(PropertyNames::Fermentable::inventory).toDouble();
-   }
-   return m_inventory;
+double Fermentable::inventory() const {
+   return InventoryUtils::getAmount(*this);
 }
 
-int Fermentable::inventoryId()
-{
+int Fermentable::inventoryId() const {
    return m_inventory_id;
 }
 
@@ -550,20 +479,3 @@ void Fermentable::setMaxInBatch_pct( double num )
 }
 
 void Fermentable::setCacheOnly( bool cache ) { m_cacheOnly = cache; }
-
-NamedEntity * Fermentable::getParent() {
-   Fermentable * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = ObjectStoreWrapper::getByIdRaw<Fermentable>(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
-}

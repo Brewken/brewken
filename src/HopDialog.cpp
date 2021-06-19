@@ -27,7 +27,8 @@
 #include <QString>
 #include <QWidget>
 
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "HopEditor.h"
 #include "HopSortFilterProxyModel.h"
 #include "HopTableModel.h"

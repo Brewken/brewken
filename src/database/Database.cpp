@@ -92,6 +92,8 @@
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "QueuedMethod.h"
+#include "database/ObjectStoreWrapper.h"
+
 
 //
 // .:TODO:. Look at BT fix https://github.com/mikfire/brewtarget/commit/e5a43c1d7babbaf9450a14e5ea1e4589235ded2c
@@ -100,9 +102,9 @@
 
 namespace {
    //! Helper to more easily get QMetaProperties.
-   QMetaProperty metaProperty(Database const & db, const char* name) {
+/*   QMetaProperty metaProperty(Database const & db, const char* name) {
       return db.metaObject()->property(db.metaObject()->indexOfProperty(name));
-   }
+   }*/
 
    //QThread* _thread;
    // These are for SQLite databases
@@ -223,7 +225,7 @@ namespace {
 }
 
 //
-// This private implementation class holds all private non-virtual members of BeerXML
+// This private implementation class holds all private non-virtual members of Database
 //
 class Database::impl {
 public:
@@ -1419,27 +1421,10 @@ bool Database::load() {
 
    this->pimpl->populateElements(*this, this->pimpl->allRecipes, DatabaseConstants::RECTABLE );
 */
-   qDebug() << Q_FUNC_INFO << "Loading objects from DB - new classes";
-   DbNamedEntityRecords<BrewNote>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Equipment>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Fermentable>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Hop>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Instruction>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Mash>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<MashStep>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Misc>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Recipe>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Salt>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Style>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Water>::getInstance().loadAll(this->sqlDatabase());
-   DbNamedEntityRecords<Yeast>::getInstance().loadAll(this->sqlDatabase());
-   qDebug() << Q_FUNC_INFO << "Objects loaded";
+//   qDebug() << Q_FUNC_INFO << "Loading objects from DB - new classes";
+//   ObjectStoreWrapper::loadAll(); // .:TODO:. This call needs to go somewhere else!
+//   qDebug() << Q_FUNC_INFO << "Objects loaded";
 
-   Recipe::connectSignals();
-   qDebug() << Q_FUNC_INFO << "Recipe signals connected";
-
-   Mash::connectSignals();
-   qDebug() << Q_FUNC_INFO << "Mash signals connected";
 
    this->pimpl->loadWasSuccessful = true;
    return this->pimpl->loadWasSuccessful;
@@ -1601,7 +1586,7 @@ bool Database::restoreFromFile(QString newDbFileStr)
    return success;
 }
 
-int Database::getParentNamedEntityKey(NamedEntity const & ingredient) {
+/*int Database::getParentNamedEntityKey(NamedEntity const & ingredient) {
    int parentKey = 0;
 
    const QMetaObject* meta = ingredient.metaObject();
@@ -1633,10 +1618,10 @@ int Database::getParentNamedEntityKey(NamedEntity const & ingredient) {
       }
    }
    return parentKey;
-}
+}*/
 
 
-bool Database::isStored(NamedEntity const & ingredient) {
+/*bool Database::isStored(NamedEntity const & ingredient) {
    // Valid database keys are all positive
    if (ingredient.key() <= 0) {
       return false;
@@ -1671,7 +1656,7 @@ bool Database::isStored(NamedEntity const & ingredient) {
 
    query.finish();
    return foundInDatabase;
-}
+}*/
 
 
 // removeFromRecipe ===========================================================
@@ -1867,7 +1852,7 @@ Equipment*   Database::equipment(int key)   { return this->pimpl->allEquipments[
 Fermentable* Database::fermentable(int key) { return this->pimpl->allFermentables[key]; }
 Hop*         Database::hop(int key)         { return this->pimpl->allHops[key]; }
 Hop*         Database::hop(int key)         {
-   auto result = DbNamedEntityRecords<Hop>::getInstance().getById(key);
+   auto result = ObjectStoreTyped<Hop>::getInstance().getById(key);
    return result ? result.value().get() : nullptr;
 }
 
@@ -3168,13 +3153,13 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
 
 }*/
 
-QString Database::getDbFileName()
+/*QString Database::getDbFileName()
 {
    // Ensure instance exists.
    instance();
 
    return dbFileName;
-}
+}*/
 
 int Database::getInventoryId(TableSchema* tbl, int key )
 {
@@ -3199,7 +3184,7 @@ int Database::getInventoryId(TableSchema* tbl, int key )
 // reach into every child and update the inventory. I am leaning towards the first.
 // Turns out, both are required in some order. Still thinking signal/slot
 //
-void Database::setInventory(NamedEntity* ins, QVariant value, int invKey, bool notify )
+/*void Database::setInventory(NamedEntity* ins, QVariant value, int invKey, bool notify )
 {
    TableSchema* tbl = this->pimpl->dbDefn.table(ins->table());
    TableSchema* inv = this->pimpl->dbDefn.table(tbl->invTable());
@@ -3245,7 +3230,7 @@ void Database::setInventory(NamedEntity* ins, QVariant value, int invKey, bool n
       emit ins->changed(ins->metaObject()->property(ndx),value);
       emit changedInventory(tbl->dbTable(),invKey, value);
    }
-}
+}*/
 
 /*void Database::updateEntry( NamedEntity* object, QString propName, QVariant value, bool notify, bool transact )
 {

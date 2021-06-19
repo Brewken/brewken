@@ -20,14 +20,14 @@
 #include "StyleListModel.h"
 
 #include "model/Style.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"
 
 StyleListModel::StyleListModel(QWidget* parent) :
    QAbstractListModel(parent),
    recipe(0) {
-   connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectInserted, this, &StyleListModel::addStyle);
-   connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectDeleted,  this, &StyleListModel::removeStyle);
+   connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectInserted, this, &StyleListModel::addStyle);
+   connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectDeleted,  this, &StyleListModel::removeStyle);
    repopulateList();
    return;
 }
@@ -120,7 +120,7 @@ void StyleListModel::styleChanged(QMetaProperty prop, QVariant val)
 
 void StyleListModel::repopulateList() {
    removeAll();
-   addStyles( DbNamedEntityRecords<Style>::getInstance().getAllRaw() );
+   addStyles( ObjectStoreTyped<Style>::getInstance().getAllRaw() );
    return;
 }
 

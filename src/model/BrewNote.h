@@ -78,8 +78,9 @@ class BrewNote : public NamedEntity {
 public:
    BrewNote(QString name = "", bool cache = true);
    BrewNote(Recipe const & recipe);
-   BrewNote(NamedParameterBundle & namedParameterBundle);
-   BrewNote(BrewNote const& other);
+   BrewNote(QDateTime dateNow, bool cache = true, QString const & name = "");
+   BrewNote(NamedParameterBundle const & namedParameterBundle);
+   BrewNote(BrewNote const & other);
 
    virtual ~BrewNote() = default;
 
@@ -231,12 +232,9 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   BrewNote(DatabaseConstants::DbTableId table, int key);
-   BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   BrewNote(QDateTime dateNow, bool cache = true, QString const & name = "");
 
    bool loading;
 

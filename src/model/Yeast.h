@@ -32,6 +32,7 @@ namespace PropertyNames::Yeast { static char const * const amount = "amount"; /*
 namespace PropertyNames::Yeast { static char const * const form = "form"; /* previously kpropForm */ }
 namespace PropertyNames::Yeast { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
 namespace PropertyNames::Yeast { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
+namespace PropertyNames::Yeast { static char const * const inventoryId = "inventoryId"; /* previously kpropInventoryId */ }
 namespace PropertyNames::Yeast { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
 namespace PropertyNames::Yeast { static char const * const type = "type"; /* previously kpropType */ }
 namespace PropertyNames::Yeast { static char const * const notes = "notes"; /* previously kpropNotes */ }
@@ -69,7 +70,7 @@ public:
    Q_ENUMS( Type Form Flocculation )
 
    Yeast(QString name = "", bool cache = true);
-   Yeast(NamedParameterBundle & namedParameterBundle);
+   Yeast(NamedParameterBundle const & namedParameterBundle);
    Yeast(Yeast const & other);
 
    virtual ~Yeast() = default;
@@ -89,7 +90,7 @@ public:
    //! \brief The amount in either liters or kg depending on \c amountIsWeight().
    Q_PROPERTY( double amount READ amount WRITE setAmount /*NOTIFY changed*/ /*changedAmount*/ )
    //! \brief The amount in inventory in either liters or kg depending on \c amountIsWeight().
-   Q_PROPERTY( double inventory READ inventory WRITE setInventoryQuanta /*NOTIFY changed*/ /*changedInventory*/ )
+   Q_PROPERTY( double inventory READ inventory WRITE setInventoryAmount /*NOTIFY changed*/ /*changedInventory*/ )
    //! \brief The inventory id
    Q_PROPERTY( double inventoryId READ inventoryId WRITE setInventoryId /*NOTIFY changed*/ /*changedInventory*/ )
    //! \brief Whether the \c amount() is weight (kg) or volume (liters).
@@ -125,6 +126,7 @@ public:
    void setType( Type t);
    void setForm( Form f);
    void setAmount( double var);
+   void setInventoryAmount(double var);
    void setInventoryQuanta(int var);
    void setAmountIsWeight( bool var);
    void setLaboratory( const QString& var);
@@ -149,7 +151,7 @@ public:
    const QString formString() const;
    const QString formStringTr() const;
    double amount() const;
-   int inventory();
+   double inventory() const;
    int inventoryId() const;
    bool amountIsWeight() const;
    QString laboratory() const;
@@ -169,18 +171,13 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Yeast(DatabaseConstants::DbTableId table, int key);
-   Yeast(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    QString m_typeString;
    Type m_type;
    QString m_formString;
@@ -199,7 +196,6 @@ private:
    int m_timesCultured;
    int m_maxReuse;
    bool m_addToSecondary;
-   int m_inventory;
    int m_inventory_id;
    bool m_cacheOnly;
 

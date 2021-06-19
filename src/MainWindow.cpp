@@ -81,6 +81,7 @@
 #include "config.h"
 #include "ConverterTool.h"
 #include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "EquipmentEditor.h"
 #include "EquipmentListModel.h"
 #include "FermentableDialog.h"
@@ -316,8 +317,16 @@ void MainWindow::init() {
    // set up the drag/drop parts
    this->setupDrops();
 
+   // Moved from Database class
+   Recipe::connectSignals();
+   qDebug() << Q_FUNC_INFO << "Recipe signals connected";
+   Mash::connectSignals();
+   qDebug() << Q_FUNC_INFO << "Mash signals connected";
+
+
    // No connections from the database yet? Oh FSM, that probably means I'm
    // doing it wrong again.
+   // .:TODO:. Change this so we use the newere deleted signal!
    connect( &(Database::instance()), SIGNAL( deletedSignal(BrewNote*)), this, SLOT( closeBrewNote(BrewNote*)));
 
    qDebug() << Q_FUNC_INFO << "MainWindow initialisation complete";
@@ -667,7 +676,7 @@ void MainWindow::restoreSavedState() {
       setRecipe(recipeObs);
       setTreeSelection(rIdx);
    } else {
-      QList<Recipe*> recs = DbNamedEntityRecords<Recipe>::getInstance().getAllRaw();
+      QList<Recipe*> recs = ObjectStoreTyped<Recipe>::getInstance().getAllRaw();
       if( recs.size() > 0 )
          setRecipe( recs[0] );
    }
@@ -2282,6 +2291,7 @@ void MainWindow::reduceInventory(){
          for( i = 0; static_cast<int>(i) < ylist.size(); ++i )
          {
             //Yeast inventory is done by quanta not amount
+            // .:TBD:. I think "quanta" is being used to mean "number of packets" or something
             int newVal = ylist[i]->inventory() - 1;
             newVal = (newVal < 0) ? 0 : newVal;
             ylist[i]->setInventoryQuanta(newVal);
@@ -2609,7 +2619,7 @@ void MainWindow::copyRecipe()
    */
    auto newRec = std::make_shared<Recipe>(*this->recipeObs); // Create a deep copy
    newRec->setName(name);
-   DbNamedEntityRecords<Recipe>::getInstance().insert(newRec);
+   ObjectStoreTyped<Recipe>::getInstance().insert(newRec);
    return;
 }
 

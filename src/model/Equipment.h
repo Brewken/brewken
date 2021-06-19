@@ -60,8 +60,8 @@ class Equipment : public NamedEntity {
 
 public:
    Equipment(QString t_name = "", bool cacheOnly = true);
-   Equipment(NamedParameterBundle & namedParameterBundle);
-   Equipment(Equipment const& other);
+   Equipment(NamedParameterBundle const & namedParameterBundle);
+   Equipment(Equipment const & other);
 
    virtual ~Equipment() = default;
 
@@ -145,8 +145,6 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
    void changedBoilSize_l(double);
    void changedBatchSize_l(double);
@@ -168,12 +166,9 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Equipment(DatabaseConstants::DbTableId table, int key);
-   Equipment(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    double m_boilSize_l;
    double m_batchSize_l;
    double m_tunVolume_l;

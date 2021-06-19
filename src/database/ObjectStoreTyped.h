@@ -1,5 +1,5 @@
 /**
- * database/DbNamedEntityRecords.h is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,32 +13,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef DATABASE_DBNAMEDENTITYRECORDS_H
-#define DATABASE_DBNAMEDENTITYRECORDS_H
+#ifndef DATABASE_OBJECTSTORETYPED_H
+#define DATABASE_OBJECTSTORETYPED_H
 #pragma once
 #include <memory>
 
 #include <QDebug>
 
-#include "database/DbRecords.h"
+#include "database/ObjectStore.h"
 #include "model/NamedEntity.h"
 
 /**
  * \brief Read, write and cache any subclass of \c NamedEntity in the database
  */
 template<class NE>
-class DbNamedEntityRecords : public DbRecords {
+class ObjectStoreTyped : public ObjectStore {
 private:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB.  Private because singleton.
     *
-    * \param tableName
-    * \param fieldSimpleDefns  First in the list should be the primary key
+    * \param primaryTableDefn First in the list of fields in this table defn should be the primary key
     */
-   DbNamedEntityRecords(char const * const tableName,
-                        FieldSimpleDefns const & fieldSimpleDefns,
-                        FieldManyToManyDefns const & fieldManyToManyDefns) :
-      DbRecords(tableName, fieldSimpleDefns, fieldManyToManyDefns) {
+   ObjectStoreTyped(TableSimpleDefn const & primaryTableDefn,
+                    FieldManyToManyDefns const & fieldManyToManyDefns = FieldManyToManyDefns{}) :
+      ObjectStore(primaryTableDefn, fieldManyToManyDefns) {
       return;
    }
 
@@ -47,7 +45,7 @@ public:
    /**
     * \brief Get the singleton instance of this class
     */
-   static DbNamedEntityRecords<NE> & getInstance();
+   static ObjectStoreTyped<NE> & getInstance();
 
    /**
     * \brief Insert a new object in the DB (and in our cache list)
@@ -57,7 +55,7 @@ public:
       // (We don't want to force callers to use std::shared_ptr<QObject>, as they would anyway have to recast it.  Eg
       // if you created a new Hop, you're going to need a std::shared_ptr<Hop> etc to be able to access Hop-specific
       // member functions)
-      this->DbRecords::insert(std::static_pointer_cast<QObject>(ne));
+      this->ObjectStore::insert(std::static_pointer_cast<QObject>(ne));
       return ne;
    }
 
@@ -103,7 +101,7 @@ public:
     * \return What was inserted or updated
     */
    virtual std::shared_ptr<NE> insertOrUpdate(std::shared_ptr<NE> ne) {
-      this->DbRecords::insertOrUpdate(std::static_pointer_cast<QObject>(ne));
+      this->ObjectStore::insertOrUpdate(std::static_pointer_cast<QObject>(ne));
       return ne;
    }
 
@@ -117,7 +115,7 @@ public:
       if (!this->contains(id)) {
          return nullptr;
       }
-      return std::static_pointer_cast<NE>(this->DbRecords::getById(id));
+      return std::static_pointer_cast<NE>(this->ObjectStore::getById(id));
    }
 
    /**
@@ -125,21 +123,21 @@ public:
     */
    QList<std::shared_ptr<NE> > getByIds(QVector<int> const & listOfIds) const {
       // Base class will give us QList<std::shared_ptr<QObject> >, which we convert to QList<std::shared_ptr<NE> >
-      return this->convertShared(this->DbRecords::getByIds(listOfIds));
+      return this->convertShared(this->ObjectStore::getByIds(listOfIds));
    }
 
    /**
     * \brief Raw pointer version of \c getByIds
     */
    QList<NE *> getByIdsRaw(QVector<int> const & listOfIds) const {
-      return this->convertRaw(this->DbRecords::getByIds(listOfIds));
+      return this->convertRaw(this->ObjectStore::getByIds(listOfIds));
    }
 
    /**
     * \brief Mark an object as deleted (including in the database) and but leave it in existence (both in the database
     *        and in our local in-memory cache.
     *
-    *        NB: We do not call down to \c DbRecords::softDelete() from this member function (as that would remove the
+    *        NB: We do not call down to \c ObjectStore::softDelete() from this member function (as that would remove the
     *            object from our local in-memory cache.
     *
     * \param id ID of the object to delete
@@ -177,7 +175,7 @@ public:
       // So, to call the base class findMatching(), we need to create our own "wrapper" lambda that receives a
       // std::shared_ptr<QObject> parameter and casts it to std::shared_ptr<NE>.
       //
-      auto result = this->DbRecords::findFirstMatching(
+      auto result = this->ObjectStore::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(std::static_pointer_cast<NE>(obj));}
       );
       if (!result.has_value()) {
@@ -203,7 +201,7 @@ public:
       // std::shared_ptr<QObject> parameter, extracts the raw pointer from it (which we know will always be valid) and
       // downcasts it from "QObject *" to "NE *".
       //
-      auto result = this->DbRecords::findFirstMatching(
+      auto result = this->ObjectStore::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
       );
       if (!result.has_value()) {
@@ -226,7 +224,7 @@ public:
       // Base class will give us QList<std::shared_ptr<QObject> >, which we convert to QList<std::shared_ptr<NE> >
       return this->convertShared(
          // As per above, we make a wrapper around the supplied lambda to do the necessary casting
-         this->DbRecords::findAllMatching(
+         this->ObjectStore::findAllMatching(
             [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(std::static_pointer_cast<NE>(obj));}
          )
       );
@@ -240,7 +238,7 @@ public:
     */
    QList<NE *> findAllMatching(std::function<bool(NE *)> const & matchFunction) const {
       return this->convertRaw(
-         this->DbRecords::findAllMatching(
+         this->ObjectStore::findAllMatching(
             [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
          )
       );
@@ -250,13 +248,13 @@ public:
     * \brief Special case of \c findAllMatching that returns a list of all cached objects of a given type
     */
    QList<std::shared_ptr<NE> > getAll() {
-      return this->convertShared(this->DbRecords::getAll());
+      return this->convertShared(this->ObjectStore::getAll());
    }
    /**
     * \brief Raw pointer version of \c getAll
     */
    QList<NE *> getAllRaw() {
-      return this->convertRaw(this->DbRecords::getAll());
+      return this->convertRaw(this->ObjectStore::getAll());
    }
 
 protected:
@@ -287,12 +285,12 @@ private:
          return;
       }
 
-      auto object = this->DbRecords::getById(id);
+      auto object = this->ObjectStore::getById(id);
       std::shared_ptr<NE> ne = std::static_pointer_cast<NE>(object);
       ne->setDeleted(true);
       if (hard) {
          // Base class does the heavy lifting
-         this->DbRecords::hardDelete(id);
+         this->ObjectStore::hardDelete(id);
       } else {
          // Base class softDelete() actually does too much for the soft delete case; we just want to store the
          // "deleted" flag in the object's DB record
@@ -336,55 +334,5 @@ private:
    }
 
 };
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-/**
- * \brief Namespace containing convenience functions for accessing member functions of appropriate DbNamedEntityRecords
- *        instances via template argument deduction
- */
-namespace ObjectStoreWrapper {
-   template<class NE> std::shared_ptr<NE> getById(int id) {
-      return DbNamedEntityRecords<NE>::getInstance().getById(id);
-   }
-
-   /**
-    * \brief Raw pointer version of \c getById
-    */
-   template<class NE> NE * getByIdRaw(int id) {
-      return DbNamedEntityRecords<NE>::getInstance().getById(id).get();
-   }
-
-   template<class NE> std::shared_ptr<NE> copy(NE const & ne) {
-      return std::make_shared<NE>(ne);
-   }
-
-   template<class NE> std::shared_ptr<NE> insert(std::shared_ptr<NE> ne) {
-      return DbNamedEntityRecords<NE>::getInstance().insert(ne);
-   }
-
-   template<class NE> std::shared_ptr<NE> insertCopyOf(NE const & ne) {
-      return DbNamedEntityRecords<NE>::getInstance().insertCopyOf(ne.key());
-   }
-
-   template<class NE> void updateProperty(NE const & ne, char const * const propertyToUpdateInDb) {
-      DbNamedEntityRecords<NE>::getInstance().updateProperty(ne, propertyToUpdateInDb);
-      return;
-   }
-
-   template<class NE> void softDelete(NE const & ne) {
-      DbNamedEntityRecords<NE>::getInstance().softDelete(ne.key());
-      return;
-   }
-
-   template<class NE> void hardDelete(NE const & ne) {
-      DbNamedEntityRecords<NE>::getInstance().hardDelete(ne.key());
-      return;
-   }
-
-}
 
 #endif

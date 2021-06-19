@@ -36,9 +36,7 @@
 #include "Algorithms.h"
 #include "Brewken.h"
 #include "ColorMethods.h"
-#include "database/Database.h"
-#include "database/RecipeSchema.h"
-#include "database/TableSchemaConst.h"
+#include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
 #include "IbuMethods.h"
 #include "model/Equipment.h"
@@ -89,7 +87,7 @@ namespace {
          // Parameter has a parent.  See if it (the parameter, not its parent!) is used in a recipe.
          // (NB: The parent of the NamedEntity is not the same thing as its parent recipe.  We should perhaps find some
          // different terms!)
-         auto matchingRecipe = DbNamedEntityRecords<Recipe>::getInstance().findFirstMatching(
+         auto matchingRecipe = ObjectStoreTyped<Recipe>::getInstance().findFirstMatching(
             [var](Recipe * recipe) {return recipe->uses(*var);}
          );
          if (matchingRecipe == nullptr) {
@@ -99,7 +97,7 @@ namespace {
       }
 
       // We need to make a copy.  (We'll rely on the copy constructor to do the right thing about parentage.)
-      return DbNamedEntityRecords<NE>::getInstance().insertCopyOf(var->key());
+      return ObjectStoreTyped<NE>::getInstance().insertCopyOf(var->key());
    }
 
    //
@@ -155,7 +153,7 @@ public:
    template<class NE> void copyList(Recipe & us, Recipe const & other) {
       for (int otherIngId : other.pimpl->accessIds<NE>()) {
          // Make and store a copy of the current Hop/Fermentable/etc object we're looking at in the other Recipe
-         auto ingToAdd = DbNamedEntityRecords<NE>::getInstance().insertCopyOf(otherIngId);
+         auto ingToAdd = ObjectStoreTyped<NE>::getInstance().insertCopyOf(otherIngId);
          // Store the ID of the copy in our recipe
          this->accessIds<NE>().append(ingToAdd->key());
          // Connect signals so that we are notified when there are changes to the Hop/Fermentable/etc we just added to
@@ -179,7 +177,7 @@ public:
     * \brief Get raw pointers to all ingredients etc of a particular type (Hop, Fermentable, etc) in this Recipe
     */
    template<class NE> QList<NE *> getAllMyRaw() {
-      return DbNamedEntityRecords<NE>::getInstance().getByIdsRaw(this->accessIds<NE>());
+      return ObjectStoreTyped<NE>::getInstance().getByIdsRaw(this->accessIds<NE>());
    }
 
    /**
@@ -244,8 +242,8 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Recipe::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Recipe>::getInstance();
+ObjectStore & Recipe::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Recipe>::getInstance();
 }
 
 QString Recipe::classNameStr()
@@ -254,45 +252,8 @@ QString Recipe::classNameStr()
    return name;
 }
 
-Recipe::Recipe(DatabaseConstants::DbTableId table, int key) :
-   NamedEntity(table, key),
-   pimpl{new impl{*this}},
-   m_type(QString("All Grain")),
-   m_brewer(QString("")),
-   m_asstBrewer(QString("Brewken: free beer software")),
-   m_batchSize_l(0.0),
-   m_boilSize_l(0.0),
-   m_boilTime_min(0.0),
-   m_efficiency_pct(0.0),
-   m_fermentationStages(1),
-   m_primaryAge_days(0.0),
-   m_primaryTemp_c(0.0),
-   m_secondaryAge_days(0.0),
-   m_secondaryTemp_c(0.0),
-   m_tertiaryAge_days(0.0),
-   m_tertiaryTemp_c(0.0),
-   m_age(0.0),
-   m_ageTemp_c(0.0),
-   m_date(QDate::currentDate()),
-   m_carbonation_vols(0.0),
-   m_forcedCarbonation(false),
-   m_primingSugarName(QString("")),
-   m_carbonationTemp_c(0.0),
-   m_primingSugarEquiv(0.0),
-   m_kegPrimingFactor(0.0),
-   m_notes(QString("")),
-   m_tasteNotes(QString("")),
-   m_tasteRating(0.0),
-   styleId(0),
-   equipmentId(-1),
-   m_og(1.0),
-   m_fg(1.0),
-   m_cacheOnly(false)
-{
-}
-
 Recipe::Recipe(QString name, bool cache) :
-   NamedEntity(DatabaseConstants::RECTABLE, -1, name, true),
+   NamedEntity(-1, name, true),
    pimpl{new impl{*this}},
    m_type(QString("All Grain")),
    m_brewer(QString("")),
@@ -326,47 +287,11 @@ Recipe::Recipe(QString name, bool cache) :
    m_fg(1.0),
    m_cacheOnly(cache)
 {
+   return;
 }
 
-Recipe::Recipe(DatabaseConstants::DbTableId table, int key, QSqlRecord rec) :
-   NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-   pimpl{new impl{*this}},
-   m_type(rec.value(kcolRecipeType).toString()),
-   m_brewer(rec.value(kcolRecipeBrewer).toString()),
-   m_asstBrewer(rec.value(kcolRecipeAsstBrewer).toString()),
-   m_batchSize_l(rec.value(kcolRecipeBatchSize).toDouble()),
-   m_boilSize_l(rec.value(kcolRecipeBoilSize).toDouble()),
-   m_boilTime_min(rec.value(kcolRecipeBoilTime).toDouble()),
-   m_efficiency_pct(rec.value(kcolRecipeEff).toDouble()),
-   m_fermentationStages(rec.value(kcolRecipeFermStages).toInt()),
-   m_primaryAge_days(rec.value(kcolRecipePrimAgeDays).toDouble()),
-   m_primaryTemp_c(rec.value(kcolRecipePrimTemp).toDouble()),
-   m_secondaryAge_days(rec.value(kcolRecipeSecAgeDays).toDouble()),
-   m_secondaryTemp_c(rec.value(kcolRecipeSecTemp).toDouble()),
-   m_tertiaryAge_days(rec.value(kcolRecipeTertAgeDays).toDouble()),
-   m_tertiaryTemp_c(rec.value(kcolRecipeTertTemp).toDouble()),
-   m_age(rec.value(kcolRecipeAge).toDouble()),
-   m_ageTemp_c(rec.value(kcolRecipeAgeTemp).toDouble()),
-   m_date(QDate::fromString(rec.value(kcolRecipeDate).toString(), Qt::ISODate)),
-   m_carbonation_vols(rec.value(kcolRecipeCarbVols).toDouble()),
-   m_forcedCarbonation(rec.value(kcolRecipeForcedCarb).toBool()),
-   m_primingSugarName(rec.value(kcolRecipePrimSugName).toString()),
-   m_carbonationTemp_c(rec.value(kcolRecipeCarbTemp).toDouble()),
-   m_primingSugarEquiv(rec.value(kcolRecipePrimSugEquiv).toDouble()),
-   m_kegPrimingFactor(rec.value(kcolRecipeKegPrimFact).toDouble()),
-   m_notes(rec.value(kcolNotes).toString()),
-   m_tasteNotes(rec.value(kcolRecipeTasteNotes).toString()),
-   m_tasteRating(rec.value(kcolRecipeTasteRating).toDouble()),
-   styleId(rec.value(kcolRecipeStyleId).toInt()),
-   equipmentId(-1),
-   m_og(rec.value(kcolRecipeOG).toDouble()),
-   m_fg(rec.value(kcolRecipeFG).toDouble()),
-   m_cacheOnly(false)
-{
-}
-
-Recipe::Recipe(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::RECTABLE},
+Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity{namedParameterBundle},
    pimpl{new impl{*this}},
    m_type              {
       // .:TODO:. Change so we store enum not string!
@@ -471,15 +396,15 @@ Recipe::Recipe( Recipe const& other ) :
    // However, AFAICT, none of Style, Mash or Equipment are not shared between Recipes because users expect to be able
    // to edit them in one Recipe without changing the settings for any other Recipe.
    //
-   auto equipment = DbNamedEntityRecords<Equipment>::getInstance().insertCopyOf(other.equipmentId);
+   auto equipment = ObjectStoreTyped<Equipment>::getInstance().insertCopyOf(other.equipmentId);
    this->equipmentId = equipment->key();
    connect(equipment.get(), SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)));
 
-   auto mash = DbNamedEntityRecords<Mash>::getInstance().insertCopyOf(other.mashId);
+   auto mash = ObjectStoreTyped<Mash>::getInstance().insertCopyOf(other.mashId);
    this->mashId = mash->key();
    connect(mash.get(), SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)));
 
-   auto style = DbNamedEntityRecords<Style>::getInstance().insertCopyOf(other.mashId);
+   auto style = ObjectStoreTyped<Style>::getInstance().insertCopyOf(other.mashId);
    this->styleId = style->key();
    connect(style.get(), SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)));
 
@@ -500,7 +425,7 @@ Recipe::~Recipe() = default;
 
 void Recipe::connectSignals() {
    // Connect fermentable, hop changed signals to their parent recipe.
-   for (auto recipe : DbNamedEntityRecords<Recipe>::getInstance().getAllRaw()) {
+   for (auto recipe : ObjectStoreTyped<Recipe>::getInstance().getAllRaw()) {
       qDebug() << Q_FUNC_INFO << "Connecting signals for Recipe #" << recipe->key();
       Equipment * equipment = recipe->equipment();
       if (equipment != nullptr) {
@@ -1220,12 +1145,13 @@ template<class NE> bool Recipe::uses(NE const & var) const {
                              [idToLookFor](int id){ return idToLookFor == id; });
    return match != this->pimpl->accessIds<NE>().cend();
 }
-template bool Recipe::uses(Hop          const & var) const;
 template bool Recipe::uses(Fermentable  const & var) const;
+template bool Recipe::uses(Hop          const & var) const;
+template bool Recipe::uses(Instruction  const & var) const;
 template bool Recipe::uses(Misc         const & var) const;
-template bool Recipe::uses(Yeast        const & var) const;
-template bool Recipe::uses(Water        const & var) const;
 template bool Recipe::uses(Salt         const & var) const;
+template bool Recipe::uses(Water        const & var) const;
+template bool Recipe::uses(Yeast        const & var) const;
 template<> bool Recipe::uses<Equipment> (Equipment  const & var) const { return var.key() == this->equipmentId; }
 template<> bool Recipe::uses<Mash>      (Mash       const & var) const { return var.key() == this->mashId; }
 template<> bool Recipe::uses<Style>     (Style      const & var) const { return var.key() == this->styleId; }
@@ -1290,7 +1216,7 @@ void Recipe::swapInstructions(Instruction * ins1, Instruction * ins2) {
 
 void Recipe::clearInstructions() {
    for (int ii : this->pimpl->instructionIds) {
-      DbNamedEntityRecords<Instruction>::getInstance().softDelete(ii);
+      ObjectStoreTyped<Instruction>::getInstance().softDelete(ii);
    }
    this->pimpl->instructionIds.clear();
    updatePropertyInDb<Instruction>(*this);
@@ -1359,7 +1285,7 @@ void Recipe::setEquipmentId(int id) {
 }
 
 void Recipe::setMashId(int id) {
-   auto & objectStore = DbNamedEntityRecords<Mash>::getInstance();
+   auto & objectStore = ObjectStoreTyped<Mash>::getInstance();
 
    // It's a coding error to supply an ID to a non-existent object.  If it happens, log some diagnostics then bail.
    Q_ASSERT(objectStore.contains(id));
@@ -1959,7 +1885,7 @@ QList<BrewNote*> Recipe::brewNotes() const {
    // The Recipe owns its BrewNotes, but, for the moment at least, it's the BrewNote that knows which Recipe it's in
    // rather than the Recipe which knows which BrewNotes it has, so we have to ask.
    int const recipeId = this->key();
-   return DbNamedEntityRecords<BrewNote>::getInstance().findAllMatching(
+   return ObjectStoreTyped<BrewNote>::getInstance().findAllMatching(
       [recipeId](BrewNote const * bn) {return bn->getRecipeId() == recipeId;}
    );
 }
@@ -2840,21 +2766,4 @@ double Recipe::targetTotalMashVol_l()
 
 
    return targetCollectedWortVol_l() + absorption_lKg * grainsInMash_kg();
-}
-
-NamedEntity * Recipe::getParent() {
-   Recipe * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = ObjectStoreWrapper::getByIdRaw<Recipe>(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
 }

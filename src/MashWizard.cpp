@@ -28,7 +28,8 @@
 #include <QMessageBox>
 
 #include "Algorithms.h"
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"

@@ -23,9 +23,7 @@
 #include <QDebug>
 
 #include "Brewken.h"
-#include "database/TableSchemaConst.h"
-#include "database/SaltSchema.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 
 bool Salt::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -37,8 +35,8 @@ bool Salt::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Salt::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Salt>::getInstance();
+ObjectStore & Salt::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Salt>::getInstance();
 }
 
 QString Salt::classNameStr()
@@ -47,21 +45,8 @@ QString Salt::classNameStr()
    return name;
 }
 
-Salt::Salt(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key),
-   m_amount(0.0),
-   m_add_to(NEVER),
-   m_type(NONE),
-   m_amount_is_weight(true),
-   m_percent_acid(0.0),
-   m_is_acid(false),
-   m_misc_id(-1),
-   m_cacheOnly(false)
-{
-}
-
-Salt::Salt(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::SALTTABLE, -1, name, true),
+Salt::Salt(QString name, bool cache) :
+   NamedEntity(-1, name, true),
    m_amount(0.0),
    m_add_to(NEVER),
    m_type(NONE),
@@ -73,8 +58,8 @@ Salt::Salt(QString name, bool cache)
 {
 }
 
-Salt::Salt(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::SALTTABLE},
+Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity       {namedParameterBundle},
    m_amount          {namedParameterBundle(PropertyNames::Salt::addTo         ).toDouble()},
    m_add_to          {static_cast<Salt::WhenToAdd>(namedParameterBundle(PropertyNames::Salt::amount).toInt())},
    m_type            {static_cast<Salt::Types>(namedParameterBundle(PropertyNames::Salt::amountIsWeight).toInt())},
@@ -86,8 +71,8 @@ Salt::Salt(NamedParameterBundle & namedParameterBundle) :
    return;
 }
 
-Salt::Salt(Salt & other)
-   : NamedEntity(DatabaseConstants::SALTTABLE, -1, other.name(), true),
+Salt::Salt(Salt const & other) :
+   NamedEntity(-1, other.name(), true),
    m_amount(other.m_amount),
    m_add_to(other.m_add_to),
    m_type(other.m_type),
@@ -96,19 +81,6 @@ Salt::Salt(Salt & other)
    m_is_acid(other.m_is_acid),
    m_misc_id(other.m_misc_id),
    m_cacheOnly(other.m_cacheOnly)
-{
-}
-
-Salt::Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
-   m_amount(rec.value(kcolAmount).toDouble()),
-   m_add_to(static_cast<Salt::WhenToAdd>(rec.value(kcolSaltAddTo).toInt())),
-   m_type(static_cast<Salt::Types>(rec.value(kcolSaltType).toInt())),
-   m_amount_is_weight(rec.value(kcolSaltAmtIsWgt).toBool()),
-   m_percent_acid(rec.value(kcolSaltPctAcid).toDouble()),
-   m_is_acid(rec.value(kcolSaltIsAcid).toBool()),
-   m_misc_id(rec.value(kcolMiscId).toInt()),
-   m_cacheOnly(false)
 {
 }
 

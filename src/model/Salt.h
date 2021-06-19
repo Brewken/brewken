@@ -75,8 +75,8 @@ public:
    Q_ENUMS(WhenToAdd Types)
 
    Salt(QString name = "", bool cache = true);
-   Salt(NamedParameterBundle & namedParameterBundle);
-   Salt(Salt & other );
+   Salt(NamedParameterBundle const & namedParameterBundle);
+   Salt(Salt const & other);
 
    virtual ~Salt() = default;
 
@@ -132,12 +132,9 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Salt(DatabaseConstants::DbTableId table, int key);
-   Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    double m_amount;
    Salt::WhenToAdd m_add_to;
    Salt::Types m_type;

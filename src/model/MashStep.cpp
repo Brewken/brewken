@@ -21,10 +21,9 @@
 
 #include <QVector>
 #include <QDebug>
+
 #include "Brewken.h"
-#include "database/Database.h"
-#include "database/TableSchemaConst.h"
-#include "database/MashStepSchema.h"
+#include "database/ObjectStoreWrapper.h"
 
 QStringList MashStep::types = QStringList() << "Infusion" << "Temperature" << "Decoction" << "Fly Sparge" << "Batch Sparge";
 QStringList MashStep::typesTr = QStringList() << QObject::tr("Infusion") << QObject::tr("Temperature") << QObject::tr("Decoction") << QObject::tr("Fly Sparge") << QObject::tr("Batch Sparge");
@@ -46,8 +45,8 @@ bool MashStep::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & MashStep::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<MashStep>::getInstance();
+ObjectStore & MashStep::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<MashStep>::getInstance();
 }
 
 QString MashStep::classNameStr()
@@ -58,42 +57,25 @@ QString MashStep::classNameStr()
 
 //==============================CONSTRUCTORS====================================
 
-MashStep::MashStep(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-     m_typeStr(QString()),
-     m_type(static_cast<MashStep::Type>(0)),
-     m_infuseAmount_l(0.0),
-     m_stepTemp_c(0.0),
-     m_stepTime_min(0.0),
-     m_rampTime_min(0.0),
-     m_endTemp_c(0.0),
-     m_infuseTemp_c(0.0),
-     m_decoctionAmount_l(0.0),
-     m_stepNumber(0.0),
-     mashId(-1),
-     m_cacheOnly(false)
-{
+MashStep::MashStep(QString name, bool cache) :
+   NamedEntity(-1, name, true),
+   m_typeStr(QString()),
+   m_type(static_cast<MashStep::Type>(0)),
+   m_infuseAmount_l(0.0),
+   m_stepTemp_c(0.0),
+   m_stepTime_min(0.0),
+   m_rampTime_min(0.0),
+   m_endTemp_c(0.0),
+   m_infuseTemp_c(0.0),
+   m_decoctionAmount_l(0.0),
+   m_stepNumber(0.0),
+   mashId(-1),
+   m_cacheOnly(cache) {
+   return;
 }
 
-MashStep::MashStep(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::MASHSTEPTABLE, -1, name, true),
-     m_typeStr(QString()),
-     m_type(static_cast<MashStep::Type>(0)),
-     m_infuseAmount_l(0.0),
-     m_stepTemp_c(0.0),
-     m_stepTime_min(0.0),
-     m_rampTime_min(0.0),
-     m_endTemp_c(0.0),
-     m_infuseTemp_c(0.0),
-     m_decoctionAmount_l(0.0),
-     m_stepNumber(0.0),
-     mashId(-1),
-     m_cacheOnly(cache)
-{
-}
-
-MashStep::MashStep(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::MASHSTEPTABLE},
+MashStep::MashStep(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity        {namedParameterBundle},
    m_type             {static_cast<MashStep::Type>(namedParameterBundle(PropertyNames::MashStep::type).toInt())},
    m_infuseAmount_l   {namedParameterBundle(PropertyNames::MashStep::infuseAmount_l   ).toDouble()},
    m_stepTemp_c       {namedParameterBundle(PropertyNames::MashStep::stepTemp_c       ).toDouble()},
@@ -109,7 +91,7 @@ MashStep::MashStep(NamedParameterBundle & namedParameterBundle) :
 }
 
 MashStep::MashStep(MashStep const & other) :
-   NamedEntity(other),
+   NamedEntity        {other},
    m_type             {other.m_type             },
    m_infuseAmount_l   {other.m_infuseAmount_l   },
    m_stepTemp_c       {other.m_stepTemp_c       },
@@ -124,22 +106,6 @@ MashStep::MashStep(MashStep const & other) :
    return;
 }
 
-
-MashStep::MashStep(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
-     m_typeStr(rec.value(kcolMashstepType).toString()),
-     m_type(static_cast<MashStep::Type>(types.indexOf(m_typeStr))),
-     m_infuseAmount_l(rec.value(kcolMashstepInfuseAmt).toDouble()),
-     m_stepTemp_c(rec.value(kcolMashstepStepTemp).toDouble()),
-     m_stepTime_min(rec.value(kcolMashstepStepTime).toDouble()),
-     m_rampTime_min(rec.value(kcolMashstepRampTime).toDouble()),
-     m_endTemp_c(rec.value(kcolMashstepEndTemp).toDouble()),
-     m_infuseTemp_c(rec.value(kcolMashstepInfuseTemp).toDouble()),
-     m_decoctionAmount_l(rec.value(kcolMashstepDecoctAmt).toDouble()),
-     m_stepNumber(rec.value(kcolMashstepStepNumber).toInt()),
-     m_cacheOnly(false)
-{
-}
 
 //================================"SET" METHODS=================================
 void MashStep::setInfuseTemp_c(double var )

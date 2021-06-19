@@ -1,5 +1,5 @@
 /**
- * database/DbRecords.cpp is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStore.cpp is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "database/DbRecords.h"
+#include "database/ObjectStore.h"
 
 #include <cstring>
 
@@ -32,16 +32,16 @@ namespace {
     * Given a (QVariant-wrapped) string value pulled out of the DB for an enum, look up and return its internal
     * numerical enum equivalent
     */
-   int stringToEnum(DbRecords::FieldSimpleDefn const & fieldDefn, QVariant const & valueFromDb) {
+   int stringToEnum(ObjectStore::FieldSimpleDefn const & fieldDefn, QVariant const & valueFromDb) {
       // It's a coding error if we called this function for a non-enum field
-      Q_ASSERT(fieldDefn.fieldType == DbRecords::Enum);
+      Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
 
       QString stringValue = valueFromDb.toString();
       auto match = std::find_if(
          fieldDefn.enumMapping->begin(),
          fieldDefn.enumMapping->end(),
-         [stringValue](DbRecords::EnumAndItsDbString const & ii){return stringValue == ii.string;}
+         [stringValue](ObjectStore::EnumAndItsDbString const & ii){return stringValue == ii.string;}
       );
 
       // If we didn't find a match, its either a coding error or someone messed with the DB data
@@ -58,16 +58,16 @@ namespace {
     * Given a (QVariant-wrapped) int value of a native enum, look up and return the corresponding string we use to
     * store it in the DB
     */
-   QString enumToString(DbRecords::FieldSimpleDefn const & fieldDefn, QVariant const & propertyValue) {
+   QString enumToString(ObjectStore::FieldSimpleDefn const & fieldDefn, QVariant const & propertyValue) {
       // It's a coding error if we called this function for a non-enum field
-      Q_ASSERT(fieldDefn.fieldType == DbRecords::Enum);
+      Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
 
       int nativeValue = propertyValue.toInt();
       auto match = std::find_if(
          fieldDefn.enumMapping->begin(),
          fieldDefn.enumMapping->end(),
-         [nativeValue](DbRecords::EnumAndItsDbString const & ii){return nativeValue == ii.native;}
+         [nativeValue](ObjectStore::EnumAndItsDbString const & ii){return nativeValue == ii.native;}
       );
 
       // It's a coding error if we couldn't find a match
@@ -125,7 +125,7 @@ namespace {
    // So instead, we just do individual inserts.  Note that orderByColumn column is only used if specified, and
    // that, if it is, we assume it's an integer type and that we create the values ourselves.
    //
-   bool insertIntoFieldManyToManyDefn(DbRecords::FieldManyToManyDefn const & fieldManyToManyDefn,
+   bool insertIntoFieldManyToManyDefn(ObjectStore::FieldManyToManyDefn const & fieldManyToManyDefn,
                                 QObject const & object,
                                 QVariant const & primaryKey,
                                 QSqlDatabase & databaseConnection) {
@@ -161,7 +161,7 @@ namespace {
 
       // Get the list of data to bind to it
       QVariant bindValues = object.property(fieldManyToManyDefn.propertyName);
-      if (fieldManyToManyDefn.assumeMaxOneEntry) {
+      if (fieldManyToManyDefn.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
          // If it's single entry only, just turn it into a one-item list so that the remaining processing is the same
          bindValues = QVariant{QList<QVariant>{bindValues}};
       }
@@ -190,7 +190,7 @@ namespace {
       return true;
    }
 
-   bool deleteFromFieldManyToManyDefn(DbRecords::FieldManyToManyDefn const & fieldManyToManyDefn,
+   bool deleteFromFieldManyToManyDefn(ObjectStore::FieldManyToManyDefn const & fieldManyToManyDefn,
                                 QVariant const & primaryKey,
                                 QSqlDatabase & databaseConnection) {
 
@@ -225,21 +225,21 @@ namespace {
 
 }
 
-// This private implementation class holds all private non-virtual members of DbRecords
-class DbRecords::impl {
+// This private implementation class holds all private non-virtual members of ObjectStore
+class ObjectStore::impl {
 public:
 
    /**
     * Constructor
     */
-   impl(char const * const tableName,
-        FieldSimpleDefns const & fieldSimpleDefns,
-        FieldManyToManyDefns const & fieldManyToManyDefns) : tableName{tableName},
-                                                           fieldSimpleDefns{fieldSimpleDefns},
-                                                           fieldManyToManyDefns{fieldManyToManyDefns},
-                                                           allObjects{} {
+   impl(TableSimpleDefn const & primaryTableDefn,
+        FieldManyToManyDefns const & fieldManyToManyDefns) : tableName{primaryTableDefn.tableName},
+                                                             fieldSimpleDefns{primaryTableDefn.fieldSimpleDefns},
+                                                             fieldManyToManyDefns{fieldManyToManyDefns},
+                                                             allObjects{} {
       return;
    }
+
 
    /**
     * Destructor
@@ -300,19 +300,32 @@ public:
 };
 
 
-DbRecords::DbRecords(char const * const tableName,
-                     FieldSimpleDefns const & fieldSimpleDefns,
-                     FieldManyToManyDefns const & fieldManyToManyDefns) :
-   pimpl{ std::make_unique<impl>(tableName, fieldSimpleDefns, fieldManyToManyDefns) } {
+ObjectStore::ObjectStore(TableSimpleDefn const & primaryTableDefn,
+                         FieldManyToManyDefns const & fieldManyToManyDefns) :
+   pimpl{ std::make_unique<impl>(primaryTableDefn, fieldManyToManyDefns) } {
    return;
 }
 
+
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
-DbRecords::~DbRecords() = default;
+ObjectStore::~ObjectStore() = default;
 
-void DbRecords::createTables() {
+void ObjectStore::createTables() {
    // .:TODO:.
+   /*
+    * Notes: - Need "PRIMARY KEY autoincrement" or equivalent on primary key column
+    *        - We don't need default values
+    *        - Might be useful to mark which fields cannot be null
+    *        - Need foreign keys on simple table fields (eg on fermentable table, inventory_id REFERENCES fermentable_in_inventory (id))
+    *        - Need double foreign keys on junction table fields (eg on fermentable_in_recipe table, foreign key(fermentable_id) references fermentable(id), foreign key(recipe_id) references recipe(id))
+    *        - Foreign keys not always consistent:
+    *             CREATE TABLE "fermentable_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
+    *             CREATE TABLE "hop_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
+    *             CREATE TABLE "misc_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
+    *             CREATE TABLE water_in_recipe( id integer PRIMARY KEY autoincrement, water_id integer, recipe_id integer, foreign key(water_id) references water(id), foreign key(recipe_id) references recipe(id))
+    *             CREATE TABLE "yeast_in_inventory" (id INTEGER PRIMARY KEY autoincrement , quanta real  DEFAULT 0)
+    */
    QString queryString{"CREATE TABLE "};
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->tableName << " (\n";
@@ -330,19 +343,19 @@ void DbRecords::createTables() {
       // of individual databases.
       // **************************************************************************************************************
       switch (fieldDefn.fieldType) {
-         case DbRecords::FieldType::Bool:
+         case ObjectStore::FieldType::Bool:
             break;
-         case DbRecords::FieldType::Int:
+         case ObjectStore::FieldType::Int:
             break;
-         case DbRecords::FieldType::UInt:
+         case ObjectStore::FieldType::UInt:
             break;
-         case DbRecords::FieldType::Double:
+         case ObjectStore::FieldType::Double:
             break;
-         case DbRecords::FieldType::String:
+         case ObjectStore::FieldType::String:
             break;
-         case DbRecords::FieldType::Date:
+         case ObjectStore::FieldType::Date:
             break;
-         case DbRecords::FieldType::Enum:
+         case ObjectStore::FieldType::Enum:
             break;
          default:
             break;
@@ -360,17 +373,10 @@ void DbRecords::createTables() {
    return;
 }
 
-void DbRecords::loadAll(QSqlDatabase databaseConnection) {
-   //
-   // NB: We need to have QSqlDatabase passed in because we can't call Database::instance().sqlDatabase() because we
-   // are ourselves being called from the first call to Database::instance() which invokes Database::load()
-   //
-   // .:TBD:. One day we should change where the loadAll calls are made from so that the Database class has no
-   //         knowledge of DbRecords / DbNamedEntityRecords classes.
-   //
-
+void ObjectStore::loadAll() {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
    DbTransaction dbTransaction{databaseConnection};
 
    //
@@ -454,7 +460,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          }
 
          // Enums need to be converted from their string representation in the DB to a numeric value
-         if (fieldDefn.fieldType == DbRecords::Enum) {
+         if (fieldDefn.fieldType == ObjectStore::Enum) {
             fieldValue = QVariant(stringToEnum(fieldDefn, fieldValue));
          }
 
@@ -549,7 +555,7 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
          // there is at most one "other" per "this", then we'll pass just the first one we get back for each "this".
          //
          auto otherKeys = thisToOtherKeys.values(currentKey);
-         if (fieldManyToManyDefn.assumeMaxOneEntry) {
+         if (fieldManyToManyDefn.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
             qDebug() <<
                Q_FUNC_INFO << currentObject->metaObject()->className() << " #" << currentKey << ", " <<
                fieldManyToManyDefn.propertyName << "=" << otherKeys.first().toInt();
@@ -571,15 +577,15 @@ void DbRecords::loadAll(QSqlDatabase databaseConnection) {
    return;
 }
 
-bool DbRecords::contains(int id) const {
+bool ObjectStore::contains(int id) const {
    return this->pimpl->allObjects.contains(id);
 }
 
-std::shared_ptr<QObject> DbRecords::getById(int id) const {
+std::shared_ptr<QObject> ObjectStore::getById(int id) const {
    return this->pimpl->allObjects.value(id);
 }
 
-QList<std::shared_ptr<QObject> > DbRecords::getByIds(QVector<int> const & listOfIds) const {
+QList<std::shared_ptr<QObject> > ObjectStore::getByIds(QVector<int> const & listOfIds) const {
    QList<std::shared_ptr<QObject> > listToReturn;
    for (auto id : listOfIds) {
       if (this->pimpl->allObjects.contains(id)) {
@@ -592,7 +598,7 @@ QList<std::shared_ptr<QObject> > DbRecords::getByIds(QVector<int> const & listOf
 }
 
 
-std::shared_ptr<QObject> DbRecords::insert(std::shared_ptr<QObject> object) {
+std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
@@ -636,7 +642,7 @@ std::shared_ptr<QObject> DbRecords::insert(std::shared_ptr<QObject> object) {
          QVariant bindValue{object->property(fieldDefn.propertyName)};
 
          // Enums need to be converted to strings first
-         if (fieldDefn.fieldType == DbRecords::Enum) {
+         if (fieldDefn.fieldType == ObjectStore::Enum) {
             bindValue = QVariant{enumToString(fieldDefn, bindValue)};
          }
 
@@ -698,7 +704,7 @@ std::shared_ptr<QObject> DbRecords::insert(std::shared_ptr<QObject> object) {
    return object;
 }
 
-void DbRecords::update(std::shared_ptr<QObject> object) {
+void ObjectStore::update(std::shared_ptr<QObject> object) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
@@ -748,7 +754,7 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
       QVariant bindValue{object->property(fieldDefn.propertyName)};
 
       // Enums need to be converted to strings first
-      if (fieldDefn.fieldType == DbRecords::Enum) {
+      if (fieldDefn.fieldType == ObjectStore::Enum) {
          bindValue = QVariant{enumToString(fieldDefn, bindValue)};
       }
 
@@ -792,7 +798,7 @@ void DbRecords::update(std::shared_ptr<QObject> object) {
 }
 
 
-std::shared_ptr<QObject> DbRecords::insertOrUpdate(std::shared_ptr<QObject> object) {
+std::shared_ptr<QObject> ObjectStore::insertOrUpdate(std::shared_ptr<QObject> object) {
    QVariant const primaryKey = this->pimpl->getPrimaryKey(*object);
    if (primaryKey.toInt() > 0) {
       this->update(object);
@@ -802,14 +808,14 @@ std::shared_ptr<QObject> DbRecords::insertOrUpdate(std::shared_ptr<QObject> obje
 }
 
 
-int DbRecords::insertOrUpdate(QObject * object) {
+int ObjectStore::insertOrUpdate(QObject * object) {
    auto sharedPointer = std::make_shared<QObject>(object);
    this->insertOrUpdate(sharedPointer);
    return this->pimpl->getPrimaryKey(*object).toInt();
 }
 
 
-void DbRecords::updateProperty(QObject const & object, char const * const propertyToUpdateInDb) {
+void ObjectStore::updateProperty(QObject const & object, char const * const propertyToUpdateInDb) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
@@ -862,7 +868,7 @@ void DbRecords::updateProperty(QObject const & object, char const * const proper
       );
       // It's a coding error if we're trying to update a property that's not in the field definitions
       Q_ASSERT(fieldDefn != this->pimpl->fieldSimpleDefns.end());
-      if (fieldDefn->fieldType == DbRecords::Enum) {
+      if (fieldDefn->fieldType == ObjectStore::Enum) {
          propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
       }
       sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
@@ -887,7 +893,12 @@ void DbRecords::updateProperty(QObject const & object, char const * const proper
       );
 
       // It's a coding error if we couldn't find the property either as a simple field or an associative entity
-      Q_ASSERT(matchingFieldManyToManyDefnDefn != this->pimpl->fieldManyToManyDefns.end());
+      if (matchingFieldManyToManyDefnDefn == this->pimpl->fieldManyToManyDefns.end()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Unable to find rule for storing property" << object.metaObject()->className() << "::" <<
+            propertyToUpdateInDb << "in either" << this->pimpl->tableName << "or any associated table";
+         Q_ASSERT(false);
+      }
 
       //
       // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
@@ -910,7 +921,7 @@ void DbRecords::updateProperty(QObject const & object, char const * const proper
 //
 // .:TODO:. For this and for hardDelete, we need to work out how to do cascading deletes for Recipe - ie delete the objects it owns (Hops, Fermentables, etc)
 //
-void DbRecords::softDelete(int id) {
+void ObjectStore::softDelete(int id) {
    auto object = this->pimpl->allObjects.value(id);
    this->pimpl->allObjects.remove(id);
 
@@ -921,7 +932,7 @@ void DbRecords::softDelete(int id) {
 }
 
 //
-void DbRecords::hardDelete(int id) {
+void ObjectStore::hardDelete(int id) {
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
    DbTransaction dbTransaction{databaseConnection};
 
@@ -981,7 +992,7 @@ void DbRecords::hardDelete(int id) {
 }
 
 
-std::optional< std::shared_ptr<QObject> > DbRecords::findFirstMatching(
+std::optional< std::shared_ptr<QObject> > ObjectStore::findFirstMatching(
    std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
 ) const {
    auto result = std::find_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), matchFunction);
@@ -991,7 +1002,7 @@ std::optional< std::shared_ptr<QObject> > DbRecords::findFirstMatching(
    return *result;
 }
 
-std::optional< QObject * > DbRecords::findFirstMatching(std::function<bool(QObject *)> const & matchFunction) const {
+std::optional< QObject * > ObjectStore::findFirstMatching(std::function<bool(QObject *)> const & matchFunction) const {
    // std::find_if on this->pimpl->allObjects is going to need a lambda that takes shared pointer to QObject
    // We create a wrapper lambda with this profile that just extracts the raw pointer and passes it through to the
    // caller's lambda
@@ -1005,7 +1016,7 @@ std::optional< QObject * > DbRecords::findFirstMatching(std::function<bool(QObje
    return result->get();
 }
 
-QList<std::shared_ptr<QObject> > DbRecords::findAllMatching(
+QList<std::shared_ptr<QObject> > ObjectStore::findAllMatching(
    std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
 ) const {
    // Before Qt 6, it would be more efficient to use QVector than QList.  However, we use QList because (a) lots of the
@@ -1016,7 +1027,7 @@ QList<std::shared_ptr<QObject> > DbRecords::findAllMatching(
    return results;
 }
 
-QList<QObject *> DbRecords::findAllMatching(std::function<bool(QObject *)> const & matchFunction) const {
+QList<QObject *> ObjectStore::findAllMatching(std::function<bool(QObject *)> const & matchFunction) const {
    // Call the shared pointer overload of this function, with a suitable wrapper round the supplied lambda
    QList<std::shared_ptr<QObject> > results = this->findAllMatching(
       [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(obj.get());}
@@ -1032,12 +1043,12 @@ QList<QObject *> DbRecords::findAllMatching(std::function<bool(QObject *)> const
    return convertedResults;
 }
 
-QList<std::shared_ptr<QObject> > DbRecords::getAll() const {
+QList<std::shared_ptr<QObject> > ObjectStore::getAll() const {
    // QHash already knows how to return a QList of its values
    return this->pimpl->allObjects.values();
 }
 
-QList<QObject *> DbRecords::getAllRaw() const {
+QList<QObject *> ObjectStore::getAllRaw() const {
    QList<QObject *> listToReturn;
    listToReturn.reserve(this->pimpl->allObjects.size());
    std::transform(this->pimpl->allObjects.cbegin(),

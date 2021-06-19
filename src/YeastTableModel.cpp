@@ -37,6 +37,7 @@
 #include <QWidget>
 
 #include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
 #include "database/Database.h"
 #include "MainWindow.h"
 #include "model/Recipe.h"
@@ -111,12 +112,12 @@ void YeastTableModel::observeDatabase(bool val) {
       observeRecipe(nullptr);
 
       removeAll();
-      connect(&DbNamedEntityRecords<Yeast>::getInstance(), &DbNamedEntityRecords<Yeast>::signalObjectInserted, this, &YeastTableModel::addYeast);
-      connect(&DbNamedEntityRecords<Yeast>::getInstance(), &DbNamedEntityRecords<Yeast>::signalObjectDeleted,  this, &YeastTableModel::removeYeast);
-      addYeasts( DbNamedEntityRecords<Yeast>::getInstance().getAllRaw() );
+      connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectInserted, this, &YeastTableModel::addYeast);
+      connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectDeleted,  this, &YeastTableModel::removeYeast);
+      addYeasts( ObjectStoreTyped<Yeast>::getInstance().getAllRaw() );
    } else {
       removeAll();
-      disconnect(&DbNamedEntityRecords<Yeast>::getInstance(), nullptr, this, nullptr);
+      disconnect(&ObjectStoreTyped<Yeast>::getInstance(), nullptr, this, nullptr);
    }
 }
 

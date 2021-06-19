@@ -24,10 +24,7 @@
 #include <QVector>
 
 #include "Brewken.h"
-#include "database/Database.h"
-#include "database/DbNamedEntityRecords.h"
-#include "database/TableSchemaConst.h"
-#include "database/WaterSchema.h"
+#include "database/ObjectStoreWrapper.h"
 
 bool Water::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -44,8 +41,8 @@ bool Water::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Water::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Water>::getInstance();
+ObjectStore & Water::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Water>::getInstance();
 }
 
 QString Water::classNameStr()
@@ -54,28 +51,8 @@ QString Water::classNameStr()
    return name;
 }
 
-Water::Water(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key),
-   m_amount(0.0),
-   m_calcium_ppm(0.0),
-   m_bicarbonate_ppm(0.0),
-   m_sulfate_ppm(0.0),
-   m_chloride_ppm(0.0),
-   m_sodium_ppm(0.0),
-   m_magnesium_ppm(0.0),
-   m_ph(0.0),
-   m_alkalinity(0.0),
-   m_notes(QString()),
-   m_cacheOnly(false),
-   m_type(NONE),
-   m_mash_ro(0.0),
-   m_sparge_ro(0.0),
-   m_alkalinity_as_hco3(true)
-{
-}
-
-Water::Water(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::WATERTABLE, -1, name, true),
+Water::Water(QString name, bool cache) :
+   NamedEntity(-1, name, true),
    m_amount(0.0),
    m_calcium_ppm(0.0),
    m_bicarbonate_ppm(0.0),
@@ -94,8 +71,8 @@ Water::Water(QString name, bool cache)
 {
 }
 
-Water::Water(Water const& other, bool cache)
-   : NamedEntity(DatabaseConstants::WATERTABLE, -1, other.name(), true),
+Water::Water(Water const& other, bool cache) :
+   NamedEntity(-1, other.name(), true),
    m_amount(other.m_amount),
    m_calcium_ppm(other.m_calcium_ppm),
    m_bicarbonate_ppm(other.m_bicarbonate_ppm),
@@ -114,28 +91,8 @@ Water::Water(Water const& other, bool cache)
 {
 }
 
-Water::Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-   m_amount(rec.value(kcolAmount).toDouble()),
-   m_calcium_ppm(rec.value(kcolWaterCalcium).toDouble()),
-   m_bicarbonate_ppm(rec.value(kcolWaterBiCarbonate).toDouble()),
-   m_sulfate_ppm(rec.value(kcolWaterSulfate).toDouble()),
-   m_chloride_ppm(rec.value(kcolWaterChloride).toDouble()),
-   m_sodium_ppm(rec.value(kcolWaterSodium).toDouble()),
-   m_magnesium_ppm(rec.value(kcolWaterMagnesium).toDouble()),
-   m_ph(rec.value(kcolPH).toDouble()),
-   m_alkalinity(rec.value(kcolWaterAlkalinity).toDouble()),
-   m_notes(rec.value(kcolNotes).toString()),
-   m_cacheOnly(false),
-   m_type(static_cast<Water::Types>(rec.value(kcolWaterType).toInt())),
-   m_mash_ro(rec.value(kcolWaterMashRO).toDouble()),
-   m_sparge_ro(rec.value(kcolWaterSpargeRO).toDouble()),
-   m_alkalinity_as_hco3(rec.value(kcolWaterAsHCO3).toBool())
-{
-}
-
-Water::Water(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity         {namedParameterBundle, DatabaseConstants::WATERTABLE},
+Water::Water(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity         {namedParameterBundle},
    m_amount            {namedParameterBundle(PropertyNames::Water::amount).toDouble()},
    m_calcium_ppm       {namedParameterBundle(PropertyNames::Water::calcium_ppm).toDouble()},
    m_bicarbonate_ppm   {namedParameterBundle(PropertyNames::Water::bicarbonate_ppm).toDouble()},
@@ -303,22 +260,4 @@ double Water::ppm( Water::Ions ion )
    }
 
    return 0.0;
-}
-
-NamedEntity * Water::getParent() {
-   Water * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
-      myParent = ObjectStoreWrapper::getByIdRaw<Water>(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
 }

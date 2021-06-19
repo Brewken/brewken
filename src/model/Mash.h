@@ -53,7 +53,7 @@ class Mash : public NamedEntity {
    friend class MashEditor;
 public:
    Mash(QString name = "", bool cache = true);
-   Mash(NamedParameterBundle & namedParameterBundle);
+   Mash(NamedParameterBundle const & namedParameterBundle);
    Mash(Mash const& other);
 
    virtual ~Mash() = default;
@@ -85,7 +85,7 @@ public:
    /**
     * \brief Connect MashStep changed signals to their parent Mashes.
     *
-    *        Needs to be called \b after all the calls to DbNamedEntityRecords<FooBar>::getInstance().loadAll()
+    *        Needs to be called \b after all the calls to ObjectStoreTyped<FooBar>::getInstance().loadAll()
     */
    static void connectSignals();
 
@@ -151,12 +151,9 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Mash(DatabaseConstants::DbTableId table, int key);
-   Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    double m_grainTemp_c;
    QString m_notes;
    double m_tunTemp_c;

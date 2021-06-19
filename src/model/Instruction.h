@@ -49,7 +49,7 @@ class Instruction : public NamedEntity {
 
 public:
    Instruction(QString name = "", bool cache = true);
-   Instruction(NamedParameterBundle & namedParameterBundle);
+   Instruction(NamedParameterBundle const & namedParameterBundle);
    Instruction(Instruction const & other);
 
    virtual ~Instruction();
@@ -93,15 +93,12 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
-
-   Instruction(DatabaseConstants::DbTableId table, int key);
-   Instruction(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
 
    QString m_directions;
    bool    m_hasTimer;

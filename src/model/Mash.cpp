@@ -24,11 +24,9 @@
 
 #include <QObject>
 
-#include "model/MashStep.h"
 #include "Brewken.h"
-#include "database/Database.h"
-#include "database/TableSchemaConst.h"
-#include "database/MashSchema.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/MashStep.h"
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -45,8 +43,8 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Mash::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Mash>::getInstance();
+ObjectStore & Mash::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Mash>::getInstance();
 }
 
 QString Mash::classNameStr()
@@ -55,32 +53,18 @@ QString Mash::classNameStr()
    return name;
 }
 
-Mash::Mash(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-     m_grainTemp_c(0.0),
-     m_notes(QString()),
-     m_tunTemp_c(0.0),
-     m_spargeTemp_c(0.0),
-     m_ph(0.0),
-     m_tunWeight_kg(0.0),
-     m_tunSpecificHeat_calGC(0.0),
-     m_equipAdjust(true),
-     m_cacheOnly(false)
-{
-}
-
-Mash::Mash(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::MASHTABLE, -1, name, true),
-     m_grainTemp_c(0.0),
-     m_notes(QString()),
-     m_tunTemp_c(0.0),
-     m_spargeTemp_c(0.0),
-     m_ph(0.0),
-     m_tunWeight_kg(0.0),
-     m_tunSpecificHeat_calGC(0.0),
-     m_equipAdjust(true),
-     m_cacheOnly(cache)
-{
+Mash::Mash(QString name, bool cache) :
+   NamedEntity(-1, name, true),
+   m_grainTemp_c(0.0),
+   m_notes(QString()),
+   m_tunTemp_c(0.0),
+   m_spargeTemp_c(0.0),
+   m_ph(0.0),
+   m_tunWeight_kg(0.0),
+   m_tunSpecificHeat_calGC(0.0),
+   m_equipAdjust(true),
+   m_cacheOnly(cache) {
+   return;
 }
 
 Mash::Mash(Mash const & other) :
@@ -119,36 +103,22 @@ Mash::Mash(Mash const & other) :
 }
 
 
-Mash::Mash(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::MASHTABLE},
-     m_grainTemp_c          {namedParameterBundle(PropertyNames::Mash::grainTemp_c          ).toDouble()},
-     m_notes                {namedParameterBundle(PropertyNames::Mash::notes                ).toString()},
-     m_tunTemp_c            {namedParameterBundle(PropertyNames::Mash::tunTemp_c            ).toDouble()},
-     m_spargeTemp_c         {namedParameterBundle(PropertyNames::Mash::spargeTemp_c         ).toDouble()},
-     m_ph                   {namedParameterBundle(PropertyNames::Mash::ph                   ).toDouble()},
-     m_tunWeight_kg         {namedParameterBundle(PropertyNames::Mash::tunWeight_kg         ).toDouble()},
-     m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Mash::tunSpecificHeat_calGC).toDouble()},
-     m_equipAdjust          {namedParameterBundle(PropertyNames::Mash::equipAdjust          ).toBool()},
-     m_cacheOnly            {false} {
+Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity            {namedParameterBundle},
+   m_grainTemp_c          {namedParameterBundle(PropertyNames::Mash::grainTemp_c          ).toDouble()},
+   m_notes                {namedParameterBundle(PropertyNames::Mash::notes                ).toString()},
+   m_tunTemp_c            {namedParameterBundle(PropertyNames::Mash::tunTemp_c            ).toDouble()},
+   m_spargeTemp_c         {namedParameterBundle(PropertyNames::Mash::spargeTemp_c         ).toDouble()},
+   m_ph                   {namedParameterBundle(PropertyNames::Mash::ph                   ).toDouble()},
+   m_tunWeight_kg         {namedParameterBundle(PropertyNames::Mash::tunWeight_kg         ).toDouble()},
+   m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Mash::tunSpecificHeat_calGC).toDouble()},
+   m_equipAdjust          {namedParameterBundle(PropertyNames::Mash::equipAdjust          ).toBool()},
+   m_cacheOnly            {false} {
    return;
 }
 
-Mash::Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
-     m_grainTemp_c(rec.value(kcolMashGrainTemp).toDouble()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_tunTemp_c(rec.value(kcolMashTunTemp).toDouble()),
-     m_spargeTemp_c(rec.value(kcolMashSpargeTemp).toDouble()),
-     m_ph(rec.value(kcolPH).toDouble()),
-     m_tunWeight_kg(rec.value(kcolMashTunWeight).toDouble()),
-     m_tunSpecificHeat_calGC(rec.value(kcolMashTunSpecHeat).toDouble()),
-     m_equipAdjust(rec.value(kcolMashEquipAdjust).toBool()),
-     m_cacheOnly(false)
-{
-}
-
 void Mash::connectSignals() {
-   for (auto mash : DbNamedEntityRecords<Mash>::getInstance().getAllRaw()) {
+   for (auto mash : ObjectStoreTyped<Mash>::getInstance().getAllRaw()) {
       for (auto mashStep : mash->mashSteps()) {
          connect(mashStep, SIGNAL(changed(QMetaProperty,QVariant)), mash, SLOT(acceptMashStepChange(QMetaProperty,QVariant)) );
       }
@@ -295,7 +265,7 @@ void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
 
 void Mash::removeAllMashSteps() {
    for (int ii : this->mashStepIds) {
-      DbNamedEntityRecords<MashStep>::getInstance().softDelete(ii);
+      ObjectStoreTyped<MashStep>::getInstance().softDelete(ii);
    }
    this->mashStepIds.clear();
 //   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
@@ -402,7 +372,7 @@ QList<MashStep*> Mash::mashSteps() const {
    // The Mash owns its MashSteps, but, for the moment at least, it's the MashStep that knows which Mash it's in
    // (and in what order) rather than the Mash which knows which MashSteps it has, so we have to ask.
    int const mashId = this->key();
-   QList<MashStep*> mashSteps = DbNamedEntityRecords<MashStep>::getInstance().findAllMatching(
+   QList<MashStep*> mashSteps = ObjectStoreTyped<MashStep>::getInstance().findAllMatching(
       [mashId](MashStep const * ms) {return ms->getMashId() == mashId;}
    );
 

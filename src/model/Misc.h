@@ -31,6 +31,7 @@
 namespace PropertyNames::Misc { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Misc { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
 namespace PropertyNames::Misc { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
+namespace PropertyNames::Misc { static char const * const inventoryId = "inventoryId"; /* previously kpropInventoryId */ }
 namespace PropertyNames::Misc { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Misc { static char const * const time = "time"; /* previously kpropMiscTime */ }
 namespace PropertyNames::Misc { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
@@ -61,7 +62,7 @@ public:
    Q_ENUMS( Type Use AmountType )
 
    Misc(QString name = "", bool cache = true);
-   Misc(NamedParameterBundle & namedParameterBundle);
+   Misc(NamedParameterBundle const & namedParameterBundle);
    Misc(Misc const & other);
 
    virtual ~Misc() = default;
@@ -125,7 +126,7 @@ public:
    const QString amountTypeString() const;
    const QString amountTypeStringTr() const;
    double amount() const;
-   double inventory();
+   double inventory() const;
    int inventoryId() const;
    double time() const;
    bool amountIsWeight() const;
@@ -135,8 +136,6 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
 
    //! \brief Emitted when \c name() changes.
@@ -145,12 +144,9 @@ signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Misc(DatabaseConstants::DbTableId table, int key);
-   Misc(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    QString m_typeString;
    Type m_type;
    QString m_useString;
@@ -160,7 +156,6 @@ private:
    bool m_amountIsWeight;
    QString m_useFor;
    QString m_notes;
-   double m_inventory;
    int m_inventory_id;
    bool m_cacheOnly;
 

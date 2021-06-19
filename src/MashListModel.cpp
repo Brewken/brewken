@@ -19,7 +19,8 @@
  */
 #include "MashListModel.h"
 
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
@@ -27,8 +28,8 @@
 MashListModel::MashListModel(QWidget* parent) :
    QAbstractListModel(parent),
    recipe(0) {
-   connect(&DbNamedEntityRecords<Mash>::getInstance(), &DbNamedEntityRecords<Mash>::signalObjectInserted, this, &MashListModel::addMash);
-   connect(&DbNamedEntityRecords<Mash>::getInstance(), &DbNamedEntityRecords<Mash>::signalObjectDeleted,  this, &MashListModel::removeMash);
+   connect(&ObjectStoreTyped<Mash>::getInstance(), &ObjectStoreTyped<Mash>::signalObjectInserted, this, &MashListModel::addMash);
+   connect(&ObjectStoreTyped<Mash>::getInstance(), &ObjectStoreTyped<Mash>::signalObjectDeleted,  this, &MashListModel::removeMash);
    this->repopulateList();
    return;
 }
@@ -117,7 +118,7 @@ void MashListModel::mashChanged(QMetaProperty prop, QVariant val)
 
 void MashListModel::repopulateList() {
    removeAll();
-   addMashes( DbNamedEntityRecords<Mash>::getInstance().getAllRaw() );
+   addMashes( ObjectStoreTyped<Mash>::getInstance().getAllRaw() );
 }
 
 Mash* MashListModel::at(int ndx)

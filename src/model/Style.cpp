@@ -18,12 +18,10 @@
  */
 #include "model/Style.h"
 
-#include "Brewken.h"
 #include <QDebug>
 
-#include "database/TableSchemaConst.h"
-#include "database/StyleSchema.h"
-#include "database/Database.h"
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
 
 QStringList Style::m_types = QStringList() << "Lager" << "Ale" << "Mead" << "Wheat" << "Mixed" << "Cider";
 
@@ -40,8 +38,8 @@ bool Style::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-DbRecords & Style::getDbNamedEntityRecordsInstance() const {
-   return DbNamedEntityRecords<Style>::getInstance();
+ObjectStore & Style::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Style>::getInstance();
 }
 
 QString Style::classNameStr()
@@ -53,8 +51,8 @@ QString Style::classNameStr()
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
-Style::Style(QString t_name, bool cacheOnly)
-   : NamedEntity(DatabaseConstants::STYLETABLE, -1, t_name, true),
+Style::Style(QString t_name, bool cacheOnly) :
+   NamedEntity(-1, t_name, true),
      m_category(QString()),
      m_categoryNumber(QString()),
      m_styleLetter(QString()),
@@ -110,8 +108,8 @@ Style::Style(Style const & other) :
 }
 
 
-Style::Style(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::STYLETABLE},
+Style::Style(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity     {namedParameterBundle},
    m_category      {namedParameterBundle(PropertyNames::Style::category      ).toString()},
    m_categoryNumber{namedParameterBundle(PropertyNames::Style::categoryNumber).toString()},
    m_styleLetter   {namedParameterBundle(PropertyNames::Style::styleLetter   ).toString()},
@@ -138,64 +136,6 @@ Style::Style(NamedParameterBundle & namedParameterBundle) :
    return;
 }
 
-// suitable for something that needs to be created in the db when the object is, but all the other
-// fields will be filled in later (shouldn't be used that much)
-Style::Style(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-     m_category(QString()),
-     m_categoryNumber(QString()),
-     m_styleLetter(QString()),
-     m_styleGuide(QString()),
-     m_typeStr(QString()),
-     m_type(static_cast<Style::Type>(0)),
-     m_ogMin(0.0),
-     m_ogMax(0.0),
-     m_fgMin(0.0),
-     m_fgMax(0.0),
-     m_ibuMin(0.0),
-     m_ibuMax(0.0),
-     m_colorMin_srm(0.0),
-     m_colorMax_srm(0.0),
-     m_carbMin_vol(0.0),
-     m_carbMax_vol(0.0),
-     m_abvMin_pct(0.0),
-     m_abvMax_pct(0.0),
-     m_notes(QString()),
-     m_profile(QString()),
-     m_ingredients(QString()),
-     m_examples(QString()),
-     m_cacheOnly(false)
-{
-}
-
-// suitable for creating a Style from a database record
-Style::Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-     m_category(rec.value(kcolStyleCat).toString()),
-     m_categoryNumber(rec.value(kcolStyleCatNum).toString()),
-     m_styleLetter(rec.value(kcolStyleLetter).toString()),
-     m_styleGuide(rec.value(kcolStyleGuide).toString()),
-     m_typeStr(rec.value(kcolStyleType).toString()),
-     m_type(static_cast<Style::Type>(m_types.indexOf(m_typeStr))),
-     m_ogMin(rec.value(kcolStyleOGMin).toDouble()),
-     m_ogMax(rec.value(kcolStyleOGMax).toDouble()),
-     m_fgMin(rec.value(kcolStyleFGMin).toDouble()),
-     m_fgMax(rec.value(kcolStyleFGMax).toDouble()),
-     m_ibuMin(rec.value(kcolStyleIBUMin).toDouble()),
-     m_ibuMax(rec.value(kcolStyleIBUMax).toDouble()),
-     m_colorMin_srm(rec.value(kcolStyleColorMin).toDouble()),
-     m_colorMax_srm(rec.value(kcolStyleColorMax).toDouble()),
-     m_carbMin_vol(rec.value(kcolStyleCarbMin).toDouble()),
-     m_carbMax_vol(rec.value(kcolStyleCarbMax).toDouble()),
-     m_abvMin_pct(rec.value(kcolStyleABVMin).toDouble()),
-     m_abvMax_pct(rec.value(kcolStyleABVMax).toDouble()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_profile(rec.value(kcolStyleProfile).toString()),
-     m_ingredients(rec.value(kcolStyleIngreds).toString()),
-     m_examples(rec.value(kcolStyleExamples).toString()),
-     m_cacheOnly(false)
-{
-}
 
 //==============================="SET" METHODS==================================
 void Style::setCategory( const QString& var )
@@ -469,21 +409,4 @@ double Style::abvMax_pct() const { return m_abvMax_pct; }
 bool Style::isValidType( const QString &str )
 {
    return m_types.contains( str );
-}
-
-NamedEntity * Style::getParent() {
-   Style * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = ObjectStoreWrapper::getByIdRaw<Style>(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
 }

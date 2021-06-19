@@ -34,7 +34,7 @@
 #include "BtTreeItem.h"
 #include "BtTreeView.h"
 #include "RecipeFormatter.h"
-#include "database/DbNamedEntityRecords.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -58,60 +58,60 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
    switch (type) {
       case RECIPEMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::RECIPE);
-         connect(&DbNamedEntityRecords<Recipe>::getInstance(), &DbNamedEntityRecords<Recipe>::signalObjectInserted, this,   &BtTreeModel::elementAddedRecipe);
-         connect(&DbNamedEntityRecords<Recipe>::getInstance(), &DbNamedEntityRecords<Recipe>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedRecipe);
+         connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalObjectInserted, this,   &BtTreeModel::elementAddedRecipe);
+         connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedRecipe);
          // Brewnotes need love too!
-         connect(&DbNamedEntityRecords<BrewNote>::getInstance(), &DbNamedEntityRecords<BrewNote>::signalObjectInserted, this,   &BtTreeModel::elementAddedBrewNote);
-         connect(&DbNamedEntityRecords<BrewNote>::getInstance(), &DbNamedEntityRecords<BrewNote>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedBrewNote);
+         connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectInserted, this,   &BtTreeModel::elementAddedBrewNote);
+         connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedBrewNote);
          _type = BtTreeItem::RECIPE;
          _mimeType = "application/x-brewken-recipe";
          break;
       case EQUIPMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::EQUIPMENT);
-         connect(&DbNamedEntityRecords<Equipment>::getInstance(), &DbNamedEntityRecords<Equipment>::signalObjectInserted, this,   &BtTreeModel::elementAddedEquipment);
-         connect(&DbNamedEntityRecords<Equipment>::getInstance(), &DbNamedEntityRecords<Equipment>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedEquipment);
+         connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectInserted, this,   &BtTreeModel::elementAddedEquipment);
+         connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedEquipment);
          _type = BtTreeItem::EQUIPMENT;
          _mimeType = "application/x-brewken-recipe";
          break;
       case FERMENTMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::FERMENTABLE);
-         connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectInserted, this,   &BtTreeModel::elementAddedFermentable);
-         connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedFermentable);
+         connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectInserted, this,   &BtTreeModel::elementAddedFermentable);
+         connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedFermentable);
          _type = BtTreeItem::FERMENTABLE;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case HOPMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::HOP);
-         connect(&DbNamedEntityRecords<Hop>::getInstance(), &DbNamedEntityRecords<Hop>::signalObjectInserted, this,   &BtTreeModel::elementAddedHop);
-         connect(&DbNamedEntityRecords<Hop>::getInstance(), &DbNamedEntityRecords<Hop>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedHop);
+         connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this,   &BtTreeModel::elementAddedHop);
+         connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedHop);
          _type = BtTreeItem::HOP;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case MISCMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::MISC);
-         connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectInserted, this,   &BtTreeModel::elementAddedMisc);
-         connect(&DbNamedEntityRecords<Misc>::getInstance(), &DbNamedEntityRecords<Misc>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedMisc);
+         connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectInserted, this,   &BtTreeModel::elementAddedMisc);
+         connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedMisc);
          _type = BtTreeItem::MISC;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case STYLEMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::STYLE);
-         connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectInserted, this,   &BtTreeModel::elementAddedStyle);
-         connect(&DbNamedEntityRecords<Style>::getInstance(), &DbNamedEntityRecords<Style>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedStyle);
+         connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectInserted, this,   &BtTreeModel::elementAddedStyle);
+         connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedStyle);
          _type = BtTreeItem::STYLE;
          _mimeType = "application/x-brewken-recipe";
          break;
       case YEASTMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::YEAST);
-         connect(&DbNamedEntityRecords<Yeast>::getInstance(), &DbNamedEntityRecords<Yeast>::signalObjectInserted, this,   &BtTreeModel::elementAddedYeast);
-         connect(&DbNamedEntityRecords<Yeast>::getInstance(), &DbNamedEntityRecords<Yeast>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedYeast);
+         connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectInserted, this,   &BtTreeModel::elementAddedYeast);
+         connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedYeast);
          _type = BtTreeItem::YEAST;
          _mimeType = "application/x-brewken-ingredient";
          break;
       case WATERMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::WATER);
-         connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectInserted, this,   &BtTreeModel::elementAddedWater);
-         connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedWater);
+         connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this,   &BtTreeModel::elementAddedWater);
+         connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedWater);
          _type = BtTreeItem::WATER;
          _mimeType = "application/x-brewken-ingredient";
          break;
@@ -582,42 +582,42 @@ QList<NamedEntity *> BtTreeModel::elements() {
    //
    switch (this->treeMask) {
       case RECIPEMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Recipe>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Recipe>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case EQUIPMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Equipment>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Equipment>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case FERMENTMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Fermentable>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Fermentable>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case HOPMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Hop>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Hop>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case MISCMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Misc>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Misc>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case YEASTMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Yeast>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Yeast>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case STYLEMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Style>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Style>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;
       case WATERMASK:
-         for (NamedEntity * elem : DbNamedEntityRecords<Water>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreTyped<Water>::getInstance().getAllRaw()) {
             elements.append(elem);
          }
          break;

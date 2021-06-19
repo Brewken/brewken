@@ -40,6 +40,7 @@ namespace PropertyNames::Fermentable { static char const * const color_srm = "co
 namespace PropertyNames::Fermentable { static char const * const diastaticPower_lintner = "diastaticPower_lintner"; /* previously kpropDiastaticPower */ }
 namespace PropertyNames::Fermentable { static char const * const ibuGalPerLb = "ibuGalPerLb"; /* previously kpropIBUGalPerLb */ }
 namespace PropertyNames::Fermentable { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
+namespace PropertyNames::Fermentable { static char const * const inventoryId = "inventoryId"; /* previously kpropInventoryId */ }
 namespace PropertyNames::Fermentable { static char const * const isMashed = "isMashed"; /* previously kpropIsMashed */ }
 namespace PropertyNames::Fermentable { static char const * const maxInBatch_pct = "maxInBatch_pct"; /* previously kpropMaxInBatch */ }
 namespace PropertyNames::Fermentable { static char const * const moisture_pct = "moisture_pct"; /* previously kpropMoisture */ }
@@ -76,7 +77,7 @@ public:
    Q_ENUMS( Type AdditionMethod AdditionTime )
 
    Fermentable( QString name = "", bool cache = true );
-   Fermentable(NamedParameterBundle & namedParameterBundle);
+   Fermentable(NamedParameterBundle const & namedParameterBundle);
    Fermentable(Fermentable const & other);
 
    virtual ~Fermentable() = default;
@@ -138,8 +139,8 @@ public:
 
    Type type() const;
    double amount_kg() const;
-   double inventory();
-   int inventoryId();
+   double inventory() const;
+   int inventoryId() const;
    double yield_pct() const;
    double color_srm() const;
    bool addAfterBoil() const;
@@ -197,18 +198,13 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual DbRecords & getDbNamedEntityRecordsInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Fermentable(DatabaseConstants::DbTableId table, int key);
-   Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-
    static bool isValidType( const QString& str );
    static QStringList types;
 
@@ -228,7 +224,7 @@ private:
    double m_maxInBatchPct;
    bool m_recommendMash;
    double m_ibuGalPerLb;
-   double m_inventory;
+//   double m_inventory;
    int m_inventory_id;
    bool m_isMashed;
    bool m_cacheOnly;

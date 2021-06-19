@@ -35,7 +35,7 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"

@@ -96,7 +96,7 @@ public:
    QString generateName(int column) const;
 public slots:
    void changed(QMetaProperty, QVariant);
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+   void changedInventory(int, QVariant);
    //! \brief Add a hop to the model.
 //   void addHop(Hop* hop);
    void addHop(int hopId);

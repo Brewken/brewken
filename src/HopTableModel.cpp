@@ -40,6 +40,7 @@
 
 #include "Brewken.h"
 #include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Hop.h"
 #include "PersistentSettings.h"
@@ -97,13 +98,13 @@ void HopTableModel::observeDatabase(bool val) {
       observeRecipe(nullptr);
       removeAll();
 //      connect(&(Database::instance()), &Database::newHopSignal, this, &HopTableModel::addHop);
-      connect(&DbNamedEntityRecords<Hop>::getInstance(), &DbNamedEntityRecords<Hop>::signalObjectInserted, this, &HopTableModel::addHop);
+      connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this, &HopTableModel::addHop);
 //      connect(&(Database::instance()), SIGNAL(deletedSignal(Hop *)), this, SLOT(removeHop(Hop *)));
-      connect(&DbNamedEntityRecords<Hop>::getInstance(),
-              &DbNamedEntityRecords<Hop>::signalObjectDeleted,
+      connect(&ObjectStoreTyped<Hop>::getInstance(),
+              &ObjectStoreTyped<Hop>::signalObjectDeleted,
               this,
               static_cast<bool (HopTableModel::*)(int)>(&HopTableModel::removeHop)); // static_cast is needed here because removeHop is overloaded
-      this->addHops(DbNamedEntityRecords<Hop>::getInstance().getAllRaw());
+      this->addHops(ObjectStoreTyped<Hop>::getInstance().getAllRaw());
    } else {
       removeAll();
       disconnect(&(Database::instance()), nullptr, this, nullptr);
@@ -129,7 +130,7 @@ void HopTableModel::observeDatabase(bool val) {
    endInsertRows();
 }*/
 void HopTableModel::addHop(int hopId) {
-   auto hopAdded = DbNamedEntityRecords<Hop>::getInstance().getById(hopId);
+   auto hopAdded = ObjectStoreTyped<Hop>::getInstance().getById(hopId);
    if (!hopAdded) {
       // Not sure this should ever happen in practice, but, if there ever is no hop with the specified ID, there's not
       // a lot we can do.
@@ -224,8 +225,8 @@ void HopTableModel::removeAll() {
    }
 }
 
-void HopTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val) {
-   if (table == DatabaseConstants::HOPTABLE) {
+void HopTableModel::changedInventory(/*DatabaseConstants::DbTableId table, */int invKey, QVariant val) {
+///   if (table == DatabaseConstants::HOPTABLE) {
       for (int i = 0; i < hopObs.size(); ++i) {
          Hop * holdmybeer = hopObs.at(i);
 
@@ -237,7 +238,7 @@ void HopTableModel::changedInventory(DatabaseConstants::DbTableId table, int inv
                              QAbstractItemModel::createIndex(i, HOPINVENTORYCOL));
          }
       }
-   }
+///   }
 }
 
 void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/) {

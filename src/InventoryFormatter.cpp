@@ -24,12 +24,12 @@
 #include "MainWindow.h"
 #include "Brewken.h"
 #include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "BtPrintPreview.h"
-
 
 namespace {
    QString createInventoryHeader() {

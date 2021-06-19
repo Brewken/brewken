@@ -25,7 +25,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Recipe.h"
 #include "model/Yeast.h"

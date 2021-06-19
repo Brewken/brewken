@@ -43,6 +43,7 @@
 
 #include "Brewken.h"
 #include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Fermentable.h"
 #include "model/Recipe.h"
@@ -95,11 +96,11 @@ void FermentableTableModel::observeDatabase(bool val) {
       this->observeRecipe(nullptr);
 
       this->removeAll();
-      connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectInserted, this, &FermentableTableModel::addFermentable);
-      connect(&DbNamedEntityRecords<Fermentable>::getInstance(), &DbNamedEntityRecords<Fermentable>::signalObjectDeleted,  this, &FermentableTableModel::removeFermentable);
-      addFermentables( DbNamedEntityRecords<Fermentable>::getInstance().getAllRaw() );
+      connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectInserted, this, &FermentableTableModel::addFermentable);
+      connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectDeleted,  this, &FermentableTableModel::removeFermentable);
+      addFermentables( ObjectStoreTyped<Fermentable>::getInstance().getAllRaw() );
    } else {
-      disconnect(&DbNamedEntityRecords<Fermentable>::getInstance(), nullptr, this, nullptr);
+      disconnect(&ObjectStoreTyped<Fermentable>::getInstance(), nullptr, this, nullptr);
       this->removeAll();
    }
 }

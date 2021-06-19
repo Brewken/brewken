@@ -30,7 +30,8 @@
 #include <QVector>
 
 #include "Brewken.h"
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "InstructionWidget.h"
 #include "model/Instruction.h"
 #include "model/Recipe.h"

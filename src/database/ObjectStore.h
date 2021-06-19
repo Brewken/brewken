@@ -1,5 +1,5 @@
 /**
- * database/DbRecords.h is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef DATABASE_DBRECORDS_H
-#define DATABASE_DBRECORDS_H
+#ifndef DATABASE_OBJECTSTORE_H
+#define DATABASE_OBJECTSTORE_H
 #pragma once
 
 #include <memory> // For PImpl
@@ -30,16 +30,14 @@
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.
  *
  *        This class does all the generic work and, by virtue of being a non-template class, can have most of its
- *        implementation private.  The template class \c DbNamedEntityRecords then does the class-specific work (eg
+ *        implementation private.  The template class \c ObjectStoreTyped then does the class-specific work (eg
  *        call constructor for the right type of object) and provides a class- specific interface (so that callers
  *        don't have to downcast return values etc).
  *
  *        Inheritance from QObject is to allow this class to send signals (and therefore that inheritance needs to be
  *        public).
- *
- * .:TBD:.  Should we rename this to ObjectStoreBase and DbNamedEntityRecords to ObjectStore?  Then could have assistance functions in ObjectStoreWrapper namespace
  */
-class DbRecords : public QObject {
+class ObjectStore : public QObject {
    // We also need the Q_OBJECT macro to use signals and/or slots
    Q_OBJECT
 
@@ -82,6 +80,19 @@ public:
 
    typedef QVector<FieldSimpleDefn> FieldSimpleDefns;
 
+   struct TableSimpleDefn {
+      char const * const tableName;
+      QVector<FieldSimpleDefn> const fieldSimpleDefns;
+   };
+
+   /**
+    * \brief See \c FieldManyToManyDefn
+    */
+   enum AssumedNumEntries {
+      MAX_ONE_ENTRY,
+      MULTIPLE_ENTRIES_OK
+   };
+
    /**
     * \brief Cross-references to other objects that are stored in a junction table.  (See
     *        https://en.wikipedia.org/wiki/Associative_entity)  Eg, for a Recipe, there are several junction tables
@@ -117,7 +128,7 @@ public:
       QString thisPrimaryKeyColumn;
       QString otherPrimaryKeyColumn;
       char const * const propertyName;
-      bool assumeMaxOneEntry = false;
+      AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
       QString orderByColumn = QString{};
    };
 
@@ -126,15 +137,13 @@ public:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
-    * \param tableName
-    * \param fieldSimpleDefns  First in the list should be the primary key
-    * \param fieldManyToManyDefns
+    * \param primaryTableDefn  First in the list should be the primary key
+    * \param fieldManyToManyDefns  Optional
     */
-   DbRecords(char const * const tableName,
-             FieldSimpleDefns const & fieldSimpleDefns,
-             FieldManyToManyDefns const & fieldManyToManyDefns);
+   ObjectStore(TableSimpleDefn const & primaryTableDefn,
+               FieldManyToManyDefns const & fieldManyToManyDefns = FieldManyToManyDefns{});
 
-   ~DbRecords();
+   ~ObjectStore();
 
    /**
     * \brief Create the table(s) for the objects handled by this store
@@ -146,7 +155,7 @@ public:
    /**
     * \brief Load from database all objects handled by this store
     */
-   void loadAll(QSqlDatabase databaseConnection);
+   void loadAll();
 
    /**
     * \brief Create a new object of the type we are handling, using the parameters read from the DB.  Subclass needs to
@@ -191,7 +200,7 @@ public:
    /**
     * \brief Remove the object from our local in-memory cache
     *
-    *        Subclasses can do additional or different work, eg \c DbNamedEntityRecords will mark the object as deleted
+    *        Subclasses can do additional or different work, eg \c ObjectStoreTyped will mark the object as deleted
     *        both in memory and in the database (via the \c "deleted" property of \c NamedEntity which is also stored
     *        in the DB) but will leave the object in the local cache (ie will not call down to this base class member
     *        function).
@@ -206,7 +215,7 @@ public:
    /**
     * \brief Remove the object from our local in-memory cache and remove its record from the DB.
     *
-    *        Subclasses can do additional work, eg \c DbNamedEntityRecords will also mark the in-memory object as
+    *        Subclasses can do additional work, eg \c ObjectStoreTyped will also mark the in-memory object as
     *        deleted (via the \c "deleted" property of \c NamedEntity).
     *
     *        .:TODO:. Need to work out where to do "is this object used elsewhere" checks - eg should a Hop be deletable if it's used in a Recipe
@@ -219,6 +228,74 @@ public:
     * \brief Return \c true if an object with the supplied ID is stored in the cache or \c false otherwise
     */
    bool contains(int id) const;
+
+   /**
+    * \brief Return pointer to the object with the specified key (or pointer to null if no object exists for the key,
+    *        though callers should ideally check this first via \c contains()  Subclasses are expected to provide a
+    *        public override of this function to downcast the QObject shared pointer to a more specific one.
+    *
+    *        NB: We do NOT simply have a virtual \c getById because we want subclasses to be able to have a different
+    *            return type to a \c getById call.  You can't change the return type on a virtual function because, by
+    *            definition, callers need to know the return type of the function without knowing which version of it
+    *            is called - hence "invalid covariant return type" compiler errors if you try.
+    *
+    * \return \c nullptr if the object with the specified ID cannot be found
+    */
+   std::shared_ptr<QObject> getById(int id) const;
+
+   /**
+    * \brief Similar to \c getById but returns a list of cached objects matching a supplied list of IDs
+    *
+    *        NB: This is non-virtual for the same reason as \c getById
+    */
+   QList<std::shared_ptr<QObject> > getByIds(QVector<int> const & listOfIds) const;
+
+   /**
+    * \brief Search for a single object (in the set of all cached objects of a given type) with a lambda.  Subclasses
+    *        are expected to provide a public override of this function that implements a class-specific interface.
+    *
+    *        NB: This is non-virtual for the same reason as \c getById
+    *
+    * \param matchFunction Takes a shared pointer to object and returns \c true if it's a match or \c false otherwise.
+    *
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
+    *         none does
+    */
+   std::optional< std::shared_ptr<QObject> > findFirstMatching(
+      std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
+   ) const;
+   /**
+    * \brief Alternate version of \c findFirstMatching that uses raw pointers
+    */
+   std::optional< QObject * > findFirstMatching(std::function<bool(QObject *)> const & matchFunction) const;
+
+   /**
+    * \brief Search for multiple objects (in the set of all cached objects of a given type) with a lambda.  Subclasses
+    *        are expected to provide a public override of this function that implements a class-specific interface.
+    *
+    *        NB: This is non-virtual for the same reason as \c getById
+    *
+    * \param matchFunction Takes a pointer to object and returns \c true if it's a match or \c false otherwise.
+    *
+    * \return List of pointers to all objects that give a \c true result to \c matchFunction.  (The list will be empty
+    *         if no objects match.)
+    */
+   QList<std::shared_ptr<QObject> > findAllMatching(
+      std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
+   ) const;
+   /**
+    * \brief Alternate version of \c findAllMatching that uses raw pointers
+    */
+   QList<QObject *> findAllMatching(std::function<bool(QObject *)> const & matchFunction) const;
+
+   /**
+    * \brief Special case of \c findAllMatching that returns a list of all cached objects of a given type
+    */
+   QList<std::shared_ptr<QObject> > getAll() const;
+   /**
+    * \brief Raw pointer version of \c getAll
+    */
+   QList<QObject *> getAllRaw() const;
 
 signals:
    /**
@@ -246,7 +323,7 @@ signals:
     *
     *        So, we emit the signal here in the virtual base class, and it will be received in slot(s) that have
     *        connected to the relevant singleton instance of the subclass.  Eg, if you connect a slot to
-    *        \c DbNamedEntityRecords<Water>::getInstance() then its going to receive a signal whenever a new Water
+    *        \c ObjectStoreTyped<Water>::getInstance() then its going to receive a signal whenever a new Water
     *        object is inserted in the database.
     *
     *        This also means that the signal parameter can't be type-specific (eg Hop * or shared_ptr<Hop>).  We could
@@ -284,77 +361,6 @@ signals:
     *               won't be able to get it from the ID because ... it's deleted.
     */
    void signalObjectDeleted(int id, std::shared_ptr<QObject> object);
-
-protected:
-   /**
-    * \brief Return pointer to the object with the specified key (or pointer to null if no object exists for the key,
-    *        though callers should ideally check this first via \c contains()  Subclasses are expected to provide a
-    *        public override of this function to downcast the QObject shared pointer to a more specific one.
-    *
-    *        NB: This is protected and non-virtual because we want subclasses to be able to have a different return type.
-    *            You can't change the return type on a virtual function because, by definition, callers need to know
-    *            the return type of the function without knowing which version of it is called - hence "invalid
-    *            covariant return type" compiler errors if you try.
-    *
-    *            We in any case don't need virtual here anyway as external callers will not be upcasting subclasses of
-    *            DbRecords.
-    * \return \c nullptr if the object with the specified ID cannot be found
-    */
-   std::shared_ptr<QObject> getById(int id) const;
-
-   /**
-    * \brief Similar to \c getById but returns a list of cached objects matching a supplied list of IDs
-    *
-    *        NB: This is protected and non-virtual for the same reasons as \c getById()
-    */
-   QList<std::shared_ptr<QObject> > getByIds(QVector<int> const & listOfIds) const;
-
-   /**
-    * \brief Search for a single object (in the set of all cached objects of a given type) with a lambda.  Subclasses
-    *        are expected to provide a public override of this function that implements a class-specific interface.
-    *
-    *        NB: This is protected and non-virtual for the same reasons as \c getById()
-    *
-    * \param matchFunction Takes a shared pointer to object and returns \c true if it's a match or \c false otherwise.
-    *
-    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
-    *         none does
-    */
-   std::optional< std::shared_ptr<QObject> > findFirstMatching(
-      std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
-   ) const;
-   /**
-    * \brief Alternate version of \c findFirstMatching that uses raw pointers
-    */
-   std::optional< QObject * > findFirstMatching(std::function<bool(QObject *)> const & matchFunction) const;
-
-   /**
-    * \brief Search for multiple objects (in the set of all cached objects of a given type) with a lambda.  Subclasses
-    *        are expected to provide a public override of this function that implements a class-specific interface.
-    *
-    *        NB: This is protected and non-virtual for the same reasons as \c getById()
-    *
-    * \param matchFunction Takes a pointer to object and returns \c true if it's a match or \c false otherwise.
-    *
-    * \return List of pointers to all objects that give a \c true result to \c matchFunction.  (The list will be empty
-    *         if no objects match.)
-    */
-   QList<std::shared_ptr<QObject> > findAllMatching(
-      std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
-   ) const;
-   /**
-    * \brief Alternate version of \c findAllMatching that uses raw pointers
-    */
-   QList<QObject *> findAllMatching(std::function<bool(QObject *)> const & matchFunction) const;
-
-   /**
-    * \brief Special case of \c findAllMatching that returns a list of all cached objects of a given type
-    */
-   QList<std::shared_ptr<QObject> > getAll() const;
-   /**
-    * \brief Raw pointer version of \c getAll
-    */
-   QList<QObject *> getAllRaw() const;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

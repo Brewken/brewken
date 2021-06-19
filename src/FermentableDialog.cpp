@@ -25,7 +25,8 @@
 #include <QString>
 #include <QWidget>
 
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "FermentableEditor.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "FermentableTableModel.h"

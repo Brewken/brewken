@@ -32,7 +32,7 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
@@ -64,12 +64,12 @@ void WaterTableModel::observeDatabase(bool val) {
    if( val ) {
       observeRecipe(nullptr);
       removeAll();
-      connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectInserted, this, &WaterTableModel::addWater);
-      connect(&DbNamedEntityRecords<Water>::getInstance(), &DbNamedEntityRecords<Water>::signalObjectDeleted,  this, &WaterTableModel::removeWater);
-      this->addWaters( DbNamedEntityRecords<Water>::getInstance().getAllRaw() );
+      connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this, &WaterTableModel::addWater);
+      connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &WaterTableModel::removeWater);
+      this->addWaters( ObjectStoreTyped<Water>::getInstance().getAllRaw() );
    } else {
       removeAll();
-      disconnect(&DbNamedEntityRecords<Water>::getInstance(), nullptr, this, nullptr);
+      disconnect(&ObjectStoreTyped<Water>::getInstance(), nullptr, this, nullptr);
    }
    return;
 }
