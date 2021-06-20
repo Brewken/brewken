@@ -31,18 +31,12 @@
 #include <memory> // For PImpl
 
 #include <QDebug>
-#include <QMap>
-//#include <QMetaProperty>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
-#include <QVariant>
 
 #include "Brewken.h"
 #include "database/DatabaseSchema.h"
-#include "database/TableSchemaConst.h"
-#include "database/TableSchema.h"
-#include "model/NamedEntity.h"
 
 
 /*!
@@ -51,6 +45,8 @@
  * \brief Handles connections to the database.
  *
  * This class is a singleton.
+ *
+ * .:TBD:. Does it still need to inherit from QObject?
  */
 class Database : public QObject {
    Q_OBJECT
@@ -116,27 +112,7 @@ public:
                                   QString const & password="brewken");
    bool loadSuccessful();
 
-   /*
-   //! Inserts an new inventory row in the appropriate table
-   int newInventory(TableSchema* schema);
-
-   int getInventoryId(TableSchema* tbl, int key );
-   void setInventory(NamedEntity* ins, QVariant value, int invKey = 0, bool notify=true );
-
-   //! \returns The entire inventory for a table.
-   QMap<int, double> getInventory(const DatabaseConstants::DbTableId table) const;
-
-   QVariant getInventoryAmt(QString col_name, DatabaseConstants::DbTableId table, int key);
-*/
 public:
-   /**
-   * \brief  This function is intended to be called by an ingredient that has not already cached its parent's key
-   * \return Key of parent ingredient if there is one, 0 otherwise
-   */
-//   int getParentNamedEntityKey(NamedEntity const & ingredient);
-
-   //! Get the file where this database was loaded from.
-//   static QString getDbFileName();
 
    /*!
     * Updates the Brewken-provided ingredients from the given sqlite
@@ -150,44 +126,13 @@ public:
                         QString const& Username, QString const& Password,
                         int Portnum, Brewken::DBTypes newType);
 
+   // .:TODO:. We can get rid of this once we rewrite BeerXml output code to use the same structures as for input
    DatabaseSchema & getDatabaseSchema();
 
-signals:
-/*   void changed(QMetaProperty prop, QVariant value);
-   void newEquipmentSignal(Equipment*);
-   void newFermentableSignal(Fermentable*);
-   void newHopSignal(Hop*);
-   void newMashSignal(Mash*);
-   void newMiscSignal(Misc*);
-   void newRecipeSignal(Recipe*);
-   void newStyleSignal(Style*);
-   void newWaterSignal(Water*);
-   void newSaltSignal(Salt*);
-   void newYeastSignal(Yeast*);
-   // This is still experimental. Or at least mental
-   void newBrewNoteSignal(BrewNote*);
+//signals:
 
-   void deletedSignal(Equipment*);
-   void deletedSignal(Fermentable*);
-   void deletedSignal(Hop*);
-   void deletedSignal(Instruction*);
-   void deletedSignal(Mash*);
-   void deletedSignal(Misc*);
-   void deletedSignal(Recipe*);
-   void deletedSignal(Style*);
-   void deletedSignal(Water*);
-   void deletedSignal(Salt*);
-   void deletedSignal(Yeast*);
-   void deletedSignal(BrewNote*);
-   void deletedSignal(MashStep*);
-
-   // MashSteps need signals too
-   void newMashStepSignal(MashStep*);
-*/
-   // Sigh
-//   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
-
-private slots:
+private:
+//slots:
    //! Load database from file.
    bool load();
 
@@ -204,7 +149,6 @@ private:
    Database& operator=(Database const&) = delete;
    //! Destructor hidden.
    ~Database();
-
 
 };
 

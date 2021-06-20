@@ -35,12 +35,6 @@
 // .:TODO:. Create tables
 // .:TBD:. Do we care about foreign keys?
 // .:TBD:. What about triggers?
-// .:TBD:. What about inventory?
-//         Currently fermentable_in_inventory has id + amount columns - and similar for all other things that have inventory
-//         It's like having a nullable column on the main table EXCEPT the ID is FK  to inventory_id on the main table
-//         Well, a bit more complicated actually.  Everything with the same ultimate parent shares the same inventory_id
-// select id from hop where inventory_id = 45; => 45 149 151 153 155
-// select child_id from hop_children where parent_id = 45; => 149 151 153 155
 //
 // .:TBD:. What about read-only fields, eg if we want an Instruction to pull its Recipe ID from instruction_in_recipe
 //

@@ -125,7 +125,6 @@ public:
 
    Q_PROPERTY( int key READ key WRITE setKey )
    Q_PROPERTY( int parentKey READ getParentKey WRITE setParentKey )
-//   Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
    //! \brief To cache or not to cache
    Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ )
 
@@ -175,9 +174,7 @@ public:
     */
    QVector<int> getParentAndChildrenIds() const;
 
-   // .:TODO:. MY 2021-03-23 Ultimately we shouldn't need to know this
-   //! \returns the table we are stored in.
-//   DatabaseConstants::DbTableId table() const;
+   // .:TBD:. Do we really need this?  AFAICT BeerXML version is not used.
    //! \returns the BeerXML version of this element.
    int version() const;
    //! Convenience method to get a meta property by name.
@@ -289,17 +286,6 @@ protected:
    void set( const QString& prop_name, const QString& col_name, const QVariant& value, bool notify = true );
    */
    void setEasy(char const * const prop_name, QVariant value, bool notify = true);
-
-   /*!
-    * \param col_name - The database column of the attribute we want to get.
-    * Returns the value of the attribute specified by key/table/col_name.
-    *
-    * .:TODO:. MY 2021-03-21 Would be nice if NamedEntity didn't need to know such DB details
-    */
-//   QVariant get( const QString& col_name ) const;
-
-//   void setInventory( const QVariant& value, int invKey = 0, bool notify=true );
-//   QVariant getInventory( const QString& col_name ) const;
 
 private:
   mutable QString _folder;

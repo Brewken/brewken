@@ -25,6 +25,8 @@
 
 /**
  * \brief Read, write and cache any subclass of \c NamedEntity in the database
+ *
+ *        Callers can mostly access via \c ObjectStoreWrapper which is slightly simpler
  */
 template<class NE>
 class ObjectStoreTyped : public ObjectStore {

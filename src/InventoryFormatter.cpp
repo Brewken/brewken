@@ -23,7 +23,6 @@
 #include "Html.h"
 #include "MainWindow.h"
 #include "Brewken.h"
-//#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -51,9 +50,6 @@ namespace {
       auto inventory = ObjectStoreWrapper::findAllMatching<Fermentable>(
          [](std::shared_ptr<Fermentable> ff) { return (ff->getParent() == nullptr && ff->inventory() > 0.0); }
       );
-//      const QMap<int, double> inventory =
-//            Database::instance().getInventory(DatabaseConstants::FERMTABLE);
-
       if (!inventory.empty()) {
          result += QString("<h2>%1</h2>").arg(QObject::tr("Fermentables"));
          result += "<table id=\"fermentables\">";
@@ -65,13 +61,6 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto fermentable : inventory) {
-/*            auto fermentable = ObjectStoreWrapper::getById<Fermentable>(itor.key());
-            if (!fermentable) {
-               qCritical() <<
-                  Q_FUNC_INFO << "Fermentable #" << itor.key() << "has a record in the inventory, but does not exist.";
-               continue;
-            }
-*/
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
@@ -95,10 +84,6 @@ namespace {
       auto inventory = ObjectStoreWrapper::findAllMatching<Hop>(
          [](std::shared_ptr<Hop> hh) { return (hh->getParent() == nullptr && hh->inventory() > 0.0); }
       );
-
-//      const QMap<int, double> inventory =
-//            Database::instance().getInventory(DatabaseConstants::HOPTABLE);
-
       if (!inventory.empty()) {
 
          result += QString("<h2>%1</h2>").arg(QObject::tr("Hops"));
@@ -113,14 +98,6 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto hop : inventory) {
-/*            auto hop = ObjectStoreWrapper::getById<Hop>(itor.key());
-            if (!hop) {
-               qCritical() << QString("The hop %1 has a record in the "
-                                       "inventory, but does not exist.")
-                                    .arg(itor.key());
-               continue;
-            }
-*/
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
@@ -145,10 +122,6 @@ namespace {
       auto inventory = ObjectStoreWrapper::findAllMatching<Misc>(
          [](std::shared_ptr<Misc> mm) { return (mm->getParent() == nullptr && mm->inventory() > 0.0); }
       );
-
-//      const QMap<int, double> inventory =
-//            Database::instance().getInventory(DatabaseConstants::MISCTABLE);
-
       if (!inventory.empty()) {
 
          result += QString("<h2>%1</h2>").arg(QObject::tr("Miscellaneous"));
@@ -161,14 +134,6 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto miscellaneous : inventory) {
-/*            auto miscellaneous = ObjectStoreWrapper::getById<Misc>(itor.key());
-            if (!miscellaneous) {
-               qCritical() << QString("The miscellaneous %1 has a record in the "
-                                       "inventory, but does not exist.")
-                                    .arg(itor.key());
-               continue;
-            }
-*/
             const QString displayAmount =
                   Brewken::displayAmount(miscellaneous->inventory(), "miscTable", "amount",
                         miscellaneous->amountIsWeight() ? (Unit*)&Units::kilograms
@@ -193,9 +158,6 @@ namespace {
       auto inventory = ObjectStoreWrapper::findAllMatching<Yeast>(
          [](std::shared_ptr<Yeast> yy) { return (yy->getParent() == nullptr && yy->inventory() > 0.0); }
       );
-//      const QMap<int, double> inventory =
-//            Database::instance().getInventory(DatabaseConstants::YEASTTABLE);
-
       if (!inventory.empty()) {
          result += QString("<h2>%1</h2>").arg(QObject::tr("Yeast"));
          result += "<table id=\"yeast\">";
@@ -207,14 +169,6 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto yeast : inventory) {
-/*            auto yeast = ObjectStoreWrapper::getById<Yeast>(itor.key());
-            if (!yeast) {
-               qCritical() << QString("The yeast %1 has a record in the "
-                                       "inventory, but does not exist.")
-                                    .arg(itor.key());
-               continue;
-            }
-*/
             const QString displayAmount =
                   Brewken::displayAmount(yeast->inventory(), "yeastTable", "quanta",
                         yeast->amountIsWeight() ? (Unit*)&Units::kilograms
