@@ -28,7 +28,9 @@ namespace {
    // functions.
    //
    template<typename CNE>
-   void setAmountsEtc(CNE & ingredient, NamedParameterBundle const & npb);
+   void setAmountsEtc(CNE & ingredient, NamedParameterBundle const & npb) {
+      return;
+   }
    template<> void setAmountsEtc(Hop & hop, NamedParameterBundle const & npb) {
       hop.setAmount_kg(npb(PropertyNames::Hop::amount_kg).toDouble());
       hop.setTime_min( npb(PropertyNames::Hop::time_min).toDouble());
@@ -66,12 +68,7 @@ void XmlRecipeRecord::addChildren() {
    //
    Recipe * recipe = static_cast<Recipe *>(this->namedEntity);
 
-   //
-   // Subclasses of NamedEntity have a static method that gives us the class name.  Without this we would either have
-   // to instantiate a new instance of the class (to use QMetaObject::className()) or pass the class name in as a
-   // parameter to this function.
-   //
-   QByteArray childClassName = CNE::classNameStr().toLatin1();
+   char const * const childClassName = CNE::staticMetaObject.className();
 
    //
    // QMultiHash guarantees that items that share the same key will appear consecutively, from the most recently to
@@ -80,14 +77,14 @@ void XmlRecipeRecord::addChildren() {
    // but requires a copy which is (a) less efficient and (b) not accepted by all compilers for the types we are
    // using.)
    //
-   for (auto ii = this->childRecords.find(childClassName.constData());
-        ii != this->childRecords.end() && ii.key() == childClassName.constData();
+   for (auto ii = this->childRecords.find(childClassName);
+        ii != this->childRecords.end() && ii.key() == childClassName;
         ++ii) {
-      qDebug() << Q_FUNC_INFO << "Adding " << childClassName.constData() << " to Recipe";
+      qDebug() << Q_FUNC_INFO << "Adding " << childClassName << " to Recipe";
 
       // It would be a (pretty unexpected) coding error if the NamedEntity subclass object stored against a class name
       // isn't of the same class against which it was stored.
-      Q_ASSERT(ii->second->getNamedEntity()->metaObject()->className() == QString(childClassName.constData()));
+      Q_ASSERT(ii->second->getNamedEntity()->metaObject()->className() == QString(childClassName));
 
       // Actually add the Hop/Yeast/etc to the Recipe
       CNE * added = recipe->add<CNE>(static_cast<CNE *>(ii->second->getNamedEntity()));
@@ -137,6 +134,9 @@ XmlRecord::ProcessingResult XmlRecipeRecord::normaliseAndStoreInDb(NamedEntity *
    this->addChildren<Misc>();
    this->addChildren<Yeast>();
    this->addChildren<Water>();
+
+   this->addChildren<Instruction>();
+
 
    // BrewNotes and Instructions are a bit different than some of the other fields.  Each BrewNote and each Instruction
    // relate to only one Recipe, but the Recipe class does not (currently) have an interface for adding BrewNotes or

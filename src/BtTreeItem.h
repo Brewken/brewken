@@ -1,5 +1,6 @@
 /**
- * BtTreeItem.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTreeItem.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -272,6 +273,9 @@ public:
    //! \brief returns the name.
    QString name();
 
+   //! \brief For logging an ITEMTYPE
+   char const * const itemTypeToString(ITEMTYPE);
+
 private:
    /*!  Keep a pointer to the parent tree item. */
    BtTreeItem* parentItem;
@@ -298,4 +302,4 @@ private:
    void setType(int t);
 };
 
-#endif /* BREWKENTREEITEM_H_ */
+#endif

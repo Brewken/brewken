@@ -1,5 +1,6 @@
 /**
- * EquipmentListModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * EquipmentListModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,13 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef _EQUIPMENTLISTMODEL_H
 #define _EQUIPMENTLISTMODEL_H
+
+#include <memory>
+
 #include <QAbstractListModel>
-#include <QModelIndex>
 #include <QList>
 #include <QMetaProperty>
+#include <QModelIndex>
 #include <QVariant>
 
 // Forward declarations.
@@ -62,10 +65,11 @@ public:
 public slots:
    void recChanged(QMetaProperty,QVariant);
    void equipChanged(QMetaProperty,QVariant);
+
    //! Add an equipment to the list.
-   void addEquipment(Equipment* equipment);
+   void addEquipment(int equipmentId);
    //! Remove an equipment from the list.
-   void removeEquipment(Equipment* equipment);
+   void removeEquipment(int equipmentId, std::shared_ptr<QObject> object);
 
 private:
    QList<Equipment*> equipments;

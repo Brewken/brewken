@@ -45,12 +45,10 @@ namespace PropertyNames::Water { static char const * const calcium_ppm = "calciu
  *
  * \brief Model for water records in the database.
  */
-class Water : public NamedEntity
-{
+class Water : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "waters")
 
-   friend class Database;
    friend class BeerXML;
    friend class WaterDialog;
    friend class WaterEditor;
@@ -73,6 +71,10 @@ public:
    };
 
    Q_ENUM(Types Ions)
+
+   Water(QString name = "", bool cache = true);
+   Water(NamedParameterBundle const & namedParameterBundle);
+   Water(Water const & other);
 
    virtual ~Water() = default;
 
@@ -117,7 +119,6 @@ public:
    double ph() const;
    double alkalinity() const;
    QString notes() const;
-   bool cacheOnly() const;
    Water::Types type() const;
    double mashRO() const;
    double spargeRO() const;
@@ -134,7 +135,6 @@ public:
    void setPh( double var );
    void setAlkalinity(double var);
    void setNotes( const QString &var );
-   void setCacheOnly( bool cache );
    void setType(Types type);
    void setMashRO(double var);
    void setSpargeRO(double var);
@@ -142,22 +142,11 @@ public:
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
-
-private:
-   Water(DatabaseConstants::DbTableId table, int key);
-   Water(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Water(Water const& other, bool cache = true);
-public:
-   Water(QString name, bool cache = true);
-   Water(NamedParameterBundle & namedParameterBundle);
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
    double m_amount;
@@ -170,7 +159,6 @@ private:
    double m_ph;
    double m_alkalinity;
    QString m_notes;
-   bool m_cacheOnly;
    Water::Types m_type;
    double m_mash_ro;
    double m_sparge_ro;

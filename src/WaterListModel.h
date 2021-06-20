@@ -1,5 +1,6 @@
 /**
- * WaterListModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * WaterListModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,13 +15,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef WATERLISTMODEL_H
+#define WATERLISTMODEL_H
+#pragma once
 
-#ifndef _WATERLISTMODEL_H
-#define _WATERLISTMODEL_H
+#include <memory>
+
 #include <QAbstractListModel>
-#include <QModelIndex>
 #include <QList>
 #include <QMetaProperty>
+#include <QModelIndex>
 #include <QVariant>
 
 // Forward declarations.
@@ -33,8 +37,7 @@ class Recipe;
  *
  * \brief Model for a list of waters.
  */
-class WaterListModel : public QAbstractListModel
-{
+class WaterListModel : public QAbstractListModel {
    Q_OBJECT
 
 public:
@@ -59,14 +62,15 @@ public:
    int indexOf(Water* w);
    //! \brief Return the index of a particular water.
    QModelIndex find(Water* w);
+   void remove(Water* water);
 
 public slots:
    void recChanged(QMetaProperty,QVariant);
    void waterChanged(QMetaProperty,QVariant);
    //! Add an water to the list.
-   void addWater(Water* water);
+   void addWater(int waterId);
    //! Remove an water from the list.
-   void removeWater(Water* water);
+   void removeWater(int waterId, std::shared_ptr<QObject> object);
 
 private:
    QList<Water*> m_waters;
@@ -75,4 +79,4 @@ private:
    void repopulateList();
 };
 
-#endif /* _WATERLISTMODEL_H */
+#endif

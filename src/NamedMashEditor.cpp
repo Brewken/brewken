@@ -1,7 +1,8 @@
 /**
- * NamedMashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * NamedMashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Moreno <danielm5@users.noreply.github.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,18 +17,18 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QWidget>
-#include <QDebug>
-
-#include "model/Mash.h"
-#include "Brewken.h"
-#include "Unit.h"
-#include "model/Equipment.h"
-#include "model/Recipe.h"
-#include "database/Database.h"
-
 #include "NamedMashEditor.h"
+
+#include <QDebug>
+#include <QWidget>
+
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Equipment.h"
+#include "model/Mash.h"
+#include "model/Recipe.h"
+#include "Unit.h"
+
 
 NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool singleMashEditor)
    : QDialog(parent), mashObs(0)
@@ -202,14 +203,17 @@ void NamedMashEditor::clear()
 
 }
 
-void NamedMashEditor::addMashStep()
-{
-   if ( ! mashObs )
+void NamedMashEditor::addMashStep() {
+   if ( ! this->mashObs ) {
       return;
+   }
 
-   MashStep* step = Database::instance().newMashStep(mashObs);
-   mashStepEditor->setMashStep(step);
+   auto step = std::make_shared<MashStep>();
+   ObjectStoreWrapper::insert(step);
+   this->mashObs->addMashStep(step.get());
+   mashStepEditor->setMashStep(step.get());
    mashStepEditor->setVisible(true);
+   return;
 }
 
 bool NamedMashEditor::justOne(QModelIndexList selected)
@@ -229,8 +233,7 @@ bool NamedMashEditor::justOne(QModelIndexList selected)
    return true;
 }
 
-void NamedMashEditor::removeMashStep()
-{
+void NamedMashEditor::removeMashStep() {
    if ( ! mashObs )
       return;
 
@@ -239,7 +242,8 @@ void NamedMashEditor::removeMashStep()
       return;
 
    MashStep* step = mashStepTableModel->getMashStep(selected[0].row());
-   Database::instance().removeFrom(mashObs, step);
+   this->mashObs->removeMashStep(step);
+   return;
 }
 
 void NamedMashEditor::moveMashStepUp()
@@ -255,9 +259,8 @@ void NamedMashEditor::moveMashStepUp()
    if ( ! justOne(selected) || row < 1)
       return;
 
-   MashStep* m1 = mashStepTableModel->getMashStep(row);
-   MashStep* m2 = mashStepTableModel->getMashStep(row-1);
-   Database::instance().swapMashStepOrder(m1,m2);
+   mashStepTableModel->moveStepUp(row);
+   return;
 }
 
 void NamedMashEditor::moveMashStepDown()
@@ -273,9 +276,8 @@ void NamedMashEditor::moveMashStepDown()
    if ( ! justOne(selected) || row >= mashStepTableModel->rowCount()-1 )
       return;
 
-   MashStep* m1 = mashStepTableModel->getMashStep(row);
-   MashStep* m2 = mashStepTableModel->getMashStep(row+1);
-   Database::instance().swapMashStepOrder(m1,m2);
+   mashStepTableModel->moveStepDown(row);
+   return;
 }
 
 void NamedMashEditor::mashSelected(const QString& name)
@@ -309,8 +311,11 @@ void NamedMashEditor::removeMash()
    disconnect(mashObs, 0, this, 0);
    // Delete the mashsteps
    QList<MashStep*> steps = mashObs->mashSteps();
-   Database::instance().remove(steps);
+   for (auto step : steps) {
+      ObjectStoreWrapper::softDelete(*step);
+   }
    // and delete the mash itself
-   Database::instance().remove(mashObs);
+   ObjectStoreWrapper::softDelete(*this->mashObs);
    setMash(mashListModel->at(newMash));
+   return;
 }

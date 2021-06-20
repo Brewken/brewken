@@ -24,11 +24,9 @@
 
 #include <QObject>
 
-#include "model/MashStep.h"
 #include "Brewken.h"
-#include "database/Database.h"
-#include "database/TableSchemaConst.h"
-#include "database/MashSchema.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/MashStep.h"
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -45,6 +43,9 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+ObjectStore & Mash::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Mash>::getInstance();
+}
 
 QString Mash::classNameStr()
 {
@@ -52,61 +53,88 @@ QString Mash::classNameStr()
    return name;
 }
 
-Mash::Mash(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-     m_grainTemp_c(0.0),
-     m_notes(QString()),
-     m_tunTemp_c(0.0),
-     m_spargeTemp_c(0.0),
-     m_ph(0.0),
-     m_tunWeight_kg(0.0),
-     m_tunSpecificHeat_calGC(0.0),
-     m_equipAdjust(true),
-     m_cacheOnly(false)
-{
-}
-
-Mash::Mash(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::MASHTABLE, -1, name, true),
-     m_grainTemp_c(0.0),
-     m_notes(QString()),
-     m_tunTemp_c(0.0),
-     m_spargeTemp_c(0.0),
-     m_ph(0.0),
-     m_tunWeight_kg(0.0),
-     m_tunSpecificHeat_calGC(0.0),
-     m_equipAdjust(true),
-     m_cacheOnly(cache)
-{
-}
-
-Mash::Mash(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::MASHTABLE},
-     m_grainTemp_c          {namedParameterBundle(PropertyNames::Mash::grainTemp_c          ).toDouble()},
-     m_notes                {namedParameterBundle(PropertyNames::Mash::notes                ).toString()},
-     m_tunTemp_c            {namedParameterBundle(PropertyNames::Mash::tunTemp_c            ).toDouble()},
-     m_spargeTemp_c         {namedParameterBundle(PropertyNames::Mash::spargeTemp_c         ).toDouble()},
-     m_ph                   {namedParameterBundle(PropertyNames::Mash::ph                   ).toDouble()},
-     m_tunWeight_kg         {namedParameterBundle(PropertyNames::Mash::tunWeight_kg         ).toDouble()},
-     m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Mash::tunSpecificHeat_calGC).toDouble()},
-     m_equipAdjust          {namedParameterBundle(PropertyNames::Mash::equipAdjust          ).toBool()},
-     m_cacheOnly{false} {
+Mash::Mash(QString name, bool cache) :
+   NamedEntity(-1, cache, name, true),
+   m_grainTemp_c(0.0),
+   m_notes(QString()),
+   m_tunTemp_c(0.0),
+   m_spargeTemp_c(0.0),
+   m_ph(0.0),
+   m_tunWeight_kg(0.0),
+   m_tunSpecificHeat_calGC(0.0),
+   m_equipAdjust(true) {
    return;
 }
 
-Mash::Mash(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
-     m_grainTemp_c(rec.value(kcolMashGrainTemp).toDouble()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_tunTemp_c(rec.value(kcolMashTunTemp).toDouble()),
-     m_spargeTemp_c(rec.value(kcolMashSpargeTemp).toDouble()),
-     m_ph(rec.value(kcolPH).toDouble()),
-     m_tunWeight_kg(rec.value(kcolMashTunWeight).toDouble()),
-     m_tunSpecificHeat_calGC(rec.value(kcolMashTunSpecHeat).toDouble()),
-     m_equipAdjust(rec.value(kcolMashEquipAdjust).toBool()),
-     m_cacheOnly(false)
-{
+Mash::Mash(Mash const & other) :
+   NamedEntity{other},
+   m_grainTemp_c          {other.m_grainTemp_c          },
+   m_notes                {other.m_notes                },
+   m_tunTemp_c            {other.m_tunTemp_c            },
+   m_spargeTemp_c         {other.m_spargeTemp_c         },
+   m_ph                   {other.m_ph                   },
+   m_tunWeight_kg         {other.m_tunWeight_kg         },
+   m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
+   m_equipAdjust          {other.m_equipAdjust          } {
+
+   // Deep copy of MashSteps
+   for (auto mashStep : other.mashSteps()) {
+      // Make a copy of the current MashStep object we're looking at in the other Mash
+      auto mashStepToAdd = std::make_shared<MashStep>(*mashStep);
+
+      // This is where things get a bit tricky.
+      // We don't have an ID yet, so we can't give it to the new MashStep
+      mashStepToAdd->setMashId(-1);
+
+      // However, if we insert the new MashStep in the object store, that will give it its own ID
+      ObjectStoreWrapper::insert(mashStepToAdd);
+
+      // Store the ID of the copy MashStep
+      // If and when we get our ID then we can give it to our MashSteps
+      // .:TBD:. It would be nice to find a more automated way of doing this
+      this->mashStepIds.append(mashStepToAdd->key());
+
+      // Connect signals so that we are notified when there are changes to the MashStep we just added to
+      // our Mash.
+      connect(mashStepToAdd.get(), &NamedEntity::changed, this, &Mash::acceptMashStepChange);
+   }
+
+   return;
 }
+
+
+Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity            {namedParameterBundle},
+   m_grainTemp_c          {namedParameterBundle(PropertyNames::Mash::grainTemp_c          ).toDouble()},
+   m_notes                {namedParameterBundle(PropertyNames::Mash::notes                ).toString()},
+   m_tunTemp_c            {namedParameterBundle(PropertyNames::Mash::tunTemp_c            ).toDouble()},
+   m_spargeTemp_c         {namedParameterBundle(PropertyNames::Mash::spargeTemp_c         ).toDouble()},
+   m_ph                   {namedParameterBundle(PropertyNames::Mash::ph                   ).toDouble()},
+   m_tunWeight_kg         {namedParameterBundle(PropertyNames::Mash::tunWeight_kg         ).toDouble()},
+   m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Mash::tunSpecificHeat_calGC).toDouble()},
+   m_equipAdjust          {namedParameterBundle(PropertyNames::Mash::equipAdjust          ).toBool()} {
+   return;
+}
+
+void Mash::connectSignals() {
+   for (auto mash : ObjectStoreTyped<Mash>::getInstance().getAllRaw()) {
+      for (auto mashStep : mash->mashSteps()) {
+         connect(mashStep, SIGNAL(changed(QMetaProperty,QVariant)), mash, SLOT(acceptMashStepChange(QMetaProperty,QVariant)) );
+      }
+   }
+   return;
+}
+
+void Mash::setKey(int key) {
+   // First call the base class function
+   this->NamedEntity::setKey(key);
+   // Now give our ID (key) to our MashSteps
+   for (auto mashStepId : this->mashStepIds) {
+      ObjectStoreWrapper::getById<MashStep>(mashStepId)->setMashId(key);
+   }
+   return;
+}
+
 
 void Mash::setGrainTemp_c( double var )
 {
@@ -196,23 +224,48 @@ void Mash::setTunSpecificHeat_calGC( double var )
    }
 }
 
-void Mash::setMashStepIds(QList<int> ids) {
-   this->mashStepIds = ids.toVector();
+void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
+   // It's a coding error if either of the steps does not belong to this mash
+   Q_ASSERT(ms1.getMashId() == this->key());
+   Q_ASSERT(ms2.getMashId() == this->key());
+
+   // It's also a coding error if we're trying to swap a step with itself
+   Q_ASSERT(ms1.key() != ms2.key());
+
+   int temp = ms1.stepNumber();
+   ms1.setStepNumber(ms2.stepNumber());
+   ms2.setStepNumber(temp);
+
+   int indexOf1 = this->mashStepIds.indexOf(ms1.key());
+   int indexOf2 = this->mashStepIds.indexOf(ms2.key());
+
+   // We can't swap them if we can't find both of them
+   // There's no point swapping them if they're the same
+   if (-1 == indexOf1 || -1 == indexOf2 || indexOf1 == indexOf2) {
+      return;
+   }
+
+   // As of Qt 5.14 we could write:
+   //    this->mashStepIds.swapItemsAt(indexOf1, indexOf2);
+   // However, we still need to support slightly older versions of Qt (5.12 in particular), hence the more cumbersome
+   // way here.
+   std::swap(this->mashStepIds[indexOf1], this->mashStepIds[indexOf2]);
+
+/*   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
+*/
    return;
 }
 
 
-void Mash::removeAllMashSteps()
-{
-   int i, size;
-   QList<MashStep*> tmpSteps = mashSteps();
-   size = tmpSteps.size();
-   for( i = 0; i < size; ++i )
-      Database::instance().removeFrom(this, tmpSteps[i]);
+void Mash::removeAllMashSteps() {
+   for (int ii : this->mashStepIds) {
+      ObjectStoreTyped<MashStep>::getInstance().softDelete(ii);
+   }
+   this->mashStepIds.clear();
+//   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
    emit mashStepsChanged();
+   return;
 }
-
-void Mash::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 
 //============================="GET" METHODS====================================
 QString Mash::notes() const { return m_notes; }
@@ -230,8 +283,6 @@ double Mash::tunWeight_kg() const { return m_tunWeight_kg; }
 double Mash::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
 
 bool Mash::equipAdjust() const { return m_equipAdjust; }
-
-bool Mash::cacheOnly() const { return m_cacheOnly; }
 
 // === other methods ===
 double Mash::totalMashWater_l()
@@ -303,48 +354,59 @@ bool Mash::hasSparge() const
    return false;
 }
 
-QList<int> Mash::getMashStepIds() const {
-   return this->mashStepIds.toList();
+QList<MashStep*> Mash::mashSteps() const {
+   // The Mash owns its MashSteps, but, for the moment at least, it's the MashStep that knows which Mash it's in
+   // (and in what order) rather than the Mash which knows which MashSteps it has, so we have to ask.
+   int const mashId = this->key();
+   QList<MashStep*> mashSteps = ObjectStoreTyped<MashStep>::getInstance().findAllMatching(
+      [mashId](MashStep const * ms) {return ms->getMashId() == mashId;}
+   );
+
+   // Now we've got the MashSteps, we need to make sure they're in the right order
+   std::sort(mashSteps.begin(),
+             mashSteps.end(),
+             [](MashStep const * lhs, MashStep const * rhs) { return lhs->stepNumber() < rhs->stepNumber(); });
+
+   return mashSteps;
 }
 
-QList<MashStep*> Mash::mashSteps() const
-{
-   return Database::instance().mashSteps(this);
-}
-
-void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/)
-{
-   int i;
+void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
    MashStep* stepSender = qobject_cast<MashStep*>(sender());
    if( stepSender == 0 )
       return;
 
    // If one of our mash steps changed, our calculated properties
    // may also change, so we need to emit some signals.
-   i = mashSteps().indexOf(stepSender);
-   if( i >= 0 )
-   {
+   int i = mashSteps().indexOf(stepSender);
+   if( i >= 0 ) {
       emit changed(metaProperty("totalMashWater_l"), QVariant());
       emit changed(metaProperty("totalTime"), QVariant());
    }
 }
 
 MashStep * Mash::addMashStep(MashStep * mashStep) {
-   mashStep->setMash(this);
-   mashStep->insertInDatabase();
+   if (this->key() > 0) {
+      mashStep->setMashId(this->key());
+   } else {
+      this->mashStepIds.append(mashStep->key());
+   }
    return mashStep;
 }
 
 MashStep * Mash::removeMashStep(MashStep * mashStep) {
-   Database::instance().removeFrom(this, mashStep);
+   mashStep->setMashId(-1);
+
+   int indexOfStep = this->mashStepIds.indexOf(mashStep->key());
+   if (indexOfStep < 0 ) {
+      // This shouldn't happen, but it doesn't inherently break anything, so just log a warning and carry on
+      qWarning() <<
+         Q_FUNC_INFO << "Tried to remove MashStep #" << mashStep->key() << " (from Mash #" << this->key() <<
+         ") but couldn't find it";
+      return mashStep;
+   }
+
+   this->mashStepIds.removeAt(indexOfStep);
+//   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
+
    return mashStep;
-}
-
-
-int Mash::insertInDatabase() {
-   return Database::instance().insertMash(this);
-}
-
-void Mash::removeFromDatabase() {
-   Database::instance().remove(this);
 }

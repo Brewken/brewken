@@ -35,9 +35,9 @@ class AboutDialog : public QDialog {
    Q_OBJECT
 
 public:
-   AboutDialog(QWidget* parent=0);
+   AboutDialog(QWidget * parent = 0);
 
-   virtual void changeEvent(QEvent* event);
+   virtual void changeEvent(QEvent * event);
 
 private:
    QLabel * label;

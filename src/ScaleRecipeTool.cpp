@@ -1,5 +1,6 @@
 /**
- * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -75,7 +76,7 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff)
    double oldEfficiency = recObs->efficiency_pct();
    double effRatio = oldEfficiency / newEff;
 
-   Database::instance().addToRecipe(recObs, equip);
+   this->recObs->setEquipment(equip);
    recObs->setBatchSize_l(newBatchSize_l);
    recObs->setBoilSize_l(equip->boilSize_l());
    recObs->setEfficiency_pct(newEff);

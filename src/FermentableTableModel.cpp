@@ -42,23 +42,24 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Fermentable.h"
+#include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
 
 //=====================CLASS FermentableTableModel==============================
-FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable)
-   : QAbstractTableModel(parent),
-     parentTableWidget(parent),
-     editable(editable),
-     _inventoryEditable(false),
-     recObs(nullptr),
-     displayPercentages(false),
-     totalFermMass_kg(0)
-{
+FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
+   QAbstractTableModel(parent),
+   parentTableWidget(parent),
+   editable(editable),
+   _inventoryEditable(false),
+   recObs(nullptr),
+   displayPercentages(false),
+   totalFermMass_kg(0) {
+
    fermObs.clear();
    // for units and scales
    setObjectName("fermentableTable");
@@ -70,7 +71,8 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable)
    parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    parentTableWidget->setWordWrap(false);
    connect(headerView, &QWidget::customContextMenuRequested, this, &FermentableTableModel::contextMenu);
-   connect( &(Database::instance()), &Database::changedInventory, this, &FermentableTableModel::changedInventory );
+   connect(&ObjectStoreTyped<InventoryFermentable>::getInstance(), &ObjectStoreTyped<InventoryFermentable>::signalPropertyChanged, this, &FermentableTableModel::changedInventory);
+   return;
 }
 
 void FermentableTableModel::observeRecipe(Recipe* rec)
@@ -89,27 +91,23 @@ void FermentableTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void FermentableTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void FermentableTableModel::observeDatabase(bool val) {
+   if ( val ) {
       // Observing a database and a recipe are mutually exclusive.
-      observeRecipe(nullptr);
+      this->observeRecipe(nullptr);
 
-      removeAll();
-      connect( &(Database::instance()), &Database::newFermentableSignal, this, &FermentableTableModel::addFermentable );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Fermentable*)), this, SLOT(removeFermentable(Fermentable*)) );
-      addFermentables( Database::instance().fermentables() );
-   }
-   else
-   {
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
-      removeAll();
+      this->removeAll();
+      connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectInserted, this, &FermentableTableModel::addFermentable);
+      connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectDeleted,  this, &FermentableTableModel::removeFermentable);
+      addFermentables( ObjectStoreTyped<Fermentable>::getInstance().getAllRaw() );
+   } else {
+      disconnect(&ObjectStoreTyped<Fermentable>::getInstance(), nullptr, this, nullptr);
+      this->removeAll();
    }
 }
 
-void FermentableTableModel::addFermentable(Fermentable* ferm)
-{
+void FermentableTableModel::addFermentable(int fermId) {
+   Fermentable * ferm = ObjectStoreWrapper::getByIdRaw<Fermentable>(fermId);
    qDebug() << QString("FermentableTableModel::addFermentable() \"%1\"").arg(ferm->name());
 
    //Check to see if it's already in the list
@@ -129,22 +127,25 @@ void FermentableTableModel::addFermentable(Fermentable* ferm)
    endInsertRows();
 }
 
-void FermentableTableModel::addFermentables(QList<Fermentable*> ferms)
-{
-   qDebug() << QString("FermentableTableModel::addFermentables() Add up to %1 fermentables to existing list of %2").arg(ferms.size()).arg(this->fermObs.size());
+void FermentableTableModel::addFermentables(QList<Fermentable*> ferms) {
+   qDebug() << Q_FUNC_INFO << QString("Add up to %1 fermentables to existing list of %2").arg(ferms.size()).arg(this->fermObs.size());
 
    QList<Fermentable*>::iterator i;
    QList<Fermentable*> tmp;
 
-   for( i = ferms.begin(); i != ferms.end(); i++ ) {
-      if ( recObs == nullptr  && ( (*i)->deleted() || !(*i)->display() ) ) {
+   for (auto ii : ferms) {
+      qDebug() <<
+         Q_FUNC_INFO << "Fermentable #" << ii->key() << (ii->deleted() ? "" : "not") << "deleted, display=" << (ii->display() ? "on" : "off");
+      if ( recObs == nullptr  && ( ii->deleted() || !ii->display() ) ) {
+
             continue;
       }
-      if( !fermObs.contains(*i) )
-         tmp.append(*i);
+      if( !fermObs.contains(ii) ) {
+         tmp.append(ii);
+      }
    }
 
-   qDebug() << QString("FermentableTableModel::addFermentables() After de-duping, adding %1 fermentables").arg(tmp.size());
+   qDebug() << Q_FUNC_INFO << QString("After de-duping, adding %1 fermentables").arg(tmp.size());
 
    int size = fermObs.size();
    if (size+tmp.size()) {
@@ -161,15 +162,17 @@ void FermentableTableModel::addFermentables(QList<Fermentable*> ferms)
    }
 }
 
-bool FermentableTableModel::removeFermentable(Fermentable* ferm)
-{
-   int i;
+void FermentableTableModel::removeFermentable(int fermId, std::shared_ptr<QObject> object) {
+   this->remove(std::static_pointer_cast<Fermentable>(object).get());
+   return;
+}
 
-   i = fermObs.indexOf(ferm);
+bool FermentableTableModel::remove(Fermentable * ferm) {
+   int i = fermObs.indexOf(ferm);
    if( i >= 0 )
    {
       beginRemoveRows( QModelIndex(), i, i );
-      disconnect( ferm, nullptr, this, nullptr );
+      disconnect(ferm, nullptr, this, nullptr);
       fermObs.removeAt(i);
 
       totalFermMass_kg -= ferm->amount_kg();
@@ -213,22 +216,18 @@ void FermentableTableModel::setDisplayPercentages(bool var)
    displayPercentages = var;
 }
 
-void FermentableTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
-{
+void FermentableTableModel::changedInventory(int invKey, char const * const propertyName) {
 
-   if ( table == DatabaseConstants::FERMTABLE ) {
+   if (QString(propertyName) == PropertyNames::Inventory::amount) {
       for( int i = 0; i < fermObs.size(); ++i ) {
          Fermentable* holdmybeer = fermObs.at(i);
-
          if ( invKey == holdmybeer->inventoryId() ) {
-            holdmybeer->setCacheOnly(true);
-            holdmybeer->setInventoryAmount(val.toDouble());
-            holdmybeer->setCacheOnly(false);
             emit dataChanged( QAbstractItemModel::createIndex(i,FERMINVENTORYCOL),
                               QAbstractItemModel::createIndex(i,FERMINVENTORYCOL) );
          }
       }
    }
+   return;
 }
 
 void FermentableTableModel::changed(QMetaProperty prop, QVariant /*val*/)

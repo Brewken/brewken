@@ -1,5 +1,5 @@
 /**
- * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -21,15 +21,14 @@
  */
 #include "model/Hop.h"
 
+#include <QDebug>
 #include <QDomElement>
 #include <QDomText>
 #include <QObject>
-#include <QDebug>
-#include "Brewken.h"
 
-#include "database/TableSchemaConst.h"
-#include "database/HopSchema.h"
-#include "database/Database.h"
+#include "Brewken.h"
+#include "database/ObjectStoreTyped.h"
+#include "model/Inventory.h"
 
 QStringList Hop::types = QStringList() << "Bittering" << "Aroma" << "Both";
 QStringList Hop::forms = QStringList() << "Leaf" << "Pellet" << "Plug";
@@ -54,6 +53,10 @@ bool Hop::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+ObjectStore & Hop::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Hop>::getInstance();
+}
+
 bool Hop::isValidUse(const QString& str)
 {
    return (uses.indexOf(str) >= 0);
@@ -75,132 +78,70 @@ QString Hop::classNameStr()
    return name;
 }
 
-Hop::Hop(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString()),
-     m_useStr(QString()),
-     m_use(static_cast<Hop::Use>(0)),
-     m_typeStr(QString()),
-     m_type(static_cast<Hop::Type>(0)),
-     m_formStr(QString()),
-     m_form(static_cast<Hop::Form>(0)),
-     m_alpha_pct(0.0),
-     m_amount_kg(0.0),
-     m_time_min(0.0),
-     m_notes(QString()),
-     m_beta_pct(0.0),
-     m_hsi_pct(0.0),
-     m_origin(QString()),
-     m_substitutes(QString()),
-     m_humulene_pct(0.0),
-     m_caryophyllene_pct(0.0),
-     m_cohumulone_pct(0.0),
-     m_myrcene_pct(0.0),
-     m_inventory(-1.0),
-     m_inventory_id(0),
-     m_cacheOnly(false)
-{
-}
-
-Hop::Hop(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::HOPTABLE, -1, name, true),
-     m_useStr(QString()),
-     m_use(static_cast<Hop::Use>(0)),
-     m_typeStr(QString()),
-     m_type(static_cast<Hop::Type>(0)),
-     m_formStr(QString()),
-     m_form(static_cast<Hop::Form>(0)),
-     m_alpha_pct(0.0),
-     m_amount_kg(0.0),
-     m_time_min(0.0),
-     m_notes(QString()),
-     m_beta_pct(0.0),
-     m_hsi_pct(0.0),
-     m_origin(QString()),
-     m_substitutes(QString()),
-     m_humulene_pct(0.0),
-     m_caryophyllene_pct(0.0),
-     m_cohumulone_pct(0.0),
-     m_myrcene_pct(0.0),
-     m_inventory(-1.0),
-     m_inventory_id(0),
-     m_cacheOnly(cache)
-{
-}
-
-Hop::Hop(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity        {namedParameterBundle, DatabaseConstants::HOPTABLE},
-   m_use              {static_cast<Hop::Use>(namedParameterBundle(PropertyNames::Hop::use).toInt())},
-   m_type             {static_cast<Hop::Type>(namedParameterBundle(PropertyNames::Hop::type).toInt())},
-   m_form             {static_cast<Hop::Form>(namedParameterBundle(PropertyNames::Hop::form).toInt())},
-   m_alpha_pct        {namedParameterBundle(PropertyNames::Hop::alpha_pct).toDouble()},
-   m_amount_kg        {namedParameterBundle(PropertyNames::Hop::amount_kg).toDouble()},
-   m_time_min         {namedParameterBundle(PropertyNames::Hop::time_min).toDouble()},
-   m_notes            {namedParameterBundle(PropertyNames::Hop::notes).toString()},
-   m_beta_pct         {namedParameterBundle(PropertyNames::Hop::beta_pct).toDouble()},
-   m_hsi_pct          {namedParameterBundle(PropertyNames::Hop::hsi_pct).toDouble()},
-   m_origin           {namedParameterBundle(PropertyNames::Hop::origin).toString()},
-   m_substitutes      {namedParameterBundle(PropertyNames::Hop::substitutes).toString()},
-   m_humulene_pct     {namedParameterBundle(PropertyNames::Hop::humulene_pct).toDouble()},
-   m_caryophyllene_pct{namedParameterBundle(PropertyNames::Hop::caryophyllene_pct).toDouble()},
-   m_cohumulone_pct   {namedParameterBundle(PropertyNames::Hop::cohumulone_pct).toDouble()},
-   m_myrcene_pct      {namedParameterBundle(PropertyNames::Hop::myrcene_pct).toDouble()},
-   m_inventory        {-1.0}, /**/
-   m_inventory_id     {0}, /**/
-   m_cacheOnly        {false} /**/ {
+Hop::Hop(QString name, bool cache) :
+   NamedEntityWithInventory{-1, cache, name, true},
+   m_useStr           {"" },
+   m_use              {Hop::Mash},
+   m_typeStr          {"" },
+   m_type             {Hop::Bittering},
+   m_formStr          {"" },
+   m_form             {Hop::Leaf},
+   m_alpha_pct        {0.0},
+   m_amount_kg        {0.0},
+   m_time_min         {0.0},
+   m_notes            {"" },
+   m_beta_pct         {0.0},
+   m_hsi_pct          {0.0},
+   m_origin           {"" },
+   m_substitutes      {"" },
+   m_humulene_pct     {0.0},
+   m_caryophyllene_pct{0.0},
+   m_cohumulone_pct   {0.0},
+   m_myrcene_pct      {0.0} {
    return;
 }
 
-
-Hop::Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-     m_useStr(rec.value(kcolUse).toString()),
-     m_use(static_cast<Hop::Use>(uses.indexOf(m_useStr))),
-     m_typeStr(rec.value(kcolHopType).toString()),
-     m_type(static_cast<Hop::Type>(types.indexOf(m_typeStr))),
-     m_formStr(rec.value(kcolHopForm).toString()),
-     m_form(static_cast<Hop::Form>(forms.indexOf(m_formStr))),
-     m_alpha_pct(rec.value(kcolHopAlpha).toDouble()),
-     m_amount_kg(rec.value(kcolHopAmount).toDouble()),
-     m_time_min(rec.value(kcolTime).toDouble()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_beta_pct(rec.value(kcolHopBeta).toDouble()),
-     m_hsi_pct(rec.value(kcolHopHSI).toDouble()),
-     m_origin(rec.value(kcolOrigin).toString()),
-     m_substitutes(rec.value(kcolSubstitutes).toString()),
-     m_humulene_pct(rec.value(kcolHopHumulene).toDouble()),
-     m_caryophyllene_pct(rec.value(kcolHopCaryophyllene).toDouble()),
-     m_cohumulone_pct(rec.value(kcolHopCohumulone).toDouble()),
-     m_myrcene_pct(rec.value(kcolHopMyrcene).toDouble()),
-     m_inventory(-1.0),
-     m_inventory_id(rec.value(kcolInventoryId).toInt()),
-     m_cacheOnly(false)
-{
+Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntityWithInventory{namedParameterBundle},
+   m_use                   {static_cast<Hop::Use>(namedParameterBundle(PropertyNames::Hop::use).toInt())},
+   m_type                  {static_cast<Hop::Type>(namedParameterBundle(PropertyNames::Hop::type).toInt())},
+   m_form                  {static_cast<Hop::Form>(namedParameterBundle(PropertyNames::Hop::form).toInt())},
+   m_alpha_pct             {namedParameterBundle(PropertyNames::Hop::alpha_pct        ).toDouble()},
+   m_amount_kg             {namedParameterBundle(PropertyNames::Hop::amount_kg        ).toDouble()},
+   m_time_min              {namedParameterBundle(PropertyNames::Hop::time_min         ).toDouble()},
+   m_notes                 {namedParameterBundle(PropertyNames::Hop::notes            ).toString()},
+   m_beta_pct              {namedParameterBundle(PropertyNames::Hop::beta_pct         ).toDouble()},
+   m_hsi_pct               {namedParameterBundle(PropertyNames::Hop::hsi_pct          ).toDouble()},
+   m_origin                {namedParameterBundle(PropertyNames::Hop::origin           ).toString()},
+   m_substitutes           {namedParameterBundle(PropertyNames::Hop::substitutes      ).toString()},
+   m_humulene_pct          {namedParameterBundle(PropertyNames::Hop::humulene_pct     ).toDouble()},
+   m_caryophyllene_pct     {namedParameterBundle(PropertyNames::Hop::caryophyllene_pct).toDouble()},
+   m_cohumulone_pct        {namedParameterBundle(PropertyNames::Hop::cohumulone_pct   ).toDouble()},
+   m_myrcene_pct           {namedParameterBundle(PropertyNames::Hop::myrcene_pct      ).toDouble()} {
+   return;
 }
 
-Hop::Hop( Hop & other )
-   : NamedEntity(other),
-     m_useStr(other.m_useStr),
-     m_use(other.m_use),
-     m_typeStr(other.m_typeStr),
-     m_type(other.m_type),
-     m_formStr(other.m_formStr),
-     m_form(other.m_form),
-     m_alpha_pct(other.m_alpha_pct),
-     m_amount_kg(other.m_amount_kg),
-     m_time_min(other.m_time_min),
-     m_notes(other.m_notes),
-     m_beta_pct(other.m_beta_pct),
-     m_hsi_pct(other.m_hsi_pct),
-     m_origin(other.m_origin),
-     m_substitutes(other.m_substitutes),
-     m_humulene_pct(other.m_humulene_pct),
-     m_caryophyllene_pct(other.m_caryophyllene_pct),
-     m_cohumulone_pct(other.m_cohumulone_pct),
-     m_myrcene_pct(other.m_myrcene_pct),
-     m_inventory(other.m_inventory),
-     m_inventory_id(other.m_inventory_id),
-     m_cacheOnly(other.m_cacheOnly)
-{
+Hop::Hop(Hop const & other) :
+   NamedEntityWithInventory{other                    },
+   m_useStr                {other.m_useStr           },
+   m_use                   {other.m_use              },
+   m_typeStr               {other.m_typeStr          },
+   m_type                  {other.m_type             },
+   m_formStr               {other.m_formStr          },
+   m_form                  {other.m_form             },
+   m_alpha_pct             {other.m_alpha_pct        },
+   m_amount_kg             {other.m_amount_kg        },
+   m_time_min              {other.m_time_min         },
+   m_notes                 {other.m_notes            },
+   m_beta_pct              {other.m_beta_pct         },
+   m_hsi_pct               {other.m_hsi_pct          },
+   m_origin                {other.m_origin           },
+   m_substitutes           {other.m_substitutes      },
+   m_humulene_pct          {other.m_humulene_pct     },
+   m_caryophyllene_pct     {other.m_caryophyllene_pct},
+   m_cohumulone_pct        {other.m_cohumulone_pct   },
+   m_myrcene_pct           {other.m_myrcene_pct      } {
+   return;
 }
 
 //============================="SET" METHODS====================================
@@ -236,28 +177,9 @@ void Hop::setAmount_kg( double num )
    }
 }
 
-void Hop::setInventoryAmount( double num )
-{
-   if( num < 0.0 )
-   {
-      qWarning() << QString("Hop: inventory < 0: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_inventory = num;
-      if ( ! m_cacheOnly ) {
-         setInventory(num,m_inventory_id);
-      }
-   }
-}
-
-void Hop::setInventoryId( int key )
-{
-   m_inventory_id = key;
-   if ( ! m_cacheOnly ) {
-      setEasy(kpropInventoryId, key);
-   }
+void Hop::setInventoryAmount(double num) {
+   InventoryUtils::setAmount(*this, num);
+   return;
 }
 
 void Hop::setUse(Use u)
@@ -429,8 +351,6 @@ void Hop::setMyrcene_pct( double num )
    }
 }
 
-void Hop::setCacheOnly(bool cache) { m_cacheOnly = cache; }
-
 //============================="GET" METHODS====================================
 
 Hop::Use Hop::use() const { return m_use; }
@@ -451,20 +371,9 @@ double Hop::humulene_pct() const { return m_humulene_pct; }
 double Hop::caryophyllene_pct() const { return m_caryophyllene_pct; }
 double Hop::cohumulone_pct() const { return m_cohumulone_pct; }
 double Hop::myrcene_pct() const { return m_myrcene_pct; }
-bool   Hop::cacheOnly() const { return m_cacheOnly; }
 
-// a little different in that we don't get the results in advance, but on the fly. I had to undo some const action to make this work
-double Hop::inventory()
-{
-   if ( m_inventory < 0 ) {
-      m_inventory = getInventory(PropertyNames::Hop::inventory).toDouble();
-   }
-   return m_inventory;
-}
-
-int Hop::inventoryId() const
-{
-   return m_inventory_id;
+double Hop::inventory() const {
+   return InventoryUtils::getAmount(*this);
 }
 
 const QString Hop::useStringTr() const
@@ -498,29 +407,4 @@ const QString Hop::formStringTr() const
    else {
       return "";
    }
-}
-
-NamedEntity * Hop::getParent() {
-   Hop * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = Database::instance().hop(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
-}
-
-int Hop::insertInDatabase() {
-   return Database::instance().insertHop(this);
-}
-
-void Hop::removeFromDatabase() {
-   Database::instance().remove(this);
 }

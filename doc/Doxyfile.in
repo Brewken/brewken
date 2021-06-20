@@ -1,3 +1,24 @@
+#----------------------------------------------------------------------------------------------------------------------
+# Doxyfile.in is part of Brewken, and is copyright the following authors 2012-2021:
+#   • Matt Young <mfsy@yahoo.com>
+#   • Maxime Lavigne (malavv) <duguigne@gmail.com>
+#   • Mik Firestone <mikfire@gmail.com>
+#   • Philip Greggory Lee <rocketman768@gmail.com>
+#
+# Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------------------------------------------------
+
+# See https://www.doxygen.nl/manual/config.html for the format of this file
+
 # Doxyfile 1.8.7
 
 # This file describes the settings to be used by the documentation system
@@ -32,13 +53,13 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = brewtarget
+PROJECT_NAME           = Brewken
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "${brewtarget_VERSION_STRING}"
+PROJECT_NUMBER         = "${BREWKEN_VERSION_STRING}"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -780,7 +801,7 @@ FILE_PATTERNS          =
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = NO
+RECURSIVE              = YES
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a

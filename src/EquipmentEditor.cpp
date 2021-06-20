@@ -34,7 +34,8 @@
 #include "BtLabel.h"
 #include "BtLineEdit.h"
 #include "config.h"
-#include "database/Database.h"
+//#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "EquipmentListModel.h"
 #include "HeatCalculations.h"
 #include "model/Equipment.h"
@@ -535,10 +536,10 @@ void EquipmentEditor::setEquipment( Equipment* e )
    }
 }
 
-void EquipmentEditor::removeEquipment()
-{
-   if( obsEquip )
-      Database::instance().remove(obsEquip);
+void EquipmentEditor::removeEquipment() {
+   if( this->obsEquip ) {
+      ObjectStoreWrapper::softDelete(*this->obsEquip);
+   }
 
    equipmentComboBox->setCurrentIndex(-1);
    setEquipment(nullptr);

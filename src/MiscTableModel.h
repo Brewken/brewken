@@ -1,6 +1,7 @@
 /**
- * MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Samuel Östling <MrOstling@gmail.com>
@@ -19,6 +20,8 @@
 #ifndef MISCTABLEMODEL_H
 #define MISCTABLEMODEL_H
 
+#include <memory>
+
 #include <QAbstractTableModel>
 #include <QAbstractItemModel>
 #include <QWidget>
@@ -36,7 +39,6 @@
 
 
 // Forward declarations.
-class MiscTableModel;
 class MiscItemDelegate;
 class Misc;
 class MiscTableWidget;
@@ -47,11 +49,9 @@ enum{MISCNAMECOL, MISCTYPECOL, MISCUSECOL, MISCTIMECOL, MISCAMOUNTCOL, MISCINVEN
 /*!
  * \class MiscTableModel
  *
- *
  * \brief Table model for a list of miscs.
  */
-class MiscTableModel : public QAbstractTableModel
-{
+class MiscTableModel : public QAbstractTableModel {
    Q_OBJECT
 
 public:
@@ -93,19 +93,20 @@ public:
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
    void setDisplayScale(int column, Unit::unitScale displayScale);
    QString generateName(int column) const;
+   bool remove(Misc * misc);
 
 public slots:
    //! \brief Add a misc to the model.
-   void addMisc(Misc* misc);
+   void addMisc(int miscId);
    //! \brief Remove a misc from the model.
-   bool removeMisc(Misc* misc);
+   void removeMisc(int miscId, std::shared_ptr<QObject> object);
 
    void contextMenu(const QPoint &point);
 
 private slots:
    //! \brief Catch changes to Recipe, Database, and Misc.
    void changed(QMetaProperty, QVariant);
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+   void changedInventory(int invKey, char const * const propertyName);
 
 private:
    bool editable;
@@ -118,12 +119,10 @@ private:
 /*!
  *  \class MiscItemDelegate
  *
- *
  *  \brief Item delegate for misc tables.
  *  \sa MiscTableModel
  */
-class MiscItemDelegate : public QItemDelegate
-{
+class MiscItemDelegate : public QItemDelegate {
    Q_OBJECT
 
 public:
@@ -138,4 +137,4 @@ public:
 private:
 };
 
-#endif   /* MISCTABLEMODEL_H */
+#endif

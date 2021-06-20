@@ -35,7 +35,7 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
@@ -350,8 +350,10 @@ void SaltTableModel::removeSalts(QList<int>deadSalts)
 
          // Dead salts do not malinger in the database. This will
          // delete the thing, not just mark it deleted
-         if ( ! zombie->cacheOnly() )
-            Database::instance().removeNamedEntityFromRecipe(m_rec,zombie);
+         if ( ! zombie->cacheOnly() ) {
+            this->m_rec->remove(zombie);
+            ObjectStoreWrapper::hardDelete(*zombie);
+         }
       }
    }
    emit newTotals();
@@ -647,14 +649,13 @@ void SaltTableModel::contextMenu(const QPoint &point)
 
 }
 
-void SaltTableModel::saveAndClose()
-{
+void SaltTableModel::saveAndClose() {
    // all of the writes should have been instantaneous unless
    // we've added a new salt. Wonder if this will work?
-   foreach( Salt* i, saltObs ) {
+   for (Salt* i : saltObs) {
       if ( i->cacheOnly() && i->type() != Salt::NONE && i->addTo() != Salt::NEVER ) {
          i->insertInDatabase();
-         Database::instance().addToRecipe(m_rec,i,true);
+         this->m_rec->add(i);
       }
    }
 }

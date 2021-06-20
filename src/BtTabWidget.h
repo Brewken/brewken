@@ -1,5 +1,6 @@
 /**
- * BtTabWidget.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTabWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,22 +15,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef BTTABWDIGET_H
 #define BTTABWDIGET_H
+#pragma once
 
-class Recipe;
+#include <QTabWidget>
+
 class Equipment;
-class Style;
 class Fermentable;
 class Hop;
 class Misc;
+class Recipe;
+class Style;
 class Yeast;
-#include <QTabWidget>
 
 /*!
  * \class BtTabWdiget
- *
  *
  * \brief To implement drag'n'drop, you need to subclass the dropEvent. I
  * think I need to implement this as a dragMoveEvent, the dragEnterEvent and
@@ -67,4 +68,4 @@ protected:
 
 };
 
-#endif /* BTTABWIDGET_H */
+#endif

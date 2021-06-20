@@ -17,17 +17,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include <QVector>
+#include "model/Equipment.h"
+
 #include <QDomElement>
 #include <QDomText>
 #include <QObject>
-#include "model/Equipment.h"
-#include "Brewken.h"
-#include "HeatCalculations.h"
+#include <QVector>
 
-#include "database/TableSchemaConst.h"
-#include "database/EquipmentSchema.h"
-#include "database/Database.h"
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
+#include "HeatCalculations.h"
 
 
 bool Equipment::isEqualTo(NamedEntity const & other) const {
@@ -51,10 +50,14 @@ bool Equipment::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+ObjectStore & Equipment::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Equipment>::getInstance();
+}
+
 
 //=============================CONSTRUCTORS=====================================
-Equipment::Equipment(QString t_name, bool cacheOnly)
-   : NamedEntity(DatabaseConstants::EQUIPTABLE, -1, t_name, true),
+Equipment::Equipment(QString t_name, bool cacheOnly) :
+   NamedEntity(-1, cacheOnly, t_name, true),
    m_boilSize_l(22.927),
    m_batchSize_l(18.927),
    m_tunVolume_l(0.0),
@@ -71,13 +74,12 @@ Equipment::Equipment(QString t_name, bool cacheOnly)
    m_hopUtilization_pct(100.0),
    m_notes(QString()),
    m_grainAbsorption_LKg(1.086),
-   m_boilingPoint_c(100.0),
-   m_cacheOnly(cacheOnly)
-{
+   m_boilingPoint_c(100.0) {
+   return;
 }
 
-Equipment::Equipment(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::EQUIPTABLE},
+Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity{namedParameterBundle},
    m_boilSize_l           {namedParameterBundle(PropertyNames::Equipment::boilSize_l           ).toDouble()},
    m_batchSize_l          {namedParameterBundle(PropertyNames::Equipment::batchSize_l          ).toDouble()},
    m_tunVolume_l          {namedParameterBundle(PropertyNames::Equipment::tunVolume_l          ).toDouble()},
@@ -94,79 +96,30 @@ Equipment::Equipment(NamedParameterBundle & namedParameterBundle) :
    m_hopUtilization_pct   {namedParameterBundle(PropertyNames::Equipment::hopUtilization_pct   ).toDouble()},
    m_notes                {namedParameterBundle(PropertyNames::Equipment::notes                ).toString()},
    m_grainAbsorption_LKg  {namedParameterBundle(PropertyNames::Equipment::grainAbsorption_LKg  ).toDouble()},
-   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c       ).toDouble()},
-   m_cacheOnly            {false} {
+   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c       ).toDouble()} {
    return;
 }
 
-
-Equipment::Equipment(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true ),
-   m_boilSize_l(22.927),
-   m_batchSize_l(18.927),
-   m_tunVolume_l(0.0),
-   m_tunWeight_kg(0.0),
-   m_tunSpecificHeat_calGC(0.0),
-   m_topUpWater_l(0.0),
-   m_trubChillerLoss_l(1.0),
-   m_evapRate_pctHr(0.0),
-   m_evapRate_lHr(4.0),
-   m_boilTime_min(60.0),
-   m_calcBoilVolume(true),
-   m_lauterDeadspace_l(0.0),
-   m_topUpKettle_l(0.0),
-   m_hopUtilization_pct(100.0),
-   m_notes(QString()),
-   m_grainAbsorption_LKg(1.086),
-   m_boilingPoint_c(100.0),
-   m_cacheOnly(false)
-{
-}
-
-Equipment::Equipment(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-   m_boilSize_l(rec.value(kcolEquipBoilSize).toDouble()),
-   m_batchSize_l(rec.value(kcolEquipBatchSize).toDouble()),
-   m_tunVolume_l(rec.value(kcolEquipTunVolume).toDouble()),
-   m_tunWeight_kg(rec.value(kcolEquipTunWeight).toDouble()),
-   m_tunSpecificHeat_calGC(rec.value(kcolEquipTunSpecHeat).toDouble()),
-   m_topUpWater_l(rec.value(kcolEquipTopUpWater).toDouble()),
-   m_trubChillerLoss_l(rec.value(kcolEquipTrubChillLoss).toDouble()),
-   m_evapRate_pctHr(rec.value(kcolEquipEvapRate).toDouble()),
-   m_evapRate_lHr(rec.value(kcolEquipRealEvapRate).toDouble()),
-   m_boilTime_min(rec.value(kcolEquipBoilTime).toDouble()),
-   m_calcBoilVolume(rec.value(kcolEquipCalcBoilVol).toBool()),
-   m_lauterDeadspace_l(rec.value(kcolEquipLauterSpace).toDouble()),
-   m_topUpKettle_l(rec.value(kcolEquipTopUpKettle).toDouble()),
-   m_hopUtilization_pct(rec.value(kcolEquipHopUtil).toDouble()),
-   m_notes(rec.value(kcolNotes).toString()),
-   m_grainAbsorption_LKg(rec.value(kcolEquipAbsorption).toDouble()),
-   m_boilingPoint_c(rec.value(kcolEquipBoilingPoint).toDouble()),
-   m_cacheOnly(false)
-{
-}
-
-Equipment::Equipment( Equipment const& other )
-   : NamedEntity(other),
-   m_boilSize_l(other.m_boilSize_l),
-   m_batchSize_l(other.m_batchSize_l),
-   m_tunVolume_l(other.m_tunVolume_l),
-   m_tunWeight_kg(other.m_tunWeight_kg),
-   m_tunSpecificHeat_calGC(other.m_tunSpecificHeat_calGC),
-   m_topUpWater_l(other.m_topUpWater_l),
-   m_trubChillerLoss_l(other.m_trubChillerLoss_l),
-   m_evapRate_pctHr(other.m_evapRate_pctHr),
-   m_evapRate_lHr(other.m_evapRate_lHr),
-   m_boilTime_min(other.m_boilTime_min),
-   m_calcBoilVolume(other.m_calcBoilVolume),
-   m_lauterDeadspace_l(other.m_lauterDeadspace_l),
-   m_topUpKettle_l(other.m_topUpKettle_l),
-   m_hopUtilization_pct(other.m_hopUtilization_pct),
-   m_notes(other.m_notes),
-   m_grainAbsorption_LKg(other.m_grainAbsorption_LKg),
-   m_boilingPoint_c(other.m_boilingPoint_c),
-   m_cacheOnly(other.m_cacheOnly)
-{
+Equipment::Equipment(Equipment const & other) :
+   NamedEntity            {other                        },
+   m_boilSize_l           {other.m_boilSize_l           },
+   m_batchSize_l          {other.m_batchSize_l          },
+   m_tunVolume_l          {other.m_tunVolume_l          },
+   m_tunWeight_kg         {other.m_tunWeight_kg         },
+   m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
+   m_topUpWater_l         {other.m_topUpWater_l         },
+   m_trubChillerLoss_l    {other.m_trubChillerLoss_l    },
+   m_evapRate_pctHr       {other.m_evapRate_pctHr       },
+   m_evapRate_lHr         {other.m_evapRate_lHr         },
+   m_boilTime_min         {other.m_boilTime_min         },
+   m_calcBoilVolume       {other.m_calcBoilVolume       },
+   m_lauterDeadspace_l    {other.m_lauterDeadspace_l    },
+   m_topUpKettle_l        {other.m_topUpKettle_l        },
+   m_hopUtilization_pct   {other.m_hopUtilization_pct   },
+   m_notes                {other.m_notes                },
+   m_grainAbsorption_LKg  {other.m_grainAbsorption_LKg  },
+   m_boilingPoint_c       {other.m_boilingPoint_c       } {
+   return;
 }
 
 QString Equipment::classNameStr()
@@ -451,8 +404,6 @@ void Equipment::setBoilingPoint_c(double var)
    }
 }
 
-void Equipment::setCacheOnly(bool cache) { m_cacheOnly = cache; }
-
 //============================"GET" METHODS=====================================
 
 QString Equipment::notes() const { return m_notes; }
@@ -472,7 +423,6 @@ double Equipment::topUpKettle_l() const { return m_topUpKettle_l; }
 double Equipment::hopUtilization_pct() const { return m_hopUtilization_pct; }
 double Equipment::grainAbsorption_LKg() { return m_grainAbsorption_LKg; }
 double Equipment::boilingPoint_c() const { return m_boilingPoint_c; }
-bool Equipment::cacheOnly() const { return m_cacheOnly; }
 
 void Equipment::doCalculations()
 {
@@ -488,29 +438,4 @@ double Equipment::wortEndOfBoil_l( double kettleWort_l ) const
    //return kettleWort_l * (1 - (boilTime_min/(double)60) * (evapRate_pctHr/(double)100) );
 
    return kettleWort_l - (boilTime_min()/(double)60)*evapRate_lHr();
-}
-
-NamedEntity * Equipment::getParent() {
-   Equipment * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = Database::instance().equipment(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
-}
-
-int Equipment::insertInDatabase() {
-   return Database::instance().insertEquipment(this);
-}
-
-void Equipment::removeFromDatabase() {
-   Database::instance().remove(this);
 }

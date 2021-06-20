@@ -19,28 +19,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#include <QDomNode>
-#include <QDomElement>
-#include <QDomText>
-#include <QObject>
-#include <QDateTime>
-#include <algorithm>
-#include <QRegExp>
-#include <QDebug>
-#include <QLocale>
-#include <QString>
 #include "model/BrewNote.h"
-#include "Brewken.h"
+
+#include <algorithm>
+#include <QDateTime>
+#include <QDebug>
+#include <QDomElement>
+#include <QDomNode>
+#include <QDomText>
+#include <QLocale>
+#include <QObject>
+#include <QRegExp>
+#include <QString>
+
 #include "Algorithms.h"
-#include "model/MashStep.h"
-#include "model/Recipe.h"
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Recipe.h"
 #include "model/Yeast.h"
-#include "database/Database.h"
-#include "database/TableSchemaConst.h"
-#include "database/BrewNoteSchema.h"
 
 // These belong here, because they really just are constant strings for
 // reaching into a hash
@@ -68,50 +67,23 @@ bool BrewNote::isEqualTo(NamedEntity const & other) const {
    );
 }
 
-// Initializers
-BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key),
-     loading(false),
-     m_brewDate(QDateTime()),
-     m_fermentDate(QDateTime()),
-     m_notes(QString()),
-     m_sg(0.0),
-     m_abv(0.0),
-     m_effIntoBK_pct(0.0),
-     m_brewhouseEff_pct(0.0),
-     m_volumeIntoBK_l(0.0),
-     m_strikeTemp_c(0.0),
-     m_mashFinTemp_c(0.0),
-     m_og(0.0),
-     m_postBoilVolume_l(0.0),
-     m_volumeIntoFerm_l(0.0),
-     m_pitchTemp_c(0.0),
-     m_fg(0.0),
-     m_attenuation(0.0),
-     m_finalVolume_l(0.0),
-     m_boilOff_l(0.0),
-     m_projBoilGrav(0.0),
-     m_projVolIntoBK_l(0.0),
-     m_projStrikeTemp_c(0.0),
-     m_projMashFinTemp_c(0.0),
-     m_projOg(0.0),
-     m_projVolIntoFerm_l(0.0),
-     m_projFg(0.0),
-     m_projEff_pct(0.0),
-     m_projABV_pct(0.0),
-     m_projPoints(0.0),
-     m_projFermPoints(0.0),
-     m_projAtten(0.0),
-     m_cacheOnly(false)
-{
+ObjectStore & BrewNote::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<BrewNote>::getInstance();
 }
 
+// Initializers
 BrewNote::BrewNote(QString name, bool cache) : BrewNote(QDateTime(), cache, name) {
    return;
 }
 
-BrewNote::BrewNote(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::BREWNOTETABLE},
+BrewNote::BrewNote(Recipe const & recipe) :
+   BrewNote(QDateTime(), true, "") {
+   this->m_recipeId = recipe.key();
+   return;
+}
+
+BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity{namedParameterBundle},
    loading            {false},
    m_brewDate         {namedParameterBundle(PropertyNames::BrewNote::brewDate         ).toDate()},
    m_fermentDate      {namedParameterBundle(PropertyNames::BrewNote::fermentDate      ).toDate()},
@@ -143,87 +115,50 @@ BrewNote::BrewNote(NamedParameterBundle & namedParameterBundle) :
    m_projPoints       {namedParameterBundle(PropertyNames::BrewNote::projPoints       ).toDouble()},
    m_projFermPoints   {namedParameterBundle(PropertyNames::BrewNote::projFermPoints   ).toDouble()},
    m_projAtten        {namedParameterBundle(PropertyNames::BrewNote::projAtten        ).toDouble()},
-   m_cacheOnly        {false} {
+   m_recipeId         {namedParameterBundle(PropertyNames::BrewNote::recipeId         ).toInt()} {
    return;
 }
 
 
-BrewNote::BrewNote(QDateTime dateNow, bool cache, QString const & name)
-   : NamedEntity(DatabaseConstants::BREWNOTETABLE,-1,name,true),
-     loading(false),
-     m_brewDate(dateNow),
-     m_fermentDate(QDateTime()),
-     m_notes(QString()),
-     m_sg(0.0),
-     m_abv(0.0),
-     m_effIntoBK_pct(0.0),
-     m_brewhouseEff_pct(0.0),
-     m_volumeIntoBK_l(0.0),
-     m_strikeTemp_c(0.0),
-     m_mashFinTemp_c(0.0),
-     m_og(0.0),
-     m_postBoilVolume_l(0.0),
-     m_volumeIntoFerm_l(0.0),
-     m_pitchTemp_c(0.0),
-     m_fg(0.0),
-     m_attenuation(0.0),
-     m_finalVolume_l(0.0),
-     m_boilOff_l(0.0),
-     m_projBoilGrav(0.0),
-     m_projVolIntoBK_l(0.0),
-     m_projStrikeTemp_c(0.0),
-     m_projMashFinTemp_c(0.0),
-     m_projOg(0.0),
-     m_projVolIntoFerm_l(0.0),
-     m_projFg(0.0),
-     m_projEff_pct(0.0),
-     m_projABV_pct(0.0),
-     m_projPoints(0.0),
-     m_projFermPoints(0.0),
-     m_projAtten(0.0),
-     m_cacheOnly(cache)
-{
-}
-
-BrewNote::BrewNote(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolBNoteFermDate).toString(), rec.value(kcolDisplay).toBool()),
-     m_brewDate(QDateTime::fromString(rec.value(kcolBNoteBrewDate).toString(), Qt::ISODate)),
-     m_fermentDate(QDateTime::fromString(rec.value(kcolBNoteFermDate).toString(), Qt::ISODate)),
-     m_notes(rec.value(kcolBNoteNotes).toString()),
-     m_sg(rec.value(kcolBNoteSG).toDouble()),
-     m_abv(rec.value(kcolBNoteABV).toDouble()),
-     m_effIntoBK_pct(rec.value(kcolBNoteEffIntoBoil).toDouble()),
-     m_brewhouseEff_pct(rec.value(kcolBNoteBrewhsEff).toDouble()),
-     m_volumeIntoBK_l(rec.value(kcolBNoteVolIntoBoil).toDouble()),
-     m_strikeTemp_c(rec.value(kcolBNoteStrikeTemp).toDouble()),
-     m_mashFinTemp_c(rec.value(kcolBNoteMashFinTemp).toDouble()),
-     m_og(rec.value(kcolBNoteOG).toDouble()),
-     m_postBoilVolume_l(rec.value(kcolBNotePostBoilVol).toDouble()),
-     m_volumeIntoFerm_l(rec.value(kcolBNoteVolIntoFerm).toDouble()),
-     m_pitchTemp_c(rec.value(kcolBNotePitchTemp).toDouble()),
-     m_fg(rec.value(kcolBNoteFG).toDouble()),
-     m_attenuation(rec.value(kcolBNoteAtten).toDouble()),
-     m_finalVolume_l(rec.value(kcolBNoteFinVol).toDouble()),
-     m_boilOff_l(rec.value(kcolBNoteBoilOff).toDouble()),
-     m_projBoilGrav(rec.value(kcolBNoteProjBoilGrav).toDouble()),
-     m_projVolIntoBK_l(rec.value(kcolBNoteProjVolIntoBoil).toDouble()),
-     m_projStrikeTemp_c(rec.value(kcolBNoteProjStrikeTemp).toDouble()),
-     m_projMashFinTemp_c(rec.value(kcolBNoteProjMashFinTemp).toDouble()),
-     m_projOg(rec.value(kcolBNoteProjOG).toDouble()),
-     m_projVolIntoFerm_l(rec.value(kcolBNoteProjVolIntoFerm).toDouble()),
-     m_projFg(rec.value(kcolBNoteProjFG).toDouble()),
-     m_projEff_pct(rec.value(kcolBNoteProjEff).toDouble()),
-     m_projABV_pct(rec.value(kcolBNoteProjABV).toDouble()),
-     m_projPoints(rec.value(kcolBNoteProjPnts).toDouble()),
-     m_projFermPoints(rec.value(kcolBNoteProjFermPnts).toDouble()),
-     m_projAtten(rec.value(kcolBNoteProjAtten).toDouble()),
-     m_cacheOnly(false)
-{
+BrewNote::BrewNote(QDateTime dateNow, bool cache, QString const & name) :
+   NamedEntity(-1, cache, name, true),
+   loading(false),
+   m_brewDate(dateNow),
+   m_fermentDate(QDateTime()),
+   m_notes(QString()),
+   m_sg(0.0),
+   m_abv(0.0),
+   m_effIntoBK_pct(0.0),
+   m_brewhouseEff_pct(0.0),
+   m_volumeIntoBK_l(0.0),
+   m_strikeTemp_c(0.0),
+   m_mashFinTemp_c(0.0),
+   m_og(0.0),
+   m_postBoilVolume_l(0.0),
+   m_volumeIntoFerm_l(0.0),
+   m_pitchTemp_c(0.0),
+   m_fg(0.0),
+   m_attenuation(0.0),
+   m_finalVolume_l(0.0),
+   m_boilOff_l(0.0),
+   m_projBoilGrav(0.0),
+   m_projVolIntoBK_l(0.0),
+   m_projStrikeTemp_c(0.0),
+   m_projMashFinTemp_c(0.0),
+   m_projOg(0.0),
+   m_projVolIntoFerm_l(0.0),
+   m_projFg(0.0),
+   m_projEff_pct(0.0),
+   m_projABV_pct(0.0),
+   m_projPoints(0.0),
+   m_projFermPoints(0.0),
+   m_projAtten(0.0) {
+   return;
 }
 
 void BrewNote::populateNote(Recipe* parent)
 {
-   this->m_recipe = parent;
+   this->m_recipeId = parent->key();
    Equipment* equip = parent->equipment();
    Mash* mash = parent->mash();
    QList<MashStep*> steps;
@@ -316,7 +251,7 @@ void BrewNote::populateNote(Recipe* parent)
 // This should allow the users to redo those calculations
 void BrewNote::recalculateEff(Recipe* parent)
 {
-   this->m_recipe = parent;
+   this->m_recipeId = parent->key();
 
    QHash<QString,double> sugars;
 
@@ -330,40 +265,39 @@ void BrewNote::recalculateEff(Recipe* parent)
    calculateBrewHouseEff_pct();
 }
 
-BrewNote::BrewNote(BrewNote const& other)
-   : NamedEntity(other),
-     m_brewDate(other.m_brewDate),
-     m_fermentDate(other.m_fermentDate),
-     m_notes(other.m_notes),
-     m_sg(other.m_sg),
-     m_abv(other.m_abv),
-     m_effIntoBK_pct(other.m_effIntoBK_pct),
-     m_brewhouseEff_pct(other.m_brewhouseEff_pct),
-     m_volumeIntoBK_l(other.m_volumeIntoBK_l),
-     m_strikeTemp_c(other.m_strikeTemp_c),
-     m_mashFinTemp_c(other.m_mashFinTemp_c),
-     m_og(other.m_og),
-     m_postBoilVolume_l(other.m_postBoilVolume_l),
-     m_volumeIntoFerm_l(other.m_volumeIntoFerm_l),
-     m_pitchTemp_c(other.m_pitchTemp_c),
-     m_fg(other.m_fg),
-     m_attenuation(other.m_attenuation),
-     m_finalVolume_l(other.m_finalVolume_l),
-     m_boilOff_l(other.m_boilOff_l),
-     m_projBoilGrav(other.m_projBoilGrav),
-     m_projVolIntoBK_l(other.m_projVolIntoBK_l),
-     m_projStrikeTemp_c(other.m_projStrikeTemp_c),
-     m_projMashFinTemp_c(other.m_projMashFinTemp_c),
-     m_projOg(other.m_projOg),
-     m_projVolIntoFerm_l(other.m_projVolIntoFerm_l),
-     m_projFg(other.m_projFg),
-     m_projEff_pct(other.m_projEff_pct),
-     m_projABV_pct(other.m_projABV_pct),
-     m_projPoints(other.m_projPoints),
-     m_projFermPoints(other.m_projFermPoints),
-     m_projAtten(other.m_projAtten),
-     m_cacheOnly(other.m_cacheOnly)
-{
+BrewNote::BrewNote(BrewNote const& other) :
+   NamedEntity        {other                    },
+   m_brewDate         {other.m_brewDate         },
+   m_fermentDate      {other.m_fermentDate      },
+   m_notes            {other.m_notes            },
+   m_sg               {other.m_sg               },
+   m_abv              {other.m_abv              },
+   m_effIntoBK_pct    {other.m_effIntoBK_pct    },
+   m_brewhouseEff_pct {other.m_brewhouseEff_pct },
+   m_volumeIntoBK_l   {other.m_volumeIntoBK_l   },
+   m_strikeTemp_c     {other.m_strikeTemp_c     },
+   m_mashFinTemp_c    {other.m_mashFinTemp_c    },
+   m_og               {other.m_og               },
+   m_postBoilVolume_l {other.m_postBoilVolume_l },
+   m_volumeIntoFerm_l {other.m_volumeIntoFerm_l },
+   m_pitchTemp_c      {other.m_pitchTemp_c      },
+   m_fg               {other.m_fg               },
+   m_attenuation      {other.m_attenuation      },
+   m_finalVolume_l    {other.m_finalVolume_l    },
+   m_boilOff_l        {other.m_boilOff_l        },
+   m_projBoilGrav     {other.m_projBoilGrav     },
+   m_projVolIntoBK_l  {other.m_projVolIntoBK_l  },
+   m_projStrikeTemp_c {other.m_projStrikeTemp_c },
+   m_projMashFinTemp_c{other.m_projMashFinTemp_c},
+   m_projOg           {other.m_projOg           },
+   m_projVolIntoFerm_l{other.m_projVolIntoFerm_l},
+   m_projFg           {other.m_projFg           },
+   m_projEff_pct      {other.m_projEff_pct      },
+   m_projABV_pct      {other.m_projABV_pct      },
+   m_projPoints       {other.m_projPoints       },
+   m_projFermPoints   {other.m_projFermPoints   },
+   m_projAtten        {other.m_projAtten        } {
+   return;
 }
 
 // Setters=====================================================================
@@ -677,9 +611,12 @@ void BrewNote::setBoilOff_l(double var)
    }
 }
 
-void BrewNote::setCacheOnly(bool cache) { m_cacheOnly = cache; }
-
-void BrewNote::setRecipe(Recipe * recipe) { this->m_recipe = recipe; }
+void BrewNote::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }
+void BrewNote::setRecipe(Recipe * recipe) {
+   Q_ASSERT(nullptr != recipe);
+   this->m_recipeId = recipe->key();
+   return;
+}
 
 
 // Getters
@@ -692,7 +629,6 @@ QString BrewNote::fermentDate_str() const { return m_fermentDate.toString(); }
 QString BrewNote::fermentDate_short() const { return Brewken::displayDateUserFormated(m_fermentDate.date()); }
 
 QString BrewNote::notes() const { return m_notes; }
-bool BrewNote::cacheOnly() const { return m_cacheOnly; }
 
 double BrewNote::sg() const { return m_sg; }
 double BrewNote::abv() const { return m_abv; }
@@ -721,11 +657,12 @@ double BrewNote::projPoints() const { return m_projPoints; }
 double BrewNote::projFermPoints() const { return m_projFermPoints; }
 double BrewNote::projAtten() const { return m_projAtten; }
 double BrewNote::boilOff_l() const { return m_boilOff_l; }
+int    BrewNote::getRecipeId() const { return this->m_recipeId; }
 
-int BrewNote::key() const
+/*int BrewNote::key() const
 {
    return _key;
-}
+}*/
 
 // calculators -- these kind of act as both setters and getters.  Likely bad
 // form
@@ -822,12 +759,4 @@ double BrewNote::calculateAttenuation_pct()
     setAttenuation(attenuation);
 
     return attenuation;
-}
-
-int BrewNote::insertInDatabase() {
-   return Database::instance().insertBrewNote(this, this->m_recipe);
-}
-
-void BrewNote::removeFromDatabase() {
-   Database::instance().remove(this);
 }

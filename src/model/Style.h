@@ -57,17 +57,18 @@ namespace PropertyNames::Style { static char const * const category = "category"
  *
  * \brief Model for style records in the database.
  */
-class Style : public NamedEntity
-{
+class Style : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "styles")
 
-   friend class Database;
    friend class BeerXML;
    friend class StyleEditor;
 public:
+   Style(QString t_name = "", bool cacheOnly = true);
+   Style(NamedParameterBundle const & namedParameterBundle);
+   Style( Style const & other );
 
-   virtual ~Style() {}
+   virtual ~Style() = default;
 
    //! \brief The type of beverage.
    enum Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
@@ -139,7 +140,6 @@ public:
    void setProfile( const QString& var);
    void setNamedEntitys( const QString& var);
    void setExamples( const QString& var);
-   void setCacheOnly(const bool cache);
 
    QString category() const;
    QString categoryNumber() const;
@@ -163,28 +163,16 @@ public:
    QString profile() const;
    QString ingredients() const;
    QString examples() const;
-   bool cacheOnly() const;
 
    static QString classNameStr();
-
-   NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Style(DatabaseConstants::DbTableId table, int key);
-public:
-   Style(QString t_name, bool cacheOnly = true);
-   Style(NamedParameterBundle & namedParameterBundle);
-private:
-   Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Style( Style const& other );
-
    QString m_category;
    QString m_categoryNumber;
    QString m_styleLetter;
@@ -208,38 +196,10 @@ private:
    QString m_ingredients;
    QString m_examples;
 
-   bool m_cacheOnly;
-
    bool isValidType( const QString &str );
    static QStringList m_types;
 };
 
 Q_DECLARE_METATYPE( Style* )
-/*
-inline bool StylePtrLt( Style* lhs, Style* rhs)
-{
-   return *lhs < *rhs;
-}
 
-inline bool StylePtrEq( Style* lhs, Style* rhs)
-{
-   return *lhs == *rhs;
-}
-
-struct Style_ptr_cmp
-{
-   bool operator()( Style* lhs, Style* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
-
-struct Style_ptr_equals
-{
-   bool operator()( Style* lhs, Style* rhs )
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
-#endif //_STYLE_H
+#endif

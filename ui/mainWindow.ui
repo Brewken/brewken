@@ -2277,7 +2277,18 @@
     <string>Redo</string>
    </property>
   </action>
- </widget>
+  <action name="action_brewit">
+   <property name="icon">
+    <iconset resource="../brewtarget.qrc">
+     <normaloff>:/images/grain2glass.svg</normaloff>:/images/grain2glass.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="toolTip">
+    <string>Brew It!</string>
+   </property>
+  </action> </widget>
  <customwidgets>
   <customwidget>
    <class>CustomComboBox</class>

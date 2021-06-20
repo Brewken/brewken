@@ -1,5 +1,5 @@
 /**
- * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -21,19 +21,18 @@
  */
 #include "model/Misc.h"
 
-#include "Brewken.h"
 #include <iostream>
 #include <string>
-#include <QVector>
-#include "Brewken.h"
+
+#include <QDebug>
 #include <QDomElement>
 #include <QDomText>
 #include <QObject>
-#include <QDebug>
+#include <QVector>
 
-#include "database/TableSchemaConst.h"
-#include "database/MiscSchema.h"
-#include "database/Database.h"
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Inventory.h"
 
 QStringList Misc::uses = QStringList() << "Boil" << "Mash" << "Primary" << "Secondary" << "Bottling";
 QStringList Misc::types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
@@ -55,86 +54,48 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+ObjectStore & Misc::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Misc>::getInstance();
+}
+
 //============================CONSTRUCTORS======================================
-Misc::Misc(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key),
-   m_typeString(QString()),
-   m_type(static_cast<Misc::Type>(0)),
-   m_useString(QString()),
-   m_use(static_cast<Misc::Use>(0)),
-   m_time(0.0),
-   m_amount(0.0),
-   m_amountIsWeight(false),
-   m_useFor(QString()),
-   m_notes(QString()),
-   m_inventory(-1.0),
-   m_inventory_id(0),
-   m_cacheOnly(false)
-{
+Misc::Misc(Misc const & other) :
+   NamedEntityWithInventory{other                 },
+   m_typeString            {other.m_typeString    },
+   m_type                  {other.m_type          },
+   m_useString             {other.m_useString     },
+   m_use                   {other.m_use           },
+   m_time                  {other.m_time          },
+   m_amount                {other.m_amount        },
+   m_amountIsWeight        {other.m_amountIsWeight},
+   m_useFor                {other.m_useFor        },
+   m_notes                 {other.m_notes         } {
+   return;
 }
 
-Misc::Misc(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-   m_typeString(rec.value(kcolMiscType).toString()),
-   m_type(static_cast<Misc::Type>(types.indexOf(m_typeString))),
-   m_useString(rec.value(kcolUse).toString()),
-   m_use(static_cast<Misc::Use>(uses.indexOf(m_useString))),
-   m_time(rec.value(kcolTime).toDouble()),
-   m_amount(rec.value(kcolAmount).toDouble()),
-   m_amountIsWeight(rec.value(kcolMiscAmtIsWgt).toBool()),
-   m_useFor(rec.value(kcolMiscUseFor).toString()),
-   m_notes(rec.value(kcolNotes).toString()),
-   m_inventory(-1.0),
-   m_inventory_id(rec.value(kcolInventoryId).toInt()),
-   m_cacheOnly(false)
-{
+Misc::Misc(QString name, bool cache) :
+   NamedEntityWithInventory{-1, cache, name, true},
+   m_typeString            {""                   },
+   m_type                  {Misc::Spice          },
+   m_useString             {""                   },
+   m_use                   {Misc::Boil           },
+   m_time                  {0.0                  },
+   m_amount                {0.0                  },
+   m_amountIsWeight        {false                },
+   m_useFor                {""                   },
+   m_notes                 {""                   } {
+   return;
 }
 
-Misc::Misc(Misc & other) : NamedEntity(other),
-   m_typeString(other.m_typeString),
-   m_type(other.m_type),
-   m_useString(other.m_useString),
-   m_use(other.m_use),
-   m_time(other.m_time),
-   m_amount(other.m_amount),
-   m_amountIsWeight(other.m_amountIsWeight),
-   m_useFor(other.m_useFor),
-   m_notes(other.m_notes),
-   m_inventory(other.m_inventory),
-   m_inventory_id(other.m_inventory_id),
-   m_cacheOnly(other.m_cacheOnly)
-{
-}
-
-Misc::Misc(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::MISCTABLE, -1, name, true),
-   m_typeString(QString()),
-   m_type(static_cast<Misc::Type>(0)),
-   m_useString(QString()),
-   m_use(static_cast<Misc::Use>(0)),
-   m_time(0.0),
-   m_amount(0.0),
-   m_amountIsWeight(false),
-   m_useFor(QString()),
-   m_notes(QString()),
-   m_inventory(-1.0),
-   m_inventory_id(0),
-   m_cacheOnly(cache)
-{
-}
-
-Misc::Misc(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::MISCTABLE},
-   m_type          {static_cast<Misc::Type>(namedParameterBundle(PropertyNames::Misc::type).toInt())},
-   m_use           {static_cast<Misc::Use>(namedParameterBundle(PropertyNames::Misc::use).toInt())},
-   m_time          {namedParameterBundle(PropertyNames::Misc::time          ).toDouble()},
-   m_amount        {namedParameterBundle(PropertyNames::Misc::amount        ).toDouble()},
-   m_amountIsWeight{namedParameterBundle(PropertyNames::Misc::amountIsWeight).toBool()},
-   m_useFor        {namedParameterBundle(PropertyNames::Misc::useFor        ).toString()},
-   m_notes         {namedParameterBundle(PropertyNames::Misc::notes         ).toString()},
-   m_inventory     {-1.0},
-   m_inventory_id  {0},
-   m_cacheOnly     {false} {
+Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntityWithInventory{namedParameterBundle},
+   m_type                  {static_cast<Misc::Type>(namedParameterBundle(PropertyNames::Misc::type).toInt())},
+   m_use                   {static_cast<Misc::Use>(namedParameterBundle(PropertyNames::Misc::use).toInt())},
+   m_time                  {namedParameterBundle(PropertyNames::Misc::time          ).toDouble()},
+   m_amount                {namedParameterBundle(PropertyNames::Misc::amount        ).toDouble()},
+   m_amountIsWeight        {namedParameterBundle(PropertyNames::Misc::amountIsWeight).toBool()},
+   m_useFor                {namedParameterBundle(PropertyNames::Misc::useFor        ).toString()},
+   m_notes                 {namedParameterBundle(PropertyNames::Misc::notes         ).toString()} {
    return;
 }
 
@@ -158,15 +119,9 @@ QString Misc::useFor() const { return m_useFor; }
 
 QString Misc::notes() const { return m_notes; }
 
-double Misc::inventory()
-{
-   if ( m_inventory < 0.0 ) {
-      m_inventory = getInventory(PropertyNames::Misc::inventory).toDouble();
-   }
-   return m_inventory;
+double Misc::inventory() const {
+   return InventoryUtils::getAmount(*this);
 }
-
-int Misc::inventoryId() const { return m_inventory_id; }
 
 Misc::AmountType Misc::amountType() const { return m_amountIsWeight ? AmountType_Weight : AmountType_Volume; }
 
@@ -204,8 +159,6 @@ const QString Misc::amountTypeStringTr() const
       return QString("Weight");
    }
 }
-
-bool Misc::cacheOnly() const { return m_cacheOnly; }
 
 //============================"SET" METHODS=====================================
 void Misc::setType( Type t )
@@ -270,22 +223,9 @@ void Misc::setAmount( double var )
    }
 }
 
-void Misc::setInventoryAmount( double var )
-{
-   if( var < 0.0 )
-      qWarning() << QString("Misc: inventory < 0: %1").arg(var);
-   else {
-      m_inventory = var;
-      if ( ! m_cacheOnly )
-         setInventory(var,m_inventory_id);
-   }
-}
-
-void Misc::setInventoryId( int key )
-{
-   m_inventory_id = key;
-   if ( ! m_cacheOnly )
-      setEasy(kpropInventoryId, key);
+void Misc::setInventoryAmount(double var) {
+   InventoryUtils::setAmount(*this, var);
+   return;
 }
 
 void Misc::setTime( double var )
@@ -295,12 +235,10 @@ void Misc::setTime( double var )
    else {
       m_time = var;
       if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Hop::time_min, var );
+         setEasy( PropertyNames::Misc::time, var );
       }
    }
 }
-
-void Misc::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 
 //========================OTHER METHODS=========================================
 
@@ -328,29 +266,4 @@ bool Misc::isValidType( const QString& var )
          return true;
 
    return false;
-}
-
-NamedEntity * Misc::getParent() {
-   Misc * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = Database::instance().misc(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
-}
-
-int Misc::insertInDatabase() {
-   return Database::instance().insertMisc(this);
-}
-
-void Misc::removeFromDatabase() {
-   Database::instance().remove(this);
 }

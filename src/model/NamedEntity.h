@@ -31,8 +31,9 @@
 #include <QVariant>
 
 #include "Brewken.h"
-#include "database/DatabaseSchema.h"
 #include "model/NamedParameterBundle.h"
+
+class ObjectStore;
 
 namespace PropertyNames::NamedEntity { static char const * const folder = "folder"; /* previously kpropFolder */ }
 namespace PropertyNames::NamedEntity { static char const * const display = "display"; /* previously kpropDisplay */ }
@@ -69,19 +70,20 @@ Q_DECLARE_METATYPE( uintptr_t )
  * \b Yeast) are ingredients in the normal sense of the word, others (eg \b Instruction, \b Equipment, \b Style,
  * \b Mash) are not really.  Equally, the fact that derived classes can be instantiated from BeerXML is not their
  * defining characteristic.
+ *
+ * NB: We cannot make this a template class (eg to use
+ * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
+ * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
  */
-class NamedEntity : public QObject
-{
+class NamedEntity : public QObject {
    Q_OBJECT
    Q_CLASSINFO("version","1")
 
-   friend class Database;
    friend class BeerXML;
 public:
-   NamedEntity(DatabaseConstants::DbTableId table, int key, QString t_name = QString(),
-                  bool t_display = false, QString folder = QString());
-   NamedEntity( NamedEntity const& other );
-   NamedEntity(NamedParameterBundle & namedParameterBundle, DatabaseConstants::DbTableId table);
+   NamedEntity(int key, bool cache = true, QString t_name = QString(), bool t_display = false, QString folder = QString());
+   NamedEntity(NamedEntity const & other);
+   NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
@@ -93,6 +95,12 @@ public:
     *        overload) the protected virtual isEqualTo() function.
     */
    bool operator==(NamedEntity const & other) const;
+
+   /**
+    * \brief We don't have a need to assign one NamedEntity to another, and the compiler implementation of this would
+    *        be wrong, so we delete it.
+    */
+   NamedEntity & operator=(NamedEntity const &) = delete;
 
    /**
     * \brief This generic version of operator!= should work for subclasses provided they correctly _override_ (NB not
@@ -117,7 +125,8 @@ public:
 
    Q_PROPERTY( int key READ key WRITE setKey )
    Q_PROPERTY( int parentKey READ getParentKey WRITE setParentKey )
-   Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
+   //! \brief To cache or not to cache
+   Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ )
 
    //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
@@ -145,14 +154,27 @@ public:
    //! \returns our key in the table we are stored in.
    int key() const;
 
-   void setKey(int key);
+   /**
+    * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
+    *
+    *        This is virtual because, in some cases, subclasses are going to want to do additional work here
+    */
+   virtual void setKey(int key);
 
    int getParentKey() const;
    void setParentKey(int parentKey);
 
-   // .:TODO:. MY 2021-03-23 Ultimately we shouldn't need to know this
-   //! \returns the table we are stored in.
-   DatabaseConstants::DbTableId table() const;
+   bool cacheOnly() const;
+   void setCacheOnly(bool cache);
+
+   /**
+    * \brief Get the IDs of this object's parent, children and siblings (plus the ID of the object itself).
+    *        A child object is just a copy of the parent that's being used in a Recipe.  Not all NamedEntity subclasses
+    *        have children, just Equipment, Fermentable, Hop, Misc and Yeast.
+    */
+   QVector<int> getParentAndChildrenIds() const;
+
+   // .:TBD:. Do we really need this?  AFAICT BeerXML version is not used.
    //! \returns the BeerXML version of this element.
    int version() const;
    //! Convenience method to get a meta property by name.
@@ -161,6 +183,7 @@ public:
    QMetaProperty metaProperty(QString const& name) const;
 
    // .:TODO:. MY 2021-03-23 These don't really belong here
+   // Should be able to get rid of them when we finish refactoring BeerXml.cpp
    // Some static helpers to convert to/from text.
    static double getDouble( const QDomText& textNode );
    static bool getBool( const QDomText& textNode );
@@ -196,7 +219,7 @@ public:
     *        us to access that parent.
     * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent exists.
     */
-   virtual NamedEntity * getParent() = 0;
+   NamedEntity * getParent() const;
 
    void setParent(NamedEntity const & parentNamedEntity);
 
@@ -205,13 +228,13 @@ public:
     *        undelete, it's helpful for the caller not to have to know what subclass of NamedEntity we are resurrecting.
     * \return Key of element inserted in database.
     */
-   virtual int insertInDatabase() = 0;
+   int insertInDatabase();
 
    /*!
     * \brief If we can put something in the database, then we also need to be able to remove it.
     *        Note that, once removed from the DB, the caller is responsible for deleting this object.
     */
-   virtual void removeFromDatabase() = 0;
+   void removeFromDatabase();
 
 signals:
    /*!
@@ -236,17 +259,23 @@ protected:
     */
    virtual bool isEqualTo(NamedEntity const & other) const = 0;
 
+   /**
+    * \brief Subclasses need to override this function to return the appropriate instance of \c ObjectStoreTyped.
+    *        This allows us in this base class to access \c ObjectStoreTyped<Hop> for \c Hop,
+    *        \c ObjectStoreTyped<Fermentable> for \c Fermentable, etc.
+    */
+   virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
+
    //! The key of this entity in its table.
    int _key;
-   //! The table where this entity is stored.
-   DatabaseConstants::DbTableId _table;
    // This is 0 if there is no parent (or parent is not yet known)
    int parentKey;
+   bool m_cacheOnly;
 
    /*!
     * \param prop_name A meta-property name
     * \param col_name The appropriate column in the table.
-    * \param value the new value
+    * \param value the new value  .:TODO:. We don't need this as wew should be able to read it out of the object
     * \param notify true to call NOTIFY method associated with \c prop_name
     * Should do the following:
     * 1) Set the appropriate value in the appropriate table row.
@@ -256,26 +285,13 @@ protected:
    void set( const char* prop_name, const char* col_name, QVariant const& value, bool notify = true );
    void set( const QString& prop_name, const QString& col_name, const QVariant& value, bool notify = true );
    */
-   void setEasy( QString prop_name, QVariant value, bool notify = true );
-
-   /*!
-    * \param col_name - The database column of the attribute we want to get.
-    * Returns the value of the attribute specified by key/table/col_name.
-    *
-    * .:TODO:. MY 2021-03-21 Would be nice if NamedEntity didn't need to know such DB details
-    */
-   QVariant get( const QString& col_name ) const;
-
-   void setInventory( const QVariant& value, int invKey = 0, bool notify=true );
-   QVariant getInventory( const QString& col_name ) const;
-
-//   QVariantMap getColumnValueMap() const;
+   void setEasy(char const * const prop_name, QVariant value, bool notify = true);
 
 private:
   mutable QString _folder;
   mutable QString _name;
-  mutable QVariant _display;
-  mutable QVariant _deleted;
+  mutable bool _display;
+  mutable bool _deleted;
 
 };
 

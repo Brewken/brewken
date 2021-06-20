@@ -27,7 +27,7 @@
 #include <QStringList>
 #include <QSqlRecord>
 
-#include "model/NamedEntity.h"
+#include "model/NamedEntityWithInventory.h"
 
 namespace PropertyNames::Hop { static char const * const alpha_pct = "alpha_pct"; /* previously kpropAlpha */ }
 namespace PropertyNames::Hop { static char const * const amount_kg = "amount_kg"; /* previously kpropAmountKg */ }
@@ -38,7 +38,6 @@ namespace PropertyNames::Hop { static char const * const form = "form"; /* previ
 namespace PropertyNames::Hop { static char const * const formString = "formString"; /* previously kpropFormString */ }
 namespace PropertyNames::Hop { static char const * const hsi_pct = "hsi_pct"; /* previously kpropHSI */ }
 namespace PropertyNames::Hop { static char const * const humulene_pct = "humulene_pct"; /* previously kpropHumulene */ }
-namespace PropertyNames::Hop { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
 namespace PropertyNames::Hop { static char const * const myrcene_pct = "myrcene_pct"; /* previously kpropMyrcene */ }
 namespace PropertyNames::Hop { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Hop { static char const * const origin = "origin"; /* previously kpropOrigin */ }
@@ -54,12 +53,10 @@ namespace PropertyNames::Hop { static char const * const use = "use"; /* previou
  *
  * \brief Model class for a hop record in the database.
  */
-class Hop : public NamedEntity
-{
+class Hop : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "hops")
 
-   friend class Database;
    friend class BeerXML;
    friend class HopDialog;
 public:
@@ -75,16 +72,16 @@ public:
    enum Use {Mash, First_Wort, Boil, UseAroma, Dry_Hop }; // NOTE: way bad. We have a duplicate enum (Aroma)
    Q_ENUMS( Type Form Use )
 
-   virtual ~Hop() {}
+   Hop(QString name = "", bool cache = true);
+   Hop(NamedParameterBundle const & namedParameterBundle);
+   Hop(Hop const & other);
+
+   virtual ~Hop() = default;
 
    //! \brief The percent alpha.
    Q_PROPERTY( double alpha_pct READ alpha_pct WRITE setAlpha_pct /*NOTIFY changed*/ /*changedAlpha_pct*/ )
    //! \brief The amount in kg.
    Q_PROPERTY( double amount_kg READ amount_kg WRITE setAmount_kg /*NOTIFY changed*/ /*changedAmount_kg*/ )
-   //! \brief The amount in inventory in kg.
-   Q_PROPERTY( double inventory READ inventory WRITE setInventoryAmount /*NOTIFY changed*/ /*changedInventory*/ )
-   //! \brief The inventory ID -- needed for signal processing. This is pretty much readonly
-   Q_PROPERTY( double inventoryId READ inventoryId WRITE setInventoryId /*NOTIFY changed*/ /*changedInventory*/ )
    //! \brief The \c Use.
    Q_PROPERTY( Use use READ use WRITE setUse /*NOTIFY changed*/ /*changedUse*/ )
    //! \brief The untranslated \c Use string.
@@ -120,8 +117,7 @@ public:
 
    double alpha_pct() const;
    double amount_kg() const;
-   double inventory();
-   int inventoryId() const;
+   virtual double inventory() const;
    // Use in enumerated, untranslated and translated versions
    Use use() const;
    const QString useString() const;
@@ -148,12 +144,11 @@ public:
    double caryophyllene_pct() const;
    double cohumulone_pct() const;
    double myrcene_pct() const;
-   bool cacheOnly() const;
 
    //set
    void setAlpha_pct( double num);
    void setAmount_kg( double num);
-   void setInventoryAmount( double num);
+   virtual void setInventoryAmount(double amount);
    void setUse( Use u);
    void setTime_min( double num);
 
@@ -168,28 +163,16 @@ public:
    void setCaryophyllene_pct( double num);
    void setCohumulone_pct( double num);
    void setMyrcene_pct( double num);
-   void setCacheOnly(bool cache);
-   void setInventoryId(int key);
 
    static QString classNameStr();
-
-   NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
 
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Hop(DatabaseConstants::DbTableId table, int key);
-   Hop(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-public:
-   Hop(QString name, bool cache = true);
-   Hop(NamedParameterBundle & namedParameterBundle);
-private:
-   Hop( Hop & other );
 
    QString m_useStr;
    Use m_use;
@@ -209,9 +192,6 @@ private:
    double m_caryophyllene_pct;
    double m_cohumulone_pct;
    double m_myrcene_pct;
-   double m_inventory;
-   int m_inventory_id;
-   bool m_cacheOnly;
 
    void setDefaults();
 
@@ -225,17 +205,7 @@ private:
 };
 
 Q_DECLARE_METATYPE( QList<Hop*> )
-/*
-inline bool HopPtrLt( Hop* lhs, Hop* rhs)
-{
-   return *lhs < *rhs;
-}
 
-inline bool HopPtrEq( Hop* lhs, Hop* rhs)
-{
-   return *lhs == *rhs;
-}
-*/
 inline bool hopLessThanByTime(const Hop* lhs, const Hop* rhs)
 {
    if ( lhs->use() == rhs->use() )
@@ -247,21 +217,5 @@ inline bool hopLessThanByTime(const Hop* lhs, const Hop* rhs)
    }
    return lhs->use() < rhs->use();
 }
-/*
-struct Hop_ptr_cmp
-{
-   bool operator()( Hop* lhs, Hop* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
 
-struct Hop_ptr_equals
-{
-   bool operator()( Hop* lhs, Hop* rhs )
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
-#endif // _HOP_H
+#endif

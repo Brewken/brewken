@@ -21,13 +21,15 @@
 #include <QString>
 #include <QList>
 
-#include "database/Database.h"
+#include "database/ObjectStoreTyped.h"
 #include "model/BrewNote.h"
 #include "model/Instruction.h"
-
+#include "model/Mash.h"
+#include "model/MashStep.h"
 #include "model/NamedEntity.h"
-#include "xml/XQString.h"
+#include "model/Recipe.h"
 #include "xml/XmlRecord.h"
+#include "xml/XQString.h"
 
 
 /**
@@ -64,26 +66,22 @@ protected:
    /**
     * \brief Implementation for general case where instances are supposed to be unique.  NB: What we really mean here
     *        is that, if we find a Hop/Yeast/Fermentable/etc in an XML file that is "the same" as one that we already
-    *        have stored, then we should not read it in.  This says nothing about whether we ourselves multiple copies
-    *        of such objects - eg as is currently the case when you add a Hop to a Recipe and a copy of the Hop is
-    *        created.  (In the long-run we might want to change how that bit of the code works, but that's another
+    *        have stored, then we should not read it in.  This says nothing about whether we ourselves have multiple
+    *        copies of such objects - eg as is currently the case when you add a Hop to a Recipe and a copy of the Hop
+    *        is created.  (In the long-run we might want to change how that bit of the code works, but that's another
     *        story.)
     */
    virtual bool isDuplicate() {
       auto currentEntity = this->namedEntity;
-      QList<NE *> listOfAllStored = Database::instance().getAll<NE>();
-      qDebug() <<
-         Q_FUNC_INFO << "Searching list of " << listOfAllStored.size() << " existing " << this->namedEntityClassName <<
-         " objects for duplicate with the one we are reading in";
-      auto matchingEntity = std::find_if(listOfAllStored.begin(),
-                                         listOfAllStored.end(),
-                                         [currentEntity](NE * ne) {return *ne == *currentEntity;});
-      if (matchingEntity != listOfAllStored.end()) {
+      auto matchResult = ObjectStoreTyped<NE>::getInstance().findFirstMatching(
+         [currentEntity](std::shared_ptr<NE> ne) {return *ne == *currentEntity;}
+      );
+      if (matchResult) {
          qDebug() << Q_FUNC_INFO << "Found a match for " << this->namedEntity->name();
          // Set our pointer to the Hop/Yeast/Fermentable/etc that we already have stored in the database, so that any
          // containing Recipe etc can refer to it.  The new object we created is still held in
          // this->namedEntityRaiiContainer and will automatically be deleted when we go out of scope.
-         this->namedEntity = *matchingEntity;
+         this->namedEntity = matchResult.value().get();
          return true;
       }
       qDebug() << Q_FUNC_INFO << "No match found for "<< this->namedEntity->name();
@@ -102,17 +100,12 @@ protected:
     */
    virtual void normaliseName() {
       QString currentName = this->namedEntity->name();
-      QList<NE *> listOfAllStored = Database::instance().getAll<NE>();
 
-      // .:TODO:. Change this to use findMatching once we switch to DbNamedEntityRecords
-      for (auto matchingEntity = std::find_if(listOfAllStored.begin(),
-                                                      listOfAllStored.end(),
-                                                      [currentName](NE * ne) {return ne->name() == currentName;});
-         matchingEntity != listOfAllStored.end();
-         matchingEntity = std::find_if(listOfAllStored.begin(),
-                                       listOfAllStored.end(),
-                                       [currentName](NE * ne) {return ne->name() == currentName;})) {
-
+      while (
+         auto matchResult = ObjectStoreTyped<NE>::getInstance().findFirstMatching(
+            [currentName](std::shared_ptr<NE> ne) {return ne->name() == currentName;}
+         )
+      ) {
          qDebug() << Q_FUNC_INFO << "Found existing " << this->namedEntityClassName << "named" << currentName;
 
          XmlRecord::modifyClashingName(currentName);
@@ -162,11 +155,11 @@ template<> inline void XmlNamedEntityRecord<BrewNote>::setContainingEntity(Named
    brewNote->setRecipe(static_cast<Recipe *>(containingEntity));
    return;
 }
-template<> inline void XmlNamedEntityRecord<Instruction>::setContainingEntity(NamedEntity * containingEntity) {
+/*template<> inline void XmlNamedEntityRecord<Instruction>::setContainingEntity(NamedEntity * containingEntity) {
    Instruction * instruction = static_cast<Instruction *>(this->namedEntity);
    instruction->setRecipe(static_cast<Recipe *>(containingEntity));
    return;
-}
+}*/
 
 // Specialisations for cases where we don't want the objects included in the stats
 template<> inline bool XmlNamedEntityRecord<Instruction>::includedInStats() const { return false; }

@@ -1,5 +1,5 @@
 /**
- * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -19,14 +19,16 @@
  */
 
 #include "MashEditor.h"
-#include <QWidget>
+
 #include <QDebug>
-#include "model/Mash.h"
+#include <QWidget>
+
 #include "Brewken.h"
-#include "Unit.h"
-#include "model/Equipment.h"
-#include "model/Recipe.h"
 #include "database/Database.h"
+#include "model/Equipment.h"
+#include "model/Mash.h"
+#include "model/Recipe.h"
+#include "Unit.h"
 
 MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr)
 {
@@ -72,7 +74,7 @@ void MashEditor::saveAndClose()
 
    if ( isNew ) {
       mashObs->insertInDatabase();
-      Database::instance().addToRecipe(m_rec, mashObs);
+      this->m_rec->setMash(this->mashObs);
    }
 }
 

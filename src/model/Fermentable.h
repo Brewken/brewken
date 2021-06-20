@@ -30,7 +30,7 @@
 #include <QString>
 #include <QSqlRecord>
 
-#include "model/NamedEntity.h"
+#include "model/NamedEntityWithInventory.h"
 #include "Unit.h"
 
 namespace PropertyNames::Fermentable { static char const * const addAfterBoil = "addAfterBoil"; /* previously kpropAddAfterBoil */ }
@@ -39,7 +39,6 @@ namespace PropertyNames::Fermentable { static char const * const coarseFineDiff_
 namespace PropertyNames::Fermentable { static char const * const color_srm = "color_srm"; /* previously kpropColor */ }
 namespace PropertyNames::Fermentable { static char const * const diastaticPower_lintner = "diastaticPower_lintner"; /* previously kpropDiastaticPower */ }
 namespace PropertyNames::Fermentable { static char const * const ibuGalPerLb = "ibuGalPerLb"; /* previously kpropIBUGalPerLb */ }
-namespace PropertyNames::Fermentable { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
 namespace PropertyNames::Fermentable { static char const * const isMashed = "isMashed"; /* previously kpropIsMashed */ }
 namespace PropertyNames::Fermentable { static char const * const maxInBatch_pct = "maxInBatch_pct"; /* previously kpropMaxInBatch */ }
 namespace PropertyNames::Fermentable { static char const * const moisture_pct = "moisture_pct"; /* previously kpropMoisture */ }
@@ -58,14 +57,12 @@ namespace PropertyNames::Fermentable { static char const * const yield_pct = "yi
  *
  * \brief Model for a fermentable record in the database.
  */
-class Fermentable : public NamedEntity
-{
+class Fermentable : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "fermentables")
 
    friend class Brewken;
    friend class BeerXML;
-   friend class Database;
    friend class FermentableDialog;
 public:
 
@@ -77,7 +74,11 @@ public:
    enum AdditionTime {Normal, Late};
    Q_ENUMS( Type AdditionMethod AdditionTime )
 
-   virtual ~Fermentable() {}
+   Fermentable( QString name = "", bool cache = true );
+   Fermentable(NamedParameterBundle const & namedParameterBundle);
+   Fermentable(Fermentable const & other);
+
+   virtual ~Fermentable() = default;
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type                     READ type                   WRITE setType                   /*NOTIFY changed*/ /*changedType*/ )
@@ -95,10 +96,6 @@ public:
    Q_PROPERTY( QString additionTimeStringTr  READ additionTimeStringTr   /*WRITE*/                       /*NOTIFY changed*/ /*changedAdditionTimeStringTr*/   STORED false )
    //! \brief The amount in kg.
    Q_PROPERTY( double amount_kg              READ amount_kg              WRITE setAmount_kg              /*NOTIFY changed*/ /*changedAmount_kg*/ )
-   //! \brief The amount in inventory in kg.
-   Q_PROPERTY( double inventory              READ inventory              WRITE setInventoryAmount        /*NOTIFY changed*/ /*changedInventory*/ )
-   //! \brief The inventory table id, needed for signals
-   Q_PROPERTY( double inventoryId            READ inventoryId            WRITE setInventoryId            /*NOTIFY changed*/ /*changedInventoryId*/ )
    //! \brief The yield (when finely milled) as a percentage of equivalent glucose.
    Q_PROPERTY( double yield_pct              READ yield_pct              WRITE setYield_pct              /*NOTIFY changed*/ /*changedYield_pct*/ )
    //! \brief The color in SRM.
@@ -136,8 +133,7 @@ public:
 
    Type type() const;
    double amount_kg() const;
-   double inventory();
-   int inventoryId();
+   virtual double inventory() const;
    double yield_pct() const;
    double color_srm() const;
    bool addAfterBoil() const;
@@ -166,14 +162,13 @@ public:
    double equivSucrose_kg() const;
    bool isExtract() const;
    bool isSugar() const;
-   bool cacheOnly() const;
 
 
    void setType( Type t );
    void setAdditionMethod( AdditionMethod m );
    void setAdditionTime( AdditionTime t );
    void setAmount_kg( double num );
-   void setInventoryAmount( double num );
+   virtual void setInventoryAmount(double amount);
    void setYield_pct( double num );
    void setColor_srm( double num );
    void setAddAfterBoil( bool b );
@@ -188,31 +183,18 @@ public:
    void setRecommendMash( bool b );
    void setIbuGalPerLb( double num );
    void setIsMashed(bool var );
-   void setCacheOnly(bool cache );
-   void setInventoryId(int key);
 
    void save();
 
    static QString classNameStr();
 
-   NamedEntity * getParent();
-   virtual int insertInDatabase();
-   virtual void removeFromDatabase();
-
 signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Fermentable(DatabaseConstants::DbTableId table, int key);
-   Fermentable(DatabaseConstants::DbTableId table, int key, QSqlRecord rec);
-   Fermentable( Fermentable &other );
-public:
-   Fermentable( QString name, bool cache = true );
-   Fermentable(NamedParameterBundle & namedParameterBundle);
-private:
-
    static bool isValidType( const QString& str );
    static QStringList types;
 
@@ -232,10 +214,7 @@ private:
    double m_maxInBatchPct;
    bool m_recommendMash;
    double m_ibuGalPerLb;
-   double m_inventory;
-   int m_inventory_id;
    bool m_isMashed;
-   bool m_cacheOnly;
 };
 
 Q_DECLARE_METATYPE( QList<Fermentable*> )

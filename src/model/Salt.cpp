@@ -1,5 +1,5 @@
 /**
- * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2020:
+ * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -23,9 +23,7 @@
 #include <QDebug>
 
 #include "Brewken.h"
-#include "database/TableSchemaConst.h"
-#include "database/SaltSchema.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 
 bool Salt::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -37,75 +35,47 @@ bool Salt::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+ObjectStore & Salt::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Salt>::getInstance();
+}
+
 QString Salt::classNameStr()
 {
    static const QString name("Salt");
    return name;
 }
 
-Salt::Salt(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key),
+Salt::Salt(QString name, bool cache) :
+   NamedEntity(-1, cache, name, true),
    m_amount(0.0),
    m_add_to(NEVER),
    m_type(NONE),
    m_amount_is_weight(true),
    m_percent_acid(0.0),
-   m_is_acid(false),
-   m_misc_id(-1),
-   m_cacheOnly(false)
-{
+   m_is_acid(false) {
+   return;
 }
 
-Salt::Salt(QString name, bool cache)
-   : NamedEntity(DatabaseConstants::SALTTABLE, -1, name, true),
-   m_amount(0.0),
-   m_add_to(NEVER),
-   m_type(NONE),
-   m_amount_is_weight(true),
-   m_percent_acid(0.0),
-   m_is_acid(false),
-   m_misc_id(-1),
-   m_cacheOnly(cache)
-{
-}
-
-Salt::Salt(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::SALTTABLE},
+Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity       {namedParameterBundle},
    m_amount          {namedParameterBundle(PropertyNames::Salt::addTo         ).toDouble()},
    m_add_to          {static_cast<Salt::WhenToAdd>(namedParameterBundle(PropertyNames::Salt::amount).toInt())},
    m_type            {static_cast<Salt::Types>(namedParameterBundle(PropertyNames::Salt::amountIsWeight).toInt())},
    m_amount_is_weight{namedParameterBundle(PropertyNames::Salt::isAcid        ).toBool()},
    m_percent_acid    {namedParameterBundle(PropertyNames::Salt::percentAcid   ).toDouble()},
-   m_is_acid         {namedParameterBundle(PropertyNames::Salt::type          ).toBool()},
-   m_misc_id(-1),
-   m_cacheOnly(false) {
+   m_is_acid         {namedParameterBundle(PropertyNames::Salt::type          ).toBool()} {
    return;
 }
 
-Salt::Salt(Salt & other)
-   : NamedEntity(DatabaseConstants::SALTTABLE, -1, other.name(), true),
-   m_amount(other.m_amount),
-   m_add_to(other.m_add_to),
-   m_type(other.m_type),
-   m_amount_is_weight(other.m_amount_is_weight),
-   m_percent_acid(other.m_percent_acid),
-   m_is_acid(other.m_is_acid),
-   m_misc_id(other.m_misc_id),
-   m_cacheOnly(other.m_cacheOnly)
-{
-}
-
-Salt::Salt(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool()),
-   m_amount(rec.value(kcolAmount).toDouble()),
-   m_add_to(static_cast<Salt::WhenToAdd>(rec.value(kcolSaltAddTo).toInt())),
-   m_type(static_cast<Salt::Types>(rec.value(kcolSaltType).toInt())),
-   m_amount_is_weight(rec.value(kcolSaltAmtIsWgt).toBool()),
-   m_percent_acid(rec.value(kcolSaltPctAcid).toDouble()),
-   m_is_acid(rec.value(kcolSaltIsAcid).toBool()),
-   m_misc_id(rec.value(kcolMiscId).toInt()),
-   m_cacheOnly(false)
-{
+Salt::Salt(Salt const & other) :
+   NamedEntity       {other                   },
+   m_amount          {other.m_amount          },
+   m_add_to          {other.m_add_to          },
+   m_type            {other.m_type            },
+   m_amount_is_weight{other.m_amount_is_weight},
+   m_percent_acid    {other.m_percent_acid    },
+   m_is_acid         {other.m_is_acid         } {
+   return;
 }
 
 //================================"SET" METHODS=================================
@@ -171,14 +141,11 @@ void Salt::setPercentAcid(double var)
       setEasy(PropertyNames::Salt::percentAcid, var);
    }
 }
-void Salt::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 
 //=========================="GET" METHODS=======================================
 double Salt::amount() const { return m_amount; }
 Salt::WhenToAdd Salt::addTo() const { return m_add_to; }
 Salt::Types Salt::type() const { return m_type; }
-bool Salt::cacheOnly() const { return m_cacheOnly; }
-int Salt::miscId() const { return m_misc_id; }
 bool Salt::isAcid() const { return m_is_acid; }
 bool Salt::amountIsWeight() const { return m_amount_is_weight; }
 double Salt::percentAcid() const { return m_percent_acid; }
@@ -264,12 +231,4 @@ double Salt::SO4() const
       case Salt::MGSO4: return 389.0 * m_amount * 1000.0;
       default: return 0.0;
    }
-}
-
-int Salt::insertInDatabase() {
-   return Database::instance().insertSalt(this);
-}
-
-void Salt::removeFromDatabase() {
-   Database::instance().remove(this);
 }

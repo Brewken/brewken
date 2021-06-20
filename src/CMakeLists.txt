@@ -113,8 +113,9 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/Database.cpp
     ${SRCDIR}/database/DatabaseSchema.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
-    ${SRCDIR}/database/DbNamedEntityRecords.cpp
-    ${SRCDIR}/database/DbRecords.cpp
+    ${SRCDIR}/database/ObjectStoreTyped.cpp
+    ${SRCDIR}/database/ObjectStoreWrapper.cpp
+    ${SRCDIR}/database/ObjectStore.cpp
     ${SRCDIR}/database/PropertySchema.cpp
     ${SRCDIR}/database/TableSchema.cpp
     ${SRCDIR}/database/TableSchemaConst.cpp
@@ -157,10 +158,12 @@ SET( Brewken_SRCS
     ${SRCDIR}/model/Fermentable.cpp
     ${SRCDIR}/model/Hop.cpp
     ${SRCDIR}/model/Instruction.cpp
+    ${SRCDIR}/model/Inventory.cpp
     ${SRCDIR}/model/Mash.cpp
     ${SRCDIR}/model/MashStep.cpp
     ${SRCDIR}/model/Misc.cpp
     ${SRCDIR}/model/NamedEntity.cpp
+    ${SRCDIR}/model/NamedEntityWithInventory.cpp
     ${SRCDIR}/model/NamedParameterBundle.cpp
     ${SRCDIR}/model/Recipe.cpp
     ${SRCDIR}/model/Salt.cpp
@@ -314,10 +317,12 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/model/Fermentable.h
     ${SRCDIR}/model/Hop.h
     ${SRCDIR}/model/Instruction.h
+    ${SRCDIR}/model/Inventory.h
     ${SRCDIR}/model/Mash.h
     ${SRCDIR}/model/MashStep.h
     ${SRCDIR}/model/Misc.h
     ${SRCDIR}/model/NamedEntity.h
+    ${SRCDIR}/model/NamedEntityWithInventory.h
     ${SRCDIR}/model/Recipe.h
     ${SRCDIR}/model/Salt.h
     ${SRCDIR}/model/Style.h

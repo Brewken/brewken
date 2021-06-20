@@ -1,5 +1,6 @@
 /**
- * BtTreeFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTreeFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,12 +15,23 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "BtTreeFilterProxyModel.h"
+
 #include <QDebug>
 
 #include "Brewken.h"
-#include "BtTreeFilterProxyModel.h"
+#include "BtFolder.h"
 #include "BtTreeModel.h"
 #include "BtTreeItem.h"
+
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Misc.h"
+#include "model/Recipe.h"
+#include "model/Style.h"
+#include "model/Water.h"
+#include "model/Yeast.h"
 
 BtTreeFilterProxyModel::BtTreeFilterProxyModel(QObject *parent,BtTreeModel::TypeMasks mask )
 : QSortFilterProxyModel(parent),

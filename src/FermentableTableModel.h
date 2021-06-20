@@ -1,6 +1,7 @@
 /**
- * FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Samuel Östling <MrOstling@gmail.com>
@@ -19,8 +20,7 @@
 #ifndef FERMENTABLETABLEMODEL_H
 #define FERMENTABLETABLEMODEL_H
 
-class FermentableTableModel;
-class FermentableItemDelegate;
+#include <memory>
 
 #include <QAbstractItemDelegate>
 #include <QAbstractTableModel>
@@ -34,11 +34,11 @@ class FermentableItemDelegate;
 
 #include "Brewken.h"
 #include "Unit.h"
-#include "database/TableSchemaConst.h"
 
 // Forward declarations.
 class Fermentable;
 class Recipe;
+class FermentableItemDelegate;
 
 enum{FERMNAMECOL, FERMTYPECOL, FERMAMOUNTCOL, FERMINVENTORYCOL, FERMISMASHEDCOL, FERMAFTERBOIL, FERMYIELDCOL, FERMCOLORCOL, FERMNUMCOLS /*This one MUST be last*/};
 
@@ -94,11 +94,13 @@ public:
 
    QTableView* parentTableWidget;
 
+   bool remove(Fermentable * ferm);
+
 public slots:
    //! \brief Watch \b ferm for changes.
-   void addFermentable(Fermentable* ferm);
+   void addFermentable(int fermId);
    //! \returns true if "ferm" is successfully found and removed.
-   bool removeFermentable(Fermentable* ferm);
+   void removeFermentable(int fermId, std::shared_ptr<QObject> object);
    //! \brief pops the context menu for changing units and scales
    void contextMenu(const QPoint &point);
 
@@ -106,7 +108,7 @@ private slots:
    //! \brief Catch changes to Recipe, Database, and Fermentable.
    void changed(QMetaProperty, QVariant);
    //! \brief Catches changes to inventory
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+   void changedInventory(int invKey, char const * const propertyName);
 
 private:
    //! \brief Recalculate the total amount of grains in the model.

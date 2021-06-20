@@ -28,20 +28,20 @@
 #include <QLineEdit>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
+#include "model/Inventory.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
 
-MiscTableModel::MiscTableModel(QTableView* parent, bool editable)
-   : QAbstractTableModel(parent),
-     editable(editable),
-     _inventoryEditable(false),
-     recObs(nullptr),
-     parentTableWidget(parent)
-{
+MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
+   QAbstractTableModel(parent),
+   editable(editable),
+   _inventoryEditable(false),
+   recObs(nullptr),
+   parentTableWidget(parent) {
    miscObs.clear();
    setObjectName("miscTableModel");
 
@@ -52,7 +52,8 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable)
    parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &MiscTableModel::contextMenu);
-   connect( &(Database::instance()), &Database::changedInventory, this, &MiscTableModel::changedInventory );
+   connect(&ObjectStoreTyped<InventoryMisc>::getInstance(), &ObjectStoreTyped<InventoryMisc>::signalPropertyChanged, this, &MiscTableModel::changedInventory);
+   return;
 }
 
 void MiscTableModel::observeRecipe(Recipe* rec)
@@ -71,27 +72,27 @@ void MiscTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void MiscTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void MiscTableModel::observeDatabase(bool val) {
+   if (val) {
       observeRecipe(nullptr);
       removeAll();
-      connect( &(Database::instance()), &Database::newMiscSignal, this, &MiscTableModel::addMisc );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Misc*)), this, SLOT(removeMisc(Misc*)) );
-      addMiscs( Database::instance().miscs() );
-   }
-   else
-   {
+      connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectInserted, this, &MiscTableModel::addMisc);
+      connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectDeleted,  this, &MiscTableModel::removeMisc);
+      addMiscs( ObjectStoreTyped<Misc>::getInstance().getAllRaw() );
+   } else {
       removeAll();
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
+      disconnect(&ObjectStoreTyped<Misc>::getInstance(), nullptr, this, nullptr );
    }
+   return;
 }
 
-void MiscTableModel::addMisc(Misc* misc)
-{
-   if( miscObs.contains(misc) )
+void MiscTableModel::addMisc(int miscId) {
+   Misc* misc = ObjectStoreWrapper::getByIdRaw<Misc>(miscId);
+
+   if( miscObs.contains(misc) ) {
       return;
+   }
+
    // If we are observing the database, ensure that the item is undeleted and
    // fit to display.
    if(
@@ -100,8 +101,9 @@ void MiscTableModel::addMisc(Misc* misc)
          misc->deleted() ||
          !misc->display()
       )
-   )
+   ) {
       return;
+   }
 
    int size = miscObs.size();
    beginInsertRows( QModelIndex(), size, size );
@@ -109,6 +111,7 @@ void MiscTableModel::addMisc(Misc* misc)
    connect( misc, &NamedEntity::changed, this, &MiscTableModel::changed );
    //reset(); // Tell everybody that the table has changed.
    endInsertRows();
+   return;
 }
 
 void MiscTableModel::addMiscs(QList<Misc*> miscs)
@@ -138,13 +141,14 @@ void MiscTableModel::addMiscs(QList<Misc*> miscs)
 }
 
 // Returns true when misc is successfully found and removed.
-bool MiscTableModel::removeMisc(Misc* misc)
-{
-   int i;
+void MiscTableModel::removeMisc(int miscId, std::shared_ptr<QObject> object) {
+   this->remove(std::static_pointer_cast<Misc>(object).get());
+   return;
+}
 
-   i = miscObs.indexOf(misc);
-   if( i >= 0 )
-   {
+bool MiscTableModel::remove(Misc * misc) {
+   int i = miscObs.indexOf(misc);
+   if( i >= 0 ) {
       beginRemoveRows( QModelIndex(), i, i );
       disconnect( misc, nullptr, this, nullptr );
       miscObs.removeAt(i);
@@ -383,30 +387,30 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
    return true;
 }
 
-void MiscTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
-{
-   if ( table == DatabaseConstants::MISCTABLE ) {
+void MiscTableModel::changedInventory(int invKey, char const * const propertyName) {
+   if (QString(propertyName) == PropertyNames::Inventory::amount) {
+///      double newAmount = ObjectStoreWrapper::getById<InventoryMisc>()->getAmount();
       for( int i = 0; i < miscObs.size(); ++i ) {
          Misc* holdmybeer = miscObs.at(i);
 
          if ( invKey == holdmybeer->inventoryId() ) {
-            holdmybeer->setCacheOnly(true);
-            holdmybeer->setInventoryAmount(val.toDouble());
-            holdmybeer->setCacheOnly(false);
+/// No need to update amount as it's only stored in one place (the inventory object) now
+///            holdmybeer->setCacheOnly(true);
+///            holdmybeer->setInventoryAmount(newAmount);
+///            holdmybeer->setCacheOnly(false);
             emit dataChanged( QAbstractItemModel::createIndex(i,MISCINVENTORYCOL),
                               QAbstractItemModel::createIndex(i,MISCINVENTORYCOL) );
          }
       }
    }
+   return;
 }
-void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/)
-{
-   int i;
 
+void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    Misc* miscSender = qobject_cast<Misc*>(sender());
    if( miscSender )
    {
-      i = miscObs.indexOf(miscSender);
+      int i = miscObs.indexOf(miscSender);
       if( i < 0 )
          return;
 
@@ -430,12 +434,13 @@ void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/)
    }
 
    // See if sender is the database.
-   if( sender() == &(Database::instance()) && QString(prop.name()) == "miscs" )
-   {
+   // .:TODO:. Look at this, as sender won't be the DB now
+/*   if ( sender() == &(Database::instance()) && QString(prop.name()) == "miscs" ) {
       removeAll();
-      addMiscs( Database::instance().miscs() );
+      addMiscs( ObjectStoreTyped<Misc>::getInstance().getAllRaw() );
       return;
-   }
+   }*/
+   return;
 }
 
 Misc* MiscTableModel::getMisc(unsigned int i)

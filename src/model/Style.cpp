@@ -18,12 +18,10 @@
  */
 #include "model/Style.h"
 
-#include "Brewken.h"
 #include <QDebug>
 
-#include "database/TableSchemaConst.h"
-#include "database/StyleSchema.h"
-#include "database/Database.h"
+#include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
 
 QStringList Style::m_types = QStringList() << "Lager" << "Ale" << "Mead" << "Wheat" << "Mixed" << "Cider";
 
@@ -40,6 +38,10 @@ bool Style::isEqualTo(NamedEntity const & other) const {
    );
 }
 
+ObjectStore & Style::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<Style>::getInstance();
+}
+
 QString Style::classNameStr()
 {
    static const QString name("Style");
@@ -49,42 +51,69 @@ QString Style::classNameStr()
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
-Style::Style(QString t_name, bool cacheOnly)
-   : NamedEntity(DatabaseConstants::STYLETABLE, -1, t_name, true),
-     m_category(QString()),
-     m_categoryNumber(QString()),
-     m_styleLetter(QString()),
-     m_styleGuide(QString()),
-     m_typeStr(QString()),
-     m_type(static_cast<Style::Type>(0)),
-     m_ogMin(0.0),
-     m_ogMax(0.0),
-     m_fgMin(0.0),
-     m_fgMax(0.0),
-     m_ibuMin(0.0),
-     m_ibuMax(0.0),
-     m_colorMin_srm(0.0),
-     m_colorMax_srm(0.0),
-     m_carbMin_vol(0.0),
-     m_carbMax_vol(0.0),
-     m_abvMin_pct(0.0),
-     m_abvMax_pct(0.0),
-     m_notes(QString()),
-     m_profile(QString()),
-     m_ingredients(QString()),
-     m_examples(QString()),
-     m_cacheOnly(cacheOnly)
-{
+Style::Style(QString t_name, bool cacheOnly) :
+   NamedEntity(-1, cacheOnly, t_name, true),
+   m_category(QString()),
+   m_categoryNumber(QString()),
+   m_styleLetter(QString()),
+   m_styleGuide(QString()),
+   m_typeStr(QString()),
+   m_type(static_cast<Style::Type>(0)),
+   m_ogMin(0.0),
+   m_ogMax(0.0),
+   m_fgMin(0.0),
+   m_fgMax(0.0),
+   m_ibuMin(0.0),
+   m_ibuMax(0.0),
+   m_colorMin_srm(0.0),
+   m_colorMax_srm(0.0),
+   m_carbMin_vol(0.0),
+   m_carbMax_vol(0.0),
+   m_abvMin_pct(0.0),
+   m_abvMax_pct(0.0),
+   m_notes(QString()),
+   m_profile(QString()),
+   m_ingredients(QString()),
+   m_examples(QString()) {
+   return;
 }
 
-Style::Style(NamedParameterBundle & namedParameterBundle) :
-   NamedEntity{namedParameterBundle, DatabaseConstants::STYLETABLE},
+Style::Style(Style const & other) :
+   NamedEntity{other},
+   m_category      {other.m_category      },
+   m_categoryNumber{other.m_categoryNumber},
+   m_styleLetter   {other.m_styleLetter   },
+   m_styleGuide    {other.m_styleGuide    },
+   m_typeStr       {other.m_typeStr       },
+   m_type          {other.m_type          },
+   m_ogMin         {other.m_ogMin         },
+   m_ogMax         {other.m_ogMax         },
+   m_fgMin         {other.m_fgMin         },
+   m_fgMax         {other.m_fgMax         },
+   m_ibuMin        {other.m_ibuMin        },
+   m_ibuMax        {other.m_ibuMax        },
+   m_colorMin_srm  {other.m_colorMin_srm  },
+   m_colorMax_srm  {other.m_colorMax_srm  },
+   m_carbMin_vol   {other.m_carbMin_vol   },
+   m_carbMax_vol   {other.m_carbMax_vol   },
+   m_abvMin_pct    {other.m_abvMin_pct    },
+   m_abvMax_pct    {other.m_abvMax_pct    },
+   m_notes         {other.m_notes         },
+   m_profile       {other.m_profile       },
+   m_ingredients   {other.m_ingredients   },
+   m_examples      {other.m_examples      } {
+   return;
+}
+
+
+Style::Style(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity     {namedParameterBundle},
    m_category      {namedParameterBundle(PropertyNames::Style::category      ).toString()},
    m_categoryNumber{namedParameterBundle(PropertyNames::Style::categoryNumber).toString()},
    m_styleLetter   {namedParameterBundle(PropertyNames::Style::styleLetter   ).toString()},
    m_styleGuide    {namedParameterBundle(PropertyNames::Style::styleGuide    ).toString()},
    //m_typeStr(QString()),
-   m_type          (static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())),
+   m_type          {static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())},
    m_ogMin         {namedParameterBundle(PropertyNames::Style::ogMin         ).toDouble()},
    m_ogMax         {namedParameterBundle(PropertyNames::Style::ogMax         ).toDouble()},
    m_fgMin         {namedParameterBundle(PropertyNames::Style::fgMin         ).toDouble()},
@@ -100,69 +129,10 @@ Style::Style(NamedParameterBundle & namedParameterBundle) :
    m_notes         {namedParameterBundle(PropertyNames::Style::notes         ).toString()},
    m_profile       {namedParameterBundle(PropertyNames::Style::profile       ).toString()},
    m_ingredients   {namedParameterBundle(PropertyNames::Style::ingredients   ).toString()},
-   m_examples      {namedParameterBundle(PropertyNames::Style::examples      ).toString()},
-   m_cacheOnly     {false} {
+   m_examples      {namedParameterBundle(PropertyNames::Style::examples      ).toString()} {
    return;
 }
 
-// suitable for something that needs to be created in the db when the object is, but all the other
-// fields will be filled in later (shouldn't be used that much)
-Style::Style(DatabaseConstants::DbTableId table, int key)
-   : NamedEntity(table, key, QString(), true),
-     m_category(QString()),
-     m_categoryNumber(QString()),
-     m_styleLetter(QString()),
-     m_styleGuide(QString()),
-     m_typeStr(QString()),
-     m_type(static_cast<Style::Type>(0)),
-     m_ogMin(0.0),
-     m_ogMax(0.0),
-     m_fgMin(0.0),
-     m_fgMax(0.0),
-     m_ibuMin(0.0),
-     m_ibuMax(0.0),
-     m_colorMin_srm(0.0),
-     m_colorMax_srm(0.0),
-     m_carbMin_vol(0.0),
-     m_carbMax_vol(0.0),
-     m_abvMin_pct(0.0),
-     m_abvMax_pct(0.0),
-     m_notes(QString()),
-     m_profile(QString()),
-     m_ingredients(QString()),
-     m_examples(QString()),
-     m_cacheOnly(false)
-{
-}
-
-// suitable for creating a Style from a database record
-Style::Style(DatabaseConstants::DbTableId table, int key, QSqlRecord rec)
-   : NamedEntity(table, key, rec.value(kcolName).toString(), rec.value(kcolDisplay).toBool(), rec.value(kcolFolder).toString()),
-     m_category(rec.value(kcolStyleCat).toString()),
-     m_categoryNumber(rec.value(kcolStyleCatNum).toString()),
-     m_styleLetter(rec.value(kcolStyleLetter).toString()),
-     m_styleGuide(rec.value(kcolStyleGuide).toString()),
-     m_typeStr(rec.value(kcolStyleType).toString()),
-     m_type(static_cast<Style::Type>(m_types.indexOf(m_typeStr))),
-     m_ogMin(rec.value(kcolStyleOGMin).toDouble()),
-     m_ogMax(rec.value(kcolStyleOGMax).toDouble()),
-     m_fgMin(rec.value(kcolStyleFGMin).toDouble()),
-     m_fgMax(rec.value(kcolStyleFGMax).toDouble()),
-     m_ibuMin(rec.value(kcolStyleIBUMin).toDouble()),
-     m_ibuMax(rec.value(kcolStyleIBUMax).toDouble()),
-     m_colorMin_srm(rec.value(kcolStyleColorMin).toDouble()),
-     m_colorMax_srm(rec.value(kcolStyleColorMax).toDouble()),
-     m_carbMin_vol(rec.value(kcolStyleCarbMin).toDouble()),
-     m_carbMax_vol(rec.value(kcolStyleCarbMax).toDouble()),
-     m_abvMin_pct(rec.value(kcolStyleABVMin).toDouble()),
-     m_abvMax_pct(rec.value(kcolStyleABVMax).toDouble()),
-     m_notes(rec.value(kcolNotes).toString()),
-     m_profile(rec.value(kcolStyleProfile).toString()),
-     m_ingredients(rec.value(kcolStyleIngreds).toString()),
-     m_examples(rec.value(kcolStyleExamples).toString()),
-     m_cacheOnly(false)
-{
-}
 
 //==============================="SET" METHODS==================================
 void Style::setCategory( const QString& var )
@@ -405,8 +375,6 @@ void Style::setExamples( const QString& var )
    }
 }
 
-void Style::setCacheOnly( const bool cache ) { m_cacheOnly = cache; }
-
 //============================="GET" METHODS====================================
 QString Style::category() const { return m_category; }
 QString Style::categoryNumber() const { return m_categoryNumber; }
@@ -419,7 +387,6 @@ QString Style::examples() const { return m_examples; }
 Style::Type Style::type() const { return m_type; }
 const QString Style::typeString() const { return m_typeStr; }
 
-bool   Style::cacheOnly() const { return m_cacheOnly; }
 double Style::ogMin() const { return m_ogMin; }
 double Style::ogMax() const { return m_ogMax; }
 double Style::fgMin() const { return m_fgMin; }
@@ -436,29 +403,4 @@ double Style::abvMax_pct() const { return m_abvMax_pct; }
 bool Style::isValidType( const QString &str )
 {
    return m_types.contains( str );
-}
-
-NamedEntity * Style::getParent() {
-   Style * myParent = nullptr;
-
-   // If we don't already know our parent, look it up
-   if (!this->parentKey) {
-      this->parentKey = Database::instance().getParentNamedEntityKey(*this);
-   }
-
-   // If we (now) know our parent, get a pointer to it
-   if (this->parentKey) {
-      myParent = Database::instance().style(this->parentKey);
-   }
-
-   // Return whatever we got
-   return myParent;
-}
-
-int Style::insertInDatabase() {
-   return Database::instance().insertStyle(this);
-}
-
-void Style::removeFromDatabase() {
-   Database::instance().remove(this);
 }

@@ -31,6 +31,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "Brewken.h"
 
 #include <iostream>
 
@@ -58,18 +59,22 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QUrl>
 
-
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "BtSplashScreen.h"
 #include "config.h"
 #include "database/Database.h"
+#include "database/DatabaseSchema.h"
+#include "database/TableSchemaConst.h"
+#include "database/TableSchema.h"
 #include "MainWindow.h"
+#include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
 #include "model/Salt.h"
+#include "model/Style.h"
 #include "model/Water.h"
+#include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
 #include "UnitSystem.h"

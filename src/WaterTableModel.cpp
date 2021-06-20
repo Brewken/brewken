@@ -32,7 +32,7 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
@@ -60,25 +60,22 @@ void WaterTableModel::observeRecipe(Recipe* rec)
    }
 }
 
-void WaterTableModel::observeDatabase(bool val)
-{
-   if( val )
-   {
+void WaterTableModel::observeDatabase(bool val) {
+   if( val ) {
       observeRecipe(nullptr);
       removeAll();
-      connect( &(Database::instance()), &Database::newWaterSignal, this, &WaterTableModel::addWater );
-      connect( &(Database::instance()), SIGNAL(deletedSignal(Water*)), this, SLOT(removeWater(Water*)) );
-      addWaters( Database::instance().waters() );
-   }
-   else
-   {
+      connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this, &WaterTableModel::addWater);
+      connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &WaterTableModel::removeWater);
+      this->addWaters( ObjectStoreTyped<Water>::getInstance().getAllRaw() );
+   } else {
       removeAll();
-      disconnect( &(Database::instance()), nullptr, this, nullptr );
+      disconnect(&ObjectStoreTyped<Water>::getInstance(), nullptr, this, nullptr);
    }
+   return;
 }
 
-void WaterTableModel::addWater(Water* water)
-{
+void WaterTableModel::addWater(int waterId) {
+   Water* water = ObjectStoreWrapper::getByIdRaw<Water>(waterId);
    if( waterObs.contains(water) )
       return;
    // If we are observing the database, ensure that the item is undeleted and
@@ -135,11 +132,9 @@ void WaterTableModel::addWaters(QList<Water*> waters)
 
 }
 
-void WaterTableModel::removeWater(Water* water)
-{
-   int i;
-
-   i = waterObs.indexOf(water);
+void WaterTableModel::removeWater(int waterId, std::shared_ptr<QObject> object) {
+   Water* water = std::static_pointer_cast<Water>(object).get();
+   int i = waterObs.indexOf(water);
    if( i >= 0 )
    {
       beginRemoveRows( QModelIndex(), i, i );

@@ -1,7 +1,8 @@
 /**
- * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Samuel Östling <MrOstling@gmail.com>
@@ -17,40 +18,41 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "BtTreeView.h"
 
 #include <QApplication>
-#include <QDrag>
-#include <QMenu>
 #include <QDebug>
+#include <QDrag>
 #include <QHeaderView>
+#include <QInputDialog>
+#include <QMenu>
 #include <QMessageBox>
 #include <QMimeData>
-#include <QInputDialog>
 
-#include "BtTreeView.h"
-#include "BtTreeModel.h"
+#include "BtFolder.h"
 #include "BtTreeFilterProxyModel.h"
-#include "database/Database.h"
-#include "model/Recipe.h"
+#include "BtTreeModel.h"
+#include "EquipmentEditor.h"
+#include "FermentableDialog.h"
+#include "HopDialog.h"
+#include "MiscDialog.h"
+#include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Misc.h"
-#include "model/Yeast.h"
-#include "model/BrewNote.h"
+#include "model/Recipe.h"
 #include "model/Style.h"
 #include "model/Water.h"
-#include "FermentableDialog.h"
-#include "EquipmentEditor.h"
-#include "HopDialog.h"
-#include "MiscDialog.h"
+#include "model/Yeast.h"
 #include "StyleEditor.h"
-#include "YeastDialog.h"
 #include "WaterEditor.h"
+#include "YeastDialog.h"
 
 BtTreeView::BtTreeView(QWidget *parent, BtTreeModel::TypeMasks type) :
-   QTreeView(parent)
-{
+   QTreeView{parent},
+   _type{type} {
+   qDebug() << Q_FUNC_INFO << "type=" << type;
    // Set some global properties that all the kids will use.
    setAllColumnsShowFocus(true);
    setContextMenuPolicy(Qt::CustomContextMenu);
@@ -61,12 +63,12 @@ BtTreeView::BtTreeView(QWidget *parent, BtTreeModel::TypeMasks type) :
    setDropIndicatorShown(true);
    setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-   _type = type;
-   _model = new BtTreeModel(this, _type);
-   _filter = new BtTreeFilterProxyModel(this, _type);
-   _filter->setSourceModel(_model);
-   setModel(_filter);
-   _filter->setDynamicSortFilter(true);
+   this->_type = type;
+   this->_model = new BtTreeModel(this, _type);
+   this->_filter = new BtTreeFilterProxyModel(this, _type);
+   this->_filter->setSourceModel(_model);
+   this->setModel(_filter);
+   this->_filter->setDynamicSortFilter(true);
 
    setExpanded(findElement(nullptr), true);
    setSortingEnabled(true);
@@ -75,6 +77,7 @@ BtTreeView::BtTreeView(QWidget *parent, BtTreeModel::TypeMasks type) :
 
    // and one wee connection
    connect( _model, &BtTreeModel::expandFolder, this, &BtTreeView::expandFolder);
+   return;
 }
 
 BtTreeModel* BtTreeView::model()
