@@ -34,6 +34,14 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().getById(id).get();
    }
 
+   template<class NE> QList<std::shared_ptr<NE> > getAll() {
+      return ObjectStoreTyped<NE>::getInstance().getAll();
+   }
+
+   template<class NE> QList<NE *> getAllRaw() {
+      return ObjectStoreTyped<NE>::getInstance().getAllRaw();
+   }
+
    template<class NE> std::shared_ptr<NE> copy(NE const & ne) {
       return std::make_shared<NE>(ne);
    }
@@ -59,6 +67,12 @@ namespace ObjectStoreWrapper {
    template<class NE> void hardDelete(NE const & ne) {
       ObjectStoreTyped<NE>::getInstance().hardDelete(ne.key());
       return;
+   }
+
+   template<class NE> QList<std::shared_ptr<NE> > findAllMatching(
+      std::function<bool(std::shared_ptr<NE>)> const & matchFunction
+   ) {
+      return ObjectStoreTyped<NE>::getInstance().findAllMatching(matchFunction);
    }
 
 }

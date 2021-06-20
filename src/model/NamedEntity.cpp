@@ -32,10 +32,11 @@ namespace {
  char const * const kVersion = "version";
 }
 
-NamedEntity::NamedEntity(int key, QString t_name, bool t_display, QString folder) :
+NamedEntity::NamedEntity(int key,  bool cache, QString t_name, bool t_display, QString folder) :
    QObject(nullptr),
    _key(key),
    parentKey(0),
+   m_cacheOnly(cache),
    _folder(folder),
    _name(t_name),
    _display(t_display),
@@ -43,15 +44,21 @@ NamedEntity::NamedEntity(int key, QString t_name, bool t_display, QString folder
    return;
 }
 
-NamedEntity::NamedEntity(NamedEntity const & other) : QObject(nullptr),
-                                                      _key(-1), // We don't want to copy the other object's key/ID
-                                                      parentKey(other.parentKey),
-                                                      _folder(other._folder),
-                                                      _name(QString()),
-                                                      _display(other._display),
-                                                      _deleted(other._deleted) {
+NamedEntity::NamedEntity(NamedEntity const & other) :
+   QObject    {nullptr},
+   _key       {-1}, // We don't want to copy the other object's key/ID
+   parentKey  {other.parentKey},
+   m_cacheOnly{other.m_cacheOnly},
+   _folder    {other._folder},
+   _name      {QString()},
+   _display   {other._display},
+   _deleted   {other._deleted} {
+   //
    // If the object we're copying has no parent, then we make it our parent, on the assumption that it's the master
-   // version of this Hop/Fermentable/etc
+   // version of this Hop/Fermentable/etc.
+   //
+   // .:TBD:. Check whether this assumption is always valid
+   //
    if (this->parentKey <= 0) {
       this->parentKey = other._key;
    }
@@ -60,13 +67,14 @@ NamedEntity::NamedEntity(NamedEntity const & other) : QObject(nullptr),
 }
 
 NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
-   QObject  {nullptr},
-   _key     {namedParameterBundle(PropertyNames::NamedEntity::key).toInt()},
-   parentKey{namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)},     // Not all subclasses have parents
-   _folder  {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
-   _name    {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})},   // One subclass, BrewNote, does not have a name
-   _display {namedParameterBundle(PropertyNames::NamedEntity::display).toBool()},
-   _deleted {namedParameterBundle(PropertyNames::NamedEntity::deleted).toBool()} {
+   QObject    {nullptr                                                            },
+   _key       {namedParameterBundle(PropertyNames::NamedEntity::key).toInt()      },
+   parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },     // Not all subclasses have parents
+   m_cacheOnly{false                                                              },
+   _folder    {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
+   _name      {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  },   // One subclass, BrewNote, does not have a name
+   _display   {namedParameterBundle(PropertyNames::NamedEntity::display).toBool() },
+   _deleted   {namedParameterBundle(PropertyNames::NamedEntity::deleted).toBool() } {
    return;
 }
 
@@ -204,8 +212,17 @@ int NamedEntity::getParentKey() const {
    return this->parentKey;
 }
 
+bool NamedEntity::cacheOnly() const {
+   return this->m_cacheOnly;
+}
+
 void NamedEntity::setParentKey(int parentKey) {
    this->parentKey = parentKey;
+   return;
+}
+
+void NamedEntity::setCacheOnly(bool cache) {
+   this->m_cacheOnly = cache;
    return;
 }
 
@@ -401,20 +418,20 @@ void NamedEntity::setEasy(char const * const prop_name, QVariant value, bool not
 /*QVariant NamedEntity::get( const QString& col_name ) const
 {
    return Database::instance().get( _table, _key, col_name );
-}*/
+}
 
 void NamedEntity::setInventory( const QVariant& value, int invKey, bool notify )
 {
-//   Database::instance().setInventory( this, value, invKey, notify );
+   Database::instance().setInventory( this, value, invKey, notify );
 }
 
 QVariant NamedEntity::getInventory( const QString& col_name ) const
 {
    QVariant val = 0.0;
-//   val = Database::instance().getInventoryAmt(col_name, _table, _key);
+   val = Database::instance().getInventoryAmt(col_name, _table, _key);
    return val;
 }
-
+*/
 NamedEntity * NamedEntity::getParent() const {
    if (this->parentKey <=0) {
       return nullptr;

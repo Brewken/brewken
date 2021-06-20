@@ -99,7 +99,6 @@ public:
    void setEndTemp_c( double var);
    void setInfuseTemp_c( double var);
    void setDecoctionAmount_l( double var);
-   void setCacheOnly(bool cache);
    void setStepNumber(int stepNumber);
    void setMashId(int mashId);
 //   void setMash(Mash * mash);
@@ -114,7 +113,6 @@ public:
    double endTemp_c() const;
    double infuseTemp_c() const;
    double decoctionAmount_l() const;
-   bool cacheOnly() const;
    int getMashId() const;
 //   Mash * mash() const;
 
@@ -158,31 +156,5 @@ private:
    static QStringList types;
    static QStringList typesTr;
 };
-/*
-inline bool MashStepPtrLt( MashStep* lhs, MashStep* rhs)
-{
-   return *lhs < *rhs;
-}
 
-inline bool MashStepPtrEq( MashStep* lhs, MashStep* rhs)
-{
-   return *lhs == *rhs;
-}
-
-struct MashStep_ptr_cmp
-{
-   bool operator()( MashStep* lhs, MashStep* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
-
-struct MashStep_ptr_equals
-{
-   bool operator()( MashStep* lhs, MashStep* rhs )
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
 #endif

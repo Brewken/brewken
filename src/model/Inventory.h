@@ -25,8 +25,8 @@
 
 class ObjectStore;
 
-namespace PropertyNames::Inventory { static char const * const id              = "id"; }
-namespace PropertyNames::Inventory { static char const * const amount          = "amount"; }
+namespace PropertyNames::Inventory { static char const * const id     = "id"; }
+namespace PropertyNames::Inventory { static char const * const amount = "amount"; }
 
 /**
  * \brief Class representing an inventory entry for Hop/Fermentable/Yeast/Misc

@@ -253,7 +253,7 @@ QString Recipe::classNameStr()
 }
 
 Recipe::Recipe(QString name, bool cache) :
-   NamedEntity(-1, name, true),
+   NamedEntity(-1, cache, name, true),
    pimpl{new impl{*this}},
    m_type(QString("All Grain")),
    m_brewer(QString("")),
@@ -284,9 +284,7 @@ Recipe::Recipe(QString name, bool cache) :
    styleId(0),
    equipmentId(-1),
    m_og(1.0),
-   m_fg(1.0),
-   m_cacheOnly(cache)
-{
+   m_fg(1.0) {
    return;
 }
 
@@ -326,8 +324,7 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    mashId              {namedParameterBundle(PropertyNames::Recipe::mashId            ).toInt()},
    equipmentId         {namedParameterBundle(PropertyNames::Recipe::equipmentId       ).toInt()},
    m_og                {namedParameterBundle(PropertyNames::Recipe::og                ).toDouble()},
-   m_fg                {namedParameterBundle(PropertyNames::Recipe::fg                ).toDouble()},
-   m_cacheOnly         {false} {
+   m_fg                {namedParameterBundle(PropertyNames::Recipe::fg                ).toDouble()} {
    // At this stage, we haven't set any Hops, Fermentables, etc.  This is deliberate because the caller typically needs
    // to access subsidiary records to obtain this info.   Callers will usually use setters (setHopIds, etc but via
    // setProperty) to finish constructing the object.
@@ -367,9 +364,7 @@ Recipe::Recipe( Recipe const& other ) :
 //   styleId          (other.styleId),  Done in body
 //   equipmentId         (other.equipmentId),  Done in body
    m_og                (other.m_og),
-   m_fg                (other.m_fg),
-   m_cacheOnly         (other.m_cacheOnly)
-{
+   m_fg                (other.m_fg) {
    setObjectName("Recipe"); // .:TBD:. Would be good to understand why we need this
 
    //
@@ -392,8 +387,8 @@ Recipe::Recipe( Recipe const& other ) :
    //
    // .:TBD:. What about Style, Mash, Equipment?
    //
-   // Style surely can be shared, hence copy of its ID above
-   // However, AFAICT, none of Style, Mash or Equipment are not shared between Recipes because users expect to be able
+   // Style surely could be shared, hence copy of its ID above
+   // However, AFAICT, none of Style, Mash or Equipment are shared between Recipes because users expect to be able
    // to edit them in one Recipe without changing the settings for any other Recipe.
    //
    auto equipment = ObjectStoreTyped<Equipment>::getInstance().insertCopyOf(other.equipmentId);
@@ -410,10 +405,6 @@ Recipe::Recipe( Recipe const& other ) :
 
    this->recalcAll();
 
-   // .:TODO:. What about these signals?
-//   emit changed( metaProperty(*this, "recipes"), QVariant() );
-//   emit newRecipeSignal(tmp);
-
    return;
 }
 
@@ -429,14 +420,14 @@ void Recipe::connectSignals() {
       qDebug() << Q_FUNC_INFO << "Connecting signals for Recipe #" << recipe->key();
       Equipment * equipment = recipe->equipment();
       if (equipment != nullptr) {
-         connect(equipment, &NamedEntity::changed,           recipe, &Recipe::acceptEquipChange );
+         connect(equipment, &NamedEntity::changed,           recipe, &Recipe::acceptChangeToContainedObject );
          connect(equipment, &Equipment::changedBoilSize_l,   recipe, &Recipe::setBoilSize_l);
          connect(equipment, &Equipment::changedBoilTime_min, recipe, &Recipe::setBoilTime_min);
       }
 
       QList<Fermentable *> fermentables = recipe->fermentables();
       for (auto fermentable : fermentables) {
-         connect(fermentable, SIGNAL(changed(QMetaProperty,QVariant)), recipe, SLOT(acceptFermChange(QMetaProperty,QVariant)) );
+         connect(fermentable, SIGNAL(changed(QMetaProperty,QVariant)), recipe, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)) );
       }
 
       QList<Hop *> hops = recipe->hops();
@@ -446,12 +437,12 @@ void Recipe::connectSignals() {
 
       QList<Yeast *> yeasts = recipe->yeasts();
       for (auto yeast : yeasts) {
-         connect(yeast, SIGNAL(changed(QMetaProperty,QVariant)), recipe, SLOT(acceptYeastChange(QMetaProperty,QVariant)) );
+         connect(yeast, SIGNAL(changed(QMetaProperty,QVariant)), recipe, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)) );
       }
 
       Mash * mash = recipe->mash();
       if (mash != nullptr) {
-         connect(mash, SIGNAL(changed(QMetaProperty,QVariant)), recipe, SLOT(acceptMashChange(QMetaProperty,QVariant)) );
+         connect(mash, SIGNAL(changed(QMetaProperty,QVariant)), recipe, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)) );
       }
    }
 
@@ -1120,8 +1111,8 @@ template<class NE> NE * Recipe::add(NE * var) {
    connect(var, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,QVariant)));
 
    updatePropertyInDb<NE>(*this);
-   this->recalcIBU(); // .:TODO:. Don't need to do this recalculation when it's Instruction
 
+   this->recalcIfNeeded(neToAdd->metaObject()->className());
    return neToAdd.get();
 }
 
@@ -1748,8 +1739,6 @@ void Recipe::setKegPrimingFactor( double var )
    }
 }
 
-void Recipe::setCacheOnly( bool cache ) { m_cacheOnly = cache; }
-
 //==========================Calculated Getters============================
 
 double Recipe::og()
@@ -1932,7 +1921,6 @@ double Recipe::primingSugarEquiv() const { return m_primingSugarEquiv; }
 double Recipe::kegPrimingFactor() const { return m_kegPrimingFactor; }
 int Recipe::fermentationStages() const { return m_fermentationStages; }
 QDate Recipe::date() const { return m_date; }
-bool Recipe::cacheOnly() const { return m_cacheOnly; }
 
 //=============================Adders and Removers========================================
 
@@ -1948,6 +1936,31 @@ double Recipe::batchSizeNoLosses_l()
 }
 
 //==============================Recalculators==================================
+
+void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
+   // We could just compare with "Hop", "Equipment", etc but there's then no compile-time checking of typos.  Using
+   // ::staticMetaObject.className() is a bit more clunky but it's safer.
+
+   if (classNameOfWhatWasAddedOrChanged == Hop::staticMetaObject.className()) {
+      this->recalcIBU();
+      return;
+   }
+
+   if (classNameOfWhatWasAddedOrChanged == "Equipment" ||
+       classNameOfWhatWasAddedOrChanged == "Fermentable" ||
+       classNameOfWhatWasAddedOrChanged == "Mash") {
+      this->recalcAll();
+      return;
+   }
+
+   if (classNameOfWhatWasAddedOrChanged == "Yeast") {
+      this->recalcOgFg();
+      this->recalcABV_pct();
+      return;
+   }
+
+   return;
+}
 
 void Recipe::recalcAll()
 {
@@ -2663,65 +2676,11 @@ void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
    if (signalSender != nullptr) {
       QString signalSenderClassName = signalSender->metaObject()->className();
       qDebug() << Q_FUNC_INFO << "Signal received from " << signalSenderClassName;
-      if (signalSenderClassName == "Hop") {
-         this->recalcIBU();
-      }
+      this->recalcIfNeeded(signalSenderClassName);
    } else {
       qDebug() << Q_FUNC_INFO << "No sender";
    }
    return;
-}
-
-void Recipe::acceptEquipChange(QMetaProperty prop, QVariant val) {
-   recalcAll();
-}
-
-void Recipe::acceptFermChange(QMetaProperty prop, QVariant val)
-{
-   recalcAll();
-}
-
-void Recipe::onFermentableChanged()
-{
-   recalcAll();
-}
-
-/*void Recipe::acceptHopChange(QMetaProperty prop, QVariant val)
-{
-   recalcIBU();
-}*/
-
-void Recipe::acceptHopChange(Hop* hop)
-{
-   recalcIBU();
-}
-
-void Recipe::acceptYeastChange(QMetaProperty prop, QVariant val)
-{
-   recalcOgFg();
-   recalcABV_pct();
-}
-
-void Recipe::acceptYeastChange(Yeast* yeast)
-{
-   recalcOgFg();
-   recalcABV_pct();
-}
-
-void Recipe::acceptMashChange(QMetaProperty prop, QVariant val)
-{
-   Mash* mashSend = qobject_cast<Mash*>(sender());
-
-   if ( mashSend == nullptr )
-      return;
-
-   recalcAll();
-}
-
-void Recipe::acceptMashChange(Mash* newMash)
-{
-   if ( newMash == mash() )
-      recalcAll();
 }
 
 double Recipe::targetCollectedWortVol_l()

@@ -239,7 +239,8 @@ void WaterDialog::update_baseProfile(int selected)
 
    if ( parent ) {
       // this is in cache only until we say "ok"
-      m_base = new Water(*parent, true);
+      m_base = new Water(*parent);
+      m_base->setCacheOnly(true);
       m_base->setType(Water::BASE);
 
       baseProfileButton->setWater(m_base);
@@ -262,7 +263,8 @@ void WaterDialog::update_targetProfile(int selected)
 
    if ( parent ) {
       // this is in cache only until we say "ok"
-      m_target = new Water(*parent, true);
+      m_target = new Water(*parent);
+      m_target->setCacheOnly(true);
       m_target->setType(Water::TARGET);
       targetProfileButton->setWater(m_target);
       m_target_editor->setWater(m_target);

@@ -144,7 +144,6 @@ public:
    void populateNote(Recipe* parent);
    void recalculateEff(Recipe* parent);
    void setLoading(bool flag);
-   void setCacheOnly(bool cache);
    void setRecipeId(int recipeId);
    void setRecipe(Recipe * recipe);
 
@@ -222,7 +221,6 @@ public:
    double projPoints() const;
    double projFermPoints() const;
    double projAtten() const;
-   bool cacheOnly() const;
 
    // BrewNote objects do not have parents
    NamedEntity * getParent() { return nullptr; }
@@ -269,37 +267,8 @@ private:
    double m_projFermPoints;
    double m_projAtten;
    int  m_recipeId;
-   bool m_cacheOnly;
 
-///   QHash<QString,double> info;
 };
 
 Q_DECLARE_METATYPE( QList<BrewNote*> )
-/*
-inline bool BrewNotePtrLt( BrewNote* lhs, BrewNote* rhs)
-{
-   return *lhs < *rhs;
-}
-
-inline bool BrewNotePtrEq( BrewNote* lhs, BrewNote* rhs)
-{
-   return *lhs == *rhs;
-}
-
-struct BrewNote_ptr_cmp
-{
-   bool operator()(BrewNote* lhs, BrewNote* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
-
-struct BrewNote_ptr_equals
-{
-   bool operator()(BrewNote* lhs, BrewNote* rhs)
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
 #endif

@@ -58,7 +58,7 @@ QString MashStep::classNameStr()
 //==============================CONSTRUCTORS====================================
 
 MashStep::MashStep(QString name, bool cache) :
-   NamedEntity(-1, name, true),
+   NamedEntity(-1, cache, name, true),
    m_typeStr(QString()),
    m_type(static_cast<MashStep::Type>(0)),
    m_infuseAmount_l(0.0),
@@ -69,8 +69,7 @@ MashStep::MashStep(QString name, bool cache) :
    m_infuseTemp_c(0.0),
    m_decoctionAmount_l(0.0),
    m_stepNumber(0.0),
-   mashId(-1),
-   m_cacheOnly(cache) {
+   mashId(-1) {
    return;
 }
 
@@ -85,8 +84,7 @@ MashStep::MashStep(NamedParameterBundle const & namedParameterBundle) :
    m_infuseTemp_c     {namedParameterBundle(PropertyNames::MashStep::infuseTemp_c     ).toDouble()},
    m_decoctionAmount_l{namedParameterBundle(PropertyNames::MashStep::decoctionAmount_l).toDouble()},
    m_stepNumber       {namedParameterBundle(PropertyNames::MashStep::stepNumber       ).toInt()},
-   mashId             {namedParameterBundle(PropertyNames::MashStep::mashId           ).toInt()},
-   m_cacheOnly        {false} {
+   mashId             {namedParameterBundle(PropertyNames::MashStep::mashId           ).toInt()} {
    return;
 }
 
@@ -101,8 +99,7 @@ MashStep::MashStep(MashStep const & other) :
    m_infuseTemp_c     {other.m_infuseTemp_c     },
    m_decoctionAmount_l{other.m_decoctionAmount_l},
    m_stepNumber       {other.m_stepNumber       },
-   mashId             {other.mashId             },
-   m_cacheOnly        {other.m_cacheOnly        } {
+   mashId             {other.mashId             } {
    return;
 }
 
@@ -223,8 +220,6 @@ void MashStep::setStepNumber(int stepNumber) {
    return;
 }
 
-void MashStep::setCacheOnly( bool cache ) { m_cacheOnly = cache; }
-
 //void MashStep::setMash( Mash * mash ) { this->m_mash = mash; }
 void MashStep::setMashId(int mashId) { this->mashId = mashId; }
 
@@ -245,7 +240,6 @@ double MashStep::rampTime_min() const { return m_rampTime_min; }
 double MashStep::endTemp_c() const { return m_endTemp_c; }
 double MashStep::decoctionAmount_l() const { return m_decoctionAmount_l; }
 int MashStep::stepNumber() const { return m_stepNumber; }
-bool MashStep::cacheOnly( ) const { return m_cacheOnly; }
 //Mash * MashStep::mash( ) const { return m_mash; }
 int MashStep::getMashId() const { return this->mashId; }
 

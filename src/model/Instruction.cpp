@@ -95,20 +95,18 @@ Instruction::Instruction(Instruction const & other) :
    m_hasTimer  {other.m_hasTimer  },
    m_timerValue{other.m_timerValue},
    m_completed {other.m_completed },
-   m_interval  {other.m_interval  },
-   m_cacheOnly {other.m_cacheOnly } {
+   m_interval  {other.m_interval  } {
    return;
 }
 
 Instruction::Instruction(QString name, bool cache) :
-   NamedEntity (-1, name, true),
+   NamedEntity (-1, cache, name, true),
    pimpl       {new impl{*this}},
-   m_directions(QString()),
+   m_directions(""),
    m_hasTimer  (false),
-   m_timerValue(QString()),
+   m_timerValue(""),
    m_completed (false),
-   m_interval  (0.0),
-   m_cacheOnly (cache) {
+   m_interval  (0.0) {
    return;
 }
 
@@ -119,8 +117,7 @@ Instruction::Instruction(NamedParameterBundle const & namedParameterBundle) :
    m_hasTimer  {namedParameterBundle(PropertyNames::Instruction::hasTimer  ).toBool()},
    m_timerValue{namedParameterBundle(PropertyNames::Instruction::timerValue).toString()},
    m_completed {namedParameterBundle(PropertyNames::Instruction::completed ).toBool()},
-   m_interval  {namedParameterBundle(PropertyNames::Instruction::interval  ).toDouble()},
-   m_cacheOnly {false} {
+   m_interval  {namedParameterBundle(PropertyNames::Instruction::interval  ).toDouble()} {
    return;
 }
 
@@ -182,7 +179,6 @@ void Instruction::addReagent(const QString& reagent)
    m_reagents.append(reagent);
 }
 
-void Instruction::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 // Accessors ==================================================================
 QString Instruction::directions() { return m_directions; }
 
@@ -199,5 +195,3 @@ double Instruction::interval() { return m_interval; }
 int Instruction::instructionNumber() const {
    return this->pimpl->getRecipe()->instructionNumber(*this);
 }
-
-bool Instruction::cacheOnly() { return m_cacheOnly; }

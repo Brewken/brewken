@@ -38,20 +38,20 @@
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
-#include "database/Database.h"
 #include "MainWindow.h"
+#include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
 
-YeastTableModel::YeastTableModel(QTableView* parent, bool editable)
-   : QAbstractTableModel(parent),
-     editable(editable),
-     _inventoryEditable(false),
-     parentTableWidget(parent),
-     recObs(nullptr)
-{
+YeastTableModel::YeastTableModel(QTableView* parent, bool editable) :
+   QAbstractTableModel(parent),
+   editable(editable),
+   _inventoryEditable(false),
+   parentTableWidget(parent),
+   recObs(nullptr) {
+
    yeastObs.clear();
    setObjectName("yeastTableModel");
 
@@ -62,7 +62,8 @@ YeastTableModel::YeastTableModel(QTableView* parent, bool editable)
    parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &YeastTableModel::contextMenu);
-   connect( &(Database::instance()), &Database::changedInventory, this, &YeastTableModel::changedInventory );
+   connect(&ObjectStoreTyped<InventoryYeast>::getInstance(), &ObjectStoreTyped<InventoryYeast>::signalPropertyChanged, this, &YeastTableModel::changedInventory);
+   return;
 }
 
 void YeastTableModel::addYeast(int yeastId) {
@@ -180,22 +181,19 @@ void YeastTableModel::removeAll()
    }
 }
 
-void YeastTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
-{
-   if ( table == DatabaseConstants::YEASTTABLE ) {
+void YeastTableModel::changedInventory(int invKey, char const * const propertyName) {
+   if (QString(propertyName) == PropertyNames::Inventory::amount) {
       for( int i = 0; i < yeastObs.size(); ++i ) {
          Yeast* holdmybeer = yeastObs.at(i);
-
          if ( invKey == holdmybeer->inventoryId() ) {
-            holdmybeer->setCacheOnly(true);
-            holdmybeer->setInventoryQuanta(val.toInt());
-            holdmybeer->setCacheOnly(false);
             emit dataChanged( QAbstractItemModel::createIndex(i,YEASTINVENTORYCOL),
                               QAbstractItemModel::createIndex(i,YEASTINVENTORYCOL) );
          }
       }
    }
+   return;
 }
+
 void YeastTableModel::changed(QMetaProperty prop, QVariant /*val*/)
 {
    int i;

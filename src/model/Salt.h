@@ -38,7 +38,6 @@ namespace PropertyNames::Salt { static char const * const addTo = "addTo"; /* pr
 /*!
  * \class Salt
  *
- *
  * \brief Model for salt records in the database.
  */
 class Salt : public NamedEntity {
@@ -93,10 +92,6 @@ public:
    Q_PROPERTY( double percentAcid READ percentAcid WRITE setPercentAcid /*NOTIFY changed*/ /*changedPercentAcid*/ )
    //! \brief Is this an acid or salt?
    Q_PROPERTY( bool isAcid READ isAcid WRITE setIsAcid /*NOTIFY changed*/ /*changedIsAcid*/ )
-   //! \brief A link to the salt in the MISC table. Not sure I'm going to use this. .:TODO:. Think this can be removed
-   Q_PROPERTY( int miscId READ miscId /* WRITE setMiscId*/ /*NOTIFY changed*/ /*changedSulfate_ppm*/ )
-   //! \brief To cache or not to cache
-   Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ /*changedSulfate_ppm*/ )
 
    double amount() const;
    Salt::WhenToAdd addTo() const;
@@ -105,7 +100,6 @@ public:
    double percentAcid() const;
    bool isAcid() const;
    int miscId() const;
-   bool cacheOnly() const;
 
    void setAmount( double var );
    void setAddTo( Salt::WhenToAdd var );
@@ -113,7 +107,6 @@ public:
    void setAmountIsWeight( bool var );
    void setPercentAcid(double var);
    void setIsAcid( bool var );
-   void setCacheOnly( bool var );
 
    static QString classNameStr();
 
@@ -141,42 +134,8 @@ private:
    bool m_amount_is_weight;
    double m_percent_acid;
    bool m_is_acid;
-   int m_misc_id;
-   bool m_cacheOnly;
-
 };
 
 Q_DECLARE_METATYPE( QList<Salt*> )
-
-inline bool SaltPtrLt( Salt* lhs, Salt* rhs)
-{
-   return (lhs->type() < rhs->type() &&
-           lhs->addTo() < rhs->addTo());
-}
-
-inline bool SaltPtrEq( Salt* lhs, Salt* rhs)
-{
-   return (lhs->type() == rhs->type() &&
-           lhs->addTo() == rhs->addTo());
-
-}
-
-struct Salt_ptr_cmp
-{
-   bool operator()( Salt* lhs, Salt* rhs)
-   {
-      return ( lhs->type() < rhs->type() &&
-           lhs->addTo() < rhs->addTo());
-   }
-};
-
-struct Salt_ptr_equals
-{
-   bool operator()( Salt* lhs, Salt* rhs )
-   {
-      return ( lhs->type() == rhs->type() &&
-           lhs->addTo() == rhs->addTo());
-   }
-};
 
 #endif

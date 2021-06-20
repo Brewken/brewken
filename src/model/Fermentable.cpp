@@ -68,7 +68,7 @@ QString Fermentable::classNameStr()
 }
 
 Fermentable::Fermentable(QString name, bool cache) :
-   NamedEntity     {-1, name, true},
+   NamedEntityWithInventory{-1, cache, name, true},
    m_typeStr       {QString()         },
    m_type          {Fermentable::Grain},
    m_amountKg      {0.0               },
@@ -85,14 +85,12 @@ Fermentable::Fermentable(QString name, bool cache) :
    m_maxInBatchPct {100.0             },
    m_recommendMash {false             },
    m_ibuGalPerLb   {0.0               },
-   m_inventory_id  {-1                },
-   m_isMashed      {false             },
-   m_cacheOnly     {cache             } {
+   m_isMashed      {false             } {
    return;
 }
 
 Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity     {namedParameterBundle},
+   NamedEntityWithInventory{namedParameterBundle},
    m_typeStr       {QString()                        },
    m_type          {static_cast<Fermentable::Type>(namedParameterBundle(PropertyNames::Fermentable::type).toInt())},
    m_amountKg      {namedParameterBundle(PropertyNames::Fermentable::amount_kg             ).toDouble()},
@@ -109,14 +107,12 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    m_maxInBatchPct {namedParameterBundle(PropertyNames::Fermentable::maxInBatch_pct        ).toDouble()},
    m_recommendMash {namedParameterBundle(PropertyNames::Fermentable::recommendMash         ).toBool()},
    m_ibuGalPerLb   {namedParameterBundle(PropertyNames::Fermentable::ibuGalPerLb           ).toDouble()},
-   m_inventory_id  {namedParameterBundle(PropertyNames::Fermentable::inventoryId           ).toInt()},
-   m_isMashed      {namedParameterBundle(PropertyNames::Fermentable::isMashed              ).toBool()},
-   m_cacheOnly     {false} {
+   m_isMashed      {namedParameterBundle(PropertyNames::Fermentable::isMashed              ).toBool()} {
    return;
 }
 
 Fermentable::Fermentable(Fermentable const & other) :
-   NamedEntity     {other                 },
+   NamedEntityWithInventory{other                 },
    m_typeStr       {other.m_typeStr       },
    m_type          {other.m_type          },
    m_amountKg      {other.m_amountKg      },
@@ -133,9 +129,7 @@ Fermentable::Fermentable(Fermentable const & other) :
    m_maxInBatchPct {other.m_maxInBatchPct },
    m_recommendMash {other.m_recommendMash },
    m_ibuGalPerLb   {other.m_ibuGalPerLb   },
-   m_inventory_id  {-1}, // Don't copy Inventory ID as new Fermentable should have its own inventory
-   m_isMashed      {other.m_isMashed      },
-   m_cacheOnly     {other.m_cacheOnly     } {
+   m_isMashed      {other.m_isMashed      } {
    return;
 }
 
@@ -157,7 +151,6 @@ double Fermentable::maxInBatch_pct() const { return m_maxInBatchPct; }
 bool Fermentable::recommendMash() const { return m_recommendMash; }
 double Fermentable::ibuGalPerLb() const { return m_ibuGalPerLb; }
 bool Fermentable::isMashed() const { return m_isMashed; }
-bool Fermentable::cacheOnly() const { return m_cacheOnly; }
 
 Fermentable::AdditionMethod Fermentable::additionMethod() const
 {
@@ -351,24 +344,8 @@ void Fermentable::setInventoryAmount(double num) {
    return;
 }
 
-void Fermentable::setInventoryId(int key) {
-   if( key < 1 ) {
-      qWarning() << QString("Fermentable: bad inventory id: %1").arg(key);
-      return;
-   }
-   m_inventory_id = key;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Fermentable::inventoryId, key);
-   }
-   return;
-}
-
 double Fermentable::inventory() const {
    return InventoryUtils::getAmount(*this);
-}
-
-int Fermentable::inventoryId() const {
-   return m_inventory_id;
 }
 
 void Fermentable::setYield_pct( double num )
@@ -477,5 +454,3 @@ void Fermentable::setMaxInBatch_pct( double num )
       qWarning() << QString("Fermentable: 0 < maxinbatch < 100: %1").arg(num);
    }
 }
-
-void Fermentable::setCacheOnly( bool cache ) { m_cacheOnly = cache; }

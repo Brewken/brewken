@@ -815,7 +815,7 @@ int ObjectStore::insertOrUpdate(QObject * object) {
 }
 
 
-void ObjectStore::updateProperty(QObject const & object, char const * const propertyToUpdateInDb) {
+void ObjectStore::updateProperty(QObject const & object, char const * const propertyName) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase databaseConnection = Database::instance().sqlDatabase();
@@ -831,7 +831,7 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
    auto matchingFieldDefn = std::find_if(
       this->pimpl->fieldSimpleDefns.begin(),
       this->pimpl->fieldSimpleDefns.end(),
-      [propertyToUpdateInDb](FieldSimpleDefn const & fd) {return 0 == std::strcmp(fd.propertyName, propertyToUpdateInDb);}
+      [propertyName](FieldSimpleDefn const & fd) {return 0 == std::strcmp(fd.propertyName, propertyName);}
    );
 
    if (matchingFieldDefn != this->pimpl->fieldSimpleDefns.end()) {
@@ -859,12 +859,12 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       //
       QSqlQuery sqlQuery{databaseConnection};
       sqlQuery.prepare(queryString);
-      QVariant propertyBindValue{object.property(propertyToUpdateInDb)};
+      QVariant propertyBindValue{object.property(propertyName)};
       // Enums need to be converted to strings first
       auto fieldDefn = std::find_if(
          this->pimpl->fieldSimpleDefns.begin(),
          this->pimpl->fieldSimpleDefns.end(),
-         [propertyToUpdateInDb](FieldSimpleDefn const & fd){return propertyToUpdateInDb == fd.propertyName;}
+         [propertyName](FieldSimpleDefn const & fd){return propertyName == fd.propertyName;}
       );
       // It's a coding error if we're trying to update a property that's not in the field definitions
       Q_ASSERT(fieldDefn != this->pimpl->fieldSimpleDefns.end());
@@ -889,14 +889,14 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       auto matchingFieldManyToManyDefnDefn = std::find_if(
          this->pimpl->fieldManyToManyDefns.begin(),
          this->pimpl->fieldManyToManyDefns.end(),
-         [propertyToUpdateInDb](FieldManyToManyDefn const & jt) {return 0 == std::strcmp(jt.propertyName, propertyToUpdateInDb);}
+         [propertyName](FieldManyToManyDefn const & jt) {return 0 == std::strcmp(jt.propertyName, propertyName);}
       );
 
       // It's a coding error if we couldn't find the property either as a simple field or an associative entity
       if (matchingFieldManyToManyDefnDefn == this->pimpl->fieldManyToManyDefns.end()) {
          qCritical() <<
             Q_FUNC_INFO << "Unable to find rule for storing property" << object.metaObject()->className() << "::" <<
-            propertyToUpdateInDb << "in either" << this->pimpl->tableName << "or any associated table";
+            propertyName << "in either" << this->pimpl->tableName << "or any associated table";
          Q_ASSERT(false);
       }
 
@@ -914,6 +914,10 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
 
    // If we made it this far then everything worked and we can commit the transaction
    dbTransaction.commit();
+
+   // Tell any bits of the UI that need to know that the property was updated
+   emit this->signalPropertyChanged(primaryKey.toInt(), propertyName);
+
    return;
 }
 

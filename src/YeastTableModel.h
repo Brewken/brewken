@@ -33,7 +33,6 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/TableSchemaConst.h"
 #include "Unit.h"
 
 // Forward declarations.
@@ -103,7 +102,7 @@ public slots:
 private slots:
    //! \brief Catch changes to Recipe, Database, and Yeast.
    void changed(QMetaProperty, QVariant);
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+   void changedInventory(int invKey, char const * const propertyName);
 
 private:
    bool editable;
@@ -135,4 +134,4 @@ public:
 private:
 };
 
-#endif   // YEASTTABLEMODEL_H
+#endif

@@ -19,7 +19,6 @@
  */
 #include "EquipmentListModel.h"
 
-//#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
@@ -28,9 +27,7 @@ EquipmentListModel::EquipmentListModel(QWidget* parent) :
    QAbstractListModel(parent), recipe(0) {
    connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectInserted, this, &EquipmentListModel::addEquipment);
    connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectDeleted,  this, &EquipmentListModel::removeEquipment);
-//   connect( &(Database::instance()), &Database::newEquipmentSignal, this, &EquipmentListModel::addEquipment );
-//   connect( &(Database::instance()), SIGNAL(deletedSignal(Equipment*)), this, SLOT(removeEquipment(Equipment*)) );
-   repopulateList();
+   this->repopulateList();
    return;
 }
 

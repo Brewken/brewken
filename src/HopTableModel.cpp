@@ -39,20 +39,20 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Hop.h"
+#include "model/Inventory.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
 
-HopTableModel::HopTableModel(QTableView * parent, bool editable)
-   : QAbstractTableModel(parent),
-     colFlags(HOPNUMCOLS),
-     _inventoryEditable(false),
-     recObs(nullptr),
-     parentTableWidget(parent),
-     showIBUs(false) {
+HopTableModel::HopTableModel(QTableView * parent, bool editable) :
+   QAbstractTableModel(parent),
+   colFlags(HOPNUMCOLS),
+   _inventoryEditable(false),
+   recObs(nullptr),
+   parentTableWidget(parent),
+   showIBUs(false) {
    this->hopObs.clear();
    this->setObjectName("hopTable");
 
@@ -73,7 +73,8 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable)
    parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &HopTableModel::contextMenu);
-   connect(&(Database::instance()), &Database::changedInventory, this, &HopTableModel::changedInventory);
+   connect(&ObjectStoreTyped<InventoryHop>::getInstance(), &ObjectStoreTyped<InventoryHop>::signalPropertyChanged, this, &HopTableModel::changedInventory);
+   return;
 }
 
 HopTableModel::~HopTableModel() {
@@ -97,9 +98,7 @@ void HopTableModel::observeDatabase(bool val) {
    if (val) {
       observeRecipe(nullptr);
       removeAll();
-//      connect(&(Database::instance()), &Database::newHopSignal, this, &HopTableModel::addHop);
       connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this, &HopTableModel::addHop);
-//      connect(&(Database::instance()), SIGNAL(deletedSignal(Hop *)), this, SLOT(removeHop(Hop *)));
       connect(&ObjectStoreTyped<Hop>::getInstance(),
               &ObjectStoreTyped<Hop>::signalObjectDeleted,
               this,
@@ -107,7 +106,8 @@ void HopTableModel::observeDatabase(bool val) {
       this->addHops(ObjectStoreTyped<Hop>::getInstance().getAllRaw());
    } else {
       removeAll();
-      disconnect(&(Database::instance()), nullptr, this, nullptr);
+      disconnect(&ObjectStoreTyped<Hop>::getInstance(), nullptr, this, nullptr);
+
    }
 }
 
@@ -225,20 +225,23 @@ void HopTableModel::removeAll() {
    }
 }
 
-void HopTableModel::changedInventory(/*DatabaseConstants::DbTableId table, */int invKey, QVariant val) {
-///   if (table == DatabaseConstants::HOPTABLE) {
+void HopTableModel::changedInventory(int invKey, char const * const propertyName) {
+   if (QString(propertyName) == PropertyNames::Inventory::amount) {
+///      double newAmount = ObjectStoreWrapper::getById<InventoryHop>()->getAmount();
       for (int i = 0; i < hopObs.size(); ++i) {
          Hop * holdmybeer = hopObs.at(i);
 
          if (invKey == holdmybeer->inventoryId()) {
-            holdmybeer->setCacheOnly(true);
-            holdmybeer->setInventoryAmount(val.toDouble());
-            holdmybeer->setCacheOnly(false);
+/// No need to update amount as it's only stored in one place (the inventory object) now
+///            holdmybeer->setCacheOnly(true);
+///            holdmybeer->setInventoryAmount(newAmount);
+///            holdmybeer->setCacheOnly(false);
             emit dataChanged(QAbstractItemModel::createIndex(i, HOPINVENTORYCOL),
                              QAbstractItemModel::createIndex(i, HOPINVENTORYCOL));
          }
       }
-///   }
+   }
+   return;
 }
 
 void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/) {

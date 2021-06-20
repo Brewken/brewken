@@ -34,7 +34,6 @@
 
 #include "Brewken.h"
 #include "Unit.h"
-#include "database/TableSchemaConst.h"
 
 // Forward declarations.
 class Fermentable;
@@ -109,7 +108,7 @@ private slots:
    //! \brief Catch changes to Recipe, Database, and Fermentable.
    void changed(QMetaProperty, QVariant);
    //! \brief Catches changes to inventory
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+   void changedInventory(int invKey, char const * const propertyName);
 
 private:
    //! \brief Recalculate the total amount of grains in the model.

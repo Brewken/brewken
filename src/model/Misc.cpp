@@ -60,48 +60,42 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
 
 //============================CONSTRUCTORS======================================
 Misc::Misc(Misc const & other) :
-   NamedEntity     {other                 },
-   m_typeString    {other.m_typeString    },
-   m_type          {other.m_type          },
-   m_useString     {other.m_useString     },
-   m_use           {other.m_use           },
-   m_time          {other.m_time          },
-   m_amount        {other.m_amount        },
-   m_amountIsWeight{other.m_amountIsWeight},
-   m_useFor        {other.m_useFor        },
-   m_notes         {other.m_notes         },
-   m_inventory_id  {-1}, // Don't copy Inventory ID as new Misc should have its own inventory
-   m_cacheOnly     {other.m_cacheOnly     } {
+   NamedEntityWithInventory{other                 },
+   m_typeString            {other.m_typeString    },
+   m_type                  {other.m_type          },
+   m_useString             {other.m_useString     },
+   m_use                   {other.m_use           },
+   m_time                  {other.m_time          },
+   m_amount                {other.m_amount        },
+   m_amountIsWeight        {other.m_amountIsWeight},
+   m_useFor                {other.m_useFor        },
+   m_notes                 {other.m_notes         } {
    return;
 }
 
 Misc::Misc(QString name, bool cache) :
-   NamedEntity(-1, name, true),
-   m_typeString(""),
-   m_type(Misc::Spice),
-   m_useString(""),
-   m_use(Misc::Boil),
-   m_time(0.0),
-   m_amount(0.0),
-   m_amountIsWeight(false),
-   m_useFor(""),
-   m_notes(""),
-   m_inventory_id(-1),
-   m_cacheOnly(cache) {
+   NamedEntityWithInventory{-1, cache, name, true},
+   m_typeString            {""                   },
+   m_type                  {Misc::Spice          },
+   m_useString             {""                   },
+   m_use                   {Misc::Boil           },
+   m_time                  {0.0                  },
+   m_amount                {0.0                  },
+   m_amountIsWeight        {false                },
+   m_useFor                {""                   },
+   m_notes                 {""                   } {
    return;
 }
 
 Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity     {namedParameterBundle},
-   m_type          {static_cast<Misc::Type>(namedParameterBundle(PropertyNames::Misc::type).toInt())},
-   m_use           {static_cast<Misc::Use>(namedParameterBundle(PropertyNames::Misc::use).toInt())},
-   m_time          {namedParameterBundle(PropertyNames::Misc::time          ).toDouble()},
-   m_amount        {namedParameterBundle(PropertyNames::Misc::amount        ).toDouble()},
-   m_amountIsWeight{namedParameterBundle(PropertyNames::Misc::amountIsWeight).toBool()},
-   m_useFor        {namedParameterBundle(PropertyNames::Misc::useFor        ).toString()},
-   m_notes         {namedParameterBundle(PropertyNames::Misc::notes         ).toString()},
-   m_inventory_id  {namedParameterBundle(PropertyNames::Misc::inventoryId   ).toInt()},
-   m_cacheOnly     {false} {
+   NamedEntityWithInventory{namedParameterBundle},
+   m_type                  {static_cast<Misc::Type>(namedParameterBundle(PropertyNames::Misc::type).toInt())},
+   m_use                   {static_cast<Misc::Use>(namedParameterBundle(PropertyNames::Misc::use).toInt())},
+   m_time                  {namedParameterBundle(PropertyNames::Misc::time          ).toDouble()},
+   m_amount                {namedParameterBundle(PropertyNames::Misc::amount        ).toDouble()},
+   m_amountIsWeight        {namedParameterBundle(PropertyNames::Misc::amountIsWeight).toBool()},
+   m_useFor                {namedParameterBundle(PropertyNames::Misc::useFor        ).toString()},
+   m_notes                 {namedParameterBundle(PropertyNames::Misc::notes         ).toString()} {
    return;
 }
 
@@ -128,8 +122,6 @@ QString Misc::notes() const { return m_notes; }
 double Misc::inventory() const {
    return InventoryUtils::getAmount(*this);
 }
-
-int Misc::inventoryId() const { return m_inventory_id; }
 
 Misc::AmountType Misc::amountType() const { return m_amountIsWeight ? AmountType_Weight : AmountType_Volume; }
 
@@ -167,8 +159,6 @@ const QString Misc::amountTypeStringTr() const
       return QString("Weight");
    }
 }
-
-bool Misc::cacheOnly() const { return m_cacheOnly; }
 
 //============================"SET" METHODS=====================================
 void Misc::setType( Type t )
@@ -238,14 +228,6 @@ void Misc::setInventoryAmount(double var) {
    return;
 }
 
-void Misc::setInventoryId( int key ) {
-   m_inventory_id = key;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Misc::inventoryId, key);
-   }
-   return;
-}
-
 void Misc::setTime( double var )
 {
    if( var < 0.0 )
@@ -257,8 +239,6 @@ void Misc::setTime( double var )
       }
    }
 }
-
-void Misc::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 
 //========================OTHER METHODS=========================================
 

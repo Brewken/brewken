@@ -160,6 +160,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
          {ObjectStore::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
          {ObjectStore::FieldType::String, "folder",           PropertyNames::NamedEntity::folder},
+         {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::NamedEntityWithInventory::inventoryId}, /// inventory_id REFERENCES fermentable_in_inventory (id))      <<< TODO
          {ObjectStore::FieldType::Bool,   "add_after_boil",   PropertyNames::Fermentable::addAfterBoil},
          {ObjectStore::FieldType::Double, "amount",           PropertyNames::Fermentable::amount_kg},
          {ObjectStore::FieldType::Double, "coarse_fine_diff", PropertyNames::Fermentable::coarseFineDiff_pct},
@@ -175,8 +176,7 @@ namespace {
          {ObjectStore::FieldType::String, "supplier",         PropertyNames::Fermentable::supplier},
          {ObjectStore::FieldType::Double, "protein",          PropertyNames::Fermentable::protein_pct},
          {ObjectStore::FieldType::Bool,   "recommend_mash",   PropertyNames::Fermentable::recommendMash},
-         {ObjectStore::FieldType::Double, "yield",            PropertyNames::Fermentable::yield_pct},
-         {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::Fermentable::inventoryId} /// inventory_id REFERENCES fermentable_in_inventory (id))      <<< TODO
+         {ObjectStore::FieldType::Double, "yield",            PropertyNames::Fermentable::yield_pct}
       }
    };
    template<> ObjectStore::FieldManyToManyDefns const MULTI_FIELDS<Fermentable> {
@@ -223,6 +223,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "display",       PropertyNames::NamedEntity::display},
          {ObjectStore::FieldType::Bool,   "deleted",       PropertyNames::NamedEntity::deleted},
          {ObjectStore::FieldType::String, "folder",        PropertyNames::NamedEntity::folder},
+         {ObjectStore::FieldType::Int,    "inventory_id",  PropertyNames::NamedEntityWithInventory::inventoryId},
          {ObjectStore::FieldType::Double, "alpha",         PropertyNames::Hop::alpha_pct},
          {ObjectStore::FieldType::Double, "amount",        PropertyNames::Hop::amount_kg},
          {ObjectStore::FieldType::Double, "beta",          PropertyNames::Hop::beta_pct},
@@ -231,7 +232,6 @@ namespace {
          {ObjectStore::FieldType::Enum,   "form",          PropertyNames::Hop::form,              &DB_HOP_FORM_ENUM},
          {ObjectStore::FieldType::Double, "hsi",           PropertyNames::Hop::hsi_pct},
          {ObjectStore::FieldType::Double, "humulene",      PropertyNames::Hop::humulene_pct},
-         {ObjectStore::FieldType::Int,    "inventory_id",  PropertyNames::Hop::inventoryId},
          {ObjectStore::FieldType::Double, "myrcene",       PropertyNames::Hop::myrcene_pct},
          {ObjectStore::FieldType::String, "notes",         PropertyNames::Hop::notes},
          {ObjectStore::FieldType::String, "origin",        PropertyNames::Hop::origin},
@@ -362,14 +362,14 @@ namespace {
          {ObjectStore::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
          {ObjectStore::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
          {ObjectStore::FieldType::String, "folder",           PropertyNames::NamedEntity::folder},
+         {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::NamedEntityWithInventory::inventoryId},
          {ObjectStore::FieldType::Enum,   "mtype",            PropertyNames::Misc::type,           &MISC_TYPE_ENUM},
          {ObjectStore::FieldType::Enum,   "use",              PropertyNames::Misc::use,            &MISC_USE_ENUM},
          {ObjectStore::FieldType::Double, "time",             PropertyNames::Misc::time           },
          {ObjectStore::FieldType::Double, "amount",           PropertyNames::Misc::amount         },
          {ObjectStore::FieldType::Bool,   "amount_is_weight", PropertyNames::Misc::amountIsWeight },
          {ObjectStore::FieldType::String, "use_for",          PropertyNames::Misc::useFor         },
-         {ObjectStore::FieldType::String, "notes",            PropertyNames::Misc::notes          },
-         {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::Misc::inventoryId    }
+         {ObjectStore::FieldType::String, "notes",            PropertyNames::Misc::notes          }
       }
    };
    template<> ObjectStore::FieldManyToManyDefns const MULTI_FIELDS<Misc> {
@@ -573,11 +573,12 @@ namespace {
    template<> ObjectStore::TableSimpleDefn const PRIMARY_TABLE<Yeast> {
       "yeast",
       {
-         {ObjectStore::FieldType::Int,    "id",          PropertyNames::NamedEntity::key},
-         {ObjectStore::FieldType::String, "name",        PropertyNames::NamedEntity::name},
-         {ObjectStore::FieldType::Bool,   "display",     PropertyNames::NamedEntity::display},
-         {ObjectStore::FieldType::Bool,   "deleted",     PropertyNames::NamedEntity::deleted},
-         {ObjectStore::FieldType::String, "folder",      PropertyNames::NamedEntity::folder},
+         {ObjectStore::FieldType::Int,    "id",               PropertyNames::NamedEntity::key},
+         {ObjectStore::FieldType::String, "name",             PropertyNames::NamedEntity::name},
+         {ObjectStore::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display},
+         {ObjectStore::FieldType::Bool,   "deleted",          PropertyNames::NamedEntity::deleted},
+         {ObjectStore::FieldType::String, "folder",           PropertyNames::NamedEntity::folder},
+         {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::NamedEntityWithInventory::inventoryId},
          {ObjectStore::FieldType::Bool,   "add_to_secondary", PropertyNames::Yeast::addToSecondary},
          {ObjectStore::FieldType::Bool,   "amount_is_weight", PropertyNames::Yeast::amountIsWeight},
          {ObjectStore::FieldType::Double, "amount",           PropertyNames::Yeast::amount},
@@ -592,8 +593,7 @@ namespace {
          {ObjectStore::FieldType::String, "best_for",         PropertyNames::Yeast::bestFor},
          {ObjectStore::FieldType::String, "laboratory",       PropertyNames::Yeast::laboratory},
          {ObjectStore::FieldType::String, "notes",            PropertyNames::Yeast::notes},
-         {ObjectStore::FieldType::String, "product_id",       PropertyNames::Yeast::productID},
-         {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::Yeast::inventoryId}
+         {ObjectStore::FieldType::String, "product_id",       PropertyNames::Yeast::productID}
       }
    };
    template<> ObjectStore::FieldManyToManyDefns const MULTI_FIELDS<Yeast> {

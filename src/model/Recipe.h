@@ -391,7 +391,6 @@ public:
    double carbonationTemp_c() const;
    double primingSugarEquiv() const;
    double kegPrimingFactor() const;
-   bool cacheOnly() const;
 
    // Calculated getters.
    double points();
@@ -511,23 +510,11 @@ public:
    void setCarbonationTemp_c( double var );
    void setPrimingSugarEquiv( double var );
    void setKegPrimingFactor( double var );
-   void setCacheOnly( bool cache );
 
 signals:
 
 public slots:
    void acceptChangeToContainedObject(QMetaProperty prop, QVariant val);
-
-   void acceptEquipChange(QMetaProperty prop, QVariant val);
-   void acceptFermChange(QMetaProperty prop, QVariant val);
-//   void acceptHopChange(QMetaProperty prop, QVariant val);
-   void acceptYeastChange(QMetaProperty prop, QVariant val);
-   void acceptMashChange(QMetaProperty prop, QVariant val);
-
-   void onFermentableChanged();
-   void acceptHopChange(Hop* hop);
-   void acceptYeastChange(Yeast* yeast);
-   void acceptMashChange(Mash* mash);
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
@@ -593,7 +580,6 @@ private:
    double m_og_fermentable;
    double m_fg_fermentable;
 
-   bool m_cacheOnly;
    // True when constructed, indicates whether recalcAll has been called.
    bool m_uninitializedCalcs;
    QMutex m_uninitializedCalcsMutex;
@@ -603,6 +589,8 @@ private:
    double batchSizeNoLosses_l();
 
    // Some recalculators for calculated properties.
+
+   void recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged);
 
    /* Recalculates all the calculated properties.
     *
@@ -643,31 +631,5 @@ private:
    void addPreinstructions( QVector<PreInstruction> preins );
    bool isValidType( const QString &str );
 };
-/*
-inline bool RecipePtrLt( Recipe* lhs, Recipe* rhs)
-{
-   return *lhs < *rhs;
-}
 
-inline bool RecipePtrEq( Recipe* lhs, Recipe* rhs)
-{
-   return *lhs == *rhs;
-}
-
-struct Recipe_ptr_cmp
-{
-   bool operator()( Recipe* lhs, Recipe* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
-
-struct Recipe_ptr_equals
-{
-   bool operator()( Recipe* lhs, Recipe* rhs )
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
 #endif

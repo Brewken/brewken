@@ -79,7 +79,7 @@ QString Hop::classNameStr()
 }
 
 Hop::Hop(QString name, bool cache) :
-   NamedEntity        {-1, name, true},
+   NamedEntityWithInventory{-1, cache, name, true},
    m_useStr           {"" },
    m_use              {Hop::Mash},
    m_typeStr          {"" },
@@ -97,56 +97,50 @@ Hop::Hop(QString name, bool cache) :
    m_humulene_pct     {0.0},
    m_caryophyllene_pct{0.0},
    m_cohumulone_pct   {0.0},
-   m_myrcene_pct      {0.0},
-   m_inventory_id     {-1 },
-   m_cacheOnly        {cache} {
+   m_myrcene_pct      {0.0} {
    return;
 }
 
 Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity        {namedParameterBundle},
-   m_use              {static_cast<Hop::Use>(namedParameterBundle(PropertyNames::Hop::use).toInt())},
-   m_type             {static_cast<Hop::Type>(namedParameterBundle(PropertyNames::Hop::type).toInt())},
-   m_form             {static_cast<Hop::Form>(namedParameterBundle(PropertyNames::Hop::form).toInt())},
-   m_alpha_pct        {namedParameterBundle(PropertyNames::Hop::alpha_pct        ).toDouble()},
-   m_amount_kg        {namedParameterBundle(PropertyNames::Hop::amount_kg        ).toDouble()},
-   m_time_min         {namedParameterBundle(PropertyNames::Hop::time_min         ).toDouble()},
-   m_notes            {namedParameterBundle(PropertyNames::Hop::notes            ).toString()},
-   m_beta_pct         {namedParameterBundle(PropertyNames::Hop::beta_pct         ).toDouble()},
-   m_hsi_pct          {namedParameterBundle(PropertyNames::Hop::hsi_pct          ).toDouble()},
-   m_origin           {namedParameterBundle(PropertyNames::Hop::origin           ).toString()},
-   m_substitutes      {namedParameterBundle(PropertyNames::Hop::substitutes      ).toString()},
-   m_humulene_pct     {namedParameterBundle(PropertyNames::Hop::humulene_pct     ).toDouble()},
-   m_caryophyllene_pct{namedParameterBundle(PropertyNames::Hop::caryophyllene_pct).toDouble()},
-   m_cohumulone_pct   {namedParameterBundle(PropertyNames::Hop::cohumulone_pct   ).toDouble()},
-   m_myrcene_pct      {namedParameterBundle(PropertyNames::Hop::myrcene_pct      ).toDouble()},
-   m_inventory_id     {namedParameterBundle(PropertyNames::Hop::inventoryId      ).toInt()},
-   m_cacheOnly        {false} /**/ {
+   NamedEntityWithInventory{namedParameterBundle},
+   m_use                   {static_cast<Hop::Use>(namedParameterBundle(PropertyNames::Hop::use).toInt())},
+   m_type                  {static_cast<Hop::Type>(namedParameterBundle(PropertyNames::Hop::type).toInt())},
+   m_form                  {static_cast<Hop::Form>(namedParameterBundle(PropertyNames::Hop::form).toInt())},
+   m_alpha_pct             {namedParameterBundle(PropertyNames::Hop::alpha_pct        ).toDouble()},
+   m_amount_kg             {namedParameterBundle(PropertyNames::Hop::amount_kg        ).toDouble()},
+   m_time_min              {namedParameterBundle(PropertyNames::Hop::time_min         ).toDouble()},
+   m_notes                 {namedParameterBundle(PropertyNames::Hop::notes            ).toString()},
+   m_beta_pct              {namedParameterBundle(PropertyNames::Hop::beta_pct         ).toDouble()},
+   m_hsi_pct               {namedParameterBundle(PropertyNames::Hop::hsi_pct          ).toDouble()},
+   m_origin                {namedParameterBundle(PropertyNames::Hop::origin           ).toString()},
+   m_substitutes           {namedParameterBundle(PropertyNames::Hop::substitutes      ).toString()},
+   m_humulene_pct          {namedParameterBundle(PropertyNames::Hop::humulene_pct     ).toDouble()},
+   m_caryophyllene_pct     {namedParameterBundle(PropertyNames::Hop::caryophyllene_pct).toDouble()},
+   m_cohumulone_pct        {namedParameterBundle(PropertyNames::Hop::cohumulone_pct   ).toDouble()},
+   m_myrcene_pct           {namedParameterBundle(PropertyNames::Hop::myrcene_pct      ).toDouble()} {
    return;
 }
 
 Hop::Hop(Hop const & other) :
-   NamedEntity        {other},
-   m_useStr           {other.m_useStr           },
-   m_use              {other.m_use              },
-   m_typeStr          {other.m_typeStr          },
-   m_type             {other.m_type             },
-   m_formStr          {other.m_formStr          },
-   m_form             {other.m_form             },
-   m_alpha_pct        {other.m_alpha_pct        },
-   m_amount_kg        {other.m_amount_kg        },
-   m_time_min         {other.m_time_min         },
-   m_notes            {other.m_notes            },
-   m_beta_pct         {other.m_beta_pct         },
-   m_hsi_pct          {other.m_hsi_pct          },
-   m_origin           {other.m_origin           },
-   m_substitutes      {other.m_substitutes      },
-   m_humulene_pct     {other.m_humulene_pct     },
-   m_caryophyllene_pct{other.m_caryophyllene_pct},
-   m_cohumulone_pct   {other.m_cohumulone_pct   },
-   m_myrcene_pct      {other.m_myrcene_pct      },
-   m_inventory_id     {-1}, // Don't copy Inventory ID as new Hop should have its own inventory
-   m_cacheOnly        {other.m_cacheOnly        } {
+   NamedEntityWithInventory{other                    },
+   m_useStr                {other.m_useStr           },
+   m_use                   {other.m_use              },
+   m_typeStr               {other.m_typeStr          },
+   m_type                  {other.m_type             },
+   m_formStr               {other.m_formStr          },
+   m_form                  {other.m_form             },
+   m_alpha_pct             {other.m_alpha_pct        },
+   m_amount_kg             {other.m_amount_kg        },
+   m_time_min              {other.m_time_min         },
+   m_notes                 {other.m_notes            },
+   m_beta_pct              {other.m_beta_pct         },
+   m_hsi_pct               {other.m_hsi_pct          },
+   m_origin                {other.m_origin           },
+   m_substitutes           {other.m_substitutes      },
+   m_humulene_pct          {other.m_humulene_pct     },
+   m_caryophyllene_pct     {other.m_caryophyllene_pct},
+   m_cohumulone_pct        {other.m_cohumulone_pct   },
+   m_myrcene_pct           {other.m_myrcene_pct      } {
    return;
 }
 
@@ -186,13 +180,6 @@ void Hop::setAmount_kg( double num )
 void Hop::setInventoryAmount(double num) {
    InventoryUtils::setAmount(*this, num);
    return;
-}
-
-void Hop::setInventoryId(int key) {
-   m_inventory_id = key;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Hop::inventoryId, key);
-   }
 }
 
 void Hop::setUse(Use u)
@@ -364,8 +351,6 @@ void Hop::setMyrcene_pct( double num )
    }
 }
 
-void Hop::setCacheOnly(bool cache) { m_cacheOnly = cache; }
-
 //============================="GET" METHODS====================================
 
 Hop::Use Hop::use() const { return m_use; }
@@ -386,14 +371,9 @@ double Hop::humulene_pct() const { return m_humulene_pct; }
 double Hop::caryophyllene_pct() const { return m_caryophyllene_pct; }
 double Hop::cohumulone_pct() const { return m_cohumulone_pct; }
 double Hop::myrcene_pct() const { return m_myrcene_pct; }
-bool   Hop::cacheOnly() const { return m_cacheOnly; }
 
 double Hop::inventory() const {
    return InventoryUtils::getAmount(*this);
-}
-
-int Hop::inventoryId() const {
-   return m_inventory_id;
 }
 
 const QString Hop::useStringTr() const

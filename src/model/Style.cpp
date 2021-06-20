@@ -52,31 +52,30 @@ QString Style::classNameStr()
 
 // suitable for something that will be written to the db later
 Style::Style(QString t_name, bool cacheOnly) :
-   NamedEntity(-1, t_name, true),
-     m_category(QString()),
-     m_categoryNumber(QString()),
-     m_styleLetter(QString()),
-     m_styleGuide(QString()),
-     m_typeStr(QString()),
-     m_type(static_cast<Style::Type>(0)),
-     m_ogMin(0.0),
-     m_ogMax(0.0),
-     m_fgMin(0.0),
-     m_fgMax(0.0),
-     m_ibuMin(0.0),
-     m_ibuMax(0.0),
-     m_colorMin_srm(0.0),
-     m_colorMax_srm(0.0),
-     m_carbMin_vol(0.0),
-     m_carbMax_vol(0.0),
-     m_abvMin_pct(0.0),
-     m_abvMax_pct(0.0),
-     m_notes(QString()),
-     m_profile(QString()),
-     m_ingredients(QString()),
-     m_examples(QString()),
-     m_cacheOnly(cacheOnly)
-{
+   NamedEntity(-1, cacheOnly, t_name, true),
+   m_category(QString()),
+   m_categoryNumber(QString()),
+   m_styleLetter(QString()),
+   m_styleGuide(QString()),
+   m_typeStr(QString()),
+   m_type(static_cast<Style::Type>(0)),
+   m_ogMin(0.0),
+   m_ogMax(0.0),
+   m_fgMin(0.0),
+   m_fgMax(0.0),
+   m_ibuMin(0.0),
+   m_ibuMax(0.0),
+   m_colorMin_srm(0.0),
+   m_colorMax_srm(0.0),
+   m_carbMin_vol(0.0),
+   m_carbMax_vol(0.0),
+   m_abvMin_pct(0.0),
+   m_abvMax_pct(0.0),
+   m_notes(QString()),
+   m_profile(QString()),
+   m_ingredients(QString()),
+   m_examples(QString()) {
+   return;
 }
 
 Style::Style(Style const & other) :
@@ -102,8 +101,7 @@ Style::Style(Style const & other) :
    m_notes         {other.m_notes         },
    m_profile       {other.m_profile       },
    m_ingredients   {other.m_ingredients   },
-   m_examples      {other.m_examples      },
-   m_cacheOnly     {other.m_cacheOnly     } {
+   m_examples      {other.m_examples      } {
    return;
 }
 
@@ -131,8 +129,7 @@ Style::Style(NamedParameterBundle const & namedParameterBundle) :
    m_notes         {namedParameterBundle(PropertyNames::Style::notes         ).toString()},
    m_profile       {namedParameterBundle(PropertyNames::Style::profile       ).toString()},
    m_ingredients   {namedParameterBundle(PropertyNames::Style::ingredients   ).toString()},
-   m_examples      {namedParameterBundle(PropertyNames::Style::examples      ).toString()},
-   m_cacheOnly     {false} {
+   m_examples      {namedParameterBundle(PropertyNames::Style::examples      ).toString()} {
    return;
 }
 
@@ -378,8 +375,6 @@ void Style::setExamples( const QString& var )
    }
 }
 
-void Style::setCacheOnly( const bool cache ) { m_cacheOnly = cache; }
-
 //============================="GET" METHODS====================================
 QString Style::category() const { return m_category; }
 QString Style::categoryNumber() const { return m_categoryNumber; }
@@ -392,7 +387,6 @@ QString Style::examples() const { return m_examples; }
 Style::Type Style::type() const { return m_type; }
 const QString Style::typeString() const { return m_typeStr; }
 
-bool   Style::cacheOnly() const { return m_cacheOnly; }
 double Style::ogMin() const { return m_ogMin; }
 double Style::ogMax() const { return m_ogMax; }
 double Style::fgMin() const { return m_fgMin; }

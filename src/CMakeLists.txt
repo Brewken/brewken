@@ -163,6 +163,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/model/MashStep.cpp
     ${SRCDIR}/model/Misc.cpp
     ${SRCDIR}/model/NamedEntity.cpp
+    ${SRCDIR}/model/NamedEntityWithInventory.cpp
     ${SRCDIR}/model/NamedParameterBundle.cpp
     ${SRCDIR}/model/Recipe.cpp
     ${SRCDIR}/model/Salt.cpp
@@ -321,6 +322,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/model/MashStep.h
     ${SRCDIR}/model/Misc.h
     ${SRCDIR}/model/NamedEntity.h
+    ${SRCDIR}/model/NamedEntityWithInventory.h
     ${SRCDIR}/model/Recipe.h
     ${SRCDIR}/model/Salt.h
     ${SRCDIR}/model/Style.h

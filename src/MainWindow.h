@@ -165,8 +165,8 @@ public slots:
    //! \brief Update the main windows statusbar.
    void updateStatus(const QString status);
 
-   //! \brief Close a brewnote tab if we must
-   void closeBrewNote(BrewNote*);
+   //! \brief Close a brewnote tab if we must (because of the BrewNote being deleted)
+   void closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object);
    //! \brief Add given Fermentable to the Recipe.
    void addFermentableToRecipe(Fermentable* ferm);
    //! \brief Remove selected Fermentable(s) from the Recipe.

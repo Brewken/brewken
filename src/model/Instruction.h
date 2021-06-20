@@ -69,7 +69,6 @@ public:
    void setTimerValue(const QString& timerVal);
    void setCompleted(bool comp);
    void setInterval(double interval);
-   void setCacheOnly(bool cache);
    void addReagent(const QString& reagent);
 
    // "get" methods.
@@ -80,7 +79,6 @@ public:
    //! This is a non-stored temporary in-memory set.
    QList<QString> reagents();
    double interval();
-   bool cacheOnly();
 
    int instructionNumber() const;
 
@@ -105,7 +103,6 @@ private:
    QString m_timerValue;
    bool    m_completed;
    double  m_interval;
-   bool    m_cacheOnly;
 
    QList<QString> m_reagents;
 };

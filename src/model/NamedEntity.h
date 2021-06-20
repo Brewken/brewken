@@ -81,7 +81,7 @@ class NamedEntity : public QObject {
 
    friend class BeerXML;
 public:
-   NamedEntity(int key, QString t_name = QString(), bool t_display = false, QString folder = QString());
+   NamedEntity(int key, bool cache = true, QString t_name = QString(), bool t_display = false, QString folder = QString());
    NamedEntity(NamedEntity const & other);
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
@@ -126,6 +126,8 @@ public:
    Q_PROPERTY( int key READ key WRITE setKey )
    Q_PROPERTY( int parentKey READ getParentKey WRITE setParentKey )
 //   Q_PROPERTY( DatabaseConstants::DbTableId table READ table )
+   //! \brief To cache or not to cache
+   Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ )
 
    //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
@@ -162,6 +164,9 @@ public:
 
    int getParentKey() const;
    void setParentKey(int parentKey);
+
+   bool cacheOnly() const;
+   void setCacheOnly(bool cache);
 
    /**
     * \brief Get the IDs of this object's parent, children and siblings (plus the ID of the object itself).
@@ -268,6 +273,7 @@ protected:
    int _key;
    // This is 0 if there is no parent (or parent is not yet known)
    int parentKey;
+   bool m_cacheOnly;
 
    /*!
     * \param prop_name A meta-property name
@@ -290,10 +296,10 @@ protected:
     *
     * .:TODO:. MY 2021-03-21 Would be nice if NamedEntity didn't need to know such DB details
     */
-   QVariant get( const QString& col_name ) const;
+//   QVariant get( const QString& col_name ) const;
 
-   void setInventory( const QVariant& value, int invKey = 0, bool notify=true );
-   QVariant getInventory( const QString& col_name ) const;
+//   void setInventory( const QVariant& value, int invKey = 0, bool notify=true );
+//   QVariant getInventory( const QString& col_name ) const;
 
 private:
   mutable QString _folder;

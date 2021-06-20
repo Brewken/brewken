@@ -46,16 +46,14 @@ QString Salt::classNameStr()
 }
 
 Salt::Salt(QString name, bool cache) :
-   NamedEntity(-1, name, true),
+   NamedEntity(-1, cache, name, true),
    m_amount(0.0),
    m_add_to(NEVER),
    m_type(NONE),
    m_amount_is_weight(true),
    m_percent_acid(0.0),
-   m_is_acid(false),
-   m_misc_id(-1),
-   m_cacheOnly(cache)
-{
+   m_is_acid(false) {
+   return;
 }
 
 Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
@@ -65,23 +63,19 @@ Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
    m_type            {static_cast<Salt::Types>(namedParameterBundle(PropertyNames::Salt::amountIsWeight).toInt())},
    m_amount_is_weight{namedParameterBundle(PropertyNames::Salt::isAcid        ).toBool()},
    m_percent_acid    {namedParameterBundle(PropertyNames::Salt::percentAcid   ).toDouble()},
-   m_is_acid         {namedParameterBundle(PropertyNames::Salt::type          ).toBool()},
-   m_misc_id(-1),
-   m_cacheOnly(false) {
+   m_is_acid         {namedParameterBundle(PropertyNames::Salt::type          ).toBool()} {
    return;
 }
 
 Salt::Salt(Salt const & other) :
-   NamedEntity(-1, other.name(), true),
-   m_amount(other.m_amount),
-   m_add_to(other.m_add_to),
-   m_type(other.m_type),
-   m_amount_is_weight(other.m_amount_is_weight),
-   m_percent_acid(other.m_percent_acid),
-   m_is_acid(other.m_is_acid),
-   m_misc_id(other.m_misc_id),
-   m_cacheOnly(other.m_cacheOnly)
-{
+   NamedEntity       {other                   },
+   m_amount          {other.m_amount          },
+   m_add_to          {other.m_add_to          },
+   m_type            {other.m_type            },
+   m_amount_is_weight{other.m_amount_is_weight},
+   m_percent_acid    {other.m_percent_acid    },
+   m_is_acid         {other.m_is_acid         } {
+   return;
 }
 
 //================================"SET" METHODS=================================
@@ -147,14 +141,11 @@ void Salt::setPercentAcid(double var)
       setEasy(PropertyNames::Salt::percentAcid, var);
    }
 }
-void Salt::setCacheOnly(bool cache) { m_cacheOnly = cache; }
 
 //=========================="GET" METHODS=======================================
 double Salt::amount() const { return m_amount; }
 Salt::WhenToAdd Salt::addTo() const { return m_add_to; }
 Salt::Types Salt::type() const { return m_type; }
-bool Salt::cacheOnly() const { return m_cacheOnly; }
-int Salt::miscId() const { return m_misc_id; }
 bool Salt::isAcid() const { return m_is_acid; }
 bool Salt::amountIsWeight() const { return m_amount_is_weight; }
 double Salt::percentAcid() const { return m_percent_acid; }

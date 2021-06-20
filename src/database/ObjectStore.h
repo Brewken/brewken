@@ -195,7 +195,7 @@ public:
    /**
     * \brief Update a single property of an existing object in the DB
     */
-   void updateProperty(QObject const & object, char const * const propertyToUpdateInDb);
+   void updateProperty(QObject const & object, char const * const propertyName);
 
    /**
     * \brief Remove the object from our local in-memory cache
@@ -361,6 +361,22 @@ signals:
     *               won't be able to get it from the ID because ... it's deleted.
     */
    void signalObjectDeleted(int id, std::shared_ptr<QObject> object);
+
+   /**
+    * \brief Signal emitted when an object parameter is changed.  This is for listeners that want to know about any
+    *        change to _any_ object of a particular type.  (See \c NamedEntity::changed() for listening to changes to
+    *        one specific object.)  NB: Replaces the following signals:
+    *            void Database::changedInventory(DatabaseConstants::DbTableId, int, QVariant);
+    *
+    *        Note that this signal is only emitted when \c updateProperty() is called, NOT when \c update() is called
+    *        (as in the latter case we won't know which, if any, properties were changed).
+    *
+    * \param id The primary key of the object that changed.  (Recipient will already know which class, as, eg, will
+    *           connect slot to \c ObjectStoreTyped<InventoryFermentable>::getInstance(),
+    *           \c ObjectStoreTyped<InventoryHop>::getInstance(), etc
+    * \param propertyName The name of the property that changed
+    */
+   void signalPropertyChanged(int id, char const * const propertyName);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

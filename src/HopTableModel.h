@@ -21,19 +21,19 @@
 #ifndef HOPTABLEMODEL_H
 #define HOPTABLEMODEL_H
 
-class HopTableModel;
-class HopItemDelegate;
-
 #include <QAbstractTableModel>
-#include <Qt>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
-#include <QTableView>
 #include <QItemDelegate>
+#include <QModelIndex>
+#include <QTableView>
+#include <QVariant>
 #include <QVector>
+#include <QWidget>
+
 #include "model/Hop.h"
 #include "model/Recipe.h"
+
+class HopTableModel;
+class HopItemDelegate;
 
 enum{HOPNAMECOL, HOPALPHACOL, HOPAMOUNTCOL, HOPINVENTORYCOL, HOPFORMCOL, HOPUSECOL, HOPTIMECOL, HOPNUMCOLS /*This one MUST be last*/};
 
@@ -96,7 +96,7 @@ public:
    QString generateName(int column) const;
 public slots:
    void changed(QMetaProperty, QVariant);
-   void changedInventory(int, QVariant);
+   void changedInventory(int invKey, char const * const propertyName);
    //! \brief Add a hop to the model.
 //   void addHop(Hop* hop);
    void addHop(int hopId);

@@ -3161,7 +3161,7 @@ int Database::insertBrewNote(BrewNote* ins, Recipe* parent) {
    return dbFileName;
 }*/
 
-int Database::getInventoryId(TableSchema* tbl, int key )
+/*int Database::getInventoryId(TableSchema* tbl, int key )
 {
    QString query = QString("SELECT %1 from %2 where %3 = %4")
          .arg(tbl->foreignKeyToColumn())
@@ -3184,7 +3184,7 @@ int Database::getInventoryId(TableSchema* tbl, int key )
 // reach into every child and update the inventory. I am leaning towards the first.
 // Turns out, both are required in some order. Still thinking signal/slot
 //
-/*void Database::setInventory(NamedEntity* ins, QVariant value, int invKey, bool notify )
+void Database::setInventory(NamedEntity* ins, QVariant value, int invKey, bool notify )
 {
    TableSchema* tbl = this->pimpl->dbDefn.table(ins->table());
    TableSchema* inv = this->pimpl->dbDefn.table(tbl->invTable());
@@ -3327,7 +3327,7 @@ QVariant Database::get( TableSchema* tbl, int key, QString col_name )
 
 
 
-QVariant Database::getInventoryAmt(QString col_name, DatabaseConstants::DbTableId table, int key)
+/*QVariant Database::getInventoryAmt(QString col_name, DatabaseConstants::DbTableId table, int key)
 {
    QVariant val = QVariant(0.0);
    TableSchema* tbl = this->pimpl->dbDefn.table(table);
@@ -3400,7 +3400,7 @@ QMap<int, double> Database::getInventory(const DatabaseConstants::DbTableId tabl
 
    return result;
 }
-
+*/
 // Add to recipe ==============================================================
 /*
 void Database::addToRecipe( Recipe* rec, Equipment* e, bool noCopy, bool transact )

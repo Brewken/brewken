@@ -106,7 +106,7 @@ public slots:
 private slots:
    //! \brief Catch changes to Recipe, Database, and Misc.
    void changed(QMetaProperty, QVariant);
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+   void changedInventory(int invKey, char const * const propertyName);
 
 private:
    bool editable;

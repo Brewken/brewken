@@ -116,6 +116,7 @@ public:
                                   QString const & password="brewken");
    bool loadSuccessful();
 
+   /*
    //! Inserts an new inventory row in the appropriate table
    int newInventory(TableSchema* schema);
 
@@ -126,7 +127,7 @@ public:
    QMap<int, double> getInventory(const DatabaseConstants::DbTableId table) const;
 
    QVariant getInventoryAmt(QString col_name, DatabaseConstants::DbTableId table, int key);
-
+*/
 public:
    /**
    * \brief  This function is intended to be called by an ingredient that has not already cached its parent's key
@@ -184,7 +185,7 @@ signals:
    void newMashStepSignal(MashStep*);
 */
    // Sigh
-   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
+//   void changedInventory(DatabaseConstants::DbTableId,int,QVariant);
 
 private slots:
    //! Load database from file.

@@ -57,7 +57,7 @@ ObjectStore & Equipment::getObjectStoreTypedInstance() const {
 
 //=============================CONSTRUCTORS=====================================
 Equipment::Equipment(QString t_name, bool cacheOnly) :
-   NamedEntity(-1, t_name, true),
+   NamedEntity(-1, cacheOnly, t_name, true),
    m_boilSize_l(22.927),
    m_batchSize_l(18.927),
    m_tunVolume_l(0.0),
@@ -74,9 +74,8 @@ Equipment::Equipment(QString t_name, bool cacheOnly) :
    m_hopUtilization_pct(100.0),
    m_notes(QString()),
    m_grainAbsorption_LKg(1.086),
-   m_boilingPoint_c(100.0),
-   m_cacheOnly(cacheOnly)
-{
+   m_boilingPoint_c(100.0) {
+   return;
 }
 
 Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
@@ -97,31 +96,29 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    m_hopUtilization_pct   {namedParameterBundle(PropertyNames::Equipment::hopUtilization_pct   ).toDouble()},
    m_notes                {namedParameterBundle(PropertyNames::Equipment::notes                ).toString()},
    m_grainAbsorption_LKg  {namedParameterBundle(PropertyNames::Equipment::grainAbsorption_LKg  ).toDouble()},
-   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c       ).toDouble()},
-   m_cacheOnly            {false} {
+   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c       ).toDouble()} {
    return;
 }
 
-Equipment::Equipment( Equipment const & other ) :
-   NamedEntity(other),
-   m_boilSize_l           (other.m_boilSize_l),
-   m_batchSize_l          (other.m_batchSize_l),
-   m_tunVolume_l          (other.m_tunVolume_l),
-   m_tunWeight_kg         (other.m_tunWeight_kg),
-   m_tunSpecificHeat_calGC(other.m_tunSpecificHeat_calGC),
-   m_topUpWater_l         (other.m_topUpWater_l),
-   m_trubChillerLoss_l    (other.m_trubChillerLoss_l),
-   m_evapRate_pctHr       (other.m_evapRate_pctHr),
-   m_evapRate_lHr         (other.m_evapRate_lHr),
-   m_boilTime_min         (other.m_boilTime_min),
-   m_calcBoilVolume       (other.m_calcBoilVolume),
-   m_lauterDeadspace_l    (other.m_lauterDeadspace_l),
-   m_topUpKettle_l        (other.m_topUpKettle_l),
-   m_hopUtilization_pct   (other.m_hopUtilization_pct),
-   m_notes                (other.m_notes),
-   m_grainAbsorption_LKg  (other.m_grainAbsorption_LKg),
-   m_boilingPoint_c       (other.m_boilingPoint_c),
-   m_cacheOnly            (other.m_cacheOnly) {
+Equipment::Equipment(Equipment const & other) :
+   NamedEntity            {other                        },
+   m_boilSize_l           {other.m_boilSize_l           },
+   m_batchSize_l          {other.m_batchSize_l          },
+   m_tunVolume_l          {other.m_tunVolume_l          },
+   m_tunWeight_kg         {other.m_tunWeight_kg         },
+   m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
+   m_topUpWater_l         {other.m_topUpWater_l         },
+   m_trubChillerLoss_l    {other.m_trubChillerLoss_l    },
+   m_evapRate_pctHr       {other.m_evapRate_pctHr       },
+   m_evapRate_lHr         {other.m_evapRate_lHr         },
+   m_boilTime_min         {other.m_boilTime_min         },
+   m_calcBoilVolume       {other.m_calcBoilVolume       },
+   m_lauterDeadspace_l    {other.m_lauterDeadspace_l    },
+   m_topUpKettle_l        {other.m_topUpKettle_l        },
+   m_hopUtilization_pct   {other.m_hopUtilization_pct   },
+   m_notes                {other.m_notes                },
+   m_grainAbsorption_LKg  {other.m_grainAbsorption_LKg  },
+   m_boilingPoint_c       {other.m_boilingPoint_c       } {
    return;
 }
 
@@ -407,8 +404,6 @@ void Equipment::setBoilingPoint_c(double var)
    }
 }
 
-void Equipment::setCacheOnly(bool cache) { m_cacheOnly = cache; }
-
 //============================"GET" METHODS=====================================
 
 QString Equipment::notes() const { return m_notes; }
@@ -428,7 +423,6 @@ double Equipment::topUpKettle_l() const { return m_topUpKettle_l; }
 double Equipment::hopUtilization_pct() const { return m_hopUtilization_pct; }
 double Equipment::grainAbsorption_LKg() { return m_grainAbsorption_LKg; }
 double Equipment::boilingPoint_c() const { return m_boilingPoint_c; }
-bool Equipment::cacheOnly() const { return m_cacheOnly; }
 
 void Equipment::doCalculations()
 {

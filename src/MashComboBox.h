@@ -1,6 +1,7 @@
 /**
- * MashComboBox.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * MashComboBox.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -32,41 +33,45 @@ class Mash;
 /*!
  * \class MashComboBox
  *
- *
  * \brief A combobox that is a view class for a list of mashes.
  *
  * Well, it's not exactly
  * a strict view class, since it contains model-related methods, so we should
  * prune out the model methods at some point.
  */
-class MashComboBox : public QComboBox
-{
-  Q_OBJECT
+class MashComboBox : public QComboBox {
+   Q_OBJECT
 
-   public:
-      MashComboBox(QWidget* parent=0);
-      virtual ~MashComboBox() {}
-      //! Set the current index to that which corresponds to \b m.
-      void setIndexByMash(Mash* m);
-      //! Set the index.
-      void setIndex(int ndx);
-      //! Remove all mashs from the internal model.
-      void removeAllMashs();
-      //! Populate the internal model with all the database mashs.
-      void repopulateList();
+public:
+   MashComboBox(QWidget * parent = 0);
+   virtual ~MashComboBox() = default;
 
-      //! \return the selected mash.
-      Mash* getSelectedMash();
+   //! Set the current index to that which corresponds to \b m.
+   void setIndexByMash(Mash * m);
+   //! Set the index.
+   void setIndex(int ndx);
+   //! Remove all mashs from the internal model.
+   void removeAllMashs();
+   //! Populate the internal model with all the database mashs.
+   void repopulateList();
 
-   public slots:
-      void changed(QMetaProperty, QVariant);
-      //! Add a mash to the internal model's list.
-      void addMash(Mash* m);
-      //! Remove a mash from the internal model's list.
-      void removeMash(Mash* m);
+   //! \return the selected mash.
+   Mash * getSelectedMash();
 
-   private:
-      QList<Mash*> mashObs;
+   //! Add a mash to the internal model's list.
+   void add(Mash * m);
+   //! Remove a mash from the internal model's list.
+   void remove(Mash * m);
+
+public slots:
+   void changed(QMetaProperty, QVariant);
+   //! Add a mash to the list.
+   void addMash(int mashId);
+   //! Remove a mash from the list.
+   void removeMash(int mashId, std::shared_ptr<QObject> object);
+
+private:
+   QList<Mash *> mashObs;
 };
 
 #endif

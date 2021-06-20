@@ -42,24 +42,24 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Fermentable.h"
+#include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
 
 //=====================CLASS FermentableTableModel==============================
-FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable)
-   : QAbstractTableModel(parent),
-     parentTableWidget(parent),
-     editable(editable),
-     _inventoryEditable(false),
-     recObs(nullptr),
-     displayPercentages(false),
-     totalFermMass_kg(0)
-{
+FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
+   QAbstractTableModel(parent),
+   parentTableWidget(parent),
+   editable(editable),
+   _inventoryEditable(false),
+   recObs(nullptr),
+   displayPercentages(false),
+   totalFermMass_kg(0) {
+
    fermObs.clear();
    // for units and scales
    setObjectName("fermentableTable");
@@ -71,7 +71,8 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable)
    parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    parentTableWidget->setWordWrap(false);
    connect(headerView, &QWidget::customContextMenuRequested, this, &FermentableTableModel::contextMenu);
-   connect( &(Database::instance()), &Database::changedInventory, this, &FermentableTableModel::changedInventory );
+   connect(&ObjectStoreTyped<InventoryFermentable>::getInstance(), &ObjectStoreTyped<InventoryFermentable>::signalPropertyChanged, this, &FermentableTableModel::changedInventory);
+   return;
 }
 
 void FermentableTableModel::observeRecipe(Recipe* rec)
@@ -215,22 +216,18 @@ void FermentableTableModel::setDisplayPercentages(bool var)
    displayPercentages = var;
 }
 
-void FermentableTableModel::changedInventory(DatabaseConstants::DbTableId table, int invKey, QVariant val)
-{
+void FermentableTableModel::changedInventory(int invKey, char const * const propertyName) {
 
-   if ( table == DatabaseConstants::FERMTABLE ) {
+   if (QString(propertyName) == PropertyNames::Inventory::amount) {
       for( int i = 0; i < fermObs.size(); ++i ) {
          Fermentable* holdmybeer = fermObs.at(i);
-
          if ( invKey == holdmybeer->inventoryId() ) {
-            holdmybeer->setCacheOnly(true);
-            holdmybeer->setInventoryAmount(val.toDouble());
-            holdmybeer->setCacheOnly(false);
             emit dataChanged( QAbstractItemModel::createIndex(i,FERMINVENTORYCOL),
                               QAbstractItemModel::createIndex(i,FERMINVENTORYCOL) );
          }
       }
    }
+   return;
 }
 
 void FermentableTableModel::changed(QMetaProperty prop, QVariant /*val*/)

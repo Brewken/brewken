@@ -327,7 +327,7 @@ void MainWindow::init() {
    // No connections from the database yet? Oh FSM, that probably means I'm
    // doing it wrong again.
    // .:TODO:. Change this so we use the newere deleted signal!
-   connect( &(Database::instance()), SIGNAL( deletedSignal(BrewNote*)), this, SLOT( closeBrewNote(BrewNote*)));
+   connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectDeleted, this, &MainWindow::closeBrewNote);
 
    qDebug() << Q_FUNC_INFO << "MainWindow initialisation complete";
    return;
@@ -1277,8 +1277,7 @@ void MainWindow::showChanges(QMetaProperty* prop)
    // Not sure about this, but I am annoyed that modifying the hop usage
    // modifiers isn't automatically updating my display
    if ( updateAll ) {
-//     recipeObs->acceptHopChange( recipeObs->metaProperty("hops"), QVariant());
-     recipeObs->acceptChangeToContainedObject( recipeObs->metaProperty("hops"), QVariant());
+     recipeObs->recalcIBU();
      hopTableProxy->invalidate();
    }
 }
@@ -2418,22 +2417,15 @@ bool MainWindow::verifyImport(QString tag, QString name)
                                 QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes;
 }
 
-void MainWindow::addMashStep()
-{
-   Mash* mash;
-   if( recipeObs != nullptr && recipeObs->mash() != nullptr )
-   {
-      mash = recipeObs->mash();
-   }
-   else
-   {
+void MainWindow::addMashStep() {
+   if( recipeObs == nullptr || recipeObs->mash() == nullptr ) {
       QMessageBox::information(this, tr("No mash"), tr("Trying to add a mash step without a mash. Please create a mash first.") );
       return;
    }
 
    // This ultimately gets stored in MainWindow::addMashStepToMash()
    MashStep* step = new MashStep("", true);
-   //step->setMash(mash);
+   //step->setMash(recipeObs->mash());
    this->mashStepEditor->setMashStep(step);
    this->mashStepEditor->setVisible(true);
    return;
@@ -3084,8 +3076,8 @@ void MainWindow::updateStatus(const QString status) {
       statusBar()->showMessage(status, 3000);
 }
 
-void MainWindow::closeBrewNote(BrewNote* b)
-{
+void MainWindow::closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object) {
+   BrewNote* b = std::static_pointer_cast<BrewNote>(object).get();
    Recipe* parent = ObjectStoreWrapper::getByIdRaw<Recipe>(b->getRecipeId());
 
    // If this isn't the focused recipe, do nothing because there are no tabs

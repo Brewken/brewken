@@ -26,13 +26,11 @@
 #include <QString>
 #include <QStringList>
 
-#include "model/NamedEntity.h"
+#include "model/NamedEntityWithInventory.h"
 
 namespace PropertyNames::Yeast { static char const * const amount = "amount"; /* previously kpropAmount */ }
 namespace PropertyNames::Yeast { static char const * const form = "form"; /* previously kpropForm */ }
 namespace PropertyNames::Yeast { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
-namespace PropertyNames::Yeast { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
-namespace PropertyNames::Yeast { static char const * const inventoryId = "inventoryId"; /* previously kpropInventoryId */ }
 namespace PropertyNames::Yeast { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
 namespace PropertyNames::Yeast { static char const * const type = "type"; /* previously kpropType */ }
 namespace PropertyNames::Yeast { static char const * const notes = "notes"; /* previously kpropNotes */ }
@@ -54,7 +52,7 @@ namespace PropertyNames::Yeast { static char const * const formString = "formStr
  *
  * \brief Model for yeast records in the database.
  */
-class Yeast : public NamedEntity {
+class Yeast : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "yeasts")
 
@@ -89,10 +87,6 @@ public:
    Q_PROPERTY( QString formStringTr READ formStringTr )
    //! \brief The amount in either liters or kg depending on \c amountIsWeight().
    Q_PROPERTY( double amount READ amount WRITE setAmount /*NOTIFY changed*/ /*changedAmount*/ )
-   //! \brief The amount in inventory in either liters or kg depending on \c amountIsWeight().
-   Q_PROPERTY( double inventory READ inventory WRITE setInventoryAmount /*NOTIFY changed*/ /*changedInventory*/ )
-   //! \brief The inventory id
-   Q_PROPERTY( double inventoryId READ inventoryId WRITE setInventoryId /*NOTIFY changed*/ /*changedInventory*/ )
    //! \brief Whether the \c amount() is weight (kg) or volume (liters).
    Q_PROPERTY( bool amountIsWeight READ amountIsWeight WRITE setAmountIsWeight /*NOTIFY changed*/ /*changedAmountIsWeight*/ )
    //! \brief The lab from which it came.
@@ -126,7 +120,7 @@ public:
    void setType( Type t);
    void setForm( Form f);
    void setAmount( double var);
-   void setInventoryAmount(double var);
+   virtual void setInventoryAmount(double var);
    void setInventoryQuanta(int var);
    void setAmountIsWeight( bool var);
    void setLaboratory( const QString& var);
@@ -140,8 +134,6 @@ public:
    void setTimesCultured( int var);
    void setMaxReuse( int var);
    void setAddToSecondary( bool var);
-   void setCacheOnly( bool cache);
-   void setInventoryId( int key);
 
    // Getters
    Type type() const;
@@ -151,8 +143,7 @@ public:
    const QString formString() const;
    const QString formStringTr() const;
    double amount() const;
-   double inventory() const;
-   int inventoryId() const;
+   virtual double inventory() const;
    bool amountIsWeight() const;
    QString laboratory() const;
    QString productID() const;
@@ -167,7 +158,6 @@ public:
    int timesCultured() const;
    int maxReuse() const;
    bool addToSecondary() const;
-   bool cacheOnly() const;
 
    static QString classNameStr();
 
@@ -197,7 +187,6 @@ private:
    int m_maxReuse;
    bool m_addToSecondary;
    int m_inventory_id;
-   bool m_cacheOnly;
 
    static QStringList types;
    static QStringList forms;
