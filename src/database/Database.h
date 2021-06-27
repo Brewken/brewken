@@ -30,14 +30,12 @@
 
 #include <memory> // For PImpl
 
-#include <QDebug>
-#include <QObject>
+#include <QCoreApplication>
 #include <QSqlDatabase>
 #include <QString>
 
 #include "Brewken.h"
 #include "database/DatabaseSchema.h"
-
 
 /*!
  * \class Database
@@ -45,11 +43,9 @@
  * \brief Handles connections to the database.
  *
  * This class is a singleton.
- *
- * .:TBD:. Does it still need to inherit from QObject?
  */
-class Database : public QObject {
-   Q_OBJECT
+class Database {
+   Q_DECLARE_TR_FUNCTIONS(Database)
 
 public:
 
@@ -112,8 +108,6 @@ public:
                                   QString const & password="brewken");
    bool loadSuccessful();
 
-public:
-
    /*!
     * Updates the Brewken-provided ingredients from the given sqlite
     * database file.
@@ -126,15 +120,41 @@ public:
                         QString const& Username, QString const& Password,
                         int Portnum, Brewken::DBTypes newType);
 
+   /**
+    * \brief For a given base type, return the typename to use for the corresponding columns when creating tables.
+    *
+    *        Note that there is no general implementation of this template, just specialisations (defined in
+    *        Database.cpp).  Supported types are:
+    *           bool
+    *           int
+    *           unsigned int
+    *           double
+    *           QString
+    *           QDate
+    */
+   template<typename T> char const * getDbNativeTypeName() const;
+
+   /**
+    * \brief Returns the text we need to use to specify an integer column as primary key when creating a table, eg:
+    *           "PRIMARY KEY" for SQLite
+    *           "SERIAL PRIMARY KEY" for PostgreSQL
+    *           "AUTO_INCREMENT PRIMARY KEY" for MySQL / MariaDB
+    */
+   char const * getDbNativeIntPrimaryKeyModifier() const;
+
+   /**
+    * \brief Returns a text template for an ALTER TABLE query to add a foreign key column to a table.  Callers should
+    *        create a QString from the result and append .arg() calls to set:
+    *           • table name (for table to modify) as argument 1
+    *           • column name (to add) as argument 2
+    *           • foreign key table name as argument 3
+    *           • foreign key column name as argument 4
+    */
+   char const * getSqlToAddColumnAsForeignKey() const;
+
+
    // .:TODO:. We can get rid of this once we rewrite BeerXml output code to use the same structures as for input
    DatabaseSchema & getDatabaseSchema();
-
-//signals:
-
-private:
-//slots:
-   //! Load database from file.
-   bool load();
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -150,6 +170,8 @@ private:
    //! Destructor hidden.
    ~Database();
 
+   //! Load database from file.
+   bool load();
 };
 
 #endif

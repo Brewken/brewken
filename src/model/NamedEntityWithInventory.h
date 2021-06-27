@@ -41,6 +41,15 @@ public:
    //! \brief The inventory table id, needed for signals
    Q_PROPERTY( double inventoryId            READ inventoryId            WRITE setInventoryId            /*NOTIFY changed*/ /*changedInventoryId*/ )
 
+   /**
+    * \brief Override \c NamedEntity::makeChild() as we have additional work to do for objects with inventory.
+    *        Specifically, a child object needs to have the same inventory as its parent.
+    *
+    * \param copiedFrom Note that this must stay as a reference to \c NamedEntity because we need to have the same
+    *                   signature as the base class member function that we're overriding.
+    */
+   virtual void makeChild(NamedEntity const & copiedFrom);
+
    virtual double inventory() const = 0;
    int inventoryId() const;
 

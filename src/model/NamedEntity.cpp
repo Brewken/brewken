@@ -21,8 +21,6 @@
 
 #include <typeinfo>
 
-#include <QDomElement>
-#include <QDomNode>
 #include <QMetaProperty>
 
 #include "Brewken.h"
@@ -33,51 +31,65 @@ namespace {
 }
 
 NamedEntity::NamedEntity(int key,  bool cache, QString t_name, bool t_display, QString folder) :
-   QObject(nullptr),
-   _key(key),
-   parentKey(0),
-   m_cacheOnly(cache),
-   _folder(folder),
-   _name(t_name),
-   _display(t_display),
-   _deleted(false) {
+   QObject    {nullptr  },
+   _key       {key      },
+   parentKey  {-1       },
+   m_cacheOnly{cache    },
+   _folder    {folder   },
+   _name      {t_name   },
+   _display   {t_display},
+   _deleted   {false    } {
    return;
 }
 
 NamedEntity::NamedEntity(NamedEntity const & other) :
-   QObject    {nullptr},
-   _key       {-1}, // We don't want to copy the other object's key/ID
-   parentKey  {other.parentKey},
+   QObject    {nullptr          }, // QObject doesn't have a copy constructor, so just make a new one
+   _key       {-1               }, // We don't want to copy the other object's key/ID
+   parentKey  {other.parentKey  },
    m_cacheOnly{other.m_cacheOnly},
-   _folder    {other._folder},
-   _name      {QString()},
-   _display   {other._display},
-   _deleted   {other._deleted} {
-   //
-   // If the object we're copying has no parent, then we make it our parent, on the assumption that it's the master
-   // version of this Hop/Fermentable/etc.
-   //
-   // .:TBD:. Check whether this assumption is always valid
-   //
-   if (this->parentKey <= 0) {
-      this->parentKey = other._key;
-   }
-
+   _folder    {other._folder    },
+   _name      {other._name      },
+   _display   {other._display   },
+   _deleted   {other._deleted   } {
    return;
 }
 
 NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject    {nullptr                                                            },
    _key       {namedParameterBundle(PropertyNames::NamedEntity::key).toInt()      },
-   parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },     // Not all subclasses have parents
+   // Not all subclasses have parents so parentKey should be optional in the NamedParameterBundle
+   // .:TBD:. For the moment, parent IDs are actually stored outside the main object table (eg in equipment_children
+   //         rather than equipment), so this will always set parentKey to -1, but we could envisage changing that in
+   //         future.
+   parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },
    m_cacheOnly{false                                                              },
    _folder    {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
-   _name      {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  },   // One subclass, BrewNote, does not have a name
+   _name      {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  }, // One subclass, BrewNote, does not have a name
    _display   {namedParameterBundle(PropertyNames::NamedEntity::display).toBool() },
    _deleted   {namedParameterBundle(PropertyNames::NamedEntity::deleted).toBool() } {
    return;
 }
 
+void NamedEntity::makeChild(NamedEntity const & copiedFrom) {
+   // It's a coding error if we're not starting out with objects that are copies of each other
+   Q_ASSERT(*this == copiedFrom);
+   Q_ASSERT(this->parentKey == copiedFrom.parentKey);
+
+   // We also assume that this newly-created object has not yet been put in the database (so we don't need to call
+   // down to the ObjectStore to update fields in the DB).
+   Q_ASSERT(this->_key <= 0);
+
+   // By default, we have the same parent as the object from which we were copied.  But, if that means we have no
+   // parent, then we take object from which we were copied as our parent, on the assumption that it is the master
+   // version of this Hop/Fermentable/etc.
+   if (this->parentKey <= 0) {
+      this->parentKey = copiedFrom._key;
+   }
+
+   // So, now, we should have some plausible parent ID, and in particular we should not be our own parent!
+   Q_ASSERT(this->parentKey != this->_key);
+   return;
+}
 
 QRegExp const & NamedEntity::getDuplicateNameNumberMatcher() {
    //
@@ -154,49 +166,49 @@ bool NamedEntity::display() const {
 }
 
 // Sigh. New databases, more complexity
-void NamedEntity::setDeleted(const bool var, bool cachedOnly)
-{
-   _deleted = var;
-   if ( ! cachedOnly )
+void NamedEntity::setDeleted(const bool var, bool cachedOnly) {
+   this->_deleted = var;
+   if ( ! cachedOnly ) {
       setEasy(PropertyNames::NamedEntity::deleted, var ? Brewken::dbTrue() : Brewken::dbFalse());
+   }
+   return;
 }
 
-void NamedEntity::setDisplay(bool var, bool cachedOnly)
-{
-   _display = var;
-   if ( ! cachedOnly )
+void NamedEntity::setDisplay(bool var, bool cachedOnly) {
+   this->_display = var;
+   if ( ! cachedOnly ) {
       setEasy(PropertyNames::NamedEntity::display, var ? Brewken::dbTrue() : Brewken::dbFalse());
+   }
+   return;
 }
 
-QString NamedEntity::folder() const
-{
-   return _folder;
+QString NamedEntity::folder() const {
+   return this->_folder;
 }
 
-void NamedEntity::setFolder(const QString var, bool signal, bool cachedOnly)
-{
-   _folder = var;
+void NamedEntity::setFolder(const QString var, bool signal, bool cachedOnly) {
+   this->_folder = var;
    if ( ! cachedOnly )
       // set( kFolder, kFolder, var );
       setEasy( PropertyNames::NamedEntity::folder, var );
    // not sure if I should only signal when not caching?
-   if ( signal )
+   if ( signal ) {
       emit changedFolder(var);
+   }
+   return;
 }
 
-QString NamedEntity::name() const
-{
-   return _name;
+QString NamedEntity::name() const {
+   return this->_name;
 }
 
-void NamedEntity::setName(const QString var, bool cachedOnly)
-{
-
-   _name = var;
+void NamedEntity::setName(const QString var, bool cachedOnly) {
+   this->_name = var;
    if ( ! cachedOnly ) {
       setEasy( PropertyNames::NamedEntity::name, var );
       emit changedName(var);
    }
+   return;
 }
 
 int NamedEntity::key() const {
@@ -218,6 +230,18 @@ bool NamedEntity::cacheOnly() const {
 
 void NamedEntity::setParentKey(int parentKey) {
    this->parentKey = parentKey;
+
+   //
+   // If the data is obviously messed up then let's at least log it.  (It doesn't necessarily mean there is a bug in
+   // the current version of the code.  It could be the result of a bug in an earlier version.  If so, a manual data
+   // fix is needed in the database.)
+   //
+   // Something should not be its own parent for instance
+   //
+   if (this->parentKey == this->_key) {
+      qCritical() << Q_FUNC_INFO << this->metaObject()->className() << "#" << this->_key << "is its own parent!";
+   }
+
    return;
 }
 
@@ -258,8 +282,7 @@ QVector<int> NamedEntity::getParentAndChildrenIds() const {
 }
 
 
-int NamedEntity::version() const
-{
+int NamedEntity::version() const {
    return QString(metaObject()->classInfo(metaObject()->indexOfClassInfo(kVersion)).value()).toInt();
 }
 
@@ -408,30 +431,13 @@ void NamedEntity::setEasy(char const * const prop_name, QVariant value, bool not
    if (notify) {
       int idx = this->metaObject()->indexOfProperty(prop_name);
       QMetaProperty mProp = this->metaObject()->property(idx);
-      emit this->changed(mProp,value);
+      emit this->changed(mProp, value);
    }
 
    return;
 }
 
 
-/*QVariant NamedEntity::get( const QString& col_name ) const
-{
-   return Database::instance().get( _table, _key, col_name );
-}
-
-void NamedEntity::setInventory( const QVariant& value, int invKey, bool notify )
-{
-   Database::instance().setInventory( this, value, invKey, notify );
-}
-
-QVariant NamedEntity::getInventory( const QString& col_name ) const
-{
-   QVariant val = 0.0;
-   val = Database::instance().getInventoryAmt(col_name, _table, _key);
-   return val;
-}
-*/
 NamedEntity * NamedEntity::getParent() const {
    if (this->parentKey <=0) {
       return nullptr;
@@ -441,8 +447,7 @@ NamedEntity * NamedEntity::getParent() const {
 }
 
 
-void NamedEntity::setParent(NamedEntity const & parentNamedEntity)
-{
+void NamedEntity::setParent(NamedEntity const & parentNamedEntity) {
    this->parentKey = parentNamedEntity._key;
    this->setEasy(PropertyNames::NamedEntity::parentKey, this->parentKey);
    return;
@@ -456,12 +461,3 @@ void NamedEntity::removeFromDatabase() {
    this->getObjectStoreTypedInstance().softDelete(this->_key);
    return;
 }
-
-
-/*QVariantMap NamedEntity::getColumnValueMap() const
-{
-   QVariantMap map;
-   map.insert(PropertyNames::NamedEntity::folder, folder());
-   map.insert(PropertyNames::NamedEntity::name, name());
-   return map;
-}*/

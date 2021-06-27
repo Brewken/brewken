@@ -30,17 +30,19 @@
  */
 template<class NE>
 class ObjectStoreTyped : public ObjectStore {
-private:
+public:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB.  Private because singleton.
     *
-    * \param primaryTableDefn First in the list of fields in this table defn should be the primary key
+    * \param primaryTable First in the list of fields in this table defn should be the primary key
     */
-   ObjectStoreTyped(TableSimpleDefn const & primaryTableDefn,
-                    FieldManyToManyDefns const & fieldManyToManyDefns = FieldManyToManyDefns{}) :
-      ObjectStore(primaryTableDefn, fieldManyToManyDefns) {
+   ObjectStoreTyped(TableDefinition const & primaryTable,
+                    JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{}) :
+      ObjectStore(primaryTable, junctionTables) {
       return;
    }
+
+   ~ObjectStoreTyped() = default;
 
 public:
 
@@ -335,6 +337,18 @@ private:
       return convertedResults;
    }
 
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
+   ObjectStoreTyped(ObjectStoreTyped const &) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   ObjectStoreTyped & operator=(ObjectStoreTyped const &) = delete;
+
 };
+
+/**
+ * \brief Does what it says on the tin
+ *
+ * \return false if something went wrong, true otherwise
+ */
+bool CreateAllDatabaseTables(Database & database);
 
 #endif

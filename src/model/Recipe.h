@@ -232,16 +232,17 @@ public:
    Q_PROPERTY( QColor SRMColor READ SRMColor /*WRITE*/ /*NOTIFY changed*/ STORED false )
 
    // Relational properties.
+   // NB: the setBlahId() calls are needed by ObjectStore and are not intended for more general use.
    //! \brief The mash.
    Q_PROPERTY(Mash * mash   READ mash      WRITE setMash /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int    mashId READ getMashId)
+   Q_PROPERTY(int    mashId READ getMashId WRITE setMashId)
 
    //! \brief The equipment.
    Q_PROPERTY(Equipment * equipment   READ equipment      WRITE setEquipment /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int         equipmentId READ getEquipmentId)
+   Q_PROPERTY(int         equipmentId READ getEquipmentId WRITE setEquipmentId)
    //! \brief The style.
    Q_PROPERTY(Style * style   READ style      WRITE setStyle /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int     styleId READ getStyleId)
+   Q_PROPERTY(int     styleId READ getStyleId WRITE setStyleId)
 
    // These QList properties should only emit changed() when their size changes, or when
    // one of their elements is replaced by another with a different key.
@@ -249,26 +250,26 @@ public:
    Q_PROPERTY( QList<BrewNote*> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false )
    //! \brief The hops.
    Q_PROPERTY(QList<Hop*>  hops   READ hops /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int> hopIds READ getHopIds)
+   Q_PROPERTY(QVector<int> hopIds READ getHopIds WRITE setHopIds)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction*> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>        instructionIds READ getInstructionIds)
+   Q_PROPERTY(QVector<int>        instructionIds READ getInstructionIds WRITE setInstructionIds)
    //! \brief The fermentables.
    Q_PROPERTY(QList<Fermentable*> fermentables   READ fermentables /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>        fermentableIds READ getFermentableIds)
+   Q_PROPERTY(QVector<int>        fermentableIds READ getFermentableIds WRITE setFermentableIds)
 
    //! \brief The miscs.
    Q_PROPERTY(QList<Misc*> miscs   READ miscs /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int> miscIds READ getMiscIds)
+   Q_PROPERTY(QVector<int> miscIds READ getMiscIds WRITE setMiscIds)
    //! \brief The yeasts.
    Q_PROPERTY(QList<Yeast*> yeasts   READ yeasts /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>  yeastIds READ getYeastIds)
+   Q_PROPERTY(QVector<int>  yeastIds READ getYeastIds WRITE setYeastIds)
    //! \brief The waters.
    Q_PROPERTY(QList<Water*> waters   READ waters /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int>  waterIds READ getWaterIds)
+   Q_PROPERTY(QVector<int>  waterIds READ getWaterIds WRITE setWaterIds)
    //! \brief The salts.
    Q_PROPERTY(QList<Salt*> salts   READ salts /*WRITE*/ /*NOTIFY changed*/ STORED false )
-   Q_PROPERTY(QVector<int> saltIds READ getSaltIds)
+   Q_PROPERTY(QVector<int> saltIds READ getSaltIds WRITE setSaltIds)
 
    /**
     * \brief Connect Fermentable, Hop changed signals etc to their parent Recipes.
@@ -440,11 +441,13 @@ public:
    void setMash(Mash * var);
    void setStyle(Style * style);
 
-/*
+   //
+   // The following calls are intended for use by the ObjectStore when pulling data from the database.  As such they do
+   // not do additional work (eg to ensure that an ingredient being added is a child).
+   //
    void setEquipmentId(int equipmentId);
    void setMashId(int mashId);
    void setStyleId(int styleId);
-
    void setFermentableIds(QVector<int> fermentableIds);
    void setHopIds(QVector<int> hopIds);
    void setInstructionIds(QVector<int> instructionIds);
@@ -452,7 +455,6 @@ public:
    void setSaltIds(QVector<int> saltIds);
    void setWaterIds(QVector<int> waterIds);
    void setYeastIds(QVector<int> yeastIds);
-*/
 
    // Other junk.
    QVector<PreInstruction> mashInstructions(double timeRemaining, double totalWaterAdded_l, unsigned int size);

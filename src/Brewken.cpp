@@ -66,6 +66,7 @@
 #include "database/DatabaseSchema.h"
 #include "database/TableSchemaConst.h"
 #include "database/TableSchema.h"
+#include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"

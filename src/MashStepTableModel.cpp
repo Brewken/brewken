@@ -34,7 +34,6 @@
 #include <QWidget>
 
 #include "Brewken.h"
-#include "database/Database.h"
 #include "MainWindow.h"
 #include "model/MashStep.h"
 #include "PersistentSettings.h"

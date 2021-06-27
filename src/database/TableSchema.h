@@ -26,7 +26,6 @@ class TableSchema : QObject
 
    Q_OBJECT
 
-   friend class DatabaseSchemaHelper;
    friend class DatabaseSchema;
    friend class Database;
    friend class BeerXML;
@@ -142,12 +141,12 @@ public:
    const QString keyName(Brewken::DBTypes type = Brewken::ALLDB) const;
 
 private:
-
+public:
    // I only allow table schema to be made with a DBTable constant
    // It saves a lot of work, and I think the name to constant
    // mapping doesn't belong here -- it belongs in DatabaseSchema
    TableSchema(DatabaseConstants::DbTableId dbTable);
-
+private:
    QString m_tableName;
    QString m_className;
    DatabaseConstants::DbTableId m_dbTable;

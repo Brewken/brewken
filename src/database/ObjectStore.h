@@ -26,6 +26,8 @@
 
 #include "model/NamedParameterBundle.h"
 
+class Database;
+
 /**
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.
  *
@@ -33,6 +35,12 @@
  *        implementation private.  The template class \c ObjectStoreTyped then does the class-specific work (eg
  *        call constructor for the right type of object) and provides a class- specific interface (so that callers
  *        don't have to downcast return values etc).
+ *
+ *        A further namespace \c ObjectStoreWrapper slightly simplifies the syntax of calls into \c ObjectStoreTyped
+ *        member functions.
+ *
+ *        Note that we do not try to implement every single feature of SQL.  This is not a generic object-to-relational
+ *        mapper.  It's just as much as we need.
  *
  *        Inheritance from QObject is to allow this class to send signals (and therefore that inheritance needs to be
  *        public).
@@ -71,22 +79,26 @@ public:
     */
    typedef QVector<EnumAndItsDbString> EnumStringMapping;
 
-   struct FieldSimpleDefn {
-      FieldType                 fieldType;
-      QString                   columnName;
-      char const * const        propertyName;
-      EnumStringMapping const * enumMapping = nullptr; // only needed if fieldType is Enum
-   };
-
-   typedef QVector<FieldSimpleDefn> FieldSimpleDefns;
-
-   struct TableSimpleDefn {
-      char const * const tableName;
-      QVector<FieldSimpleDefn> const fieldSimpleDefns;
+   struct TableDefinition;
+   struct TableField {
+      FieldType const                 fieldType;
+      char const * const              columnName;
+      char const * const              propertyName;
+      EnumStringMapping const * const enumMapping = nullptr; // only needed if fieldType is Enum
+      TableDefinition const * const   foreignKeyTo = nullptr;
    };
 
    /**
-    * \brief See \c FieldManyToManyDefn
+    * \brief The main table in which objects of the type handled by this \c ObjectStore live, and how to map between
+    *        object properties and table fields.
+    */
+   struct TableDefinition {
+      char const * const tableName;
+      QVector<TableField> const tableFields;
+   };
+
+   /**
+    * \brief See \c JunctionTableDefinition
     */
    enum AssumedNumEntries {
       MAX_ONE_ENTRY,
@@ -99,58 +111,66 @@ public:
     *        (fermentable_in_recipe, hop_in_recipe, etc) to store info where potentially many other objects
     *        (Fermentable, Hop, etc) are associated with a single recipe.
     *
+    *        We could store junction table information in quite a concise structure, but we prefer to extend the same
+    *        structure used for primary tables.  This is more consistent, and simplifies some of the code, at the
+    *        expense of a little more boilerplate text in the JUNCTION_TABLE definitions in ObjectStoreTyped.cpp.
+    *
     *        NB: What we are storing here is the junction table from the point of view of one class.  Eg
     *        fermentable_in_recipe could be seen from the point of view of the Recipe or of the Fermentable.  In this
     *        particular example, it will be configured from the point of view of the Recipe because the Recipe class
     *        knows about which Hops it uses (but the Hop class does not know about which Recipes it is used in).
     *
-    *        We assume that each junction table contains only two columns of interest to us, both of which are foreign
-    *        keys to other objects, and both of which are integers.  When passing the results to-and-from the object
-    *        itself, we'll normally pass a list of integers.  However, if \c assumeMaxOneEntry is set to \c true, then
-    *        we'll pull at most one matching row and pass an integer (wrapped in QVariant and thus 0 if no row
-    *        returned).
-    *
     *        .:TBD:. For reasons that are not entirely clear, the parent-child relationship between various objects is
-    *        also stored in junction tables.  Although we could change this, it's more likely we will just drop the
-    *        parent-child stuff.
+    *        also stored in junction tables.  Although we could change this, it's more likely in the long run that we
+    *        change how the parent-child stuff works as it currently involves lots of duplicated data.
     *
     * \param tableName
-    * \param thisPrimaryKeyColumn
-    * \param otherPrimaryKeyColumn
-    * \param propertyName
-    * \param assumeMaxOneEntry
-    * \param orderByColumn      If not empty string, this is the column that orders the elements (eg instruction
-    *                           number for instructions_in_recipe).  Otherwise the elements are assumed to be an
-    *                           unordered set (and pulled out in ID order by default).
+    * \param tableFields  • First entry is the primary key of this table, which we don't explicitly use (other
+    *                               than for table creation) and therefore has no property name.
+    *                             • Second entry is the foreign key to primary table of this store.  Its property name
+    *                               should be the same as that of the primary key of this store's primary table.  Its
+    *                               \c foreignKeyTo (which we use only for table creation) should point to the
+    *                               \c TableDefinition for this store.
+    *                             • Third entry is a field to be stored in the objects managed by this store against
+    *                               the property name specified.  If this is a true junction table then its
+    *                               \c foreignKeyTo will show what table it is a foreign key to -- information that we
+    *                               use only for table creation
+    *                             • Fourth entry is optional.  If present, it is used for ordering.  We assume the
+    *                               actual values do not matter, just the ordering they imply, so it has no property
+    *                               name.
+    * \param assumedNumEntries  When passing data between the table and the object, we'll normally pass a list of
+    *                           values (typically integers).  However, if \c assumedNumEntries is set to
+    *                           \c MAX_ONE_ENTRY, then we'll pull at most one matching row and pass an integer (wrapped
+    *                           in QVariant and thus 0 for an integer if no row returned).
     */
-   struct FieldManyToManyDefn {
-      char const * const tableName;
-      QString thisPrimaryKeyColumn;
-      QString otherPrimaryKeyColumn;
-      char const * const propertyName;
+   struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
-      QString orderByColumn = QString{};
    };
 
-   typedef QVector<FieldManyToManyDefn> FieldManyToManyDefns;
+
+   // This isn't strictly necessary, but it makes various declarations more concise
+   typedef QVector<JunctionTableDefinition> JunctionTableDefinitions;
 
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
-    * \param primaryTableDefn  First in the list should be the primary key
-    * \param fieldManyToManyDefns  Optional
+    * \param primaryTable  First in the list should be the primary key
+    * \param junctionTables  Optional
     */
-   ObjectStore(TableSimpleDefn const & primaryTableDefn,
-               FieldManyToManyDefns const & fieldManyToManyDefns = FieldManyToManyDefns{});
+   ObjectStore(TableDefinition const &           primaryTable,
+               JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();
 
    /**
     * \brief Create the table(s) for the objects handled by this store
-    *
-    * NB: THIS IS NOT YET IMPLEMENTED
     */
-   void createTables();
+   bool createTables(Database & database) const;
+
+   /**
+    * \brief Add (eg foreign key) constraints to the table(s) for the objects handled by this store
+    */
+   bool addTableConstraints(Database & database) const;
 
    /**
     * \brief Load from database all objects handled by this store
@@ -382,6 +402,12 @@ private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
+
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
+   ObjectStore(ObjectStore const &) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   ObjectStore & operator=(ObjectStore const &) = delete;
+
 };
 
 

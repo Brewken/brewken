@@ -1,6 +1,7 @@
 /**
- * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -18,86 +19,36 @@
 #ifndef DATABASESCHEMAHELPER_H
 #define DATABASESCHEMAHELPER_H
 
-#include "Brewken.h"
-#include <QString>
 #include <QSqlDatabase>
 
-#include "database/DatabaseSchema.h"
+#include "Brewken.h"
 
+class Database;
+class DatabaseSchema;
 
 /*!
- * \brief Helper to Database that manages schema stuff
- *
- *
- * This helper has static methods available only to Database that help it
- * manage the schema.
+ * \brief Helper functions to manage Database schema upgrades etc
  */
-class DatabaseSchemaHelper
-{
-   friend class BeerXML;
-   friend class Database;
-
-public:
-
-   // No public methods. Database is the only class able to access
-   // DatabaseSchemaHelper methods.
-
-private:
+namespace DatabaseSchemaHelper {
 
    //! \brief Database version. Increment on any schema change.
-   static const int dbVersion;
+   extern int const dbVersion;
 
-   // Commands and keywords
-   static QString CREATETABLE;
-   static QString ALTERTABLE;
-   static QString DROPTABLE;
-   static QString ADDCOLUMN;
-   static QString DROPCOLUMN;
-   static QString UPDATE;
-   static QString SET;
-   static QString INSERTINTO;
-   static QString DEFAULT;
-   static QString SELECT;
-   static QString SEP;
-   static QString UNIQUE;
-   static QString COMMA;
-   static QString OPENPAREN;
-   static QString CLOSEPAREN;
-   static QString END;
+   extern bool upgrade;
 
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-   static bool upgrade;
    /*!
     * \brief Create a blank database whose schema version is \c dbVersion
     */
-   static bool create(QSqlDatabase db, DatabaseSchema* defn, Brewken::DBTypes dbType = Brewken::NODB);
-
-   /*!
-    * \brief Migrate from version \c oldVersion to \c oldVersion+1
-    */
-   static bool migrateNext(int oldVersion, QSqlDatabase db = QSqlDatabase());
+   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Brewken::DBTypes dbType = Brewken::NODB);
 
    /*!
     * \brief Migrate schema from \c oldVersion to \c newVersion
     */
-   static bool migrate(int oldVersion, int newVersion, QSqlDatabase db = QSqlDatabase());
+   bool migrate(Database & database, int oldVersion, int newVersion, QSqlDatabase db = QSqlDatabase());
 
    //! \brief Current schema version of the given database
-   static int currentVersion(QSqlDatabase db = QSqlDatabase());
+   int currentVersion(QSqlDatabase db = QSqlDatabase());
 
-   static bool drop_columns(QSqlQuery q, TableSchema* tbl);
-   static bool drop_columns(QSqlQuery q, TableSchema* tbl, QStringList colNames);
-
-   static bool migrate_to_202(QSqlQuery q, DatabaseSchema *defn);
-   static bool migrate_to_210(QSqlQuery q, DatabaseSchema *defn);
-   static bool migrate_to_4(QSqlQuery q, DatabaseSchema *defn);
-   static bool migrate_to_5(QSqlQuery q, DatabaseSchema *defn);
-   static bool migrate_to_6(QSqlQuery q, DatabaseSchema *defn);
-   static bool migrate_to_7(QSqlQuery q, DatabaseSchema *defn);
-   static bool migration_aide_8(QSqlQuery q, DatabaseSchema* defn, DatabaseConstants::DbTableId table );
-   static bool migrate_to_8(QSqlQuery q, DatabaseSchema *defn);
-   static bool migrate_to_9(QSqlQuery q, DatabaseSchema *defn);
-};
+}
 
 #endif

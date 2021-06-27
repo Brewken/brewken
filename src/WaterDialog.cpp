@@ -29,7 +29,6 @@
 #include "Brewken.h"
 #include "BtDigitWidget.h"
 #include "ColorMethods.h"
-#include "database/Database.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"

@@ -19,14 +19,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "FermentableEditor.h"
 
 #include <QIcon>
-#include "FermentableEditor.h"
-#include "model/Fermentable.h"
-#include "database/Database.h"
-#include "config.h"
-#include "Unit.h"
+
 #include "Brewken.h"
+#include "config.h"
+#include "model/Fermentable.h"
+#include "Unit.h"
 
 FermentableEditor::FermentableEditor( QWidget* parent )
         : QDialog(parent), obsFerm(nullptr)
