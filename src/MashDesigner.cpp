@@ -26,7 +26,6 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "database/Database.h"
 #include "HeatCalculations.h"
 #include "PhysicalConstants.h"
 #include "model/Fermentable.h"
@@ -350,11 +349,11 @@ bool MashDesigner::initializeMash()
       return false;
 
    mash = recObs->mash();
-   if( mash == nullptr )
-      // mash = Database::instance().newMash( recObs );
+   if( mash == nullptr ) {
       mash = new Mash(QString(""),true);
-   else
+   } else {
       mash->removeAllMashSteps();
+   }
 
    // Order matters. Don't do this until every that could return false has
    mash->setTunSpecificHeat_calGC( equip->tunSpecificHeat_calGC() );

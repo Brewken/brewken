@@ -75,20 +75,21 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
    return;
 }
 
-void FermentableTableModel::observeRecipe(Recipe* rec)
-{
-   if( recObs )
-   {
-      disconnect( recObs, nullptr, this, nullptr );
-      removeAll();
+void FermentableTableModel::observeRecipe(Recipe* rec) {
+   if (this->recObs) {
+      qDebug() << Q_FUNC_INFO << "Unobserve Recipe #" << this->recObs->key() << "(" << this->recObs->name() << ")";
+      disconnect(this->recObs, nullptr, this, nullptr);
+      this->removeAll();
    }
 
-   recObs = rec;
-   if( recObs )
-   {
-      connect( recObs, &NamedEntity::changed, this, &FermentableTableModel::changed );
-      addFermentables( recObs->fermentables() );
+   this->recObs = rec;
+   if (this->recObs) {
+      qDebug() << Q_FUNC_INFO << "Observe Recipe #" << this->recObs->key() << "(" << this->recObs->name() << ")";
+
+      connect(this->recObs, &NamedEntity::changed, this, &FermentableTableModel::changed);
+      this->addFermentables( recObs->fermentables() );
    }
+   return;
 }
 
 void FermentableTableModel::observeDatabase(bool val) {
@@ -130,7 +131,6 @@ void FermentableTableModel::addFermentable(int fermId) {
 void FermentableTableModel::addFermentables(QList<Fermentable*> ferms) {
    qDebug() << Q_FUNC_INFO << QString("Add up to %1 fermentables to existing list of %2").arg(ferms.size()).arg(this->fermObs.size());
 
-   QList<Fermentable*>::iterator i;
    QList<Fermentable*> tmp;
 
    for (auto ii : ferms) {
@@ -152,7 +152,7 @@ void FermentableTableModel::addFermentables(QList<Fermentable*> ferms) {
       beginInsertRows( QModelIndex(), size, size+tmp.size()-1 );
       fermObs.append(tmp);
 
-      for( i = tmp.begin(); i != tmp.end(); i++ )
+      for(QList<Fermentable*>::iterator i = tmp.begin(); i != tmp.end(); i++ )
       {
          connect( *i, &NamedEntity::changed, this, &FermentableTableModel::changed );
          totalFermMass_kg += (*i)->amount_kg();
@@ -272,22 +272,24 @@ int FermentableTableModel::columnCount(const QModelIndex& /*parent*/) const
    return FERMNUMCOLS;
 }
 
-QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const
-{
-   Fermentable* row;
-   int col = index.column();
+QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const {
    Unit::unitScale scale;
    Unit::unitDisplay unit;
 
-   // Ensure the row is ok.
-   if( index.row() >= static_cast<int>(fermObs.size() ))
-   {
-      qCritical() << tr("Bad model index. row = %1").arg(index.row());
+   // Ensure the row is OK
+   if (index.row() >= static_cast<int>(fermObs.size() )) {
+      qCritical() << Q_FUNC_INFO << tr("Bad model index. row = %1").arg(index.row());
       return QVariant();
    }
-   else
-      row = fermObs[index.row()];
 
+   Fermentable* row = this->fermObs[index.row()];
+   if (row == nullptr) {
+      // This is probably a coding error
+      qCritical() << Q_FUNC_INFO << "Null pointer at row" << index.row();
+      return QVariant();
+   }
+
+   int col = index.column();
    switch( col )
    {
       case FERMNAMECOL:

@@ -16,22 +16,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "ScaleRecipeTool.h"
+
 #include <QMessageBox>
 #include <QButtonGroup>
+
 #include "Brewken.h"
-#include "model/Recipe.h"
+#include "EquipmentListModel.h"
+#include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Hop.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
-#include "model/Hop.h"
 #include "model/Misc.h"
-#include "model/Yeast.h"
+#include "model/Recipe.h"
 #include "model/Water.h"
-#include "database/Database.h"
-#include "model/Equipment.h"
-#include "EquipmentListModel.h"
+#include "model/Yeast.h"
 #include "NamedEntitySortProxyModel.h"
 
 ScaleRecipeTool::ScaleRecipeTool(QWidget* parent) :

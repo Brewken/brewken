@@ -47,7 +47,6 @@ class DatabaseSchema
 {
    friend class BeerXML;
    friend class Database;
-   friend class DatabaseSchemaHelper;
 
 public:
 
@@ -97,9 +96,9 @@ private:
    Brewken::DBTypes m_type;
    QString m_id;
    QString m_name;
-
+public:
    DatabaseSchema();
-
+private:
    void loadTables();
 
 };

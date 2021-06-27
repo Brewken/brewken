@@ -22,6 +22,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include <QDateTime>
 #include <QDomText>
@@ -83,12 +84,27 @@ class NamedEntity : public QObject {
 public:
    NamedEntity(int key, bool cache = true, QString t_name = QString(), bool t_display = false, QString folder = QString());
    NamedEntity(NamedEntity const & other);
+
+   /**
+    * \brief Note that, if you want a \b child of a \c NamedEntity (to add to a \c Recipe), you should call
+    *        \c makeChild() on the copy, which will do the right things about parentage and inventory.
+    */
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
    // virtue of inheriting from QObject, but this declaration does no harm.
    virtual ~NamedEntity() = default;
+
+   /**
+    * \brief Turns a straight copy of an object into a "child" copy that can be used in a Recipe.  (A child copy is
+    *        essentially an "instance of use of".)
+    *
+    *        NB: This function must be called \b before the object is added to its \c ObjectStore
+    *
+    * \param copiedFrom The object from which this one was copied
+    */
+   virtual void makeChild(NamedEntity const & copiedFrom);
 
    /**
     * \brief This generic version of operator== should work for subclasses provided they correctly _override_ (NB not

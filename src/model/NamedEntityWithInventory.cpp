@@ -31,9 +31,18 @@ NamedEntityWithInventory::NamedEntityWithInventory(NamedParameterBundle const & 
 
 NamedEntityWithInventory::NamedEntityWithInventory(NamedEntityWithInventory const & other) :
    NamedEntity     {other                 },
-   // Don't copy Inventory ID as new Fermentable should have its own inventory
-   // .:TODO:. Need to fix this for parent/child
-   m_inventory_id  {-1} {
+   // Don't copy Inventory ID as new Fermentable should have its own inventory - unless it's a child, but that case is
+   // handled in makeChild() below
+   m_inventory_id {-1} {
+   return;
+}
+
+void NamedEntityWithInventory::makeChild(NamedEntity const & copiedFrom) {
+   // First do the base class work
+   this->NamedEntity::makeChild(copiedFrom);
+
+   // Now we want the child to share the same inventory item as its parent
+   this->m_inventory_id = static_cast<NamedEntityWithInventory const &>(copiedFrom).m_inventory_id;
    return;
 }
 

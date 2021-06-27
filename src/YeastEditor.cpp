@@ -22,7 +22,6 @@
 
 #include "Brewken.h"
 #include "config.h"
-#include "database/Database.h"
 #include "model/Yeast.h"
 #include "Unit.h"
 

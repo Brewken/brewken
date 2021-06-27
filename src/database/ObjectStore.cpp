@@ -28,14 +28,193 @@
 
 // Private implementation details that don't need access to class member variables
 namespace {
+
+   /**
+    * For a given field type, get the native database typename
+    */
+   char const * getDatabaseNativeTypeName(Database const & database, ObjectStore::FieldType const fieldType) {
+      switch (fieldType) {
+         case ObjectStore::FieldType::Bool:   return database.getDbNativeTypeName<bool>();
+         case ObjectStore::FieldType::Int:    return database.getDbNativeTypeName<int>();
+         case ObjectStore::FieldType::UInt:   return database.getDbNativeTypeName<unsigned int>();
+         case ObjectStore::FieldType::Double: return database.getDbNativeTypeName<double>();
+         case ObjectStore::FieldType::String: return database.getDbNativeTypeName<QString>();
+         case ObjectStore::FieldType::Date:   return database.getDbNativeTypeName<QDate>();
+         case ObjectStore::FieldType::Enum:   return database.getDbNativeTypeName<QString>();
+         default:
+            // It's a coding error if we get here!
+            Q_ASSERT(false);
+            break;
+      }
+      return nullptr; // Should never get here
+   }
+
+
+   /**
+    * \brief Create a database table without foreign key constraints (allowing tables to be created in any order)
+    *
+    *        NB: In practice, this means omitting columns that are foreign keys.  They will be added in
+    *            addForeignKeysToTable() below.  This is because of limitations in SQLite.
+    *
+    *            SQLite does not support adding a foreign key to an existing column.  In newer versions (since 3.35.0)
+    *            you can work around this (for an empty table) by dropping a column and re-adding it with a foreign
+    *            key.  However, older versions of SQLite do not even support "DROP COLUMN".  And, since we use the
+    *            version of SQLite that's embedded in Qt, we can't easily just switch to a newer version.
+    *
+    *            So, instead, when we create tables, we miss out the foreign key columns altogether and then add them,
+    *            with the foreign key constraints, in addForeignKeysToTable() below.
+    *
+    * \return true if succeeded, false otherwise
+    */
+   bool createTableWithoutForeignKeys(Database & database,
+                                      QSqlDatabase & databaseConnection,
+                                      ObjectStore::TableDefinition const & tableDefinition) {
+      //
+      // We're building a SQL string of the form
+      //    CREATE TABLE foobar (
+      //       bah INTEGER PRIMARY KEY,
+      //       hum TEXT,
+      //       ...
+      //       bug DATE
+      //    );
+      // .:TBD:. At some future point we might extend our model to allow marking some columns as NOT NULL (eg via some
+      //         extra optional flag on ObjectStore::TableField), but it doesn't seem pressing at the moment.
+      //
+      QString queryString{"CREATE TABLE "};
+      QTextStream queryStringAsStream{&queryString};
+      queryStringAsStream << tableDefinition.tableName << " (\n";
+      bool firstFieldOutput = false;
+      for (auto const & fieldDefn: tableDefinition.tableFields) {
+         if (fieldDefn.foreignKeyTo != nullptr) {
+            qDebug() << Q_FUNC_INFO << "Skipping" << fieldDefn.columnName << "as foreign key";
+            // It's (currently) a coding error if a foreign key is anything other than an integer
+            Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Int);
+            continue;
+         }
+
+         // If it's not the first field, we need a separator from the previous field
+         if (firstFieldOutput) {
+            queryStringAsStream << ", \n";
+         }
+
+         queryStringAsStream << fieldDefn.columnName << " " << getDatabaseNativeTypeName(database, fieldDefn.fieldType);
+
+         if (!firstFieldOutput) {
+            // If it's the first column then it's the primary key and we are going to need to add PRIMARY KEY or some such
+            // at the end.  The Database class knows exactly what text is needed for each type of database.
+            firstFieldOutput = true;
+            queryStringAsStream << " " << database.getDbNativeIntPrimaryKeyModifier();
+         }
+      }
+      queryStringAsStream << "\n);";
+
+      qDebug().noquote() << Q_FUNC_INFO << "Table creation: " << queryString;
+
+      QSqlQuery sqlQuery{databaseConnection};
+      sqlQuery.prepare(queryString);
+      if (!sqlQuery.exec()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return false;
+      }
+      return true;
+   }
+
+   /**
+    * \brief Add foreign key constraints to a newly-created table
+    *
+    *        Doing the foreign key columns after all the tables are created means we don't have to worry about the
+    *        order in which table creation is done.
+    *
+    * \return true if succeeded, false otherwise
+    */
+   bool addForeignKeysToTable(Database & database,
+                              QSqlDatabase & databaseConnection,
+                              ObjectStore::TableDefinition const & tableDefinition) {
+      //
+      // The exact format for adding a column that's a foreign key varies by database.  Some accept:
+      //
+      //    ALTER TABLE foobar ADD COLUMN other_id INTEGER REFERENCES other(id);
+      //
+      // Others want:
+      //
+      //    ALTER TABLE foobar ADD COLUMN other_id INTEGER ADD CONSTRAINT (other_id) REFERENCES other(id);
+      //
+      // Rather than try to work it out here, we just ask the Database class to give us a suitable string template
+      // where we can fill in the blanks.
+      //
+      // We don't particularly care about giving the foreign key constraint a name, so we don't use the more
+      // complicated syntax that would be required for that.
+      //
+      // Note that, here, we do one column at a time because it keeps things simple - including in the case where the
+      // table has no foreign keys.
+      //
+      QSqlQuery sqlQuery{databaseConnection};
+      for (auto const & fieldDefn: tableDefinition.tableFields) {
+         if (fieldDefn.fieldType == ObjectStore::FieldType::Int && fieldDefn.foreignKeyTo != nullptr) {
+            // It's obviously a programming error if the foreignKeyTo table doesn't have any fields.  (We only care
+            // here about the first of those fields as, by convention, that's always the primary key on the table.)
+            Q_ASSERT(fieldDefn.foreignKeyTo->tableFields.size() > 0);
+
+            QString queryString = QString(
+               database.getSqlToAddColumnAsForeignKey()
+            ).arg(
+               tableDefinition.tableName
+            ).arg(
+               fieldDefn.columnName
+            ).arg(
+               fieldDefn.foreignKeyTo->tableName
+            ).arg(
+               fieldDefn.foreignKeyTo->tableFields[0].columnName
+            );
+            qDebug().noquote() << Q_FUNC_INFO << "Foreign keys: " << queryString;
+
+            sqlQuery.prepare(queryString);
+            if (!sqlQuery.exec()) {
+               qCritical() <<
+                  Q_FUNC_INFO << "Error executing database query " << queryString << ": " <<
+                  sqlQuery.lastError().text();
+               return false;
+            }
+         }
+      }
+      return true;
+   }
+
+   /**
+    * Return a string containing all the bound values on a query.   This is quite a useful thing to have logged when
+    * you get an error!
+    *
+    * NB: This can be a long string.  It includes newlines, and is intended to be logged with qDebug().noquote() or
+    *     similar.
+    */
+   QString BoundValuesToString(QSqlQuery const & sqlQuery) {
+      QString result;
+      QTextStream resultAsStream{&result};
+
+      QMap<QString, QVariant> boundValueMap = sqlQuery.boundValues();
+      for (auto bv = boundValueMap.begin(); bv != boundValueMap.end(); ++bv) {
+         resultAsStream << bv.key() << ": " << bv.value().toString() << "\n";
+      }
+
+      return result;
+   }
+
    /**
     * Given a (QVariant-wrapped) string value pulled out of the DB for an enum, look up and return its internal
     * numerical enum equivalent
     */
-   int stringToEnum(ObjectStore::FieldSimpleDefn const & fieldDefn, QVariant const & valueFromDb) {
+   int stringToEnum(ObjectStore::TableField const & fieldDefn, QVariant const & valueFromDb) {
       // It's a coding error if we called this function for a non-enum field
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
+
+      if (valueFromDb.isNull()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Found null value for enum when mapping column " << fieldDefn.columnName <<
+            " to property " << fieldDefn.propertyName << " so using 0";
+         return 0;
+      }
 
       QString stringValue = valueFromDb.toString();
       auto match = std::find_if(
@@ -58,7 +237,7 @@ namespace {
     * Given a (QVariant-wrapped) int value of a native enum, look up and return the corresponding string we use to
     * store it in the DB
     */
-   QString enumToString(ObjectStore::FieldSimpleDefn const & fieldDefn, QVariant const & propertyValue) {
+   QString enumToString(ObjectStore::TableField const & fieldDefn, QVariant const & propertyValue) {
       // It's a coding error if we called this function for a non-enum field
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
@@ -106,6 +285,22 @@ namespace {
    };
 
    //
+   // Convenience functions for accessing specific fields of a JunctionTableDefinition struct
+   //
+   char const * const GetJunctionTableDefinitionPropertyName(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields[2].propertyName;
+   }
+   char const * const GetJunctionTableDefinitionThisPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields[1].columnName;
+   }
+   char const * const GetJunctionTableDefinitionOtherPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields[2].columnName;
+   }
+   char const * const GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : nullptr;
+   }
+
+   //
    // Insert data from an object property to a junction table
    //
    // We may be inserting more than one row.  In theory we COULD combine all the rows into a single insert statement
@@ -125,28 +320,42 @@ namespace {
    // So instead, we just do individual inserts.  Note that orderByColumn column is only used if specified, and
    // that, if it is, we assume it's an integer type and that we create the values ourselves.
    //
-   bool insertIntoFieldManyToManyDefn(ObjectStore::FieldManyToManyDefn const & fieldManyToManyDefn,
+   // Returns true if succeeded, false otherwise
+   //
+   bool insertIntoJunctionTableDefinition(ObjectStore::JunctionTableDefinition const & junctionTable,
                                 QObject const & object,
                                 QVariant const & primaryKey,
                                 QSqlDatabase & databaseConnection) {
       qDebug() <<
-         Q_FUNC_INFO << "Writing property " << fieldManyToManyDefn.propertyName << " into junction table " <<
-         fieldManyToManyDefn.tableName;
+         Q_FUNC_INFO << "Writing" << object.metaObject()->className() << "property" <<
+         GetJunctionTableDefinitionPropertyName(junctionTable) << " into junction table " << junctionTable.tableName;
+
+      //
+      // It's a coding error if the caller has supplied us anything other than an int inside the primaryKey QVariant.
+      //
+      // Here and elsewhere, although we could just do a Q_ASSERT, we prefer (a) some extra diagnostics on debug builds
+      // and (b) to bail out immediately of the DB transaction on non-debug builds.
+      //
+      if (QVariant::Type::Int != primaryKey.type()) {
+         qCritical() << Q_FUNC_INFO << "Unexpected contents of primaryKey QVariant: " << primaryKey.typeName();
+         Q_ASSERT(false); // Stop here on debug builds
+         return false;    // Continue but bail out of the current DB transaction on other builds
+      }
 
       // Construct the query
       QString queryString{"INSERT INTO "};
       QTextStream queryStringAsStream{&queryString};
-      queryStringAsStream << fieldManyToManyDefn.tableName << " (" <<
-         fieldManyToManyDefn.thisPrimaryKeyColumn << ", " <<
-         fieldManyToManyDefn.otherPrimaryKeyColumn;
-      if (fieldManyToManyDefn.orderByColumn != "") {
-         queryStringAsStream << ", " << fieldManyToManyDefn.orderByColumn;
+      queryStringAsStream << junctionTable.tableName << " (" <<
+         GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << ", " <<
+         GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
+      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+         queryStringAsStream << ", " << GetJunctionTableDefinitionOrderByColumn(junctionTable);
       }
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(fieldManyToManyDefn.thisPrimaryKeyColumn);
-      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(fieldManyToManyDefn.otherPrimaryKeyColumn);
-      QString const orderByBindName         = QString{":%1"}.arg(fieldManyToManyDefn.orderByColumn);
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable));
+      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable));
+      QString const orderByBindName         = QString{":%1"}.arg(GetJunctionTableDefinitionOrderByColumn(junctionTable));
       queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
-      if (fieldManyToManyDefn.orderByColumn != "") {
+      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
          queryStringAsStream << ", " << orderByBindName;
       }
       queryStringAsStream << ");";
@@ -160,24 +369,61 @@ namespace {
       sqlQuery.prepare(queryString);
 
       // Get the list of data to bind to it
-      QVariant bindValues = object.property(fieldManyToManyDefn.propertyName);
-      if (fieldManyToManyDefn.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
+      QVariant propertyValuesWrapper = object.property(GetJunctionTableDefinitionPropertyName(junctionTable));
+      if (!propertyValuesWrapper.isValid()) {
+         // It's a programming error if we couldn't read a property value
+         qCritical() <<
+            Q_FUNC_INFO << "Unable to read" << object.metaObject()->className() << "property" <<
+            GetJunctionTableDefinitionPropertyName(junctionTable);
+         Q_ASSERT(false); // Stop here on debug builds
+         return false;
+      }
+
+      // We now need to extract the property values from their QVariant wrapper
+      QVector<int> propertyValues;
+      if (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
          // If it's single entry only, just turn it into a one-item list so that the remaining processing is the same
-         bindValues = QVariant{QList<QVariant>{bindValues}};
+         bool succeeded = false;
+         int theValue = propertyValuesWrapper.toInt(&succeeded);
+         if (!succeeded) {
+            qCritical() << Q_FUNC_INFO << "Can't convert QVariant of" << propertyValuesWrapper.typeName() << "to int";
+            Q_ASSERT(false); // Stop here on debug builds
+            return false;    // Continue but bail out of the current DB transaction on other builds
+         }
+         propertyValues.append(theValue);
+      } else {
+         //
+         // The propertyValuesWrapper QVariant should hold QVector<int>.  If it doesn't it's a coding error (because we have a
+         // property getter that's returning something else).
+         //
+         // Note that QVariant::toList() is NOT going to be useful to us here because that ONLY works if the contained
+         // type is QList<QVariant> (aka QVariantList) or QStringList.  If your QVariant contains some other list-like
+         // structure then toList() will just return an empty list.
+         //
+         if (!propertyValuesWrapper.canConvert< QVector<int> >()) {
+            qCritical() <<
+               Q_FUNC_INFO << "Can't convert QVariant of" << propertyValuesWrapper.typeName() << "to QVector<int>";
+            Q_ASSERT(false); // Stop here on debug builds
+            return false;    // Continue but bail out of the current DB transaction on other builds
+         }
+         propertyValues = propertyValuesWrapper.value< QVector<int> >();
       }
 
       // Now loop through and bind/run the insert query once for each item in the list
       int itemNumber = 1;
-      QList<QVariant> list = bindValues.toList();
-      for (auto curValue : list ) {
-         sqlQuery.bindValue(thisPrimaryKeyBindName, QVariant{primaryKey});
+      qDebug() <<
+         Q_FUNC_INFO << propertyValues.size() << "value(s) (in" << propertyValuesWrapper.typeName() << ") for property" <<
+         GetJunctionTableDefinitionPropertyName(junctionTable) << "of" << object.metaObject()->className() << "#" <<
+         primaryKey.toInt();
+      for (int curValue : propertyValues) {
+         sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
          sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
-         if (fieldManyToManyDefn.orderByColumn != "") {
-            sqlQuery.bindValue(orderByBindName, QVariant{itemNumber});
+         if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+            sqlQuery.bindValue(orderByBindName, itemNumber);
          }
          qDebug() <<
-            Q_FUNC_INFO << itemNumber << ": " << fieldManyToManyDefn.thisPrimaryKeyColumn << " #" << primaryKey <<
-            " <-> " << fieldManyToManyDefn.otherPrimaryKeyColumn << " #" << curValue.toInt();
+            Q_FUNC_INFO << itemNumber << ": " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << " #" <<
+            primaryKey.toInt() << " <-> " << GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable) << " #" << curValue;
 
          if (!sqlQuery.exec()) {
             qCritical() <<
@@ -190,21 +436,21 @@ namespace {
       return true;
    }
 
-   bool deleteFromFieldManyToManyDefn(ObjectStore::FieldManyToManyDefn const & fieldManyToManyDefn,
+   bool deleteFromJunctionTableDefinition(ObjectStore::JunctionTableDefinition const & junctionTable,
                                 QVariant const & primaryKey,
                                 QSqlDatabase & databaseConnection) {
 
       qDebug() <<
-         Q_FUNC_INFO << "Deleting property " << fieldManyToManyDefn.propertyName << " in junction table " <<
-         fieldManyToManyDefn.tableName;
+         Q_FUNC_INFO << "Deleting property " << GetJunctionTableDefinitionPropertyName(junctionTable) << " in junction table " <<
+         junctionTable.tableName;
 
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(fieldManyToManyDefn.thisPrimaryKeyColumn);
+      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable));
 
       // Construct the DELETE query
       QString queryString{"DELETE FROM "};
       QTextStream queryStringAsStream{&queryString};
       queryStringAsStream <<
-         fieldManyToManyDefn.tableName << " WHERE " << fieldManyToManyDefn.thisPrimaryKeyColumn << " = " <<
+         junctionTable.tableName << " WHERE " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << " = " <<
          thisPrimaryKeyBindName << ";";
 
       QSqlQuery sqlQuery{databaseConnection};
@@ -232,11 +478,10 @@ public:
    /**
     * Constructor
     */
-   impl(TableSimpleDefn const & primaryTableDefn,
-        FieldManyToManyDefns const & fieldManyToManyDefns) : tableName{primaryTableDefn.tableName},
-                                                             fieldSimpleDefns{primaryTableDefn.fieldSimpleDefns},
-                                                             fieldManyToManyDefns{fieldManyToManyDefns},
-                                                             allObjects{} {
+   impl(TableDefinition const &           primaryTable,
+        JunctionTableDefinitions const & junctionTables) : primaryTable{primaryTable},
+                                                           junctionTables{junctionTables},
+                                                           allObjects{} {
       return;
    }
 
@@ -248,7 +493,7 @@ public:
 
    /**
     * \brief Append, to the supplied query string we are constructing, a comma-separated list of all the column names
-    *        for the table, in the order of this->fieldSimpleDefns
+    *        for the table, in the order of this->primaryTable.tableFields
     *
     * \param queryStringAsStream
     * \param includePrimaryKey  Usually \c true for SELECT and UPDATE, and \c false for INSERT
@@ -257,7 +502,7 @@ public:
    void appendColumNames(QTextStream & queryStringAsStream, bool includePrimaryKey, bool prependColons) {
       bool skippedPrimaryKey = false;
       bool firstFieldOutput = false;
-      for (auto const & fieldDefn: this->fieldSimpleDefns) {
+      for (auto const & fieldDefn: this->primaryTable.tableFields) {
          if (!includePrimaryKey && !skippedPrimaryKey) {
             // By convention the first field is the primary key
             skippedPrimaryKey = true;
@@ -279,9 +524,9 @@ public:
    /**
     * \brief Get the name of the DB column that holds the primary key
     */
-   QString const & getPrimaryKeyColumn() {
+   char const * getPrimaryKeyColumn() {
       // By convention the first field is the primary key
-      return this->fieldSimpleDefns[0].columnName;
+      return this->primaryTable.tableFields[0].columnName;
    };
 
    /**
@@ -289,20 +534,19 @@ public:
     */
    QVariant getPrimaryKey(QObject const & object) {
       // By convention the first field is the primary key
-      char const * const primaryKeyProperty {this->fieldSimpleDefns[0].propertyName};
+      char const * const primaryKeyProperty {this->primaryTable.tableFields[0].propertyName};
       return object.property(primaryKeyProperty);
    }
 
-   char const * const tableName;
-   FieldSimpleDefns const & fieldSimpleDefns;
-   FieldManyToManyDefns const & fieldManyToManyDefns;
+   TableDefinition const & primaryTable;
+   JunctionTableDefinitions const & junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
 };
 
 
-ObjectStore::ObjectStore(TableSimpleDefn const & primaryTableDefn,
-                         FieldManyToManyDefns const & fieldManyToManyDefns) :
-   pimpl{ std::make_unique<impl>(primaryTableDefn, fieldManyToManyDefns) } {
+ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
+                         JunctionTableDefinitions const & junctionTables) :
+   pimpl{ std::make_unique<impl>(primaryTable, junctionTables) } {
    return;
 }
 
@@ -311,66 +555,57 @@ ObjectStore::ObjectStore(TableSimpleDefn const & primaryTableDefn,
 // header file)
 ObjectStore::~ObjectStore() = default;
 
-void ObjectStore::createTables() {
-   // .:TODO:.
-   /*
-    * Notes: - Need "PRIMARY KEY autoincrement" or equivalent on primary key column
-    *        - We don't need default values
-    *        - Might be useful to mark which fields cannot be null
-    *        - Need foreign keys on simple table fields (eg on fermentable table, inventory_id REFERENCES fermentable_in_inventory (id))
-    *        - Need double foreign keys on junction table fields (eg on fermentable_in_recipe table, foreign key(fermentable_id) references fermentable(id), foreign key(recipe_id) references recipe(id))
-    *        - Foreign keys not always consistent:
-    *             CREATE TABLE "fermentable_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
-    *             CREATE TABLE "hop_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
-    *             CREATE TABLE "misc_in_inventory" (id INTEGER PRIMARY KEY autoincrement , amount real  DEFAULT 0)
-    *             CREATE TABLE water_in_recipe( id integer PRIMARY KEY autoincrement, water_id integer, recipe_id integer, foreign key(water_id) references water(id), foreign key(recipe_id) references recipe(id))
-    *             CREATE TABLE "yeast_in_inventory" (id INTEGER PRIMARY KEY autoincrement , quanta real  DEFAULT 0)
-    */
-   QString queryString{"CREATE TABLE "};
-   QTextStream queryStringAsStream{&queryString};
-   queryStringAsStream << this->pimpl->tableName << " (\n";
-   bool firstFieldOutput = false;
-   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
-      if (!firstFieldOutput) {
-         firstFieldOutput = true;
-      } else {
-         queryStringAsStream << ", \n";
-      }
-      queryStringAsStream << fieldDefn.columnName << " ";
-      // **************************************************************************************************************
-      // .:TODO:. In order to finish this, we need a SQL data type mapper, because different DBs have different data
-      // types with different names.  This should be hidden from this class, as it shouldn't need to know the specifics
-      // of individual databases.
-      // **************************************************************************************************************
-      switch (fieldDefn.fieldType) {
-         case ObjectStore::FieldType::Bool:
-            break;
-         case ObjectStore::FieldType::Int:
-            break;
-         case ObjectStore::FieldType::UInt:
-            break;
-         case ObjectStore::FieldType::Double:
-            break;
-         case ObjectStore::FieldType::String:
-            break;
-         case ObjectStore::FieldType::Date:
-            break;
-         case ObjectStore::FieldType::Enum:
-            break;
-         default:
-            break;
-      }
+// Note that we have to pass Database in as a parameter because, ultimately, we're being called from Database::load()
+// which is called from Database::getInstance(), so we don't want to get in an endless loop.
+bool ObjectStore::createTables(Database & database) const {
+   // Start transaction
+   // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   QSqlDatabase databaseConnection = database.sqlDatabase();
+   DbTransaction dbTransaction{databaseConnection};
 
-      //
-      // .:TODO:. Primary key is "id INTEGER PRIMARY KEY autoincrement"
-      //
+   //
+   // Note that we are not putting in foreign key constraints here, as we don't want to have to care about the order in
+   // which tables are created.  The constraints are added subsequently by calls to addTableConstraints();
+   //
+   // Note too, that we don't care about default values as we assume we will always provide values for all columns when
+   // we do an insert.  (Suitable default values for object fields are set in the object's constructor.)
+   //
+   if (!createTableWithoutForeignKeys(database, databaseConnection, this->pimpl->primaryTable)) {
+      return false;
    }
-   queryStringAsStream << "\n);";
 
-   // *****************************************************************************************************************
-   // .:TODO:. Junction tables
-   // *****************************************************************************************************************
-   return;
+   //
+   // Now create the junction tables
+   //
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      if (!createTableWithoutForeignKeys(database, databaseConnection, junctionTable)) {
+         return false;
+      }
+   }
+
+   dbTransaction.commit();
+   return true;
+}
+
+// Note that we have to pass Database in as a parameter because, ultimately, we're being called from Database::load()
+// which is called from Database::getInstance(), so we don't want to get in an endless loop.
+bool ObjectStore::addTableConstraints(Database & database) const {
+   // This is all pretty much the same structure as createTables(), so I won't repeat all the comments here
+   QSqlDatabase databaseConnection = database.sqlDatabase();
+   DbTransaction dbTransaction{databaseConnection};
+
+   if (!addForeignKeysToTable(database, databaseConnection, this->pimpl->primaryTable)) {
+      return false;
+   }
+
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      if (!addForeignKeysToTable(database, databaseConnection, junctionTable)) {
+         return false;
+      }
+   }
+
+   dbTransaction.commit();
+   return true;
 }
 
 void ObjectStore::loadAll() {
@@ -392,7 +627,7 @@ void ObjectStore::loadAll() {
    QString queryString{"SELECT "};
    QTextStream queryStringAsStream{&queryString};
    this->pimpl->appendColumNames(queryStringAsStream, true, false);
-   queryStringAsStream << "\n FROM " << this->pimpl->tableName << ";";
+   queryStringAsStream << "\n FROM " << this->pimpl->primaryTable.tableName << ";";
    QSqlQuery sqlQuery{databaseConnection};
    sqlQuery.prepare(queryString);
    if (!sqlQuery.exec()) {
@@ -448,13 +683,13 @@ void ObjectStore::loadAll() {
       //     allow a wider range of types.
       //
       bool readPrimaryKey = false;
-      for (auto const & fieldDefn : this->pimpl->fieldSimpleDefns) {
+      for (auto const & fieldDefn : this->pimpl->primaryTable.tableFields) {
          //qDebug() << Q_FUNC_INFO << "Reading " << fieldDefn.columnName << " into " << fieldDefn.propertyName;
          QVariant fieldValue = sqlQuery.value(fieldDefn.columnName);
          if (!fieldValue.isValid()) {
             qCritical() <<
                Q_FUNC_INFO << "Error reading column " << fieldDefn.columnName << " (" << fieldValue.toString() <<
-               ") from database table " << this->pimpl->tableName << ". SQL error message: " <<
+               ") from database table " << this->pimpl->primaryTable.tableName << ". SQL error message: " <<
                sqlQuery.lastError().text();
             break;
          }
@@ -482,7 +717,9 @@ void ObjectStore::loadAll() {
       // It's a coding error if we have two objects with the same primary key
       Q_ASSERT(!this->pimpl->allObjects.contains(primaryKey));
       this->pimpl->allObjects.insert(primaryKey, object);
-      qDebug() << Q_FUNC_INFO << "Stored " << object->metaObject()->className() << " #" << primaryKey;
+      qDebug() <<
+         Q_FUNC_INFO << "Cached" << object->metaObject()->className() << "#" << primaryKey << "in" <<
+         this->metaObject()->className();
    }
 
    //
@@ -492,10 +729,10 @@ void ObjectStore::loadAll() {
    // optimising every single SQL query (because the amount of data in the DB is not enormous), we prefer the
    // simplicity of separate queries.
    //
-   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
       qDebug() <<
-         Q_FUNC_INFO << "Reading junction table " << fieldManyToManyDefn.tableName << " into " <<
-         fieldManyToManyDefn.propertyName;
+         Q_FUNC_INFO << "Reading junction table " << junctionTable.tableName << " into " <<
+         GetJunctionTableDefinitionPropertyName(junctionTable);
 
       //
       // Order first by the object we're adding the other IDs to, then order either by the other IDs or by another
@@ -503,14 +740,14 @@ void ObjectStore::loadAll() {
       //
       queryString = "SELECT ";
       queryStringAsStream <<
-         fieldManyToManyDefn.thisPrimaryKeyColumn << ", " <<
-         fieldManyToManyDefn.otherPrimaryKeyColumn <<
-         " FROM " << fieldManyToManyDefn.tableName <<
-         " ORDER BY " << fieldManyToManyDefn.thisPrimaryKeyColumn << ", ";
-      if (fieldManyToManyDefn.orderByColumn != "") {
-         queryStringAsStream << fieldManyToManyDefn.orderByColumn;
+         GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << ", " <<
+         GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable) <<
+         " FROM " << junctionTable.tableName <<
+         " ORDER BY " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << ", ";
+      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+         queryStringAsStream << GetJunctionTableDefinitionOrderByColumn(junctionTable);
       } else {
-         queryStringAsStream << fieldManyToManyDefn.otherPrimaryKeyColumn;
+         queryStringAsStream << GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
       }
       queryStringAsStream << ";";
 
@@ -529,8 +766,8 @@ void ObjectStore::loadAll() {
       //
       QMultiHash<int, QVariant> thisToOtherKeys;
       while (sqlQuery.next()) {
-         thisToOtherKeys.insert(sqlQuery.value(fieldManyToManyDefn.thisPrimaryKeyColumn).toInt(),
-                                sqlQuery.value(fieldManyToManyDefn.otherPrimaryKeyColumn));
+         thisToOtherKeys.insert(sqlQuery.value(GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable)).toInt(),
+                                sqlQuery.value(GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable)));
       }
 
       //
@@ -543,7 +780,7 @@ void ObjectStore::loadAll() {
          //
          if (!this->contains(currentKey)) {
             qCritical() <<
-               Q_FUNC_INFO << "Ignoring record in table " << fieldManyToManyDefn.tableName <<
+               Q_FUNC_INFO << "Ignoring record in table " << junctionTable.tableName <<
                " for non-existent object with primary key " << currentKey;
             continue;
          }
@@ -554,22 +791,49 @@ void ObjectStore::loadAll() {
          // Normally we'd pass a list of all the "other" keys for each "this" object, but if we've been told to assume
          // there is at most one "other" per "this", then we'll pass just the first one we get back for each "this".
          //
-         auto otherKeys = thisToOtherKeys.values(currentKey);
-         if (fieldManyToManyDefn.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
+         QList<QVariant> otherKeys = thisToOtherKeys.values(currentKey);
+         bool success = false;
+         if (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
             qDebug() <<
                Q_FUNC_INFO << currentObject->metaObject()->className() << " #" << currentKey << ", " <<
-               fieldManyToManyDefn.propertyName << "=" << otherKeys.first().toInt();
-            currentObject->setProperty(fieldManyToManyDefn.propertyName, otherKeys.first());
+               GetJunctionTableDefinitionPropertyName(junctionTable) << "=" << otherKeys.first().toInt();
+            success = currentObject->setProperty(GetJunctionTableDefinitionPropertyName(junctionTable), otherKeys.first());
          } else {
             //
             // The setProperty function always takes a QVariant, so we need to create one from the QList<QVariant> we
-            // have.
+            // have.  However, we need to be careful here.  There are several ways to get the call to setProperty wrong
+            // at runtime, which gives you a "false" return code but no diagnostics or log of why the call failed.
             //
-            currentObject->setProperty(fieldManyToManyDefn.propertyName, QVariant{otherKeys});
+            // In particular, we can't just shove a QList<QVariant> (ie otherKeys) inside a QVariant, because passing
+            // this to setProperty() (or equivalent calls via the metaObject) will cause Qt to attempt (and fail) to
+            // access a setter that takes QList<QVariant>.  We need to create QVector<int> (ie what the setter expects)
+            // and then wrap that in a QVariant.
+            //
+            // To add to the challenge, despite QVariant having a huge number of constructors, none of them will accept
+            // QVector<int>, so, instead, you have to use the static function QVariant::fromValue to create a QVariant
+            // wrapper around QVector<int>.
+            //
+            QVector<int> convertedOtherKeys;
+            for (auto ii : otherKeys) {
+               convertedOtherKeys.append(ii.toInt());
+            }
+            QVariant wrappedConvertedOtherKeys = QVariant::fromValue(convertedOtherKeys);
+            success = currentObject->setProperty(GetJunctionTableDefinitionPropertyName(junctionTable), wrappedConvertedOtherKeys);
          }
-         qDebug() <<
-            Q_FUNC_INFO << "Stored " << fieldManyToManyDefn.propertyName << " for " <<
-            currentObject->metaObject()->className() << " #" << currentKey;
+         if (!success) {
+            // This is a coding error - eg the property doesn't have a WRITE member function or it doesn't take the
+            // type of argument we supplied inside a QVariant.
+            qCritical() <<
+               Q_FUNC_INFO << "Unable to set property" << GetJunctionTableDefinitionPropertyName(junctionTable) << "on" <<
+               currentObject->metaObject()->className();
+            Q_ASSERT(false);
+         } else {
+            qDebug() <<
+               Q_FUNC_INFO << "Set" <<
+               (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY ? 1 : otherKeys.size()) <<
+               GetJunctionTableDefinitionPropertyName(junctionTable) << "property for" <<
+               currentObject->metaObject()->className() << "#" << currentKey;
+         }
       }
    }
 
@@ -582,6 +846,11 @@ bool ObjectStore::contains(int id) const {
 }
 
 std::shared_ptr<QObject> ObjectStore::getById(int id) const {
+   // Callers should always check that the object they are requesting exists.  However, if a caller does request
+   // something invalid, then we at least want to log that for debugging.
+   if (!this->pimpl->allObjects.contains(id)) {
+      qCritical() << Q_FUNC_INFO << "Unable to find object with ID " << id;
+   }
    return this->pimpl->allObjects.value(id);
 }
 
@@ -617,7 +886,7 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    //
    QString queryString{"INSERT INTO "};
    QTextStream queryStringAsStream{&queryString};
-   queryStringAsStream << this->pimpl->tableName << " (";
+   queryStringAsStream << this->pimpl->primaryTable.tableName << " (";
    this->pimpl->appendColumNames(queryStringAsStream, false, false);
    queryStringAsStream << ") VALUES (";
    this->pimpl->appendColumNames(queryStringAsStream, false, true);
@@ -632,7 +901,7 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    sqlQuery.prepare(queryString);
    bool skippedPrimaryKey = false;
    char const * primaryKeyParameter{nullptr};
-   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
+   for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
       if (!skippedPrimaryKey) {
          // By convention the first field is the primary key
          skippedPrimaryKey = true;
@@ -641,14 +910,21 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
          QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
          QVariant bindValue{object->property(fieldDefn.propertyName)};
 
-         // Enums need to be converted to strings first
          if (fieldDefn.fieldType == ObjectStore::Enum) {
+            // Enums need to be converted to strings first
             bindValue = QVariant{enumToString(fieldDefn, bindValue)};
+         } else if (fieldDefn.foreignKeyTo && bindValue.toInt() <= 0) {
+            // If the field is a foreign key and the value we would otherwise put in it is not a valid key (eg we are
+            // inserting a Recipe on which the Equipment has not yet been set) then the query would barf at the invalid
+            // key.  So, in this case, we need to insert NULL.
+            bindValue = QVariant();
          }
 
          sqlQuery.bindValue(bindName, bindValue);
       }
    }
+
+   qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
    //
    // The object we are inserting should not already have a valid primary key.
@@ -677,9 +953,18 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    //
    Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
    auto primaryKey = sqlQuery.lastInsertId();
+   qDebug() <<
+      Q_FUNC_INFO << object->metaObject()->className() << "#" << primaryKey.toInt() << "inserted in database using" <<
+      queryString;
 
-   object->setProperty(primaryKeyParameter, primaryKey);
-   qDebug() << Q_FUNC_INFO << "Object with ID" << primaryKey.toInt() << "inserted in database using" << queryString;
+   bool setPrimaryKeyOk = object->setProperty(primaryKeyParameter, primaryKey);
+   if (!setPrimaryKeyOk) {
+      // This is a coding error - eg the property doesn't have a WRITE member function or it doesn't take the type of
+      // argument we supplied inside a QVariant.
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to set property" << primaryKeyParameter << "on" << object->metaObject()->className();
+      Q_ASSERT(false);
+   }
 
    //
    // Add the object to our list of all objects of this type (asserting that it should be impossible for an object with
@@ -691,8 +976,8 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    //
    // Now save data to the junction tables
    //
-   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
-      insertIntoFieldManyToManyDefn(fieldManyToManyDefn, *object, primaryKey, databaseConnection);
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, databaseConnection);
    }
 
    //
@@ -721,14 +1006,14 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    //
    QString queryString{"UPDATE "};
    QTextStream queryStringAsStream{&queryString};
-   queryStringAsStream << this->pimpl->tableName << " SET ";
+   queryStringAsStream << this->pimpl->primaryTable.tableName << " SET ";
 
    QString const & primaryKeyColumn {this->pimpl->getPrimaryKeyColumn()};
    QVariant const  primaryKey       {this->pimpl->getPrimaryKey(*object)};
 
    bool skippedPrimaryKey = false;
    bool firstFieldOutput = false;
-   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
+   for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
       if (!skippedPrimaryKey) {
          skippedPrimaryKey = true;
       } else {
@@ -749,7 +1034,7 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    //
    QSqlQuery sqlQuery{databaseConnection};
    sqlQuery.prepare(queryString);
-   for (auto const & fieldDefn: this->pimpl->fieldSimpleDefns) {
+   for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
       QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
       QVariant bindValue{object->property(fieldDefn.propertyName)};
 
@@ -773,10 +1058,10 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    //
    // Now update data in the junction tables
    //
-   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
       qDebug() <<
-         Q_FUNC_INFO << "Updating property " << fieldManyToManyDefn.propertyName << " in junction table " <<
-         fieldManyToManyDefn.tableName;
+         Q_FUNC_INFO << "Updating property " << GetJunctionTableDefinitionPropertyName(junctionTable) << " in junction table " <<
+         junctionTable.tableName;
 
       //
       // The simplest thing to do with each junction table is to blat any rows relating to the current object and then
@@ -785,10 +1070,10 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
       // optimising (eg read what's in the DB, compare with what's in the object property, work out what deletes,
       // inserts and updates are needed to sync them, etc.
       //
-      if (!deleteFromFieldManyToManyDefn(fieldManyToManyDefn, primaryKey, databaseConnection)) {
+      if (!deleteFromJunctionTableDefinition(junctionTable, primaryKey, databaseConnection)) {
          return;
       }
-      if (!insertIntoFieldManyToManyDefn(fieldManyToManyDefn, *object, primaryKey, databaseConnection)) {
+      if (!insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, databaseConnection)) {
          return;
       }
    }
@@ -829,12 +1114,12 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
    // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
    //
    auto matchingFieldDefn = std::find_if(
-      this->pimpl->fieldSimpleDefns.begin(),
-      this->pimpl->fieldSimpleDefns.end(),
-      [propertyName](FieldSimpleDefn const & fd) {return 0 == std::strcmp(fd.propertyName, propertyName);}
+      this->pimpl->primaryTable.tableFields.begin(),
+      this->pimpl->primaryTable.tableFields.end(),
+      [propertyName](TableField const & fd) {return 0 == std::strcmp(fd.propertyName, propertyName);}
    );
 
-   if (matchingFieldDefn != this->pimpl->fieldSimpleDefns.end()) {
+   if (matchingFieldDefn != this->pimpl->primaryTable.tableFields.end()) {
       //
       // We're updating a simple property
       //
@@ -846,7 +1131,7 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       //
       QString queryString{"UPDATE "};
       QTextStream queryStringAsStream{&queryString};
-      queryStringAsStream << this->pimpl->tableName << " SET ";
+      queryStringAsStream << this->pimpl->primaryTable.tableName << " SET ";
 
 
       QString const & columnToUpdateInDb = matchingFieldDefn->columnName;
@@ -862,12 +1147,12 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       QVariant propertyBindValue{object.property(propertyName)};
       // Enums need to be converted to strings first
       auto fieldDefn = std::find_if(
-         this->pimpl->fieldSimpleDefns.begin(),
-         this->pimpl->fieldSimpleDefns.end(),
-         [propertyName](FieldSimpleDefn const & fd){return propertyName == fd.propertyName;}
+         this->pimpl->primaryTable.tableFields.begin(),
+         this->pimpl->primaryTable.tableFields.end(),
+         [propertyName](TableField const & fd){return propertyName == fd.propertyName;}
       );
       // It's a coding error if we're trying to update a property that's not in the field definitions
-      Q_ASSERT(fieldDefn != this->pimpl->fieldSimpleDefns.end());
+      Q_ASSERT(fieldDefn != this->pimpl->primaryTable.tableFields.end());
       if (fieldDefn->fieldType == ObjectStore::Enum) {
          propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
       }
@@ -886,17 +1171,17 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       //
       // The property we've been given isn't a simple property, so look for it in the ones we store in junction tables
       //
-      auto matchingFieldManyToManyDefnDefn = std::find_if(
-         this->pimpl->fieldManyToManyDefns.begin(),
-         this->pimpl->fieldManyToManyDefns.end(),
-         [propertyName](FieldManyToManyDefn const & jt) {return 0 == std::strcmp(jt.propertyName, propertyName);}
+      auto matchingJunctionTableDefinitionDefn = std::find_if(
+         this->pimpl->junctionTables.begin(),
+         this->pimpl->junctionTables.end(),
+         [propertyName](JunctionTableDefinition const & jt) {return 0 == std::strcmp(GetJunctionTableDefinitionPropertyName(jt), propertyName);}
       );
 
       // It's a coding error if we couldn't find the property either as a simple field or an associative entity
-      if (matchingFieldManyToManyDefnDefn == this->pimpl->fieldManyToManyDefns.end()) {
+      if (matchingJunctionTableDefinitionDefn == this->pimpl->junctionTables.end()) {
          qCritical() <<
             Q_FUNC_INFO << "Unable to find rule for storing property" << object.metaObject()->className() << "::" <<
-            propertyName << "in either" << this->pimpl->tableName << "or any associated table";
+            propertyName << "in either" << this->pimpl->primaryTable.tableName << "or any associated table";
          Q_ASSERT(false);
       }
 
@@ -904,10 +1189,10 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
       // write out data based on the current property values.
       //
-      if (!deleteFromFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, primaryKey, databaseConnection)) {
+      if (!deleteFromJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, primaryKey, databaseConnection)) {
          return;
       }
-      if (!insertIntoFieldManyToManyDefn(*matchingFieldManyToManyDefnDefn, object, primaryKey, databaseConnection)) {
+      if (!insertIntoJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, object, primaryKey, databaseConnection)) {
          return;
       }
    }
@@ -950,7 +1235,7 @@ void ObjectStore::hardDelete(int id) {
    //
    QString queryString{"DELETE FROM "};
    QTextStream queryStringAsStream{&queryString};
-   queryStringAsStream << this->pimpl->tableName;
+   queryStringAsStream << this->pimpl->primaryTable.tableName;
    QString const & primaryKeyColumn = this->pimpl->getPrimaryKeyColumn();
    queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
 
@@ -975,8 +1260,8 @@ void ObjectStore::hardDelete(int id) {
    //
    // Now remove data in the junction tables
    //
-   for (auto const & fieldManyToManyDefn : this->pimpl->fieldManyToManyDefns) {
-      if (!deleteFromFieldManyToManyDefn(fieldManyToManyDefn, primaryKey, databaseConnection)) {
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      if (!deleteFromJunctionTableDefinition(junctionTable, primaryKey, databaseConnection)) {
          return;
       }
    }

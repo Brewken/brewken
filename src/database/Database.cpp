@@ -65,6 +65,64 @@
 //
 
 namespace {
+
+   //
+   // Constants for DB native type names etc
+   //
+   struct DbNativeVariants {
+      char const * const sqliteName;
+      char const * const postgresqlName;
+   };
+
+   //
+   // SQLite actually lets you store any type in any column, and only offers five "affinities" for "the recommended
+   // type for data stored in a column".   There are no special types for boolean or date.  However, it also allows you
+   // to use traditional SQL type names in create table statements etc (and does the mapping down to the affinities
+   // under the hood) and retains those names when you're browsing the database   We therefore use those traditional
+   // SQL typenames here as it makes the intent clearer for anyone looking directly at the database.
+   //
+   // PostgreSQL is the other extreme and has all sorts of specialised types (including for networking addresses,
+   // geometric shapes and XML).  We need only a small subset of these.
+   //
+   template<typename T> DbNativeVariants const nativeTypeNames;
+   //                                                                SQLite    PostgreSQL
+   template<> DbNativeVariants const nativeTypeNames<bool>         {"BOOLEAN", "BOOLEAN"         };
+   template<> DbNativeVariants const nativeTypeNames<int>          {"INTEGER", "INTEGER"         };
+   template<> DbNativeVariants const nativeTypeNames<unsigned int> {"INTEGER", "INTEGER"         };
+   template<> DbNativeVariants const nativeTypeNames<double>       {"DOUBLE",  "DOUBLE PRECISION"};
+   template<> DbNativeVariants const nativeTypeNames<QString>      {"TEXT",    "TEXT"            };
+   template<> DbNativeVariants const nativeTypeNames<QDate>        {"DATE",    "DATE"            };
+
+   // Note that, per https://www.sqlite.org/autoinc.html, SQLite explicitly recommends against using AUTOINCREMENT for
+   // integer primary keys, as specifying "PRIMARY KEY" alone will result in automatic generation of primary keys with
+   // less overhead.
+   DbNativeVariants const nativeIntPrimaryKeyModifier {
+      "PRIMARY KEY",        // SQLite
+      "SERIAL PRIMARY KEY"  // PostgreSQL
+   };
+
+   DbNativeVariants const sqlToAddColumnAsForeignKey {
+      "ALTER TABLE %1 ADD COLUMN %2 INTEGER REFERENCES %3(%4);", // SQLite
+      "ALTER TABLE %1 ADD COLUMN %2 INTEGER REFERENCES %3(%4);"  // PostgreSQL
+      // MySQL would be ALTER TABLE %1 ADD COLUMN %2 int, FOREIGN KEY (%2) REFERENCES %3(%4)
+   };
+
+   char const * getDbNativeName(DbNativeVariants const & dbNativeVariants) {
+      Brewken::DBTypes dbType = Brewken::dbType();
+      switch (dbType) {
+         case Brewken::SQLITE: return dbNativeVariants.sqliteName;
+         case Brewken::PGSQL:  return dbNativeVariants.postgresqlName;
+         default:
+            qCritical() << Q_FUNC_INFO << "Unrecognised DB type:" << dbType;
+            break;
+      }
+      return "NotSupported";
+   }
+
+   //
+   // Variables
+   //
+
    // These are for SQLite databases
    QFile dbFile;
    QString dbFileName;
@@ -235,6 +293,20 @@ public:
       this->dbConName = sqldb.connectionName();
       qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
+      //
+      // It's quite useful to record the DB version in the logs
+      //
+      QSqlQuery sqlQuery(sqldb);
+      QString queryString{"SELECT sqlite_version() AS version;"};
+      sqlQuery.prepare(queryString);
+      if (!sqlQuery.exec() || !sqlQuery.next()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return false;
+      }
+      QVariant fieldValue = sqlQuery.value("version");
+      qInfo() << Q_FUNC_INFO << "SQLite version" << fieldValue;
+
       // NOTE: synchronous=off reduces query time by an order of magnitude!
       QSqlQuery pragma(sqldb);
       if ( ! pragma.exec( "PRAGMA synchronous = off" ) ) {
@@ -296,6 +368,20 @@ public:
       this->dbConName = sqldb.connectionName();
       qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
+      //
+      // It's quite useful to record the DB version in the logs
+      //
+      QSqlQuery sqlQuery(sqldb);
+      QString queryString{"SELECT version() AS version;"};
+      sqlQuery.prepare(queryString);
+      if (!sqlQuery.exec() || !sqlQuery.next()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return false;
+      }
+      QVariant fieldValue = sqlQuery.value("version");
+      qInfo() << Q_FUNC_INFO << "PostgreSQL version" << fieldValue;
+
       // by the time we had pgsql support, there is a settings table
       this->createFromScratch = ! sqldb.tables().contains("settings");
 
@@ -311,7 +397,7 @@ public:
 
       if( doUpdate )
       {
-         bool success = DatabaseSchemaHelper::migrate( currentVersion, newVersion, database.sqlDatabase() );
+         bool success = DatabaseSchemaHelper::migrate(database, currentVersion, newVersion, database.sqlDatabase() );
          if( !success )
          {
             qCritical() << QString("Database migration %1->%2 failed").arg(currentVersion).arg(newVersion);
@@ -803,7 +889,7 @@ bool Database::load() {
 
    // This should work regardless of the db being used.
    if( this->pimpl->createFromScratch ) {
-      bool success = DatabaseSchemaHelper::create(sqldb,&this->pimpl->dbDefn,Brewken::dbType());
+      bool success = DatabaseSchemaHelper::create(*this, sqldb, &this->pimpl->dbDefn, Brewken::dbType());
       if( !success ) {
          qCritical() << "DatabaseSchemaHelper::create() failed";
          return false;
@@ -864,7 +950,7 @@ bool Database::createBlank(QString const& filename)
          return false;
       }
 
-      DatabaseSchemaHelper::create(sqldb,&this->pimpl->dbDefn,Brewken::SQLITE);
+      DatabaseSchemaHelper::create(*this, sqldb,&this->pimpl->dbDefn,Brewken::SQLITE);
 
       sqldb.close();
    } // sqldb gets destroyed as it goes out of scope before removeDatabase()
@@ -1244,4 +1330,26 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
 
 DatabaseSchema & Database::getDatabaseSchema() {
    return this->pimpl->dbDefn;
+}
+
+template<typename T> char const * Database::getDbNativeTypeName() const {
+   return getDbNativeName(nativeTypeNames<T>);
+}
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+//
+template char const * Database::getDbNativeTypeName<bool>() const;
+template char const * Database::getDbNativeTypeName<int>() const;
+template char const * Database::getDbNativeTypeName<unsigned int>() const;
+template char const * Database::getDbNativeTypeName<double>() const;
+template char const * Database::getDbNativeTypeName<QString>() const;
+template char const * Database::getDbNativeTypeName<QDate>() const;
+
+char const * Database::getDbNativeIntPrimaryKeyModifier() const {
+   return getDbNativeName(nativeIntPrimaryKeyModifier);
+}
+
+char const * Database::getSqlToAddColumnAsForeignKey() const {
+   return getDbNativeName(sqlToAddColumnAsForeignKey);
 }

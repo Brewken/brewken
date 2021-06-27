@@ -145,7 +145,6 @@ int main(int argc, char **argv) {
       }
    }
 
-
    if (parser.isSet(importFromXmlOption)) importFromXml(parser.value(importFromXmlOption));
    if (parser.isSet(createBlankDBOption)) createBlankDb(parser.value(createBlankDBOption));
 
