@@ -1313,7 +1313,6 @@ void Recipe::setMashId(int id) {
 }
 
 void Recipe::setFermentableIds(QVector<int> fermentableIds) {
-   qDebug() << Q_FUNC_INFO << "Set" << fermentableIds.size() << "Fermentable IDs for Recipe #" << this->key();
    this->pimpl->fermentableIds = fermentableIds;
    return;
 }

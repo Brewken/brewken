@@ -717,9 +717,11 @@ void ObjectStore::loadAll() {
       // It's a coding error if we have two objects with the same primary key
       Q_ASSERT(!this->pimpl->allObjects.contains(primaryKey));
       this->pimpl->allObjects.insert(primaryKey, object);
-      qDebug() <<
-         Q_FUNC_INFO << "Cached" << object->metaObject()->className() << "#" << primaryKey << "in" <<
-         this->metaObject()->className();
+      // Normally leave this debug output commented, as it generates a lot of logging at start-up, but can be useful to
+      // enable for debugging.
+//      qDebug() <<
+//         Q_FUNC_INFO << "Cached" << object->metaObject()->className() << "#" << primaryKey << "in" <<
+//         this->metaObject()->className();
    }
 
    //
@@ -826,14 +828,17 @@ void ObjectStore::loadAll() {
             qCritical() <<
                Q_FUNC_INFO << "Unable to set property" << GetJunctionTableDefinitionPropertyName(junctionTable) << "on" <<
                currentObject->metaObject()->className();
-            Q_ASSERT(false);
-         } else {
-            qDebug() <<
-               Q_FUNC_INFO << "Set" <<
-               (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY ? 1 : otherKeys.size()) <<
-               GetJunctionTableDefinitionPropertyName(junctionTable) << "property for" <<
-               currentObject->metaObject()->className() << "#" << currentKey;
+            Q_ASSERT(false); // Stop here on a debug build
+            return;          // Continue but abort the transaction on a non-debug build
          }
+
+         // This is useful for debugging but I usually leave it commented out as it generates a lot of logging at start-up
+//         qDebug() <<
+//            Q_FUNC_INFO << "Set" <<
+//            (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY ? 1 : otherKeys.size()) <<
+//            GetJunctionTableDefinitionPropertyName(junctionTable) << "property for" <<
+//            currentObject->metaObject()->className() << "#" << currentKey;
+
       }
    }
 

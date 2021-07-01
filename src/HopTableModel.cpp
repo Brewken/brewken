@@ -436,7 +436,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  "inventoryAmount",
+                                                  PropertyNames::NamedEntityWithInventory::inventory,
                                                   Brewken::qStringToSI(value.toString(), &Units::kilograms, displayUnit(HOPINVENTORYCOL)),
                                                   tr("Change Hop Inventory Amount"));
          }

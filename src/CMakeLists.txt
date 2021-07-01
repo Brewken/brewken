@@ -26,6 +26,9 @@
 # See also ../CMakeLists.txt
 #
 
+# Uncomment the next line for verbose build output
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # The current directory in the original source.
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 # The current directory in the output build directory.
@@ -501,7 +504,11 @@ IF( NOT ${NO_QTMULTIMEDIA})
    SET( QT5_USE_MODULES_LIST ${QT5_USE_MODULES_LIST} Qt5::Multimedia)
 ENDIF()
 
-target_link_libraries( ${QT5_USE_MODULES_LIST} ${XercesC_LIBRARIES} ${XalanC_LIBRARIES})
+# The dl library is needed on non-Windows platforms for Boost Stacktrace
+IF(NOT WIN32)
+   SET(LIBDL dl)
+ENDIF()
+target_link_libraries( ${QT5_USE_MODULES_LIST} ${XercesC_LIBRARIES} ${XalanC_LIBRARIES} ${LIBDL} )
 
 #=================================Tests========================================
 
@@ -528,7 +535,7 @@ IF( NOT ${NO_QTMULTIMEDIA})
 SET( QT5_USE_MODULES_LIST ${QT5_USE_MODULES_LIST} Qt5::Multimedia)
 ENDIF()
 
-target_link_libraries(${QT5_USE_MODULES_LIST} ${XercesC_LIBRARIES} ${XalanC_LIBRARIES})
+target_link_libraries(${QT5_USE_MODULES_LIST} ${XercesC_LIBRARIES} ${XalanC_LIBRARIES} ${LIBDL})
 
 ADD_TEST(
    NAME pstdintTest

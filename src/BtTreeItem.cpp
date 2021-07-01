@@ -185,9 +185,9 @@ QVariant BtTreeItem::data(int column)
 }
 
 bool BtTreeItem::insertChildren(int position, int count, int _type) {
-   qDebug() <<
-      Q_FUNC_INFO << "Inserting" << count << "children of type" << _type << "(" <<
-      this->itemTypeToString(static_cast<BtTreeItem::ITEMTYPE>(_type)) << ") at position" << position;
+//   qDebug() <<
+//      Q_FUNC_INFO << "Inserting" << count << "children of type" << _type << "(" <<
+//      this->itemTypeToString(static_cast<BtTreeItem::ITEMTYPE>(_type)) << ") at position" << position;
    if ( position < 0  || position > this->childItems.size()) {
       qWarning() << Q_FUNC_INFO << "Position" << position << "outside range (0, " << this->childItems.size() << ")";
       return false;

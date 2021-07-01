@@ -15,6 +15,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include "SimpleUndoableUpdate.h"
+
+// Uncomment the following and the stacktrace stuff below to debug issues tripping the isValid assert below
+//#include <boost/stacktrace.hpp>
+//#include <sstream>      // std::ostringstream
+
 #include "Brewken.h" // For logging
 
 SimpleUndoableUpdate::SimpleUndoableUpdate(QObject & updatee,
@@ -25,6 +30,11 @@ SimpleUndoableUpdate::SimpleUndoableUpdate(QObject & updatee,
    : QUndoCommand(parent), updatee(updatee), propertyName(propertyName), newValue(newValue)
 {
    this->oldValue = this->updatee.property(this->propertyName);
+
+// Uncomment this block if the assert below is tripping, as it will usually help find the bug quickly
+//   std::ostringstream stacktrace;
+//   stacktrace << boost::stacktrace::stacktrace();
+//   qDebug().noquote() << Q_FUNC_INFO << this->propertyName << " " << QString::fromStdString(stacktrace.str());
    Q_ASSERT(this->oldValue.isValid() && "Trying to update non-existent property");
 
    this->setText(description);

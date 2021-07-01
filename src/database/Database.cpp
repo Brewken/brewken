@@ -933,7 +933,6 @@ bool Database::load() {
       // Update this field.
       Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
    }
-
    this->pimpl->loadWasSuccessful = true;
    return this->pimpl->loadWasSuccessful;
 }

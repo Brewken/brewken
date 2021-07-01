@@ -320,9 +320,9 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
          if( value.canConvert(QVariant::String) )
          {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     PropertyNames::NamedEntity::name,
-                                                     value.toString(),
-                                                     tr("Change Misc Name"));
+                                                  PropertyNames::NamedEntity::name,
+                                                  value.toString(),
+                                                  tr("Change Misc Name"));
          }
          else
             return false;
@@ -331,53 +331,53 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
          if( ! value.canConvert(QVariant::Int) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                   "type",
-                                                  static_cast<Misc::Type>(value.toInt()),
-                                                  tr("Change Misc Type"));
+                                               PropertyNames::Misc::type,
+                                               static_cast<Misc::Type>(value.toInt()),
+                                               tr("Change Misc Type"));
          break;
       case MISCUSECOL:
          if( ! value.canConvert(QVariant::Int) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                   "use",
-                                                   static_cast<Misc::Use>(value.toInt()),
-                                                   tr("Change Misc Use"));
+                                               PropertyNames::Misc::use,
+                                               static_cast<Misc::Use>(value.toInt()),
+                                               tr("Change Misc Use"));
          break;
       case MISCTIMECOL:
          if( ! value.canConvert(QVariant::String) )
             return false;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                   PropertyNames::Misc::time,
-                                                   Brewken::qStringToSI(value.toString(), &Units::minutes, dspUnit, dspScl),
-                                                   tr("Change Misc Time"));
+                                               PropertyNames::Misc::time,
+                                               Brewken::qStringToSI(value.toString(), &Units::minutes, dspUnit, dspScl),
+                                               tr("Change Misc Time"));
          break;
       case MISCINVENTORYCOL:
          if( ! value.canConvert(QVariant::String) )
             return false;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                   "inventoryAmount",
-                                                   Brewken::qStringToSI(value.toString(), unit, dspUnit,dspScl),
-                                                   tr("Change Misc Inventory Amount"));
+                                               PropertyNames::NamedEntityWithInventory::inventory,
+                                               Brewken::qStringToSI(value.toString(), unit, dspUnit,dspScl),
+                                               tr("Change Misc Inventory Amount"));
          break;
       case MISCAMOUNTCOL:
          if( ! value.canConvert(QVariant::String) )
             return false;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                   "amount",
-                                                   Brewken::qStringToSI(value.toString(), unit, dspUnit,dspScl),
-                                                   tr("Change Misc Amount"));
+                                               PropertyNames::Misc::amount,
+                                               Brewken::qStringToSI(value.toString(), unit, dspUnit,dspScl),
+                                               tr("Change Misc Amount"));
          break;
       case MISCISWEIGHT:
          if( ! value.canConvert(QVariant::Int) )
             return false;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                   "amountType",
-                                                   static_cast<Misc::AmountType>(value.toInt()),
-                                                   tr("Change Misc Amount Type"));
+                                               PropertyNames::Misc::amountType,
+                                               static_cast<Misc::AmountType>(value.toInt()),
+                                               tr("Change Misc Amount Type"));
          break;
       default:
          return false;
