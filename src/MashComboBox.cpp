@@ -71,7 +71,7 @@ void MashComboBox::removeAllMashs() {
    QList<Mash *> tmpMashs(mashObs);
 
    for (int i = 0; i < tmpMashs.size(); ++i) {
-      removeMash(tmpMashs[i]);
+      this->remove(tmpMashs[i]);
    }
 }
 
@@ -102,7 +102,7 @@ void MashComboBox::repopulateList() {
    QList<Mash *> tmpMashs(mashObs);
    size = tmpMashs.size();
    for (i = 0; i < size; ++i) {
-      this->removeMash(tmpMashs[i]);
+      this->remove(tmpMashs[i]);
    }
 
    tmpMashs.clear();
@@ -110,7 +110,7 @@ void MashComboBox::repopulateList() {
 
    size = tmpMashs.size();
    for (i = 0; i < size; ++i) {
-      this->addMash(tmpMashs[i]);
+      this->add(tmpMashs[i]);
    }
 
    this->setCurrentIndex(-1);

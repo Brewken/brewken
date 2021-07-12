@@ -188,7 +188,7 @@ public:
 
    void save();
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 

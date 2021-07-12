@@ -62,7 +62,7 @@ void MashEditor::saveAndClose()
 
    mashObs->setEquipAdjust( true ); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
 
-   mashObs->setName( lineEdit_name->text(), mashObs->cacheOnly() );
+   mashObs->setName(lineEdit_name->text());
    mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI());
    mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI());
    mashObs->setPh(lineEdit_spargePh->toSI());

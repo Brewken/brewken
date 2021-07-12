@@ -19,6 +19,8 @@
  */
 #include "BtTreeModel.h"
 
+#include <cstring>
+
 #include <QAbstractItemModel>
 #include <QList>
 #include <QMessageBox>
@@ -29,6 +31,7 @@
 #include <Qt>
 #include <QVariant>
 
+#include "AncestorDialog.h"
 #include "Brewken.h"
 #include "BtFolder.h"
 #include "BtTreeItem.h"
@@ -44,6 +47,7 @@
 #include "model/BrewNote.h"
 #include "model/Style.h"
 #include "model/Water.h"
+#include "PersistentSettings.h"
 
 // =========================================================================
 // ============================ CLASS STUFF ================================
@@ -58,62 +62,72 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
    switch (type) {
       case RECIPEMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::RECIPE);
-         connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalObjectInserted, this,   &BtTreeModel::elementAddedRecipe);
+         connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalObjectInserted, this, &BtTreeModel::elementAddedRecipe);
          connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedRecipe);
          // Brewnotes need love too!
-         connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectInserted, this,   &BtTreeModel::elementAddedBrewNote);
+         connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectInserted, this, &BtTreeModel::elementAddedBrewNote);
          connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedBrewNote);
+         // And some versioning stuff, because why not?
+         connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalPropertyChanged, this, &BtTreeModel::recipePropertyChanged);
          _type = BtTreeItem::RECIPE;
-         _mimeType = "application/x-brewken-recipe";
+         _mimeType = "application/x-brewtarget-recipe";
+         m_maxColumns = BtTreeItem::RECIPENUMCOLS;
          break;
       case EQUIPMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::EQUIPMENT);
-         connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectInserted, this,   &BtTreeModel::elementAddedEquipment);
+         connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectInserted, this, &BtTreeModel::elementAddedEquipment);
          connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedEquipment);
          _type = BtTreeItem::EQUIPMENT;
-         _mimeType = "application/x-brewken-recipe";
+         _mimeType = "application/x-brewtarget-recipe";
+         m_maxColumns = BtTreeItem::EQUIPMENTNUMCOLS;
          break;
       case FERMENTMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::FERMENTABLE);
-         connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectInserted, this,   &BtTreeModel::elementAddedFermentable);
+         connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectInserted, this, &BtTreeModel::elementAddedFermentable);
          connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedFermentable);
          _type = BtTreeItem::FERMENTABLE;
-         _mimeType = "application/x-brewken-ingredient";
+         _mimeType = "application/x-brewtarget-ingredient";
+         m_maxColumns = BtTreeItem::FERMENTABLENUMCOLS;
          break;
       case HOPMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::HOP);
-         connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this,   &BtTreeModel::elementAddedHop);
+         connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this, &BtTreeModel::elementAddedHop);
          connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedHop);
          _type = BtTreeItem::HOP;
-         _mimeType = "application/x-brewken-ingredient";
+         _mimeType = "application/x-brewtarget-ingredient";
+         m_maxColumns = BtTreeItem::HOPNUMCOLS;
          break;
       case MISCMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::MISC);
-         connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectInserted, this,   &BtTreeModel::elementAddedMisc);
+         connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectInserted, this, &BtTreeModel::elementAddedMisc);
          connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedMisc);
          _type = BtTreeItem::MISC;
-         _mimeType = "application/x-brewken-ingredient";
+         _mimeType = "application/x-brewtarget-ingredient";
+         m_maxColumns = BtTreeItem::MISCNUMCOLS;
          break;
       case STYLEMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::STYLE);
-         connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectInserted, this,   &BtTreeModel::elementAddedStyle);
+         connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectInserted, this, &BtTreeModel::elementAddedStyle);
          connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedStyle);
          _type = BtTreeItem::STYLE;
-         _mimeType = "application/x-brewken-recipe";
+         _mimeType = "application/x-brewtarget-recipe";
+         m_maxColumns = BtTreeItem::STYLENUMCOLS;
          break;
       case YEASTMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::YEAST);
-         connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectInserted, this,   &BtTreeModel::elementAddedYeast);
+         connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectInserted, this, &BtTreeModel::elementAddedYeast);
          connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedYeast);
          _type = BtTreeItem::YEAST;
-         _mimeType = "application/x-brewken-ingredient";
+         _mimeType = "application/x-brewtarget-ingredient";
+         m_maxColumns = BtTreeItem::YEASTNUMCOLS;
          break;
       case WATERMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::WATER);
-         connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this,   &BtTreeModel::elementAddedWater);
+         connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this, &BtTreeModel::elementAddedWater);
          connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedWater);
          _type = BtTreeItem::WATER;
-         _mimeType = "application/x-brewken-ingredient";
+         _mimeType = "application/x-brewtarget-ingredient";
+         m_maxColumns = BtTreeItem::WATERNUMCOLS;
          break;
       default:
          qWarning() << QString("Invalid treemask: %1").arg(type);
@@ -126,6 +140,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
 }
 
 BtTreeModel::~BtTreeModel() {
+   // Qt automatically handles the disconnection of any signals we were listening to
    delete rootItem;
    rootItem = nullptr;
 }
@@ -157,26 +172,7 @@ int BtTreeModel::rowCount(const QModelIndex & parent) const {
 
 int BtTreeModel::columnCount(const QModelIndex & parent) const {
    Q_UNUSED(parent)
-   switch (treeMask) {
-      case RECIPEMASK:
-         return BtTreeItem::RECIPENUMCOLS;
-      case EQUIPMASK:
-         return BtTreeItem::EQUIPMENTNUMCOLS;
-      case FERMENTMASK:
-         return BtTreeItem::FERMENTABLENUMCOLS;
-      case HOPMASK:
-         return BtTreeItem::HOPNUMCOLS;
-      case MISCMASK:
-         return BtTreeItem::MISCNUMCOLS;
-      case YEASTMASK:
-         return BtTreeItem::YEASTNUMCOLS;
-      case STYLEMASK:
-         return BtTreeItem::STYLENUMCOLS;
-      case WATERMASK:
-         return BtTreeItem::WATERNUMCOLS;
-      default:
-         return 0;
-   }
+   return m_maxColumns;
 }
 
 Qt::ItemFlags BtTreeModel::flags(const QModelIndex & index) const {
@@ -242,64 +238,34 @@ QModelIndex BtTreeModel::first() {
 QVariant BtTreeModel::data(const QModelIndex & index, int role) const {
    int maxColumns;
 
-   switch (treeMask) {
-      case RECIPEMASK:
-         maxColumns = BtTreeItem::RECIPENUMCOLS;
-         break;
-      case EQUIPMASK:
-         maxColumns = BtTreeItem::EQUIPMENTNUMCOLS;
-         break;
-      case FERMENTMASK:
-         maxColumns = BtTreeItem::FERMENTABLENUMCOLS;
-         break;
-      case HOPMASK:
-         maxColumns = BtTreeItem::HOPNUMCOLS;
-         break;
-      case MISCMASK:
-         maxColumns = BtTreeItem::MISCNUMCOLS;
-         break;
-      case YEASTMASK:
-         maxColumns = BtTreeItem::YEASTNUMCOLS;
-         break;
-      case STYLEMASK:
-         maxColumns = BtTreeItem::STYLENUMCOLS;
-         break;
-      case FOLDERMASK:
-         maxColumns = BtTreeItem::FOLDERNUMCOLS;
-         break;
-      case WATERMASK:
-         maxColumns = BtTreeItem::WATERNUMCOLS;
-         break;
-      default:
-         // Backwards compatibility. This MUST be fixed prior to releasing the code
-         // I hate this comment! Why? Why MUST this be fixed prior to release?
-         // It wasn't, so what is "this" and what are the consequences. I am such
-         // an ass.
-         maxColumns = BtTreeItem::RECIPENUMCOLS;
+   if (treeMask == FOLDERMASK) {
+      maxColumns = BtTreeItem::FOLDERNUMCOLS;
+   } else {
+      maxColumns = m_maxColumns;
    }
 
    if (!rootItem || !index.isValid() || index.column() < 0 || index.column() >= maxColumns) {
       return QVariant();
    }
 
-   if (role == Qt::ToolTipRole) {
-      return toolTipData(index);
-   }
-
-   if (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::DecorationRole) {
-      return QVariant();
-   }
-
    BtTreeItem * itm = item(index);
-   if (role == Qt::DecorationRole && index.column() == 0) {
-      if (itm->type() == BtTreeItem::FOLDER) {
-         return QIcon(":images/folder.png");
-      } else {
-         return QVariant();
-      }
+
+   QFont font;
+   switch (role) {
+      case Qt::ToolTipRole:
+         return toolTipData(index);
+      case Qt::DisplayRole:
+         return itm->data(index.column());
+      case Qt::DecorationRole:
+         if (index.column() == 0 && itm->type() == BtTreeItem::FOLDER) {
+            return QIcon(":images/folder.png");
+         }
+         break;
+      default:
+         break;
    }
 
-   return itm->data(index.column());
+   return QVariant();
 }
 
 QVariant BtTreeModel::toolTipData(const QModelIndex & index) const {
@@ -321,9 +287,6 @@ QVariant BtTreeModel::toolTipData(const QModelIndex & index) const {
       case YEASTMASK:
          return whiskey->getToolTip(qobject_cast<Yeast *>(thing(index)));
       case WATERMASK:
-         // return thing(index)->name();
-         // this must wait until I implement the call. SEE? That's a proper
-         // comment. Not this weaksauce "must be fixed" shit.
          return whiskey->getToolTip(qobject_cast<Water *>(thing(index)));
       default:
          return item(index)->name();
@@ -364,6 +327,8 @@ QVariant BtTreeModel::recipeHeader(int section) const {
    switch (section) {
       case BtTreeItem::RECIPENAMECOL:
          return QVariant(tr("Name"));
+      case BtTreeItem::RECIPEANCCOUNT:
+         return QVariant(tr("Snapshots"));
       case BtTreeItem::RECIPEBREWDATECOL:
          return QVariant(tr("Brew Date"));
       case BtTreeItem::RECIPESTYLECOL:
@@ -522,11 +487,10 @@ bool BtTreeModel::insertRow(int row, const QModelIndex & parent, QObject * victi
 
 bool BtTreeModel::removeRows(int row, int count, const QModelIndex & parent) {
    BtTreeItem * pItem = item(parent);
-   bool success = true;
 
-   beginRemoveRows(parent, row, row + count - 1);
-   success = pItem->removeChildren(row, count);
-   endRemoveRows();
+   this->beginRemoveRows(parent, row, row + count - 1);
+   bool success = pItem->removeChildren(row, count);
+   this->endRemoveRows();
 
    return success;
 }
@@ -636,7 +600,7 @@ void BtTreeModel::loadTreeModel() {
 
    qDebug() << Q_FUNC_INFO << "Got " << elems.length() << "elements matching type mask" << this->treeMask;
 
-   foreach (NamedEntity * elem, elems) {
+   for (NamedEntity * elem : elems) {
 
       if (! elem->folder().isEmpty()) {
          ndxLocal = findFolder(elem->folder(), rootItem->child(0), true);
@@ -659,21 +623,50 @@ void BtTreeModel::loadTreeModel() {
       }
 
       // If we have brewnotes, set them up here.
-      if (this->treeMask & RECIPEMASK) {
-         this->addBrewNoteSubTree(qobject_cast<Recipe *>(elem), i, local);
+      if (treeMask & RECIPEMASK) {
+         Recipe * holdmebeer = qobject_cast<Recipe *>(elem);
+         if (PersistentSettings::value("showsnapshots", false).toBool() && holdmebeer->hasAncestors()) {
+            setShowChild(ndxLocal, true);
+            addAncestoralTree(holdmebeer, i, local);
+            addBrewNoteSubTree(holdmebeer, i, local, false);
+         } else {
+            addBrewNoteSubTree(holdmebeer, i, local);
+         }
       }
-
       observeElement(elem);
    }
 }
 
-void BtTreeModel::addBrewNoteSubTree(Recipe * rec, int i, BtTreeItem * parent) {
-   QList<BrewNote *> notes = rec->brewNotes();
+void BtTreeModel::addAncestoralTree(Recipe * rec, int i, BtTreeItem * parent) {
+   BtTreeItem * temp = parent->child(i);
+   int j = 0;
+
+   for (Recipe * stor : rec->ancestors()) {
+      // insert the ancestor. This is most of magic. One day, I understood it.
+      // Now I simply copy/paste it
+      if (! insertRow(j, createIndex(i, 0, temp), stor, BtTreeItem::RECIPE)) {
+         qWarning() << "Ancestor insert failed in loadTreeModel()";
+         continue;
+      }
+      // we need to find the index of what we just inserted
+      QModelIndex cIndex = findElement(stor, temp);
+      // and set showChild on it
+      setShowChild(cIndex, true);
+
+      // finally, add this ancestors brewnotes but do not recurse
+      addBrewNoteSubTree(stor, j, temp, false);
+      observeElement(stor);
+      ++j;
+   }
+}
+
+void BtTreeModel::addBrewNoteSubTree(Recipe * rec, int i, BtTreeItem * parent, bool recurse) {
+   QList<BrewNote *> notes = recurse ? RecipeHelper::brewNotesForRecipeAndAncestors(*rec) : rec->brewNotes();
    BtTreeItem * temp = parent->child(i);
 
    int j = 0;
 
-   foreach (BrewNote * note, notes) {
+   for (BrewNote * note : notes) {
       // In previous insert loops, we ignore the error and soldier on. So we
       // will do that here too
       if (! insertRow(j, createIndex(i, 0, temp), note, BtTreeItem::BREWNOTE)) {
@@ -794,62 +787,65 @@ void BtTreeModel::copySelected(QList< QPair<QModelIndex, QString>> toBeCopied) {
       // switch.
       //
       switch (type(ndx)) {
-         case BtTreeItem::EQUIPMENT:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->equipment(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::FERMENTABLE:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->fermentable(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::HOP:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->hop(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::MISC:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->misc(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::RECIPE:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->recipe(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::STYLE:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->style(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::YEAST:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->yeast(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
-         case BtTreeItem::WATER:
-            {
-               auto copy = ObjectStoreWrapper::copy(*this->water(ndx)); // Create a deep copy.
-               copy->setName(name);
-               ObjectStoreWrapper::insert(copy);
-            }
-            break;
+         case BtTreeItem::EQUIPMENT: {
+            auto copy = ObjectStoreWrapper::copy(*this->equipment(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::FERMENTABLE: {
+            auto copy = ObjectStoreWrapper::copy(*this->fermentable(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::HOP: {
+            auto copy = ObjectStoreWrapper::copy(*this->hop(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::MISC: {
+            auto copy = ObjectStoreWrapper::copy(*this->misc(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::RECIPE: {
+            auto copy = ObjectStoreWrapper::copy(*this->recipe(ndx)); // Create a deep copy.
+            qDebug() <<
+               Q_FUNC_INFO << "display:" <<  copy->display() << "isLocked:" << copy->locked() <<
+               "hasDescendants:" << copy->hasDescendants();
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::STYLE: {
+            auto copy = ObjectStoreWrapper::copy(*this->style(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::YEAST: {
+            auto copy = ObjectStoreWrapper::copy(*this->yeast(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
+         case BtTreeItem::WATER: {
+            auto copy = ObjectStoreWrapper::copy(*this->water(ndx)); // Create a deep copy.
+            copy->setName(name);
+            ObjectStoreWrapper::insert(copy);
+            this->folderChanged(copy.get());
+         }
+         break;
          default:
             qWarning() << QString("copySelected:: unknown type %1").arg(type(ndx));
       }
@@ -864,6 +860,11 @@ void BtTreeModel::copySelected(QList< QPair<QModelIndex, QString>> toBeCopied) {
 
 void BtTreeModel::deleteSelected(QModelIndexList victims) {
    QModelIndexList toBeDeleted = victims; // trust me
+   Recipe * rec;
+   int deletewhat;
+
+   // There are black zones of shadow close to our daily paths,
+   // and now and then some evil soul breaks a passage through.
 
    while (! toBeDeleted.isEmpty()) {
       QModelIndex ndx = toBeDeleted.takeFirst();
@@ -881,7 +882,18 @@ void BtTreeModel::deleteSelected(QModelIndexList victims) {
             ObjectStoreWrapper::softDelete(*misc(ndx));
             break;
          case BtTreeItem::RECIPE:
-            ObjectStoreWrapper::softDelete(*recipe(ndx));
+            {
+               rec = recipe(ndx);
+               deletewhat = PersistentSettings::value("deletewhat", Recipe::DESCENDANT).toInt();
+               if (deletewhat == Recipe::DESCENDANT) {
+                  this->revertRecipeToPreviousVersion(ndx);
+               } else {
+                  for (auto ancestor : rec->ancestors()) {
+                     ObjectStoreWrapper::softDelete(*ancestor);
+                  }
+               }
+               ObjectStoreWrapper::softDelete(*rec);
+            }
             break;
          case BtTreeItem::STYLE:
             ObjectStoreWrapper::softDelete(*style(ndx));
@@ -917,20 +929,26 @@ void BtTreeModel::deleteSelected(QModelIndexList victims) {
 //
 void BtTreeModel::folderChanged(QString name) {
    NamedEntity * test = qobject_cast<NamedEntity *>(sender());
-   QModelIndex ndx, pIndex;
-   bool expand = true;
 
    Q_UNUSED(name)
    if (! test) {
       return;
    }
 
+   this->folderChanged(test);
+   return;
+}
+
+void BtTreeModel::folderChanged(NamedEntity * test) {
    // Find it.
-   ndx = findElement(test);
+   QModelIndex ndx = findElement(test);
    if (! ndx.isValid()) {
-      qWarning() << "folderChanged:: could not find element";
+      qWarning() << Q_FUNC_INFO << "Could not find element";
       return;
    }
+
+   QModelIndex pIndex;
+   bool expand = true;
 
    pIndex = parent(ndx); // Get the parent
    // If the parent isn't valid, its the root
@@ -942,7 +960,7 @@ void BtTreeModel::folderChanged(QString name) {
 
    // Remove it
    if (! removeRows(i, 1, pIndex)) {
-      qWarning() << "folderChanged:: could not remove row";
+      qWarning() << Q_FUNC_INFO << "Could not remove row";
       return;
    }
 
@@ -959,7 +977,7 @@ void BtTreeModel::folderChanged(QString name) {
    int j = local->childCount();
 
    if (!  insertRow(j, newNdx, test, _type)) {
-      qWarning() << "folderChanged:: could not insert row";
+      qWarning() << Q_FUNC_INFO << "Could not insert row";
       return;
    }
    // If we have brewnotes, set them up here.
@@ -1114,13 +1132,6 @@ QModelIndex BtTreeModel::createFolderTree(QStringList dirs, BtTreeItem * parent,
       pItem->insertChildren(i, 1, BtTreeItem::FOLDER);
       pItem->child(i)->setData(BtTreeItem::FOLDER, temp);
 
-      // Insert the item into the tree. If it fails, bug out
-      //if ( ! insertRow(i, ndx, temp, BtTreeItem::FOLDER) )
-      //{
-      //   emit layoutChanged();
-      //   return QModelIndex();
-      //}
-
       // Set the parent item to point to the newly created tree
       pItem = pItem->child(i);
 
@@ -1238,15 +1249,33 @@ void BtTreeModel::elementChanged() {
  * liners is required to give the right signature and to be able to call
  * addElement() properly
  */
-void BtTreeModel::elementAddedRecipe     (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Recipe     >(victimId))); }
-void BtTreeModel::elementAddedEquipment  (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Equipment  >(victimId))); }
-void BtTreeModel::elementAddedFermentable(int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Fermentable>(victimId))); }
-void BtTreeModel::elementAddedHop        (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Hop        >(victimId))); }
-void BtTreeModel::elementAddedMisc       (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Misc       >(victimId))); }
-void BtTreeModel::elementAddedStyle      (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Style      >(victimId))); }
-void BtTreeModel::elementAddedYeast      (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Yeast      >(victimId))); }
-void BtTreeModel::elementAddedBrewNote   (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<BrewNote   >(victimId))); }
-void BtTreeModel::elementAddedWater      (int victimId) { this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Water      >(victimId))); }
+void BtTreeModel::elementAddedRecipe(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Recipe     >(victimId)));
+}
+void BtTreeModel::elementAddedEquipment(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Equipment  >(victimId)));
+}
+void BtTreeModel::elementAddedFermentable(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Fermentable>(victimId)));
+}
+void BtTreeModel::elementAddedHop(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Hop        >(victimId)));
+}
+void BtTreeModel::elementAddedMisc(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Misc       >(victimId)));
+}
+void BtTreeModel::elementAddedStyle(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Style      >(victimId)));
+}
+void BtTreeModel::elementAddedYeast(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Yeast      >(victimId)));
+}
+void BtTreeModel::elementAddedBrewNote(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<BrewNote   >(victimId)));
+}
+void BtTreeModel::elementAddedWater(int victimId) {
+   this->elementAdded(qobject_cast<NamedEntity *>(ObjectStoreWrapper::getByIdRaw<Water      >(victimId)));
+}
 
 // I guess this isn't too bad. Better than this same function copied 7 times
 void BtTreeModel::elementAdded(NamedEntity * victim) {
@@ -1293,15 +1322,33 @@ void BtTreeModel::elementAdded(NamedEntity * victim) {
    observeElement(victim);
 }
 
-void BtTreeModel::elementRemovedRecipe     (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedEquipment  (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedFermentable(int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedHop        (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedMisc       (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedStyle      (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedYeast      (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedBrewNote   (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
-void BtTreeModel::elementRemovedWater      (int victimId, std::shared_ptr<QObject> victim) { this->elementRemoved(qobject_cast<NamedEntity *>(victim.get())); }
+void BtTreeModel::elementRemovedRecipe(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedEquipment(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedFermentable(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedHop(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedMisc(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedStyle(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedYeast(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedBrewNote(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
+void BtTreeModel::elementRemovedWater(int victimId, std::shared_ptr<QObject> victim) {
+   this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
+}
 
 void BtTreeModel::elementRemoved(NamedEntity * victim) {
    QModelIndex index, pIndex;
@@ -1320,12 +1367,46 @@ void BtTreeModel::elementRemoved(NamedEntity * victim) {
       return;
    }
 
-   if (removeRows(index.row(), 1, pIndex)) {
+   if (!removeRows(index.row(), 1, pIndex)) {
       return;
    }
 
    disconnect(victim, nullptr, this, nullptr);
 }
+
+void BtTreeModel::recipePropertyChanged(int recipeId, char const * const propertyName) {
+   // If a Recipe's ancestor ID has changed then it might be because a new ancestor has been created
+   // .:TBD:. We could probably get away with propertyName == PropertyNames::Recipe::ancestorId here because
+   // we always use the same constants for property names.
+   if (0 != std::strcmp(propertyName, PropertyNames::Recipe::ancestorId)) {
+      qDebug() << Q_FUNC_INFO << "Ignoring change to" << propertyName << "on Recipe" << recipeId;
+      return;
+   }
+
+   Recipe * descendant = ObjectStoreWrapper::getByIdRaw<Recipe>(recipeId);
+   if (!descendant) {
+      qCritical() << Q_FUNC_INFO << "Unable to find Recipe" << recipeId << "to check its change to" << propertyName;
+      return;
+   }
+
+   int ancestorId = descendant->getAncestorId();
+
+   if (ancestorId <= 0 || ancestorId == descendant->key()) {
+      qDebug() << Q_FUNC_INFO << "No ancestor (" << ancestorId << ") on Recipe" << recipeId;
+      return;
+   }
+
+   Recipe * ancestor = ObjectStoreWrapper::getByIdRaw<Recipe>(ancestorId);
+   if (!ancestor) {
+      qCritical() << Q_FUNC_INFO << "Unable to find Recipe" << ancestorId << "set as ancestor to Recipe" << recipeId;
+      return;
+   }
+
+   this->versionedRecipe(ancestor, descendant);
+
+   return;
+}
+
 
 void BtTreeModel::observeElement(NamedEntity * d) {
    if (! d) {
@@ -1344,6 +1425,35 @@ void BtTreeModel::observeElement(NamedEntity * d) {
 // =========================================================================
 // ===================== DRAG AND DROP STUFF ===============================
 // =========================================================================
+NamedEntity * getElement(int oType, int id) {
+   switch (oType) {
+      case BtTreeItem::RECIPE:
+         // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
+         return ObjectStoreWrapper::getById<Recipe>(id).get();
+      case BtTreeItem::EQUIPMENT:
+         return ObjectStoreWrapper::getById<Equipment>(id).get();
+      case BtTreeItem::FERMENTABLE:
+         return ObjectStoreWrapper::getById<Fermentable>(id).get();
+      case BtTreeItem::HOP:
+         return ObjectStoreWrapper::getById<Hop>(id).get();
+      case BtTreeItem::MISC:
+         return ObjectStoreWrapper::getById<Misc>(id).get();
+      case BtTreeItem::STYLE:
+         return ObjectStoreWrapper::getById<Style>(id).get();
+      case BtTreeItem::YEAST:
+         return ObjectStoreWrapper::getById<Yeast>(id).get();
+      case BtTreeItem::WATER:
+         return ObjectStoreWrapper::getById<Water>(id).get();
+      case BtTreeItem::FOLDER:
+         break;
+      default:
+         return nullptr;
+   }
+
+
+   return nullptr;
+}
+
 
 bool BtTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action,
                                int row, int column, const QModelIndex & parent) {
@@ -1360,9 +1470,9 @@ bool BtTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action,
 
    QDataStream stream(&encodedData, QIODevice::ReadOnly);
    int oType, id;
-   QList<int> droppedIds;
    QString target = "";
    QString name = "";
+   NamedEntity * something = nullptr;
 
    if (! parent.isValid()) {
       return false;
@@ -1371,55 +1481,29 @@ bool BtTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action,
    if (isFolder(parent)) {
       target = folder(parent)->fullPath();
    } else {
-      NamedEntity * _thing = thing(parent);
+      something = thing(parent);
 
       // Did you know there's a space between elements in a tree, and you can
       // actually drop things there? If somebody drops something there, don't
       // do anything
-      if (! _thing) {
+      if (! something) {
          return false;
       }
 
-      target = _thing->folder();
+      target = something->folder();
    }
 
    // Pull the stream apart and do that which needs done. Late binding ftw!
    while (!stream.atEnd()) {
       QString text;
       stream >> oType >> id >> name;
-      NamedEntity * elem = nullptr;
-      switch (oType) {
-         case BtTreeItem::RECIPE:
-            // .:TODO:. For now we just pull the raw pointer out of the shared pointer, but the rest of this code needs refactoring
-            elem = ObjectStoreWrapper::getById<Recipe>(id).get();
-            break;
-         case BtTreeItem::EQUIPMENT:
-            elem = ObjectStoreWrapper::getById<Equipment>(id).get();
-            break;
-         case BtTreeItem::FERMENTABLE:
-            elem = ObjectStoreWrapper::getById<Fermentable>(id).get();
-            break;
-         case BtTreeItem::HOP:
-            elem = ObjectStoreWrapper::getById<Hop>(id).get();
-            break;
-         case BtTreeItem::MISC:
-            elem = ObjectStoreWrapper::getById<Misc>(id).get();
-            break;
-         case BtTreeItem::STYLE:
-            elem = ObjectStoreWrapper::getById<Style>(id).get();
-            break;
-         case BtTreeItem::YEAST:
-            elem = ObjectStoreWrapper::getById<Yeast>(id).get();
-            break;
-         case BtTreeItem::WATER:
-            elem = ObjectStoreWrapper::getById<Water>(id).get();
-            break;
-         case BtTreeItem::FOLDER:
-            break;
-         default:
-            return false;
+      NamedEntity * elem = getElement(oType, id);
+
+      if (elem == nullptr && oType != BtTreeItem::FOLDER) {
+         return false;
       }
 
+      // this is the work.
       if (oType != BtTreeItem::FOLDER) {
          elem->setFolder(target);
       } else {
@@ -1434,6 +1518,124 @@ bool BtTreeModel::dropMimeData(const QMimeData * data, Qt::DropAction action,
    return true;
 }
 
+/*
+ * Looks like this is unused
+// do not call up any that you can not put down
+void BtTreeModel::makeAncestors(NamedEntity * ancestor, NamedEntity * descendant) {
+   if (ancestor == descendant) {
+      return;
+   }
+
+   // I need these as their recipes later, so cast'em
+   Recipe * r_desc = qobject_cast<Recipe *>(descendant);
+   Recipe * r_anc = qobject_cast<Recipe *>(ancestor);
+
+   // find the ancestor in the tree
+   QModelIndex ancNdx = findElement(ancestor);
+
+   // remove the ancestor
+   removeRows(ancNdx.row(), 1, this->parent(ancNdx));
+
+   // this does the database work
+   r_desc->setAncestor(*r_anc);
+
+   // now we need to find the descendant. This has to be done after we remove
+   // the rows.
+   QModelIndex descNdx = findElement(descendant);
+   BtTreeItem * node = item(descNdx);
+
+   // Remove all the brewnotes in the tree first. We get dupes otherwise.
+   removeRows(0, node->childCount(), descNdx);
+
+   // Add the ancestor's brewnotes to the descendant
+   addBrewNoteSubTree(r_desc, descNdx.row(), node->parent(), true);
+}
+*/
+void BtTreeModel::revertRecipeToPreviousVersion(QModelIndex ndx) {
+   BtTreeItem * node = item(ndx);
+   BtTreeItem * pNode = node->parent();
+   QModelIndex pIndex = parent(ndx);
+
+   // The recipe referred to by the index is the one that's about to be deleted
+   Recipe * recipeToRevert = recipe(ndx);
+
+   Recipe * ancestor = recipeToRevert->revertToPreviousVersion();
+
+   // don't do anything if there is nothing to do
+   if (!ancestor) {
+      return;
+   }
+
+   // Remove all the rows associated with the about-to-be-deleted Recipe
+   removeRows(0, node->childCount(), ndx);
+
+   // Put the ancestor into the tree
+   if (! insertRow(pIndex.row(), pIndex, ancestor, BtTreeItem::RECIPE)) {
+      qWarning() << Q_FUNC_INFO << "Could not add ancestor to tree";
+   }
+
+   // Find the ancestor in the tree
+   QModelIndex ancNdx = findElement(ancestor);
+   if (! ancNdx.isValid()) {
+      qWarning() << Q_FUNC_INFO << "Couldn't find the ancestor";
+   }
+
+   // Add the ancestor's brewnotes to the descendant
+   addBrewNoteSubTree(ancestor, ancNdx.row(), pNode);
+
+   return;
+}
+
+void BtTreeModel::spawnRecipe(QModelIndex ndx) {
+   Recipe * ancestor = recipe(ndx);
+   std::shared_ptr<Recipe> descendant = std::make_shared<Recipe>(*ancestor);
+   // We want to store the new Recipe first so that it gets an ID...
+   ObjectStoreWrapper::insert<Recipe>(descendant);
+   // ...then we can connect it to the one it was copied from
+   descendant->setAncestor(*ancestor);
+   qDebug() << Q_FUNC_INFO << "Created descendant Recipe" << descendant->key() << "of Recipe" << ancestor->key();
+
+   // First, we remove the ancestor from the tree
+   if (!removeRows(ndx.row(), 1, this->parent(ndx))) {
+      qCritical() << Q_FUNC_INFO << "Could not find Recipe" << ancestor->key() << "in display tree";
+   }
+
+   // Now we need to find the descendant in the tree. This has to be done
+   // after we removed the ancestor row, otherwise the index will be wrong.
+   QModelIndex decNdx = findElement(descendant.get());
+   this->showAncestors(decNdx);
+
+   emit dataChanged(decNdx, decNdx);
+   emit recipeSpawn(descendant.get());
+
+   return;
+}
+
+void BtTreeModel::versionedRecipe(Recipe * ancestor, Recipe * descendant) {
+   qDebug() << Q_FUNC_INFO << "Updating tree now that Recipe" << descendant->key() << "has ancestor Recipe" << ancestor->key();
+
+   // like before, remove the ancestor
+   QModelIndex ndx = findElement(ancestor);
+   if (!removeRows(ndx.row(), 1, this->parent(ndx))) {
+      qCritical() << Q_FUNC_INFO << "Could not find Recipe" << ancestor->key() << "in display tree";
+   }
+
+   // add the descendant in, but get the index only after we removed the
+   // ancestor
+   QModelIndex decNdx = findElement(descendant);
+   this->showAncestors(decNdx);
+
+   // do not mess with this order. We have to signal the data is in the tree
+   // first (dataChanged), then put it in the right folder (folderChanged) and
+   // finally tell MainWindow something happened (recipeSpawn).
+   // Any other order doesn't work, or dumps core
+   emit dataChanged(decNdx, decNdx);
+   this->folderChanged(descendant);
+   emit recipeSpawn(descendant);
+   return;
+}
+
+
 QStringList BtTreeModel::mimeTypes() const {
    QStringList types;
    // accept whatever type we like, and folders
@@ -1444,4 +1646,98 @@ QStringList BtTreeModel::mimeTypes() const {
 
 Qt::DropActions BtTreeModel::supportedDropActions() const {
    return Qt::CopyAction | Qt::MoveAction;
+}
+
+
+// =========================================================================
+// ===================== RECIPE VERSION STUFF ==============================
+// =========================================================================
+//
+bool BtTreeModel::showChild(QModelIndex child) const {
+   BtTreeItem * node = item(child);
+   return node->showMe();
+}
+
+void BtTreeModel::setShowChild(QModelIndex child, bool val) {
+   BtTreeItem * node = item(child);
+   return node->setShowMe(val);
+}
+
+void BtTreeModel::showAncestors(QModelIndex ndx) {
+
+   if (! ndx.isValid()) {
+      return;
+   }
+
+   BtTreeItem * node = item(ndx);
+   Recipe * descendant = recipe(ndx);
+   QList<Recipe *> ancestors = descendant->ancestors();
+
+   removeRows(0, node->childCount(), ndx);
+
+   // add the brewnotes for this version back
+   addBrewNoteSubTree(descendant, ndx.row(), node->parent(), false);
+
+   // set showChild on the leaf node. I use this for drawing menus
+   setShowChild(ndx, true);
+
+   // Now loop through the ancestors. The nature of the beast is nearest
+   // ancestors are first
+   for (Recipe * ancestor : ancestors) {
+      int j = node->childCount();
+      if (! insertRow(j, ndx, ancestor, BtTreeItem::RECIPE)) {
+         qWarning() << "Could not add ancestoral brewnotes";
+      }
+      QModelIndex cIndex = findElement(ancestor, node);
+      setShowChild(cIndex, true);
+      // ew, but apparently this has to happen here.
+      emit dataChanged(cIndex, cIndex);
+
+      // add the brewnotes to the ancestors, but make sure we don't recurse
+      addBrewNoteSubTree(ancestor, j, node, false);
+   }
+}
+
+void BtTreeModel::hideAncestors(QModelIndex ndx) {
+   BtTreeItem * node = item(ndx);
+
+   // This has no potential to be clever. None.
+   if (! ndx.isValid()) {
+      return;
+   }
+
+   // remove all the currently shown children
+   removeRows(0, node->childCount(), ndx);
+   Recipe * descendant = recipe(ndx);
+
+   // put the brewnotes back, including those from the ancestors.
+   addBrewNoteSubTree(descendant, ndx.row(), node->parent());
+
+   // This is for menus
+   setShowChild(ndx, false);
+
+   // Now we just need to mark each ancestor invisible again
+   for (Recipe * ancestor : descendant->ancestors()) {
+      QModelIndex aIndex = findElement(ancestor, node);
+      setShowChild(aIndex, false);
+      emit dataChanged(aIndex, aIndex);
+   }
+}
+
+// more cleverness must happen. Wonder if I can figure it out.
+void BtTreeModel::catchAncestors(bool showem) {
+   QModelIndex ndxLocal;
+   BtTreeItem * local = nullptr;
+   QList<NamedEntity *> elems = elements();
+
+   foreach (NamedEntity * elem, elems) {
+      Recipe * rec = qobject_cast<Recipe *>(elem);
+
+      local = rootItem->child(0);
+      ndxLocal = findElement(elem, local);
+
+      if (rec->hasAncestors()) {
+         showem ? showAncestors(ndxLocal) : hideAncestors(ndxLocal);
+      }
+   }
 }

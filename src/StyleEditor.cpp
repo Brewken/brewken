@@ -98,7 +98,7 @@ void StyleEditor::save()
       return;
    }
 
-   s->setName( lineEdit_name->text(), s->cacheOnly());
+   s->setName(lineEdit_name->text());
    s->setCategory( lineEdit_category->text() );
    s->setCategoryNumber( lineEdit_categoryNumber->text() );
    s->setStyleLetter( lineEdit_styleLetter->text() );
@@ -117,7 +117,7 @@ void StyleEditor::save()
    s->setAbvMin_pct( lineEdit_abvMin->toSI() );
    s->setAbvMax_pct( lineEdit_abvMax->toSI() );
    s->setProfile( textEdit_profile->toPlainText() );
-   s->setNamedEntitys( textEdit_ingredients->toPlainText() );
+   s->setIngredients( textEdit_ingredients->toPlainText() );
    s->setExamples( textEdit_examples->toPlainText() );
    s->setNotes( textEdit_notes->toPlainText() );
 
@@ -142,8 +142,9 @@ void StyleEditor::newStyle(QString folder)
       return;
 
    Style *s = new Style(name);
-   if ( ! folder.isEmpty() )
-      s->setFolder(folder,true);
+   if ( ! folder.isEmpty() ) {
+      s->setFolder(folder);
+   }
 
    setStyle(s);
    show();

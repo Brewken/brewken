@@ -24,9 +24,17 @@
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "PhysicalConstants.h"
 
-QStringList MashStep::types = QStringList() << "Infusion" << "Temperature" << "Decoction" << "Fly Sparge" << "Batch Sparge";
-QStringList MashStep::typesTr = QStringList() << QObject::tr("Infusion") << QObject::tr("Temperature") << QObject::tr("Decoction") << QObject::tr("Fly Sparge") << QObject::tr("Batch Sparge");
+QStringList const MashStep::types{"Infusion", "Temperature", "Decoction", "Fly Sparge", "Batch Sparge"};
+
+namespace {
+   QStringList typesTr = QStringList() << QObject::tr("Infusion") << QObject::tr("Temperature") << QObject::tr("Decoction") << QObject::tr("Fly Sparge") << QObject::tr("Batch Sparge");
+   bool isValidType( const QString &str ) {
+      return MashStep::types.contains(str);
+   }
+
+}
 
 bool MashStep::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -49,17 +57,10 @@ ObjectStore & MashStep::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<MashStep>::getInstance();
 }
 
-QString MashStep::classNameStr()
-{
-   static const QString name("MashStep");
-   return name;
-}
-
 //==============================CONSTRUCTORS====================================
 
 MashStep::MashStep(QString name, bool cache) :
    NamedEntity(-1, cache, name, true),
-   m_typeStr(QString()),
    m_type(static_cast<MashStep::Type>(0)),
    m_infuseAmount_l(0.0),
    m_stepTemp_c(0.0),
@@ -105,127 +106,48 @@ MashStep::MashStep(MashStep const & other) :
 
 
 //================================"SET" METHODS=================================
-void MashStep::setInfuseTemp_c(double var )
-{
-   m_infuseTemp_c = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::MashStep::infuseTemp_c, var);
-   }
+void MashStep::setInfuseTemp_c(double var) {
+   this->setAndNotify(PropertyNames::MashStep::infuseTemp_c, this->m_infuseTemp_c, var);
 }
 
-void MashStep::setType( Type t )
-{
-   m_type = t;
-   m_typeStr = types.at(t);
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::MashStep::type, m_typeStr);
-   }
+void MashStep::setType(Type t) {
+   this->setAndNotify(PropertyNames::MashStep::type, this->m_type, t);
 }
 
-void MashStep::setInfuseAmount_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("%1 number cannot be negative: %2").arg(Q_FUNC_INFO).arg(var);
-      return;
-   }
-   else
-   {
-      m_infuseAmount_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::MashStep::infuseAmount_l, var);
-      }
-   }
+void MashStep::setInfuseAmount_l(double var) {
+   this->setAndNotify(PropertyNames::MashStep::infuseAmount_l, this->m_infuseAmount_l, this->enforceMin(var, "infuse amount"));
 }
 
-void MashStep::setStepTemp_c( double var )
-{
-   if( var < -273.15 )
-   {
-      qWarning() << QString("%1: temp below absolute zero: %2").arg(Q_FUNC_INFO).arg(var);
-      return;
-   }
-   else
-   {
-      m_stepTemp_c = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::MashStep::stepTemp_c, var);
-      }
-   }
+void MashStep::setStepTemp_c(double var) {
+   this->setAndNotify(PropertyNames::MashStep::stepTemp_c, this->m_stepTemp_c, this->enforceMin(var, "step temp", PhysicalConstants::absoluteZero));
 }
 
-void MashStep::setStepTime_min( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("%1: step time cannot be negative: %2").arg(Q_FUNC_INFO).arg(var);
-      return;
-   }
-   else
-   {
-      m_stepTime_min = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::MashStep::stepTime_min, var);
-      }
-   }
+void MashStep::setStepTime_min(double var) {
+   this->setAndNotify(PropertyNames::MashStep::stepTime_min, this->m_stepTime_min, this->enforceMin(var, "step time"));
 }
 
-void MashStep::setRampTime_min( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("%1: ramp time cannot be negative: %2").arg(Q_FUNC_INFO).arg(var);
-
-      return;
-   }
-   else
-   {
-      m_rampTime_min = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::MashStep::rampTime_min, var);
-      }
-   }
+void MashStep::setRampTime_min(double var) {
+   this->setAndNotify(PropertyNames::MashStep::rampTime_min, this->m_rampTime_min, this->enforceMin(var, "ramp time"));
 }
 
-void MashStep::setEndTemp_c( double var )
-{
-   if( var < -273.15 )
-   {
-      qWarning() << QString("%1: temp below absolute zero: %2").arg(Q_FUNC_INFO).arg(var);
-      return;
-   }
-   else
-   {
-      m_endTemp_c = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::MashStep::endTemp_c, var);
-      }
-   }
+void MashStep::setEndTemp_c(double var) {
+   this->setAndNotify(PropertyNames::MashStep::endTemp_c, this->m_endTemp_c, this->enforceMin(var, "end temp", PhysicalConstants::absoluteZero));
 }
 
-void MashStep::setDecoctionAmount_l(double var )
-{
-   m_decoctionAmount_l = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::MashStep::decoctionAmount_l, var);
-   }
+void MashStep::setDecoctionAmount_l(double var) {
+   this->setAndNotify(PropertyNames::MashStep::decoctionAmount_l, this->m_decoctionAmount_l, var);
 }
 
 
 void MashStep::setStepNumber(int stepNumber) {
-   this->m_stepNumber = stepNumber;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::MashStep::stepNumber, stepNumber);
-   }
-   return;
+   this->setAndNotify(PropertyNames::MashStep::stepNumber, this->m_stepNumber, stepNumber);
 }
 
-//void MashStep::setMash( Mash * mash ) { this->m_mash = mash; }
 void MashStep::setMashId(int mashId) { this->mashId = mashId; }
 
 //============================="GET" METHODS====================================
 MashStep::Type MashStep::type() const { return m_type; }
-const QString MashStep::typeString() const { return m_typeStr; }
+const QString MashStep::typeString() const { return types.at(m_type); }
 const QString MashStep::typeStringTr() const {
    if ( m_type < 0 || m_type > typesTr.length() ) {
       return "";
@@ -267,7 +189,10 @@ bool MashStep::isDecoction() const
    return ( m_type == MashStep::Decoction );
 }
 
-bool MashStep::isValidType( const QString &str ) const
-{
-   return MashStep::types.contains(str);
+Recipe * MashStep::getOwningRecipe() {
+   Mash * mash = ObjectStoreWrapper::getByIdRaw<Mash>(this->mashId);
+   if (!mash) {
+      return nullptr;
+   }
+   return mash->getOwningRecipe();
 }

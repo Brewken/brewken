@@ -87,8 +87,6 @@ public:
    bool operator<(BrewNote const & other) const;
    bool operator>(BrewNote const & other) const;
 
-   static QString classNameStr();
-
    Q_PROPERTY( QDateTime brewDate READ brewDate WRITE setBrewDate /*NOTIFY changed*/ STORED false )
    Q_PROPERTY( QDateTime fermentDate READ fermentDate  WRITE setFermentDate /*NOTIFY changed*/ STORED false )
    Q_PROPERTY( QString notes READ notes WRITE setNotes /*NOTIFY changed*/ STORED false )
@@ -222,8 +220,7 @@ public:
    double projFermPoints() const;
    double projAtten() const;
 
-   // BrewNote objects do not have parents
-   NamedEntity * getParent() { return nullptr; }
+   virtual Recipe * getOwningRecipe();
 
 signals:
    void brewDateChanged(const QDateTime&);

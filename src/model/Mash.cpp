@@ -27,6 +27,7 @@
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/MashStep.h"
+#include "model/Recipe.h"
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -45,12 +46,6 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
 
 ObjectStore & Mash::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Mash>::getInstance();
-}
-
-QString Mash::classNameStr()
-{
-   static const QString name("Mash");
-   return name;
 }
 
 Mash::Mash(QString name, bool cache) :
@@ -136,92 +131,36 @@ void Mash::setKey(int key) {
 }
 
 
-void Mash::setGrainTemp_c( double var )
-{
-   m_grainTemp_c = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Mash::grainTemp_c, var);
-   }
+void Mash::setGrainTemp_c(double var) {
+   this->setAndNotify(PropertyNames::Mash::grainTemp_c, this->m_grainTemp_c, var);
 }
 
-void Mash::setNotes( const QString& var )
-{
-   m_notes = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Mash::notes, var);
-   }
+void Mash::setNotes(QString const & var) {
+   this->setAndNotify(PropertyNames::Mash::notes, this->m_notes, var);
 }
 
-void Mash::setTunTemp_c( double var )
-{
-   m_tunTemp_c = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Mash::tunTemp_c, var);
-   }
+void Mash::setTunTemp_c(double var) {
+   this->setAndNotify(PropertyNames::Mash::tunTemp_c, this->m_tunTemp_c, var);
 }
 
-void Mash::setSpargeTemp_c( double var )
-{
-   m_spargeTemp_c = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Mash::spargeTemp_c, var);
-   }
+void Mash::setSpargeTemp_c(double var) {
+   this->setAndNotify(PropertyNames::Mash::spargeTemp_c, this->m_spargeTemp_c, var);
 }
 
-void Mash::setEquipAdjust( bool var )
-{
-   m_equipAdjust = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Mash::equipAdjust, var);
-   }
+void Mash::setEquipAdjust(bool var) {
+   this->setAndNotify(PropertyNames::Mash::equipAdjust, this->m_equipAdjust, var);
 }
 
-void Mash::setPh( double var )
-{
-   if( var < 0.0 || var > 14.0 )
-   {
-      qWarning() << QString("Mash: 0 < pH < 14: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_ph = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Mash::ph, var);
-      }
-   }
+void Mash::setPh(double var) {
+   this->setAndNotify(PropertyNames::Mash::ph, this->m_ph, this->enforceMinAndMax(var, "pH", 0.0, 14.0, 7.0));
 }
 
-void Mash::setTunWeight_kg( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Mash: tun weight < 0: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_tunWeight_kg = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Mash::tunWeight_kg, var);
-      }
-   }
+void Mash::setTunWeight_kg(double var) {
+   this->setAndNotify(PropertyNames::Mash::tunWeight_kg, this->m_tunWeight_kg, this->enforceMin(var, "tun weight"));
 }
 
-void Mash::setTunSpecificHeat_calGC( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Mash: sp heat < 0: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_tunSpecificHeat_calGC = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Mash::tunSpecificHeat_calGC, var);
-      }
-   }
+void Mash::setTunSpecificHeat_calGC(double var) {
+   this->setAndNotify(PropertyNames::Mash::tunSpecificHeat_calGC, this->m_tunSpecificHeat_calGC, this->enforceMin(var, "specific heat"));
 }
 
 void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
@@ -251,8 +190,6 @@ void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
    // way here.
    std::swap(this->mashStepIds[indexOf1], this->mashStepIds[indexOf2]);
 
-/*   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
-*/
    return;
 }
 
@@ -262,7 +199,6 @@ void Mash::removeAllMashSteps() {
       ObjectStoreTyped<MashStep>::getInstance().softDelete(ii);
    }
    this->mashStepIds.clear();
-//   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
    emit mashStepsChanged();
    return;
 }
@@ -409,4 +345,8 @@ MashStep * Mash::removeMashStep(MashStep * mashStep) {
 //   ObjectStoreWrapper::updateProperty(*this, PropertyNames::Mash::mashStepIds);
 
    return mashStep;
+}
+
+Recipe * Mash::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

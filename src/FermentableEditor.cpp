@@ -1,5 +1,5 @@
 /**
- * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -55,7 +55,7 @@ void FermentableEditor::save()
       return;
    }
 
-   obsFerm->setName(lineEdit_name->text(), obsFerm->cacheOnly());
+   obsFerm->setName(lineEdit_name->text());
 
    // NOTE: the following assumes that Fermentable::Type is enumerated in the same
    // order as the combobox.

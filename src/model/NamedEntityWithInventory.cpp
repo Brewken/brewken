@@ -47,14 +47,13 @@ void NamedEntityWithInventory::makeChild(NamedEntity const & copiedFrom) {
 }
 
 void NamedEntityWithInventory::setInventoryId(int key) {
-   if( key < 1 ) {
-      qWarning() << QString("Fermentable: bad inventory id: %1").arg(key);
-      return;
+   if (key < 1) {
+      // This really shouldn't happen
+      qCritical() << QString("Fermentable: bad inventory id: %1").arg(key);
+      Q_ASSERT(false); // Bail on debug build
+      return;          // Continue (without setting invalid ID) otherwise
    }
-   m_inventory_id = key;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::NamedEntityWithInventory::inventoryId, key);
-   }
+   this->setAndNotify(PropertyNames::NamedEntityWithInventory::inventoryId, this->m_inventory_id, key);
    return;
 }
 

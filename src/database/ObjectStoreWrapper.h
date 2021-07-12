@@ -69,6 +69,32 @@ namespace ObjectStoreWrapper {
       return;
    }
 
+   /**
+    * \brief Search the set of all cached objects with a lambda.
+    *
+    * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
+    *
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
+    *         none does
+    */
+   template<class NE> std::optional< std::shared_ptr<NE> > findFirstMatching(
+      std::function<bool(std::shared_ptr<NE>)> const & matchFunction
+   ) {
+      return ObjectStoreTyped<NE>::getInstance().findFirstMatching(matchFunction);
+   }
+
+   /**
+    * \brief Alternate version of \c findFirstMatching that uses raw pointers
+    *
+    * \return Pointer to the first object that gives a \c true result to \c matchFunction, or \c nullptr if
+    *         none does
+    */
+   template<class NE> NE * findFirstMatching(
+      std::function<bool(NE *)> const & matchFunction
+   ) {
+      return ObjectStoreTyped<NE>::getInstance().findFirstMatching(matchFunction);
+   }
+
    template<class NE> QList<std::shared_ptr<NE> > findAllMatching(
       std::function<bool(std::shared_ptr<NE>)> const & matchFunction
    ) {

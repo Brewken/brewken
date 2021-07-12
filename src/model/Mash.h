@@ -133,10 +133,7 @@ public:
 
    void removeAllMashSteps();
 
-   static QString classNameStr();
-
-   // Mash objects do not have parents
-   NamedEntity * getParent() { return nullptr; }
+   virtual Recipe * getOwningRecipe();
 
 public slots:
    void acceptMashStepChange(QMetaProperty, QVariant);

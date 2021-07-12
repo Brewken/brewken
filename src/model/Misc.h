@@ -128,12 +128,12 @@ public:
    QString useFor() const;
    QString notes() const;
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 
    //! \brief Emitted when \c name() changes.
-   // Declared in Base Class BeerXMLElement, should not be overloaded
+   // Declared in Base Class NamedEntity, should not be overloaded
    //void changedName(QString);
 
 protected:
@@ -141,9 +141,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString m_typeString;
    Type m_type;
-   QString m_useString;
    Use m_use;
    double m_time;
    double m_amount;
@@ -153,10 +151,6 @@ private:
 
    bool isValidType( const QString &var );
    bool isValidUse( const QString &var );
-
-   static QStringList types;
-   static QStringList uses;
-   static QStringList amountTypes;
 };
 
 Q_DECLARE_METATYPE( QList<Misc*> )

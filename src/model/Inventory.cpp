@@ -116,6 +116,12 @@ void Inventory::setDeleted(bool var) {
    return;
 }
 
+void Inventory::setDisplay(bool var) {
+   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
+   Q_ASSERT(false);
+   return;
+}
+
 
 char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
 char const * InventoryHop::getIngredientClass() const         { return "Hop"; }

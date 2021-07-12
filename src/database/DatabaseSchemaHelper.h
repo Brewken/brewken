@@ -18,12 +18,13 @@
  */
 #ifndef DATABASESCHEMAHELPER_H
 #define DATABASESCHEMAHELPER_H
+#pragma once
 
 #include <QSqlDatabase>
 
 #include "Brewken.h"
+#include "Database.h"
 
-class Database;
 class DatabaseSchema;
 
 /*!
@@ -39,16 +40,21 @@ namespace DatabaseSchemaHelper {
    /*!
     * \brief Create a blank database whose schema version is \c dbVersion
     */
-   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Brewken::DBTypes dbType = Brewken::NODB);
+   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Database::DBTypes dbType = Database::NODB);
 
    /*!
     * \brief Migrate schema from \c oldVersion to \c newVersion
     */
-   bool migrate(Database & database, int oldVersion, int newVersion, QSqlDatabase db = QSqlDatabase());
+   bool migrate(Database & database, int oldVersion, int newVersion, QSqlDatabase connection);
 
    //! \brief Current schema version of the given database
    int currentVersion(QSqlDatabase db = QSqlDatabase());
 
+   //! \brief does the heavy lifting to copy the contents from one db to the next
+   void copyDatabase(Database & database, Database::DBTypes oldType, Database::DBTypes newType, QSqlDatabase connectionNew);
+
+   //! \brief Populates (or updates) default Recipes, Hops, Styles, etc in the DB
+   void updateDatabase(Database & database, QString const& filename);
 }
 
 #endif

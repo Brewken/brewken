@@ -33,7 +33,6 @@
 #include "model/Yeast.h"
 
 // .:TODO:. Create tables
-// .:TBD:. Do we care about foreign keys?
 // .:TBD:. What about triggers?
 //
 // .:TBD:. What about read-only fields, eg if we want an Instruction to pull its Recipe ID from instruction_in_recipe
@@ -605,6 +604,8 @@ namespace {
          {ObjectStore::FieldType::Double, "tertiary_age",        PropertyNames::Recipe::tertiaryAge_days    },
          {ObjectStore::FieldType::Double, "tertiary_temp",       PropertyNames::Recipe::tertiaryTemp_c      },
          {ObjectStore::FieldType::Enum,   "type",                PropertyNames::Recipe::recipeType,           &RECIPE_STEP_TYPE_ENUM},
+         {ObjectStore::FieldType::Int,    "ancestor_id",         PropertyNames::Recipe::ancestorId,           nullptr,                &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Bool,   "locked",              PropertyNames::Recipe::locked              }
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Recipe> {
@@ -779,15 +780,15 @@ namespace {
    };
 }
 
-bool CreateAllDatabaseTables(Database & database) {
+bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection) {
    qDebug() << Q_FUNC_INFO;
    for (auto ii : AllObjectStores) {
-      if (!ii->createTables(database)) {
+      if (!ii->createTables(database, connection)) {
          return false;
       }
    }
    for (auto jj : AllObjectStores) {
-      if (!jj->addTableConstraints(database)) {
+      if (!jj->addTableConstraints(database, connection)) {
          return false;
       }
    }

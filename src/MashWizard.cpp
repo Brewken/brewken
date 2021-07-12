@@ -374,7 +374,7 @@ void MashWizard::wizardry()
             mashStep = new MashStep("", true);
 
             mashStep->setType(MashStep::batchSparge);
-            mashStep->setName(tr("Batch Sparge %1").arg(i+1),true);
+            mashStep->setName(tr("Batch Sparge %1").arg(i+1));
             mashStep->setInfuseAmount_l(volPerBatch);
             mashStep->setInfuseTemp_c(tw);
             mashStep->setEndTemp_c(tw);
@@ -395,7 +395,7 @@ void MashWizard::wizardry()
       else {
          mashStep = new MashStep("", true);
 
-         mashStep->setName(tr("Fly Sparge"), true);
+         mashStep->setName(tr("Fly Sparge"));
          mashStep->setType(MashStep::flySparge);
          mashStep->setInfuseAmount_l(spargeWater_l);
          mashStep->setInfuseTemp_c(tw);

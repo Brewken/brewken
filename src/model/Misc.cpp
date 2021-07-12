@@ -33,15 +33,12 @@
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/Recipe.h"
 
-QStringList Misc::uses = QStringList() << "Boil" << "Mash" << "Primary" << "Secondary" << "Bottling";
-QStringList Misc::types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
-QStringList Misc::amountTypes = QStringList() << "Weight" << "Volume";
-
-QString Misc::classNameStr()
-{
-   static const QString name("Misc");
-   return name;
+namespace {
+   QStringList uses = QStringList() << "Boil" << "Mash" << "Primary" << "Secondary" << "Bottling";
+   QStringList types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
+   QStringList amountTypes = QStringList() << "Weight" << "Volume";
 }
 
 bool Misc::isEqualTo(NamedEntity const & other) const {
@@ -61,9 +58,7 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
 //============================CONSTRUCTORS======================================
 Misc::Misc(Misc const & other) :
    NamedEntityWithInventory{other                 },
-   m_typeString            {other.m_typeString    },
    m_type                  {other.m_type          },
-   m_useString             {other.m_useString     },
    m_use                   {other.m_use           },
    m_time                  {other.m_time          },
    m_amount                {other.m_amount        },
@@ -75,9 +70,7 @@ Misc::Misc(Misc const & other) :
 
 Misc::Misc(QString name, bool cache) :
    NamedEntityWithInventory{-1, cache, name, true},
-   m_typeString            {""                   },
    m_type                  {Misc::Spice          },
-   m_useString             {""                   },
    m_use                   {Misc::Boil           },
    m_time                  {0.0                  },
    m_amount                {0.0                  },
@@ -103,11 +96,11 @@ Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
 //============================"GET" METHODS=====================================
 Misc::Type Misc::type() const { return m_type; }
 
-const QString Misc::typeString() const { return m_typeString; }
+const QString Misc::typeString() const { return types.at(m_type); }
 
 Misc::Use Misc::use() const { return m_use; }
 
-const QString Misc::useString() const { return m_useString; }
+const QString Misc::useString() const { return uses.at(m_use); }
 
 double Misc::amount() const { return m_amount; }
 
@@ -161,66 +154,32 @@ const QString Misc::amountTypeStringTr() const
 }
 
 //============================"SET" METHODS=====================================
-void Misc::setType( Type t )
-{
-   m_type = t;
-   m_typeString = types.at(t);
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Misc::type, m_typeString );
-   }
+void Misc::setType(Type t) {
+   this->setAndNotify( PropertyNames::Misc::type, this->m_type, t);
 }
 
-void Misc::setUse( Use u )
-{
-   m_use = u;
-   m_useString = uses.at(u);
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Misc::use, m_useString );
-   }
+void Misc::setUse(Use u) {
+   this->setAndNotify( PropertyNames::Misc::use, this->m_use, u);
 }
 
-void Misc::setUseFor( const QString& var )
-{
-   m_useFor = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Misc::useFor, var );
-   }
+void Misc::setUseFor(QString const & var) {
+   this->setAndNotify( PropertyNames::Misc::useFor, this->m_useFor, var );
 }
 
-void Misc::setNotes( const QString& var )
-{
-   m_notes = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Misc::notes, var );
-   }
+void Misc::setNotes(QString const & var) {
+   this->setAndNotify( PropertyNames::Misc::notes, this->m_notes, var );
 }
 
-void Misc::setAmountType( AmountType t )
-{
-   m_amountIsWeight = t == AmountType_Weight;
-   if ( ! m_cacheOnly ) {
-      setAmountIsWeight(m_amountIsWeight);
-   }
+void Misc::setAmountType(AmountType t) {
+   this->setAmountIsWeight(t == AmountType_Weight);
 }
 
-void Misc::setAmountIsWeight( bool var )
-{
-   m_amountIsWeight = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Misc::amountIsWeight, var );
-   }
+void Misc::setAmountIsWeight(bool var) {
+   this->setAndNotify( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, var);
 }
 
-void Misc::setAmount( double var )
-{
-   if( var < 0.0 )
-      qWarning() << QString("Misc: amount < 0: %1").arg(var);
-   else {
-      m_amount = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Misc::amount, var );
-      }
-   }
+void Misc::setAmount(double var) {
+   this->setAndNotify( PropertyNames::Misc::amount, this->m_amount, this->enforceMin(var, "amount"));
 }
 
 void Misc::setInventoryAmount(double var) {
@@ -228,16 +187,8 @@ void Misc::setInventoryAmount(double var) {
    return;
 }
 
-void Misc::setTime( double var )
-{
-   if( var < 0.0 )
-      qWarning() << QString("Misc: time < 0: %1").arg(var);
-   else {
-      m_time = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Misc::time, var );
-      }
-   }
+void Misc::setTime(double var) {
+   this->setAndNotify( PropertyNames::Misc::time, this->m_time, this->enforceMin(var, "time"));
 }
 
 //========================OTHER METHODS=========================================
@@ -266,4 +217,8 @@ bool Misc::isValidType( const QString& var )
          return true;
 
    return false;
+}
+
+Recipe * Misc::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

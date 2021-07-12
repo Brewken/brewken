@@ -20,6 +20,7 @@
  */
 #ifndef MODEL_WATER_H
 #define MODEL_WATER_H
+#pragma once
 
 #include <QString>
 #include <QSqlRecord>
@@ -140,7 +141,7 @@ public:
    void setSpargeRO(double var);
    void setAlkalinityAsHCO3(bool var);
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 
@@ -166,4 +167,4 @@ private:
 
 };
 
-#endif   // WATER_H
+#endif

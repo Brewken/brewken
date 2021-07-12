@@ -292,6 +292,7 @@ private:
       auto object = this->ObjectStore::getById(id);
       std::shared_ptr<NE> ne = std::static_pointer_cast<NE>(object);
       ne->setDeleted(true);
+      ne->setDisplay(false);
       if (hard) {
          // Base class does the heavy lifting
          this->ObjectStore::hardDelete(id);
@@ -345,10 +346,13 @@ private:
 };
 
 /**
- * \brief Does what it says on the tin
+ * \brief Does what it says on the tin.  Note that it is the caller's responsibility to handle transactions.
+ *
+ * \param database
+ * \param connection  Need this as might be creating tables in a new database rather than the default one
  *
  * \return false if something went wrong, true otherwise
  */
-bool CreateAllDatabaseTables(Database & database);
+bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection);
 
 #endif

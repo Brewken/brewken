@@ -90,7 +90,9 @@ ENDMACRO(ADD_PCH_RULE _src_list _header_filename)
 #
 SET( Brewken_SRCS
     ${SRCDIR}/AboutDialog.cpp
+    ${SRCDIR}/AlcoholTool.cpp
     ${SRCDIR}/Algorithms.cpp
+    ${SRCDIR}/AncestorDialog.cpp
     ${SRCDIR}/BeerColorWidget.cpp
     ${SRCDIR}/boiltime.cpp
     ${SRCDIR}/BrewDayScrollWidget.cpp
@@ -116,6 +118,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/Database.cpp
     ${SRCDIR}/database/DatabaseSchema.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
+    ${SRCDIR}/database/DbTransaction.cpp
     ${SRCDIR}/database/ObjectStoreTyped.cpp
     ${SRCDIR}/database/ObjectStoreWrapper.cpp
     ${SRCDIR}/database/ObjectStore.cpp
@@ -144,6 +147,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/Logging.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
+    ${SRCDIR}/MashComboBox.cpp
     ${SRCDIR}/MashDesigner.cpp
     ${SRCDIR}/MashEditor.cpp
     ${SRCDIR}/MashListModel.cpp
@@ -222,10 +226,15 @@ SET( Brewken_SRCS
     ${SRCDIR}/YeastTableModel.cpp
 )
 
-# List of all the *.ui.
+# List of all the *.ui
 # TODO: can I somehow have a separate CMakeLists.txt
 # in the ui/ directory instead of here?
+#
+# You can recreate the body of this list by running the following from the bash prompt in the build directory:
+#    find ../ui -name '*.ui' | sort  | sed 's+^../ui+    ${SRCDIR}+'
+#
 SET( Brewken_UIS
+    ${UIDIR}/ancestorDialog.ui
     ${UIDIR}/brewDayScrollWidget.ui
     ${UIDIR}/brewDayWidget.ui
     ${UIDIR}/brewNoteWidget.ui
@@ -260,10 +269,12 @@ SET( Brewken_UIS
 # NB: This is NOT a list of ALL header files!
 #
 # You can recreate the body of this list by running the following from the bash prompt in the build directory:
-#    grep -rl Q_OBJECT ../src | sort | sed 's+^../src+    ${SRCDIR}+'
+#    grep -rl Q_OBJECT ../src | sort | sed 's+^../src+    ${SRCDIR}+' | grep -v Testing.h
 #
 SET( Brewken_MOC_HEADERS
     ${SRCDIR}/AboutDialog.h
+    ${SRCDIR}/AlcoholTool.h
+    ${SRCDIR}/AncestorDialog.h
     ${SRCDIR}/BeerColorWidget.h
     ${SRCDIR}/boiltime.h
     ${SRCDIR}/BrewDayScrollWidget.h
@@ -488,6 +499,22 @@ IF( WIN32 AND MINGW )
    #    '-Wl,-subsystem,windows' supresses the output command window.
    #    '-Wl,-s' strips the executable of symbols.
    SET_TARGET_PROPERTIES( ${Brewken_EXECUTABLE} PROPERTIES LINK_FLAGS "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl,-subsystem,windows")
+
+   if(TARGET Qt5::windeployqt)
+      # execute windeployqt in a tmp directory after build
+      add_custom_command(TARGET ${Brewken_EXECUTABLE}
+         POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+         COMMAND Qt5::windeployqt --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt" --no-translations --compiler-runtime "$<TARGET_FILE_DIR:${Brewken_EXECUTABLE}>/$<TARGET_FILE_NAME:${Brewken_EXECUTABLE}>"
+   )
+
+   # copy deployment directory during installation
+   install(
+      DIRECTORY
+      "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+      DESTINATION bin
+   )
+   endif()
 ENDIF()
 
 SET( QT5_USE_MODULES_LIST
@@ -560,6 +587,30 @@ INSTALL( TARGETS ${Brewken_EXECUTABLE}
          BUNDLE DESTINATION .
          RUNTIME DESTINATION ${TARGETPATH}
          COMPONENT ${RUNTIME_INSTALL_COMPONENT} )
+
+IF( WIN32 )
+      install(CODE
+      "
+         file(GET_RUNTIME_DEPENDENCIES
+            RESOLVED_DEPENDENCIES_VAR deps
+            UNRESOLVED_DEPENDENCIES_VAR confdeps
+            EXECUTABLES src/${Brewken_EXECUTABLE}.exe
+            PRE_EXCLUDE_REGEXES \"^api-ms-win.*\$|^ext-ms.*\$\"
+            POST_EXCLUDE_REGEXES \".*system32.*\"
+            DIRECTORIES ${Mingw_Path}
+         )
+         #message(\"Installing: \${deps}\")
+         #message(\"Not found: \${confdeps}\")
+         FOREACH (fdep IN LISTS deps)
+            message( \"\${fdep}\" )
+            file( INSTALL
+               DESTINATION bin
+               TYPE SHARED_LIBRARY
+               FOLLOW_SYMLINK_CHAIN
+               FILES \"\${fdep}\")
+         ENDFOREACH()
+      ")
+   ENDIF()
 
 # Install the translations.
 INSTALL(FILES ${QM_FILES}

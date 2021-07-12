@@ -62,7 +62,7 @@ TableSchema::TableSchema(DatabaseConstants::DbTableId table)
       m_invTable(DatabaseConstants::NOTABLE),
       m_btTable(DatabaseConstants::NOTABLE),
       m_trigger(QString()),
-      m_defType(Brewken::dbType())
+      m_defType(Database::dbType())
 {
     // for this bit of ugly, I gain a lot of utility.
     defineTable();
@@ -82,18 +82,18 @@ const QString TableSchema::triggerProperty() const { return m_trigger; }
 const QMap<QString,PropertySchema*> TableSchema::properties() const { return m_properties; }
 const QMap<QString,PropertySchema*> TableSchema::foreignKeys() const { return m_foreignKeys; }
 const PropertySchema* TableSchema::key() const { return m_key; }
-Brewken::DBTypes TableSchema::defType() const { return m_defType; }
+Database::DBTypes TableSchema::defType() const { return m_defType; }
 
-const QString TableSchema::keyName( Brewken::DBTypes type ) const
+const QString TableSchema::keyName( Database::DBTypes type ) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
 
    return m_key->colName(selected);
 }
 
-const QStringList TableSchema::allPropertyNames(Brewken::DBTypes type) const
+const QStringList TableSchema::allPropertyNames(Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
 
    QMapIterator<QString,PropertySchema*> i(m_properties);
    QStringList retval;
@@ -108,9 +108,9 @@ const QStringList TableSchema::allProperties() const
 {
    return m_properties.keys();
 }
-const QStringList TableSchema::allForeignKeyNames(Brewken::DBTypes type) const
+const QStringList TableSchema::allForeignKeyNames(Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QMapIterator<QString,PropertySchema*> i(m_foreignKeys);
    QStringList retval;
    while ( i.hasNext() ) {
@@ -125,9 +125,9 @@ const QStringList TableSchema::allForeignKeys() const
    return m_foreignKeys.keys();
 }
 
-const QStringList TableSchema::allColumnNames(Brewken::DBTypes type) const
+const QStringList TableSchema::allColumnNames(Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QStringList tmp;
    QMapIterator<QString,PropertySchema*> i(m_properties);
 
@@ -138,10 +138,10 @@ const QStringList TableSchema::allColumnNames(Brewken::DBTypes type) const
    return tmp;
 }
 
-const QStringList TableSchema::allForeignKeyColumnNames(Brewken::DBTypes type) const
+const QStringList TableSchema::allForeignKeyColumnNames(Database::DBTypes type) const
 {
    QStringList tmp;
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
 
    QMapIterator<QString,PropertySchema*> i(m_foreignKeys);
 
@@ -160,9 +160,9 @@ const PropertySchema* TableSchema::property(QString prop) const
    return retval;
 }
 
-const QString TableSchema::propertyName(QString prop, Brewken::DBTypes type) const
+const QString TableSchema::propertyName(QString prop, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_properties.contains(prop) ) {
       retval =  m_properties.value(prop)->propName(selected);
@@ -170,9 +170,9 @@ const QString TableSchema::propertyName(QString prop, Brewken::DBTypes type) con
    return retval;
 
 }
-const QString TableSchema::propertyToColumn(QString prop, Brewken::DBTypes type) const
+const QString TableSchema::propertyToColumn(QString prop, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_properties.contains(prop) ) {
       retval =  m_properties.value(prop)->colName(selected);
@@ -180,9 +180,9 @@ const QString TableSchema::propertyToColumn(QString prop, Brewken::DBTypes type)
    return retval;
 }
 
-const QString TableSchema::foreignKeyToColumn(QString fkey, Brewken::DBTypes type) const
+const QString TableSchema::foreignKeyToColumn(QString fkey, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_foreignKeys.contains(fkey) ) {
       retval =  m_foreignKeys.value(fkey)->colName(selected);
@@ -190,9 +190,9 @@ const QString TableSchema::foreignKeyToColumn(QString fkey, Brewken::DBTypes typ
    return retval;
 }
 
-const QString TableSchema::foreignKeyToColumn(Brewken::DBTypes type) const
+const QString TableSchema::foreignKeyToColumn(Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
 
    if ( m_foreignKeys.size() == 1 ) {
@@ -201,9 +201,9 @@ const QString TableSchema::foreignKeyToColumn(Brewken::DBTypes type) const
    return retval;
 }
 
-const QString TableSchema::propertyToXml(QString prop, Brewken::DBTypes type) const
+const QString TableSchema::propertyToXml(QString prop, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_properties.contains(prop) ) {
       retval = m_properties.value(prop)->xmlName(selected);
@@ -219,10 +219,10 @@ const QString TableSchema::propertyToXml(QString prop, Brewken::DBTypes type) co
    return retval;
 }
 
-const QString TableSchema::xmlToProperty(QString xmlName, Brewken::DBTypes type) const
+const QString TableSchema::xmlToProperty(QString xmlName, Database::DBTypes type) const
 {
    QString retval;
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
 
    QMapIterator<QString,PropertySchema*> i(m_properties);
 
@@ -236,9 +236,9 @@ const QString TableSchema::xmlToProperty(QString xmlName, Brewken::DBTypes type)
    return retval;
 }
 
-const QString TableSchema::propertyColumnType(QString prop, Brewken::DBTypes type) const
+const QString TableSchema::propertyColumnType(QString prop, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    if ( m_properties.contains(prop) ) {
       return m_properties.value(prop)->colType(selected);
    }
@@ -247,9 +247,9 @@ const QString TableSchema::propertyColumnType(QString prop, Brewken::DBTypes typ
    }
 }
 
-const QVariant TableSchema::propertyColumnDefault(QString prop, Brewken::DBTypes type) const
+const QVariant TableSchema::propertyColumnDefault(QString prop, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QVariant retval = QString();
    if ( m_properties.contains(prop) ) {
       retval = m_properties.value(prop)->defaultValue(selected);
@@ -257,9 +257,9 @@ const QVariant TableSchema::propertyColumnDefault(QString prop, Brewken::DBTypes
    return retval;
 }
 
-int TableSchema::propertyColumnSize(QString prop, Brewken::DBTypes type) const
+int TableSchema::propertyColumnSize(QString prop, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    if ( m_properties.contains(prop) ) {
       return m_properties.value(prop)->colSize(selected);
    }
@@ -268,9 +268,9 @@ int TableSchema::propertyColumnSize(QString prop, Brewken::DBTypes type) const
    }
 }
 
-DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Brewken::DBTypes type) const
+DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    if ( m_foreignKeys.contains(fkey) ) {
@@ -280,9 +280,9 @@ DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Brewken::DB
 
 }
 
-DatabaseConstants::DbTableId TableSchema::foreignTable(Brewken::DBTypes type) const
+DatabaseConstants::DbTableId TableSchema::foreignTable(Database::DBTypes type) const
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    if ( m_foreignKeys.size() == 1 ) {
@@ -298,9 +298,9 @@ bool TableSchema::isInRecTable()     { return m_type == INREC; }
 bool TableSchema::isBtTable()        { return m_type == BT; }
 bool TableSchema::isMetaTable()      { return m_type == META; }
 
-const QString TableSchema::childIndexName(Brewken::DBTypes type)
+const QString TableSchema::childIndexName(Database::DBTypes type)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString cname;
 
    if ( m_type == CHILD || m_type == BT ) {
@@ -317,9 +317,9 @@ const QString TableSchema::childIndexName(Brewken::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::inRecIndexName(Brewken::DBTypes type)
+const QString TableSchema::inRecIndexName(Database::DBTypes type)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString cname;
 
    if ( m_type == INREC ) {
@@ -336,10 +336,10 @@ const QString TableSchema::inRecIndexName(Brewken::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::recipeIndexName(Brewken::DBTypes type)
+const QString TableSchema::recipeIndexName(Database::DBTypes type)
 {
    QString cname;
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
 
    if ( m_foreignKeys.contains(kpropRecipeId) ) {
       cname = m_foreignKeys.value(kpropRecipeId)->colName(selected);
@@ -348,10 +348,10 @@ const QString TableSchema::recipeIndexName(Brewken::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::parentIndexName(Brewken::DBTypes type)
+const QString TableSchema::parentIndexName(Database::DBTypes type)
 {
    QString cname;
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
 
    if ( m_foreignKeys.contains(kpropParentId) ) {
       cname = m_foreignKeys.value(kpropParentId)->colName(selected);
@@ -360,9 +360,9 @@ const QString TableSchema::parentIndexName(Brewken::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::generateCreateTable(Brewken::DBTypes type, QString tmpName)
+const QString TableSchema::generateCreateTable(Database::DBTypes type, QString tmpName)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString tname = tmpName.isEmpty() ? m_tableName : tmpName;
    QString retVal = QString("CREATE TABLE %1 (\n%2 %3\n")
                      .arg( tname )
@@ -382,7 +382,7 @@ const QString TableSchema::generateCreateTable(Brewken::DBTypes type, QString tm
       if ( defVal.isValid() ) {
          QString tmp = defVal.toString();
          if ( prop->colType() == "boolean" ) {
-            tmp = Brewken::dbBoolean(defVal.toBool(),type);
+            tmp = Database::dbBoolean(defVal.toBool(),type);
          }
 
          // this isn't quite perfect, as you will get two spaces between the type
@@ -423,9 +423,9 @@ const QString TableSchema::generateCreateTable(Brewken::DBTypes type, QString tm
    return retVal;
 }
 
-const QString TableSchema::generateInsertRow(Brewken::DBTypes type)
+const QString TableSchema::generateInsertRow(Database::DBTypes type)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString columns = keyName(selected);
    QString binding = QString(":%1").arg(keyName(selected));
 
@@ -454,9 +454,9 @@ const QString TableSchema::generateInsertRow(Brewken::DBTypes type)
 // of itself and foreign key *values* are part of the database.
 // To make other parts of the code easier, I am making certain that the bound values use the property name
 // and not the column name. It saves a call later.
-const QString TableSchema::generateInsertProperties(Brewken::DBTypes type)
+const QString TableSchema::generateInsertProperties(Database::DBTypes type)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString columns;
    QString binding;
 
@@ -484,9 +484,9 @@ const QString TableSchema::generateInsertProperties(Brewken::DBTypes type)
 }
 
 // note: this does not do anything with foreign keys. It is up to the calling code to handle those problems
-const QString TableSchema::generateUpdateRow(int key, Brewken::DBTypes type)
+const QString TableSchema::generateUpdateRow(int key, Database::DBTypes type)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString columns;
 
    QMapIterator<QString, PropertySchema*> i(m_properties);
@@ -514,9 +514,9 @@ const QString TableSchema::generateUpdateRow(int key, Brewken::DBTypes type)
 
 // note: this does not do anything with foreign keys. It is up to the calling code to handle those problems
 // unlike the previous method, this one uses a bind named ":id" for the key value.
-const QString TableSchema::generateUpdateRow(Brewken::DBTypes type)
+const QString TableSchema::generateUpdateRow(Database::DBTypes type)
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString columns;
 
    QMapIterator<QString, PropertySchema*> i(m_properties);
@@ -541,9 +541,9 @@ const QString TableSchema::generateUpdateRow(Brewken::DBTypes type)
            .arg(keyName(selected));
 }
 
-const QString TableSchema::generateCopyTable( QString dest, Brewken::DBTypes type )
+const QString TableSchema::generateCopyTable( QString dest, Database::DBTypes type )
 {
-   Brewken::DBTypes selected = type == Brewken::ALLDB ? m_defType : type;
+   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
    QString columns = keyName(selected);
 
    QMapIterator<QString, PropertySchema*> i(m_properties);
@@ -569,14 +569,14 @@ const QString TableSchema::generateCopyTable( QString dest, Brewken::DBTypes typ
 // right now, only instruction_number has an increment (or decrement) trigger.
 // if we invent others, the m_trigger property will need to be set for that table.
 // this only handles one trigger per table. It could be made to handle a list, maybe.
-const QString TableSchema::generateIncrementTrigger(Brewken::DBTypes type)
+const QString TableSchema::generateIncrementTrigger(Database::DBTypes type)
 {
    QString retval;
 
    if ( m_trigger.isEmpty() )
       return retval;
 
-   if ( type == Brewken::PGSQL ) {
+   if ( type == Database::PGSQL ) {
       // create or replace function increment_instruction_num() returns trigger as $BODY$
       //   begin update instruction_in_recipe set instruction_number = (SELECT max(instruction_number) from instruction_in_recipe where recipe_id = new.recipe_id) + 1
       //         where id = NEW.id;
@@ -610,14 +610,14 @@ const QString TableSchema::generateIncrementTrigger(Brewken::DBTypes type)
    return retval;
 }
 
-const QString TableSchema::generateDecrementTrigger(Brewken::DBTypes type)
+const QString TableSchema::generateDecrementTrigger(Database::DBTypes type)
 {
    QString retval;
 
    if ( m_trigger.isEmpty() )
       return retval;
 
-   if ( type == Brewken::PGSQL ) {
+   if ( type == Database::PGSQL ) {
       // create or replace function decrement_instruction_num() returns trigger as $BODY$
       //   begin update instruction_in_recipe set instruction_number = instruction_number - 1
       //         where recipe_id = OLD.recipe_id AND instruction_number > OLD.instruction_number;
@@ -795,8 +795,8 @@ void TableSchema::defineStyleTable()
    m_btTable = DatabaseConstants::BT_STYLETABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntity::name]      = new PropertySchema( PropertyNames::NamedEntity::name,       PropertyNames::NamedEntity::name,         kxmlPropName,     QString("text"), QString("''"), QString("not null"));
    m_properties[PropertyNames::Style::type]      = new PropertySchema( PropertyNames::Style::typeString, kcolStyleType,     kxmlPropType,     QString("text"), QString("'Ale'"));
@@ -835,8 +835,8 @@ void TableSchema::defineEquipmentTable()
    m_btTable = DatabaseConstants::BT_EQUIPTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntity::name]          = new PropertySchema( PropertyNames::NamedEntity::name,          PropertyNames::NamedEntity::name,         kxmlPropName,            QString("text"), QString("''"), QString("not null"));
    m_properties[PropertyNames::Equipment::boilSize_l]      = new PropertySchema( PropertyNames::Equipment::boilSize_l,      kcolEquipBoilSize,      kxmlPropBoilSize,        QString("real"), QVariant(0.0));
@@ -873,8 +873,8 @@ void TableSchema::defineFermentableTable()
    m_btTable    = DatabaseConstants::BT_FERMTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntity::name]           = new PropertySchema( PropertyNames::NamedEntity::name,           kcolName,               kxmlPropName,           QString("text"), QString("''"), QString("not null"));
    m_properties[PropertyNames::Fermentable::notes]          = new PropertySchema( PropertyNames::Fermentable::notes,          kcolNotes,              kxmlPropNotes,          QString("text"), QString("''"));
@@ -913,8 +913,8 @@ void TableSchema::defineHopTable()
    m_btTable    = DatabaseConstants::BT_HOPTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]          = new PropertySchema( PropertyNames::NamedEntity::name,          kcolName,             kxmlPropName,          QString("text"), QString("''"), QString("not null"));
@@ -948,8 +948,8 @@ void TableSchema::defineInstructionTable()
    m_inRecTable = DatabaseConstants::INSTINRECTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]          = new PropertySchema( PropertyNames::NamedEntity::name,          kcolName,                  kxmlPropName,       QString("text"), QString("''"), QString("not null"));
@@ -969,8 +969,8 @@ void TableSchema::defineMashTable()
    m_className = QString("Mash");
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]        = new PropertySchema( PropertyNames::NamedEntity::name,        kcolName,            kxmlPropName,        QString("text"), QString("''"), QString("not null"));
@@ -995,8 +995,8 @@ void TableSchema::defineMashstepTable()
    m_className = QString("MashStep");
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntity::name]       = new PropertySchema( PropertyNames::NamedEntity::name,       kcolName,               kxmlPropName,       QString("text"), QString("''"),QString("not null"));
    m_properties[PropertyNames::MashStep::type]       = new PropertySchema( PropertyNames::MashStep::typeString, kcolMashstepType,       kxmlPropType,       QString("text"), QString("'Infusion'"));
@@ -1026,8 +1026,8 @@ void TableSchema::defineMiscTable()
    m_btTable    = DatabaseConstants::BT_MISCTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]     = new PropertySchema( PropertyNames::NamedEntity::name,       kcolName,         kxmlPropName,     QString("text"), QString("''"), QString("not null"));
@@ -1053,8 +1053,8 @@ void TableSchema::defineRecipeTable()
    m_childTable = DatabaseConstants::RECIPECHILDTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntity::name]        = new PropertySchema( PropertyNames::NamedEntity::name,        kcolName,               kxmlPropName,         QString("text"), QString("''"), QString("not null"));
    m_properties[PropertyNames::Recipe::notes]       = new PropertySchema( PropertyNames::Recipe::notes,       kcolNotes,              kxmlPropNotes,        QString("text"), QString("''"));
@@ -1109,8 +1109,8 @@ void TableSchema::defineYeastTable()
    m_btTable    = DatabaseConstants::BT_YEASTTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]       = new PropertySchema( PropertyNames::NamedEntity::name,       kcolName,            kxmlPropName,       QString("text"), QString("''"), QString("not null"));
@@ -1143,8 +1143,8 @@ void TableSchema::defineBrewnoteTable()
    m_className = QString("BrewNote");
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::BrewNote::notes]           = new PropertySchema( PropertyNames::BrewNote::notes,           kcolNotes,                kxmlPropNotes,           QString("text"),    QString("''"));
 
@@ -1196,8 +1196,8 @@ void TableSchema::defineWaterTable()
    m_btTable    = DatabaseConstants::BT_WATERTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]       = new PropertySchema(PropertyNames::NamedEntity::name,       kcolName,             kxmlPropName,        QString("text"),    QString("''"), QString("not null"));
@@ -1230,8 +1230,8 @@ void TableSchema::defineSaltTable()
    m_inRecTable = DatabaseConstants::SALTINRECTABLE;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // These are defined in the global file.
    m_properties[PropertyNames::NamedEntity::name]     = new PropertySchema( PropertyNames::NamedEntity::name,     kcolName,         QString(), QString("text"),    QString("''"), QString("not null"));
@@ -1255,8 +1255,8 @@ void TableSchema::defineChildTable(DatabaseConstants::DbTableId table)
    m_type = CHILD;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_foreignKeys[kpropChildId]  = new PropertySchema( kpropChildId,  kcolChildId,  QString("integer"), table);
    m_foreignKeys[kpropParentId] = new PropertySchema( kpropParentId, kcolParentId, QString("integer"), table);
@@ -1268,8 +1268,8 @@ void TableSchema::defineInRecipeTable(QString childIdx, DatabaseConstants::DbTab
    m_type = INREC;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_foreignKeys[kpropRecipeId] = new PropertySchema( kpropRecipeId, kcolRecipeId, QString("integer"), DatabaseConstants::RECTABLE);
    m_foreignKeys[childIdx]      = new PropertySchema( childIdx,      childIdx,     QString("integer"), table);
@@ -1284,8 +1284,8 @@ void TableSchema::defineInstructionInRecipeTable(QString childIdx, DatabaseConst
    m_trigger = kpropInstructionNumber;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // I am not breaking these rules any more. It makes it too annoying in the calling code to know when to use a kcol or kprop
    // so it is now kprop all the time
@@ -1301,8 +1301,8 @@ void TableSchema::defineBtTable(QString childIdx, DatabaseConstants::DbTableId t
    m_type = BT;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    // What good is a rule followed to well?
    m_foreignKeys[childIdx] = new PropertySchema( childIdx, childIdx, QString("integer"), table);
@@ -1314,8 +1314,8 @@ void TableSchema::defineFermInventoryTable()
    m_type = INV;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntityWithInventory::inventory]      = new PropertySchema( PropertyNames::NamedEntityWithInventory::inventory,     kcolAmount,        kxmlPropAmount, QString("real"), QVariant(0.0));
 }
@@ -1325,8 +1325,8 @@ void TableSchema::defineHopInventoryTable()
    m_type = INV;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntityWithInventory::inventory] = new PropertySchema( PropertyNames::NamedEntityWithInventory::inventory, kcolAmount, kxmlPropAmount, QString("real"), QVariant(0.0));
 }
@@ -1336,8 +1336,8 @@ void TableSchema::defineMiscInventoryTable()
    m_type = INV;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntityWithInventory::inventory] = new PropertySchema( PropertyNames::NamedEntityWithInventory::inventory, kcolAmount, kxmlPropAmount, QString("real"), QVariant(0.0));
 
@@ -1348,8 +1348,8 @@ void TableSchema::defineYeastInventoryTable()
    m_type = INV;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[PropertyNames::NamedEntityWithInventory::inventory] = new PropertySchema( kpropQuanta,  kcolYeastQuanta, kxmlPropAmount, QString("real"), QVariant(0.0));
 
@@ -1360,8 +1360,8 @@ void TableSchema::defineSettingsTable()
    m_type = META;
 
    m_key                        = new PropertySchema();
-   m_key->addProperty(kpropKey, Brewken::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
-   m_key->addProperty(kpropKey, Brewken::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
+   m_key->addProperty(kpropKey, Database::PGSQL,  kcolKey, QString(""), QString("integer"), QVariant(0), 0, kPgSQLConstraint);
+   m_key->addProperty(kpropKey, Database::SQLITE, kcolKey, QString(""), QString("integer"), QVariant(0), 0, kSQLiteConstraint);
 
    m_properties[kpropSettingsVersion]    = new PropertySchema( QString(), kcolSettingsVersion,    QString(), QString("integer"), QVariant(0));
    m_properties[kpropSettingsRepopulate] = new PropertySchema( QString(), kcolSettingsRepopulate, QString(), QString("integer"), QVariant(0));

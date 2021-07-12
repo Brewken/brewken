@@ -27,12 +27,30 @@
 #include <QObject>
 
 #include "Brewken.h"
-#include "database/ObjectStoreTyped.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/Recipe.h"
 
-QStringList Hop::types = QStringList() << "Bittering" << "Aroma" << "Both";
-QStringList Hop::forms = QStringList() << "Leaf" << "Pellet" << "Plug";
-QStringList Hop::uses = QStringList() << "Mash" << "First Wort" << "Boil" << "Aroma" << "Dry Hop";
+namespace {
+   QStringList types = QStringList() << "Bittering" << "Aroma" << "Both";
+   QStringList forms = QStringList() << "Leaf" << "Pellet" << "Plug";
+   QStringList uses = QStringList() << "Mash" << "First Wort" << "Boil" << "Aroma" << "Dry Hop";
+   bool isValidUse(const QString& str)
+   {
+      return (uses.indexOf(str) >= 0);
+   }
+
+   bool isValidType(const QString& str)
+   {
+      return (types.indexOf(str) >= 0);
+   }
+
+   bool isValidForm(const QString& str)
+   {
+      return (forms.indexOf(str) >= 0);
+   }
+
+}
 
 bool Hop::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -57,34 +75,10 @@ ObjectStore & Hop::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Hop>::getInstance();
 }
 
-bool Hop::isValidUse(const QString& str)
-{
-   return (uses.indexOf(str) >= 0);
-}
-
-bool Hop::isValidType(const QString& str)
-{
-   return (types.indexOf(str) >= 0);
-}
-
-bool Hop::isValidForm(const QString& str)
-{
-   return (forms.indexOf(str) >= 0);
-}
-
-QString Hop::classNameStr()
-{
-   static const QString name("Hop");
-   return name;
-}
-
 Hop::Hop(QString name, bool cache) :
    NamedEntityWithInventory{-1, cache, name, true},
-   m_useStr           {"" },
    m_use              {Hop::Mash},
-   m_typeStr          {"" },
    m_type             {Hop::Bittering},
-   m_formStr          {"" },
    m_form             {Hop::Leaf},
    m_alpha_pct        {0.0},
    m_amount_kg        {0.0},
@@ -123,11 +117,8 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
 
 Hop::Hop(Hop const & other) :
    NamedEntityWithInventory{other                    },
-   m_useStr                {other.m_useStr           },
    m_use                   {other.m_use              },
-   m_typeStr               {other.m_typeStr          },
    m_type                  {other.m_type             },
-   m_formStr               {other.m_formStr          },
    m_form                  {other.m_form             },
    m_alpha_pct             {other.m_alpha_pct        },
    m_amount_kg             {other.m_amount_kg        },
@@ -145,36 +136,12 @@ Hop::Hop(Hop const & other) :
 }
 
 //============================="SET" METHODS====================================
-void Hop::setAlpha_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < alpha < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_alpha_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::alpha_pct, num);
-      }
-   }
+void Hop::setAlpha_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::alpha_pct, this->m_alpha_pct, this->enforceMinAndMax(var, "alpha", 0.0, 100.0));
 }
 
-void Hop::setAmount_kg( double num )
-{
-   if( num < 0.0 )
-   {
-      qWarning() << QString("Hop: amount < 0: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_amount_kg = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::amount_kg,num);
-      }
-   }
+void Hop::setAmount_kg(double var) {
+   this->setAndNotify(PropertyNames::Hop::amount_kg, this->m_amount_kg, this->enforceMin(var, "amount"));
 }
 
 void Hop::setInventoryAmount(double num) {
@@ -182,184 +149,67 @@ void Hop::setInventoryAmount(double num) {
    return;
 }
 
-void Hop::setUse(Use u)
-{
-   if ( u < uses.size()) {
-      m_use = u;
-      m_useStr = uses.at(u);
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::use, uses.at(u));
-      }
-   }
+void Hop::setUse(Use u) {
+   this->setAndNotify(PropertyNames::Hop::use, this->m_use, u);
 }
 
-void Hop::setTime_min( double num )
-{
-   if( num < 0.0 )
-   {
-      qWarning() << QString("Hop: time < 0: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_time_min = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::time_min, num);
-      }
-   }
+void Hop::setTime_min(double var) {
+   this->setAndNotify(PropertyNames::Hop::time_min, this->m_time_min, this->enforceMin(var, "time"));
 }
 
-void Hop::setNotes( const QString& str )
-{
-   m_notes = str;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Hop::notes, str);
-   }
+void Hop::setNotes(QString const & str) {
+   this->setAndNotify(PropertyNames::Hop::notes, this->m_notes, str);
 }
 
-void Hop::setType(Type t)
-{
-  if ( t < types.size() ) {
-     m_type = t;
-     m_typeStr = types.at(t);
-     if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Hop::type, m_typeStr);
-     }
-  }
+void Hop::setType(Type t) {
+   this->setAndNotify(PropertyNames::Hop::type, this->m_type, t);
 }
 
-void Hop::setForm( Form f )
-{
-   if ( f < forms.size() ) {
-      m_form = f;
-      m_formStr = forms.at(f);
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::form, m_formStr);
-      }
-   }
+void Hop::setForm(Form f) {
+   this->setAndNotify(PropertyNames::Hop::form, this->m_form, f);
 }
 
-void Hop::setBeta_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < beta < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_beta_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::beta_pct, num);
-      }
-   }
+void Hop::setBeta_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::beta_pct, this->m_beta_pct, this->enforceMinAndMax(var, "beta", 0.0, 100.0));
 }
 
-void Hop::setHsi_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < hsi < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_hsi_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::hsi_pct, num);
-      }
-   }
+void Hop::setHsi_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::hsi_pct, this->m_hsi_pct, this->enforceMinAndMax(var, "hsi", 0.0, 100.0));
 }
 
-void Hop::setOrigin( const QString& str )
-{
-   m_origin = str;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Hop::origin, str);
-   }
+void Hop::setOrigin(QString const & str) {
+   this->setAndNotify(PropertyNames::Hop::origin, this->m_origin, str);
 }
 
-void Hop::setSubstitutes( const QString& str )
-{
-   m_substitutes = str;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Hop::substitutes, str);
-   }
+void Hop::setSubstitutes(QString const & str) {
+   this->setAndNotify(PropertyNames::Hop::substitutes, this->m_substitutes, str);
 }
 
-void Hop::setHumulene_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < humulene < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_humulene_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::humulene_pct,num);
-      }
-   }
+void Hop::setHumulene_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::humulene_pct, this->m_humulene_pct, this->enforceMinAndMax(var, "humulene", 0.0, 100.0));
 }
 
-void Hop::setCaryophyllene_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < cary < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_caryophyllene_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::caryophyllene_pct, num);
-      }
-   }
+void Hop::setCaryophyllene_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::caryophyllene_pct, this->m_caryophyllene_pct, this->enforceMinAndMax(var, "caryophyllene", 0.0, 100.0));
 }
 
-void Hop::setCohumulone_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < cohumulone < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_cohumulone_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::cohumulone_pct, num);
-      }
-   }
+void Hop::setCohumulone_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::cohumulone_pct, this->m_cohumulone_pct, this->enforceMinAndMax(var, "cohumulone", 0.0, 100.0));
 }
 
-void Hop::setMyrcene_pct( double num )
-{
-   if( num < 0.0 || num > 100.0 )
-   {
-      qWarning() << QString("Hop: 0 < myrcene < 100: %1").arg(num);
-      return;
-   }
-   else
-   {
-      m_myrcene_pct = num;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Hop::myrcene_pct, num);
-      }
-   }
+void Hop::setMyrcene_pct(double var) {
+   this->setAndNotify(PropertyNames::Hop::myrcene_pct, this->m_myrcene_pct, this->enforceMinAndMax(var, "myrcene", 0.0, 100.0));
 }
 
 //============================="GET" METHODS====================================
 
 Hop::Use Hop::use() const { return m_use; }
-const QString Hop::useString() const { return m_useStr; }
+const QString Hop::useString() const { return uses.at(m_use); }
 const QString Hop::notes() const { return m_notes; }
 Hop::Type Hop::type() const { return m_type; }
-const QString Hop::typeString() const { return m_typeStr; }
+const QString Hop::typeString() const { return types.at(m_type); }
 Hop::Form Hop::form() const { return m_form; }
-const QString Hop::formString() const { return m_formStr; }
+const QString Hop::formString() const { return forms.at(m_form); }
 const QString Hop::origin() const { return m_origin; }
 const QString Hop::substitutes() const { return m_substitutes; }
 double Hop::alpha_pct() const { return m_alpha_pct; }
@@ -407,4 +257,8 @@ const QString Hop::formStringTr() const
    else {
       return "";
    }
+}
+
+Recipe * Hop::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

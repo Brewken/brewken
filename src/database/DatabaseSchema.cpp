@@ -17,6 +17,7 @@
 #include <QString>
 #include <QStringBuilder>
 
+#include "database/Database.h"
 #include "database/TableSchema.h"
 #include "database/TableSchemaConst.h"
 #include "database/DatabaseSchema.h"
@@ -26,7 +27,7 @@
 DatabaseSchema::DatabaseSchema()
 {
    loadTables();
-   m_type = Brewken::dbType();
+//   m_type = Database::dbType();
 }
 
 void DatabaseSchema::loadTables()
@@ -78,26 +79,26 @@ const QString DatabaseSchema::generateCreateTable(DatabaseConstants::DbTableId t
 
    TableSchema* tSchema = m_tables.at(table);
 
-   return tSchema->generateCreateTable(m_type,name);
+   return tSchema->generateCreateTable(Database::dbType(),name);
 }
 
 // these two basically just pass the call to the proper table
 const QString DatabaseSchema::generateInsertRow(DatabaseConstants::DbTableId table)
 {
    TableSchema* tSchema = m_tables.value(table);
-   return tSchema->generateInsertRow(m_type);
+   return tSchema->generateInsertRow(Database::dbType());
 }
 
-const QString DatabaseSchema::generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Brewken::DBTypes type)
+/*const QString DatabaseSchema::generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Database::DBTypes type)
 {
    TableSchema* tSchema = m_tables.value(src);
    return tSchema->generateCopyTable(dest,type);
-}
+}*/
 
 const QString DatabaseSchema::generateUpdateRow(DatabaseConstants::DbTableId table, int key)
 {
    TableSchema* tSchema = m_tables.value(table);
-   return tSchema->generateUpdateRow(key, m_type);
+   return tSchema->generateUpdateRow(key, Database::dbType());
 }
 
 DatabaseConstants::DbTableId DatabaseSchema::classNameToTable(QString className) const

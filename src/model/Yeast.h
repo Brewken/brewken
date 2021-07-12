@@ -21,6 +21,7 @@
  */
 #ifndef MODEL_YEAST_H
 #define MODEL_YEAST_H
+#pragma once
 
 #include <QSqlRecord>
 #include <QString>
@@ -159,7 +160,7 @@ public:
    int maxReuse() const;
    bool addToSecondary() const;
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 
@@ -168,11 +169,8 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString m_typeString;
    Type m_type;
-   QString m_formString;
    Form m_form;
-   QString m_flocculationString;
    Flocculation m_flocculation;
    double m_amount;
    bool m_amountIsWeight;
@@ -187,43 +185,8 @@ private:
    int m_maxReuse;
    bool m_addToSecondary;
    int m_inventory_id;
-
-   static QStringList types;
-   static QStringList forms;
-   static QStringList flocculations;
-
-   // Methods
-   bool isValidType(const QString& str) const;
-   bool isValidForm(const QString& str) const;
-   bool isValidFlocculation(const QString& str) const;
 };
 
 Q_DECLARE_METATYPE( QList<Yeast*> )
-/*
-inline bool YeastPtrLt( Yeast* lhs, Yeast* rhs)
-{
-   return *lhs < *rhs;
-}
 
-inline bool YeastPtrEq( Yeast* lhs, Yeast* rhs)
-{
-   return *lhs == *rhs;
-}
-
-struct Yeast_ptr_cmp
-{
-   bool operator()( Yeast* lhs, Yeast* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
-
-struct Yeast_ptr_equals
-{
-   bool operator()( Yeast* lhs, Yeast* rhs )
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
-#endif   // YEAST_H
+#endif
