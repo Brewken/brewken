@@ -772,6 +772,7 @@ void MainWindow::setupTriggers() {
    connect( action_recipeToTextClipboard, &QAction::triggered, recipeFormatter, &RecipeFormatter::toTextClipboard );    // > Tools > Recipe to Clipboard as Text
    connect( actionConvert_Units, &QAction::triggered, converterTool, &QWidget::show );                                  // > Tools > Convert Units
    connect( actionHydrometer_Temp_Adjustment, &QAction::triggered, hydrometerTool, &QWidget::show );                    // > Tools > Hydrometer Temp Adjustment
+   connect( actionAlcohol_Percentage_Tool, &QAction::triggered, alcoholTool, &QWidget::show );                          // > Tools > Alcohol
    connect( actionOG_Correction_Help, &QAction::triggered, ogAdjuster, &QWidget::show );                                // > Tools > OG Correction Help
    connect( actionCopy_Recipe, &QAction::triggered, this, &MainWindow::copyRecipe );                                    // > File > Copy Recipe
    connect( actionPriming_Calculator, &QAction::triggered, primingDialog, &QWidget::show );                             // > Tools > Priming Calculator
@@ -1132,9 +1133,7 @@ void MainWindow::setAncestor()
    Recipe* rec;
    if ( this->recipeObs ) {
       rec = this->recipeObs;
-
-   }
-   else {
+   } else {
       QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
       rec = treeView_recipe->recipe(indexes[0]);
    }
