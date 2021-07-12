@@ -44,82 +44,97 @@ class Water;
  *
  * \brief View class for BtTreeModel.
  */
-class BtTreeView : public QTreeView
-{
+class BtTreeView : public QTreeView {
    Q_OBJECT
 public:
    //! \brief The standard constructor
-   BtTreeView(QWidget *parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::RECIPEMASK);
+   BtTreeView(QWidget * parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::RECIPEMASK);
    //! \brief returns the model associated with this tree
-   BtTreeModel* model();
+   BtTreeModel * model();
+   //! \b returns the filter associated with this model
+   BtTreeFilterProxyModel * filter();
+
    //! \brief returns the context menu associated with the \c selected item
-   QMenu* contextMenu(QModelIndex selected);
+   QMenu * contextMenu(QModelIndex selected);
 
    //! \brief removes \c index item from the tree returns true if the remove works
-   bool removeRow(const QModelIndex &index);
+   bool removeRow(const QModelIndex & index);
    //! \brief returns true if \c parent is the parent of \c child
-   bool isParent(const QModelIndex& parent, const QModelIndex& child);
+   bool isParent(const QModelIndex & parent, const QModelIndex & child);
 
    //! \brief returns the parent of \c child
-   QModelIndex parent(const QModelIndex& child);
+   QModelIndex parent(const QModelIndex & child);
    //! \brief returns the first \c type element in the tree
    QModelIndex first();
 
-   QModelIndex findElement(NamedEntity* thing);
+   QModelIndex findElement(NamedEntity * thing);
 
    //! \brief returns the recipe at \c index
-   Recipe* recipe(const QModelIndex &index) const;
+   Recipe * recipe(const QModelIndex & index) const;
    //! \brief returns the equipment at \c index
-   Equipment* equipment(const QModelIndex &index) const;
+   Equipment * equipment(const QModelIndex & index) const;
    //! \brief returns the fermentable at \c index
-   Fermentable* fermentable(const QModelIndex &index) const;
+   Fermentable * fermentable(const QModelIndex & index) const;
    //! \brief returns the hop at \c index
-   Hop* hop(const QModelIndex &index) const;
+   Hop * hop(const QModelIndex & index) const;
    //! \brief returns the misc at \c index
-   Misc* misc(const QModelIndex &index) const;
+   Misc * misc(const QModelIndex & index) const;
    //! \brief returns the yeast at \c index
-   Yeast* yeast(const QModelIndex &index) const;
+   Yeast * yeast(const QModelIndex & index) const;
    //! \brief returns the yeast at \c index
-   Style* style(const QModelIndex &index) const;
+   Style * style(const QModelIndex & index) const;
    //! \brief returns the brewnote at \c index
-   BrewNote* brewNote(const QModelIndex &index) const;
+   BrewNote * brewNote(const QModelIndex & index) const;
    //! \brief returns the water at \c index
-   Water* water(const QModelIndex &index) const;
+   Water * water(const QModelIndex & index) const;
 
    //! \brief returns the folder at \c index
-   BtFolder* folder(const QModelIndex &index) const;
+   BtFolder * folder(const QModelIndex & index) const;
    //! \brief finds the index of the \c folder in the tree,but does not create
-   QModelIndex findFolder( BtFolder* folder);
+   QModelIndex findFolder(BtFolder * folder);
    //! \brief adds a folder to the tree
-   void addFolder( QString folder);
+   void addFolder(QString folder);
    //! \brief renames a folder and all of its subitems
-   void renameFolder(BtFolder* victim, QString newName);
+   void renameFolder(BtFolder * victim, QString newName);
    QString folderName(QModelIndex starter);
 
    //! \brief gets the type of the item at \c index.
-   int type(const QModelIndex &index);
+   int type(const QModelIndex & index);
+
+   //! \brief returns true if the recipe at ndx is showing its ancestors
+   bool ancestorsAreShowing(QModelIndex ndx);
+   //! \brief enables or disables the delete action when a recipe is unlocked/locked
+   void enableDelete(bool enable);
+   //! \brief enables or disables showing ancestors
+   void enableShowAncestor(bool enable);
+   //! \brief enables or disables hiding ancestors
+   void enableHideAncestor(bool enable);
+   //! \brief make a recipe its own ancestor
+   void enableOrphan(bool enable);
+   //! \brief do we breed, or not
+   void enableSpawn(bool enable);
 
    //! \brief returns true if a recipe and an ingredient (hop, equipment, etc.) are selected at the same time
    bool multiSelected();
 
    // Another try at drag and drop
    //! \brief starts a drag and drop event
-   void mousePressEvent(QMouseEvent *event);
+   void mousePressEvent(QMouseEvent * event);
    //! \brief distinguishes between a move event and a double click
-   void mouseMoveEvent(QMouseEvent *event);
+   void mouseMoveEvent(QMouseEvent * event);
    //! \brief recognizes a double click event
-   void mouseDoubleClickEvent(QMouseEvent *event);
+   void mouseDoubleClickEvent(QMouseEvent * event);
 
    //! \brief catches a key stroke in a tree
-   void keyPressEvent(QKeyEvent* event);
+   void keyPressEvent(QKeyEvent * event);
 
    //! \brief creates a context menu based on the type of tree
-   void setupContextMenu(QWidget* top, QWidget* editor );
+   void setupContextMenu(QWidget * top, QWidget * editor);
 
    //! \brief sets a new filter
-   void setFilter(BtTreeFilterProxyModel* newFilter);
+   void setFilter(BtTreeFilterProxyModel * newFilter);
    //! \brief gets the current filter
-   BtTreeFilterProxyModel* filter() const;
+   BtTreeFilterProxyModel * filter() const;
 
    void deleteSelected(QModelIndexList selected);
    void copySelected(QModelIndexList selected);
@@ -139,121 +154,129 @@ public slots:
 
 private slots:
    void expandFolder(BtTreeModel::TypeMasks kindaThing, QModelIndex fIdx);
+   void versionedRecipe(Recipe * descendant);
+
+   void showAncestors();
+   void hideAncestors();
+   void revertRecipeToPreviousVersion();
+   void spawnRecipe();
+
+signals:
+   void recipeSpawn(Recipe * descendant);
 
 private:
-   BtTreeModel* _model;
-   BtTreeFilterProxyModel* _filter;
+   BtTreeModel * _model;
+   BtTreeFilterProxyModel * _filter;
    BtTreeModel::TypeMasks _type;
-   QMenu* _contextMenu, *subMenu;
+   QMenu * _contextMenu,
+         *subMenu,
+         *m_versionMenu;
+   QAction * m_deleteAction,
+           *m_showAncestorAction,
+           *m_hideAncestorAction,
+           *m_orphanAction,
+           *m_spawnAction;
    QPoint dragStart;
-   QWidget* _editor;
+   QWidget * _editor;
 
    bool doubleClick;
 
    int verifyDelete(int confirmDelete, QString tag, QString name);
-   QString verifyCopy(QString tag, QString name, bool *abort);
-   QMimeData *mimeData(QModelIndexList indexes);
+   QString verifyCopy(QString tag, QString name, bool * abort);
+   QMimeData * mimeData(QModelIndexList indexes);
 };
 
 //!
 // \class RecipeTreeView
 // \brief subclasses BtTreeView to only show recipes.
-class RecipeTreeView : public BtTreeView
-{
+class RecipeTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   RecipeTreeView(QWidget *parent = nullptr);
+   RecipeTreeView(QWidget * parent = nullptr);
 
 };
 
 //!
 // \class EquipmentTreeView
 // \brief subclasses BtTreeView to only show equipment.
-class EquipmentTreeView : public BtTreeView
-{
+class EquipmentTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   EquipmentTreeView(QWidget *parent = nullptr);
+   EquipmentTreeView(QWidget * parent = nullptr);
 };
 
 //!
 // \class FermentableTreeView
 // \brief subclasses BtTreeView to only show fermentables.
-class FermentableTreeView : public BtTreeView
-{
+class FermentableTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   FermentableTreeView(QWidget *parent = nullptr);
+   FermentableTreeView(QWidget * parent = nullptr);
 
 };
 
 //!
 // \class HopTreeView
 // \brief subclasses BtTreeView to only show hops.
-class HopTreeView : public BtTreeView
-{
+class HopTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   HopTreeView(QWidget *parent = nullptr);
+   HopTreeView(QWidget * parent = nullptr);
 
 };
 
 //!
 // \class MiscTreeView
 // \brief subclasses BtTreeView to only show miscs.
-class MiscTreeView : public BtTreeView
-{
+class MiscTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   MiscTreeView(QWidget *parent = nullptr);
+   MiscTreeView(QWidget * parent = nullptr);
 };
 
 //!
 // \class YeastTreeView
 // \brief subclasses BtTreeView to only show yeasts.
-class YeastTreeView : public BtTreeView
-{
+class YeastTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   YeastTreeView(QWidget *parent = nullptr);
+   YeastTreeView(QWidget * parent = nullptr);
 
 };
 
 //!
 // \class StyleTreeView
 // \brief subclasses BtTreeView to only show styles.
-class StyleTreeView : public BtTreeView
-{
+class StyleTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   StyleTreeView(QWidget *parent = nullptr);
+   StyleTreeView(QWidget * parent = nullptr);
 
 };
 
 //!
 // \class WaterTreeView
 // \brief subclasses BtTreeView to only show waters.
-class WaterTreeView : public BtTreeView
-{
+class WaterTreeView : public BtTreeView {
    Q_OBJECT
 public:
    //! \brief Constructs the tree view, sets up the filter proxy and sets a
    // few options on the tree that can only be set after the model
-   WaterTreeView(QWidget *parent = nullptr);
+   WaterTreeView(QWidget * parent = nullptr);
 
 };
 #endif

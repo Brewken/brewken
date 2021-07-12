@@ -34,8 +34,7 @@
 #include <QSqlDatabase>
 #include <QString>
 
-#include "Brewken.h"
-#include "database/DatabaseSchema.h"
+class DatabaseSchema;
 
 /*!
  * \class Database
@@ -48,6 +47,15 @@ class Database {
    Q_DECLARE_TR_FUNCTIONS(Database)
 
 public:
+
+   //! \brief Supported databases. I am not 100% sure I'm digging this
+   //  solution, but this is more extensible than what I was doing previously
+   enum DBTypes {
+      NODB = 0,  // Popularity was over rated
+      SQLITE,    // compact, fast and a little loose
+      PGSQL,     // big, powerful, uptight and a little stodgy
+      ALLDB      // Keep this one the last one, or bad things will happen
+   };
 
    //! This should be the ONLY way you get an instance.
    static Database& instance();
@@ -99,7 +107,7 @@ public:
    //! \brief Reverts database to that of chosen file.
    static bool restoreFromFile(QString newDbFileStr);
 
-   static bool verifyDbConnection(Brewken::DBTypes testDb,
+   static bool verifyDbConnection(Database::DBTypes testDb,
                                   QString const& hostname,
                                   int portnum = 5432,
                                   QString const & schema="public",
@@ -118,7 +126,29 @@ public:
    //   needs opens and then calls the appropriate workhorse to get it done.
    void convertDatabase(QString const& Hostname, QString const& DbName,
                         QString const& Username, QString const& Password,
-                        int Portnum, Brewken::DBTypes newType);
+                        int Portnum, Database::DBTypes newType);
+
+   /*!
+    * \brief If we are supporting multiple databases, we need some way to
+    * figure out which database we are using. I still don't know that this
+    * will be the final implementation -- I can't help but think I should be
+    * subclassing something
+    */
+   static Database::DBTypes dbType();
+
+   /*!
+    * \brief Different databases use different values for true and false.
+    * This method handles that difference, in a marginally extensible way
+    *
+    * .:TODO:. Pretty sure we can kill this once we retire TableSchema.cpp
+    */
+   static QString dbBoolean(bool flag, Database::DBTypes whichDb = Database::NODB);
+
+   /**
+    * \brief Turn foreign key constraints on or off.  Typically, turning them off is only required during copying the
+    *        contents of one DB to another.
+    */
+   static void setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DBTypes whichDb = Database::NODB);
 
    /**
     * \brief For a given base type, return the typename to use for the corresponding columns when creating tables.
@@ -131,16 +161,20 @@ public:
     *           double
     *           QString
     *           QDate
+    *
+    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   template<typename T> char const * getDbNativeTypeName() const;
+   template<typename T> char const * getDbNativeTypeName(Database::DBTypes whichDb = Database::NODB) const;
 
    /**
     * \brief Returns the text we need to use to specify an integer column as primary key when creating a table, eg:
     *           "PRIMARY KEY" for SQLite
     *           "SERIAL PRIMARY KEY" for PostgreSQL
     *           "AUTO_INCREMENT PRIMARY KEY" for MySQL / MariaDB
+    *
+    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getDbNativeIntPrimaryKeyModifier() const;
+   char const * getDbNativeIntPrimaryKeyModifier(Database::DBTypes whichDb = Database::NODB) const;
 
    /**
     * \brief Returns a text template for an ALTER TABLE query to add a foreign key column to a table.  Callers should
@@ -149,8 +183,10 @@ public:
     *           • column name (to add) as argument 2
     *           • foreign key table name as argument 3
     *           • foreign key column name as argument 4
+    *
+    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getSqlToAddColumnAsForeignKey() const;
+   char const * getSqlToAddColumnAsForeignKey(Database::DBTypes whichDb = Database::NODB) const;
 
 
    // .:TODO:. We can get rid of this once we rewrite BeerXml output code to use the same structures as for input

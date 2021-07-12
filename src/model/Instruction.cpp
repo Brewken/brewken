@@ -81,13 +81,6 @@ ObjectStore & Instruction::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Instruction>::getInstance();
 }
 
-
-QString Instruction::classNameStr()
-{
-   static const QString name("Instruction");
-   return name;
-}
-
 Instruction::Instruction(Instruction const & other) :
    NamedEntity {other},
    pimpl       {new impl{*this}},
@@ -126,36 +119,20 @@ Instruction::Instruction(NamedParameterBundle const & namedParameterBundle) :
 Instruction::~Instruction() = default;
 
 // Setters ====================================================================
-void Instruction::setDirections(const QString& dir)
-{
-   m_directions = dir;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Instruction::directions,  dir);
-   }
+void Instruction::setDirections(QString const & dir) {
+   this->setAndNotify(PropertyNames::Instruction::directions, this->m_directions, dir);
 }
 
-void Instruction::setHasTimer(bool has)
-{
-   m_hasTimer = has;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Instruction::hasTimer,  has);
-   }
+void Instruction::setHasTimer(bool has) {
+   this->setAndNotify(PropertyNames::Instruction::hasTimer, this->m_hasTimer, has);
 }
 
-void Instruction::setTimerValue(const QString& timerVal)
-{
-   m_timerValue = timerVal;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Instruction::timerValue,  timerVal);
-   }
+void Instruction::setTimerValue(QString const & timerVal) {
+   this->setAndNotify(PropertyNames::Instruction::timerValue, this->m_timerValue, timerVal);
 }
 
-void Instruction::setCompleted(bool comp)
-{
-   m_completed = comp;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Instruction::completed,  comp);
-   }
+void Instruction::setCompleted(bool comp) {
+   this->setAndNotify(PropertyNames::Instruction::completed, this->m_completed, comp);
 }
 
 // TODO: figure out.
@@ -166,16 +143,12 @@ void Instruction::setReagent(const QString& reagent)
 }
 */
 
-void Instruction::setInterval(double time)
-{
-   m_interval = time;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Instruction::interval,  time);
-   }
+void Instruction::setInterval(double time) {
+   this->setAndNotify(PropertyNames::Instruction::interval, this->m_interval, time);
 }
 
-void Instruction::addReagent(const QString& reagent)
-{
+void Instruction::addReagent(QString const & reagent) {
+   // Reagents aren't stored in the DB, so no call to setAndNotify() etc here
    m_reagents.append(reagent);
 }
 
@@ -194,4 +167,8 @@ double Instruction::interval() { return m_interval; }
 
 int Instruction::instructionNumber() const {
    return this->pimpl->getRecipe()->instructionNumber(*this);
+}
+
+Recipe * Instruction::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

@@ -369,49 +369,49 @@ bool YeastTableModel::setData( const QModelIndex& index, const QVariant& value, 
          if( ! value.canConvert(QVariant::String))
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  PropertyNames::NamedEntity::name,
-                                                  value.toString(),
-                                                  tr("Change Yeast Name"));
+                                               PropertyNames::NamedEntity::name,
+                                               value.toString(),
+                                               tr("Change Yeast Name"));
          break;
       case YEASTLABCOL:
          if( ! value.canConvert(QVariant::String) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  PropertyNames::Yeast::laboratory,
-                                                  value.toString(),
-                                                  tr("Change Yeast Laboratory"));
+                                               PropertyNames::Yeast::laboratory,
+                                               value.toString(),
+                                               tr("Change Yeast Laboratory"));
          break;
       case YEASTPRODIDCOL:
          if( ! value.canConvert(QVariant::String) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  PropertyNames::Yeast::productID,
-                                                  value.toString(),
-                                                  tr("Change Yeast Product ID"));
+                                               PropertyNames::Yeast::productID,
+                                               value.toString(),
+                                               tr("Change Yeast Product ID"));
          break;
       case YEASTTYPECOL:
          if( ! value.canConvert(QVariant::Int) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  "type",
-                                                  static_cast<Yeast::Type>(value.toInt()),
-                                                  tr("Change Yeast Type"));
+                                               PropertyNames::Yeast::type,
+                                               static_cast<Yeast::Type>(value.toInt()),
+                                               tr("Change Yeast Type"));
          break;
       case YEASTFORMCOL:
          if( ! value.canConvert(QVariant::Int) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  "form",
-                                                  static_cast<Yeast::Form>(value.toInt()),
-                                                  tr("Change Yeast Form"));
+                                               PropertyNames::Yeast::form,
+                                               static_cast<Yeast::Form>(value.toInt()),
+                                               tr("Change Yeast Form"));
          break;
       case YEASTINVENTORYCOL:
          if( ! value.canConvert(QVariant::Int) )
             return false;
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  "inventoryQuanta",
-                                                  value.toInt(),
-                                                  tr("Change Yeast Inventory Unit Size")); // .:TBD:. MY 2020-12-11 Whilst it's admirably concise, I find "quanta" unclear, and I'm not sure it's that easy to translate either
+                                               PropertyNames::NamedEntityWithInventory::inventory,
+                                               value.toInt(),
+                                               tr("Change Yeast Inventory Unit Size")); // .:TBD:. MY 2020-12-11 Whilst it's admirably concise, I find "quanta" unclear, and I'm not sure it's that easy to translate either
          break;
       case YEASTAMOUNTCOL:
          if( ! value.canConvert(QVariant::String) )
@@ -420,9 +420,9 @@ bool YeastTableModel::setData( const QModelIndex& index, const QVariant& value, 
          unit = row->amountIsWeight() ? &Units::kilograms : &Units::liters;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  "amount",
-                                                  Brewken::qStringToSI(value.toString(), unit, dspUnit, dspScl),
-                                                  tr("Change Yeast Amount"));
+                                               PropertyNames::Yeast::amount,
+                                               Brewken::qStringToSI(value.toString(), unit, dspUnit, dspScl),
+                                               tr("Change Yeast Amount"));
          break;
 
       default:

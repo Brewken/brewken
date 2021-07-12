@@ -22,8 +22,11 @@
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/Recipe.h"
 
-QStringList Style::m_types = QStringList() << "Lager" << "Ale" << "Mead" << "Wheat" << "Mixed" << "Cider";
+namespace {
+   QStringList const types{"Lager", "Ale", "Mead", "Wheat", "Mixed", "Cider"};
+}
 
 bool Style::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -42,12 +45,6 @@ ObjectStore & Style::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Style>::getInstance();
 }
 
-QString Style::classNameStr()
-{
-   static const QString name("Style");
-   return name;
-}
-
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
@@ -57,7 +54,6 @@ Style::Style(QString t_name, bool cacheOnly) :
    m_categoryNumber(QString()),
    m_styleLetter(QString()),
    m_styleGuide(QString()),
-   m_typeStr(QString()),
    m_type(static_cast<Style::Type>(0)),
    m_ogMin(0.0),
    m_ogMax(0.0),
@@ -84,7 +80,6 @@ Style::Style(Style const & other) :
    m_categoryNumber{other.m_categoryNumber},
    m_styleLetter   {other.m_styleLetter   },
    m_styleGuide    {other.m_styleGuide    },
-   m_typeStr       {other.m_typeStr       },
    m_type          {other.m_type          },
    m_ogMin         {other.m_ogMin         },
    m_ogMax         {other.m_ogMax         },
@@ -112,7 +107,6 @@ Style::Style(NamedParameterBundle const & namedParameterBundle) :
    m_categoryNumber{namedParameterBundle(PropertyNames::Style::categoryNumber).toString()},
    m_styleLetter   {namedParameterBundle(PropertyNames::Style::styleLetter   ).toString()},
    m_styleGuide    {namedParameterBundle(PropertyNames::Style::styleGuide    ).toString()},
-   //m_typeStr(QString()),
    m_type          {static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())},
    m_ogMin         {namedParameterBundle(PropertyNames::Style::ogMin         ).toDouble()},
    m_ogMax         {namedParameterBundle(PropertyNames::Style::ogMax         ).toDouble()},
@@ -135,244 +129,88 @@ Style::Style(NamedParameterBundle const & namedParameterBundle) :
 
 
 //==============================="SET" METHODS==================================
-void Style::setCategory( const QString& var )
-{
-   m_category = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::category, var );
-   }
+void Style::setCategory(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::category, this->m_category, var);
 }
 
-void Style::setCategoryNumber( const QString& var )
-{
-   m_categoryNumber = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::categoryNumber, var );
-   }
+void Style::setCategoryNumber(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::categoryNumber, this->m_categoryNumber, var);
 }
 
-void Style::setStyleLetter( const QString& var )
-{
-   m_styleLetter = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::styleLetter, var );
-   }
+void Style::setStyleLetter(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::styleLetter, this->m_styleLetter, var);
 }
 
-void Style::setStyleGuide( const QString& var )
-{
-   m_styleGuide = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::styleGuide, var );
-   }
+void Style::setStyleGuide(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::styleGuide, this->m_styleGuide, var);
 }
 
-void Style::setType( Type t )
-{
-   m_type = t;
-   m_typeStr = m_types.at(t);
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::type, m_typeStr);
-   }
+void Style::setType(Type t) {
+   this->setAndNotify(PropertyNames::Style::type, this->m_type, t);
 }
 
-void Style::setOgMin( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_ogMin = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::ogMin, var);
-      }
-   }
+void Style::setOgMin(double var) {
+   this->setAndNotify(PropertyNames::Style::ogMin, this->m_ogMin, this->enforceMin(var, "og min"));
 }
 
-void Style::setOgMax( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_ogMax = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::ogMax, var);
-      }
-   }
+void Style::setOgMax(double var) {
+   this->setAndNotify(PropertyNames::Style::ogMax, this->m_ogMax, this->enforceMin(var, "og max"));
 }
 
-void Style::setFgMin( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_fgMin = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::fgMin, var);
-      }
-   }
+void Style::setFgMin(double var) {
+   this->setAndNotify(PropertyNames::Style::fgMin, this->m_fgMin, this->enforceMin(var, "fg min"));
 }
 
-void Style::setFgMax( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_fgMax = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::fgMax, var);
-      }
-   }
+void Style::setFgMax(double var) {
+   this->setAndNotify(PropertyNames::Style::fgMax, this->m_fgMax, this->enforceMin(var, "fg max"));
 }
 
-void Style::setIbuMin( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_ibuMin = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::ibuMin, var);
-      }
-   }
+void Style::setIbuMin(double var) {
+   this->setAndNotify(PropertyNames::Style::ibuMin, this->m_ibuMin, this->enforceMin(var, "ibu min"));
 }
 
-void Style::setIbuMax( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_ibuMax = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::ibuMax, var);
-      }
-   }
+void Style::setIbuMax(double var) {
+   this->setAndNotify(PropertyNames::Style::ibuMax, this->m_ibuMax, this->enforceMin(var, "ibu max"));
 }
 
-void Style::setColorMin_srm( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_colorMin_srm = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::colorMin_srm, var);
-      }
-   }
+void Style::setColorMin_srm(double var) {
+   this->setAndNotify(PropertyNames::Style::colorMin_srm, this->m_colorMin_srm, this->enforceMin(var, "color min"));
 }
 
-void Style::setColorMax_srm( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_colorMax_srm = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::colorMax_srm, var);
-      }
-   }
+void Style::setColorMax_srm(double var) {
+   this->setAndNotify(PropertyNames::Style::colorMax_srm, this->m_colorMax_srm, this->enforceMin(var, "color max"));
 }
 
-void Style::setCarbMin_vol( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_carbMin_vol = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::carbMin_vol, var);
-      }
-   }
+void Style::setCarbMin_vol(double var) {
+   this->setAndNotify(PropertyNames::Style::carbMin_vol, this->m_carbMin_vol, this->enforceMin(var, "carb vol min"));
 }
 
-void Style::setCarbMax_vol( double var )
-{
-   if( var < 0.0 ) {
-      return;
-   }
-   else
-   {
-      m_carbMax_vol = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::carbMax_vol, var);
-      }
-   }
+void Style::setCarbMax_vol(double var) {
+   this->setAndNotify(PropertyNames::Style::carbMax_vol, this->m_carbMax_vol, this->enforceMin(var, "carb vol max"));
 }
 
-void Style::setAbvMin_pct( double var )
-{
-   if( var < 0.0 || var > 100.0 ) {
-      return;
-   }
-   else
-   {
-      m_abvMin_pct = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::abvMin_pct, var);
-      }
-   }
+void Style::setAbvMin_pct(double var) {
+   this->setAndNotify(PropertyNames::Style::abvMin_pct, this->m_abvMin_pct, this->enforceMinAndMax(var, "min abv pct", 0.0, 100.0));
 }
 
-void Style::setAbvMax_pct( double var )
-{
-   if( var < 0.0 || var > 100.0 )
-      return;
-   else
-   {
-        m_abvMax_pct = var;
-      if ( ! m_cacheOnly ) {
-         setEasy( PropertyNames::Style::abvMax_pct, var);
-      }
-   }
+void Style::setAbvMax_pct(double var) {
+   this->setAndNotify(PropertyNames::Style::abvMax_pct, this->m_abvMax_pct, this->enforceMinAndMax(var, "max abv pct", 0.0, 100.0));
 }
 
-void Style::setNotes( const QString& var )
-{
-    m_notes = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::notes, var);
-   }
+void Style::setNotes(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::notes, this->m_notes, var);
 }
 
-void Style::setProfile( const QString& var )
-{
-    m_profile = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::profile, var);
-   }
+void Style::setProfile(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::profile, this->m_profile, var);
 }
 
-void Style::setNamedEntitys( const QString& var )
-{
-    m_ingredients = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::ingredients, var);
-   }
+void Style::setIngredients(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::ingredients, this->m_ingredients, var);
 }
 
-void Style::setExamples( const QString& var )
-{
-    m_examples = var;
-   if ( ! m_cacheOnly ) {
-      setEasy( PropertyNames::Style::examples, var);
-   }
+void Style::setExamples(QString const & var) {
+   this->setAndNotify(PropertyNames::Style::examples, this->m_examples, var);
 }
 
 //============================="GET" METHODS====================================
@@ -385,7 +223,7 @@ QString Style::profile() const { return m_profile; }
 QString Style::ingredients() const { return m_ingredients; }
 QString Style::examples() const { return m_examples; }
 Style::Type Style::type() const { return m_type; }
-const QString Style::typeString() const { return m_typeStr; }
+const QString Style::typeString() const { return types.at(m_type); }
 
 double Style::ogMin() const { return m_ogMin; }
 double Style::ogMax() const { return m_ogMax; }
@@ -400,7 +238,6 @@ double Style::carbMax_vol() const { return m_carbMax_vol; }
 double Style::abvMin_pct() const { return m_abvMin_pct; }
 double Style::abvMax_pct() const { return m_abvMax_pct; }
 
-bool Style::isValidType( const QString &str )
-{
-   return m_types.contains( str );
+Recipe * Style::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

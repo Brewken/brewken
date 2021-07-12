@@ -91,6 +91,7 @@ class Brewken : public QObject
 {
    Q_OBJECT
    Q_ENUMS(DBTypes)
+   Q_ENUMS(delOptions)
 
    friend class OptionDialog;
    friend class IbuMethods;
@@ -119,15 +120,6 @@ public:
    enum RangeType {
       DENSITY,
       COLOR
-   };
-
-   //! \brief Supported databases. I am not 100% sure I'm digging this
-   //  solution, but this is more extensible than what I was doing previously
-   enum DBTypes {
-      NODB = 0,  // Popularity was over rated
-      SQLITE,    // compact, fast and a little loose
-      PGSQL,     // big, powerful, uptight and a little stodgy
-      ALLDB      // Keep this one the last one, or bad things will happen
    };
 
    /**
@@ -281,21 +273,6 @@ public:
    static QMenu* setupTimeMenu(QWidget* parent, Unit::unitScale scale);
    static void generateAction(QMenu* menu, QString text, QVariant data, QVariant currentVal, QActionGroup* qgrp = nullptr);
 
-   /*!
-    * \brief If we are supporting multiple databases, we need some way to
-    * figure out which database we are using. I still don't know that this
-    * will be the final implementation -- I can't help but think I should be
-    * subclassing something
-    */
-   static Brewken::DBTypes dbType();
-   /*!
-    * \brief Different databases use different values for true and false.
-    * These two methods handle that difference, in a marginally extensible way
-    */
-   static QString dbTrue(Brewken::DBTypes whichDb = Brewken::NODB);
-   static QString dbFalse(Brewken::DBTypes whichDb = Brewken::NODB);
-   static QString dbBoolean(bool flag, Brewken::DBTypes whichDb = Brewken::NODB);
-
    //! \return the main window.
    static MainWindow* mainWindow();
 
@@ -309,8 +286,6 @@ private:
    static bool userDatabaseDidNotExist;
    static QFile pidFile;
    static bool _isInteractive;
-
-   static DBTypes _dbType;
 
    //! \brief If this option is false, do not bother the user about new versions.
    static bool checkVersion;

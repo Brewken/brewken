@@ -82,10 +82,7 @@ public:
 
    int instructionNumber() const;
 
-   static QString classNameStr();
-
-   // Instruction objects do not have parents
-   NamedEntity * getParent() { return nullptr; }
+   virtual Recipe * getOwningRecipe();
 
 signals:
 

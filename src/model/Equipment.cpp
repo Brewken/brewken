@@ -27,7 +27,7 @@
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
-
+#include "model/Recipe.h"
 
 bool Equipment::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -122,286 +122,136 @@ Equipment::Equipment(Equipment const & other) :
    return;
 }
 
-QString Equipment::classNameStr()
-{
-   static const QString name("Equipment");
-   return name;
-}
-
 //============================"SET" METHODS=====================================
 
-void Equipment::setBoilSize_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: boil size negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_boilSize_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::boilSize_l, var);
-         emit changedBoilSize_l(var);
-      }
-   }
-}
-
-void Equipment::setBatchSize_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: batch size negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_batchSize_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::batchSize_l, var);
-         doCalculations();
-      }
-   }
-}
-
-void Equipment::setTunVolume_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: tun volume negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_tunVolume_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::tunVolume_l, var);
-      }
-   }
-}
-
-void Equipment::setTunWeight_kg( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: tun weight negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_tunWeight_kg = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::tunWeight_kg, var);
-      }
-   }
-}
-
-void Equipment::setTunSpecificHeat_calGC( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: tun sp heat negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_tunSpecificHeat_calGC = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::tunSpecificHeat_calGC, var);
-      }
-   }
-}
-
-void Equipment::setTopUpWater_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: top up water negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_topUpWater_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::topUpWater_l,var);
-         doCalculations();
-      }
-   }
-}
-
-void Equipment::setTrubChillerLoss_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: trub chiller loss negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_trubChillerLoss_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::trubChillerLoss_l, var);
-         doCalculations();
-      }
-   }
-}
-
-void Equipment::setEvapRate_pctHr( double var )
-{
-   if( var < 0.0 || var > 100.0)
-   {
-      qWarning() << QString("Equipment: 0 < evap rate < 100: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_evapRate_pctHr = var;
-      m_evapRate_lHr = var/100.0 * m_batchSize_l;
-
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::evapRate_pctHr, var);
-         setEasy(PropertyNames::Equipment::evapRate_lHr, var/100.0 * batchSize_l() ); // We always use this one, so set it.
-      }
-      // Right now, I am claiming this needs to happen regardless m_cacheOnly.
-      // I could be wrong
-      doCalculations();
-   }
-}
-
-void Equipment::setEvapRate_lHr( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: evap rate negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_evapRate_lHr = var;
-      m_evapRate_pctHr = var/batchSize_l() * 100.0;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::evapRate_lHr, var);
-         setEasy(PropertyNames::Equipment::evapRate_pctHr, var/batchSize_l() * 100.0 ); // We don't use it, but keep it current.
-      }
-      doCalculations();
-   }
-}
-
-void Equipment::setBoilTime_min( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: boil time negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_boilTime_min = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::boilTime_min, var);
-         emit changedBoilTime_min(var);
-      }
-      doCalculations();
-   }
-}
-
-void Equipment::setCalcBoilVolume( bool var )
-{
-   m_calcBoilVolume = var;
+// The logic through here is similar to what's in Hop. When either cacheOnly
+// is true or setEasy return true (we didn't clone), then update the cached
+// value. Unfortunately, the additional signals don't allow quite the
+// compactness.
+void Equipment::setBoilSize_l( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::boilSize_l,
+                                   this->m_boilSize_l,
+                                   this->enforceMin(var, "boil size"));
    if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Equipment::calcBoilVolume, var);
+      // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
+      emit changedBoilSize_l(var);
    }
+}
+
+void Equipment::setBatchSize_l( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::batchSize_l,
+                                   this->m_batchSize_l,
+                                   this->enforceMin(var, "batch size"));
+   if ( ! m_cacheOnly ) {
+      doCalculations();
+   }
+}
+
+void Equipment::setTunVolume_l( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::tunVolume_l,
+                                   this->m_tunVolume_l,
+                                   this->enforceMin(var, "tun volume"));
+}
+
+void Equipment::setTunWeight_kg( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::tunWeight_kg,
+                                   this->m_tunWeight_kg,
+                                   this->enforceMin(var, "tun weight"));
+}
+
+void Equipment::setTunSpecificHeat_calGC( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::tunSpecificHeat_calGC,
+                                   this->m_tunSpecificHeat_calGC,
+                                   this->enforceMin(var, "tun specific heat"));
+}
+
+void Equipment::setTopUpWater_l( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::topUpWater_l,
+                                   this->m_topUpWater_l,
+                                   this->enforceMin(var, "top-up water"));
+   if ( ! m_cacheOnly ) {
+      doCalculations();
+   }
+}
+
+void Equipment::setTrubChillerLoss_l( double var ) {
+   this->setAndNotify(
+                                   PropertyNames::Equipment::trubChillerLoss_l,
+                                   this->m_trubChillerLoss_l,
+                                   this->enforceMin(var, "trub chiller loss"));
+   if ( ! m_cacheOnly ) {
+      doCalculations();
+   }
+}
+
+void Equipment::setEvapRate_pctHr( double var ) {
+   // NOTE: We never use evapRate_pctHr, but we do use evapRate_lHr. So keep them
+   //       synced, and implement the former in terms of the latter.
+   this->setEvapRate_lHr(var/100.0 * batchSize_l());
+   return;
+}
+
+void Equipment::setEvapRate_lHr( double var ) {
+   // NOTE: We never use evapRate_pctHr, but we maintain here anyway.
+   // Because both values are stored in the DB, and because we only want to call prepareForPropertyChange() once, we
+   // can't use the setAndNotify() helper function
+   this->prepareForPropertyChange(PropertyNames::Equipment::evapRate_lHr);
+   this->m_evapRate_lHr = this->enforceMin(var, "evap rate");
+   this->m_evapRate_pctHr = this->m_evapRate_lHr/batchSize_l() * 100.0; // We don't use it, but keep it current.
+   this->propagatePropertyChange(PropertyNames::Equipment::evapRate_lHr);
+   this->propagatePropertyChange(PropertyNames::Equipment::evapRate_pctHr);
+
+   // Right now, I am claiming this needs to happen regardless m_cacheOnly.
+   // I could be wrong
+   doCalculations();
+}
+
+void Equipment::setBoilTime_min( double var ) {
+   this->setAndNotify(PropertyNames::Equipment::boilTime_min,
+                      this->m_boilTime_min,
+                      this->enforceMin(var, "boil time"));
+   if ( ! m_cacheOnly ) {
+      // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
+      emit changedBoilTime_min(var);
+   }
+   doCalculations();
+}
+
+void Equipment::setCalcBoilVolume( bool var ) {
+   this->setAndNotify(PropertyNames::Equipment::calcBoilVolume, this->m_calcBoilVolume, var);
    if ( var ) {
       doCalculations();
    }
 }
 
-void Equipment::setLauterDeadspace_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: deadspace negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_lauterDeadspace_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::lauterDeadspace_l, var);
-      }
-   }
+void Equipment::setLauterDeadspace_l( double var ) {
+   this->setAndNotify(PropertyNames::Equipment::lauterDeadspace_l, this->m_lauterDeadspace_l, this->enforceMin(var, "deadspace"));
 }
 
-void Equipment::setTopUpKettle_l( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: top up kettle negative: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_topUpKettle_l = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::topUpKettle_l, var);
-      }
-   }
+void Equipment::setTopUpKettle_l( double var ) {
+   this->setAndNotify(PropertyNames::Equipment::topUpKettle_l, this->m_topUpKettle_l, this->enforceMin(var, "top-up kettle"));
 }
 
-void Equipment::setHopUtilization_pct( double var )
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: 0 < hop utilization: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_hopUtilization_pct = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::hopUtilization_pct, var);
-      }
-   }
+void Equipment::setHopUtilization_pct( double var ) {
+   this->setAndNotify(PropertyNames::Equipment::hopUtilization_pct, this->m_hopUtilization_pct, this->enforceMin(var, "hop utilization"));
 }
 
-void Equipment::setNotes( const QString &var )
-{
-   m_notes = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Equipment::notes, var);
-   }
+void Equipment::setNotes( const QString &var ) {
+   this->setAndNotify(PropertyNames::Equipment::notes, this->m_notes, var);
 }
 
-void Equipment::setGrainAbsorption_LKg(double var)
-{
-   if( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: absorption < 0: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_grainAbsorption_LKg = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::grainAbsorption_LKg, var);
-      }
-   }
+void Equipment::setGrainAbsorption_LKg(double var) {
+   this->setAndNotify(PropertyNames::Equipment::grainAbsorption_LKg, this->m_grainAbsorption_LKg, this->enforceMin(var, "absorption"));
 }
 
-void Equipment::setBoilingPoint_c(double var)
-{
-   if ( var < 0.0 )
-   {
-      qWarning() << QString("Equipment: boiling point of water < 0: %1").arg(var);
-      return;
-   }
-   else
-   {
-      m_boilingPoint_c = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Equipment::boilingPoint_c, var);
-      }
-   }
+void Equipment::setBoilingPoint_c(double var) {
+   this->setAndNotify(PropertyNames::Equipment::boilingPoint_c, this->m_boilingPoint_c, this->enforceMin(var, "boiling point of water"));
 }
 
 //============================"GET" METHODS=====================================
@@ -438,4 +288,10 @@ double Equipment::wortEndOfBoil_l( double kettleWort_l ) const
    //return kettleWort_l * (1 - (boilTime_min/(double)60) * (evapRate_pctHr/(double)100) );
 
    return kettleWort_l - (boilTime_min()/(double)60)*evapRate_lHr();
+}
+
+// Although it's a similar one-liner implementation for many subclasses of NamedEntity, we can't push the
+// implementation of this down to the base class, as Recipe::uses() is templated and won't work with type erasure.
+Recipe * Equipment::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

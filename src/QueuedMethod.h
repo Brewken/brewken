@@ -27,6 +27,7 @@
 /*!
  * \class QueuedMethod
  *
+ * .:TODO:. AFAICT this is not used anywhere in the code and duplicates functionality in Qt, Boost, etc.  So we should delete.
  *
  * \brief Runs long methods in the background.
  *

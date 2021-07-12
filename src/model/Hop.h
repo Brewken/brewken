@@ -164,7 +164,7 @@ public:
    void setCohumulone_pct( double num);
    void setMyrcene_pct( double num);
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 
@@ -173,12 +173,8 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-
-   QString m_useStr;
    Use m_use;
-   QString m_typeStr;
    Type m_type;
-   QString m_formStr;
    Form m_form;
    double m_alpha_pct;
    double m_amount_kg;
@@ -194,14 +190,6 @@ private:
    double m_myrcene_pct;
 
    void setDefaults();
-
-   static bool isValidUse(const QString& str);
-   static bool isValidType(const QString& str);
-   static bool isValidForm(const QString& str);
-
-   static QStringList uses;
-   static QStringList types;
-   static QStringList forms;
 };
 
 Q_DECLARE_METATYPE( QList<Hop*> )

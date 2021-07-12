@@ -26,10 +26,14 @@
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/Recipe.h"
+#include "PhysicalConstants.h"
 
-QStringList Yeast::types = QStringList() << "Ale" << "Lager" << "Wheat" << "Wine" << "Champagne";
-QStringList Yeast::forms = QStringList() << "Liquid" << "Dry" << "Slant" << "Culture";
-QStringList Yeast::flocculations = QStringList() << "Low" << "Medium" << "High" << "Very High";
+namespace {
+   QStringList const types{"Ale", "Lager", "Wheat", "Wine", "Champagne"};
+   QStringList const forms{"Liquid", "Dry", "Slant", "Culture"};
+   QStringList const flocculations{"Low", "Medium", "High", "Very High"};
+}
 
 bool Yeast::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -48,21 +52,12 @@ ObjectStore & Yeast::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Yeast>::getInstance();
 }
 
-QString Yeast::classNameStr()
-{
-   static const QString name("Yeast");
-   return name;
-}
-
 //============================CONSTRUCTORS======================================
 
 Yeast::Yeast(QString name, bool cache ) :
    NamedEntityWithInventory(-1, cache, name, true ),
-   m_typeString(QString()),
    m_type(static_cast<Yeast::Type>(0)),
-   m_formString(QString()),
    m_form(static_cast<Yeast::Form>(0)),
-   m_flocculationString(QString()),
    m_flocculation(static_cast<Yeast::Flocculation>(0)),
    m_amount(0.0),
    m_amountIsWeight(false),
@@ -101,11 +96,8 @@ Yeast::Yeast(NamedParameterBundle const & namedParameterBundle) :
 
 Yeast::Yeast(Yeast const & other) :
    NamedEntityWithInventory{other                     },
-   m_typeString            {other.m_typeString        },
    m_type                  {other.m_type              },
-   m_formString            {other.m_formString        },
    m_form                  {other.m_form              },
-   m_flocculationString    {other.m_flocculationString},
    m_flocculation          {other.m_flocculation      },
    m_amount                {other.m_amount            },
    m_amountIsWeight        {other.m_amountIsWeight    },
@@ -131,11 +123,11 @@ QString Yeast::notes() const { return m_notes; }
 
 QString Yeast::bestFor() const { return m_bestFor; }
 
-const QString Yeast::typeString() const { return m_typeString; }
+const QString Yeast::typeString() const { return types.at(m_type); }
 
-const QString Yeast::formString() const { return m_formString; }
+const QString Yeast::formString() const { return forms.at(m_form); }
 
-const QString Yeast::flocculationString() const { return m_flocculationString; }
+const QString Yeast::flocculationString() const { return flocculations.at(m_flocculation); }
 
 double Yeast::amount() const { return m_amount; }
 
@@ -163,8 +155,7 @@ Yeast::Flocculation Yeast::flocculation() const { return m_flocculation; }
 
 Yeast::Type Yeast::type() const { return m_type; }
 
-const QString Yeast::typeStringTr() const
-{
+const QString Yeast::typeStringTr() const {
    static QStringList typesTr = QStringList() << QObject::tr("Ale")
                                        << QObject::tr("Lager")
                                        << QObject::tr("Wheat")
@@ -174,13 +165,10 @@ const QString Yeast::typeStringTr() const
    if ( m_type < typesTr.size() && m_type >= 0 ) {
       return typesTr.at(m_type);
    }
-   else {
-      return typesTr.at(0);
-   }
+   return typesTr.at(0);
 }
 
-const QString Yeast::formStringTr() const
-{
+const QString Yeast::formStringTr() const {
    static QStringList formsTr = QStringList() << QObject::tr("Liquid")
                                        << QObject::tr("Dry")
                                        << QObject::tr("Slant")
@@ -188,13 +176,10 @@ const QString Yeast::formStringTr() const
    if ( m_form < formsTr.size() && m_form >= 0  ) {
       return formsTr.at(m_form);
    }
-   else {
-      return formsTr.at(0);
-   }
+   return formsTr.at(0);
 }
 
-const QString Yeast::flocculationStringTr() const
-{
+const QString Yeast::flocculationStringTr() const {
    static QStringList flocculationsTr = QStringList() << QObject::tr("Low")
                                                << QObject::tr("Medium")
                                                << QObject::tr("High")
@@ -202,40 +187,23 @@ const QString Yeast::flocculationStringTr() const
    if ( m_flocculation < flocculationsTr.size() && m_flocculation >= 0 ) {
       return flocculationsTr.at(m_flocculation);
    }
-   else {
-      return flocculationsTr.at(0);
-   }
+   return flocculationsTr.at(0);
 }
 
 //============================="SET" METHODS====================================
-void Yeast::setType( Yeast::Type t )
-{
-   m_type = t;
-   m_typeString = types.at(t);
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::type, m_typeString);
-   }
+void Yeast::setType(Yeast::Type t) {
+   this->setAndNotify(PropertyNames::Yeast::type, this->m_type, t);
+   return;
 }
 
-void Yeast::setForm( Yeast::Form f )
-{
-   m_form = f;
-   m_formString = forms.at(f);
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::form, m_formString);
-   }
+void Yeast::setForm(Yeast::Form f) {
+   this->setAndNotify(PropertyNames::Yeast::form, this->m_form, f);
 }
 
-void Yeast::setAmount( double var )
-{
-   if( var < 0.0 )
-      qWarning() << QString("Yeast: amount < 0: %1").arg(var);
-   else {
-      m_amount = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::amount, var);
-      }
-   }
+void Yeast::setAmount(double var) {
+   this->setAndNotify(PropertyNames::Yeast::amount,
+                      this->m_amount,
+                      this->enforceMin(var, "amount", 0.0));
 }
 
 void Yeast::setInventoryAmount(double var) {
@@ -251,161 +219,68 @@ void Yeast::setInventoryQuanta(int var) {
    return;
 }
 
-void Yeast::setAmountIsWeight( bool var )
-{
-   m_amountIsWeight = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::amountIsWeight, var);
-   }
+void Yeast::setAmountIsWeight(bool var) {
+   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, var);
 }
 
-void Yeast::setLaboratory( const QString& var )
-{
-   m_laboratory = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::laboratory, var);
-   }
+void Yeast::setLaboratory(QString const & var) {
+   this->setAndNotify(PropertyNames::Yeast::laboratory, this->m_laboratory, var);
 }
 
-void Yeast::setProductID( const QString& var )
-{
-   m_productID = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::productID, var);
-   }
+void Yeast::setProductID(QString const & var) {
+   this->setAndNotify(PropertyNames::Yeast::productID, this->m_productID, var);
 }
 
-void Yeast::setMinTemperature_c( double var )
-{
-   if( var < -273.15 )
-      return;
-   else {
-      m_minTemperature_c = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::minTemperature_c, var);
-      }
-   }
+void Yeast::setMinTemperature_c(double var){
+   // It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
+   this->setAndNotify(PropertyNames::Yeast::minTemperature_c,
+                      this->m_minTemperature_c,
+                      this->enforceMin(var, "max temp", PhysicalConstants::absoluteZero, 0.0));
 }
 
-void Yeast::setMaxTemperature_c( double var )
-{
-   if( var < -273.15 )
-      return;
-   else {
-      m_maxTemperature_c = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::maxTemperature_c, var);
-      }
-   }
+void Yeast::setMaxTemperature_c(double var) {
+   // It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
+   this->setAndNotify(PropertyNames::Yeast::maxTemperature_c,
+                      this->m_maxTemperature_c,
+                      this->enforceMin(var, "max temp", PhysicalConstants::absoluteZero, 0.0));
 }
 
 // Remember -- always make sure the value is in range before we set
 // coredumps happen otherwise
-void Yeast::setFlocculation( Yeast::Flocculation f)
-{
-   if ( flocculations.at(f) != nullptr ) {
-      m_flocculation = f;
-      m_flocculationString = flocculations.at(f);
-
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::flocculation, flocculations.at(f));
-      }
-   }
+void Yeast::setFlocculation(Yeast::Flocculation f) {
+   this->setAndNotify(PropertyNames::Yeast::flocculation, this->m_flocculation, f);
 }
 
-void Yeast::setAttenuation_pct( double var )
-{
-   if( var < 0.0 || var > 100.0 )
-      return;
-   else {
-      m_attenuation_pct = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::attenuation_pct, var);
-      }
-   }
+void Yeast::setAttenuation_pct(double var) {
+   this->setAndNotify(PropertyNames::Yeast::attenuation_pct,
+                      this->m_attenuation_pct,
+                      this->enforceMinAndMax(var, "pct attenuation", 0.0, 100.0, 0.0));
 }
 
-void Yeast::setNotes( const QString& var )
-{
-   m_notes = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::notes, var);
-   }
+void Yeast::setNotes(QString const & var) {
+   this->setAndNotify(PropertyNames::Yeast::notes, this->m_notes, var);
 }
 
-void Yeast::setBestFor( const QString& var )
-{
-   m_bestFor = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::bestFor, var);
-   }
+void Yeast::setBestFor(QString const & var) {
+   this->setAndNotify(PropertyNames::Yeast::bestFor, this->m_bestFor, var);
 }
 
-void Yeast::setTimesCultured( int var )
-{
-   if( var < 0 )
-      return;
-   else {
-      m_timesCultured = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::timesCultured, var);
-      }
-   }
+void Yeast::setTimesCultured(int var) {
+   this->setAndNotify(PropertyNames::Yeast::timesCultured,
+                      this->m_timesCultured,
+                      this->enforceMin(var, "times cultured"));
 }
 
-void Yeast::setMaxReuse( int var )
-{
-   if( var < 0 )
-      return;
-   else {
-      m_maxReuse = var;
-      if ( ! m_cacheOnly ) {
-         setEasy(PropertyNames::Yeast::maxReuse, var);
-      }
-   }
+void Yeast::setMaxReuse(int var) {
+   this->setAndNotify(PropertyNames::Yeast::maxReuse,
+                      this->m_maxReuse,
+                      this->enforceMin(var, "max reuse"));
 }
 
-void Yeast::setAddToSecondary( bool var )
-{
-   m_addToSecondary = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Yeast::addToSecondary, var);
-   }
+void Yeast::setAddToSecondary( bool var ) {
+   this->setAndNotify(PropertyNames::Yeast::addToSecondary, this->m_addToSecondary, var);
 }
 
-//========================OTHER METHODS=========================================
-bool Yeast::isValidType(const QString& str) const
-{
-   static const QString types[] = {"Ale", "Lager", "Wheat", "Wine", "Champagne"};
-   unsigned int i, size = 5;
-
-   for( i = 0; i < size; ++i )
-      if( str == types[i] )
-         return true;
-
-   return false;
-}
-
-bool Yeast::isValidForm(const QString& str) const
-{
-   static const QString forms[] = {"Liquid", "Dry", "Slant", "Culture"};
-   unsigned int i, size=4;
-
-   for( i = 0; i < size; ++i )
-      if( str == forms[i] )
-         return true;
-
-   return false;
-}
-
-bool Yeast::isValidFlocculation(const QString& str) const
-{
-   static const QString floc[] = {"Low", "Medium", "High", "Very High"};
-   unsigned int i, size=4;
-
-   for( i = 0; i < size; ++i )
-      if( str == floc[i] )
-         return true;
-
-   return false;
+Recipe * Yeast::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

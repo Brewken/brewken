@@ -45,6 +45,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QObject>
+#include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlQuery>
@@ -53,16 +54,12 @@
 
 #include "Brewken.h"
 #include "config.h"
+#include "database/DatabaseSchema.h"
 #include "database/DatabaseSchemaHelper.h"
+#include "database/TableSchemaConst.h"
 #include "model/BrewNote.h"
 #include "PersistentSettings.h"
-#include "QueuedMethod.h"
 
-
-//
-// .:TODO:. Look at BT fix https://github.com/mikfire/brewtarget/commit/e5a43c1d7babbaf9450a14e5ea1e4589235ded2c
-// for incorrect inventory handling when a NE is copied
-//
 
 namespace {
 
@@ -107,11 +104,14 @@ namespace {
       // MySQL would be ALTER TABLE %1 ADD COLUMN %2 int, FOREIGN KEY (%2) REFERENCES %3(%4)
    };
 
-   char const * getDbNativeName(DbNativeVariants const & dbNativeVariants) {
-      Brewken::DBTypes dbType = Brewken::dbType();
+   char const * getDbNativeName(DbNativeVariants const & dbNativeVariants, Database::DBTypes dbType) {
+      if (dbType == Database::NODB) {
+         // Caller wants us to supply DB type
+         dbType = Database::dbType();
+      }
       switch (dbType) {
-         case Brewken::SQLITE: return dbNativeVariants.sqliteName;
-         case Brewken::PGSQL:  return dbNativeVariants.postgresqlName;
+         case Database::SQLITE: return dbNativeVariants.sqliteName;
+         case Database::PGSQL:  return dbNativeVariants.postgresqlName;
          default:
             qCritical() << Q_FUNC_INFO << "Unrecognised DB type:" << dbType;
             break;
@@ -122,6 +122,8 @@ namespace {
    //
    // Variables
    //
+   Database::DBTypes currentDbType{Database::NODB};
+
 
    // These are for SQLite databases
    QFile dbFile;
@@ -153,31 +155,12 @@ namespace {
       QString{"%1"}.arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)
    };
 
-   //! \brief converts sqlite values (mostly booleans) into something postgres wants
-   QVariant convertValue(Brewken::DBTypes newType, QSqlField field) {
-      QVariant retVar = field.value();
-      if ( field.type() == QVariant::Bool ) {
-         switch(newType) {
-            case Brewken::PGSQL:
-               retVar = field.value().toBool();
-               break;
-            default:
-               retVar = field.value().toInt();
-               break;
-         }
-      } else if ( field.name() == PropertyNames::BrewNote::fermentDate && field.value().toString() == "CURRENT_DATETIME" ) {
-         retVar = "'now()'";
-      }
-      return retVar;
-   }
-
-
    // May St. Stevens intercede on my behalf.
    //
    //! \brief opens an SQLite db for transfer
    QSqlDatabase openSQLite() {
       QString filePath = PersistentSettings::getUserDataDir().filePath("database.sqlite");
-      QSqlDatabase newDb = QSqlDatabase::addDatabase("QSQLITE", "altdb");
+      QSqlDatabase newConnection = QSqlDatabase::addDatabase("QSQLITE", "altdb");
 
       try {
          dbFile.setFileName(dbFileName);
@@ -185,40 +168,40 @@ namespace {
          if ( filePath.isEmpty() )
             throw QString("Could not read the database file(%1)").arg(filePath);
 
-         newDb.setDatabaseName(filePath);
+         newConnection.setDatabaseName(filePath);
 
-         if (!  newDb.open() )
-            throw QString("Could not open %1 : %2").arg(filePath).arg(newDb.lastError().text());
+         if (!  newConnection.open() )
+            throw QString("Could not open %1 : %2").arg(filePath).arg(newConnection.lastError().text());
       }
       catch (QString e) {
          qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
          throw;
       }
 
-      return newDb;
+      return newConnection;
    }
 
    //! \brief opens a PostgreSQL db for transfer. I need
    QSqlDatabase openPostgres(QString const& Hostname, QString const& DbName,
                              QString const& Username, QString const& Password,
                              int Portnum) {
-      QSqlDatabase newDb = QSqlDatabase::addDatabase("QPSQL", "altdb");
+      QSqlDatabase newConnection = QSqlDatabase::addDatabase("QPSQL", "altdb");
 
       try {
-         newDb.setHostName(Hostname);
-         newDb.setDatabaseName(DbName);
-         newDb.setUserName(Username);
-         newDb.setPort(Portnum);
-         newDb.setPassword(Password);
+         newConnection.setHostName(Hostname);
+         newConnection.setDatabaseName(DbName);
+         newConnection.setUserName(Username);
+         newConnection.setPort(Portnum);
+         newConnection.setPassword(Password);
 
-         if ( ! newDb.open() )
-            throw QString("Could not open %1 : %2").arg(Hostname).arg(newDb.lastError().text());
+         if ( ! newConnection.open() )
+            throw QString("Could not open %1 : %2").arg(Hostname).arg(newConnection.lastError().text());
       }
       catch (QString e) {
          qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
          throw;
       }
-      return newDb;
+      return newConnection;
    }
 
 }
@@ -236,6 +219,7 @@ public:
             dbConName{},
             loaded{false},
             loadWasSuccessful{false} {
+      currentDbType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
       return;
    }
 
@@ -287,16 +271,16 @@ public:
       // Open SQLite DB
       // It's a coding error if we didn't already establish that SQLite is the type of DB we're talking to, so assert
       // that and then call the generic code to get a connection
-      Q_ASSERT(Brewken::dbType() == Brewken::SQLITE);
-      QSqlDatabase sqldb = database.sqlDatabase();
+      Q_ASSERT(Database::dbType() == Database::SQLITE);
+      QSqlDatabase connection = database.sqlDatabase();
 
-      this->dbConName = sqldb.connectionName();
+      this->dbConName = connection.connectionName();
       qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
       //
       // It's quite useful to record the DB version in the logs
       //
-      QSqlQuery sqlQuery(sqldb);
+      QSqlQuery sqlQuery(connection);
       QString queryString{"SELECT sqlite_version() AS version;"};
       sqlQuery.prepare(queryString);
       if (!sqlQuery.exec() || !sqlQuery.next()) {
@@ -308,7 +292,7 @@ public:
       qInfo() << Q_FUNC_INFO << "SQLite version" << fieldValue;
 
       // NOTE: synchronous=off reduces query time by an order of magnitude!
-      QSqlQuery pragma(sqldb);
+      QSqlQuery pragma(connection);
       if ( ! pragma.exec( "PRAGMA synchronous = off" ) ) {
          qCritical() << Q_FUNC_INFO << "Could not disable synchronous writes: " << pragma.lastError().text();
          return false;
@@ -328,7 +312,7 @@ public:
 
       // older sqlite databases may not have a settings table. I think I will
       // just check to see if anything is in there.
-      this->createFromScratch = sqldb.tables().size() == 0;
+      this->createFromScratch = connection.tables().size() == 0;
 
       return true;
    }
@@ -354,7 +338,7 @@ public:
             dbPassword = QInputDialog::getText(nullptr,tr("Database password"),
                   tr("Password"), QLineEdit::Password,QString(),&isOk);
             if ( isOk ) {
-               isOk = verifyDbConnection( Brewken::PGSQL, dbHostname, dbPortnum, dbSchema,
+               isOk = verifyDbConnection( Database::PGSQL, dbHostname, dbPortnum, dbSchema,
                                     dbName, dbUsername, dbPassword);
             }
          }
@@ -362,16 +346,16 @@ public:
 
       // It's a coding error if we didn't already establish that PostgreSQL is the type of DB we're talking to, so assert
       // that and then call the generic code to get a connection
-      Q_ASSERT(Brewken::dbType() == Brewken::PGSQL);
-      QSqlDatabase sqldb = database.sqlDatabase();
+      Q_ASSERT(Database::dbType() == Database::PGSQL);
+      QSqlDatabase connection = database.sqlDatabase();
 
-      this->dbConName = sqldb.connectionName();
+      this->dbConName = connection.connectionName();
       qDebug() << Q_FUNC_INFO << "dbConName=" << this->dbConName;
 
       //
       // It's quite useful to record the DB version in the logs
       //
-      QSqlQuery sqlQuery(sqldb);
+      QSqlQuery sqlQuery(connection);
       QString queryString{"SELECT version() AS version;"};
       sqlQuery.prepare(queryString);
       if (!sqlQuery.exec() || !sqlQuery.next()) {
@@ -383,7 +367,7 @@ public:
       qInfo() << Q_FUNC_INFO << "PostgreSQL version" << fieldValue;
 
       // by the time we had pgsql support, there is a settings table
-      this->createFromScratch = ! sqldb.tables().contains("settings");
+      this->createFromScratch = ! connection.tables().contains("settings");
 
       return true;
    }
@@ -395,18 +379,19 @@ public:
       int newVersion = DatabaseSchemaHelper::dbVersion;
       bool doUpdate = currentVersion < newVersion;
 
-      if( doUpdate )
-      {
+      if (doUpdate) {
          bool success = DatabaseSchemaHelper::migrate(database, currentVersion, newVersion, database.sqlDatabase() );
-         if( !success )
-         {
-            qCritical() << QString("Database migration %1->%2 failed").arg(currentVersion).arg(newVersion);
-            if( err )
+         if (!success) {
+            qCritical() << Q_FUNC_INFO << QString("Database migration %1->%2 failed").arg(currentVersion).arg(newVersion);
+            if (err) {
                *err = true;
+            }
             return false;
          }
       }
 
+/*
+      // .:TBD:. Don't think we need this if the rest of the code is correctly keeping child IDs updated
       database.sqlDatabase().transaction();
 
       try {
@@ -435,134 +420,10 @@ public:
       }
 
       database.sqlDatabase().commit();
-
+*/
       return doUpdate;
    }
 
-
-   //! \brief does the heavy lifting to copy the contents from one db to the next
-   void copyDatabase(Database & database, Brewken::DBTypes oldType, Brewken::DBTypes newType, QSqlDatabase newDb) {
-      QSqlDatabase oldDb = database.sqlDatabase();
-      QSqlQuery readOld(oldDb);
-
-      // There are a lot of tables to process, and we need to make
-      // sure the inventory tables go first
-      foreach( TableSchema* table, this->dbDefn.allTables(true) ) {
-         QString tname = table->tableName();
-         QSqlField field;
-         bool mustPrepare = true;
-         int maxid = -1;
-
-         // select * from [table] order by id asc
-         QString findAllQuery = QString("SELECT * FROM %1 order by %2 asc")
-                                    .arg(tname)
-                                    .arg(table->keyName(oldType)); // make sure we specify the right db type
-         qDebug() << Q_FUNC_INFO << "FIND ALL:" << findAllQuery;
-         try {
-            if (! readOld.exec(findAllQuery) ) {
-               throw QString("Could not execute %1 : %2")
-                  .arg(readOld.lastQuery())
-                  .arg(readOld.lastError().text());
-            }
-
-            newDb.transaction();
-
-            QSqlQuery upsertNew(newDb); // we will prepare this in a bit
-
-            // Start reading the records from the old db
-            while(readOld.next()) {
-               int idx;
-               QSqlRecord here = readOld.record();
-               QString upsertQuery;
-
-               idx = here.indexOf(table->keyName(oldType));
-
-               // We are going to need this for resetting the indexes later. We only
-               // need it for copying to postgresql, but .. meh, not worth the extra
-               // work
-               if ( idx != -1 && here.value(idx).toInt() > maxid ) {
-                  maxid = here.value(idx).toInt();
-               }
-
-               // Prepare the insert for this table if required
-               if ( mustPrepare ) {
-                  upsertQuery = table->generateInsertRow(newType);
-                  upsertNew.prepare(upsertQuery);
-                  // but do it only once for this table
-                  mustPrepare = false;
-               }
-
-               qDebug() << Q_FUNC_INFO << "INSERT:" << upsertQuery;
-               // All that's left is to bind
-               for(int i = 0; i < here.count(); ++i) {
-                  if ( table->dbTable() == DatabaseConstants::BREWNOTETABLE
-                     && here.fieldName(i) == PropertyNames::BrewNote::brewDate ) {
-                     QVariant helpme(here.field(i).value().toString());
-                     upsertNew.bindValue(":brewdate",helpme);
-                  }
-                  else {
-                     upsertNew.bindValue(QString(":%1").arg(here.fieldName(i)),
-                                       convertValue(newType, here.field(i)));
-                  }
-               }
-               // and execute
-               if ( ! upsertNew.exec() ) {
-                  throw QString("Could not insert new row %1 : %2")
-                     .arg(upsertNew.lastQuery())
-                     .arg(upsertNew.lastError().text());
-               }
-            }
-            // We need to create the increment and decrement things for the
-            // instructions_in_recipe table. This seems a little weird to do this
-            // here, but it makes sense to wait until after we've inserted all
-            // the data. The increment trigger happens on insert, and I suspect
-            // bad things would happen if it were in place before we inserted all our data.
-            if ( table->dbTable() == DatabaseConstants::INSTINRECTABLE ) {
-               QString trigger = table->generateIncrementTrigger(newType);
-               if ( trigger.isEmpty() ) {
-                  qCritical() << QString("No increment triggers found for %1").arg(table->tableName());
-               }
-               else {
-                  qDebug() << "INC TRIGGER:" << trigger;
-                  upsertNew.exec(trigger);
-                  trigger =  table->generateDecrementTrigger(newType);
-                  if ( trigger.isEmpty() ) {
-                     qCritical() << QString("No decrement triggers found for %1").arg(table->tableName());
-                  }
-                  else {
-                     qDebug() << "DEC TRIGGER:" << trigger;
-                     if ( ! upsertNew.exec(trigger) ) {
-                        throw QString("Could not insert new row %1 : %2")
-                           .arg(upsertNew.lastQuery())
-                           .arg(upsertNew.lastError().text());
-                     }
-                  }
-               }
-            }
-            // We need to manually reset the sequences in postgresql
-            if ( newType == Brewken::PGSQL ) {
-               // this probably should be fixed somewhere, but this is enough for now?
-               //
-               // SELECT setval(hop_id_seq,(SELECT MAX(id) from hop))
-               QString seq = QString("SELECT setval('%1_%2_seq',(SELECT MAX(%2) FROM %1))")
-                                             .arg(table->tableName())
-                                             .arg(table->keyName());
-               qDebug() << "SEQ reset: " << seq;
-
-               if ( ! upsertNew.exec(seq) )
-                  throw QString("Could not reset the sequences: %1 %2")
-                     .arg(seq).arg(upsertNew.lastError().text());
-            }
-         }
-         catch (QString e) {
-            qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-            newDb.rollback();
-            abort();
-         }
-
-         newDb.commit();
-      }
-   }
 
    void automaticBackup() {
       int count = PersistentSettings::value("count",0,"backups").toInt() + 1;
@@ -648,7 +509,7 @@ public:
       PersistentSettings::insert("files", listOfFiles, "backups");
    }
 
-
+/*
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    // This links ingredients with the same name.
    // The first displayed ingredient in the database is assumed to be the parent.
@@ -684,7 +545,7 @@ public:
             // find the first element with display set true (assumed parent)
             query.prepare(queryString);
             query.bindValue(":name", name);
-            query.bindValue(":boolean",Brewken::dbTrue());
+            query.bindValue(":boolean",Database::dbTrue());
 
             if ( !query.exec() ) {
                throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
@@ -695,7 +556,7 @@ public:
 
             // find the every element with display set false (assumed children)
             query.bindValue(":name", name);
-            query.bindValue(":boolean", Brewken::dbFalse());
+            query.bindValue(":boolean", Database::dbFalse());
 
             if ( !query.exec() ) {
                throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
@@ -704,8 +565,8 @@ public:
             // I'm not seeing a better way yet.
             while (query.next()) {
                QString childID = query.record().value(tbl->keyName()).toString();
-               switch( Brewken::dbType() ) {
-                  case Brewken::PGSQL:
+               switch( Database::dbType() ) {
+                  case Database::PGSQL:
                      //  INSERT INTO [child table] (parent_id, child_id) VALUES (:parentid, child_id) ON CONFLICT(child_id) DO UPDATE set parent_id = EXCLUDED.parent_id
                      queryString = QString("INSERT INTO %1 (%2, %3) VALUES (%4, %5) ON CONFLICT(%3) DO UPDATE set %2 = EXCLUDED.%2")
                            .arg(this->dbDefn.childTableName((table)))
@@ -759,7 +620,7 @@ public:
       }
       return;
    }
-
+*/
    DatabaseSchema dbDefn;
    QString dbConName;
 
@@ -810,7 +671,7 @@ QSqlDatabase Database::sqlDatabase() const {
    // Create a new connection in Qt's register of connections.  (NB: The call to QSqlDatabase::addDatabase() is thread-
    // safe, so we don't need to worry about mutexes here.)
    //
-   QString driverType{Brewken::dbType() == Brewken::PGSQL ? "QPSQL" : "QSQLITE"};
+   QString driverType{Database::dbType() == Database::PGSQL ? "QPSQL" : "QSQLITE"};
    qDebug() <<
       Q_FUNC_INFO << "Creating connection " << dbConnectionNameForThisThread << " with " << driverType << " driver";
    connection = QSqlDatabase::addDatabase(driverType, dbConnectionNameForThisThread);
@@ -822,10 +683,12 @@ QSqlDatabase Database::sqlDatabase() const {
       qCritical() << Q_FUNC_INFO << "Unable to load " << driverType << " database driver";
    }
 
+   qDebug() << Q_FUNC_INFO << "Created connection of type" << connection.driver()->handle().typeName();
+
    //
    // Initialisation parameters depend on the DB type
    //
-   if (Brewken::dbType() == Brewken::PGSQL) {
+   if (Database::dbType() == Database::PGSQL) {
       connection.setHostName(dbHostname);
       connection.setDatabaseName(dbName);
       connection.setUserName(dbUsername);
@@ -840,7 +703,7 @@ QSqlDatabase Database::sqlDatabase() const {
    //
    if (!connection.open()) {
       QString errorMessage;
-      if (Brewken::dbType() == Brewken::PGSQL) {
+      if (Database::dbType() == Database::PGSQL) {
          errorMessage = QString{
             QObject::tr("Could not open PostgreSQL DB connection to %1.\n%2")
          }.arg(dbHostname).arg(connection.lastError().text());
@@ -872,7 +735,7 @@ bool Database::load() {
    this->pimpl->schemaUpdated=false;
    this->pimpl->loadWasSuccessful = false;
 
-   if ( Brewken::dbType() == Brewken::PGSQL ) {
+   if ( Database::dbType() == Database::PGSQL ) {
       dbIsOpen = this->pimpl->loadPgSQL(*this);
    }
    else {
@@ -889,7 +752,7 @@ bool Database::load() {
 
    // This should work regardless of the db being used.
    if( this->pimpl->createFromScratch ) {
-      bool success = DatabaseSchemaHelper::create(*this, sqldb, &this->pimpl->dbDefn, Brewken::dbType());
+      bool success = DatabaseSchemaHelper::create(*this, sqldb, &this->pimpl->dbDefn, Database::dbType());
       if( !success ) {
          qCritical() << "DatabaseSchemaHelper::create() failed";
          return false;
@@ -933,7 +796,6 @@ bool Database::load() {
       // Update this field.
       Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
    }
-
    this->pimpl->loadWasSuccessful = true;
    return this->pimpl->loadWasSuccessful;
 }
@@ -950,7 +812,7 @@ bool Database::createBlank(QString const& filename)
          return false;
       }
 
-      DatabaseSchemaHelper::create(*this, sqldb,&this->pimpl->dbDefn,Brewken::SQLITE);
+      DatabaseSchemaHelper::create(*this, sqldb,&this->pimpl->dbDefn,Database::SQLITE);
 
       sqldb.close();
    } // sqldb gets destroyed as it goes out of scope before removeDatabase()
@@ -988,7 +850,7 @@ void Database::unload() {
 
    qDebug() << Q_FUNC_INFO << "DB connections all closed";
 
-   if (this->pimpl->loadWasSuccessful && Brewken::dbType() == Brewken::SQLITE ) {
+   if (this->pimpl->loadWasSuccessful && Database::dbType() == Database::SQLITE ) {
       dbFile.close();
       this->pimpl->automaticBackup();
    }
@@ -1082,154 +944,13 @@ bool Database::restoreFromFile(QString newDbFileStr)
 }
 
 // .:TBD:. Discuss with other folks whether this is worth fixing
-void Database::updateDatabase(QString const& filename)
-{
-   throw QString("Not implemented");
-/*
-   // In the naming here "old" means our local database, and
-   // "new" means the database coming from 'filename'.
-
-   QVariant btid, newid, oldid;
-   QMap<QString, std::function<NamedEntity*(QString name)> >  makeObject = makeTableParams(*this);
-
-   try {
-      QString newCon("newSqldbCon");
-      QSqlDatabase newSqldb = QSqlDatabase::addDatabase("QSQLITE", newCon);
-      newSqldb.setDatabaseName(filename);
-      if( ! newSqldb.open() ) {
-         QMessageBox::critical(nullptr,
-                              QObject::tr("Database Failure"),
-                              QString(QObject::tr("Failed to open the database '%1'.").arg(filename)));
-         throw QString("Could not open %1 for reading.\n%2").arg(filename).arg(newSqldb.lastError().text());
-      }
-
-      // This is the basic gist...
-      // For each (id, hop_id) in newSqldb.bt_hop...
-
-      // Call this newRecord
-      // SELECT * FROM newSqldb.hop WHERE id=<hop_id>
-
-      // UPDATE hop SET name=:name, alpha=:alpha,... WHERE id=(SELECT hop_id FROM bt_hop WHERE id=:bt_id)
-
-      // Bind :bt_id from <id>
-      // Bind :name, :alpha, ..., from newRecord.
-
-      // Execute.
-
-      foreach( TableSchema* tbl, this->pimpl->dbDefn.baseTables() )
-      {
-         TableSchema* btTbl = this->pimpl->dbDefn.btTable(tbl->dbTable());
-         // not all tables have bt* tables
-         if ( btTbl == nullptr ) {
-            continue;
-         }
-         QSqlQuery qNewBtIng( QString("SELECT * FROM %1").arg(btTbl->tableName()), newSqldb );
-
-         QSqlQuery qNewIng( newSqldb );
-         qNewIng.prepare(QString("SELECT * FROM %1 WHERE %2=:id").arg(tbl->tableName()).arg(tbl->keyName()));
-
-         // Construct the big update query.
-         QSqlQuery qUpdateOldIng( sqlDatabase() );
-         QString updateString = tbl->generateUpdateRow();
-         qUpdateOldIng.prepare(updateString);
-
-         QSqlQuery qOldBtIng( sqlDatabase() );
-         qOldBtIng.prepare( QString("SELECT * FROM %1 WHERE %2=:btid").arg(btTbl->tableName()).arg(btTbl->keyName()) );
-
-         QSqlQuery qOldBtIngInsert( sqlDatabase() );
-         qOldBtIngInsert.prepare( QString("INSERT INTO %1 (%2,%3) values (:id,:%3)")
-                                  .arg(btTbl->tableName())
-                                  .arg(btTbl->keyName())
-                                  .arg(btTbl->childIndexName()));
-
-         while( qNewBtIng.next() ) {
-            btid = qNewBtIng.record().value(btTbl->keyName());
-            newid = qNewBtIng.record().value(btTbl->childIndexName());
-
-            qNewIng.bindValue(":id", newid);
-            // if we can't run the query
-            if ( ! qNewIng.exec() )
-               throw QString("Could not retrieve new ingredient: %1 %2").arg(qNewIng.lastQuery()).arg(qNewIng.lastError().text());
-
-            // if we can't get the result from the query
-            if( !qNewIng.next() )
-               throw QString("Could not advance query: %1 %2").arg(qNewIng.lastQuery()).arg(qNewIng.lastError().text());
-
-            foreach( QString pn, tbl->allColumnNames()) {
-               // Bind the old values to the new unless it is deleted, which we always set to false
-               if ( pn == kcolDeleted ) {
-                  qUpdateOldIng.bindValue( QString(":%1").arg(pn), Brewken::dbFalse());
-               }
-               qUpdateOldIng.bindValue( QString(":%1").arg(pn), qNewIng.record().value(pn));
-            }
-
-            // Done retrieving new ingredient data.
-            qNewIng.finish();
-
-            // Find the bt_<ingredient> record in the local table.
-            qOldBtIng.bindValue( ":btid", btid );
-            if ( ! qOldBtIng.exec() ) {
-               throw QString("Could not find btID (%1): %2 %3")
-                        .arg(btid.toInt())
-                        .arg(qOldBtIng.lastQuery())
-                        .arg(qOldBtIng.lastError().text());
-            }
-
-            // If the btid exists in the old bt_hop table, do an update.
-            if( qOldBtIng.next() ) {
-               oldid = qOldBtIng.record().value( btTbl->keyName() );
-               qOldBtIng.finish();
-
-               qUpdateOldIng.bindValue( ":id", oldid );
-
-               if ( ! qUpdateOldIng.exec() )
-                  throw QString("Could not update old btID (%1): %2 %3")
-                           .arg(oldid.toInt())
-                           .arg(qUpdateOldIng.lastQuery())
-                           .arg(qUpdateOldIng.lastError().text());
-
-            }
-            // If the btid doesn't exist in the old bt_ table, do an insert into
-            // the new table, then into the new bt_ table.
-            else {
-               // Create a new ingredient.
-               oldid = makeObject.value(tbl->tableName())(qNewBtIng.record().value(PropertyNames::NamedEntity::name).toString())->key();
-
-               // Copy in the new data.
-               qUpdateOldIng.bindValue( ":id", oldid );
-
-               if ( ! qUpdateOldIng.exec() )
-                  throw QString("Could not insert new btID (%1): %2 %3")
-                           .arg(oldid.toInt())
-                           .arg(qUpdateOldIng.lastQuery())
-                           .arg(qUpdateOldIng.lastError().text());
-
-
-               // Insert an entry into our bt_<ingredient> table.
-               qOldBtIngInsert.bindValue( ":id", btid );
-               qOldBtIngInsert.bindValue( QString(":%1").arg(btTbl->childIndexName()), oldid );
-
-               if ( !  qOldBtIngInsert.exec() )
-                  throw QString("Could not insert btID (%1): %2 %3")
-                           .arg(btid.toInt())
-                           .arg(qOldBtIngInsert.lastQuery())
-                           .arg(qOldBtIngInsert.lastError().text());
-            }
-         }
-      }
-      // If we, by some miracle, get here, commit
-      sqlDatabase().commit();
-      // I think
-   }
-   catch (QString e) {
-      qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-      sqlDatabase().rollback();
-      abort();
-   }
-   */
+void Database::updateDatabase(QString const& filename) {
+   DatabaseSchemaHelper::updateDatabase(*this, filename);
+   return;
 }
 
-bool Database::verifyDbConnection(Brewken::DBTypes testDb, QString const& hostname, int portnum, QString const& schema,
+
+bool Database::verifyDbConnection(Database::DBTypes testDb, QString const& hostname, int portnum, QString const& schema,
                               QString const& database, QString const& username, QString const& password)
 {
    QString driverName;
@@ -1238,7 +959,7 @@ bool Database::verifyDbConnection(Brewken::DBTypes testDb, QString const& hostna
 
    switch( testDb )
    {
-      case Brewken::PGSQL:
+      case Database::PGSQL:
          driverName = "QPSQL";
          break;
       default:
@@ -1248,7 +969,7 @@ bool Database::verifyDbConnection(Brewken::DBTypes testDb, QString const& hostna
 
    switch( testDb )
    {
-      case Brewken::PGSQL:
+      case Database::PGSQL:
          connDb.setHostName(hostname);
          connDb.setPort(portnum);
          connDb.setDatabaseName(database);
@@ -1275,52 +996,34 @@ bool Database::verifyDbConnection(Brewken::DBTypes testDb, QString const& hostna
 
 void Database::convertDatabase(QString const& Hostname, QString const& DbName,
                                QString const& Username, QString const& Password,
-                               int Portnum, Brewken::DBTypes newType)
+                               int Portnum, Database::DBTypes newType)
 {
-   QSqlDatabase newDb;
+   QSqlDatabase connectionNew;
 
-   Brewken::DBTypes oldType = static_cast<Brewken::DBTypes>(PersistentSettings::value("dbType", Brewken::SQLITE).toInt());
+   Database::DBTypes oldType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
 
    try {
-      if ( newType == Brewken::NODB ) {
+      if ( newType == Database::NODB ) {
          throw QString("No type found for the new database.");
       }
 
-      if ( oldType == Brewken::NODB ) {
+      if ( oldType == Database::NODB ) {
          throw QString("No type found for the old database.");
       }
 
       switch( newType ) {
-         case Brewken::PGSQL:
-            newDb = openPostgres(Hostname, DbName,Username, Password, Portnum);
+         case Database::PGSQL:
+            connectionNew = openPostgres(Hostname, DbName,Username, Password, Portnum);
             break;
          default:
-            newDb = openSQLite();
+            connectionNew = openSQLite();
       }
 
-      if ( ! newDb.isOpen() ) {
-         throw QString("Could not open new database: %1").arg(newDb.lastError().text());
+      if ( ! connectionNew.isOpen() ) {
+         throw QString("Could not open new database: %1").arg(connectionNew.lastError().text());
       }
 
-      // this is to prevent us from over-writing or doing heavens knows what to an existing db
-      if( newDb.tables().contains(QLatin1String("settings")) ) {
-         qWarning() << QString("It appears the database is already configured.");
-         return;
-      }
-
-      newDb.transaction();
-
-      // make sure we get the inventory tables first
-      foreach( TableSchema* table, this->pimpl->dbDefn.allTables(true) ) {
-         QString createTable = table->generateCreateTable(newType);
-         QSqlQuery results( newDb );
-         if ( ! results.exec(createTable) ) {
-            throw QString("Could not create %1 : %2").arg(table->tableName()).arg(results.lastError().text());
-         }
-      }
-      newDb.commit();
-
-      this->pimpl->copyDatabase(*this, oldType, newType, newDb);
+      DatabaseSchemaHelper::copyDatabase(*this, oldType, newType, connectionNew);
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -1332,24 +1035,83 @@ DatabaseSchema & Database::getDatabaseSchema() {
    return this->pimpl->dbDefn;
 }
 
-template<typename T> char const * Database::getDbNativeTypeName() const {
-   return getDbNativeName(nativeTypeNames<T>);
+Database::DBTypes Database::dbType() {
+   if (currentDbType == Database::NODB ) {
+      currentDbType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   }
+   return currentDbType;
+}
+
+void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DBTypes type) {
+   if (type == Database::NODB) {
+      type = Database::dbType();
+   }
+
+   switch( type ) {
+      case SQLITE:
+         if (enabled) {
+            connection.exec("PRAGMA foreign_keys=on");
+         } else {
+            connection.exec("PRAGMA foreign_keys=off");
+         }
+         break;
+      case PGSQL:
+         // This is a bit of a hack, and needs you to be connected as super user, but seems more robust than
+         // "SET CONSTRAINTS ALL DEFERRED" which requires foreign keys to have been set up in a particular way in the
+         // first place (see https://www.postgresql.org/docs/13/sql-set-constraints.html).
+         if (enabled) {
+            connection.exec("SET session_replication_role TO 'origin'");
+         } else {
+            connection.exec("SET session_replication_role TO 'replica'");
+         }
+         break;
+      default:
+         // It's a coding error (somewhere) if we get here!
+         Q_ASSERT(false);
+   }
+
+   return;
+}
+
+
+QString Database::dbBoolean(bool flag, Database::DBTypes type) {
+   QString retval;
+
+   if (type == Database::NODB) {
+      type = Database::dbType();
+   }
+
+   switch( type ) {
+      case SQLITE:
+         retval = flag ? QString("1") : QString("0");
+         break;
+      case PGSQL:
+         retval = flag ? QString("true") : QString("false");
+         break;
+      default:
+         retval = "notwhiskeytangofoxtrot";
+   }
+   return retval;
+}
+
+template<typename T> char const * Database::getDbNativeTypeName(Database::DBTypes type) const {
+   return getDbNativeName(nativeTypeNames<T>, type);
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template char const * Database::getDbNativeTypeName<bool>() const;
-template char const * Database::getDbNativeTypeName<int>() const;
-template char const * Database::getDbNativeTypeName<unsigned int>() const;
-template char const * Database::getDbNativeTypeName<double>() const;
-template char const * Database::getDbNativeTypeName<QString>() const;
-template char const * Database::getDbNativeTypeName<QDate>() const;
+template char const * Database::getDbNativeTypeName<bool>(Database::DBTypes type) const;
+template char const * Database::getDbNativeTypeName<int>(Database::DBTypes type) const;
+template char const * Database::getDbNativeTypeName<unsigned int>(Database::DBTypes type) const;
+template char const * Database::getDbNativeTypeName<double>(Database::DBTypes type) const;
+template char const * Database::getDbNativeTypeName<QString>(Database::DBTypes type) const;
+template char const * Database::getDbNativeTypeName<QDate>(Database::DBTypes type) const;
 
-char const * Database::getDbNativeIntPrimaryKeyModifier() const {
-   return getDbNativeName(nativeIntPrimaryKeyModifier);
+char const * Database::getDbNativeIntPrimaryKeyModifier(Database::DBTypes type) const {
+   return getDbNativeName(nativeIntPrimaryKeyModifier, type);
 }
 
-char const * Database::getSqlToAddColumnAsForeignKey() const {
-   return getDbNativeName(sqlToAddColumnAsForeignKey);
+char const * Database::getSqlToAddColumnAsForeignKey(Database::DBTypes type) const {
+   return getDbNativeName(sqlToAddColumnAsForeignKey, type);
 }

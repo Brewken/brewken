@@ -59,9 +59,9 @@ namespace {
    struct LanguageInfo {
       QString            iso639_1Code;       // What we need to pass to Brewken::setLanguage()
       QIcon              countryFlag;        // Yes, we know some languages are spoken in more than one country...
-      char const *       nameInEnglish;
+      char const    *    nameInEnglish;
       QString            nameInCurrentLang;  // Don't strictly need to store this, but having the hard-coded tr() calls
-                                             // in the initialisation flag up what language names need translating
+      // in the initialisation flag up what language names need translating
    };
 }
 
@@ -98,30 +98,30 @@ public:
       label_frequency            {optionDialog.groupBox_dbConfig},
       spinBox_frequency          {optionDialog.groupBox_dbConfig},
       languageInfo {
-         {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
-         {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
-         {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
-         {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
-         {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
-         {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
-         {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
-         {"et", QIcon(),                              "Estonian",         tr("Estonian")         },
-         {"eu", QIcon(),                              "Basque",           tr("Basque")           },
-         {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
-         {"gl", QIcon(),                              "Galician",         tr("Galician")         },
-         {"hu", QIcon(),                              "Hungarian",        tr("Hungarian")        },
-         {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
-         {"lv", QIcon(),                              "Latvian",          tr("Latvian")          },
-         {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
-         {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
-         {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
-         {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
-         {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
-         {"sr", QIcon(),                              "Serbian",          tr("Serbian")          },
-         {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
-         {"tr", QIcon(),                              "Turkish",          tr("Turkish")          },
-         {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
-      } {
+      {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
+      {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
+      {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
+      {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
+      {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
+      {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
+      {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
+      {"et", QIcon(),                              "Estonian",         tr("Estonian")         },
+      {"eu", QIcon(),                              "Basque",           tr("Basque")           },
+      {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
+      {"gl", QIcon(),                              "Galician",         tr("Galician")         },
+      {"hu", QIcon(),                              "Hungarian",        tr("Hungarian")        },
+      {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
+      {"lv", QIcon(),                              "Latvian",          tr("Latvian")          },
+      {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
+      {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
+      {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
+      {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
+      {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
+      {"sr", QIcon(),                              "Serbian",          tr("Serbian")          },
+      {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
+      {"tr", QIcon(),                              "Turkish",          tr("Turkish")          },
+      {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
+   } {
       //
       // Optimise the select file dialog to select directories
       //
@@ -129,7 +129,7 @@ public:
       this->qFileDialog.setOptions(
          QFileDialog::ShowDirsOnly |        // <- Only show directories in the dialog
          QFileDialog::DontUseNativeDialog | // <- Use the Qt dialog for selecting directories as it's usually better at
-                                            //    respecting all the other settings than the native dialog
+         //    respecting all the other settings than the native dialog
          QFileDialog::HideNameFilterDetails // <- Don't have the file-types selector active, as it serves no purpose
       );                                    //    for selecting a directory
       this->qFileDialog.setFilter(QDir::AllDirs | QDir::Hidden); // <- We don't hide any directories from the user
@@ -222,8 +222,8 @@ public:
     *
     */
    void clearLayout(OptionDialog & optionDialog) {
-      QLayoutItem *child;
-      while ( (child = optionDialog.gridLayout->takeAt(0)) != nullptr ) {
+      QLayoutItem * child;
+      while ((child = optionDialog.gridLayout->takeAt(0)) != nullptr) {
          optionDialog.gridLayout->removeItem(child);
       }
       return;
@@ -232,32 +232,32 @@ public:
    /**
     * Determine which set of DB config params to show, based on whether PostgresSQL or SQLite is selected
     */
-   void setDbDialog(OptionDialog & optionDialog, Brewken::DBTypes db) {
-      qDebug() << Q_FUNC_INFO << "Set " << (db == Brewken::PGSQL ? "PostgresSQL" : "SQLite") << " config params visible";
+   void setDbDialog(OptionDialog & optionDialog, Database::DBTypes db) {
+      qDebug() << Q_FUNC_INFO << "Set " << (db == Database::PGSQL ? "PostgresSQL" : "SQLite") << " config params visible";
       optionDialog.groupBox_dbConfig->setVisible(false);
 
       this->clearLayout(optionDialog);
-      if ( db == Brewken::PGSQL ) {
+      if (db == Database::PGSQL) {
          this->postgresVisible(true);
          this->sqliteVisible(false);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgHostname,0,0);
-         optionDialog.gridLayout->addWidget(&this->input_pgHostname,0,1,1,2);
+         optionDialog.gridLayout->addWidget(&this->label_pgHostname, 0, 0);
+         optionDialog.gridLayout->addWidget(&this->input_pgHostname, 0, 1, 1, 2);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgPortNum,0,3);
-         optionDialog.gridLayout->addWidget(&this->input_pgPortNum,0,4);
+         optionDialog.gridLayout->addWidget(&this->label_pgPortNum, 0, 3);
+         optionDialog.gridLayout->addWidget(&this->input_pgPortNum, 0, 4);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgSchema,1,0);
-         optionDialog.gridLayout->addWidget(&this->input_pgSchema,1,1);
+         optionDialog.gridLayout->addWidget(&this->label_pgSchema, 1, 0);
+         optionDialog.gridLayout->addWidget(&this->input_pgSchema, 1, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgDbName,2,0);
-         optionDialog.gridLayout->addWidget(&this->input_pgDbName,2,1);
+         optionDialog.gridLayout->addWidget(&this->label_pgDbName, 2, 0);
+         optionDialog.gridLayout->addWidget(&this->input_pgDbName, 2, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgUsername,3,0);
-         optionDialog.gridLayout->addWidget(&this->input_pgUsername,3,1);
+         optionDialog.gridLayout->addWidget(&this->label_pgUsername, 3, 0);
+         optionDialog.gridLayout->addWidget(&this->input_pgUsername, 3, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgPassword,4,0);
-         optionDialog.gridLayout->addWidget(&this->input_pgPassword,4,1);
+         optionDialog.gridLayout->addWidget(&this->label_pgPassword, 4, 0);
+         optionDialog.gridLayout->addWidget(&this->input_pgPassword, 4, 1);
 
          optionDialog.gridLayout->addWidget(&this->checkBox_savePgPassword, 4, 4);
 
@@ -265,19 +265,19 @@ public:
          this->postgresVisible(false);
          this->sqliteVisible(true);
 
-         optionDialog.gridLayout->addWidget(&this->label_userDataDir,0,0);
-         optionDialog.gridLayout->addWidget(&this->input_userDataDir,0,1,1,2);
-         optionDialog.gridLayout->addWidget(&this->pushButton_browseDataDir,0,3);
+         optionDialog.gridLayout->addWidget(&this->label_userDataDir, 0, 0);
+         optionDialog.gridLayout->addWidget(&this->input_userDataDir, 0, 1, 1, 2);
+         optionDialog.gridLayout->addWidget(&this->pushButton_browseDataDir, 0, 3);
 
-         optionDialog.gridLayout->addWidget(&this->label_backupDir,1,0);
-         optionDialog.gridLayout->addWidget(&this->input_backupDir,1,1,1,2);
-         optionDialog.gridLayout->addWidget(&this->pushButton_browseBackupDir,1,3);
+         optionDialog.gridLayout->addWidget(&this->label_backupDir, 1, 0);
+         optionDialog.gridLayout->addWidget(&this->input_backupDir, 1, 1, 1, 2);
+         optionDialog.gridLayout->addWidget(&this->pushButton_browseBackupDir, 1, 3);
 
-         optionDialog.gridLayout->addWidget(&this->label_numBackups,3,0);
-         optionDialog.gridLayout->addWidget(&this->spinBox_numBackups,3,1);
+         optionDialog.gridLayout->addWidget(&this->label_numBackups, 3, 0);
+         optionDialog.gridLayout->addWidget(&this->spinBox_numBackups, 3, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_frequency,4,0);
-         optionDialog.gridLayout->addWidget(&this->spinBox_frequency,4,1);
+         optionDialog.gridLayout->addWidget(&this->label_frequency, 4, 0);
+         optionDialog.gridLayout->addWidget(&this->spinBox_frequency, 4, 1);
       }
       optionDialog.groupBox_dbConfig->setVisible(true);
       return;
@@ -304,17 +304,23 @@ public:
 
       // set up the tooltips if we are using them
 #ifndef QT_NO_TOOLTIP
-      this->input_pgHostname.setToolTip(QApplication::translate("optionsDialog", "PostgresSQL's host name or IP address", nullptr));
-      this->input_pgPortNum.setToolTip(QApplication::translate("optionsDialog", "Port the PostgreSQL is listening on", nullptr));
-      this->input_pgSchema.setToolTip(QApplication::translate("optionsDialog", "The schema containing the database", nullptr));
-      this->input_pgUsername.setToolTip(QApplication::translate("optionsDialog", "User with create/delete table access", nullptr));
+      this->input_pgHostname.setToolTip(QApplication::translate("optionsDialog", "PostgresSQL's host name or IP address",
+                                                                nullptr));
+      this->input_pgPortNum.setToolTip(QApplication::translate("optionsDialog", "Port the PostgreSQL is listening on",
+                                                               nullptr));
+      this->input_pgSchema.setToolTip(QApplication::translate("optionsDialog", "The schema containing the database",
+                                                              nullptr));
+      this->input_pgUsername.setToolTip(QApplication::translate("optionsDialog", "User with create/delete table access",
+                                                                nullptr));
       this->input_pgPassword.setToolTip(QApplication::translate("optionsDialog", "Password for the user", nullptr));
       this->input_pgDbName.setToolTip(QApplication::translate("optionsDialog", "The name of the database", nullptr));
-      this->label_userDataDir.setToolTip(QApplication::translate("optionsDialog", "Where your database file is",nullptr));
-      this->label_backupDir.setToolTip(QApplication::translate("optionsDialog", "Where to save your backups",nullptr));
-      this->label_numBackups.setToolTip(QApplication::translate("optionsDialog", "Number of backups to keep: -1 means never remove, 0 means never backup", nullptr));
+      this->label_userDataDir.setToolTip(QApplication::translate("optionsDialog", "Where your database file is", nullptr));
+      this->label_backupDir.setToolTip(QApplication::translate("optionsDialog", "Where to save your backups", nullptr));
+      this->label_numBackups.setToolTip(QApplication::translate("optionsDialog",
+                                                                "Number of backups to keep: -1 means never remove, 0 means never backup", nullptr));
       // Actually the backups happen after every X times the program is closed, but the tooltip is already long enough!
-      this->label_frequency.setToolTip(QApplication::translate("optionsDialog", "How many times Brewken needs to be run to trigger another backup: 1 means always backup", nullptr));
+      this->label_frequency.setToolTip(QApplication::translate("optionsDialog",
+                                                               "How many times Brewken needs to be run to trigger another backup: 1 means always backup", nullptr));
 #endif
       return;
    }
@@ -341,8 +347,7 @@ public:
       // Green when the test passed
       // Black otherwise.
 
-      switch(dbConnectionTestState)
-      {
+      switch (dbConnectionTestState) {
          case NEEDS_TEST:
             optionDialog.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             optionDialog.pushButton_testConnection->setEnabled(true);
@@ -380,7 +385,8 @@ public:
       optionDialog.gravityComboBox->setCurrentIndex(optionDialog.gravityComboBox->findData(Brewken::densityUnit));
       optionDialog.dateComboBox->setCurrentIndex(optionDialog.dateComboBox->findData(Brewken::dateFormat));
       optionDialog.colorComboBox->setCurrentIndex(optionDialog.colorComboBox->findData(Brewken::colorUnit));
-      optionDialog.diastaticPowerComboBox->setCurrentIndex(optionDialog.diastaticPowerComboBox->findData(Brewken::diastaticPowerUnit));
+      optionDialog.diastaticPowerComboBox->setCurrentIndex(optionDialog.diastaticPowerComboBox->findData(
+                                                              Brewken::diastaticPowerUnit));
 
       optionDialog.colorFormulaComboBox->setCurrentIndex(optionDialog.colorFormulaComboBox->findData(Brewken::colorFormula));
       optionDialog.ibuFormulaComboBox->setCurrentIndex(optionDialog.ibuFormulaComboBox->findData(Brewken::ibuFormula));
@@ -390,32 +396,58 @@ public:
 
       // Backup stuff
       // By default backups go in the same directory as the DB
-      this->input_backupDir.setText( PersistentSettings::value("directory", PersistentSettings::getUserDataDir().canonicalPath(), "backups").toString() );
-      this->spinBox_numBackups.setValue( PersistentSettings::value("maximum", 10, "backups").toInt() );
-      this->spinBox_frequency.setValue( PersistentSettings::value("frequency", 4, "backups").toInt() );
+      this->input_backupDir.setText(PersistentSettings::value("directory",
+                                                              PersistentSettings::getUserDataDir().canonicalPath(), "backups").toString());
+      this->spinBox_numBackups.setValue(PersistentSettings::value("maximum", 10, "backups").toInt());
+      this->spinBox_frequency.setValue(PersistentSettings::value("frequency", 4, "backups").toInt());
 
       // The IBU modifications. These will all be calculated from a 60 min boil. This is gonna get confusing.
-      double amt = Brewken::toDouble(PersistentSettings::value("mashHopAdjustment",0).toString(), "OptionDialog::showChanges()");
-      optionDialog.ibuAdjustmentMashHopDoubleSpinBox->setValue(amt*100);
+      double amt = Brewken::toDouble(PersistentSettings::value("mashHopAdjustment", 0).toString(),
+                                     "OptionDialog::showChanges()");
+      optionDialog.ibuAdjustmentMashHopDoubleSpinBox->setValue(amt * 100);
 
-      amt = Brewken::toDouble(PersistentSettings::value("firstWortHopAdjustment",1.1).toString(), "OptionDialog::showChanges()");
-      optionDialog.ibuAdjustmentFirstWortDoubleSpinBox->setValue(amt*100);
+      amt = Brewken::toDouble(PersistentSettings::value("firstWortHopAdjustment", 1.1).toString(),
+                              "OptionDialog::showChanges()");
+      optionDialog.ibuAdjustmentFirstWortDoubleSpinBox->setValue(amt * 100);
 
       // Database stuff -- this looks weird, but trust me. We want SQLITE to be
       // the default for this field
-      int tmp = PersistentSettings::value("dbType",Brewken::SQLITE).toInt() - 1;
+      int tmp = PersistentSettings::value("dbType", Database::SQLITE).toInt() - 1;
       optionDialog.comboBox_engine->setCurrentIndex(tmp);
 
-      this->input_pgHostname.setText(PersistentSettings::value("dbHostname","localhost").toString());
-      this->input_pgPortNum.setText(PersistentSettings::value("dbPort","5432").toString());
-      this->input_pgSchema.setText(PersistentSettings::value("dbSchema","public").toString());
-      this->input_pgDbName.setText(PersistentSettings::value("dbName","brewken").toString());
-      this->input_pgUsername.setText(PersistentSettings::value("dbUsername","brewken").toString());
-      this->input_pgPassword.setText(PersistentSettings::value("dbPassword","").toString());
-      this->checkBox_savePgPassword.setChecked( PersistentSettings::contains("dbPassword") );
+      this->input_pgHostname.setText(PersistentSettings::value("dbHostname", "localhost").toString());
+      this->input_pgPortNum.setText(PersistentSettings::value("dbPort", "5432").toString());
+      this->input_pgSchema.setText(PersistentSettings::value("dbSchema", "public").toString());
+      this->input_pgDbName.setText(PersistentSettings::value("dbName", "brewken").toString());
+      this->input_pgUsername.setText(PersistentSettings::value("dbUsername", "brewken").toString());
+      this->input_pgPassword.setText(PersistentSettings::value("dbPassword", "").toString());
+      this->checkBox_savePgPassword.setChecked(PersistentSettings::contains("dbPassword"));
 
       this->dbConnectionTestState = NO_CHANGE;
       this->changeColors(optionDialog);
+
+      if (PersistentSettings::value("versioning", false).toBool()) {
+         optionDialog.checkBox_versioning->setCheckState(Qt::Checked);
+         optionDialog.groupBox_deleteBehavior->setEnabled(true);
+         switch (PersistentSettings::value("deletewhat", Recipe::DESCENDANT).toInt()) {
+            case Recipe::ANCESTOR:
+               optionDialog.radioButton_deleteAncestor->setChecked(true);
+               break;
+            default:
+               optionDialog.radioButton_deleteDescendant->setChecked(true);
+               break;
+         }
+      } else {
+         optionDialog.checkBox_versioning->setCheckState(Qt::Unchecked);
+         optionDialog.groupBox_deleteBehavior->setEnabled(false);
+      }
+
+      if (PersistentSettings::value("showsnapshots", false).toBool()) {
+         optionDialog.checkBox_alwaysShowSnaps->setCheckState(Qt::Checked);
+      } else {
+         optionDialog.checkBox_alwaysShowSnaps->setCheckState(Qt::Unchecked);
+      }
+
       return;
    }
 
@@ -455,9 +487,9 @@ public:
 
 };
 
-OptionDialog::OptionDialog(QWidget* parent) : QDialog{},
-                                              Ui::optionsDialog{},
-                                              pimpl{ new impl{*this} } {
+OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
+   Ui::optionsDialog{},
+   pimpl{ new impl{*this} } {
 
    // I need a lot of control over what is displayed on the DbConfig dialog.
    // Maybe designer can do it? No idea. So I did this hybrid model, and I
@@ -466,10 +498,34 @@ OptionDialog::OptionDialog(QWidget* parent) : QDialog{},
    this->setupUi(this);
    this->pimpl->initLangs(*this);
 
-   if( parent != nullptr ) {
+   if (parent != nullptr) {
       setWindowIcon(parent->windowIcon());
    }
 
+   // populate the combo boxes on the units tab
+   configure_unitCombos();
+
+   // populate the combo boxes on the formulas tab
+   configure_formulaCombos();
+
+   // populate the combo boxes on the logging tab
+   configure_logging();
+
+   // database panel stuff
+   comboBox_engine->addItem(tr("SQLite (default)"), QVariant(Database::SQLITE));
+   comboBox_engine->addItem(tr("PostgreSQL"), QVariant(Database::PGSQL));
+
+   // figure out which database we have
+   int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   this->pimpl->setDbDialog(*this, static_cast<Database::DBTypes>(idx));
+
+   // connect all the signals
+   connect_signals();
+
+   pushButton_testConnection->setEnabled(false);
+}
+
+void OptionDialog::configure_unitCombos() {
    // Populate combo boxes on the "Units" tab
    weightComboBox->addItem(tr("SI units"), QVariant(SI));
    weightComboBox->addItem(tr("US traditional units"), QVariant(USCustomary));
@@ -491,7 +547,9 @@ OptionDialog::OptionDialog(QWidget* parent) : QDialog{},
 
    colorComboBox->addItem(tr("SRM"), QVariant(Brewken::SRM));
    colorComboBox->addItem(tr("EBC"), QVariant(Brewken::EBC));
+}
 
+void OptionDialog::configure_formulaCombos() {
    diastaticPowerComboBox->addItem(tr("Lintner"), QVariant(Brewken::LINTNER));
    diastaticPowerComboBox->addItem(tr("WK"), QVariant(Brewken::WK));
 
@@ -503,10 +561,9 @@ OptionDialog::OptionDialog(QWidget* parent) : QDialog{},
    colorFormulaComboBox->addItem(tr("Mosher's approximation"), QVariant(Brewken::MOSHER));
    colorFormulaComboBox->addItem(tr("Daniel's approximation"), QVariant(Brewken::DANIEL));
    colorFormulaComboBox->addItem(tr("Morey's approximation"), QVariant(Brewken::MOREY));
+}
 
-   connect( buttonBox, &QDialogButtonBox::accepted, this, &OptionDialog::saveAndClose );
-   connect( buttonBox, &QDialogButtonBox::rejected, this, &OptionDialog::cancel );
-
+void OptionDialog::configure_logging() {
    //Populate options on the "Logging" tab
    for (auto ii : Logging::levelDetails) {
       loggingLevelComboBox->addItem(ii.description, QVariant(ii.level));
@@ -517,20 +574,26 @@ OptionDialog::OptionDialog(QWidget* parent) : QDialog{},
    this->setFileLocationState(Logging::getLogInConfigDir());
 
    // database panel stuff
-   comboBox_engine->addItem( tr("SQLite (default)"), QVariant(Brewken::SQLITE));
-   comboBox_engine->addItem( tr("PostgreSQL"), QVariant(Brewken::PGSQL));
+   comboBox_engine->addItem(tr("SQLite (default)"), QVariant(Database::SQLITE));
+   comboBox_engine->addItem(tr("PostgreSQL"), QVariant(Database::PGSQL));
+}
+
+void OptionDialog::connect_signals() {
+   connect(buttonBox, &QDialogButtonBox::accepted, this, &OptionDialog::saveAndClose);
+   connect(buttonBox, &QDialogButtonBox::rejected, this, &OptionDialog::cancel);
+
    // QOverload is needed on next line because the signal currentIndexChanged is overloaded in QComboBox - see
    // https://doc.qt.io/qt-5/qcombobox.html#currentIndexChanged
-   connect( comboBox_engine, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &OptionDialog::setEngine );
-   connect( pushButton_testConnection, &QAbstractButton::clicked, this, &OptionDialog::testConnection);
+   connect(comboBox_engine, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &OptionDialog::setEngine);
+   connect(pushButton_testConnection, &QAbstractButton::clicked, this, &OptionDialog::testConnection);
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Brewken::SQLITE).toInt());
-   this->pimpl->setDbDialog(*this, static_cast<Brewken::DBTypes>(idx));
+   int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   this->pimpl->setDbDialog(*this, static_cast<Database::DBTypes>(idx));
 
    // Set the signals
    connect(&this->pimpl->checkBox_savePgPassword, &QAbstractButton::clicked, this, &OptionDialog::savePassword);
-   connect( this->checkBox_LogFileLocationUseDefault, &QAbstractButton::clicked, this, &OptionDialog::setFileLocationState);
+   connect(this->checkBox_LogFileLocationUseDefault, &QAbstractButton::clicked, this, &OptionDialog::setFileLocationState);
 
    connect(&this->pimpl->input_pgHostname, &QLineEdit::editingFinished, this, &OptionDialog::testRequired);
    connect(&this->pimpl->input_pgPortNum,  &QLineEdit::editingFinished, this, &OptionDialog::testRequired);
@@ -539,16 +602,22 @@ OptionDialog::OptionDialog(QWidget* parent) : QDialog{},
    connect(&this->pimpl->input_pgUsername, &QLineEdit::editingFinished, this, &OptionDialog::testRequired);
    connect(&this->pimpl->input_pgPassword, &QLineEdit::editingFinished, this, &OptionDialog::testRequired);
 
-   connect(&this->pimpl->pushButton_browseDataDir, &QAbstractButton::clicked, this, &OptionDialog::setDataDir );
-   connect(&this->pimpl->pushButton_browseBackupDir, &QAbstractButton::clicked, this, &OptionDialog::setBackupDir );
-   connect( pushButton_resetToDefault, &QAbstractButton::clicked, this, &OptionDialog::resetToDefault );
-   connect( pushButton_LogFileLocationBrowse, &QAbstractButton::clicked, this, &OptionDialog::setLogDir );
+   connect(&this->pimpl->pushButton_browseDataDir, &QAbstractButton::clicked, this, &OptionDialog::setDataDir);
+   connect(&this->pimpl->pushButton_browseBackupDir, &QAbstractButton::clicked, this, &OptionDialog::setBackupDir);
+   connect(pushButton_resetToDefault, &QAbstractButton::clicked, this, &OptionDialog::resetToDefault);
+   connect(pushButton_LogFileLocationBrowse, &QAbstractButton::clicked, this, &OptionDialog::setLogDir);
    pushButton_testConnection->setEnabled(false);
 
+   connect(checkBox_versioning, &QAbstractButton::clicked, this, &OptionDialog::versioningChanged);
+   connect(checkBox_alwaysShowSnaps, &QAbstractButton::clicked, this, &OptionDialog::signalAncestors);
 
    // Call this here to set up translatable strings.
    this->pimpl->retranslate(*this);
    return;
+}
+
+void OptionDialog::signalAncestors() {
+   emit showAllAncestors(checkBox_alwaysShowSnaps->checkState() == Qt::Checked);
 }
 
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
@@ -589,10 +658,9 @@ void OptionDialog::setLogDir() {
    return;
 }
 
-void OptionDialog::resetToDefault()
-{
-   Brewken::DBTypes engine = static_cast<Brewken::DBTypes>(comboBox_engine->currentData().toInt());
-   if ( engine == Brewken::PGSQL ) {
+void OptionDialog::resetToDefault() {
+   Database::DBTypes engine = static_cast<Database::DBTypes>(comboBox_engine->currentData().toInt());
+   if (engine == Database::PGSQL) {
       this->pimpl->input_pgHostname.setText(QString("localhost"));
       this->pimpl->input_pgPortNum.setText(QString("5432"));
       this->pimpl->input_pgSchema.setText(QString("public"));
@@ -601,225 +669,13 @@ void OptionDialog::resetToDefault()
       this->pimpl->input_pgPassword.setText(QString(""));
       this->pimpl->checkBox_savePgPassword.setChecked(false);
    } else {
-      this->pimpl->input_userDataDir.setText( PersistentSettings::getConfigDir().canonicalPath() );
-      this->pimpl->input_backupDir.setText( PersistentSettings::getConfigDir().canonicalPath() );
+      this->pimpl->input_userDataDir.setText(PersistentSettings::getConfigDir().canonicalPath());
+      this->pimpl->input_backupDir.setText(PersistentSettings::getConfigDir().canonicalPath());
       this->pimpl->spinBox_frequency.setValue(4);
       this->pimpl->spinBox_numBackups.setValue(10);
    }
 }
 
-void OptionDialog::saveAndClose()
-{
-   bool okay = false;
-   bool saveDbConfig = true;
-
-   // TODO:: FIX THIS UI. I am really not sure what the best approach is here.
-   if ( this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED ) {
-      QMessageBox::critical(nullptr,
-            tr("Test connection or cancel"),
-            tr("Saving the options without testing the connection can cause Brewken to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.")
-            );
-      return;
-   }
-
-   if ( this->pimpl->dbConnectionTestState == TEST_PASSED ) {
-      // This got unpleasant. There are multiple possible transfer paths.
-      // SQLite->Pgsql, Pgsql->Pgsql and Pgsql->SQLite. This will ensure we
-      // preserve the information required.
-      try {
-         QString theQuestion = tr("Would you like Brewken to transfer your data to the new database? NOTE: If you've already loaded the data, say No");
-         if ( QMessageBox::Yes == QMessageBox::question(this, tr("Transfer database"), theQuestion) ) {
-            Database::instance().convertDatabase(this->pimpl->input_pgHostname.text(),
-                                                 this->pimpl->input_pgDbName.text(),
-                                                 this->pimpl->input_pgUsername.text(),
-                                                 this->pimpl->input_pgPassword.text(),
-                                                 this->pimpl->input_pgPortNum.text().toInt(),
-                                                 static_cast<Brewken::DBTypes>(this->comboBox_engine->currentData().toInt()));
-         }
-         // Database engine stuff
-         int engine = comboBox_engine->currentData().toInt();
-         PersistentSettings::insert("dbType", engine);
-         // only write these changes when switching TO pgsql
-         if ( engine == Brewken::PGSQL ) {
-            PersistentSettings::insert("dbHostname", this->pimpl->input_pgHostname.text());
-            PersistentSettings::insert("dbPortnum",  this->pimpl->input_pgPortNum.text());
-            PersistentSettings::insert("dbSchema",   this->pimpl->input_pgSchema.text());
-            PersistentSettings::insert("dbName",     this->pimpl->input_pgDbName.text());
-            PersistentSettings::insert("dbUsername", this->pimpl->input_pgUsername.text());
-         }
-         QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken to connect to the new database"));
-      }
-      catch (QString e) {
-         qCritical() << Q_FUNC_INFO << e;
-         saveDbConfig = false;
-      }
-   }
-
-   if ( saveDbConfig && this->pimpl->checkBox_savePgPassword.checkState() == Qt::Checked ) {
-      PersistentSettings::insert("dbPassword", this->pimpl->input_pgPassword.text());
-   }
-   else {
-      PersistentSettings::remove("dbPassword");
-   }
-
-   switch (weightComboBox->itemData(weightComboBox->currentIndex()).toInt(&okay))
-   {
-      case SI:
-      default:
-         Brewken::weightUnitSystem = SI;
-         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::siWeightUnitSystem);
-         break;
-      case USCustomary:
-         Brewken::weightUnitSystem  = USCustomary;
-         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::usWeightUnitSystem);
-         break;
-      case Imperial:
-         Brewken::weightUnitSystem  = Imperial;
-         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::usWeightUnitSystem);
-         break;
-   }
-
-   switch (temperatureComboBox->itemData(temperatureComboBox->currentIndex()).toInt(&okay))
-   {
-      case Celsius:
-      default:
-         Brewken::tempScale = Celsius;
-         Brewken::thingToUnitSystem.insert(Unit::Temp,&UnitSystems::celsiusTempUnitSystem);
-         break;
-      case Fahrenheit:
-         Brewken::tempScale = Fahrenheit;
-         Brewken::thingToUnitSystem.insert(Unit::Temp,&UnitSystems::fahrenheitTempUnitSystem);
-         break;
-   }
-
-   switch (volumeComboBox->itemData(volumeComboBox->currentIndex()).toInt(&okay))
-   {
-      case SI:
-      default:
-         Brewken::volumeUnitSystem = SI;
-         Brewken::thingToUnitSystem.insert(Unit::Volume,&UnitSystems::siVolumeUnitSystem);
-         break;
-      case USCustomary:
-         Brewken::volumeUnitSystem = USCustomary;
-         Brewken::thingToUnitSystem.insert(Unit::Volume,&UnitSystems::usVolumeUnitSystem);
-         break;
-      case Imperial:
-         Brewken::volumeUnitSystem = Imperial;
-         Brewken::thingToUnitSystem.insert(Unit::Volume,&UnitSystems::imperialVolumeUnitSystem);
-         break;
-   }
-
-   switch (gravityComboBox->itemData(gravityComboBox->currentIndex()).toInt(&okay))
-   {
-      case Brewken::SG:
-      default:
-         Brewken::densityUnit = Brewken::SG;
-         Brewken::thingToUnitSystem.insert(Unit::Density, &UnitSystems::sgDensityUnitSystem);
-         break;
-      case Brewken::PLATO:
-         Brewken::densityUnit = Brewken::PLATO;
-         Brewken::thingToUnitSystem.insert(Unit::Density, &UnitSystems::platoDensityUnitSystem);
-         break;
-   }
-
-   switch (dateComboBox->itemData(dateComboBox->currentIndex()).toInt(&okay))
-   {
-      case Unit::displayUS:
-      default:
-         Brewken::dateFormat = Unit::displayUS;
-         break;
-      case Unit::displayImp:
-         Brewken::dateFormat = Unit::displayImp;
-         break;
-      case Unit::displaySI:
-         Brewken::dateFormat = Unit::displaySI;
-         break;
-   }
-
-   switch (colorComboBox->itemData(colorComboBox->currentIndex()).toInt(&okay))
-   {
-      case Brewken::SRM:
-      default:
-         Brewken::thingToUnitSystem.insert(Unit::Color,&UnitSystems::srmColorUnitSystem);
-         Brewken::colorUnit = Brewken::SRM;
-         break;
-      case Brewken::EBC:
-         Brewken::thingToUnitSystem.insert(Unit::Color,&UnitSystems::ebcColorUnitSystem);
-         Brewken::colorUnit = Brewken::EBC;
-         break;
-   }
-
-   switch (diastaticPowerComboBox->itemData(diastaticPowerComboBox->currentIndex()).toInt(&okay))
-   {
-      case Brewken::LINTNER:
-      default:
-         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::lintnerDiastaticPowerUnitSystem);
-         Brewken::diastaticPowerUnit = Brewken::LINTNER;
-         break;
-      case Brewken::WK:
-         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::wkDiastaticPowerUnitSystem);
-         Brewken::diastaticPowerUnit = Brewken::WK;
-         break;
-   }
-
-   int ndx = ibuFormulaComboBox->itemData(ibuFormulaComboBox->currentIndex()).toInt(&okay);
-   Brewken::ibuFormula = static_cast<Brewken::IbuType>(ndx);
-   ndx = colorFormulaComboBox->itemData(colorFormulaComboBox->currentIndex()).toInt(&okay);
-   Brewken::colorFormula = static_cast<Brewken::ColorType>(ndx);
-
-   // Set the right language.
-   Brewken::setLanguage(this->comboBox_lang->currentData().toString());
-
-   // Check the new userDataDir.
-   Brewken::DBTypes dbEngine = static_cast<Brewken::DBTypes>(comboBox_engine->currentData().toInt());
-   if ( dbEngine == Brewken::SQLITE ) {
-      QString newUserDataDir = this->pimpl->input_userDataDir.text();
-      QDir userDirectory(newUserDataDir);
-
-      // I think this is redundant and could be handled as just a simple db
-      // transfer using the TEST_PASSED loop above.
-      if( userDirectory != PersistentSettings::getUserDataDir() )
-      {
-         // If there are no data files present...
-         if( ! QFileInfo(userDirectory, "database.sqlite").exists() )
-         {
-            // ...tell user we will copy old data files to new location.
-            QMessageBox::information(this,
-                                    tr("Copy Data"),
-                                    tr("There do not seem to be any data files in this directory, so we will copy your old data here.")
-                                    );
-            Brewken::copyDataFiles(newUserDataDir);
-         }
-
-         PersistentSettings::setUserDataDir(newUserDataDir);
-         QMessageBox::information(
-            this,
-            tr("Restart"),
-            tr("Please restart Brewken.")
-         );
-      }
-
-      PersistentSettings::insert("maximum", this->pimpl->spinBox_numBackups.value(), "backups");
-      PersistentSettings::insert("frequency", this->pimpl->spinBox_frequency.value(), "backups");
-      PersistentSettings::insert("directory", this->pimpl->input_backupDir.text(), "backups");
-   }
-
-   PersistentSettings::insert("mashHopAdjustment", ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
-   PersistentSettings::insert("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
-
-   // Saving Logging Options to the Log object
-   Logging::setLogLevel(static_cast<Logging::Level>(loggingLevelComboBox->currentData().toInt()));
-   Logging::setDirectory(
-      checkBox_LogFileLocationUseDefault->isChecked() ?
-         std::optional<QDir>(std::nullopt) : std::optional<QDir>(lineEdit_LogFileLocation->text())
-   );
-   // Make sure the main window updates.
-   if (Brewken::mainWindow()) {
-      Brewken::mainWindow()->showChanges();
-   }
-   setVisible(false);
-   return;
-}
 
 void OptionDialog::cancel() {
    this->setVisible(false);
@@ -828,8 +684,7 @@ void OptionDialog::cancel() {
 
 
 void OptionDialog::changeEvent(QEvent * e) {
-   switch( e->type() )
-   {
+   switch (e->type()) {
       case QEvent::LanguageChange:
          this->pimpl->retranslate(*this);
          e->accept();
@@ -844,7 +699,7 @@ void OptionDialog::changeEvent(QEvent * e) {
 void OptionDialog::setEngine(int selected) {
 
    QVariant data = comboBox_engine->currentData();
-   Brewken::DBTypes newEngine = static_cast<Brewken::DBTypes>(data.toInt());
+   Database::DBTypes newEngine = static_cast<Database::DBTypes>(data.toInt());
 
    this->pimpl->setDbDialog(*this, newEngine);
    testRequired();
@@ -856,14 +711,14 @@ void OptionDialog::testConnection() {
    QString hostname, schema, database, username, password;
    int port;
 
-   Brewken::DBTypes newType = static_cast<Brewken::DBTypes>(comboBox_engine->currentData().toInt());
+   Database::DBTypes newType = static_cast<Database::DBTypes>(comboBox_engine->currentData().toInt());
    // Do nothing if nothing is required.
-   if ( this->pimpl->dbConnectionTestState == NO_CHANGE || this->pimpl->dbConnectionTestState == TEST_PASSED) {
+   if (this->pimpl->dbConnectionTestState == NO_CHANGE || this->pimpl->dbConnectionTestState == TEST_PASSED) {
       return;
    }
 
    switch (newType) {
-      case Brewken::PGSQL:
+      case Database::PGSQL:
          hostname = this->pimpl->input_pgHostname.text();
          schema   = this->pimpl->input_pgSchema.text();
          database = this->pimpl->input_pgDbName.text();
@@ -871,18 +726,18 @@ void OptionDialog::testConnection() {
          password = this->pimpl->input_pgPassword.text();
          port     = this->pimpl->input_pgPortNum.text().toInt();
 
-         success = Database::verifyDbConnection(newType,hostname,port,schema,database,username,password);
+         success = Database::verifyDbConnection(newType, hostname, port, schema, database, username, password);
          break;
       default:
          hostname = QString("%1/%2").arg(this->pimpl->input_userDataDir.text()).arg("database.sqlite");
-         success = Database::verifyDbConnection(newType,hostname);
+         success = Database::verifyDbConnection(newType, hostname);
    }
 
    if (success) {
       QMessageBox::information(nullptr,
-                           QObject::tr("Connection Test"),
-                           QString(QObject::tr("Connection to database was successful"))
-                           );
+                               QObject::tr("Connection Test"),
+                               QString(QObject::tr("Connection to database was successful"))
+                              );
       this->pimpl->dbConnectionTestState = TEST_PASSED;
    } else {
       // Database::testConnection already popped the dialog
@@ -900,15 +755,312 @@ void OptionDialog::testRequired() {
 
 
 void OptionDialog::savePassword(bool state) {
-   if ( state ) {
+   if (state) {
       QMessageBox::warning(nullptr, QObject::tr("Plaintext"),
-                              QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the password. By enabling this option, you take full responsibility for any potential problems."));
+                           QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the password. By enabling this option, you take full responsibility for any potential problems."));
    }
    return;
 }
 
 void OptionDialog::setFileLocationState(bool state) {
-   this->lineEdit_LogFileLocation->setEnabled( ! state );
-   this->pushButton_LogFileLocationBrowse->setEnabled( ! state );
+   this->lineEdit_LogFileLocation->setEnabled(! state);
+   this->pushButton_LogFileLocationBrowse->setEnabled(! state);
    return;
+}
+
+void OptionDialog::versioningChanged(bool state) {
+   groupBox_deleteBehavior->setEnabled(state);
+}
+
+void OptionDialog::saveAndClose() {
+   saveDatabaseConfig();
+   saveDefaultUnits();
+   saveFormulae();
+   saveLoggingSettings();
+   saveVersioningSettings();
+
+   // Set the right language.
+   Brewken::setLanguage(this->comboBox_lang->currentData().toString());
+
+   setVisible(false);
+}
+
+bool OptionDialog::saveDefaultUnits() {
+   bool okay = true;
+
+   okay &= saveWeightUnits();
+   okay &= saveTemperatureUnits();
+   okay &= saveVolumeUnits();
+   okay &= saveGravityUnits();
+   okay &= saveDateFormat();
+   okay &= saveColorUnits();
+   okay &= saveDiastaticUnits();
+
+   return okay;
+}
+
+void OptionDialog::saveFormulae() {
+   bool okay = false;
+
+   int ndx = ibuFormulaComboBox->itemData(ibuFormulaComboBox->currentIndex()).toInt(&okay);
+   Brewken::ibuFormula = static_cast<Brewken::IbuType>(ndx);
+   ndx = colorFormulaComboBox->itemData(colorFormulaComboBox->currentIndex()).toInt(&okay);
+   Brewken::colorFormula = static_cast<Brewken::ColorType>(ndx);
+
+   PersistentSettings::insert("mashHopAdjustment", ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
+   PersistentSettings::insert("firstWortHopAdjustment", ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
+}
+
+void OptionDialog::saveLoggingSettings() {
+   // Saving Logging Options to the Log object
+   Logging::setLogLevel(static_cast<Logging::Level>(loggingLevelComboBox->currentData().toInt()));
+   Logging::setDirectory(
+      checkBox_LogFileLocationUseDefault->isChecked() ?
+      std::optional<QDir>(std::nullopt) : std::optional<QDir>(lineEdit_LogFileLocation->text())
+   );
+   // Make sure the main window updates.
+   if (Brewken::mainWindow()) {
+      Brewken::mainWindow()->showChanges();
+   }
+}
+
+void OptionDialog::saveVersioningSettings() {
+   // Save versioning options
+   if (checkBox_versioning->checkState() == Qt::Checked) {
+      PersistentSettings::insert("versioning", true);
+      if (radioButton_deleteAncestor->isChecked()) {
+         PersistentSettings::insert("deletewhat", Recipe::ANCESTOR);
+      } else {
+         PersistentSettings::insert("deletewhat", Recipe::DESCENDANT);
+      }
+   } else {
+      // the default when versioning is off is to only delete descendant
+      PersistentSettings::insert("versioning", false);
+      PersistentSettings::insert("deletewhat", Recipe::DESCENDANT);
+   }
+
+   PersistentSettings::insert("showsnapshots", checkBox_alwaysShowSnaps->checkState() == Qt::Checked);
+
+}
+
+bool OptionDialog::saveDatabaseConfig() {
+
+   bool saveDbConfig = true;
+
+   // TODO:: FIX THIS UI. I am really not sure what the best approach is here.
+   if (this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED) {
+      QMessageBox::critical(nullptr,
+                            tr("Test connection or cancel"),
+                            tr("Saving the options without testing the connection can cause Brewken to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.")
+                           );
+      return false;
+   }
+
+   // ask the user if they want to transfer data
+   if (this->pimpl->dbConnectionTestState == TEST_PASSED) {
+      saveDbConfig = transferDatabase();
+   }
+
+   if (saveDbConfig && this->pimpl->checkBox_savePgPassword.checkState() == Qt::Checked) {
+      PersistentSettings::insert("dbPassword", this->pimpl->input_pgPassword.text());
+   } else {
+      PersistentSettings::remove("dbPassword");
+   }
+
+   Database::DBTypes dbEngine = static_cast<Database::DBTypes>(comboBox_engine->currentData().toInt());
+   if (dbEngine == Database::SQLITE) {
+      saveSqliteConfig();
+   }
+
+   return saveDbConfig;
+}
+
+bool OptionDialog::transferDatabase() {
+   bool success = true;
+   // This got unpleasant. There are multiple possible transfer paths.
+   // SQLite->Pgsql, Pgsql->Pgsql and Pgsql->SQLite. This will ensure we
+   // preserve the information required.
+   try {
+      QString theQuestion =
+         tr("Would you like Brewken to transfer your data to the new database? NOTE: If you've already loaded the data, say No");
+      if (QMessageBox::Yes == QMessageBox::question(this, tr("Transfer database"), theQuestion)) {
+         Database::instance().convertDatabase(this->pimpl->input_pgHostname.text(),
+                                              this->pimpl->input_pgDbName.text(),
+                                              this->pimpl->input_pgUsername.text(),
+                                              this->pimpl->input_pgPassword.text(),
+                                              this->pimpl->input_pgPortNum.text().toInt(),
+                                              static_cast<Database::DBTypes>(this->comboBox_engine->currentData().toInt()));
+      }
+      // Database engine stuff
+      int engine = comboBox_engine->currentData().toInt();
+      PersistentSettings::insert("dbType", engine);
+      // only write these changes when switching TO pgsql
+      if (engine == Database::PGSQL) {
+         PersistentSettings::insert("dbHostname", this->pimpl->input_pgHostname.text());
+         PersistentSettings::insert("dbPortnum",  this->pimpl->input_pgPortNum.text());
+         PersistentSettings::insert("dbSchema",   this->pimpl->input_pgSchema.text());
+         PersistentSettings::insert("dbName",     this->pimpl->input_pgDbName.text());
+         PersistentSettings::insert("dbUsername", this->pimpl->input_pgUsername.text());
+      }
+      QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken to connect to the new database"));
+   } catch (QString e) {
+      qCritical() << Q_FUNC_INFO << e;
+      success = false;
+   }
+   return success;
+}
+
+void OptionDialog::saveSqliteConfig() {
+   // Check the new userDataDir.
+   QString newUserDataDir = this->pimpl->input_userDataDir.text();
+   QDir userDirectory(newUserDataDir);
+
+   // I think this is redundant and could be handled as just a simple db
+   // transfer using the TEST_PASSED loop above.
+   if (userDirectory != PersistentSettings::getUserDataDir()) {
+      // If there are no data files present...
+      if (! QFileInfo(userDirectory, "database.sqlite").exists()) {
+         // ...tell user we will copy old data files to new location.
+         QMessageBox::information(this,
+                                  tr("Copy Data"),
+                                  tr("There do not seem to be any data files in this directory, so we will copy your old data here.")
+                                 );
+         Brewken::copyDataFiles(newUserDataDir);
+      }
+
+      PersistentSettings::setUserDataDir(newUserDataDir);
+      QMessageBox::information(
+         this,
+         tr("Restart"),
+         tr("Please restart Brewken.")
+      );
+   }
+
+   PersistentSettings::insert("maximum", this->pimpl->spinBox_numBackups.value(), "backups");
+   PersistentSettings::insert("frequency", this->pimpl->spinBox_frequency.value(), "backups");
+   PersistentSettings::insert("directory", this->pimpl->input_backupDir.text(), "backups");
+
+   return;
+}
+
+bool OptionDialog::saveWeightUnits() {
+   bool okay = false;
+   switch (weightComboBox->itemData(weightComboBox->currentIndex()).toInt(&okay)) {
+      case SI:
+      default:
+         Brewken::weightUnitSystem = SI;
+         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::siWeightUnitSystem);
+         break;
+      case USCustomary:
+         Brewken::weightUnitSystem  = USCustomary;
+         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::usWeightUnitSystem);
+         break;
+      case Imperial:
+         Brewken::weightUnitSystem  = Imperial;
+         Brewken::thingToUnitSystem.insert(Unit::Mass, &UnitSystems::usWeightUnitSystem);
+         break;
+   }
+   return okay;
+}
+
+bool OptionDialog::saveTemperatureUnits() {
+   bool okay = false;
+   switch (temperatureComboBox->itemData(temperatureComboBox->currentIndex()).toInt(&okay)) {
+      case Celsius:
+      default:
+         Brewken::tempScale = Celsius;
+         Brewken::thingToUnitSystem.insert(Unit::Temp, &UnitSystems::celsiusTempUnitSystem);
+         break;
+      case Fahrenheit:
+         Brewken::tempScale = Fahrenheit;
+         Brewken::thingToUnitSystem.insert(Unit::Temp, &UnitSystems::fahrenheitTempUnitSystem);
+         break;
+   }
+   return okay;
+}
+
+bool OptionDialog::saveVolumeUnits() {
+   bool okay = false;
+   switch (volumeComboBox->itemData(volumeComboBox->currentIndex()).toInt(&okay)) {
+      case SI:
+      default:
+         Brewken::volumeUnitSystem = SI;
+         Brewken::thingToUnitSystem.insert(Unit::Volume, &UnitSystems::siVolumeUnitSystem);
+         break;
+      case USCustomary:
+         Brewken::volumeUnitSystem = USCustomary;
+         Brewken::thingToUnitSystem.insert(Unit::Volume, &UnitSystems::usVolumeUnitSystem);
+         break;
+      case Imperial:
+         Brewken::volumeUnitSystem = Imperial;
+         Brewken::thingToUnitSystem.insert(Unit::Volume, &UnitSystems::imperialVolumeUnitSystem);
+         break;
+   }
+   return okay;
+}
+
+bool OptionDialog::saveGravityUnits() {
+   bool okay = false;
+   switch (gravityComboBox->itemData(gravityComboBox->currentIndex()).toInt(&okay)) {
+      case Brewken::SG:
+      default:
+         Brewken::densityUnit = Brewken::SG;
+         Brewken::thingToUnitSystem.insert(Unit::Density, &UnitSystems::sgDensityUnitSystem);
+         break;
+      case Brewken::PLATO:
+         Brewken::densityUnit = Brewken::PLATO;
+         Brewken::thingToUnitSystem.insert(Unit::Density, &UnitSystems::platoDensityUnitSystem);
+         break;
+   }
+   return okay;
+}
+
+bool OptionDialog::saveDateFormat() {
+   bool okay = false;
+   switch (dateComboBox->itemData(dateComboBox->currentIndex()).toInt(&okay)) {
+      case Unit::displayUS:
+      default:
+         Brewken::dateFormat = Unit::displayUS;
+         break;
+      case Unit::displayImp:
+         Brewken::dateFormat = Unit::displayImp;
+         break;
+      case Unit::displaySI:
+         Brewken::dateFormat = Unit::displaySI;
+         break;
+   }
+   return okay;
+}
+
+bool OptionDialog::saveColorUnits() {
+   bool okay = false;
+   switch (colorComboBox->itemData(colorComboBox->currentIndex()).toInt(&okay)) {
+      case Brewken::SRM:
+      default:
+         Brewken::thingToUnitSystem.insert(Unit::Color, &UnitSystems::srmColorUnitSystem);
+         Brewken::colorUnit = Brewken::SRM;
+         break;
+      case Brewken::EBC:
+         Brewken::thingToUnitSystem.insert(Unit::Color, &UnitSystems::ebcColorUnitSystem);
+         Brewken::colorUnit = Brewken::EBC;
+         break;
+   }
+   return okay;
+}
+
+bool OptionDialog::saveDiastaticUnits() {
+   bool okay = false;
+   switch (diastaticPowerComboBox->itemData(diastaticPowerComboBox->currentIndex()).toInt(&okay)) {
+      case Brewken::LINTNER:
+      default:
+         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower, &UnitSystems::lintnerDiastaticPowerUnitSystem);
+         Brewken::diastaticPowerUnit = Brewken::LINTNER;
+         break;
+      case Brewken::WK:
+         Brewken::thingToUnitSystem.insert(Unit::DiastaticPower, &UnitSystems::wkDiastaticPowerUnitSystem);
+         Brewken::diastaticPowerUnit = Brewken::WK;
+         break;
+   }
+
+   return okay;
 }

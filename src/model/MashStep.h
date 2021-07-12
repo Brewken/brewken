@@ -47,6 +47,7 @@ namespace PropertyNames::MashStep { static char const * const type = "type"; /* 
  */
 class MashStep : public NamedEntity {
    Q_OBJECT
+   Q_CLASSINFO("signal", "mashsteps")
 
    // this seems to be a class with a lot of friends
    friend class BeerXML;
@@ -125,11 +126,9 @@ public:
    bool isTemperature() const;
    bool isDecoction() const;
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
-   // MashStep objects do not have parents
-   NamedEntity * getParent() { return nullptr; }
-
+   static QStringList const types;
 signals:
 
 protected:
@@ -137,7 +136,6 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString m_typeStr;
    Type m_type;
    double m_infuseAmount_l;
    double m_stepTemp_c;
@@ -148,13 +146,6 @@ private:
    double m_decoctionAmount_l;
    int m_stepNumber;
    int mashId;
-//   Mash * m_mash;
-   bool m_cacheOnly;
-
-   bool isValidType( const QString &str ) const;
-
-   static QStringList types;
-   static QStringList typesTr;
 };
 
 #endif

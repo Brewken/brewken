@@ -24,6 +24,7 @@
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/Recipe.h"
 
 bool Salt::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -37,12 +38,6 @@ bool Salt::isEqualTo(NamedEntity const & other) const {
 
 ObjectStore & Salt::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Salt>::getInstance();
-}
-
-QString Salt::classNameStr()
-{
-   static const QString name("Salt");
-   return name;
 }
 
 Salt::Salt(QString name, bool cache) :
@@ -79,67 +74,32 @@ Salt::Salt(Salt const & other) :
 }
 
 //================================"SET" METHODS=================================
-void Salt::setAmount( double var )
-{
-   m_amount = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Salt::amount, var);
-   }
+void Salt::setAmount(double var) {
+   this->setAndNotify(PropertyNames::Salt::amount, this->m_amount, var);
 }
 
-void Salt::setAddTo( Salt::WhenToAdd var )
-{
-   if ( var < NEVER || var > EQUAL ) {
-      return;
-   }
-
-   m_add_to = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Salt::addTo, var);
-   }
+void Salt::setAddTo(Salt::WhenToAdd var) {
+   this->setAndNotify(PropertyNames::Salt::addTo, this->m_add_to, var);
 }
 
 // This may come to haunt me, but I am setting the isAcid flag and the
 // amount_is_weight flags here.
-void Salt::setType(Salt::Types type)
-{
-   if ( type < NONE || type > ACIDMLT ) {
-      return;
-   }
-
-   m_type = type;
-   m_is_acid = (type > NAHCO3);
-   m_amount_is_weight = ! (type == LACTIC || type == H3PO4);
-
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Salt::type, type);
-      setEasy(PropertyNames::Salt::isAcid, m_is_acid);
-      setEasy(PropertyNames::Salt::amountIsWeight, m_amount_is_weight);
-   }
+void Salt::setType(Salt::Types type) {
+   this->setAndNotify(PropertyNames::Salt::type,           this->m_type, type);
+   this->setAndNotify(PropertyNames::Salt::isAcid,         this->m_is_acid, (type > NAHCO3));
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amount_is_weight, !(type == LACTIC || type == H3PO4));
 }
 
-void Salt::setAmountIsWeight( bool var )
-{
-   m_amount_is_weight = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Salt::amountIsWeight, var);
-   }
+void Salt::setAmountIsWeight(bool var) {
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amount_is_weight, var);
 }
 
-void Salt::setIsAcid( bool var )
-{
-   m_is_acid = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Salt::isAcid, var);
-   }
+void Salt::setIsAcid(bool var) {
+   this->setAndNotify(PropertyNames::Salt::isAcid, this->m_is_acid, var);
 }
 
-void Salt::setPercentAcid(double var)
-{
-   m_percent_acid = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Salt::percentAcid, var);
-   }
+void Salt::setPercentAcid(double var) {
+   this->setAndNotify(PropertyNames::Salt::percentAcid, this->m_percent_acid, var);
 }
 
 //=========================="GET" METHODS=======================================
@@ -231,4 +191,8 @@ double Salt::SO4() const
       case Salt::MGSO4: return 389.0 * m_amount * 1000.0;
       default: return 0.0;
    }
+}
+
+Recipe * Salt::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

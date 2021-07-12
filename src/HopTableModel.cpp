@@ -73,7 +73,8 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &HopTableModel::contextMenu);
-   connect(&ObjectStoreTyped<InventoryHop>::getInstance(), &ObjectStoreTyped<InventoryHop>::signalPropertyChanged, this, &HopTableModel::changedInventory);
+   connect(&ObjectStoreTyped<InventoryHop>::getInstance(), &ObjectStoreTyped<InventoryHop>::signalPropertyChanged, this,
+           &HopTableModel::changedInventory);
    return;
 }
 
@@ -98,11 +99,13 @@ void HopTableModel::observeDatabase(bool val) {
    if (val) {
       observeRecipe(nullptr);
       removeAll();
-      connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this, &HopTableModel::addHop);
+      connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this,
+              &HopTableModel::addHop);
       connect(&ObjectStoreTyped<Hop>::getInstance(),
               &ObjectStoreTyped<Hop>::signalObjectDeleted,
               this,
-              static_cast<bool (HopTableModel::*)(int)>(&HopTableModel::removeHop)); // static_cast is needed here because removeHop is overloaded
+              static_cast<bool (HopTableModel::*)(int)>
+              (&HopTableModel::removeHop)); // static_cast is needed here because removeHop is overloaded
       this->addHops(ObjectStoreTyped<Hop>::getInstance().getAllRaw());
    } else {
       removeAll();
@@ -154,21 +157,20 @@ void HopTableModel::addHop(int hopId) {
    int size = hopObs.size();
    beginInsertRows(QModelIndex(), size, size);
    hopObs.append(hop);
-   connect(hop, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
-   //reset(); // Tell everybody that the table has changed.
+   connect(hop, &NamedEntity::changed, this, &HopTableModel::changed);
    endInsertRows();
+   return;
 }
 
 void HopTableModel::addHops(QList<Hop *> hops) {
-   QList<Hop *>::iterator i;
    QList<Hop *> tmp;
 
-   for (i = hops.begin(); i != hops.end(); i++) {
-      if (recObs == nullptr && ((*i)->deleted() || !(*i)->display())) {
+   for (auto hop : hops) {
+      if (recObs == nullptr && (hop->deleted() || !hop->display())) {
          continue;
       }
-      if (!hopObs.contains(*i)) {
-         tmp.append(*i);
+      if (!hopObs.contains(hop)) {
+         tmp.append(hop);
       }
    }
 
@@ -177,12 +179,13 @@ void HopTableModel::addHops(QList<Hop *> hops) {
       beginInsertRows(QModelIndex(), size, size + tmp.size() - 1);
       hopObs.append(tmp);
 
-      for (i = tmp.begin(); i != tmp.end(); i++) {
-         connect(*i, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
+      for (auto hop : tmp) {
+         connect(hop, &NamedEntity::changed, this, &HopTableModel::changed);
       }
 
       endInsertRows();
    }
+   return;
 }
 
 bool HopTableModel::removeHop(Hop * hop) {
@@ -203,7 +206,9 @@ bool HopTableModel::removeHop(Hop * hop) {
 bool HopTableModel::removeHop(int hopId) {
    auto match = std::find_if(this->hopObs.begin(),
                              this->hopObs.end(),
-                             [hopId](Hop * current){return hopId == current->key();});
+   [hopId](Hop * current) {
+      return hopId == current->key();
+   });
    if (match == this->hopObs.cend()) {
       // We didn't find the deleted Hop in our list
       return false;
@@ -436,7 +441,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                  "inventoryAmount",
+                                                  PropertyNames::NamedEntityWithInventory::inventory,
                                                   Brewken::qStringToSI(value.toString(), &Units::kilograms, displayUnit(HOPINVENTORYCOL)),
                                                   tr("Change Hop Inventory Amount"));
          }

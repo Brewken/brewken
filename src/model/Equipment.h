@@ -141,7 +141,7 @@ public:
    //! \brief Calculate how much wort is left immediately at knockout.
    double wortEndOfBoil_l( double kettleWort_l ) const;
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
    void changedBoilSize_l(double);

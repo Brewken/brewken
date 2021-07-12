@@ -34,6 +34,8 @@
 #include "Unit.h"
 
 namespace PropertyNames::Fermentable { static char const * const addAfterBoil = "addAfterBoil"; /* previously kpropAddAfterBoil */ }
+namespace PropertyNames::Fermentable { static char const * const additionMethod = "additionMethod"; }
+namespace PropertyNames::Fermentable { static char const * const additionTime = "additionTime"; }
 namespace PropertyNames::Fermentable { static char const * const amount_kg = "amount_kg"; /* previously kpropAmountKg */ }
 namespace PropertyNames::Fermentable { static char const * const coarseFineDiff_pct = "coarseFineDiff_pct"; /* previously kpropCoarseFineDiff */ }
 namespace PropertyNames::Fermentable { static char const * const color_srm = "color_srm"; /* previously kpropColor */ }
@@ -186,7 +188,7 @@ public:
 
    void save();
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 

@@ -60,7 +60,7 @@ void HopEditor::save()
       return;
    }
 
-   h->setName(lineEdit_name->text(), h->cacheOnly());
+   h->setName(lineEdit_name->text());
    h->setAlpha_pct(lineEdit_alpha->toSI());
    h->setAmount_kg(lineEdit_amount->toSI());
    h->setUse(static_cast<Hop::Use>(comboBox_use->currentIndex()));

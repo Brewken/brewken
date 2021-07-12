@@ -157,7 +157,6 @@ bool Brewken::_isInteractive = true;
 QDateTime Brewken::lastDbMergeRequest = QDateTime::fromString("1986-02-24T06:00:00", Qt::ISODate);
 
 QString Brewken::currentLanguage = "en";
-Brewken::DBTypes Brewken::_dbType = Brewken::NODB;
 
 bool Brewken::checkVersion = true;
 
@@ -333,43 +332,10 @@ bool Brewken::initialize()
    // Make sure all the necessary directories and files we need exist before starting.
    ensureDirectoriesExist();
 
-   // Ensure the user data directory exists
-/*   QDir userDataDirectory = PersistentSettings::getUserDataDir();
-   if (!userDataDir.exists()) {
-      qDebug() << QString("User data dir \"%1\" does not exist, trying to create").arg(userDataDir.path());
-      createDir(userDataDir);
-      qDebug() << "UserDataDir Created";
-   }
-*/
-
-   // If a specific user data directory was specified via command-line parameter, we use that.  Otherwise we look for a
-   // value remembered from the last run of the program.  And failing that we use the default.
-/*   if (!userDirectory.isEmpty() && QDir(userDirectory).exists()) {
-      userDataDir.setPath(QDir(userDirectory).canonicalPath());
-   } else if (PersistentSettings::contains("user_data_dir") &&
-              QDir(PersistentSettings::value("user_data_dir","").toString()).exists()) {
-      userDataDir.setPath(
-         QDir(PersistentSettings::value("user_data_dir", "").toString()).canonicalPath()
-      );
-
-   } else {
-      qWarning() << QString("User data directory not specified or doesn't exist - using default.");
-      userDataDir = Brewken::getDefaultUserDataDir();
-   }
-*/
-
    readSystemOptions();
 
    loadMap();
 
-
-   // If the directory doesn't exist, canonicalPath() will return an empty
-   // string. By waiting until after we know the directory is created, we
-   // make sure it isn't empty
-/*   if (!PersistentSettings::contains("user_data_dir")) {
-      PersistentSettings::insert("user_data_dir", userDataDir.canonicalPath());
-   }
-*/
    loadTranslations(); // Do internationalization.
 
 #if defined(Q_OS_MAC)
@@ -380,76 +346,6 @@ bool Brewken::initialize()
    // loading the main window.
    qDebug() << "Loading Database...";
    return Database::instance().loadSuccessful();
-}
-
-Brewken::DBTypes Brewken::dbType()
-{
-   if ( _dbType == Brewken::NODB )
-      _dbType = static_cast<Brewken::DBTypes>(PersistentSettings::value("dbType", Brewken::SQLITE).toInt());
-   return _dbType;
-}
-
-QString Brewken::dbTrue(Brewken::DBTypes type)
-{
-   Brewken::DBTypes whichDb = type;
-   QString retval;
-
-   if ( whichDb == Brewken::NODB )
-      whichDb = dbType();
-
-   switch( whichDb ) {
-      case SQLITE:
-         retval = "1";
-         break;
-      case PGSQL:
-         retval = "true";
-         break;
-      default:
-         retval = "whiskeytangofoxtrot";
-   }
-   return retval;
-}
-
-QString Brewken::dbFalse(Brewken::DBTypes type)
-{
-   Brewken::DBTypes whichDb = type;
-   QString retval;
-
-   if ( whichDb == Brewken::NODB )
-      whichDb = dbType();
-
-   switch( whichDb ) {
-      case SQLITE:
-         retval = "0";
-         break;
-      case PGSQL:
-         retval = "false";
-         break;
-      default:
-         retval = "notwhiskeytangofoxtrot";
-   }
-   return retval;
-}
-
-QString Brewken::dbBoolean(bool flag, Brewken::DBTypes type)
-{
-   Brewken::DBTypes whichDb = type;
-   QString retval;
-
-   if ( whichDb == Brewken::NODB )
-      whichDb = dbType();
-
-   switch( whichDb ) {
-      case SQLITE:
-         retval = flag ? QString("1") : QString("0");
-         break;
-      case PGSQL:
-         retval = flag ? QString("true") : QString("false");
-         break;
-      default:
-         retval = "notwhiskeytangofoxtrot";
-   }
-   return retval;
 }
 
 void Brewken::cleanup() {
@@ -753,7 +649,7 @@ void Brewken::updateConfig()
       switch ( ++cVersion ) {
          case 1:
             // Update the dbtype, because I had to increase the NODB value from -1 to 0
-            int newType = static_cast<Brewken::DBTypes>(PersistentSettings::value("dbType",Brewken::NODB).toInt() + 1);
+            int newType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType",Database::NODB).toInt() + 1);
             // Write that back to the config file
             PersistentSettings::insert("dbType", static_cast<int>(newType));
             // and make sure we don't do it again.
@@ -908,8 +804,7 @@ void Brewken::readSystemOptions()
    //=======================Date format===================
    dateFormat = static_cast<Unit::unitDisplay>(PersistentSettings::value("date_format",Unit::displaySI).toInt());
 
-   //=======================Database type ================
-   _dbType = static_cast<Brewken::DBTypes>(PersistentSettings::value("dbType",Brewken::SQLITE).toInt());
+   return;
 
 }
 

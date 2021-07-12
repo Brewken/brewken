@@ -34,11 +34,15 @@
  * \brief View/controller dialog to manage options.
  */
 class OptionDialog : public QDialog, public Ui::optionsDialog {
+   Q_OBJECT
 
 public:
    //! \brief Default constructor.
-   OptionDialog(QWidget *parent=0);
+   OptionDialog(QWidget * parent = 0);
    ~OptionDialog();
+
+signals:
+   void showAllAncestors(bool showem);
 
 public slots:
    //! \brief Show the dialog.
@@ -63,18 +67,44 @@ public slots:
    void testRequired();
    //! \brief handle the dialogs for saving passwords
    void savePassword(bool state);
+   //! \brief does the version options
+   void versioningChanged(bool state);
 
    void setFileLocationState(bool state);
 
 protected:
 
    //! \brief Reimplemented from QWidget.
-   virtual void changeEvent(QEvent* e);
+   virtual void changeEvent(QEvent * e);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
+
+   void configure_unitCombos();
+   void configure_formulaCombos();
+   void configure_languages();
+   void configure_logging();
+   void connect_signals();
+
+   bool saveDatabaseConfig();
+   bool saveDefaultUnits();
+   void saveLoggingSettings();
+   void saveVersioningSettings();
+   bool transferDatabase();
+   void saveSqliteConfig();
+   void saveFormulae();
+
+   bool saveWeightUnits();
+   bool saveTemperatureUnits();
+   bool saveVolumeUnits();
+   bool saveGravityUnits();
+   bool saveDateFormat();
+   bool saveColorUnits();
+   bool saveDiastaticUnits();
+
+   void signalAncestors();
 };
 
 #endif

@@ -115,7 +115,7 @@ public:
    //! \brief The profile.
    Q_PROPERTY( QString profile READ profile WRITE setProfile /*NOTIFY changed*/ /*changedProfile*/ )
    //! \brief The ingredients.
-   Q_PROPERTY( QString ingredients READ ingredients WRITE setNamedEntitys /*NOTIFY changed*/ /*changedNamedEntitys*/ )
+   Q_PROPERTY( QString ingredients READ ingredients WRITE setIngredients /*NOTIFY changed*/ /*changedIngredients*/ )
    //! \brief The commercial examples.
    Q_PROPERTY( QString examples READ examples WRITE setExamples /*NOTIFY changed*/ /*changedExamples*/ )
 
@@ -138,7 +138,7 @@ public:
    void setAbvMax_pct( double var);
    void setNotes( const QString& var);
    void setProfile( const QString& var);
-   void setNamedEntitys( const QString& var);
+   void setIngredients( const QString& var);
    void setExamples( const QString& var);
 
    QString category() const;
@@ -164,7 +164,7 @@ public:
    QString ingredients() const;
    QString examples() const;
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 
@@ -177,7 +177,6 @@ private:
    QString m_categoryNumber;
    QString m_styleLetter;
    QString m_styleGuide;
-   QString m_typeStr;
    Type m_type;
    double m_ogMin;
    double m_ogMax;
@@ -195,9 +194,6 @@ private:
    QString m_profile;
    QString m_ingredients;
    QString m_examples;
-
-   bool isValidType( const QString &str );
-   static QStringList m_types;
 };
 
 Q_DECLARE_METATYPE( Style* )

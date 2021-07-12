@@ -83,6 +83,12 @@ public:
    void setDeleted(bool var);
 
    /**
+    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
+    *        as it's needed for \c ObjectStoreTyped::softDelete().
+    */
+   void setDisplay(bool var);
+
+   /**
     * \brief Returns the name of the ingredient class (eg Hop, Fermentable, Misc, Yeast) to which this Inventory class
     *        relates.  Subclasses need to provide the (trivial) implementation of this.  Primarily useful for logging
     *        and debugging.

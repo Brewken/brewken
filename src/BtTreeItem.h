@@ -55,8 +55,7 @@ class Water;
  *
  * It does assume that everything being stored can be cast into a QObject.
  */
-class BtTreeItem
-{
+class BtTreeItem {
 
 public:
 
@@ -66,6 +65,8 @@ public:
    enum RECIPEITEM {
       //! Recipe name
       RECIPENAMECOL,
+      //! Recipe ancestors
+      RECIPEANCCOUNT,
       //! Recipe brewdate
       RECIPEBREWDATECOL,
       //! Recipe style
@@ -212,17 +213,17 @@ public:
       NUMTYPES
    };
 
-   friend bool operator==(BtTreeItem &lhs, BtTreeItem &rhs);
+   friend bool operator==(BtTreeItem & lhs, BtTreeItem & rhs);
 
    //! \brief A constructor that sets the \c type of the BtTreeItem and
    // the \c parent
-   BtTreeItem(int _type = NUMTYPES, BtTreeItem *parent=nullptr );
+   BtTreeItem(int _type = NUMTYPES, BtTreeItem * parent = nullptr);
    virtual ~BtTreeItem();
 
    //! \brief returns the child at \c number
-   BtTreeItem *child(int number);
+   BtTreeItem * child(int number);
    //! \brief returns item's parent
-   BtTreeItem *parent();
+   BtTreeItem * parent();
 
    //! \brief returns item's type
    int type();
@@ -240,30 +241,30 @@ public:
    QVariant data(int column);
 
    //! \brief sets the \c t type of the object and the \c d data
-   void setData(int t, QObject *d);
+   void setData(int t, QObject * d);
 
    //! \brief returns the data as a Recipe
-   Recipe*      recipe();
+   Recipe   *   recipe();
    //! \brief returns the data as an Equipment
-   Equipment*   equipment();
+   Equipment  * equipment();
    //! \brief returns the data as a fermentable
-   Fermentable* fermentable();
+   Fermentable * fermentable();
    //! \brief returns the data as a hop
-   Hop*         hop();
+   Hop     *    hop();
    //! \brief returns the data as a misc
-   Misc*        misc();
+   Misc    *    misc();
    //! \brief returns the data as a yeast
-   Yeast*       yeast();
+   Yeast    *   yeast();
    //! \brief returns the data as a brewnote
-   BrewNote*    brewNote();
+   BrewNote  *  brewNote();
    //! \brief returns the data as a style
-   Style*       style();
+   Style    *   style();
    //! \brief returns data as a folder
-   BtFolder*   folder();
+   BtFolder  * folder();
    //! \brief returns data as a water
-   Water*   water();
+   Water  * water();
    //! \brief returns the data as a NamedEntity
-   NamedEntity* thing();
+   NamedEntity * thing();
 
    //! \brief inserts \c count new items of \c type, starting at \c position
    bool insertChildren(int position, int count, int _type = RECIPE);
@@ -272,20 +273,26 @@ public:
 
    //! \brief returns the name.
    QString name();
+   //! \brief flag this node to override display() or not
+   void setShowMe(bool val);
+   //! \brief does the node want to be shown regardless of display()
+   bool showMe() const;
 
    //! \brief For logging an ITEMTYPE
    char const * const itemTypeToString(ITEMTYPE);
 
 private:
    /*!  Keep a pointer to the parent tree item. */
-   BtTreeItem* parentItem;
+   BtTreeItem * parentItem;
    /*!  The list of children associated with this item */
-   QList<BtTreeItem*> childItems;
+   QList<BtTreeItem *> childItems;
 
    /*! the type of this item */
    int _type;
    /*! the data associated with this item */
-   QObject* _thing;
+   QObject * _thing;
+   //! \b overrides the display()
+   bool m_showMe;
 
    /*! helper functions to get the information from the item */
    QVariant dataRecipe(int column);

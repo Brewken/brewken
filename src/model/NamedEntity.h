@@ -35,6 +35,7 @@
 #include "model/NamedParameterBundle.h"
 
 class ObjectStore;
+class Recipe;
 
 namespace PropertyNames::NamedEntity { static char const * const folder = "folder"; /* previously kpropFolder */ }
 namespace PropertyNames::NamedEntity { static char const * const display = "display"; /* previously kpropDisplay */ }
@@ -159,13 +160,13 @@ public:
    static QRegExp const & getDuplicateNameNumberMatcher();
 
    //! And ways to set those flags
-   void setDeleted(const bool var, bool cachedOnly = false);
-   void setDisplay(const bool var, bool cachedOnly = false);
+   void setDeleted(bool const var);
+   void setDisplay(bool const var);
    //! and a way to set the folder
-   virtual void setFolder(const QString var, bool signal=true, bool cachedOnly = false);
+   virtual void setFolder(QString const & var);
 
    //!
-   void setName(const QString var, bool cachedOnly = false);
+   void setName(QString const & var);
 
    //! \returns our key in the table we are stored in.
    int key() const;
@@ -229,6 +230,13 @@ public:
       return reinterpret_cast<NamedEntity*>(addr);
    }
 
+   /**
+    * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
+    *
+    * \return \c nullptr if this object is not, and does not belong to, any Recipe
+    */
+   virtual Recipe * getOwningRecipe() = 0;
+
    /*!
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
     *        For those that do, we think of the copy as being a child of the original NamedEntity.  This function allows
@@ -258,11 +266,17 @@ signals:
     * NOTE: when subclassing, be \em extra careful not to create a method with
     * the same signature. Otherwise, everything will silently break.
     */
-   void changed(QMetaProperty, QVariant value = QVariant());
+   void changed(QMetaProperty, QVariant value = QVariant()) const;
    void changedFolder(QString);
    void changedName(QString);
 
 protected:
+   //! The key of this entity in its table.
+   int m_key;
+   // This is 0 if there is no parent (or parent is not yet known)
+   int parentKey;
+   bool m_cacheOnly;
+
    /**
     * \brief Subclasses need to overload (NB not override) this function to do the substantive work for operator==.
     *        By the time this function is called on a subclass, we will already have established that the two objects
@@ -282,33 +296,85 @@ protected:
     */
    virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
 
-   //! The key of this entity in its table.
-   int _key;
-   // This is 0 if there is no parent (or parent is not yet known)
-   int parentKey;
-   bool m_cacheOnly;
-
-   /*!
-    * \param prop_name A meta-property name
-    * \param col_name The appropriate column in the table.
-    * \param value the new value  .:TODO:. We don't need this as wew should be able to read it out of the object
-    * \param notify true to call NOTIFY method associated with \c prop_name
-    * Should do the following:
-    * 1) Set the appropriate value in the appropriate table row.
-    * 2) Call the NOTIFY method associated with \c prop_name if \c notify == true.
+   /**
+    * \brief Used by setters to force a value not to be below a certain amount
+    *
+    * \param value the value to check
+    * \param name the name of the value being set, so we can log a warning about it being out of range
+    * \param minValue what value must not be below -- 0 if not specified
+    * \param defaultValue what to use instead of value if it is below minValue -- 0 if not specified
+    *
+    * \return What to use for the value (ie \c value or \c defaultValue, depending on whether \c value is in range
     */
-   /*
-   void set( const char* prop_name, const char* col_name, QVariant const& value, bool notify = true );
-   void set( const QString& prop_name, const QString& col_name, const QVariant& value, bool notify = true );
-   */
-   void setEasy(char const * const prop_name, QVariant value, bool notify = true);
+   template<typename T> T enforceMin(T const value,
+                                     char const * const name,
+                                     T const minValue = 0,
+                                     T const defaultValue = 0) {
+      if (value < minValue) {
+         qWarning() <<
+            Q_FUNC_INFO << this->metaObject()->className() << ":" << name << "value" << value <<
+            "below min of" << minValue << "so using" << defaultValue << "instead";
+         return defaultValue;
+      }
+      return value;
+   }
+
+   /**
+    * \brief Like \c enforceMin, but for a range
+    *
+    *        (We often want \c minValue = 0 and \c maxValue = 100, but I don't default them here as I want it to be
+    *         hard to get \c enforceMin and \c enforceMinAndMax mixed up.)
+    */
+   template<typename T> T enforceMinAndMax(T const value,
+                                           char const * const name,
+                                           T const minValue,
+                                           T const maxValue,
+                                           T const defaultValue = 0) {
+      if (value < minValue || value > maxValue) {
+         qWarning() <<
+            Q_FUNC_INFO << this->metaObject()->className() << ":" << name << "value" << value <<
+            "outside range min of" << minValue << "-" << maxValue << "so using" << defaultValue << "instead";
+         return defaultValue;
+      }
+      return value;
+   }
+
+   /**
+    * \brief This is intended to be called from setter member functions (including those of derived classes),
+    *        \b before changing a property.  It triggers a check for whether this property change would require us to
+    *        create a new version of a Recipe - eg because we are modifying some ingredient or other attribute of the
+    *        Recipe and automatic versioning is enabled.
+    */
+   void prepareForPropertyChange(char const * const propertyName);
+
+   /**
+    * \brief This is intended to be called from setter member functions (including those of derived classes), \b after
+    *        changing a property.  It checks whether the object is is in "cache only" mode and, if not, propagates the
+    *        change down to the database layer and, optionally, also emits a "changed" signal.
+    *
+    * \param propertyName The name of the property that has been changed
+    * \param emitChangedSignal Whether to emit a "changed" signal. Default is \c true
+    */
+   void propagatePropertyChange(char const * const propertyName, bool notify = true) const;
+
+   /**
+    * \brief Convenience function that wraps preparing for a property change, making it and propagating it.
+    */
+   template<typename T>
+   void setAndNotify(char const * const propertyName,
+                     T & memberVariable,
+                     T const newValue) {
+      this->prepareForPropertyChange(propertyName);
+      memberVariable = newValue;
+      this->propagatePropertyChange(propertyName);
+      return;
+   }
 
 private:
-  mutable QString _folder;
-  mutable QString _name;
-  mutable bool _display;
-  mutable bool _deleted;
-
+  mutable QString m_folder;
+  mutable QString m_name;
+  mutable bool m_display;
+  mutable bool m_deleted;
 };
 
 #endif

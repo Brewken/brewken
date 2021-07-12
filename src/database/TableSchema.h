@@ -18,6 +18,7 @@
 
 #include <QString>
 
+#include "database/Database.h"
 #include "database/PropertySchema.h"
 #include "Brewken.h"
 
@@ -67,69 +68,69 @@ public:
    // Get the property object. Try not to use this?
    const PropertySchema* property(QString prop) const;
    // some properties may be named differently (like inventory v quanta)
-   const QString propertyName(QString prop, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString propertyName(QString prop, Database::DBTypes type = Database::ALLDB) const;
    // get the database column name for this property
-   const QString propertyToColumn(QString prop, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString propertyToColumn(QString prop, Database::DBTypes type = Database::ALLDB) const;
    // get the database column type
-   const QString propertyColumnType(QString prop, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString propertyColumnType(QString prop, Database::DBTypes type = Database::ALLDB) const;
    // get the XML tag for this column
-   const QString propertyToXml(QString prop, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString propertyToXml(QString prop, Database::DBTypes type = Database::ALLDB) const;
    // get the default value for this column
-   const QVariant propertyColumnDefault(QString prop, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QVariant propertyColumnDefault(QString prop, Database::DBTypes type = Database::ALLDB) const;
    // get the column size of the property's column
-   int propertyColumnSize(QString prop, Brewken::DBTypes type = Brewken::ALLDB) const;
+   int propertyColumnSize(QString prop, Database::DBTypes type = Database::ALLDB) const;
    // given an XML tag, get the associated property name
-   const QString xmlToProperty(QString xmlName, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString xmlToProperty(QString xmlName, Database::DBTypes type = Database::ALLDB) const;
    // returns the property to be used for the increment/decrement triggers
    const QString triggerProperty() const;
 
    //!brief get all the property names
-   const QStringList allPropertyNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QStringList allPropertyNames(Database::DBTypes type = Database::ALLDB) const;
    //!brief get all the database column names
-   const QStringList allColumnNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QStringList allColumnNames(Database::DBTypes type = Database::ALLDB) const;
    //!brief get keys for the properties
    const QStringList allProperties() const;
 
    // things to do on foreign keys
    // get a specific foreign key column name
-   const QString foreignKeyToColumn(QString fkey, Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString foreignKeyToColumn(QString fkey, Database::DBTypes type = Database::ALLDB) const;
    // a lot of tables have one foreign key. This is a nice shortcut for that
-   const QString foreignKeyToColumn(Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString foreignKeyToColumn(Database::DBTypes type = Database::ALLDB) const;
 
    // which table does this foreign key point to
-   DatabaseConstants::DbTableId foreignTable(QString fkey, Brewken::DBTypes type = Brewken::ALLDB) const;
+   DatabaseConstants::DbTableId foreignTable(QString fkey, Database::DBTypes type = Database::ALLDB) const;
    // a lot of tables have one foreign key. This is a nice shortcut for that
-   DatabaseConstants::DbTableId foreignTable(Brewken::DBTypes type = Brewken::ALLDB) const;
+   DatabaseConstants::DbTableId foreignTable(Database::DBTypes type = Database::ALLDB) const;
 
    //!brief get all the foreign key property names
-   const QStringList allForeignKeyNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QStringList allForeignKeyNames(Database::DBTypes type = Database::ALLDB) const;
    //!brief get all the foreign key column names
-   const QStringList allForeignKeyColumnNames(Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QStringList allForeignKeyColumnNames(Database::DBTypes type = Database::ALLDB) const;
    //!brief get keys for the foreign keys
    const QStringList allForeignKeys() const;
 
    //!brief Use this to get the not recipe_id index from an inrec table
-   const QString inRecIndexName(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString inRecIndexName(Database::DBTypes type = Database::ALLDB);
    //!brief Use this to get the child_id index from a children table
-   const QString childIndexName(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString childIndexName(Database::DBTypes type = Database::ALLDB);
    //!brief Use this to get the recipe_id from a inrec table
-   const QString recipeIndexName(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString recipeIndexName(Database::DBTypes type = Database::ALLDB);
    //!brief Use this to get the parent_id from a child table
-   const QString parentIndexName(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString parentIndexName(Database::DBTypes type = Database::ALLDB);
 
    // Not sure these belong here yet, but maybe
-   const QString generateCreateTable(Brewken::DBTypes type = Brewken::ALLDB, QString tmpName = QString("") );
-   const QString generateUpdateRow(int key, Brewken::DBTypes type = Brewken::ALLDB);
-   const QString generateUpdateRow(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString generateCreateTable(Database::DBTypes type = Database::ALLDB, QString tmpName = QString("") );
+   const QString generateUpdateRow(int key, Database::DBTypes type = Database::ALLDB);
+   const QString generateUpdateRow(Database::DBTypes type = Database::ALLDB);
    // this one includes the foreign keys and is really only suitable for copying databases
-   const QString generateInsertRow(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString generateInsertRow(Database::DBTypes type = Database::ALLDB);
    // this one ignores the foreign keys and is more generally useful
-   const QString generateInsertProperties(Brewken::DBTypes type = Brewken::ALLDB);
+   const QString generateInsertProperties(Database::DBTypes type = Database::ALLDB);
    // when dropping columns, we have to copy tables in sqlite. This does that.
-   const QString generateCopyTable( QString dest, Brewken::DBTypes type = Brewken::ALLDB);
+   const QString generateCopyTable( QString dest, Database::DBTypes type = Database::ALLDB);
 
-   const QString generateDecrementTrigger(Brewken::DBTypes type);
-   const QString generateIncrementTrigger(Brewken::DBTypes type);
+   const QString generateDecrementTrigger(Database::DBTypes type);
+   const QString generateIncrementTrigger(Database::DBTypes type);
 
    bool isInventoryTable();
    bool isBaseTable();
@@ -138,7 +139,7 @@ public:
    bool isBtTable();
    bool isMetaTable();
 
-   const QString keyName(Brewken::DBTypes type = Brewken::ALLDB) const;
+   const QString keyName(Database::DBTypes type = Database::ALLDB) const;
 
 private:
 public:
@@ -168,11 +169,11 @@ private:
    // some already difficult to read calls harder to read. Or I can cache the
    // default in the table and use that if ALLDB is sent, which breaks the
    // metaphor.
-   Brewken::DBTypes m_defType;
+   Database::DBTypes m_defType;
 
    // getter only. But this is private because only my dearest,
    // closest friends can do this
-   Brewken::DBTypes defType() const;
+   Database::DBTypes defType() const;
 
    void defineTable();
    void defineStyleTable();

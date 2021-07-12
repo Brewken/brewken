@@ -19,6 +19,7 @@
 #include "Brewken.h"
 #include <QString>
 
+#include "database/Database.h"
 #include "database/TableSchemaConst.h"
 
 // Needs the forward declaration
@@ -46,7 +47,7 @@ public:
    // since I've removed all the things from the initializer, we need two
    // methods to actually add properties
    void addProperty(QString propName,
-                   Brewken::DBTypes dbType = Brewken::ALLDB,
+                   Database::DBTypes dbType = Database::ALLDB,
                    QString colName = QString(),
                    QString xmlName = QString(),
                    QString colType = QString(),
@@ -55,31 +56,31 @@ public:
                    QString constraint = QString() );
 
    void addForeignKey(QString propName,
-                      Brewken::DBTypes dbType = Brewken::ALLDB,
+                      Database::DBTypes dbType = Database::ALLDB,
                       QString colName = QString(),
                       DatabaseConstants::DbTableId fTable = DatabaseConstants::NOTABLE);
 
    // this may get revisited later, but if you either do not include the
    // dbType in the call or you send ALLDB, then you will get the default
-   const QString propName(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   const QString colName(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   const QString xmlName(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   const QString constraint(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   const QString colType(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   const QVariant defaultValue(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   int colSize(Brewken::DBTypes dbType = Brewken::ALLDB) const;
-   DatabaseConstants::DbTableId fTable(Brewken::DBTypes dbType = Brewken::ALLDB) const;
+   const QString propName(Database::DBTypes dbType = Database::ALLDB) const;
+   const QString colName(Database::DBTypes dbType = Database::ALLDB) const;
+   const QString xmlName(Database::DBTypes dbType = Database::ALLDB) const;
+   const QString constraint(Database::DBTypes dbType = Database::ALLDB) const;
+   const QString colType(Database::DBTypes dbType = Database::ALLDB) const;
+   const QVariant defaultValue(Database::DBTypes dbType = Database::ALLDB) const;
+   int colSize(Database::DBTypes dbType = Database::ALLDB) const;
+   DatabaseConstants::DbTableId fTable(Database::DBTypes dbType = Database::ALLDB) const;
 
    // sets
    // NOTE: I am specifically not allowing the propName to be set. Do that
    // when you call addProperty or addForeignKey. I may
-   void setColName(QString column, Brewken::DBTypes dbType = Brewken::ALLDB);
-   void setXmlName(QString xmlName, Brewken::DBTypes dbType = Brewken::ALLDB);
-   void setConstraint(QString constraint, Brewken::DBTypes dbType = Brewken::ALLDB);
-   void setColType(QString colType, Brewken::DBTypes dbType = Brewken::ALLDB);
-   void setDefaultValue(QVariant defVal, Brewken::DBTypes dbType = Brewken::ALLDB);
-   void setColSize(int size, Brewken::DBTypes dbType = Brewken::ALLDB);
-   void setFTable(DatabaseConstants::DbTableId fTable, Brewken::DBTypes dbType = Brewken::ALLDB);
+   void setColName(QString column, Database::DBTypes dbType = Database::ALLDB);
+   void setXmlName(QString xmlName, Database::DBTypes dbType = Database::ALLDB);
+   void setConstraint(QString constraint, Database::DBTypes dbType = Database::ALLDB);
+   void setColType(QString colType, Database::DBTypes dbType = Database::ALLDB);
+   void setDefaultValue(QVariant defVal, Database::DBTypes dbType = Database::ALLDB);
+   void setColSize(int size, Database::DBTypes dbType = Database::ALLDB);
+   void setFTable(DatabaseConstants::DbTableId fTable, Database::DBTypes dbType = Database::ALLDB);
 
 private:
    PropertySchema();

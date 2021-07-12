@@ -25,6 +25,7 @@
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/Recipe.h"
 
 bool Water::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -43,12 +44,6 @@ bool Water::isEqualTo(NamedEntity const & other) const {
 
 ObjectStore & Water::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Water>::getInstance();
-}
-
-QString Water::classNameStr()
-{
-   static const QString name("Water");
-   return name;
 }
 
 Water::Water(QString name, bool cache) :
@@ -109,120 +104,60 @@ Water::Water(NamedParameterBundle const & namedParameterBundle) :
 }
 
 //================================"SET" METHODS=================================
-void Water::setAmount( double var )
-{
-   m_amount = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::amount, var);
-   }
+void Water::setAmount(double var) {
+   this->setAndNotify(PropertyNames::Water::amount, this->m_amount, var);
 }
 
-void Water::setCalcium_ppm( double var )
-{
-   m_calcium_ppm = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::calcium_ppm, var);
-   }
+void Water::setCalcium_ppm(double var) {
+   this->setAndNotify(PropertyNames::Water::calcium_ppm, this->m_calcium_ppm, var);
 }
 
-void Water::setBicarbonate_ppm( double var )
-{
-   m_bicarbonate_ppm = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::bicarbonate_ppm, var);
-   }
+void Water::setBicarbonate_ppm(double var) {
+   this->setAndNotify(PropertyNames::Water::bicarbonate_ppm, this->m_bicarbonate_ppm, var);
 }
 
-void Water::setChloride_ppm( double var )
-{
-   m_chloride_ppm = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::chloride_ppm, var);
-   }
+void Water::setChloride_ppm(double var) {
+   this->setAndNotify(PropertyNames::Water::chloride_ppm, this->m_chloride_ppm, var);
 }
 
-void Water::setSodium_ppm( double var )
-{
-   m_sodium_ppm = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::sodium_ppm, var);
-   }
+void Water::setSodium_ppm(double var) {
+   this->setAndNotify(PropertyNames::Water::sodium_ppm, this->m_sodium_ppm, var);
 }
 
-void Water::setMagnesium_ppm( double var )
-{
-   m_magnesium_ppm = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::magnesium_ppm, var);
-   }
+void Water::setMagnesium_ppm(double var) {
+   this->setAndNotify(PropertyNames::Water::magnesium_ppm, this->m_magnesium_ppm, var);
 }
 
-void Water::setPh( double var )
-{
-   m_ph = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::ph, var);
-   }
+void Water::setPh(double var) {
+   this->setAndNotify(PropertyNames::Water::ph, this->m_ph, var);
 }
 
-void Water::setAlkalinity(double var)
-{
-   m_alkalinity = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::alkalinity, var);
-   }
+void Water::setAlkalinity(double var) {
+   this->setAndNotify(PropertyNames::Water::alkalinity, this->m_alkalinity, var);
 }
 
-void Water::setSulfate_ppm( double var )
-{
-   m_sulfate_ppm = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::sulfate_ppm, var);
-   }
+void Water::setSulfate_ppm(double var) {
+   this->setAndNotify(PropertyNames::Water::sulfate_ppm, this->m_sulfate_ppm, var);
 }
 
-void Water::setNotes( const QString &var )
-{
-   m_notes = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::notes, var);
-   }
+void Water::setNotes(QString const & var) {
+   this->setAndNotify(PropertyNames::Water::notes, this->m_notes, var);
 }
 
-void Water::setType(Types type)
-{
-   if ( type < NONE || type > TARGET ) {
-      return;
-   }
-
-   m_type = type;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::type, type);
-   }
+void Water::setType(Types type) {
+   this->setAndNotify(PropertyNames::Water::type, this->m_type, type);
 }
 
-void Water::setMashRO( double var )
-{
-   m_mash_ro = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::mashRO, var);
-   }
+void Water::setMashRO(double var) {
+   this->setAndNotify(PropertyNames::Water::mashRO, this->m_mash_ro, var);
 }
 
-void Water::setSpargeRO( double var )
-{
-   m_sparge_ro = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::spargeRO, var);
-   }
+void Water::setSpargeRO(double var) {
+   this->setAndNotify(PropertyNames::Water::spargeRO, this->m_sparge_ro, var);
 }
 
-void Water::setAlkalinityAsHCO3(bool var)
-{
-   m_alkalinity_as_hco3 = var;
-   if ( ! m_cacheOnly ) {
-      setEasy(PropertyNames::Water::alkalinityAsHCO3, var);
-   }
+void Water::setAlkalinityAsHCO3(bool var) {
+   this->setAndNotify(PropertyNames::Water::alkalinityAsHCO3, this->m_alkalinity_as_hco3, var);
 }
 
 //=========================="GET" METHODS=======================================
@@ -254,4 +189,8 @@ double Water::ppm( Water::Ions ion )
    }
 
    return 0.0;
+}
+
+Recipe * Water::getOwningRecipe() {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

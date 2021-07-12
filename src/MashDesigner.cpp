@@ -154,7 +154,7 @@ void MashDesigner::saveStep()
    // Bound the target temperature to what can be achieved
    temp = bound_temp_c(temp);
 
-   mashStep->setName( lineEdit_name->text(), mashStep->cacheOnly() );
+   mashStep->setName(lineEdit_name->text());
    mashStep->setType( type );
    mashStep->setStepTemp_c( temp );
    mashStep->setStepTime_min( lineEdit_time->toSI() );

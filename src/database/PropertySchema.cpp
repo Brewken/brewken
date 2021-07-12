@@ -24,7 +24,7 @@
 // win
 PropertySchema::PropertySchema()
     : QObject(nullptr),
-    m_properties(QVector<dbProp*>(1 + static_cast<int>(Brewken::ALLDB),nullptr))
+    m_properties(QVector<dbProp*>(1 + static_cast<int>(Database::ALLDB),nullptr))
 {
 }
 
@@ -33,7 +33,7 @@ PropertySchema::PropertySchema( QString propName, QString colName,
                                 QString xmlName,  QString colType,
                                 QVariant defaultValue, QString constraint, int colSize )
     : QObject(nullptr),
-    m_properties(QVector<dbProp*>(1 + static_cast<int>(Brewken::ALLDB),nullptr))
+    m_properties(QVector<dbProp*>(1 + static_cast<int>(Database::ALLDB),nullptr))
 {
    dbProp* tmp = new dbProp;
 
@@ -46,8 +46,8 @@ PropertySchema::PropertySchema( QString propName, QString colName,
    tmp->m_colSize = colSize;
    tmp->m_ftable = DatabaseConstants::NOTABLE;
 
-   int i = static_cast<int>(Brewken::SQLITE);
-   while ( i <= static_cast<int>(Brewken::ALLDB) ) {
+   int i = static_cast<int>(Database::SQLITE);
+   while ( i <= static_cast<int>(Database::ALLDB) ) {
       m_properties[i] = tmp;
       i++;
    }
@@ -56,7 +56,7 @@ PropertySchema::PropertySchema( QString propName, QString colName,
 // Foreign key initializer, will set all the DB to this definition
 PropertySchema::PropertySchema(QString propName, QString colName, QString colType, DatabaseConstants::DbTableId fTable)
     : QObject(nullptr),
-    m_properties(QVector<dbProp*>(1 + static_cast<int>(Brewken::ALLDB),nullptr))
+    m_properties(QVector<dbProp*>(1 + static_cast<int>(Database::ALLDB),nullptr))
 {
    dbProp* tmp = new dbProp;
 
@@ -69,8 +69,8 @@ PropertySchema::PropertySchema(QString propName, QString colName, QString colTyp
    tmp->m_colSize = 0;
    tmp->m_ftable = fTable;
 
-   int i = static_cast<int>(Brewken::SQLITE);
-   while ( i <= static_cast<int>(Brewken::ALLDB) ) {
+   int i = static_cast<int>(Database::SQLITE);
+   while ( i <= static_cast<int>(Database::ALLDB) ) {
       m_properties[i] = tmp;
       i++;
    }
@@ -80,7 +80,7 @@ PropertySchema::PropertySchema(QString propName, QString colName, QString colTyp
 // definitions
 // If you use ALLDB with this, it will initialize anything not already set to
 // the value
-void PropertySchema::addProperty( QString propName, Brewken::DBTypes dbType,
+void PropertySchema::addProperty( QString propName, Database::DBTypes dbType,
                   QString colName, QString xmlName, QString colType,
                   QVariant defaultValue, int colSize, QString constraint )
 {
@@ -95,9 +95,9 @@ void PropertySchema::addProperty( QString propName, Brewken::DBTypes dbType,
    tmp->m_colSize = colSize;
    tmp->m_ftable = DatabaseConstants::NOTABLE;
 
-   if ( dbType == Brewken::ALLDB ) {
-      int i = static_cast<int>(Brewken::SQLITE);
-      while ( i < static_cast<int>(Brewken::ALLDB) ) {
+   if ( dbType == Database::ALLDB ) {
+      int i = static_cast<int>(Database::SQLITE);
+      while ( i < static_cast<int>(Database::ALLDB) ) {
          if ( m_properties[i] == nullptr ) {
             m_properties[i] = tmp;
          }
@@ -110,7 +110,7 @@ void PropertySchema::addProperty( QString propName, Brewken::DBTypes dbType,
 }
 
 // The other foreign key initializer does just ALLDB. use this to special case that
-void PropertySchema::addForeignKey(QString propName, Brewken::DBTypes dbType,
+void PropertySchema::addForeignKey(QString propName, Database::DBTypes dbType,
                               QString colName, DatabaseConstants::DbTableId fTable)
 {
    dbProp* tmp = new dbProp;
@@ -124,9 +124,9 @@ void PropertySchema::addForeignKey(QString propName, Brewken::DBTypes dbType,
    tmp->m_colSize = 0;
    tmp->m_ftable = fTable;
 
-   if ( dbType == Brewken::ALLDB ) {
-      int i = static_cast<int>(Brewken::SQLITE);
-      while ( i < static_cast<int>(Brewken::ALLDB) ) {
+   if ( dbType == Database::ALLDB ) {
+      int i = static_cast<int>(Database::SQLITE);
+      while ( i < static_cast<int>(Database::ALLDB) ) {
          if ( m_properties[i] == nullptr ) {
             m_properties[i] = tmp;
          }
@@ -138,77 +138,77 @@ void PropertySchema::addForeignKey(QString propName, Brewken::DBTypes dbType,
    }
 }
 
-const QString PropertySchema::colName(Brewken::DBTypes dbType) const
+const QString PropertySchema::colName(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_colName;
 }
 
-const QString PropertySchema::propName(Brewken::DBTypes dbType) const
+const QString PropertySchema::propName(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_propName;
 }
 
-const QString PropertySchema::colType(Brewken::DBTypes dbType) const
+const QString PropertySchema::colType(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_colType;
 }
 
-const QString PropertySchema::xmlName(Brewken::DBTypes dbType) const
+const QString PropertySchema::xmlName(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_xmlName;
 }
 
-const QString PropertySchema::constraint(Brewken::DBTypes dbType) const
+const QString PropertySchema::constraint(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_constraint;
 }
 
-const QVariant PropertySchema::defaultValue(Brewken::DBTypes dbType) const
+const QVariant PropertySchema::defaultValue(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_defaultValue;
 }
 
-int PropertySchema::colSize(Brewken::DBTypes dbType) const
+int PropertySchema::colSize(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_colSize;
 }
 
-DatabaseConstants::DbTableId PropertySchema::fTable(Brewken::DBTypes dbType) const
+DatabaseConstants::DbTableId PropertySchema::fTable(Database::DBTypes dbType) const
 {
    return m_properties[dbType]->m_ftable;
 }
 
-void PropertySchema::setColName(QString colName, Brewken::DBTypes dbType)
+void PropertySchema::setColName(QString colName, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_colName = colName;
 }
 
-void PropertySchema::setXmlName(QString xmlName, Brewken::DBTypes dbType)
+void PropertySchema::setXmlName(QString xmlName, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_xmlName = xmlName;
 }
 
-void PropertySchema::setConstraint(QString constraint, Brewken::DBTypes dbType)
+void PropertySchema::setConstraint(QString constraint, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_constraint = constraint;
 }
 
-void PropertySchema::setColType(QString colType, Brewken::DBTypes dbType)
+void PropertySchema::setColType(QString colType, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_colType = colType;
 }
 
-void PropertySchema::setDefaultValue(QVariant defVal, Brewken::DBTypes dbType)
+void PropertySchema::setDefaultValue(QVariant defVal, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_defaultValue = defVal;
 }
 
-void PropertySchema::setColSize(int size, Brewken::DBTypes dbType)
+void PropertySchema::setColSize(int size, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_colSize = size;
 }
 
-void PropertySchema::setFTable(DatabaseConstants::DbTableId ftable, Brewken::DBTypes dbType)
+void PropertySchema::setFTable(DatabaseConstants::DbTableId ftable, Database::DBTypes dbType)
 {
    m_properties[dbType]->m_ftable = ftable;
 }

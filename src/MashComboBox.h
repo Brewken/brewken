@@ -15,17 +15,17 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef MASHCOMBOBOX_H
+#define MASHCOMBOBOX_H
+#pragma once
 
-#ifndef _MASHCOMBOBOX_H
-#define  _MASHCOMBOBOX_H
-
-class MashComboBox;
+#include <memory>
 
 #include <QComboBox>
-#include <QWidget>
 #include <QList>
 #include <QMetaProperty>
 #include <QVariant>
+#include <QWidget>
 
 // Forward declaration.
 class Mash;

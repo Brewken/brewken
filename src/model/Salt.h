@@ -108,8 +108,6 @@ public:
    void setPercentAcid(double var);
    void setIsAcid( bool var );
 
-   static QString classNameStr();
-
    double Ca() const;
    double Cl() const;
    double CO3() const;
@@ -118,8 +116,7 @@ public:
    double Na() const;
    double SO4() const;
 
-   // Salt objects do not have parents
-   NamedEntity * getParent() { return nullptr; }
+   virtual Recipe * getOwningRecipe();
 
 signals:
 

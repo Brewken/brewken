@@ -21,6 +21,7 @@
  */
 #ifndef MODEL_YEAST_H
 #define MODEL_YEAST_H
+#pragma once
 
 #include <QSqlRecord>
 #include <QString>
@@ -28,24 +29,24 @@
 
 #include "model/NamedEntityWithInventory.h"
 
-namespace PropertyNames::Yeast { static char const * const amount = "amount"; /* previously kpropAmount */ }
-namespace PropertyNames::Yeast { static char const * const form = "form"; /* previously kpropForm */ }
-namespace PropertyNames::Yeast { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
-namespace PropertyNames::Yeast { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
-namespace PropertyNames::Yeast { static char const * const type = "type"; /* previously kpropType */ }
-namespace PropertyNames::Yeast { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Yeast { static char const * const addToSecondary = "addToSecondary"; /* previously kpropAddToSec */ }
-namespace PropertyNames::Yeast { static char const * const maxReuse = "maxReuse"; /* previously kpropMaxReuse */ }
-namespace PropertyNames::Yeast { static char const * const timesCultured = "timesCultured"; /* previously kpropTimesCultd */ }
-namespace PropertyNames::Yeast { static char const * const bestFor = "bestFor"; /* previously kpropBestFor */ }
+namespace PropertyNames::Yeast { static char const * const amount = "amount"; /* previously kpropAmount */ }
+namespace PropertyNames::Yeast { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
 namespace PropertyNames::Yeast { static char const * const attenuation_pct = "attenuation_pct"; /* previously kpropAttenPct */ }
-namespace PropertyNames::Yeast { static char const * const flocculationString = "flocculationString"; /* previously kpropFlocString */ }
+namespace PropertyNames::Yeast { static char const * const bestFor = "bestFor"; /* previously kpropBestFor */ }
 namespace PropertyNames::Yeast { static char const * const flocculation = "flocculation"; /* previously kpropFloc */ }
+namespace PropertyNames::Yeast { static char const * const flocculationString = "flocculationString"; /* previously kpropFlocString */ }
+namespace PropertyNames::Yeast { static char const * const form = "form"; /* previously kpropForm */ }
+namespace PropertyNames::Yeast { static char const * const formString = "formString"; /* previously kpropFormString */ }
+namespace PropertyNames::Yeast { static char const * const laboratory = "laboratory"; /* previously kpropLab */ }
+namespace PropertyNames::Yeast { static char const * const maxReuse = "maxReuse"; /* previously kpropMaxReuse */ }
 namespace PropertyNames::Yeast { static char const * const maxTemperature_c = "maxTemperature_c"; /* previously kpropMaxTemp */ }
 namespace PropertyNames::Yeast { static char const * const minTemperature_c = "minTemperature_c"; /* previously kpropMinTemp */ }
+namespace PropertyNames::Yeast { static char const * const notes = "notes"; /* previously kpropNotes */ }
 namespace PropertyNames::Yeast { static char const * const productID = "productID"; /* previously kpropProductID */ }
-namespace PropertyNames::Yeast { static char const * const laboratory = "laboratory"; /* previously kpropLab */ }
-namespace PropertyNames::Yeast { static char const * const formString = "formString"; /* previously kpropFormString */ }
+namespace PropertyNames::Yeast { static char const * const timesCultured = "timesCultured"; /* previously kpropTimesCultd */ }
+namespace PropertyNames::Yeast { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
+namespace PropertyNames::Yeast { static char const * const type = "type"; /* previously kpropType */ }
 
 /*!
  * \class Yeast
@@ -159,7 +160,7 @@ public:
    int maxReuse() const;
    bool addToSecondary() const;
 
-   static QString classNameStr();
+   virtual Recipe * getOwningRecipe();
 
 signals:
 
@@ -168,11 +169,8 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString m_typeString;
    Type m_type;
-   QString m_formString;
    Form m_form;
-   QString m_flocculationString;
    Flocculation m_flocculation;
    double m_amount;
    bool m_amountIsWeight;
@@ -187,43 +185,8 @@ private:
    int m_maxReuse;
    bool m_addToSecondary;
    int m_inventory_id;
-
-   static QStringList types;
-   static QStringList forms;
-   static QStringList flocculations;
-
-   // Methods
-   bool isValidType(const QString& str) const;
-   bool isValidForm(const QString& str) const;
-   bool isValidFlocculation(const QString& str) const;
 };
 
 Q_DECLARE_METATYPE( QList<Yeast*> )
-/*
-inline bool YeastPtrLt( Yeast* lhs, Yeast* rhs)
-{
-   return *lhs < *rhs;
-}
 
-inline bool YeastPtrEq( Yeast* lhs, Yeast* rhs)
-{
-   return *lhs == *rhs;
-}
-
-struct Yeast_ptr_cmp
-{
-   bool operator()( Yeast* lhs, Yeast* rhs)
-   {
-      return *lhs < *rhs;
-   }
-};
-
-struct Yeast_ptr_equals
-{
-   bool operator()( Yeast* lhs, Yeast* rhs )
-   {
-      return *lhs == *rhs;
-   }
-};
-*/
-#endif   // YEAST_H
+#endif

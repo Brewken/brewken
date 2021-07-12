@@ -643,7 +643,7 @@ void EquipmentEditor::save()
          return;
    }
 
-   obsEquip->setName( lineEdit_name->text(), obsEquip->cacheOnly() );
+   obsEquip->setName( lineEdit_name->text() );
    obsEquip->setBoilSize_l( lineEdit_boilSize->toSI() );
    obsEquip->setBatchSize_l( lineEdit_batchSize->toSI() );
    obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI() );

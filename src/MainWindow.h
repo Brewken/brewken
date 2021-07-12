@@ -50,6 +50,8 @@
 // Forward Declarations
 
 class AboutDialog;
+class AlcoholTool;
+class AncestorDialog;
 class BeerColorWidget;
 class BrewDayScrollWidget;
 class BrewNoteWidget;
@@ -102,7 +104,6 @@ class YeastTableModel;
 
 /*!
  * \class MainWindow
- *
  *
  * \brief Brewken's main window. This is a view/controller class.
  */
@@ -291,7 +292,7 @@ public slots:
 
    void updateEquipmentButton();
 
-   //! \brief Set the equipment based on a drop event
+   //! \brief Set all the things based on a drop event
    void droppedRecipeEquipment(Equipment *kit);
    void droppedRecipeStyle(Style *style);
    void droppedRecipeFermentable(QList<Fermentable*>ferms);
@@ -299,9 +300,16 @@ public slots:
    void droppedRecipeMisc(QList<Misc*>miscs);
    void droppedRecipeYeast(QList<Yeast*>yeasts);
 
+   void versionedRecipe(Recipe* descendant);
+
    //! \brief Doing updates via this method makes them undoable (and redoable).  This is the most generic version
    //         which requires the caller to construct a QUndoCommand.
    void doOrRedoUpdate(QUndoCommand * update);
+
+    //! \brief to lock or not was never the question before now.
+   void lockRecipe(int state);
+   //! \brief prepopulate the ancestorDialog when the menu is selected
+   void setAncestor();
 
 public:
    //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
@@ -375,6 +383,7 @@ private:
    OgAdjuster* ogAdjuster;
    ConverterTool* converterTool;
    HydrometerTool* hydrometerTool;
+   AlcoholTool* alcoholTool;
    TimerMainDialog* timerMainDialog;
    PrimingDialog* primingDialog;
    StrikeWaterDialog* strikeWaterDialog;
@@ -385,6 +394,8 @@ private:
 
    WaterDialog* waterDialog;
    WaterEditor* waterEditor;
+
+   AncestorDialog* ancestorDialog;
 
    // all things tables should go here.
    FermentableTableModel* fermTableModel;
@@ -461,6 +472,8 @@ private:
    void setupTextEdit();
    //! \brief Connect signal/slots drag/drop
    void setupDrops();
+   //! \brief Connect signal/slots for check boxes
+   void setUpStateChanges();
 
    void updateDensitySlider(QString attribute, RangedSlider* slider, double max);
    void updateColorSlider(QString attribute, RangedSlider* slider);
