@@ -104,16 +104,14 @@ namespace {
       // MySQL would be ALTER TABLE %1 ADD COLUMN %2 int, FOREIGN KEY (%2) REFERENCES %3(%4)
    };
 
-   char const * getDbNativeName(DbNativeVariants const & dbNativeVariants, Database::DBTypes dbType) {
-      if (dbType == Database::NODB) {
-         // Caller wants us to supply DB type
-         dbType = Database::dbType();
-      }
+   char const * getDbNativeName(DbNativeVariants const & dbNativeVariants, Database::DbType dbType) {
       switch (dbType) {
          case Database::SQLITE: return dbNativeVariants.sqliteName;
          case Database::PGSQL:  return dbNativeVariants.postgresqlName;
          default:
+            // It's a coding error if we get here
             qCritical() << Q_FUNC_INFO << "Unrecognised DB type:" << dbType;
+            Q_ASSERT(false);
             break;
       }
       return "NotSupported";
@@ -122,8 +120,6 @@ namespace {
    //
    // Variables
    //
-   Database::DBTypes currentDbType{Database::NODB};
-
 
    // These are for SQLite databases
    QFile dbFile;
@@ -215,11 +211,12 @@ public:
    /**
     * Constructor
     */
-   impl() : dbDefn{},
-            dbConName{},
-            loaded{false},
-            loadWasSuccessful{false} {
-      currentDbType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   impl(Database::DbType dbType) : dbType{dbType},
+                                   dbDefn{},
+                                   dbConName{},
+                                   loaded{false},
+                                   loadWasSuccessful{false},
+                                   mutex{} {
       return;
    }
 
@@ -271,7 +268,7 @@ public:
       // Open SQLite DB
       // It's a coding error if we didn't already establish that SQLite is the type of DB we're talking to, so assert
       // that and then call the generic code to get a connection
-      Q_ASSERT(Database::dbType() == Database::SQLITE);
+      Q_ASSERT(this->dbType == Database::SQLITE);
       QSqlDatabase connection = database.sqlDatabase();
 
       this->dbConName = connection.connectionName();
@@ -346,7 +343,7 @@ public:
 
       // It's a coding error if we didn't already establish that PostgreSQL is the type of DB we're talking to, so assert
       // that and then call the generic code to get a connection
-      Q_ASSERT(Database::dbType() == Database::PGSQL);
+      Q_ASSERT(this->dbType == Database::PGSQL);
       QSqlDatabase connection = database.sqlDatabase();
 
       this->dbConName = connection.connectionName();
@@ -621,6 +618,7 @@ public:
       return;
    }
 */
+   Database::DbType dbType;
    DatabaseSchema dbDefn;
    QString dbConName;
 
@@ -631,10 +629,12 @@ public:
    bool createFromScratch;
    bool schemaUpdated;
 
+   // Used for locking member functions that must be single-threaded
+   QMutex mutex;
 };
 
 
-Database::Database() : pimpl{ new impl{} } {
+Database::Database(Database::DbType dbType) : pimpl{ new impl{dbType} } {
    //.setUndoLimit(100);
    return;
 }
@@ -671,7 +671,7 @@ QSqlDatabase Database::sqlDatabase() const {
    // Create a new connection in Qt's register of connections.  (NB: The call to QSqlDatabase::addDatabase() is thread-
    // safe, so we don't need to worry about mutexes here.)
    //
-   QString driverType{Database::dbType() == Database::PGSQL ? "QPSQL" : "QSQLITE"};
+   QString driverType{this->pimpl->dbType == Database::PGSQL ? "QPSQL" : "QSQLITE"};
    qDebug() <<
       Q_FUNC_INFO << "Creating connection " << dbConnectionNameForThisThread << " with " << driverType << " driver";
    connection = QSqlDatabase::addDatabase(driverType, dbConnectionNameForThisThread);
@@ -688,7 +688,7 @@ QSqlDatabase Database::sqlDatabase() const {
    //
    // Initialisation parameters depend on the DB type
    //
-   if (Database::dbType() == Database::PGSQL) {
+   if (this->pimpl->dbType == Database::PGSQL) {
       connection.setHostName(dbHostname);
       connection.setDatabaseName(dbName);
       connection.setUserName(dbUsername);
@@ -703,7 +703,7 @@ QSqlDatabase Database::sqlDatabase() const {
    //
    if (!connection.open()) {
       QString errorMessage;
-      if (Database::dbType() == Database::PGSQL) {
+      if (this->pimpl->dbType == Database::PGSQL) {
          errorMessage = QString{
             QObject::tr("Could not open PostgreSQL DB connection to %1.\n%2")
          }.arg(dbHostname).arg(connection.lastError().text());
@@ -829,6 +829,9 @@ bool Database::loadSuccessful()
 
 void Database::unload() {
 
+   // This RAII wrapper does all the hard work on mutex.lock() and mutex.unlock() in an exception-safe way
+   QMutexLocker locker(&this->pimpl->mutex);
+
    // So far, it seems we only create one connection to the db. This is
    // likely overkill
    QStringList allConnectionNames{QSqlDatabase::connectionNames()};
@@ -858,17 +861,26 @@ void Database::unload() {
    this->pimpl->loaded = false;
    this->pimpl->loadWasSuccessful = false;
 
+   qDebug() << Q_FUNC_INFO << "Drop Instance done";
+
    return;
 }
 
 
-Database& Database::instance() {
+Database& Database::instance(Database::DbType dbType) {
+   //
+   // For the moment, with only two types of database supported, we don't do anything too sophisticated here, but we
+   // should probably change that if we end up supporting more.
+   //
+   if (dbType == Database::NODB) {
+      dbType = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   }
 
    //
    // As of C++11, simple "Meyers singleton" is now thread-safe -- see
    // https://www.modernescpp.com/index.php/thread-safe-initialization-of-a-singleton#h3-guarantees-of-the-c-runtime
    //
-   static Database dbSingleton;
+   static Database dbSingleton_SQLite{Database::SQLITE}, dbSingleton_PostgresSQL{Database::PGSQL};
 
    //
    // And C++11 also provides a thread-safe way to ensure a function is called exactly once
@@ -878,21 +890,15 @@ Database& Database::instance() {
    // platforms, back in the days when the C++ language had "no notion of threading (or any other form of
    // concurrency)".
    //
-   static std::once_flag initFlag;
-   std::call_once(initFlag, &Database::load, &dbSingleton);
+   static std::once_flag initFlag_SQLite, initFlag_PostgresSQL;
 
-   return dbSingleton;
-}
+   if (dbType == Database::SQLITE) {
+      std::call_once(initFlag_SQLite, &Database::load, &dbSingleton_SQLite);
+      return dbSingleton_SQLite;
+   }
 
-// TBD Why don't we just have callers invoke unload directly?
-void Database::dropInstance() {
-   static QMutex mutex;
-
-   mutex.lock();
-   Database::instance().unload();
-   mutex.unlock();
-   qDebug() << Q_FUNC_INFO << "Drop Instance done";
-   return;
+   std::call_once(initFlag_PostgresSQL, &Database::load, &dbSingleton_PostgresSQL);
+   return dbSingleton_PostgresSQL;
 }
 
 char const * Database::getDefaultBackupFileName() {
@@ -950,7 +956,7 @@ void Database::updateDatabase(QString const& filename) {
 }
 
 
-bool Database::verifyDbConnection(Database::DBTypes testDb, QString const& hostname, int portnum, QString const& schema,
+bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
                               QString const& database, QString const& username, QString const& password)
 {
    QString driverName;
@@ -996,11 +1002,11 @@ bool Database::verifyDbConnection(Database::DBTypes testDb, QString const& hostn
 
 void Database::convertDatabase(QString const& Hostname, QString const& DbName,
                                QString const& Username, QString const& Password,
-                               int Portnum, Database::DBTypes newType)
+                               int Portnum, Database::DbType newType)
 {
    QSqlDatabase connectionNew;
 
-   Database::DBTypes oldType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   Database::DbType oldType = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
 
    try {
       if ( newType == Database::NODB ) {
@@ -1023,7 +1029,7 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
          throw QString("Could not open new database: %1").arg(connectionNew.lastError().text());
       }
 
-      DatabaseSchemaHelper::copyDatabase(*this, oldType, newType, connectionNew);
+      DatabaseSchemaHelper::copyDatabase(oldType, newType, connectionNew);
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -1035,14 +1041,11 @@ DatabaseSchema & Database::getDatabaseSchema() {
    return this->pimpl->dbDefn;
 }
 
-Database::DBTypes Database::dbType() {
-   if (currentDbType == Database::NODB ) {
-      currentDbType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
-   }
-   return currentDbType;
+Database::DbType Database::dbType() {
+   return this->pimpl->dbType;
 }
 
-void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DBTypes type) {
+void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DbType type) {
    if (type == Database::NODB) {
       type = Database::dbType();
    }
@@ -1074,11 +1077,11 @@ void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Data
 }
 
 
-QString Database::dbBoolean(bool flag, Database::DBTypes type) {
+QString Database::dbBoolean(bool flag, Database::DbType type) {
    QString retval;
 
    if (type == Database::NODB) {
-      type = Database::dbType();
+      type = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
    }
 
    switch( type ) {
@@ -1094,24 +1097,24 @@ QString Database::dbBoolean(bool flag, Database::DBTypes type) {
    return retval;
 }
 
-template<typename T> char const * Database::getDbNativeTypeName(Database::DBTypes type) const {
-   return getDbNativeName(nativeTypeNames<T>, type);
+template<typename T> char const * Database::getDbNativeTypeName(Database::DbType type) const {
+   return getDbNativeName(nativeTypeNames<T>, this->pimpl->dbType);
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template char const * Database::getDbNativeTypeName<bool>(Database::DBTypes type) const;
-template char const * Database::getDbNativeTypeName<int>(Database::DBTypes type) const;
-template char const * Database::getDbNativeTypeName<unsigned int>(Database::DBTypes type) const;
-template char const * Database::getDbNativeTypeName<double>(Database::DBTypes type) const;
-template char const * Database::getDbNativeTypeName<QString>(Database::DBTypes type) const;
-template char const * Database::getDbNativeTypeName<QDate>(Database::DBTypes type) const;
+template char const * Database::getDbNativeTypeName<bool>(Database::DbType type) const;
+template char const * Database::getDbNativeTypeName<int>(Database::DbType type) const;
+template char const * Database::getDbNativeTypeName<unsigned int>(Database::DbType type) const;
+template char const * Database::getDbNativeTypeName<double>(Database::DbType type) const;
+template char const * Database::getDbNativeTypeName<QString>(Database::DbType type) const;
+template char const * Database::getDbNativeTypeName<QDate>(Database::DbType type) const;
 
-char const * Database::getDbNativeIntPrimaryKeyModifier(Database::DBTypes type) const {
-   return getDbNativeName(nativeIntPrimaryKeyModifier, type);
+char const * Database::getDbNativeIntPrimaryKeyModifier(Database::DbType type) const {
+   return getDbNativeName(nativeIntPrimaryKeyModifier, this->pimpl->dbType);
 }
 
-char const * Database::getSqlToAddColumnAsForeignKey(Database::DBTypes type) const {
-   return getDbNativeName(sqlToAddColumnAsForeignKey, type);
+char const * Database::getSqlToAddColumnAsForeignKey(Database::DbType type) const {
+   return getDbNativeName(sqlToAddColumnAsForeignKey, this->pimpl->dbType);
 }

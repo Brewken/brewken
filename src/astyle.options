@@ -87,6 +87,9 @@
 # Limit lines to 120 characters (because very long lines are hard to read).
 --max-code-length=120
 
+# However, break this rule for code that has been deliberately kept on a single line for readability
+--keep‑one‑line‑blocks
+
 # Where breaking at a logical conditional (||, &&), put the break afterwards, not before, as it makes it clearer that
 # the line continues
 --break-after-logical

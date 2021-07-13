@@ -788,7 +788,7 @@ void MainWindow::setupTriggers() {
 
    // postgresql cannot backup or restore yet. I would like to find some way
    // around this, but for now just disable
-   if ( Database::dbType() == Database::PGSQL ) {
+   if ( Database::instance().dbType() == Database::PGSQL ) {
       actionBackup_Database->setEnabled(false);                                                                         // > File > Database > Backup
       actionRestore_Database->setEnabled(false);                                                                        // > File > Database > Restore
    }

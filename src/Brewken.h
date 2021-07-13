@@ -90,7 +90,7 @@ Q_DECLARE_METATYPE( QMetaProperty )
 class Brewken : public QObject
 {
    Q_OBJECT
-   Q_ENUMS(DBTypes)
+   Q_ENUMS(DbType)
    Q_ENUMS(delOptions)
 
    friend class OptionDialog;

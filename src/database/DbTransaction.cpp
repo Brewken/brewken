@@ -19,14 +19,15 @@
 #include "database/Database.h"
 
 
-DbTransaction::DbTransaction(QSqlDatabase & connection, DbTransaction::SpecialBehaviours specialBehaviours) :
-   connection(connection),
-   committed(false),
-   specialBehaviours(specialBehaviours) {
+DbTransaction::DbTransaction(Database & database, QSqlDatabase & connection, DbTransaction::SpecialBehaviours specialBehaviours) :
+   database{database},
+   connection{connection},
+   committed{false},
+   specialBehaviours{specialBehaviours} {
    // Note that, on SQLite at least, turning foreign keys on and off has to happen outside a transaction, so we have to
    // be careful about the order in which we do things.
    if (this->specialBehaviours & DISABLE_FOREIGN_KEYS) {
-      Database::setForeignKeysEnabled(false, connection);
+      this->database.setForeignKeysEnabled(false, connection);
    }
 
    bool succeeded = this->connection.transaction();
@@ -43,7 +44,7 @@ DbTransaction::~DbTransaction() {
 
    // See comment above about why we need to do this _after_ the transaction has finished
    if (this->specialBehaviours & DISABLE_FOREIGN_KEYS) {
-      Database::setForeignKeysEnabled(true, connection);
+      this->database.setForeignKeysEnabled(true, connection);
    }
    return;
 }

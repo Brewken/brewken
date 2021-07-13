@@ -653,6 +653,19 @@ private:
    //void setDefaults();
    void addPreinstructions(QVector<PreInstruction> preins);
    bool isValidType(const QString & str);
+
+   /**
+    * \brief Add a Hop/Fermentable/Instruction etc that is already in an Object Store and is known not to be used by
+    *        any other Recipe.
+    */
+   template<class NE> NE * add(std::shared_ptr<NE> ne);
+
+   /**
+    * \brief Create and add a new Hop/Fermentable/Instruction etc, first to the relevant Object Store and then to this
+    *        Recipe
+    */
+   template<class NE> void addNew(std::shared_ptr<NE> ne);
+
 };
 
 /**

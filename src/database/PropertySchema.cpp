@@ -80,7 +80,7 @@ PropertySchema::PropertySchema(QString propName, QString colName, QString colTyp
 // definitions
 // If you use ALLDB with this, it will initialize anything not already set to
 // the value
-void PropertySchema::addProperty( QString propName, Database::DBTypes dbType,
+void PropertySchema::addProperty( QString propName, Database::DbType dbType,
                   QString colName, QString xmlName, QString colType,
                   QVariant defaultValue, int colSize, QString constraint )
 {
@@ -110,7 +110,7 @@ void PropertySchema::addProperty( QString propName, Database::DBTypes dbType,
 }
 
 // The other foreign key initializer does just ALLDB. use this to special case that
-void PropertySchema::addForeignKey(QString propName, Database::DBTypes dbType,
+void PropertySchema::addForeignKey(QString propName, Database::DbType dbType,
                               QString colName, DatabaseConstants::DbTableId fTable)
 {
    dbProp* tmp = new dbProp;
@@ -138,77 +138,77 @@ void PropertySchema::addForeignKey(QString propName, Database::DBTypes dbType,
    }
 }
 
-const QString PropertySchema::colName(Database::DBTypes dbType) const
+const QString PropertySchema::colName(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_colName;
 }
 
-const QString PropertySchema::propName(Database::DBTypes dbType) const
+const QString PropertySchema::propName(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_propName;
 }
 
-const QString PropertySchema::colType(Database::DBTypes dbType) const
+const QString PropertySchema::colType(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_colType;
 }
 
-const QString PropertySchema::xmlName(Database::DBTypes dbType) const
+const QString PropertySchema::xmlName(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_xmlName;
 }
 
-const QString PropertySchema::constraint(Database::DBTypes dbType) const
+const QString PropertySchema::constraint(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_constraint;
 }
 
-const QVariant PropertySchema::defaultValue(Database::DBTypes dbType) const
+const QVariant PropertySchema::defaultValue(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_defaultValue;
 }
 
-int PropertySchema::colSize(Database::DBTypes dbType) const
+int PropertySchema::colSize(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_colSize;
 }
 
-DatabaseConstants::DbTableId PropertySchema::fTable(Database::DBTypes dbType) const
+DatabaseConstants::DbTableId PropertySchema::fTable(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_ftable;
 }
 
-void PropertySchema::setColName(QString colName, Database::DBTypes dbType)
+void PropertySchema::setColName(QString colName, Database::DbType dbType)
 {
    m_properties[dbType]->m_colName = colName;
 }
 
-void PropertySchema::setXmlName(QString xmlName, Database::DBTypes dbType)
+void PropertySchema::setXmlName(QString xmlName, Database::DbType dbType)
 {
    m_properties[dbType]->m_xmlName = xmlName;
 }
 
-void PropertySchema::setConstraint(QString constraint, Database::DBTypes dbType)
+void PropertySchema::setConstraint(QString constraint, Database::DbType dbType)
 {
    m_properties[dbType]->m_constraint = constraint;
 }
 
-void PropertySchema::setColType(QString colType, Database::DBTypes dbType)
+void PropertySchema::setColType(QString colType, Database::DbType dbType)
 {
    m_properties[dbType]->m_colType = colType;
 }
 
-void PropertySchema::setDefaultValue(QVariant defVal, Database::DBTypes dbType)
+void PropertySchema::setDefaultValue(QVariant defVal, Database::DbType dbType)
 {
    m_properties[dbType]->m_defaultValue = defVal;
 }
 
-void PropertySchema::setColSize(int size, Database::DBTypes dbType)
+void PropertySchema::setColSize(int size, Database::DbType dbType)
 {
    m_properties[dbType]->m_colSize = size;
 }
 
-void PropertySchema::setFTable(DatabaseConstants::DbTableId ftable, Database::DBTypes dbType)
+void PropertySchema::setFTable(DatabaseConstants::DbTableId ftable, Database::DbType dbType)
 {
    m_properties[dbType]->m_ftable = ftable;
 }

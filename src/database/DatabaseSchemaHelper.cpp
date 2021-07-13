@@ -46,7 +46,7 @@ int const DatabaseSchemaHelper::dbVersion = 10;
 namespace {
 
    //! \brief converts sqlite values (mostly booleans) into something postgres wants
-   QVariant convertValue(Database::DBTypes newType, QSqlField field) {
+   QVariant convertValue(Database::DbType newType, QSqlField field) {
       QVariant retVar = field.value();
       if ( field.type() == QVariant::Bool ) {
          switch(newType) {
@@ -685,7 +685,7 @@ namespace {
 bool DatabaseSchemaHelper::upgrade = false;
 // Default namespace hides functions from everything outside this file.
 
-bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, DatabaseSchema* defn, Database::DBTypes dbType ) {
+bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, DatabaseSchema* defn, Database::DbType dbType ) {
    //--------------------------------------------------------------------------
    // NOTE: if you edit this function, increment dbVersion and edit
    // migrateNext() appropriately.
@@ -706,7 +706,7 @@ bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, 
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().
-   DbTransaction dbTransaction{connection};
+   DbTransaction dbTransaction{database, connection};
 
    // .:TODO-DATABASE:. Need to look at the default data population stuff below ALSO move repopulate stuff out of Database class into this one
    bool ret = true;
@@ -745,7 +745,7 @@ bool DatabaseSchemaHelper::migrate(Database & database, int oldVersion, int newV
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().  (It will also turn foreign keys back on either way -- whether the
    // transaction is committed or rolled back.)
-   DbTransaction dbTransaction{connection, DbTransaction::DISABLE_FOREIGN_KEYS};
+   DbTransaction dbTransaction{database, connection, DbTransaction::DISABLE_FOREIGN_KEYS};
 
    for ( ; oldVersion < newVersion && ret; ++oldVersion ) {
       ret &= migrateNext(database, oldVersion, connection);
@@ -797,153 +797,107 @@ int DatabaseSchemaHelper::currentVersion(QSqlDatabase db) {
    return -1;
 }
 
-void DatabaseSchemaHelper::copyDatabase(Database & database, Database::DBTypes oldType, Database::DBTypes newType, QSqlDatabase connectionNew) {
+void DatabaseSchemaHelper::copyDatabase(Database::DbType oldType, Database::DbType newType, QSqlDatabase connectionNew) {
+   Database & oldDatabase = Database::instance(oldType);
+   Database & newDatabase = Database::instance(newType);
+
    // this is to prevent us from over-writing or doing heavens knows what to an existing db
    if( connectionNew.tables().contains(QLatin1String("settings")) ) {
       qWarning() << Q_FUNC_INFO << "It appears the database is already configured.";
       return;
    }
 
-   if (!CreateAllDatabaseTables(database, connectionNew)) {
+   // The crucial bit is creating the new tables in the new DB.  Once that is done then, assuming disabling of foreign
+   // keys works OK, it should be turn-the-handle to run through all the tables and copy each record from old DB to new
+   // one.
+   if (!CreateAllDatabaseTables(newDatabase, connectionNew)) {
       qCritical() << Q_FUNC_INFO << "Error creating tables in new DB";
       return;
    }
 
-   DatabaseSchema & dbDefn = database.getDatabaseSchema();
+   //
+   // .:TODO-DATABASE:. We need to have different instance of Database for each DbType
+   //
+   // Start transaction
+   // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
+   // having called dbTransaction.commit().  (It will also turn foreign keys back on either way -- whether the
+   // transaction is committed or rolled back.)
+   //
+   DbTransaction dbTransaction{newDatabase, connectionNew, DbTransaction::DISABLE_FOREIGN_KEYS};
 
-   connectionNew.transaction();
-
-   // .:TODO-DATABASE:. Fix all this
-   // make sure we get the inventory tables first
-   foreach( TableSchema* table, dbDefn.allTables(true) ) {
-      QString createTable = table->generateCreateTable(newType);
-      QSqlQuery results( connectionNew );
-      if ( ! results.exec(createTable) ) {
-         throw QString("Could not create %1 : %2").arg(table->tableName()).arg(results.lastError().text());
-      }
-   }
-   connectionNew.commit();
-
-   QSqlDatabase connectionOld = database.sqlDatabase();
+   QSqlDatabase connectionOld = oldDatabase.sqlDatabase();
    QSqlQuery readOld(connectionOld);
+   QSqlQuery upsertNew(connectionNew); // we will prepare this in a bit
 
-   // There are a lot of tables to process, and we need to make
-   // sure the inventory tables go first
-   foreach( TableSchema* table, dbDefn.allTables(true) ) {
-      QString tname = table->tableName();
-      QSqlField field;
-      bool mustPrepare = true;
-      int maxid = -1;
-
-      // select * from [table] order by id asc
-      QString findAllQuery = QString("SELECT * FROM %1 order by %2 asc")
-                                 .arg(tname)
-                                 .arg(table->keyName(oldType)); // make sure we specify the right db type
-      qDebug() << Q_FUNC_INFO << "FIND ALL:" << findAllQuery;
-      try {
+   QVector<ObjectStore const *> objectStores = GetAllObjectStores();
+   for (ObjectStore const * objectStore : objectStores) {
+      QList<QString> tableNames = objectStore->getAllTableNames();
+      for (QString tableName : tableNames) {
+         QString findAllQuery = QString("SELECT * FROM %1").arg(tableName);
+         qDebug() << Q_FUNC_INFO << "FIND ALL:" << findAllQuery;
          if (! readOld.exec(findAllQuery) ) {
-            throw QString("Could not execute %1 : %2")
-               .arg(readOld.lastQuery())
-               .arg(readOld.lastError().text());
+            qCritical() << Q_FUNC_INFO << "Error reading record from DB with SQL" << readOld.lastQuery() << ":" << readOld.lastError().text();
+            return;
          }
 
-         connectionNew.transaction();
-
-         QSqlQuery upsertNew(connectionNew); // we will prepare this in a bit
+         //
+         // We do SELECT * on the old DB table and then look at the records that come back to work out what the INSERT
+         // into the new DB table should look like.  Of course, we're assuming that there aren't any secret extra
+         // fields on the old DB table, otherwise things will break.  But, all being well, this saves a lot of special-
+         // case code either inside ObjectStore or messing with its internal data structures.
+         //
+         bool upsertQueryCreated{false};
+         QString fieldNames;
+         QTextStream fieldNamesAsStream{&fieldNames};
+         QString bindNames;
+         QTextStream bindNamesAsStream{&bindNames};
+         QString upsertQuery{"INSERT INTO "};
+         QTextStream upsertQueryAsStream{&upsertQuery};
 
          // Start reading the records from the old db
-         while(readOld.next()) {
-            int idx;
+         while (readOld.next()) {
             QSqlRecord here = readOld.record();
-            QString upsertQuery;
-
-            idx = here.indexOf(table->keyName(oldType));
-
-            // We are going to need this for resetting the indexes later. We only
-            // need it for copying to postgresql, but .. meh, not worth the extra
-            // work
-            if ( idx != -1 && here.value(idx).toInt() > maxid ) {
-               maxid = here.value(idx).toInt();
-            }
-
-            // Prepare the insert for this table if required
-            if ( mustPrepare ) {
-               upsertQuery = table->generateInsertRow(newType);
-               upsertNew.prepare(upsertQuery);
-               // but do it only once for this table
-               mustPrepare = false;
-            }
-
-            qDebug() << Q_FUNC_INFO << "INSERT:" << upsertQuery;
-            // All that's left is to bind
-            for(int i = 0; i < here.count(); ++i) {
-               if ( table->dbTable() == DatabaseConstants::BREWNOTETABLE
-                  && here.fieldName(i) == PropertyNames::BrewNote::brewDate ) {
-                  QVariant helpme(here.field(i).value().toString());
-                  upsertNew.bindValue(":brewdate",helpme);
-               }
-               else {
-                  upsertNew.bindValue(QString(":%1").arg(here.fieldName(i)),
-                                    convertValue(newType, here.field(i)));
-               }
-            }
-            // and execute
-            if ( ! upsertNew.exec() ) {
-               throw QString("Could not insert new row %1 : %2")
-                  .arg(upsertNew.lastQuery())
-                  .arg(upsertNew.lastError().text());
-            }
-         }
-         // We need to create the increment and decrement things for the
-         // instructions_in_recipe table. This seems a little weird to do this
-         // here, but it makes sense to wait until after we've inserted all
-         // the data. The increment trigger happens on insert, and I suspect
-         // bad things would happen if it were in place before we inserted all our data.
-         if ( table->dbTable() == DatabaseConstants::INSTINRECTABLE ) {
-            QString trigger = table->generateIncrementTrigger(newType);
-            if ( trigger.isEmpty() ) {
-               qCritical() << QString("No increment triggers found for %1").arg(table->tableName());
-            }
-            else {
-               qDebug() << "INC TRIGGER:" << trigger;
-               upsertNew.exec(trigger);
-               trigger =  table->generateDecrementTrigger(newType);
-               if ( trigger.isEmpty() ) {
-                  qCritical() << QString("No decrement triggers found for %1").arg(table->tableName());
-               }
-               else {
-                  qDebug() << "DEC TRIGGER:" << trigger;
-                  if ( ! upsertNew.exec(trigger) ) {
-                     throw QString("Could not insert new row %1 : %2")
-                        .arg(upsertNew.lastQuery())
-                        .arg(upsertNew.lastError().text());
+            if (!upsertQueryCreated) {
+               // Loop through all the fields in the record.  Order shouldn't matter.
+               for (int ii = 0; ii < here.count(); ++ii) {
+                  QSqlField field = here.field(ii);
+                  if (ii != 0) {
+                     fieldNamesAsStream << ", ";
+                     bindNamesAsStream << ", ";
                   }
+                  fieldNamesAsStream << field.name();
+                  bindNamesAsStream << ":" << field.name();
                }
+               upsertQueryAsStream << tableName << " (" << fieldNames << ") VALUES (" << bindNames << ");";
+               upsertNew.prepare(upsertQuery);
+               upsertQueryCreated = true;
+            }
+
+            for (int ii = 0; ii < here.count(); ++ii) {
+               QSqlField field = here.field(ii);
+               QString bindName = QString(":%1").arg(field.name());
+               QVariant bindValue = here.value(field.name());
+               //
+               // QVariant should handle all the problems of different types for us here.  Eg, in SQLite, there is no
+               // native bool type, so we'll get back 0 or 1 on a field we store bools in, but this should still
+               // convert to the right thing in, say, PostgreSQL, when we try to insert it into a field of type
+               // BOOLEAN.
+               //
+               upsertNew.bindValue(bindName, bindValue);
+            }
+
+            if (!upsertNew.exec()) {
+               qCritical() <<
+                  Q_FUNC_INFO << "Error writing record to DB with SQL" << upsertNew.lastQuery() << ":" <<
+                  upsertNew.lastError().text();
+               return;
             }
          }
-         // We need to manually reset the sequences in postgresql
-         if ( newType == Database::PGSQL ) {
-            // this probably should be fixed somewhere, but this is enough for now?
-            //
-            // SELECT setval(hop_id_seq,(SELECT MAX(id) from hop))
-            QString seq = QString("SELECT setval('%1_%2_seq',(SELECT MAX(%2) FROM %1))")
-                                          .arg(table->tableName())
-                                          .arg(table->keyName());
-            qDebug() << "SEQ reset: " << seq;
-
-            if ( ! upsertNew.exec(seq) )
-               throw QString("Could not reset the sequences: %1 %2")
-                  .arg(seq).arg(upsertNew.lastError().text());
-         }
       }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         connectionNew.rollback();
-         abort();
-      }
-
-      connectionNew.commit();
    }
+
+   dbTransaction.commit();
+   return;
 }
 
 namespace {
@@ -1025,7 +979,7 @@ void DatabaseSchemaHelper::updateDatabase(Database & database, QString const& fi
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().
    QSqlDatabase connectionOld = database.sqlDatabase();
-   DbTransaction dbTransaction{connectionOld};
+   DbTransaction dbTransaction{database, connectionOld};
 
    try {
       // connect to the new database

@@ -50,6 +50,7 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
+#include "PersistentSettings.h"
 
 static const QString kDefault("DEFAULT");
 
@@ -62,7 +63,7 @@ TableSchema::TableSchema(DatabaseConstants::DbTableId table)
       m_invTable(DatabaseConstants::NOTABLE),
       m_btTable(DatabaseConstants::NOTABLE),
       m_trigger(QString()),
-      m_defType(Database::dbType())
+      m_defType(static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt()))
 {
     // for this bit of ugly, I gain a lot of utility.
     defineTable();
@@ -82,18 +83,18 @@ const QString TableSchema::triggerProperty() const { return m_trigger; }
 const QMap<QString,PropertySchema*> TableSchema::properties() const { return m_properties; }
 const QMap<QString,PropertySchema*> TableSchema::foreignKeys() const { return m_foreignKeys; }
 const PropertySchema* TableSchema::key() const { return m_key; }
-Database::DBTypes TableSchema::defType() const { return m_defType; }
+Database::DbType TableSchema::defType() const { return m_defType; }
 
-const QString TableSchema::keyName( Database::DBTypes type ) const
+const QString TableSchema::keyName( Database::DbType type ) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
 
    return m_key->colName(selected);
 }
 
-const QStringList TableSchema::allPropertyNames(Database::DBTypes type) const
+const QStringList TableSchema::allPropertyNames(Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
 
    QMapIterator<QString,PropertySchema*> i(m_properties);
    QStringList retval;
@@ -108,9 +109,9 @@ const QStringList TableSchema::allProperties() const
 {
    return m_properties.keys();
 }
-const QStringList TableSchema::allForeignKeyNames(Database::DBTypes type) const
+const QStringList TableSchema::allForeignKeyNames(Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QMapIterator<QString,PropertySchema*> i(m_foreignKeys);
    QStringList retval;
    while ( i.hasNext() ) {
@@ -125,9 +126,9 @@ const QStringList TableSchema::allForeignKeys() const
    return m_foreignKeys.keys();
 }
 
-const QStringList TableSchema::allColumnNames(Database::DBTypes type) const
+const QStringList TableSchema::allColumnNames(Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QStringList tmp;
    QMapIterator<QString,PropertySchema*> i(m_properties);
 
@@ -138,10 +139,10 @@ const QStringList TableSchema::allColumnNames(Database::DBTypes type) const
    return tmp;
 }
 
-const QStringList TableSchema::allForeignKeyColumnNames(Database::DBTypes type) const
+const QStringList TableSchema::allForeignKeyColumnNames(Database::DbType type) const
 {
    QStringList tmp;
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
 
    QMapIterator<QString,PropertySchema*> i(m_foreignKeys);
 
@@ -160,9 +161,9 @@ const PropertySchema* TableSchema::property(QString prop) const
    return retval;
 }
 
-const QString TableSchema::propertyName(QString prop, Database::DBTypes type) const
+const QString TableSchema::propertyName(QString prop, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_properties.contains(prop) ) {
       retval =  m_properties.value(prop)->propName(selected);
@@ -170,9 +171,9 @@ const QString TableSchema::propertyName(QString prop, Database::DBTypes type) co
    return retval;
 
 }
-const QString TableSchema::propertyToColumn(QString prop, Database::DBTypes type) const
+const QString TableSchema::propertyToColumn(QString prop, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_properties.contains(prop) ) {
       retval =  m_properties.value(prop)->colName(selected);
@@ -180,9 +181,9 @@ const QString TableSchema::propertyToColumn(QString prop, Database::DBTypes type
    return retval;
 }
 
-const QString TableSchema::foreignKeyToColumn(QString fkey, Database::DBTypes type) const
+const QString TableSchema::foreignKeyToColumn(QString fkey, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_foreignKeys.contains(fkey) ) {
       retval =  m_foreignKeys.value(fkey)->colName(selected);
@@ -190,9 +191,9 @@ const QString TableSchema::foreignKeyToColumn(QString fkey, Database::DBTypes ty
    return retval;
 }
 
-const QString TableSchema::foreignKeyToColumn(Database::DBTypes type) const
+const QString TableSchema::foreignKeyToColumn(Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
 
    if ( m_foreignKeys.size() == 1 ) {
@@ -201,9 +202,9 @@ const QString TableSchema::foreignKeyToColumn(Database::DBTypes type) const
    return retval;
 }
 
-const QString TableSchema::propertyToXml(QString prop, Database::DBTypes type) const
+const QString TableSchema::propertyToXml(QString prop, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString retval;
    if ( m_properties.contains(prop) ) {
       retval = m_properties.value(prop)->xmlName(selected);
@@ -219,10 +220,10 @@ const QString TableSchema::propertyToXml(QString prop, Database::DBTypes type) c
    return retval;
 }
 
-const QString TableSchema::xmlToProperty(QString xmlName, Database::DBTypes type) const
+const QString TableSchema::xmlToProperty(QString xmlName, Database::DbType type) const
 {
    QString retval;
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
 
    QMapIterator<QString,PropertySchema*> i(m_properties);
 
@@ -236,9 +237,9 @@ const QString TableSchema::xmlToProperty(QString xmlName, Database::DBTypes type
    return retval;
 }
 
-const QString TableSchema::propertyColumnType(QString prop, Database::DBTypes type) const
+const QString TableSchema::propertyColumnType(QString prop, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    if ( m_properties.contains(prop) ) {
       return m_properties.value(prop)->colType(selected);
    }
@@ -247,9 +248,9 @@ const QString TableSchema::propertyColumnType(QString prop, Database::DBTypes ty
    }
 }
 
-const QVariant TableSchema::propertyColumnDefault(QString prop, Database::DBTypes type) const
+const QVariant TableSchema::propertyColumnDefault(QString prop, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QVariant retval = QString();
    if ( m_properties.contains(prop) ) {
       retval = m_properties.value(prop)->defaultValue(selected);
@@ -257,9 +258,9 @@ const QVariant TableSchema::propertyColumnDefault(QString prop, Database::DBType
    return retval;
 }
 
-int TableSchema::propertyColumnSize(QString prop, Database::DBTypes type) const
+int TableSchema::propertyColumnSize(QString prop, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    if ( m_properties.contains(prop) ) {
       return m_properties.value(prop)->colSize(selected);
    }
@@ -268,9 +269,9 @@ int TableSchema::propertyColumnSize(QString prop, Database::DBTypes type) const
    }
 }
 
-DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Database::DBTypes type) const
+DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    if ( m_foreignKeys.contains(fkey) ) {
@@ -280,9 +281,9 @@ DatabaseConstants::DbTableId TableSchema::foreignTable(QString fkey, Database::D
 
 }
 
-DatabaseConstants::DbTableId TableSchema::foreignTable(Database::DBTypes type) const
+DatabaseConstants::DbTableId TableSchema::foreignTable(Database::DbType type) const
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    DatabaseConstants::DbTableId retval = DatabaseConstants::NOTABLE;
 
    if ( m_foreignKeys.size() == 1 ) {
@@ -298,9 +299,9 @@ bool TableSchema::isInRecTable()     { return m_type == INREC; }
 bool TableSchema::isBtTable()        { return m_type == BT; }
 bool TableSchema::isMetaTable()      { return m_type == META; }
 
-const QString TableSchema::childIndexName(Database::DBTypes type)
+const QString TableSchema::childIndexName(Database::DbType type)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString cname;
 
    if ( m_type == CHILD || m_type == BT ) {
@@ -317,9 +318,9 @@ const QString TableSchema::childIndexName(Database::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::inRecIndexName(Database::DBTypes type)
+const QString TableSchema::inRecIndexName(Database::DbType type)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString cname;
 
    if ( m_type == INREC ) {
@@ -336,10 +337,10 @@ const QString TableSchema::inRecIndexName(Database::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::recipeIndexName(Database::DBTypes type)
+const QString TableSchema::recipeIndexName(Database::DbType type)
 {
    QString cname;
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
 
    if ( m_foreignKeys.contains(kpropRecipeId) ) {
       cname = m_foreignKeys.value(kpropRecipeId)->colName(selected);
@@ -348,10 +349,10 @@ const QString TableSchema::recipeIndexName(Database::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::parentIndexName(Database::DBTypes type)
+const QString TableSchema::parentIndexName(Database::DbType type)
 {
    QString cname;
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
 
    if ( m_foreignKeys.contains(kpropParentId) ) {
       cname = m_foreignKeys.value(kpropParentId)->colName(selected);
@@ -360,9 +361,9 @@ const QString TableSchema::parentIndexName(Database::DBTypes type)
    return cname;
 }
 
-const QString TableSchema::generateCreateTable(Database::DBTypes type, QString tmpName)
+const QString TableSchema::generateCreateTable(Database::DbType type, QString tmpName)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString tname = tmpName.isEmpty() ? m_tableName : tmpName;
    QString retVal = QString("CREATE TABLE %1 (\n%2 %3\n")
                      .arg( tname )
@@ -423,9 +424,9 @@ const QString TableSchema::generateCreateTable(Database::DBTypes type, QString t
    return retVal;
 }
 
-const QString TableSchema::generateInsertRow(Database::DBTypes type)
+const QString TableSchema::generateInsertRow(Database::DbType type)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString columns = keyName(selected);
    QString binding = QString(":%1").arg(keyName(selected));
 
@@ -454,9 +455,9 @@ const QString TableSchema::generateInsertRow(Database::DBTypes type)
 // of itself and foreign key *values* are part of the database.
 // To make other parts of the code easier, I am making certain that the bound values use the property name
 // and not the column name. It saves a call later.
-const QString TableSchema::generateInsertProperties(Database::DBTypes type)
+const QString TableSchema::generateInsertProperties(Database::DbType type)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString columns;
    QString binding;
 
@@ -484,9 +485,9 @@ const QString TableSchema::generateInsertProperties(Database::DBTypes type)
 }
 
 // note: this does not do anything with foreign keys. It is up to the calling code to handle those problems
-const QString TableSchema::generateUpdateRow(int key, Database::DBTypes type)
+const QString TableSchema::generateUpdateRow(int key, Database::DbType type)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString columns;
 
    QMapIterator<QString, PropertySchema*> i(m_properties);
@@ -514,9 +515,9 @@ const QString TableSchema::generateUpdateRow(int key, Database::DBTypes type)
 
 // note: this does not do anything with foreign keys. It is up to the calling code to handle those problems
 // unlike the previous method, this one uses a bind named ":id" for the key value.
-const QString TableSchema::generateUpdateRow(Database::DBTypes type)
+const QString TableSchema::generateUpdateRow(Database::DbType type)
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString columns;
 
    QMapIterator<QString, PropertySchema*> i(m_properties);
@@ -541,9 +542,9 @@ const QString TableSchema::generateUpdateRow(Database::DBTypes type)
            .arg(keyName(selected));
 }
 
-const QString TableSchema::generateCopyTable( QString dest, Database::DBTypes type )
+const QString TableSchema::generateCopyTable( QString dest, Database::DbType type )
 {
-   Database::DBTypes selected = type == Database::ALLDB ? m_defType : type;
+   Database::DbType selected = type == Database::ALLDB ? m_defType : type;
    QString columns = keyName(selected);
 
    QMapIterator<QString, PropertySchema*> i(m_properties);
@@ -569,7 +570,7 @@ const QString TableSchema::generateCopyTable( QString dest, Database::DBTypes ty
 // right now, only instruction_number has an increment (or decrement) trigger.
 // if we invent others, the m_trigger property will need to be set for that table.
 // this only handles one trigger per table. It could be made to handle a list, maybe.
-const QString TableSchema::generateIncrementTrigger(Database::DBTypes type)
+const QString TableSchema::generateIncrementTrigger(Database::DbType type)
 {
    QString retval;
 
@@ -610,7 +611,7 @@ const QString TableSchema::generateIncrementTrigger(Database::DBTypes type)
    return retval;
 }
 
-const QString TableSchema::generateDecrementTrigger(Database::DBTypes type)
+const QString TableSchema::generateDecrementTrigger(Database::DbType type)
 {
    QString retval;
 

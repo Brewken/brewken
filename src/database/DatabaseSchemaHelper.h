@@ -40,7 +40,7 @@ namespace DatabaseSchemaHelper {
    /*!
     * \brief Create a blank database whose schema version is \c dbVersion
     */
-   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Database::DBTypes dbType = Database::NODB);
+   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Database::DbType dbType = Database::NODB);
 
    /*!
     * \brief Migrate schema from \c oldVersion to \c newVersion
@@ -51,7 +51,7 @@ namespace DatabaseSchemaHelper {
    int currentVersion(QSqlDatabase db = QSqlDatabase());
 
    //! \brief does the heavy lifting to copy the contents from one db to the next
-   void copyDatabase(Database & database, Database::DBTypes oldType, Database::DBTypes newType, QSqlDatabase connectionNew);
+   void copyDatabase(Database::DbType oldType, Database::DbType newType, QSqlDatabase connectionNew);
 
    //! \brief Populates (or updates) default Recipes, Hops, Styles, etc in the DB
    void updateDatabase(Database & database, QString const& filename);

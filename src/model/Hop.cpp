@@ -35,21 +35,6 @@ namespace {
    QStringList types = QStringList() << "Bittering" << "Aroma" << "Both";
    QStringList forms = QStringList() << "Leaf" << "Pellet" << "Plug";
    QStringList uses = QStringList() << "Mash" << "First Wort" << "Boil" << "Aroma" << "Dry Hop";
-   bool isValidUse(const QString& str)
-   {
-      return (uses.indexOf(str) >= 0);
-   }
-
-   bool isValidType(const QString& str)
-   {
-      return (types.indexOf(str) >= 0);
-   }
-
-   bool isValidForm(const QString& str)
-   {
-      return (forms.indexOf(str) >= 0);
-   }
-
 }
 
 bool Hop::isEqualTo(NamedEntity const & other) const {

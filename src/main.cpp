@@ -199,7 +199,7 @@ void importFromXml(const QString & filename) {
       qCritical() << "Unable to import" << filename << "Error: " << errorMessage;
       exit(1);
    }
-    Database::dropInstance();
+   Database::instance().unload();
 ///    PersistentSettings::insert("converted", QDate().currentDate().toString());
     exit(0);
 }

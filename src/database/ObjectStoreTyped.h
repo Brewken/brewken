@@ -355,4 +355,10 @@ private:
  */
 bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection);
 
+/**
+ * \brief Returns a list of all the database tables managed by all the object stores.  Really only needed for copying
+ *        one database to another.
+ */
+QVector<ObjectStore const *> GetAllObjectStores();
+
 #endif

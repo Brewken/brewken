@@ -19,6 +19,8 @@
 
 #include <QSqlDatabase>
 
+class Database;
+
 /**
  * \brief RAII wrapper for transaction(), commit(), rollback() member functions of QSqlDatabase
  */
@@ -32,7 +34,7 @@ public:
    /**
     * \brief Constructing a \c DbTransaction will start a DB transaction
     */
-   DbTransaction(QSqlDatabase & connection, SpecialBehaviours specialBehaviours = NONE);
+   DbTransaction(Database & database, QSqlDatabase & connection, SpecialBehaviours specialBehaviours = NONE);
 
    /**
     * \brief When a \c DbTransaction goes out of scope and its destructor is called, the transaction started in the
@@ -48,6 +50,7 @@ public:
    bool commit();
 
 private:
+   Database & database;
    // This is intended to be a short-lived object, so it's OK to store a reference to a QSqlDatabase object
    QSqlDatabase & connection;
    bool committed;

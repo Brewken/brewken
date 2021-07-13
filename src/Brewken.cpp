@@ -355,7 +355,7 @@ void Brewken::cleanup() {
    delete btTrans;
    delete _mainWindow;
 
-   Database::dropInstance();
+   Database::instance().unload();
    return;
 }
 
@@ -649,7 +649,7 @@ void Brewken::updateConfig()
       switch ( ++cVersion ) {
          case 1:
             // Update the dbtype, because I had to increase the NODB value from -1 to 0
-            int newType = static_cast<Database::DBTypes>(PersistentSettings::value("dbType",Database::NODB).toInt() + 1);
+            int newType = static_cast<Database::DbType>(PersistentSettings::value("dbType",Database::NODB).toInt() + 1);
             // Write that back to the config file
             PersistentSettings::insert("dbType", static_cast<int>(newType));
             // and make sure we don't do it again.

@@ -215,7 +215,7 @@ void YeastTableModel::changed(QMetaProperty prop, QVariant /*val*/)
    Recipe* recSender = qobject_cast<Recipe*>(sender());
    if( recSender && recSender == recObs )
    {
-      if( QString(prop.name()) == "yeasts" )
+      if( QString(prop.name()) == PropertyNames::Recipe::yeastIds )
       {
          removeAll();
          addYeasts( recObs->yeasts() );
@@ -291,14 +291,11 @@ QVariant YeastTableModel::data( const QModelIndex& index, int role ) const
 
          unit  = displayUnit(index.column());
 
-         return QVariant(
-                           Brewken::displayAmount( row->amount(),
-                                                      row->amountIsWeight() ? &Units::kilograms : &Units::liters,
-                                                      3,
-                                                      unit,
-                                                      Unit::noScale
-                                                   )
-                        );
+         return QVariant(Brewken::displayAmount(row->amount(),
+                                                row->amountIsWeight() ? &Units::kilograms : &Units::liters,
+                                                3,
+                                                unit,
+                                                Unit::noScale));
 
       default :
          qWarning() << tr("Bad column: %1").arg(index.column());

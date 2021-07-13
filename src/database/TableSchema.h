@@ -68,69 +68,69 @@ public:
    // Get the property object. Try not to use this?
    const PropertySchema* property(QString prop) const;
    // some properties may be named differently (like inventory v quanta)
-   const QString propertyName(QString prop, Database::DBTypes type = Database::ALLDB) const;
+   const QString propertyName(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the database column name for this property
-   const QString propertyToColumn(QString prop, Database::DBTypes type = Database::ALLDB) const;
+   const QString propertyToColumn(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the database column type
-   const QString propertyColumnType(QString prop, Database::DBTypes type = Database::ALLDB) const;
+   const QString propertyColumnType(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the XML tag for this column
-   const QString propertyToXml(QString prop, Database::DBTypes type = Database::ALLDB) const;
+   const QString propertyToXml(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the default value for this column
-   const QVariant propertyColumnDefault(QString prop, Database::DBTypes type = Database::ALLDB) const;
+   const QVariant propertyColumnDefault(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the column size of the property's column
-   int propertyColumnSize(QString prop, Database::DBTypes type = Database::ALLDB) const;
+   int propertyColumnSize(QString prop, Database::DbType type = Database::ALLDB) const;
    // given an XML tag, get the associated property name
-   const QString xmlToProperty(QString xmlName, Database::DBTypes type = Database::ALLDB) const;
+   const QString xmlToProperty(QString xmlName, Database::DbType type = Database::ALLDB) const;
    // returns the property to be used for the increment/decrement triggers
    const QString triggerProperty() const;
 
    //!brief get all the property names
-   const QStringList allPropertyNames(Database::DBTypes type = Database::ALLDB) const;
+   const QStringList allPropertyNames(Database::DbType type = Database::ALLDB) const;
    //!brief get all the database column names
-   const QStringList allColumnNames(Database::DBTypes type = Database::ALLDB) const;
+   const QStringList allColumnNames(Database::DbType type = Database::ALLDB) const;
    //!brief get keys for the properties
    const QStringList allProperties() const;
 
    // things to do on foreign keys
    // get a specific foreign key column name
-   const QString foreignKeyToColumn(QString fkey, Database::DBTypes type = Database::ALLDB) const;
+   const QString foreignKeyToColumn(QString fkey, Database::DbType type = Database::ALLDB) const;
    // a lot of tables have one foreign key. This is a nice shortcut for that
-   const QString foreignKeyToColumn(Database::DBTypes type = Database::ALLDB) const;
+   const QString foreignKeyToColumn(Database::DbType type = Database::ALLDB) const;
 
    // which table does this foreign key point to
-   DatabaseConstants::DbTableId foreignTable(QString fkey, Database::DBTypes type = Database::ALLDB) const;
+   DatabaseConstants::DbTableId foreignTable(QString fkey, Database::DbType type = Database::ALLDB) const;
    // a lot of tables have one foreign key. This is a nice shortcut for that
-   DatabaseConstants::DbTableId foreignTable(Database::DBTypes type = Database::ALLDB) const;
+   DatabaseConstants::DbTableId foreignTable(Database::DbType type = Database::ALLDB) const;
 
    //!brief get all the foreign key property names
-   const QStringList allForeignKeyNames(Database::DBTypes type = Database::ALLDB) const;
+   const QStringList allForeignKeyNames(Database::DbType type = Database::ALLDB) const;
    //!brief get all the foreign key column names
-   const QStringList allForeignKeyColumnNames(Database::DBTypes type = Database::ALLDB) const;
+   const QStringList allForeignKeyColumnNames(Database::DbType type = Database::ALLDB) const;
    //!brief get keys for the foreign keys
    const QStringList allForeignKeys() const;
 
    //!brief Use this to get the not recipe_id index from an inrec table
-   const QString inRecIndexName(Database::DBTypes type = Database::ALLDB);
+   const QString inRecIndexName(Database::DbType type = Database::ALLDB);
    //!brief Use this to get the child_id index from a children table
-   const QString childIndexName(Database::DBTypes type = Database::ALLDB);
+   const QString childIndexName(Database::DbType type = Database::ALLDB);
    //!brief Use this to get the recipe_id from a inrec table
-   const QString recipeIndexName(Database::DBTypes type = Database::ALLDB);
+   const QString recipeIndexName(Database::DbType type = Database::ALLDB);
    //!brief Use this to get the parent_id from a child table
-   const QString parentIndexName(Database::DBTypes type = Database::ALLDB);
+   const QString parentIndexName(Database::DbType type = Database::ALLDB);
 
    // Not sure these belong here yet, but maybe
-   const QString generateCreateTable(Database::DBTypes type = Database::ALLDB, QString tmpName = QString("") );
-   const QString generateUpdateRow(int key, Database::DBTypes type = Database::ALLDB);
-   const QString generateUpdateRow(Database::DBTypes type = Database::ALLDB);
+   const QString generateCreateTable(Database::DbType type = Database::ALLDB, QString tmpName = QString("") );
+   const QString generateUpdateRow(int key, Database::DbType type = Database::ALLDB);
+   const QString generateUpdateRow(Database::DbType type = Database::ALLDB);
    // this one includes the foreign keys and is really only suitable for copying databases
-   const QString generateInsertRow(Database::DBTypes type = Database::ALLDB);
+   const QString generateInsertRow(Database::DbType type = Database::ALLDB);
    // this one ignores the foreign keys and is more generally useful
-   const QString generateInsertProperties(Database::DBTypes type = Database::ALLDB);
+   const QString generateInsertProperties(Database::DbType type = Database::ALLDB);
    // when dropping columns, we have to copy tables in sqlite. This does that.
-   const QString generateCopyTable( QString dest, Database::DBTypes type = Database::ALLDB);
+   const QString generateCopyTable( QString dest, Database::DbType type = Database::ALLDB);
 
-   const QString generateDecrementTrigger(Database::DBTypes type);
-   const QString generateIncrementTrigger(Database::DBTypes type);
+   const QString generateDecrementTrigger(Database::DbType type);
+   const QString generateIncrementTrigger(Database::DbType type);
 
    bool isInventoryTable();
    bool isBaseTable();
@@ -139,7 +139,7 @@ public:
    bool isBtTable();
    bool isMetaTable();
 
-   const QString keyName(Database::DBTypes type = Database::ALLDB) const;
+   const QString keyName(Database::DbType type = Database::ALLDB) const;
 
 private:
 public:
@@ -169,11 +169,11 @@ private:
    // some already difficult to read calls harder to read. Or I can cache the
    // default in the table and use that if ALLDB is sent, which breaks the
    // metaphor.
-   Database::DBTypes m_defType;
+   Database::DbType m_defType;
 
    // getter only. But this is private because only my dearest,
    // closest friends can do this
-   Database::DBTypes defType() const;
+   Database::DbType defType() const;
 
    void defineTable();
    void defineStyleTable();

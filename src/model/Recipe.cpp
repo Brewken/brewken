@@ -153,10 +153,10 @@ namespace {
    template<> char const * const propertyToPropertyName<Yeast>()       {
       return PropertyNames::Recipe::yeastIds;
    }
-   template<class NE> void updatePropertyInDb(Recipe const & recipe) {
-      ObjectStoreWrapper::updateProperty(recipe, propertyToPropertyName<NE>());
+/*   template<class NE> void updatePropertyInDb(Recipe const & recipe) {
+      this->propagatePropertyChange(propertyToPropertyName<NE>());
       return;
-   }
+   }*/
 }
 
 
@@ -227,16 +227,6 @@ public:
       return ObjectStoreTyped<NE>::getInstance().getByIdsRaw(this->accessIds<NE>());
    }
 
-   /**
-    * \brief Create and add a new Hop/Fermentable/Instruction etc, first to the relevant Object Store and then to this
-    *        Recipe
-    */
-   template<class NE> void addNew(std::shared_ptr<NE> ne) {
-      ObjectStoreWrapper::insert(ne);
-      this->accessIds<NE>().append(ne->key());
-      updatePropertyInDb<Instruction>(recipe);
-      return;
-   }
 
    // Member variables
    Recipe & recipe;
@@ -538,6 +528,7 @@ void Recipe::connectSignals() {
    return;
 }
 
+
 void Recipe::mashFermentableIns() {
    /*** Add grains ***/
    auto ins = std::make_shared<Instruction>();
@@ -552,7 +543,7 @@ void Recipe::mashFermentableIns() {
    str += tr("to the mash tun.");
    ins->setDirections(str);
 
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -580,7 +571,7 @@ void Recipe::saltWater(Salt::WhenToAdd when) {
    str += QString(tr(" into the %1 water").arg(tmp));
    ins->setDirections(str);
 
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -603,7 +594,7 @@ void Recipe::mashWaterIns() {
    str += tr("for upcoming infusions.");
    ins->setDirections(str);
 
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -745,7 +736,7 @@ void Recipe::firstWortHopsIns() {
    ins->setName(tr("First wort hopping"));
    ins->setDirections(str);
 
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -775,7 +766,7 @@ void Recipe::topOffIns() {
    ins->setDirections(str);
    ins->addReagent(tmp);
 
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -891,7 +882,7 @@ void Recipe::postboilFermentablesIns() {
    ins->setDirections(str);
    ins->addReagent(tmp);
 
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -924,7 +915,7 @@ void Recipe::postboilIns() {
    auto ins = std::make_shared<Instruction>();
    ins->setName(tr("Post boil"));
    ins->setDirections(str);
-   this->pimpl->addNew(ins);
+   this->addNew(ins);
 
    return;
 }
@@ -940,7 +931,7 @@ void Recipe::addPreinstructions(QVector<PreInstruction> preins) {
       ins->setDirections(pi.getText());
       ins->setInterval(pi.getTime());
 
-      this->pimpl->addNew(ins);
+      this->addNew(ins);
    }
    return;
 }
@@ -1011,7 +1002,7 @@ void Recipe::generateInstructions() {
    startBoilIns->setName(tr("Start boil"));
    startBoilIns->setInterval(timeRemaining);
    startBoilIns->setDirections(str);
-   this->pimpl->addNew(startBoilIns);
+   this->addNew(startBoilIns);
 
    /*** Get fermentables unless we haven't added yet ***/
    if (hasBoilFermentable()) {
@@ -1038,7 +1029,7 @@ void Recipe::generateInstructions() {
    auto flameoutIns = std::make_shared<Instruction>();
    flameoutIns->setName(tr("Flameout"));
    flameoutIns->setDirections(tr("Stop boiling the wort."));
-   this->pimpl->addNew(flameoutIns);
+   this->addNew(flameoutIns);
 
    // Steeped aroma hops
    preinstructions.clear();
@@ -1068,7 +1059,7 @@ void Recipe::generateInstructions() {
    auto pitchIns = std::make_shared<Instruction>();
    pitchIns->setName(tr("Pitch yeast"));
    pitchIns->setDirections(str);
-   this->pimpl->addNew(pitchIns);
+   this->addNew(pitchIns);
    /*** End primary yeast ***/
 
    /*** Primary misc ***/
@@ -1080,13 +1071,13 @@ void Recipe::generateInstructions() {
    auto fermentIns = std::make_shared<Instruction>();
    fermentIns->setName(tr("Ferment"));
    fermentIns->setDirections(str);
-   this->pimpl->addNew(fermentIns);
+   this->addNew(fermentIns);
 
    str = tr("Transfer beer to secondary.");
    auto transferIns = std::make_shared<Instruction>();
    transferIns->setName(tr("Transfer to secondary"));
    transferIns->setDirections(str);
-   this->pimpl->addNew(transferIns);
+   this->addNew(transferIns);
 
    /*** Secondary misc ***/
    addPreinstructions(miscSteps(Misc::Secondary));
@@ -1156,16 +1147,29 @@ QString Recipe::nextAddToBoil(double & time) {
 }
 
 //============================Relational Setters===============================
+template<class NE> NE * Recipe::add(std::shared_ptr<NE> ne) {
+   this->pimpl->accessIds<NE>().append(ne->key());
+   connect(ne.get(), SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,
+                                                                                                        QVariant)));
+   this->propagatePropertyChange(propertyToPropertyName<NE>());
+
+   this->recalcIfNeeded(ne->metaObject()->className());
+   return ne.get();
+}
+
+/**
+ * \brief Create and add a new Hop/Fermentable/Instruction etc, first to the relevant Object Store and then to this
+ *        Recipe
+ */
+template<class NE> void Recipe::addNew(std::shared_ptr<NE> ne) {
+   ObjectStoreWrapper::insert(ne);
+   this->add(ne);
+   return;
+}
+
 template<class NE> NE * Recipe::add(NE * var) {
    std::shared_ptr<NE> neToAdd = copyIfNeeded(*var);
-   this->pimpl->accessIds<NE>().append(neToAdd->key());
-   connect(var, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,
-                                                                                                   QVariant)));
-
-   updatePropertyInDb<NE>(*this);
-
-   this->recalcIfNeeded(neToAdd->metaObject()->className());
-   return neToAdd.get();
+   return this->add(neToAdd);
 }
 
 //
@@ -1226,7 +1230,7 @@ template<class NE> NE * Recipe::remove(NE * var) {
       // This shouldn't happen, but it doesn't inherently break anything, so just log a warning and carry on
       qWarning() << Q_FUNC_INFO << "Tried to remove object with ID" << idToLookFor << "but couldn't find it";
    } else {
-      updatePropertyInDb<NE>(*this);
+      this->propagatePropertyChange(propertyToPropertyName<NE>());
       this->recalcIBU(); // .:TODO:. Don't need to do this recalculation when it's Instruction
    }
    return var;
@@ -1269,7 +1273,7 @@ void Recipe::clearInstructions() {
       ObjectStoreTyped<Instruction>::getInstance().softDelete(ii);
    }
    this->pimpl->instructionIds.clear();
-   updatePropertyInDb<Instruction>(*this);
+   this->propagatePropertyChange(propertyToPropertyName<Instruction>());
    return;
 }
 
@@ -1279,7 +1283,7 @@ void Recipe::insertInstruction(Instruction * ins, int pos) {
    }
 
    this->pimpl->instructionIds.insert(pos, ins->key());
-   updatePropertyInDb<Instruction>(*this);
+   this->propagatePropertyChange(propertyToPropertyName<Instruction>());
    return;
 }
 
@@ -1290,7 +1294,7 @@ void Recipe::setStyle(Style * var) {
 
    std::shared_ptr<Style> styleToAdd = copyIfNeeded(*var);
    this->styleId = styleToAdd->key();
-   updatePropertyInDb<Style>(*this);
+   this->propagatePropertyChange(propertyToPropertyName<Style>());
    return;
 }
 
@@ -1301,7 +1305,7 @@ void Recipe::setEquipment(Equipment * var) {
 
    std::shared_ptr<Equipment> equipmentToAdd = copyIfNeeded(*var);
    this->equipmentId = equipmentToAdd->key();
-   updatePropertyInDb<Equipment>(*this);
+   this->propagatePropertyChange(propertyToPropertyName<Equipment>());
    return;
 }
 
@@ -1314,7 +1318,7 @@ void Recipe::setMash(Mash * var) {
 
    std::shared_ptr<Mash> mashToAdd = copyIfNeeded(*var);
    this->mashId = mashToAdd->key();
-   updatePropertyInDb<Mash>(*this);
+   this->propagatePropertyChange(propertyToPropertyName<Mash>());
 
    connect(mashToAdd.get(), SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptMashChange(QMetaProperty,
                                                                                                   QVariant)));

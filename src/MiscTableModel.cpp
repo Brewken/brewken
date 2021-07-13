@@ -423,7 +423,7 @@ void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    Recipe* recSender = qobject_cast<Recipe*>(sender());
    if( recSender && recSender == recObs )
    {
-      if( QString(prop.name()) == "miscs" )
+      if( QString(prop.name()) == PropertyNames::Recipe::miscIds )
       {
          removeAll();
          addMiscs( recObs->miscs() );

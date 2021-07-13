@@ -182,8 +182,11 @@ public:
 
    /**
     * \brief Load from database all objects handled by this store
+    *
+    * \param database Sets and stores the Database this store is going to work with.  If not supplied (or set to
+    *                 nullptr) then the store will use \c Database::getInstance()
     */
-   void loadAll();
+   void loadAll(Database * database = nullptr);
 
    /**
     * \brief Create a new object of the type we are handling, using the parameters read from the DB.  Subclass needs to
@@ -324,6 +327,11 @@ public:
     * \brief Raw pointer version of \c getAll
     */
    QList<QObject *> getAllRaw() const;
+
+   /**
+    * \brief Returns a list of all tables used by this store.  Used for copying data from one DB to another.
+    */
+   QList<QString> getAllTableNames() const;
 
 signals:
    /**
