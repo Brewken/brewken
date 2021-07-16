@@ -56,18 +56,18 @@ public:
    virtual ~BeerXML();
 
    // Export to BeerXML =======================================================
-   void toXml( BrewNote* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Equipment* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Fermentable* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Hop* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Instruction* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Mash* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( MashStep* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Misc* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Recipe* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Style* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Water* a, QDomDocument& doc, QDomNode& parent );
-   void toXml( Yeast* a, QDomDocument& doc, QDomNode& parent );
+
+   /**
+    * \brief Creates a blank BeerXML document in the supplied file (which the caller should have opened for writing
+    *        already).  This can then be supplied to subsequent calls to add BeerXML for Recipes, Hops, etc.
+    */
+   void createXmlFile(QFile & outFile);
+
+   /**
+    * \brief Write a list of objects to the supplied file
+    */
+   template<class NE> void toXml(QList<NE *> nes, QFile & outFile);
+
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
    /*! Import ingredients, recipes, etc from BeerXML documents.
@@ -94,8 +94,10 @@ private:
    BeerXML(BeerXML const&) = delete;
    //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
    BeerXML& operator=(BeerXML const&) = delete;
-
-   QString textFromValue(QVariant value, QString type);
+   //! No move constructor
+   BeerXML(BeerXML &&) = delete;
+   //! No move assignment
+   BeerXML & operator=(BeerXML &&) = delete;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020:
+ * XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -42,19 +42,21 @@ public:
     * \brief This constructor doesn't have to do much more than create an appropriate new subclass of \b NamedEntity.
     *        Everything else is done in the base class.
     */
-   XmlNamedEntityRecord(XmlCoding const & xmlCoding,
+   XmlNamedEntityRecord(QString const & recordName,
+                        XmlCoding const & xmlCoding,
                         XmlRecord::FieldDefinitions const & fieldDefinitions) :
-   XmlRecord{xmlCoding,
-             fieldDefinitions} {
-      this->namedEntityRaiiContainer.reset(new NE{"Empty Object"});
-      this->namedEntity = this->namedEntityRaiiContainer.get();
-      this->namedEntityClassName = this->namedEntity->metaObject()->className();
+   XmlRecord{recordName, xmlCoding, fieldDefinitions} {
+      this->namedEntityClassName = NE::staticMetaObject.className();
       this->includeInStats = this->includedInStats();
       return;
    }
 
 
 protected:
+   virtual void constructNamedEntity() {
+      this->namedEntityRaiiContainer.reset(new NE{this->namedParameterBundle});
+      this->namedEntity = this->namedEntityRaiiContainer.get();
+   }
 
    //
    // TODO It's a bit clunky to have the knowledge/logic in this class for whether duplicates and name clashes are

@@ -30,7 +30,7 @@ PropertySchema::PropertySchema()
 
 // Normal property initializer, will set every DB to this definition
 PropertySchema::PropertySchema( QString propName, QString colName,
-                                QString xmlName,  QString colType,
+                                QString colType,
                                 QVariant defaultValue, QString constraint, int colSize )
     : QObject(nullptr),
     m_properties(QVector<dbProp*>(1 + static_cast<int>(Database::ALLDB),nullptr))
@@ -39,7 +39,6 @@ PropertySchema::PropertySchema( QString propName, QString colName,
 
    tmp->m_propName = propName;
    tmp->m_colName = colName;
-   tmp->m_xmlName = xmlName;
    tmp->m_constraint = constraint;
    tmp->m_colType = colType;
    tmp->m_defaultValue = defaultValue;
@@ -62,7 +61,6 @@ PropertySchema::PropertySchema(QString propName, QString colName, QString colTyp
 
    tmp->m_propName = propName;
    tmp->m_colName = colName;
-   tmp->m_xmlName = QString();
    tmp->m_constraint = QString();
    tmp->m_colType = colType;
    tmp->m_defaultValue = QVariant();
@@ -81,14 +79,13 @@ PropertySchema::PropertySchema(QString propName, QString colName, QString colTyp
 // If you use ALLDB with this, it will initialize anything not already set to
 // the value
 void PropertySchema::addProperty( QString propName, Database::DbType dbType,
-                  QString colName, QString xmlName, QString colType,
+                  QString colName, QString colType,
                   QVariant defaultValue, int colSize, QString constraint )
 {
    dbProp* tmp = new dbProp;
 
    tmp->m_propName = propName;
    tmp->m_colName = colName;
-   tmp->m_xmlName = xmlName;
    tmp->m_constraint = constraint;
    tmp->m_colType = colType;
    tmp->m_defaultValue = defaultValue;
@@ -117,7 +114,6 @@ void PropertySchema::addForeignKey(QString propName, Database::DbType dbType,
 
    tmp->m_propName = propName;
    tmp->m_colName = colName;
-   tmp->m_xmlName = QString();
    tmp->m_constraint = QString();
    tmp->m_colType = QString();
    tmp->m_defaultValue = QVariant();
@@ -153,11 +149,6 @@ const QString PropertySchema::colType(Database::DbType dbType) const
    return m_properties[dbType]->m_colType;
 }
 
-const QString PropertySchema::xmlName(Database::DbType dbType) const
-{
-   return m_properties[dbType]->m_xmlName;
-}
-
 const QString PropertySchema::constraint(Database::DbType dbType) const
 {
    return m_properties[dbType]->m_constraint;
@@ -181,11 +172,6 @@ DatabaseConstants::DbTableId PropertySchema::fTable(Database::DbType dbType) con
 void PropertySchema::setColName(QString colName, Database::DbType dbType)
 {
    m_properties[dbType]->m_colName = colName;
-}
-
-void PropertySchema::setXmlName(QString xmlName, Database::DbType dbType)
-{
-   m_properties[dbType]->m_xmlName = xmlName;
 }
 
 void PropertySchema::setConstraint(QString constraint, Database::DbType dbType)

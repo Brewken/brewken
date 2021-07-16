@@ -426,7 +426,7 @@ public:
       this->dbConnectionTestState = NO_CHANGE;
       this->changeColors(optionDialog);
 
-      if (PersistentSettings::value("versioning", false).toBool()) {
+      if (RecipeHelper::getAutomaticVersioningEnabled()) {
          optionDialog.checkBox_versioning->setCheckState(Qt::Checked);
          optionDialog.groupBox_deleteBehavior->setEnabled(true);
          switch (PersistentSettings::value("deletewhat", Recipe::DESCENDANT).toInt()) {
@@ -827,7 +827,7 @@ void OptionDialog::saveLoggingSettings() {
 void OptionDialog::saveVersioningSettings() {
    // Save versioning options
    if (checkBox_versioning->checkState() == Qt::Checked) {
-      PersistentSettings::insert("versioning", true);
+      RecipeHelper::setAutomaticVersioningEnabled(true);
       if (radioButton_deleteAncestor->isChecked()) {
          PersistentSettings::insert("deletewhat", Recipe::ANCESTOR);
       } else {
@@ -835,7 +835,7 @@ void OptionDialog::saveVersioningSettings() {
       }
    } else {
       // the default when versioning is off is to only delete descendant
-      PersistentSettings::insert("versioning", false);
+      RecipeHelper::setAutomaticVersioningEnabled(false);
       PersistentSettings::insert("deletewhat", Recipe::DESCENDANT);
    }
 

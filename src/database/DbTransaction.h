@@ -55,6 +55,13 @@ private:
    QSqlDatabase & connection;
    bool committed;
    int specialBehaviours;
+
+   // RAII class shouldn't be getting copied or moved
+   DbTransaction(DbTransaction const &) = delete;
+   DbTransaction & operator=(DbTransaction const &) = delete;
+   DbTransaction(DbTransaction &&) = delete;
+   DbTransaction & operator=(DbTransaction &&) = delete;
+
 };
 
 

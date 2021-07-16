@@ -1781,7 +1781,7 @@ double Recipe::points() {
 }
 
 //=========================Relational Getters=============================
-Style * Recipe::style() {
+Style * Recipe::style() const {
    return ObjectStoreWrapper::getByIdRaw<Style>(this->styleId);
 }
 int Recipe::getStyleId() const {
@@ -2646,7 +2646,7 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, char const * const
    //
    // If the user has said they don't want versioning, just return
    //
-   if (!PersistentSettings::value("versioning", false).toBool()) {
+   if (!RecipeHelper::getAutomaticVersioningEnabled()) {
       return;
    }
 
@@ -2681,5 +2681,36 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, char const * const
    //
    owner->setAncestor(*spawn);
 
+   return;
+}
+
+/**
+ * \brief Turn automatic versioning on or off
+ */
+void RecipeHelper::setAutomaticVersioningEnabled(bool enabled) {
+   PersistentSettings::insert("versioning", enabled);
+   return;
+}
+
+/**
+ * \brief Returns \c true if automatic versioning is enabled, \c false otherwise
+ */
+bool RecipeHelper::getAutomaticVersioningEnabled() {
+   return PersistentSettings::value("versioning", false).toBool();
+}
+
+RecipeHelper::SuspendRecipeVersioning::SuspendRecipeVersioning() {
+   this->savedVersioningValue = RecipeHelper::getAutomaticVersioningEnabled();
+   if (this->savedVersioningValue) {
+      qDebug() << Q_FUNC_INFO << "Temporarily suspending automatic Recipe versioning";
+      RecipeHelper::setAutomaticVersioningEnabled(false);
+   }
+   return;
+}
+RecipeHelper::SuspendRecipeVersioning::~SuspendRecipeVersioning() {
+   if (this->savedVersioningValue) {
+      qDebug() << Q_FUNC_INFO << "Re-enabling automatic Recipe versioning";
+      RecipeHelper::setAutomaticVersioningEnabled(true);
+   }
    return;
 }

@@ -1075,13 +1075,11 @@ std::shared_ptr<QObject> ObjectStore::insertOrUpdate(std::shared_ptr<QObject> ob
    return this->insert(object);
 }
 
-
-int ObjectStore::insertOrUpdate(QObject * object) {
-   auto sharedPointer = std::make_shared<QObject>(object);
+int ObjectStore::insertOrUpdate(QObject & object) {
+   std::shared_ptr<QObject> sharedPointer{&object};
    this->insertOrUpdate(sharedPointer);
-   return this->pimpl->getPrimaryKey(*object).toInt();
+   return this->pimpl->getPrimaryKey(object).toInt();
 }
-
 
 void ObjectStore::updateProperty(QObject const & object, char const * const propertyName) {
    // Start transaction
@@ -1121,6 +1119,10 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
 
       queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
       queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
+
+      qDebug() <<
+         Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
+         "with database query" << queryString;
 
       //
       // Bind the values
@@ -1172,6 +1174,9 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
       // write out data based on the current property values.
       //
+      qDebug() <<
+         Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
+         "in junction table" << matchingJunctionTableDefinitionDefn->tableName;
       if (!deleteFromJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, primaryKey, connection)) {
          return;
       }

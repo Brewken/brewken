@@ -221,7 +221,7 @@ public:
     *
     * \return ID of what was inserted or updated
     */
-   int insertOrUpdate(QObject * object);
+   int insertOrUpdate(QObject & object);
 
    /**
     * \brief Update a single property of an existing object in the DB
@@ -424,6 +424,10 @@ private:
    ObjectStore(ObjectStore const &) = delete;
    //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
    ObjectStore & operator=(ObjectStore const &) = delete;
+   //! No move constructor
+   ObjectStore(ObjectStore &&) = delete;
+   //! No move assignment
+   ObjectStore & operator=(ObjectStore &&) = delete;
 
 };
 

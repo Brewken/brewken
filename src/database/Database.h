@@ -206,6 +206,10 @@ private:
    Database(Database const&) = delete;
    //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
    Database& operator=(Database const&) = delete;
+   //! No move constructor
+   Database(Database &&) = delete;
+   //! No move assignment
+   Database& operator=(Database &&) = delete;
    //! Destructor hidden.
    ~Database();
 

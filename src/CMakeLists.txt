@@ -216,6 +216,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/xml/BtDomErrorHandler.cpp
     ${SRCDIR}/xml/XercesHelpers.cpp
     ${SRCDIR}/xml/XmlCoding.cpp
+    ${SRCDIR}/xml/XmlMashRecord.cpp
     ${SRCDIR}/xml/XmlMashStepRecord.cpp
     ${SRCDIR}/xml/XmlRecipeRecord.cpp
     ${SRCDIR}/xml/XmlRecordCount.cpp

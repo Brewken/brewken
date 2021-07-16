@@ -44,7 +44,7 @@ class Salt : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "salts")
 
-   friend class BeerXML;
+
    friend class WaterDialog;
    friend class SaltTableModel;
 public:

@@ -45,7 +45,7 @@ namespace PropertyNames::Instruction { static char const * const timerValue = "t
 class Instruction : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "instructions")
-   friend class BeerXML;
+
 
 public:
    Instruction(QString name = "", bool cache = true);

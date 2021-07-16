@@ -40,65 +40,75 @@
 #include "model/Misc.h"
 #include "model/Salt.h"  // Needed for Salt::WhenToAdd (see getReagents())
 
-namespace PropertyNames::Recipe {static char const * const ABV_pct            = "ABV_pct"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const age                = "age"; /* previously kpropAge */ }
-namespace PropertyNames::Recipe {static char const * const ageTemp_c          = "ageTemp_c"; /* previously kpropAgeTemp */ }
-namespace PropertyNames::Recipe {static char const * const ancestorId         = "ancestorId"; }
-namespace PropertyNames::Recipe {static char const * const asstBrewer         = "asstBrewer"; /* previously kpropAsstBrewer */ }
-namespace PropertyNames::Recipe {static char const * const batchSize_l        = "batchSize_l"; /* previously kpropBatchSize */ }
-namespace PropertyNames::Recipe {static char const * const boilGrav           = "boilGrav"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const boilSize_l         = "boilSize_l"; /* previously kpropBoilSize */ }
-namespace PropertyNames::Recipe {static char const * const boilTime_min       = "boilTime_min"; /* previously kpropBoilTime */ }
-namespace PropertyNames::Recipe {static char const * const boilVolume_l       = "boilVolume_l"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const brewer             = "brewer"; /* previously kpropBrewer */ }
-namespace PropertyNames::Recipe {static char const * const calories           = "calories"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const carbonationTemp_c  = "carbonationTemp_c"; /* previously kpropCarbTemp */ }
-namespace PropertyNames::Recipe {static char const * const carbonation_vols   = "carbonation_vols"; /* previously kpropCarbVols */ }
-namespace PropertyNames::Recipe {static char const * const color_srm          = "color_srm"; /* previously kpropColor */ }
-namespace PropertyNames::Recipe {static char const * const date               = "date"; /* previously kpropDate */ }
-namespace PropertyNames::Recipe {static char const * const efficiency_pct     = "efficiency_pct"; /* previously kpropEffPct */ }
-namespace PropertyNames::Recipe {static char const * const equipment          = "equipment"; }
-namespace PropertyNames::Recipe {static char const * const equipmentId        = "equipmentId"; }
-namespace PropertyNames::Recipe {static char const * const fermentableIds     = "fermentableIds"; }
-namespace PropertyNames::Recipe {static char const * const fermentationStages = "fermentationStages"; /* previously kpropFermStages */ }
-namespace PropertyNames::Recipe {static char const * const fg                 = "fg"; /* previously kpropFG */ }
-namespace PropertyNames::Recipe {static char const * const finalVolume_l      = "finalVolume_l"; /* previously kpropFinVol */ }
-namespace PropertyNames::Recipe {static char const * const forcedCarbonation  = "forcedCarbonation"; /* previously kpropForcedCarb */ }
-namespace PropertyNames::Recipe {static char const * const grainsInMash_kg    = "grainsInMash_kg"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const grains_kg          = "grains_kg"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const hopIds             = "hopIds"; }
-namespace PropertyNames::Recipe {static char const * const IBU                = "IBU"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const IBUs               = "IBUs"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const instructionIds     = "instructionIds"; }
-namespace PropertyNames::Recipe {static char const * const kegPrimingFactor   = "kegPrimingFactor"; /* previously kpropKegPrimFact */ }
-namespace PropertyNames::Recipe {static char const * const locked             = "locked"; }
-namespace PropertyNames::Recipe {static char const * const mashId             = "mashId"; }
-namespace PropertyNames::Recipe {static char const * const mash               = "mash"; }
-namespace PropertyNames::Recipe {static char const * const miscIds            = "miscIds"; }
-namespace PropertyNames::Recipe {static char const * const notes              = "notes"; /* previously kpropNotes */ }
-namespace PropertyNames::Recipe {static char const * const og                 = "og"; /* previously kpropOG */ }
-namespace PropertyNames::Recipe {static char const * const points             = "points"; /* previously kpropPoints */ }
-namespace PropertyNames::Recipe {static char const * const postBoilVolume_l   = "postBoilVolume_l"; /* previously kpropPostBoilVol */ }
-namespace PropertyNames::Recipe {static char const * const primaryAge_days    = "primaryAge_days"; /* previously kpropPrimAgeDays */ }
-namespace PropertyNames::Recipe {static char const * const primaryTemp_c      = "primaryTemp_c"; /* previously kpropPrimTemp */ }
-namespace PropertyNames::Recipe {static char const * const primingSugarEquiv  = "primingSugarEquiv"; /* previously kpropPrimSugEquiv */ }
-namespace PropertyNames::Recipe {static char const * const primingSugarName   = "primingSugarName"; /* previously kpropPrimSugName */ }
-namespace PropertyNames::Recipe {static char const * const recipeType         = "recipeType"; }
-namespace PropertyNames::Recipe {static char const * const saltIds            = "saltIds"; }
-namespace PropertyNames::Recipe {static char const * const secondaryAge_days  = "secondaryAge_days"; /* previously kpropSecAgeDays */ }
-namespace PropertyNames::Recipe {static char const * const secondaryTemp_c    = "secondaryTemp_c"; /* previously kpropSecTemp */ }
-namespace PropertyNames::Recipe {static char const * const SRMColor           = "SRMColor"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const styleId            = "styleId"; }
-namespace PropertyNames::Recipe {static char const * const style              = "style"; }
-namespace PropertyNames::Recipe {static char const * const tasteNotes         = "tasteNotes"; /* previously kpropTasteNotes */ }
-namespace PropertyNames::Recipe {static char const * const tasteRating        = "tasteRating"; /* previously kpropTasteRating */ }
-namespace PropertyNames::Recipe {static char const * const tertiaryAge_days   = "tertiaryAge_days"; /* previously kpropTertAgeDays */ }
-namespace PropertyNames::Recipe {static char const * const tertiaryTemp_c     = "tertiaryTemp_c"; /* previously kpropTertTemp */ }
-namespace PropertyNames::Recipe {static char const * const type               = "type"; /* previously kpropType */ }
-namespace PropertyNames::Recipe {static char const * const waterIds           = "waterIds"; }
-namespace PropertyNames::Recipe {static char const * const wortFromMash_l     = "wortFromMash_l"; /* not stored */ }
-namespace PropertyNames::Recipe {static char const * const yeastIds           = "yeastIds"; }
-
+// One advantage of using these constants is you get compile-time checking for typos etc
+#define AddPropertyName(property) \
+namespace PropertyNames::Recipe {static char const * const property = #property; }
+AddPropertyName(ABV_pct)
+AddPropertyName(age)
+AddPropertyName(ageTemp_c)
+AddPropertyName(ancestorId)
+AddPropertyName(asstBrewer)
+AddPropertyName(batchSize_l)
+AddPropertyName(boilGrav)
+AddPropertyName(boilSize_l)
+AddPropertyName(boilTime_min)
+AddPropertyName(boilVolume_l)
+AddPropertyName(brewer)
+AddPropertyName(brewNotes)
+AddPropertyName(calories)
+AddPropertyName(carbonationTemp_c)
+AddPropertyName(carbonation_vols)
+AddPropertyName(color_srm)
+AddPropertyName(date)
+AddPropertyName(efficiency_pct)
+AddPropertyName(equipment)
+AddPropertyName(equipmentId)
+AddPropertyName(fermentableIds)
+AddPropertyName(fermentables)
+AddPropertyName(fermentationStages)
+AddPropertyName(fg)
+AddPropertyName(finalVolume_l)
+AddPropertyName(forcedCarbonation)
+AddPropertyName(grainsInMash_kg)
+AddPropertyName(grains_kg)
+AddPropertyName(hopIds)
+AddPropertyName(hops)
+AddPropertyName(IBU)
+AddPropertyName(IBUs)
+AddPropertyName(instructionIds)
+AddPropertyName(instructions)
+AddPropertyName(kegPrimingFactor)
+AddPropertyName(locked)
+AddPropertyName(mash)
+AddPropertyName(mashId)
+AddPropertyName(miscIds)
+AddPropertyName(miscs)
+AddPropertyName(notes)
+AddPropertyName(og)
+AddPropertyName(points)
+AddPropertyName(postBoilVolume_l)
+AddPropertyName(primaryAge_days)
+AddPropertyName(primaryTemp_c)
+AddPropertyName(primingSugarEquiv)
+AddPropertyName(primingSugarName)
+AddPropertyName(recipeType)
+AddPropertyName(saltIds)
+AddPropertyName(secondaryAge_days)
+AddPropertyName(secondaryTemp_c)
+AddPropertyName(SRMColor)
+AddPropertyName(style)
+AddPropertyName(styleId)
+AddPropertyName(tasteNotes)
+AddPropertyName(tasteRating)
+AddPropertyName(tertiaryAge_days)
+AddPropertyName(tertiaryTemp_c)
+AddPropertyName(type)
+AddPropertyName(waterIds)
+AddPropertyName(waters)
+AddPropertyName(wortFromMash_l)
+AddPropertyName(yeastIds)
+AddPropertyName(yeasts)
+#undef AddPropertyName
 
 // Forward declarations
 class Equipment;
@@ -122,7 +132,7 @@ class Recipe : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "recipes")
 
-   friend class BeerXML;
+
    friend class RecipeFormatter;
    friend class MainWindow;
    friend class WaterDialog;
@@ -439,7 +449,7 @@ public:
    int getMashId() const;
    Equipment * equipment() const;
    int getEquipmentId() const;
-   Style * style();
+   Style * style() const;
    int getStyleId() const;
 
    int getAncestorId() const;
@@ -683,6 +693,32 @@ namespace RecipeHelper {
     *        enabled.
     */
    void prepareForPropertyChange(NamedEntity & ne, char const * const propertyName);
+
+   /**
+    * \brief Turn automatic versioning on or off
+    */
+   void setAutomaticVersioningEnabled(bool enabled);
+
+   /**
+    * \brief Returns \c true if automatic versioning is enabled, \c false otherwise
+    */
+   bool getAutomaticVersioningEnabled();
+
+   /**
+    * \brief Mini RAII class that allows automatic Recipe versioning to be suspended for the time that it's in scope
+    */
+   class SuspendRecipeVersioning {
+   public:
+      SuspendRecipeVersioning();
+      ~SuspendRecipeVersioning();
+   private:
+      bool savedVersioningValue;
+      // RAII class shouldn't be getting copied or moved
+      SuspendRecipeVersioning(SuspendRecipeVersioning const &) = delete;
+      SuspendRecipeVersioning & operator=(SuspendRecipeVersioning const &) = delete;
+      SuspendRecipeVersioning(SuspendRecipeVersioning &&) = delete;
+      SuspendRecipeVersioning & operator=(SuspendRecipeVersioning &&) = delete;
+   };
 
 }
 #endif

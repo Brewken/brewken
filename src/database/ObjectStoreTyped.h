@@ -92,10 +92,10 @@ public:
     *
     * \return ID of the newly-inserted object in the database
     */
-   int insert(NE * ne) {
-      std::shared_ptr<NE> nePointer{ne};
+   int insert(NE & ne) {
+      std::shared_ptr<NE> nePointer{&ne};
       this->insert(nePointer);
-      return ne->key();
+      return ne.key();
    }
 
    /**
@@ -107,6 +107,21 @@ public:
    virtual std::shared_ptr<NE> insertOrUpdate(std::shared_ptr<NE> ne) {
       this->ObjectStore::insertOrUpdate(std::static_pointer_cast<QObject>(ne));
       return ne;
+   }
+
+   /**
+    * \brief Raw pointer version of \c insertOrUpdate
+    *
+    * \return ID of what was inserted or updated
+    */
+   int insertOrUpdate(NE & ne) {
+      int id = ne.key();
+      if (id > 0) {
+         std::shared_ptr<NE> nep = this->getById(id);
+         this->ObjectStore::update(std::static_pointer_cast<QObject>(nep));
+         return id;
+      }
+      return this->insert(ne);
    }
 
    /**

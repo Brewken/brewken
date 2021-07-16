@@ -64,7 +64,8 @@ public:
       String,
       Date,
       Enum,
-      Record
+      RecordSimple,
+      RecordComplex
    };
 
    /**
@@ -87,7 +88,7 @@ public:
    struct FieldDefinition {
       FieldType           fieldType;
       XQString            xPath;
-      char const * const  propertyName;
+      char const * const  propertyName;   // If fieldType == RecordSet, then this is used only on export
       EnumLookupMap const * stringToEnum;
    };
 
@@ -95,17 +96,24 @@ public:
 
    /**
     * \brief Constructor
+    * \param recordName The name of the outer tag around this type of record, eg "RECIPE" for a "<RECIPE>...</RECIPE>"
+    *                   record in BeerXML.
     * \param xmlCoding An \b XmlCoding object representing the XML Coding we are using (eg BeerXML 1.0).  This is what
     *                  we'll need to look up how to handle nested records inside this one.
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     */
-   XmlRecord(XmlCoding const & xmlCoding,
+   XmlRecord(QString const & recordName,
+             XmlCoding const & xmlCoding,
              FieldDefinitions const & fieldDefinitions);
 
+   /**
+    * \brief Get the record name (in this coding)
+    */
+   QString getRecordName() const;
 
    /**
-    * \brief Getter for the NamedParameterBundle we readin from this record
+    * \brief Getter for the NamedParameterBundle we read in from this record
     *
     *        This is needed for the same reasons as \c XmlRecord::getNamedEntity() below
     *
@@ -160,6 +168,17 @@ public:
    virtual ProcessingResult normaliseAndStoreInDb(NamedEntity * containingEntity,
                                                   QTextStream & userMessage,
                                                   XmlRecordCount & stats);
+   /**
+    * \brief Export to XML
+    * \param namedEntityToExport The object that we want to export to XML
+    * \param out Where to write the XML
+    * \param indentLevel Current number of indents to put before each opening tag (default 1)
+    * \param indentString String to use for each indent (default two spaces)
+    */
+   void toXml(NamedEntity const & namedEntityToExport,
+              QTextStream & out,
+              int indentLevel = 1,
+              char const * const indentString = "  ") const;
 
 private:
    /**
@@ -173,6 +192,12 @@ private:
                          QTextStream & userMessage);
 
 protected:
+   /**
+    * \brief Child classes need to implement this to populate this->namedEntity with a suitably-constructed object
+    *        using the contents of this=>namedParameterBundle
+    */
+   virtual void constructNamedEntity();
+
    bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                                           XmlRecordCount & stats);
 
@@ -198,6 +223,33 @@ protected:
    virtual void setContainingEntity(NamedEntity * containingEntity);
 
    /**
+    * \brief Called by \c toXml to write out any fields that are themselves records.
+    *        Subclasses should provide the obvious recursive implementation.
+    * \param fieldDefinition Which of the fields we're trying to export.  It will be of type \c XmlRecord::Record
+    * \param subRecord A suitably constructed subclass of \c XmlRecord that can do the export.  (Note that because
+    *                  exporting to XML is const on \c XmlRecord, we only need one of these even if there are multiple
+    *                  records to export.)
+    * \param namedEntityToExport The object containing (or referencing) the data we want to export to XML
+    * \param out Where to write the XML
+    */
+   virtual void subRecordToXml(XmlRecord::FieldDefinition const & fieldDefinition,
+                               XmlRecord const & subRecord,
+                               NamedEntity const & namedEntityToExport,
+                               QTextStream & out,
+                               int indentLevel,
+                               char const * const indentString) const;
+
+   /**
+    * \brief Writes a comment to the XML output when there is no contained record to output (to make it explicit that
+    *        the omission was not by accident.
+    */
+   void writeNone(XmlRecord const & subRecord,
+                  NamedEntity const & namedEntityToExport,
+                  QTextStream & out,
+                  int indentLevel,
+                  char const * const indentString) const;
+
+   /**
     * \brief Given a name that is a duplicate of an existing one, modify it to a potential alternative.
     *        Callers should call this function as many times as necessary to find a non-clashing name.
     *
@@ -210,8 +262,8 @@ protected:
     */
    static void modifyClashingName(QString & candidateName);
 
+   QString const            recordName;
    XmlCoding const &        xmlCoding;
-
    FieldDefinitions const & fieldDefinitions;
 
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
@@ -261,7 +313,7 @@ protected:
    //   • A smart pointer to the child XmlRecord.  (Smart pointer ensures each child record is destroyed properly when
    //     our own destructor is called.
    //
-   typedef std::pair<char const * const, std::shared_ptr<XmlRecord> > ChildRecord;
+   typedef std::pair<XmlRecord::FieldDefinition const *, std::shared_ptr<XmlRecord> > ChildRecord;
    QMultiHash<QString const &, ChildRecord> childRecords;
 };
 

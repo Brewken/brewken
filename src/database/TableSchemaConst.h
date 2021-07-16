@@ -192,34 +192,7 @@ static const QString kcolTime("time");
 static const QString kcolKey("id");
 
 static const QString kcolPH("ph");
-// And things that are identical in beerxml
-static const QString kxmlPropName("NAME");
-static const QString kxmlPropNotes("NOTES");
-static const QString kxmlPropAmount("AMOUNT");
-static const QString kxmlPropSubstitutes("SUBSTITUTES");
-static const QString kxmlPropTime("TIME");
 
-// needed by both equipment and mash
-const QString kxmlPropTunWeight("TUN_WEIGHT");
-const QString kxmlPropTunSpecHeat("TUN_SPECIFIC_HEAT");
-
-// needed by both misc and yeast
-static const QString kxmlPropAmtIsWgt("AMOUNT_IS_WEIGHT");
-
-// needed by both recipe and equipment
-static const QString kxmlPropBatchSize("BATCH_SIZE");
-static const QString kxmlPropBoilSize("BOIL_SIZE");
-static const QString kxmlPropBoilTime("BOIL_TIME");
-
-// used by yeast and brewnote
-static const QString kxmlPropAtten("ATTENUATION");
-
-// use by recipe and brewnote
-static const QString kxmlPropFG("FG");
-static const QString kxmlPropOG("OG");
-
-// water and mash
-static const QString kxmlPropPH("PH");
 // Child information. We were really consistent with our naming here, so all the
 // *children tables will use these constants. The only thing that changes is
 // the table it points at

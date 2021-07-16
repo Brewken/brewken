@@ -45,7 +45,7 @@
  */
 class DatabaseSchema
 {
-   friend class BeerXML;
+
    friend class Database;
 
 public:

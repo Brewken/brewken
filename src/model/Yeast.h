@@ -57,7 +57,7 @@ class Yeast : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "yeasts")
 
-   friend class BeerXML;
+
    friend class YeastDialog;
 public:
    //! \brief What beverage the yeast is for.

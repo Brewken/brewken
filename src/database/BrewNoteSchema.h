@@ -57,37 +57,4 @@ static const QString kcolBNoteProjAtten("projected_atten");
 static const QString kcolBNoteProjPnts("projected_points");
 static const QString kcolBNoteProjFermPnts("projected_ferm_points");
 
-
-// Properties
-
-
-// finally, XML props
-static const QString kxmlPropBrewDate("BREWDATE");
-static const QString kxmlPropFermDate("DATE_FERMENTED_OUT");
-static const QString kxmlPropSG("SG");
-static const QString kxmlPropVolIntoBoil("VOLUME_INTO_BK");
-static const QString kxmlPropStrikeTemp("STRIKE_TEMP");
-static const QString kxmlPropMashFinTemp("MASH_FINAL_TEMP");
-static const QString kxmlPropPostBoilVol("POST_BOIL_VOLUME");
-static const QString kxmlPropVolIntoFerm("VOLUME_INTO_FERMENTER");
-static const QString kxmlPropPitchTemp("PITCH_TEMP");
-static const QString kxmlPropEffIntoBoil("EFF_INTO_BK");
-static const QString kxmlPropABV("ACTUAL_ABV");
-static const QString kxmlPropBrewhsEff("BREWHOUSE_EFF");
-
-static const QString kxmlPropProjBoilGrav("PROJECTED_BOIL_GRAV");
-static const QString kxmlPropProjStrikeTemp("PROJECTED_STRIKE_TEMP");
-static const QString kxmlPropProjMashFinTemp("PROJECTED_MASH_FIN_TEMP");
-static const QString kxmlPropProjVolIntoBoil("PROJECTED_VOL_INTO_BK");
-static const QString kxmlPropProjOG("PROJECTED_OG");
-static const QString kxmlPropProjVolIntoFerm("PROJECTED_VOL_INTO_FERM");
-static const QString kxmlPropProjFG("PROJECTED_FG");
-static const QString kxmlPropProjEff("PROJECTED_EFF");
-static const QString kxmlPropProjABV("PROJECTED_ABV");
-static const QString kxmlPropProjPnts("PROJECTED_POINTS");
-static const QString kxmlPropProjFermPnts("PROJECTED_FERM_POINTS");
-static const QString kxmlPropProjAtten("PROJECTED_ATTEN");
-static const QString kxmlPropBoilOff("BOIL_OFF");
-static const QString kxmlPropFinVol("FINAL_VOLUME");
-
-#endif // BREWNOTESCHEMA_H
+#endif

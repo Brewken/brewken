@@ -24,16 +24,8 @@ static const QString kcolInstructionTimerValue("timervalue");
 static const QString kcolInstructionCompleted("completed");
 static const QString kcolInstructionInterval("interval");
 
-
-static const QString kxmlPropDirections("directions");
-static const QString kxmlPropHasTimer("hasTimer");
-static const QString kxmlPropTimerValue("timervalue");
-static const QString kxmlPropCompleted("completed");
-static const QString kxmlPropInterval("interval");
-
-
 // small cheat here. InstructionInRecipe tables have a spare column. Rather
 // than define a unique header file, I am including it here.
 static char const * const kpropInstructionNumber = "instruction_number";
 static const QString kcolInstructionNumber("instruction_number");
-#endif // INSTRUCTIONSCHEMA_H
+#endif

@@ -78,6 +78,14 @@ Equipment::Equipment(QString t_name, bool cacheOnly) :
    return;
 }
 
+
+
+// The default values below are set for the following fields that are not part of BeerXML 1.0 standard and so will
+// not be present in BeerXML files (unless we wrote them) but will be present in the database:
+//    - evapRate_lHr
+//    - grainAbsorption_LKg
+//    - boilingPoint_c
+//
 Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle},
    m_boilSize_l           {namedParameterBundle(PropertyNames::Equipment::boilSize_l           ).toDouble()},
@@ -88,15 +96,15 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    m_topUpWater_l         {namedParameterBundle(PropertyNames::Equipment::topUpWater_l         ).toDouble()},
    m_trubChillerLoss_l    {namedParameterBundle(PropertyNames::Equipment::trubChillerLoss_l    ).toDouble()},
    m_evapRate_pctHr       {namedParameterBundle(PropertyNames::Equipment::evapRate_pctHr       ).toDouble()},
-   m_evapRate_lHr         {namedParameterBundle(PropertyNames::Equipment::evapRate_lHr         ).toDouble()},
+   m_evapRate_lHr         {namedParameterBundle(PropertyNames::Equipment::evapRate_lHr, 4.0)               },
    m_boilTime_min         {namedParameterBundle(PropertyNames::Equipment::boilTime_min         ).toDouble()},
-   m_calcBoilVolume       {namedParameterBundle(PropertyNames::Equipment::calcBoilVolume       ).toBool()},
+   m_calcBoilVolume       {namedParameterBundle(PropertyNames::Equipment::calcBoilVolume       ).toBool()  },
    m_lauterDeadspace_l    {namedParameterBundle(PropertyNames::Equipment::lauterDeadspace_l    ).toDouble()},
    m_topUpKettle_l        {namedParameterBundle(PropertyNames::Equipment::topUpKettle_l        ).toDouble()},
    m_hopUtilization_pct   {namedParameterBundle(PropertyNames::Equipment::hopUtilization_pct   ).toDouble()},
    m_notes                {namedParameterBundle(PropertyNames::Equipment::notes                ).toString()},
-   m_grainAbsorption_LKg  {namedParameterBundle(PropertyNames::Equipment::grainAbsorption_LKg  ).toDouble()},
-   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c       ).toDouble()} {
+   m_grainAbsorption_LKg  {namedParameterBundle(PropertyNames::Equipment::grainAbsorption_LKg, 1.086)      },
+   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c,      100.0)      } {
    return;
 }
 

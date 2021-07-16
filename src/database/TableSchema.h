@@ -29,7 +29,7 @@ class TableSchema : QObject
 
    friend class DatabaseSchema;
    friend class Database;
-   friend class BeerXML;
+
 
 public:
 
@@ -73,14 +73,10 @@ public:
    const QString propertyToColumn(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the database column type
    const QString propertyColumnType(QString prop, Database::DbType type = Database::ALLDB) const;
-   // get the XML tag for this column
-   const QString propertyToXml(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the default value for this column
    const QVariant propertyColumnDefault(QString prop, Database::DbType type = Database::ALLDB) const;
    // get the column size of the property's column
    int propertyColumnSize(QString prop, Database::DbType type = Database::ALLDB) const;
-   // given an XML tag, get the associated property name
-   const QString xmlToProperty(QString xmlName, Database::DbType type = Database::ALLDB) const;
    // returns the property to be used for the increment/decrement triggers
    const QString triggerProperty() const;
 

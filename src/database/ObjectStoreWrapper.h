@@ -54,6 +54,10 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().insertCopyOf(ne.key());
    }
 
+   template<class NE> int insertOrUpdate(NE & ne) {
+      return ObjectStoreTyped<NE>::getInstance().insertOrUpdate(ne);
+   }
+
    template<class NE> void updateProperty(NE const & ne, char const * const propertyToUpdateInDb) {
       ObjectStoreTyped<NE>::getInstance().updateProperty(ne, propertyToUpdateInDb);
       return;

@@ -51,32 +51,5 @@ static const QString kcolRecipeEquipmentId("equipment_id");
 static const QString kcolRecipeStyleId("style_id");
 static const QString kcolRecipeAncestorId("ancestor_id");
 
-// properties for the recipe object
-
- static char const * const kpropAncestorId = "ancestor_id";
-
-// Huh. Took a long time for a xmlPropType to show up
-static const QString kxmlPropType("TYPE");
-static const QString kxmlPropBrewer("BREWER");
-static const QString kxmlPropEff("EFFICIENCY");
-static const QString kxmlPropAsstBrewer("ASST_BREWER");
-static const QString kxmlPropTasteNotes("TASTE_NOTES");
-static const QString kxmlPropTasteRating("TASTE_RATING");
-static const QString kxmlPropFermStages("FERMENTATION_STAGES");
-static const QString kxmlPropPrimAgeDays("PRIMARY_AGE");
-static const QString kxmlPropPrimTemp("PRIMARY_TEMP");
-static const QString kxmlPropSecAgeDays("SECONDARY_AGE");
-static const QString kxmlPropSecTemp("SECONDARY_TEMP");
-static const QString kxmlPropTertAgeDays("TERTIARY_AGE");
-static const QString kxmlPropTertTemp("TERTIARY_TEMP");
-static const QString kxmlPropAge("AGE");
-static const QString kxmlPropAgeTemp("AGE_TEMP");
-static const QString kxmlPropDate("DATE");
-static const QString kxmlPropCarbVols("CARBONATION");
-static const QString kxmlPropForcedCarb("FORCED_CARBONATION");
-static const QString kxmlPropPrimSugName("PRIMING_SUGAR_NAME");
-static const QString kxmlPropCarbTemp("CARBONATION_TEMP");
-static const QString kxmlPropPrimSugEquiv("PRIMING_SUGAR_EQUIV");
-static const QString kxmlPropKegPrimFact("KEG_PRIMING_FACTOR");
-
-#endif // RECIPESCHEMA_H
+static char const * const kpropAncestorId = "ancestor_id";
+#endif

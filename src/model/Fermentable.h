@@ -64,7 +64,7 @@ class Fermentable : public NamedEntityWithInventory {
    Q_CLASSINFO("signal", "fermentables")
 
    friend class Brewken;
-   friend class BeerXML;
+
    friend class FermentableDialog;
 public:
 

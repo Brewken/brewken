@@ -31,20 +31,4 @@ static const QString kcolHopCaryophyllene("caryophyllene");
 static const QString kcolHopCohumulone("cohumulone");
 static const QString kcolHopMyrcene("myrcene");
 
-// properties for objects
-
-
-// these are also in the main constants file
-static const QString kxmlPropAlpha("ALPHA");
-static const QString kxmlPropBeta("BETA");
-static const QString kxmlPropHSI("HSI");
-static const QString kxmlPropHumulene("HUMULENE");
-static const QString kxmlPropCaryophyllene("CARYOPHYLLENE");
-static const QString kxmlPropCohumulone("COHUMULONE");
-static const QString kxmlPropMyrcene("MYRCENE");
-
-// These are not in BeerXML
-static const QString kxmlPropUse("USE");
-static const QString kxmlPropForm("FORM");
-//
-#endif // HOPSCHEMA_H
+#endif

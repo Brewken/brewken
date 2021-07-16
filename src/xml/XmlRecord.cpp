@@ -21,6 +21,7 @@
 #include <xalanc/XalanDOM/XalanNodeList.hpp>
 #include <xalanc/XPath/NodeRefList.hpp>
 #include <xalanc/XPath/XPathEvaluator.hpp>
+#include <xalanc/XalanDOM/XalanNamedNodeMap.hpp>
 
 #include "xml/XmlCoding.h"
 
@@ -45,19 +46,37 @@ namespace {
       "NOTATION_NODE",                //= 12
       "UNRECOGNISED!"
    };
+
+   /**
+    * \brief Helper function for writing multiple indents
+    */
+   void writeIndents(QTextStream & out,
+                     int indentLevel,
+                     char const * const indentString) {
+      for (int ii = 0; ii < indentLevel; ++ii) {
+         out << indentString;
+      };
+      return;
+   }
 }
 
-XmlRecord::XmlRecord(XmlCoding const & xmlCoding,
+XmlRecord::XmlRecord(QString const & recordName,
+                     XmlCoding const & xmlCoding,
                      FieldDefinitions const & fieldDefinitions) :
+   recordName{recordName},
    xmlCoding{xmlCoding},
    fieldDefinitions{fieldDefinitions},
    namedEntityClassName{},
-   namedParameterBundle{},
+   namedParameterBundle{NamedParameterBundle::NOT_STRICT},
    namedEntity{nullptr},
    namedEntityRaiiContainer{nullptr},
    includeInStats{true},
    childRecords{} {
    return;
+}
+
+QString XmlRecord::getRecordName() const {
+   return this->recordName;
 }
 
 NamedParameterBundle const & XmlRecord::getNamedParameterBundle() const {
@@ -97,7 +116,7 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                                     fieldDefinition->xPath.getXalanString());
       auto numChildNodes = nodesForCurrentXPath.getLength();
       qDebug() << Q_FUNC_INFO << "Found" << numChildNodes << "node(s) for " << fieldDefinition->xPath;
-      if (XmlRecord::Record == fieldDefinition->fieldType) {
+      if (XmlRecord::RecordSimple == fieldDefinition->fieldType || XmlRecord::RecordComplex == fieldDefinition->fieldType) {
          //
          // Depending on the context, it may or may not be valid to have multiple children of this type of record (eg
          // a Recipe might have multiple Hops but it only has one Equipment).  We don't really have to worry about that
@@ -200,11 +219,22 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      // QString's toDouble method will report success/failure of parsing straight back into our flag
                      parsedValue.setValue(value.toDouble(&parsedValueOk));
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
-                        qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as decimal number (double)";
+                        //
+                        // Although it is not explicitly stated in the BeerXML 1.0 standard, it is clear from the
+                        // sample files downloadable from www.beerxml.com that some "ignorable" percentage and decimal
+                        // values can be specified as "-".  I haven't found a straightforward way to filter or
+                        // transform these during XSD validation.  Nor, as yet, do I know whether it's possible from a
+                        // xalanc::XalanNode to get back to the Post-Schema-Validation Infoset (PSVI) information in
+                        // Xerces that might allow us to examine the XSD rules applied to the current node.
+                        //
+                        // For the moment, we assume that, if a "-" didn't get filtered out by XSD then it's allowed
+                        // and should be interpreted as NULL, which therefore means we store 0.0.
+                        //
+                        qInfo() <<
+                           Q_FUNC_INFO << "Treating " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
+                           value << " as 0.0";
+                        parsedValue.setValue(0.0);
+                        parsedValueOk = true;
                      }
                      break;
 
@@ -333,39 +363,39 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                //
                if (nullptr != fieldDefinition->propertyName) {
                   this->namedParameterBundle.insert(fieldDefinition->propertyName, parsedValue);
-
-                  //
-                  // It's a coding error if we're trying to store a simple field without somewhere to store it.  It
-                  // should only be the root record that doesn't have a NamedEntity to populate, and, equally, the root
-                  // record should not be configured to parse anything other than contained records.
-                  //
-                  Q_ASSERT(nullptr != this->namedEntity && "Trying to parse simple field on root record");
-                  if (!this->namedEntity->setProperty(fieldDefinition->propertyName, parsedValue)) {
-                     //
-                     // It's also a coding error if we are trying to read and store a field that does not exist on the
-                     // object we are loading (because we only try to store fields we (a) recognise and (b) are
-                     // interested in).  Nonetheless, if asserts are disabled, we may be able to continue past this
-                     // coding error by ignoring the current field.
-                     //
-                     Q_ASSERT(false && "Trying to update undeclared property");
-                     qCritical() <<
-                        Q_FUNC_INFO << "Trying to update undeclared property " << fieldDefinition->propertyName << " of " <<
-                        this->namedEntity->metaObject()->className();
-                  }
                }
             }
          }
       }
    }
+
+   //
+   // For everything but the root record, we now construct a suitable object (Hop, Recipe, etc) from the
+   // NamedParameterBundle (which will be empty for the root record).
+   //
+   if (!this->namedParameterBundle.isEmpty()) {
+      this->constructNamedEntity();
+   }
+
    return true;
 }
+
+void XmlRecord::constructNamedEntity() {
+   // Base class does not have a NamedEntity or a container, so nothing to do
+   // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
+   // NamedEntity, and subclasses that do have one should override this function.
+   Q_ASSERT(false && "Trying to construct named entity for base record");
+   return;
+}
+
 
 XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(NamedEntity * containingEntity,
                                                              QTextStream & userMessage,
                                                              XmlRecordCount & stats) {
    if (nullptr != this->namedEntity) {
       qDebug() <<
-         Q_FUNC_INFO << "Normalise and store " << this->namedEntityClassName << ": " << this->namedEntity->name();
+         Q_FUNC_INFO << "Normalise and store " << this->namedEntityClassName << "(" <<
+         this->namedEntity->metaObject()->className() << "):" << this->namedEntity->name();
 
       // If the object we are reading in is a duplicate of something we already have (and duplicates are not allowed)
       // then skip over this record (and any records it contains).  (This is _not_ an error, so we return true not
@@ -388,7 +418,12 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(NamedEntity * conta
       this->setContainingEntity(containingEntity);
 
       // Now we're ready to store in the DB, something the NamedEntity knows how to make happen
-      this->namedEntity->insertInDatabase();
+      int id = this->namedEntity->insertInDatabase();
+      if (id <= 0) {
+         userMessage << "Error storing" << this->namedEntity->metaObject()->className() <<
+         "in database.  See logs for more details";
+         return XmlRecord::Failed;
+      }
 
       // Once we've stored the object, we no longer have to take responsibility for destroying it because its registry
       // (currently the Database singleton) will now own it.
@@ -425,18 +460,30 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       if (XmlRecord::Failed == ii.value().second->normaliseAndStoreInDb(this->namedEntity, userMessage, stats)) {
          return false;
       }
+      //
       // Now we've stored the child record (or recognised it as a duplicate of one we already hold), we want to link it
       // (or as the case may be the record it's a duplicate of) to the parent.  If this is possible via a property (eg
       // the style on a recipe), then we can just do that here.  Otherwise the work needs to be done in the appropriate
-      // subclass of XmlNamedEntityRecord
-      char const * const propertyName = ii.value().first;
-      if (nullptr != propertyName) {
+      // subclass of XmlNamedEntityRecord.
+      //
+      // We can't use the presence or absence of a property name to determine whether the child record can be set via
+      // a property because some properties are read-only (and need to be present in the FieldDefinition for export to
+      // XML to work).  Instead we distinguish between two types of records: RecordSimple, which can be set via a
+      // property, and RecordComplex, which can't.
+      //
+      if (XmlRecord::RecordSimple == ii.value().first->fieldType) {
+         char const * const propertyName = ii.value().first->propertyName;
+         Q_ASSERT(nullptr != propertyName);
          // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
          // (ie for the root record).
          Q_ASSERT(nullptr != this->namedEntity);
          // It's a coding error if we're trying to set a non-existent property on the NamedEntity subclass for this
          // record.
-         Q_ASSERT(this->namedEntity->metaObject()->indexOfProperty(propertyName) > 0);
+         QMetaObject const * metaObject = this->namedEntity->metaObject();
+         int propertyIndex = metaObject->indexOfProperty(propertyName);
+         Q_ASSERT(propertyIndex >= 0);
+         QMetaProperty metaProperty = metaObject->property(propertyIndex);
+         Q_ASSERT(metaProperty.isWritable());
          // It's a coding error if we can't create a valid QVariant from a pointer to class we are trying to "set"
          Q_ASSERT(QVariant::fromValue(ii.value().second->namedEntity).isValid());
 
@@ -492,7 +539,7 @@ bool XmlRecord::loadChildRecords(xalanc::DOMSupport & domSupport,
 
       std::shared_ptr<XmlRecord> xmlRecord = this->xmlCoding.getNewXmlRecord(childRecordName);
       this->childRecords.insert(xmlRecord->namedEntityClassName,
-                                XmlRecord::ChildRecord(fieldDefinition->propertyName, xmlRecord));
+                                XmlRecord::ChildRecord(fieldDefinition, xmlRecord));
       if (!xmlRecord->load(domSupport, childRecordNode, userMessage)) {
          return false;
       }
@@ -542,5 +589,180 @@ void XmlRecord::modifyClashingName(QString & candidateName) {
       candidateName.truncate(positionOfMatch);
    }
    candidateName += QString(" (%1)").arg(duplicateNumber);
+   return;
+}
+
+void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
+                      QTextStream & out,
+                      int indentLevel,
+                      char const * const indentString) const {
+   // Callers are not allowed to supply null indent string
+   Q_ASSERT(nullptr != indentString);
+   qDebug() <<
+      Q_FUNC_INFO << "Exporting XML for" << namedEntityToExport.metaObject()->className() << "#" << namedEntityToExport.key();
+   writeIndents(out, indentLevel, indentString);
+   out << "<" << this->recordName << ">\n";
+
+   // BeerXML doesn't care about field order, so we don't either (though it would be relatively small additional work
+   // to control field order precisely).
+   for (auto & fieldDefinition : this->fieldDefinitions) {
+      // If there isn't a property name that means this is not a field we support so there's nothing to write out.
+      if (!fieldDefinition.propertyName) {
+         // At the moment at least, we support all XmlRecord::RecordSimple and XmlRecord::RecordComplex fields, so it's
+         // a coding error if one of them does not have a property name.
+         Q_ASSERT(XmlRecord::RecordSimple != fieldDefinition.fieldType);
+         Q_ASSERT(XmlRecord::RecordComplex != fieldDefinition.fieldType);
+         continue;
+      }
+
+      // Nested record fields are of two types.  XmlRecord::RecordSimple can be handled generically.
+      // XmlRecord::RecordComplex need to be handled in part by subclasses.
+      if (XmlRecord::RecordSimple == fieldDefinition.fieldType ||
+          XmlRecord::RecordComplex == fieldDefinition.fieldType) {
+         //
+         // Some of the work is generic, so we do it here.  In particular, we can work out what tags are needed to
+         // contain the record (from the XPath, if any, prior to the last slash), but also what type of XmlRecord(s) we
+         // will need by looking at the end of the XPath for this field.
+         //
+         // (In BeerXML, these contained XPaths are only 1-2 elements, so numContainingTags is always 0 or 1.  If and
+         // when we support a different XML coding, we might need to look at this code more closely.)
+         //
+         QStringList xPathElements = fieldDefinition.xPath.split("/");
+         Q_ASSERT(xPathElements.size() >= 1);
+         int numContainingTags = xPathElements.size() - 1;
+         for (int ii = 0; ii < numContainingTags; ++ii) {
+            writeIndents(out, indentLevel + 1 + ii, indentString);
+            out << "<" << xPathElements.at(ii) << ">\n";
+         }
+         qDebug() << Q_FUNC_INFO << xPathElements;
+         qDebug() << Q_FUNC_INFO << xPathElements.last();
+         std::shared_ptr<XmlRecord> subRecord = this->xmlCoding.getNewXmlRecord(xPathElements.last());
+
+         if (XmlRecord::RecordSimple == fieldDefinition.fieldType) {
+            NamedEntity * childNamedEntity =
+               namedEntityToExport.property(fieldDefinition.propertyName).value<NamedEntity *>();
+            if (childNamedEntity) {
+               subRecord->toXml(*childNamedEntity, out, indentLevel + numContainingTags + 1, indentString);
+            } else {
+               this->writeNone(*subRecord, namedEntityToExport, out, indentLevel + numContainingTags + 1, indentString);
+            }
+         } else {
+            //
+            // In theory we could get a list of the contained records via the Qt Property system.  However, the
+            // different things we would get back inside the QVariant (QList<BrewNote *>, QList<Hop *> etc) have no
+            // common base class, so we can't safely treat them as, or upcast them to, QList<NamedEntity *>.
+            //
+            // Instead, we get the subclass of this class (eg XmlRecipeRecord) to do the work
+            //
+            this->subRecordToXml(fieldDefinition,
+                                 *subRecord,
+                                 namedEntityToExport,
+                                 out,
+                                 indentLevel + numContainingTags + 1,
+                                 indentString);
+         }
+
+         // Obviously closing tags need to be written out in reverse order
+         for (int ii = numContainingTags - 1; ii >= 0 ; --ii) {
+            writeIndents(out, indentLevel + 1 + ii, indentString);
+            out << "</" << xPathElements.at(ii) << ">\n";
+         }
+         continue;
+      }
+
+      QVariant value = namedEntityToExport.property(fieldDefinition.propertyName);
+      Q_ASSERT(value.isValid());
+      // It's a coding error if we are trying here to write out some field with a complex XPath
+      if (fieldDefinition.xPath.contains("/")) {
+         qCritical() << Q_FUNC_INFO <<
+            "Invalid use of non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
+            fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
+         Q_ASSERT(false); // Stop here on a debug build
+         continue;        // Soldier on in a prod build
+      }
+      QString valueAsText;
+      switch (fieldDefinition.fieldType) {
+
+         case XmlRecord::Bool:
+            // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
+            valueAsText = value.toBool() ? "TRUE" : "FALSE";
+            break;
+
+         case XmlRecord::Int:
+         case XmlRecord::UInt:
+         case XmlRecord::Double:
+            // QVariant knows how to convert a number to a string
+            valueAsText = value.toString();
+            break;
+
+         case XmlRecord::Date:
+            // There is only one true date format :-)
+            valueAsText = value.toDate().toString(Qt::ISODate);
+            break;
+
+         case XmlRecord::Enum:
+            // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
+            Q_ASSERT(nullptr != fieldDefinition.stringToEnum);
+            // When writing out XML, we have the value of the EnumLookupMap (an int) and need to find the corresponding
+            // key (a string).  Fortunately, the underlying QHash already does all the heavy lifting.
+            valueAsText = fieldDefinition.stringToEnum->key(value.toInt());
+            if (valueAsText == "") {
+               // It's a coding error if we couldn't find the enum value the enum mapping
+               qCritical() << Q_FUNC_INFO <<
+                  "Could not find string representation of enum property" << fieldDefinition.propertyName <<
+                  "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
+                  namedEntityToExport.metaObject()->className();
+               Q_ASSERT(false); // Stop here on a debug build
+               continue;        // Soldier on in a prod build
+            }
+            break;
+
+            // By default we assume it's a string
+            case XmlRecord::String:
+            default:
+               valueAsText = value.toString();
+               break;
+      }
+      writeIndents(out, indentLevel + 1, indentString);
+      out << "<" << fieldDefinition.xPath << ">" << valueAsText << "</" << fieldDefinition.xPath << ">\n";
+   }
+
+   writeIndents(out, indentLevel, indentString);
+   out << "</" << this->recordName << ">\n";
+   return;
+}
+
+void XmlRecord::subRecordToXml(XmlRecord::FieldDefinition const & fieldDefinition,
+                               XmlRecord const & subRecord,
+                               NamedEntity const & namedEntityToExport,
+                               QTextStream & out,
+                               int indentLevel,
+                               char const * const indentString) const {
+   // Base class does not know how to handle nested records
+   // It's a coding error if we get here as this virtual member function should be overridden classes that have nested records
+   qCritical() << Q_FUNC_INFO <<
+      "Coding error: cannot export" << namedEntityToExport.metaObject()->className() << "(" <<
+      this->namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" << fieldDefinition.xPath <<
+      "> from base class XmlRecord";
+   Q_ASSERT(false);
+   return;
+}
+
+void XmlRecord::writeNone(XmlRecord const & subRecord,
+                          NamedEntity const & namedEntityToExport,
+                          QTextStream & out,
+                          int indentLevel,
+                          char const * const indentString) const {
+   //
+   // The fact that we don't have anything to write for a particular subrecord may or may not be a problem in a given
+   // XML coding.  Eg, we allow a recipe to exist without a style, equipment or mash, but, in BeerXML, only the latter
+   // two of these three are optional.  For the moment we just log what's going on.
+   //
+   qInfo() <<
+      Q_FUNC_INFO << "Skipping" << subRecord.getRecordName() << "tag while exporting" <<
+      this->getRecordName() << "XML record for" << namedEntityToExport.metaObject()->className() <<
+      "as no data to write";
+   writeIndents(out, indentLevel, indentString);
+   out << "<!-- No " << subRecord.getRecordName() << " in this " << this->getRecordName() << " -->\n";
    return;
 }

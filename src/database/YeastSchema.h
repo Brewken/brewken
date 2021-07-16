@@ -39,16 +39,4 @@ static const QString kcolYeastAddToSec("add_to_secondary");
 // properties for objects
 static char const * const kpropQuanta = "quanta";
 
-// XML properties
-// Note -- no XML props for type, form and flocculation
-static const QString kxmlPropLab("LABORATORY");
-static const QString kxmlPropProductID("PRODUCT_ID");
-static const QString kxmlPropMinTemp("MIN_TEMPERATURE");
-static const QString kxmlPropMaxTemp("MAX_TEMPERATURE");
-static const QString kxmlPropBestFor("BEST_FOR");
-static const QString kxmlPropTimesCultd("TIMES_CULTURED");
-static const QString kxmlPropMaxReuse("MAX_REUSE");
-static const QString kxmlPropAddToSec("ADD_TO_SECONDARY");
-static const QString kxmlPropFloc("FLOCCULATION");
-
-#endif // YEASTSCHEMA_H
+#endif
