@@ -57,7 +57,8 @@ NamedEntity::NamedEntity(NamedEntity const & other) :
 
 NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject    {nullptr                                                            },
-   m_key       {namedParameterBundle(PropertyNames::NamedEntity::key).toInt()      },
+   // Key will be set if we're creating from a DB record, but not if we're creating from an XML record
+   m_key       {namedParameterBundle(PropertyNames::NamedEntity::key, -1)         },
    // Not all subclasses have parents so parentKey should be optional in the NamedParameterBundle
    // .:TBD:. For the moment, parent IDs are actually stored outside the main object table (eg in equipment_children
    //         rather than equipment), so this will always set parentKey to -1, but we could envisage changing that in
@@ -66,8 +67,10 @@ NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    m_cacheOnly{false                                                              },
    m_folder    {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
    m_name      {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  }, // One subclass, BrewNote, does not have a name
-   m_display   {namedParameterBundle(PropertyNames::NamedEntity::display).toBool() },
-   m_deleted   {namedParameterBundle(PropertyNames::NamedEntity::deleted).toBool() } {
+   // Display will be set if we're creating from a DB record, but not if we're creating from an XML record
+   m_display   {namedParameterBundle(PropertyNames::NamedEntity::display, true)  },
+   // Deleted will be set if we're creating from a DB record, but not if we're creating from an XML record
+   m_deleted   {namedParameterBundle(PropertyNames::NamedEntity::deleted, false) } {
    return;
 }
 
@@ -454,7 +457,8 @@ void NamedEntity::setParent(NamedEntity const & parentNamedEntity) {
 }
 
 int NamedEntity::insertInDatabase() {
-   return this->getObjectStoreTypedInstance().insertOrUpdate(this);
+   qDebug() << Q_FUNC_INFO << this->metaObject()->className();
+   return this->getObjectStoreTypedInstance().insertOrUpdate(*this);
 }
 
 void NamedEntity::removeFromDatabase() {

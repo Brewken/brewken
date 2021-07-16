@@ -22,6 +22,7 @@
 #include "database/TableSchemaConst.h"
 #include "database/DatabaseSchema.h"
 #include "database/InstructionSchema.h"
+#include "PersistentSettings.h"
 
 
 DatabaseSchema::DatabaseSchema()
@@ -79,17 +80,17 @@ const QString DatabaseSchema::generateCreateTable(DatabaseConstants::DbTableId t
 
    TableSchema* tSchema = m_tables.at(table);
 
-   return tSchema->generateCreateTable(Database::dbType(),name);
+   return tSchema->generateCreateTable(static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt()),name);
 }
 
 // these two basically just pass the call to the proper table
 const QString DatabaseSchema::generateInsertRow(DatabaseConstants::DbTableId table)
 {
    TableSchema* tSchema = m_tables.value(table);
-   return tSchema->generateInsertRow(Database::dbType());
+   return tSchema->generateInsertRow(static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt()));
 }
 
-/*const QString DatabaseSchema::generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Database::DBTypes type)
+/*const QString DatabaseSchema::generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Database::DbType type)
 {
    TableSchema* tSchema = m_tables.value(src);
    return tSchema->generateCopyTable(dest,type);
@@ -98,7 +99,7 @@ const QString DatabaseSchema::generateInsertRow(DatabaseConstants::DbTableId tab
 const QString DatabaseSchema::generateUpdateRow(DatabaseConstants::DbTableId table, int key)
 {
    TableSchema* tSchema = m_tables.value(table);
-   return tSchema->generateUpdateRow(key, Database::dbType());
+   return tSchema->generateUpdateRow(key, static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt()));
 }
 
 DatabaseConstants::DbTableId DatabaseSchema::classNameToTable(QString className) const

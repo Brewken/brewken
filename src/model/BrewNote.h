@@ -73,7 +73,7 @@ class Recipe;
  */
 class BrewNote : public NamedEntity {
    Q_OBJECT
-   friend class BeerXML;
+
 
 public:
    BrewNote(QString name = "", bool cache = true);

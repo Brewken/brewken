@@ -27,6 +27,7 @@
 #include <QTextStream>
 
 #include "Brewken.h"
+#include "config.h" // For VERSIONSTRING
 #include "database/Database.h"
 #include "database/TableSchema.h"
 #include "model/BrewNote.h"
@@ -51,26 +52,30 @@
 // Variables and constant definitions that we need only in this file
 //
 namespace {
+   template<class NE> QString BEER_XML_RECORD_NAME;
+   template<class NE> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS;
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Top-level field mappings for BeerXML files
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   XmlRecord::FieldDefinitions const BEER_XML_ROOT_RECORD_FIELDS {
-      // Type              XPath                      Q_PROPERTY   Enum Mapper
-      {XmlRecord::Record, "HOPS/HOP",                 nullptr,     nullptr},
-      {XmlRecord::Record, "FERMENTABLES/FERMENTABLE", nullptr,     nullptr},
-      {XmlRecord::Record, "YEASTS/YEAST",             nullptr,     nullptr},
-      {XmlRecord::Record, "MISCS/MISC",               nullptr,     nullptr},
-      {XmlRecord::Record, "WATERS/WATER",             nullptr,     nullptr},
-      {XmlRecord::Record, "STYLES/STYLE",             nullptr,     nullptr},
-      {XmlRecord::Record, "MASHS/MASH",               nullptr,     nullptr},
-      {XmlRecord::Record, "RECIPES/RECIPE",           nullptr,     nullptr},
-      {XmlRecord::Record, "EQUIPMENTS/EQUIPMENT",     nullptr,     nullptr},
+   template<> QString const BEER_XML_RECORD_NAME<void>{"BEER_XML"};
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<void> {
+      // Type                    XPath                      Q_PROPERTY   Enum Mapper
+      {XmlRecord::RecordComplex, "HOPS/HOP",                 nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "FERMENTABLES/FERMENTABLE", nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "YEASTS/YEAST",             nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "MISCS/MISC",               nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "WATERS/WATER",             nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "STYLES/STYLE",             nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "MASHS/MASH",               nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "RECIPES/RECIPE",           nullptr,     nullptr},
+      {XmlRecord::RecordComplex, "EQUIPMENTS/EQUIPMENT",     nullptr,     nullptr},
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <HOP>...</HOP> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<Hop>{"HOP"};
    XmlRecord::EnumLookupMap const BEER_XML_HOP_USE_MAPPER {
       {"Boil",       Hop::Boil},
       {"Dry Hop",    Hop::Dry_Hop},
@@ -88,7 +93,7 @@ namespace {
       {"Plug",   Hop::Plug},
       {"Leaf",   Hop::Leaf}
    };
-   XmlRecord::FieldDefinitions const BEER_XML_HOP_RECORD_FIELDS {
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type              XPath             Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
       {XmlRecord::UInt,    "VERSION",        nullptr,                               nullptr},
@@ -115,6 +120,7 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <FERMENTABLE>...</FERMENTABLE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<Fermentable>{"FERMENTABLE"};
    XmlRecord::EnumLookupMap const BEER_XML_FERMENTABLE_TYPE_MAPPER {
       {"Grain",       Fermentable::Grain},
       {"Sugar",       Fermentable::Sugar},
@@ -122,7 +128,7 @@ namespace {
       {"Dry Extract", Fermentable::Dry_Extract},
       {"Adjunct",     Fermentable::Adjunct}
    };
-   XmlRecord::FieldDefinitions const BEER_XML_FERMENTABLE_RECORD_FIELDS {
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
       // Type              XPath               Q_PROPERTY                                          Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,                   nullptr},
       {XmlRecord::UInt,    "VERSION",          nullptr,                                            nullptr},
@@ -151,6 +157,7 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <YEAST>...</YEAST> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<Yeast>{"YEAST"};
    XmlRecord::EnumLookupMap const BEER_XML_YEAST_TYPE_MAPPER {
       {"Ale",       Yeast::Ale},
       {"Lager",     Yeast::Lager},
@@ -170,7 +177,7 @@ namespace {
       {"High",      Yeast::High},
       {"Very High", Yeast::Very_High}
    };
-   XmlRecord::FieldDefinitions const BEER_XML_YEAST_RECORD_FIELDS {
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
       // Type              XPath               Q_PROPERTY                                    Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,             nullptr},
       {XmlRecord::UInt,    "VERSION",          nullptr,                                      nullptr},
@@ -199,6 +206,7 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <MISC>...</MISC> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<Misc>{"MISC"};
    XmlRecord::EnumLookupMap const BEER_XML_MISC_TYPE_MAPPER {
       {"Spice",       Misc::Spice},
       {"Fining",      Misc::Fining},
@@ -214,7 +222,7 @@ namespace {
       {"Secondary", Misc::Secondary},
       {"Bottling",  Misc::Bottling}
    };
-   XmlRecord::FieldDefinitions const BEER_XML_MISC_RECORD_FIELDS {
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Misc> {
       // Type              XPath               Q_PROPERTY                           Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,    nullptr},
       {XmlRecord::UInt,    "VERSION",          nullptr,                             nullptr},
@@ -233,7 +241,8 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <WATER>...</WATER> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   XmlRecord::FieldDefinitions const BEER_XML_WATER_RECORD_FIELDS {
+   template<> QString const BEER_XML_RECORD_NAME<Water>{"WATER"};
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Water> {
       // Type               XPath            Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
       {XmlRecord::UInt,    "VERSION",        nullptr,                               nullptr},
@@ -252,6 +261,7 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <STYLE>...</STYLE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<Style>{"STYLE"};
    XmlRecord::EnumLookupMap const BEER_XML_STYLE_TYPE_MAPPER {
       {"Lager", Style::Lager},
       {"Ale",   Style::Ale},
@@ -260,7 +270,7 @@ namespace {
       {"Mixed", Style::Mixed},
       {"Cider", Style::Cider}
    };
-   XmlRecord::FieldDefinitions const BEER_XML_STYLE_RECORD_FIELDS {
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Style> {
       // Type              XPath                Q_PROPERTY                            Enum Mapper
       {XmlRecord::String,  "NAME",              PropertyNames::NamedEntity::name,     nullptr},
       {XmlRecord::String,  "CATEGORY",          PropertyNames::Style::category,       nullptr},
@@ -302,6 +312,7 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <MASH_STEP>...</MASH_STEP> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<MashStep>{"MASH_STEP"};
    XmlRecord::EnumLookupMap const BEER_XML_MASH_STEP_TYPE_MAPPER {
       {"Infusion",     MashStep::Infusion},
       {"Temperature",  MashStep::Temperature},
@@ -309,7 +320,7 @@ namespace {
       // Inside Brewken we also have MashStep::flySparge and MashStep::batchSparge which are not mentioned in the
       // BeerXML 1.0 Standard.  They get treated as "Infusion" when we write to BeerXML
    };
-   XmlRecord::FieldDefinitions const BEER_XML_MASH_STEP_RECORD_FIELDS {
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<MashStep> {
       // Type              XPath                 Q_PROPERTY                                  Enum Mapper
       {XmlRecord::String,  "NAME",               PropertyNames::NamedEntity::name,           nullptr},
       {XmlRecord::UInt,    "VERSION",            nullptr,                                    nullptr},
@@ -331,29 +342,31 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <MASH>...</MASH> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   XmlRecord::FieldDefinitions const BEER_XML_MASH_RECORD_FIELDS {
-      // Type               XPath                  Q_PROPERTY                                  Enum Mapper
-      {XmlRecord::String,  "NAME",                 PropertyNames::NamedEntity::name,           nullptr},
-      {XmlRecord::UInt,    "VERSION",              nullptr,                                    nullptr},
-      {XmlRecord::Double,  "GRAIN_TEMP",           PropertyNames::Mash::grainTemp_c,           nullptr},
-      {XmlRecord::Record,  "MASH_STEPS/MASH_STEP", nullptr,                                    nullptr}, // Additional logic for "MASH-STEPS" is handled in code
-      {XmlRecord::String,  "NOTES",                PropertyNames::Mash::notes,                 nullptr},
-      {XmlRecord::Double,  "TUN_TEMP",             PropertyNames::Mash::tunTemp_c,             nullptr},
-      {XmlRecord::Double,  "SPARGE_TEMP",          PropertyNames::Mash::spargeTemp_c,          nullptr},
-      {XmlRecord::Double,  "PH",                   PropertyNames::Mash::ph,                    nullptr},
-      {XmlRecord::Double,  "TUN_WEIGHT",           PropertyNames::Mash::tunWeight_kg,          nullptr},
-      {XmlRecord::Double,  "TUN_SPECIFIC_HEAT",    PropertyNames::Mash::tunSpecificHeat_calGC, nullptr},
-      {XmlRecord::Bool,    "EQUIP_ADJUST",         PropertyNames::Mash::equipAdjust,           nullptr},
-      {XmlRecord::String,  "DISPLAY_GRAIN_TEMP",   nullptr,                                    nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_TUN_TEMP",     nullptr,                                    nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_SPARGE_TEMP",  nullptr,                                    nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_TUN_WEIGHT",   nullptr,                                    nullptr}  // Extension tag
+   template<> QString const BEER_XML_RECORD_NAME<Mash>{"MASH"};
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Mash> {
+      // Type                    XPath                   Q_PROPERTY                                  Enum Mapper
+      {XmlRecord::String,        "NAME",                 PropertyNames::NamedEntity::name,           nullptr},
+      {XmlRecord::UInt,          "VERSION",              nullptr,                                    nullptr},
+      {XmlRecord::Double,        "GRAIN_TEMP",           PropertyNames::Mash::grainTemp_c,           nullptr},
+      {XmlRecord::RecordComplex, "MASH_STEPS/MASH_STEP", PropertyNames::Mash::mashSteps,             nullptr}, // Additional logic for "MASH-STEPS" is handled in code
+      {XmlRecord::String,        "NOTES",                PropertyNames::Mash::notes,                 nullptr},
+      {XmlRecord::Double,        "TUN_TEMP",             PropertyNames::Mash::tunTemp_c,             nullptr},
+      {XmlRecord::Double,        "SPARGE_TEMP",          PropertyNames::Mash::spargeTemp_c,          nullptr},
+      {XmlRecord::Double,        "PH",                   PropertyNames::Mash::ph,                    nullptr},
+      {XmlRecord::Double,        "TUN_WEIGHT",           PropertyNames::Mash::tunWeight_kg,          nullptr},
+      {XmlRecord::Double,        "TUN_SPECIFIC_HEAT",    PropertyNames::Mash::tunSpecificHeat_calGC, nullptr},
+      {XmlRecord::Bool,          "EQUIP_ADJUST",         PropertyNames::Mash::equipAdjust,           nullptr},
+      {XmlRecord::String,        "DISPLAY_GRAIN_TEMP",   nullptr,                                    nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_TUN_TEMP",     nullptr,                                    nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_SPARGE_TEMP",  nullptr,                                    nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_TUN_WEIGHT",   nullptr,                                    nullptr}  // Extension tag
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <EQUIPMENT>...</EQUIPMENT> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   XmlRecord::FieldDefinitions const BEER_XML_EQUIPMENT_RECORD_FIELDS {
+   template<> QString const BEER_XML_RECORD_NAME<Equipment>{"EQUIPMENT"};
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Equipment> {
       // Type              XPath                        Q_PROPERTY                                       Enum Mapper
       {XmlRecord::String,  "NAME",                      PropertyNames::NamedEntity::name,                nullptr},
       {XmlRecord::UInt,    "VERSION",                   nullptr,                                         nullptr},
@@ -387,7 +400,8 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <INSTRUCTION>...</INSTRUCTION> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   XmlRecord::FieldDefinitions const BEER_XML_INSTRUCTION_RECORD_FIELDS {
+   template<> QString const BEER_XML_RECORD_NAME<Instruction>{"INSTRUCTION"};
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Instruction> {
       // Type              XPath         Q_PROPERTY                              Enum Mapper
       {XmlRecord::String,  "NAME",       PropertyNames::NamedEntity::name,       nullptr},
       {XmlRecord::UInt,    "VERSION",    nullptr,                                nullptr},
@@ -402,7 +416,8 @@ namespace {
    // Field mappings for <BREWNOTE>...</BREWNOTE> BeerXML records
    // NB There is no NAME field on a BREWNOTE
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   XmlRecord::FieldDefinitions const BEER_XML_BREWNOTE_RECORD_FIELDS {
+   template<> QString const BEER_XML_RECORD_NAME<BrewNote>{"BREWNOTE"};
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<BrewNote> {
       // Type              XPath                      Q_PROPERTY                                     Enum Mapper
       {XmlRecord::UInt,    "VERSION",                 nullptr,                                       nullptr},
       {XmlRecord::Date,    "BREWDATE",                PropertyNames::BrewNote::brewDate,             nullptr},
@@ -440,72 +455,73 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <RECIPE>...</RECIPE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_XML_RECORD_NAME<Recipe>{"RECIPE"};
    XmlRecord::EnumLookupMap const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
       {"Extract",      Recipe::Extract},
       {"Partial Mash", Recipe::PartialMash},
       {"All Grain",    Recipe::AllGrain}
    };
-   XmlRecord::FieldDefinitions const BEER_XML_RECIPE_RECORD_FIELDS {
-      // Type               XPath                      Q_PROPERTY                                 Enum Mapper
-      {XmlRecord::String,  "NAME",                     PropertyNames::NamedEntity::name,          nullptr},
-      {XmlRecord::UInt,    "VERSION",                  nullptr,                                   nullptr},
-      {XmlRecord::Enum,    "TYPE",                     PropertyNames::Recipe::recipeType,         &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
-      {XmlRecord::Record,  "STYLE",                    PropertyNames::Recipe::style,              nullptr},
-      {XmlRecord::Record,  "EQUIPMENT",                PropertyNames::Recipe::equipment,          nullptr},
-      {XmlRecord::String,  "BREWER",                   PropertyNames::Recipe::brewer,             nullptr},
-      {XmlRecord::String,  "ASST_BREWER",              PropertyNames::Recipe::asstBrewer,         nullptr},
-      {XmlRecord::Double,  "BATCH_SIZE",               PropertyNames::Recipe::batchSize_l,        nullptr},
-      {XmlRecord::Double,  "BOIL_SIZE",                PropertyNames::Recipe::boilSize_l,         nullptr},
-      {XmlRecord::Double,  "BOIL_TIME",                PropertyNames::Recipe::boilTime_min,       nullptr},
-      {XmlRecord::Double,  "EFFICIENCY",               PropertyNames::Recipe::efficiency_pct,     nullptr},
-      {XmlRecord::Record,  "HOPS/HOP",                 nullptr,                                   nullptr}, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
-      {XmlRecord::Record,  "FERMENTABLES/FERMENTABLE", nullptr,                                   nullptr}, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
-      {XmlRecord::Record,  "MISCS/MISC",               nullptr,                                   nullptr}, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
-      {XmlRecord::Record,  "YEASTS/YEAST",             nullptr,                                   nullptr}, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
-      {XmlRecord::Record,  "WATERS/WATER",             nullptr,                                   nullptr}, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
-      {XmlRecord::Record,  "MASH",                     PropertyNames::Recipe::mash,               nullptr},
-      {XmlRecord::Record,  "INSTRUCTIONS/INSTRUCTION", nullptr,                                   nullptr}, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
-      {XmlRecord::Record,  "BREWNOTES/BREWNOTE",       nullptr,                                   nullptr}, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h
-      {XmlRecord::String,  "NOTES",                    PropertyNames::Recipe::notes,              nullptr},
-      {XmlRecord::String,  "TASTE_NOTES",              PropertyNames::Recipe::tasteNotes,         nullptr},
-      {XmlRecord::Double,  "TASTE_RATING",             PropertyNames::Recipe::tasteRating,        nullptr},
-      {XmlRecord::Double,  "OG",                       PropertyNames::Recipe::og,                 nullptr},
-      {XmlRecord::Double,  "FG",                       PropertyNames::Recipe::fg,                 nullptr},
-      {XmlRecord::UInt,    "FERMENTATION_STAGES",      PropertyNames::Recipe::fermentationStages, nullptr},
-      {XmlRecord::Double,  "PRIMARY_AGE",              PropertyNames::Recipe::primaryAge_days,    nullptr},
-      {XmlRecord::Double,  "PRIMARY_TEMP",             PropertyNames::Recipe::primaryTemp_c,      nullptr},
-      {XmlRecord::Double,  "SECONDARY_AGE",            PropertyNames::Recipe::secondaryAge_days,  nullptr},
-      {XmlRecord::Double,  "SECONDARY_TEMP",           PropertyNames::Recipe::secondaryTemp_c,    nullptr},
-      {XmlRecord::Double,  "TERTIARY_AGE",             PropertyNames::Recipe::tertiaryAge_days,   nullptr},
-      {XmlRecord::Double,  "TERTIARY_TEMP",            PropertyNames::Recipe::tertiaryTemp_c,     nullptr},
-      {XmlRecord::Double,  "AGE",                      PropertyNames::Recipe::age,                nullptr},
-      {XmlRecord::Double,  "AGE_TEMP",                 PropertyNames::Recipe::ageTemp_c,          nullptr},
-      {XmlRecord::Date,    "DATE",                     PropertyNames::Recipe::date,               nullptr},
-      {XmlRecord::Double,  "CARBONATION",              PropertyNames::Recipe::carbonation_vols,   nullptr},
-      {XmlRecord::Bool,    "FORCED_CARBONATION",       PropertyNames::Recipe::forcedCarbonation,  nullptr},
-      {XmlRecord::String,  "PRIMING_SUGAR_NAME",       PropertyNames::Recipe::primingSugarName,   nullptr},
-      {XmlRecord::Double,  "CARBONATION_TEMP",         PropertyNames::Recipe::carbonationTemp_c,  nullptr},
-      {XmlRecord::Double,  "PRIMING_SUGAR_EQUIV",      PropertyNames::Recipe::primingSugarEquiv,  nullptr},
-      {XmlRecord::Double,  "KEG_PRIMING_FACTOR",       PropertyNames::Recipe::kegPrimingFactor,   nullptr},
-      {XmlRecord::String,  "EST_OG",                   nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "EST_FG",                   nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "EST_COLOR",                nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "IBU",                      nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "IBU_METHOD",               nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "EST_ABV",                  nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "ABV",                      nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "ACTUAL_EFFICIENCY",        nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "CALORIES",                 nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_BATCH_SIZE",       nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_BOIL_SIZE",        nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_OG",               nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_FG",               nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_PRIMARY_TEMP",     nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_SECONDARY_TEMP",   nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_TERTIARY_TEMP",    nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_AGE_TEMP",         nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "CARBONATION_USED",         nullptr,                                   nullptr}, // Extension tag
-      {XmlRecord::String,  "DISPLAY_CARB_TEMP",        nullptr,                                   nullptr} // Extension tag
+   template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Recipe> {
+      // Type                    XPath                       Q_PROPERTY                                 Enum Mapper
+      {XmlRecord::String,        "NAME",                     PropertyNames::NamedEntity::name,          nullptr},
+      {XmlRecord::UInt,          "VERSION",                  nullptr,                                   nullptr},
+      {XmlRecord::Enum,          "TYPE",                     PropertyNames::Recipe::recipeType,         &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
+      {XmlRecord::RecordSimple,  "STYLE",                    PropertyNames::Recipe::style,              nullptr},
+      {XmlRecord::RecordSimple,  "EQUIPMENT",                PropertyNames::Recipe::equipment,          nullptr},
+      {XmlRecord::String,        "BREWER",                   PropertyNames::Recipe::brewer,             nullptr},
+      {XmlRecord::String,        "ASST_BREWER",              PropertyNames::Recipe::asstBrewer,         nullptr},
+      {XmlRecord::Double,        "BATCH_SIZE",               PropertyNames::Recipe::batchSize_l,        nullptr},
+      {XmlRecord::Double,        "BOIL_SIZE",                PropertyNames::Recipe::boilSize_l,         nullptr},
+      {XmlRecord::Double,        "BOIL_TIME",                PropertyNames::Recipe::boilTime_min,       nullptr},
+      {XmlRecord::Double,        "EFFICIENCY",               PropertyNames::Recipe::efficiency_pct,     nullptr},
+      {XmlRecord::RecordComplex, "HOPS/HOP",                 PropertyNames::Recipe::hops,               nullptr}, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
+      {XmlRecord::RecordComplex, "FERMENTABLES/FERMENTABLE", PropertyNames::Recipe::fermentables,       nullptr}, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
+      {XmlRecord::RecordComplex, "MISCS/MISC",               PropertyNames::Recipe::miscs,              nullptr}, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
+      {XmlRecord::RecordComplex, "YEASTS/YEAST",             PropertyNames::Recipe::yeasts,             nullptr}, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
+      {XmlRecord::RecordComplex, "WATERS/WATER",             PropertyNames::Recipe::waters,             nullptr}, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
+      {XmlRecord::RecordSimple,  "MASH",                     PropertyNames::Recipe::mash,               nullptr},
+      {XmlRecord::RecordComplex, "INSTRUCTIONS/INSTRUCTION", PropertyNames::Recipe::instructions,       nullptr}, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
+      {XmlRecord::RecordComplex, "BREWNOTES/BREWNOTE",       PropertyNames::Recipe::brewNotes,          nullptr}, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h
+      {XmlRecord::String,        "NOTES",                    PropertyNames::Recipe::notes,              nullptr},
+      {XmlRecord::String,        "TASTE_NOTES",              PropertyNames::Recipe::tasteNotes,         nullptr},
+      {XmlRecord::Double,        "TASTE_RATING",             PropertyNames::Recipe::tasteRating,        nullptr},
+      {XmlRecord::Double,        "OG",                       PropertyNames::Recipe::og,                 nullptr},
+      {XmlRecord::Double,        "FG",                       PropertyNames::Recipe::fg,                 nullptr},
+      {XmlRecord::UInt,          "FERMENTATION_STAGES",      PropertyNames::Recipe::fermentationStages, nullptr},
+      {XmlRecord::Double,        "PRIMARY_AGE",              PropertyNames::Recipe::primaryAge_days,    nullptr},
+      {XmlRecord::Double,        "PRIMARY_TEMP",             PropertyNames::Recipe::primaryTemp_c,      nullptr},
+      {XmlRecord::Double,        "SECONDARY_AGE",            PropertyNames::Recipe::secondaryAge_days,  nullptr},
+      {XmlRecord::Double,        "SECONDARY_TEMP",           PropertyNames::Recipe::secondaryTemp_c,    nullptr},
+      {XmlRecord::Double,        "TERTIARY_AGE",             PropertyNames::Recipe::tertiaryAge_days,   nullptr},
+      {XmlRecord::Double,        "TERTIARY_TEMP",            PropertyNames::Recipe::tertiaryTemp_c,     nullptr},
+      {XmlRecord::Double,        "AGE",                      PropertyNames::Recipe::age,                nullptr},
+      {XmlRecord::Double,        "AGE_TEMP",                 PropertyNames::Recipe::ageTemp_c,          nullptr},
+      {XmlRecord::Date,          "DATE",                     PropertyNames::Recipe::date,               nullptr},
+      {XmlRecord::Double,        "CARBONATION",              PropertyNames::Recipe::carbonation_vols,   nullptr},
+      {XmlRecord::Bool,          "FORCED_CARBONATION",       PropertyNames::Recipe::forcedCarbonation,  nullptr},
+      {XmlRecord::String,        "PRIMING_SUGAR_NAME",       PropertyNames::Recipe::primingSugarName,   nullptr},
+      {XmlRecord::Double,        "CARBONATION_TEMP",         PropertyNames::Recipe::carbonationTemp_c,  nullptr},
+      {XmlRecord::Double,        "PRIMING_SUGAR_EQUIV",      PropertyNames::Recipe::primingSugarEquiv,  nullptr},
+      {XmlRecord::Double,        "KEG_PRIMING_FACTOR",       PropertyNames::Recipe::kegPrimingFactor,   nullptr},
+      {XmlRecord::String,        "EST_OG",                   nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "EST_FG",                   nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "EST_COLOR",                nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "IBU",                      nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "IBU_METHOD",               nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "EST_ABV",                  nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "ABV",                      nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "ACTUAL_EFFICIENCY",        nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "CALORIES",                 nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_BATCH_SIZE",       nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_BOIL_SIZE",        nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_OG",               nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_FG",               nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_PRIMARY_TEMP",     nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_SECONDARY_TEMP",   nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_TERTIARY_TEMP",    nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_AGE_TEMP",         nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "CARBONATION_USED",         nullptr,                                   nullptr}, // Extension tag
+      {XmlRecord::String,        "DISPLAY_CARB_TEMP",        nullptr,                                   nullptr}  // Extension tag
    };
 }
 
@@ -523,19 +539,19 @@ public:
                "BeerXML 1.0",
                ":/xsd/beerxml/v1/BeerXml.xsd",
                QHash<QString, XmlCoding::XmlRecordDefinition>{
-                  {"BEER_XML",    {&XmlCoding::construct<void>,        &BEER_XML_ROOT_RECORD_FIELDS} },
-                  {"HOP",         {&XmlCoding::construct<Hop>,         &BEER_XML_HOP_RECORD_FIELDS} },
-                  {"FERMENTABLE", {&XmlCoding::construct<Fermentable>, &BEER_XML_FERMENTABLE_RECORD_FIELDS} },
-                  {"YEAST",       {&XmlCoding::construct<Yeast>,       &BEER_XML_YEAST_RECORD_FIELDS} },
-                  {"MISC",        {&XmlCoding::construct<Misc>,        &BEER_XML_MISC_RECORD_FIELDS} },
-                  {"WATER",       {&XmlCoding::construct<Water>,       &BEER_XML_WATER_RECORD_FIELDS} },
-                  {"STYLE",       {&XmlCoding::construct<Style>,       &BEER_XML_STYLE_RECORD_FIELDS} },
-                  {"MASH_STEP",   {&XmlCoding::construct<MashStep>,    &BEER_XML_MASH_STEP_RECORD_FIELDS} },
-                  {"MASH",        {&XmlCoding::construct<Mash>,        &BEER_XML_MASH_RECORD_FIELDS} },
-                  {"EQUIPMENT",   {&XmlCoding::construct<Equipment>,   &BEER_XML_EQUIPMENT_RECORD_FIELDS} },
-                  {"INSTRUCTION", {&XmlCoding::construct<Instruction>, &BEER_XML_INSTRUCTION_RECORD_FIELDS} },
-                  {"BREWNOTE",    {&XmlCoding::construct<BrewNote>,    &BEER_XML_BREWNOTE_RECORD_FIELDS} },
-                  {"RECIPE",      {&XmlCoding::construct<Recipe>,      &BEER_XML_RECIPE_RECORD_FIELDS} }
+                  {BEER_XML_RECORD_NAME<void>       , {&XmlCoding::construct<void>,        &BEER_XML_RECORD_FIELDS<void>       } }, //Root
+                  {BEER_XML_RECORD_NAME<Hop>        , {&XmlCoding::construct<Hop>,         &BEER_XML_RECORD_FIELDS<Hop>        } },
+                  {BEER_XML_RECORD_NAME<Fermentable>, {&XmlCoding::construct<Fermentable>, &BEER_XML_RECORD_FIELDS<Fermentable>} },
+                  {BEER_XML_RECORD_NAME<Yeast>      , {&XmlCoding::construct<Yeast>,       &BEER_XML_RECORD_FIELDS<Yeast>      } },
+                  {BEER_XML_RECORD_NAME<Misc>       , {&XmlCoding::construct<Misc>,        &BEER_XML_RECORD_FIELDS<Misc>       } },
+                  {BEER_XML_RECORD_NAME<Water>      , {&XmlCoding::construct<Water>,       &BEER_XML_RECORD_FIELDS<Water>      } },
+                  {BEER_XML_RECORD_NAME<Style>      , {&XmlCoding::construct<Style>,       &BEER_XML_RECORD_FIELDS<Style>      } },
+                  {BEER_XML_RECORD_NAME<MashStep>   , {&XmlCoding::construct<MashStep>,    &BEER_XML_RECORD_FIELDS<MashStep>   } },
+                  {BEER_XML_RECORD_NAME<Mash>       , {&XmlCoding::construct<Mash>,        &BEER_XML_RECORD_FIELDS<Mash>       } },
+                  {BEER_XML_RECORD_NAME<Equipment>  , {&XmlCoding::construct<Equipment>,   &BEER_XML_RECORD_FIELDS<Equipment>  } },
+                  {BEER_XML_RECORD_NAME<Instruction>, {&XmlCoding::construct<Instruction>, &BEER_XML_RECORD_FIELDS<Instruction>} },
+                  {BEER_XML_RECORD_NAME<BrewNote>   , {&XmlCoding::construct<BrewNote>,    &BEER_XML_RECORD_FIELDS<BrewNote>   } },
+                  {BEER_XML_RECORD_NAME<Recipe>     , {&XmlCoding::construct<Recipe>,      &BEER_XML_RECORD_FIELDS<Recipe>     } }
                }
             } {
       return;
@@ -546,6 +562,18 @@ public:
     */
    ~impl() = default;
 
+   /**
+    * Export an individual object to BeerXML
+    */
+   template<class NE> void toXml(NE & ne, QTextStream & out) {
+      std::shared_ptr<XmlRecord> xmlRecord{
+         XmlCoding::construct<NE>(BEER_XML_RECORD_NAME<NE>,
+                                  this->BeerXml1Coding,
+                                  BEER_XML_RECORD_FIELDS<NE>)
+      };
+      xmlRecord->toXml(ne, out);
+      return;
+   }
 
    /**
     * \brief Validate XML file against schema and load its contents
@@ -693,427 +721,54 @@ BeerXML::~BeerXML() = default;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-QString BeerXML::textFromValue(QVariant value, QString type)
-{
-   QString retval = value.toString();
+void BeerXML::createXmlFile(QFile & outFile) {
+   QTextStream out(&outFile);
 
-   if (type == "boolean" )
-      retval = NamedEntity::text(value.toBool());
-   else if (type == "real")
-      retval = NamedEntity::text(value.toDouble());
-   else if (type == "timestamp")
-      retval = NamedEntity::text(value.toDate());
+   out <<
+      "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
+      "<!-- BeerXML Format generated by Brewken " << VERSIONSTRING << " on " <<
+      QDateTime::currentDateTime().date().toString(Qt::ISODate) << " -->\n";
 
-   return retval;
+   return;
 }
 
-void BeerXML::toXml( BrewNote* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::BREWNOTETABLE);
-
-   node = doc.createElement("BREWNOTE");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
+template<class NE> void BeerXML::toXml(QList<NE *> nes, QFile & outFile) {
+   // It is a feature of BeerXML that the tag name for a list of elements is just the tag name for an individual
+   // element with an S on the end, even when this is not grammatically correct.  Thus a list of <HOP>...</HOP> records
+   // is contained inside <HOPS>...</HOPS> tags, a list of <MISC>...</MISC> records is contained inside
+   // <MISCS>...</MISCS> tags and so on.
+   QTextStream out(&outFile);
+   out << "<" << BEER_XML_RECORD_NAME<NE> << "S>\n";
+   for (auto ne : nes) {
+      this->pimpl->toXml(*ne, out);
    }
-   parent.appendChild(node);
+   out << "</" << BEER_XML_RECORD_NAME<NE> << "S>\n";
 }
-
-void BeerXML::toXml( Equipment* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::EQUIPTABLE);
-
-   node = doc.createElement("EQUIPMENT");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-}
-
-void BeerXML::toXml( Fermentable* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::FERMTABLE);
-
-   node = doc.createElement("FERMENTABLE");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-
-}
-
-void BeerXML::toXml( Hop* a, QDomDocument& doc, QDomNode& parent )
-{
-
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::HOPTABLE);
-
-   node = doc.createElement("HOP");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-
-}
-
-void BeerXML::toXml( Instruction* a, QDomDocument& doc, QDomNode& parent )
-{
-
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::INSTRUCTIONTABLE);
-
-   node = doc.createElement("INSTRUCTION");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-
-}
-
-void BeerXML::toXml( Mash* a, QDomDocument& doc, QDomNode& parent )
-{
-
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   int i, size;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::MASHTABLE);
-
-   node = doc.createElement("MASH");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-
-   tmpElement = doc.createElement("MASH_STEPS");
-   QList<MashStep*> mashSteps = a->mashSteps();
-   size = mashSteps.size();
-   for( i = 0; i < size; ++i )
-      toXml( mashSteps[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   parent.appendChild(node);
-
-}
-
-void BeerXML::toXml( MashStep* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::MASHSTEPTABLE);
-
-   node = doc.createElement("MASH_STEP");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         QString val;
-         // flySparge and batchSparge aren't part of the BeerXML spec.
-         // prop makes sure we give BeerXML something it understands.
-         if ( element == PropertyNames::MashStep::type ) {
-            val = a->isSparge() ? MashStep::types[0] : a->typeString();
-         }
-         else {
-            val = textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element));
-         }
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(val);
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-
-}
-
-void BeerXML::toXml( Misc* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::MISCTABLE);
-
-   node = doc.createElement("MISC");
-
-   // This sucks. Not quite sure what to do, but hard code it
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-}
-
-void BeerXML::toXml( Recipe* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::RECTABLE);
-
-   int i;
-
-   node = doc.createElement("RECIPE");
-
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-
-   Style* style = a->style();
-   if( style != nullptr )
-      toXml( style, doc, node);
-
-   tmpElement = doc.createElement("HOPS");
-   QList<Hop*> hops = a->hops();
-   for( i = 0; i < hops.size(); ++i )
-      toXml( hops[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   tmpElement = doc.createElement("FERMENTABLES");
-   QList<Fermentable*> ferms = a->fermentables();
-   for( i = 0; i < ferms.size(); ++i )
-      toXml( ferms[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   tmpElement = doc.createElement("MISCS");
-   QList<Misc*> miscs = a->miscs();
-   for( i = 0; i < miscs.size(); ++i )
-      toXml( miscs[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   tmpElement = doc.createElement("YEASTS");
-   QList<Yeast*> yeasts = a->yeasts();
-   for( i = 0; i < yeasts.size(); ++i )
-      toXml( yeasts[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   tmpElement = doc.createElement("WATERS");
-   QList<Water*> waters = a->waters();
-   for( i = 0; i < waters.size(); ++i )
-      toXml( waters[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   Mash* mash = a->mash();
-   if( mash != nullptr )
-      toXml( mash, doc, node);
-
-   tmpElement = doc.createElement("INSTRUCTIONS");
-   QList<Instruction*> instructions = a->instructions();
-   for( i = 0; i < instructions.size(); ++i )
-      toXml( instructions[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   tmpElement = doc.createElement("BREWNOTES");
-   QList<BrewNote*> brewNotes = a->brewNotes();
-   for(i=0; i < brewNotes.size(); ++i)
-      toXml(brewNotes[i], doc, tmpElement);
-   node.appendChild(tmpElement);
-
-   Equipment* equip = a->equipment();
-   if( equip )
-      toXml( equip, doc, node);
-
-   parent.appendChild(node);
-}
-
-void BeerXML::toXml( Style* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::STYLETABLE);
-
-   node = doc.createElement("STYLE");
-
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-
-}
-
-void BeerXML::toXml( Water* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::WATERTABLE);
-
-   node = doc.createElement("WATER");
-
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-
-
-}
-
-void BeerXML::toXml( Yeast* a, QDomDocument& doc, QDomNode& parent )
-{
-   QDomElement node;
-   QDomElement tmpElement;
-   QDomText tmpText;
-   TableSchema* tbl = this->m_tables.table(DatabaseConstants::YEASTTABLE);
-
-   node = doc.createElement("YEAST");
-
-   tmpElement = doc.createElement("VERSION");
-   tmpText = doc.createTextNode(NamedEntity::text(a->version()));
-   tmpElement.appendChild(tmpText);
-   node.appendChild(tmpElement);
-
-   foreach (QString element, tbl->allProperties()) {
-      if ( ! tbl->propertyToXml(element).isEmpty() ) {
-         QString prop = tbl->propertyName(element);
-         tmpElement = doc.createElement(tbl->propertyToXml(element));
-         tmpText    = doc.createTextNode(textFromValue(a->property(prop.toUtf8().data()), tbl->propertyColumnType(element)));
-         tmpElement.appendChild(tmpText);
-         node.appendChild(tmpElement);
-      }
-   }
-   parent.appendChild(node);
-}
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
+// means, amongst other things, that we can reference the pimpl.)
+//
+template void BeerXML::toXml(QList<Hop *>          nes, QFile & outFile);
+template void BeerXML::toXml(QList<Fermentable *>  nes, QFile & outFile);
+template void BeerXML::toXml(QList<Yeast *>        nes, QFile & outFile);
+template void BeerXML::toXml(QList<Misc *>         nes, QFile & outFile);
+template void BeerXML::toXml(QList<Water *>        nes, QFile & outFile);
+template void BeerXML::toXml(QList<Style *>        nes, QFile & outFile);
+template void BeerXML::toXml(QList<MashStep *>     nes, QFile & outFile);
+template void BeerXML::toXml(QList<Mash *>         nes, QFile & outFile);
+template void BeerXML::toXml(QList<Equipment *>    nes, QFile & outFile);
+template void BeerXML::toXml(QList<Instruction *>  nes, QFile & outFile);
+template void BeerXML::toXml(QList<BrewNote *>     nes, QFile & outFile);
+template void BeerXML::toXml(QList<Recipe *>       nes, QFile & outFile);
 
 // fromXml ====================================================================
 bool BeerXML::importFromXML(QString const & filename, QTextStream & userMessage) {
+   //
+   // During importation we do not want automatic versioning turned on because, during the process of reading in a
+   // Recipe we'll end up creating load of versions of it.  The magic of RAII means it's a one-liner to suspend
+   // automatic versioning, in an exception-safe way, until the end of this function.
+   //
+   RecipeHelper::SuspendRecipeVersioning suspendRecipeVersioning;
    return this->pimpl->validateAndLoad(filename, userMessage);
 }

@@ -30,10 +30,6 @@ QStringList const MashStep::types{"Infusion", "Temperature", "Decoction", "Fly S
 
 namespace {
    QStringList typesTr = QStringList() << QObject::tr("Infusion") << QObject::tr("Temperature") << QObject::tr("Decoction") << QObject::tr("Fly Sparge") << QObject::tr("Batch Sparge");
-   bool isValidType( const QString &str ) {
-      return MashStep::types.contains(str);
-   }
-
 }
 
 bool MashStep::isEqualTo(NamedEntity const & other) const {

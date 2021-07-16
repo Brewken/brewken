@@ -730,11 +730,12 @@ namespace {
 
 template<class NE>
 ObjectStoreTyped<NE> & ObjectStoreTyped<NE>::getInstance() {
-//   static ObjectStoreTyped<NE> singleton{PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
-
    // C++11 provides a thread-safe way to ensure singleton.loadAll() is called exactly once
+   //
+   // NB: It's easier to just pass in nullptr to ObjectStoreTyped<NE>::loadAll than to do all the magic casting to
+   //     allow std::call_once to invoke it with the default parameter (which is nullptr).
    static std::once_flag initFlag;
-   std::call_once(initFlag, &ObjectStoreTyped<NE>::loadAll, &ostSingleton<NE>);
+   std::call_once(initFlag, &ObjectStoreTyped<NE>::loadAll, &ostSingleton<NE>, nullptr);
 
    return ostSingleton<NE>;
 }
@@ -793,4 +794,8 @@ bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection) {
       }
    }
    return true;
+}
+
+QVector<ObjectStore const *> GetAllObjectStores() {
+   return AllObjectStores;
 }

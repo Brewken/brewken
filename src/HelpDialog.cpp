@@ -20,9 +20,8 @@
 #include <QTextStream>
 #include <QLabel>
 
-#include "config.h"
-
 #include "Brewken.h"
+#include "config.h" // For VERSIONSTRING
 #include "Logging.h"
 #include "PersistentSettings.h"
 

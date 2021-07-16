@@ -37,34 +37,4 @@ static const QString kcolFermMaxInBatch("max_in_batch");
 static const QString kcolFermRecommendMash("recommend_mash");
 static const QString kcolFermIsMashed("is_mashed");
 static const QString kcolFermIBUGalPerLb("ibu_gal_per_lb");
-
-// Prop names
-// These are defined in the main constants file
-// const QString kpropName("name");
-// const QString kpropNotes("notes");
-// const QString kpropType("type");
-// const QString kpropInventory("inventory");
-// static const QString kpropAmountKg("amount_kg");
-// static const QString kpropOrigin("origin");
-
-// XML prop names
-// const QString kXmlNameProp("NAME");
-// const QString kXmlNotesProp("NOTES");
-// static const QString kxmlPropAmount("AMOUNT");
-
-static const QString kxmlPropInventory("INVENTORY");
-static const QString kxmlPropYield("YIELD");
-static const QString kxmlPropColor("COLOR");
-static const QString kxmlPropAddAfterBoil("ADD_AFTER_BOIL");
-static const QString kxmlPropOrigin("ORIGIN");
-static const QString kxmlPropSupplier("SUPPLIER");
-static const QString kxmlPropCoarseFineDiff("COARSE_FINE_DIFF");
-static const QString kxmlPropMoisture("MOISTURE");
-static const QString kxmlPropDiastaticPower("DIASTATIC_POWER");
-static const QString kxmlPropProtein("PROTEIN");
-static const QString kxmlPropMaxInBatch("MAX_IN_BATCH");
-static const QString kxmlPropRecommendMash("RECOMMEND_MASH");
-static const QString kxmlPropIsMashed("IS_MASHED");
-static const QString kxmlPropIBUGalPerLb("IBU_GAL_PER_LB");
-
-#endif // FERMENTABLESCHEMA_H
+#endif

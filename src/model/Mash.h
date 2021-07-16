@@ -27,14 +27,19 @@
 #include <QVector>
 
 #include "model/NamedEntity.h"
-namespace PropertyNames::Mash { static char const * const equipAdjust = "equipAdjust"; /* previously kpropEquipAdjust */ }
-namespace PropertyNames::Mash { static char const * const grainTemp_c = "grainTemp_c"; /* previously kpropGrainTemp */ }
-namespace PropertyNames::Mash { static char const * const notes = "notes"; /* previously kpropNotes */ }
-namespace PropertyNames::Mash { static char const * const ph = "ph"; /* previously kpropPH */ }
-namespace PropertyNames::Mash { static char const * const spargeTemp_c = "spargeTemp_c"; /* previously kpropSpargeTemp */ }
-namespace PropertyNames::Mash { static char const * const tunSpecificHeat_calGC = "tunSpecificHeat_calGC"; /* previously kpropTunSpecHeat */ }
-namespace PropertyNames::Mash { static char const * const tunTemp_c = "tunTemp_c"; /* previously kpropTunTemp */ }
-namespace PropertyNames::Mash { static char const * const tunWeight_kg = "tunWeight_kg"; /* previously kpropTunWeight */ }
+#define AddPropertyName(property) \
+namespace PropertyNames::Mash {static char const * const property = #property; }
+AddPropertyName(equipAdjust)
+AddPropertyName(grainTemp_c)
+AddPropertyName(mashSteps)
+AddPropertyName(notes)
+AddPropertyName(ph)
+AddPropertyName(spargeTemp_c)
+AddPropertyName(tunSpecificHeat_calGC)
+AddPropertyName(tunTemp_c)
+AddPropertyName(tunWeight_kg)
+#undef AddPropertyName
+
 
 // Forward declarations.
 class MashStep;
@@ -48,7 +53,7 @@ class Mash : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashs")
 
-   friend class BeerXML;
+
    friend class MashDesigner;
    friend class MashEditor;
 public:

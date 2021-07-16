@@ -453,7 +453,8 @@ public:
    impl(TableDefinition const &           primaryTable,
         JunctionTableDefinitions const & junctionTables) : primaryTable{primaryTable},
                                                            junctionTables{junctionTables},
-                                                           allObjects{} {
+                                                           allObjects{},
+                                                           database{nullptr} {
       return;
    }
 
@@ -513,6 +514,7 @@ public:
    TableDefinition const & primaryTable;
    JunctionTableDefinitions const & junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
+   Database * database;
 };
 
 
@@ -571,11 +573,17 @@ bool ObjectStore::addTableConstraints(Database & database, QSqlDatabase & connec
    return true;
 }
 
-void ObjectStore::loadAll() {
+void ObjectStore::loadAll(Database * database) {
+   if (database) {
+      this->pimpl->database = database;
+   } else {
+      this->pimpl->database = &Database::instance();
+   }
+
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
-   QSqlDatabase connection = Database::instance().sqlDatabase();
-   DbTransaction dbTransaction{connection};
+   QSqlDatabase connection = this->pimpl->database->sqlDatabase();
+   DbTransaction dbTransaction{*this->pimpl->database, connection};
 
    //
    // Using QSqlTableModel would save us having to write a SELECT statement, however it is a bit hard to use it to
@@ -840,8 +848,8 @@ QList<std::shared_ptr<QObject> > ObjectStore::getByIds(QVector<int> const & list
 std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
-   QSqlDatabase connection = Database::instance().sqlDatabase();
-   DbTransaction dbTransaction{connection};
+   QSqlDatabase connection = this->pimpl->database->sqlDatabase();
+   DbTransaction dbTransaction{*this->pimpl->database, connection};
 
    //
    // Construct the SQL, which will be of the form
@@ -967,8 +975,8 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
 void ObjectStore::update(std::shared_ptr<QObject> object) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
-   QSqlDatabase connection = Database::instance().sqlDatabase();
-   DbTransaction dbTransaction{connection};
+   QSqlDatabase connection = this->pimpl->database->sqlDatabase();
+   DbTransaction dbTransaction{*this->pimpl->database, connection};
 
    //
    // Construct the SQL, which will be of the form
@@ -1067,19 +1075,17 @@ std::shared_ptr<QObject> ObjectStore::insertOrUpdate(std::shared_ptr<QObject> ob
    return this->insert(object);
 }
 
-
-int ObjectStore::insertOrUpdate(QObject * object) {
-   auto sharedPointer = std::make_shared<QObject>(object);
+int ObjectStore::insertOrUpdate(QObject & object) {
+   std::shared_ptr<QObject> sharedPointer{&object};
    this->insertOrUpdate(sharedPointer);
-   return this->pimpl->getPrimaryKey(*object).toInt();
+   return this->pimpl->getPrimaryKey(object).toInt();
 }
-
 
 void ObjectStore::updateProperty(QObject const & object, char const * const propertyName) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
-   QSqlDatabase connection = Database::instance().sqlDatabase();
-   DbTransaction dbTransaction{connection};
+   QSqlDatabase connection = this->pimpl->database->sqlDatabase();
+   DbTransaction dbTransaction{*this->pimpl->database, connection};
 
    // We'll need some of this info even if it's a junction table property we're updating
    QString const &  primaryKeyColumn {this->pimpl->getPrimaryKeyColumn()};
@@ -1113,6 +1119,10 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
 
       queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
       queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
+
+      qDebug() <<
+         Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
+         "with database query" << queryString;
 
       //
       // Bind the values
@@ -1164,6 +1174,9 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
       // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
       // write out data based on the current property values.
       //
+      qDebug() <<
+         Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
+         "in junction table" << matchingJunctionTableDefinitionDefn->tableName;
       if (!deleteFromJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, primaryKey, connection)) {
          return;
       }
@@ -1197,8 +1210,8 @@ void ObjectStore::softDelete(int id) {
 
 //
 void ObjectStore::hardDelete(int id) {
-   QSqlDatabase connection = Database::instance().sqlDatabase();
-   DbTransaction dbTransaction{connection};
+   QSqlDatabase connection = this->pimpl->database->sqlDatabase();
+   DbTransaction dbTransaction{*this->pimpl->database, connection};
 
    //
    // Construct the SQL, which will be of the form
@@ -1320,4 +1333,14 @@ QList<QObject *> ObjectStore::getAllRaw() const {
                   std::back_inserter(listToReturn),
                   [](auto & sharedPointer) { return sharedPointer.get(); });
    return listToReturn;
+}
+
+
+QList<QString> ObjectStore::getAllTableNames() const {
+   QList<QString> tableNames;
+   tableNames.append(this->pimpl->primaryTable.tableName);
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      tableNames.append(junctionTable.tableName);
+   }
+   return tableNames;
 }

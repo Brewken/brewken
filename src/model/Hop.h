@@ -57,7 +57,7 @@ class Hop : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "hops")
 
-   friend class BeerXML;
+
    friend class HopDialog;
 public:
 

@@ -50,7 +50,7 @@ class MashStep : public NamedEntity {
    Q_CLASSINFO("signal", "mashsteps")
 
    // this seems to be a class with a lot of friends
-   friend class BeerXML;
+
    friend class MashStepItemDelegate;
    friend class MashWizard;
    friend class MashDesigner;

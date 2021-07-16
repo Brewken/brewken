@@ -40,27 +40,4 @@ static const QString kcolStyleProfile("profile");
 static const QString kcolStyleIngreds("ingredients");
 static const QString kcolStyleExamples("examples");
 
-// properties for objects
-
-// these are also in the main constants file
-static const QString kxmlPropCat("CATEGORY");
-static const QString kxmlPropCatNum("CATEGORY_NUMBER");
-static const QString kxmlPropLetter("STYLE_LETTER");
-static const QString kxmlPropGuide("STYLE_GUIDE");
-static const QString kxmlPropOGMin("OG_MIN");
-static const QString kxmlPropOGMax("OG_MAX");
-static const QString kxmlPropFGMin("FG_MIN");
-static const QString kxmlPropFGMax("FG_MAX");
-static const QString kxmlPropIBUMin("IBU_MIN");
-static const QString kxmlPropIBUMax("IBU_MAX");
-static const QString kxmlPropColorMin("COLOR_MIN");
-static const QString kxmlPropColorMax("COLOR_MAX");
-static const QString kxmlPropCarbMin("CARB_MIN");
-static const QString kxmlPropCarbMax("CARB_MAX");
-static const QString kxmlPropABVMin("ABV_MIN");
-static const QString kxmlPropABVMax("ABV_MAX");
-static const QString kxmlPropProfile("PROFILE");
-static const QString kxmlPropIngreds("INGREDIENTS");
-static const QString kxmlPropExamples("EXAMPLES");
-
-#endif // STYLESCHEMA_H
+#endif

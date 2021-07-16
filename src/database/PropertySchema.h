@@ -27,7 +27,6 @@
 struct dbProp {
    QString m_propName;
    QString m_colName;
-   QString m_xmlName;
    QString m_constraint;
    QString m_colType;
    QVariant m_defaultValue;
@@ -47,47 +46,43 @@ public:
    // since I've removed all the things from the initializer, we need two
    // methods to actually add properties
    void addProperty(QString propName,
-                   Database::DBTypes dbType = Database::ALLDB,
+                   Database::DbType dbType = Database::ALLDB,
                    QString colName = QString(),
-                   QString xmlName = QString(),
                    QString colType = QString(),
                    QVariant defaultValue = QVariant(),
                    int colSize = 0,
                    QString constraint = QString() );
 
    void addForeignKey(QString propName,
-                      Database::DBTypes dbType = Database::ALLDB,
+                      Database::DbType dbType = Database::ALLDB,
                       QString colName = QString(),
                       DatabaseConstants::DbTableId fTable = DatabaseConstants::NOTABLE);
 
    // this may get revisited later, but if you either do not include the
    // dbType in the call or you send ALLDB, then you will get the default
-   const QString propName(Database::DBTypes dbType = Database::ALLDB) const;
-   const QString colName(Database::DBTypes dbType = Database::ALLDB) const;
-   const QString xmlName(Database::DBTypes dbType = Database::ALLDB) const;
-   const QString constraint(Database::DBTypes dbType = Database::ALLDB) const;
-   const QString colType(Database::DBTypes dbType = Database::ALLDB) const;
-   const QVariant defaultValue(Database::DBTypes dbType = Database::ALLDB) const;
-   int colSize(Database::DBTypes dbType = Database::ALLDB) const;
-   DatabaseConstants::DbTableId fTable(Database::DBTypes dbType = Database::ALLDB) const;
+   const QString propName(Database::DbType dbType = Database::ALLDB) const;
+   const QString colName(Database::DbType dbType = Database::ALLDB) const;
+   const QString constraint(Database::DbType dbType = Database::ALLDB) const;
+   const QString colType(Database::DbType dbType = Database::ALLDB) const;
+   const QVariant defaultValue(Database::DbType dbType = Database::ALLDB) const;
+   int colSize(Database::DbType dbType = Database::ALLDB) const;
+   DatabaseConstants::DbTableId fTable(Database::DbType dbType = Database::ALLDB) const;
 
    // sets
    // NOTE: I am specifically not allowing the propName to be set. Do that
    // when you call addProperty or addForeignKey. I may
-   void setColName(QString column, Database::DBTypes dbType = Database::ALLDB);
-   void setXmlName(QString xmlName, Database::DBTypes dbType = Database::ALLDB);
-   void setConstraint(QString constraint, Database::DBTypes dbType = Database::ALLDB);
-   void setColType(QString colType, Database::DBTypes dbType = Database::ALLDB);
-   void setDefaultValue(QVariant defVal, Database::DBTypes dbType = Database::ALLDB);
-   void setColSize(int size, Database::DBTypes dbType = Database::ALLDB);
-   void setFTable(DatabaseConstants::DbTableId fTable, Database::DBTypes dbType = Database::ALLDB);
+   void setColName(QString column, Database::DbType dbType = Database::ALLDB);
+   void setConstraint(QString constraint, Database::DbType dbType = Database::ALLDB);
+   void setColType(QString colType, Database::DbType dbType = Database::ALLDB);
+   void setDefaultValue(QVariant defVal, Database::DbType dbType = Database::ALLDB);
+   void setColSize(int size, Database::DbType dbType = Database::ALLDB);
+   void setFTable(DatabaseConstants::DbTableId fTable, Database::DbType dbType = Database::ALLDB);
 
 private:
    PropertySchema();
    // if you use this constructor, it will default to ALLDB
    PropertySchema( QString propName,
                    QString colName,
-                   QString xmlName,
                    QString colType,
                    QVariant defVal,
                    QString constraint = QString(""),

@@ -61,7 +61,7 @@ class Style : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "styles")
 
-   friend class BeerXML;
+
    friend class StyleEditor;
 public:
    Style(QString t_name = "", bool cacheOnly = true);

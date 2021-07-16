@@ -25,7 +25,8 @@ NamedEntityWithInventory::NamedEntityWithInventory(int key, bool cache, QString 
 
 NamedEntityWithInventory::NamedEntityWithInventory(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity   {namedParameterBundle},
-   m_inventory_id{namedParameterBundle(PropertyNames::NamedEntityWithInventory::inventoryId).toInt()} {
+   // If we're reading in from a BeerXML file, there won't be an inventory ID
+   m_inventory_id{namedParameterBundle(PropertyNames::NamedEntityWithInventory::inventoryId, -1)} {
    return;
 }
 

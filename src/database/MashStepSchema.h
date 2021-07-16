@@ -27,14 +27,4 @@ static const QString kcolMashstepEndTemp("end_temp");
 static const QString kcolMashstepInfuseTemp("infuse_temp");
 static const QString kcolMashstepDecoctAmt("decoction_amount");
 static const QString kcolMashstepStepNumber("step_number");
-
-
-static const QString kxmlPropInfuseAmt("INFUSE_AMOUNT");
-static const QString kxmlPropStepTemp("STEP_TEMP");
-static const QString kxmlPropStepTime("STEP_TIME");
-static const QString kxmlPropRampTime("RAMP_TIME");
-static const QString kxmlPropEndTemp("END_TEMP");
-static const QString kxmlPropInfuseTemp("INFUSE_TEMP");
-static const QString kxmlPropDecoctAmt("DECOCTION_AMOUNT");
-static const QString kxmlPropStepType("STEP_TYPE");
-#endif // MASHSTEPSCHEMA_H
+#endif

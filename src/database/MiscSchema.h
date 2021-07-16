@@ -24,7 +24,4 @@ static const QString kcolMiscType("mtype");
 static const QString kcolMiscAmtIsWgt("amount_is_weight");
 static const QString kcolMiscUseFor("use_for");
 
-//static const QString kpropTypeStr("typeString"); // Commented as unused
-
-static const QString kxmlPropUseFor("USE_FOR");
-#endif // MISCSCHEMA_H
+#endif

@@ -50,7 +50,7 @@ class Water : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "waters")
 
-   friend class BeerXML;
+
    friend class WaterDialog;
    friend class WaterEditor;
 public:

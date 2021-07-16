@@ -45,7 +45,7 @@
  */
 class DatabaseSchema
 {
-   friend class BeerXML;
+
    friend class Database;
 
 public:
@@ -61,7 +61,7 @@ public:
    const QString generateCreateTable(DatabaseConstants::DbTableId table, QString name = QString());
    const QString generateInsertRow(DatabaseConstants::DbTableId table);
    const QString generateUpdateRow(DatabaseConstants::DbTableId table, int key);
-//   const QString generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Database::DBTypes type);
+//   const QString generateCopyTable(DatabaseConstants::DbTableId src, QString dest, Database::DbType type);
 
    // these translate from a class to a table or its name
    DatabaseConstants::DbTableId classNameToTable(QString className) const;
@@ -93,7 +93,7 @@ public:
 
 private:
    QVector<TableSchema*> m_tables;
-//   Database::DBTypes m_type;
+//   Database::DbType m_type;
    QString m_id;
    QString m_name;
 public:

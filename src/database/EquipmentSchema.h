@@ -34,24 +34,4 @@ static const QString kcolEquipRealEvapRate("real_evap_rate");
 static const QString kcolEquipBoilingPoint("boiling_point");
 static const QString kcolEquipAbsorption("absorption");
 
-// Prop names
-// These are defined in the main constants file
-// const QString kpropName("name");
-// const QString kpropNotes("notes");
-
-// XML prop names
-// const QString kXmlNameProp("NAME");
-// const QString kXmlNotesProp("NOTES");
-static const QString kxmlPropTunVolume("TUN_VOLUME");
-static const QString kxmlPropTopUpWater("TOP_UP_WATER");
-static const QString kxmlPropTrubChillLoss("TRUB_CHILLER_LOSS");
-static const QString kxmlPropEvapRate("EVAP_RATE");
-static const QString kxmlPropRealEvapRate("REAL_EVAP_RATE");
-static const QString kxmlPropCalcBoilVol("CALC_BOIL_VOLUME");
-static const QString kxmlPropLauterSpace("LAUTER_DEADSPACE");
-static const QString kxmlPropTopUpKettle("TOP_UP_KETTLE");
-static const QString kxmlPropHopUtil("HOP_UTILIZATION");
-static const QString kxmlPropGrainAbsorption("ABSORPTION");
-static const QString kxmlPropBoilingPoint("BOILING_POINT");
-
-#endif // EQUIPMENTSCHEMA_H
+#endif

@@ -182,8 +182,11 @@ public:
 
    /**
     * \brief Load from database all objects handled by this store
+    *
+    * \param database Sets and stores the Database this store is going to work with.  If not supplied (or set to
+    *                 nullptr) then the store will use \c Database::getInstance()
     */
-   void loadAll();
+   void loadAll(Database * database = nullptr);
 
    /**
     * \brief Create a new object of the type we are handling, using the parameters read from the DB.  Subclass needs to
@@ -218,7 +221,7 @@ public:
     *
     * \return ID of what was inserted or updated
     */
-   int insertOrUpdate(QObject * object);
+   int insertOrUpdate(QObject & object);
 
    /**
     * \brief Update a single property of an existing object in the DB
@@ -325,6 +328,11 @@ public:
     */
    QList<QObject *> getAllRaw() const;
 
+   /**
+    * \brief Returns a list of all tables used by this store.  Used for copying data from one DB to another.
+    */
+   QList<QString> getAllTableNames() const;
+
 signals:
    /**
     * \brief Signal emitted when a new object is inserted in the database.  Parts of the UI that need to display all
@@ -416,6 +424,10 @@ private:
    ObjectStore(ObjectStore const &) = delete;
    //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
    ObjectStore & operator=(ObjectStore const &) = delete;
+   //! No move constructor
+   ObjectStore(ObjectStore &&) = delete;
+   //! No move assignment
+   ObjectStore & operator=(ObjectStore &&) = delete;
 
 };
 

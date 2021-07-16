@@ -25,9 +25,10 @@
  */
 class XmlMashStepRecord : public XmlNamedEntityRecord<MashStep> {
 public:
-   // We only want to override one method, so the parent class's constructors are fine for us
+   // We only want to override one member function, so the parent class's constructors are fine for us
    using XmlNamedEntityRecord<MashStep>::XmlNamedEntityRecord;
 
+protected:
    /**
     * \brief We override \b XmlNamedEntityRecord<MashStep>::normaliseAndStoreInDb because a MashStep can only be stored
     *        in the DB other in association with its Mash.
@@ -36,5 +37,10 @@ public:
    virtual XmlRecord::ProcessingResult normaliseAndStoreInDb(NamedEntity * containingEntity,
                                                              QTextStream & userMessage,
                                                              XmlRecordCount & stats);
+   /**
+    * \brief We need this override a MashStep is owned by its Mash
+    */
+   virtual void setContainingEntity(NamedEntity * containingEntity);
+
 };
 #endif

@@ -37,11 +37,11 @@
 class ObjectStore;
 class Recipe;
 
-namespace PropertyNames::NamedEntity { static char const * const folder = "folder"; /* previously kpropFolder */ }
-namespace PropertyNames::NamedEntity { static char const * const display = "display"; /* previously kpropDisplay */ }
-namespace PropertyNames::NamedEntity { static char const * const deleted = "deleted"; /* previously kpropDeleted */ }
-namespace PropertyNames::NamedEntity { static char const * const name = "name"; /* previously kpropName */ }
-namespace PropertyNames::NamedEntity { static char const * const key = "key"; }
+namespace PropertyNames::NamedEntity { static char const * const deleted   = "deleted"; /* previously kpropDeleted */ }
+namespace PropertyNames::NamedEntity { static char const * const display   = "display"; /* previously kpropDisplay */ }
+namespace PropertyNames::NamedEntity { static char const * const folder    = "folder"; /* previously kpropFolder */ }
+namespace PropertyNames::NamedEntity { static char const * const key       = "key"; }
+namespace PropertyNames::NamedEntity { static char const * const name      = "name"; /* previously kpropName */ }
 namespace PropertyNames::NamedEntity { static char const * const parentKey = "parentKey"; }
 
 // Make uintptr_t available in QVariant.
@@ -73,7 +73,7 @@ Q_DECLARE_METATYPE( uintptr_t )
  * \b Mash) are not really.  Equally, the fact that derived classes can be instantiated from BeerXML is not their
  * defining characteristic.
  *
- * NB: We cannot make this a template class (eg to use
+ * NB: Although we can template individual member functions, we cannot make this a template class (eg to use
  * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
  * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
  */
@@ -81,7 +81,7 @@ class NamedEntity : public QObject {
    Q_OBJECT
    Q_CLASSINFO("version","1")
 
-   friend class BeerXML;
+
 public:
    NamedEntity(int key, bool cache = true, QString t_name = QString(), bool t_display = false, QString folder = QString());
    NamedEntity(NamedEntity const & other);

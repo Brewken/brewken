@@ -269,7 +269,7 @@ void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    // See if sender is our recipe.
    Recipe * recSender = qobject_cast<Recipe *>(sender());
    if (recSender && recSender == recObs) {
-      if (QString(prop.name()) == "hops") {
+      if (QString(prop.name()) == PropertyNames::Recipe::hopIds) {
          removeAll();
          addHops(recObs->hops());
       }

@@ -232,7 +232,7 @@ public:
    /**
     * Determine which set of DB config params to show, based on whether PostgresSQL or SQLite is selected
     */
-   void setDbDialog(OptionDialog & optionDialog, Database::DBTypes db) {
+   void setDbDialog(OptionDialog & optionDialog, Database::DbType db) {
       qDebug() << Q_FUNC_INFO << "Set " << (db == Database::PGSQL ? "PostgresSQL" : "SQLite") << " config params visible";
       optionDialog.groupBox_dbConfig->setVisible(false);
 
@@ -426,7 +426,7 @@ public:
       this->dbConnectionTestState = NO_CHANGE;
       this->changeColors(optionDialog);
 
-      if (PersistentSettings::value("versioning", false).toBool()) {
+      if (RecipeHelper::getAutomaticVersioningEnabled()) {
          optionDialog.checkBox_versioning->setCheckState(Qt::Checked);
          optionDialog.groupBox_deleteBehavior->setEnabled(true);
          switch (PersistentSettings::value("deletewhat", Recipe::DESCENDANT).toInt()) {
@@ -517,7 +517,7 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
 
    // figure out which database we have
    int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Database::SQLITE).toInt());
-   this->pimpl->setDbDialog(*this, static_cast<Database::DBTypes>(idx));
+   this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
 
    // connect all the signals
    connect_signals();
@@ -589,7 +589,7 @@ void OptionDialog::connect_signals() {
 
    // figure out which database we have
    int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Database::SQLITE).toInt());
-   this->pimpl->setDbDialog(*this, static_cast<Database::DBTypes>(idx));
+   this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
 
    // Set the signals
    connect(&this->pimpl->checkBox_savePgPassword, &QAbstractButton::clicked, this, &OptionDialog::savePassword);
@@ -659,7 +659,7 @@ void OptionDialog::setLogDir() {
 }
 
 void OptionDialog::resetToDefault() {
-   Database::DBTypes engine = static_cast<Database::DBTypes>(comboBox_engine->currentData().toInt());
+   Database::DbType engine = static_cast<Database::DbType>(comboBox_engine->currentData().toInt());
    if (engine == Database::PGSQL) {
       this->pimpl->input_pgHostname.setText(QString("localhost"));
       this->pimpl->input_pgPortNum.setText(QString("5432"));
@@ -699,7 +699,7 @@ void OptionDialog::changeEvent(QEvent * e) {
 void OptionDialog::setEngine(int selected) {
 
    QVariant data = comboBox_engine->currentData();
-   Database::DBTypes newEngine = static_cast<Database::DBTypes>(data.toInt());
+   Database::DbType newEngine = static_cast<Database::DbType>(data.toInt());
 
    this->pimpl->setDbDialog(*this, newEngine);
    testRequired();
@@ -711,7 +711,7 @@ void OptionDialog::testConnection() {
    QString hostname, schema, database, username, password;
    int port;
 
-   Database::DBTypes newType = static_cast<Database::DBTypes>(comboBox_engine->currentData().toInt());
+   Database::DbType newType = static_cast<Database::DbType>(comboBox_engine->currentData().toInt());
    // Do nothing if nothing is required.
    if (this->pimpl->dbConnectionTestState == NO_CHANGE || this->pimpl->dbConnectionTestState == TEST_PASSED) {
       return;
@@ -827,7 +827,7 @@ void OptionDialog::saveLoggingSettings() {
 void OptionDialog::saveVersioningSettings() {
    // Save versioning options
    if (checkBox_versioning->checkState() == Qt::Checked) {
-      PersistentSettings::insert("versioning", true);
+      RecipeHelper::setAutomaticVersioningEnabled(true);
       if (radioButton_deleteAncestor->isChecked()) {
          PersistentSettings::insert("deletewhat", Recipe::ANCESTOR);
       } else {
@@ -835,7 +835,7 @@ void OptionDialog::saveVersioningSettings() {
       }
    } else {
       // the default when versioning is off is to only delete descendant
-      PersistentSettings::insert("versioning", false);
+      RecipeHelper::setAutomaticVersioningEnabled(false);
       PersistentSettings::insert("deletewhat", Recipe::DESCENDANT);
    }
 
@@ -867,7 +867,7 @@ bool OptionDialog::saveDatabaseConfig() {
       PersistentSettings::remove("dbPassword");
    }
 
-   Database::DBTypes dbEngine = static_cast<Database::DBTypes>(comboBox_engine->currentData().toInt());
+   Database::DbType dbEngine = static_cast<Database::DbType>(comboBox_engine->currentData().toInt());
    if (dbEngine == Database::SQLITE) {
       saveSqliteConfig();
    }
@@ -889,7 +889,7 @@ bool OptionDialog::transferDatabase() {
                                               this->pimpl->input_pgUsername.text(),
                                               this->pimpl->input_pgPassword.text(),
                                               this->pimpl->input_pgPortNum.text().toInt(),
-                                              static_cast<Database::DBTypes>(this->comboBox_engine->currentData().toInt()));
+                                              static_cast<Database::DbType>(this->comboBox_engine->currentData().toInt()));
       }
       // Database engine stuff
       int engine = comboBox_engine->currentData().toInt();

@@ -55,7 +55,7 @@ class Equipment : public NamedEntity {
 
    Q_CLASSINFO("signal", "equipments")
 
-   friend class BeerXML;
+
    friend class EquipmentEditor;
 
 public:

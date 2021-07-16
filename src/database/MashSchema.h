@@ -24,9 +24,4 @@ static const QString kcolMashTunWeight("tun_weight");
 static const QString kcolMashTunSpecHeat("tun_specific_heat");
 static const QString kcolMashEquipAdjust("equip_adjust");
 
-
-static const QString kxmlPropGrainTemp("GRAIN_TEMP");
-static const QString kxmlPropTunTemp("TUN_TEMP");
-static const QString kxmlPropSpargeTemp("SPARGE_TEMP");
-static const QString kxmlPropEquipAdjust("EQUIP_ADJUST");
-#endif // MASHSCHEMA_H
+#endif

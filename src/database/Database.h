@@ -41,7 +41,7 @@ class DatabaseSchema;
  *
  * \brief Handles connections to the database.
  *
- * This class is a singleton.
+ * This class is a sort-of singleton, in that there is one instance for each type of DB.
  */
 class Database {
    Q_DECLARE_TR_FUNCTIONS(Database)
@@ -50,17 +50,20 @@ public:
 
    //! \brief Supported databases. I am not 100% sure I'm digging this
    //  solution, but this is more extensible than what I was doing previously
-   enum DBTypes {
+   enum DbType {
       NODB = 0,  // Popularity was over rated
       SQLITE,    // compact, fast and a little loose
       PGSQL,     // big, powerful, uptight and a little stodgy
       ALLDB      // Keep this one the last one, or bad things will happen
    };
 
-   //! This should be the ONLY way you get an instance.
-   static Database& instance();
-   //! Call this to delete the internal instance.
-   static void dropInstance();
+   /*!
+    * \brief This should be the ONLY way you get an instance.
+    *
+    * \param dbType Which type of database object you want to get.  If not specified (or set to Database::NODB) then
+    *               the default configured type will be returned
+    */
+   static Database& instance(Database::DbType dbType = Database::NODB);
 
    /*! \brief Get the right database connection for the calling thread.
     *
@@ -107,7 +110,7 @@ public:
    //! \brief Reverts database to that of chosen file.
    static bool restoreFromFile(QString newDbFileStr);
 
-   static bool verifyDbConnection(Database::DBTypes testDb,
+   static bool verifyDbConnection(Database::DbType testDb,
                                   QString const& hostname,
                                   int portnum = 5432,
                                   QString const & schema="public",
@@ -126,7 +129,7 @@ public:
    //   needs opens and then calls the appropriate workhorse to get it done.
    void convertDatabase(QString const& Hostname, QString const& DbName,
                         QString const& Username, QString const& Password,
-                        int Portnum, Database::DBTypes newType);
+                        int Portnum, Database::DbType newType);
 
    /*!
     * \brief If we are supporting multiple databases, we need some way to
@@ -134,7 +137,7 @@ public:
     * will be the final implementation -- I can't help but think I should be
     * subclassing something
     */
-   static Database::DBTypes dbType();
+   Database::DbType dbType();
 
    /*!
     * \brief Different databases use different values for true and false.
@@ -142,13 +145,13 @@ public:
     *
     * .:TODO:. Pretty sure we can kill this once we retire TableSchema.cpp
     */
-   static QString dbBoolean(bool flag, Database::DBTypes whichDb = Database::NODB);
+   static QString dbBoolean(bool flag, Database::DbType whichDb = Database::NODB);
 
    /**
     * \brief Turn foreign key constraints on or off.  Typically, turning them off is only required during copying the
     *        contents of one DB to another.
     */
-   static void setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DBTypes whichDb = Database::NODB);
+   void setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DbType whichDb = Database::NODB);
 
    /**
     * \brief For a given base type, return the typename to use for the corresponding columns when creating tables.
@@ -164,7 +167,7 @@ public:
     *
     * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   template<typename T> char const * getDbNativeTypeName(Database::DBTypes whichDb = Database::NODB) const;
+   template<typename T> char const * getDbNativeTypeName(Database::DbType whichDb = Database::NODB) const;
 
    /**
     * \brief Returns the text we need to use to specify an integer column as primary key when creating a table, eg:
@@ -174,7 +177,7 @@ public:
     *
     * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getDbNativeIntPrimaryKeyModifier(Database::DBTypes whichDb = Database::NODB) const;
+   char const * getDbNativeIntPrimaryKeyModifier(Database::DbType whichDb = Database::NODB) const;
 
    /**
     * \brief Returns a text template for an ALTER TABLE query to add a foreign key column to a table.  Callers should
@@ -186,7 +189,7 @@ public:
     *
     * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getSqlToAddColumnAsForeignKey(Database::DBTypes whichDb = Database::NODB) const;
+   char const * getSqlToAddColumnAsForeignKey(Database::DbType whichDb = Database::NODB) const;
 
 
    // .:TODO:. We can get rid of this once we rewrite BeerXml output code to use the same structures as for input
@@ -198,11 +201,15 @@ private:
    std::unique_ptr<impl> pimpl;
 
    //! Hidden constructor.
-   Database();
+   Database(DbType dbType);
    //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
    Database(Database const&) = delete;
    //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
    Database& operator=(Database const&) = delete;
+   //! No move constructor
+   Database(Database &&) = delete;
+   //! No move assignment
+   Database& operator=(Database &&) = delete;
    //! Destructor hidden.
    ~Database();
 

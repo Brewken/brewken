@@ -48,7 +48,7 @@ class Misc : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "miscs")
 
-   friend class BeerXML;
+
    friend class MiscDialog;
 public:
 
