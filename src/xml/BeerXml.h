@@ -83,8 +83,6 @@ private:
    class impl;
    std::unique_ptr<impl> pimpl;
 
-   DatabaseSchema & m_tables;
-
    /**
     * Private constructor as singleton
     */

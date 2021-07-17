@@ -157,11 +157,6 @@ template<> inline void XmlNamedEntityRecord<BrewNote>::setContainingEntity(Named
    brewNote->setRecipe(static_cast<Recipe *>(containingEntity));
    return;
 }
-/*template<> inline void XmlNamedEntityRecord<Instruction>::setContainingEntity(NamedEntity * containingEntity) {
-   Instruction * instruction = static_cast<Instruction *>(this->namedEntity);
-   instruction->setRecipe(static_cast<Recipe *>(containingEntity));
-   return;
-}*/
 
 // Specialisations for cases where we don't want the objects included in the stats
 template<> inline bool XmlNamedEntityRecord<Instruction>::includedInStats() const { return false; }

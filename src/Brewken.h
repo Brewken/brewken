@@ -99,7 +99,7 @@ class Brewken : public QObject
    friend class RecipeFormatter;
    friend class Unit;
    friend class Database;
-   friend class BeerXML;
+
    friend class MainWindow;
    friend class Testing;
 

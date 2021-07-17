@@ -709,8 +709,7 @@ BeerXML & BeerXML::getInstance() {
 }
 
 
-BeerXML::BeerXML() : pimpl{ new impl{} },
-                     m_tables{Database::instance().getDatabaseSchema()} {
+BeerXML::BeerXML() : pimpl{ new impl{} } {
    return;
 }
 

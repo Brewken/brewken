@@ -685,7 +685,7 @@ namespace {
 bool DatabaseSchemaHelper::upgrade = false;
 // Default namespace hides functions from everything outside this file.
 
-bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, DatabaseSchema* defn, Database::DbType dbType ) {
+bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection) {
    //--------------------------------------------------------------------------
    // NOTE: if you edit this function, increment dbVersion and edit
    // migrateNext() appropriately.
@@ -715,7 +715,7 @@ bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, 
 
    // Create the settings table manually, since it's only used in this file
    QVector<QueryAndParameters> const setUpQueries{
-      {QString("CREATE TABLE settings (id %1 %2, repopulatechildrenonnextstart %1, version %1)").arg(database.getDbNativeTypeName<int>(dbType), database.getDbNativeIntPrimaryKeyModifier(dbType))},
+      {QString("CREATE TABLE settings (id %1 %2, repopulatechildrenonnextstart %1, version %1)").arg(database.getDbNativeTypeName<int>(), database.getDbNativeIntPrimaryKeyModifier())},
       {QString("INSERT INTO settings (repopulatechildrenonnextstart, version) VALUES (?, ?)"), {QVariant(true), QVariant(dbVersion)}}
 
    };
@@ -815,8 +815,6 @@ void DatabaseSchemaHelper::copyDatabase(Database::DbType oldType, Database::DbTy
       return;
    }
 
-   //
-   // .:TODO-DATABASE:. We need to have different instance of Database for each DbType
    //
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
@@ -970,10 +968,7 @@ namespace {
 void DatabaseSchemaHelper::updateDatabase(Database & database, QString const& filename) {
    // In the naming here "old" means the user's database, and
    // "new" means the database coming from 'filename'.
-
    QVariant btid, newid, oldid;
-
-
 
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without

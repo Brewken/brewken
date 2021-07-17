@@ -57,7 +57,6 @@
 #include "database/DatabaseSchema.h"
 #include "database/DatabaseSchemaHelper.h"
 #include "database/TableSchemaConst.h"
-#include "model/BrewNote.h"
 #include "PersistentSettings.h"
 
 
@@ -387,37 +386,6 @@ public:
          }
       }
 
-/*
-      // .:TBD:. Don't think we need this if the rest of the code is correctly keeping child IDs updated
-      database.sqlDatabase().transaction();
-
-      try {
-         //populate ingredient links
-         int repopChild = 0;
-         QSqlQuery popchildq( "SELECT repopulateChildrenOnNextStart FROM settings WHERE id=1", database.sqlDatabase() );
-
-         if( popchildq.next() )
-            repopChild = popchildq.record().value("repopulateChildrenOnNextStart").toInt();
-         else
-            throw QString("%1 %2").arg(popchildq.lastQuery()).arg(popchildq.lastError().text());
-
-         if(repopChild == 1) {
-            qDebug() << Q_FUNC_INFO << "calling populateChildTablesByName()";
-            this->populateChildTablesByName(database);
-
-            QSqlQuery popchildq( "UPDATE settings SET repopulateChildrenOnNextStart = 0", database.sqlDatabase() );
-            if ( ! popchildq.isActive() )
-               throw QString("Could not modify settings table: %1 %2").arg(popchildq.lastQuery()).arg(popchildq.lastError().text());
-         }
-      }
-      catch (QString e ) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         database.sqlDatabase().rollback();
-         throw;
-      }
-
-      database.sqlDatabase().commit();
-*/
       return doUpdate;
    }
 
@@ -506,118 +474,6 @@ public:
       PersistentSettings::insert("files", listOfFiles, "backups");
    }
 
-/*
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   // This links ingredients with the same name.
-   // The first displayed ingredient in the database is assumed to be the parent.
-   void populateChildTablesByName(Database & database, DatabaseConstants::DbTableId table) {
-      TableSchema* tbl = this->dbDefn.table(table);
-      TableSchema* cld = this->dbDefn.childTable( table );
-      qInfo() << QString("Populating Children NamedEntity Links (%1)").arg(tbl->tableName());
-
-      try {
-         // "SELECT DISTINCT name FROM [tablename]"
-         QString queryString = QString("SELECT DISTINCT %1 FROM %2")
-               .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name)).arg(tbl->tableName());
-
-         qDebug() << Q_FUNC_INFO << "DISTINCT:" << queryString;
-         QSqlQuery nameq( queryString, database.sqlDatabase() );
-
-         if ( ! nameq.exec() ) {
-            throw QString("%1 %2").arg(nameq.lastQuery()).arg(nameq.lastError().text());
-         }
-
-         while (nameq.next()) {
-            QString name = nameq.record().value(0).toString();
-            // select id from [tablename] where ( name = :name and display = :boolean ) order by id asc
-            queryString = QString( "SELECT %1 FROM %2 WHERE ( %3=:name AND %4=:boolean ) ORDER BY %1")
-                        .arg(tbl->keyName())
-                        .arg(tbl->tableName())
-                        .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name))
-                        .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::display));
-            QSqlQuery query( database.sqlDatabase() );
-
-            qDebug() << Q_FUNC_INFO << "FIND:" << queryString;
-
-            // find the first element with display set true (assumed parent)
-            query.prepare(queryString);
-            query.bindValue(":name", name);
-            query.bindValue(":boolean",Database::dbTrue());
-
-            if ( !query.exec() ) {
-               throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
-            }
-
-            query.first();
-            QString parentID = query.record().value(tbl->keyName()).toString();
-
-            // find the every element with display set false (assumed children)
-            query.bindValue(":name", name);
-            query.bindValue(":boolean", Database::dbFalse());
-
-            if ( !query.exec() ) {
-               throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
-            }
-            // Postgres uses a more verbose upsert syntax. I don't like this, but
-            // I'm not seeing a better way yet.
-            while (query.next()) {
-               QString childID = query.record().value(tbl->keyName()).toString();
-               switch( Database::dbType() ) {
-                  case Database::PGSQL:
-                     //  INSERT INTO [child table] (parent_id, child_id) VALUES (:parentid, child_id) ON CONFLICT(child_id) DO UPDATE set parent_id = EXCLUDED.parent_id
-                     queryString = QString("INSERT INTO %1 (%2, %3) VALUES (%4, %5) ON CONFLICT(%3) DO UPDATE set %2 = EXCLUDED.%2")
-                           .arg(this->dbDefn.childTableName((table)))
-                           .arg(cld->parentIndexName())
-                           .arg(cld->childIndexName())
-                           .arg(parentID)
-                           .arg(childID);
-                     break;
-                  default:
-                     // insert or replace into [child table] (parent_id, child_id) values (:parentid,:childid)
-                     queryString = QString("INSERT OR REPLACE INTO %1 (%2, %3) VALUES (%4, %5)")
-                                 .arg(this->dbDefn.childTableName(table))
-                                 .arg(cld->parentIndexName())
-                                 .arg(cld->childIndexName())
-                                 .arg(parentID)
-                                 .arg(childID);
-               }
-               qDebug() << Q_FUNC_INFO << "UPSERT:" << queryString;
-               QSqlQuery insertq( queryString, database.sqlDatabase() );
-               if ( !insertq.exec() ) {
-                  throw QString("%1 %2").arg(insertq.lastQuery()).arg(insertq.lastError().text());
-               }
-            }
-         }
-      }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         abort();
-      }
-
-      return;
-   }
-
-   // populate ingredient tables
-   // Runs populateChildTablesByName for each
-   void populateChildTablesByName(Database & database) {
-
-      try {
-         // I really dislike this. It counts as spooky action at a distance, but
-         // the populateChildTablesByName methods need these hashes populated
-         // early and there is no easy way to untangle them. Yes, this results in
-         // the work being done twice. Such is life.
-         populateChildTablesByName(database, DatabaseConstants::FERMTABLE);
-         populateChildTablesByName(database, DatabaseConstants::HOPTABLE);
-         populateChildTablesByName(database, DatabaseConstants::MISCTABLE);
-         populateChildTablesByName(database, DatabaseConstants::YEASTTABLE);
-      }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         throw;
-      }
-      return;
-   }
-*/
    Database::DbType dbType;
    DatabaseSchema dbDefn;
    QString dbConName;
@@ -635,7 +491,6 @@ public:
 
 
 Database::Database(Database::DbType dbType) : pimpl{ new impl{dbType} } {
-   //.setUndoLimit(100);
    return;
 }
 
@@ -735,7 +590,7 @@ bool Database::load() {
    this->pimpl->schemaUpdated=false;
    this->pimpl->loadWasSuccessful = false;
 
-   if ( Database::dbType() == Database::PGSQL ) {
+   if (this->dbType() == Database::PGSQL ) {
       dbIsOpen = this->pimpl->loadPgSQL(*this);
    }
    else {
@@ -752,7 +607,7 @@ bool Database::load() {
 
    // This should work regardless of the db being used.
    if( this->pimpl->createFromScratch ) {
-      bool success = DatabaseSchemaHelper::create(*this, sqldb, &this->pimpl->dbDefn, Database::dbType());
+      bool success = DatabaseSchemaHelper::create(*this, sqldb);
       if( !success ) {
          qCritical() << "DatabaseSchemaHelper::create() failed";
          return false;
@@ -812,7 +667,7 @@ bool Database::createBlank(QString const& filename)
          return false;
       }
 
-      DatabaseSchemaHelper::create(*this, sqldb,&this->pimpl->dbDefn,Database::SQLITE);
+      DatabaseSchemaHelper::create(Database::instance(Database::SQLITE), sqldb);
 
       sqldb.close();
    } // sqldb gets destroyed as it goes out of scope before removeDatabase()
@@ -853,7 +708,7 @@ void Database::unload() {
 
    qDebug() << Q_FUNC_INFO << "DB connections all closed";
 
-   if (this->pimpl->loadWasSuccessful && Database::dbType() == Database::SQLITE ) {
+   if (this->pimpl->loadWasSuccessful && this->dbType() == Database::SQLITE ) {
       dbFile.close();
       this->pimpl->automaticBackup();
    }
@@ -949,32 +804,26 @@ bool Database::restoreFromFile(QString newDbFileStr)
    return success;
 }
 
-// .:TBD:. Discuss with other folks whether this is worth fixing
 void Database::updateDatabase(QString const& filename) {
    DatabaseSchemaHelper::updateDatabase(*this, filename);
    return;
 }
 
-
 bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
-                              QString const& database, QString const& username, QString const& password)
-{
+                                  QString const& database, QString const& username, QString const& password) {
    QString driverName;
-   QSqlDatabase connDb;
-   bool results;
 
-   switch( testDb )
-   {
+   switch (testDb) {
       case Database::PGSQL:
          driverName = "QPSQL";
          break;
       default:
          driverName = "QSQLITE";
    }
-   connDb = QSqlDatabase::addDatabase(driverName,"testConnDb");
 
-   switch( testDb )
-   {
+   QSqlDatabase connDb = QSqlDatabase::addDatabase(driverName,"testConnDb");
+
+   switch (testDb) {
       case Database::PGSQL:
          connDb.setHostName(hostname);
          connDb.setPort(portnum);
@@ -986,14 +835,17 @@ bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostna
          connDb.setDatabaseName(hostname);
    }
 
-   results = connDb.open();
+   bool results = connDb.open();
 
-   if ( results )
+   if ( results ) {
       connDb.close();
-   else
-      QMessageBox::critical(nullptr, tr("Connection failed"),
-               QString(tr("Could not connect to %1 : %2")).arg(hostname).arg(connDb.lastError().text())
-            );
+   } else {
+      QMessageBox::critical(
+         nullptr,
+         tr("Connection failed"),
+         QString(tr("Could not connect to %1 : %2")).arg(hostname).arg(connDb.lastError().text())
+      );
+   }
    return results;
 
 }
@@ -1047,7 +899,7 @@ Database::DbType Database::dbType() {
 
 void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DbType type) {
    if (type == Database::NODB) {
-      type = Database::dbType();
+      type = this->dbType();
    }
 
    switch( type ) {

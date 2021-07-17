@@ -40,7 +40,7 @@ namespace DatabaseSchemaHelper {
    /*!
     * \brief Create a blank database whose schema version is \c dbVersion
     */
-   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Database::DbType dbType = Database::NODB);
+   bool create(Database & database, QSqlDatabase db);
 
    /*!
     * \brief Migrate schema from \c oldVersion to \c newVersion
