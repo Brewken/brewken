@@ -260,6 +260,7 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
    Recipe const & rhs = static_cast<Recipe const &>(other);
    // Base class will already have ensured names are equal
    return (
+             // .:TBD:. Is this really the full list of what makes a Recipe unique?
              this->m_type              == rhs.m_type              &&
              this->m_batchSize_l       == rhs.m_batchSize_l       &&
              this->m_boilSize_l        == rhs.m_boilSize_l        &&
@@ -273,7 +274,7 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
              this->m_tertiaryTemp_c    == rhs.m_tertiaryTemp_c    &&
              this->m_age               == rhs.m_age               &&
              this->m_ageTemp_c         == rhs.m_ageTemp_c         &&
-             this->styleId             == rhs.styleId             &&
+             ObjectStoreWrapper::compareById<Style>(this->styleId, rhs.styleId) &&
              this->m_og                == rhs.m_og                &&
              this->m_fg                == rhs.m_fg
           );
@@ -1087,7 +1088,7 @@ void Recipe::generateInstructions() {
 
    // END fermentation instructions. Let everybody know that now is the time
    // to update instructions
-   emit changed(metaProperty("instructions"), instructions().size());
+   emit changed(metaProperty(PropertyNames::Recipe::instructions), this->instructions().size());
 
    return;
 }
@@ -1322,7 +1323,7 @@ void Recipe::setMash(Mash * var) {
 
    connect(mashToAdd.get(), SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptMashChange(QMetaProperty,
                                                                                                   QVariant)));
-   emit this->changed(this->metaProperty("mash"), NamedEntity::qVariantFromPtr(mashToAdd.get()));
+   emit this->changed(this->metaProperty(PropertyNames::Recipe::mash), QVariant::fromValue<Mash *>(mashToAdd.get()));
 
    this->recalcAll();
 

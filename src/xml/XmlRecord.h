@@ -64,8 +64,9 @@ public:
       String,
       Date,
       Enum,
-      RecordSimple,
-      RecordComplex
+      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
+      RecordSimple,       // Single contained record
+      RecordComplex       // Zero, one or more contained records
    };
 
    /**
@@ -88,7 +89,8 @@ public:
    struct FieldDefinition {
       FieldType           fieldType;
       XQString            xPath;
-      char const * const  propertyName;   // If fieldType == RecordSet, then this is used only on export
+      char const * const  propertyName;   // If fieldType == RecordComplex, then this is used only on export
+                                          // If fieldType == RequiredConstant, then this is actually the constant value
       EnumLookupMap const * stringToEnum;
    };
 

@@ -105,6 +105,30 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().findAllMatching(matchFunction);
    }
 
+   /**
+    * \brief Given two IDs of some subclass of \c NamedEntity, return \c true if the corresponding objects are equal (or
+    *        if both IDs are invalid), and \c false otherwise
+    */
+   template<class NE>
+   bool compareById(int lhsId, int rhsId) {
+      if (lhsId <= 0 && rhsId <= 0) {
+         // Both are invalid IDs
+         return true;
+      }
+      NE const * lhs = ObjectStoreWrapper::getByIdRaw<NE>(lhsId);
+      NE const * rhs = ObjectStoreWrapper::getByIdRaw<NE>(rhsId);
+      if (nullptr == lhs && nullptr == rhs) {
+         // Neither ID was found in the ObjectStore
+         return true;
+      }
+      if (nullptr == lhs || nullptr == rhs) {
+         // Only one of the IDs was found in the ObjectStore
+         return false;
+      }
+      // Both IDs found in the ObjectStore, so we can compare the corresponding object directly
+      return *lhs == *rhs;
+   }
+
 }
 
 #endif

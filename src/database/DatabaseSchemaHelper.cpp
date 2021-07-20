@@ -970,6 +970,9 @@ void DatabaseSchemaHelper::updateDatabase(Database & database, QString const& fi
    // "new" means the database coming from 'filename'.
    QVariant btid, newid, oldid;
 
+   // .:TODO:. Change this to read in BeerXML and to put NEW recipes in brewtarget folder (but how?)
+   // .:TODO:. Change where we test equality of newly read-in things from BeerXML
+
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().

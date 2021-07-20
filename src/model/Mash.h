@@ -27,18 +27,24 @@
 #include <QVector>
 
 #include "model/NamedEntity.h"
-#define AddPropertyName(property) \
-namespace PropertyNames::Mash {static char const * const property = #property; }
+
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Mash {static char const * const property = #property; }
 AddPropertyName(equipAdjust)
 AddPropertyName(grainTemp_c)
 AddPropertyName(mashSteps)
 AddPropertyName(notes)
 AddPropertyName(ph)
 AddPropertyName(spargeTemp_c)
+AddPropertyName(totalMashWater_l)
+AddPropertyName(totalTime)
 AddPropertyName(tunSpecificHeat_calGC)
 AddPropertyName(tunTemp_c)
 AddPropertyName(tunWeight_kg)
 #undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 
 // Forward declarations.

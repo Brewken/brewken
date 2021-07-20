@@ -60,17 +60,16 @@ void StyleButton::setStyle(Style* style)
       setText("");
 }
 
-void StyleButton::styleChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-   if( propName == PropertyNames::NamedEntity::name )
-      setText( val.toString() );
+void StyleButton::styleChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::NamedEntity::name) {
+      this->setText(val.toString());
+   }
+   return;
 }
 
-void StyleButton::recChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-
-   if( propName == "style" )
-      setStyle( qobject_cast<Style*>(NamedEntity::extractPtr(val)) );
+void StyleButton::recChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::Recipe::style) {
+      this->setStyle(val.value<Style*>());
+   }
+   return;
 }

@@ -64,17 +64,16 @@ void MashButton::setMash(Mash* mash)
 // because the mash tab is the only tab where you can delete stuff directly.
 Mash* MashButton::mash() { return _mash; }
 
-void MashButton::mashChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-   if( propName == PropertyNames::NamedEntity::name )
-      setText( val.toString() );
+void MashButton::mashChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::NamedEntity::name) {
+      this->setText(val.toString());
+   }
+   return;
 }
 
-void MashButton::recChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-
-   if( propName == "mash" )
-      setMash( qobject_cast<Mash*>(NamedEntity::extractPtr(val)) );
+void MashButton::recChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::Recipe::mash) {
+      this->setMash(val.value<Mash*>());
+   }
+   return;
 }

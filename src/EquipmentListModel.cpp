@@ -115,23 +115,21 @@ void EquipmentListModel::equipChanged(QMetaProperty prop, QVariant val)
       return;
 
    QString propName(prop.name());
-   if( propName == PropertyNames::NamedEntity::name )
-   {
+   if (propName == PropertyNames::NamedEntity::name) {
       int ndx = equipments.indexOf(eSend);
-      if( ndx >= 0 )
+      if (ndx >= 0) {
          emit dataChanged( createIndex(ndx,0), createIndex(ndx,0) );
+      }
    }
 }
 
-void EquipmentListModel::recChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-   if( propName == "equipment" )
-   {
-      Equipment* newEquip = qobject_cast<Equipment*>(NamedEntity::extractPtr(val));
-      // Now do something with the equipment.
+void EquipmentListModel::recChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name()== PropertyNames::Recipe::equipment) {
+      Equipment* newEquip = val.value<Equipment *>();
+      // .:TODO:. Now do something with the equipment.
       Q_UNUSED(newEquip); // Until then, this will keep the compiler happy
    }
+   return;
 }
 
 void EquipmentListModel::repopulateList() {

@@ -17,6 +17,7 @@
 
 #include <QDate>
 #include <QDebug>
+#include <QXmlStreamWriter>
 
 #include <xalanc/XalanDOM/XalanNodeList.hpp>
 #include <xalanc/XPath/NodeRefList.hpp>
@@ -328,6 +329,22 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      }
                      break;
 
+                  case XmlRecord::RequiredConstant:
+                     //
+                     // This is a field that is required to be in the XML, but whose value we don't need (and for which
+                     // we always write a constant value on output).  At the moment it's only needed for the VERSION tag
+                     // in BeerXML.
+                     //
+                     // Note that, because we abuse the propertyName field to hold the default value (ie what we write
+                     // out), we can't carry on to normal processing below.  So jump straight to processing the next
+                     // node in the loop (via continue).
+                     //
+                     qDebug() <<
+                        Q_FUNC_INFO << "Skipping " << this->namedEntityClassName << " node " <<
+                        fieldDefinition->xPath << "=" << value << "(" << fieldDefinition->propertyName <<
+                        ") as not useful";
+                     continue; // NB: _NOT_break here.  We want to jump straight to the next run through the for loop.
+
                   // By default we assume it's a string
                   case XmlRecord::String:
                   default:
@@ -603,6 +620,10 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
    writeIndents(out, indentLevel, indentString);
    out << "<" << this->recordName << ">\n";
 
+   // For the moment, we are constructing XML output without using Xerces (or similar), on the grounds that, in this
+   // direction (ie to XML rather than from XML), it's a pretty simple algorithm and we don't need to validate anything
+   // (because we assume that our own data is valid).
+
    // BeerXML doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
    for (auto & fieldDefinition : this->fieldDefinitions) {
@@ -670,58 +691,75 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          continue;
       }
 
-      QVariant value = namedEntityToExport.property(fieldDefinition.propertyName);
-      Q_ASSERT(value.isValid());
-      // It's a coding error if we are trying here to write out some field with a complex XPath
-      if (fieldDefinition.xPath.contains("/")) {
-         qCritical() << Q_FUNC_INFO <<
-            "Invalid use of non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
-            fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
-         Q_ASSERT(false); // Stop here on a debug build
-         continue;        // Soldier on in a prod build
-      }
       QString valueAsText;
-      switch (fieldDefinition.fieldType) {
+      if (fieldDefinition.fieldType == XmlRecord::RequiredConstant) {
+         //
+         // This is a field that is required to be in the XML, but whose value we don't need, and for which we always
+         // write a constant value on output.  At the moment it's only needed for the VERSION tag in BeerXML.
+         //
+         // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
+         // write out).  This saves having an extra almost-never-used field on XmlRecord::FieldDefinition.
+         //
+         valueAsText = fieldDefinition.propertyName;
+      } else {
+         QVariant value = namedEntityToExport.property(fieldDefinition.propertyName);
+         Q_ASSERT(value.isValid());
+         // It's a coding error if we are trying here to write out some field with a complex XPath
+         if (fieldDefinition.xPath.contains("/")) {
+            qCritical() << Q_FUNC_INFO <<
+               "Invalid use of non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
+               fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
+            Q_ASSERT(false); // Stop here on a debug build
+            continue;        // Soldier on in a prod build
+         }
 
-         case XmlRecord::Bool:
-            // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
-            valueAsText = value.toBool() ? "TRUE" : "FALSE";
-            break;
+         switch (fieldDefinition.fieldType) {
 
-         case XmlRecord::Int:
-         case XmlRecord::UInt:
-         case XmlRecord::Double:
-            // QVariant knows how to convert a number to a string
-            valueAsText = value.toString();
-            break;
+            case XmlRecord::Bool:
+               // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
+               valueAsText = value.toBool() ? "TRUE" : "FALSE";
+               break;
 
-         case XmlRecord::Date:
-            // There is only one true date format :-)
-            valueAsText = value.toDate().toString(Qt::ISODate);
-            break;
+            case XmlRecord::Int:
+            case XmlRecord::UInt:
+            case XmlRecord::Double:
+               // QVariant knows how to convert a number to a string
+               valueAsText = value.toString();
+               break;
 
-         case XmlRecord::Enum:
-            // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
-            Q_ASSERT(nullptr != fieldDefinition.stringToEnum);
-            // When writing out XML, we have the value of the EnumLookupMap (an int) and need to find the corresponding
-            // key (a string).  Fortunately, the underlying QHash already does all the heavy lifting.
-            valueAsText = fieldDefinition.stringToEnum->key(value.toInt());
-            if (valueAsText == "") {
-               // It's a coding error if we couldn't find the enum value the enum mapping
-               qCritical() << Q_FUNC_INFO <<
-                  "Could not find string representation of enum property" << fieldDefinition.propertyName <<
-                  "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
-                  namedEntityToExport.metaObject()->className();
-               Q_ASSERT(false); // Stop here on a debug build
-               continue;        // Soldier on in a prod build
-            }
-            break;
+            case XmlRecord::Date:
+               // There is only one true date format :-)
+               valueAsText = value.toDate().toString(Qt::ISODate);
+               break;
+
+            case XmlRecord::Enum:
+               // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
+               Q_ASSERT(nullptr != fieldDefinition.stringToEnum);
+               // When writing out XML, we have the value of the EnumLookupMap (an int) and need to find the corresponding
+               // key (a string).  Fortunately, the underlying QHash already does all the heavy lifting.
+               valueAsText = fieldDefinition.stringToEnum->key(value.toInt());
+               if (valueAsText == "") {
+                  // It's a coding error if we couldn't find the enum value the enum mapping
+                  qCritical() << Q_FUNC_INFO <<
+                     "Could not find string representation of enum property" << fieldDefinition.propertyName <<
+                     "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
+                     namedEntityToExport.metaObject()->className();
+                  Q_ASSERT(false); // Stop here on a debug build
+                  continue;        // Soldier on in a prod build
+               }
+               break;
 
             // By default we assume it's a string
             case XmlRecord::String:
             default:
-               valueAsText = value.toString();
+               {
+                  // We use this to escape "&" to "&amp;" and so on in string content.  (Other data types should not
+                  // have anything in their string representation that needs escaping in XML.)
+                  QXmlStreamWriter qXmlStreamWriter(&valueAsText);
+                  qXmlStreamWriter.writeCharacters(value.toString());
+               }
                break;
+         }
       }
       writeIndents(out, indentLevel + 1, indentString);
       out << "<" << fieldDefinition.xPath << ">" << valueAsText << "</" << fieldDefinition.xPath << ">\n";

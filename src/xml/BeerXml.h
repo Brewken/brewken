@@ -61,12 +61,12 @@ public:
     * \brief Creates a blank BeerXML document in the supplied file (which the caller should have opened for writing
     *        already).  This can then be supplied to subsequent calls to add BeerXML for Recipes, Hops, etc.
     */
-   void createXmlFile(QFile & outFile);
+   void createXmlFile(QFile & outFile) const;
 
    /**
     * \brief Write a list of objects to the supplied file
     */
-   template<class NE> void toXml(QList<NE *> nes, QFile & outFile);
+   template<class NE> void toXml(QList<NE *> & nes, QFile & outFile) const;
 
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

@@ -104,22 +104,21 @@ void WaterListModel::waterChanged(QMetaProperty prop, QVariant val)
    if( eSend == nullptr )
       return;
 
-   QString propName(prop.name());
-   if ( propName == PropertyNames::NamedEntity::name ) {
+   if (prop.name() == PropertyNames::NamedEntity::name) {
       int ndx = m_waters.indexOf(eSend);
-      if ( ndx >= 0 )
+      if ( ndx >= 0 ) {
          emit dataChanged( createIndex(ndx,0), createIndex(ndx,0) );
+      }
    }
 }
 
-void WaterListModel::recChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-   if ( propName == "water" ) {
-      Water* newWater = qobject_cast<Water*>(NamedEntity::extractPtr(val));
-      // Now do something with the water.
+void WaterListModel::recChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::Recipe::waters) {
+      Water* newWater = val.value<Water*>();
+      // .:TODO:. Now do something with the water.
       Q_UNUSED(newWater) // Until then, this will keep the compiler happy
    }
+   return;
 }
 
 void WaterListModel::repopulateList() {

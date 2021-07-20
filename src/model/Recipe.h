@@ -40,9 +40,9 @@
 #include "model/Misc.h"
 #include "model/Salt.h"  // Needed for Salt::WhenToAdd (see getReagents())
 
-// One advantage of using these constants is you get compile-time checking for typos etc
-#define AddPropertyName(property) \
-namespace PropertyNames::Recipe {static char const * const property = #property; }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Recipe {static char const * const property = #property; }
 AddPropertyName(ABV_pct)
 AddPropertyName(age)
 AddPropertyName(ageTemp_c)
@@ -109,6 +109,8 @@ AddPropertyName(wortFromMash_l)
 AddPropertyName(yeastIds)
 AddPropertyName(yeasts)
 #undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 // Forward declarations
 class Equipment;
@@ -124,7 +126,6 @@ class Yeast;
 
 /*!
  * \class Recipe
- *
  *
  * \brief Model class for recipe records in the database.
  */

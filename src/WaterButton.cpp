@@ -57,19 +57,16 @@ void WaterButton::setWater(Water* water)
    }
 }
 
-void WaterButton::waterChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-   if ( propName == PropertyNames::NamedEntity::name ) {
-      setText( val.toString() );
+void WaterButton::waterChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::NamedEntity::name) {
+      this->setText(val.toString());
    }
+   return;
 }
 
-void WaterButton::recChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-
-   if ( propName == "water" ) {
-      setWater( qobject_cast<Water*>(NamedEntity::extractPtr(val)) );
+void WaterButton::recChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::Recipe::waters) {
+      this->setWater(val.value<Water*>());
    }
+   return;
 }

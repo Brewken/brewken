@@ -37,15 +37,20 @@
 class ObjectStore;
 class Recipe;
 
-namespace PropertyNames::NamedEntity { static char const * const deleted   = "deleted"; /* previously kpropDeleted */ }
-namespace PropertyNames::NamedEntity { static char const * const display   = "display"; /* previously kpropDisplay */ }
-namespace PropertyNames::NamedEntity { static char const * const folder    = "folder"; /* previously kpropFolder */ }
-namespace PropertyNames::NamedEntity { static char const * const key       = "key"; }
-namespace PropertyNames::NamedEntity { static char const * const name      = "name"; /* previously kpropName */ }
-namespace PropertyNames::NamedEntity { static char const * const parentKey = "parentKey"; }
-
-// Make uintptr_t available in QVariant.
-Q_DECLARE_METATYPE( uintptr_t )
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+// Make this class's property names available via constants in sub-namespace of PropertyNames
+// One advantage of using these constants is you get compile-time checking for typos etc
+#define AddPropertyName(property) namespace PropertyNames::NamedEntity {static char const * const property = #property; }
+AddPropertyName(deleted)
+AddPropertyName(display)
+AddPropertyName(folder)
+AddPropertyName(key)
+AddPropertyName(name)
+AddPropertyName(parentKey)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 /*!
  * \class NamedEntity
@@ -76,6 +81,9 @@ Q_DECLARE_METATYPE( uintptr_t )
  * NB: Although we can template individual member functions, we cannot make this a template class (eg to use
  * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
  * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
+ *
+ * NB: Because NamedEntity inherits from QObject, no extra work is required to store pointers to NamedEntity objects
+ *     inside QVariant
  */
 class NamedEntity : public QObject {
    Q_OBJECT
@@ -195,40 +203,9 @@ public:
    //! \returns the BeerXML version of this element.
    int version() const;
    //! Convenience method to get a meta property by name.
-   QMetaProperty metaProperty(const char* name) const;
+   QMetaProperty metaProperty(char const * const name) const;
    //! Convenience method to get a meta property by name.
-   QMetaProperty metaProperty(QString const& name) const;
-
-   // .:TODO:. MY 2021-03-23 These don't really belong here
-   // Should be able to get rid of them when we finish refactoring BeerXml.cpp
-   // Some static helpers to convert to/from text.
-   static double getDouble( const QDomText& textNode );
-   static bool getBool( const QDomText& textNode );
-   static int getInt( const QDomText& textNode );
-   static QString getString( QDomText const& textNode );
-   static QDateTime getDateTime( QDomText const& textNode );
-   static QDate getDate( QDomText const& textNode );
-   //! Convert the string to a QDateTime according to Qt::ISODate.
-   static QDateTime getDateTime(QString const& str = "");
-   static QDate getDate(QString const& str = "");
-   static QString text(bool val);
-   static QString text(double val);
-   static QString text(int val);
-   //! Convert the date to string in Qt::ISODate format for storage NOT display.
-   static QString text(QDate const& val);
-
-   //! Use this to pass pointers around in QVariants.
-   static inline QVariant qVariantFromPtr( NamedEntity* ptr )
-   {
-      uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
-      return QVariant::fromValue<uintptr_t>(addr);
-   }
-
-   static inline NamedEntity* extractPtr( QVariant ptrVal )
-   {
-      uintptr_t addr = ptrVal.value<uintptr_t>();
-      return reinterpret_cast<NamedEntity*>(addr);
-   }
+//   QMetaProperty metaProperty(QString const& name) const;
 
    /**
     * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.

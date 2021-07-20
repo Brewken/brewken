@@ -31,9 +31,12 @@ void XmlMashRecord::subRecordToXml(XmlRecord::FieldDefinition const & fieldDefin
    Q_ASSERT(0 == strcmp(fieldDefinition.propertyName, PropertyNames::Mash::mashSteps));
 
    QList<MashStep *> children = mash.mashSteps();
-   for (MashStep * child : children) {
-      subRecord.toXml(*child, out, indentLevel, indentString);
+   if (children.empty()) {
+      this->writeNone(subRecord, mash, out, indentLevel, indentString);
+   } else {
+      for (MashStep * child : children) {
+         subRecord.toXml(*child, out, indentLevel, indentString);
+      }
    }
-
    return;
 }
