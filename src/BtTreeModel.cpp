@@ -1586,6 +1586,55 @@ void BtTreeModel::revertRecipeToPreviousVersion(QModelIndex ndx) {
    return;
 }
 
+// This is detaching a Recipe from its previous versions
+void BtTreeModel::orphanRecipe(QModelIndex ndx) {
+   BtTreeItem* node = item(ndx);
+   BtTreeItem* pNode = node->parent();
+   QModelIndex pIndex = parent(ndx);
+
+   // I need the recipe referred to by the index
+   Recipe *orphan = recipe(ndx);
+
+   // don't do anything if there is nothing to do
+   if ( ! orphan->hasAncestors() ) {
+      return;
+   }
+
+   // And I need its immediate ancestor
+   Recipe *ancestor = orphan->ancestors().at(0);
+
+   // Deal with the soon-to-be orphan first
+   // Remove all the rows associated with the orphan
+   removeRows(0,node->childCount(),ndx);
+
+   // This looks weird, but I think it will do what I need -- set
+   // the ancestor_id to itself and reload the ancestors array. setAncestor
+   // handles the locked and display flags
+   orphan->setAncestor(*orphan);
+   // Display all of its brewnotes
+   addBrewNoteSubTree(orphan, ndx.row(), pNode, false);
+
+   // set the ancestor to visible. Not sure this is required?
+   ancestor->setDisplay(true);
+   ancestor->setLocked(false);
+
+   // Put the ancestor into the tree
+   if ( ! insertRow(pIndex.row(), pIndex, ancestor, BtTreeItem::RECIPE) ) {
+      qWarning() << Q_FUNC_INFO << "Could not add ancestor to tree";
+   }
+
+   // Find the ancestor in the tree
+   QModelIndex ancNdx = findElement(ancestor);
+   if ( ! ancNdx.isValid() ) {
+      qWarning() << Q_FUNC_INFO << "Couldn't find the ancestor";
+   }
+
+   // Add the ancestor's brewnotes to the descendant
+   addBrewNoteSubTree(ancestor,ancNdx.row(),pNode);
+
+   return;
+}
+
 void BtTreeModel::spawnRecipe(QModelIndex ndx) {
    Recipe * ancestor = recipe(ndx);
    std::shared_ptr<Recipe> descendant = std::make_shared<Recipe>(*ancestor);

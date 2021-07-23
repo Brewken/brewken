@@ -27,12 +27,18 @@
 
 #include "model/NamedEntity.h"
 
-namespace PropertyNames::Salt { static char const * const amount = "amount"; /* previously kpropAmount */ }
-namespace PropertyNames::Salt { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
-namespace PropertyNames::Salt { static char const * const type = "type"; /* previously kpropType */ }
-namespace PropertyNames::Salt { static char const * const isAcid = "isAcid"; /* previously kpropIsAcid */ }
-namespace PropertyNames::Salt { static char const * const percentAcid = "percentAcid"; /* previously kpropPctAcid */ }
-namespace PropertyNames::Salt { static char const * const addTo = "addTo"; /* previously kpropAddTo */ }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Salt {static char const * const property = #property; }
+AddPropertyName(amount)
+AddPropertyName(amountIsWeight)
+AddPropertyName(type)
+AddPropertyName(isAcid)
+AddPropertyName(percentAcid)
+AddPropertyName(addTo)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 
 /*!

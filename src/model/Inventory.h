@@ -25,8 +25,15 @@
 
 class ObjectStore;
 
-namespace PropertyNames::Inventory { static char const * const id     = "id"; }
-namespace PropertyNames::Inventory { static char const * const amount = "amount"; }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Inventory {static char const * const property = #property; }
+AddPropertyName(id)
+AddPropertyName(amount)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /**
  * \brief Class representing an inventory entry for Hop/Fermentable/Yeast/Misc
@@ -94,6 +101,11 @@ public:
     *        and debugging.
     */
    virtual char const * getIngredientClass() const = 0;
+
+   /**
+    * \brief We need this for ObjectStoreTyped to call
+    */
+   void hardDeleteOwnedEntities();
 
 protected:
    /**

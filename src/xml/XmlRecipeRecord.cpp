@@ -64,7 +64,6 @@ namespace {
 }
 
 
-
 template<typename CNE>
 void XmlRecipeRecord::addChildren() {
    //
@@ -113,7 +112,6 @@ void XmlRecipeRecord::addChildren() {
       //
       Q_ASSERT(added != nullptr);
       setAmountsEtc(*added, ii->second->getNamedParameterBundle());
-
    }
    return;
 }
@@ -149,7 +147,6 @@ XmlRecord::ProcessingResult XmlRecipeRecord::normaliseAndStoreInDb(NamedEntity *
 
    return XmlRecord::Succeeded;
 }
-
 
 template<typename CNE>
 bool XmlRecipeRecord::childrenToXml(XmlRecord::FieldDefinition const & fieldDefinition,

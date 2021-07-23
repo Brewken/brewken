@@ -1,6 +1,7 @@
 /**
- * RecipeExtrasWidget.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * RecipeExtrasWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -20,7 +21,6 @@
 
 class RecipeExtrasWidget;
 
-#include <QDialog>
 #include <QWidget>
 #include <QMetaProperty>
 #include <QVariant>
@@ -28,20 +28,19 @@ class RecipeExtrasWidget;
 
 // Forward declarations
 class Recipe;
+class QDate;
 
 /*!
  * \class RecipeExtrasWidget
  *
- *
  * \brief View/controller widget for modifying "extra" recipe fields.
  */
-class RecipeExtrasWidget : public QWidget, public Ui::recipeExtrasWidget
-{
+class RecipeExtrasWidget : public QWidget, public Ui::recipeExtrasWidget {
    Q_OBJECT
 
 public:
-   RecipeExtrasWidget(QWidget* parent=0);
-   virtual ~RecipeExtrasWidget() {}
+   RecipeExtrasWidget(QWidget* parent = nullptr);
+   virtual ~RecipeExtrasWidget() = default;
    //! \brief Set the recipe to view/edit.
    void setRecipe(Recipe* rec);
 
@@ -65,13 +64,13 @@ private slots:
    void changeRatings(int rating);
    void saveAll();
 
-   void changed(QMetaProperty,QVariant);
+   void changed(QMetaProperty, QVariant);
 
 private:
    Recipe* recipe;
    bool ratingChanged;
 
-   void showChanges(QMetaProperty* prop = 0);
+   void showChanges(QMetaProperty * prop = nullptr);
 };
 
-#endif // RECIPEEXTRASWIDGET_H
+#endif

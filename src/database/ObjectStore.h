@@ -197,9 +197,9 @@ public:
    /**
     * \brief Insert a new object in the DB (and in our cache list)
     *
-    * \return What was inserted
+    * \return The ID of what was inserted
     */
-   virtual std::shared_ptr<QObject> insert(std::shared_ptr<QObject> object);
+   virtual int insert(std::shared_ptr<QObject> object);
 
    /**
     * \brief Update an existing object in the DB

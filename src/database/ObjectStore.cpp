@@ -430,6 +430,7 @@ namespace {
 
       // Bind the primary key value
       sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
+      qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
       // Run the query
       if (!sqlQuery.exec()) {
@@ -509,6 +510,118 @@ public:
       // By convention the first field is the primary key
       char const * const primaryKeyProperty {this->primaryTable.tableFields[0].propertyName};
       return object.property(primaryKeyProperty);
+   }
+
+   /**
+    * \brief Update the specified property on an object
+    *
+    *        NB: Caller is responsible for handling transactions
+    *
+    * \return \c true if succeeded, \c false otherwise
+    */
+   bool updatePropertyInDb(QSqlDatabase & connection, QObject const & object, char const * const propertyName) {
+      // We'll need some of this info even if it's a junction table property we're updating
+      QString const &  primaryKeyColumn {this->getPrimaryKeyColumn()};
+      QVariant const   primaryKey       {this->getPrimaryKey(object)};
+
+      //
+      // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
+      //
+      auto matchingFieldDefn = std::find_if(
+         this->primaryTable.tableFields.begin(),
+         this->primaryTable.tableFields.end(),
+         [propertyName](TableField const & fd) {return 0 == std::strcmp(fd.propertyName, propertyName);}
+      );
+
+      if (matchingFieldDefn != this->primaryTable.tableFields.end()) {
+         //
+         // We're updating a simple property
+         //
+         // Construct the SQL, which will be of the form
+         //
+         //    UPDATE tablename
+         //    SET columnName = :columnName
+         //    WHERE primaryKeyColumn = :primaryKeyColumn;
+         //
+         QString queryString{"UPDATE "};
+         QTextStream queryStringAsStream{&queryString};
+         queryStringAsStream << this->primaryTable.tableName << " SET ";
+
+         QString const & columnToUpdateInDb = matchingFieldDefn->columnName;
+
+         queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
+         queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
+
+         qDebug() <<
+            Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
+            "with database query" << queryString;
+
+         //
+         // Bind the values
+         //
+         QSqlQuery sqlQuery{connection};
+         sqlQuery.prepare(queryString);
+         QVariant propertyBindValue{object.property(propertyName)};
+         // Enums need to be converted to strings first
+         auto fieldDefn = std::find_if(
+            this->primaryTable.tableFields.begin(),
+            this->primaryTable.tableFields.end(),
+            [propertyName](TableField const & fd){return propertyName == fd.propertyName;}
+         );
+         // It's a coding error if we're trying to update a property that's not in the field definitions
+         Q_ASSERT(fieldDefn != this->primaryTable.tableFields.end());
+         if (fieldDefn->fieldType == ObjectStore::Enum) {
+            propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
+         }
+         sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
+         sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), primaryKey);
+         qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
+
+         //
+         // Run the query
+         //
+         if (!sqlQuery.exec()) {
+            qCritical() <<
+               Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+            return false;
+         }
+      } else {
+         //
+         // The property we've been given isn't a simple property, so look for it in the ones we store in junction tables
+         //
+         auto matchingJunctionTableDefinitionDefn = std::find_if(
+            this->junctionTables.begin(),
+            this->junctionTables.end(),
+            [propertyName](JunctionTableDefinition const & jt) {
+               return 0 == std::strcmp(GetJunctionTableDefinitionPropertyName(jt), propertyName);
+            }
+         );
+
+         // It's a coding error if we couldn't find the property either as a simple field or an associative entity
+         if (matchingJunctionTableDefinitionDefn == this->junctionTables.end()) {
+            qCritical() <<
+               Q_FUNC_INFO << "Unable to find rule for storing property" << object.metaObject()->className() << "::" <<
+               propertyName << "in either" << this->primaryTable.tableName << "or any associated table";
+            Q_ASSERT(false);
+         }
+
+         //
+         // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
+         // write out data based on the current property values.
+         //
+         qDebug() <<
+            Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
+            "in junction table" << matchingJunctionTableDefinitionDefn->tableName;
+         if (!deleteFromJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, primaryKey, connection)) {
+            return false;
+         }
+         if (!insertIntoJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, object, primaryKey, connection)) {
+            return false;
+         }
+      }
+
+      // If we made it this far then everything worked
+      return true;
    }
 
    TableDefinition const & primaryTable;
@@ -845,7 +958,7 @@ QList<std::shared_ptr<QObject> > ObjectStore::getByIds(QVector<int> const & list
 }
 
 
-std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
+int ObjectStore::insert(std::shared_ptr<QObject> object) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
@@ -870,7 +983,9 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    this->pimpl->appendColumNames(queryStringAsStream, false, true);
    queryStringAsStream << ");";
 
-   qDebug() << Q_FUNC_INFO << "Inserting" << object->metaObject()->className() << "main table row with database query " << queryString;
+   qDebug() <<
+      Q_FUNC_INFO << "Inserting" << object->metaObject()->className() << "main table row with database query " <<
+      queryString;
 
    //
    // Bind the values
@@ -918,7 +1033,7 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    if (!sqlQuery.exec()) {
       qCritical() <<
          Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
-      return object;
+      return -1;
    }
 
    //
@@ -940,15 +1055,6 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
       Q_FUNC_INFO << object->metaObject()->className() << "#" << primaryKey << "inserted in database using" <<
       queryString;
 
-   bool setPrimaryKeyOk = object->setProperty(primaryKeyParameter, primaryKey);
-   if (!setPrimaryKeyOk) {
-      // This is a coding error - eg the property doesn't have a WRITE member function or it doesn't take the type of
-      // argument we supplied inside a QVariant.
-      qCritical() <<
-         Q_FUNC_INFO << "Unable to set property" << primaryKeyParameter << "on" << object->metaObject()->className();
-      Q_ASSERT(false);
-   }
-
    //
    // Add the object to our list of all objects of this type (asserting that it should be impossible for an object with
    // this ID to already exist in that list).
@@ -960,16 +1066,34 @@ std::shared_ptr<QObject> ObjectStore::insert(std::shared_ptr<QObject> object) {
    // Now save data to the junction tables
    //
    for (auto const & junctionTable : this->pimpl->junctionTables) {
-      insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, connection);
+      if (!insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, connection)) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error writing to juncton tables:" << connection.lastError().text();
+         return -1;
+      }
+   }
+
+   // Everything succeeded if we got this far so we can wrap up the transaction
+   dbTransaction.commit();
+
+   //
+   // Now we tell the object what its primary key is.  Note that we must do this after the database transaction is
+   // finished as there are some circumstances where this call will trigger the start of another database transaction.
+   //
+   bool setPrimaryKeyOk = object->setProperty(primaryKeyParameter, primaryKey);
+   if (!setPrimaryKeyOk) {
+      // This is a coding error - eg the property doesn't have a WRITE member function or it doesn't take the type of
+      // argument we supplied inside a QVariant.
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to set property" << primaryKeyParameter << "on" << object->metaObject()->className();
+      Q_ASSERT(false);
    }
 
    //
    // Tell any bits of the UI that need to know that there's a new object
    //
    emit this->signalObjectInserted(primaryKey);
-
-   dbTransaction.commit();
-   return object;
+   return primaryKey;
 }
 
 void ObjectStore::update(std::shared_ptr<QObject> object) {
@@ -1070,9 +1194,10 @@ std::shared_ptr<QObject> ObjectStore::insertOrUpdate(std::shared_ptr<QObject> ob
    QVariant const primaryKey = this->pimpl->getPrimaryKey(*object);
    if (primaryKey.toInt() > 0) {
       this->update(object);
-      return object;
+   } else {
+      this->insert(object);
    }
-   return this->insert(object);
+   return object;
 }
 
 int ObjectStore::insertOrUpdate(QObject & object) {
@@ -1087,129 +1212,41 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
 
-   // We'll need some of this info even if it's a junction table property we're updating
-   QString const &  primaryKeyColumn {this->pimpl->getPrimaryKeyColumn()};
-   QVariant const   primaryKey       {this->pimpl->getPrimaryKey(object)};
-
-   //
-   // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
-   //
-   auto matchingFieldDefn = std::find_if(
-      this->pimpl->primaryTable.tableFields.begin(),
-      this->pimpl->primaryTable.tableFields.end(),
-      [propertyName](TableField const & fd) {return 0 == std::strcmp(fd.propertyName, propertyName);}
-   );
-
-   if (matchingFieldDefn != this->pimpl->primaryTable.tableFields.end()) {
-      //
-      // We're updating a simple property
-      //
-      // Construct the SQL, which will be of the form
-      //
-      //    UPDATE tablename
-      //    SET columnName = :columnName
-      //    WHERE primaryKeyColumn = :primaryKeyColumn;
-      //
-      QString queryString{"UPDATE "};
-      QTextStream queryStringAsStream{&queryString};
-      queryStringAsStream << this->pimpl->primaryTable.tableName << " SET ";
-
-
-      QString const & columnToUpdateInDb = matchingFieldDefn->columnName;
-
-      queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
-      queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
-
-      qDebug() <<
-         Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
-         "with database query" << queryString;
-
-      //
-      // Bind the values
-      //
-      QSqlQuery sqlQuery{connection};
-      sqlQuery.prepare(queryString);
-      QVariant propertyBindValue{object.property(propertyName)};
-      // Enums need to be converted to strings first
-      auto fieldDefn = std::find_if(
-         this->pimpl->primaryTable.tableFields.begin(),
-         this->pimpl->primaryTable.tableFields.end(),
-         [propertyName](TableField const & fd){return propertyName == fd.propertyName;}
-      );
-      // It's a coding error if we're trying to update a property that's not in the field definitions
-      Q_ASSERT(fieldDefn != this->pimpl->primaryTable.tableFields.end());
-      if (fieldDefn->fieldType == ObjectStore::Enum) {
-         propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
-      }
-      sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
-      sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), primaryKey);
-
-      //
-      // Run the query
-      //
-      if (!sqlQuery.exec()) {
-         qCritical() <<
-            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
-         return;
-      }
-   } else {
-      //
-      // The property we've been given isn't a simple property, so look for it in the ones we store in junction tables
-      //
-      auto matchingJunctionTableDefinitionDefn = std::find_if(
-         this->pimpl->junctionTables.begin(),
-         this->pimpl->junctionTables.end(),
-         [propertyName](JunctionTableDefinition const & jt) {return 0 == std::strcmp(GetJunctionTableDefinitionPropertyName(jt), propertyName);}
-      );
-
-      // It's a coding error if we couldn't find the property either as a simple field or an associative entity
-      if (matchingJunctionTableDefinitionDefn == this->pimpl->junctionTables.end()) {
-         qCritical() <<
-            Q_FUNC_INFO << "Unable to find rule for storing property" << object.metaObject()->className() << "::" <<
-            propertyName << "in either" << this->pimpl->primaryTable.tableName << "or any associated table";
-         Q_ASSERT(false);
-      }
-
-      //
-      // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
-      // write out data based on the current property values.
-      //
-      qDebug() <<
-         Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
-         "in junction table" << matchingJunctionTableDefinitionDefn->tableName;
-      if (!deleteFromJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, primaryKey, connection)) {
-         return;
-      }
-      if (!insertIntoJunctionTableDefinition(*matchingJunctionTableDefinitionDefn, object, primaryKey, connection)) {
-         return;
-      }
+   if (!this->pimpl->updatePropertyInDb(connection, object, propertyName)) {
+      // Something went wrong.  Bailing out here will abort the transaction and avoid sending the signal.
+      return;
    }
 
-   // If we made it this far then everything worked and we can commit the transaction
+   // Everything went fine so we can commit the transaction
    dbTransaction.commit();
 
    // Tell any bits of the UI that need to know that the property was updated
-   emit this->signalPropertyChanged(primaryKey.toInt(), propertyName);
+   emit this->signalPropertyChanged(this->pimpl->getPrimaryKey(object).toInt(), propertyName);
 
    return;
 }
 
 
 //
-// .:TODO:. For this and for hardDelete, we need to work out how to do cascading deletes for Recipe - ie delete the objects it owns (Hops, Fermentables, etc)
+// .:TODO:. For this and for hardDelete, we need to work out how to do cascading deletes for Recipe - ie delete the
+//          objects it owns (Hops, Fermentables, etc).  I think this is best done in the objects themselves
 //
 void ObjectStore::softDelete(int id) {
+   qDebug() << Q_FUNC_INFO << "Soft delete item #" << id;
    auto object = this->pimpl->allObjects.value(id);
-   this->pimpl->allObjects.remove(id);
+   if (this->pimpl->allObjects.contains(id)) {
+      this->pimpl->allObjects.remove(id);
 
-   // Tell any bits of the UI that need to know that an object was deleted
-   emit this->signalObjectDeleted(id, object);
+      // Tell any bits of the UI that need to know that an object was deleted
+      emit this->signalObjectDeleted(id, object);
+   }
 
    return;
 }
 
 //
 void ObjectStore::hardDelete(int id) {
+   qDebug() << Q_FUNC_INFO << "Hard delete item #" << id;
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
 
@@ -1226,6 +1263,8 @@ void ObjectStore::hardDelete(int id) {
    queryStringAsStream << this->pimpl->primaryTable.tableName;
    QString const & primaryKeyColumn = this->pimpl->getPrimaryKeyColumn();
    queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
+   qDebug() <<
+      Q_FUNC_INFO << "Deleting main table row #" << id << "with database query " << queryString;
 
    //
    // Bind the value
@@ -1235,6 +1274,7 @@ void ObjectStore::hardDelete(int id) {
    sqlQuery.prepare(queryString);
    QString bindName = QString{":%1"}.arg(primaryKeyColumn);
    sqlQuery.bindValue(bindName, primaryKey);
+   qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
    //
    // Run the query
@@ -1254,13 +1294,13 @@ void ObjectStore::hardDelete(int id) {
       }
    }
 
+   dbTransaction.commit();
+
    //
    // Remove the object from the cache
    //
    auto object = this->pimpl->allObjects.value(id);
    this->pimpl->allObjects.remove(id);
-
-   dbTransaction.commit();
 
    // Tell any bits of the UI that need to know that an object was deleted
    emit this->signalObjectDeleted(id, object);

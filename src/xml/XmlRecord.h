@@ -195,11 +195,25 @@ private:
 
 protected:
    /**
-    * \brief Child classes need to implement this to populate this->namedEntity with a suitably-constructed object
-    *        using the contents of this=>namedParameterBundle
+    * \brief Subclasses need to implement this to populate this->namedEntity with a suitably-constructed object using
+    *        the contents of this=>namedParameterBundle
     */
    virtual void constructNamedEntity();
 
+   /**
+    * \brief Subclasses  need to implement this to store this->namedEntityRaiiContainer in the appropriate ObjectStore
+    * \return the ID of the newly-inserted object
+    */
+   virtual int storeNamedEntityInDb();
+
+public:
+   /**
+    * \brief Subclasses  need to implement this to delete this->namedEntityRaiiContainer from the appropriate
+    *        ObjectStore (this is in the event of problems detected after the call to this->storeNamedEntityInDb()
+    */
+   virtual void deleteNamedEntityFromDb();
+
+protected:
    bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                                           XmlRecordCount & stats);
 
@@ -281,25 +295,24 @@ protected:
    // then we need to ensure it is properly destroyed if we abort that processing.  Putting it in this RAII container
    // handles that automatically for us.
    //
-   // Once the object is populated, and we give ownership to something else (eg Database class), we should call
-   // release(), because we no longer want the new Hop/Yeast/Recipe/etc object to be destroyed when the
-   // XmlNamedEntityRecord is destroyed (typically at end of document processing).
+   // Once the object is populated, and we give ownership to the relevant Object Store there will be another instance of
+   // this shared pointer (in the object store), which is perfect because, at this point, we don't want the new
+   // Hop/Yeast/Recipe/etc object to be destroyed when the XmlNamedEntityRecord is destroyed (typically at end of
+   // document processing).
    //
-   // HOWEVER, we might still need access to the object even after we are no longer its owner.  This is why we also
-   // have this->namedEntity.
-   //
-   // MOREOVER, there are circumstances where we want this->namedEntity and this->namedEntityRaiiContainer to point to
-   // different things.  Specifically, if we are reading in, say a Hop and we discover that we already have the same
-   // Hop (where "the same" means "as determined by NamedEntity.operator==") in the Database, then we will want to set
-   // this->namedEntity to the Hop we already have stored (in case other objects we are reading in need to cross-refer
-   // to it) and leave this->namedEntityRaiiContainer holding the newly-created Hop object that needs to be discarded.
+   // Note HOWEVER, that, despite having this shared pointer, we tend to access through this->namedEntity because there
+   // are circumstances where we want this->namedEntity and this->namedEntityRaiiContainer to point to different things.
+   // Specifically, if we are reading in, say a Hop and we discover that we already have the same Hop (where "the same"
+   // means "as determined by NamedEntity.operator==") in the Database, then we will want to set this->namedEntity to
+   // the Hop we already have stored (in case other objects we are reading in need to cross-refer to it) and leave
+   // this->namedEntityRaiiContainer holding the newly-created Hop object that needs to be discarded.
    //
    // (An alternative approach would be to do replace this->namedEntityRaiiContainer with some boolean flag saying
    // whether we own the object and then write a custom destructor to check the flag and delete this->namedEntity if
    // necessary.  But this creates complication for dealing with duplicates.)
    //
    NamedEntity * namedEntity; // This is null for the root record of a document
-   std::unique_ptr<NamedEntity> namedEntityRaiiContainer;
+   std::shared_ptr<NamedEntity> namedEntityRaiiContainer;
 
    // This determines whether we include this record in the stats we show the user (about how many records were read in
    // or skipped from a file.  By default it's true.  Subclass constructors set it to false for types of record that

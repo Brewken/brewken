@@ -969,6 +969,13 @@ void DatabaseSchemaHelper::updateDatabase(Database & database, QString const& fi
    // In the naming here "old" means the user's database, and
    // "new" means the database coming from 'filename'.
    QVariant btid, newid, oldid;
+   /*
+    *  TODO-DATABASE:
+   ¥¥¥¥ ADD FOLDER FIELD
+   ¥¥¥¥ GET DATA TO COME FROM XML
+    *
+    *
+    */
 
    // .:TODO:. Change this to read in BeerXML and to put NEW recipes in brewtarget folder (but how?)
    // .:TODO:. Change where we test equality of newly read-in things from BeerXML

@@ -27,50 +27,56 @@
 #include "database/ObjectStore.h"
 #include "model/Recipe.h"
 
-namespace {
- char const * const kVersion = "version";
-}
-
 NamedEntity::NamedEntity(int key,  bool cache, QString t_name, bool t_display, QString folder) :
    QObject    {nullptr  },
-   m_key       {key      },
+   m_key      {key      },
    parentKey  {-1       },
    m_cacheOnly{cache    },
-   m_folder    {folder   },
-   m_name      {t_name   },
-   m_display   {t_display},
-   m_deleted   {false    } {
+   m_folder   {folder   },
+   m_name     {t_name   },
+   m_display  {t_display},
+   m_deleted  {false    },
+   m_beingModified{false} {
    return;
 }
 
 NamedEntity::NamedEntity(NamedEntity const & other) :
-   QObject    {nullptr          }, // QObject doesn't have a copy constructor, so just make a new one
+   QObject     {nullptr          }, // QObject doesn't have a copy constructor, so just make a new one
    m_key       {-1               }, // We don't want to copy the other object's key/ID
-   parentKey  {other.parentKey  },
-   m_cacheOnly{other.m_cacheOnly},
-   m_folder    {other.m_folder    },
-   m_name      {other.m_name      },
-   m_display   {other.m_display   },
-   m_deleted   {other.m_deleted   } {
+   parentKey   {other.parentKey  },
+   m_cacheOnly {other.m_cacheOnly},
+   m_folder    {other.m_folder   },
+   m_name      {other.m_name     },
+   m_display   {other.m_display  },
+   m_deleted   {other.m_deleted  },
+   m_beingModified{false} {
    return;
 }
 
+//
+// Construct from NamedParameterBundle
+//
+// The "key", "display" and "deleted" properties are optional because they will be set if we're creating from a DB
+// record, but not if we're creating from an XML record.
+//
+// The "folder", "name" and "parent" properties have to be optional because not all subclasses have them.  (BrewNote is
+// the subclass without a name, and, yes, I know the existence of a NamedEntity without a name calls into question our
+// class naming! :->)
+//
+// .:TBD:. For the moment, parent IDs are actually stored outside the main object table (eg in equipment_children
+//         rather than equipment), so this will always set parentKey to -1, but we could envisage changing that in
+//         future.
+//
 NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
-   QObject    {nullptr                                                            },
-   // Key will be set if we're creating from a DB record, but not if we're creating from an XML record
-   m_key       {namedParameterBundle(PropertyNames::NamedEntity::key, -1)         },
-   // Not all subclasses have parents so parentKey should be optional in the NamedParameterBundle
-   // .:TBD:. For the moment, parent IDs are actually stored outside the main object table (eg in equipment_children
-   //         rather than equipment), so this will always set parentKey to -1, but we could envisage changing that in
-   //         future.
+   QObject{nullptr},
+   m_key      {namedParameterBundle(PropertyNames::NamedEntity::key, -1)          },
    parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },
    m_cacheOnly{false                                                              },
-   m_folder    {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})}, // Not all subclasses have folders
-   m_name      {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  }, // One subclass, BrewNote, does not have a name
-   // Display will be set if we're creating from a DB record, but not if we're creating from an XML record
-   m_display   {namedParameterBundle(PropertyNames::NamedEntity::display, true)  },
-   // Deleted will be set if we're creating from a DB record, but not if we're creating from an XML record
-   m_deleted   {namedParameterBundle(PropertyNames::NamedEntity::deleted, false) } {
+   m_folder   {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})},
+   m_name     {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  },
+   m_display  {namedParameterBundle(PropertyNames::NamedEntity::display, true)    },
+   m_deleted  {namedParameterBundle(PropertyNames::NamedEntity::deleted, false)   },
+   m_beingModified{false} {
    return;
 }
 
@@ -171,12 +177,19 @@ bool NamedEntity::display() const {
 
 // Sigh. New databases, more complexity
 void NamedEntity::setDeleted(bool const var) {
+   if (this->newValueMatchesExisting(PropertyNames::NamedEntity::deleted, this->m_deleted, var)) {
+      return;
+   }
+
    this->m_deleted = var;
    this->propagatePropertyChange(PropertyNames::NamedEntity::deleted);
    return;
 }
 
 void NamedEntity::setDisplay(bool var) {
+   if (this->newValueMatchesExisting(PropertyNames::NamedEntity::display, this->m_display, var)) {
+      return;
+   }
    this->m_display = var;
    this->propagatePropertyChange(PropertyNames::NamedEntity::display);
    return;
@@ -187,6 +200,9 @@ QString NamedEntity::folder() const {
 }
 
 void NamedEntity::setFolder(QString const & var) {
+   if (this->newValueMatchesExisting(PropertyNames::NamedEntity::folder, this->m_folder, var)) {
+      return;
+   }
    this->m_folder = var;
    this->propagatePropertyChange(PropertyNames::NamedEntity::folder);
    return;
@@ -244,6 +260,15 @@ void NamedEntity::setCacheOnly(bool cache) {
    return;
 }
 
+void NamedEntity::setBeingModified(bool set) {
+   this->m_beingModified = set;
+   return;
+}
+
+bool NamedEntity::isBeingModified() const {
+   return this->m_beingModified;
+}
+
 QVector<int> NamedEntity::getParentAndChildrenIds() const {
    QVector<int> results;
    NamedEntity const * parent = this->getParent();
@@ -275,15 +300,9 @@ QVector<int> NamedEntity::getParentAndChildrenIds() const {
    return results;
 }
 
-
-int NamedEntity::version() const {
-   return QString(metaObject()->classInfo(metaObject()->indexOfClassInfo(kVersion)).value()).toInt();
-}
-
 QMetaProperty NamedEntity::metaProperty(char const * const name) const {
    return this->metaObject()->property(this->metaObject()->indexOfProperty(name));
 }
-
 
 void NamedEntity::prepareForPropertyChange(char const * const propertyName) {
    //
@@ -318,7 +337,6 @@ void NamedEntity::propagatePropertyChange(char const * const propertyName, bool 
    }
 
    return;
-
 }
 
 NamedEntity * NamedEntity::getParent() const {
@@ -329,18 +347,34 @@ NamedEntity * NamedEntity::getParent() const {
    return static_cast<NamedEntity *>(this->getObjectStoreTypedInstance().getById(this->parentKey).get());
 }
 
-
 void NamedEntity::setParent(NamedEntity const & parentNamedEntity) {
    this->setAndNotify(PropertyNames::NamedEntity::parentKey, this->parentKey, parentNamedEntity.m_key);
    return;
 }
 
-int NamedEntity::insertInDatabase() {
-   qDebug() << Q_FUNC_INFO << this->metaObject()->className();
-   return this->getObjectStoreTypedInstance().insertOrUpdate(*this);
+void NamedEntity::hardDeleteOwnedEntities() {
+   // If we are not overridden in the subclass then there is no work to do
+   qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "owns no other entities";
+   return;
 }
 
-void NamedEntity::removeFromDatabase() {
-   this->getObjectStoreTypedInstance().softDelete(this->m_key);
+//======================================================================================================================
+// NamedEntityModifyingMarker
+//======================================================================================================================
+NamedEntityModifyingMarker::NamedEntityModifyingMarker(NamedEntity & namedEntity) :
+   namedEntity{namedEntity},
+   savedModificationState{namedEntity.isBeingModified()} {
+   qDebug() <<
+      Q_FUNC_INFO << "Marking" << this->namedEntity.metaObject()->className() << "#" << this->namedEntity.key() <<
+      "as being modified (" << (this->savedModificationState ? "no change" : "previously was not") << ")";
+   this->namedEntity.setBeingModified(true);
+   return;
+}
+
+NamedEntityModifyingMarker::~NamedEntityModifyingMarker() {
+   qDebug() <<
+      Q_FUNC_INFO << "Restoring" << this->namedEntity.metaObject()->className() << "#" << this->namedEntity.key() <<
+      "\"being modified\" state to" << (this->savedModificationState ? "on" : "off");
+   this->namedEntity.setBeingModified(this->savedModificationState);
    return;
 }

@@ -28,7 +28,6 @@
 #include <QMessageBox>
 
 #include "Algorithms.h"
-//#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
 #include "model/Equipment.h"
@@ -381,7 +380,8 @@ void MashWizard::wizardry()
             mashStep->setStepTemp_c(tf);
             mashStep->setStepTime_min(15);
             //mashStep->setMash(mash);
-            mashStep->insertInDatabase();
+            ObjectStoreWrapper::insert(*mashStep);
+            mashStep->setCacheOnly(false);
             steps.append(mashStep);
             emit mashStep->changed(
                         mashStep->metaObject()->property(
@@ -403,7 +403,8 @@ void MashWizard::wizardry()
          mashStep->setStepTemp_c(tf);
          mashStep->setStepTime_min(15);
          //mashStep->setMash(mash);
-         mashStep->insertInDatabase();
+         ObjectStoreWrapper::insert(*mashStep);
+         mashStep->setCacheOnly(false);
          steps.append(mashStep);
          emit mashStep->changed(
                      mashStep->metaObject()->property(

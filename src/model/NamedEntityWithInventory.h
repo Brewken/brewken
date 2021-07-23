@@ -19,8 +19,15 @@
 
 #include "model/NamedEntity.h"
 
-namespace PropertyNames::NamedEntityWithInventory { static char const * const inventory = "inventory"; /* previously kpropInventory */ }
-namespace PropertyNames::NamedEntityWithInventory { static char const * const inventoryId = "inventoryId"; /* previously kpropInventoryId */ }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::NamedEntityWithInventory {static char const * const property = #property; }
+AddPropertyName(inventory)
+AddPropertyName(inventoryId)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /**
  * \class NamedEntityWithInventory

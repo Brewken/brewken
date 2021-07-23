@@ -153,13 +153,15 @@ public:
    //! \brief To cache or not to cache
    Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ )
 
+   //! \returns our key in the table we are stored in.
+   int key() const;
+   //! Access to the name attribute.
+   QString name() const;
    //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
    bool display() const;
    //! Access to the folder attribute.
    QString folder() const;
-   //! Access to the name attribute.
-   QString name() const;
 
    /**
     * \brief Returns a regexp that will match the " (n)" (for n some positive integer) added on the end of a name to
@@ -176,8 +178,17 @@ public:
    //!
    void setName(QString const & var);
 
-   //! \returns our key in the table we are stored in.
-   int key() const;
+   /**
+    * \brief This sets or unsets the "being modified" flag on the object.  Callers should preferably access this via
+    *        the \c NamedEntityModifyingMarker RAII wrapper.
+    *
+    *        This is a transient attribute (not stored in the DB) that it supposed to be used to mark when we are in the
+    *        process of modifying or copying the object and therefore do not want to heed signals that would trigger
+    *        further modifications or copies.  It's otherwise too easy to generate endless loops via a sequence of well-
+    *        intentioned signals.  (Finding and eliminating all these potential loops is non-trivial.)
+    */
+   void setBeingModified(bool set);
+   bool isBeingModified() const;
 
    /**
     * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
@@ -199,13 +210,8 @@ public:
     */
    QVector<int> getParentAndChildrenIds() const;
 
-   // .:TBD:. Do we really need this?  AFAICT BeerXML version is not used.
-   //! \returns the BeerXML version of this element.
-   int version() const;
    //! Convenience method to get a meta property by name.
    QMetaProperty metaProperty(char const * const name) const;
-   //! Convenience method to get a meta property by name.
-//   QMetaProperty metaProperty(QString const& name) const;
 
    /**
     * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
@@ -224,18 +230,13 @@ public:
 
    void setParent(NamedEntity const & parentNamedEntity);
 
-   /*!
-    * \brief When we create an NamedEntity, or undelete a deleted one, we need to put it in the database.  For the case of
-    *        undelete, it's helpful for the caller not to have to know what subclass of NamedEntity we are resurrecting.
-    * \return Key of element inserted in database.
+   /**
+    * \brief If we are _really_ deleting (rather than just marking deleted) an entity that owns other entities (eg a
+    *        Mash owns its MashSteps) then we need to delete those owned entities immediately beforehand.
+    *
+    *        By default this function does nothing.  Subclasses override it if needed.
     */
-   int insertInDatabase();
-
-   /*!
-    * \brief If we can put something in the database, then we also need to be able to remove it.
-    *        Note that, once removed from the DB, the caller is responsible for deleting this object.
-    */
-   void removeFromDatabase();
+   virtual void hardDeleteOwnedEntities();
 
 signals:
    /*!
@@ -334,6 +335,26 @@ protected:
     */
    void propagatePropertyChange(char const * const propertyName, bool notify = true) const;
 
+
+   /**
+    * \brief Convenience function to check for the set being a no-op. (Sometimes the UI will call all setters, even on
+    *        fields that haven't changed.)
+    *
+    * \return \c true if there's nothing to change, \c false otherwise
+    */
+   template<typename T>
+   bool newValueMatchesExisting(char const * const propertyName,
+                                T & memberVariable,
+                                T const newValue) {
+      if (newValue == memberVariable) {
+         qDebug() <<
+            Q_FUNC_INFO << this->metaObject()->className() << "#" << this->key() << ": ignoring call to setter for" <<
+            propertyName << "as value not changing";
+         return true;
+      }
+      return false;
+   }
+
    /**
     * \brief Convenience function that wraps preparing for a property change, making it and propagating it.
     */
@@ -341,6 +362,9 @@ protected:
    void setAndNotify(char const * const propertyName,
                      T & memberVariable,
                      T const newValue) {
+      if (this->newValueMatchesExisting(propertyName, memberVariable, newValue)) {
+         return;
+      }
       this->prepareForPropertyChange(propertyName);
       memberVariable = newValue;
       this->propagatePropertyChange(propertyName);
@@ -348,10 +372,32 @@ protected:
    }
 
 private:
-  mutable QString m_folder;
-  mutable QString m_name;
-  mutable bool m_display;
-  mutable bool m_deleted;
+  QString m_folder;
+  QString m_name;
+  bool m_display;
+  bool m_deleted;
+  bool m_beingModified;
+};
+
+
+/**
+ * \class NamedEntityModifyingMarker
+ *
+ * \brief RAII helper for temporarily marking a class as being modified
+ */
+class NamedEntityModifyingMarker {
+public:
+   NamedEntityModifyingMarker(NamedEntity & namedEntity);
+   ~NamedEntityModifyingMarker();
+private:
+   NamedEntity & namedEntity;
+   bool savedModificationState;
+
+   // RAII class shouldn't be getting copied or moved
+   NamedEntityModifyingMarker(NamedEntityModifyingMarker const &) = delete;
+   NamedEntityModifyingMarker & operator=(NamedEntityModifyingMarker const &) = delete;
+   NamedEntityModifyingMarker(NamedEntityModifyingMarker &&) = delete;
+   NamedEntityModifyingMarker & operator=(NamedEntityModifyingMarker &&) = delete;
 };
 
 #endif

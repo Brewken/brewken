@@ -194,8 +194,9 @@ public:
    bool showChild(QModelIndex ndx) const;
    //! \b hide the ancestors
    void hideAncestors(QModelIndex ndx);
-   //! \b orphan a recipe
    void revertRecipeToPreviousVersion(QModelIndex ndx);
+   //! \b orphan a recipe
+   void orphanRecipe(QModelIndex ndx);
    //! \b spawns a recipe
    void spawnRecipe(QModelIndex ndx);
 

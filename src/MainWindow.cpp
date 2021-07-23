@@ -2236,7 +2236,8 @@ void MainWindow::newRecipe()
       }
    }
 
-   newRec->insertInDatabase();
+   ObjectStoreWrapper::insert(*newRec);
+   newRec->setCacheOnly(false);
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?

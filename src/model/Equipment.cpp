@@ -19,11 +19,6 @@
  */
 #include "model/Equipment.h"
 
-#include <QDomElement>
-#include <QDomText>
-#include <QObject>
-#include <QVector>
-
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
@@ -137,10 +132,9 @@ Equipment::Equipment(Equipment const & other) :
 // value. Unfortunately, the additional signals don't allow quite the
 // compactness.
 void Equipment::setBoilSize_l( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::boilSize_l,
-                                   this->m_boilSize_l,
-                                   this->enforceMin(var, "boil size"));
+   this->setAndNotify(PropertyNames::Equipment::boilSize_l,
+                      this->m_boilSize_l,
+                      this->enforceMin(var, "boil size"));
    if ( ! m_cacheOnly ) {
       // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
       emit changedBoilSize_l(var);
@@ -148,51 +142,45 @@ void Equipment::setBoilSize_l( double var ) {
 }
 
 void Equipment::setBatchSize_l( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::batchSize_l,
-                                   this->m_batchSize_l,
-                                   this->enforceMin(var, "batch size"));
+   this->setAndNotify(PropertyNames::Equipment::batchSize_l,
+                      this->m_batchSize_l,
+                      this->enforceMin(var, "batch size"));
    if ( ! m_cacheOnly ) {
       doCalculations();
    }
 }
 
 void Equipment::setTunVolume_l( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::tunVolume_l,
-                                   this->m_tunVolume_l,
-                                   this->enforceMin(var, "tun volume"));
+   this->setAndNotify(PropertyNames::Equipment::tunVolume_l,
+                      this->m_tunVolume_l,
+                      this->enforceMin(var, "tun volume"));
 }
 
 void Equipment::setTunWeight_kg( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::tunWeight_kg,
-                                   this->m_tunWeight_kg,
-                                   this->enforceMin(var, "tun weight"));
+   this->setAndNotify(PropertyNames::Equipment::tunWeight_kg,
+                      this->m_tunWeight_kg,
+                      this->enforceMin(var, "tun weight"));
 }
 
 void Equipment::setTunSpecificHeat_calGC( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::tunSpecificHeat_calGC,
-                                   this->m_tunSpecificHeat_calGC,
-                                   this->enforceMin(var, "tun specific heat"));
+   this->setAndNotify(PropertyNames::Equipment::tunSpecificHeat_calGC,
+                      this->m_tunSpecificHeat_calGC,
+                      this->enforceMin(var, "tun specific heat"));
 }
 
 void Equipment::setTopUpWater_l( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::topUpWater_l,
-                                   this->m_topUpWater_l,
-                                   this->enforceMin(var, "top-up water"));
+   this->setAndNotify(PropertyNames::Equipment::topUpWater_l,
+                      this->m_topUpWater_l,
+                      this->enforceMin(var, "top-up water"));
    if ( ! m_cacheOnly ) {
       doCalculations();
    }
 }
 
 void Equipment::setTrubChillerLoss_l( double var ) {
-   this->setAndNotify(
-                                   PropertyNames::Equipment::trubChillerLoss_l,
-                                   this->m_trubChillerLoss_l,
-                                   this->enforceMin(var, "trub chiller loss"));
+   this->setAndNotify(PropertyNames::Equipment::trubChillerLoss_l,
+                      this->m_trubChillerLoss_l,
+                      this->enforceMin(var, "trub chiller loss"));
    if ( ! m_cacheOnly ) {
       doCalculations();
    }
@@ -282,17 +270,20 @@ double Equipment::hopUtilization_pct() const { return m_hopUtilization_pct; }
 double Equipment::grainAbsorption_LKg() { return m_grainAbsorption_LKg; }
 double Equipment::boilingPoint_c() const { return m_boilingPoint_c; }
 
-void Equipment::doCalculations()
-{
+void Equipment::doCalculations() {
    // Only do the calculation if we're asked to.
-   if( ! calcBoilVolume() )
+   if (!this->calcBoilVolume()) {
       return;
+   }
 
-   setBoilSize_l( batchSize_l() - topUpWater_l() + trubChillerLoss_l() + (boilTime_min()/(double)60)*evapRate_lHr());
+   this->setBoilSize_l(this->batchSize_l() -
+                       this->topUpWater_l() +
+                       this->trubChillerLoss_l() +
+                       (this->boilTime_min()/(double)60)*this->evapRate_lHr());
+   return;
 }
 
-double Equipment::wortEndOfBoil_l( double kettleWort_l ) const
-{
+double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
    //return kettleWort_l * (1 - (boilTime_min/(double)60) * (evapRate_pctHr/(double)100) );
 
    return kettleWort_l - (boilTime_min()/(double)60)*evapRate_lHr();

@@ -122,7 +122,7 @@ void StyleEditor::save()
    s->setNotes( textEdit_notes->toPlainText() );
 
    if ( s->cacheOnly() ) {
-      s->insertInDatabase();
+      ObjectStoreWrapper::insert(*s);
       s->setCacheOnly(false);
    }
 

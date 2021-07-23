@@ -159,6 +159,7 @@ private slots:
    void showAncestors();
    void hideAncestors();
    void revertRecipeToPreviousVersion();
+   void orphanRecipe();
    void spawnRecipe();
 
 signals:

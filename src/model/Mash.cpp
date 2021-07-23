@@ -350,3 +350,13 @@ MashStep * Mash::removeMashStep(MashStep * mashStep) {
 Recipe * Mash::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
+
+void Mash::hardDeleteOwnedEntities() {
+   // It's the MashStep that stores its Mash ID, so all we need to do is delete our MashSteps then the subsequent
+   // database delete of this Mash won't hit any foreign key problems.
+   auto mashSteps = this->mashSteps();
+   for (auto mashStep : mashSteps) {
+      ObjectStoreWrapper::hardDelete<MashStep>(*mashStep);
+   }
+   return;
+}

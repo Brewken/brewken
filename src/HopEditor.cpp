@@ -25,6 +25,7 @@
 
 #include "Brewken.h"
 #include "config.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Hop.h"
 #include "Unit.h"
 
@@ -79,7 +80,8 @@ void HopEditor::save()
    h->setNotes(textEdit_notes->toPlainText());
 
    if ( h->cacheOnly() ) {
-      h->insertInDatabase();
+      ObjectStoreWrapper::insert(*h);
+      h->setCacheOnly(false);
    }
 
    // do this late to make sure we've the row in the inventory table

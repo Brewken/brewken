@@ -112,6 +112,7 @@ AddPropertyName(yeasts)
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
+
 // Forward declarations
 class Equipment;
 class Fermentable;
@@ -537,6 +538,11 @@ public:
    void setHasDescendants(bool spawned);
 
    virtual Recipe * getOwningRecipe();
+
+   /**
+    * \brief A Recipe owns some of its contained objects, so needs to delete those if it itself is being deleted
+    */
+   virtual void hardDeleteOwnedEntities();
 
 signals:
 

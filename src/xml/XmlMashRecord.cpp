@@ -40,3 +40,11 @@ void XmlMashRecord::subRecordToXml(XmlRecord::FieldDefinition const & fieldDefin
    }
    return;
 }
+
+void XmlMashRecord::setContainingEntity(NamedEntity * containingEntity) {
+   // Don't include Mash in stats is it's in a Recipe (ie if the cast below succeeds); DO include it if it's not (ie if
+   // there's no containing entity or the cast below fails).
+   this->includeInStats = (nullptr == dynamic_cast<Recipe *>(containingEntity));
+   qDebug() << Q_FUNC_INFO << (this->includeInStats ? "Included in" : "Excluded from") << "stats";
+   return;
+}

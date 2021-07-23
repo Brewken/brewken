@@ -785,5 +785,14 @@ bool BeerXML::importFromXML(QString const & filename, QTextStream & userMessage)
    // automatic versioning, in an exception-safe way, until the end of this function.
    //
    RecipeHelper::SuspendRecipeVersioning suspendRecipeVersioning;
-   return this->pimpl->validateAndLoad(filename, userMessage);
+
+   //
+   // Slightly more manually, we also change the cursor to show "busy" while we're doing the import as, for large
+   // imports, processing can take a few seconds or so.
+   //
+   QApplication::setOverrideCursor(Qt::WaitCursor);
+   QApplication::processEvents();
+   bool result = this->pimpl->validateAndLoad(filename, userMessage);
+   QApplication::restoreOverrideCursor();
+   return result;
 }

@@ -21,6 +21,9 @@
 /**
  * \brief Namespace containing convenience functions for accessing member functions of appropriate ObjectStoreTyped
  *        instances via template argument deduction
+ *
+ *        Where functions below are not commented, the documentation is in the corresponding function declaration in
+ *        ObjectStoreTyped.h
  */
 namespace ObjectStoreWrapper {
    template<class NE> std::shared_ptr<NE> getById(int id) {
@@ -46,7 +49,11 @@ namespace ObjectStoreWrapper {
       return std::make_shared<NE>(ne);
    }
 
-   template<class NE> std::shared_ptr<NE> insert(std::shared_ptr<NE> ne) {
+   template<class NE> int insert(std::shared_ptr<NE> ne) {
+      return ObjectStoreTyped<NE>::getInstance().insert(ne);
+   }
+
+   template<class NE> int insert(NE & ne) {
       return ObjectStoreTyped<NE>::getInstance().insert(ne);
    }
 
@@ -68,8 +75,20 @@ namespace ObjectStoreWrapper {
       return;
    }
 
+   template<class NE> void hardDelete(int id) {
+      ObjectStoreTyped<NE>::getInstance().hardDelete(id);
+      return;
+   }
+
    template<class NE> void hardDelete(NE const & ne) {
       ObjectStoreTyped<NE>::getInstance().hardDelete(ne.key());
+      return;
+   }
+
+   template<class NE> void hardDelete(std::shared_ptr<NE> ne) {
+      if (ne.get()) {
+        ObjectStoreTyped<NE>::getInstance().hardDelete(ne->key());
+      }
       return;
    }
 
@@ -105,6 +124,12 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().findAllMatching(matchFunction);
    }
 
+   template<class NE> QList<NE *> findAllMatching(
+      std::function<bool(NE *)> const & matchFunction
+   ) {
+      return ObjectStoreTyped<NE>::getInstance().findAllMatching(matchFunction);
+   }
+
    /**
     * \brief Given two IDs of some subclass of \c NamedEntity, return \c true if the corresponding objects are equal (or
     *        if both IDs are invalid), and \c false otherwise
@@ -129,6 +154,25 @@ namespace ObjectStoreWrapper {
       return *lhs == *rhs;
    }
 
+   /**
+    * \brief Given two lists of IDs of some subclass of \c NamedEntity, return \c true if all the corresponding objects
+    *        are equal, and \c false otherwise
+    */
+   template<class NE>
+   bool compareListByIds(QVector<int> & lhsIds, QVector<int> & rhsIds) {
+      if (lhsIds.size() != rhsIds.size()) {
+         return false;
+      }
+
+      // .:TBD:. For the moment we're assuming everything is always in the same order and order matters
+      for (int ii = 0; ii < lhsIds.size(); ++ii) {
+         if (!compareById<NE>(lhsIds.at(ii), rhsIds.at(ii))) {
+            return false;
+         }
+      }
+
+      return true;
+   }
 }
 
 #endif

@@ -29,11 +29,18 @@
 
 #include "model/NamedEntity.h"
 
-namespace PropertyNames::Instruction { static char const * const completed  = "completed"; /* previously kpropCompleted */ }
-namespace PropertyNames::Instruction { static char const * const directions = "directions"; /* previously kpropDirections */ }
-namespace PropertyNames::Instruction { static char const * const hasTimer   = "hasTimer"; /* previously kpropHasTimer */ }
-namespace PropertyNames::Instruction { static char const * const interval   = "interval"; /* previously kpropInterval */ }
-namespace PropertyNames::Instruction { static char const * const timerValue = "timerValue"; /* previously kpropTimerValue */ }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Instruction {static char const * const property = #property; }
+AddPropertyName(completed)
+AddPropertyName(directions)
+AddPropertyName(hasTimer)
+AddPropertyName(interval)
+AddPropertyName(timerValue)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /*!
  * \class Instruction

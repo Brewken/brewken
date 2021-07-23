@@ -28,17 +28,24 @@
 #include "model/Mash.h"
 #include "model/NamedEntity.h"
 
-namespace PropertyNames::MashStep { static char const * const decoctionAmount_l = "decoctionAmount_l"; /* previously kpropDecoctAmt */ }
-namespace PropertyNames::MashStep { static char const * const endTemp_c = "endTemp_c"; /* previously kpropEndTemp */ }
-namespace PropertyNames::MashStep { static char const * const infuseAmount_l = "infuseAmount_l"; /* previously kpropInfuseAmt */ }
-namespace PropertyNames::MashStep { static char const * const infuseTemp_c = "infuseTemp_c"; /* previously kpropInfuseTemp */ }
-namespace PropertyNames::MashStep { static char const * const mashId = "mashId";}
-namespace PropertyNames::MashStep { static char const * const rampTime_min = "rampTime_min"; /* previously kpropRampTime */ }
-namespace PropertyNames::MashStep { static char const * const stepNumber = "stepNumber"; /* previously kpropStepNumber */ }
-namespace PropertyNames::MashStep { static char const * const stepTemp_c = "stepTemp_c"; /* previously kpropStepTemp */ }
-namespace PropertyNames::MashStep { static char const * const stepTime_min = "stepTime_min"; /* previously kpropStepTime */ }
-namespace PropertyNames::MashStep { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
-namespace PropertyNames::MashStep { static char const * const type = "type"; /* previously kpropType */ }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::MashStep {static char const * const property = #property; }
+AddPropertyName(decoctionAmount_l)
+AddPropertyName(endTemp_c)
+AddPropertyName(infuseAmount_l)
+AddPropertyName(infuseTemp_c)
+AddPropertyName(mashId)
+AddPropertyName(rampTime_min)
+AddPropertyName(stepNumber)
+AddPropertyName(stepTemp_c)
+AddPropertyName(stepTime_min)
+AddPropertyName(typeString)
+AddPropertyName(type)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /*!
  * \class MashStep

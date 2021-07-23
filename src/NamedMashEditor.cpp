@@ -30,18 +30,17 @@
 #include "Unit.h"
 
 
-NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool singleMashEditor)
-   : QDialog(parent), mashObs(0)
-{
+NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool singleMashEditor) :
+   QDialog{parent},
+   mashObs{nullptr} {
    setupUi(this);
 
-   if ( singleMashEditor )
-   {
-      for (int i = 0; i < horizontalLayout_mashs->count(); ++i)
-      {
+   if (singleMashEditor) {
+      for (int i = 0; i < horizontalLayout_mashs->count(); ++i) {
          QWidget* w = horizontalLayout_mashs->itemAt(i)->widget();
-         if (w)
+         if (w) {
             w->setVisible(false);
+         }
       }
       // pushButton_new->setVisible(false);
    }
@@ -75,39 +74,41 @@ NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool s
    connect(mashComboBox, SIGNAL(activated(const QString&)), this, SLOT(mashSelected(const QString&)));
    connect(pushButton_remove, &QAbstractButton::clicked, this, &NamedMashEditor::removeMash);
 
-   setMash(mashListModel->at(mashComboBox->currentIndex()));
-
+   this->setMash(mashListModel->at(mashComboBox->currentIndex()));
+   return;
 }
 
-void NamedMashEditor::showEditor()
-{
-   showChanges();
-   setVisible(true);
+void NamedMashEditor::showEditor() {
+   this->showChanges();
+   this->setVisible(true);
+   return;
 }
 
-void NamedMashEditor::closeEditor()
-{
-   setVisible(false);
+void NamedMashEditor::closeEditor() {
+   this->setVisible(false);
 }
 
-void NamedMashEditor::saveAndClose()
-{
-   if( mashObs == 0 )
+void NamedMashEditor::saveAndClose() {
+   if (this->mashObs == nullptr) {
       return;
+   }
+
+   qDebug() << Q_FUNC_INFO << "Saving mash (#" << this->mashObs->key() << ")";
 
    // using toSI aon the spargePh is something of a cheat, but the btLineEdit
    // class will do the right thing. That is how a plan comes together.
 
-   mashObs->setEquipAdjust( true ); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
-   mashObs->setName(lineEdit_name->text());
-   mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI());
-   mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI());
-   mashObs->setPh(lineEdit_spargePh->toSI());
-   mashObs->setTunTemp_c(lineEdit_tunTemp->toSI());
-   mashObs->setTunWeight_kg(lineEdit_tunMass->toSI());
-   mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI());
+   this->mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
+   this->mashObs->setName(lineEdit_name->text());
+   this->mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI());
+   this->mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI());
+   this->mashObs->setPh(lineEdit_spargePh->toSI());
+   this->mashObs->setTunTemp_c(lineEdit_tunTemp->toSI());
+   this->mashObs->setTunWeight_kg(lineEdit_tunMass->toSI());
+   this->mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI());
 
-   mashObs->setNotes( textEdit_notes->toPlainText() );
+   this->mashObs->setNotes( textEdit_notes->toPlainText() );
+   return;
 }
 
 void NamedMashEditor::setMash(Mash* mash)
@@ -131,21 +132,21 @@ void NamedMashEditor::changed(QMetaProperty prop, QVariant /*val*/)
       showChanges(&prop);
 }
 
-void NamedMashEditor::showChanges(QMetaProperty* prop)
-{
+void NamedMashEditor::showChanges(QMetaProperty* prop) {
    bool updateAll = false;
    QString propName;
 
-   if( mashObs == 0 )
-   {
-      clear();
+   if (this->mashObs == nullptr) {
+      this->clear();
       return;
    }
 
-   if( prop == 0 )
+   if (prop == nullptr) {
       updateAll = true;
-   else
+   } else {
       propName = prop->name();
+   }
+   qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all" : "property") << propName;
 
    if( propName == PropertyNames::NamedEntity::name || updateAll ) {
       lineEdit_name->setText(mashObs->name());
@@ -162,7 +163,7 @@ void NamedMashEditor::showChanges(QMetaProperty* prop)
       if( ! updateAll )
          return;
    }
-   if( propName == "ph" || updateAll ) {
+   if( propName == PropertyNames::Mash::ph || updateAll ) {
       lineEdit_spargePh->setText(mashObs);
       if( ! updateAll )
          return;
@@ -172,17 +173,17 @@ void NamedMashEditor::showChanges(QMetaProperty* prop)
       if( ! updateAll )
          return;
    }
-   if( propName == "tunMass_kg" || updateAll ) {
+   if( propName == PropertyNames::Mash::tunWeight_kg || updateAll ) {
       lineEdit_tunMass->setText(mashObs);
       if( ! updateAll )
          return;
    }
-   if( propName == "tunSpecificHeat_calGC" || updateAll ) {
+   if( propName == PropertyNames::Mash::tunSpecificHeat_calGC || updateAll ) {
       lineEdit_tunSpHeat->setText(mashObs);
       if( ! updateAll )
          return;
    }
-   if( propName == "notes" || updateAll ) {
+   if( propName == PropertyNames::Mash::notes || updateAll ) {
       textEdit_notes->setPlainText(mashObs->notes());
       if( ! updateAll )
          return;

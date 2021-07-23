@@ -654,7 +654,8 @@ void SaltTableModel::saveAndClose() {
    // we've added a new salt. Wonder if this will work?
    for (Salt* i : saltObs) {
       if ( i->cacheOnly() && i->type() != Salt::NONE && i->addTo() != Salt::NEVER ) {
-         i->insertInDatabase();
+         ObjectStoreWrapper::insert(*i);
+         i->setCacheOnly(false);
          this->m_rec->add(i);
       }
    }
