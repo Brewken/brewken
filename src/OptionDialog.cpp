@@ -412,7 +412,7 @@ public:
 
       // Database stuff -- this looks weird, but trust me. We want SQLITE to be
       // the default for this field
-      int tmp = PersistentSettings::value("dbType", Database::SQLITE).toInt() - 1;
+      int tmp = PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt() - 1;
       optionDialog.comboBox_engine->setCurrentIndex(tmp);
 
       this->input_pgHostname.setText(PersistentSettings::value("dbHostname", "localhost").toString());
@@ -516,7 +516,7 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    comboBox_engine->addItem(tr("PostgreSQL"), QVariant(Database::PGSQL));
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
    this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
 
    // connect all the signals
@@ -588,7 +588,7 @@ void OptionDialog::connect_signals() {
    connect(pushButton_testConnection, &QAbstractButton::clicked, this, &OptionDialog::testConnection);
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
    this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
 
    // Set the signals
@@ -893,7 +893,7 @@ bool OptionDialog::transferDatabase() {
       }
       // Database engine stuff
       int engine = comboBox_engine->currentData().toInt();
-      PersistentSettings::insert("dbType", engine);
+      PersistentSettings::insert(PersistentSettings::Names::dbType, engine);
       // only write these changes when switching TO pgsql
       if (engine == Database::PGSQL) {
          PersistentSettings::insert("dbHostname", this->pimpl->input_pgHostname.text());

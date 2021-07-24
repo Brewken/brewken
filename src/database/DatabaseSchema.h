@@ -105,4 +105,4 @@ private:
 
 Q_DECLARE_METATYPE( DatabaseConstants::DbTableId )
 
-#endif // DATABASESCHEMA_H
+#endif

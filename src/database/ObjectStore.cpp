@@ -1227,11 +1227,11 @@ void ObjectStore::updateProperty(QObject const & object, char const * const prop
 }
 
 
-//
-// .:TODO:. For this and for hardDelete, we need to work out how to do cascading deletes for Recipe - ie delete the
-//          objects it owns (Hops, Fermentables, etc).  I think this is best done in the objects themselves
-//
 void ObjectStore::softDelete(int id) {
+   //
+   // We assume on soft-delete that there is nothing to do on related objects - eg if a Mash is soft deleted (ie marked
+   // deleted but remains in the DB) then there isn't actually anything we need to do with its MashSteps.
+   //
    qDebug() << Q_FUNC_INFO << "Soft delete item #" << id;
    auto object = this->pimpl->allObjects.value(id);
    if (this->pimpl->allObjects.contains(id)) {
@@ -1246,6 +1246,12 @@ void ObjectStore::softDelete(int id) {
 
 //
 void ObjectStore::hardDelete(int id) {
+   //
+   // We assume on hard-delete that the subclass ObjectStore (specifically ObjectStoreTyped will override this member
+   // function to interact with the object to delete any "owned" objects.  It is better to have the rules for that in
+   // the object model than here in the object store as they can be subtle, and it would be cumbersome to model them
+   // generically.
+   //
    qDebug() << Q_FUNC_INFO << "Hard delete item #" << id;
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};

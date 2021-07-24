@@ -254,14 +254,13 @@ public:
          Brewken::userDatabaseDidNotExist = true;
 
          // Have to wait until db is open before creating from scratch.
-         if( dataDbFile.exists() )
-         {
+         if (dataDbFile.exists()) {
             dataDbFile.copy(dbFileName);
             QFile::setPermissions( dbFileName, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup );
          }
 
          // Reset the last merge request.
-         Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
+         Database::lastDbMergeRequest = QDateTime::currentDateTime();
       }
 
       // Open SQLite DB
@@ -630,11 +629,16 @@ bool Database::load() {
       return false;
    }
 
+   this->pimpl->loadWasSuccessful = true;
+   return this->pimpl->loadWasSuccessful;
+}
+
+void Database::checkForNewDefaultData() {
    // See if there are new ingredients that we need to merge from the data-space db.
    // Don't do this if we JUST copied the dataspace database.
    if (dataDbFile.fileName() != dbFile.fileName() &&
        !Brewken::userDatabaseDidNotExist &&
-       QFileInfo(dataDbFile).lastModified() > Brewken::lastDbMergeRequest) {
+       QFileInfo(dataDbFile).lastModified() > Database::lastDbMergeRequest) {
       if( Brewken::isInteractive() &&
          QMessageBox::question(
             nullptr,
@@ -645,15 +649,40 @@ bool Database::load() {
          )
          == QMessageBox::Yes
       ) {
-         updateDatabase(dataDbFile.fileName());
+         QString userMessage;
+         QTextStream userMessageAsStream{&userMessage};
+
+         bool succeeded = DatabaseSchemaHelper::updateDatabase(userMessageAsStream);
+
+         QString messageBoxTitle{succeeded ? tr("Success!") : tr("ERROR")};
+         QString messageBoxText;
+         if (succeeded) {
+            // The userMessage parameter will tell how many files were imported/exported and/or skipped (as duplicates)
+            // Do separate messages for import and export as it makes translations easier
+            messageBoxText = QString(
+               tr("Successfully read new default data\n\n%1").arg(userMessage)
+            );
+         } else {
+            messageBoxText = QString(
+               tr("Unable to import new default data\n\n"
+                  "%1\n\n"
+                  "Log file may contain more details.").arg(userMessage)
+            );
+            qCritical() << Q_FUNC_INFO << userMessage;
+         }
+         qDebug() << Q_FUNC_INFO << "Message box text : " << messageBoxText;
+         QMessageBox msgBox{succeeded ? QMessageBox::Information : QMessageBox::Critical,
+                            messageBoxTitle,
+                            messageBoxText};
+         msgBox.exec();
       }
 
       // Update this field.
-      Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
+      Database::lastDbMergeRequest = QDateTime::currentDateTime();
    }
-   this->pimpl->loadWasSuccessful = true;
-   return this->pimpl->loadWasSuccessful;
+   return;
 }
+
 
 bool Database::createBlank(QString const& filename)
 {
@@ -728,7 +757,7 @@ Database& Database::instance(Database::DbType dbType) {
    // should probably change that if we end up supporting more.
    //
    if (dbType == Database::NODB) {
-      dbType = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+      dbType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
    }
 
    //
@@ -804,11 +833,6 @@ bool Database::restoreFromFile(QString newDbFileStr)
    return success;
 }
 
-void Database::updateDatabase(QString const& filename) {
-   DatabaseSchemaHelper::updateDatabase(*this, filename);
-   return;
-}
-
 bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
                                   QString const& database, QString const& username, QString const& password) {
    QString driverName;
@@ -858,7 +882,7 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
 {
    QSqlDatabase connectionNew;
 
-   Database::DbType oldType = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   Database::DbType oldType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
 
    try {
       if ( newType == Database::NODB ) {
@@ -933,7 +957,7 @@ QString Database::dbBoolean(bool flag, Database::DbType type) {
    QString retval;
 
    if (type == Database::NODB) {
-      type = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+      type = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
    }
 
    switch( type ) {
@@ -970,3 +994,5 @@ char const * Database::getDbNativeIntPrimaryKeyModifier(Database::DbType type) c
 char const * Database::getSqlToAddColumnAsForeignKey(Database::DbType type) const {
    return getDbNativeName(sqlToAddColumnAsForeignKey, this->pimpl->dbType);
 }
+
+QDateTime Database::lastDbMergeRequest = QDateTime::fromString("1986-02-24T06:00:00", Qt::ISODate);

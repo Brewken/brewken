@@ -33,6 +33,17 @@
 #include <QString>
 #include <QVariant>
 
+// .:TODO:. Most of the code still uses hard-coded strings for settings names.  We should go through and convert these
+//          all to compile-time-checkable constants in the PersistentSettings::Names namespace (ie defined here).
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddSettingName(setting) namespace PersistentSettings::Names {static char const * const setting = #setting; }
+AddSettingName(dbType)
+AddSettingName(last_db_merge_req)
+#undef AddSettingName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /**
  * \brief Functions that manage remembering settings across sessions.
@@ -46,6 +57,8 @@
  *            "MainWindow", don't try to save another key as "mainwindow".
  *          - Do not use slashes or backslashes in section or key names
  *          - Avoid key names that are the same as section names
+ *        For the same reason we use PropertyNames::NamedEntity::name and similar constants, we have
+ *        PersistentSettings::Names::foobar etc above
  */
 namespace PersistentSettings {
 

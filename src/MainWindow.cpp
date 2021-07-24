@@ -807,7 +807,6 @@ void MainWindow::setupTriggers() {
    connect( actionStrikeWater_Calculator, &QAction::triggered, strikeWaterDialog, &QWidget::show );                     // > Tools > Strike Water Calculator
    connect( actionRefractometer_Tools, &QAction::triggered, refractoDialog, &QWidget::show );                           // > Tools > Refractometer Tools
    connect( actionPitch_Rate_Calculator, &QAction::triggered, this, &MainWindow::showPitchDialog);                      // > Tools > Pitch Rate Calculator
-   connect( actionMergeDatabases, &QAction::triggered, this, &MainWindow::updateDatabase );                             // > File > Database > Merge
    connect( actionTimers, &QAction::triggered, timerMainDialog, &QWidget::show );                                       // > Tools > Timers
    connect( actionDeleteSelected, &QAction::triggered, this, &MainWindow::deleteSelected );
    connect( actionWater_Chemistry, &QAction::triggered, this, &MainWindow::popChemistry);                               // > Tools > Water Chemistry
@@ -3103,33 +3102,6 @@ void MainWindow::exportSelected() {
 
    outFile->close();
    return;
-}
-
-void MainWindow::updateDatabase()
-{
-   QString otherDb;
-   QMessageBox::StandardButton but;
-
-   // Tell user what's about to happen.
-   but = QMessageBox::question( this,
-                          tr("Database Update"),
-                          tr("You are about to update the current database with another one. "
-                             "This may make changes to (but will not delete) some of your ingredients. "
-                             "It will not modify any of your recipes. "
-                             "Continue?"),
-                          QMessageBox::Yes | QMessageBox::No,
-                          QMessageBox::No );
-   if( but == QMessageBox::No )
-      return;
-
-   // Select the db to merge with.
-   otherDb = QFileDialog::getOpenFileName( this,
-                                           tr("Select Database File"),
-                                           PersistentSettings::getUserDataDir().canonicalPath(),
-                                           tr("Brewken Database (*.sqlite)") );
-
-   // Merge.
-   Database::instance().updateDatabase( otherDb );
 }
 
 void MainWindow::finishCheckingVersion()

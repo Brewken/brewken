@@ -65,6 +65,11 @@ public:
     */
    static Database& instance(Database::DbType dbType = Database::NODB);
 
+   /**
+    * \brief Check for new default ingredients etc
+    */
+   void checkForNewDefaultData();
+
    /*! \brief Get the right database connection for the calling thread.
     *
     *         Note the following from https://doc.qt.io/qt-5/qsqldatabase.html#database:
@@ -118,12 +123,6 @@ public:
                                   QString const & username="brewken",
                                   QString const & password="brewken");
    bool loadSuccessful();
-
-   /*!
-    * Updates the Brewken-provided ingredients from the given sqlite
-    * database file.
-    */
-   void updateDatabase(QString const& filename);
 
    //! \brief Figures out what databases we are copying to and from, opens what
    //   needs opens and then calls the appropriate workhorse to get it done.
@@ -194,6 +193,11 @@ public:
 
    // .:TODO:. We can get rid of this once we rewrite BeerXml output code to use the same structures as for input
    DatabaseSchema & getDatabaseSchema();
+
+   /*! Stores the date that we last asked the user to merge the
+    *  data-space database to the user-space database.
+    */
+   static QDateTime lastDbMergeRequest;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
