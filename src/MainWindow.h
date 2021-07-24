@@ -279,9 +279,6 @@ public slots:
    void changeBrewDate();
    void fixBrewNote();
 
-   //! \brief Merges two database files.
-   void updateDatabase();
-
    //! \brief Catches a QNetworkReply signal and gets info about any new version available.
    void finishCheckingVersion();
 

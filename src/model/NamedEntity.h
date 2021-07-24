@@ -37,15 +37,20 @@
 class ObjectStore;
 class Recipe;
 
-namespace PropertyNames::NamedEntity { static char const * const deleted   = "deleted"; /* previously kpropDeleted */ }
-namespace PropertyNames::NamedEntity { static char const * const display   = "display"; /* previously kpropDisplay */ }
-namespace PropertyNames::NamedEntity { static char const * const folder    = "folder"; /* previously kpropFolder */ }
-namespace PropertyNames::NamedEntity { static char const * const key       = "key"; }
-namespace PropertyNames::NamedEntity { static char const * const name      = "name"; /* previously kpropName */ }
-namespace PropertyNames::NamedEntity { static char const * const parentKey = "parentKey"; }
-
-// Make uintptr_t available in QVariant.
-Q_DECLARE_METATYPE( uintptr_t )
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+// Make this class's property names available via constants in sub-namespace of PropertyNames
+// One advantage of using these constants is you get compile-time checking for typos etc
+#define AddPropertyName(property) namespace PropertyNames::NamedEntity {static char const * const property = #property; }
+AddPropertyName(deleted)
+AddPropertyName(display)
+AddPropertyName(folder)
+AddPropertyName(key)
+AddPropertyName(name)
+AddPropertyName(parentKey)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 /*!
  * \class NamedEntity
@@ -76,6 +81,9 @@ Q_DECLARE_METATYPE( uintptr_t )
  * NB: Although we can template individual member functions, we cannot make this a template class (eg to use
  * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
  * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
+ *
+ * NB: Because NamedEntity inherits from QObject, no extra work is required to store pointers to NamedEntity objects
+ *     inside QVariant
  */
 class NamedEntity : public QObject {
    Q_OBJECT
@@ -145,13 +153,15 @@ public:
    //! \brief To cache or not to cache
    Q_PROPERTY( bool cacheOnly READ cacheOnly WRITE setCacheOnly /*NOTIFY changed*/ )
 
+   //! \returns our key in the table we are stored in.
+   int key() const;
+   //! Access to the name attribute.
+   QString name() const;
    //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
    bool display() const;
    //! Access to the folder attribute.
    QString folder() const;
-   //! Access to the name attribute.
-   QString name() const;
 
    /**
     * \brief Returns a regexp that will match the " (n)" (for n some positive integer) added on the end of a name to
@@ -168,8 +178,17 @@ public:
    //!
    void setName(QString const & var);
 
-   //! \returns our key in the table we are stored in.
-   int key() const;
+   /**
+    * \brief This sets or unsets the "being modified" flag on the object.  Callers should preferably access this via
+    *        the \c NamedEntityModifyingMarker RAII wrapper.
+    *
+    *        This is a transient attribute (not stored in the DB) that it supposed to be used to mark when we are in the
+    *        process of modifying or copying the object and therefore do not want to heed signals that would trigger
+    *        further modifications or copies.  It's otherwise too easy to generate endless loops via a sequence of well-
+    *        intentioned signals.  (Finding and eliminating all these potential loops is non-trivial.)
+    */
+   void setBeingModified(bool set);
+   bool isBeingModified() const;
 
    /**
     * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
@@ -191,44 +210,8 @@ public:
     */
    QVector<int> getParentAndChildrenIds() const;
 
-   // .:TBD:. Do we really need this?  AFAICT BeerXML version is not used.
-   //! \returns the BeerXML version of this element.
-   int version() const;
    //! Convenience method to get a meta property by name.
-   QMetaProperty metaProperty(const char* name) const;
-   //! Convenience method to get a meta property by name.
-   QMetaProperty metaProperty(QString const& name) const;
-
-   // .:TODO:. MY 2021-03-23 These don't really belong here
-   // Should be able to get rid of them when we finish refactoring BeerXml.cpp
-   // Some static helpers to convert to/from text.
-   static double getDouble( const QDomText& textNode );
-   static bool getBool( const QDomText& textNode );
-   static int getInt( const QDomText& textNode );
-   static QString getString( QDomText const& textNode );
-   static QDateTime getDateTime( QDomText const& textNode );
-   static QDate getDate( QDomText const& textNode );
-   //! Convert the string to a QDateTime according to Qt::ISODate.
-   static QDateTime getDateTime(QString const& str = "");
-   static QDate getDate(QString const& str = "");
-   static QString text(bool val);
-   static QString text(double val);
-   static QString text(int val);
-   //! Convert the date to string in Qt::ISODate format for storage NOT display.
-   static QString text(QDate const& val);
-
-   //! Use this to pass pointers around in QVariants.
-   static inline QVariant qVariantFromPtr( NamedEntity* ptr )
-   {
-      uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
-      return QVariant::fromValue<uintptr_t>(addr);
-   }
-
-   static inline NamedEntity* extractPtr( QVariant ptrVal )
-   {
-      uintptr_t addr = ptrVal.value<uintptr_t>();
-      return reinterpret_cast<NamedEntity*>(addr);
-   }
+   QMetaProperty metaProperty(char const * const name) const;
 
    /**
     * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
@@ -247,18 +230,13 @@ public:
 
    void setParent(NamedEntity const & parentNamedEntity);
 
-   /*!
-    * \brief When we create an NamedEntity, or undelete a deleted one, we need to put it in the database.  For the case of
-    *        undelete, it's helpful for the caller not to have to know what subclass of NamedEntity we are resurrecting.
-    * \return Key of element inserted in database.
+   /**
+    * \brief If we are _really_ deleting (rather than just marking deleted) an entity that owns other entities (eg a
+    *        Mash owns its MashSteps) then we need to delete those owned entities immediately beforehand.
+    *
+    *        By default this function does nothing.  Subclasses override it if needed.
     */
-   int insertInDatabase();
-
-   /*!
-    * \brief If we can put something in the database, then we also need to be able to remove it.
-    *        Note that, once removed from the DB, the caller is responsible for deleting this object.
-    */
-   void removeFromDatabase();
+   virtual void hardDeleteOwnedEntities();
 
 signals:
    /*!
@@ -357,6 +335,26 @@ protected:
     */
    void propagatePropertyChange(char const * const propertyName, bool notify = true) const;
 
+
+   /**
+    * \brief Convenience function to check for the set being a no-op. (Sometimes the UI will call all setters, even on
+    *        fields that haven't changed.)
+    *
+    * \return \c true if there's nothing to change, \c false otherwise
+    */
+   template<typename T>
+   bool newValueMatchesExisting(char const * const propertyName,
+                                T & memberVariable,
+                                T const newValue) {
+      if (newValue == memberVariable) {
+         qDebug() <<
+            Q_FUNC_INFO << this->metaObject()->className() << "#" << this->key() << ": ignoring call to setter for" <<
+            propertyName << "as value not changing";
+         return true;
+      }
+      return false;
+   }
+
    /**
     * \brief Convenience function that wraps preparing for a property change, making it and propagating it.
     */
@@ -364,6 +362,9 @@ protected:
    void setAndNotify(char const * const propertyName,
                      T & memberVariable,
                      T const newValue) {
+      if (this->newValueMatchesExisting(propertyName, memberVariable, newValue)) {
+         return;
+      }
       this->prepareForPropertyChange(propertyName);
       memberVariable = newValue;
       this->propagatePropertyChange(propertyName);
@@ -371,10 +372,32 @@ protected:
    }
 
 private:
-  mutable QString m_folder;
-  mutable QString m_name;
-  mutable bool m_display;
-  mutable bool m_deleted;
+  QString m_folder;
+  QString m_name;
+  bool m_display;
+  bool m_deleted;
+  bool m_beingModified;
+};
+
+
+/**
+ * \class NamedEntityModifyingMarker
+ *
+ * \brief RAII helper for temporarily marking a class as being modified
+ */
+class NamedEntityModifyingMarker {
+public:
+   NamedEntityModifyingMarker(NamedEntity & namedEntity);
+   ~NamedEntityModifyingMarker();
+private:
+   NamedEntity & namedEntity;
+   bool savedModificationState;
+
+   // RAII class shouldn't be getting copied or moved
+   NamedEntityModifyingMarker(NamedEntityModifyingMarker const &) = delete;
+   NamedEntityModifyingMarker & operator=(NamedEntityModifyingMarker const &) = delete;
+   NamedEntityModifyingMarker(NamedEntityModifyingMarker &&) = delete;
+   NamedEntityModifyingMarker & operator=(NamedEntityModifyingMarker &&) = delete;
 };
 
 #endif

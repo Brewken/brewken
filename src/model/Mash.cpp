@@ -315,8 +315,8 @@ void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
    // may also change, so we need to emit some signals.
    int i = mashSteps().indexOf(stepSender);
    if( i >= 0 ) {
-      emit changed(metaProperty("totalMashWater_l"), QVariant());
-      emit changed(metaProperty("totalTime"), QVariant());
+      emit changed(metaProperty(PropertyNames::Mash::totalMashWater_l), QVariant());
+      emit changed(metaProperty(PropertyNames::Mash::totalTime), QVariant());
    }
 }
 
@@ -349,4 +349,14 @@ MashStep * Mash::removeMashStep(MashStep * mashStep) {
 
 Recipe * Mash::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+}
+
+void Mash::hardDeleteOwnedEntities() {
+   // It's the MashStep that stores its Mash ID, so all we need to do is delete our MashSteps then the subsequent
+   // database delete of this Mash won't hit any foreign key problems.
+   auto mashSteps = this->mashSteps();
+   for (auto mashStep : mashSteps) {
+      ObjectStoreWrapper::hardDelete<MashStep>(*mashStep);
+   }
+   return;
 }

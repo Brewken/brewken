@@ -63,9 +63,6 @@
 #include "BtSplashScreen.h"
 #include "config.h"
 #include "database/Database.h"
-#include "database/DatabaseSchema.h"
-#include "database/TableSchemaConst.h"
-#include "database/TableSchema.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Equipment.h"
@@ -148,13 +145,12 @@ namespace {
 
 }
 
-MainWindow* Brewken::_mainWindow = nullptr;
+MainWindow* Brewken::m_mainWindow = nullptr;
 QDomDocument* Brewken::optionsDoc;
 QTranslator* Brewken::defaultTrans = new QTranslator();
 QTranslator* Brewken::btTrans = new QTranslator();
 bool Brewken::userDatabaseDidNotExist = false;
 bool Brewken::_isInteractive = true;
-QDateTime Brewken::lastDbMergeRequest = QDateTime::fromString("1986-02-24T06:00:00", Qt::ISODate);
 
 QString Brewken::currentLanguage = "en";
 
@@ -319,7 +315,6 @@ bool Brewken::initialize()
    qRegisterMetaType<Mash*>();
    qRegisterMetaType<Style*>();
    qRegisterMetaType<Salt*>();
-   qRegisterMetaType<DatabaseConstants::DbTableId>();
    qRegisterMetaType< QList<BrewNote*> >();
    qRegisterMetaType< QList<Hop*> >();
    qRegisterMetaType< QList<Instruction*> >();
@@ -353,7 +348,7 @@ void Brewken::cleanup() {
    // Should I do qApp->removeTranslator() first?
    delete defaultTrans;
    delete btTrans;
-   delete _mainWindow;
+   delete m_mainWindow;
 
    Database::instance().unload();
    return;
@@ -381,12 +376,13 @@ int Brewken::run() {
       return 1;
    }
    qInfo() << QString("Starting Brewken v%1 on %2.").arg(VERSIONSTRING).arg(QSysInfo::prettyProductName());
-   _mainWindow = new MainWindow();
-   _mainWindow->init();
-   _mainWindow->setVisible(true);
-   splashScreen.finish(_mainWindow);
+   Database::instance().checkForNewDefaultData();
+   m_mainWindow = new MainWindow();
+   m_mainWindow->init();
+   m_mainWindow->setVisible(true);
+   splashScreen.finish(m_mainWindow);
 
-   checkForNewVersion(_mainWindow);
+   checkForNewVersion(m_mainWindow);
    do {
       ret = qApp->exec();
    } while (ret == 1000);
@@ -398,260 +394,15 @@ int Brewken::run() {
    return ret;
 }
 
-/*
-// Read the old options.xml file one more time, then move it out of the way.
-void Brewken::convertPersistentOptions()
-{
-   QDir cfgDir = QDir(getConfigDir());
-   QFile xmlFile(getConfigDir().filePath("options.xml"));
-   optionsDoc = new QDomDocument();
-   QDomElement root;
-   QString err;
-   QString text;
-   int line;
-   int col;
-   bool hasOption;
-
-   // Try to open xmlFile.
-   if( ! xmlFile.open(QIODevice::ReadOnly) )
-   {
-      // Now we know we can't open it.
-      qWarning() << QString("Could not open %1 for reading.").arg(xmlFile.fileName());
-      // Try changing the permissions
-      return;
-   }
-
-   if( ! optionsDoc->setContent(&xmlFile, false, &err, &line, &col) )
-      qWarning() << QString("Bad document formatting in %1 %2:%3").arg(xmlFile.fileName()).arg(line).arg(col);
-
-   root = optionsDoc->documentElement();
-
-   //================Version Checking========================
-   text = getOptionValue(*optionsDoc, "check_version");
-   if( text == "true" )
-      checkVersion = true;
-   else
-      checkVersion = false;
-
-   //=====================Last DB Merge Request======================
-   text = getOptionValue(*optionsDoc, "last_db_merge_req", &hasOption);
-   if( hasOption )
-      lastDbMergeRequest = QDateTime::fromString(text, Qt::ISODate);
-
-   //=====================Language====================
-   text = getOptionValue(*optionsDoc, "language", &hasOption);
-   if( hasOption )
-      setLanguage(text);
-
-   //=======================Weight=====================
-   text = getOptionValue(*optionsDoc, "weight_unit_system", &hasOption);
-   if( hasOption )
-   {
-      if( text == "Imperial" )
-      {
-         weightUnitSystem = Imperial;
-         thingToUnitSystem.insert(Unit::Mass,&UnitSystems::usWeightUnitSystem);
-      }
-      else if (text == "USCustomary")
-      {
-         weightUnitSystem = USCustomary;
-         thingToUnitSystem.insert(Unit::Mass,&UnitSystems::usWeightUnitSystem);
-      }
-      else
-      {
-         weightUnitSystem = SI;
-         thingToUnitSystem.insert(Unit::Mass,&UnitSystems::siWeightUnitSystem);
-      }
-   }
-
-   //===========================Volume=======================
-   text = getOptionValue(*optionsDoc, "volume_unit_system", &hasOption);
-   if( hasOption )
-   {
-      if( text == "Imperial" )
-      {
-         volumeUnitSystem = Imperial;
-         thingToUnitSystem.insert(Unit::Volume,&UnitSystems::imperialVolumeUnitSystem);
-      }
-      else if (text == "USCustomary")
-      {
-         volumeUnitSystem = USCustomary;
-         thingToUnitSystem.insert(Unit::Volume,&UnitSystems::usVolumeUnitSystem);
-      }
-      else
-      {
-         volumeUnitSystem = SI;
-         thingToUnitSystem.insert(Unit::Volume,&UnitSystems::siVolumeUnitSystem);
-      }
-   }
-
-   //=======================Temp======================
-   text = getOptionValue(*optionsDoc, "temperature_scale", &hasOption);
-   if( hasOption )
-   {
-      if( text == "Fahrenheit" )
-      {
-         tempScale = Fahrenheit;
-         thingToUnitSystem.insert(Unit::Temp,&UnitSystems::fahrenheitTempUnitSystem);
-      }
-      else
-      {
-         tempScale = Celsius;
-         thingToUnitSystem.insert(Unit::Temp,&UnitSystems::celsiusTempUnitSystem);
-      }
-   }
-
-   //======================Time======================
-   // Set the one and only time system.
-   thingToUnitSystem.insert(Unit::Time,&UnitSystems::timeUnitSystem);
-
-   //===================IBU===================
-   text = getOptionValue(*optionsDoc, "ibu_formula", &hasOption);
-   if( hasOption )
-   {
-      if( text == "tinseth" )
-         ibuFormula = TINSETH;
-      else if( text == "rager" )
-         ibuFormula = RAGER;
-      else if( text == "noonan")
-         ibuFormula = NOONAN;
-      else
-      {
-         qCritical() << QString("Bad ibu_formula type: %1").arg(text);
-      }
-   }
-
-   //========================Color======================
-   text = getOptionValue(*optionsDoc, "color_formula", &hasOption);
-   if( hasOption )
-   {
-      if( text == "morey" )
-         colorFormula = MOREY;
-      else if( text == "daniel" )
-         colorFormula = DANIEL;
-      else if( text == "mosher" )
-         colorFormula = MOSHER;
-      else
-      {
-         qCritical() << QString("Bad color_formula type: %1").arg(text);
-      }
-   }
-
-   //========================Density==================
-   text = getOptionValue(*optionsDoc, "use_plato", &hasOption);
-   if( hasOption )
-   {
-      if( text == "true" )
-      {
-         densityUnit = PLATO;
-         thingToUnitSystem.insert(Unit::Density,&UnitSystems::platoDensityUnitSystem);
-      }
-      else if( text == "false" )
-      {
-         densityUnit = SG;
-         thingToUnitSystem.insert(Unit::Density,&UnitSystems::sgDensityUnitSystem);
-      }
-      else
-      {
-         qWarning() << QString("Bad use_plato type: %1").arg(text);
-      }
-   }
-
-   //=======================Color unit===================
-   text = getOptionValue(*optionsDoc, "color_unit", &hasOption);
-   if( hasOption )
-   {
-      if( text == "srm" )
-      {
-         colorUnit = SRM;
-         thingToUnitSystem.insert(Unit::Color,&UnitSystems::srmColorUnitSystem);
-      }
-      else if( text == "ebc" )
-      {
-         colorUnit = EBC;
-         thingToUnitSystem.insert(Unit::Color,&UnitSystems::ebcColorUnitSystem);
-      }
-      else
-         qWarning() << QString("Bad color_unit type: %1").arg(text);
-   }
-
-   //=======================Diastatic power unit===================
-   text = getOptionValue(*optionsDoc, "diastatic_power_unit", &hasOption);
-   if( hasOption )
-   {
-      if( text == "Lintner" )
-      {
-         diastaticPowerUnit = LINTNER;
-         thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::lintnerDiastaticPowerUnitSystem);
-      }
-      else if( text == "WK" )
-      {
-         diastaticPowerUnit = WK;
-         thingToUnitSystem.insert(Unit::DiastaticPower,&UnitSystems::wkDiastaticPowerUnitSystem);
-      }
-      else
-      {
-         qWarning() << QString("Bad diastatic_power_unit type: %1").arg(text);
-      }
-   }
-
-   delete optionsDoc;
-   optionsDoc = nullptr;
-   xmlFile.close();
-
-   // Don't do this on Windows. We have extra work to do and creating the
-   // obsolete directory mess it all up. Not sure why that test is still in here
-#ifndef Q_OS_WIN
-   // This shouldn't really happen, but lets be sure
-   if( !cfgDir.exists("obsolete") )
-      cfgDir.mkdir("obsolete");
-
-   // copy the old file into obsolete and delete it
-   cfgDir.cd("obsolete");
-   if( xmlFile.copy(cfgDir.filePath("options.xml")) )
-      xmlFile.remove();
-
-#endif
-   // And remove the flag
-   QSettings().remove("hadOldConfig");
-}
-
-
-QString Brewken::getOptionValue(const QDomDocument& optionsDoc, const QString& option, bool* hasOption)
-{
-   QDomNode node, child;
-   QDomText textNode;
-   QDomNodeList list;
-
-   list = optionsDoc.elementsByTagName(option);
-   if(list.length() <= 0) {
-      qWarning() << QString("Could not find the <%1> tag in the option file.").arg(option);
-      if( hasOption != nullptr )
-         *hasOption = false;
-      return "";
-   }
-   else {
-      node = list.at(0);
-      child = node.firstChild();
-      textNode = child.toText();
-
-      if( hasOption != nullptr )
-         *hasOption = true;
-
-      return textNode.nodeValue();
-   }
-}
-*/
-void Brewken::updateConfig()
-{
+void Brewken::updateConfig() {
    int cVersion = PersistentSettings::value("config_version", QVariant(0)).toInt();
    while ( cVersion < CONFIG_VERSION ) {
       switch ( ++cVersion ) {
          case 1:
             // Update the dbtype, because I had to increase the NODB value from -1 to 0
-            int newType = static_cast<Database::DbType>(PersistentSettings::value("dbType",Database::NODB).toInt() + 1);
+            int newType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::NODB).toInt() + 1);
             // Write that back to the config file
-            PersistentSettings::insert("dbType", static_cast<int>(newType));
+            PersistentSettings::insert(PersistentSettings::Names::dbType, static_cast<int>(newType));
             // and make sure we don't do it again.
             PersistentSettings::insert("config_version", QVariant(cVersion));
             break;
@@ -670,8 +421,9 @@ void Brewken::readSystemOptions()
    checkVersion = PersistentSettings::value("check_version", QVariant(false)).toBool();
 
    //=====================Last DB Merge Request======================
-   if( PersistentSettings::contains("last_db_merge_req"))
-      lastDbMergeRequest = QDateTime::fromString(PersistentSettings::value("last_db_merge_req","").toString(), Qt::ISODate);
+   if (PersistentSettings::contains(PersistentSettings::Names::last_db_merge_req)) {
+      Database::lastDbMergeRequest = QDateTime::fromString(PersistentSettings::value(PersistentSettings::Names::last_db_merge_req,"").toString(), Qt::ISODate);
+   }
 
    //=====================Language====================
    if( PersistentSettings::contains("language") )
@@ -812,7 +564,7 @@ void Brewken::saveSystemOptions() {
    QString text;
 
    PersistentSettings::insert("check_version", checkVersion);
-   PersistentSettings::insert("last_db_merge_req", lastDbMergeRequest.toString(Qt::ISODate));
+   PersistentSettings::insert(PersistentSettings::Names::last_db_merge_req, Database::lastDbMergeRequest.toString(Qt::ISODate));
    PersistentSettings::insert("language", getCurrentLanguage());
    //setOption("user_data_dir", userDataDir);
    PersistentSettings::insert("weight_unit_system", thingToUnitSystem.value(Unit::Mass)->unitType());
@@ -1457,5 +1209,5 @@ void Brewken::generateAction(QMenu* menu, QString text, QVariant data, QVariant 
 
 MainWindow* Brewken::mainWindow()
 {
-   return _mainWindow;
+   return m_mainWindow;
 }

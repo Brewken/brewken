@@ -54,13 +54,12 @@ public:
    /**
     * \brief Insert a new object in the DB (and in our cache list)
     */
-   virtual std::shared_ptr<NE> insert(std::shared_ptr<NE> ne) {
+   virtual int insert(std::shared_ptr<NE> ne) {
       // The base class does all the work, we just need to cast the pointer
       // (We don't want to force callers to use std::shared_ptr<QObject>, as they would anyway have to recast it.  Eg
       // if you created a new Hop, you're going to need a std::shared_ptr<Hop> etc to be able to access Hop-specific
       // member functions)
-      this->ObjectStore::insert(std::static_pointer_cast<QObject>(ne));
-      return ne;
+      return this->ObjectStore::insert(std::static_pointer_cast<QObject>(ne));
    }
 
    /**
@@ -82,7 +81,8 @@ public:
       auto copyNe = otherNe ? std::make_shared<NE>(*otherNe) : std::make_shared<NE>();
 
       // Add the copied object to the database and our object cache, and return it to the caller
-      return this->insert(copyNe);
+      this->insert(copyNe);
+      return copyNe;
    }
 
    /**
@@ -94,8 +94,7 @@ public:
     */
    int insert(NE & ne) {
       std::shared_ptr<NE> nePointer{&ne};
-      this->insert(nePointer);
-      return ne.key();
+      return this->insert(nePointer);
    }
 
    /**
@@ -298,26 +297,33 @@ private:
     * \param hard \c true for hard delete, \c false for soft delete
     */
    void hardOrSoftDelete(int id, bool hard) {
-      if (!this->contains(id)) {
+      qDebug() <<
+         Q_FUNC_INFO << (hard ? "Hard" : "Soft") << "delete " << NE::staticMetaObject.className() << " #" << id;
+      if (id <= 0 || !this->contains(id)) {
          // This is probably a coding error, but might be recoverable
-         qWarning() << Q_FUNC_INFO << "Trying to delete non-existent object with ID" << id;
+         qWarning() <<
+            Q_FUNC_INFO << "Trying to delete non-existent " << NE::staticMetaObject.className() << " with ID" << id;
          return;
       }
 
       auto object = this->ObjectStore::getById(id);
       std::shared_ptr<NE> ne = std::static_pointer_cast<NE>(object);
+      if (hard) {
+         // If the NamedEntity we are deleting owns any other NamedEntity objects (eg Mash owns its MashSteps) then tell
+         // it to delete those first.
+         ne->hardDeleteOwnedEntities();
+         // Base class does the heavy lifting on removing the NamedEntity from the DB
+         this->ObjectStore::hardDelete(id);
+      }
+
+      // This marks the in-memory object as deleted (and will get pushed down to the DB if this is a soft delete)
       ne->setDeleted(true);
       ne->setDisplay(false);
-      if (hard) {
-         // Base class does the heavy lifting
-         this->ObjectStore::hardDelete(id);
-      } else {
-         // Base class softDelete() actually does too much for the soft delete case; we just want to store the
-         // "deleted" flag in the object's DB record
-         this->updateProperty(*ne, PropertyNames::NamedEntity::deleted);
 
-         // Because we're not calling the base class, we need to be the ones to tell any bits of the UI that need to
-         // know that an object was deleted
+      if (!hard) {
+         // Base class softDelete() actually does too much for the soft delete case; we just need to tell any bits of
+         // the UI that need to know that an object was deleted.  (In the hard delete case, this signal will already
+         // have been emitted.)
          emit this->signalObjectDeleted(id, object);
       }
       return;

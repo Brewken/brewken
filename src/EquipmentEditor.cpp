@@ -34,7 +34,6 @@
 #include "BtLabel.h"
 #include "BtLineEdit.h"
 #include "config.h"
-//#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "EquipmentListModel.h"
 #include "HeatCalculations.h"
@@ -665,7 +664,7 @@ void EquipmentEditor::save()
    obsEquip->setCalcBoilVolume(checkBox_calcBoilVolume->checkState() == Qt::Checked);
 
    if ( obsEquip->cacheOnly() ) {
-      obsEquip->insertInDatabase();
+      ObjectStoreWrapper::insert(*obsEquip);
       obsEquip->setCacheOnly(false);
    }
    setVisible(false);

@@ -115,7 +115,8 @@ namespace {
       // ...then make sure the copy is a "child" (ie "instance of use of")...
       copy->makeChild(var);
       // ...and finally ensure the copy is stored.
-      return ObjectStoreWrapper::insert(copy);
+      ObjectStoreWrapper::insert(copy);
+      return copy;
    }
 
    //
@@ -153,10 +154,6 @@ namespace {
    template<> char const * const propertyToPropertyName<Yeast>()       {
       return PropertyNames::Recipe::yeastIds;
    }
-/*   template<class NE> void updatePropertyInDb(Recipe const & recipe) {
-      this->propagatePropertyChange(propertyToPropertyName<NE>());
-      return;
-   }*/
 }
 
 
@@ -198,14 +195,27 @@ public:
          this->accessIds<NE>().append(ourIngredient->key());
 
          qDebug() <<
-                  Q_FUNC_INFO << "After adding" << ourIngredient->metaObject()->className() << "#" << ourIngredient->key() <<
-                  ", Recipe" << us.name() << "has" << this->accessIds<NE>().size() << "of" <<
-                  NE::staticMetaObject.className();
+            Q_FUNC_INFO << "After adding" << ourIngredient->metaObject()->className() << "#" << ourIngredient->key() <<
+            ", Recipe" << us.name() << "has" << this->accessIds<NE>().size() << "of" <<
+            NE::staticMetaObject.className();
 
          // Connect signals so that we are notified when there are changes to the Hop/Fermentable/etc we just added to
          // our recipe.
          connect(ourIngredient.get(), SIGNAL(changed(QMetaProperty, QVariant)), &us,
                  SLOT(acceptChangeToContainedObject(QMetaProperty, QVariant)));
+      }
+      return;
+   }
+
+   /**
+    * \brief If the Recipe is about to be deleted, we delete all the things that belong to it.  Note that, with the
+    *        exception of Instruction, what we are actually deleting here is not the Hops/Fermentables/etc but the "use
+    *        of" Hops/Fermentables/etc records (which are distinguished by having a parent ID.
+    */
+   template<class NE> void hardDeleteAllMy() {
+      qDebug() << Q_FUNC_INFO;
+      for (auto id : this->accessIds<NE>()) {
+         ObjectStoreWrapper::hardDelete<NE>(id);
       }
       return;
    }
@@ -273,9 +283,18 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
              this->m_tertiaryTemp_c    == rhs.m_tertiaryTemp_c    &&
              this->m_age               == rhs.m_age               &&
              this->m_ageTemp_c         == rhs.m_ageTemp_c         &&
-             this->styleId             == rhs.styleId             &&
+             ObjectStoreWrapper::compareById<Style>(    this->styleId,     rhs.styleId)     &&
+             ObjectStoreWrapper::compareById<Mash>(     this->mashId,      rhs.mashId)      &&
+             ObjectStoreWrapper::compareById<Equipment>(this->equipmentId, rhs.equipmentId) &&
              this->m_og                == rhs.m_og                &&
-             this->m_fg                == rhs.m_fg
+             this->m_fg                == rhs.m_fg                &&
+             ObjectStoreWrapper::compareListByIds<Fermentable>(this->pimpl->fermentableIds, rhs.pimpl->fermentableIds) &&
+             ObjectStoreWrapper::compareListByIds<Hop>(        this->pimpl->hopIds,         rhs.pimpl->hopIds)         &&
+             ObjectStoreWrapper::compareListByIds<Instruction>(this->pimpl->instructionIds, rhs.pimpl->instructionIds) &&
+             ObjectStoreWrapper::compareListByIds<Misc>(       this->pimpl->miscIds,        rhs.pimpl->miscIds)        &&
+             ObjectStoreWrapper::compareListByIds<Salt>(       this->pimpl->saltIds,        rhs.pimpl->saltIds)        &&
+             ObjectStoreWrapper::compareListByIds<Water>(      this->pimpl->waterIds,       rhs.pimpl->waterIds)       &&
+             ObjectStoreWrapper::compareListByIds<Yeast>(      this->pimpl->yeastIds,       rhs.pimpl->yeastIds)
           );
 }
 
@@ -414,7 +433,10 @@ m_hasDescendants    {false                     } {
    setObjectName("Recipe"); // .:TBD:. Would be good to understand why we need this
 
    //
-   // TODO: Template this!
+   // We don't want to be versioning something while we're still constructing it
+   //
+   NamedEntityModifyingMarker modifyingMarker(*this);
+
    //
    // When we make a copy of a Recipe, it needs to be a deep(ish) copy.  In particular, we need to make copies of the
    // Hops, Fermentables etc as some attributes of the recipe (eg how much and when to add) are stored inside these
@@ -1087,7 +1109,7 @@ void Recipe::generateInstructions() {
 
    // END fermentation instructions. Let everybody know that now is the time
    // to update instructions
-   emit changed(metaProperty("instructions"), instructions().size());
+   emit changed(metaProperty(PropertyNames::Recipe::instructions), this->instructions().size());
 
    return;
 }
@@ -1322,7 +1344,7 @@ void Recipe::setMash(Mash * var) {
 
    connect(mashToAdd.get(), SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptMashChange(QMetaProperty,
                                                                                                   QVariant)));
-   emit this->changed(this->metaProperty("mash"), NamedEntity::qVariantFromPtr(mashToAdd.get()));
+   emit this->changed(this->metaProperty(PropertyNames::Recipe::mash), QVariant::fromValue<Mash *>(mashToAdd.get()));
 
    this->recalcAll();
 
@@ -1561,7 +1583,11 @@ void Recipe::setKegPrimingFactor(double var) {
 }
 
 void Recipe::setLocked(bool isLocked) {
-   // Locking a Recipe doesn't count as changing it for the purposes of versioning or the UI, so no call to setAndNotify here
+   // Locking a Recipe doesn't count as changing it for the purposes of versioning or the UI, so no call to setAndNotify
+   // here.
+   if (this->newValueMatchesExisting(PropertyNames::Recipe::locked, this->m_locked, isLocked)) {
+      return;
+   }
    this->m_locked = isLocked;
    this->propagatePropertyChange(PropertyNames::Recipe::locked);
    return;
@@ -1601,8 +1627,11 @@ void Recipe::setHasDescendants(bool spawned) {
 }
 
 void Recipe::setAncestorId(int ancestorId, bool notify) {
-   // Setting Recipe's ancestor ID doesn't count as changing it for the purposes of versioning or the UI, so no call to setAndNotify here
-   // However, we do want the DB to get updated, so we do call propagatePropertyChange.
+   // Setting Recipe's ancestor ID doesn't count as changing it for the purposes of versioning or the UI, so no call to
+   // setAndNotify here.  However, we do want the DB to get updated, so we do call propagatePropertyChange.
+   if (this->newValueMatchesExisting(PropertyNames::Recipe::ancestorId, this->m_ancestor_id, ancestorId)) {
+      return;
+   }
    this->m_ancestor_id = ancestorId;
    this->propagatePropertyChange(PropertyNames::Recipe::ancestorId, notify);
    return;
@@ -1620,20 +1649,37 @@ void Recipe::setAncestor(Recipe & ancestor) {
    qDebug() <<
       Q_FUNC_INFO << "Setting Recipe #" << ancestor.key() << "to be immediate prior version (ancestor) of Recipe #" <<
       this->key();
+
    if (this->m_ancestor_id > 0 && this->m_ancestor_id != this->key()) {
-      // We already have ancestors (aka previous versions), so give them to the new direct ancestor (aka immediate
-      // prior version).
-      ancestor.m_ancestor_id = this->m_ancestor_id;
-      ancestor.m_ancestors = this->ancestors();
+      // We already have ancestors (aka previous versions)
+
+      if (&ancestor == this) {
+         // Setting a Recipe to be its own ancestor is a kooky way of saying we want the Recipe not to have any
+         // ancestors
+         if (this->ancestors().size() > 0) {
+            // We have some ancestors so we just have to tell the immediate one that it no longer has descendants
+            this->ancestors().at(0)->setHasDescendants(false);
+            this->ancestors().clear();
+         }
+      } else {
+         // Give our existing ancestors them to the new direct ancestor (aka immediate prior version).  Note that it's
+         // a coding error if this new direct ancestor already has its own ancestors.
+         Q_ASSERT(ancestor.m_ancestor_id == ancestor.key() || ancestor.m_ancestor_id <= 0);
+         ancestor.m_ancestor_id = this->m_ancestor_id;
+         ancestor.m_ancestors = this->ancestors();
+      }
    }
 
-   // Either we verified the lazy-load of this->m_ancestors in the call to this->ancestors() in the if statement above
-   // or it should have been empty to begin with.  In both cases, we should be good to append the new ancestor here.
-   this->m_ancestors.append(&ancestor);
+   // Skip most of the remaining work if we're really setting "no ancestors"
+   if (&ancestor != this) {
+      // Either we verified the lazy-load of this->m_ancestors in the call to this->ancestors() in the if statement above
+      // or it should have been empty to begin with.  In both cases, we should be good to append the new ancestor here.
+      this->m_ancestors.append(&ancestor);
 
-   ancestor.setDisplay(false);
-   ancestor.setLocked(true);
-   ancestor.setHasDescendants(true);
+      ancestor.setDisplay(false);
+      ancestor.setLocked(true);
+      ancestor.setHasDescendants(true);
+   }
 
    this->setAncestorId(ancestor.key());
 
@@ -2630,9 +2676,47 @@ Recipe * Recipe::getOwningRecipe() {
    return this;
 }
 
-//=====================================================================================================================
-//=========================================== Functions in Helper Namespace ===========================================
-//=====================================================================================================================
+void Recipe::hardDeleteOwnedEntities() {
+   // It's the BrewNote that stores its Recipe ID, so all we need to do is delete our BrewNotes then the subsequent
+   // database delete of this Recipe won't hit any foreign key problems.
+   auto brewNotes = this->brewNotes();
+   for (auto brewNote : brewNotes) {
+      ObjectStoreWrapper::hardDelete<BrewNote>(*brewNote);
+   }
+
+   this->pimpl->hardDeleteAllMy<Fermentable>();
+   this->pimpl->hardDeleteAllMy<Hop>        ();
+   this->pimpl->hardDeleteAllMy<Instruction>();
+   this->pimpl->hardDeleteAllMy<Misc>       ();
+   this->pimpl->hardDeleteAllMy<Salt>       ();
+   this->pimpl->hardDeleteAllMy<Water>      ();
+   this->pimpl->hardDeleteAllMy<Yeast>      ();
+
+   // Strictly a Recipe does not own its Mash.  However, if our Mash does not have a name and is not used by any other
+   // Recipe, then we delete it, on the grounds that it's not one the user intended to reuse across multiple Recipes.
+   Mash * mash = this->mash();
+   if (mash && mash->name() == "") {
+      qDebug() << Q_FUNC_INFO << "Checking whether our unnamed Mash is used elsewhere";
+      auto recipesUsingThisMash = ObjectStoreWrapper::findAllMatching<Recipe>(
+         [mash](Recipe const * rec) {
+            return rec->uses(*mash);
+         }
+      );
+      if (1 == recipesUsingThisMash.size()) {
+         qDebug() <<
+            Q_FUNC_INFO << "Deleting unnamed Mash # " << mash->key() << " used only by Recipe #" << this->key();
+         Q_ASSERT(recipesUsingThisMash.at(0)->key() == this->key());
+         ObjectStoreWrapper::hardDelete<Mash>(*mash);
+      }
+   }
+
+   return;
+}
+
+
+//======================================================================================================================
+//====================================== Start of Functions in Helper Namespace ========================================
+//======================================================================================================================
 QList<BrewNote *> RecipeHelper::brewNotesForRecipeAndAncestors(Recipe const & recipe) {
    QList<BrewNote *> brewNotes = recipe.brewNotes();
    QList<Recipe *> ancestors = recipe.ancestors();
@@ -2644,21 +2728,42 @@ QList<BrewNote *> RecipeHelper::brewNotesForRecipeAndAncestors(Recipe const & re
 
 void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, char const * const propertyName) {
    //
+   // .:TBD:. MY 2021-07-23  This is largely working, in that, with automatic versioning enabled, every time you make a
+   // change to something (a Recipe's own field or a field on an ingredient, the Mash, etc) it generates a new version
+   // of the Recipe.  However, I wonder it's really what we want.  If every single property change generates a new
+   // version of the Recipe then you could end up with a lot of Recipe versions.  If we moved the automatic versioning
+   // logic from the model to the UI then it could be a bit smarter -- eg if the user changes two properties on a
+   // Fermentable in one edit then, when they click Save, it could generate one new version of the Recipe rather than
+   // two.
+   //
+
+   //
    // If the user has said they don't want versioning, just return
    //
    if (!RecipeHelper::getAutomaticVersioningEnabled()) {
       return;
    }
 
-   qDebug() << Q_FUNC_INFO << "Modifying: " << ne.metaObject()->className() << " property " << propertyName;
+   qDebug() <<
+      Q_FUNC_INFO << "Modifying: " << ne.metaObject()->className() << "#" << ne.key() << "property" << propertyName;
 
-
-   // If the object we're about to change a property on is a Recipe or is used in a Recipe, then that Recipe needs a
-   // new version.
+   // If the object we're about to change a property on is a Recipe or is used in a Recipe, then that Recipe probably
+   // needs a new version -- unless it's already being versioned.
    Recipe * owner = ne.getOwningRecipe();
-   if (!owner) {
+   if (!owner || owner->isBeingModified()) {
       return;
    }
+
+   // If the object we're about to change already has descendants, then we don't want to create new ones.
+   if (owner->hasDescendants()) {
+      qDebug() << Q_FUNC_INFO << "Recipe #" << owner->key() << "already has descendants, so not creating any more";
+      return;
+   }
+
+   //
+   // Once we've started doing versioning, we don't want to trigger it again on the same Recipe until we've finished
+   //
+   NamedEntityModifyingMarker ownerModifyingMarker(*owner);
 
    //
    // Versioning when modifying something in a recipe is *hard*.  If we copy the recipe, there is no easy way to say
@@ -2669,10 +2774,14 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, char const * const
 
    // Create a deep copy of the Recipe, and put it in the DB, so it has an ID.
    // (This will also emit signalObjectInserted for the new Recipe from ObjectStoreTyped<Recipe>.)
+   qDebug() << Q_FUNC_INFO << "Copying Recipe" << owner->key();
+
+   // We also don't want to trigger versioning on the newly spawned Recipe until we're completely done here!
    std::shared_ptr<Recipe> spawn = std::make_shared<Recipe>(*owner);
+   NamedEntityModifyingMarker spawnModifyingMarker(*spawn);
    ObjectStoreWrapper::insert(spawn);
 
-   qDebug() << Q_FUNC_INFO << "Copied Recipe" << owner->key() << "to new Recipe" << spawn->key();
+   qDebug() << Q_FUNC_INFO << "Copied Recipe #" << owner->key() << "to new Recipe #" << spawn->key();
 
    //
    // By default, copying a Recipe does not copy all its ancestry.  Here, we want the copy to become our ancestor (ie
@@ -2714,3 +2823,7 @@ RecipeHelper::SuspendRecipeVersioning::~SuspendRecipeVersioning() {
    }
    return;
 }
+
+//======================================================================================================================
+//======================================= End of Functions in Helper Namespace =========================================
+//======================================================================================================================

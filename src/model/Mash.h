@@ -27,18 +27,24 @@
 #include <QVector>
 
 #include "model/NamedEntity.h"
-#define AddPropertyName(property) \
-namespace PropertyNames::Mash {static char const * const property = #property; }
+
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Mash {static char const * const property = #property; }
 AddPropertyName(equipAdjust)
 AddPropertyName(grainTemp_c)
 AddPropertyName(mashSteps)
 AddPropertyName(notes)
 AddPropertyName(ph)
 AddPropertyName(spargeTemp_c)
+AddPropertyName(totalMashWater_l)
+AddPropertyName(totalTime)
 AddPropertyName(tunSpecificHeat_calGC)
 AddPropertyName(tunTemp_c)
 AddPropertyName(tunWeight_kg)
 #undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 
 // Forward declarations.
@@ -48,6 +54,9 @@ class MashStep;
  * \class Mash
  *
  * \brief Model class for a mash record in the database.
+ *
+ *        .:TBD:. Mashes have a freestanding existence and can, in principle, be shared between Recipes but the UI does
+ *        not currently enforce them having non-empty names.
  */
 class Mash : public NamedEntity {
    Q_OBJECT
@@ -83,7 +92,6 @@ public:
    Q_PROPERTY( double totalMashWater_l READ totalMashWater_l /*WRITE*/ /*NOTIFY changed*/ /*changedTotalMashWater_l*/ STORED false )
    //! \brief The total mash time in minutes. Calculated.
    Q_PROPERTY( double totalTime READ totalTime /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
-  // Q_PROPERTY( double tunMass_kg READ tunMass_kg  WRITE setTunMass_kg /*NOTIFY changed*/ /*changedTotalTime*/ )
    //! \brief The individual mash steps.
    Q_PROPERTY( QList<MashStep*> mashSteps  READ mashSteps /*WRITE*/ /*NOTIFY changed*/ /*changedTotalTime*/ STORED false )
 
@@ -139,6 +147,11 @@ public:
    void removeAllMashSteps();
 
    virtual Recipe * getOwningRecipe();
+
+   /**
+    * \brief A Mash owns its MashSteps so needs to delete those if it itself is being deleted
+    */
+   virtual void hardDeleteOwnedEntities();
 
 public slots:
    void acceptMashStepChange(QMetaProperty, QVariant);

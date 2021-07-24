@@ -1,5 +1,6 @@
 /**
- * NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -39,11 +40,11 @@ class Equipment;
 /*!
  * \class NamedMashEditor
  *
- *
  * \brief View/controller dialog for editing a mash.
+ *
+ *        See also \c MashEditor
  */
-class NamedMashEditor : public QDialog, public Ui::namedMashEditor
-{
+class NamedMashEditor : public QDialog, public Ui::namedMashEditor {
    Q_OBJECT
 public:
    NamedMashEditor( QWidget *parent = 0, MashStepEditor* editor =0, bool singleMashEditor = false );
@@ -97,4 +98,4 @@ private:
 
 };
 
-#endif   /* NAMEDMASHEDITOR_H */
+#endif

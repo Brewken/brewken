@@ -116,15 +116,11 @@ SET( Brewken_SRCS
     ${SRCDIR}/ConverterTool.cpp
     ${SRCDIR}/CustomComboBox.cpp
     ${SRCDIR}/database/Database.cpp
-    ${SRCDIR}/database/DatabaseSchema.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
     ${SRCDIR}/database/DbTransaction.cpp
     ${SRCDIR}/database/ObjectStoreTyped.cpp
     ${SRCDIR}/database/ObjectStoreWrapper.cpp
     ${SRCDIR}/database/ObjectStore.cpp
-    ${SRCDIR}/database/PropertySchema.cpp
-    ${SRCDIR}/database/TableSchema.cpp
-    ${SRCDIR}/database/TableSchemaConst.cpp
     ${SRCDIR}/EquipmentButton.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
@@ -297,8 +293,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/ConverterTool.h
     ${SRCDIR}/CustomComboBox.h
     ${SRCDIR}/database/Database.h
-    ${SRCDIR}/database/PropertySchema.h
-    ${SRCDIR}/database/TableSchema.h
     ${SRCDIR}/EquipmentButton.h
     ${SRCDIR}/EquipmentEditor.h
     ${SRCDIR}/EquipmentListModel.h

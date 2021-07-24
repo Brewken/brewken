@@ -200,7 +200,7 @@ public:
          QTextStream userMessageAsStream{&userMessage};
          bool succeeded = BeerXML::getInstance().importFromXML(filename, userMessageAsStream);
          qDebug() << Q_FUNC_INFO << "Import " << (succeeded ? "succeeded" : "failed");
-         this->importMsg(filename, succeeded, userMessage);
+         this->importExportMsg(IMPORT, filename, succeeded, userMessage);
       }
 
       mainWindow->showChanges();
@@ -208,28 +208,56 @@ public:
       return;
    }
 
+   enum ImportOrExport {
+      EXPORT,
+      IMPORT
+   };
+
    /**
     * \brief Show a success/failure message to the user after we attempted to import one or more BeerXML files
     */
-   void importMsg(QString const & fileName, bool succeeded, QString const & userMessage) {
+   void importExportMsg(ImportOrExport const importOrExport,
+                        QString const & fileName,
+                        bool succeeded,
+                        QString const & userMessage) {
       // This will allow us to drop the directory path to the file, as it is often long and makes the message box a
       // "wall of text" that will put a lot of users off.
       QFileInfo fileInfo(fileName);
 
-
       QString messageBoxTitle{succeeded ? tr("Success!") : tr("ERROR")};
       QString messageBoxText;
       if (succeeded) {
-         // The userMessage parameter will tell how many files were imported and/or skipped (as duplicates)
-         messageBoxText = QString(
-            tr("Successfully read \"%1\"\n\n%2").arg(fileInfo.fileName()).arg(userMessage)
-         );
+         // The userMessage parameter will tell how many files were imported/exported and/or skipped (as duplicates)
+         // Do separate messages for import and export as it makes translations easier
+         if (IMPORT == importOrExport) {
+            messageBoxText = QString(
+               tr("Successfully read \"%1\"\n\n%2").arg(fileInfo.fileName()).arg(userMessage)
+            );
+         } else {
+            messageBoxText = QString(
+               tr("Successfully wrote \"%1\"\n\n%2").arg(fileInfo.fileName()).arg(userMessage)
+            );
+         }
       } else {
-         messageBoxText = QString(
-            tr("Unable to import data from \"%1\"\n\n"
-               "%2\n\n"
-               "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
-         );
+         if (IMPORT == importOrExport) {
+            messageBoxText = QString(
+               tr("Unable to import data from \"%1\"\n\n"
+                  "%2\n\n"
+                  "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
+            );
+         } else {
+            // Some write errors (eg nothing to export) are before the filename was chosen (in which case the name will
+            // be blank).
+            if (fileName == "") {
+               messageBoxText = QString("%2").arg(userMessage);
+            } else {
+               messageBoxText = QString(
+                  tr("Unable to write data to \"%1\"\n\n"
+                     "%2\n\n"
+                     "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
+               );
+            }
+         }
       }
       qDebug() << Q_FUNC_INFO << "Message box text : " << messageBoxText;
       QMessageBox msgBox{succeeded ? QMessageBox::Information : QMessageBox::Critical,
@@ -779,7 +807,6 @@ void MainWindow::setupTriggers() {
    connect( actionStrikeWater_Calculator, &QAction::triggered, strikeWaterDialog, &QWidget::show );                     // > Tools > Strike Water Calculator
    connect( actionRefractometer_Tools, &QAction::triggered, refractoDialog, &QWidget::show );                           // > Tools > Refractometer Tools
    connect( actionPitch_Rate_Calculator, &QAction::triggered, this, &MainWindow::showPitchDialog);                      // > Tools > Pitch Rate Calculator
-   connect( actionMergeDatabases, &QAction::triggered, this, &MainWindow::updateDatabase );                             // > File > Database > Merge
    connect( actionTimers, &QAction::triggered, timerMainDialog, &QWidget::show );                                       // > Tools > Timers
    connect( actionDeleteSelected, &QAction::triggered, this, &MainWindow::deleteSelected );
    connect( actionWater_Chemistry, &QAction::triggered, this, &MainWindow::popChemistry);                               // > Tools > Water Chemistry
@@ -1288,26 +1315,20 @@ void MainWindow::lockRecipe(int state)
 
 }
 
-void MainWindow::changed(QMetaProperty prop, QVariant value)
-{
+void MainWindow::changed(QMetaProperty prop, QVariant val) {
    QString propName(prop.name());
 
-   if( propName == "equipment" )
-   {
-      Equipment* newRecEquip = qobject_cast<Equipment*>(NamedEntity::extractPtr(value));
-      recEquip = newRecEquip;
-
-      singleEquipEditor->setEquipment(recEquip);
-   }
-   else if( propName == "style" )
-   {
+   if (propName == PropertyNames::Recipe::equipment) {
+      this->recEquip = val.value<Equipment *>();
+      this->singleEquipEditor->setEquipment(this->recEquip);
+   } else if (propName == PropertyNames::Recipe::style) {
       //recStyle = recipeObs->style();
-      recStyle = qobject_cast<Style*>(NamedEntity::extractPtr(value));
-      singleStyleEditor->setStyle(recStyle);
-
+      this->recStyle = val.value<Style*>();
+      this->singleStyleEditor->setStyle(this->recStyle);
    }
 
-   showChanges(&prop);
+   this->showChanges(&prop);
+   return;
 }
 
 void MainWindow::updateDensitySlider(QString attribute, RangedSlider* slider, double max)
@@ -2214,7 +2235,8 @@ void MainWindow::newRecipe()
       }
    }
 
-   newRec->insertInDatabase();
+   ObjectStoreWrapper::insert(*newRec);
+   newRec->setCacheOnly(false);
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?
@@ -2963,9 +2985,14 @@ void MainWindow::exportSelected() {
       return;
    }
 
+   QString userMessage;
+   QString filename;
+   bool succeeded = false;
    QModelIndexList selected = active->selectionModel()->selectedRows();
    if (selected.count() == 0) {
       qDebug() << Q_FUNC_INFO << "Nothing selected, so nothing to export";
+      userMessage = "Nothing selected";
+      this->pimpl->importExportMsg(impl::EXPORT, filename, succeeded, userMessage);
       return;
    }
 
@@ -3038,6 +3065,8 @@ void MainWindow::exportSelected() {
 
    if (0 == count) {
       qDebug() << Q_FUNC_INFO << "Nothing selected was exportable to XML";
+      userMessage = "Nothing exportable selected";
+      this->pimpl->importExportMsg(impl::EXPORT, filename, succeeded, userMessage);
       return;
    }
 
@@ -3073,33 +3102,6 @@ void MainWindow::exportSelected() {
 
    outFile->close();
    return;
-}
-
-void MainWindow::updateDatabase()
-{
-   QString otherDb;
-   QMessageBox::StandardButton but;
-
-   // Tell user what's about to happen.
-   but = QMessageBox::question( this,
-                          tr("Database Update"),
-                          tr("You are about to update the current database with another one. "
-                             "This may make changes to (but will not delete) some of your ingredients. "
-                             "It will not modify any of your recipes. "
-                             "Continue?"),
-                          QMessageBox::Yes | QMessageBox::No,
-                          QMessageBox::No );
-   if( but == QMessageBox::No )
-      return;
-
-   // Select the db to merge with.
-   otherDb = QFileDialog::getOpenFileName( this,
-                                           tr("Select Database File"),
-                                           PersistentSettings::getUserDataDir().canonicalPath(),
-                                           tr("Brewken Database (*.sqlite)") );
-
-   // Merge.
-   Database::instance().updateDatabase( otherDb );
 }
 
 void MainWindow::finishCheckingVersion()

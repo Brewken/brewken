@@ -16,6 +16,8 @@
 #include "database/DbTransaction.h"
 
 #include <QDebug>
+#include <QSqlError>
+
 #include "database/Database.h"
 
 
@@ -32,6 +34,10 @@ DbTransaction::DbTransaction(Database & database, QSqlDatabase & connection, DbT
 
    bool succeeded = this->connection.transaction();
    qDebug() << Q_FUNC_INFO << "Database transaction begin: " << (succeeded ? "succeeded" : "failed");
+   if (!succeeded) {
+      qCritical() << Q_FUNC_INFO << "Unable to start database transaction:" << connection.lastError().text();
+      Q_ASSERT(false); // .:TODO-DATABASE:. COMMENT OUT THIS ASSERT!
+   }
    return;
 }
 
@@ -39,7 +45,10 @@ DbTransaction::~DbTransaction() {
    qDebug() << Q_FUNC_INFO;
    if (!committed) {
       bool succeeded = this->connection.rollback();
-      qWarning() << Q_FUNC_INFO << "Database transaction rollback: " << (succeeded ? "succeeded" : "failed");
+      qDebug() << Q_FUNC_INFO << "Database transaction rollback: " << (succeeded ? "succeeded" : "failed");
+      if (!succeeded) {
+         qCritical() << Q_FUNC_INFO << "Unable to rollback database transaction:" << connection.lastError().text();
+      }
    }
 
    // See comment above about why we need to do this _after_ the transaction has finished
@@ -52,5 +61,8 @@ DbTransaction::~DbTransaction() {
 bool DbTransaction::commit() {
    this->committed = connection.commit();
    qDebug() << Q_FUNC_INFO << "Database transaction commit: " << (this->committed ? "succeeded" : "failed");
+   if (!this->committed) {
+      qCritical() << Q_FUNC_INFO << "Unable to commit database transaction:" << connection.lastError().text();
+   }
    return this->committed;
 }

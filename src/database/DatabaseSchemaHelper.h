@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef DATABASESCHEMAHELPER_H
-#define DATABASESCHEMAHELPER_H
+#ifndef DATABASE_DATABASESCHEMAHELPER_H
+#define DATABASE_DATABASESCHEMAHELPER_H
 #pragma once
 
 #include <QSqlDatabase>
 
-#include "Brewken.h"
+//#include "Brewken.h"
 #include "Database.h"
 
-class DatabaseSchema;
+class QTextStream;
 
 /*!
  * \brief Helper functions to manage Database schema upgrades etc
@@ -40,7 +40,7 @@ namespace DatabaseSchemaHelper {
    /*!
     * \brief Create a blank database whose schema version is \c dbVersion
     */
-   bool create(Database & database, QSqlDatabase db, DatabaseSchema* defn, Database::DbType dbType = Database::NODB);
+   bool create(Database & database, QSqlDatabase db);
 
    /*!
     * \brief Migrate schema from \c oldVersion to \c newVersion
@@ -53,8 +53,12 @@ namespace DatabaseSchemaHelper {
    //! \brief does the heavy lifting to copy the contents from one db to the next
    void copyDatabase(Database::DbType oldType, Database::DbType newType, QSqlDatabase connectionNew);
 
-   //! \brief Populates (or updates) default Recipes, Hops, Styles, etc in the DB
-   void updateDatabase(Database & database, QString const& filename);
+   /**
+    * \brief Populates (or updates) default Recipes, Hops, Styles, etc in the DB
+    *
+    * \return \c true if succeeded, \c false otherwise
+    */
+   bool updateDatabase(QTextStream & userMessage);
 }
 
 #endif

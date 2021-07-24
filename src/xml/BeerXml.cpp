@@ -24,12 +24,12 @@
 #include <QFile>
 #include <QHash>
 #include <QList>
+#include <QTextCodec>
 #include <QTextStream>
 
 #include "Brewken.h"
 #include "config.h" // For VERSIONSTRING
 #include "database/Database.h"
-#include "database/TableSchema.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -45,6 +45,7 @@
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "xml/BtDomErrorHandler.h"
+#include "xml/MibEnum.h"
 #include "xml/XmlCoding.h"
 #include "xml/XmlRecord.h"
 
@@ -96,7 +97,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type              XPath             Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
-      {XmlRecord::UInt,    "VERSION",        nullptr,                               nullptr},
+      {XmlRecord::RequiredConstant, "VERSION", "1",                                 nullptr},
       {XmlRecord::Double,  "ALPHA",          PropertyNames::Hop::alpha_pct,         nullptr},
       {XmlRecord::Double,  "AMOUNT",         PropertyNames::Hop::amount_kg,         nullptr},
       {XmlRecord::Enum,    "USE",            PropertyNames::Hop::use,               &BEER_XML_HOP_USE_MAPPER},
@@ -131,7 +132,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
       // Type              XPath               Q_PROPERTY                                          Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,                   nullptr},
-      {XmlRecord::UInt,    "VERSION",          nullptr,                                            nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                               nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Fermentable::type,                   &BEER_XML_FERMENTABLE_TYPE_MAPPER},
       {XmlRecord::Double,  "AMOUNT",           PropertyNames::Fermentable::amount_kg,              nullptr},
       {XmlRecord::Double,  "YIELD",            PropertyNames::Fermentable::yield_pct,              nullptr},
@@ -180,7 +181,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
       // Type              XPath               Q_PROPERTY                                    Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,             nullptr},
-      {XmlRecord::UInt,    "VERSION",          nullptr,                                      nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                         nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Yeast::type,                   &BEER_XML_YEAST_TYPE_MAPPER},
       {XmlRecord::Enum,    "FORM",             PropertyNames::Yeast::form,                   &BEER_XML_YEAST_FORM_MAPPER},
       {XmlRecord::Double,  "AMOUNT",           PropertyNames::Yeast::amount,                 nullptr},
@@ -225,7 +226,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Misc> {
       // Type              XPath               Q_PROPERTY                           Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,    nullptr},
-      {XmlRecord::UInt,    "VERSION",          nullptr,                             nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Misc::type,           &BEER_XML_MISC_TYPE_MAPPER},
       {XmlRecord::Enum,    "USE",              PropertyNames::Misc::use,            &BEER_XML_MISC_USE_MAPPER},
       {XmlRecord::Double,  "TIME",             PropertyNames::Misc::time,           nullptr},
@@ -245,7 +246,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Water> {
       // Type               XPath            Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
-      {XmlRecord::UInt,    "VERSION",        nullptr,                               nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                nullptr},
       {XmlRecord::Double,  "AMOUNT",         PropertyNames::Water::amount,          nullptr},
       {XmlRecord::Double,  "CALCIUM",        PropertyNames::Water::calcium_ppm,     nullptr},
       {XmlRecord::Double,  "BICARBONATE",    PropertyNames::Water::bicarbonate_ppm, nullptr},
@@ -274,7 +275,7 @@ namespace {
       // Type              XPath                Q_PROPERTY                            Enum Mapper
       {XmlRecord::String,  "NAME",              PropertyNames::NamedEntity::name,     nullptr},
       {XmlRecord::String,  "CATEGORY",          PropertyNames::Style::category,       nullptr},
-      {XmlRecord::UInt,    "VERSION",           nullptr,                              nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                  nullptr},
       {XmlRecord::String,  "CATEGORY_NUMBER",   PropertyNames::Style::categoryNumber, nullptr},
       {XmlRecord::String,  "STYLE_LETTER",      PropertyNames::Style::styleLetter,    nullptr},
       {XmlRecord::String,  "STYLE_GUIDE",       PropertyNames::Style::styleGuide,     nullptr},
@@ -323,7 +324,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<MashStep> {
       // Type              XPath                 Q_PROPERTY                                  Enum Mapper
       {XmlRecord::String,  "NAME",               PropertyNames::NamedEntity::name,           nullptr},
-      {XmlRecord::UInt,    "VERSION",            nullptr,                                    nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                         nullptr},
       {XmlRecord::Enum,    "TYPE",               PropertyNames::MashStep::type,              &BEER_XML_MASH_STEP_TYPE_MAPPER},
       {XmlRecord::Double,  "INFUSE_AMOUNT",      PropertyNames::MashStep::infuseAmount_l,    nullptr}, // Should not be supplied if TYPE is "Decoction"
       {XmlRecord::Double,  "STEP_TEMP",          PropertyNames::MashStep::stepTemp_c,        nullptr},
@@ -346,7 +347,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Mash> {
       // Type                    XPath                   Q_PROPERTY                                  Enum Mapper
       {XmlRecord::String,        "NAME",                 PropertyNames::NamedEntity::name,           nullptr},
-      {XmlRecord::UInt,          "VERSION",              nullptr,                                    nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                 nullptr},
       {XmlRecord::Double,        "GRAIN_TEMP",           PropertyNames::Mash::grainTemp_c,           nullptr},
       {XmlRecord::RecordComplex, "MASH_STEPS/MASH_STEP", PropertyNames::Mash::mashSteps,             nullptr}, // Additional logic for "MASH-STEPS" is handled in code
       {XmlRecord::String,        "NOTES",                PropertyNames::Mash::notes,                 nullptr},
@@ -369,7 +370,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Equipment> {
       // Type              XPath                        Q_PROPERTY                                       Enum Mapper
       {XmlRecord::String,  "NAME",                      PropertyNames::NamedEntity::name,                nullptr},
-      {XmlRecord::UInt,    "VERSION",                   nullptr,                                         nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                     nullptr},
       {XmlRecord::Double,  "BOIL_SIZE",                 PropertyNames::Equipment::boilSize_l,            nullptr},
       {XmlRecord::Double,  "BATCH_SIZE",                PropertyNames::Equipment::batchSize_l,           nullptr},
       {XmlRecord::Double,  "TUN_VOLUME",                PropertyNames::Equipment::tunVolume_l,           nullptr},
@@ -404,7 +405,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Instruction> {
       // Type              XPath         Q_PROPERTY                              Enum Mapper
       {XmlRecord::String,  "NAME",       PropertyNames::NamedEntity::name,       nullptr},
-      {XmlRecord::UInt,    "VERSION",    nullptr,                                nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                             nullptr},
       {XmlRecord::String,  "directions", PropertyNames::Instruction::directions, nullptr},
       {XmlRecord::Bool,    "hasTimer",   PropertyNames::Instruction::hasTimer,   nullptr},
       {XmlRecord::String,  "timervalue", PropertyNames::Instruction::timerValue, nullptr}, // NB XPath is lowercase and property is camelCase
@@ -415,11 +416,15 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <BREWNOTE>...</BREWNOTE> BeerXML records
    // NB There is no NAME field on a BREWNOTE
+   //
+   // Since this is only used by Brewtarget/Brewken, we could probably lose the VERSION field here (with  corresponding
+   // changes to BeerXml.xsd), at the cost of creating files that would not be readable by old versions of those
+   // programs.  But it seems small bother to leave it be.
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<BrewNote>{"BREWNOTE"};
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<BrewNote> {
       // Type              XPath                      Q_PROPERTY                                     Enum Mapper
-      {XmlRecord::UInt,    "VERSION",                 nullptr,                                       nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                 nullptr},
       {XmlRecord::Date,    "BREWDATE",                PropertyNames::BrewNote::brewDate,             nullptr},
       {XmlRecord::Date,    "DATE_FERMENTED_OUT",      PropertyNames::BrewNote::fermentDate,          nullptr},
       {XmlRecord::String,  "NOTES",                   PropertyNames::BrewNote::notes,                nullptr},
@@ -464,7 +469,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Recipe> {
       // Type                    XPath                       Q_PROPERTY                                 Enum Mapper
       {XmlRecord::String,        "NAME",                     PropertyNames::NamedEntity::name,          nullptr},
-      {XmlRecord::UInt,          "VERSION",                  nullptr,                                   nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                    nullptr},
       {XmlRecord::Enum,          "TYPE",                     PropertyNames::Recipe::recipeType,         &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
       {XmlRecord::RecordSimple,  "STYLE",                    PropertyNames::Recipe::style,              nullptr},
       {XmlRecord::RecordSimple,  "EQUIPMENT",                PropertyNames::Recipe::equipment,          nullptr},
@@ -709,8 +714,7 @@ BeerXML & BeerXML::getInstance() {
 }
 
 
-BeerXML::BeerXML() : pimpl{ new impl{} },
-                     m_tables{Database::instance().getDatabaseSchema()} {
+BeerXML::BeerXML() : pimpl{ new impl{} } {
    return;
 }
 
@@ -721,8 +725,10 @@ BeerXML::~BeerXML() = default;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void BeerXML::createXmlFile(QFile & outFile) {
+void BeerXML::createXmlFile(QFile & outFile) const {
    QTextStream out(&outFile);
+   // BeerXML specifies the ISO-8859-1 encoding
+   out.setCodec(QTextCodec::codecForMib(CharacterSets::ISO_8859_1_1987));
 
    out <<
       "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
@@ -732,35 +738,43 @@ void BeerXML::createXmlFile(QFile & outFile) {
    return;
 }
 
-template<class NE> void BeerXML::toXml(QList<NE *> nes, QFile & outFile) {
+template<class NE> void BeerXML::toXml(QList<NE *> & nes, QFile & outFile) const {
+   // We don't want to output empty container records
+   if (nes.empty()) {
+      return;
+   }
+
    // It is a feature of BeerXML that the tag name for a list of elements is just the tag name for an individual
    // element with an S on the end, even when this is not grammatically correct.  Thus a list of <HOP>...</HOP> records
    // is contained inside <HOPS>...</HOPS> tags, a list of <MISC>...</MISC> records is contained inside
    // <MISCS>...</MISCS> tags and so on.
    QTextStream out(&outFile);
+   // BeerXML specifies the ISO-8859-1 encoding
+   out.setCodec(QTextCodec::codecForMib(CharacterSets::ISO_8859_1_1987));
    out << "<" << BEER_XML_RECORD_NAME<NE> << "S>\n";
    for (auto ne : nes) {
       this->pimpl->toXml(*ne, out);
    }
    out << "</" << BEER_XML_RECORD_NAME<NE> << "S>\n";
+   return;
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // means, amongst other things, that we can reference the pimpl.)
 //
-template void BeerXML::toXml(QList<Hop *>          nes, QFile & outFile);
-template void BeerXML::toXml(QList<Fermentable *>  nes, QFile & outFile);
-template void BeerXML::toXml(QList<Yeast *>        nes, QFile & outFile);
-template void BeerXML::toXml(QList<Misc *>         nes, QFile & outFile);
-template void BeerXML::toXml(QList<Water *>        nes, QFile & outFile);
-template void BeerXML::toXml(QList<Style *>        nes, QFile & outFile);
-template void BeerXML::toXml(QList<MashStep *>     nes, QFile & outFile);
-template void BeerXML::toXml(QList<Mash *>         nes, QFile & outFile);
-template void BeerXML::toXml(QList<Equipment *>    nes, QFile & outFile);
-template void BeerXML::toXml(QList<Instruction *>  nes, QFile & outFile);
-template void BeerXML::toXml(QList<BrewNote *>     nes, QFile & outFile);
-template void BeerXML::toXml(QList<Recipe *>       nes, QFile & outFile);
+template void BeerXML::toXml(QList<Hop *> &        nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Fermentable *> &nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Yeast *> &      nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Misc *> &       nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Water *> &      nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Style *> &      nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<MashStep *> &   nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Mash *> &       nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Equipment *> &  nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Instruction *> &nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<BrewNote *> &   nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Recipe *> &     nes, QFile & outFile) const;
 
 // fromXml ====================================================================
 bool BeerXML::importFromXML(QString const & filename, QTextStream & userMessage) {
@@ -770,5 +784,14 @@ bool BeerXML::importFromXML(QString const & filename, QTextStream & userMessage)
    // automatic versioning, in an exception-safe way, until the end of this function.
    //
    RecipeHelper::SuspendRecipeVersioning suspendRecipeVersioning;
-   return this->pimpl->validateAndLoad(filename, userMessage);
+
+   //
+   // Slightly more manually, we also change the cursor to show "busy" while we're doing the import as, for large
+   // imports, processing can take a few seconds or so.
+   //
+   QApplication::setOverrideCursor(Qt::WaitCursor);
+   QApplication::processEvents();
+   bool result = this->pimpl->validateAndLoad(filename, userMessage);
+   QApplication::restoreOverrideCursor();
+   return result;
 }

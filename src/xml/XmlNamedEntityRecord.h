@@ -21,7 +21,7 @@
 #include <QString>
 #include <QList>
 
-#include "database/ObjectStoreTyped.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/BrewNote.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
@@ -51,13 +51,23 @@ public:
       return;
    }
 
-
 protected:
    virtual void constructNamedEntity() {
       this->namedEntityRaiiContainer.reset(new NE{this->namedParameterBundle});
       this->namedEntity = this->namedEntityRaiiContainer.get();
    }
 
+   virtual int storeNamedEntityInDb() {
+      return ObjectStoreWrapper::insert(std::static_pointer_cast<NE>(this->namedEntityRaiiContainer));
+   }
+
+public:
+   virtual void deleteNamedEntityFromDb() {
+      ObjectStoreWrapper::hardDelete(std::static_pointer_cast<NE>(this->namedEntityRaiiContainer));
+      return;
+   }
+
+protected:
    //
    // TODO It's a bit clunky to have the knowledge/logic in this class for whether duplicates and name clashes are
    //      allowed.  Ideally this should be part of the NamedEntity subclasses themselves and the traits used here.
@@ -130,11 +140,10 @@ protected:
       return;
    }
 
-private:
    /**
-    *
+    * By default things are included in stats
     */
-   bool includedInStats() const { return true; }
+   virtual bool includedInStats() const { return true; }
 
 };
 
@@ -157,11 +166,6 @@ template<> inline void XmlNamedEntityRecord<BrewNote>::setContainingEntity(Named
    brewNote->setRecipe(static_cast<Recipe *>(containingEntity));
    return;
 }
-/*template<> inline void XmlNamedEntityRecord<Instruction>::setContainingEntity(NamedEntity * containingEntity) {
-   Instruction * instruction = static_cast<Instruction *>(this->namedEntity);
-   instruction->setRecipe(static_cast<Recipe *>(containingEntity));
-   return;
-}*/
 
 // Specialisations for cases where we don't want the objects included in the stats
 template<> inline bool XmlNamedEntityRecord<Instruction>::includedInStats() const { return false; }

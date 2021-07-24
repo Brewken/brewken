@@ -54,10 +54,7 @@
 
 #include "Brewken.h"
 #include "config.h"
-#include "database/DatabaseSchema.h"
 #include "database/DatabaseSchemaHelper.h"
-#include "database/TableSchemaConst.h"
-#include "model/BrewNote.h"
 #include "PersistentSettings.h"
 
 
@@ -212,7 +209,6 @@ public:
     * Constructor
     */
    impl(Database::DbType dbType) : dbType{dbType},
-                                   dbDefn{},
                                    dbConName{},
                                    loaded{false},
                                    loadWasSuccessful{false},
@@ -255,14 +251,13 @@ public:
          Brewken::userDatabaseDidNotExist = true;
 
          // Have to wait until db is open before creating from scratch.
-         if( dataDbFile.exists() )
-         {
+         if (dataDbFile.exists()) {
             dataDbFile.copy(dbFileName);
             QFile::setPermissions( dbFileName, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup );
          }
 
          // Reset the last merge request.
-         Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
+         Database::lastDbMergeRequest = QDateTime::currentDateTime();
       }
 
       // Open SQLite DB
@@ -387,37 +382,6 @@ public:
          }
       }
 
-/*
-      // .:TBD:. Don't think we need this if the rest of the code is correctly keeping child IDs updated
-      database.sqlDatabase().transaction();
-
-      try {
-         //populate ingredient links
-         int repopChild = 0;
-         QSqlQuery popchildq( "SELECT repopulateChildrenOnNextStart FROM settings WHERE id=1", database.sqlDatabase() );
-
-         if( popchildq.next() )
-            repopChild = popchildq.record().value("repopulateChildrenOnNextStart").toInt();
-         else
-            throw QString("%1 %2").arg(popchildq.lastQuery()).arg(popchildq.lastError().text());
-
-         if(repopChild == 1) {
-            qDebug() << Q_FUNC_INFO << "calling populateChildTablesByName()";
-            this->populateChildTablesByName(database);
-
-            QSqlQuery popchildq( "UPDATE settings SET repopulateChildrenOnNextStart = 0", database.sqlDatabase() );
-            if ( ! popchildq.isActive() )
-               throw QString("Could not modify settings table: %1 %2").arg(popchildq.lastQuery()).arg(popchildq.lastError().text());
-         }
-      }
-      catch (QString e ) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         database.sqlDatabase().rollback();
-         throw;
-      }
-
-      database.sqlDatabase().commit();
-*/
       return doUpdate;
    }
 
@@ -506,120 +470,7 @@ public:
       PersistentSettings::insert("files", listOfFiles, "backups");
    }
 
-/*
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   // This links ingredients with the same name.
-   // The first displayed ingredient in the database is assumed to be the parent.
-   void populateChildTablesByName(Database & database, DatabaseConstants::DbTableId table) {
-      TableSchema* tbl = this->dbDefn.table(table);
-      TableSchema* cld = this->dbDefn.childTable( table );
-      qInfo() << QString("Populating Children NamedEntity Links (%1)").arg(tbl->tableName());
-
-      try {
-         // "SELECT DISTINCT name FROM [tablename]"
-         QString queryString = QString("SELECT DISTINCT %1 FROM %2")
-               .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name)).arg(tbl->tableName());
-
-         qDebug() << Q_FUNC_INFO << "DISTINCT:" << queryString;
-         QSqlQuery nameq( queryString, database.sqlDatabase() );
-
-         if ( ! nameq.exec() ) {
-            throw QString("%1 %2").arg(nameq.lastQuery()).arg(nameq.lastError().text());
-         }
-
-         while (nameq.next()) {
-            QString name = nameq.record().value(0).toString();
-            // select id from [tablename] where ( name = :name and display = :boolean ) order by id asc
-            queryString = QString( "SELECT %1 FROM %2 WHERE ( %3=:name AND %4=:boolean ) ORDER BY %1")
-                        .arg(tbl->keyName())
-                        .arg(tbl->tableName())
-                        .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::name))
-                        .arg(tbl->propertyToColumn(PropertyNames::NamedEntity::display));
-            QSqlQuery query( database.sqlDatabase() );
-
-            qDebug() << Q_FUNC_INFO << "FIND:" << queryString;
-
-            // find the first element with display set true (assumed parent)
-            query.prepare(queryString);
-            query.bindValue(":name", name);
-            query.bindValue(":boolean",Database::dbTrue());
-
-            if ( !query.exec() ) {
-               throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
-            }
-
-            query.first();
-            QString parentID = query.record().value(tbl->keyName()).toString();
-
-            // find the every element with display set false (assumed children)
-            query.bindValue(":name", name);
-            query.bindValue(":boolean", Database::dbFalse());
-
-            if ( !query.exec() ) {
-               throw QString("%1 %2").arg(query.lastQuery()).arg(query.lastError().text());
-            }
-            // Postgres uses a more verbose upsert syntax. I don't like this, but
-            // I'm not seeing a better way yet.
-            while (query.next()) {
-               QString childID = query.record().value(tbl->keyName()).toString();
-               switch( Database::dbType() ) {
-                  case Database::PGSQL:
-                     //  INSERT INTO [child table] (parent_id, child_id) VALUES (:parentid, child_id) ON CONFLICT(child_id) DO UPDATE set parent_id = EXCLUDED.parent_id
-                     queryString = QString("INSERT INTO %1 (%2, %3) VALUES (%4, %5) ON CONFLICT(%3) DO UPDATE set %2 = EXCLUDED.%2")
-                           .arg(this->dbDefn.childTableName((table)))
-                           .arg(cld->parentIndexName())
-                           .arg(cld->childIndexName())
-                           .arg(parentID)
-                           .arg(childID);
-                     break;
-                  default:
-                     // insert or replace into [child table] (parent_id, child_id) values (:parentid,:childid)
-                     queryString = QString("INSERT OR REPLACE INTO %1 (%2, %3) VALUES (%4, %5)")
-                                 .arg(this->dbDefn.childTableName(table))
-                                 .arg(cld->parentIndexName())
-                                 .arg(cld->childIndexName())
-                                 .arg(parentID)
-                                 .arg(childID);
-               }
-               qDebug() << Q_FUNC_INFO << "UPSERT:" << queryString;
-               QSqlQuery insertq( queryString, database.sqlDatabase() );
-               if ( !insertq.exec() ) {
-                  throw QString("%1 %2").arg(insertq.lastQuery()).arg(insertq.lastError().text());
-               }
-            }
-         }
-      }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         abort();
-      }
-
-      return;
-   }
-
-   // populate ingredient tables
-   // Runs populateChildTablesByName for each
-   void populateChildTablesByName(Database & database) {
-
-      try {
-         // I really dislike this. It counts as spooky action at a distance, but
-         // the populateChildTablesByName methods need these hashes populated
-         // early and there is no easy way to untangle them. Yes, this results in
-         // the work being done twice. Such is life.
-         populateChildTablesByName(database, DatabaseConstants::FERMTABLE);
-         populateChildTablesByName(database, DatabaseConstants::HOPTABLE);
-         populateChildTablesByName(database, DatabaseConstants::MISCTABLE);
-         populateChildTablesByName(database, DatabaseConstants::YEASTTABLE);
-      }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-         throw;
-      }
-      return;
-   }
-*/
    Database::DbType dbType;
-   DatabaseSchema dbDefn;
    QString dbConName;
 
    bool loaded;
@@ -635,7 +486,6 @@ public:
 
 
 Database::Database(Database::DbType dbType) : pimpl{ new impl{dbType} } {
-   //.setUndoLimit(100);
    return;
 }
 
@@ -735,7 +585,7 @@ bool Database::load() {
    this->pimpl->schemaUpdated=false;
    this->pimpl->loadWasSuccessful = false;
 
-   if ( Database::dbType() == Database::PGSQL ) {
+   if (this->dbType() == Database::PGSQL ) {
       dbIsOpen = this->pimpl->loadPgSQL(*this);
    }
    else {
@@ -752,7 +602,7 @@ bool Database::load() {
 
    // This should work regardless of the db being used.
    if( this->pimpl->createFromScratch ) {
-      bool success = DatabaseSchemaHelper::create(*this, sqldb, &this->pimpl->dbDefn, Database::dbType());
+      bool success = DatabaseSchemaHelper::create(*this, sqldb);
       if( !success ) {
          qCritical() << "DatabaseSchemaHelper::create() failed";
          return false;
@@ -775,11 +625,16 @@ bool Database::load() {
       return false;
    }
 
+   this->pimpl->loadWasSuccessful = true;
+   return this->pimpl->loadWasSuccessful;
+}
+
+void Database::checkForNewDefaultData() {
    // See if there are new ingredients that we need to merge from the data-space db.
    // Don't do this if we JUST copied the dataspace database.
    if (dataDbFile.fileName() != dbFile.fileName() &&
        !Brewken::userDatabaseDidNotExist &&
-       QFileInfo(dataDbFile).lastModified() > Brewken::lastDbMergeRequest) {
+       QFileInfo(dataDbFile).lastModified() > Database::lastDbMergeRequest) {
       if( Brewken::isInteractive() &&
          QMessageBox::question(
             nullptr,
@@ -790,15 +645,40 @@ bool Database::load() {
          )
          == QMessageBox::Yes
       ) {
-         updateDatabase(dataDbFile.fileName());
+         QString userMessage;
+         QTextStream userMessageAsStream{&userMessage};
+
+         bool succeeded = DatabaseSchemaHelper::updateDatabase(userMessageAsStream);
+
+         QString messageBoxTitle{succeeded ? tr("Success!") : tr("ERROR")};
+         QString messageBoxText;
+         if (succeeded) {
+            // The userMessage parameter will tell how many files were imported/exported and/or skipped (as duplicates)
+            // Do separate messages for import and export as it makes translations easier
+            messageBoxText = QString(
+               tr("Successfully read new default data\n\n%1").arg(userMessage)
+            );
+         } else {
+            messageBoxText = QString(
+               tr("Unable to import new default data\n\n"
+                  "%1\n\n"
+                  "Log file may contain more details.").arg(userMessage)
+            );
+            qCritical() << Q_FUNC_INFO << userMessage;
+         }
+         qDebug() << Q_FUNC_INFO << "Message box text : " << messageBoxText;
+         QMessageBox msgBox{succeeded ? QMessageBox::Information : QMessageBox::Critical,
+                            messageBoxTitle,
+                            messageBoxText};
+         msgBox.exec();
       }
 
       // Update this field.
-      Brewken::lastDbMergeRequest = QDateTime::currentDateTime();
+      Database::lastDbMergeRequest = QDateTime::currentDateTime();
    }
-   this->pimpl->loadWasSuccessful = true;
-   return this->pimpl->loadWasSuccessful;
+   return;
 }
+
 
 bool Database::createBlank(QString const& filename)
 {
@@ -812,7 +692,7 @@ bool Database::createBlank(QString const& filename)
          return false;
       }
 
-      DatabaseSchemaHelper::create(*this, sqldb,&this->pimpl->dbDefn,Database::SQLITE);
+      DatabaseSchemaHelper::create(Database::instance(Database::SQLITE), sqldb);
 
       sqldb.close();
    } // sqldb gets destroyed as it goes out of scope before removeDatabase()
@@ -853,7 +733,7 @@ void Database::unload() {
 
    qDebug() << Q_FUNC_INFO << "DB connections all closed";
 
-   if (this->pimpl->loadWasSuccessful && Database::dbType() == Database::SQLITE ) {
+   if (this->pimpl->loadWasSuccessful && this->dbType() == Database::SQLITE ) {
       dbFile.close();
       this->pimpl->automaticBackup();
    }
@@ -873,7 +753,7 @@ Database& Database::instance(Database::DbType dbType) {
    // should probably change that if we end up supporting more.
    //
    if (dbType == Database::NODB) {
-      dbType = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+      dbType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
    }
 
    //
@@ -949,32 +829,21 @@ bool Database::restoreFromFile(QString newDbFileStr)
    return success;
 }
 
-// .:TBD:. Discuss with other folks whether this is worth fixing
-void Database::updateDatabase(QString const& filename) {
-   DatabaseSchemaHelper::updateDatabase(*this, filename);
-   return;
-}
-
-
 bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
-                              QString const& database, QString const& username, QString const& password)
-{
+                                  QString const& database, QString const& username, QString const& password) {
    QString driverName;
-   QSqlDatabase connDb;
-   bool results;
 
-   switch( testDb )
-   {
+   switch (testDb) {
       case Database::PGSQL:
          driverName = "QPSQL";
          break;
       default:
          driverName = "QSQLITE";
    }
-   connDb = QSqlDatabase::addDatabase(driverName,"testConnDb");
 
-   switch( testDb )
-   {
+   QSqlDatabase connDb = QSqlDatabase::addDatabase(driverName,"testConnDb");
+
+   switch (testDb) {
       case Database::PGSQL:
          connDb.setHostName(hostname);
          connDb.setPort(portnum);
@@ -986,14 +855,17 @@ bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostna
          connDb.setDatabaseName(hostname);
    }
 
-   results = connDb.open();
+   bool results = connDb.open();
 
-   if ( results )
+   if ( results ) {
       connDb.close();
-   else
-      QMessageBox::critical(nullptr, tr("Connection failed"),
-               QString(tr("Could not connect to %1 : %2")).arg(hostname).arg(connDb.lastError().text())
-            );
+   } else {
+      QMessageBox::critical(
+         nullptr,
+         tr("Connection failed"),
+         QString(tr("Could not connect to %1 : %2")).arg(hostname).arg(connDb.lastError().text())
+      );
+   }
    return results;
 
 }
@@ -1006,7 +878,7 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
 {
    QSqlDatabase connectionNew;
 
-   Database::DbType oldType = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+   Database::DbType oldType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
 
    try {
       if ( newType == Database::NODB ) {
@@ -1037,17 +909,13 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
    }
 }
 
-DatabaseSchema & Database::getDatabaseSchema() {
-   return this->pimpl->dbDefn;
-}
-
 Database::DbType Database::dbType() {
    return this->pimpl->dbType;
 }
 
 void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DbType type) {
    if (type == Database::NODB) {
-      type = Database::dbType();
+      type = this->dbType();
    }
 
    switch( type ) {
@@ -1081,7 +949,7 @@ QString Database::dbBoolean(bool flag, Database::DbType type) {
    QString retval;
 
    if (type == Database::NODB) {
-      type = static_cast<Database::DbType>(PersistentSettings::value("dbType", Database::SQLITE).toInt());
+      type = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
    }
 
    switch( type ) {
@@ -1118,3 +986,5 @@ char const * Database::getDbNativeIntPrimaryKeyModifier(Database::DbType type) c
 char const * Database::getSqlToAddColumnAsForeignKey(Database::DbType type) const {
    return getDbNativeName(sqlToAddColumnAsForeignKey, this->pimpl->dbType);
 }
+
+QDateTime Database::lastDbMergeRequest = QDateTime::fromString("1986-02-24T06:00:00", Qt::ISODate);

@@ -19,6 +19,8 @@
  */
 #include "database/DatabaseSchemaHelper.h"
 
+#include <algorithm> // For std::sort and std::set_difference
+
 #include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
@@ -26,24 +28,22 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QString>
+#include <QTextStream>
 #include <QVariant>
 
 #include "Brewken.h"
 #include "database/Database.h"
-#include "database/DatabaseSchema.h"
 #include "database/DbTransaction.h"
-#include "database/BrewNoteSchema.h"
 #include "database/ObjectStoreWrapper.h"
-#include "database/SettingsSchema.h"
-#include "database/TableSchemaConst.h"
-#include "database/TableSchema.h"
-#include "database/WaterSchema.h"
 #include "model/BrewNote.h"
+#include "model/Recipe.h"
 #include "model/Water.h"
+#include "xml/BeerXml.h"
 
 int const DatabaseSchemaHelper::dbVersion = 10;
 
 namespace {
+   char const * const FOLDER_FOR_SUPPLIED_RECIPES = "brewken";
 
    //! \brief converts sqlite values (mostly booleans) into something postgres wants
    QVariant convertValue(Database::DbType newType, QSqlField field) {
@@ -685,7 +685,7 @@ namespace {
 bool DatabaseSchemaHelper::upgrade = false;
 // Default namespace hides functions from everything outside this file.
 
-bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, DatabaseSchema* defn, Database::DbType dbType ) {
+bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection) {
    //--------------------------------------------------------------------------
    // NOTE: if you edit this function, increment dbVersion and edit
    // migrateNext() appropriately.
@@ -715,7 +715,7 @@ bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection, 
 
    // Create the settings table manually, since it's only used in this file
    QVector<QueryAndParameters> const setUpQueries{
-      {QString("CREATE TABLE settings (id %1 %2, repopulatechildrenonnextstart %1, version %1)").arg(database.getDbNativeTypeName<int>(dbType), database.getDbNativeIntPrimaryKeyModifier(dbType))},
+      {QString("CREATE TABLE settings (id %1 %2, repopulatechildrenonnextstart %1, version %1)").arg(database.getDbNativeTypeName<int>(), database.getDbNativeIntPrimaryKeyModifier())},
       {QString("INSERT INTO settings (repopulatechildrenonnextstart, version) VALUES (?, ?)"), {QVariant(true), QVariant(dbVersion)}}
 
    };
@@ -816,8 +816,6 @@ void DatabaseSchemaHelper::copyDatabase(Database::DbType oldType, Database::DbTy
    }
 
    //
-   // .:TODO-DATABASE:. We need to have different instance of Database for each DbType
-   //
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().  (It will also turn foreign keys back on either way -- whether the
@@ -900,232 +898,64 @@ void DatabaseSchemaHelper::copyDatabase(Database::DbType oldType, Database::DbTy
    return;
 }
 
-namespace {
-   // updateDatabase is ugly enough. This takes 20-ish lines out of it that do
-   // not really enhance understanding
-   void bindForUpdateDatabase(TableSchema* tbl, QSqlQuery qry, QSqlRecord rec) {
-      foreach( QString prop, tbl->allProperties() ) {
-         // we need to specify the database here. The default database might be
-         // postgres, but the new ingredients are always shipped in sqlite
-         QString col = tbl->propertyToColumn(prop, Database::SQLITE);
-         QVariant bindVal;
 
-         // deleted is always false, but spell 'false' properly for
-         // the database
-         if ( prop == PropertyNames::NamedEntity::deleted ) {
-            bindVal = QVariant(false);
-         }
-         // boolean values suck, so make sure we spell them properly
-         else if ( tbl->propertyColumnType(prop) == "boolean" ) {
-            // makes the lines short enough
-            bindVal = QVariant(rec.value(col).toBool());
-         }
-         // otherwise, just grab the value
-         else {
-            bindVal = rec.value(col);
-         }
-         // and bind it.
-         qry.bindValue(QString(":%1").arg(prop), bindVal);
-      }
-   }
-}
-
-/*******
+/**
+ * \brief Imports any new default data to the database.  This is what gets called when the user responds Yes to the
+ *        dialog saying "There are new ingredients, would you like to merge?"
  *
- * I will be using hop as my example, because it is easy to type.  You should
- * be able to substitute any of the base tables and it will work the same.
+ *        In older versions of the software, default data was copied from a SQLite database file (default_db.sqlite)
+ *        into the user's database (which could be SQLite or PostgreSQL), and special tables (bt_hop, bt_fermentable,
+ *        etc) kept track of which records in the user's database had been copies from the default database.  This
+ *        served two purposes.  One was to know which default records were present in the user's database, so we could
+ *        copy across any new ones when the default data set is augmented.  The other was to allow us to attempt to
+ *        modify the user's records when corresponding records in the default data set were changed (typically to make
+ *        corrections).  However, it's risky to modify the user's existing data because you might overwrite changes
+ *        they've made themselves since the record was imported.  So we stopped trying to do that, and used the special
+ *        tables just to track which default records had and hadn't yet been imported.
  *
- * We maintain a table named bt_hop. The bt_hop table has two columns: id and
- * hop_id. id is the standard autosequence we use. hop_id is the id of a row
- * in the hop table for a hop that we shipped. In the default database, the
- * two values will almost always be equal. In all databases, hop_id will point
- * to a parent hop.
- *
- * When a new hop is added to the default-db.sqlite, a new row has to be
- * inserted into bt_hop pointing to the new hop.
- *
- * When the user gets the dialog saying "There are new ingredients, would you
- * like to merge?", updateDatabase() is called and it works like this:
- *     1. We get all the rows from bt_hop from default_db.sqlite
- *     2. We search for each bt.id in the user's database.
- *     3. If we do not find the bt.id, it means the hop is new to the user and
- *        we need to add it to their database.
- *     4. We do the necessary binding and inserting to add the new hop to the
- *        user's database
- *     5. We put a new entry in the user's bt_hop table, pointing to the
- *        record we just added.
- *     6. Repeat steps 3 - 5 until we run out of rows.
- *
- * It is really important that we DO NOTHING if the user already has the hop.
- * We should NEVER over write user data without explicit permission. I have no
- * interest in working up a diff mechanism, a display mechanism, etc. to show
- * the user what would be done. For now, then, we don't over write any
- * existing records.
- *
- * A few other notes. Any use of TableSchema on the default_db.sqlite must
- * specify the database type as SQLite. We cannot be sure the user's database
- * is SQLite. There's no real difference yet, but I am considering tackling
- * mysql again.
+ *        What we do now is store the default data in BeerXML.  (We will likely switch to storing in BeerJSON once we
+ *        support that.)  Besides simplifying this function, this has a couple of advantages:
+ *           - Being a text rather than a binary format, it's much easier in the source code repository to make (and
+ *             see) changes to default data.
+ *           - Our XML import code already does duplicate detection, so don't need the special tracking tables any more.
+ *             We just try to import all the default data, and any records that the user already has will be skipped
+ *             over.
  */
-void DatabaseSchemaHelper::updateDatabase(Database & database, QString const& filename) {
-   // In the naming here "old" means the user's database, and
-   // "new" means the database coming from 'filename'.
+bool DatabaseSchemaHelper::updateDatabase(QTextStream & userMessage) {
 
-   QVariant btid, newid, oldid;
+   //
+   // We'd like to put any newly-imported default Recipes in the same folder as the other default ones.  To do this, we
+   // first make a note of which Recipes exist already, then, after the import, any new ones need to go in the default
+   // folder.
+   //
+   QList<Recipe *> allRecipesBeforeImport = ObjectStoreWrapper::getAllRaw<Recipe>();
+   qDebug() << Q_FUNC_INFO << allRecipesBeforeImport.size() << "Recipes before import";
 
+   QString const defaultDataFileName = Brewken::getResourceDir().filePath("DefaultData.xml");
+   bool succeeded = BeerXML::getInstance().importFromXML(defaultDataFileName, userMessage);
 
+   if (succeeded) {
+      //
+      // Now see what Recipes exist that weren't there before the import
+      //
+      QList<Recipe *> allRecipesAfterImport = ObjectStoreWrapper::getAllRaw<Recipe>();
+      qDebug() << Q_FUNC_INFO << allRecipesAfterImport.size() << "Recipes after import";
 
-   // Start transaction
-   // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
-   // having called dbTransaction.commit().
-   QSqlDatabase connectionOld = database.sqlDatabase();
-   DbTransaction dbTransaction{database, connectionOld};
-
-   try {
-      // connect to the new database
-      QString newCon("newSqldbCon");
-      QSqlDatabase newSqldb = QSqlDatabase::addDatabase("QSQLITE", newCon);
-      newSqldb.setDatabaseName(filename);
-      if( ! newSqldb.open() ) {
-         QMessageBox::critical(nullptr,
-                              QObject::tr("Database Failure"),
-                              QString(QObject::tr("Failed to open the database '%1'.").arg(filename)));
-         throw QString("Could not open %1 for reading.\n%2").arg(filename).arg(newSqldb.lastError().text());
-      }
-
-      // For each (id, hop_id) in newSqldb.bt_hop...
-
-      // SELECT * FROM newSqldb.hop WHERE id=<hop_id>
-
-      // INSERT INTO hop SET name=:name, alpha=:alpha,... WHERE id=(SELECT hop_id FROM bt_hop WHERE id=:bt_id)
-
-      // Bind :bt_id from <id>
-      // Bind :name, :alpha, ..., from newRecord.
-
-      // Execute.
-      DatabaseSchema & dbDefn = database.getDatabaseSchema();
-      for ( TableSchema* tbl : dbDefn.baseTables() )
-      {
-         TableSchema* btTbl = dbDefn.btTable(tbl->dbTable());
-         // skip any table that doesn't have a bt_ table
-         if ( btTbl == nullptr ) {
-            continue;
-         }
-
-         // build and prepare all the queries once per table.
-
-         // get the new hop referenced by bt_hop.hop_id
-         QSqlQuery qNewIng(newSqldb);
-         QString   newIngString = QString("SELECT * FROM %1 WHERE %2=:id")
-                                    .arg(tbl->tableName())
-                                    .arg(tbl->keyName(Database::SQLITE));
-         qNewIng.prepare(newIngString);
-         qDebug() << Q_FUNC_INFO << newIngString;
-
-         // get the same row from the old bt_hop.
-         QSqlQuery qOldBtIng(connectionOld);
-         QString   oldBtIngString = QString("SELECT * FROM %1 WHERE %2=:btid")
-                                    .arg(btTbl->tableName())
-                                    .arg(btTbl->keyName());
-         qOldBtIng.prepare(oldBtIngString);
-         qDebug() << Q_FUNC_INFO << oldBtIngString;
-
-         // insert the new bt_hop row into the old database.
-         QSqlQuery qOldBtIngInsert(connectionOld);
-         QString   oldBtIngInsert = QString("INSERT INTO %1 (%2,%3) values (:id,:%3)")
-                                          .arg(btTbl->tableName())
-                                          .arg(btTbl->keyName())
-                                          .arg(btTbl->childIndexName());
-         qOldBtIngInsert.prepare(oldBtIngInsert);
-         qDebug() << Q_FUNC_INFO << oldBtIngInsert;
-
-         // Create in insert statement for new records. We will bind this
-         // later
-         QSqlQuery qInsertOldIng(connectionOld);
-         QString   insertString = tbl->generateInsertProperties();
-         qInsertOldIng.prepare(insertString);
-         qDebug() << Q_FUNC_INFO << insertString;
-
-         // get the bt_hop rows from the new database
-         QSqlQuery qNewBtIng(newSqldb);
-         QString   newBtIngString = QString("SELECT * FROM %1").arg(btTbl->tableName());
-         qDebug() << Q_FUNC_INFO << newBtIngString;
-
-         if ( ! qNewBtIng.exec(newBtIngString) ) {
-            throw QString("Could not find btID (%1): %2 %3")
-                     .arg(btid.toInt())
-                     .arg(qNewBtIng.lastQuery())
-                     .arg(qNewBtIng.lastError().text());
-         }
-
-         // start processing the ingredients from the new db
-         while ( qNewBtIng.next() ) {
-
-            // get the bt.id and bt.hop_id. Note we specify the db type here
-            btid  = qNewBtIng.record().value(btTbl->keyName(Database::SQLITE));
-            newid = qNewBtIng.record().value(btTbl->childIndexName(Database::SQLITE));
-
-            // bind the id to find the hop in the new db
-            qNewIng.bindValue(":id", newid);
-
-            // if we can't execute the search
-            if ( ! qNewIng.exec() ) {
-               throw QString("Could not retrieve new ingredient: %1 %2")
-                        .arg(qNewIng.lastQuery())
-                        .arg(qNewIng.lastError().text());
-            }
-
-            // if we can't read/find the hop
-            if ( ! qNewIng.next() ) {
-               throw QString("Could not advance query: %1 %2")
-                        .arg(qNewIng.lastQuery())
-                        .arg(qNewIng.lastError().text());
-            }
-
-            // Find the bt_hop record in the old database.
-            qOldBtIng.bindValue( ":btid", btid );
-            if ( ! qOldBtIng.exec() ) {
-               throw QString("Could not find btID (%1): %2 %3")
-                        .arg(btid.toInt())
-                        .arg(qOldBtIng.lastQuery())
-                        .arg(qOldBtIng.lastError().text());
-            }
-
-            // If the new bt_hop.id isn't in the old bt_hop
-            if( ! qOldBtIng.next() ) {
-               // bind the values from the new hop to the insert query
-               bindForUpdateDatabase(tbl,qInsertOldIng,qNewIng.record());
-               // execute the insert
-               if ( ! qInsertOldIng.exec() ) {
-                  throw QString("Could not insert new btID (%1): %2 %3")
-                           .arg(oldid.toInt())
-                           .arg(qInsertOldIng.lastQuery())
-                           .arg(qInsertOldIng.lastError().text());
-               }
-
-               // get the id from the last insert
-               oldid = qInsertOldIng.lastInsertId().toInt();
-
-               // Insert an entry into the old bt_hop table.
-               qOldBtIngInsert.bindValue( ":id", btid);
-               qOldBtIngInsert.bindValue( QString(":%1").arg(btTbl->childIndexName()), oldid);
-
-               if ( ! qOldBtIngInsert.exec() ) {
-                  throw QString("Could not insert btID (%1): %2 %3")
-                           .arg(btid.toInt())
-                           .arg(qOldBtIngInsert.lastQuery())
-                           .arg(qOldBtIngInsert.lastError().text());
-               }
-            }
-         }
+      //
+      // Once the lists are sorted, finding the difference is just a library call
+      // (Note that std::set_difference requires the longer list as its first parameter pair.)
+      //
+      std::sort(allRecipesBeforeImport.begin(), allRecipesBeforeImport.end());
+      std::sort(allRecipesAfterImport.begin(), allRecipesAfterImport.end());
+      QList<Recipe *> newlyImportedRecipes;
+      std::set_difference(allRecipesAfterImport.begin(), allRecipesAfterImport.end(),
+                          allRecipesBeforeImport.begin(), allRecipesBeforeImport.end(),
+                          std::back_inserter(newlyImportedRecipes));
+      qDebug() << Q_FUNC_INFO << newlyImportedRecipes.size() << "newly imported Recipes";
+      for (auto recipe : newlyImportedRecipes) {
+         recipe->setFolder(FOLDER_FOR_SUPPLIED_RECIPES);
       }
    }
-   catch (QString e) {
-      qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
-      abort();
-   }
 
-   // If we made it this far, everything was OK and we can commit the transaction
-   dbTransaction.commit();
-   return;
+   return succeeded;
 }

@@ -22,6 +22,7 @@
 
 #include "Brewken.h"
 #include "config.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Yeast.h"
 #include "Unit.h"
 
@@ -76,7 +77,8 @@ void YeastEditor::save()
    y->setNotes(textEdit_notes->toPlainText());
 
    if ( y->cacheOnly() ) {
-      y->insertInDatabase();
+      ObjectStoreWrapper::insert(*y);
+      y->setCacheOnly(false);
    }
    // do this late to make sure we've the row in the inventory table
    y->setInventoryQuanta( lineEdit_inventory->text().toInt() );

@@ -99,7 +99,7 @@ class Brewken : public QObject
    friend class RecipeFormatter;
    friend class Unit;
    friend class Database;
-   friend class BeerXML;
+
    friend class MainWindow;
    friend class Testing;
 
@@ -277,7 +277,7 @@ public:
    static MainWindow* mainWindow();
 
 private:
-   static MainWindow* _mainWindow;
+   static MainWindow* m_mainWindow;
    static QDomDocument* optionsDoc;
    static QTranslator* defaultTrans;
    static QTranslator* btTrans;
@@ -289,11 +289,6 @@ private:
 
    //! \brief If this option is false, do not bother the user about new versions.
    static bool checkVersion;
-
-   /*! Stores the date that we last asked the user to merge the
-    *  data-space database to the user-space database.
-    */
-   static QDateTime lastDbMergeRequest;
 
    // Options to be edited ONLY by the OptionDialog============================
    // Whether or not to display plato instead of SG.

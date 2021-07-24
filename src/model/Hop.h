@@ -29,24 +29,31 @@
 
 #include "model/NamedEntityWithInventory.h"
 
-namespace PropertyNames::Hop { static char const * const alpha_pct = "alpha_pct"; /* previously kpropAlpha */ }
-namespace PropertyNames::Hop { static char const * const amount_kg = "amount_kg"; /* previously kpropAmountKg */ }
-namespace PropertyNames::Hop { static char const * const beta_pct = "beta_pct"; /* previously kpropBeta */ }
-namespace PropertyNames::Hop { static char const * const caryophyllene_pct = "caryophyllene_pct"; /* previously kpropCaryophyllene */ }
-namespace PropertyNames::Hop { static char const * const cohumulone_pct = "cohumulone_pct"; /* previously kpropCohumulone */ }
-namespace PropertyNames::Hop { static char const * const form = "form"; /* previously kpropForm */ }
-namespace PropertyNames::Hop { static char const * const formString = "formString"; /* previously kpropFormString */ }
-namespace PropertyNames::Hop { static char const * const hsi_pct = "hsi_pct"; /* previously kpropHSI */ }
-namespace PropertyNames::Hop { static char const * const humulene_pct = "humulene_pct"; /* previously kpropHumulene */ }
-namespace PropertyNames::Hop { static char const * const myrcene_pct = "myrcene_pct"; /* previously kpropMyrcene */ }
-namespace PropertyNames::Hop { static char const * const notes = "notes"; /* previously kpropNotes */ }
-namespace PropertyNames::Hop { static char const * const origin = "origin"; /* previously kpropOrigin */ }
-namespace PropertyNames::Hop { static char const * const substitutes = "substitutes"; /* previously kpropSubstitutes */ }
-namespace PropertyNames::Hop { static char const * const time_min = "time_min"; /* previously kpropTime */ }
-namespace PropertyNames::Hop { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
-namespace PropertyNames::Hop { static char const * const type = "type"; /* previously kpropType */ }
-namespace PropertyNames::Hop { static char const * const useString = "useString"; /* previously kpropUseString */ }
-namespace PropertyNames::Hop { static char const * const use = "use"; /* previously kpropUse */ }
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Hop {static char const * const property = #property; }
+AddPropertyName(alpha_pct)
+AddPropertyName(amount_kg)
+AddPropertyName(beta_pct)
+AddPropertyName(caryophyllene_pct)
+AddPropertyName(cohumulone_pct)
+AddPropertyName(form)
+AddPropertyName(formString)
+AddPropertyName(hsi_pct)
+AddPropertyName(humulene_pct)
+AddPropertyName(myrcene_pct)
+AddPropertyName(notes)
+AddPropertyName(origin)
+AddPropertyName(substitutes)
+AddPropertyName(time_min)
+AddPropertyName(typeString)
+AddPropertyName(type)
+AddPropertyName(useString)
+AddPropertyName(use)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /*!
  * \class Hop

@@ -29,6 +29,7 @@
 #include "Brewken.h"
 #include "BtDigitWidget.h"
 #include "ColorMethods.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
@@ -499,11 +500,13 @@ void WaterDialog::saveAndClose()
 {
    m_salt_table_model->saveAndClose();
    if ( m_base != nullptr && m_base->cacheOnly() ) {
-      m_base->insertInDatabase();
+      ObjectStoreWrapper::insert(*m_base);
+      m_base->setCacheOnly(false);
       this->m_rec->add(this->m_base);
    }
    if ( m_target != nullptr && m_target->cacheOnly() ) {
-      m_target->insertInDatabase();
+      ObjectStoreWrapper::insert(*m_target);
+      m_target->setCacheOnly(false);
       this->m_rec->add(this->m_target);
    }
 

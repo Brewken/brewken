@@ -24,6 +24,7 @@
 
 #include "Brewken.h"
 #include "config.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Misc.h"
 #include "Unit.h"
 
@@ -70,7 +71,8 @@ void MiscEditor::save()
    m->setNotes( textEdit_notes->toPlainText() );
 
    if ( m->cacheOnly() ) {
-      m->insertInDatabase();
+      ObjectStoreWrapper::insert(*m);
+      m->setCacheOnly(false);
    }
    // do this late to make sure we've the row in the inventory table
    m->setInventoryAmount(lineEdit_inventory->toSI());

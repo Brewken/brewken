@@ -17,15 +17,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include "WaterEditor.h"
 
 #include <QDebug>
 #include <QInputDialog>
 
-#include "WaterEditor.h"
-#include "database/WaterSchema.h"
-#include "database/TableSchemaConst.h"
-#include "model/Water.h"
 #include "Brewken.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Water.h"
 
 WaterEditor::WaterEditor(QWidget *parent) : QDialog(parent), obs{nullptr} {
    setupUi(this);
@@ -182,7 +181,8 @@ void WaterEditor::saveAndClose()
 
    if (this->obs->cacheOnly()) {
       qDebug() << Q_FUNC_INFO << "writing " << this->obs->name();
-      this->obs->insertInDatabase();
+      ObjectStoreWrapper::insert(*this->obs);
+      this->obs->setCacheOnly(false);
    }
 
    setVisible(false);

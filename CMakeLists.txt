@@ -340,6 +340,7 @@ SET( Brewken_DOCS
 # List of data files to be installed.
 SET( Brewken_DATA
      ${DATADIR}/default_db.sqlite
+     ${DATADIR}/DefaultData.xml
 )
 
 # Desktop files to install.

@@ -122,6 +122,11 @@ void Inventory::setDisplay(bool var) {
    return;
 }
 
+void Inventory::hardDeleteOwnedEntities() {
+   qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "owns no other entities";
+   return;
+}
+
 
 char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
 char const * InventoryHop::getIngredientClass() const         { return "Hop"; }

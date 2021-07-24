@@ -28,16 +28,24 @@
 #include <QSqlRecord>
 
 #include "model/NamedEntityWithInventory.h"
-namespace PropertyNames::Misc { static char const * const amount = "amount"; /* previously kpropAmount */ }
-namespace PropertyNames::Misc { static char const * const amountIsWeight = "amountIsWeight"; /* previously kpropAmtIsWgt */ }
-namespace PropertyNames::Misc { static char const * const amountType = "amountType"; }
-namespace PropertyNames::Misc { static char const * const notes = "notes"; /* previously kpropNotes */ }
-namespace PropertyNames::Misc { static char const * const time = "time"; /* previously kpropMiscTime */ }
-namespace PropertyNames::Misc { static char const * const typeString = "typeString"; /* previously kpropTypeString */ }
-namespace PropertyNames::Misc { static char const * const type = "type"; /* previously kpropType */ }
-namespace PropertyNames::Misc { static char const * const useFor = "useFor"; /* previously kpropUseFor */ }
-namespace PropertyNames::Misc { static char const * const useString = "useString"; /* previously kpropUseString */ }
-namespace PropertyNames::Misc { static char const * const use = "use"; /* previously kpropUse */ }
+
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::Misc {static char const * const property = #property; }
+AddPropertyName(amount)
+AddPropertyName(amountIsWeight)
+AddPropertyName(amountType)
+AddPropertyName(notes)
+AddPropertyName(time)
+AddPropertyName(typeString)
+AddPropertyName(type)
+AddPropertyName(useFor)
+AddPropertyName(useString)
+AddPropertyName(use)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
 
 /*!
  * \class Misc

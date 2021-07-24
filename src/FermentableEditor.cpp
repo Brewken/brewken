@@ -25,6 +25,7 @@
 
 #include "Brewken.h"
 #include "config.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "Unit.h"
 
@@ -78,7 +79,8 @@ void FermentableEditor::save()
    obsFerm->setNotes( textEdit_notes->toPlainText() );
 
    if ( obsFerm->cacheOnly() ) {
-      obsFerm->insertInDatabase();
+      ObjectStoreWrapper::insert(*obsFerm);
+      obsFerm->setCacheOnly(false);
    }
 
    // I could do this in the database code, but it makes sense to me here.

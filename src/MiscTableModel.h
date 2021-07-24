@@ -35,7 +35,6 @@
 
 #include "Unit.h"
 #include "Brewken.h"
-#include "database/TableSchemaConst.h"
 
 
 // Forward declarations.

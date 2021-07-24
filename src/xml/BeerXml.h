@@ -19,26 +19,9 @@
 
 #include <memory> // For PImpl
 
-#include <QDomDocument>
-#include <QDomNode>
+#include <QFile>
 #include <QString>
-#include <QVariant>
-#include <QObject>
-
-#include "database/DatabaseSchema.h"
-
-class BrewNote;
-class Equipment;
-class Fermentable;
-class Hop;
-class Instruction;
-class Mash;
-class MashStep;
-class Misc;
-class Recipe;
-class Style;
-class Water;
-class Yeast;
+#include <QTextStream>
 
 /*!
  * \class BeerXML
@@ -61,12 +44,12 @@ public:
     * \brief Creates a blank BeerXML document in the supplied file (which the caller should have opened for writing
     *        already).  This can then be supplied to subsequent calls to add BeerXML for Recipes, Hops, etc.
     */
-   void createXmlFile(QFile & outFile);
+   void createXmlFile(QFile & outFile) const;
 
    /**
     * \brief Write a list of objects to the supplied file
     */
-   template<class NE> void toXml(QList<NE *> nes, QFile & outFile);
+   template<class NE> void toXml(QList<NE *> & nes, QFile & outFile) const;
 
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -82,8 +65,6 @@ private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
-
-   DatabaseSchema & m_tables;
 
    /**
     * Private constructor as singleton

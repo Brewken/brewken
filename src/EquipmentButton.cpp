@@ -58,17 +58,16 @@ void EquipmentButton::setEquipment(Equipment* equip)
       setText("");
 }
 
-void EquipmentButton::equipChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-   if( propName == PropertyNames::NamedEntity::name )
-      setText( val.toString() );
+void EquipmentButton::equipChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::NamedEntity::name) {
+      this->setText( val.toString() );
+   }
+   return;
 }
 
-void EquipmentButton::recChanged(QMetaProperty prop, QVariant val)
-{
-   QString propName(prop.name());
-
-   if( propName == "equipment" )
-      setEquipment( qobject_cast<Equipment*>(NamedEntity::extractPtr(val)) );
+void EquipmentButton::recChanged(QMetaProperty prop, QVariant val) {
+   if (prop.name() == PropertyNames::Recipe::equipment) {
+      this->setEquipment(val.value<Equipment *>());
+   }
+   return;
 }

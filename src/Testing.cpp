@@ -30,7 +30,7 @@
 #include <QString>
 #include <QtTest/QtTest>
 
-#include "database/Database.h"
+#include "database/ObjectStoreWrapper.h"
 #include "Logging.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -124,7 +124,8 @@ void Testing::initTestCase() {
    // Cascade pellets at 4% AA
 ///   cascade_4pct = Database::instance().newHop();
    this->cascade_4pct = std::make_shared<Hop>();
-   this->cascade_4pct->insertInDatabase();
+   ObjectStoreWrapper::insert(*this->cascade_4pct);
+   this->cascade_4pct->setCacheOnly(false);
    this->cascade_4pct->setName("Cascade 4pct");
    this->cascade_4pct->setAlpha_pct(4.0);
    this->cascade_4pct->setUse(Hop::Boil);

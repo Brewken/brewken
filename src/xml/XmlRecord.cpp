@@ -17,6 +17,7 @@
 
 #include <QDate>
 #include <QDebug>
+#include <QXmlStreamWriter>
 
 #include <xalanc/XalanDOM/XalanNodeList.hpp>
 #include <xalanc/XPath/NodeRefList.hpp>
@@ -328,6 +329,22 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      }
                      break;
 
+                  case XmlRecord::RequiredConstant:
+                     //
+                     // This is a field that is required to be in the XML, but whose value we don't need (and for which
+                     // we always write a constant value on output).  At the moment it's only needed for the VERSION tag
+                     // in BeerXML.
+                     //
+                     // Note that, because we abuse the propertyName field to hold the default value (ie what we write
+                     // out), we can't carry on to normal processing below.  So jump straight to processing the next
+                     // node in the loop (via continue).
+                     //
+                     qDebug() <<
+                        Q_FUNC_INFO << "Skipping " << this->namedEntityClassName << " node " <<
+                        fieldDefinition->xPath << "=" << value << "(" << fieldDefinition->propertyName <<
+                        ") as not useful";
+                     continue; // NB: _NOT_break here.  We want to jump straight to the next run through the for loop.
+
                   // By default we assume it's a string
                   case XmlRecord::String:
                   default:
@@ -388,6 +405,15 @@ void XmlRecord::constructNamedEntity() {
    return;
 }
 
+int XmlRecord::storeNamedEntityInDb() {
+   Q_ASSERT(false && "Trying to store named entity for base record");
+   return -1;
+}
+
+void XmlRecord::deleteNamedEntityFromDb() {
+   Q_ASSERT(false && "Trying to delete named entity for base record");
+   return;
+}
 
 XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(NamedEntity * containingEntity,
                                                              QTextStream & userMessage,
@@ -397,13 +423,19 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(NamedEntity * conta
          Q_FUNC_INFO << "Normalise and store " << this->namedEntityClassName << "(" <<
          this->namedEntity->metaObject()->className() << "):" << this->namedEntity->name();
 
+      //
       // If the object we are reading in is a duplicate of something we already have (and duplicates are not allowed)
       // then skip over this record (and any records it contains).  (This is _not_ an error, so we return true not
       // false in this event.)
+      //
+      // Note, however, that some objects -- in particular those such as Recipe that contain other objects -- need
+      // to be further along in their construction (ie have had all their contained objects added) before we can
+      // determine whether they are duplicates.  This is why we check again, after storing in the DB, below.
+      //
       if (this->isDuplicate()) {
          qDebug() <<
-            Q_FUNC_INFO << "Duplicate " << this->namedEntityClassName << (this->includeInStats ? " will" : " won't") <<
-            " be included in stats";
+            Q_FUNC_INFO << "(Early found) duplicate" << this->namedEntityClassName <<
+            (this->includeInStats ? " will" : " won't") << " be included in stats";
          if (this->includeInStats) {
             stats.skipped(this->namedEntityClassName.toLower());
          }
@@ -417,39 +449,77 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(NamedEntity * conta
       // it if not).
       this->setContainingEntity(containingEntity);
 
-      // Now we're ready to store in the DB, something the NamedEntity knows how to make happen
-      int id = this->namedEntity->insertInDatabase();
+      // Now we're ready to store in the DB
+      int id = this->storeNamedEntityInDb();
       if (id <= 0) {
          userMessage << "Error storing" << this->namedEntity->metaObject()->className() <<
          "in database.  See logs for more details";
          return XmlRecord::Failed;
       }
+   }
 
-      // Once we've stored the object, we no longer have to take responsibility for destroying it because its registry
-      // (currently the Database singleton) will now own it.
-      this->namedEntityRaiiContainer.release();
+   XmlRecord::ProcessingResult processingResult;
 
-      if (this->includeInStats) {
+   //
+   // Finally (well, nearly) orchestrate storing any contained records
+   //
+   // Note, of course, that this still needs to be done, even if nullptr == this->namedEntity, because that just means
+   // we're processing the root node.
+   //
+   if (this->normaliseAndStoreChildRecordsInDb(userMessage, stats)) {
+      //
+      // Now all the processing succeeded, we do that final duplicate check for any complex object such as Recipe that
+      // had to be fully constructed before we could meaningfully check whether it's the same as something we already
+      // have in the object store.
+      //
+      if (nullptr == this->namedEntity) {
+         // Child records OK and no duplicate check needed (root record), which also means no further processing
+         // required
+          return XmlRecord::Succeeded;
+      }
+      processingResult = this->isDuplicate() ? XmlRecord::FoundDuplicate : XmlRecord::Succeeded;
+   } else {
+      // There was a problem with one of our child records
+      processingResult = XmlRecord::Failed;
+   }
+
+   if (nullptr != this->namedEntity) {
+      //
+      // We potentially do stats for everything except failure
+      //
+      if (XmlRecord::FoundDuplicate == processingResult) {
+         qDebug() <<
+            Q_FUNC_INFO << "(Late found) duplicate" << this->namedEntityClassName <<
+            (this->includeInStats ? " will" : " won't") << " be included in stats";
+         if (this->includeInStats) {
+            stats.skipped(this->namedEntityClassName.toLower());
+         }
+      } else if (XmlRecord::Succeeded == processingResult && this->includeInStats) {
          stats.processedOk(this->namedEntityClassName.toLower());
+      }
+
+      //
+      // Clean-up
+      //
+      if (XmlRecord::FoundDuplicate == processingResult || XmlRecord::Failed == processingResult) {
+         //
+         // If we reach here, it means either there was a problem with one of our child records or we ourselves are a
+         // late-detected duplicate.  We've already stored our NamedEntity record in the DB, so we need to try to undo
+         // that by deleting it.  It should be the case that this deletion will also take care of deleting any owned
+         // child records that have already been stored.  (Eg if this is a Mash, and we stored it and 2 MashSteps before
+         // hitting an error on the 3rd MashStep, then deleting the Mash from the DB should also result in those 2
+         // stored MashSteps getting deleted from the DB.)
+         //
+         // .:TODO-DATABASE:. Make the above statement about deletion true!
+         //
+         qDebug() <<
+            Q_FUNC_INFO << "Deleting stored" << this->namedEntityClassName << "as" <<
+            (XmlRecord::FoundDuplicate == processingResult ? "duplicate" : "failed to read all child records");
+         this->deleteNamedEntityFromDb();
       }
    }
 
-   // Finally orchestrate storing any contained records
-   if (this->normaliseAndStoreChildRecordsInDb(userMessage, stats)) {
-      return XmlRecord::Succeeded;
-   }
-
-   // If we reach here, it means there was a problem with one of our child records.  We've already stored our
-   // NamedEntity record in the DB, so we need to try to undo that by deleting it.  It should be the case that this
-   // deletion will also take care of deleting any owned child records that have already been stored.  (Eg if this is
-   // a Mash, and we stored it and 2 MashSteps before hitting an error on the 3rd MashStep, then deleting the Mash
-   // from the DB should also result in those 2 stored MashSteps getting deleted from the DB.)
-   this->namedEntity->removeFromDatabase();
-
-   // Now we removed the object from the database, we're responsible for calling its destructor
-   this->namedEntityRaiiContainer.reset(this->namedEntity);
-
-   return XmlRecord::Failed;
+   return processingResult;
 }
 
 
@@ -603,6 +673,10 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
    writeIndents(out, indentLevel, indentString);
    out << "<" << this->recordName << ">\n";
 
+   // For the moment, we are constructing XML output without using Xerces (or similar), on the grounds that, in this
+   // direction (ie to XML rather than from XML), it's a pretty simple algorithm and we don't need to validate anything
+   // (because we assume that our own data is valid).
+
    // BeerXML doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
    for (auto & fieldDefinition : this->fieldDefinitions) {
@@ -670,58 +744,75 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          continue;
       }
 
-      QVariant value = namedEntityToExport.property(fieldDefinition.propertyName);
-      Q_ASSERT(value.isValid());
-      // It's a coding error if we are trying here to write out some field with a complex XPath
-      if (fieldDefinition.xPath.contains("/")) {
-         qCritical() << Q_FUNC_INFO <<
-            "Invalid use of non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
-            fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
-         Q_ASSERT(false); // Stop here on a debug build
-         continue;        // Soldier on in a prod build
-      }
       QString valueAsText;
-      switch (fieldDefinition.fieldType) {
+      if (fieldDefinition.fieldType == XmlRecord::RequiredConstant) {
+         //
+         // This is a field that is required to be in the XML, but whose value we don't need, and for which we always
+         // write a constant value on output.  At the moment it's only needed for the VERSION tag in BeerXML.
+         //
+         // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
+         // write out).  This saves having an extra almost-never-used field on XmlRecord::FieldDefinition.
+         //
+         valueAsText = fieldDefinition.propertyName;
+      } else {
+         QVariant value = namedEntityToExport.property(fieldDefinition.propertyName);
+         Q_ASSERT(value.isValid());
+         // It's a coding error if we are trying here to write out some field with a complex XPath
+         if (fieldDefinition.xPath.contains("/")) {
+            qCritical() << Q_FUNC_INFO <<
+               "Invalid use of non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
+               fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
+            Q_ASSERT(false); // Stop here on a debug build
+            continue;        // Soldier on in a prod build
+         }
 
-         case XmlRecord::Bool:
-            // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
-            valueAsText = value.toBool() ? "TRUE" : "FALSE";
-            break;
+         switch (fieldDefinition.fieldType) {
 
-         case XmlRecord::Int:
-         case XmlRecord::UInt:
-         case XmlRecord::Double:
-            // QVariant knows how to convert a number to a string
-            valueAsText = value.toString();
-            break;
+            case XmlRecord::Bool:
+               // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
+               valueAsText = value.toBool() ? "TRUE" : "FALSE";
+               break;
 
-         case XmlRecord::Date:
-            // There is only one true date format :-)
-            valueAsText = value.toDate().toString(Qt::ISODate);
-            break;
+            case XmlRecord::Int:
+            case XmlRecord::UInt:
+            case XmlRecord::Double:
+               // QVariant knows how to convert a number to a string
+               valueAsText = value.toString();
+               break;
 
-         case XmlRecord::Enum:
-            // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
-            Q_ASSERT(nullptr != fieldDefinition.stringToEnum);
-            // When writing out XML, we have the value of the EnumLookupMap (an int) and need to find the corresponding
-            // key (a string).  Fortunately, the underlying QHash already does all the heavy lifting.
-            valueAsText = fieldDefinition.stringToEnum->key(value.toInt());
-            if (valueAsText == "") {
-               // It's a coding error if we couldn't find the enum value the enum mapping
-               qCritical() << Q_FUNC_INFO <<
-                  "Could not find string representation of enum property" << fieldDefinition.propertyName <<
-                  "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
-                  namedEntityToExport.metaObject()->className();
-               Q_ASSERT(false); // Stop here on a debug build
-               continue;        // Soldier on in a prod build
-            }
-            break;
+            case XmlRecord::Date:
+               // There is only one true date format :-)
+               valueAsText = value.toDate().toString(Qt::ISODate);
+               break;
+
+            case XmlRecord::Enum:
+               // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
+               Q_ASSERT(nullptr != fieldDefinition.stringToEnum);
+               // When writing out XML, we have the value of the EnumLookupMap (an int) and need to find the corresponding
+               // key (a string).  Fortunately, the underlying QHash already does all the heavy lifting.
+               valueAsText = fieldDefinition.stringToEnum->key(value.toInt());
+               if (valueAsText == "") {
+                  // It's a coding error if we couldn't find the enum value the enum mapping
+                  qCritical() << Q_FUNC_INFO <<
+                     "Could not find string representation of enum property" << fieldDefinition.propertyName <<
+                     "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
+                     namedEntityToExport.metaObject()->className();
+                  Q_ASSERT(false); // Stop here on a debug build
+                  continue;        // Soldier on in a prod build
+               }
+               break;
 
             // By default we assume it's a string
             case XmlRecord::String:
             default:
-               valueAsText = value.toString();
+               {
+                  // We use this to escape "&" to "&amp;" and so on in string content.  (Other data types should not
+                  // have anything in their string representation that needs escaping in XML.)
+                  QXmlStreamWriter qXmlStreamWriter(&valueAsText);
+                  qXmlStreamWriter.writeCharacters(value.toString());
+               }
                break;
+         }
       }
       writeIndents(out, indentLevel + 1, indentString);
       out << "<" << fieldDefinition.xPath << ">" << valueAsText << "</" << fieldDefinition.xPath << ">\n";
