@@ -54,9 +54,7 @@
 
 #include "Brewken.h"
 #include "config.h"
-#include "database/DatabaseSchema.h"
 #include "database/DatabaseSchemaHelper.h"
-#include "database/TableSchemaConst.h"
 #include "PersistentSettings.h"
 
 
@@ -211,7 +209,6 @@ public:
     * Constructor
     */
    impl(Database::DbType dbType) : dbType{dbType},
-                                   dbDefn{},
                                    dbConName{},
                                    loaded{false},
                                    loadWasSuccessful{false},
@@ -474,7 +471,6 @@ public:
    }
 
    Database::DbType dbType;
-   DatabaseSchema dbDefn;
    QString dbConName;
 
    bool loaded;
@@ -911,10 +907,6 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
       throw;
    }
-}
-
-DatabaseSchema & Database::getDatabaseSchema() {
-   return this->pimpl->dbDefn;
 }
 
 Database::DbType Database::dbType() {

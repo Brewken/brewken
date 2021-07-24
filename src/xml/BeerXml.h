@@ -19,26 +19,9 @@
 
 #include <memory> // For PImpl
 
-#include <QDomDocument>
-#include <QDomNode>
+#include <QFile>
 #include <QString>
-#include <QVariant>
-#include <QObject>
-
-#include "database/DatabaseSchema.h"
-
-class BrewNote;
-class Equipment;
-class Fermentable;
-class Hop;
-class Instruction;
-class Mash;
-class MashStep;
-class Misc;
-class Recipe;
-class Style;
-class Water;
-class Yeast;
+#include <QTextStream>
 
 /*!
  * \class BeerXML

@@ -1,7 +1,8 @@
 /**
- * FermentableSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * FermentableSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jamie Daws <jdelectronics1@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -23,7 +24,6 @@
 #include "FermentableSortFilterProxyModel.h"
 #include "FermentableTableModel.h"
 #include "model/Fermentable.h"
-#include "database/TableSchemaConst.h"
 #include "Brewken.h"
 #include <iostream>
 #include <QDebug>

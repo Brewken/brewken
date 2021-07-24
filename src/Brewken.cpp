@@ -63,9 +63,6 @@
 #include "BtSplashScreen.h"
 #include "config.h"
 #include "database/Database.h"
-#include "database/DatabaseSchema.h"
-#include "database/TableSchemaConst.h"
-#include "database/TableSchema.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "model/Equipment.h"
@@ -318,7 +315,6 @@ bool Brewken::initialize()
    qRegisterMetaType<Mash*>();
    qRegisterMetaType<Style*>();
    qRegisterMetaType<Salt*>();
-   qRegisterMetaType<DatabaseConstants::DbTableId>();
    qRegisterMetaType< QList<BrewNote*> >();
    qRegisterMetaType< QList<Hop*> >();
    qRegisterMetaType< QList<Instruction*> >();

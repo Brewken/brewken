@@ -30,7 +30,6 @@
 #include "Brewken.h"
 #include "config.h" // For VERSIONSTRING
 #include "database/Database.h"
-#include "database/TableSchema.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"

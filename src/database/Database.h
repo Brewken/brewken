@@ -34,8 +34,6 @@
 #include <QSqlDatabase>
 #include <QString>
 
-class DatabaseSchema;
-
 /*!
  * \class Database
  *
@@ -189,10 +187,6 @@ public:
     * \param whichDb Only needs to be specified if you want something other than the current DB
     */
    char const * getSqlToAddColumnAsForeignKey(Database::DbType whichDb = Database::NODB) const;
-
-
-   // .:TODO:. We can get rid of this once we rewrite BeerXml output code to use the same structures as for input
-   DatabaseSchema & getDatabaseSchema();
 
    /*! Stores the date that we last asked the user to merge the
     *  data-space database to the user-space database.
