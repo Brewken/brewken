@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _HYDROMETERTOOL_H
-#define  _HYDROMETERTOOL_H
-
-class HydrometerTool;
+#ifndef HYDROMETERTOOL_H
+#define HYDROMETERTOOL_H
+#pragma once
 
 #include <QDialog>
 #include <QWidget>

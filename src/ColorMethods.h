@@ -13,15 +13,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _COLORMETHODS_H
-#define _COLORMETHODS_H
-
-class ColorMethods;
+#ifndef COLORMETHODS_H
+#define COLORMETHODS_H
+#pragma once
 
 /*!
  * \class ColorMethods
- *
  *
  * \brief Converts malt color units to SRM.
  */

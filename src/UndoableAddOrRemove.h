@@ -202,4 +202,4 @@ template<class UU, class VV> UndoableAddOrRemove<UU, VV> * newUndoableAddOrRemov
                                           parent);
 }
 
-#endif /*UNDOABLE_ADD_OR_REMOVE_H*/
+#endif

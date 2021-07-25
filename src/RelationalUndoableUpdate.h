@@ -15,6 +15,7 @@
  */
 #ifndef RELATIONAL_UNDOABLE_UPDATE_H
 #define RELATIONAL_UNDOABLE_UPDATE_H
+#pragma once
 
 #include "Brewken.h" // For logging
 #include <QMetaType>
@@ -130,5 +131,4 @@ template<class UU, class VV> RelationalUndoableUpdate<UU, VV> * newRelationalUnd
 }
 
 
-
-#endif /*RELATIONAL_UNDOABLE_UPDATE_H*/
+#endif

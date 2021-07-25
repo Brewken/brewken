@@ -22,30 +22,33 @@
 #include "FermentableEditor.h"
 
 #include <QIcon>
+#include <QInputDialog>
 
 #include "Brewken.h"
+#include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "Unit.h"
 
-FermentableEditor::FermentableEditor( QWidget* parent )
-        : QDialog(parent), obsFerm(nullptr)
-{
+FermentableEditor::FermentableEditor( QWidget* parent ) :
+   QDialog(parent), obsFerm(nullptr) {
    setupUi(this);
 
-   connect( this, &QDialog::accepted, this, &FermentableEditor::save);
-   connect( this, &QDialog::rejected, this, &FermentableEditor::clearAndClose);
+   this->tabWidget_editor->tabBar()->setStyle( new BtHorizontalTabs );
 
+   connect( pushButton_new,    SIGNAL( clicked() ),       this, SLOT( newFermentable() ) );
+   connect( pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save );
+   connect( pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose );
+   return;
 }
 
-void FermentableEditor::setFermentable( Fermentable* newFerm )
-{
-   if(newFerm)
-   {
+void FermentableEditor::setFermentable( Fermentable* newFerm ) {
+   if(newFerm) {
       obsFerm = newFerm;
       showChanges();
    }
+   return;
 }
 
 void FermentableEditor::save()
@@ -95,26 +98,27 @@ void FermentableEditor::clearAndClose()
    setVisible(false); // Hide the window.
 }
 
-void FermentableEditor::showChanges(QMetaProperty* metaProp)
-{
-   if( !obsFerm )
+void FermentableEditor::showChanges(QMetaProperty* metaProp) {
+   if( !obsFerm ) {
       return;
+   }
 
    QString propName;
    bool updateAll = false;
-   if( metaProp == nullptr )
+   if( metaProp == nullptr ) {
       updateAll = true;
-   else
-   {
+   } else {
       propName = metaProp->name();
    }
 
-   if( propName == PropertyNames::NamedEntity::name || updateAll )
-   {
+   if( propName == PropertyNames::NamedEntity::name || updateAll ) {
       lineEdit_name->setText(obsFerm->name());
       lineEdit_name->setCursorPosition(0);
-      if( ! updateAll )
+
+      tabWidget_editor->setTabText(0, obsFerm->name() );
+      if( ! updateAll ) {
          return;
+      }
    }
    if( propName == "type" || updateAll) {
       // NOTE: assumes the comboBox entries are in same order as Fermentable::Type
@@ -207,4 +211,27 @@ void FermentableEditor::showChanges(QMetaProperty* metaProp)
       if( ! updateAll )
          return;
    }
+}
+
+void FermentableEditor::newFermentable(QString folder)  {
+   QString name = QInputDialog::getText(this, tr("Fermentable name"),
+                                          tr("Fermentable name:"));
+   if( name.isEmpty() ) {
+      return;
+   }
+
+   Fermentable* f = new Fermentable(name,true);
+
+   if ( ! folder.isEmpty() ) {
+      f->setFolder(folder);
+   }
+
+   setFermentable(f);
+   show();
+   return;
+}
+
+void FermentableEditor::newFermentable() {
+   newFermentable(QString());
+   return;
 }

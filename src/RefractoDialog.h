@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _REFRACTODIALOG_H
-#define _REFRACTODIALOG_H
-
-class RefractoDialog;
+#ifndef REFRACTODIALOG_H
+#define REFRACTODIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QWidget>
@@ -25,7 +23,6 @@ class RefractoDialog;
 
 /*!
  * \class RefractoDialog
- *
  *
  * \brief Dialog for calculating refractometer stuff.
  */
@@ -43,4 +40,4 @@ private:
    void clearOutputFields();
 };
 
-#endif /*_REFRACTODIALOG_H*/
+#endif

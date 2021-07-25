@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _MASHBUTTON_H
-#define _MASHBUTTON_H
+#ifndef MASHBUTTON_H
+#define MASHBUTTON_H
+#pragma once
 
 #include <QPushButton>
 #include <QMetaProperty>
@@ -29,7 +29,6 @@ class QWidget;
 
 /*!
  * \class MashButton
- *
  *
  * \brief This is a view class that displays a named mash
  */
@@ -52,7 +51,7 @@ private slots:
    void mashChanged(QMetaProperty,QVariant);
 
 private:
-   Recipe* _rec;
+   Recipe* m_rec;
    Mash* _mash;
 };
 

@@ -1,5 +1,5 @@
-/**
- * BtHorizontalTabs.h is part of Brewken, and is copyright the following authors 2021:
+/*
+ * BtHorizontalTabs.h is part of Brewken, and is Copyright the following authors 2021:
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,13 +15,15 @@
  */
 #ifndef BTHORIZONTALTABS_H
 #define BTHORIZONTALTABS_H
+#pragma once
 
 #include <QProxyStyle>
 #include <QStyleOption>
 #include <QStyleOptionTab>
 #include <QSize>
 
-/* A quick little bit to handle a tab bar with the tabs on the west.
+/**
+ * \brief A quick little bit to handle a tab bar with the tabs on the west.
  */
 class BtHorizontalTabs : public QProxyStyle
 {

@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _IBUMETHODS_H
-#define _IBUMETHODS_H
+#ifndef IBUMETHODS_H
+#define IBUMETHODS_H
+#pragma once
 
 /*!
  * \class IbuMethods
- *
  *
  * \brief Make IBU calculations.
  */

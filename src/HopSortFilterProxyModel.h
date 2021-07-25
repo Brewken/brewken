@@ -14,18 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _HOPSORTFILTERPROXYMODEL_H
-#define _HOPSORTFILTERPROXYMODEL_H
-
-class HopSortFilterProxyModel;
+#ifndef HOPSORTFILTERPROXYMODEL_H
+#define HOPSORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
 
 /*!
  * \class HopSortFilterProxyModel
- *
- *
  *
  * \brief Proxy model for sorting hops.
  */

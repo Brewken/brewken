@@ -2210,7 +2210,7 @@
   </action>
   <action name="actionStrikeWater_Calculator">
    <property name="icon">
-    <iconset resource="../brewtarget.qrc">
+    <iconset resource="../brewken.qrc">
      <normaloff>:/images/smallWater.svg</normaloff>:/images/smallWater.svg</iconset>
    </property>
    <property name="text">
@@ -2228,7 +2228,7 @@
   </action>
   <action name="actionHydrometer_Temp_Adjustment">
    <property name="icon">
-    <iconset resource="../brewtarget.qrc">
+    <iconset resource="../brewken.qrc">
      <normaloff>:/images/hydrometer.svg</normaloff>:/images/hydrometer.svg</iconset>
    </property>
    <property name="text">
@@ -2269,7 +2269,7 @@
   </action>
   <action name="actionWater_Chemistry">
    <property name="icon">
-    <iconset resource="../brewtarget.qrc">
+    <iconset resource="../brewken.qrc">
      <normaloff>:/images/testtube.svg</normaloff>:/images/testtube.svg</iconset>
    </property>
    <property name="text">
@@ -2288,7 +2288,7 @@
   </action>
   <action name="actionAncestors">
    <property name="icon">
-    <iconset resource="../brewtarget.qrc">
+    <iconset resource="../brewken.qrc">
      <normaloff>:/images/merge.png</normaloff>:/images/merge.png</iconset>
    </property>
    <property name="text">
@@ -2297,7 +2297,7 @@
   </action>
   <action name="action_brewit">
    <property name="icon">
-    <iconset resource="../brewtarget.qrc">
+    <iconset resource="../brewken.qrc">
      <normaloff>:/images/grain2glass.svg</normaloff>:/images/grain2glass.svg</iconset>
    </property>
    <property name="text">

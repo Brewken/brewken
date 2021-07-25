@@ -32,6 +32,11 @@
 #include "UnitSystem.h"
 #include "Unit.h"
 
+namespace {
+   int const min_text_size = 8;
+   int const max_text_size = 50;
+}
+
 BtLineEdit::BtLineEdit(QWidget *parent, Unit::UnitType type, QString const & maximalDisplayString) :
    QLineEdit(parent),
    btParent(parent),
@@ -220,10 +225,9 @@ void BtLineEdit::setText( NamedEntity* element, int precision )
    double amount = 0.0;
    QString display;
 
-   if ( _type == Unit::String )
+   if ( _type == Unit::String ) {
       display = element->property(_editField.toLatin1().constData()).toString();
-   else if ( element->property(_editField.toLatin1().constData()).canConvert(QVariant::Double) )
-   {
+   } else if ( element->property(_editField.toLatin1().constData()).canConvert(QVariant::Double) ) {
       bool ok = false;
       // Get the value from the element, and put it in a QVariant
       QVariant tmp = element->property(_editField.toLatin1().constData());
@@ -239,40 +243,36 @@ void BtLineEdit::setText( NamedEntity* element, int precision )
       }
 
       display = displayAmount(amount, precision);
-   }
-   else
-   {
+   } else {
       display = "?";
    }
 
    QLineEdit::setText(display);
-   this->setDisplaySize();
+   this->setDisplaySize(_type == Unit::String);
    return;
 }
 
-void BtLineEdit::setText( QString amount, int precision)
-{
-   double amt;
+void BtLineEdit::setText( QString amount, int precision) {
    bool ok = false;
+   bool force = false;
 
-   if ( _type == Unit::String )
+   if ( _type == Unit::String ) {
       QLineEdit::setText(amount);
-   else
-   {
-      amt = Brewken::toDouble(amount,&ok);
-      if ( !ok )
+      force = true;
+   } else {
+      double amt = Brewken::toDouble(amount,&ok);
+      if ( !ok ) {
          qWarning() << QString("%1 could not convert %2 (%3:%4) to double").arg(Q_FUNC_INFO).arg(amount).arg(_section).arg(_editField);
+      }
       QLineEdit::setText(displayAmount(amt, precision));
    }
 
-   this->setDisplaySize();
+   this->setDisplaySize(force);
    return;
 }
 
-void BtLineEdit::setText( QVariant amount, int precision)
-{
+void BtLineEdit::setText( QVariant amount, int precision) {
    setText(amount.toString(), precision);
-   this->setDisplaySize();
    return;
 }
 
@@ -341,8 +341,7 @@ void BtLineEdit::setForcedScale( QString forcedScale )
    _forceScale = (Unit::unitScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
 }
 
-void BtLineEdit::calculateDisplaySize(QString const & maximalDisplayString)
-{
+void BtLineEdit::calculateDisplaySize(QString const & maximalDisplayString) {
    //
    // By default, some, but not all, boxes have a min and max width of 100 pixels, but this is not wide enough on a
    // high DPI display.  We instead calculate width here based on font-size - but without reducing any existing minimum
@@ -370,8 +369,21 @@ void BtLineEdit::calculateDisplaySize(QString const & maximalDisplayString)
    return;
 }
 
-void BtLineEdit::setDisplaySize()
-{
+void BtLineEdit::setDisplaySize(bool recalculate) {
+   if ( recalculate ) {
+      QString sizing_string = text();
+
+      // this is a dirty bit of cheating. If we do not reset the minimum
+      // width, the field only ever gets bigger. This forces the resize I
+      // want, but only when we are instructed to force it
+      setMinimumWidth(0);
+      if ( sizing_string.length() < min_text_size ) {
+         sizing_string = QString(min_text_size,'a');
+      } else if ( sizing_string.length() > max_text_size ) {
+         sizing_string = QString(max_text_size,'a');
+      }
+      calculateDisplaySize(sizing_string);
+   }
    this->setFixedWidth(this->desiredWidthInPixels);
    return;
 }

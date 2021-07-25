@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _PHYSICALCONSTANTS_H
-#define _PHYSICALCONSTANTS_H
+#ifndef PHYSICALCONSTANTS_H
+#define PHYSICALCONSTANTS_H
+#pragma once
 
 /*!
  * \brief Collection of physical constants like density of materials.

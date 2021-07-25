@@ -14,17 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _WATERSORTFILTERPROXYMODEL_H
-#define _WATERSORTFILTERPROXYMODEL_H
-
-class WaterSortFilterProxyModel;
+#ifndef WATERSORTFILTERPROXYMODEL_H
+#define WATERSORTFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
 
 /*!
  * \class WaterSortFilterProxyModel
- *
  *
  * \brief Proxy model for sorting water profiles.
  */

@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _BTSPLASHSCREEN_H
-#define _BTSPLASHSCREEN_H
+#ifndef BTSPLASHSCREEN_H
+#define BTSPLASHSCREEN_H
+#pragma once
 
 #include <QWidget>
 #include <QSplashScreen>
@@ -25,7 +25,6 @@
 
 /*!
  * \class BtSplashScreen
- *
  *
  * \brief A class for showing the Brewken splash screen on startup.
  */
@@ -43,4 +42,4 @@ public:
    void showMessage(QString const& message);
 };
 
-#endif /*_BTSPLASHSCREEN_H*/
+#endif

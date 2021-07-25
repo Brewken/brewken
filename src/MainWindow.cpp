@@ -81,6 +81,7 @@
 #include "BtDigitWidget.h"
 #include "BtFolder.h"
 #include "BtHorizontalTabs.h"
+#include "BtTabWidget.h"
 #include "config.h"
 #include "ConverterTool.h"
 #include "database/Database.h"

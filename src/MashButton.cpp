@@ -24,7 +24,7 @@
 
 MashButton::MashButton(QWidget* parent)
    : QPushButton(parent),
-     _rec(0),
+     m_rec(0),
      _mash(0)
 {
 }
@@ -32,14 +32,14 @@ MashButton::MashButton(QWidget* parent)
 void MashButton::setRecipe(Recipe* rec)
 {
 
-   if(_rec)
-      disconnect( _rec, 0, this, 0 );
+   if(m_rec)
+      disconnect( m_rec, 0, this, 0 );
 
-   _rec = rec;
-   if( _rec )
+   m_rec = rec;
+   if( m_rec )
    {
-      connect( _rec, &NamedEntity::changed, this, &MashButton::recChanged );
-      setMash( _rec->mash() );
+      connect( m_rec, &NamedEntity::changed, this, &MashButton::recChanged );
+      setMash( m_rec->mash() );
    }
    else
       setMash(0);

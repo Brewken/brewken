@@ -14,18 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _FermentableSORTFILTERPROXYMODEL_H
-#define _FermentableSORTFILTERPROXYMODEL_H
-
-class FermentableSortFilterProxyModel;
+#ifndef FERMENTABLESORTFILTERPROXYMODEL_H
+#define FERMENTABLESORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
 
 /*!
  * \class FermentableSortFilterProxyModel
- *
- *
  *
  * \brief Proxy model for sorting Fermentables.
  */

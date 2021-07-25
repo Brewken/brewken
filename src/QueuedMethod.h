@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _QUEUEDMETHOD_H
-#define _QUEUEDMETHOD_H
+#ifndef QUEUEDMETHOD_H
+#define QUEUEDMETHOD_H
+#pragma once
 
 #include <QString>
 #include <QGenericArgument>
@@ -100,5 +100,4 @@ private:
    static QList< QSharedPointer<QueuedMethod> > _queue;
 };
 
-
-#endif /*_QUEUEDMETHOD_H*/
+#endif

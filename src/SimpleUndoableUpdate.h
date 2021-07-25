@@ -15,6 +15,7 @@
  */
 #ifndef SIMPLE_UNDOABLE_UPDATE_H
 #define SIMPLE_UNDOABLE_UPDATE_H
+#pragma once
 
 #include <QMetaProperty>
 #include <QMetaType>
@@ -72,4 +73,4 @@ private:
    QVariant oldValue, newValue;
 };
 
-#endif /*SIMPLE_UNDOABLE_UPDATE_H*/
+#endif

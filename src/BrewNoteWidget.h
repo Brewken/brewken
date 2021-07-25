@@ -15,11 +15,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _BREWNOTEWIDGET_H
-#define _BREWNOTEWIDGET_H
-
-class BrewNoteWidget;
+#ifndef BREWNOTEWIDGET_H
+#define BREWNOTEWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QDialog>
@@ -32,7 +30,6 @@ class BrewNote;
 
 /*!
  * \class BrewNoteWidget
- *
  *
  * \brief View/controller widget that edits BrewNotes.
  */

@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _MISCSORTFILTERPROXYMODEL_H
-#define _MISCSORTFILTERPROXYMODEL_H
-
-class MiscSortFilterProxyModel;
+#ifndef MISCSORTFILTERPROXYMODEL_H
+#define MISCSORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
 
 /*!
  * \class MiscSortFilterProxyModel
- *
  *
  * \brief Proxy model for sorting miscs.
  */

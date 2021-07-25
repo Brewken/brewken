@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef RANGEDSLIDER_H
 #define RANGEDSLIDER_H
+#pragma once
 
 #include <QWidget>
 #include <QSize>
@@ -165,4 +165,4 @@ private:
    mutable int heightInPixels;
 };
 
-#endif /*RANGEDSLIDER_H*/
+#endif

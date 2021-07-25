@@ -70,7 +70,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          // And some versioning stuff, because why not?
          connect(&ObjectStoreTyped<Recipe>::getInstance(), &ObjectStoreTyped<Recipe>::signalPropertyChanged, this, &BtTreeModel::recipePropertyChanged);
          _type = BtTreeItem::RECIPE;
-         _mimeType = "application/x-brewtarget-recipe";
+         _mimeType = "application/x-brewken-recipe";
          m_maxColumns = BtTreeItem::RECIPENUMCOLS;
          break;
       case EQUIPMASK:
@@ -78,7 +78,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectInserted, this, &BtTreeModel::elementAddedEquipment);
          connect(&ObjectStoreTyped<Equipment>::getInstance(), &ObjectStoreTyped<Equipment>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedEquipment);
          _type = BtTreeItem::EQUIPMENT;
-         _mimeType = "application/x-brewtarget-recipe";
+         _mimeType = "application/x-brewken-recipe";
          m_maxColumns = BtTreeItem::EQUIPMENTNUMCOLS;
          break;
       case FERMENTMASK:
@@ -86,7 +86,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectInserted, this, &BtTreeModel::elementAddedFermentable);
          connect(&ObjectStoreTyped<Fermentable>::getInstance(), &ObjectStoreTyped<Fermentable>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedFermentable);
          _type = BtTreeItem::FERMENTABLE;
-         _mimeType = "application/x-brewtarget-ingredient";
+         _mimeType = "application/x-brewken-ingredient";
          m_maxColumns = BtTreeItem::FERMENTABLENUMCOLS;
          break;
       case HOPMASK:
@@ -94,7 +94,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectInserted, this, &BtTreeModel::elementAddedHop);
          connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedHop);
          _type = BtTreeItem::HOP;
-         _mimeType = "application/x-brewtarget-ingredient";
+         _mimeType = "application/x-brewken-ingredient";
          m_maxColumns = BtTreeItem::HOPNUMCOLS;
          break;
       case MISCMASK:
@@ -102,7 +102,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectInserted, this, &BtTreeModel::elementAddedMisc);
          connect(&ObjectStoreTyped<Misc>::getInstance(), &ObjectStoreTyped<Misc>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedMisc);
          _type = BtTreeItem::MISC;
-         _mimeType = "application/x-brewtarget-ingredient";
+         _mimeType = "application/x-brewken-ingredient";
          m_maxColumns = BtTreeItem::MISCNUMCOLS;
          break;
       case STYLEMASK:
@@ -110,7 +110,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectInserted, this, &BtTreeModel::elementAddedStyle);
          connect(&ObjectStoreTyped<Style>::getInstance(), &ObjectStoreTyped<Style>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedStyle);
          _type = BtTreeItem::STYLE;
-         _mimeType = "application/x-brewtarget-recipe";
+         _mimeType = "application/x-brewken-recipe";
          m_maxColumns = BtTreeItem::STYLENUMCOLS;
          break;
       case YEASTMASK:
@@ -118,7 +118,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectInserted, this, &BtTreeModel::elementAddedYeast);
          connect(&ObjectStoreTyped<Yeast>::getInstance(), &ObjectStoreTyped<Yeast>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedYeast);
          _type = BtTreeItem::YEAST;
-         _mimeType = "application/x-brewtarget-ingredient";
+         _mimeType = "application/x-brewken-ingredient";
          m_maxColumns = BtTreeItem::YEASTNUMCOLS;
          break;
       case WATERMASK:
@@ -126,7 +126,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this, &BtTreeModel::elementAddedWater);
          connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedWater);
          _type = BtTreeItem::WATER;
-         _mimeType = "application/x-brewtarget-ingredient";
+         _mimeType = "application/x-brewken-ingredient";
          m_maxColumns = BtTreeItem::WATERNUMCOLS;
          break;
       default:
