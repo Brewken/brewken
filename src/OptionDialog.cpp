@@ -32,8 +32,10 @@
 #include <QIcon>
 #include <QMap>
 #include <QMessageBox>
+#include <QSizePolicy>
 #include <QString>
 #include <QVector>
+#include <QWidget>
 
 #include "Brewken.h"
 #include "BtLineEdit.h"

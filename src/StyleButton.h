@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _STYLEBUTTON_H
-#define _STYLEBUTTON_H
+#ifndef STYLEBUTTON_H
+#define STYLEBUTTON_H
 
 #include <QPushButton>
 #include <QMetaProperty>
@@ -29,7 +28,6 @@ class QWidget;
 
 /*!
  * \class StyleButton
- *
  *
  * \brief This is a view class that displays the name of a style
  */
@@ -50,7 +48,7 @@ private slots:
    void styleChanged(QMetaProperty,QVariant);
 
 private:
-   Recipe* _rec;
+   Recipe* m_rec;
    Style* _style;
 };
 

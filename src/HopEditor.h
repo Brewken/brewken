@@ -1,5 +1,5 @@
 /**
- * HopEditor.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * HopEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,11 +15,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _HOPEDITOR_H
-#define   _HOPEDITOR_H
-
-class HopEditor;
+#ifndef HOPEDITOR_H
+#define HOPEDITOR_H
+#pragma once
 
 #include "ui_hopEditor.h"
 #include <QMetaProperty>
@@ -30,7 +28,6 @@ class Hop;
 
 /*!
  * \class HopEditor
- *
  *
  * \brief View/controller class for modifying hops.
  */
@@ -43,6 +40,8 @@ public:
    virtual ~HopEditor() {}
    //! Edit the given hop.
    void setHop( Hop* h );
+   //! Create a new hop
+   void newHop(QString folder);
 
 public slots:
    //! Save the changes.
@@ -50,6 +49,7 @@ public slots:
    //! Clear the dialog and close it.
    void clearAndClose();
    void changed(QMetaProperty,QVariant);
+   void newHop();
 
 private:
    Hop* obsHop;
@@ -60,4 +60,4 @@ private:
    void showChanges(QMetaProperty* prop = nullptr);
 };
 
-#endif   /* _HOPEDITOR_H */
+#endif

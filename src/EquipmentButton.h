@@ -1,5 +1,6 @@
-/**
- * EquipmentButton.h is part of Brewken, and is copyright the following authors 2009-2014:
+/*======================================================================================================================
+ * EquipmentButton.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -13,10 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
-
-#ifndef _EQUIPMENTBUTTON_H
-#define _EQUIPMENTBUTTON_H
+ =====================================================================================================================*/
+#ifndef EQUIPMENTBUTTON_H
+#define EQUIPMENTBUTTON_H
 
 #include <QPushButton>
 #include <QMetaProperty>
@@ -29,7 +29,6 @@ class QWidget;
 
 /*!
  * \class EquipmentButton
- *
  *
  * \brief This is a view class that displays the name of an equipment.
  */
@@ -50,8 +49,8 @@ private slots:
    void equipChanged(QMetaProperty,QVariant);
 
 private:
-   Recipe* _rec;
-   Equipment* _equip;
+   Recipe* m_rec;
+   Equipment* m_equip;
 };
 
 #endif

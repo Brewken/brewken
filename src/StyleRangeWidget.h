@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef STYLERANGEWIDGET_H
 #define STYLERANGEWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QSize>
@@ -35,4 +35,4 @@ public:
    StyleRangeWidget(QWidget* parent=0);
 };
 
-#endif /*STYLERANGEWIDGET_H*/
+#endif

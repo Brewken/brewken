@@ -108,7 +108,7 @@ signals:
 
 private:
    void calculateDisplaySize(QString const & maximalDisplayString);
-   void setDisplaySize();
+   void setDisplaySize(bool recalculate = false);
    int desiredWidthInPixels;
 
 protected:

@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _STRIKEWATERDIALOG_H
-#define _STRIKEWATERDIALOG_H
+#ifndef STRIKEWATERDIALOG_H
+#define STRIKEWATERDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QWidget>

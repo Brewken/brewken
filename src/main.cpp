@@ -200,8 +200,8 @@ void importFromXml(const QString & filename) {
       exit(1);
    }
    Database::instance().unload();
-///    PersistentSettings::insert("converted", QDate().currentDate().toString());
-    exit(0);
+   PersistentSettings::insert("converted", QDate().currentDate().toString());
+   exit(0);
 }
 
 //! \brief Creates a blank database using the given filename.

@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _INGREDIENTWIDGET_H
-#define   _INGREDIENTWIDGET_H
-
-class InstructionWidget;
+#ifndef INSTRUCTIONWIDGET_H
+#define INSTRUCTIONWIDGET_H
+#pragma once
 
 #include "ui_instructionWidget.h"
 #include <QWidget>
@@ -34,7 +32,6 @@ class Instruction;
 
 /*!
  * \class InstructionWidget
- *
  *
  * \brief View/controller widget that views/edits recipe instructions.
  */

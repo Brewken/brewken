@@ -17,8 +17,7 @@
  */
 #ifndef YEASTEDITOR_H
 #define YEASTEDITOR_H
-
-class YeastEditor;
+#pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
@@ -43,11 +42,13 @@ public:
    virtual ~YeastEditor() {}
    //! Set the yeast we want to modify.
    void setYeast( Yeast* y );
+   void newYeast(QString folder);
 
 public slots:
    void save();
    void clearAndClose();
    void changed(QMetaProperty,QVariant);
+   void newYeast();
 
 private:
    Yeast* obsYeast;
@@ -55,4 +56,4 @@ private:
    void showChanges(QMetaProperty* prop = nullptr);
 };
 
-#endif   // YEASTEDITOR_H
+#endif

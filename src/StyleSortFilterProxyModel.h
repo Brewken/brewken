@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _STYLESORTFILTERPROXYMODEL_H
-#define _STYLESORTFILTERPROXYMODEL_H
+#ifndef STYLESORTFILTERPROXYMODEL_H
+#define STYLESORTFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
 
 /*!
  * \class StyleSortFilterProxyModel
- *
  *
  * \brief Proxy model for sorting/filtering Styles.
  * This should really be a base filter for all ingredient models that filters

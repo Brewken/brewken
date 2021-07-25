@@ -14,17 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _YEASTSORTFILTERPROXYMODEL_H
-#define _YEASTSORTFILTERPROXYMODEL_H
-
-class YeastSortFilterProxyModel;
+#ifndef YEASTSORTFILTERPROXYMODEL_H
+#define YEASTSORTFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
 
 /*!
  * \class YeastSortFilterProxyModel
- *
  *
  * \brief Proxy model for sorting yeasts.
  */

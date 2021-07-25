@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _PRIMINGDIALOG_H
-#define _PRIMINGDIALOG_H
-
-class PrimingDialog;
+#ifndef PRIMINGDIALOG_H
+#define PRIMINGDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QWidget>
@@ -26,7 +24,6 @@ class PrimingDialog;
 
 /*!
  * \class PrimingDialog
- *
  *
  * \brief Dialog to calculate priming sugar amounts.
  */

@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _HOPDIALOG_H
-#define _HOPDIALOG_H
+#ifndef HOPDIALOG_H
+#define HOPDIALOG_H
+#pragma once
 
 #include <QWidget>
 #include <QDialog>
@@ -37,7 +37,6 @@ class HopSortFilterProxyModel;
 
 /*!
  * \class HopDialog
- *
  *
  * \brief View/controller class for showing/editing the list of hops in the database.
  */

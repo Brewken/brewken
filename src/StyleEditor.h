@@ -17,8 +17,7 @@
  */
 #ifndef STYLEEDITOR_H
 #define STYLEEDITOR_H
-
-class StyleEditor;
+#pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
@@ -33,11 +32,9 @@ class StyleSortFilterProxyModel;
 /*!
  * \class StyleEditor
  *
- *
  * \brief View/controller dialog to modify styles.
  */
-class StyleEditor : public QDialog, public Ui::styleEditor
-{
+class StyleEditor : public QDialog, public Ui::styleEditor {
    Q_OBJECT
 
 public:
@@ -64,4 +61,4 @@ private:
    void showChanges(QMetaProperty* prop = 0);
 };
 
-#endif   // STYLEEDITOR_H
+#endif

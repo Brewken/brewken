@@ -24,7 +24,7 @@
 
 StyleButton::StyleButton(QWidget* parent)
    : QPushButton(parent),
-     _rec(nullptr),
+     m_rec(nullptr),
      _style(nullptr)
 {
 }
@@ -32,14 +32,14 @@ StyleButton::StyleButton(QWidget* parent)
 void StyleButton::setRecipe(Recipe* rec)
 {
 
-   if(_rec)
-      disconnect( _rec, nullptr, this, nullptr );
+   if(m_rec)
+      disconnect( m_rec, nullptr, this, nullptr );
 
-   _rec = rec;
-   if( _rec )
+   m_rec = rec;
+   if( m_rec )
    {
-      connect( _rec, &NamedEntity::changed, this, &StyleButton::recChanged );
-      setStyle( _rec->style() );
+      connect( m_rec, &NamedEntity::changed, this, &StyleButton::recChanged );
+      setStyle( m_rec->style() );
    }
    else
       setStyle(nullptr);

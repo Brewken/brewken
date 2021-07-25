@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _MASHSTEPTABLEWIDGET_H
-#define   _MASHSTEPTABLEWIDGET_H
-
-class MashStepTableWidget;
+#ifndef MASHSTEPTABLEWIDGET_H
+#define MASHSTEPTABLEWIDGET_H
+#pragma once
 
 #include <QTableView>
 #include <QWidget>
@@ -26,7 +24,6 @@ class MashStepTableModel;
 
 /*!
  * \class MashStepTableWidget
- *
  *
  * \brief View class that displays a table of mash steps.
  * NOTE: This class seems completely

@@ -1,6 +1,7 @@
 /**
- * MiscEditor.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * MiscEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -17,6 +18,7 @@
  */
 #ifndef MISCEDITOR_H
 #define MISCEDITOR_H
+#pragma once
 
 #include <QDialog>
 #include "ui_miscEditor.h"
@@ -29,7 +31,6 @@ class Misc;
 /*!
  * \class MiscEditor
  *
- *
  * \brief View/controller dialog for editing miscs.
  */
 class MiscEditor : public QDialog, private Ui::miscEditor
@@ -41,14 +42,17 @@ public:
    virtual ~MiscEditor() {}
    //! Set the misc we wish to view/edit.
    void setMisc( Misc* m );
+  //! Create a misc with folders
+   void newMisc(QString folder);
 
 public slots:
    //! Save changes.
    void save();
    //! Clear dialog and close.
    void clearAndClose();
+   //! Add a new misc
+   void newMisc();
    void changed(QMetaProperty,QVariant);
-//   void updateField();
 
 private:
    Misc* obsMisc;
@@ -59,4 +63,4 @@ private:
    void showChanges(QMetaProperty* metaProp = nullptr);
 };
 
-#endif   /* MISCEDITOR_H */
+#endif

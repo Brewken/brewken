@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _XML_XMLRECORD_H
-#define _XML_XMLRECORD_H
+#ifndef XML_XMLRECORD_H
+#define XML_XMLRECORD_H
 #pragma once
 
 #include <memory>

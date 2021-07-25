@@ -1,7 +1,8 @@
 /**
- * FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,11 +17,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _FERMENTABLEEDITOR_H
-#define   _FERMENTABLEEDITOR_H
-
-class FermentableEditor;
+#ifndef FERMENTABLEEDITOR_H
+#define FERMENTABLEEDITOR_H
+#pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
@@ -33,7 +32,6 @@ class Fermentable;
 /*!
  * \class FermentableEditor
  *
- *
  * \brief Fermentable view/controller dialog that allows you to edit Fermentables.
  */
 class FermentableEditor : public QDialog, private Ui::fermentableEditor
@@ -44,10 +42,12 @@ public:
    FermentableEditor( QWidget *parent=nullptr );
    virtual ~FermentableEditor() {}
    void setFermentable( Fermentable* f );
+   void newFermentable( QString folder );
 
 public slots:
    void save();
    void clearAndClose();
+   void newFermentable();
 
 private:
    Fermentable* obsFerm;
@@ -58,4 +58,4 @@ private:
    void showChanges(QMetaProperty* metaProp = nullptr);
 };
 
-#endif   /* _FERMENTABLEEDITOR_H */
+#endif

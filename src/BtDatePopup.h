@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #ifndef BTDATEPOPUP_H
 #define BTDATEPOPUP_H
+#pragma once
 
 #include <QDialog>
 #include <QDate>
@@ -28,7 +28,6 @@
 
 /*!
  * \class BtDatePopup
- *
  *
  * \brief Gives us a calendar popup so that we can redate a brewnote. A lot of
  * setup needs to be done to make this behave, so it is easier to do it as a
@@ -53,4 +52,4 @@ private:
       QVBoxLayout* vertical;
 };
 
-#endif /* BTDATEPOPUP_H */
+#endif

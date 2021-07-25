@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _EQUIPMENTLISTMODEL_H
-#define _EQUIPMENTLISTMODEL_H
+#ifndef EQUIPMENTLISTMODEL_H
+#define EQUIPMENTLISTMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -31,7 +32,6 @@ class Recipe;
 
 /*!
  * \class EquipmentListModel
- *
  *
  * \brief Model for a list of equipments.
  */
@@ -78,4 +78,4 @@ private:
    void repopulateList();
 };
 
-#endif /* _EQUIPMENTLISTMODEL_H */
+#endif

@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _WATERBUTTON_H
-#define _WATERBUTTON_H
+#ifndef WATERBUTTON_H
+#define WATERBUTTON_H
 
 #include <QPushButton>
 #include <QMetaProperty>
@@ -29,7 +28,6 @@ class QWidget;
 
 /*!
  * \class WaterButton
- *
  *
  * \brief This is a view class that displays the name of an water.
  */

@@ -16,8 +16,7 @@
  */
 #ifndef BTFOLDER_H
 #define BTFOLDER_H
-
-class BtFolder;
+#pragma once
 
 #include <QSharedPointer>
 #include <QList>
@@ -30,7 +29,6 @@ class BtFolder;
 
 /*!
  * \class BtFolder
- *
  *
  * \brief Item needed to implement folders in the trees
  *
@@ -77,4 +75,4 @@ private:
 
 };
 
-#endif /* BTFOLDER_H */
+#endif

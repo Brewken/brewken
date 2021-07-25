@@ -13,16 +13,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _CUSTOMCOMBOBOX_H
-#define _CUSTOMCOMBOBOX_H
+#ifndef CUSTOMCOMBOBOX_H
+#define CUSTOMCOMBOBOX_H
+#pragma once
 
 #include <QString>
 #include <QComboBox>
 
 /*!
  * \class CustomComboBox
- *
  *
  * \brief This class is a more flexible combo box. Does not show any text.
  */
@@ -40,4 +39,4 @@ public:
    virtual void paintEvent(QPaintEvent*);
 };
 
-#endif /*_CUSTOMCOMBOBOX_H*/
+#endif
