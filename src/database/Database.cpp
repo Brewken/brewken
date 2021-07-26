@@ -36,6 +36,8 @@
  */
 #include "database/Database.h"
 
+#include <mutex>
+
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
