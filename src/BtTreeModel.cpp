@@ -546,42 +546,42 @@ QList<NamedEntity *> BtTreeModel::elements() {
    //
    switch (this->treeMask) {
       case RECIPEMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Recipe>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Recipe>()) {
             elements.append(elem);
          }
          break;
       case EQUIPMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Equipment>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Equipment>()) {
             elements.append(elem);
          }
          break;
       case FERMENTMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Fermentable>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Fermentable>()) {
             elements.append(elem);
          }
          break;
       case HOPMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Hop>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Hop>()) {
             elements.append(elem);
          }
          break;
       case MISCMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Misc>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Misc>()) {
             elements.append(elem);
          }
          break;
       case YEASTMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Yeast>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Yeast>()) {
             elements.append(elem);
          }
          break;
       case STYLEMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Style>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Style>()) {
             elements.append(elem);
          }
          break;
       case WATERMASK:
-         for (NamedEntity * elem : ObjectStoreTyped<Water>::getInstance().getAllRaw()) {
+         for (NamedEntity * elem : ObjectStoreWrapper::getAllDisplayableRaw<Water>()) {
             elements.append(elem);
          }
          break;
