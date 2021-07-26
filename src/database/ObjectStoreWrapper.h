@@ -45,6 +45,18 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().getAllRaw();
    }
 
+   /**
+    * \brief Gets only those objects which are:
+    *          - marked displayable
+    *          - not marked deleted
+    *          - do not have a parent (ie are not "an instance of use of"
+    */
+   template<class NE> QList<NE *> getAllDisplayableRaw() {
+      return ObjectStoreTyped<NE>::getInstance().findAllMatching(
+         [](NE const * ne) { return (ne->display() && !ne->deleted() && ne->getParentKey() <= 0); }
+      );
+   }
+
    template<class NE> std::shared_ptr<NE> copy(NE const & ne) {
       return std::make_shared<NE>(ne);
    }
