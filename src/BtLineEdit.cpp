@@ -28,6 +28,7 @@
 
 #include "Algorithms.h"
 #include "Brewken.h"
+#include "model/NamedEntity.h"
 #include "PersistentSettings.h"
 #include "UnitSystem.h"
 #include "Unit.h"
