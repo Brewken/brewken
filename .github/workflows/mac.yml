@@ -1,0 +1,82 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# .github/workflows/mac.yml is part of Brewken, and is copyright the following authors 2021:
+#   • Artem Martynov <martynov-a@polyplastic.by>
+#   • Mattias Måhl <mattias@kejsarsten.com>
+#
+# Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------------------------------------------------------
+name: Mac
+
+on:
+  push:
+    branches:
+      - develop
+      - "stable/**"
+
+  pull_request:
+    branches:
+      - develop
+  schedule:
+    - cron: "0 2 * * *"
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+          version: 5.9.5
+
+    - name: Install dependencies
+      run: brew install xalan-c boost
+
+    - name: Build
+      env:
+        QT_QPA_PLATFORM: offscreen
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make && (CTEST_OUTPUT_ON_FAILURE=TRUE make test)
+
+    - name: Make package
+      run: |
+        cd build
+        make package
+
+    - name: 'Upload mac'
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: brewken-dev-mac
+        path: |
+          ${{github.workspace}}/build/brewken*.sh
+        retention-days: 7
+
+    - name: Recover Debris Artifacts
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-results
+        path: ${{github.workspace}}/build
+        retention-days: 1

@@ -25,15 +25,14 @@
 #include <memory>
 
 #include <QDateTime>
-#include <QDomText>
 #include <QList>
 #include <QMetaProperty>
 #include <QObject>
 #include <QVariant>
 
 #include "Brewken.h"
-#include "model/NamedParameterBundle.h"
 
+class NamedParameterBundle;
 class ObjectStore;
 class Recipe;
 
