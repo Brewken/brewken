@@ -26,6 +26,7 @@
 
 #include "database/Database.h"
 #include "database/DbTransaction.h"
+#include "model/NamedParameterBundle.h"
 
 // Private implementation details that don't need access to class member variables
 namespace {

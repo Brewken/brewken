@@ -16,14 +16,11 @@
  */
 #include "model/Salt.h"
 
-#include <QVector>
-#include <QDomElement>
-#include <QDomText>
-#include <QObject>
 #include <QDebug>
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 bool Salt::isEqualTo(NamedEntity const & other) const {

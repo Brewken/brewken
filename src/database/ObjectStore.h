@@ -24,9 +24,8 @@
 #include <QString>
 #include <QVector>
 
-#include "model/NamedParameterBundle.h"
-
 class Database;
+class NamedParameterBundle;
 
 /**
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.

@@ -24,9 +24,6 @@
 #include <algorithm>
 #include <QDateTime>
 #include <QDebug>
-#include <QDomElement>
-#include <QDomNode>
-#include <QDomText>
 #include <QLocale>
 #include <QObject>
 #include <QRegExp>
@@ -38,6 +35,7 @@
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 

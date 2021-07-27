@@ -27,6 +27,7 @@
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/MashStep.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
