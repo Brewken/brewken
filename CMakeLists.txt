@@ -163,7 +163,7 @@ ENDIF()
 #==================================Find Qt5====================================
 
 # The minimum QT5 version we need. Keep as low as necessary.
-SET(QT5_MIN_VERSION 5.3)
+SET(QT5_MIN_VERSION 5.10)
 
 # Automatically run moc on source files when necessary
 SET(CMAKE_AUTOMOC ON)
@@ -209,6 +209,9 @@ IF(Qt5_POSITION_INDEPENDENT_CODE)
    SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ENDIF()
 
+# Uncomment the following line to show what version of Qt is actually being used
+message(STATUS ${Qt5_CONFIG})
+
 MESSAGE( STATUS "CMAKE_SYSTEM_INCLUDE_PATH: ${CMAKE_SYSTEM_INCLUDE_PATH}" )
 
 # Some extra files for the "make clean" target.
@@ -234,8 +237,9 @@ INCLUDE_DIRECTORIES(${XercesC_INCLUDE_DIRS})
 # Same comments apply here as for Xerces above
 FIND_PACKAGE(XalanC REQUIRED)
 INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
-message( "Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS} )
-message( "Xalan-C++ libraries: " ${XalanC_LIBRARIES} )
+# Uncomment the next two lines if you want to find where Xalan headers and DLLs are on your system
+#message( "Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS} )
+#message( "Xalan-C++ libraries: " ${XalanC_LIBRARIES} )
 
 #=========================Configure Brewken.qrc.in==========================
 

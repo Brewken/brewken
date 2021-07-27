@@ -26,12 +26,12 @@
  */
 class NamedParameterBundle : public QHash<char const * const, QVariant> {
 public:
-   enum Mode {
-      STRICT = 0,
-      NOT_STRICT = 1
+   enum OperationMode {
+      STRICT,
+      NOT_STRICT
    };
 
-   NamedParameterBundle(Mode mode = STRICT);
+   NamedParameterBundle(OperationMode mode = STRICT);
    ~NamedParameterBundle();
 
    /**
@@ -52,7 +52,7 @@ public:
     */
    template <class T> T operator()(char const * const parameterName, T const & defaultValue) const;
 private:
-   Mode mode;
+   OperationMode mode;
 };
 
 #endif

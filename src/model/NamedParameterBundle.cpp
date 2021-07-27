@@ -29,7 +29,8 @@ namespace {
    template <> double  valueFromQVariant(QVariant const & qv) {return qv.toDouble();}
 }
 
-NamedParameterBundle::NamedParameterBundle(Mode mode) : QHash<char const * const, QVariant>(), mode{mode} {
+NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :
+   QHash<char const * const, QVariant>(), mode{mode} {
    return;
 }
 
