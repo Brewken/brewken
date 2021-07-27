@@ -101,6 +101,14 @@ public:
    struct TableDefinition {
       char const * const tableName;
       QVector<TableField> const tableFields;
+      // GCC will let you get away without it, but some C++ compilers are more strict about the need for a non-default
+      // constructor when you have const members in a struct
+      TableDefinition(char const * const tableName = nullptr,
+                      std::initializer_list<TableField> tableFields = {}) :
+         tableName{tableName},
+         tableFields{tableFields} {
+         return;
+      }
    };
 
    /**
@@ -151,6 +159,14 @@ public:
     */
    struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
+      JunctionTableDefinition(char const * const tableName = nullptr,
+                              std::initializer_list<TableField> tableFields = {},
+                              AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK) :
+         TableDefinition{tableName, tableFields},
+         assumedNumEntries{assumedNumEntries} {
+         return;
+      }
+
    };
 
 
