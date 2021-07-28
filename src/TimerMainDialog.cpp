@@ -2,6 +2,7 @@
  * TimerMainDialog.cpp is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,10 +15,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "TimerMainDialog.h"
+
 #include <QMessageBox>
 #include <QToolTip>
+
 #include "Unit.h"
 
 TimerMainDialog::TimerMainDialog(MainWindow* parent) : QDialog(parent),
@@ -126,9 +128,11 @@ void TimerMainDialog::resetTimers()
     boilTime->setBoilTime(setBoilTimeBox->value() * 60);
     updateTime();
     // Reset all children timers
-    if (!timers->isEmpty())
-        foreach (TimerWidget* t, *timers)
+    if (!timers->isEmpty()) {
+        foreach (TimerWidget* t, *timers) {
             t->reset();
+        }
+    }
 }
 
 void TimerMainDialog::on_setBoilTimeBox_valueChanged(int t)

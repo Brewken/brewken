@@ -165,7 +165,7 @@ ENDIF()
 # The minimum QT5 version we need. Keep as low as necessary.
 # Note that if you change this, you need to make corresponding changes to the .github/workflows/*.yml files so that
 # GitHub uses the appropriate version of Qt for the automated builds.
-SET(QT5_MIN_VERSION 5.9.5)
+SET(QT5_MIN_VERSION 5.10.1)
 
 # Automatically run moc on source files when necessary
 SET(CMAKE_AUTOMOC ON)
@@ -212,7 +212,7 @@ IF(Qt5_POSITION_INDEPENDENT_CODE)
 ENDIF()
 
 # Uncomment the following line to show what version of Qt is actually being used
-message(STATUS ${Qt5_CONFIG})
+message(STATUS "Using Qt version " ${QT_VERSION})
 
 MESSAGE( STATUS "CMAKE_SYSTEM_INCLUDE_PATH: ${CMAKE_SYSTEM_INCLUDE_PATH}" )
 

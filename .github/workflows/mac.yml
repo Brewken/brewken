@@ -45,7 +45,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-          version: 5.9.5
+          version: 5.10.1
 
     - name: Install dependencies
       run: brew install xalan-c boost

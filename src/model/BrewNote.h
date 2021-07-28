@@ -75,6 +75,8 @@ class Recipe;
 /*!
  * \class BrewNote
  *
+ * .:TBD:. Some or all uses of QDateTime in this class should be changed to QDate
+ *
  * \brief Model for a brewnote record, which records what you did on brewday.
  */
 class BrewNote : public NamedEntity {
