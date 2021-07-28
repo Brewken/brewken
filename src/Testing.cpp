@@ -27,9 +27,13 @@
 
 #include <QDebug>
 #include <QDir>
-//#include <QRandomGenerator>
 #include <QString>
 #include <QtTest/QtTest>
+#if QT_VERSION < QT_VERSION_CHECK(5,10,0)
+#include <QtGlobal>
+#else
+#include <QRandomGenerator>
+#endif
 
 #include "database/ObjectStoreWrapper.h"
 #include "Logging.h"
