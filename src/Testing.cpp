@@ -32,7 +32,6 @@
 #include <QtTest/QtTest>
 #if QT_VERSION < QT_VERSION_CHECK(5,10,0)
 #include <QtGlobal> // For qrand() -- which is superseded by QRandomGenerator in later versions of Qt
-#define
 #else
 #include <QRandomGenerator>
 #endif
