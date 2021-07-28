@@ -16,6 +16,7 @@
 #ifndef DATABASE_OBJECTSTORE_H
 #define DATABASE_OBJECTSTORE_H
 #pragma once
+#include <functional>
 
 #include <memory> // For PImpl
 

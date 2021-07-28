@@ -29,7 +29,6 @@
 /*!
  * \class UndoableAddOrRemove
  *
- *
  * \brief Each instance of this class is a non-trivial undoable addition to, or removal from, a recipe etc.
  */
 template<class UU, class VV>

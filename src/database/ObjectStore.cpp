@@ -16,7 +16,6 @@
 #include "database/ObjectStore.h"
 
 #include <cstring>
-#include <functional>
 
 #include <QDebug>
 #include <QHash>

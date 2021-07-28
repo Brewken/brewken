@@ -27,11 +27,11 @@
 class NamedParameterBundle : public QHash<char const * const, QVariant> {
 public:
    enum OperationMode {
-      STRICT,
-      NOT_STRICT
+      Strict,
+      NotStrict
    };
 
-   NamedParameterBundle(OperationMode mode = STRICT);
+   NamedParameterBundle(OperationMode mode = Strict);
    ~NamedParameterBundle();
 
    /**

@@ -40,7 +40,7 @@ NamedParameterBundle::~NamedParameterBundle() = default;
 QVariant NamedParameterBundle::operator()(char const * const parameterName) const {
    if (!this->contains(parameterName)) {
       QString errorMessage = QString("No value supplied for required parameter, %1").arg(parameterName);
-      if (this->mode == NamedParameterBundle::STRICT) {
+      if (this->mode == NamedParameterBundle::Strict) {
          //
          // We want to throw an exception here because it's a lot less code than checking a return value on every call
          // and, usually, missing required parameter is a coding error.

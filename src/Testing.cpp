@@ -27,7 +27,7 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QRandomGenerator>
+//#include <QRandomGenerator>
 #include <QString>
 #include <QtTest/QtTest>
 
