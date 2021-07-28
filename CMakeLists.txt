@@ -165,7 +165,9 @@ ENDIF()
 # The minimum QT5 version we need. Keep as low as necessary.
 # Note that if you change this, you need to make corresponding changes to the .github/workflows/*.yml files so that
 # GitHub uses the appropriate version of Qt for the automated builds.
-SET(QT5_MIN_VERSION 5.10.1)
+#
+# For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
+SET(QT5_MIN_VERSION 5.9.5)
 
 # Automatically run moc on source files when necessary
 SET(CMAKE_AUTOMOC ON)

@@ -31,7 +31,8 @@
 #include <QString>
 #include <QtTest/QtTest>
 #if QT_VERSION < QT_VERSION_CHECK(5,10,0)
-#include <QtGlobal>
+#include <QtGlobal> // For qrand() -- which is superseded by QRandomGenerator in later versions of Qt
+#define
 #else
 #include <QRandomGenerator>
 #endif
@@ -72,7 +73,11 @@ namespace {
       QString randSTR;
       for (int i = 0; i < randomcharLength; i++)
       {
+#if QT_VERSION < QT_VERSION_CHECK(5,10,0)
+         int index = qrand() % posChars.length();
+#else
          int index = QRandomGenerator().generate64() % posChars.length();
+#endif
          QChar nChar = posChars.at(index);
          randSTR.append(nChar);
       }
