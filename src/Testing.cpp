@@ -21,6 +21,7 @@
  */
 #include "Testing.h"
 
+#include <iostream> // For std::cout
 #include <math.h>
 
 #include <xercesc/util/PlatformUtils.hpp>
@@ -92,6 +93,7 @@ void Testing::initTestCase() {
       qCritical() << Q_FUNC_INFO << "Xerces XML Parser Initialisation Failed: " << xercesInitException.getMessage();
       return;
    }
+   std::cout << "Initialising Test Case" << std::endl;
 
    // Create a different set of options to avoid clobbering real options
    QCoreApplication::setOrganizationDomain("brewken.com/test");
@@ -99,9 +101,19 @@ void Testing::initTestCase() {
 
    // Set options so that any data modification does not affect any other data
    PersistentSettings::initialise(QDir::tempPath());
-   Logging::initializeLogging();
 
+   //Log test setup
+   //Verify that the Logging initializes normally
+   qDebug() << "Initiallizing Logging module";
+   Logging::initializeLogging();
+   Logging::setLogLevel(Logging::LogLevel_DEBUG);
+   qDebug() << "logging initialized";
+
+   // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
+   // logging output to stderr.
    qDebug() << Q_FUNC_INFO << "Initialised";
+   std::cout << Q_FUNC_INFO << "Logging directory O: " << Logging::getDirectory().canonicalPath().toUtf8().constData() << std::endl;
+   std::cerr << Q_FUNC_INFO << "Logging directory E: " << Logging::getDirectory().canonicalPath().toUtf8().constData() << std::endl;
 
    PersistentSettings::insert("color_formula", "morey");
    PersistentSettings::insert("ibu_formula", "tinseth");
@@ -127,9 +139,8 @@ void Testing::initTestCase() {
    this->equipFiveGalNoLoss->setBoilingPoint_c(100);
 
    // Cascade pellets at 4% AA
-///   cascade_4pct = Database::instance().newHop();
    this->cascade_4pct = std::make_shared<Hop>();
-   ObjectStoreWrapper::insert(*this->cascade_4pct);
+   ObjectStoreWrapper::insert(this->cascade_4pct);
    this->cascade_4pct->setCacheOnly(false);
    this->cascade_4pct->setName("Cascade 4pct");
    this->cascade_4pct->setAlpha_pct(4.0);
@@ -147,12 +158,7 @@ void Testing::initTestCase() {
    this->twoRow->setMoisture_pct(0);
    this->twoRow->setIsMashed(true);
 
-   //Log test setup
-   //Verify that the Logging initializes normally
-   qDebug() << "Initiallizing Logging module";
-   Logging::initializeLogging();
-   Logging::setLogLevel(Logging::LogLevel_DEBUG);
-   qDebug() << "logging initialized";
+   return;
 }
 
 void Testing::recipeCalcTest_allGrain()

@@ -363,6 +363,17 @@ namespace {
             Q_ASSERT(false); // Stop here on debug builds
             return false;    // Continue but bail out of the current DB transaction on other builds
          }
+
+         // If the foreign key returned is not valid, it's not an error, it just means there is no associated object,
+         // eg this Hop does not have a parent.
+         if (theValue <= 0) {
+            qDebug() <<
+               Q_FUNC_INFO << "Property" << GetJunctionTableDefinitionPropertyName(junctionTable) << "of" <<
+               object.metaObject()->className() << "#" << primaryKey.toInt() << "is" << theValue <<
+               "which we assume means \"unset\", so nothing to write to junction table" << junctionTable.tableName;
+            return true;
+         }
+
          propertyValues.append(theValue);
       } else {
          //
@@ -635,13 +646,19 @@ public:
 ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
    pimpl{ std::make_unique<impl>(primaryTable, junctionTables) } {
+   qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
    return;
 }
 
 
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
-ObjectStore::~ObjectStore() = default;
+ObjectStore::~ObjectStore() {
+   qDebug() <<
+      Q_FUNC_INFO << "Destruct of object store for primary table" << this->pimpl->primaryTable.tableName <<
+      "(containing" << this->pimpl->allObjects.size() << "objects)";
+   return;
+}
 
 // Note that we have to pass Database in as a parameter because, ultimately, we're being called from Database::load()
 // which is called from Database::getInstance(), so we don't want to get in an endless loop.
@@ -696,6 +713,8 @@ void ObjectStore::loadAll(Database * database) {
 
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   //
+   // .:TBD:. In theory we don't need a transaction if we're _only_ reading data...
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
 
@@ -810,6 +829,10 @@ void ObjectStore::loadAll(Database * database) {
 //         Q_FUNC_INFO << "Cached" << object->metaObject()->className() << "#" << primaryKey << "in" <<
 //         this->metaObject()->className();
    }
+
+   qDebug() <<
+      Q_FUNC_INFO << "Read" << this->pimpl->allObjects.size() << "entries from primary table" <<
+      this->pimpl->primaryTable.tableName;
 
    //
    // Now we load the data from the junction tables.  This, pretty much by definition, isn't needed for the object's
@@ -1069,7 +1092,7 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
    for (auto const & junctionTable : this->pimpl->junctionTables) {
       if (!insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, connection)) {
          qCritical() <<
-            Q_FUNC_INFO << "Error writing to juncton tables:" << connection.lastError().text();
+            Q_FUNC_INFO << "Error writing to junction tables:" << connection.lastError().text();
          return -1;
       }
    }

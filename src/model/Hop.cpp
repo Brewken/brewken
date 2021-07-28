@@ -121,6 +121,11 @@ Hop::Hop(Hop const & other) :
    return;
 }
 
+Hop::~Hop() {
+//   qDebug() << Q_FUNC_INFO << "Destructor for Hop #" << this->key();
+   return;
+}
+
 //============================="SET" METHODS====================================
 void Hop::setAlpha_pct(double var) {
    this->setAndNotify(PropertyNames::Hop::alpha_pct, this->m_alpha_pct, this->enforceMinAndMax(var, "alpha", 0.0, 100.0));
