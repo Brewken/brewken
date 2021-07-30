@@ -426,6 +426,9 @@ SET( Brewken_INFO_PLIST "${ROOTDIR}/mac/Info.plist" )
 SET( Brewken_MAC_ICNS "${ROOTDIR}/mac/BrewkenIcon.icns" )
 
 #==========================Find dlls for Win32=================================
+# Note that WIN32 is true "when the target system is Windows, including Win64" (see
+# https://cmake.org/cmake/help/latest/variable/WIN32.html), so this is ALL versions of Windows, not just 32-bit.
+#
 # .:TBD:. MY 2020-12-29 What do we need to do for Xerces and Xalan here?
 IF( WIN32 )
    IF( NOT ${NO_QTMULTIMEDIA} )
@@ -516,11 +519,11 @@ IF( WIN32 )
       IF( NOT MINGW_BIN_DIR )
          FIND_PATH(MINGW_BIN_DIR "mingw32-make.exe")
       ENDIF()
-     IF( NOT EXISTS ${MINGW_BIN_DIR} )
-        MESSAGE( FATAL_ERROR "MinGW bin dir not found. Run cmake again with the option -DMINGW_BIN_DIR=c:/path/to/mingw/bin" )
-     ELSE()
-        get_filename_component( Mingw_Path ${CMAKE_CXX_COMPILER} PATH )
-     ENDIF()
+      IF( NOT EXISTS ${MINGW_BIN_DIR} )
+         MESSAGE( FATAL_ERROR "MinGW bin dir not found. Run cmake again with the option -DMINGW_BIN_DIR=c:/path/to/mingw/bin" )
+      ELSE()
+         get_filename_component( Mingw_Path ${CMAKE_CXX_COMPILER} PATH )
+      ENDIF()
    ENDIF()
 ENDIF()
 

@@ -17,9 +17,13 @@
 
 #include <string>
 #include <stdexcept>
+#include <sstream>
+
+#include <boost/stacktrace.hpp>
 
 #include <QDebug>
 #include <QString>
+#include <QTextStream>
 
 namespace {
    template <class T> T valueFromQVariant(QVariant const & qv);
@@ -48,7 +52,15 @@ QVariant NamedParameterBundle::operator()(char const * const parameterName) cons
          // Qt doesn't have its own exceptions, so we use a C++ Standard Library one, which in turn means using
          // std::string.
          //
-         qCritical() << Q_FUNC_INFO << errorMessage;
+         // C++ exceptions don't give you a stack trace by default, so we use Boost to include one, as that's going to
+         // be pretty helpful in debugging.
+         //
+         std::ostringstream stacktrace;
+         stacktrace << boost::stacktrace::stacktrace();
+         QTextStream errorMessageAsStream(&errorMessage);
+         errorMessageAsStream << "\nStacktrace:\n" << QString::fromStdString(stacktrace.str());
+
+         qCritical().noquote() << Q_FUNC_INFO << errorMessage;
          throw std::invalid_argument(errorMessage.toStdString());
       }
       // In non-strict mode we'll just construct an empty QVariant and return that in the hope that its default value

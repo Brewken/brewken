@@ -18,6 +18,10 @@
  */
 #include "Logging.h"
 
+#include <sstream>      // For std::ostringstream
+
+#include <boost/stacktrace.hpp>
+
 #include <QApplication>
 #include <QDebug>
 #include <QMutex>
@@ -382,6 +386,11 @@ bool Logging::initializeLogging() {
 
    qInstallMessageHandler(logMessageHandler);
    qDebug() << Q_FUNC_INFO << "Logging initialized.  Logs will be written to" << logDirectory.canonicalPath();
+
+   // It's quite useful on debug builds to check that stack trace logging is working, rather than to find out it's not
+   // when you need the info to fix another bug.
+   qDebug().noquote() << Q_FUNC_INFO << "Check that stacktraces are working:" << Logging::getStackTrace();
+
    return true;
 }
 
@@ -512,4 +521,13 @@ void Logging::terminateLogging() {
    QMutexLocker locker(&mutex);
    closeLogFile();
    return;
+}
+
+QString Logging::getStackTrace() {
+   std::ostringstream stacktrace;
+   stacktrace << boost::stacktrace::stacktrace();
+   QString returnValue;
+   QTextStream returnValueAsStream(&returnValue);
+   returnValueAsStream << "\nStacktrace:\n" << QString::fromStdString(stacktrace.str());
+   return returnValue;
 }

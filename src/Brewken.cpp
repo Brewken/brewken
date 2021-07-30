@@ -173,7 +173,7 @@ QHash<int, UnitSystem const *> Brewken::thingToUnitSystem;
 
 
 
-// .:TODO:. This needs to be updated to look at github
+// .:TODO:. This needs to be updated
 void Brewken::checkForNewVersion(MainWindow* mw)
 {
 
@@ -182,7 +182,7 @@ void Brewken::checkForNewVersion(MainWindow* mw)
       return;
 
    QNetworkAccessManager manager;
-   QUrl url("http://brewken.sourceforge.net/version");
+   QUrl url("https://github.com/Brewken/brewken/releases/latest");
    QNetworkReply* reply = manager.get( QNetworkRequest(url) );
    QObject::connect( reply, &QNetworkReply::finished, mw, &MainWindow::finishCheckingVersion );
 }
