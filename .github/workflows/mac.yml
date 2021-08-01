@@ -67,8 +67,7 @@ jobs:
         # Running "make test" boils down to running ctest (because the invocation of make above will have done all the
         # necessary prep.  Running ctest directly allows us to pass in extra parameters to try to get as much
         # diagnostics as possible out of a remote build such as this.
-        # make test
-        ctest --extra-verbose --output-on-failure
+        ctest --extra-verbose --output-on-failure 2>&1
 
     - name: Make package
       run: |
