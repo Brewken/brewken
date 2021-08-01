@@ -70,9 +70,9 @@ jobs:
         ulimit -c unlimited
         echo "Core size limit is $(ulimit -c)"
         sudo chmod -R +rwx /cores
-        sudo chmod -R +rwx ~/Library/Logs/DiagnosticReports
+        sudo chmod -R +rwx /Library/Logs/DiagnosticReports
         ls -l /cores
-        ls -l ~/Library/Logs/DiagnosticReports
+        ls -l /Library/Logs/DiagnosticReports
         sudo ./src/Brewken_tests "pstdintTest" 2>&1
         ctest --extra-verbose --output-on-failure 2>&1
 
@@ -103,10 +103,11 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: DiagnosticReports
-        path: ~/Library/Logs/DiagnosticReports
+        path: /Library/Logs/DiagnosticReports
         retention-days: 1
 
     - name: Recover Cores
+      if: ${{ failure() }}
       uses: actions/upload-artifact@v2
       with:
         name: cores
