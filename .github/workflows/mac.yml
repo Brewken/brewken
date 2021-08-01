@@ -107,7 +107,7 @@ jobs:
         retention-days: 1
 
     - name: Recover Cores
-    - uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v2
       with:
         name: cores
         path: /cores
