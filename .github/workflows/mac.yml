@@ -50,7 +50,9 @@ jobs:
     - name: Install dependencies
       # Installing Xalan-C will cause Xerces-C to be installed too (as the former depends on the latter)
       # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
-      run: brew install xalan-c boost
+      run: |
+        brew install xalan-c
+        brew install boost --cc=clang
 
     - name: Build
       env:
@@ -90,13 +92,15 @@ jobs:
           ${{github.workspace}}/build/brewken*.sh
         retention-days: 7
 
-    - name: Fix permissions on cores
+    - name: Post-processing on cores
       if: ${{ failure() }}
       run: |
         sudo chmod -R +rwx /cores
         sudo chmod -R +rwx /Library/Logs/DiagnosticReports
         echo "Contents of /cores directory: $(ls -ltr /cores)"
         echo "Contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports)"
+        cd /cores
+        echo "bt" | lldb -c $(ls -1)
 
     - name: Recover Debris Artifacts
       if: ${{ failure() }}
