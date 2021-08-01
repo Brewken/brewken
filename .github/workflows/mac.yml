@@ -69,14 +69,12 @@ jobs:
         # diagnostics as possible out of a remote build such as this.
         ulimit -c unlimited
         echo "Core size limit is $(ulimit -c)"
-        pwd
+        sudo chmod -R +rwx /cores
+        sudo chmod -R +rwx ~/Library/Logs/DiagnosticReports
+        ls -l /cores
+        ls -l ~/Library/Logs/DiagnosticReports
         sudo ./src/Brewken_tests "pstdintTest" 2>&1
-        sudo chmod -R +rwx /cores/* # Enable access to core dumps (doesn't need to be in same run block)
         ctest --extra-verbose --output-on-failure 2>&1
-    - uses: actions/upload-artifact@v2 # capture all crashes as build artifacts
-      with:
-        name: crashes
-        path: /cores
 
     - name: Make package
       run: |
@@ -98,4 +96,19 @@ jobs:
       with:
         name: build-results
         path: ${{github.workspace}}/build
+        retention-days: 1
+
+    - name: Recover DiagnosticReports
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: DiagnosticReports
+        path: ~/Library/Logs/DiagnosticReports
+        retention-days: 1
+
+    - name: Recover Cores
+    - uses: actions/upload-artifact@v2
+      with:
+        name: cores
+        path: /cores
         retention-days: 1
