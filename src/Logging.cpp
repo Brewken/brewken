@@ -365,7 +365,7 @@ bool Logging::initializeLogging() {
    // We _really_ need to see problems with opening the log file on stderr!
    TemporarilyForceStderrLogging temporarilyForceStderrLogging;
 
-   // If we're running a test, some settings are differentiate
+   // If we're running a test, some settings are different
    // .:TODO:. Ideally, we should move this knowledge outside of the Logging namespace and just have a parameter
    // passed in to this function that tells it whether to use these special settings.
    if (QCoreApplication::applicationName() == "brewken-test") {

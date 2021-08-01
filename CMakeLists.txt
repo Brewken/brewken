@@ -122,10 +122,21 @@ IF( ${NO_QTMULTIMEDIA} )
    ADD_DEFINITIONS( -DNO_QTMULTIMEDIA )
 ENDIF()
 
+#====================================================Set build type=====================================================
+# We might always to tell the compiler to include debugging information (eg via the -g option on gcc).  It makes the
+# binaries slightly bigger on Linux, but helps greatly in analysing core dumps etc.  (In closed-source projects people
+# sometimes turn it off for release builds to make it harder to reverse engineer the software, but obviously that's not
+# an issue for us.)
+#
+# However, setting CMAKE_BUILD_TYPE to "Debug", also changes other things, such as the default location for connfig
+# files, which we don't want on a release build, so we would probably need to set compiler flags directly.
+#
+# .:TBD:. Investigate whether setting CMAKE_BUILD_TYPE to "RelWithDebInfo" does what we want.
+#
 IF( ${DO_RELEASE_BUILD} )
-   SET( CMAKE_BUILD_TYPE "Release" )
+   SET(CMAKE_BUILD_TYPE "Release")
 ELSE()
-   SET( CMAKE_BUILD_TYPE "Debug" )
+   SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
 
 IF( APPLE AND NOT CMAKE_OSX_ARCHITECTURES )
@@ -227,6 +238,26 @@ SET_PROPERTY(
    "CPackConfig.cmake"
    "CPackSourceConfig.cmake"
 )
+
+#======================================================Find Boost=======================================================
+# Boost is a collection of separate libraries, so we need to specify here which ones we are using
+# On Windows, using MSYS2, the mingw-w64-boost packages do not include libboost_stacktrace_backtrace, but
+# https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html suggests it is not required
+# (because on Windows, if you have libbacktrace installed, you can set BOOST_STACKTRACE_USE_BACKTRACE in header-only
+# mode).
+#
+# .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so that
+# needs some more investigation.  (It could be that it's a bug in Boost, at least according to
+# https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
+IF( WIN32 )
+FIND_PACKAGE(Boost REQUIRED)
+ELSE()
+FIND_PACKAGE(Boost REQUIRED COMPONENTS stacktrace_backtrace)
+ENDIF()
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+# Uncomment the next two lines if you want to find where Boost headers and DLLs are on your system
+message( "Boost include directories: " ${Boost_INCLUDE_DIRS} )
+message( "Boost libraries: " ${Boost_LIBRARIES} )
 
 #===============================Find Xerces-C++================================
 # CMake already knows how to find and configure Xerces-C++, see

@@ -1,5 +1,6 @@
 /**
- * BtDatePopup.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtDatePopup.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -43,7 +44,7 @@ class BtDatePopup : public QDialog
 
 public:
       BtDatePopup(QWidget* parent=0);
-      QDateTime selectedDate() const;
+      QDate selectedDate() const;
 
 private:
       QWidget* widget;

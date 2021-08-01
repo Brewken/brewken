@@ -22,7 +22,6 @@
 #include "model/BrewNote.h"
 
 #include <algorithm>
-#include <QDateTime>
 #include <QDebug>
 #include <QLocale>
 #include <QObject>
@@ -64,12 +63,12 @@ ObjectStore & BrewNote::getObjectStoreTypedInstance() const {
 }
 
 // Initializers
-BrewNote::BrewNote(QString name, bool cache) : BrewNote(QDateTime(), cache, name) {
+BrewNote::BrewNote(QString name, bool cache) : BrewNote(QDate(), cache, name) {
    return;
 }
 
 BrewNote::BrewNote(Recipe const & recipe) :
-   BrewNote(QDateTime(), true, "") {
+   BrewNote(QDate(), true, "") {
    this->m_recipeId = recipe.key();
    return;
 }
@@ -112,11 +111,11 @@ BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
 }
 
 
-BrewNote::BrewNote(QDateTime dateNow, bool cache, QString const & name) :
+BrewNote::BrewNote(QDate dateNow, bool cache, QString const & name) :
    NamedEntity(-1, cache, name, true),
    loading(false),
    m_brewDate(dateNow),
-   m_fermentDate(QDateTime()),
+   m_fermentDate(QDate()),
    m_notes(QString()),
    m_sg(0.0),
    m_abv(0.0),
@@ -293,7 +292,7 @@ BrewNote::BrewNote(BrewNote const& other) :
 }
 
 // Setters=====================================================================
-void BrewNote::setBrewDate(QDateTime const& date) {
+void BrewNote::setBrewDate(QDate const & date) {
    this->setAndNotify(PropertyNames::BrewNote::brewDate, this->m_brewDate, date);
    if ( ! m_cacheOnly ) {
       // .:TBD:. Do we really need this special signal when we could use the generic changed one?
@@ -301,7 +300,7 @@ void BrewNote::setBrewDate(QDateTime const& date) {
    }
 }
 
-void BrewNote::setFermentDate(QDateTime const& date) {
+void BrewNote::setFermentDate(QDate const & date) {
    this->setAndNotify(PropertyNames::BrewNote::fermentDate, this->m_fermentDate, date);
 }
 
@@ -484,13 +483,13 @@ Recipe * BrewNote::getOwningRecipe() {
 
 
 // Getters
-QDateTime BrewNote::brewDate() const { return m_brewDate; }
+QDate BrewNote::brewDate() const { return m_brewDate; }
 QString BrewNote::brewDate_str() const { return m_brewDate.toString(); }
-QString BrewNote::brewDate_short() const { return Brewken::displayDateUserFormated(m_brewDate.date()); }
+QString BrewNote::brewDate_short() const { return Brewken::displayDateUserFormated(m_brewDate); }
 
-QDateTime BrewNote::fermentDate() const { return m_fermentDate; }
+QDate BrewNote::fermentDate() const { return m_fermentDate; }
 QString BrewNote::fermentDate_str() const { return m_fermentDate.toString(); }
-QString BrewNote::fermentDate_short() const { return Brewken::displayDateUserFormated(m_fermentDate.date()); }
+QString BrewNote::fermentDate_short() const { return Brewken::displayDateUserFormated(m_fermentDate); }
 
 QString BrewNote::notes() const { return m_notes; }
 

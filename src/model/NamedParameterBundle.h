@@ -18,13 +18,14 @@
 #pragma once
 
 #include <QHash>
+#include <QString>
 #include <QVariant>
 
 /**
  * \brief This allows constructors to be called without a long list of positional parameters and, more importantly, for
  *        those parameters to be data-driven, eg from a mapping of database column names to property names.
  */
-class NamedParameterBundle : public QHash<char const * const, QVariant> {
+class NamedParameterBundle : public QHash<QString, QVariant> {
 public:
    enum OperationMode {
       Strict,

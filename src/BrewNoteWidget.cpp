@@ -45,7 +45,7 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
 
    connect(lineEdit_FG, &BtLineEdit::textModified, this, &BrewNoteWidget::updateFG);
    connect(lineEdit_finalVol, &BtLineEdit::textModified, this, &BrewNoteWidget::updateFinalVolume_l);
-   connect(lineEdit_fermentDate, &QDateTimeEdit::dateTimeChanged, this, &BrewNoteWidget::updateFermentDate);
+   connect(lineEdit_fermentDate, &QDateTimeEdit::dateChanged, this, &BrewNoteWidget::updateFermentDate);
 
    connect(btTextEdit_brewNotes, &BtTextEdit::textModified, this, &BrewNoteWidget::updateNotes);
 
@@ -231,7 +231,7 @@ void BrewNoteWidget::updateFinalVolume_l()
 //   showChanges();
 }
 
-void BrewNoteWidget::updateFermentDate(const QDateTime& datetime)
+void BrewNoteWidget::updateFermentDate(QDate const & datetime)
 {
    if (bNoteObs == 0)
       return;
@@ -271,7 +271,7 @@ void BrewNoteWidget::showChanges(QString field)
    lineEdit_FG->setText(bNoteObs);
    lineEdit_finalVol->setText(bNoteObs);
 
-   lineEdit_fermentDate->setDateTime(bNoteObs->fermentDate());
+   lineEdit_fermentDate->setDate(bNoteObs->fermentDate());
    btTextEdit_brewNotes->setPlainText(bNoteObs->notes());
 
    // Now with the calculated stuff

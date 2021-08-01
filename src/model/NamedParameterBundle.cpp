@@ -34,7 +34,7 @@ namespace {
 }
 
 NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :
-   QHash<char const * const, QVariant>(), mode{mode} {
+   QHash<QString, QVariant>(), mode{mode} {
    return;
 }
 
@@ -43,7 +43,19 @@ NamedParameterBundle::~NamedParameterBundle() = default;
 
 QVariant NamedParameterBundle::operator()(char const * const parameterName) const {
    if (!this->contains(parameterName)) {
-      QString errorMessage = QString("No value supplied for required parameter, %1").arg(parameterName);
+      QString errorMessage = QString("No value supplied for required parameter, %1.").arg(parameterName);
+      QTextStream errorMessageAsStream(&errorMessage);
+      errorMessageAsStream << "  (Parameters in this bundle are ";
+      bool wroteFirst = false;
+      for (auto ii = this->constBegin(); ii != this->constEnd(); ++ii) {
+         if (!wroteFirst) {
+            wroteFirst = true;
+         } else {
+            errorMessageAsStream << ", ";
+         }
+         errorMessageAsStream << ii.key();
+      }
+      errorMessageAsStream << ")";
       if (this->mode == NamedParameterBundle::Strict) {
          //
          // We want to throw an exception here because it's a lot less code than checking a return value on every call
@@ -57,7 +69,6 @@ QVariant NamedParameterBundle::operator()(char const * const parameterName) cons
          //
          std::ostringstream stacktrace;
          stacktrace << boost::stacktrace::stacktrace();
-         QTextStream errorMessageAsStream(&errorMessage);
          errorMessageAsStream << "\nStacktrace:\n" << QString::fromStdString(stacktrace.str());
 
          qCritical().noquote() << Q_FUNC_INFO << errorMessage;

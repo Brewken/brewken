@@ -440,11 +440,12 @@ ENDIF()
 IF(NOT WIN32)
    find_library(DL_LIBRARY dl)
 ENDIF()
-#
 find_package(Backtrace REQUIRED)
-find_library(BoostStacktraceBacktrace_LIBRARY boost_stacktrace_backtrace)
-add_compile_definitions(BOOST_STACKTRACE_DYN_LINK BOOST_STACKTRACE_USE_BACKTRACE)
-message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${BoostStacktraceBacktrace_LIBRARY})
+IF(NOT WIN32)
+   add_compile_definitions(BOOST_STACKTRACE_DYN_LINK)
+ENDIF()
+add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
+message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boost_LIBRARIES})
 
 #===========================Create the binary==================================
 
@@ -566,7 +567,7 @@ target_link_libraries(
    ${QT5_USE_MODULES_LIST}
    ${XercesC_LIBRARIES}
    ${XalanC_LIBRARIES}
-   ${BoostStacktraceBacktrace_LIBRARY}
+   ${Boost_LIBRARIES}
    ${DL_LIBRARY}
    ${Backtrace_LIBRARIES}
 )
@@ -601,7 +602,7 @@ target_link_libraries(
    ${QT5_USE_MODULES_LIST}
    ${XercesC_LIBRARIES}
    ${XalanC_LIBRARIES}
-   ${BoostStacktraceBacktrace_LIBRARY}
+   ${Boost_LIBRARIES}
    ${DL_LIBRARY}
    ${Backtrace_LIBRARIES}
 )

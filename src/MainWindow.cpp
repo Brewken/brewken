@@ -3202,7 +3202,7 @@ void MainWindow::showStyleEditor()
 void MainWindow::changeBrewDate()
 {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
-   QDateTime newDate;
+   QDate newDate;
 
    foreach(QModelIndex selected, indexes)
    {
@@ -3232,7 +3232,7 @@ void MainWindow::changeBrewDate()
 void MainWindow::fixBrewNote()
 {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
-   QDateTime newDate;
+   QDate newDate;
 
    foreach(QModelIndex selected, indexes)
    {
