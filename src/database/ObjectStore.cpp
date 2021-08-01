@@ -657,9 +657,11 @@ ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
 ObjectStore::~ObjectStore() {
-   qDebug() <<
-      Q_FUNC_INFO << "Destruct of object store for primary table" << this->pimpl->primaryTable.tableName <<
-      "(containing" << this->pimpl->allObjects.size() << "objects)";
+   // Normally we try to avoid logging things here, as it's possible that the objects used in Logging.cpp have already
+   // been destroyed, but it can be useful to turn this on when debugging ObjectStore problems.
+   //qDebug() <<
+   //   Q_FUNC_INFO << "Destruct of object store for primary table" << this->pimpl->primaryTable.tableName <<
+   //   "(containing" << this->pimpl->allObjects.size() << "objects)";
    return;
 }
 

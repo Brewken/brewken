@@ -449,7 +449,7 @@ IF(NOT APPLE)
    ENDIF()
    add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
 ENDIF()
-#message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boost_LIBRARIES})
+message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boost_LIBRARIES})
 
 #===========================Create the binary==================================
 
