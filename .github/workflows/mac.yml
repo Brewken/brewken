@@ -45,7 +45,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-          version: 5.10.1
+          version: 5.9.5
 
     - name: Install dependencies
       # Installing Xalan-C will cause Xerces-C to be installed too (as the former depends on the latter)
