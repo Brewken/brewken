@@ -71,8 +71,8 @@ jobs:
         echo "Core size limit is $(ulimit -c)"
         sudo chmod -R +rwx /cores
         sudo chmod -R +rwx /Library/Logs/DiagnosticReports
-        ls -l /cores
-        ls -l /Library/Logs/DiagnosticReports
+        echo "Clearing contents of /cores directory: $(ls -ltr /cores) $(rm -rf /cores/*)"
+        echo "Clearing contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports) $(rm -rf /Library/Logs/DiagnosticReports)"
         sudo ./src/Brewken_tests "pstdintTest" 2>&1
         ctest --extra-verbose --output-on-failure 2>&1
 
@@ -89,6 +89,14 @@ jobs:
         path: |
           ${{github.workspace}}/build/brewken*.sh
         retention-days: 7
+
+    - name: Fix permissions on cores
+      if: ${{ failure() }}
+      run: |
+        sudo chmod -R +rwx /cores
+        sudo chmod -R +rwx /Library/Logs/DiagnosticReports
+        echo "Contents of /cores directory: $(ls -ltr /cores)"
+        echo "Contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports)"
 
     - name: Recover Debris Artifacts
       if: ${{ failure() }}
