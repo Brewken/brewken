@@ -69,7 +69,7 @@ jobs:
         # diagnostics as possible out of a remote build such as this.
         ulimit -c unlimited
         pwd
-        /src/Brewken_tests "pstdintTest" 2>&1
+        ./src/Brewken_tests "pstdintTest" 2>&1
         ctest --extra-verbose --output-on-failure 2>&1
 
     - name: Make package
