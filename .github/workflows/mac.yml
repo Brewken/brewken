@@ -59,7 +59,13 @@ jobs:
         mkdir build
         cd build
         cmake ..
-        make && (CTEST_OUTPUT_ON_FAILURE=TRUE make test)
+        make
+
+    - name: Automated tests
+      run: |
+        cd build
+        ./src/Brewken_tests "pstdintTest"
+        make test
 
     - name: Make package
       run: |
