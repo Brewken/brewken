@@ -639,8 +639,8 @@ public:
       return true;
    }
 
-   TableDefinition const & primaryTable;
-   JunctionTableDefinitions const & junctionTables;
+   TableDefinition const primaryTable;
+   JunctionTableDefinitions const junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
    Database * database;
 };
