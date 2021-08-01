@@ -441,10 +441,14 @@ IF(NOT WIN32)
    find_library(DL_LIBRARY dl)
 ENDIF()
 find_package(Backtrace REQUIRED)
-IF(NOT WIN32)
-   add_compile_definitions(BOOST_STACKTRACE_DYN_LINK)
+# For the moment, leave default settings for Mac as can't work out how to get the backtrace version of stacktrace
+# working.  (Should still get stack traces on Mac, but might not get as much info in them as we'd like.)
+IF(NOT APPLE)
+   IF(NOT WIN32)
+      add_compile_definitions(BOOST_STACKTRACE_DYN_LINK)
+   ENDIF()
+   add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
 ENDIF()
-add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
 message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boost_LIBRARIES})
 
 #===========================Create the binary==================================

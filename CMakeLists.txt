@@ -246,10 +246,16 @@ SET_PROPERTY(
 # (because on Windows, if you have libbacktrace installed, you can set BOOST_STACKTRACE_USE_BACKTRACE in header-only
 # mode).
 #
+# .:TODO:. Not sure how to get libboost_stacktrace_backtrace installed on Mac.  It doesn't seem to be findable by CMake
+# after installing Boost via Homebrew (https://brew.sh/).  For the moment, skip trying to use
+# libboost_stacktrace_backtrace on Mac
+#
 # .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so that
 # needs some more investigation.  (It could be that it's a bug in Boost, at least according to
 # https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
-IF( WIN32 )
+IF(WIN32)
+FIND_PACKAGE(Boost REQUIRED)
+ELSEIF(APPLE)
 FIND_PACKAGE(Boost REQUIRED)
 ELSE()
 FIND_PACKAGE(Boost REQUIRED COMPONENTS stacktrace_backtrace)
