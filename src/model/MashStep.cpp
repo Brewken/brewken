@@ -19,8 +19,8 @@
  */
 #include "model/MashStep.h"
 
-#include <QVector>
 #include <QDebug>
+#include <QVector>
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"

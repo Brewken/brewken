@@ -24,8 +24,6 @@
 #include "model/Fermentable.h"
 
 #include <QDebug>
-#include <QDomElement>
-#include <QDomText>
 #include <QObject>
 #include <QVariant>
 

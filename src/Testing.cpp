@@ -118,8 +118,6 @@ void Testing::initTestCase() {
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
       // logging output to stderr.
       qDebug() << Q_FUNC_INFO << "Initialised";
-      std::cout << Q_FUNC_INFO << "Logging directory O: " << Logging::getDirectory().canonicalPath().toUtf8().constData() << std::endl;
-      std::cerr << Q_FUNC_INFO << "Logging directory E: " << Logging::getDirectory().canonicalPath().toUtf8().constData() << std::endl;
 
       PersistentSettings::insert("color_formula", "morey");
       PersistentSettings::insert("ibu_formula", "tinseth");

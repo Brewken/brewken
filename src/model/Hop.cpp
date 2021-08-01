@@ -22,8 +22,6 @@
 #include "model/Hop.h"
 
 #include <QDebug>
-#include <QDomElement>
-#include <QDomText>
 #include <QObject>
 
 #include "Brewken.h"

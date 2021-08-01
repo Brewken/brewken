@@ -18,8 +18,6 @@
 #define UNDOABLE_ADD_OR_REMOVE_LIST_H
 #pragma once
 
-//#include "Brewken.h" // For logging
-
 #include <QList>
 #include <QString>
 #include <QUndoCommand>

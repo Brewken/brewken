@@ -19,13 +19,12 @@
 #define BTDATEPOPUP_H
 #pragma once
 
-#include <QDialog>
+#include <QCalendarWidget>
 #include <QDate>
 #include <QDateTime>
-#include <QCalendarWidget>
+#include <QDialog>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
-
 
 /*!
  * \class BtDatePopup
@@ -37,9 +36,7 @@
  * This is largely taken from jordenysp's example on stackoverflow
  * http://stackoverflow.com/questions/1352334/qcalendarwidget-as-pop-up-not-as-new-window
  */
-
-class BtDatePopup : public QDialog
-{
+class BtDatePopup : public QDialog {
    Q_OBJECT
 
 public:
