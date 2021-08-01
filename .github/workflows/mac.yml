@@ -68,9 +68,15 @@ jobs:
         # necessary prep.  Running ctest directly allows us to pass in extra parameters to try to get as much
         # diagnostics as possible out of a remote build such as this.
         ulimit -c unlimited
+        echo "Core size limit is $(ulimit -c)"
         pwd
-        ./src/Brewken_tests "pstdintTest" 2>&1
+        sudo ./src/Brewken_tests "pstdintTest" 2>&1
+        sudo chmod -R +rwx /cores/* # Enable access to core dumps (doesn't need to be in same run block)
         ctest --extra-verbose --output-on-failure 2>&1
+    - uses: actions/upload-artifact@v2 # capture all crashes as build artifacts
+      with:
+        name: crashes
+        path: /cores
 
     - name: Make package
       run: |
