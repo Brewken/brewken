@@ -264,14 +264,14 @@ namespace {
    std::string const & GetJunctionTableDefinitionPropertyName(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[2].propertyName;
    }
-   QString const & GetJunctionTableDefinitionThisPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+   char const * const GetJunctionTableDefinitionThisPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[1].columnName;
    }
-   QString const & GetJunctionTableDefinitionOtherPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+   char const * const GetJunctionTableDefinitionOtherPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[2].columnName;
    }
-   QString GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
-      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : "";
+   char const * const GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : nullptr;
    }
 
    //
@@ -323,14 +323,14 @@ namespace {
       queryStringAsStream << junctionTable.tableName << " (" <<
          GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << ", " <<
          GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
-      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != "") {
+      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
          queryStringAsStream << ", " << GetJunctionTableDefinitionOrderByColumn(junctionTable);
       }
       QString const thisPrimaryKeyBindName  = QString{":"} + GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
       QString const otherPrimaryKeyBindName = QString{":"} + GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
       QString const orderByBindName         = QString{":"} + GetJunctionTableDefinitionOrderByColumn(junctionTable);
       queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
-      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != "") {
+      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
          queryStringAsStream << ", " << orderByBindName;
       }
       queryStringAsStream << ");";
@@ -405,7 +405,7 @@ namespace {
       for (int curValue : propertyValues) {
          sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
          sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
-         if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != "") {
+         if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
             sqlQuery.bindValue(orderByBindName, itemNumber);
          }
          qDebug() <<
@@ -514,7 +514,7 @@ public:
    /**
     * \brief Get the name of the DB column that holds the primary key
     */
-   QString const & getPrimaryKeyColumn() {
+   char const * const getPrimaryKeyColumn() {
       // By convention the first field is the primary key
       return this->primaryTable.tableFields[0].columnName;
    };
@@ -639,8 +639,8 @@ public:
       return true;
    }
 
-   TableDefinition const primaryTable;
-   JunctionTableDefinitions const junctionTables;
+   TableDefinition const & primaryTable;
+   JunctionTableDefinitions const & junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
    Database * database;
 };
