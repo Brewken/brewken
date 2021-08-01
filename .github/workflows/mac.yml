@@ -64,7 +64,7 @@ jobs:
     - name: Automated tests
       run: |
         cd build
-        ./src/Brewken_tests "pstdintTest"
+        ./src/Brewken_tests "pstdintTest" 2>&1 | tee test0.log
         make test
 
     - name: Make package
