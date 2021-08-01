@@ -50,9 +50,11 @@ jobs:
     - name: Install dependencies
       # Installing Xalan-C will cause Xerces-C to be installed too (as the former depends on the latter)
       # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
+      #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
+      #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
       run: |
         brew install xalan-c
-        brew install boost --cc=clang
+        brew install boost
 
     - name: Build
       env:
