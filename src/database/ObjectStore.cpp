@@ -330,7 +330,7 @@ namespace {
       QString const otherPrimaryKeyBindName = QString{":"} + GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
       QString const orderByBindName         = QString{":"} + GetJunctionTableDefinitionOrderByColumn(junctionTable);
       queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
-      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+      if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
          queryStringAsStream << ", " << orderByBindName;
       }
       queryStringAsStream << ");";
@@ -405,7 +405,7 @@ namespace {
       for (int curValue : propertyValues) {
          sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
          sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
-         if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+         if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
             sqlQuery.bindValue(orderByBindName, itemNumber);
          }
          qDebug() <<
@@ -1039,7 +1039,6 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
          skippedPrimaryKey = true;
          primaryKeyParameter = *fieldDefn.propertyName;
       } else {
-         QString bindName = QString{":"} + fieldDefn.columnName;
          QVariant bindValue{object->property(*fieldDefn.propertyName)};
 
          if (fieldDefn.fieldType == ObjectStore::Enum) {
@@ -1052,7 +1051,7 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
             bindValue = QVariant();
          }
 
-         sqlQuery.bindValue(bindName, bindValue);
+         sqlQuery.bindValue(QString{":"} + fieldDefn.columnName, bindValue);
       }
    }
 
@@ -1154,8 +1153,8 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->primaryTable.tableName << " SET ";
 
-   QString const & primaryKeyColumn {*this->pimpl->getPrimaryKeyColumn()};
-   QVariant const  primaryKey       {this->pimpl->getPrimaryKey(*object)};
+   QString  const primaryKeyColumn {*this->pimpl->getPrimaryKeyColumn()};
+   QVariant const primaryKey       {this->pimpl->getPrimaryKey(*object)};
 
    bool skippedPrimaryKey = false;
    bool firstFieldOutput = false;
@@ -1181,7 +1180,6 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    QSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
    for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
-      QString bindName = QString{":"} + fieldDefn.columnName;
       QVariant bindValue{object->property(*fieldDefn.propertyName)};
 
       // Enums need to be converted to strings first
@@ -1189,7 +1187,7 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
          bindValue = QVariant{enumToString(fieldDefn, bindValue)};
       }
 
-      sqlQuery.bindValue(bindName, bindValue);
+      sqlQuery.bindValue(QString{":"} + fieldDefn.columnName, bindValue);
    }
 
    //
@@ -1317,8 +1315,7 @@ void ObjectStore::hardDelete(int id) {
    QVariant primaryKey{id};
    QSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
-   QString bindName = QString{":"} + primaryKeyColumn;
-   sqlQuery.bindValue(bindName, primaryKey);
+   sqlQuery.bindValue(QString{":"} + primaryKeyColumn, primaryKey);
    qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
    //

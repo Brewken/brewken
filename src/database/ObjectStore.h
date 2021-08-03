@@ -161,7 +161,7 @@ public:
     */
    struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
-      JunctionTableDefinition(char const * const tableName = nullptr,
+      JunctionTableDefinition(BtStringConst const tableName = {},
                               std::initializer_list<TableField> tableFields = {},
                               AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK) :
          TableDefinition{tableName, tableFields},
