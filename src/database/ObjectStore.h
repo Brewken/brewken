@@ -19,7 +19,7 @@
 #include <functional>
 
 #include <memory> // For PImpl
-#include <string>
+#include <cstring>
 
 #include <QObject>
 #include <QSqlDatabase>
@@ -28,6 +28,66 @@
 
 class Database;
 class NamedParameterBundle;
+
+// TBD Do we want to use this in NamedParameterBundle too?
+class BtStringConst {
+public:
+   BtStringConst(char const * const cString = nullptr) : cString(cString) {
+      return;
+   }
+   //! Copy constructor OK
+   BtStringConst(BtStringConst const &) = default;
+   ~BtStringConst() = default;
+   bool operator==(BtStringConst const & rhs) const {
+      if (this->cString == nullptr && rhs.cString == nullptr) { return true; }
+      if (this->cString == nullptr || rhs.cString == nullptr) { return false; }
+      return 0 == std::strcmp(this->cString, rhs.cString);
+   }
+   bool operator!=(BtStringConst const & rhs) const {
+      return !(*this == rhs);
+   }
+   bool isNull() const {
+      return (nullptr == this->cString);
+   }
+
+   char const * const operator*() const { return this->cString; }
+private:
+   char const * const cString;
+
+   //! No assignment operator
+   BtStringConst & operator=(BtStringConst const &) = delete;
+   //! No move constructor
+   BtStringConst(BtStringConst &&) = delete;
+   //! No move assignment
+   BtStringConst & operator=(BtStringConst &&) = delete;
+
+};
+
+/**
+ * \brief Generic output streaming for \c BtStringConst
+ */
+template<class OS>
+OS & operator<<(OS & outputStream, BtStringConst const & btStringConst) {
+   if (btStringConst.isNull()) {
+      outputStream << "[nullptr]";
+   } else {
+      outputStream << *btStringConst;
+   }
+   return outputStream;
+}
+
+/**
+ * \brief Generic concatenation for \c BtStringConst
+ */
+template<class T>
+T operator+(T const & other, BtStringConst const & btStringConst) {
+   if (btStringConst.isNull()) {
+      return other + "[nullptr]";
+   }
+   return other + *btStringConst;
+}
+
+
 
 /**
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.
@@ -87,17 +147,28 @@ public:
    typedef QVector<EnumAndItsDbString> EnumStringMapping;
 
    //
-   // You might be wondering why we are using QString and std::string here.  There is a reason!
+   // Fun with strings
    //
-   // In theory, we could legitimately store columnName, propertyName, tableName, etc as char const * const because they
-   // are compile-time constant ASCII strings.  In practice, this leads to too many subtle bugs (sometimes compiler-
-   // specific) when you accidentally use == instead of std::strcmp to compare things.  (Such comparisons happen a lot
-   // more in the ObjectStore code than, say, the XML code, as we need to be able to update a field corresponding to an
-   // individual property and are therefore do things such as search for the TableField matching a given property name.)
+   // Storing constant strings has some surprising pain points.
+   //
+   // Mostly we store constants such columnName, propertyName, tableName, etc as char const * const because they are
+   // just compile-time constant ASCII strings.  It's simple and efficient when you have the struct you need and you
+   // just need to pull out some const string data -- because whatever you need to give the string to is bound to accept
+   // char const * const as an input.  However, you can trip up on subtle bugs (sometimes compiler-specific) when you
+   // have a string that you need to do lots of comparisons on, because if you forget to use std::strcmp and
+   // accidentally incorrectly use == instead, it will appear to work a lot of the time with a lot of compilers
+   // (depending on how they've optimised storage of string constants), so it takes a while to spot.  (Such string
+   // comparisons happen a lot more in the ObjectStore code than, say, the XML code, as we need to be able to update a
+   // field corresponding to an individual property and are therefore do things such as search for the TableField
+   // matching a given property name.)
    //
    // In a Qt application such as ours, we naturally look to use QString const instead, not least because we end up
    // creating QString objects to pass in to QSqlQuery::prepare(), QSqlQuery::bindValue(), and so on.  And creating
-   // QStrings from char const * const values (eg literal string text in source code files) is trivial.
+   // QStrings from char const * const values (eg literal string text in source code files) is trivial.  However, this
+   // has its own problems.  Because QString does clever reference counting internally (see
+   // https://doc.qt.io/qt-5/implicit-sharing.html), you have to be a bit careful about how you use them in structs.  We
+   // have hit mysterious bugs where QtPrivate::RefCount::ref() segfaults on Mac OS which _seem_ to relate to the
+   // compiler doing some under-the-covers copy or move on the struct.
    //
    // However, there is one exception to this.  For property names, the Qt functions that use them, such as
    // QObject::property() and QObject::setProperty(), actually need to be passed char const *, and getting this out of a
@@ -112,8 +183,8 @@ public:
    struct TableDefinition;
    struct TableField {
       FieldType const                 fieldType;
-      char const * const              columnName;            // Shouldn't ever be empty in practice
-      std::string const               propertyName = "";     // Can be empty (ie N/A) in a junction table (see below)
+      BtStringConst const             columnName;            // Shouldn't ever be empty in practice
+      BtStringConst const             propertyName = {};     // Can be empty (ie N/A) in a junction table (see below)
       EnumStringMapping const * const enumMapping = nullptr; // Only needed if fieldType is Enum
       TableDefinition const * const   foreignKeyTo = nullptr;
    };
@@ -123,11 +194,11 @@ public:
     *        object properties and table fields.
     */
    struct TableDefinition {
-      char const * const tableName;
+      BtStringConst tableName;
       QVector<TableField> const tableFields;
       // GCC will let you get away without it, but some C++ compilers are more strict about the need for a non-default
       // constructor when you have const members in a struct
-      TableDefinition(char const * const tableName = nullptr,
+      TableDefinition(BtStringConst tableName = {},
                       std::initializer_list<TableField> tableFields = {}) :
          tableName{tableName},
          tableFields{tableFields} {
