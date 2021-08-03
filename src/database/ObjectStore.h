@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,81 +12,22 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_OBJECTSTORE_H
 #define DATABASE_OBJECTSTORE_H
 #pragma once
 #include <functional>
 
 #include <memory> // For PImpl
-#include <cstring>
 
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
 #include <QVector>
 
+#include "utils/BtStringConst.h"
 class Database;
 class NamedParameterBundle;
-
-// TBD Do we want to use this in NamedParameterBundle too?
-class BtStringConst {
-public:
-   BtStringConst(char const * const cString = nullptr) : cString(cString) {
-      return;
-   }
-   //! Copy constructor OK
-   BtStringConst(BtStringConst const &) = default;
-   ~BtStringConst() = default;
-   bool operator==(BtStringConst const & rhs) const {
-      if (this->cString == nullptr && rhs.cString == nullptr) { return true; }
-      if (this->cString == nullptr || rhs.cString == nullptr) { return false; }
-      return 0 == std::strcmp(this->cString, rhs.cString);
-   }
-   bool operator!=(BtStringConst const & rhs) const {
-      return !(*this == rhs);
-   }
-   bool isNull() const {
-      return (nullptr == this->cString);
-   }
-
-   char const * const operator*() const { return this->cString; }
-private:
-   char const * const cString;
-
-   //! No assignment operator
-   BtStringConst & operator=(BtStringConst const &) = delete;
-   //! No move constructor
-   BtStringConst(BtStringConst &&) = delete;
-   //! No move assignment
-   BtStringConst & operator=(BtStringConst &&) = delete;
-
-};
-
-/**
- * \brief Generic output streaming for \c BtStringConst
- */
-template<class OS>
-OS & operator<<(OS & outputStream, BtStringConst const & btStringConst) {
-   if (btStringConst.isNull()) {
-      outputStream << "[nullptr]";
-   } else {
-      outputStream << *btStringConst;
-   }
-   return outputStream;
-}
-
-/**
- * \brief Generic concatenation for \c BtStringConst
- */
-template<class T>
-T operator+(T const & other, BtStringConst const & btStringConst) {
-   if (btStringConst.isNull()) {
-      return other + "[nullptr]";
-   }
-   return other + *btStringConst;
-}
-
 
 
 /**
@@ -146,40 +87,6 @@ public:
     */
    typedef QVector<EnumAndItsDbString> EnumStringMapping;
 
-   //
-   // Fun with strings
-   //
-   // Storing constant strings has some surprising pain points.
-   //
-   // Mostly we store constants such columnName, propertyName, tableName, etc as char const * const because they are
-   // just compile-time constant ASCII strings.  It's simple and efficient when you have the struct you need and you
-   // just need to pull out some const string data -- because whatever you need to give the string to is bound to accept
-   // char const * const as an input.  However, you can trip up on subtle bugs (sometimes compiler-specific) when you
-   // have a string that you need to do lots of comparisons on, because if you forget to use std::strcmp and
-   // accidentally incorrectly use == instead, it will appear to work a lot of the time with a lot of compilers
-   // (depending on how they've optimised storage of string constants), so it takes a while to spot.  (Such string
-   // comparisons happen a lot more in the ObjectStore code than, say, the XML code, as we need to be able to update a
-   // field corresponding to an individual property and are therefore do things such as search for the TableField
-   // matching a given property name.)
-   //
-   // In a Qt application such as ours, we naturally look to use QString const instead, not least because we end up
-   // creating QString objects to pass in to QSqlQuery::prepare(), QSqlQuery::bindValue(), and so on.  And creating
-   // QStrings from char const * const values (eg literal string text in source code files) is trivial.  However, this
-   // has its own problems.  Because QString does clever reference counting internally (see
-   // https://doc.qt.io/qt-5/implicit-sharing.html), you have to be a bit careful about how you use them in structs.  We
-   // have hit mysterious bugs where QtPrivate::RefCount::ref() segfaults on Mac OS which _seem_ to relate to the
-   // compiler doing some under-the-covers copy or move on the struct.
-   //
-   // However, there is one exception to this.  For property names, the Qt functions that use them, such as
-   // QObject::property() and QObject::setProperty(), actually need to be passed char const *, and getting this out of a
-   // QString is a bit painful (because QString is inherently UTF-16 so you end up creating temporaries to hold char *
-   // data etc.)
-   //
-   // So we store property names in std::string (which internally is just char *) instead.
-   //
-   // Fortunately, this is an implementation detail that only needs to be known by ObjectStore and ObjectStoreTyped.
-   // External users of the class don't have to worry about it.
-   //
    struct TableDefinition;
    struct TableField {
       FieldType const                 fieldType;
