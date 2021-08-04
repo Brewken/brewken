@@ -33,7 +33,7 @@
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
-#define AddPropertyName(property) namespace PropertyNames::BrewNote {static char const * const property = #property; }
+#define AddPropertyName(property) namespace PropertyNames::BrewNote { BtStringConst const property{#property}; }
 AddPropertyName(abv)
 AddPropertyName(attenuation)
 AddPropertyName(boilOff_l)

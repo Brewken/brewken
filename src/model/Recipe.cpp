@@ -123,35 +123,35 @@ namespace {
    // After we modified a property via a templated member function of Recipe, we need to tell the object store to
    // update the database.  These template specialisations map from property type to property name.
    //
-   template<class NE> char const * const propertyToPropertyName();
-   template<> char const * const propertyToPropertyName<Equipment>()   {
+   template<class NE> BtStringConst const & propertyToPropertyName();
+   template<> BtStringConst const & propertyToPropertyName<Equipment>()   {
       return PropertyNames::Recipe::equipmentId;
    }
-   template<> char const * const propertyToPropertyName<Fermentable>() {
+   template<> BtStringConst const & propertyToPropertyName<Fermentable>() {
       return PropertyNames::Recipe::fermentableIds;
    }
-   template<> char const * const propertyToPropertyName<Hop>()         {
+   template<> BtStringConst const & propertyToPropertyName<Hop>()         {
       return PropertyNames::Recipe::hopIds;
    }
-   template<> char const * const propertyToPropertyName<Instruction>() {
+   template<> BtStringConst const & propertyToPropertyName<Instruction>() {
       return PropertyNames::Recipe::instructionIds;
    }
-   template<> char const * const propertyToPropertyName<Mash>()        {
+   template<> BtStringConst const & propertyToPropertyName<Mash>()        {
       return PropertyNames::Recipe::mashId;
    }
-   template<> char const * const propertyToPropertyName<Misc>()        {
+   template<> BtStringConst const & propertyToPropertyName<Misc>()        {
       return PropertyNames::Recipe::miscIds;
    }
-   template<> char const * const propertyToPropertyName<Salt>()        {
+   template<> BtStringConst const & propertyToPropertyName<Salt>()        {
       return PropertyNames::Recipe::saltIds;
    }
-   template<> char const * const propertyToPropertyName<Style>()       {
+   template<> BtStringConst const & propertyToPropertyName<Style>()       {
       return PropertyNames::Recipe::styleId;
    }
-   template<> char const * const propertyToPropertyName<Water>()       {
+   template<> BtStringConst const & propertyToPropertyName<Water>()       {
       return PropertyNames::Recipe::waterIds;
    }
-   template<> char const * const propertyToPropertyName<Yeast>()       {
+   template<> BtStringConst const & propertyToPropertyName<Yeast>()       {
       return PropertyNames::Recipe::yeastIds;
    }
 }
@@ -1109,7 +1109,7 @@ void Recipe::generateInstructions() {
 
    // END fermentation instructions. Let everybody know that now is the time
    // to update instructions
-   emit changed(metaProperty(PropertyNames::Recipe::instructions), this->instructions().size());
+   emit changed(metaProperty(*PropertyNames::Recipe::instructions), this->instructions().size());
 
    return;
 }
@@ -1344,7 +1344,7 @@ void Recipe::setMash(Mash * var) {
 
    connect(mashToAdd.get(), SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptMashChange(QMetaProperty,
                                                                                                   QVariant)));
-   emit this->changed(this->metaProperty(PropertyNames::Recipe::mash), QVariant::fromValue<Mash *>(mashToAdd.get()));
+   emit this->changed(this->metaProperty(*PropertyNames::Recipe::mash), QVariant::fromValue<Mash *>(mashToAdd.get()));
 
    this->recalcAll();
 
@@ -1988,7 +1988,7 @@ void Recipe::recalcABV_pct() {
    if (! qFuzzyCompare(ret, m_ABV_pct)) {
       m_ABV_pct = ret;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::ABV_pct), m_ABV_pct);
+         emit changed(metaProperty(*PropertyNames::Recipe::ABV_pct), m_ABV_pct);
       }
    }
 }
@@ -2011,7 +2011,7 @@ void Recipe::recalcColor_srm() {
    if (! qFuzzyCompare(m_color_srm, ret)) {
       m_color_srm = ret;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::color_srm), m_color_srm);
+         emit changed(metaProperty(*PropertyNames::Recipe::color_srm), m_color_srm);
       }
    }
 
@@ -2043,7 +2043,7 @@ void Recipe::recalcIBU() {
    if (! qFuzzyCompare(ibus, m_IBU)) {
       m_IBU = ibus;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::IBU), m_IBU);
+         emit changed(metaProperty(*PropertyNames::Recipe::IBU), m_IBU);
       }
    }
 }
@@ -2122,28 +2122,28 @@ void Recipe::recalcVolumeEstimates() {
    if (! qFuzzyCompare(tmp_wfm, m_wortFromMash_l)) {
       m_wortFromMash_l = tmp_wfm;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::wortFromMash_l), m_wortFromMash_l);
+         emit changed(metaProperty(*PropertyNames::Recipe::wortFromMash_l), m_wortFromMash_l);
       }
    }
 
    if (! qFuzzyCompare(tmp_bv, m_boilVolume_l)) {
       m_boilVolume_l = tmp_bv;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::boilVolume_l), m_boilVolume_l);
+         emit changed(metaProperty(*PropertyNames::Recipe::boilVolume_l), m_boilVolume_l);
       }
    }
 
    if (! qFuzzyCompare(tmp_fv, m_finalVolume_l)) {
       m_finalVolume_l = tmp_fv;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::finalVolume_l), m_finalVolume_l);
+         emit changed(metaProperty(*PropertyNames::Recipe::finalVolume_l), m_finalVolume_l);
       }
    }
 
    if (! qFuzzyCompare(tmp_pbv, m_postBoilVolume_l)) {
       m_postBoilVolume_l = tmp_pbv;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::postBoilVolume_l), m_postBoilVolume_l);
+         emit changed(metaProperty(*PropertyNames::Recipe::postBoilVolume_l), m_postBoilVolume_l);
       }
    }
 }
@@ -2166,7 +2166,7 @@ void Recipe::recalcGrainsInMash_kg() {
    if (! qFuzzyCompare(ret, m_grainsInMash_kg)) {
       m_grainsInMash_kg = ret;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::grainsInMash_kg), m_grainsInMash_kg);
+         emit changed(metaProperty(*PropertyNames::Recipe::grainsInMash_kg), m_grainsInMash_kg);
       }
    }
 }
@@ -2184,7 +2184,7 @@ void Recipe::recalcGrains_kg() {
    if (! qFuzzyCompare(ret, m_grains_kg)) {
       m_grains_kg = ret;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::grains_kg), m_grains_kg);
+         emit changed(metaProperty(*PropertyNames::Recipe::grains_kg), m_grains_kg);
       }
    }
 }
@@ -2195,7 +2195,7 @@ void Recipe::recalcSRMColor() {
    if (tmp != m_SRMColor) {
       m_SRMColor = tmp;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::SRMColor), m_SRMColor);
+         emit changed(metaProperty(*PropertyNames::Recipe::SRMColor), m_SRMColor);
       }
    }
 }
@@ -2232,7 +2232,7 @@ void Recipe::recalcCalories() {
    if (! qFuzzyCompare(tmp, m_calories)) {
       m_calories = tmp;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::calories), m_calories);
+         emit changed(metaProperty(*PropertyNames::Recipe::calories), m_calories);
       }
    }
 }
@@ -2310,7 +2310,7 @@ void Recipe::recalcBoilGrav() {
    if (! qFuzzyCompare(ret, m_boilGrav)) {
       m_boilGrav = ret;
       if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(PropertyNames::Recipe::boilGrav), m_boilGrav);
+         emit changed(metaProperty(*PropertyNames::Recipe::boilGrav), m_boilGrav);
       }
    }
 }
@@ -2429,8 +2429,8 @@ void Recipe::recalcOgFg() {
       // these functions in the first place.
       if (!m_uninitializedCalcs) {
          this->propagatePropertyChange(PropertyNames::Recipe::og, false);
-         emit changed(metaProperty(PropertyNames::Recipe::og), m_og);
-         emit changed(metaProperty(PropertyNames::Recipe::points), (m_og - 1.0) * 1e3);
+         emit changed(metaProperty(*PropertyNames::Recipe::og), m_og);
+         emit changed(metaProperty(*PropertyNames::Recipe::points), (m_og - 1.0) * 1e3);
       }
    }
 
@@ -2438,7 +2438,7 @@ void Recipe::recalcOgFg() {
       m_fg     = tmp_fg;
       if (!m_uninitializedCalcs) {
          this->propagatePropertyChange(PropertyNames::Recipe::fg, false);
-         emit changed(metaProperty(PropertyNames::Recipe::fg), m_fg);
+         emit changed(metaProperty(*PropertyNames::Recipe::fg), m_fg);
       }
    }
 }
@@ -2448,10 +2448,14 @@ void Recipe::recalcOgFg() {
 double Recipe::ibuFromHop(Hop const * hop) {
    Equipment * equip = equipment();
    double ibus = 0.0;
-   double fwhAdjust = Brewken::toDouble(PersistentSettings::value("firstWortHopAdjustment", 1.1).toString(),
-                                        "Recipe::ibmFromHop()");
-   double mashHopAdjust = Brewken::toDouble(PersistentSettings::value("mashHopAdjustment", 0).toString(),
-                                            "Recipe::ibmFromHop()");
+   double fwhAdjust = Brewken::toDouble(
+      PersistentSettings::value(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
+      "Recipe::ibmFromHop()"
+   );
+   double mashHopAdjust = Brewken::toDouble(
+      PersistentSettings::value(PersistentSettings::Names::mashHopAdjustment, 0).toString(),
+      "Recipe::ibmFromHop()"
+   );
 
    if (hop == nullptr) {
       return 0.0;
@@ -2726,7 +2730,7 @@ QList<BrewNote *> RecipeHelper::brewNotesForRecipeAndAncestors(Recipe const & re
    return brewNotes;
 }
 
-void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, char const * const propertyName) {
+void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst const propertyName) {
    //
    // .:TBD:. MY 2021-07-23  This is largely working, in that, with automatic versioning enabled, every time you make a
    // change to something (a Recipe's own field or a field on an ingredient, the Mash, etc) it generates a new version
@@ -2797,7 +2801,7 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, char const * const
  * \brief Turn automatic versioning on or off
  */
 void RecipeHelper::setAutomaticVersioningEnabled(bool enabled) {
-   PersistentSettings::insert("versioning", enabled);
+   PersistentSettings::insert(PersistentSettings::Names::versioning, enabled);
    return;
 }
 
@@ -2805,7 +2809,7 @@ void RecipeHelper::setAutomaticVersioningEnabled(bool enabled) {
  * \brief Returns \c true if automatic versioning is enabled, \c false otherwise
  */
 bool RecipeHelper::getAutomaticVersioningEnabled() {
-   return PersistentSettings::value("versioning", false).toBool();
+   return PersistentSettings::value(PersistentSettings::Names::versioning, false).toBool();
 }
 
 RecipeHelper::SuspendRecipeVersioning::SuspendRecipeVersioning() {

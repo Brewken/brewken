@@ -378,7 +378,7 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                //
                // If we do need it, we now store the value
                //
-               if (nullptr != fieldDefinition->propertyName) {
+               if (!fieldDefinition->propertyName.isNull()) {
                   this->namedParameterBundle.insert(fieldDefinition->propertyName, parsedValue);
                }
             }
@@ -542,7 +542,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       // property, and RecordComplex, which can't.
       //
       if (XmlRecord::RecordSimple == ii.value().first->fieldType) {
-         char const * const propertyName = ii.value().first->propertyName;
+         char const * const propertyName = *ii.value().first->propertyName;
          Q_ASSERT(nullptr != propertyName);
          // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
          // (ie for the root record).
@@ -681,7 +681,7 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
    // to control field order precisely).
    for (auto & fieldDefinition : this->fieldDefinitions) {
       // If there isn't a property name that means this is not a field we support so there's nothing to write out.
-      if (!fieldDefinition.propertyName) {
+      if (fieldDefinition.propertyName.isNull()) {
          // At the moment at least, we support all XmlRecord::RecordSimple and XmlRecord::RecordComplex fields, so it's
          // a coding error if one of them does not have a property name.
          Q_ASSERT(XmlRecord::RecordSimple != fieldDefinition.fieldType);
@@ -714,7 +714,7 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
 
          if (XmlRecord::RecordSimple == fieldDefinition.fieldType) {
             NamedEntity * childNamedEntity =
-               namedEntityToExport.property(fieldDefinition.propertyName).value<NamedEntity *>();
+               namedEntityToExport.property(*fieldDefinition.propertyName).value<NamedEntity *>();
             if (childNamedEntity) {
                subRecord->toXml(*childNamedEntity, out, indentLevel + numContainingTags + 1, indentString);
             } else {
@@ -753,9 +753,9 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
          // write out).  This saves having an extra almost-never-used field on XmlRecord::FieldDefinition.
          //
-         valueAsText = fieldDefinition.propertyName;
+         valueAsText = *fieldDefinition.propertyName;
       } else {
-         QVariant value = namedEntityToExport.property(fieldDefinition.propertyName);
+         QVariant value = namedEntityToExport.property(*fieldDefinition.propertyName);
          Q_ASSERT(value.isValid());
          // It's a coding error if we are trying here to write out some field with a complex XPath
          if (fieldDefinition.xPath.contains("/")) {

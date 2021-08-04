@@ -71,7 +71,7 @@ private:
                       QTextStream & out,
                       int indentLevel,
                       char const * const indentString,
-                      char const * const propertyNameForGetter,
+                      BtStringConst const & propertyNameForGetter,
                       RecipeChildGetter<CNE> getter) const;
 
 };

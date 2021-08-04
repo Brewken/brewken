@@ -105,8 +105,8 @@ public:
       QVector<TableField> const tableFields;
       // GCC will let you get away without it, but some C++ compilers are more strict about the need for a non-default
       // constructor when you have const members in a struct
-      TableDefinition(BtStringConst tableName = {},
-                      std::initializer_list<TableField> tableFields = {}) :
+      TableDefinition(BtStringConst const tableName = {},
+                      std::initializer_list<TableField> const tableFields = {}) :
          tableName{tableName},
          tableFields{tableFields} {
          return;
@@ -244,7 +244,7 @@ public:
    /**
     * \brief Update a single property of an existing object in the DB
     */
-   void updateProperty(QObject const & object, char const * const propertyName);
+   void updateProperty(QObject const & object, BtStringConst const & propertyName);
 
    /**
     * \brief Remove the object from our local in-memory cache
@@ -431,7 +431,7 @@ signals:
     *           \c ObjectStoreTyped<InventoryHop>::getInstance(), etc
     * \param propertyName The name of the property that changed
     */
-   void signalPropertyChanged(int id, char const * const propertyName);
+   void signalPropertyChanged(int id, BtStringConst const propertyName);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

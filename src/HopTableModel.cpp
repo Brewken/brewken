@@ -45,6 +45,7 @@
 #include "model/Inventory.h"
 #include "PersistentSettings.h"
 #include "Unit.h"
+#include "utils/BtStringConst.h"
 
 HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    QAbstractTableModel(parent),
@@ -230,8 +231,8 @@ void HopTableModel::removeAll() {
    }
 }
 
-void HopTableModel::changedInventory(int invKey, char const * const propertyName) {
-   if (QString(propertyName) == PropertyNames::Inventory::amount) {
+void HopTableModel::changedInventory(int invKey, BtStringConst const propertyName) {
+   if (propertyName == PropertyNames::Inventory::amount) {
 ///      double newAmount = ObjectStoreWrapper::getById<InventoryHop>()->getAmount();
       for (int i = 0; i < hopObs.size(); ++i) {
          Hop * holdmybeer = hopObs.at(i);
@@ -551,13 +552,13 @@ QString HopTableModel::generateName(int column) const {
 
    switch (column) {
       case HOPINVENTORYCOL:
-         attribute = "inventory_kg";
+         attribute = *PropertyNames::NamedEntityWithInventory::inventory;
          break;
       case HOPAMOUNTCOL:
-         attribute = "amount_kg";
+         attribute = *PropertyNames::Hop::amount_kg;
          break;
       case HOPTIMECOL:
-         attribute = PropertyNames::Hop::time_min;
+         attribute = *PropertyNames::Hop::time_min;
          break;
       default:
          attribute = "";

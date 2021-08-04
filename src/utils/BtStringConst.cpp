@@ -17,6 +17,12 @@
 
 #include <cstring>
 
+#include <QDebug>
+#include <QString>
+#include <QTextStream>
+
+BtStringConst const BtString::NULL_STR{static_cast<char const * const>(nullptr)};
+
 BtStringConst::BtStringConst(char const * const cString) : cString(cString) {
    return;
 }
@@ -31,14 +37,40 @@ bool BtStringConst::operator==(BtStringConst const & rhs) const {
    return 0 == std::strcmp(this->cString, rhs.cString);
 }
 
-bool BtStringConst::operator!=(BtStringConst const & rhs) const {
-   return !(*this == rhs);
-}
-
 bool BtStringConst::isNull() const {
    return (nullptr == this->cString);
 }
 
 char const * const BtStringConst::operator*() const {
    return this->cString;
+}
+
+bool operator==(char const * const lhs, BtStringConst const & rhs) {
+   return BtStringConst(lhs) == rhs;
+}
+
+bool operator==(BtStringConst const & lhs, char const * const rhs) {
+   return lhs == BtStringConst(rhs);
+}
+
+bool operator==(QString const & lhs, BtStringConst const & rhs) {
+   // Qt already provides operator ==  to compare QString with char const * const
+   return lhs == *rhs;
+}
+
+bool operator==(BtStringConst const & lhs, QString const & rhs) {
+   // Qt already provides operator ==  to compare QString with char const * const
+   return *lhs == rhs;
+}
+
+bool operator!=(QString const & lhs, BtStringConst const & rhs) {
+   return !(lhs == rhs);
+}
+
+QTextStream & operator<<(QTextStream & outputStream, BtStringConst const & btStringConst) {
+   return btStringConst.writeTo(outputStream);
+}
+
+QDebug & operator<<(QDebug & outputStream, BtStringConst const & btStringConst) {
+   return btStringConst.writeTo(outputStream);
 }

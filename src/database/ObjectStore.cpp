@@ -271,7 +271,7 @@ namespace {
       return junctionTable.tableFields[2].columnName;
    }
    BtStringConst GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
-      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : BtStringConst{nullptr};
+      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : BtStringConst{static_cast<char const * const>(nullptr)};
    }
 
    //
@@ -326,9 +326,9 @@ namespace {
       if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
          queryStringAsStream << ", " << GetJunctionTableDefinitionOrderByColumn(junctionTable);
       }
-      QString const thisPrimaryKeyBindName  = QString{":"} + GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
-      QString const otherPrimaryKeyBindName = QString{":"} + GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
-      QString const orderByBindName         = QString{":"} + GetJunctionTableDefinitionOrderByColumn(junctionTable);
+      QString const thisPrimaryKeyBindName  = QString{":"} + *GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
+      QString const otherPrimaryKeyBindName = QString{":"} + *GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
+      QString const orderByBindName         = QString{":"} + *GetJunctionTableDefinitionOrderByColumn(junctionTable);
       queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
       if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
          queryStringAsStream << ", " << orderByBindName;
@@ -432,7 +432,7 @@ namespace {
          Q_FUNC_INFO << "Deleting property " << GetJunctionTableDefinitionPropertyName(junctionTable) <<
          " in junction table " << junctionTable.tableName;
 
-      QString const thisPrimaryKeyBindName = QString{":"} + GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
+      QString const thisPrimaryKeyBindName = QString{":"} + *GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
 
       // Construct the DELETE query
       QString queryString{"DELETE FROM "};
@@ -1051,7 +1051,7 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
             bindValue = QVariant();
          }
 
-         sqlQuery.bindValue(QString{":"} + fieldDefn.columnName, bindValue);
+         sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
       }
    }
 
@@ -1187,7 +1187,7 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
          bindValue = QVariant{enumToString(fieldDefn, bindValue)};
       }
 
-      sqlQuery.bindValue(QString{":"} + fieldDefn.columnName, bindValue);
+      sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
    }
 
    //
@@ -1243,7 +1243,7 @@ int ObjectStore::insertOrUpdate(QObject & object) {
    return this->pimpl->getPrimaryKey(object).toInt();
 }
 
-void ObjectStore::updateProperty(QObject const & object, char const * const propertyName) {
+void ObjectStore::updateProperty(QObject const & object, BtStringConst const & propertyName) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
@@ -1315,7 +1315,7 @@ void ObjectStore::hardDelete(int id) {
    QVariant primaryKey{id};
    QSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
-   sqlQuery.bindValue(QString{":"} + primaryKeyColumn, primaryKey);
+   sqlQuery.bindValue(QString{":"} + *primaryKeyColumn, primaryKey);
    qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
    //

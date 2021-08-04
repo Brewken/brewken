@@ -123,8 +123,8 @@ void Testing::initTestCase() {
       // logging output to stderr.
       qDebug() << Q_FUNC_INFO << "Initialised";
 
-      PersistentSettings::insert("color_formula", "morey");
-      PersistentSettings::insert("ibu_formula", "tinseth");
+      PersistentSettings::insert(PersistentSettings::Names::color_formula, "morey");
+      PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "tinseth");
 
       // Tell Brewken not to require any "user" input on starting
       Brewken::setInteractive(false);

@@ -189,9 +189,8 @@ void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val)
    int i;
 
    MashStep* stepSender = qobject_cast<MashStep*>(sender());
-   if( stepSender && (i = steps.indexOf(stepSender)) >= 0 )
-   {
-      if ( prop.name() == QString(PropertyNames::MashStep::stepNumber) ) {
+   if (stepSender && (i = steps.indexOf(stepSender)) >= 0) {
+      if (prop.name() == PropertyNames::MashStep::stepNumber) {
          reorderMashStep(stepSender,i);
       }
 
@@ -504,16 +503,16 @@ QString MashStepTableModel::generateName(int column) const
    switch(column)
    {
       case MASHSTEPAMOUNTCOL:
-         attribute = "amount";
+         attribute = "amount"; // Not a real property name
          break;
       case MASHSTEPTEMPCOL:
-         attribute = PropertyNames::MashStep::infuseTemp_c;
+         attribute = *PropertyNames::MashStep::infuseTemp_c;
          break;
       case MASHSTEPTARGETTEMPCOL:
-         attribute = PropertyNames::MashStep::stepTemp_c;
+         attribute = *PropertyNames::MashStep::stepTemp_c;
          break;
       case MASHSTEPTIMECOL:
-         attribute = PropertyNames::Misc::time;
+         attribute = *PropertyNames::Misc::time;
          break;
       default:
          attribute = "";

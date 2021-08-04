@@ -89,7 +89,7 @@ public:
    struct FieldDefinition {
       FieldType           fieldType;
       XQString            xPath;
-      char const * const  propertyName;   // If fieldType == RecordComplex, then this is used only on export
+      BtStringConst const propertyName;   // If fieldType == RecordComplex, then this is used only on export
                                           // If fieldType == RequiredConstant, then this is actually the constant value
       EnumLookupMap const * stringToEnum;
    };
