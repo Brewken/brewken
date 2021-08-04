@@ -49,7 +49,7 @@ class QTextStream;
  */
 class BtStringConst {
 public:
-   BtStringConst(char const * const cString = nullptr);
+   BtStringConst(char const * const cString);
 
    // We don't want to construct with implicit conversions, though, unfortunately, this isn't a universal fix
    BtStringConst(int param) = delete;
@@ -110,7 +110,7 @@ private:
 /**
  * \brief If you want to initialise a \c BtStringConst with \c nullptr you need to pass
  *        static_cast<char const * const>(nullptr), which is a bit cumbersome, so instead, this pre-defined constant
- *        allows you to reference a null-containing \c BtStringConst with BtStringConst::NULL_STR.
+ *        allows you to reference a null-containing \c BtStringConst with BtString::NULL_STR.
  */
 namespace BtString { extern BtStringConst const NULL_STR; }
 

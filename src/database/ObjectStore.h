@@ -91,7 +91,7 @@ public:
    struct TableField {
       FieldType const                 fieldType;
       BtStringConst const             columnName;            // Shouldn't ever be empty in practice
-      BtStringConst const             propertyName = {};     // Can be empty (ie N/A) in a junction table (see below)
+      BtStringConst const             propertyName = BtString::NULL_STR; // Can be empty in a junction table (see below)
       EnumStringMapping const * const enumMapping = nullptr; // Only needed if fieldType is Enum
       TableDefinition const * const   foreignKeyTo = nullptr;
    };
@@ -105,7 +105,7 @@ public:
       QVector<TableField> const tableFields;
       // GCC will let you get away without it, but some C++ compilers are more strict about the need for a non-default
       // constructor when you have const members in a struct
-      TableDefinition(BtStringConst const tableName = {},
+      TableDefinition(BtStringConst const tableName = BtString::NULL_STR,
                       std::initializer_list<TableField> const tableFields = {}) :
          tableName{tableName},
          tableFields{tableFields} {
@@ -161,7 +161,7 @@ public:
     */
    struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
-      JunctionTableDefinition(BtStringConst const tableName = {},
+      JunctionTableDefinition(BtStringConst const tableName = BtString::NULL_STR,
                               std::initializer_list<TableField> tableFields = {},
                               AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK) :
          TableDefinition{tableName, tableFields},
