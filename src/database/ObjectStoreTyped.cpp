@@ -34,9 +34,6 @@
 
 
 namespace {
-   //===================================================================================================================
-   //======================================= Start of DB schema name constants =========================================
-   #define STR(value) BtStringConst const {value}
 
    //
    // By the magic of templated variables and template specialisation, we have below all the constructor parameters for
@@ -49,8 +46,6 @@ namespace {
    //
    template<class NE> ObjectStore::TableDefinition const PRIMARY_TABLE;
    template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES;
-
-   ObjectStore::TableField terryFuckwit         {ObjectStore::FieldType::Int,    "id",                PropertyNames::NamedEntity::key};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Equipment
