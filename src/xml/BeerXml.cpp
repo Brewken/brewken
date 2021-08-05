@@ -53,6 +53,12 @@
 // Variables and constant definitions that we need only in this file
 //
 namespace {
+   // See comment in XmlRecord.cpp about how we slightly abuse propertyName field of FieldDefinition when fieldType is
+   // XmlRecord::RequiredConstant.  (This is when a required XML field holds data we don't need (and for which we always
+   // write a constant value on output.)  Specifically, in BeerXML, we need to write every version of pretty much every
+   // record as "1".
+   BtStringConst const VERSION1{"1"};
+
    template<class NE> QString BEER_XML_RECORD_NAME;
    template<class NE> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS;
 
@@ -97,7 +103,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type              XPath             Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
-      {XmlRecord::RequiredConstant, "VERSION", "1",                                 nullptr},
+      {XmlRecord::RequiredConstant, "VERSION", VERSION1,                                 nullptr},
       {XmlRecord::Double,  "ALPHA",          PropertyNames::Hop::alpha_pct,         nullptr},
       {XmlRecord::Double,  "AMOUNT",         PropertyNames::Hop::amount_kg,         nullptr},
       {XmlRecord::Enum,    "USE",            PropertyNames::Hop::use,               &BEER_XML_HOP_USE_MAPPER},
@@ -132,7 +138,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
       // Type              XPath               Q_PROPERTY                                          Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,                   nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                               nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                               nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Fermentable::type,                   &BEER_XML_FERMENTABLE_TYPE_MAPPER},
       {XmlRecord::Double,  "AMOUNT",           PropertyNames::Fermentable::amount_kg,              nullptr},
       {XmlRecord::Double,  "YIELD",            PropertyNames::Fermentable::yield_pct,              nullptr},
@@ -181,7 +187,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
       // Type              XPath               Q_PROPERTY                                    Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,             nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                         nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                         nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Yeast::type,                   &BEER_XML_YEAST_TYPE_MAPPER},
       {XmlRecord::Enum,    "FORM",             PropertyNames::Yeast::form,                   &BEER_XML_YEAST_FORM_MAPPER},
       {XmlRecord::Double,  "AMOUNT",           PropertyNames::Yeast::amount,                 nullptr},
@@ -226,7 +232,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Misc> {
       // Type              XPath               Q_PROPERTY                           Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,    nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Misc::type,           &BEER_XML_MISC_TYPE_MAPPER},
       {XmlRecord::Enum,    "USE",              PropertyNames::Misc::use,            &BEER_XML_MISC_USE_MAPPER},
       {XmlRecord::Double,  "TIME",             PropertyNames::Misc::time,           nullptr},
@@ -246,7 +252,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Water> {
       // Type               XPath            Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                nullptr},
       {XmlRecord::Double,  "AMOUNT",         PropertyNames::Water::amount,          nullptr},
       {XmlRecord::Double,  "CALCIUM",        PropertyNames::Water::calcium_ppm,     nullptr},
       {XmlRecord::Double,  "BICARBONATE",    PropertyNames::Water::bicarbonate_ppm, nullptr},
@@ -275,7 +281,7 @@ namespace {
       // Type              XPath                Q_PROPERTY                            Enum Mapper
       {XmlRecord::String,  "NAME",              PropertyNames::NamedEntity::name,     nullptr},
       {XmlRecord::String,  "CATEGORY",          PropertyNames::Style::category,       nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                  nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                  nullptr},
       {XmlRecord::String,  "CATEGORY_NUMBER",   PropertyNames::Style::categoryNumber, nullptr},
       {XmlRecord::String,  "STYLE_LETTER",      PropertyNames::Style::styleLetter,    nullptr},
       {XmlRecord::String,  "STYLE_GUIDE",       PropertyNames::Style::styleGuide,     nullptr},
@@ -324,7 +330,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<MashStep> {
       // Type              XPath                 Q_PROPERTY                                  Enum Mapper
       {XmlRecord::String,  "NAME",               PropertyNames::NamedEntity::name,           nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                         nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                         nullptr},
       {XmlRecord::Enum,    "TYPE",               PropertyNames::MashStep::type,              &BEER_XML_MASH_STEP_TYPE_MAPPER},
       {XmlRecord::Double,  "INFUSE_AMOUNT",      PropertyNames::MashStep::infuseAmount_l,    nullptr}, // Should not be supplied if TYPE is "Decoction"
       {XmlRecord::Double,  "STEP_TEMP",          PropertyNames::MashStep::stepTemp_c,        nullptr},
@@ -347,7 +353,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Mash> {
       // Type                    XPath                   Q_PROPERTY                                  Enum Mapper
       {XmlRecord::String,        "NAME",                 PropertyNames::NamedEntity::name,           nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                 nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                                 nullptr},
       {XmlRecord::Double,        "GRAIN_TEMP",           PropertyNames::Mash::grainTemp_c,           nullptr},
       {XmlRecord::RecordComplex, "MASH_STEPS/MASH_STEP", PropertyNames::Mash::mashSteps,             nullptr}, // Additional logic for "MASH-STEPS" is handled in code
       {XmlRecord::String,        "NOTES",                PropertyNames::Mash::notes,                 nullptr},
@@ -370,7 +376,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Equipment> {
       // Type              XPath                        Q_PROPERTY                                       Enum Mapper
       {XmlRecord::String,  "NAME",                      PropertyNames::NamedEntity::name,                nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                     nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                                     nullptr},
       {XmlRecord::Double,  "BOIL_SIZE",                 PropertyNames::Equipment::boilSize_l,            nullptr},
       {XmlRecord::Double,  "BATCH_SIZE",                PropertyNames::Equipment::batchSize_l,           nullptr},
       {XmlRecord::Double,  "TUN_VOLUME",                PropertyNames::Equipment::tunVolume_l,           nullptr},
@@ -405,7 +411,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Instruction> {
       // Type              XPath         Q_PROPERTY                              Enum Mapper
       {XmlRecord::String,  "NAME",       PropertyNames::NamedEntity::name,       nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                             nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                             nullptr},
       {XmlRecord::String,  "directions", PropertyNames::Instruction::directions, nullptr},
       {XmlRecord::Bool,    "hasTimer",   PropertyNames::Instruction::hasTimer,   nullptr},
       {XmlRecord::String,  "timervalue", PropertyNames::Instruction::timerValue, nullptr}, // NB XPath is lowercase and property is camelCase
@@ -424,7 +430,7 @@ namespace {
    template<> QString const BEER_XML_RECORD_NAME<BrewNote>{"BREWNOTE"};
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<BrewNote> {
       // Type              XPath                      Q_PROPERTY                                     Enum Mapper
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                 nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                                 nullptr},
       {XmlRecord::Date,    "BREWDATE",                PropertyNames::BrewNote::brewDate,             nullptr},
       {XmlRecord::Date,    "DATE_FERMENTED_OUT",      PropertyNames::BrewNote::fermentDate,          nullptr},
       {XmlRecord::String,  "NOTES",                   PropertyNames::BrewNote::notes,                nullptr},
@@ -469,7 +475,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Recipe> {
       // Type                    XPath                       Q_PROPERTY                                 Enum Mapper
       {XmlRecord::String,        "NAME",                     PropertyNames::NamedEntity::name,          nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", "1",                                                    nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                                    nullptr},
       {XmlRecord::Enum,          "TYPE",                     PropertyNames::Recipe::recipeType,         &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
       {XmlRecord::RecordSimple,  "STYLE",                    PropertyNames::Recipe::style,              nullptr},
       {XmlRecord::RecordSimple,  "EQUIPMENT",                PropertyNames::Recipe::equipment,          nullptr},

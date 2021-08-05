@@ -94,11 +94,20 @@ AddSettingName(windowState)
 //======================================== Start of setting SECTION constants ==========================================
 #define AddSettingSection(section) namespace PersistentSettings::Sections { BtStringConst const section{#section}; }
 AddSettingSection(backups)
+AddSettingSection(fermentableTable)
+AddSettingSection(hopTable)
 AddSettingSection(MainWindow)
+AddSettingSection(mashStepTableModel)
+AddSettingSection(miscTable)
+AddSettingSection(miscTableModel)
+AddSettingSection(page_postboil)
 AddSettingSection(page_postferment)
 AddSettingSection(page_preboil)
 AddSettingSection(pitchRateCalc)
+AddSettingSection(saltTable)
 AddSettingSection(tab_recipe)
+AddSettingSection(yeastTable)
+AddSettingSection(yeastTableModel)
 #undef AddSettingName
 //========================================= End of setting SECTION constants ===========================================
 //======================================================================================================================

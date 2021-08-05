@@ -44,6 +44,10 @@ class NamedParameterBundle;
  *        Note that we do not try to implement every single feature of SQL.  This is not a generic object-to-relational
  *        mapper.  It's just as much as we need.
  *
+ *        For the moment at least, we do not support triggers as, AFAICT, they are not needed.  (The DB might be using
+ *        its own triggers to handle primary key columns, but that happens without our intervention once we've specified
+ *        the column type.)
+ *
  *        Inheritance from QObject is to allow this class to send signals (and therefore that inheritance needs to be
  *        public).
  */
@@ -87,13 +91,35 @@ public:
     */
    typedef QVector<EnumAndItsDbString> EnumStringMapping;
 
+   //
+   // It's a bit tedious having to create constructors for structs but we need them to allow BtStringConst members to be
+   // constructed from a string literal without having to put wrappers (BtStringConst const {}) around each string
+   // literal.
+   //
+   // The reason we don't have existing constants for table name and column name string literals (in contrast with
+   // property names) is that these values are not needed anywhere else in the code.
+   //
+
    struct TableDefinition;
    struct TableField {
       FieldType const                 fieldType;
-      BtStringConst const             columnName;            // Shouldn't ever be empty in practice
-      BtStringConst const             propertyName = BtString::NULL_STR; // Can be empty in a junction table (see below)
-      EnumStringMapping const * const enumMapping = nullptr; // Only needed if fieldType is Enum
-      TableDefinition const * const   foreignKeyTo = nullptr;
+      BtStringConst const             columnName;   // Shouldn't ever be empty in practice
+      BtStringConst const             propertyName; // Can be empty in a junction table (see below)
+      EnumStringMapping const * const enumMapping;  // Only needed if fieldType is Enum
+      TableDefinition const * const   foreignKeyTo;
+      //! Constructor
+      TableField(FieldType const                 fieldType,
+                 char const * const              columnName = nullptr,
+                 BtStringConst const &           propertyName = BtString::NULL_STR,
+                 EnumStringMapping const * const enumMapping = nullptr,
+                 TableDefinition const * const   foreignKeyTo = nullptr) :
+         fieldType{fieldType},
+         columnName{columnName},
+         propertyName{propertyName},
+         enumMapping{enumMapping},
+         foreignKeyTo{foreignKeyTo} {
+         return;
+      }
    };
 
    /**
@@ -103,9 +129,8 @@ public:
    struct TableDefinition {
       BtStringConst tableName;
       QVector<TableField> const tableFields;
-      // GCC will let you get away without it, but some C++ compilers are more strict about the need for a non-default
-      // constructor when you have const members in a struct
-      TableDefinition(BtStringConst const tableName = BtString::NULL_STR,
+      //! Constructor
+      TableDefinition(char const * const tableName = nullptr,
                       std::initializer_list<TableField> const tableFields = {}) :
          tableName{tableName},
          tableFields{tableFields} {
@@ -161,7 +186,7 @@ public:
     */
    struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
-      JunctionTableDefinition(BtStringConst const tableName = BtString::NULL_STR,
+      JunctionTableDefinition(char const * const tableName = nullptr,
                               std::initializer_list<TableField> tableFields = {},
                               AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK) :
          TableDefinition{tableName, tableFields},

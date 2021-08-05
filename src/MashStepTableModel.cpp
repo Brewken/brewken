@@ -340,9 +340,9 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
          if( value.canConvert(QVariant::Int) )
          {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                     "type",
-                                                     static_cast<MashStep::Type>(value.toInt()),
-                                                     tr("Change Mash Step Type"));
+                                                  PropertyNames::MashStep::type,
+                                                  static_cast<MashStep::Type>(value.toInt()),
+                                                  tr("Change Mash Step Type"));
             return true;
          }
          else

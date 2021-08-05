@@ -1480,20 +1480,20 @@ void MainWindow::showChanges(QMetaProperty* prop)
    styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
    styleRangeWidget_ibu->setValue(recipeObs->IBU());
 
-   rangeWidget_batchsize->setRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"batchSize_l", &Units::liters,0));
-   rangeWidget_batchsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"finalVolume_l", &Units::liters,0));
-   rangeWidget_batchsize->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"finalVolume_l", &Units::liters,0));
+   rangeWidget_batchsize->setRange(0, Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::batchSize_l, &Units::liters, 0));
+   rangeWidget_batchsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::finalVolume_l, &Units::liters, 0));
+   rangeWidget_batchsize->setValue(Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::finalVolume_l, &Units::liters, 0));
 
-   rangeWidget_boilsize->setRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"boilSize_l", &Units::liters,0));
-   rangeWidget_boilsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs,tab_recipe,"boilVolume_l", &Units::liters,0));
-   rangeWidget_boilsize->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"boilVolume_l", &Units::liters,0));
+   rangeWidget_boilsize->setRange(0, Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::boilSize_l, &Units::liters, 0));
+   rangeWidget_boilsize->setPreferredRange(0, Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::boilVolume_l, &Units::liters, 0));
+   rangeWidget_boilsize->setValue(Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::boilVolume_l, &Units::liters, 0));
 
    /* Colors need the same basic treatment as gravity */
    updateColorSlider(PropertyNames::Style::colorMin_srm,
                      PropertyNames::Style::colorMax_srm,
                      PropertyNames::Recipe::color_srm,
                      styleRangeWidget_srm);
-   styleRangeWidget_srm->setValue(Brewken::amountDisplay(recipeObs,tab_recipe,"color_srm",&Units::srm,0));
+   styleRangeWidget_srm->setValue(Brewken::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::color_srm, &Units::srm, 0));
 
    // In some, incomplete, recipes, OG is approximately 1.000, which then makes GU close to 0 and thus IBU/GU insanely
    // large.  Besides being meaningless, such a large number takes up a lot of space.  So, where gravity units are
@@ -1621,8 +1621,8 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit)
    Mash* m = recipeObs->mash();
    if( m )
    {
-      new SimpleUndoableUpdate(*m, "tunWeight_kg", kit->tunWeight_kg(), tr("Change Tun Weight"), equipmentUpdate);
-      new SimpleUndoableUpdate(*m, "tunSpecificHeat_calGC", kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
+      new SimpleUndoableUpdate(*m, PropertyNames::Mash::tunWeight_kg, kit->tunWeight_kg(), tr("Change Tun Weight"), equipmentUpdate);
+      new SimpleUndoableUpdate(*m, PropertyNames::Mash::tunSpecificHeat_calGC, kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
    }
 
    if( QMessageBox::question(this,
@@ -1639,9 +1639,9 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit)
       // won't ever be seen by the user, but there's no harm in setting them.
       // (The previous call here to mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
       // setTunSpecificHeat_calGC() on the mash.)
-      new SimpleUndoableUpdate(*this->recipeObs, "batchSize_l", kit->batchSize_l(), tr("Change Batch Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, "boilSize_l", kit->boilSize_l(), tr("Change Boil Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, "boilTime_min", kit->boilTime_min(), tr("Change Boil Time"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::batchSize_l, kit->batchSize_l(), tr("Change Batch Size"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::boilSize_l, kit->boilSize_l(), tr("Change Boil Size"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::boilTime_min, kit->boilTime_min(), tr("Change Boil Time"), equipmentUpdate);
    }
 
    // This will do the equipment update and any related updates - see above
@@ -1741,7 +1741,10 @@ void MainWindow::updateRecipeBatchSize()
    if( recipeObs == nullptr )
       return;
 
-   this->doOrRedoUpdate(*this->recipeObs, "batchSize_l", lineEdit_batchSize->toSI(), tr("Change Batch Size"));
+   this->doOrRedoUpdate(*this->recipeObs,
+                        PropertyNames::Recipe::batchSize_l,
+                        lineEdit_batchSize->toSI(),
+                        tr("Change Batch Size"));
 }
 
 void MainWindow::updateRecipeBoilSize()
@@ -1749,7 +1752,10 @@ void MainWindow::updateRecipeBoilSize()
    if( recipeObs == nullptr )
       return;
 
-   this->doOrRedoUpdate(*this->recipeObs, "boilSize_l", lineEdit_boilSize->toSI(), tr("Change Boil Size"));
+   this->doOrRedoUpdate(*this->recipeObs,
+                        PropertyNames::Recipe::boilSize_l,
+                        lineEdit_boilSize->toSI(),
+                        tr("Change Boil Size"));
 }
 
 void MainWindow::updateRecipeBoilTime()
@@ -1767,10 +1773,11 @@ void MainWindow::updateRecipeBoilTime()
    // changes to recipeObs->boilTime_min and maybe recipeObs->boilSize_l
    // NOTE: This works because kit is the recipe's equipment, not the generic
    // equipment in the recipe drop down.
-   if( kit )
-      this->doOrRedoUpdate(*kit, "boilTime_min", boilTime, tr("Change Boil Time"));
-   else
-      this->doOrRedoUpdate(*this->recipeObs, "boilTime_min", boilTime, tr("Change Boil Time"));
+   if (kit) {
+      this->doOrRedoUpdate(*kit, PropertyNames::Equipment::boilTime_min, boilTime, tr("Change Boil Time"));
+   } else {
+      this->doOrRedoUpdate(*this->recipeObs, PropertyNames::Recipe::boilTime_min, boilTime, tr("Change Boil Time"));
+   }
 
    return;
 }

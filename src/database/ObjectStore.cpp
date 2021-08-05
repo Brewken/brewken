@@ -818,7 +818,7 @@ void ObjectStore::loadAll(Database * database) {
          // It's a coding error if we got the same parameter twice
          Q_ASSERT(!namedParameterBundle.contains(*fieldDefn.propertyName));
 
-         namedParameterBundle.insert(*fieldDefn.propertyName, fieldValue);
+         namedParameterBundle.insert(fieldDefn.propertyName, fieldValue);
 
          // We assert that the insert always works!
          Q_ASSERT(namedParameterBundle.contains(*fieldDefn.propertyName));

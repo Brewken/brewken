@@ -770,8 +770,11 @@ QString Brewken::displayAmount(NamedEntity* element, QObject* object, BtStringCo
 
 }
 
-QString Brewken::displayAmount(double amt, QString section, BtStringConst const & propertyName, Unit const * units, int precision )
-{
+QString Brewken::displayAmount(double amt,
+                               BtStringConst const & section,
+                               BtStringConst const & propertyName,
+                               Unit const * units,
+                               int precision) {
    Unit::unitScale dispScale;
    Unit::unitDisplay dispUnit;
 

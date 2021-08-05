@@ -45,11 +45,12 @@ class QTextStream;
  *
  *        NB: Since this is just a thin code wrapper around a const pointer, there is no particular benefit in passing
  *            references to BtStringConst around.  OTOH there's probably no harm either as one would expect the compiler
- *            to optimise down to about the same thing either way.
+ *            to optimise down to about the same thing either way.  (I tend to pass const references out of habit and by
+ *            analogy with std::string and QString parameters.)
  */
 class BtStringConst {
 public:
-   BtStringConst(char const * const cString);
+   explicit BtStringConst(char const * const cString);
 
    // We don't want to construct with implicit conversions, though, unfortunately, this isn't a universal fix
    BtStringConst(int param) = delete;

@@ -174,7 +174,11 @@ public:
     * \param units which unit system it is in
     * \param precision how many decimal places to use, defaulting to 3
     */
-   static QString displayAmount( double amount, QString section, BtStringConst const & propertyName, Unit const * units=nullptr, int precision = 3);
+   static QString displayAmount(double amount,
+                                BtStringConst const & section,
+                                BtStringConst const & propertyName,
+                                Unit const * units=nullptr,
+                                int precision = 3);
 
    /*!
     *  \brief Displays an amount in the appropriate units.

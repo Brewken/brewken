@@ -66,7 +66,8 @@ public:
       Enum,
       RequiredConstant,   // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
       RecordSimple,       // Single contained record
-      RecordComplex       // Zero, one or more contained records
+      RecordComplex,      // Zero, one or more contained records
+      INVALID
    };
 
    /**
