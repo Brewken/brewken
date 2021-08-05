@@ -505,12 +505,11 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(NamedEntity * conta
          //
          // If we reach here, it means either there was a problem with one of our child records or we ourselves are a
          // late-detected duplicate.  We've already stored our NamedEntity record in the DB, so we need to try to undo
-         // that by deleting it.  It should be the case that this deletion will also take care of deleting any owned
-         // child records that have already been stored.  (Eg if this is a Mash, and we stored it and 2 MashSteps before
-         // hitting an error on the 3rd MashStep, then deleting the Mash from the DB should also result in those 2
-         // stored MashSteps getting deleted from the DB.)
-         //
-         // .:TODO-DATABASE:. Make the above statement about deletion true!
+         // that by deleting it.  It is the responsibility of each NamedEntity subclass to take care of deleting any
+         // owned stored objects, via the virtual member function NamedEntity::hardDeleteOwnedEntities().  So we don't
+         // have to worry about child records that have already been stored.  (Eg if this is a Mash, and we stored it
+         // and 2 MashSteps before hitting an error on the 3rd MashStep, then deleting the Mash from the DB will also
+         // result in those 2 stored MashSteps getting deleted from the DB.)
          //
          qDebug() <<
             Q_FUNC_INFO << "Deleting stored" << this->namedEntityClassName << "as" <<

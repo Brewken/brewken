@@ -270,8 +270,8 @@ namespace {
    BtStringConst const & GetJunctionTableDefinitionOtherPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[2].columnName;
    }
-   BtStringConst GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
-      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : BtStringConst{static_cast<char const * const>(nullptr)};
+   BtStringConst const & GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : BtString::NULL_STR;
    }
 
    //

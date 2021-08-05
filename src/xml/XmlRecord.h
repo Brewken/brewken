@@ -73,13 +73,10 @@ public:
    /**
     * \brief Map from a string in an XML file to the value of an enum in a Brewken class
     *
-    * .:TODO:. In theory we'll need to make this two-way when we extend to support saving XML, but a straight search
-    *          through the whole map is not actually that burdensome
-    *
-    * Could use QMap or QHash here.  Doubt it makes much difference either way for the quantity of data /
-    * number of look-ups we're doing.  (Documentation says QHash is "significantly faster" if you don't need ordering,
-    * but some people say that's only true beyond a certain number of elements stored.  We could benchmark it if we
-    * were anxious about performance here.)
+    * Could use QMap or QHash here.  Doubt it makes much difference either way for the quantity of data / number of
+    * look-ups we're doing.  (Documentation says QHash is "significantly faster" if you don't need ordering, but some
+    * people say that's only true beyond a certain number of elements stored.  We could benchmark it if we were anxious
+    * about performance here.)
     */
    typedef QHash<QString, int> EnumLookupMap;
 
