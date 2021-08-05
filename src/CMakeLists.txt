@@ -26,7 +26,11 @@
 # See also ../CMakeLists.txt
 #
 
-# Uncomment the next line for verbose build output
+#
+# Uncomment the next line for slightly verbose build output
+# Alternatively, for very verbose output, invoke make as follows:
+#    $ make VERBOSE=1
+#
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # The current directory in the original source.
@@ -200,6 +204,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/TimerWidget.cpp
     ${SRCDIR}/Unit.cpp
     ${SRCDIR}/UnitSystem.cpp
+    ${SRCDIR}/utils/BtStringConst.cpp
     ${SRCDIR}/WaterButton.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp
@@ -421,6 +426,32 @@ ELSEIF(WIN32)
   SET(Brewken_ICON ${RCFILE})
 ENDIF()
 
+#===========================================Requirements for Boost Stacktrace===========================================
+#
+# Per https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html, by default
+# Boost.Stacktrace is a header-only library.  However, you get better results by linking (either statically or
+# dynamically) with a helper library.  Of the various options, it seems like boost_stacktrace_backtrace gives the most
+# functionality over the most platforms.  This has dependencies on:
+#   - libdl on POSIX platforms
+#   - libbacktrace
+# The latter is an external library on Windows.  On POSIX plaforms it's typically already either installed on the system
+# (eg see https://man7.org/linux/man-pages/man3/backtrace.3.html) or built in to the compiler.  Fortunately, CMake knows
+# how to do the right thing in either case, thanks to https://cmake.org/cmake/help/latest/module/FindBacktrace.html.
+#
+IF(NOT WIN32)
+   find_library(DL_LIBRARY dl)
+ENDIF()
+find_package(Backtrace REQUIRED)
+# For the moment, leave default settings for Mac as can't work out how to get the backtrace version of stacktrace
+# working.  (Should still get stack traces on Mac, but might not get as much info in them as we'd like.)
+IF(NOT APPLE)
+   IF(NOT WIN32)
+      add_compile_definitions(BOOST_STACKTRACE_DYN_LINK)
+   ENDIF()
+   add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
+ENDIF()
+message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boost_LIBRARIES})
+
 #===========================Create the binary==================================
 
 # This creates a "library" of object files so that we do not have to recompile
@@ -527,11 +558,24 @@ IF( NOT ${NO_QTMULTIMEDIA})
    SET( QT5_USE_MODULES_LIST ${QT5_USE_MODULES_LIST} Qt5::Multimedia)
 ENDIF()
 
-# The dl library is needed on non-Windows platforms for Boost Stacktrace
-IF(NOT WIN32)
-   SET(LIBDL dl)
-ENDIF()
-target_link_libraries( ${QT5_USE_MODULES_LIST} ${XercesC_LIBRARIES} ${XalanC_LIBRARIES} ${LIBDL} )
+#
+# All the libraries
+#
+# ********************************************************************************************************************
+# * Note that if you change this you need to make corresponding changes to this to target_link_libraries in the Tests
+# * section below.
+# *
+# * .:TODO:. Work out how to avoid this copy-and-paste duplication
+# ********************************************************************************************************************
+#
+target_link_libraries(
+   ${QT5_USE_MODULES_LIST}
+   ${XercesC_LIBRARIES}
+   ${XalanC_LIBRARIES}
+   ${Boost_LIBRARIES}
+   ${DL_LIBRARY}
+   ${Backtrace_LIBRARIES}
+)
 
 #=================================Tests========================================
 
@@ -558,7 +602,15 @@ IF( NOT ${NO_QTMULTIMEDIA})
 SET( QT5_USE_MODULES_LIST ${QT5_USE_MODULES_LIST} Qt5::Multimedia)
 ENDIF()
 
-target_link_libraries(${QT5_USE_MODULES_LIST} ${XercesC_LIBRARIES} ${XalanC_LIBRARIES} ${LIBDL})
+# NB Needs to be same as the one a few lines above. Sigh.
+target_link_libraries(
+   ${QT5_USE_MODULES_LIST}
+   ${XercesC_LIBRARIES}
+   ${XalanC_LIBRARIES}
+   ${Boost_LIBRARIES}
+   ${DL_LIBRARY}
+   ${Backtrace_LIBRARIES}
+)
 
 ADD_TEST(
    NAME pstdintTest

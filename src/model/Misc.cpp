@@ -25,14 +25,12 @@
 #include <string>
 
 #include <QDebug>
-#include <QDomElement>
-#include <QDomText>
-#include <QObject>
 #include <QVector>
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 namespace {

@@ -23,6 +23,7 @@
 #include <QString>
 #include <QVector>
 
+#include "utils/BtStringConst.h"
 
 /**
  * @brief Plots radar charts (see https://en.wikipedia.org/wiki/Radar_chart) of the specified Qt properties of one or
@@ -41,8 +42,9 @@ public:
     * internal property name.  We also have a localised display name to label the axis for this variable.
     */
    struct VariableName {
-      char const * propertyName;
-      QString displayName;
+      // Note that the members of the struct need to be default initialisable so we can store them in a QVector below
+      BtStringConst const & propertyName = BtString::NULL_STR;
+      QString displayName = "";
    };
 
    /**

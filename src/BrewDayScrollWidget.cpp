@@ -37,6 +37,7 @@
 #include "model/Instruction.h"
 #include "model/Mash.h"
 #include "model/Style.h"
+#include "PersistentSettings.h"
 #include "TimerWidget.h"
 
 namespace {
@@ -52,7 +53,10 @@ namespace {
       if ( ! equipment ) {
          return "unknown";
       } else {
-         return Brewken::displayAmount(equipment->boilTime_min(), "tab_recipe", "boilTime_min", &Units::minutes);
+         return Brewken::displayAmount(equipment->boilTime_min(),
+                                       PersistentSettings::Sections::tab_recipe,
+                                       PropertyNames::Recipe::boilTime_min,
+                                       &Units::minutes);
       }
    }
 }
@@ -369,23 +373,23 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
    // third row: pre-Boil Volume and Preboil Gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Boil Volume"))
-            .arg(Brewken::displayAmount(recObs->boilVolume_l(), "tab_recipe", "boilVolume_l", &Units::liters,2))
+            .arg(Brewken::displayAmount(recObs->boilVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilVolume_l, &Units::liters,2))
             .arg(tr("Preboil Gravity"))
-            .arg(Brewken::displayAmount(recObs->boilGrav(), "tab_recipe", "og", &Units::sp_grav, 3));
+            .arg(Brewken::displayAmount(recObs->boilGrav(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Units::sp_grav, 3));
 
    // fourth row: Final volume and starting gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Final Volume"))
-            .arg(Brewken::displayAmount(recObs->finalVolume_l(), "tab_recipe", "finalVolume_l", &Units::liters,2))
+            .arg(Brewken::displayAmount(recObs->finalVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::finalVolume_l, &Units::liters,2))
             .arg(tr("Starting Gravity"))
-            .arg(Brewken::displayAmount(recObs->og(), "tab_recipe", "og", &Units::sp_grav, 3));
+            .arg(Brewken::displayAmount(recObs->og(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Units::sp_grav, 3));
 
    // fifth row: IBU and Final gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("IBU"))
             .arg( Brewken::displayAmount(recObs->IBU(),nullptr,1))
             .arg(tr("Final Gravity"))
-            .arg(Brewken::displayAmount(recObs->fg(), "tab_recipe", "fg", &Units::sp_grav, 3));
+            .arg(Brewken::displayAmount(recObs->fg(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::fg, &Units::sp_grav, 3));
 
    // sixth row: ABV and estimate calories
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2%</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")

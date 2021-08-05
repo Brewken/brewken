@@ -1,5 +1,5 @@
 /**
- * SimpleUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020:
+ * SimpleUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,17 +23,17 @@
 #include <QUndoCommand>
 #include <QVariant>
 
+#include "utils/BtStringConst.h"
+
 /*!
  * \class SimpleUndoableUpdate
- *
  *
  * \brief Each instance of this class is an undoable update to a 'simple' editable field of a recipe, style, etc.
  *        By simple, we mean that there is one of them and that it is non-relational (ie can be passed and set by value).
  *        The thing being updated needs to inherit from Q_OBJECT and the field being changed needs to have been
  *        declared as a Q_PROPERTY.
  */
-class SimpleUndoableUpdate : public QUndoCommand
-{
+class SimpleUndoableUpdate : public QUndoCommand {
 public:
    /*!
     * \param updatee The entity (eg recipe) we are updating
@@ -43,7 +43,7 @@ public:
     * \param parent This is for grouping updates together.  We don't currently use it.
     */
    SimpleUndoableUpdate(QObject & updatee,
-                        char const * const propertyName,
+                        BtStringConst const & propertyName,
                         QVariant newValue,
                         QString const & description,
                         QUndoCommand * parent = nullptr);
@@ -69,7 +69,7 @@ private:
    bool undoOrRedo(bool const isUndo);
 
    QObject & updatee;
-   char const * const propertyName;
+   BtStringConst const propertyName;
    QVariant oldValue, newValue;
 };
 

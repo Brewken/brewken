@@ -191,7 +191,10 @@ void RecipeExtrasWidget::updateCarbonation()
    if( recipe == 0 )
       return;
 
-   Brewken::mainWindow()->doOrRedoUpdate(*recipe, PropertyNames::Recipe::carbonation_vols, lineEdit_carbVols->toSI(), tr("Change Carbonation"));
+   Brewken::mainWindow()->doOrRedoUpdate(*recipe,
+                                         PropertyNames::Recipe::carbonation_vols,
+                                         lineEdit_carbVols->toSI(),
+                                         tr("Change Carbonation"));
 }
 
 void RecipeExtrasWidget::updateTasteNotes()
@@ -199,7 +202,10 @@ void RecipeExtrasWidget::updateTasteNotes()
    if( recipe == 0 )
       return;
 
-   Brewken::mainWindow()->doOrRedoUpdate(*recipe, PropertyNames::Recipe::tasteNotes, btTextEdit_tasteNotes->toPlainText(), tr("Edit Taste Notes"));
+   Brewken::mainWindow()->doOrRedoUpdate(*recipe,
+                                         PropertyNames::Recipe::tasteNotes,
+                                         btTextEdit_tasteNotes->toPlainText(),
+                                         tr("Edit Taste Notes"));
 }
 
 void RecipeExtrasWidget::updateNotes()
@@ -207,7 +213,10 @@ void RecipeExtrasWidget::updateNotes()
    if( recipe == 0 )
       return;
 
-   Brewken::mainWindow()->doOrRedoUpdate(*recipe, "notes", btTextEdit_notes->toPlainText(), tr("Edit Notes"));
+   Brewken::mainWindow()->doOrRedoUpdate(*recipe,
+                                         PropertyNames::Recipe::notes,
+                                         btTextEdit_notes->toPlainText(),
+                                         tr("Edit Notes"));
 }
 
 void RecipeExtrasWidget::changed(QMetaProperty prop, QVariant /*val*/)

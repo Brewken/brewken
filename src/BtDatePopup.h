@@ -1,5 +1,6 @@
 /**
- * BtDatePopup.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtDatePopup.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -18,13 +19,12 @@
 #define BTDATEPOPUP_H
 #pragma once
 
-#include <QDialog>
+#include <QCalendarWidget>
 #include <QDate>
 #include <QDateTime>
-#include <QCalendarWidget>
+#include <QDialog>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
-
 
 /*!
  * \class BtDatePopup
@@ -36,14 +36,12 @@
  * This is largely taken from jordenysp's example on stackoverflow
  * http://stackoverflow.com/questions/1352334/qcalendarwidget-as-pop-up-not-as-new-window
  */
-
-class BtDatePopup : public QDialog
-{
+class BtDatePopup : public QDialog {
    Q_OBJECT
 
 public:
       BtDatePopup(QWidget* parent=0);
-      QDateTime selectedDate() const;
+      QDate selectedDate() const;
 
 private:
       QWidget* widget;

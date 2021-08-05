@@ -384,9 +384,9 @@ void MashWizard::wizardry()
             mashStep->setCacheOnly(false);
             steps.append(mashStep);
             emit mashStep->changed(
-                        mashStep->metaObject()->property(
-                            mashStep->metaObject()->indexOfProperty(PropertyNames::MashStep::type)
-                        )
+               mashStep->metaObject()->property(
+                     mashStep->metaObject()->indexOfProperty(*PropertyNames::MashStep::type)
+               )
             );
          }
          emit mash->mashStepsChanged();
@@ -407,9 +407,9 @@ void MashWizard::wizardry()
          mashStep->setCacheOnly(false);
          steps.append(mashStep);
          emit mashStep->changed(
-                     mashStep->metaObject()->property(
-                         mashStep->metaObject()->indexOfProperty(PropertyNames::MashStep::type)
-                     )
+            mashStep->metaObject()->property(
+                  mashStep->metaObject()->indexOfProperty(*PropertyNames::MashStep::type)
+            )
          );
       }
 

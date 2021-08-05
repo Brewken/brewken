@@ -200,7 +200,7 @@ void importFromXml(const QString & filename) {
       exit(1);
    }
    Database::instance().unload();
-   PersistentSettings::insert("converted", QDate().currentDate().toString());
+   PersistentSettings::insert(PersistentSettings::Names::converted, QDate().currentDate().toString());
    exit(0);
 }
 

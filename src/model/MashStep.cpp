@@ -19,11 +19,12 @@
  */
 #include "model/MashStep.h"
 
-#include <QVector>
 #include <QDebug>
+#include <QVector>
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/NamedParameterBundle.h"
 #include "PhysicalConstants.h"
 
 QStringList const MashStep::types{"Infusion", "Temperature", "Decoction", "Fly Sparge", "Batch Sparge"};
