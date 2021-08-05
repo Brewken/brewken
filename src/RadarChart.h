@@ -43,7 +43,7 @@ public:
     */
    struct VariableName {
       // Note that the members of the struct need to be default initialisable so we can store them in a QVector below
-      BtStringConst const propertyName = BtString::NULL_STR;
+      BtStringConst const & propertyName = BtString::NULL_STR;
       QString displayName = "";
    };
 

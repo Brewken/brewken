@@ -388,7 +388,7 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
    return true;
 }
 
-void MiscTableModel::changedInventory(int invKey, BtStringConst const propertyName) {
+void MiscTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
    if (propertyName == PropertyNames::Inventory::amount) {
 ///      double newAmount = ObjectStoreWrapper::getById<InventoryMisc>()->getAmount();
       for( int i = 0; i < miscObs.size(); ++i ) {

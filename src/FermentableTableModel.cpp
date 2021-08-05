@@ -217,7 +217,7 @@ void FermentableTableModel::setDisplayPercentages(bool var)
    displayPercentages = var;
 }
 
-void FermentableTableModel::changedInventory(int invKey, BtStringConst const propertyName) {
+void FermentableTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
 
    if (propertyName == PropertyNames::Inventory::amount) {
       for( int i = 0; i < fermObs.size(); ++i ) {

@@ -28,6 +28,7 @@ BtStringConst::BtStringConst(char const * const cString) : cString(cString) {
 }
 
 BtStringConst::BtStringConst(BtStringConst const &) = default;
+BtStringConst::BtStringConst(BtStringConst &&) = default;
 
 BtStringConst::~BtStringConst() = default;
 

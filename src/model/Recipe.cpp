@@ -2734,7 +2734,7 @@ QList<BrewNote *> RecipeHelper::brewNotesForRecipeAndAncestors(Recipe const & re
    return brewNotes;
 }
 
-void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst const propertyName) {
+void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst const & propertyName) {
    //
    // .:TBD:. MY 2021-07-23  This is largely working, in that, with automatic versioning enabled, every time you make a
    // change to something (a Recipe's own field or a field on an ingredient, the Mash, etc) it generates a new version

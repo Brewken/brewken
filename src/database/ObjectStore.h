@@ -206,7 +206,7 @@ public:
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
     */
-   ObjectStore(TableDefinition const &           primaryTable,
+   ObjectStore(TableDefinition const &          primaryTable,
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();
@@ -456,7 +456,7 @@ signals:
     *           \c ObjectStoreTyped<InventoryHop>::getInstance(), etc
     * \param propertyName The name of the property that changed
     */
-   void signalPropertyChanged(int id, BtStringConst const propertyName);
+   void signalPropertyChanged(int id, BtStringConst const & propertyName);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

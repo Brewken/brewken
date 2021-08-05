@@ -699,7 +699,7 @@ namespace RecipeHelper {
     *        because we are modifying some ingredient or other attribute of the Recipe and automatic versioning is
     *        enabled.
     */
-   void prepareForPropertyChange(NamedEntity & ne, BtStringConst const propertyName);
+   void prepareForPropertyChange(NamedEntity & ne, BtStringConst const & propertyName);
 
    /**
     * \brief Turn automatic versioning on or off

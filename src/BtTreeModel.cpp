@@ -1375,7 +1375,7 @@ void BtTreeModel::elementRemoved(NamedEntity * victim) {
    disconnect(victim, nullptr, this, nullptr);
 }
 
-void BtTreeModel::recipePropertyChanged(int recipeId, BtStringConst const propertyName) {
+void BtTreeModel::recipePropertyChanged(int recipeId, BtStringConst const & propertyName) {
    // If a Recipe's ancestor ID has changed then it might be because a new ancestor has been created
    // .:TBD:. We could probably get away with propertyName == PropertyNames::Recipe::ancestorId here because
    // we always use the same constants for property names.

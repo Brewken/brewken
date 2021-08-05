@@ -231,7 +231,7 @@ void HopTableModel::removeAll() {
    }
 }
 
-void HopTableModel::changedInventory(int invKey, BtStringConst const propertyName) {
+void HopTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
    if (propertyName == PropertyNames::Inventory::amount) {
 ///      double newAmount = ObjectStoreWrapper::getById<InventoryHop>()->getAmount();
       for (int i = 0; i < hopObs.size(); ++i) {

@@ -235,7 +235,7 @@ private slots:
    void elementRemovedBrewNote(int victimId, std::shared_ptr<QObject> victim);
    void elementRemovedWater(int victimId, std::shared_ptr<QObject> victim);
 
-   void recipePropertyChanged(int recipeId, BtStringConst const propertyName);
+   void recipePropertyChanged(int recipeId, BtStringConst const & propertyName);
 
 signals:
    void expandFolder(BtTreeModel::TypeMasks kindofThing, QModelIndex fIdx);

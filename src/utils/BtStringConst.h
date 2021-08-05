@@ -42,22 +42,15 @@ class QTextStream;
  *        QString and never a problem.  In practice, you have to be careful about, say, a struct containing
  *        QString const &, as you can break the reference-counting logic and get a segfault (at least on Clang on Mac OS
  *        with Qt 5.9.5).
- *
- *        NB: Since this is just a thin code wrapper around a const pointer, there is no particular benefit in passing
- *            references to BtStringConst around.  OTOH there's probably no harm either as one would expect the compiler
- *            to optimise down to about the same thing either way.  (I tend to pass const references out of habit and by
- *            analogy with std::string and QString parameters.)
  */
 class BtStringConst {
 public:
+   // NB: Constructors are all explicit as we don't want to construct with implicit conversions
    explicit BtStringConst(char const * const cString);
-
-   // We don't want to construct with implicit conversions, though, unfortunately, this isn't a universal fix
-   BtStringConst(int param) = delete;
-   template <typename T> BtStringConst(T value) = delete;
-
    //! Copy constructor OK
-   BtStringConst(BtStringConst const &);
+   explicit BtStringConst(BtStringConst const &);
+   //! Move constructor OK
+   explicit BtStringConst(BtStringConst &&);
    ~BtStringConst();
 
    /**
@@ -102,8 +95,6 @@ private:
 
    //! No assignment operator
    BtStringConst & operator=(BtStringConst const &) = delete;
-   //! No move constructor
-   BtStringConst(BtStringConst &&) = delete;
    //! No move assignment
    BtStringConst & operator=(BtStringConst &&) = delete;
 };

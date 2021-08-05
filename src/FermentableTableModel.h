@@ -109,7 +109,7 @@ private slots:
    //! \brief Catch changes to Recipe, Database, and Fermentable.
    void changed(QMetaProperty, QVariant);
    //! \brief Catches changes to inventory
-   void changedInventory(int invKey, BtStringConst const propertyName);
+   void changedInventory(int invKey, BtStringConst const & propertyName);
 
 private:
    //! \brief Recalculate the total amount of grains in the model.
