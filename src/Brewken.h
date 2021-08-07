@@ -27,6 +27,7 @@
  */
 #ifndef BREWKEN_H
 #define BREWKEN_H
+#pragma once
 
 #define CONFIG_VERSION 1
 
@@ -95,7 +96,6 @@ class Brewken : public QObject
    Q_ENUMS(delOptions)
 
    friend class OptionDialog;
-   friend class IbuMethods;
    friend class ColorMethods;
    friend class RecipeFormatter;
    friend class Unit;
@@ -115,8 +115,6 @@ public:
    enum DensityUnitType {SG,PLATO};
    //! \brief The units for the diastatic power.
    enum DiastaticPowerUnitType {LINTNER, WK};
-   //! \brief The formula used to get IBUs.
-   enum IbuType {TINSETH, RAGER, NOONAN};
 
    enum RangeType {
       DENSITY,
@@ -222,8 +220,6 @@ public:
    static double qStringToSI( QString qstr, Unit const * unit,
          Unit::unitDisplay dispUnit = Unit::noUnit, Unit::unitScale dispScale = Unit::noScale);
 
-   //! \brief return the bitterness formula's name
-   static QString ibuFormulaName();
    //! \brief return the color formula name
    static QString colorFormulaName();
 
@@ -318,7 +314,6 @@ private:
    static ColorUnitType colorUnit;
    static DensityUnitType densityUnit;
    static DiastaticPowerUnitType diastaticPowerUnit;
-   static IbuType ibuFormula;
    static Unit::unitDisplay dateFormat;
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
