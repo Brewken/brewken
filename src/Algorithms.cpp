@@ -309,9 +309,9 @@ double Algorithms::abvFromOgAndFg(double og, double fg) {
 
    //
    // It's worth reiterating some definitions here.  Although OG and FG are often expressed in terms of SPECIFIC GRAVITY
-   // (see https://en.wikipedia.org/wiki/Relative_density), the definition HMRC will almost certainly be in terms of
-   // EXCESS GRAVITY, per https://beerandbrewing.com/dictionary/c9EBwhgZpA/: "Original gravity is expressed as the
-   // density above that of distilled water and in the UK is called the excess gravity. Water is deemed to have a
+   // (see https://en.wikipedia.org/wiki/Relative_density), the definition HMRC will almost certainly be using is in
+   // terms of EXCESS GRAVITY.  Per https://beerandbrewing.com/dictionary/c9EBwhgZpA/: "Original gravity is expressed as
+   // the density above that of distilled water and in the UK is called the excess gravity. Water is deemed to have a
    // density at STP of 1.000.  If the wort density is 1.048, it will have 48° of excess gravity and an OG of 48.
    //    "Internationally, different units are used to express OG that are unique to the brewing industry and include
    // degrees Plato, degrees Balling, or percent dry matter of the wort, Brix % (for sucrose only). ... The numerical
@@ -367,9 +367,6 @@ double Algorithms::abvFromOgAndFg(double og, double fg) {
       Q_FUNC_INFO << "ABV old method:" << abvByOldMethod << "% , new method:" << abvByNewMethod << "% (used factor" <<
       matchingGravityDifferenceRec->factorToUse << "and should be in range" <<
       matchingGravityDifferenceRec->pctAbv_Min << "% -" << matchingGravityDifferenceRec->pctAbv_Max << "%)";
-   double dummy = 5.119;
-   qDebug() << Q_FUNC_INFO << QLocale().toString(dummy, 'f', 6) << "=" << QLocale().toString(dummy, 'f', 2);
-
 
    // The tables from UK HMRC have some sanity-check data, so let's use it!
    if (abvByNewMethod < matchingGravityDifferenceRec->pctAbv_Min ||
