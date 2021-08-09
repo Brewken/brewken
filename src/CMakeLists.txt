@@ -103,6 +103,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/BrewDayWidget.cpp
     ${SRCDIR}/Brewken.cpp
     ${SRCDIR}/BrewNoteWidget.cpp
+    ${SRCDIR}/BtColor.cpp
     ${SRCDIR}/BtDatePopup.cpp
     ${SRCDIR}/BtDigitWidget.cpp
     ${SRCDIR}/BtFolder.cpp
@@ -122,8 +123,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/database/Database.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
     ${SRCDIR}/database/DbTransaction.cpp
-    ${SRCDIR}/database/ObjectStoreTyped.cpp
     ${SRCDIR}/database/ObjectStore.cpp
+    ${SRCDIR}/database/ObjectStoreTyped.cpp
     ${SRCDIR}/EquipmentButton.cpp
     ${SRCDIR}/EquipmentEditor.cpp
     ${SRCDIR}/EquipmentListModel.cpp
@@ -212,6 +213,9 @@ SET( Brewken_SRCS
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
     ${SRCDIR}/WaterTableModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
+    ${SRCDIR}/widgets/Animator.cpp
+    ${SRCDIR}/widgets/SelectionControl.cpp
+    ${SRCDIR}/widgets/ToggleSwitch.cpp
     ${SRCDIR}/xml/BeerXml.cpp
     ${SRCDIR}/xml/BtDomErrorHandler.cpp
     ${SRCDIR}/xml/XercesHelpers.cpp
@@ -286,9 +290,9 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/BtDatePopup.h
     ${SRCDIR}/BtDigitWidget.h
     ${SRCDIR}/BtFolder.h
-    ${SRCDIR}/BtHorizontalTabs.h
     ${SRCDIR}/BtLabel.h
     ${SRCDIR}/BtLineEdit.h
+    ${SRCDIR}/BtPrintPreview.h
     ${SRCDIR}/BtSplashScreen.h
     ${SRCDIR}/BtTabWidget.h
     ${SRCDIR}/BtTextEdit.h
@@ -298,7 +302,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/CMakeLists.txt
     ${SRCDIR}/ConverterTool.h
     ${SRCDIR}/CustomComboBox.h
-    ${SRCDIR}/database/Database.h
+    ${SRCDIR}/database/ObjectStore.h
     ${SRCDIR}/EquipmentButton.h
     ${SRCDIR}/EquipmentEditor.h
     ${SRCDIR}/EquipmentListModel.h
@@ -346,6 +350,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/NamedEntitySortProxyModel.h
     ${SRCDIR}/NamedMashEditor.h
     ${SRCDIR}/OgAdjuster.h
+    ${SRCDIR}/OptionDialog.h
     ${SRCDIR}/PitchDialog.h
     ${SRCDIR}/PrimingDialog.h
     ${SRCDIR}/QueuedMethod.h
@@ -362,11 +367,10 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/StyleListModel.h
     ${SRCDIR}/StyleRangeWidget.h
     ${SRCDIR}/StyleSortFilterProxyModel.h
-    ${SRCDIR}/Testing.h
     ${SRCDIR}/TimerListDialog.h
     ${SRCDIR}/TimerMainDialog.h
     ${SRCDIR}/TimerWidget.h
-    ${SRCDIR}/unit.h
+    ${SRCDIR}/Unit.h
     ${SRCDIR}/WaterButton.h
     ${SRCDIR}/WaterDialog.h
     ${SRCDIR}/WaterEditor.h
@@ -374,6 +378,9 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/WaterSortFilterProxyModel.h
     ${SRCDIR}/WaterTableModel.h
     ${SRCDIR}/WaterTableWidget.h
+    ${SRCDIR}/widgets/Animator.h
+    ${SRCDIR}/widgets/SelectionControl.h
+    ${SRCDIR}/widgets/ToggleSwitch.h
     ${SRCDIR}/YeastDialog.h
     ${SRCDIR}/YeastEditor.h
     ${SRCDIR}/YeastSortFilterProxyModel.h

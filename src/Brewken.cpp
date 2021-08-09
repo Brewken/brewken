@@ -64,6 +64,7 @@
 #include "config.h"
 #include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
+#include "IbuMethods.h"
 #include "MainWindow.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -163,7 +164,6 @@ TempScale Brewken::tempScale = Celsius;
 Unit::unitDisplay Brewken::dateFormat = Unit::displaySI;
 
 Brewken::ColorType Brewken::colorFormula = Brewken::MOREY;
-Brewken::IbuType Brewken::ibuFormula = Brewken::TINSETH;
 Brewken::ColorUnitType Brewken::colorUnit = Brewken::SRM;
 Brewken::DensityUnitType Brewken::densityUnit = Brewken::SG;
 Brewken::DiastaticPowerUnitType Brewken::diastaticPowerUnit = Brewken::LINTNER;
@@ -484,17 +484,7 @@ void Brewken::readSystemOptions()
    thingToUnitSystem.insert(Unit::Time,&UnitSystems::timeUnitSystem);
 
    //===================IBU===================
-   text = PersistentSettings::value(PersistentSettings::Names::ibu_formula, "tinseth").toString();
-   if( text == "tinseth" )
-      ibuFormula = TINSETH;
-   else if( text == "rager" )
-      ibuFormula = RAGER;
-   else if( text == "noonan" )
-       ibuFormula = NOONAN;
-   else
-   {
-      qCritical() << QString("Bad ibu_formula type: %1").arg(text);
-   }
+   IbuMethods::loadIbuFormula();
 
    //========================Color Formula======================
    text = PersistentSettings::value(PersistentSettings::Names::color_formula, "morey").toString();
@@ -574,18 +564,7 @@ void Brewken::saveSystemOptions() {
    PersistentSettings::insert(PersistentSettings::Names::use_plato, densityUnit == PLATO);
    PersistentSettings::insert(PersistentSettings::Names::date_format, dateFormat);
 
-   switch(ibuFormula)
-   {
-      case TINSETH:
-         PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "tinseth");
-         break;
-      case RAGER:
-         PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "rager");
-         break;
-      case NOONAN:
-         PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "noonan");
-         break;
-   }
+   IbuMethods::saveIbuFormula();
 
    switch(colorFormula)
    {
@@ -734,10 +713,12 @@ QString Brewken::displayAmount( double amount, Unit const * units, int precision
    // convert to the current unit system (s).
    UnitSystem const * temp = findUnitSystem(units, displayUnits);
    // If we cannot find a unit system
-   if ( temp == nullptr )
+   if ( temp == nullptr ) {
       ret = QString("%L1 %2").arg(SIAmount, fieldWidth, format, precision).arg(SIUnitName);
-   else
+   } else {
+//      qDebug() << Q_FUNC_INFO << "Display" << amount << units->getUnitName() << "in" << temp->unitType();
       ret = temp->displayAmount( amount, units, precision, displayScale );
+   }
 
    return ret;
 }
@@ -880,20 +861,6 @@ double Brewken::qStringToSI(QString qstr, Unit const * unit, Unit::unitDisplay d
 {
    UnitSystem const * temp = findUnitSystem(unit, dispUnit);
    return temp->qstringToSI(qstr,temp->unit(),false,dispScale);
-}
-
-QString Brewken::ibuFormulaName()
-{
-   switch ( ibuFormula )
-   {
-      case Brewken::TINSETH:
-         return "Tinseth";
-      case Brewken::RAGER:
-         return "Rager";
-      case Brewken::NOONAN:
-         return "Noonan";
-   }
-  return tr("Unknown");
 }
 
 QString Brewken::colorFormulaName()

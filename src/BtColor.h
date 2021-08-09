@@ -1,7 +1,6 @@
 /*======================================================================================================================
- * AlcoholTool.h is is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtColor.h is is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
- *   • Ryan Hoobler <rhoob@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,44 +13,25 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef ALCOHOLTOOL_H
-#define ALCOHOLTOOL_H
+#ifndef BTCOLOR_H
+#define BTCOLOR_H
 #pragma once
 
-#include <memory> // For PImpl
+#include <QColor>
 
-#include <QDialog>
-
-class QWidget;
-class QEvent;
-
-/*!
- * \brief Dialog to calculate ABV from OG and FG readings - optionally with temperature correction.
+/**
+ * \brief Extend \c QColor to add more constructors
  */
-class AlcoholTool : public QDialog {
-   Q_OBJECT
-
+class BtColor : public QColor {
 public:
-   AlcoholTool(QWidget* parent = nullptr);
-   virtual ~AlcoholTool();
-
-public slots:
-   void calculate();
+   // Ensure access to QColor's existing constructors and assignment operators, even though we add our own below
+   using QColor::QColor;
+   using QColor::operator=;
 
    /**
-    * \brief Turn the advanced controls (temperature correction) on or off
+    * \brief Creates a color and set it's opacity on a scale of 0.0 - 1.0
     */
-   void toggleAdvancedControls();
-
-protected:
-   virtual void changeEvent(QEvent* event);
-   //! Called when the user closes the tool
-   virtual void done(int r);
-
-private:
-   // Private implementation details - see https://herbsutter.com/gotw/_100/
-   class impl;
-   std::unique_ptr<impl> pimpl;
+   BtColor(char const * name, qreal opacity);
 };
 
 #endif

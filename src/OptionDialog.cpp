@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -23,7 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ ======================================================================================================================*/
 #include "OptionDialog.h"
 
 #include <QAbstractButton>
@@ -40,6 +40,7 @@
 #include "Brewken.h"
 #include "BtLineEdit.h"
 #include "database/Database.h"
+#include "IbuMethods.h"
 #include "Logging.h"
 #include "MainWindow.h"
 #include "PersistentSettings.h"
@@ -391,7 +392,7 @@ public:
                                                               Brewken::diastaticPowerUnit));
 
       optionDialog.colorFormulaComboBox->setCurrentIndex(optionDialog.colorFormulaComboBox->findData(Brewken::colorFormula));
-      optionDialog.ibuFormulaComboBox->setCurrentIndex(optionDialog.ibuFormulaComboBox->findData(Brewken::ibuFormula));
+      optionDialog.ibuFormulaComboBox->setCurrentIndex(optionDialog.ibuFormulaComboBox->findData(IbuMethods::ibuFormula));
 
       // User data directory
       this->input_userDataDir.setText(PersistentSettings::getUserDataDir().canonicalPath());
@@ -491,7 +492,7 @@ public:
 
 OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    Ui::optionsDialog{},
-   pimpl{ new impl{*this} } {
+   pimpl{std::make_unique<impl>(*this)} {
 
    // I need a lot of control over what is displayed on the DbConfig dialog.
    // Maybe designer can do it? No idea. So I did this hybrid model, and I
@@ -556,9 +557,9 @@ void OptionDialog::configure_formulaCombos() {
    diastaticPowerComboBox->addItem(tr("WK"), QVariant(Brewken::WK));
 
    // Populate combo boxes on the "Formulas" tab
-   ibuFormulaComboBox->addItem(tr("Tinseth's approximation"), QVariant(Brewken::TINSETH));
-   ibuFormulaComboBox->addItem(tr("Rager's approximation"), QVariant(Brewken::RAGER));
-   ibuFormulaComboBox->addItem(tr("Noonan's approximation"), QVariant(Brewken::NOONAN));
+   ibuFormulaComboBox->addItem(tr("Tinseth's approximation"), QVariant(IbuMethods::TINSETH));
+   ibuFormulaComboBox->addItem(tr("Rager's approximation"), QVariant(IbuMethods::RAGER));
+   ibuFormulaComboBox->addItem(tr("Noonan's approximation"), QVariant(IbuMethods::NOONAN));
 
    colorFormulaComboBox->addItem(tr("Mosher's approximation"), QVariant(Brewken::MOSHER));
    colorFormulaComboBox->addItem(tr("Daniel's approximation"), QVariant(Brewken::DANIEL));
@@ -574,10 +575,7 @@ void OptionDialog::configure_logging() {
    checkBox_LogFileLocationUseDefault->setChecked(Logging::getLogInConfigDir());
    lineEdit_LogFileLocation->setText(Logging::getDirectory().absolutePath());
    this->setFileLocationState(Logging::getLogInConfigDir());
-
-   // database panel stuff
-   comboBox_engine->addItem(tr("SQLite (default)"), QVariant(Database::SQLITE));
-   comboBox_engine->addItem(tr("PostgreSQL"), QVariant(Database::PGSQL));
+   return;
 }
 
 void OptionDialog::connect_signals() {
@@ -704,7 +702,7 @@ void OptionDialog::setEngine(int selected) {
    Database::DbType newEngine = static_cast<Database::DbType>(data.toInt());
 
    this->pimpl->setDbDialog(*this, newEngine);
-   testRequired();
+   this->testRequired();
    return;
 }
 
@@ -738,8 +736,7 @@ void OptionDialog::testConnection() {
    if (success) {
       QMessageBox::information(nullptr,
                                QObject::tr("Connection Test"),
-                               QString(QObject::tr("Connection to database was successful"))
-                              );
+                               QString(QObject::tr("Connection to database was successful")));
       this->pimpl->dbConnectionTestState = TEST_PASSED;
    } else {
       // Database::testConnection already popped the dialog
@@ -758,8 +755,12 @@ void OptionDialog::testRequired() {
 
 void OptionDialog::savePassword(bool state) {
    if (state) {
-      QMessageBox::warning(nullptr, QObject::tr("Plaintext"),
-                           QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the password. By enabling this option, you take full responsibility for any potential problems."));
+      QMessageBox::warning(
+         nullptr,
+         QObject::tr("Plaintext"),
+         QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the "
+                     "password. By enabling this option, you take full responsibility for any potential problems.")
+      );
    }
    return;
 }
@@ -805,7 +806,7 @@ void OptionDialog::saveFormulae() {
    bool okay = false;
 
    int ndx = ibuFormulaComboBox->itemData(ibuFormulaComboBox->currentIndex()).toInt(&okay);
-   Brewken::ibuFormula = static_cast<Brewken::IbuType>(ndx);
+   IbuMethods::ibuFormula = static_cast<IbuMethods::IbuType>(ndx);
    ndx = colorFormulaComboBox->itemData(colorFormulaComboBox->currentIndex()).toInt(&okay);
    Brewken::colorFormula = static_cast<Brewken::ColorType>(ndx);
 
@@ -851,10 +852,13 @@ bool OptionDialog::saveDatabaseConfig() {
 
    // TODO:: FIX THIS UI. I am really not sure what the best approach is here.
    if (this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED) {
-      QMessageBox::critical(nullptr,
-                            tr("Test connection or cancel"),
-                            tr("Saving the options without testing the connection can cause Brewken to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.")
-                           );
+      QMessageBox::critical(
+         nullptr,
+         tr("Test connection or cancel"),
+         tr("Saving the options without testing the connection can cause Brewken to not restart.  Your changes have "
+            "been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you "
+            "got to this message.")
+      );
       return false;
    }
 
@@ -884,7 +888,8 @@ bool OptionDialog::transferDatabase() {
    // preserve the information required.
    try {
       QString theQuestion =
-         tr("Would you like Brewken to transfer your data to the new database? NOTE: If you've already loaded the data, say No");
+         tr("Would you like Brewken to transfer your data to the new database? "
+            "NOTE: If you've already loaded the data, say No");
       if (QMessageBox::Yes == QMessageBox::question(this, tr("Transfer database"), theQuestion)) {
          Database::instance().convertDatabase(this->pimpl->input_pgHostname.text(),
                                               this->pimpl->input_pgDbName.text(),

@@ -28,6 +28,7 @@
 
 #include "Brewken.h"
 #include "Html.h"
+#include "IbuMethods.h"
 #include "MainWindow.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
@@ -324,7 +325,7 @@ public:
                      "<td class=\"value\">%2 (%3)</td></tr>")
             .arg(tr("IBU"))
             .arg(Brewken::displayAmount(rec->IBU(), nullptr, 1))
-            .arg(Brewken::ibuFormulaName() );
+            .arg(IbuMethods::ibuFormulaName() );
 
       // Fifth row: Color and calories.  Set up the color string first
       body += QString("<tr>"
@@ -373,7 +374,7 @@ public:
       entry.append(tr("Bitterness"));
       value.append(QString("%1 %2 (%3)").arg(Brewken::displayAmount(rec->IBU(), nullptr, 1))
                                  .arg(tr("IBU"))
-                                 .arg(Brewken::ibuFormulaName()));
+                                 .arg(IbuMethods::ibuFormulaName()));
       entry.append(tr("Color"));
       value.append(QString("%1 (%2)").arg(Brewken::displayAmount(rec->color_srm(),PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::color_srm, &Units::srm, 1))
                               .arg(Brewken::colorFormulaName()));
@@ -1182,7 +1183,7 @@ QString RecipeFormatter::getToolTip(Recipe* rec) {
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2 (%3)</td></tr>")
            .arg(tr("IBU"))
            .arg(Brewken::displayAmount(rec->IBU(), nullptr, 1))
-           .arg(Brewken::ibuFormulaName() );
+           .arg(IbuMethods::ibuFormulaName() );
 
    body += "</table></body></html>";
 
