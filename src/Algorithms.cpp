@@ -23,6 +23,7 @@
 #include <QVector>
 
 #include "PhysicalConstants.h"
+#include "Unit.h"
 
 namespace {
 
@@ -379,4 +380,42 @@ double Algorithms::abvFromOgAndFg(double og, double fg) {
    }
 
    return abvByNewMethod;
+}
+
+double Algorithms::correctSgForTemperature(double measuredSg, double readingTempInC, double calibrationTempInC) {
+   //
+   // Typically older hydrometers are calibrated to 15°C and newer ones to 20°C
+   //
+   // From https://www.vinolab.hr/calculator/hydrometer-temperature-correction-en31,
+   // http://www.straighttothepint.com/hydrometer-temperature-correction/ and
+   // https://homebrew.stackexchange.com/questions/4137/temperature-correction-for-specific-gravity we have the
+   // following formula for temperatures in Fahrenheit:
+   //
+   //   corrected-reading = measured-reading * (
+   //     (1.00130346 - (0.000134722124 * tr) + (0.00000204052596 * tr^2) - (0.00000000232820948 * tr^3)) /
+   //     (1.00130346 - (0.000134722124 * tc) + (0.00000204052596 * tc^2) - (0.00000000232820948 * tc^3))
+   //   )
+   // Where:
+   //    tr = temperature at time of reading
+   //    tc = calibration temperature of hydrometer
+   //
+   // All these sorts of formulae are derived from fitting a polynomial to observed results.  (See
+   // https://onlinelibrary.wiley.com/doi/pdf/10.1002/j.2050-0416.1970.tb03327.x for a rather old example.)  Hence the
+   // use of non-SI units -- because the people in question were working in Fahrenheit.
+   //
+   double tr = Units::fahrenheit.fromSI(readingTempInC);
+   double tc = Units::fahrenheit.fromSI(calibrationTempInC);
+
+   double correctedSg = measuredSg * (
+      (1.00130346 - 0.000134722124 * tr + 0.00000204052596 * intPow(tr,2) - 0.00000000232820948 * intPow(tr,3)) /
+      (1.00130346 - 0.000134722124 * tc + 0.00000204052596 * intPow(tc,2) - 0.00000000232820948 * intPow(tc,3))
+   );
+
+   qDebug() <<
+     Q_FUNC_INFO << measuredSg << "SG measured @" << readingTempInC << "°C (" << tr << "°F) "
+     "on hydrometer calibrated at" << calibrationTempInC << "°C (" << tc << "°F) is corrected to" << correctedSg <<
+     "SG";
+
+   return correctedSg;
+
 }

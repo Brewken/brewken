@@ -1,6 +1,7 @@
 /**
- * HydrometerTool.h is part of Brewken, and is copyright the following authors 2016-2017:
+ * HydrometerTool.h is part of Brewken, and is copyright the following authors 2016-2021:
  *   • Jamie Daws <jdelectronics1@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -19,23 +20,22 @@
 #pragma once
 
 #include <QDialog>
-#include <QWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QLabel>
-#include <QEvent>
-#include "Brewken.h"
-#include "BtLineEdit.h"
+
+class QEvent;
+class QGroupBox;
+class QPushButton;
+class QWidget;
+
+
 #include "BtLabel.h"
-#include <QGroupBox>
+#include "BtLineEdit.h"
 
 
-class HydrometerTool : public QDialog
-{
+class HydrometerTool : public QDialog {
    Q_OBJECT
 public:
 
-   HydrometerTool(QWidget* parent=0);
+   HydrometerTool(QWidget* parent = nullptr);
 
    //! \name Public UI Variables
    //! @{
@@ -56,15 +56,8 @@ public:
 public slots:
    void convert();
 
-
 protected:
-
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QDialog::changeEvent(event);
-   }
+   virtual void changeEvent(QEvent* event);
 
 private:
 

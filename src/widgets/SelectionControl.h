@@ -1,7 +1,7 @@
 /*======================================================================================================================
- * AlcoholTool.h is is part of Brewken, and is copyright the following authors 2009-2021:
+ * widgets/SelectionControl.h is is part of Brewken, and is copyright the following authors 2018-2021:
+ *   • Iman Ahmadvand <iman72411@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
- *   • Ryan Hoobler <rhoob@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,44 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef ALCOHOLTOOL_H
-#define ALCOHOLTOOL_H
+#ifndef WIDGETS_SELECTIONCONTROL_H
+#define WIDGETS_SELECTIONCONTROL_H
 #pragma once
 
-#include <memory> // For PImpl
+#include <QAbstractButton>
 
-#include <QDialog>
-
-class QWidget;
 class QEvent;
+class QWidget;
 
-/*!
- * \brief Dialog to calculate ABV from OG and FG readings - optionally with temperature correction.
+/**
+ * \brief
  */
-class AlcoholTool : public QDialog {
+class SelectionControl : public QAbstractButton {
    Q_OBJECT
 
 public:
-   AlcoholTool(QWidget* parent = nullptr);
-   virtual ~AlcoholTool();
+   explicit SelectionControl(QWidget * parent = nullptr);
+   ~SelectionControl() override;
 
-public slots:
-   void calculate();
+   Qt::CheckState checkState() const;
 
-   /**
-    * \brief Turn the advanced controls (temperature correction) on or off
-    */
-   void toggleAdvancedControls();
+Q_SIGNALS:
+   void stateChanged(int);
 
 protected:
-   virtual void changeEvent(QEvent* event);
-   //! Called when the user closes the tool
-   virtual void done(int r);
-
-private:
-   // Private implementation details - see https://herbsutter.com/gotw/_100/
-   class impl;
-   std::unique_ptr<impl> pimpl;
+   void enterEvent(QEvent *) override;
+   void checkStateSet() override;
+   void nextCheckState() override;
+   virtual void toggle(Qt::CheckState state) = 0;
 };
 
 #endif

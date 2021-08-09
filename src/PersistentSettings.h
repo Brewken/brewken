@@ -37,6 +37,8 @@
 
 //======================================================================================================================
 //========================================== Start of setting NAME constants ===========================================
+//===== (Note that we only need to add here names that have no section or are used in multiple places in the code) =====
+//===== (Note too that property names are often used as setting names and, in such cases, are not redefined here) ======
 #define AddSettingName(name) namespace PersistentSettings::Names { BtStringConst const name{#name}; }
 AddSettingName(check_version)
 AddSettingName(color_formula)
@@ -93,6 +95,7 @@ AddSettingName(windowState)
 //======================================================================================================================
 //======================================== Start of setting SECTION constants ==========================================
 #define AddSettingSection(section) namespace PersistentSettings::Sections { BtStringConst const section{#section}; }
+AddSettingSection(alcoholTool)
 AddSettingSection(backups)
 AddSettingSection(fermentableTable)
 AddSettingSection(hopTable)

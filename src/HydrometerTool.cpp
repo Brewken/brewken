@@ -1,7 +1,8 @@
 /**
- * HydrometerTool.cpp is part of Brewken, and is copyright the following authors 2016-2017:
+ * HydrometerTool.cpp is part of Brewken, and is copyright the following authors 2016-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jamie Daws <jdelectronics1@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,18 +16,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 #include "HydrometerTool.h"
-#include "Unit.h"
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QFormLayout>
-#include <QSpacerItem>
-#include <math.h>
-#include "Brewken.h"
 
-HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent)
-{
+#include <cmath>
+
+#include <QEvent>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QSpacerItem>
+#include <QVBoxLayout>
+#include <QWidget>
+
+#include "Algorithms.h"
+#include "Brewken.h"
+#include "Unit.h"
+
+HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
    doLayout();
 
    connect( pushButton_convert, &QAbstractButton::clicked, this, &HydrometerTool::convert );
@@ -36,11 +43,10 @@ HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent)
    connect(label_calibratedTemp, &BtLabel::labelChanged, lineEdit_calibratedTemp, &BtLineEdit::lineChanged);
 
    QMetaObject::connectSlotsByName(this);
-
+   return;
 }
 
-void HydrometerTool::doLayout()
-{
+void HydrometerTool::doLayout() {
    resize(279, 96);
    QHBoxLayout* hLayout = new QHBoxLayout(this);
      QFormLayout* formLayout = new QFormLayout();
@@ -82,17 +88,11 @@ void HydrometerTool::doLayout()
         lineEdit_outputSg->setProperty("forcedUnit",QVariant(QStringLiteral("displaySG")));
         lineEdit_outputSg->setReadOnly(true);
 
-
-
-
-
 #ifndef QT_NO_SHORTCUT
   label_inputSg->setBuddy(lineEdit_inputSg);
   label_inputTemp->setBuddy(lineEdit_inputTemp);
   label_outputSg->setBuddy(lineEdit_outputSg);
 #endif  //QT_NO_SHORTCUT
-
-
 
   formLayout->setWidget(0, QFormLayout::LabelRole, label_inputSg);
   formLayout->setWidget(0, QFormLayout::FieldRole, lineEdit_inputSg);
@@ -121,12 +121,11 @@ void HydrometerTool::doLayout()
   hLayout->addLayout(formLayout);
   hLayout->addLayout(vLayout);
 
-
   retranslateUi();
+  return;
 }
 
-void HydrometerTool::retranslateUi()
-{
+void HydrometerTool::retranslateUi() {
    setWindowTitle(tr("Hydrometer Tool"));
    label_inputSg->setText(tr("SG Reading")); //TODO translation
    label_inputTemp->setText(tr("Temperature"));  //TODO translation
@@ -138,33 +137,25 @@ void HydrometerTool::retranslateUi()
    lineEdit_inputSg->setToolTip(tr("Measured gravity"));  //TODO translate
    lineEdit_inputTemp->setToolTip(tr("Temperature"));  //TODO translate
    lineEdit_outputSg->setToolTip(tr("Corrected gravity"));  //TODO translate
-
-
-#endif // QT_NO_TOOLTIP
+#endif
+   return;
 }
 
-void HydrometerTool::convert()
-{
-   /*
-   cg = corrected gravity
-   mg = measured gravity
-   tr = temperature at time of reading in Fahrenheit
-   tc = calibration temperature of hydrometer in Fahrenheit*/
+void HydrometerTool::convert() {
+   double correctedGravity = Algorithms::correctSgForTemperature(
+      lineEdit_inputSg->toSI(),       // measured gravity
+      lineEdit_inputTemp->toSI(),     // temperature at time of reading in Celsius
+      lineEdit_calibratedTemp->toSI() // calibration temperature of hydrometer in Celsius
+   );
 
-   double cg;
-   double mg;
-   double tr;
-   double tc;
+   lineEdit_outputSg->setText(correctedGravity);
+   return;
+}
 
-   tc = lineEdit_calibratedTemp->toSI();  //does not always return C
-   tr = lineEdit_inputTemp->toSI();  //does not always return C
-   tr = tr * 1.8 + 32;  //formula below uses Fahrenheit
-   tc = tc * 1.8 + 32;  //formula below uses Fahrenheit
-   mg = lineEdit_inputSg->toSI();
-
-   //formula from http://www.straighttothepint.com/hydrometer-temperature-correction/
-   cg = mg * ((1.00130346 - 0.000134722124 * tr + 0.00000204052596 * pow(tr,2) - 0.00000000232820948 * pow(tr,3))
-         / (1.00130346 - 0.000134722124 * tc + 0.00000204052596 * pow(tc,2) - 0.00000000232820948 * pow(tc,3)));
-
-   lineEdit_outputSg->setText(cg);
+void HydrometerTool::changeEvent(QEvent* event) {
+   if (event->type() == QEvent::LanguageChange) {
+      this->retranslateUi();
+   }
+   this->QDialog::changeEvent(event);
+   return;
 }

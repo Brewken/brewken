@@ -146,6 +146,8 @@ namespace Algorithms {
    double realExtract( double sg, double plato );
    //! \brief Calculate ABV from OG and FG
    double abvFromOgAndFg(double og, double fg);
+   //! \brief Correct specific gravity reading for the temperature at which it was taken
+   double correctSgForTemperature(double measuredSg, double readingTempInC, double calibrationTempInC);
 }
 
 #endif

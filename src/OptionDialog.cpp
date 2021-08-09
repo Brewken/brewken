@@ -702,7 +702,7 @@ void OptionDialog::setEngine(int selected) {
    Database::DbType newEngine = static_cast<Database::DbType>(data.toInt());
 
    this->pimpl->setDbDialog(*this, newEngine);
-   testRequired();
+   this->testRequired();
    return;
 }
 
@@ -736,8 +736,7 @@ void OptionDialog::testConnection() {
    if (success) {
       QMessageBox::information(nullptr,
                                QObject::tr("Connection Test"),
-                               QString(QObject::tr("Connection to database was successful"))
-                              );
+                               QString(QObject::tr("Connection to database was successful")));
       this->pimpl->dbConnectionTestState = TEST_PASSED;
    } else {
       // Database::testConnection already popped the dialog
@@ -756,8 +755,12 @@ void OptionDialog::testRequired() {
 
 void OptionDialog::savePassword(bool state) {
    if (state) {
-      QMessageBox::warning(nullptr, QObject::tr("Plaintext"),
-                           QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the password. By enabling this option, you take full responsibility for any potential problems."));
+      QMessageBox::warning(
+         nullptr,
+         QObject::tr("Plaintext"),
+         QObject::tr("Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the "
+                     "password. By enabling this option, you take full responsibility for any potential problems.")
+      );
    }
    return;
 }
@@ -849,10 +852,13 @@ bool OptionDialog::saveDatabaseConfig() {
 
    // TODO:: FIX THIS UI. I am really not sure what the best approach is here.
    if (this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED) {
-      QMessageBox::critical(nullptr,
-                            tr("Test connection or cancel"),
-                            tr("Saving the options without testing the connection can cause Brewken to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.")
-                           );
+      QMessageBox::critical(
+         nullptr,
+         tr("Test connection or cancel"),
+         tr("Saving the options without testing the connection can cause Brewken to not restart.  Your changes have "
+            "been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you "
+            "got to this message.")
+      );
       return false;
    }
 
@@ -882,7 +888,8 @@ bool OptionDialog::transferDatabase() {
    // preserve the information required.
    try {
       QString theQuestion =
-         tr("Would you like Brewken to transfer your data to the new database? NOTE: If you've already loaded the data, say No");
+         tr("Would you like Brewken to transfer your data to the new database? "
+            "NOTE: If you've already loaded the data, say No");
       if (QMessageBox::Yes == QMessageBox::question(this, tr("Transfer database"), theQuestion)) {
          Database::instance().convertDatabase(this->pimpl->input_pgHostname.text(),
                                               this->pimpl->input_pgDbName.text(),

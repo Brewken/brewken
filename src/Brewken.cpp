@@ -713,10 +713,12 @@ QString Brewken::displayAmount( double amount, Unit const * units, int precision
    // convert to the current unit system (s).
    UnitSystem const * temp = findUnitSystem(units, displayUnits);
    // If we cannot find a unit system
-   if ( temp == nullptr )
+   if ( temp == nullptr ) {
       ret = QString("%L1 %2").arg(SIAmount, fieldWidth, format, precision).arg(SIUnitName);
-   else
+   } else {
+//      qDebug() << Q_FUNC_INFO << "Display" << amount << units->getUnitName() << "in" << temp->unitType();
       ret = temp->displayAmount( amount, units, precision, displayScale );
+   }
 
    return ret;
 }
