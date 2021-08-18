@@ -1,9 +1,7 @@
 /*======================================================================================================================
- * AboutDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
- *   • Daniel Pettersson <pettson81@gmail.com>
- *   • Greg Greenaae <ggreenaae@gmail.com>
+ * print/PageText.h is part of Brewken, and is copyright the following authors 2021:
+ *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -16,34 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef ABOUTDIALOG_H
-#define ABOUTDIALOG_H
+#ifndef PRINT_PAGETEXT_H
+#define PRINT_PAGETEXT_H
 #pragma once
 
-#include <QDialog>
+#include <QDebug>
+#include <QFont>
+#include <QPainter>
+#include <QRectF>
+#include <QString>
+#include <QTextOption>
 
-class QEvent;
-class QLabel;
-class QWidget;
+#include "PageChildObject.h"
 
-/*!
- * \class AboutDialog
- *
- * \brief Simple "about" dialog for Brewken.
- */
-class AboutDialog : public QDialog {
-   Q_OBJECT
+namespace Print {
+   /**
+    * \class PageText text object that needs to have a Value (text) and a Font (Will default to Application Font if not set.)
+    */
+   class PageText
+      : public PageChildObject
+   {
 
-public:
-   AboutDialog(QWidget * parent = 0);
+   public:
+      PageText(Page *parent, QString value, QFont font);
+      virtual ~PageText();
 
-   virtual void changeEvent(QEvent * event);
+      QString Value;
+      QTextOption Options;
 
-private:
-   QLabel * label;
+      int count();
 
-   void doLayout();
-   void retranslateUi();
-};
-
+      //Enforced by PageChildObject
+      void render(QPainter *painter);
+      QSize getSize();
+      void calculateBoundingBox( double scalex = 0.0, double scaley = 0.0 );
+   };
+}
 #endif

@@ -1,9 +1,7 @@
 /*======================================================================================================================
- * AboutDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
- *   • Daniel Pettersson <pettson81@gmail.com>
- *   • Greg Greenaae <ggreenaae@gmail.com>
+ * print/PageBreak.cpp is part of Brewken, and is copyright the following authors 2021:
+ *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -16,34 +14,26 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef ABOUTDIALOG_H
-#define ABOUTDIALOG_H
-#pragma once
+#include "print/PageBreak.h"
+#include "print/Page.h"
 
-#include <QDialog>
+namespace Print {
+   PageBreak::PageBreak(Page *parent) :
+      PageChildObject{parent} {
+      return;
+   }
 
-class QEvent;
-class QLabel;
-class QWidget;
+   void PageBreak::render(QPainter *painter) {
+      this->parent->printer->newPage();
+   }
 
-/*!
- * \class AboutDialog
- *
- * \brief Simple "about" dialog for Brewken.
- */
-class AboutDialog : public QDialog {
-   Q_OBJECT
+   QSize PageBreak::getSize() {
+      return QSize();
+   }
 
-public:
-   AboutDialog(QWidget * parent = 0);
+   // .:TBD:. Not sure what this is for...?
+   void PageBreak::calculateBoundingBox(double scalex, double scaley) {
+      return;
+   }
 
-   virtual void changeEvent(QEvent * event);
-
-private:
-   QLabel * label;
-
-   void doLayout();
-   void retranslateUi();
-};
-
-#endif
+}

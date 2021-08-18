@@ -143,7 +143,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/IbuGuSlider.cpp
     ${SRCDIR}/IbuMethods.cpp
     ${SRCDIR}/InstructionWidget.cpp
-    ${SRCDIR}/InventoryFormatter.cpp
     ${SRCDIR}/Logging.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
@@ -185,11 +184,21 @@ SET( Brewken_SRCS
     ${SRCDIR}/PitchDialog.cpp
     ${SRCDIR}/PreInstruction.cpp
     ${SRCDIR}/PrimingDialog.cpp
+    ${SRCDIR}/print/BrewDayFormatter.cpp
+    ${SRCDIR}/print/InventoryFormatter.cpp
+    ${SRCDIR}/print/Page.cpp
+    ${SRCDIR}/print/PageBreak.cpp
+    ${SRCDIR}/print/PageChildObject.cpp
+    ${SRCDIR}/print/PageImage.cpp
+    ${SRCDIR}/print/PageTable.cpp
+    ${SRCDIR}/print/PageTableColumn.cpp
+    ${SRCDIR}/print/PageText.cpp
+    ${SRCDIR}/print/PrintAndPreviewDialog.cpp
+    ${SRCDIR}/print/RecipeFormatter.cpp
     ${SRCDIR}/QueuedMethod.cpp
     ${SRCDIR}/RadarChart.cpp
     ${SRCDIR}/RangedSlider.cpp
     ${SRCDIR}/RecipeExtrasWidget.cpp
-    ${SRCDIR}/RecipeFormatter.cpp
     ${SRCDIR}/RefractoDialog.cpp
     ${SRCDIR}/SaltTableModel.cpp
     ${SRCDIR}/ScaleRecipeTool.cpp
@@ -258,6 +267,7 @@ SET( Brewken_UIS
     ${UIDIR}/optionsDialog.ui
     ${UIDIR}/pitchDialog.ui
     ${UIDIR}/primingDialog.ui
+    ${UIDIR}/printAndPreview.ui
     ${UIDIR}/recipeExtrasWidget.ui
     ${UIDIR}/refractoDialog.ui
     ${UIDIR}/strikeWaterDialog.ui

@@ -36,7 +36,7 @@
 #include "BtFolder.h"
 #include "BtTreeItem.h"
 #include "BtTreeView.h"
-#include "RecipeFormatter.h"
+#include "print/RecipeFormatter.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
