@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/NamedEntity.h"
 
 #include <typeinfo>
@@ -95,6 +95,15 @@ void NamedEntity::makeChild(NamedEntity const & copiedFrom) {
    if (this->parentKey <= 0) {
       this->parentKey = copiedFrom.m_key;
    }
+
+   //
+   // A _child_ of a Hop (or Style/Fermentable/etc) is "an instance of use of" the parent Hop (etc).  Thus we don't want
+   // it to show up in the list of all Hops (etc).
+   //
+   // .:TBD:. It would be nicer to do away with m_display and have NamedEntity::display() do some logic (eg don't
+   // display if deleted or has a parent) that might be overridden by Recipe to add the extra logic around ancestors.
+   //
+   this->m_display = false;
 
    // So, now, we should have some plausible parent ID, and in particular we should not be our own parent!
    Q_ASSERT(this->parentKey != this->m_key);

@@ -47,6 +47,7 @@
 #include "model/BrewNote.h"
 #include "model/Style.h"
 #include "model/Water.h"
+#include "utils/BtStringConst.h"
 #include "PersistentSettings.h"
 
 // =========================================================================
@@ -201,20 +202,18 @@ QModelIndex BtTreeModel::index(int row, int column, const QModelIndex & parent) 
    }
 }
 
-QModelIndex BtTreeModel::parent(const QModelIndex & index) const {
-   BtTreeItem * pItem, *cItem;
-
+QModelIndex BtTreeModel::parent(QModelIndex const & index) const {
    if (!index.isValid()) {
       return QModelIndex();
    }
 
-   cItem = item(index);
+   BtTreeItem * cItem = item(index);
 
    if (cItem == nullptr) {
       return QModelIndex();
    }
 
-   pItem = cItem->parent();
+   BtTreeItem * pItem = cItem->parent();
 
    if (pItem == rootItem || pItem == nullptr) {
       return QModelIndex();
@@ -625,7 +624,7 @@ void BtTreeModel::loadTreeModel() {
       // If we have brewnotes, set them up here.
       if (treeMask & RECIPEMASK) {
          Recipe * holdmebeer = qobject_cast<Recipe *>(elem);
-         if (PersistentSettings::value("showsnapshots", false).toBool() && holdmebeer->hasAncestors()) {
+         if (PersistentSettings::value(PersistentSettings::Names::showsnapshots, false).toBool() && holdmebeer->hasAncestors()) {
             setShowChild(ndxLocal, true);
             addAncestoralTree(holdmebeer, i, local);
             addBrewNoteSubTree(holdmebeer, i, local, false);
@@ -678,7 +677,7 @@ void BtTreeModel::addBrewNoteSubTree(Recipe * rec, int i, BtTreeItem * parent, b
    }
 }
 
-Recipe * BtTreeModel::recipe(const QModelIndex & index) const {
+Recipe * BtTreeModel::recipe(QModelIndex const & index) const {
    return index.isValid() ? item(index)->recipe() : nullptr;
 }
 
@@ -884,7 +883,7 @@ void BtTreeModel::deleteSelected(QModelIndexList victims) {
          case BtTreeItem::RECIPE:
             {
                rec = recipe(ndx);
-               deletewhat = PersistentSettings::value("deletewhat", Recipe::DESCENDANT).toInt();
+               deletewhat = PersistentSettings::value(PersistentSettings::Names::deletewhat, Recipe::DESCENDANT).toInt();
                if (deletewhat == Recipe::DESCENDANT) {
                   this->revertRecipeToPreviousVersion(ndx);
                } else {
