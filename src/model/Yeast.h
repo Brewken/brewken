@@ -31,7 +31,7 @@
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
-#define AddPropertyName(property) namespace PropertyNames::Yeast {static char const * const property = #property; }
+#define AddPropertyName(property) namespace PropertyNames::Yeast { BtStringConst const property{#property}; }
 AddPropertyName(addToSecondary)
 AddPropertyName(amount)
 AddPropertyName(amountIsWeight)

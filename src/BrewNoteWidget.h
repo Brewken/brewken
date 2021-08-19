@@ -1,6 +1,7 @@
 /**
- * BrewNoteWidget.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BrewNoteWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -59,7 +60,7 @@ public slots:
 
    void updateFG();
    void updateFinalVolume_l();
-   void updateFermentDate(const QDateTime& datetime);
+   void updateFermentDate(QDate const & datetime);
    void updateDateFormat(Unit::unitDisplay display,Unit::unitScale scale);
 
    void updateNotes();
@@ -77,4 +78,4 @@ private:
 
 };
 
-#endif // _BREWNOTESWIDGET_H
+#endif

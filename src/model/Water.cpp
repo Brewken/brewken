@@ -18,13 +18,8 @@
  */
 #include "model/Water.h"
 
-#include <QDomElement>
-#include <QDomText>
-#include <QObject>
-#include <QVector>
-
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 bool Water::isEqualTo(NamedEntity const & other) const {

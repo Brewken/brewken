@@ -23,9 +23,10 @@
 #define BTLINEEDIT_H
 
 #include <QLineEdit>
+#include <QString>
+#include <QWidget>
+
 #include "Unit.h"
-#include "UnitSystem.h"
-#include "model/NamedEntity.h"
 
 class BtGenericEdit;
 class BtMassEdit;
@@ -37,10 +38,10 @@ class BtColorEdit;
 class BtMixedEdit;
 class BtDiastaticPowerEdit;
 class BtStringEdit;
+class NamedEntity;
 
 /*!
  * \class BtLineEdit
- *
  *
  * \brief This extends QLineEdit such that the Object handles all the unit
  * transformation we do, instead of each dialog. It makes the code much
@@ -67,7 +68,7 @@ public:
    *       Not sure how to signal the parent to redisplay
    */
 
-   BtLineEdit(QWidget* parent = 0, Unit::UnitType type = Unit::None, QString const & maximalDisplayString = "100.000 L");
+   BtLineEdit(QWidget* parent = nullptr, Unit::UnitType type = Unit::None, QString const & maximalDisplayString = "100.000 L");
    double toSI(Unit::unitDisplay oldUnit = Unit::noUnit, Unit::unitScale oldScale = Unit::noScale, bool force = false);
    // Use this when you want to do something with the returned QString
    QString displayAmount( double amount, int precision = 3);

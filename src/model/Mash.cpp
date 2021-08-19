@@ -27,6 +27,7 @@
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/MashStep.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
@@ -315,8 +316,8 @@ void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
    // may also change, so we need to emit some signals.
    int i = mashSteps().indexOf(stepSender);
    if( i >= 0 ) {
-      emit changed(metaProperty(PropertyNames::Mash::totalMashWater_l), QVariant());
-      emit changed(metaProperty(PropertyNames::Mash::totalTime), QVariant());
+      emit changed(metaProperty(*PropertyNames::Mash::totalMashWater_l), QVariant());
+      emit changed(metaProperty(*PropertyNames::Mash::totalTime), QVariant());
    }
 }
 

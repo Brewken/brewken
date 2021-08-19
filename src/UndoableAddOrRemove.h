@@ -1,5 +1,5 @@
 /**
- * UndoableAddOrRemove.h is part of Brewken, and is copyright the following authors 2020:
+ * UndoableAddOrRemove.h is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -29,12 +29,10 @@
 /*!
  * \class UndoableAddOrRemove
  *
- *
  * \brief Each instance of this class is a non-trivial undoable addition to, or removal from, a recipe etc.
  */
 template<class UU, class VV>
-class UndoableAddOrRemove : public QUndoCommand
-{
+class UndoableAddOrRemove : public QUndoCommand {
 public:
    /*!
     * \param updatee The object we are updating - eg recipe
@@ -68,24 +66,21 @@ public:
      undoer(undoer),
      doCallback(doCallback),
      undoCallback(undoCallback),
-     everDone(false)
-   {
+     everDone(false) {
       // Parent class handles storing description and making it accessible to the undo stack etc - we just have to give
       // it the text.
       this->setText(description);
       return;
    }
 
-   ~UndoableAddOrRemove()
-   {
+   ~UndoableAddOrRemove() {
       return;
    }
 
    /*!
     * \brief Apply the update (including for the first time)
     */
-   void redo()
-   {
+   void redo() {
       QUndoCommand::redo();
       this->undoOrRedo(false);
       return;
@@ -94,8 +89,7 @@ public:
    /*!
     * \brief Undo applying the update
     */
-   void undo()
-   {
+   void undo() {
       QUndoCommand::undo();
       this->undoOrRedo(true);
       return;
@@ -106,8 +100,7 @@ private:
     * \brief Undo or redo applying the update
     * \param isUndo true for undo, false for redo
     */
-   void undoOrRedo(bool const isUndo)
-   {
+   void undoOrRedo(bool const isUndo) {
       //
       // This function works on the assumption that Add and Remove both return "what was changed".
       //
@@ -121,11 +114,13 @@ private:
       // will cause it to be stored in the DB with a new ID.
       //
       if (!isUndo) {
-         qDebug() << QString("%1: %2 \"%3\" for #%4").arg(Q_FUNC_INFO).arg(this->everDone ? "Redo" : "Do" ).arg(this->text()).arg(this->whatToAddOrRemove->key());
+         qDebug() <<
+            Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << this->text() << "for #" <<
+            this->whatToAddOrRemove->key();
 
          this->whatToAddOrRemove = (this->updatee.*(this->doer))(this->whatToAddOrRemove);
+         qDebug() << Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << "Returned #" << this->whatToAddOrRemove->key();
 
-         qDebug() << QString("%1: %2 Returned #%3").arg(Q_FUNC_INFO).arg(this->everDone ? "Redo" : "Do" ).arg(this->whatToAddOrRemove->key());
          if (this->doCallback != nullptr) {
             (Brewken::mainWindow()->*(this->doCallback))(this->whatToAddOrRemove);
          }
@@ -134,11 +129,11 @@ private:
          // be able to distinguish the two cases.
          this->everDone = true;
       } else {
-         qDebug() << QString("%1: Undo \"%2\" for #%3").arg(Q_FUNC_INFO).arg(this->text()).arg(this->whatToAddOrRemove->key());
+         qDebug() << Q_FUNC_INFO << "Undo" << this->text() << "for #" << this->whatToAddOrRemove->key();
 
          this->whatToAddOrRemove = (this->updatee.*(this->undoer))(this->whatToAddOrRemove);
+         qDebug() << Q_FUNC_INFO << "Undo Returned #" << this->whatToAddOrRemove->key();
 
-         qDebug() << QString("%1: Undo Returned #%2").arg(Q_FUNC_INFO).arg(this->whatToAddOrRemove->key());
          if (this->undoCallback != nullptr) {
             (Brewken::mainWindow()->*(this->undoCallback))(this->whatToAddOrRemove);
          }

@@ -1,5 +1,5 @@
 /**
- * SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020:
+ * SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -23,13 +23,12 @@
 #include "Brewken.h" // For logging
 
 SimpleUndoableUpdate::SimpleUndoableUpdate(QObject & updatee,
-                                           char const * const propertyName,
+                                           BtStringConst const & propertyName,
                                            QVariant newValue,
                                            QString const & description,
                                            QUndoCommand * parent)
-   : QUndoCommand(parent), updatee(updatee), propertyName(propertyName), newValue(newValue)
-{
-   this->oldValue = this->updatee.property(this->propertyName);
+   : QUndoCommand(parent), updatee(updatee), propertyName(propertyName), newValue(newValue) {
+   this->oldValue = this->updatee.property(*this->propertyName);
 
 // Uncomment this block if the assert below is tripping, as it will usually help find the bug quickly
 //   std::ostringstream stacktrace;
@@ -41,20 +40,17 @@ SimpleUndoableUpdate::SimpleUndoableUpdate(QObject & updatee,
    return;
 }
 
-SimpleUndoableUpdate::~SimpleUndoableUpdate()
-{
+SimpleUndoableUpdate::~SimpleUndoableUpdate() {
    return;
 }
 
-void SimpleUndoableUpdate::redo()
-{
+void SimpleUndoableUpdate::redo() {
    QUndoCommand::redo();
    this->undoOrRedo(false);
    return;
 }
 
-void SimpleUndoableUpdate::undo()
-{
+void SimpleUndoableUpdate::undo() {
    QUndoCommand::undo();
    this->undoOrRedo(true);
    return;
@@ -63,13 +59,14 @@ void SimpleUndoableUpdate::undo()
 bool SimpleUndoableUpdate::undoOrRedo(bool const isUndo)
 {
    // This is where we call the setter for propertyName on updatee, via the magic of the Qt Property System
-   bool success = this->updatee.setProperty(this->propertyName, isUndo ? this->oldValue : this->newValue);
+   bool success = this->updatee.setProperty(*this->propertyName, isUndo ? this->oldValue : this->newValue);
 
    // It's a coding error if we tried to update a non-existent property
    Q_ASSERT(success && "Trying to update non-existent property");
-   if (!success)
-   {
-      qCritical() << QString("Could not %1 update of %2 property %3").arg(isUndo ? "undo" : "redo").arg(this->updatee.metaObject()->className()).arg(propertyName);
+   if (!success) {
+      qCritical() <<
+         Q_FUNC_INFO << "Could not" << (isUndo ? "undo" : "redo") << " update of " <<
+         this->updatee.metaObject()->className() << "property" << this->propertyName;
    }
    return success;
 }

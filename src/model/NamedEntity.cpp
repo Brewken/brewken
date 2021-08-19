@@ -25,6 +25,7 @@
 
 #include "Brewken.h"
 #include "database/ObjectStore.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 NamedEntity::NamedEntity(int key,  bool cache, QString t_name, bool t_display, QString folder) :
@@ -313,7 +314,7 @@ QMetaProperty NamedEntity::metaProperty(char const * const name) const {
    return this->metaObject()->property(this->metaObject()->indexOfProperty(name));
 }
 
-void NamedEntity::prepareForPropertyChange(char const * const propertyName) {
+void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
    //
    // At the moment, the only thing we want to do in this pre-change check is to see whether we need to version a
    // Recipe.  Obviously we leave all the details of that to the Recipe-related namespace.
@@ -322,7 +323,7 @@ void NamedEntity::prepareForPropertyChange(char const * const propertyName) {
    return;
 }
 
-void NamedEntity::propagatePropertyChange(char const * const propertyName, bool notify) const {
+void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bool notify) const {
    // If we're in "cache only" mode, there's nothing to do
    if (this->m_cacheOnly) {
       return;
@@ -338,7 +339,7 @@ void NamedEntity::propagatePropertyChange(char const * const propertyName, bool 
    if (notify) {
       // It's obviously a coding error to supply a property name that is not registered with Qt as a property of this
       // object
-      int idx = this->metaObject()->indexOfProperty(propertyName);
+      int idx = this->metaObject()->indexOfProperty(*propertyName);
       Q_ASSERT(idx >= 0);
       QMetaProperty metaProperty = this->metaObject()->property(idx);
       QVariant value = metaProperty.read(this);

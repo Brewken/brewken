@@ -36,6 +36,8 @@
  */
 #include "database/Database.h"
 
+#include <mutex>
+
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
@@ -66,6 +68,13 @@ namespace {
    struct DbNativeVariants {
       char const * const sqliteName;
       char const * const postgresqlName;
+      // GCC will let you get away without it, but some C++ compilers are more strict about the need for a non-default
+      // constructor when you have const members in a struct
+      DbNativeVariants(char const * const sqliteName = nullptr, char const * const postgresqlName = nullptr) :
+         sqliteName{sqliteName},
+         postgresqlName{postgresqlName} {
+         return;
+      }
    };
 
    //
@@ -312,15 +321,15 @@ public:
 
    bool loadPgSQL(Database & database) {
 
-      dbHostname = PersistentSettings::value("dbHostname").toString();
-      dbPortnum  = PersistentSettings::value("dbPortnum").toInt();
-      dbName     = PersistentSettings::value("dbName").toString();
-      dbSchema   = PersistentSettings::value("dbSchema").toString();
+      dbHostname = PersistentSettings::value(PersistentSettings::Names::dbHostname).toString();
+      dbPortnum  = PersistentSettings::value(PersistentSettings::Names::dbPortnum).toInt();
+      dbName     = PersistentSettings::value(PersistentSettings::Names::dbName).toString();
+      dbSchema   = PersistentSettings::value(PersistentSettings::Names::dbSchema).toString();
 
-      dbUsername = PersistentSettings::value("dbUsername").toString();
+      dbUsername = PersistentSettings::value(PersistentSettings::Names::dbUsername).toString();
 
-      if ( PersistentSettings::contains("dbPassword") ) {
-         dbPassword = PersistentSettings::value("dbPassword").toString();
+      if ( PersistentSettings::contains(PersistentSettings::Names::dbPassword) ) {
+         dbPassword = PersistentSettings::value(PersistentSettings::Names::dbPassword).toString();
       }
       else {
          bool isOk = false;
@@ -388,14 +397,14 @@ public:
 
 
    void automaticBackup() {
-      int count = PersistentSettings::value("count",0,"backups").toInt() + 1;
-      int frequency = PersistentSettings::value("frequency",4,"backups").toInt();
-      int maxBackups = PersistentSettings::value("maximum",10,"backups").toInt();
+      int count = PersistentSettings::value(PersistentSettings::Names::count, 0, PersistentSettings::Sections::backups).toInt() + 1;
+      int frequency = PersistentSettings::value(PersistentSettings::Names::frequency, 4, PersistentSettings::Sections::backups).toInt();
+      int maxBackups = PersistentSettings::value(PersistentSettings::Names::maximum, 10, PersistentSettings::Sections::backups).toInt();
 
       // The most common case is update the counter and nothing else
       // A frequency of 1 means backup every time. Which this statisfies
       if ( count % frequency != 0 ) {
-         PersistentSettings::insert( "count", count, "backups");
+         PersistentSettings::insert(PersistentSettings::Names::count, count, PersistentSettings::Sections::backups);
          return;
       }
 
@@ -406,8 +415,8 @@ public:
          return;
       }
 
-      QString backupDir = PersistentSettings::value("directory", PersistentSettings::getUserDataDir().canonicalPath(), "backups").toString();
-      QString listOfFiles = PersistentSettings::value("files", QVariant(), "backups").toString();
+      QString backupDir = PersistentSettings::value(PersistentSettings::Names::directory, PersistentSettings::getUserDataDir().canonicalPath(), PersistentSettings::Sections::backups).toString();
+      QString listOfFiles = PersistentSettings::value(PersistentSettings::Names::files, QVariant(), PersistentSettings::Sections::backups).toString();
 #if QT_VERSION < QT_VERSION_CHECK(5,15,0)
       QStringList fileNames = listOfFiles.split(",", QString::SkipEmptyParts);
 #else
@@ -434,7 +443,7 @@ public:
       // If we have maxBackups == -1, it means never clean. It also means we
       // don't track the filenames.
       if ( maxBackups == -1 )  {
-         PersistentSettings::remove("files", "backups");
+         PersistentSettings::remove(PersistentSettings::Names::files, PersistentSettings::Sections::backups);
          return;
       }
 
@@ -467,8 +476,8 @@ public:
       listOfFiles = fileNames.join(",");
 
       // finally, reset the counter and save the new list of files
-      PersistentSettings::insert("count", 0, "backups");
-      PersistentSettings::insert("files", listOfFiles, "backups");
+      PersistentSettings::insert(PersistentSettings::Names::count, 0, PersistentSettings::Sections::backups);
+      PersistentSettings::insert(PersistentSettings::Names::files, listOfFiles, PersistentSettings::Sections::backups);
    }
 
    Database::DbType dbType;

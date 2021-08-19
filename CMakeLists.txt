@@ -27,8 +27,8 @@
 # See also src/CMakeLists.txt
 #
 PROJECT(brewken)
-CMAKE_MINIMUM_REQUIRED( VERSION 3.0 )
-CMAKE_POLICY( VERSION 3.0 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.16 )
+CMAKE_POLICY( VERSION 3.16 )
 
 # Creates a Makefile.
 # NOTE: cmake . -DCMAKE_INSTALL_PREFIX=/tmp/blah && make DESTDIR=/foo
@@ -122,10 +122,21 @@ IF( ${NO_QTMULTIMEDIA} )
    ADD_DEFINITIONS( -DNO_QTMULTIMEDIA )
 ENDIF()
 
+#====================================================Set build type=====================================================
+# We might always to tell the compiler to include debugging information (eg via the -g option on gcc).  It makes the
+# binaries slightly bigger on Linux, but helps greatly in analysing core dumps etc.  (In closed-source projects people
+# sometimes turn it off for release builds to make it harder to reverse engineer the software, but obviously that's not
+# an issue for us.)
+#
+# However, setting CMAKE_BUILD_TYPE to "Debug", also changes other things, such as the default location for connfig
+# files, which we don't want on a release build, so we would probably need to set compiler flags directly.
+#
+# .:TBD:. Investigate whether setting CMAKE_BUILD_TYPE to "RelWithDebInfo" does what we want.
+#
 IF( ${DO_RELEASE_BUILD} )
-   SET( CMAKE_BUILD_TYPE "Release" )
+   SET(CMAKE_BUILD_TYPE "Release")
 ELSE()
-   SET( CMAKE_BUILD_TYPE "Debug" )
+   SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
 
 IF( APPLE AND NOT CMAKE_OSX_ARCHITECTURES )
@@ -163,7 +174,11 @@ ENDIF()
 #==================================Find Qt5====================================
 
 # The minimum QT5 version we need. Keep as low as necessary.
-SET(QT5_MIN_VERSION 5.3)
+# Note that if you change this, you need to make corresponding changes to the .github/workflows/*.yml files so that
+# GitHub uses the appropriate version of Qt for the automated builds.
+#
+# For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
+SET(QT5_MIN_VERSION 5.9.5)
 
 # Automatically run moc on source files when necessary
 SET(CMAKE_AUTOMOC ON)
@@ -209,6 +224,9 @@ IF(Qt5_POSITION_INDEPENDENT_CODE)
    SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ENDIF()
 
+# Uncomment the following line to show what version of Qt is actually being used
+message(STATUS "Using Qt version " ${QT_VERSION})
+
 MESSAGE( STATUS "CMAKE_SYSTEM_INCLUDE_PATH: ${CMAKE_SYSTEM_INCLUDE_PATH}" )
 
 # Some extra files for the "make clean" target.
@@ -220,6 +238,32 @@ SET_PROPERTY(
    "CPackConfig.cmake"
    "CPackSourceConfig.cmake"
 )
+
+#======================================================Find Boost=======================================================
+# Boost is a collection of separate libraries, so we need to specify here which ones we are using
+# On Windows, using MSYS2, the mingw-w64-boost packages do not include libboost_stacktrace_backtrace, but
+# https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html suggests it is not required
+# (because on Windows, if you have libbacktrace installed, you can set BOOST_STACKTRACE_USE_BACKTRACE in header-only
+# mode).
+#
+# .:TODO:. Not sure how to get libboost_stacktrace_backtrace installed on Mac.  It doesn't seem to be findable by CMake
+# after installing Boost via Homebrew (https://brew.sh/).  For the moment, skip trying to use
+# libboost_stacktrace_backtrace on Mac
+#
+# .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so that
+# needs some more investigation.  (It could be that it's a bug in Boost, at least according to
+# https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
+IF(WIN32)
+FIND_PACKAGE(Boost REQUIRED)
+ELSEIF(APPLE)
+FIND_PACKAGE(Boost REQUIRED)
+ELSE()
+FIND_PACKAGE(Boost REQUIRED COMPONENTS stacktrace_backtrace)
+ENDIF()
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+# Uncomment the next two lines if you want to find where Boost headers and DLLs are on your system
+message( "Boost include directories: " ${Boost_INCLUDE_DIRS} )
+message( "Boost libraries: " ${Boost_LIBRARIES} )
 
 #===============================Find Xerces-C++================================
 # CMake already knows how to find and configure Xerces-C++, see
@@ -234,8 +278,9 @@ INCLUDE_DIRECTORIES(${XercesC_INCLUDE_DIRS})
 # Same comments apply here as for Xerces above
 FIND_PACKAGE(XalanC REQUIRED)
 INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
-message( "Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS} )
-message( "Xalan-C++ libraries: " ${XalanC_LIBRARIES} )
+# Uncomment the next two lines if you want to find where Xalan headers and DLLs are on your system
+#message( "Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS} )
+#message( "Xalan-C++ libraries: " ${XalanC_LIBRARIES} )
 
 #=========================Configure Brewken.qrc.in==========================
 
@@ -418,6 +463,9 @@ SET( Brewken_INFO_PLIST "${ROOTDIR}/mac/Info.plist" )
 SET( Brewken_MAC_ICNS "${ROOTDIR}/mac/BrewkenIcon.icns" )
 
 #==========================Find dlls for Win32=================================
+# Note that WIN32 is true "when the target system is Windows, including Win64" (see
+# https://cmake.org/cmake/help/latest/variable/WIN32.html), so this is ALL versions of Windows, not just 32-bit.
+#
 # .:TBD:. MY 2020-12-29 What do we need to do for Xerces and Xalan here?
 IF( WIN32 )
    IF( NOT ${NO_QTMULTIMEDIA} )
@@ -488,8 +536,17 @@ IF( WIN32 )
       ${QtQWindows_location}
    )
 
-   # This is ugly. UGLY.
-   FIND_PATH(QT5_BIN_DIR "qmake.exe")
+   GET_TARGET_PROPERTY( _qmake_executable Qt5::qmake IMPORTED_LOCATION )
+   GET_FILENAME_COMPONENT( QT5_BIN_DIR "${_qmake_executable}" DIRECTORY )
+   FIND_PROGRAM( WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT5_BIN_DIR}" )
+   IF( EXISTS ${WINDEPLOYQT_EXECUTABLE} )
+        add_executable(Qt5::windeployqt IMPORTED)
+
+        set_target_properties(Qt5::windeployqt PROPERTIES
+            IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE}
+        )
+   ENDIF()
+
    FILE( GLOB IcuDlls
         "${QT5_BIN_DIR}/ic*.dll"
    )
@@ -499,20 +556,15 @@ IF( WIN32 )
       IF( NOT MINGW_BIN_DIR )
          FIND_PATH(MINGW_BIN_DIR "mingw32-make.exe")
       ENDIF()
-     IF( NOT EXISTS ${MINGW_BIN_DIR} )
-        MESSAGE( FATAL_ERROR "MinGW bin dir not found. Run cmake again with the option -DMINGW_BIN_DIR=c:/path/to/mingw/bin" )
-     ELSE()
-        SET( Qt_DLLs
-             ${Qt_DLLs}
-             ${IcuDlls}
-             ${MINGW_BIN_DIR}/libgcc_s_dw2-1.dll
-             ${MINGW_BIN_DIR}/libstdc++-6.dll
-             ${MINGW_BIN_DIR}/libwinpthread-1.dll
-        )
-     ENDIF()
+      IF( NOT EXISTS ${MINGW_BIN_DIR} )
+         MESSAGE( FATAL_ERROR "MinGW bin dir not found. Run cmake again with the option -DMINGW_BIN_DIR=c:/path/to/mingw/bin" )
+      ELSE()
+         get_filename_component( Mingw_Path ${CMAKE_CXX_COMPILER} PATH )
+      ENDIF()
    ENDIF()
 ENDIF()
 
+include( InstallRequiredSystemLibraries )
 #===============================Packaging======================================
 # To make the packages, "make package". For source packages, "make package_source"
 
@@ -651,24 +703,9 @@ IF( NOT ${BUILD_DESIGNER_PLUGINS} )
                COMPONENT ${DATA_INSTALL_COMPONENT} )
    ENDIF()
 
-   #--------Windows--------
-   IF( WIN32 )
-      INSTALL( FILES ${Qt_DLLs}
-               DESTINATION "bin"
-               COMPONENT ${RUNTIME_INSTALL_COMPONENT} )
-      INSTALL( FILES ${SQL_Drivers_DLLs}
-               DESTINATION "bin/sqldrivers"
-               COMPONENT ${RUNTIME_INSTALL_COMPONENT} )
-      INSTALL( FILES ${Image_Formats_DLLs}
-               DESTINATION "bin/imageformats"
-               COMPONENT ${RUNTIME_INSTALL_COMPONENT} )
-      INSTALL( FILES ${Icon_Engines_DLLs}
-               DESTINATION "bin/iconengines"
-               COMPONENT ${RUNTIME_INSTALL_COMPONENT} )
-      INSTALL( FILES ${Platform_DLLs}
-               DESTINATION "bin/platforms"
-               COMPONENT ${RUNTIME_INSTALL_COMPONENT})
-   ENDIF()
+   IF( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS )
+      INSTALL( PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin COMPONENT System )
+   ENDIF( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS )
 ENDIF()
 
 # =====================Process other CMakeList.txt's===========================

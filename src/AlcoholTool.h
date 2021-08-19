@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * AlcoholTool.h is is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
@@ -13,26 +13,20 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef ALCOHOLTOOL_H
 #define ALCOHOLTOOL_H
 #pragma once
 
-#include <QDialog>
-#include <QEvent>
-#include <QFormLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QSpacerItem>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <memory> // For PImpl
 
-#include "BtLineEdit.h"
+#include <QDialog>
+
+class QWidget;
+class QEvent;
 
 /*!
- * \brief Dialog to convert units.
+ * \brief Dialog to calculate ABV from OG and FG readings - optionally with temperature correction.
  */
 class AlcoholTool : public QDialog {
    Q_OBJECT
@@ -42,28 +36,22 @@ public:
    virtual ~AlcoholTool();
 
 public slots:
-   void convert();
+   void calculate();
+
+   /**
+    * \brief Turn the advanced controls (temperature correction) on or off
+    */
+   void toggleAdvancedControls();
 
 protected:
    virtual void changeEvent(QEvent* event);
+   //! Called when the user closes the tool
+   virtual void done(int r);
 
 private:
-   QPushButton   * pushButton_convert;
-   QLabel        * label_og;
-   BtDensityEdit * input_og;
-   QLabel        * label_fg;
-   BtDensityEdit * input_fg;
-   QLabel        * label_result;
-   QLabel        * output_result;
-   QHBoxLayout   * hLayout;
-   QFormLayout   * formLayout;
-   QVBoxLayout   * vLayout;
-   QSpacerItem   * verticalSpacer;
-   QSpacerItem   * verticalSpacer2;
-   QSpacerItem   * verticalSpacer3;
-
-   void doLayout();
-   void retranslateUi();
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
 #endif

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStore.cpp is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "database/ObjectStore.h"
 
 #include <cstring>
@@ -26,6 +26,7 @@
 
 #include "database/Database.h"
 #include "database/DbTransaction.h"
+#include "model/NamedParameterBundle.h"
 
 // Private implementation details that don't need access to class member variables
 namespace {
@@ -98,7 +99,8 @@ namespace {
             queryStringAsStream << ", \n";
          }
 
-         queryStringAsStream << fieldDefn.columnName << " " << getDatabaseNativeTypeName(database, fieldDefn.fieldType);
+         queryStringAsStream <<
+            fieldDefn.columnName << " " << getDatabaseNativeTypeName(database, fieldDefn.fieldType);
 
          if (!firstFieldOutput) {
             // If it's the first column then it's the primary key and we are going to need to add PRIMARY KEY or some such
@@ -160,13 +162,13 @@ namespace {
             QString queryString = QString(
                database.getSqlToAddColumnAsForeignKey()
             ).arg(
-               tableDefinition.tableName
+               *tableDefinition.tableName
             ).arg(
-               fieldDefn.columnName
+               *fieldDefn.columnName
             ).arg(
-               fieldDefn.foreignKeyTo->tableName
+               *fieldDefn.foreignKeyTo->tableName
             ).arg(
-               fieldDefn.foreignKeyTo->tableFields[0].columnName
+               *fieldDefn.foreignKeyTo->tableFields[0].columnName
             );
             qDebug().noquote() << Q_FUNC_INFO << "Foreign keys: " << queryString;
 
@@ -259,17 +261,17 @@ namespace {
    //
    // Convenience functions for accessing specific fields of a JunctionTableDefinition struct
    //
-   char const * const GetJunctionTableDefinitionPropertyName(ObjectStore::JunctionTableDefinition const & junctionTable) {
+   BtStringConst const & GetJunctionTableDefinitionPropertyName(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[2].propertyName;
    }
-   char const * const GetJunctionTableDefinitionThisPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+   BtStringConst const & GetJunctionTableDefinitionThisPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[1].columnName;
    }
-   char const * const GetJunctionTableDefinitionOtherPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+   BtStringConst const & GetJunctionTableDefinitionOtherPrimaryKeyColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
       return junctionTable.tableFields[2].columnName;
    }
-   char const * const GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
-      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : nullptr;
+   BtStringConst const & GetJunctionTableDefinitionOrderByColumn(ObjectStore::JunctionTableDefinition const & junctionTable) {
+      return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : BtString::NULL_STR;
    }
 
    //
@@ -300,7 +302,8 @@ namespace {
                                           QSqlDatabase & connection) {
       qDebug() <<
          Q_FUNC_INFO << "Writing" << object.metaObject()->className() << "property" <<
-         GetJunctionTableDefinitionPropertyName(junctionTable) << " into junction table " << junctionTable.tableName;
+         GetJunctionTableDefinitionPropertyName(junctionTable) << " into junction table " <<
+         junctionTable.tableName;
 
       //
       // It's a coding error if the caller has supplied us anything other than an int inside the primaryKey QVariant.
@@ -320,14 +323,14 @@ namespace {
       queryStringAsStream << junctionTable.tableName << " (" <<
          GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << ", " <<
          GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
-      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+      if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
          queryStringAsStream << ", " << GetJunctionTableDefinitionOrderByColumn(junctionTable);
       }
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable));
-      QString const otherPrimaryKeyBindName = QString{":%1"}.arg(GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable));
-      QString const orderByBindName         = QString{":%1"}.arg(GetJunctionTableDefinitionOrderByColumn(junctionTable));
+      QString const thisPrimaryKeyBindName  = QString{":"} + *GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
+      QString const otherPrimaryKeyBindName = QString{":"} + *GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
+      QString const orderByBindName         = QString{":"} + *GetJunctionTableDefinitionOrderByColumn(junctionTable);
       queryStringAsStream << ") VALUES (" << thisPrimaryKeyBindName << ", " << otherPrimaryKeyBindName;
-      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+      if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
          queryStringAsStream << ", " << orderByBindName;
       }
       queryStringAsStream << ");";
@@ -341,7 +344,7 @@ namespace {
       sqlQuery.prepare(queryString);
 
       // Get the list of data to bind to it
-      QVariant propertyValuesWrapper = object.property(GetJunctionTableDefinitionPropertyName(junctionTable));
+      QVariant propertyValuesWrapper = object.property(*GetJunctionTableDefinitionPropertyName(junctionTable));
       if (!propertyValuesWrapper.isValid()) {
          // It's a programming error if we couldn't read a property value
          qCritical() <<
@@ -362,6 +365,18 @@ namespace {
             Q_ASSERT(false); // Stop here on debug builds
             return false;    // Continue but bail out of the current DB transaction on other builds
          }
+
+         // If the foreign key returned is not valid, it's not an error, it just means there is no associated object,
+         // eg this Hop does not have a parent.
+         if (theValue <= 0) {
+            qDebug() <<
+               Q_FUNC_INFO << "Property" << GetJunctionTableDefinitionPropertyName(junctionTable) << "of" <<
+               object.metaObject()->className() << "#" << primaryKey.toInt() << "is" << theValue <<
+               "which we assume means \"unset\", so nothing to write to junction table" <<
+               junctionTable.tableName;
+            return true;
+         }
+
          propertyValues.append(theValue);
       } else {
          //
@@ -385,17 +400,18 @@ namespace {
       int itemNumber = 1;
       qDebug() <<
          Q_FUNC_INFO << propertyValues.size() << "value(s) (in" << propertyValuesWrapper.typeName() << ") for property" <<
-         GetJunctionTableDefinitionPropertyName(junctionTable) << "of" << object.metaObject()->className() << "#" <<
-         primaryKey.toInt();
+         GetJunctionTableDefinitionPropertyName(junctionTable) << "of" << object.metaObject()->className() <<
+         "#" << primaryKey.toInt();
       for (int curValue : propertyValues) {
          sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
          sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
-         if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+         if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
             sqlQuery.bindValue(orderByBindName, itemNumber);
          }
          qDebug() <<
-            Q_FUNC_INFO << itemNumber << ": " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << " #" <<
-            primaryKey.toInt() << " <-> " << GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable) << " #" << curValue;
+            Q_FUNC_INFO << itemNumber << ": " <<
+            GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << " #" << primaryKey.toInt() << " <-> " <<
+            GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable) << " #" << curValue;
 
          if (!sqlQuery.exec()) {
             qCritical() <<
@@ -409,21 +425,21 @@ namespace {
    }
 
    bool deleteFromJunctionTableDefinition(ObjectStore::JunctionTableDefinition const & junctionTable,
-                                QVariant const & primaryKey,
-                                QSqlDatabase & connection) {
+                                          QVariant const & primaryKey,
+                                          QSqlDatabase & connection) {
 
       qDebug() <<
-         Q_FUNC_INFO << "Deleting property " << GetJunctionTableDefinitionPropertyName(junctionTable) << " in junction table " <<
-         junctionTable.tableName;
+         Q_FUNC_INFO << "Deleting property " << GetJunctionTableDefinitionPropertyName(junctionTable) <<
+         " in junction table " << junctionTable.tableName;
 
-      QString const thisPrimaryKeyBindName  = QString{":%1"}.arg(GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable));
+      QString const thisPrimaryKeyBindName = QString{":"} + *GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
 
       // Construct the DELETE query
       QString queryString{"DELETE FROM "};
       QTextStream queryStringAsStream{&queryString};
       queryStringAsStream <<
-         junctionTable.tableName << " WHERE " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << " = " <<
-         thisPrimaryKeyBindName << ";";
+         junctionTable.tableName << " WHERE " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) <<
+         " = " << thisPrimaryKeyBindName << ";";
 
       QSqlQuery sqlQuery{connection};
       sqlQuery.prepare(queryString);
@@ -498,7 +514,7 @@ public:
    /**
     * \brief Get the name of the DB column that holds the primary key
     */
-   char const * getPrimaryKeyColumn() {
+   BtStringConst const & getPrimaryKeyColumn() {
       // By convention the first field is the primary key
       return this->primaryTable.tableFields[0].columnName;
    };
@@ -508,8 +524,7 @@ public:
     */
    QVariant getPrimaryKey(QObject const & object) {
       // By convention the first field is the primary key
-      char const * const primaryKeyProperty {this->primaryTable.tableFields[0].propertyName};
-      return object.property(primaryKeyProperty);
+      return object.property(*this->primaryTable.tableFields[0].propertyName);
    }
 
    /**
@@ -519,10 +534,10 @@ public:
     *
     * \return \c true if succeeded, \c false otherwise
     */
-   bool updatePropertyInDb(QSqlDatabase & connection, QObject const & object, char const * const propertyName) {
+   bool updatePropertyInDb(QSqlDatabase & connection, QObject const & object, BtStringConst const & propertyName) {
       // We'll need some of this info even if it's a junction table property we're updating
-      QString const &  primaryKeyColumn {this->getPrimaryKeyColumn()};
-      QVariant const   primaryKey       {this->getPrimaryKey(object)};
+      BtStringConst const & primaryKeyColumn {this->getPrimaryKeyColumn()};
+      QVariant const        primaryKey       {this->getPrimaryKey(object)};
 
       //
       // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
@@ -530,7 +545,7 @@ public:
       auto matchingFieldDefn = std::find_if(
          this->primaryTable.tableFields.begin(),
          this->primaryTable.tableFields.end(),
-         [propertyName](TableField const & fd) {return 0 == std::strcmp(fd.propertyName, propertyName);}
+         [propertyName](TableField const & fd) {return fd.propertyName == propertyName;}
       );
 
       if (matchingFieldDefn != this->primaryTable.tableFields.end()) {
@@ -547,7 +562,7 @@ public:
          QTextStream queryStringAsStream{&queryString};
          queryStringAsStream << this->primaryTable.tableName << " SET ";
 
-         QString const & columnToUpdateInDb = matchingFieldDefn->columnName;
+         BtStringConst const & columnToUpdateInDb = matchingFieldDefn->columnName;
 
          queryStringAsStream << " " << columnToUpdateInDb << " = :" << columnToUpdateInDb;
          queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
@@ -561,7 +576,7 @@ public:
          //
          QSqlQuery sqlQuery{connection};
          sqlQuery.prepare(queryString);
-         QVariant propertyBindValue{object.property(propertyName)};
+         QVariant propertyBindValue{object.property(*propertyName)};
          // Enums need to be converted to strings first
          auto fieldDefn = std::find_if(
             this->primaryTable.tableFields.begin(),
@@ -573,8 +588,8 @@ public:
          if (fieldDefn->fieldType == ObjectStore::Enum) {
             propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
          }
-         sqlQuery.bindValue(QString{":%1"}.arg(columnToUpdateInDb), propertyBindValue);
-         sqlQuery.bindValue(QString{":%1"}.arg(primaryKeyColumn), primaryKey);
+         sqlQuery.bindValue(QString{":%1"}.arg(*columnToUpdateInDb), propertyBindValue);
+         sqlQuery.bindValue(QString{":%1"}.arg(*primaryKeyColumn), primaryKey);
          qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
          //
@@ -593,7 +608,7 @@ public:
             this->junctionTables.begin(),
             this->junctionTables.end(),
             [propertyName](JunctionTableDefinition const & jt) {
-               return 0 == std::strcmp(GetJunctionTableDefinitionPropertyName(jt), propertyName);
+               return GetJunctionTableDefinitionPropertyName(jt) == propertyName;
             }
          );
 
@@ -634,13 +649,21 @@ public:
 ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
    pimpl{ std::make_unique<impl>(primaryTable, junctionTables) } {
+   qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
    return;
 }
 
 
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
-ObjectStore::~ObjectStore() = default;
+ObjectStore::~ObjectStore() {
+   // Normally we try to avoid logging things here, as it's possible that the objects used in Logging.cpp have already
+   // been destroyed, but it can be useful to turn this on when debugging ObjectStore problems.
+   //qDebug() <<
+   //   Q_FUNC_INFO << "Destruct of object store for primary table" << this->pimpl->primaryTable.tableName <<
+   //   "(containing" << this->pimpl->allObjects.size() << "objects)";
+   return;
+}
 
 // Note that we have to pass Database in as a parameter because, ultimately, we're being called from Database::load()
 // which is called from Database::getInstance(), so we don't want to get in an endless loop.
@@ -695,6 +718,8 @@ void ObjectStore::loadAll(Database * database) {
 
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
+   //
+   // .:TBD:. In theory we don't need a transaction if we're _only_ reading data...
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
 
@@ -770,8 +795,10 @@ void ObjectStore::loadAll(Database * database) {
       //
       bool readPrimaryKey = false;
       for (auto const & fieldDefn : this->pimpl->primaryTable.tableFields) {
-         //qDebug() << Q_FUNC_INFO << "Reading " << fieldDefn.columnName << " into " << fieldDefn.propertyName;
-         QVariant fieldValue = sqlQuery.value(fieldDefn.columnName);
+         QVariant fieldValue = sqlQuery.value(*fieldDefn.columnName);
+         //qDebug() <<
+         //   Q_FUNC_INFO << "Reading col" << fieldDefn.columnName << "(=" << fieldValue << ") into property" <<
+         //   fieldDefn.propertyName;
          if (!fieldValue.isValid()) {
             qCritical() <<
                Q_FUNC_INFO << "Error reading column " << fieldDefn.columnName << " (" << fieldValue.toString() <<
@@ -783,12 +810,18 @@ void ObjectStore::loadAll(Database * database) {
          // Enums need to be converted from their string representation in the DB to a numeric value
          if (fieldDefn.fieldType == ObjectStore::Enum) {
             fieldValue = QVariant(stringToEnum(fieldDefn, fieldValue));
+            //qDebug() <<
+            //   Q_FUNC_INFO << "Value for property" << fieldDefn.propertyName << "after enum conversion: " <<
+            //   fieldValue;
          }
 
          // It's a coding error if we got the same parameter twice
-         Q_ASSERT(!namedParameterBundle.contains(fieldDefn.propertyName));
+         Q_ASSERT(!namedParameterBundle.contains(*fieldDefn.propertyName));
 
          namedParameterBundle.insert(fieldDefn.propertyName, fieldValue);
+
+         // We assert that the insert always works!
+         Q_ASSERT(namedParameterBundle.contains(*fieldDefn.propertyName));
 
          if (!readPrimaryKey) {
             readPrimaryKey = true;
@@ -809,6 +842,10 @@ void ObjectStore::loadAll(Database * database) {
 //         Q_FUNC_INFO << "Cached" << object->metaObject()->className() << "#" << primaryKey << "in" <<
 //         this->metaObject()->className();
    }
+
+   qDebug() <<
+      Q_FUNC_INFO << "Read" << this->pimpl->allObjects.size() << "entries from primary table" <<
+      this->pimpl->primaryTable.tableName;
 
    //
    // Now we load the data from the junction tables.  This, pretty much by definition, isn't needed for the object's
@@ -832,7 +869,7 @@ void ObjectStore::loadAll(Database * database) {
          GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable) <<
          " FROM " << junctionTable.tableName <<
          " ORDER BY " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) << ", ";
-      if (GetJunctionTableDefinitionOrderByColumn(junctionTable) != nullptr) {
+      if (!GetJunctionTableDefinitionOrderByColumn(junctionTable).isNull()) {
          queryStringAsStream << GetJunctionTableDefinitionOrderByColumn(junctionTable);
       } else {
          queryStringAsStream << GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable);
@@ -854,8 +891,8 @@ void ObjectStore::loadAll(Database * database) {
       //
       QMultiHash<int, QVariant> thisToOtherKeys;
       while (sqlQuery.next()) {
-         thisToOtherKeys.insert(sqlQuery.value(GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable)).toInt(),
-                                sqlQuery.value(GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable)));
+         thisToOtherKeys.insert(sqlQuery.value(*GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable)).toInt(),
+                                sqlQuery.value(*GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable)));
       }
 
       //
@@ -884,8 +921,9 @@ void ObjectStore::loadAll(Database * database) {
          if (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY) {
             qDebug() <<
                Q_FUNC_INFO << currentObject->metaObject()->className() << " #" << currentKey << ", " <<
-               GetJunctionTableDefinitionPropertyName(junctionTable) << "=" << otherKeys.first().toInt();
-            success = currentObject->setProperty(GetJunctionTableDefinitionPropertyName(junctionTable), otherKeys.first());
+               GetJunctionTableDefinitionPropertyName(junctionTable) << "=" << otherKeys.first();
+            success = currentObject->setProperty(*GetJunctionTableDefinitionPropertyName(junctionTable),
+                                                 otherKeys.first());
          } else {
             //
             // The setProperty function always takes a QVariant, so we need to create one from the QList<QVariant> we
@@ -906,14 +944,15 @@ void ObjectStore::loadAll(Database * database) {
                convertedOtherKeys.append(ii.toInt());
             }
             QVariant wrappedConvertedOtherKeys = QVariant::fromValue(convertedOtherKeys);
-            success = currentObject->setProperty(GetJunctionTableDefinitionPropertyName(junctionTable), wrappedConvertedOtherKeys);
+            success = currentObject->setProperty(*GetJunctionTableDefinitionPropertyName(junctionTable),
+                                                 wrappedConvertedOtherKeys);
          }
          if (!success) {
             // This is a coding error - eg the property doesn't have a WRITE member function or it doesn't take the
             // type of argument we supplied inside a QVariant.
             qCritical() <<
-               Q_FUNC_INFO << "Unable to set property" << GetJunctionTableDefinitionPropertyName(junctionTable) << "on" <<
-               currentObject->metaObject()->className();
+               Q_FUNC_INFO << "Unable to set property" << GetJunctionTableDefinitionPropertyName(junctionTable) <<
+               "on" << currentObject->metaObject()->className();
             Q_ASSERT(false); // Stop here on a debug build
             return;          // Continue but abort the transaction on a non-debug build
          }
@@ -922,7 +961,7 @@ void ObjectStore::loadAll(Database * database) {
 //         qDebug() <<
 //            Q_FUNC_INFO << "Set" <<
 //            (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY ? 1 : otherKeys.size()) <<
-//            GetJunctionTableDefinitionPropertyName(junctionTable) << "property for" <<
+//            GetJunctionTableDefinitionPropertyName(junctionTable).c_str() << "property for" <<
 //            currentObject->metaObject()->className() << "#" << currentKey;
 
       }
@@ -998,10 +1037,9 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
       if (!skippedPrimaryKey) {
          // By convention the first field is the primary key
          skippedPrimaryKey = true;
-         primaryKeyParameter = fieldDefn.propertyName;
+         primaryKeyParameter = *fieldDefn.propertyName;
       } else {
-         QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
-         QVariant bindValue{object->property(fieldDefn.propertyName)};
+         QVariant bindValue{object->property(*fieldDefn.propertyName)};
 
          if (fieldDefn.fieldType == ObjectStore::Enum) {
             // Enums need to be converted to strings first
@@ -1013,7 +1051,7 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
             bindValue = QVariant();
          }
 
-         sqlQuery.bindValue(bindName, bindValue);
+         sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
       }
    }
 
@@ -1068,7 +1106,7 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
    for (auto const & junctionTable : this->pimpl->junctionTables) {
       if (!insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, connection)) {
          qCritical() <<
-            Q_FUNC_INFO << "Error writing to juncton tables:" << connection.lastError().text();
+            Q_FUNC_INFO << "Error writing to junction tables:" << connection.lastError().text();
          return -1;
       }
    }
@@ -1115,8 +1153,8 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->primaryTable.tableName << " SET ";
 
-   QString const & primaryKeyColumn {this->pimpl->getPrimaryKeyColumn()};
-   QVariant const  primaryKey       {this->pimpl->getPrimaryKey(*object)};
+   QString  const primaryKeyColumn {*this->pimpl->getPrimaryKeyColumn()};
+   QVariant const primaryKey       {this->pimpl->getPrimaryKey(*object)};
 
    bool skippedPrimaryKey = false;
    bool firstFieldOutput = false;
@@ -1142,15 +1180,14 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    QSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
    for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
-      QString bindName = QString{":%1"}.arg(fieldDefn.columnName);
-      QVariant bindValue{object->property(fieldDefn.propertyName)};
+      QVariant bindValue{object->property(*fieldDefn.propertyName)};
 
       // Enums need to be converted to strings first
       if (fieldDefn.fieldType == ObjectStore::Enum) {
          bindValue = QVariant{enumToString(fieldDefn, bindValue)};
       }
 
-      sqlQuery.bindValue(bindName, bindValue);
+      sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
    }
 
    //
@@ -1167,8 +1204,8 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    //
    for (auto const & junctionTable : this->pimpl->junctionTables) {
       qDebug() <<
-         Q_FUNC_INFO << "Updating property " << GetJunctionTableDefinitionPropertyName(junctionTable) << " in junction table " <<
-         junctionTable.tableName;
+         Q_FUNC_INFO << "Updating property " << GetJunctionTableDefinitionPropertyName(junctionTable) <<
+         " in junction table " << junctionTable.tableName;
 
       //
       // The simplest thing to do with each junction table is to blat any rows relating to the current object and then
@@ -1206,7 +1243,7 @@ int ObjectStore::insertOrUpdate(QObject & object) {
    return this->pimpl->getPrimaryKey(object).toInt();
 }
 
-void ObjectStore::updateProperty(QObject const & object, char const * const propertyName) {
+void ObjectStore::updateProperty(QObject const & object, BtStringConst const & propertyName) {
    // Start transaction
    // (By the magic of RAII, this will abort if we return from this function without calling dbTransaction.commit()
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
@@ -1267,7 +1304,7 @@ void ObjectStore::hardDelete(int id) {
    QString queryString{"DELETE FROM "};
    QTextStream queryStringAsStream{&queryString};
    queryStringAsStream << this->pimpl->primaryTable.tableName;
-   QString const & primaryKeyColumn = this->pimpl->getPrimaryKeyColumn();
+   BtStringConst const & primaryKeyColumn = this->pimpl->getPrimaryKeyColumn();
    queryStringAsStream << " WHERE " << primaryKeyColumn << " = :" << primaryKeyColumn << ";";
    qDebug() <<
       Q_FUNC_INFO << "Deleting main table row #" << id << "with database query " << queryString;
@@ -1278,8 +1315,7 @@ void ObjectStore::hardDelete(int id) {
    QVariant primaryKey{id};
    QSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
-   QString bindName = QString{":%1"}.arg(primaryKeyColumn);
-   sqlQuery.bindValue(bindName, primaryKey);
+   sqlQuery.bindValue(QString{":"} + *primaryKeyColumn, primaryKey);
    qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
 
    //
@@ -1384,9 +1420,9 @@ QList<QObject *> ObjectStore::getAllRaw() const {
 
 QList<QString> ObjectStore::getAllTableNames() const {
    QList<QString> tableNames;
-   tableNames.append(this->pimpl->primaryTable.tableName);
+   tableNames.append(*this->pimpl->primaryTable.tableName);
    for (auto const & junctionTable : this->pimpl->junctionTables) {
-      tableNames.append(junctionTable.tableName);
+      tableNames.append(*junctionTable.tableName);
    }
    return tableNames;
 }

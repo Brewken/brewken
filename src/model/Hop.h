@@ -31,7 +31,7 @@
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
-#define AddPropertyName(property) namespace PropertyNames::Hop {static char const * const property = #property; }
+#define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
 AddPropertyName(alpha_pct)
 AddPropertyName(amount_kg)
 AddPropertyName(beta_pct)
@@ -83,7 +83,7 @@ public:
    Hop(NamedParameterBundle const & namedParameterBundle);
    Hop(Hop const & other);
 
-   virtual ~Hop() = default;
+   virtual ~Hop();
 
    //! \brief The percent alpha.
    Q_PROPERTY( double alpha_pct READ alpha_pct WRITE setAlpha_pct /*NOTIFY changed*/ /*changedAlpha_pct*/ )

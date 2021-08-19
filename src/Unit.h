@@ -22,6 +22,8 @@
 #define UNIT_H
 #pragma once
 
+#include <functional>
+
 #include <QMultiMap>
 #include <QObject>
 #include <QString>

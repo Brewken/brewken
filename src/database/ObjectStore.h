@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,10 +12,11 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_OBJECTSTORE_H
 #define DATABASE_OBJECTSTORE_H
 #pragma once
+#include <functional>
 
 #include <memory> // For PImpl
 
@@ -24,9 +25,10 @@
 #include <QString>
 #include <QVector>
 
-#include "model/NamedParameterBundle.h"
-
+#include "utils/BtStringConst.h"
 class Database;
+class NamedParameterBundle;
+
 
 /**
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.
@@ -41,6 +43,10 @@ class Database;
  *
  *        Note that we do not try to implement every single feature of SQL.  This is not a generic object-to-relational
  *        mapper.  It's just as much as we need.
+ *
+ *        For the moment at least, we do not support triggers as, AFAICT, they are not needed.  (The DB might be using
+ *        its own triggers to handle primary key columns, but that happens without our intervention once we've specified
+ *        the column type.)
  *
  *        Inheritance from QObject is to allow this class to send signals (and therefore that inheritance needs to be
  *        public).
@@ -85,13 +91,35 @@ public:
     */
    typedef QVector<EnumAndItsDbString> EnumStringMapping;
 
+   //
+   // It's a bit tedious having to create constructors for structs but we need them to allow BtStringConst members to be
+   // constructed from a string literal without having to put wrappers (BtStringConst const {}) around each string
+   // literal.
+   //
+   // The reason we don't have existing constants for table name and column name string literals (in contrast with
+   // property names) is that these values are not needed anywhere else in the code.
+   //
+
    struct TableDefinition;
    struct TableField {
       FieldType const                 fieldType;
-      char const * const              columnName;
-      char const * const              propertyName;
-      EnumStringMapping const * const enumMapping = nullptr; // only needed if fieldType is Enum
-      TableDefinition const * const   foreignKeyTo = nullptr;
+      BtStringConst const             columnName;   // Shouldn't ever be empty in practice
+      BtStringConst const             propertyName; // Can be empty in a junction table (see below)
+      EnumStringMapping const * const enumMapping;  // Only needed if fieldType is Enum
+      TableDefinition const * const   foreignKeyTo;
+      //! Constructor
+      TableField(FieldType const                 fieldType,
+                 char const * const              columnName = nullptr,
+                 BtStringConst const &           propertyName = BtString::NULL_STR,
+                 EnumStringMapping const * const enumMapping = nullptr,
+                 TableDefinition const * const   foreignKeyTo = nullptr) :
+         fieldType{fieldType},
+         columnName{columnName},
+         propertyName{propertyName},
+         enumMapping{enumMapping},
+         foreignKeyTo{foreignKeyTo} {
+         return;
+      }
    };
 
    /**
@@ -99,8 +127,15 @@ public:
     *        object properties and table fields.
     */
    struct TableDefinition {
-      char const * const tableName;
+      BtStringConst tableName;
       QVector<TableField> const tableFields;
+      //! Constructor
+      TableDefinition(char const * const tableName = nullptr,
+                      std::initializer_list<TableField> const tableFields = {}) :
+         tableName{tableName},
+         tableFields{tableFields} {
+         return;
+      }
    };
 
    /**
@@ -151,6 +186,14 @@ public:
     */
    struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
+      JunctionTableDefinition(char const * const tableName = nullptr,
+                              std::initializer_list<TableField> tableFields = {},
+                              AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK) :
+         TableDefinition{tableName, tableFields},
+         assumedNumEntries{assumedNumEntries} {
+         return;
+      }
+
    };
 
 
@@ -163,7 +206,7 @@ public:
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
     */
-   ObjectStore(TableDefinition const &           primaryTable,
+   ObjectStore(TableDefinition const &          primaryTable,
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();
@@ -226,7 +269,7 @@ public:
    /**
     * \brief Update a single property of an existing object in the DB
     */
-   void updateProperty(QObject const & object, char const * const propertyName);
+   void updateProperty(QObject const & object, BtStringConst const & propertyName);
 
    /**
     * \brief Remove the object from our local in-memory cache
@@ -413,7 +456,7 @@ signals:
     *           \c ObjectStoreTyped<InventoryHop>::getInstance(), etc
     * \param propertyName The name of the property that changed
     */
-   void signalPropertyChanged(int id, char const * const propertyName);
+   void signalPropertyChanged(int id, BtStringConst const & propertyName);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

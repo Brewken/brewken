@@ -24,14 +24,13 @@
 #include "model/Fermentable.h"
 
 #include <QDebug>
-#include <QDomElement>
-#include <QDomText>
 #include <QObject>
 #include <QVariant>
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
 // .:TBD:. I think (and hope) that we can dispense with the following line!

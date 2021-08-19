@@ -1373,11 +1373,11 @@ void BtTreeModel::elementRemoved(NamedEntity * victim) {
    disconnect(victim, nullptr, this, nullptr);
 }
 
-void BtTreeModel::recipePropertyChanged(int recipeId, char const * const propertyName) {
+void BtTreeModel::recipePropertyChanged(int recipeId, BtStringConst const & propertyName) {
    // If a Recipe's ancestor ID has changed then it might be because a new ancestor has been created
    // .:TBD:. We could probably get away with propertyName == PropertyNames::Recipe::ancestorId here because
    // we always use the same constants for property names.
-   if (0 != std::strcmp(propertyName, PropertyNames::Recipe::ancestorId)) {
+   if (propertyName != PropertyNames::Recipe::ancestorId) {
       qDebug() << Q_FUNC_INFO << "Ignoring change to" << propertyName << "on Recipe" << recipeId;
       return;
    }
