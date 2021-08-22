@@ -372,9 +372,14 @@ public:
    QList<QObject *> getAllRaw() const;
 
    /**
-    * \brief Returns a list of all tables used by this store.  Used for copying data from one DB to another.
+    * \brief Write everything in this object store to a new database.  Caller's responsibility to wrap everything in a
+    *        transaction and turn off foreign key constraints.
+    *
+    * \param connectionNew
+    *
+    * \return \c true if succeeded \c false otherwise
     */
-   QList<QString> getAllTableNames() const;
+   bool writeAllToNewDb(QSqlDatabase connectionNew) const;
 
 signals:
    /**

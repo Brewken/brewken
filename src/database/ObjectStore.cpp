@@ -21,9 +21,10 @@
 #include <QHash>
 #include <QSqlDriver>
 #include <QSqlError>
-#include <QSqlQuery>
+#include <QSqlField>
 #include <QSqlRecord>
 
+#include "database/BtSqlQuery.h"
 #include "database/Database.h"
 #include "database/DbTransaction.h"
 #include "model/NamedParameterBundle.h"
@@ -99,21 +100,30 @@ namespace {
             queryStringAsStream << ", \n";
          }
 
-         queryStringAsStream <<
-            fieldDefn.columnName << " " << getDatabaseNativeTypeName(database, fieldDefn.fieldType);
+         queryStringAsStream << fieldDefn.columnName;
 
          if (!firstFieldOutput) {
-            // If it's the first column then it's the primary key and we are going to need to add PRIMARY KEY or some such
-            // at the end.  The Database class knows exactly what text is needed for each type of database.
+            //
+            // If it's the first column then it's the primary key and we are going to need to add INTEGER PRIMARY KEY
+            // (for SQLite) or SERIAL PRIMARY KEY (for PostgreSQL) or some such at the end.  The Database class knows
+            // exactly what text is needed for each type of database.
+            //
+            // NOTE because PostgreSQL needs SERIAL instead of INTEGER for an integer primary key, we (a) ignore
+            // fieldDefn.fieldType and (b) do not support non-integer primary keys.  This _could_ be fixed by making
+            // Database::getDbNativePrimaryKeyDeclaration() take fieldType as a parameter, but this is a future exercise
+            // to consider if we ever reach the point of needing non-integer primary keys.
+            //
             firstFieldOutput = true;
-            queryStringAsStream << " " << database.getDbNativeIntPrimaryKeyModifier();
+            queryStringAsStream << " " << database.getDbNativePrimaryKeyDeclaration();
+         } else {
+            queryStringAsStream << " " << getDatabaseNativeTypeName(database, fieldDefn.fieldType);
          }
       }
       queryStringAsStream << "\n);";
 
       qDebug().noquote() << Q_FUNC_INFO << "Table creation: " << queryString;
 
-      QSqlQuery sqlQuery{connection};
+      BtSqlQuery sqlQuery{connection};
       sqlQuery.prepare(queryString);
       if (!sqlQuery.exec()) {
          qCritical() <<
@@ -152,7 +162,7 @@ namespace {
       // Note that, here, we do one column at a time because it keeps things simple - including in the case where the
       // table has no foreign keys.
       //
-      QSqlQuery sqlQuery{connection};
+      BtSqlQuery sqlQuery{connection};
       for (auto const & fieldDefn: tableDefinition.tableFields) {
          if (fieldDefn.fieldType == ObjectStore::FieldType::Int && fieldDefn.foreignKeyTo != nullptr) {
             // It's obviously a programming error if the foreignKeyTo table doesn't have any fields.  (We only care
@@ -191,7 +201,7 @@ namespace {
     * NB: This can be a long string.  It includes newlines, and is intended to be logged with qDebug().noquote() or
     *     similar.
     */
-   QString BoundValuesToString(QSqlQuery const & sqlQuery) {
+   QString BoundValuesToString(BtSqlQuery const & sqlQuery) {
       QString result;
       QTextStream resultAsStream{&result};
 
@@ -274,28 +284,17 @@ namespace {
       return junctionTable.tableFields.size() > 3 ? junctionTable.tableFields[3].columnName : BtString::NULL_STR;
    }
 
-   //
-   // Insert data from an object property to a junction table
-   //
-   // We may be inserting more than one row.  In theory we COULD combine all the rows into a single insert statement
-   // using either QSqlQuery::execBatch() or directly constructing one of the common (but technically non-standard)
-   // syntaxes, eg the following works on a lot of databases (including PostgreSQL and newer versions of SQLite) for
-   // up to 1000 rows):
-   //    INSERT INTO table (columnA, columnB, ..., columnN)
-   //         VALUES       (r1_valA, r1_valB, ..., r1_valN),
-   //                      (r2_valA, r2_valB, ..., r2_valN),
-   //                      ...,
-   //                      (rm_valA, rm_valB, ..., rm_valN);
-   // However, we DON"T do this.  The variable binding is more complicated/error-prone than when just doing
-   // individual inserts.  (Even with QSqlQuery::execBatch(), we'd have to loop to construct the lists of bind
-   // parameters.)  And there's likely no noticeable performance benefit given that we're typically inserting only
-   // a handful of rows at a time (eg all the Hops in a Recipe).
-   //
-   // So instead, we just do individual inserts.  Note that orderByColumn column is only used if specified, and
-   // that, if it is, we assume it's an integer type and that we create the values ourselves.
-   //
-   // Returns true if succeeded, false otherwise
-   //
+   /**
+    * \brief Insert data from an object property to a junction table
+    *
+    * \param junctionTable
+    * \param object
+    * \param primaryKey  Note that this must be supplied separately as, for a new object, we may not (yet) have set its
+    *                    primary key (ie we cannot just read primary key from object)
+    * \param connection
+    *
+    * \return \c true if succeeded, \c false otherwise
+    */
    bool insertIntoJunctionTableDefinition(ObjectStore::JunctionTableDefinition const & junctionTable,
                                           QObject const & object,
                                           QVariant const & primaryKey,
@@ -317,7 +316,26 @@ namespace {
          return false;    // Continue but bail out of the current DB transaction on other builds
       }
 
+      //
       // Construct the query
+      //
+      // We may be inserting more than one row.  In theory we COULD combine all the rows into a single insert statement
+      // using either BtSqlQuery::execBatch() or directly constructing one of the common (but technically non-standard)
+      // syntaxes, eg the following works on a lot of databases (including PostgreSQL and newer versions of SQLite) for
+      // up to 1000 rows):
+      //    INSERT INTO table (columnA, columnB, ..., columnN)
+      //         VALUES       (r1_valA, r1_valB, ..., r1_valN),
+      //                      (r2_valA, r2_valB, ..., r2_valN),
+      //                      ...,
+      //                      (rm_valA, rm_valB, ..., rm_valN);
+      // However, we DON"T do this.  The variable binding is more complicated/error-prone than when just doing
+      // individual inserts.  (Even with BtSqlQuery::execBatch(), we'd have to loop to construct the lists of bind
+      // parameters.)  And there's likely no noticeable performance benefit given that we're typically inserting only
+      // a handful of rows at a time (eg all the Hops in a Recipe).
+      //
+      // So instead, we just do individual inserts.  Note that orderByColumn column is only used if specified, and
+      // that, if it is, we assume it's an integer type and that we create the values ourselves.
+      //
       QString queryString{"INSERT INTO "};
       QTextStream queryStringAsStream{&queryString};
       queryStringAsStream << junctionTable.tableName << " (" <<
@@ -337,10 +355,10 @@ namespace {
 
       //
       // Note that, when we are using bind values, we do NOT want to call the
-      // QSqlQuery::QSqlQuery(const QString &, QSqlDatabase db) version of the QSqlQuery constructor because that would
+      // BtSqlQuery::BtSqlQuery(const QString &, QSqlDatabase db) version of the BtSqlQuery constructor because that would
       // result in the supplied query being executed immediately (ie before we've had a chance to bind parameters).
       //
-      QSqlQuery sqlQuery{connection};
+      BtSqlQuery sqlQuery{connection};
       sqlQuery.prepare(queryString);
 
       // Get the list of data to bind to it
@@ -424,6 +442,15 @@ namespace {
       return true;
    }
 
+   /**
+    * \brief Delete rows relating to a particular object from a junction table
+    *
+    * \param junctionTable
+    * \param primaryKey
+    * \param connection
+    *
+    * \return \c true if succeeded, \c false otherwise
+    */
    bool deleteFromJunctionTableDefinition(ObjectStore::JunctionTableDefinition const & junctionTable,
                                           QVariant const & primaryKey,
                                           QSqlDatabase & connection) {
@@ -441,7 +468,7 @@ namespace {
          junctionTable.tableName << " WHERE " << GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable) <<
          " = " << thisPrimaryKeyBindName << ";";
 
-      QSqlQuery sqlQuery{connection};
+      BtSqlQuery sqlQuery{connection};
       sqlQuery.prepare(queryString);
 
       // Bind the primary key value
@@ -520,11 +547,18 @@ public:
    };
 
    /**
+    * \brief Get the name of the object property that holds the primary key
+    */
+   BtStringConst const & getPrimaryKeyProperty() {
+      // By convention the first field is the primary key
+      return this->primaryTable.tableFields[0].propertyName;
+   };
+
+   /**
     * \brief Extract the primary key from an object
     */
    QVariant getPrimaryKey(QObject const & object) {
-      // By convention the first field is the primary key
-      return object.property(*this->primaryTable.tableFields[0].propertyName);
+      return object.property(*getPrimaryKeyProperty());
    }
 
    /**
@@ -574,7 +608,7 @@ public:
          //
          // Bind the values
          //
-         QSqlQuery sqlQuery{connection};
+         BtSqlQuery sqlQuery{connection};
          sqlQuery.prepare(queryString);
          QVariant propertyBindValue{object.property(*propertyName)};
          // Enums need to be converted to strings first
@@ -637,6 +671,135 @@ public:
 
       // If we made it this far then everything worked
       return true;
+   }
+
+   /**
+    * \brief Insert an object in the database
+    *
+    *        NB: Caller is responsible for handling transactions
+    *
+    * \param connection
+    * \param object
+    * \param writePrimaryKey Normally this is \c false, meaning we are going to let the DB assign a primary key to the
+    *                        new object we are inserting.  However, if we are writing existing objects out to a new
+    *                        database, then this will be \c true, meaning we write out the existing primary keys (to
+    *                        keep any foreign key references to them valid.  (In this latter circumstance, we are also
+    *                        assuming the caller has disabled foreign key constraints for the duration of the
+    *                        transaction.)
+    *
+    * \return the primary key of the inserted object, or -1 if there was an error.  Note that, in the case that
+    *         \c writePrimaryKey is \c false (ie we are inserting a new object), it is the \b caller's responsibility to
+    *         update the object with its new primary key.
+    */
+   int insertObjectInDb(QSqlDatabase & connection, QObject const & object, bool writePrimaryKey) {
+      //
+      // Construct the SQL, which will be of the form
+      //
+      //    INSERT INTO tablename (firstColumn, secondColumn, ...)
+      //    VALUES (:firstColumn, :secondColumn, ...);
+      //
+      // We omit the primary key column because we can't know its value in advance.  We'll find out what value the DB
+      // assigned to it after the query was run -- see below.
+      //
+      QString queryString{"INSERT INTO "};
+      QTextStream queryStringAsStream{&queryString};
+      queryStringAsStream << this->primaryTable.tableName << " (";
+      this->appendColumNames(queryStringAsStream, writePrimaryKey, false);
+      queryStringAsStream << ") VALUES (";
+      this->appendColumNames(queryStringAsStream, writePrimaryKey, true);
+      queryStringAsStream << ");";
+
+      qDebug() <<
+         Q_FUNC_INFO << "Inserting" << object.metaObject()->className() << "main table row with database query " <<
+         queryString;
+
+      //
+      // Bind the values
+      //
+      BtSqlQuery sqlQuery{connection};
+      sqlQuery.prepare(queryString);
+      for (int ii = (writePrimaryKey ? 0 : 1); ii < this->primaryTable.tableFields.size(); ++ii) {
+         auto const & fieldDefn = this->primaryTable.tableFields[ii];
+
+         QVariant bindValue{object.property(*fieldDefn.propertyName)};
+         if (fieldDefn.fieldType == ObjectStore::Enum) {
+            // Enums need to be converted to strings first
+            bindValue = QVariant{enumToString(fieldDefn, bindValue)};
+         } else if (fieldDefn.foreignKeyTo && bindValue.toInt() <= 0) {
+            // If the field is a foreign key and the value we would otherwise put in it is not a valid key (eg we are
+            // inserting a Recipe on which the Equipment has not yet been set) then the query would barf at the invalid
+            // key.  So, in this case, we need to insert NULL.
+            bindValue = QVariant();
+         }
+
+         sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
+      }
+
+      qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
+
+      //
+      // Run the query
+      //
+      if (!sqlQuery.exec()) {
+         qCritical() <<
+            Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
+         return -1;
+      }
+
+      //
+      // Get the ID of the row we just inserted
+      //
+      // Assert that we are only using database drivers that support returning the last insert ID.  (It is frustratingly
+      // hard to find documentation about this, as, eg, https://doc.qt.io/qt-5/sql-driver.html does not explicitly list
+      // which supplied drivers support which features.  However, in reality, we know SQLite and PostgreSQL drivers both
+      // support this, so it would likely only be a problem if a new type of DB were introduced.)
+      //
+      // Note too that we have to explicitly put the primary key into an int, because, by default it might come back as
+      // long long int rather than int (ie 64-bits rather than 32-bits in the C++ implementations we care about).
+      //
+      Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
+      QVariant rawPrimaryKey = sqlQuery.lastInsertId();
+      Q_ASSERT(rawPrimaryKey.canConvert(QMetaType::Int));
+      int primaryKeyInDb = rawPrimaryKey.toInt();
+      qDebug() <<
+         Q_FUNC_INFO << object.metaObject()->className() << "#" << primaryKeyInDb << "inserted in database using" <<
+         queryString;
+
+      //
+      // Where we're not explicitly writing the primary key it's because the object we are inserting should not already
+      // have a valid primary key.
+      //
+      // Where we are writing the primary key, it shouldn't get changed by the write.
+      //
+      // .:TBD:. Maybe if we're doing undelete, this is the place to handle that case.
+      //
+      int currentPrimaryKey = object.property(*this->getPrimaryKeyProperty()).toInt();
+      if (writePrimaryKey && primaryKeyInDb != currentPrimaryKey) {
+         // Likely a coding error
+         qCritical() <<
+            Q_FUNC_INFO << "After writing" << object.metaObject()->className() << "#" << currentPrimaryKey <<
+            "to database, primary key was changed to" << primaryKeyInDb;
+         Q_ASSERT(false); // Stop here on debug build
+      } else if (!writePrimaryKey && currentPrimaryKey > 0) {
+         // This is almost certainly a coding error
+         qCritical() <<
+            Q_FUNC_INFO << "Wrote new" << object.metaObject()->className() << " to database (with primary key " <<
+            primaryKeyInDb << ") but it already had primary key" << currentPrimaryKey;
+         Q_ASSERT(false); // Stop here on debug build
+      }
+
+      //
+      // Now save data to the junction tables
+      //
+      for (auto const & junctionTable : this->junctionTables) {
+         if (!insertIntoJunctionTableDefinition(junctionTable, object, primaryKeyInDb, connection)) {
+            qCritical() <<
+               Q_FUNC_INFO << "Error writing to junction tables:" << connection.lastError().text();
+            return -1;
+         }
+      }
+
+      return primaryKeyInDb;
    }
 
    TableDefinition const & primaryTable;
@@ -737,7 +900,7 @@ void ObjectStore::loadAll(Database * database) {
    QTextStream queryStringAsStream{&queryString};
    this->pimpl->appendColumNames(queryStringAsStream, true, false);
    queryStringAsStream << "\n FROM " << this->pimpl->primaryTable.tableName << ";";
-   QSqlQuery sqlQuery{connection};
+   BtSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
    if (!sqlQuery.exec()) {
       qCritical() <<
@@ -876,7 +1039,7 @@ void ObjectStore::loadAll(Database * database) {
       }
       queryStringAsStream << ";";
 
-      sqlQuery = QSqlQuery{connection};
+      sqlQuery = BtSqlQuery{connection};
       sqlQuery.prepare(queryString);
       if (!sqlQuery.exec()) {
          qCritical() <<
@@ -1003,95 +1166,7 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
 
-   //
-   // Construct the SQL, which will be of the form
-   //
-   //    INSERT INTO tablename (firstColumn, secondColumn, ...)
-   //    VALUES (:firstColumn, :secondColumn, ...);
-   //
-   // We omit the primary key column because we can't know its value in advance.  We'll find out what value the DB
-   // assigned to it after the query was run -- see below.
-   //
-   // .:TBD:. A small optimisation might be to construct this just once rather than every time this function is called
-   //
-   QString queryString{"INSERT INTO "};
-   QTextStream queryStringAsStream{&queryString};
-   queryStringAsStream << this->pimpl->primaryTable.tableName << " (";
-   this->pimpl->appendColumNames(queryStringAsStream, false, false);
-   queryStringAsStream << ") VALUES (";
-   this->pimpl->appendColumNames(queryStringAsStream, false, true);
-   queryStringAsStream << ");";
-
-   qDebug() <<
-      Q_FUNC_INFO << "Inserting" << object->metaObject()->className() << "main table row with database query " <<
-      queryString;
-
-   //
-   // Bind the values
-   //
-   QSqlQuery sqlQuery{connection};
-   sqlQuery.prepare(queryString);
-   bool skippedPrimaryKey = false;
-   char const * primaryKeyParameter{nullptr};
-   for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
-      if (!skippedPrimaryKey) {
-         // By convention the first field is the primary key
-         skippedPrimaryKey = true;
-         primaryKeyParameter = *fieldDefn.propertyName;
-      } else {
-         QVariant bindValue{object->property(*fieldDefn.propertyName)};
-
-         if (fieldDefn.fieldType == ObjectStore::Enum) {
-            // Enums need to be converted to strings first
-            bindValue = QVariant{enumToString(fieldDefn, bindValue)};
-         } else if (fieldDefn.foreignKeyTo && bindValue.toInt() <= 0) {
-            // If the field is a foreign key and the value we would otherwise put in it is not a valid key (eg we are
-            // inserting a Recipe on which the Equipment has not yet been set) then the query would barf at the invalid
-            // key.  So, in this case, we need to insert NULL.
-            bindValue = QVariant();
-         }
-
-         sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
-      }
-   }
-
-   qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
-
-   //
-   // The object we are inserting should not already have a valid primary key.
-   //
-   // .:TBD:. Maybe if we're doing undelete, this is the place to handle that case.
-   //
-   int currentPrimaryKey = object->property(primaryKeyParameter).toInt();
-   Q_ASSERT(currentPrimaryKey <= 0);
-
-   //
-   // Run the query
-   //
-   if (!sqlQuery.exec()) {
-      qCritical() <<
-         Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
-      return -1;
-   }
-
-   //
-   // Get the ID of the row we just inserted and put it in the object
-   //
-   // Assert that we are only using database drivers that support returning the last insert ID.  (It is frustratingly
-   // hard to find documentation about this, as, eg, https://doc.qt.io/qt-5/sql-driver.html does not explicitly list
-   // which supplied drivers support which features.  However, in reality, we know SQLite and PostgreSQL drivers both
-   // support this, so it would likely only be a problem if a new type of DB were introduced.)
-   //
-   // Note too that we have to explicitly put the primary key into an int, because, by default it might come back as
-   // long long int rather than int (ie 64-bits rather than 32-bits in the C++ implementations we care about).
-   //
-   Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
-   QVariant rawPrimaryKey = sqlQuery.lastInsertId();
-   Q_ASSERT(rawPrimaryKey.canConvert(QMetaType::Int));
-   int primaryKey = rawPrimaryKey.toInt();
-   qDebug() <<
-      Q_FUNC_INFO << object->metaObject()->className() << "#" << primaryKey << "inserted in database using" <<
-      queryString;
+   int primaryKey = this->pimpl->insertObjectInDb(connection, *object, false);
 
    //
    // Add the object to our list of all objects of this type (asserting that it should be impossible for an object with
@@ -1100,30 +1175,20 @@ int ObjectStore::insert(std::shared_ptr<QObject> object) {
    Q_ASSERT(!this->pimpl->allObjects.contains(primaryKey));
    this->pimpl->allObjects.insert(primaryKey, object);
 
-   //
-   // Now save data to the junction tables
-   //
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
-      if (!insertIntoJunctionTableDefinition(junctionTable, *object, primaryKey, connection)) {
-         qCritical() <<
-            Q_FUNC_INFO << "Error writing to junction tables:" << connection.lastError().text();
-         return -1;
-      }
-   }
-
    // Everything succeeded if we got this far so we can wrap up the transaction
    dbTransaction.commit();
 
    //
-   // Now we tell the object what its primary key is.  Note that we must do this after the database transaction is
+   // Now we tell the object what its primary key is.  Note that we must do this _after_ the database transaction is
    // finished as there are some circumstances where this call will trigger the start of another database transaction.
    //
-   bool setPrimaryKeyOk = object->setProperty(primaryKeyParameter, primaryKey);
+   BtStringConst const & primaryKeyProperty = this->pimpl->getPrimaryKeyProperty();
+   bool setPrimaryKeyOk = object->setProperty(*primaryKeyProperty, primaryKey);
    if (!setPrimaryKeyOk) {
       // This is a coding error - eg the property doesn't have a WRITE member function or it doesn't take the type of
       // argument we supplied inside a QVariant.
       qCritical() <<
-         Q_FUNC_INFO << "Unable to set property" << primaryKeyParameter << "on" << object->metaObject()->className();
+         Q_FUNC_INFO << "Unable to set property" << primaryKeyProperty << "on" << object->metaObject()->className();
       Q_ASSERT(false);
    }
 
@@ -1177,7 +1242,7 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    // Bind the values.  Note that, because we're using bind names, it doesn't matter that the order in which we do the
    // binds is different than the order in which the fields appear in the query.
    //
-   QSqlQuery sqlQuery{connection};
+   BtSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
    for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
       QVariant bindValue{object->property(*fieldDefn.propertyName)};
@@ -1313,7 +1378,7 @@ void ObjectStore::hardDelete(int id) {
    // Bind the value
    //
    QVariant primaryKey{id};
-   QSqlQuery sqlQuery{connection};
+   BtSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
    sqlQuery.bindValue(QString{":"} + *primaryKeyColumn, primaryKey);
    qDebug().noquote() << Q_FUNC_INFO << "Bind values:" << BoundValuesToString(sqlQuery);
@@ -1417,12 +1482,22 @@ QList<QObject *> ObjectStore::getAllRaw() const {
    return listToReturn;
 }
 
-
-QList<QString> ObjectStore::getAllTableNames() const {
-   QList<QString> tableNames;
-   tableNames.append(*this->pimpl->primaryTable.tableName);
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
-      tableNames.append(*junctionTable.tableName);
+bool ObjectStore::writeAllToNewDb(QSqlDatabase connectionNew) const {
+   //
+   // This is primarily used when someone is migrating data from, say, SQLite to PostgreSQL.
+   //
+   // We've got all the data cached in memory, so we just need to write it to the new database ... with a couple of
+   // twists.  The assumption here is that we're already inside a transaction and that foreign key constraints are
+   // turned off.  So we just need to tell our insert member function to write to a different DB than normal and not to
+   // try to do anything with transactions ... AND we want to keep all the existing primary key values the same, rather
+   // than let the DB generate new ones when we do the inserts, so the third parameter to this->pimpl->insertObjectInDb
+   // is true.
+   //
+   for (auto object : this->pimpl->allObjects) {
+      if (this->pimpl->insertObjectInDb(connectionNew, *object, true) <= 0) {
+         return false;
+      }
    }
-   return tableNames;
+
+   return true;
 }

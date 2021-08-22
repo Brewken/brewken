@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/Database.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
@@ -24,9 +24,10 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_H
 #define DATABASE_H
+#pragma once
 
 #include <memory> // For PImpl
 
@@ -105,13 +106,13 @@ public:
    static char const * getDefaultBackupFileName();
 
    //! backs up database to chosen file
-   static bool backupToFile(QString newDbFileName);
+   bool backupToFile(QString newDbFileName);
 
    //! backs up database to 'dir' in chosen directory
-   static bool backupToDir(QString dir, QString filename="");
+   bool backupToDir(QString dir, QString filename="");
 
    //! \brief Reverts database to that of chosen file.
-   static bool restoreFromFile(QString newDbFileStr);
+   bool restoreFromFile(QString newDbFileStr);
 
    static bool verifyDbConnection(Database::DbType testDb,
                                   QString const& hostname,
@@ -136,14 +137,6 @@ public:
     */
    Database::DbType dbType();
 
-   /*!
-    * \brief Different databases use different values for true and false.
-    * This method handles that difference, in a marginally extensible way
-    *
-    * .:TODO:. Pretty sure we can kill this once we retire TableSchema.cpp
-    */
-   static QString dbBoolean(bool flag, Database::DbType whichDb = Database::NODB);
-
    /**
     * \brief Turn foreign key constraints on or off.  Typically, turning them off is only required during copying the
     *        contents of one DB to another.
@@ -161,20 +154,16 @@ public:
     *           double
     *           QString
     *           QDate
-    *
-    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   template<typename T> char const * getDbNativeTypeName(Database::DbType whichDb = Database::NODB) const;
+   template<typename T> char const * getDbNativeTypeName() const;
 
    /**
     * \brief Returns the text we need to use to specify an integer column as primary key when creating a table, eg:
-    *           "PRIMARY KEY" for SQLite
+    *           "INTEGER PRIMARY KEY" for SQLite
     *           "SERIAL PRIMARY KEY" for PostgreSQL
     *           "AUTO_INCREMENT PRIMARY KEY" for MySQL / MariaDB
-    *
-    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getDbNativeIntPrimaryKeyModifier(Database::DbType whichDb = Database::NODB) const;
+   char const * getDbNativePrimaryKeyDeclaration() const;
 
    /**
     * \brief Returns a text template for an ALTER TABLE query to add a foreign key column to a table.  Callers should
@@ -183,10 +172,8 @@ public:
     *           • column name (to add) as argument 2
     *           • foreign key table name as argument 3
     *           • foreign key column name as argument 4
-    *
-    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getSqlToAddColumnAsForeignKey(Database::DbType whichDb = Database::NODB) const;
+   char const * getSqlToAddColumnAsForeignKey() const;
 
    /*! Stores the date that we last asked the user to merge the
     *  data-space database to the user-space database.

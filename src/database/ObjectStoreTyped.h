@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_OBJECTSTORETYPED_H
 #define DATABASE_OBJECTSTORETYPED_H
 #pragma once
@@ -377,9 +377,12 @@ private:
 bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection);
 
 /**
- * \brief Returns a list of all the database tables managed by all the object stores.  Really only needed for copying
- *        one database to another.
+ * \brief Write all data in all object stores to a new database
+ *
+ *        Caller's responsibility to have called \c CreateAllDatabaseTables
+ *
+ * \return \c true if succeeded \c false otherwise
  */
-QVector<ObjectStore const *> GetAllObjectStores();
+bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase connectionNew);
 
 #endif
