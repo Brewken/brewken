@@ -102,7 +102,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type              XPath             Q_PROPERTY                             Enum Mapper
       {XmlRecord::String,  "NAME",           PropertyNames::NamedEntity::name,      nullptr},
-      {XmlRecord::RequiredConstant, "VERSION", VERSION1,                                 nullptr},
+      {XmlRecord::RequiredConstant, "VERSION", VERSION1,                            nullptr},
       {XmlRecord::Double,  "ALPHA",          PropertyNames::Hop::alpha_pct,         nullptr},
       {XmlRecord::Double,  "AMOUNT",         PropertyNames::Hop::amount_kg,         nullptr},
       {XmlRecord::Enum,    "USE",            PropertyNames::Hop::use,               &BEER_XML_HOP_USE_MAPPER},
@@ -137,7 +137,7 @@ namespace {
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
       // Type              XPath               Q_PROPERTY                                          Enum Mapper
       {XmlRecord::String,  "NAME",             PropertyNames::NamedEntity::name,                   nullptr},
-      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                               nullptr},
+      {XmlRecord::RequiredConstant,  "VERSION", VERSION1,                                          nullptr},
       {XmlRecord::Enum,    "TYPE",             PropertyNames::Fermentable::type,                   &BEER_XML_FERMENTABLE_TYPE_MAPPER},
       {XmlRecord::Double,  "AMOUNT",           PropertyNames::Fermentable::amount_kg,              nullptr},
       {XmlRecord::Double,  "YIELD",            PropertyNames::Fermentable::yield_pct,              nullptr},

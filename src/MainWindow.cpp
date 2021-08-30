@@ -149,7 +149,7 @@
 namespace {
 
    /**
-    * \brief Generates the pop-up you see when you hover over the Brewtarget image above the trees, which is supposed to
+    * \brief Generates the pop-up you see when you hover over the Brewken image above the trees, which is supposed to
     *        show the database type you are connected to, and some useful information with respect to that database.
     */
    QString getLabelToolTip() {
@@ -406,7 +406,7 @@ void MainWindow::init() {
    // Set up the pretty tool tip. It doesn't really belong anywhere, so here it is
    // .:TODO:. When we allow users to change databases without restarting, we'll need to make sure to call this whenever
    // the databae is changed (as setToolTip() just takes static text as its parameter).
-   label_Brewtarget->setToolTip(getLabelToolTip());
+   label_Brewken->setToolTip(getLabelToolTip());
 
    qDebug() << Q_FUNC_INFO << "MainWindow initialisation complete";
    return;
