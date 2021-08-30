@@ -35,6 +35,8 @@
 #include <QSqlDatabase>
 #include <QString>
 
+class BtStringConst;
+
 /*!
  * \class Database
  *
@@ -135,7 +137,7 @@ public:
     * will be the final implementation -- I can't help but think I should be
     * subclassing something
     */
-   Database::DbType dbType();
+   Database::DbType dbType() const;
 
    /**
     * \brief Turn foreign key constraints on or off.  Typically, turning them off is only required during copying the
@@ -180,6 +182,27 @@ public:
     */
    static QDateTime lastDbMergeRequest;
 
+   /**
+    * \brief Returns a displayable set of name-value pairs for the connection details for the current database,
+    *        \b excluding password
+    */
+   QList<QPair<QString, QString>> displayableConnectionParms() const;
+
+   /**
+    * \brief This member function should be called after you have manually inserted into a primary key column that is
+    *        normally automatically populated by the database.  When you do such manual inserts, some databases (eg
+    *        PostgreSQL) need to be told to update the value they would use for the next automatically generated ID.
+    *
+    * \param connection The connection you used to do the manual inserts
+    * \param tableName  The table you inserted into
+    * \param columName  The primary key column on that table
+    *
+    * \return \c false if there was an error, \c true otherwise
+    */
+   bool updatePrimaryKeySequenceIfNecessary(QSqlDatabase & connection,
+                                            BtStringConst const & tableName,
+                                            BtStringConst const & columnName) const;
+
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
@@ -201,5 +224,14 @@ private:
    //! Load database from file.
    bool load();
 };
+
+namespace DatabaseHelper {
+
+   /**
+    * \return displayable name for a given DB type
+    */
+   char const * getNameFromDbTypeName(Database::DbType whichDb);
+
+}
 
 #endif

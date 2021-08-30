@@ -383,6 +383,6 @@ bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection);
  *
  * \return \c true if succeeded \c false otherwise
  */
-bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase connectionNew);
+bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase & connectionNew);
 
 #endif

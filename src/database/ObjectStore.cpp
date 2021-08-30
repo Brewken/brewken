@@ -746,47 +746,58 @@ public:
          return -1;
       }
 
-      //
-      // Get the ID of the row we just inserted
-      //
-      // Assert that we are only using database drivers that support returning the last insert ID.  (It is frustratingly
-      // hard to find documentation about this, as, eg, https://doc.qt.io/qt-5/sql-driver.html does not explicitly list
-      // which supplied drivers support which features.  However, in reality, we know SQLite and PostgreSQL drivers both
-      // support this, so it would likely only be a problem if a new type of DB were introduced.)
-      //
-      // Note too that we have to explicitly put the primary key into an int, because, by default it might come back as
-      // long long int rather than int (ie 64-bits rather than 32-bits in the C++ implementations we care about).
-      //
-      Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
-      QVariant rawPrimaryKey = sqlQuery.lastInsertId();
-      Q_ASSERT(rawPrimaryKey.canConvert(QMetaType::Int));
-      int primaryKeyInDb = rawPrimaryKey.toInt();
+      int currentPrimaryKey = object.property(*this->getPrimaryKeyProperty()).toInt();
+      int primaryKeyInDb;
+      if (writePrimaryKey) {
+         //
+         // We already know the ID of the object we wrote to the database, so we don't need to ask the database what it
+         // was (and indeed attempts to do so may not work, per the comment below in the other branch of this if
+         // statement.
+         //
+         primaryKeyInDb = currentPrimaryKey;
+      } else {
+         //
+         // If we didn't have an ID and asked the DB to generate one, we need to find out what it was.
+         //
+         // Assert that we are only using database drivers that support returning the last insert ID.  (It is
+         // frustratingly hard to find documentation about this, as, eg, https://doc.qt.io/qt-5/sql-driver.html does not
+         // explicitly list which supplied drivers support which features.  However, in reality, we know SQLite and
+         // PostgreSQL drivers both support this, so it would likely only be a problem if a new type of DB were
+         // introduced.)
+         //
+         // It is important to be aware that this feature may not return a meaningful result in the case that we,
+         // explicitly wrote the ID.  (Eg in PostgreSQL there will be a sequence for generating IDs that needs to get
+         // reset after you've done one or more inserts with explicitly set IDs.  Asking for the last insert ID gets the
+         // current state of the sequence and so only works when the sequence was used to generate the ID.)
+         //
+         // Note too that we have to explicitly put the primary key into an int, because, by default it might come back
+         // as long long int rather than int (ie 64-bits rather than 32-bits in the C++ implementations we care about).
+         //
+         Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
+         QVariant rawPrimaryKey = sqlQuery.lastInsertId();
+         Q_ASSERT(rawPrimaryKey.canConvert(QMetaType::Int));
+         primaryKeyInDb = rawPrimaryKey.toInt();
+
+         //
+         // Where we're not explicitly writing the primary key it's because the object we are inserting should not
+         // already have a valid primary key.
+         //
+         // Where we are writing the primary key, it shouldn't get changed by the write.
+         //
+         // .:TBD:. Maybe if we're doing undelete, this is the place to handle that case.
+         //
+         if (currentPrimaryKey > 0) {
+            // This is almost certainly a coding error
+            qCritical() <<
+               Q_FUNC_INFO << "Wrote new" << object.metaObject()->className() << " to database (with primary key " <<
+               primaryKeyInDb << ") but it already had primary key" << currentPrimaryKey;
+            Q_ASSERT(false); // Stop here on debug build
+         }
+      }
+
       qDebug() <<
          Q_FUNC_INFO << object.metaObject()->className() << "#" << primaryKeyInDb << "inserted in database using" <<
          queryString;
-
-      //
-      // Where we're not explicitly writing the primary key it's because the object we are inserting should not already
-      // have a valid primary key.
-      //
-      // Where we are writing the primary key, it shouldn't get changed by the write.
-      //
-      // .:TBD:. Maybe if we're doing undelete, this is the place to handle that case.
-      //
-      int currentPrimaryKey = object.property(*this->getPrimaryKeyProperty()).toInt();
-      if (writePrimaryKey && primaryKeyInDb != currentPrimaryKey) {
-         // Likely a coding error
-         qCritical() <<
-            Q_FUNC_INFO << "After writing" << object.metaObject()->className() << "#" << currentPrimaryKey <<
-            "to database, primary key was changed to" << primaryKeyInDb;
-         Q_ASSERT(false); // Stop here on debug build
-      } else if (!writePrimaryKey && currentPrimaryKey > 0) {
-         // This is almost certainly a coding error
-         qCritical() <<
-            Q_FUNC_INFO << "Wrote new" << object.metaObject()->className() << " to database (with primary key " <<
-            primaryKeyInDb << ") but it already had primary key" << currentPrimaryKey;
-         Q_ASSERT(false); // Stop here on debug build
-      }
 
       //
       // Now save data to the junction tables
@@ -1142,7 +1153,9 @@ std::shared_ptr<QObject> ObjectStore::getById(int id) const {
    // Callers should always check that the object they are requesting exists.  However, if a caller does request
    // something invalid, then we at least want to log that for debugging.
    if (!this->pimpl->allObjects.contains(id)) {
-      qCritical() << Q_FUNC_INFO << "Unable to find object with ID " << id;
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to find cached object with ID" << id << "(which should be stored in DB table" <<
+         this->pimpl->primaryTable.tableName << ")";
    }
    return this->pimpl->allObjects.value(id);
 }
@@ -1482,7 +1495,7 @@ QList<QObject *> ObjectStore::getAllRaw() const {
    return listToReturn;
 }
 
-bool ObjectStore::writeAllToNewDb(QSqlDatabase connectionNew) const {
+bool ObjectStore::writeAllToNewDb(Database & databaseNew, QSqlDatabase & connectionNew) const {
    //
    // This is primarily used when someone is migrating data from, say, SQLite to PostgreSQL.
    //
@@ -1498,6 +1511,21 @@ bool ObjectStore::writeAllToNewDb(QSqlDatabase connectionNew) const {
          return false;
       }
    }
+
+   //
+   // Some databases (eg PostgreSQL) get confused if you manually insert values into a primary key column that is
+   // normally automatically populated.  Database class knows how to put things back in order for such databases.
+   //
+   // Note that we only need to do this for the primary key on primaryTable.  We make no use of the primary key IDs on
+   // junction tables and we always let the DB auto-generate them, even when writing all data to a new DB.
+   //
+   // We _could_ call databaseNew.updatePrimaryKeySequenceIfNecessary() in this->pimpl->insertObjectInDb() every time we
+   // explicitly insert an ID in primaryTable, but it's currently not necessary as this is the only place we ask
+   // this->pimpl->insertObjectInDb() to do that.
+   //
+   databaseNew.updatePrimaryKeySequenceIfNecessary(connectionNew,
+                                                   this->pimpl->primaryTable.tableName,
+                                                   this->pimpl->getPrimaryKeyColumn());
 
    return true;
 }

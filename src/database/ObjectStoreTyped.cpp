@@ -788,7 +788,7 @@ bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection) {
    return true;
 }
 
-bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase connectionNew) {
+bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase & connectionNew) {
    //
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
@@ -798,7 +798,7 @@ bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase connection
    DbTransaction dbTransaction{newDatabase, connectionNew, DbTransaction::DISABLE_FOREIGN_KEYS};
 
    for (ObjectStore const * objectStore : AllObjectStores) {
-      if (!objectStore->writeAllToNewDb(connectionNew)) {
+      if (!objectStore->writeAllToNewDb(newDatabase, connectionNew)) {
          return false;
       }
    }

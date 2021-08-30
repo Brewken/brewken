@@ -62,7 +62,6 @@ public:
    QString getToolTip(Misc* misc);
    QString getToolTip(Yeast* yeast);
    QString getToolTip(Water* water);
-   QString getLabelToolTip();
 
    /*!
     * \brief Show the print preview
