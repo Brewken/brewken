@@ -26,6 +26,8 @@
  ======================================================================================================================*/
 #include "OptionDialog.h"
 
+#include <optional>
+
 #include <QAbstractButton>
 #include <QCheckBox>
 #include <QFileDialog>
@@ -854,11 +856,11 @@ bool OptionDialog::saveDatabaseConfig() {
    if (this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED) {
       QMessageBox::critical(
          nullptr,
-         tr("Test connection or cancel"),
+                            tr("Test connection or cancel"),
          tr("Saving the options without testing the connection can cause Brewken to not restart.  Your changes have "
             "been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you "
             "got to this message.")
-      );
+                           );
       return false;
    }
 

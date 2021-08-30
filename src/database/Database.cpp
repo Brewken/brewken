@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/Database.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
@@ -33,10 +33,11 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "database/Database.h"
 
-#include <mutex>
+#include <iostream> // For writing to std::cerr in destructor
+#include <mutex>    // For std::once_flag etc
 
 #include <QDebug>
 #include <QFile>
@@ -50,15 +51,15 @@
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlField>
-#include <QSqlQuery>
 #include <QString>
 #include <QThread>
 
 #include "Brewken.h"
 #include "config.h"
+#include "database/BtSqlQuery.h"
 #include "database/DatabaseSchemaHelper.h"
 #include "PersistentSettings.h"
-
+#include "utils/BtStringConst.h"
 
 namespace {
 
@@ -75,6 +76,11 @@ namespace {
          postgresqlName{postgresqlName} {
          return;
       }
+   };
+
+   DbNativeVariants const displayableDbType {
+      "SQLite",
+      "PostgreSQL"
    };
 
    //
@@ -99,9 +105,9 @@ namespace {
    // Note that, per https://www.sqlite.org/autoinc.html, SQLite explicitly recommends against using AUTOINCREMENT for
    // integer primary keys, as specifying "PRIMARY KEY" alone will result in automatic generation of primary keys with
    // less overhead.
-   DbNativeVariants const nativeIntPrimaryKeyModifier {
-      "PRIMARY KEY",        // SQLite
-      "SERIAL PRIMARY KEY"  // PostgreSQL
+   DbNativeVariants const nativeIntPrimaryKeyDeclaration {
+      "INTEGER PRIMARY KEY", // SQLite
+      "SERIAL PRIMARY KEY"   // PostgreSQL
    };
 
    DbNativeVariants const sqlToAddColumnAsForeignKey {
@@ -124,66 +130,59 @@ namespace {
    }
 
    //
-   // Variables
-   //
-
-   // These are for SQLite databases
-   QFile dbFile;
-   QString dbFileName;
-   QFile dataDbFile;
-   QString dataDbFileName;
-
-   // And these are for Postgres databases -- are these really required? Are
-   // the sqlite ones really required?
-   QString dbHostname;
-   int dbPortnum;
-   QString dbName;
-   QString dbSchema;
-   QString dbUsername;
-   QString dbPassword;
-
-   //
    // Each thread has its own connection to the database, and each connection has to have a unique name (otherwise,
    // calling QSqlDatabase::addDatabase() with the same name as an existing connection will replace that existing
-   // connection with the new one created by that function).  We just create a unique connection name from the thread
-   // ID in the same way that we do in the Logging module.
+   // connection with the new one created by that function).  We can create a unique connection name from the thread
+   // ID in a similar way as we do in the Logging module.  The difference is that we need each _instance_ of Database to
+   // have a separate connection name for each _thread_ because, eg, when you're switching between SQLite and
+   // PostgreSQL, a single thread will have two separate connections open (one to current and one to new DB).
    //
    // We only need to store the name of the connection here.  (See header file comment for Database::sqlDatabase() for
    // more details of why it would be unhelpful to store a QSqlDatabase object in thread-local storage.)
    //
    // Since C++11, we can use thread_local to define thread-specific variables that are initialized "before first use"
    //
-   thread_local QString const dbConnectionNameForThisThread {
-      QString{"%1"}.arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)
+   thread_local QMap<int, QString> const dbConnectionNamesForThisThread {
+      {Database::SQLITE, QString{"%1-%2"}.arg(getDbNativeName(displayableDbType, Database::SQLITE)).arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)},
+      {Database::PGSQL,  QString{"%1-%2"}.arg(getDbNativeName(displayableDbType, Database::PGSQL)).arg(reinterpret_cast<quintptr>(QThread::currentThreadId()), 0, 36)}
    };
+
+   //
+   // At start-up, we know what type of database to talk to (and thus what type of Database object to return from
+   // Database::instance()) by looking in PersistentSettings (and defaulting to SQLite if nothing is marked there).  But
+   // we need to remember this value and not keep looking in PersistentSettings because those settings can change (if
+   // the user wants to switch to another database) and we don't want other bits of the program to suddenly get a
+   // different object back from Database::instance() before we're ready for it.  Hence this variable.
+   //
+   Database::DbType currentDbType = Database::NODB;
 
    // May St. Stevens intercede on my behalf.
    //
    //! \brief opens an SQLite db for transfer
-   QSqlDatabase openSQLite() {
-      QString filePath = PersistentSettings::getUserDataDir().filePath("database.sqlite");
+   QSqlDatabase openSQLite(QString filePath) {
       QSqlDatabase newConnection = QSqlDatabase::addDatabase("QSQLITE", "altdb");
 
       try {
-         dbFile.setFileName(dbFileName);
+///         dbFile.setFileName(dbFileName);
 
-         if ( filePath.isEmpty() )
-            throw QString("Could not read the database file(%1)").arg(filePath);
+         if (filePath.isEmpty()) {
+            throw QString("Could not read the database file (%1)").arg(filePath);
+         }
 
          newConnection.setDatabaseName(filePath);
 
-         if (!  newConnection.open() )
+         if (!newConnection.open()) {
             throw QString("Could not open %1 : %2").arg(filePath).arg(newConnection.lastError().text());
-      }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
+         }
+      } catch (QString e) {
+         qCritical() << Q_FUNC_INFO << e;
          throw;
       }
 
       return newConnection;
    }
 
-   //! \brief opens a PostgreSQL db for transfer. I need
+   //! \brief opens a PostgreSQL db for transfer
    QSqlDatabase openPostgres(QString const& Hostname, QString const& DbName,
                              QString const& Username, QString const& Password,
                              int Portnum) {
@@ -196,11 +195,11 @@ namespace {
          newConnection.setPort(Portnum);
          newConnection.setPassword(Password);
 
-         if ( ! newConnection.open() )
+         if (!newConnection.open()) {
             throw QString("Could not open %1 : %2").arg(Hostname).arg(newConnection.lastError().text());
-      }
-      catch (QString e) {
-         qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
+         }
+      } catch (QString e) {
+         qCritical() << Q_FUNC_INFO << e;
          throw;
       }
       return newConnection;
@@ -235,34 +234,33 @@ public:
       qDebug() << "Loading SQLITE...";
 
       // Set file names.
-      dbFileName = PersistentSettings::getUserDataDir().filePath("database.sqlite");
-      dataDbFileName = Brewken::getResourceDir().filePath("default_db.sqlite");
-      qDebug() << Q_FUNC_INFO << QString("dbFileName = \"%1\"\nDatabase::loadSQLite() - dataDbFileName=\"%2\"").arg(dbFileName).arg(dataDbFileName);
+      this->dbFileName = PersistentSettings::getUserDataDir().filePath("database.sqlite");
+      this->dataDbFileName = Brewken::getResourceDir().filePath("default_db.sqlite");
+      qDebug().noquote() <<
+         Q_FUNC_INFO << "dbFileName = \"" << this->dbFileName << "\"\ndataDbFileName=\"" << this->dataDbFileName << "\"";
       // Set the files.
-      dbFile.setFileName(dbFileName);
-      dataDbFile.setFileName(dataDbFileName);
+      this->dbFile.setFileName(this->dbFileName);
+      this->dataDbFile.setFileName(this->dataDbFileName);
 
       // If user restored the database from a backup, make the backup into the primary.
       {
-         QFile newdb(QString("%1.new").arg(dbFileName));
-         if( newdb.exists() )
-         {
-            dbFile.remove();
-            newdb.copy(dbFileName);
-            QFile::setPermissions( dbFileName, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup );
+         QFile newdb(QString("%1.new").arg(this->dbFileName));
+         if (newdb.exists()) {
+            this->dbFile.remove();
+            newdb.copy(this->dbFileName);
+            QFile::setPermissions(this->dbFileName, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup );
             newdb.remove();
          }
       }
 
       // If there's no dbFile, try to copy from dataDbFile.
-      if( !dbFile.exists() )
-      {
+      if (!this->dbFile.exists()) {
          Brewken::userDatabaseDidNotExist = true;
 
          // Have to wait until db is open before creating from scratch.
-         if (dataDbFile.exists()) {
-            dataDbFile.copy(dbFileName);
-            QFile::setPermissions( dbFileName, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup );
+         if (this->dataDbFile.exists()) {
+            this->dataDbFile.copy(this->dbFileName);
+            QFile::setPermissions(this->dbFileName, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup);
          }
 
          // Reset the last merge request.
@@ -281,7 +279,7 @@ public:
       //
       // It's quite useful to record the DB version in the logs
       //
-      QSqlQuery sqlQuery(connection);
+      BtSqlQuery sqlQuery(connection);
       QString queryString{"SELECT sqlite_version() AS version;"};
       sqlQuery.prepare(queryString);
       if (!sqlQuery.exec() || !sqlQuery.next()) {
@@ -293,7 +291,7 @@ public:
       qInfo() << Q_FUNC_INFO << "SQLite version" << fieldValue;
 
       // NOTE: synchronous=off reduces query time by an order of magnitude!
-      QSqlQuery pragma(connection);
+      BtSqlQuery pragma(connection);
       if ( ! pragma.exec( "PRAGMA synchronous = off" ) ) {
          qCritical() << Q_FUNC_INFO << "Could not disable synchronous writes: " << pragma.lastError().text();
          return false;
@@ -320,33 +318,41 @@ public:
 
    bool loadPgSQL(Database & database) {
 
-      dbHostname = PersistentSettings::value(PersistentSettings::Names::dbHostname).toString();
-      dbPortnum  = PersistentSettings::value(PersistentSettings::Names::dbPortnum).toInt();
-      dbName     = PersistentSettings::value(PersistentSettings::Names::dbName).toString();
-      dbSchema   = PersistentSettings::value(PersistentSettings::Names::dbSchema).toString();
+      this->dbHostname = PersistentSettings::value(PersistentSettings::Names::dbHostname).toString();
+      this->dbPortnum  = PersistentSettings::value(PersistentSettings::Names::dbPortnum).toInt();
+      this->dbName     = PersistentSettings::value(PersistentSettings::Names::dbName).toString();
+      this->dbSchema   = PersistentSettings::value(PersistentSettings::Names::dbSchema).toString();
 
-      dbUsername = PersistentSettings::value(PersistentSettings::Names::dbUsername).toString();
+      this->dbUsername = PersistentSettings::value(PersistentSettings::Names::dbUsername).toString();
 
-      if ( PersistentSettings::contains(PersistentSettings::Names::dbPassword) ) {
-         dbPassword = PersistentSettings::value(PersistentSettings::Names::dbPassword).toString();
-      }
-      else {
+      if (PersistentSettings::contains(PersistentSettings::Names::dbPassword)) {
+         this->dbPassword = PersistentSettings::value(PersistentSettings::Names::dbPassword).toString();
+      } else {
          bool isOk = false;
 
          // prompt for the password until we get it? I don't think this is a good
          // idea?
-         while ( ! isOk ) {
-            dbPassword = QInputDialog::getText(nullptr,tr("Database password"),
-                  tr("Password"), QLineEdit::Password,QString(),&isOk);
-            if ( isOk ) {
-               isOk = verifyDbConnection( Database::PGSQL, dbHostname, dbPortnum, dbSchema,
-                                    dbName, dbUsername, dbPassword);
+         while (!isOk) {
+            this->dbPassword = QInputDialog::getText(nullptr,
+                                                     tr("Database password"),
+                                                     tr("Password"),
+                                                     QLineEdit::Password,
+                                                     QString(),
+                                                     &isOk);
+            if (isOk) {
+               isOk = verifyDbConnection(Database::PGSQL,
+                                         this->dbHostname,
+                                         this->dbPortnum,
+                                         this->dbSchema,
+                                         this->dbName,
+                                         this->dbUsername,
+                                         this->dbPassword);
             }
          }
       }
 
-      // It's a coding error if we didn't already establish that PostgreSQL is the type of DB we're talking to, so assert
-      // that and then call the generic code to get a connection
+      // It's a coding error if we didn't already establish that PostgreSQL is the type of DB we're talking to, so
+      // assert that and then call the generic code to get a connection
       Q_ASSERT(this->dbType == Database::PGSQL);
       QSqlDatabase connection = database.sqlDatabase();
 
@@ -356,7 +362,7 @@ public:
       //
       // It's quite useful to record the DB version in the logs
       //
-      QSqlQuery sqlQuery(connection);
+      BtSqlQuery sqlQuery(connection);
       QString queryString{"SELECT version() AS version;"};
       sqlQuery.prepare(queryString);
       if (!sqlQuery.exec() || !sqlQuery.next()) {
@@ -395,7 +401,7 @@ public:
    }
 
 
-   void automaticBackup() {
+   void automaticBackup(Database & database) {
       int count = PersistentSettings::value(PersistentSettings::Names::count, 0, PersistentSettings::Sections::backups).toInt() + 1;
       int frequency = PersistentSettings::value(PersistentSettings::Names::frequency, 4, PersistentSettings::Sections::backups).toInt();
       int maxBackups = PersistentSettings::value(PersistentSettings::Names::maximum, 10, PersistentSettings::Sections::backups).toInt();
@@ -437,7 +443,7 @@ public:
          }
       }
       // backup the file first
-      backupToDir(backupDir,newName);
+      database.backupToDir(backupDir, newName);
 
       // If we have maxBackups == -1, it means never clean. It also means we
       // don't track the filenames.
@@ -491,6 +497,20 @@ public:
 
    // Used for locking member functions that must be single-threaded
    QMutex mutex;
+
+   // These are for SQLite databases
+   QFile dbFile;
+   QString dbFileName;
+   QFile dataDbFile;
+   QString dataDbFileName;
+
+   // And these are for Postgres databases
+   QString dbHostname;
+   int dbPortnum;
+   QString dbName;
+   QString dbSchema;
+   QString dbUsername;
+   QString dbPassword;
 };
 
 
@@ -502,9 +522,13 @@ Database::~Database() {
    // Don't try and log in this function as it's called pretty close to the program exiting, at the end of main(), at
    // which point the objects used by the logging module may be in a weird state.
 
-   // If we have not explicitly unloaded, do so now and discard changes.
+   // Similarly, trying to close DB connections etc here can be tricky as some bits of Qt may already have terminated.
+   // It's therefore safer, albeit less elegant to rely on main() or similar to call unload() rather than try to do it
+   // here.
    if (this->pimpl->loaded) {
-      this->unload();
+      std::cerr <<
+         "Warning: Destructor on Database object object for " <<
+         getDbNativeName(displayableDbType, this->pimpl->dbType) << " called before unload()";
    }
 
    return;
@@ -519,10 +543,13 @@ QSqlDatabase Database::sqlDatabase() const {
    // If we already created a valid DB connection for this thread, this call will get it, and we can just return it to
    // the caller.  Otherwise, we'll just get an invalid connection.
    //
-   Q_ASSERT(!dbConnectionNameForThisThread.isEmpty());
-   QSqlDatabase connection = QSqlDatabase::database(dbConnectionNameForThisThread);
+   Q_ASSERT(this->pimpl->dbType != Database::NODB);
+   Q_ASSERT(dbConnectionNamesForThisThread.contains(this->pimpl->dbType));
+   QString connectionName = dbConnectionNamesForThisThread.value(this->pimpl->dbType);
+   Q_ASSERT(!connectionName.isEmpty());
+   QSqlDatabase connection = QSqlDatabase::database(connectionName);
    if (connection.isValid()) {
-      qDebug() << Q_FUNC_INFO << "Returning connection " << dbConnectionNameForThisThread;
+      qDebug() << Q_FUNC_INFO << "Returning connection " << connectionName;
       return connection;
    }
 
@@ -532,8 +559,8 @@ QSqlDatabase Database::sqlDatabase() const {
    //
    QString driverType{this->pimpl->dbType == Database::PGSQL ? "QPSQL" : "QSQLITE"};
    qDebug() <<
-      Q_FUNC_INFO << "Creating connection " << dbConnectionNameForThisThread << " with " << driverType << " driver";
-   connection = QSqlDatabase::addDatabase(driverType, dbConnectionNameForThisThread);
+      Q_FUNC_INFO << "Creating connection " << connectionName << " with " << driverType << " driver";
+   connection = QSqlDatabase::addDatabase(driverType, connectionName);
    if (!connection.isValid()) {
       //
       // If the connection is not valid, it means the specified driver type is not available or could not be loaded
@@ -548,13 +575,13 @@ QSqlDatabase Database::sqlDatabase() const {
    // Initialisation parameters depend on the DB type
    //
    if (this->pimpl->dbType == Database::PGSQL) {
-      connection.setHostName(dbHostname);
-      connection.setDatabaseName(dbName);
-      connection.setUserName(dbUsername);
-      connection.setPort(dbPortnum);
-      connection.setPassword(dbPassword);
+      connection.setHostName    (this->pimpl->dbHostname);
+      connection.setDatabaseName(this->pimpl->dbName);
+      connection.setUserName    (this->pimpl->dbUsername);
+      connection.setPort        (this->pimpl->dbPortnum);
+      connection.setPassword    (this->pimpl->dbPassword);
    } else {
-      connection.setDatabaseName(dbFileName);
+      connection.setDatabaseName(this->pimpl->dbFileName);
    }
 
    //
@@ -565,11 +592,11 @@ QSqlDatabase Database::sqlDatabase() const {
       if (this->pimpl->dbType == Database::PGSQL) {
          errorMessage = QString{
             QObject::tr("Could not open PostgreSQL DB connection to %1.\n%2")
-         }.arg(dbHostname).arg(connection.lastError().text());
+         }.arg(this->pimpl->dbHostname).arg(connection.lastError().text());
       } else {
          errorMessage = QString{
             QObject::tr("Could not open SQLite DB file %1.\n%2")
-         }.arg(dbFileName).arg(connection.lastError().text());
+         }.arg(this->pimpl->dbFileName).arg(connection.lastError().text());
       }
       qCritical() << Q_FUNC_INFO << errorMessage;
 
@@ -588,20 +615,18 @@ QSqlDatabase Database::sqlDatabase() const {
 
 
 bool Database::load() {
-   bool dbIsOpen;
-
-   this->pimpl->createFromScratch=false;
-   this->pimpl->schemaUpdated=false;
+   this->pimpl->createFromScratch = false;
+   this->pimpl->schemaUpdated = false;
    this->pimpl->loadWasSuccessful = false;
 
+   bool dbIsOpen;
    if (this->dbType() == Database::PGSQL ) {
       dbIsOpen = this->pimpl->loadPgSQL(*this);
-   }
-   else {
+   } else {
       dbIsOpen = this->pimpl->loadSQLite(*this);
    }
 
-   if ( ! dbIsOpen ) {
+   if (!dbIsOpen) {
       return false;
    }
 
@@ -610,10 +635,9 @@ bool Database::load() {
    QSqlDatabase sqldb = this->sqlDatabase();
 
    // This should work regardless of the db being used.
-   if( this->pimpl->createFromScratch ) {
-      bool success = DatabaseSchemaHelper::create(*this, sqldb);
-      if( !success ) {
-         qCritical() << "DatabaseSchemaHelper::create() failed";
+   if (this->pimpl->createFromScratch) {
+      if (!DatabaseSchemaHelper::create(*this, sqldb)) {
+         qCritical() << Q_FUNC_INFO << "DatabaseSchemaHelper::create() failed";
          return false;
       }
    }
@@ -641,9 +665,9 @@ bool Database::load() {
 void Database::checkForNewDefaultData() {
    // See if there are new ingredients that we need to merge from the data-space db.
    // Don't do this if we JUST copied the dataspace database.
-   if (dataDbFile.fileName() != dbFile.fileName() &&
+   if (this->pimpl->dataDbFile.fileName() != this->pimpl->dbFile.fileName() &&
        !Brewken::userDatabaseDidNotExist &&
-       QFileInfo(dataDbFile).lastModified() > Database::lastDbMergeRequest) {
+       QFileInfo(this->pimpl->dataDbFile).lastModified() > Database::lastDbMergeRequest) {
       if( Brewken::isInteractive() &&
          QMessageBox::question(
             nullptr,
@@ -718,33 +742,49 @@ bool Database::loadSuccessful()
 
 void Database::unload() {
 
+   // We really don't want this function to be called twice on the same object or when we didn't get as far as making a
+   // connection to the DB etc.
+   if (!this->pimpl->loaded) {
+      qDebug() <<
+         Q_FUNC_INFO << "Nothing to do for Database object for" <<
+         getDbNativeName(displayableDbType, this->pimpl->dbType) << "as not loaded";
+      return;
+   }
+
    // This RAII wrapper does all the hard work on mutex.lock() and mutex.unlock() in an exception-safe way
    QMutexLocker locker(&this->pimpl->mutex);
 
-   // So far, it seems we only create one connection to the db. This is
-   // likely overkill
+   // We only want to close connections that relate to this instance of Database
+   QString ourConnectionPrefix = QString{"%1-"}.arg(getDbNativeName(displayableDbType, this->pimpl->dbType));
+
+   // So far, it seems we only create one connection to the db per database type, so this is likely overkill
    QStringList allConnectionNames{QSqlDatabase::connectionNames()};
    for (QString conName : allConnectionNames) {
-      qDebug() << Q_FUNC_INFO << "Closing connection " << conName;
-      {
-         //
-         // Extra braces here are to ensure that this QSqlDatabase object is out of scope before the call to
-         // QSqlDatabase::removeDatabase() below
-         //
-         QSqlDatabase connectionToClose = QSqlDatabase::database(conName, false);
-         if (connectionToClose.isOpen()) {
-            connectionToClose.rollback();
-            connectionToClose.close();
+      if (0 == conName.indexOf(ourConnectionPrefix)) {
+         qDebug() << Q_FUNC_INFO << "Closing connection " << conName;
+         {
+            //
+            // Extra braces here are to ensure that this QSqlDatabase object is out of scope before the call to
+            // QSqlDatabase::removeDatabase() below
+            //
+            QSqlDatabase connectionToClose = QSqlDatabase::database(conName, false);
+            if (connectionToClose.isOpen()) {
+               connectionToClose.rollback();
+               connectionToClose.close();
+            }
          }
+         QSqlDatabase::removeDatabase(conName);
+      } else {
+         qDebug() <<
+            Q_FUNC_INFO << "Ignoring connection" << conName << "as does not start with" << ourConnectionPrefix;
       }
-      QSqlDatabase::removeDatabase(conName);
    }
 
    qDebug() << Q_FUNC_INFO << "DB connections all closed";
 
    if (this->pimpl->loadWasSuccessful && this->dbType() == Database::SQLITE ) {
-      dbFile.close();
-      this->pimpl->automaticBackup();
+      this->pimpl->dbFile.close();
+      this->pimpl->automaticBackup(*this);
    }
 
    this->pimpl->loaded = false;
@@ -761,8 +801,16 @@ Database& Database::instance(Database::DbType dbType) {
    // For the moment, with only two types of database supported, we don't do anything too sophisticated here, but we
    // should probably change that if we end up supporting more.
    //
-   if (dbType == Database::NODB) {
-      dbType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
+   if (Database::NODB == dbType) {
+      // The first time we are asked for the default type of Database, we look in PersistentSettings.  We then want to
+      // remember that value for future requests in case PersistentSettings changes (see comment at definition of
+      // currentDbType).
+      if (Database::NODB == currentDbType) {
+         currentDbType = static_cast<Database::DbType>(
+            PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt()
+         );
+      }
+      dbType = currentDbType;
    }
 
    //
@@ -776,8 +824,7 @@ Database& Database::instance(Database::DbType dbType) {
    //
    // (See http://www.aristeia.com/Papers/DDJ_Jul_Aug_2004_revised.pdf for why user-implemented efforts to do this via
    // double-checked locking often come unstuck in the face of compiler optimisations, especially on multi-processor
-   // platforms, back in the days when the C++ language had "no notion of threading (or any other form of
-   // concurrency)".
+   // platforms, back in the days when the C++ language had "no notion of threading (or any other form of concurrency)".
    //
    static std::once_flag initFlag_SQLite, initFlag_PostgresSQL;
 
@@ -795,14 +842,11 @@ char const * Database::getDefaultBackupFileName() {
 }
 
 bool Database::backupToFile(QString newDbFileName) {
-   // Make sure the singleton exists - otherwise there's nothing to backup.
-   instance();
-
    // Remove the files if they already exist so that
    // the copy() operation will succeed.
    QFile::remove(newDbFileName);
 
-   bool success = dbFile.copy( newDbFileName );
+   bool success = this->pimpl->dbFile.copy(newDbFileName);
 
    qDebug() << QString("Database backup to \"%1\" %2").arg(newDbFileName, success ? "succeeded" : "failed");
 
@@ -810,7 +854,6 @@ bool Database::backupToFile(QString newDbFileName) {
 }
 
 bool Database::backupToDir(QString dir, QString filename) {
-   bool success = true;
    QString prefix = dir + "/";
    QString newDbFileName = prefix + getDefaultBackupFileName();
 
@@ -818,21 +861,17 @@ bool Database::backupToDir(QString dir, QString filename) {
       newDbFileName = prefix + filename;
    }
 
-   success = backupToFile( newDbFileName );
-
-   return success;
+   return this->backupToFile( newDbFileName );
 }
 
-bool Database::restoreFromFile(QString newDbFileStr)
-{
-   bool success = true;
-
+bool Database::restoreFromFile(QString newDbFileStr) {
    QFile newDbFile(newDbFileStr);
    // Fail if we can't find file.
-   if( !newDbFile.exists() ) {
+   if (!newDbFile.exists()) {
       return false;
    }
-   success &= newDbFile.copy(QString("%1.new").arg(dbFile.fileName()));
+
+   bool success = newDbFile.copy(QString("%1.new").arg(this->pimpl->dbFile.fileName()));
    QFile::setPermissions( newDbFile.fileName(), QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup );
 
    return success;
@@ -840,8 +879,9 @@ bool Database::restoreFromFile(QString newDbFileStr)
 
 bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
                                   QString const& database, QString const& username, QString const& password) {
-   QString driverName;
+   QString const testConnectionName{"testConnDb"};
 
+   QString driverName;
    switch (testDb) {
       case Database::PGSQL:
          driverName = "QPSQL";
@@ -850,67 +890,71 @@ bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostna
          driverName = "QSQLITE";
    }
 
-   QSqlDatabase connDb = QSqlDatabase::addDatabase(driverName,"testConnDb");
+   bool results = false;
 
-   switch (testDb) {
-      case Database::PGSQL:
-         connDb.setHostName(hostname);
-         connDb.setPort(portnum);
-         connDb.setDatabaseName(database);
-         connDb.setUserName(username);
-         connDb.setPassword(password);
-         break;
-      default:
-         connDb.setDatabaseName(hostname);
+   {
+      // Extra braces here are to ensure that this QSqlDatabase object is out of scope before the call to
+      // QSqlDatabase::removeDatabase() below
+      QSqlDatabase connDb = QSqlDatabase::addDatabase(driverName, testConnectionName);
+
+      switch (testDb) {
+         case Database::PGSQL:
+            connDb.setHostName(hostname);
+            connDb.setPort(portnum);
+            connDb.setDatabaseName(database);
+            connDb.setUserName(username);
+            connDb.setPassword(password);
+            break;
+         default:
+            connDb.setDatabaseName(hostname);
+      }
+
+      results = connDb.open();
+
+      if (results) {
+         connDb.close();
+      } else {
+         QMessageBox::critical(
+            nullptr,
+            tr("Connection failed"),
+            QString(tr("Could not connect to %1 : %2")).arg(hostname).arg(connDb.lastError().text())
+         );
+      }
    }
 
-   bool results = connDb.open();
+   QSqlDatabase::removeDatabase(testConnectionName);
 
-   if ( results ) {
-      connDb.close();
-   } else {
-      QMessageBox::critical(
-         nullptr,
-         tr("Connection failed"),
-         QString(tr("Could not connect to %1 : %2")).arg(hostname).arg(connDb.lastError().text())
-      );
-   }
    return results;
-
 }
-
-
 
 void Database::convertDatabase(QString const& Hostname, QString const& DbName,
                                QString const& Username, QString const& Password,
-                               int Portnum, Database::DbType newType)
-{
+                               int Portnum, Database::DbType newType) {
    QSqlDatabase connectionNew;
-
-   Database::DbType oldType = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
 
    try {
       if ( newType == Database::NODB ) {
          throw QString("No type found for the new database.");
       }
 
-      if ( oldType == Database::NODB ) {
-         throw QString("No type found for the old database.");
-      }
-
       switch( newType ) {
          case Database::PGSQL:
-            connectionNew = openPostgres(Hostname, DbName,Username, Password, Portnum);
+            connectionNew = openPostgres(Hostname, DbName, Username, Password, Portnum);
             break;
          default:
-            connectionNew = openSQLite();
+            // .:TBD:. Feels like we should have filePath passed in rather than coming from PersistentSettings
+            QString filePath = PersistentSettings::getUserDataDir().filePath("database.sqlite");
+            connectionNew = openSQLite(filePath);
       }
 
       if ( ! connectionNew.isOpen() ) {
          throw QString("Could not open new database: %1").arg(connectionNew.lastError().text());
       }
 
-      DatabaseSchemaHelper::copyDatabase(oldType, newType, connectionNew);
+      // Don't get newDatabase via Database::instance() as we don't want to use the connection details from
+      // PersistentSettings (or to attempt to read data from newDatabase)
+      Database newDatabase{newType};
+      DatabaseSchemaHelper::copyToNewDatabase(newDatabase, connectionNew);
    }
    catch (QString e) {
       qCritical() << QString("%1 %2").arg(Q_FUNC_INFO).arg(e);
@@ -918,7 +962,7 @@ void Database::convertDatabase(QString const& Hostname, QString const& DbName,
    }
 }
 
-Database::DbType Database::dbType() {
+Database::DbType Database::dbType() const {
    return this->pimpl->dbType;
 }
 
@@ -927,7 +971,7 @@ void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Data
       type = this->dbType();
    }
 
-   switch( type ) {
+   switch (type) {
       case SQLITE:
          if (enabled) {
             connection.exec("PRAGMA foreign_keys=on");
@@ -953,47 +997,115 @@ void Database::setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Data
    return;
 }
 
-
-QString Database::dbBoolean(bool flag, Database::DbType type) {
-   QString retval;
-
-   if (type == Database::NODB) {
-      type = static_cast<Database::DbType>(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
-   }
-
-   switch( type ) {
-      case SQLITE:
-         retval = flag ? QString("1") : QString("0");
-         break;
-      case PGSQL:
-         retval = flag ? QString("true") : QString("false");
-         break;
-      default:
-         retval = "notwhiskeytangofoxtrot";
-   }
-   return retval;
-}
-
-template<typename T> char const * Database::getDbNativeTypeName(Database::DbType type) const {
+template<typename T> char const * Database::getDbNativeTypeName() const {
    return getDbNativeName(nativeTypeNames<T>, this->pimpl->dbType);
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template char const * Database::getDbNativeTypeName<bool>(Database::DbType type) const;
-template char const * Database::getDbNativeTypeName<int>(Database::DbType type) const;
-template char const * Database::getDbNativeTypeName<unsigned int>(Database::DbType type) const;
-template char const * Database::getDbNativeTypeName<double>(Database::DbType type) const;
-template char const * Database::getDbNativeTypeName<QString>(Database::DbType type) const;
-template char const * Database::getDbNativeTypeName<QDate>(Database::DbType type) const;
+template char const * Database::getDbNativeTypeName<bool>() const;
+template char const * Database::getDbNativeTypeName<int>() const;
+template char const * Database::getDbNativeTypeName<unsigned int>() const;
+template char const * Database::getDbNativeTypeName<double>() const;
+template char const * Database::getDbNativeTypeName<QString>() const;
+template char const * Database::getDbNativeTypeName<QDate>() const;
 
-char const * Database::getDbNativeIntPrimaryKeyModifier(Database::DbType type) const {
-   return getDbNativeName(nativeIntPrimaryKeyModifier, this->pimpl->dbType);
+char const * Database::getDbNativePrimaryKeyDeclaration() const {
+   return getDbNativeName(nativeIntPrimaryKeyDeclaration, this->pimpl->dbType);
 }
 
-char const * Database::getSqlToAddColumnAsForeignKey(Database::DbType type) const {
+char const * Database::getSqlToAddColumnAsForeignKey() const {
    return getDbNativeName(sqlToAddColumnAsForeignKey, this->pimpl->dbType);
 }
 
 QDateTime Database::lastDbMergeRequest = QDateTime::fromString("1986-02-24T06:00:00", Qt::ISODate);
+
+QList<QPair<QString, QString>> Database::displayableConnectionParms() const {
+   switch (this->pimpl->dbType) {
+      case SQLITE:
+         return {
+            {tr("Filename"), this->pimpl->dbFileName}
+         };
+      case PGSQL:
+         return {
+            { tr("Host & Port"), QString("%1:%2").arg(this->pimpl->dbHostname, this->pimpl->dbPortnum) },
+            { tr("Database"),    this->pimpl->dbName     },
+            { tr("Schema"),      this->pimpl->dbSchema   },
+            { tr("Username"),    this->pimpl->dbUsername }
+         };
+      default:
+         // It's a coding error (somewhere) if we get here!
+         Q_ASSERT(false);
+   }
+
+   return {};
+}
+
+bool Database::updatePrimaryKeySequenceIfNecessary(QSqlDatabase & connection,
+                                                   BtStringConst const & tableName,
+                                                   BtStringConst const & columnName) const {
+   switch (this->pimpl->dbType) {
+      case SQLITE:
+         // Nothing to do for SQLite
+         break;
+      case PGSQL:
+         {
+            //
+            // https://wiki.postgresql.org/wiki/Fixing_Sequences has a big scary query you can run that will fix all
+            // sequences in the database.  But to fix one sequence on one table, the work is more comprehensible.
+            //
+            // Per https://www.postgresql.org/docs/current/functions-info.html,
+            // pg_get_serial_sequence(table_name, column_name) gets the name of the sequence that a serial, smallserial
+            // or bigserial column uses.  (Usually, for column "id" on table "foo", the sequence will be called
+            // "foo_id_seq".)  Note the need to quote the parameters.
+            //
+            // Per https://www.postgresql.org/docs/current/functions-sequence.html, setval(seq, val, advance)
+            // will update the last_value field on sequence seq to val and, depending on whether advance is true or
+            // false, will or won't increment the last_value field before the next call to nextval().  Note that, since
+            // PostgreSQL 8.1, we _don't_ need to quote the sequence name.
+            //
+            // The result returned by setval is just the value of its second argument.  We only need FROM in the
+            // statement below so that the MAX function will give us the current maximum value of the primary column
+            // whose sequence we are updating.
+            //
+            // COALESCE covers the case where the table is empty (so MAX would return NULL).
+            //
+            // We use "setval(..., COALESCE(MAX(%2) + 1, 1), false)" to set the sequence to the next value that should
+            // be used (and don't advance sequence before next insertion), rather than
+            // "setval(..., COALESCE(MAX(%2), 0), true)" to set the sequence to the last insered value (and advance the
+            // sequence before next insertion) because, in the case the table is empty, we don't want to set the
+            // sequence to 0 (an invalid ID) in case it causes problems.
+            //
+            BtSqlQuery query{connection};
+            query.prepare(
+               QString("SELECT setval(pg_get_serial_sequence('%1', '%2'), COALESCE(MAX(%2) + 1, 1), false) "
+                       "FROM %1;").arg(*tableName, *columnName)
+            );
+            if (!query.exec()) {
+               qCritical() <<
+                  Q_FUNC_INFO << "Error updating sequence value for column" << columnName << "on table" << tableName <<
+                  "using SQL \"" << query.lastQuery() << "\":" << query.lastError().text();
+               return false;
+            }
+            if (query.next()) {
+               qInfo() <<
+                  Q_FUNC_INFO << "Updated sequence value for column" << columnName << "on table" << tableName << "to" <<
+                  query.value(0);
+            }
+         }
+         break;
+      default:
+         // It's a coding error (somewhere) if we get here!
+         Q_ASSERT(false);
+         return false;
+   }
+   return true;
+}
+
+//======================================================================================================================
+//====================================== Start of Functions in Helper Namespace ========================================
+//======================================================================================================================
+char const * DatabaseHelper::getNameFromDbTypeName(Database::DbType whichDb) {
+   return getDbNativeName(displayableDbType, whichDb);
+}

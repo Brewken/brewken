@@ -120,6 +120,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/ColorMethods.cpp
     ${SRCDIR}/ConverterTool.cpp
     ${SRCDIR}/CustomComboBox.cpp
+    ${SRCDIR}/database/BtSqlQuery.cpp
     ${SRCDIR}/database/Database.cpp
     ${SRCDIR}/database/DatabaseSchemaHelper.cpp
     ${SRCDIR}/database/DbTransaction.cpp
