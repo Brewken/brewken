@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * xml/BeerXml.h is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef XML_BEERXML_H
 #define XML_BEERXML_H
 

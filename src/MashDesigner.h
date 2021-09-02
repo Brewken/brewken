@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * MashDesigner.h is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonathon Harding <github@jrhardin.net>
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MASHDESIGNER_H
 #define MASHDESIGNER_H
 
