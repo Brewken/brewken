@@ -516,7 +516,7 @@ namespace {
       {XmlRecord::String,        "EST_OG",                   BtString::NULL_STR,                        nullptr}, // Extension tag
       {XmlRecord::String,        "EST_FG",                   BtString::NULL_STR,                        nullptr}, // Extension tag
       {XmlRecord::String,        "EST_COLOR",                BtString::NULL_STR,                        nullptr}, // Extension tag
-      {XmlRecord::String,        "IBU",                      BtString::NULL_STR,                        nullptr}, // Extension tag
+      {XmlRecord::String,        "IBU",                      PropertyNames::Recipe::IBU,                nullptr}, // Extension tag.  We write but ignore on read if present.
       {XmlRecord::String,        "IBU_METHOD",               BtString::NULL_STR,                        nullptr}, // Extension tag
       {XmlRecord::String,        "EST_ABV",                  BtString::NULL_STR,                        nullptr}, // Extension tag
       {XmlRecord::String,        "ABV",                      BtString::NULL_STR,                        nullptr}, // Extension tag

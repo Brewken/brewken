@@ -103,4 +103,4 @@ private:
    int curStep;
 };
 
-#endif // MASHDESIGNER_H
+#endif

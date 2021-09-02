@@ -23,6 +23,7 @@
  */
 #ifndef MODEL_RECIPE_H
 #define MODEL_RECIPE_H
+#pragma once
 
 #include <memory> // For PImpl
 
