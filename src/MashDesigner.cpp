@@ -42,8 +42,8 @@ MashDesigner::MashDesigner(QWidget* parent) : QDialog(parent)
    this->mashStep = nullptr;
    this->prevStep = nullptr;
 
-   this->label_zeroVol->setText(Brewtarget::displayAmount(0, &Units::liters));
-   this->label_zeroWort->setText(Brewtarget::displayAmount(0, &Units::liters));
+   this->label_zeroVol->setText(Brewken::displayAmount(0, &Units::liters));
+   this->label_zeroWort->setText(Brewken::displayAmount(0, &Units::liters));
 
    // Update temp slider when we move amount slider.
    connect( horizontalSlider_amount, &QAbstractSlider::sliderMoved, this, &MashDesigner::updateTempSlider );
@@ -361,7 +361,7 @@ bool MashDesigner::initializeMash() {
    // Order matters. Don't do this until every that could return false has
    this->mash->setTunSpecificHeat_calGC(this->equip->tunSpecificHeat_calGC());
    this->mash->setTunWeight_kg(this->equip->tunWeight_kg());
-   this->mash->setTunTemp_c(Brewtarget::qStringToSI(dialogText, &Units::celsius));
+   this->mash->setTunTemp_c(Brewken::qStringToSI(dialogText, &Units::celsius));
 
    this->curStep = 0;
    this->addedWater_l = 0;
@@ -371,8 +371,8 @@ bool MashDesigner::initializeMash() {
    this->MC = recObs->grainsInMash_kg() * HeatCalculations::Cgrain_calGC;
    this->grain_kg = recObs->grainsInMash_kg();
 
-   this->label_tunVol->setText(Brewtarget::displayAmount(equip->tunVolume_l(), &Units::liters));
-   this->label_wortMax->setText(Brewtarget::displayAmount(recObs->targetCollectedWortVol_l(), &Units::liters));
+   this->label_tunVol->setText(Brewken::displayAmount(equip->tunVolume_l(), &Units::liters));
+   this->label_wortMax->setText(Brewken::displayAmount(recObs->targetCollectedWortVol_l(), &Units::liters));
 
    this->updateMinAmt();
    this->updateMaxAmt();
@@ -414,8 +414,8 @@ void MashDesigner::updateFullness() {
    }
 
    this->progressBar_fullness->setValue(static_cast<int>(ratio*progressBar_fullness->maximum()));
-   this->label_mashVol->setText(Brewtarget::displayAmount(vol_l, &Units::liters));
-   this->label_thickness->setText(Brewtarget::displayThickness( (addedWater_l + (isInfusion() ? selectedAmount_l() : 0) )/grain_kg ));
+   this->label_mashVol->setText(Brewken::displayAmount(vol_l, &Units::liters));
+   this->label_thickness->setText(Brewken::displayThickness( (addedWater_l + (isInfusion() ? selectedAmount_l() : 0) )/grain_kg ));
    return;
 }
 
