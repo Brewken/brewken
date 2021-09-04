@@ -219,7 +219,8 @@ void HopDialog::newHop(QString folder)
    if( name.isEmpty() )
       return;
 
-   Hop* hop = new Hop(name,true);
+   // .:TODO:. Change to shared_ptr as potential memory leak
+   Hop* hop = new Hop(name);
    if ( ! folder.isEmpty() )
       hop->setFolder(folder);
 

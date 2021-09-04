@@ -239,9 +239,7 @@ void HopTableModel::changedInventory(int invKey, BtStringConst const & propertyN
 
          if (invKey == holdmybeer->inventoryId()) {
 /// No need to update amount as it's only stored in one place (the inventory object) now
-///            holdmybeer->setCacheOnly(true);
 ///            holdmybeer->setInventoryAmount(newAmount);
-///            holdmybeer->setCacheOnly(false);
             emit dataChanged(QAbstractItemModel::createIndex(i, HOPINVENTORYCOL),
                              QAbstractItemModel::createIndex(i, HOPINVENTORYCOL));
          }

@@ -60,8 +60,8 @@ ObjectStore & Fermentable::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Fermentable>::getInstance();
 }
 
-Fermentable::Fermentable(QString name, bool cache) :
-   NamedEntityWithInventory{-1, cache, name, true},
+Fermentable::Fermentable(QString name) :
+   NamedEntityWithInventory{name, true},
    m_typeStr       {QString()         },
    m_type          {Fermentable::Grain},
    m_amountKg      {0.0               },

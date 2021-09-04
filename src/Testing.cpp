@@ -149,7 +149,6 @@ void Testing::initTestCase() {
       // Cascade pellets at 4% AA
       this->cascade_4pct = std::make_shared<Hop>();
       ObjectStoreWrapper::insert(this->cascade_4pct);
-      this->cascade_4pct->setCacheOnly(false);
       this->cascade_4pct->setName("Cascade 4pct");
       this->cascade_4pct->setAlpha_pct(4.0);
       this->cascade_4pct->setUse(Hop::Boil);

@@ -92,44 +92,41 @@ void StyleEditor::styleSelected( const QString& /*text*/ )
    setStyle( styleListModel->at(sourceIndex.row()) );
 }
 
-void StyleEditor::save()
-{
-   Style* s = obsStyle;
-   if( s == 0 )
-   {
+void StyleEditor::save() {
+   if (!this->obsStyle) {
       setVisible(false);
       return;
    }
 
-   s->setName(lineEdit_name->text());
-   s->setCategory( lineEdit_category->text() );
-   s->setCategoryNumber( lineEdit_categoryNumber->text() );
-   s->setStyleLetter( lineEdit_styleLetter->text() );
-   s->setStyleGuide( lineEdit_styleGuide->text() );
-   s->setType( static_cast<Style::Type>(comboBox_type->currentIndex()) );
-   s->setOgMin( lineEdit_ogMin->toSI() );
-   s->setOgMax( lineEdit_ogMax->toSI() );
-   s->setFgMin( lineEdit_fgMin->toSI() );
-   s->setFgMax( lineEdit_fgMax->toSI() );
-   s->setIbuMin( lineEdit_ibuMin->toSI() );
-   s->setIbuMax( lineEdit_ibuMax->toSI() );
-   s->setColorMin_srm( lineEdit_colorMin->toSI() );
-   s->setColorMax_srm( lineEdit_colorMax->toSI() );
-   s->setCarbMin_vol( lineEdit_carbMin->toSI() );
-   s->setCarbMax_vol( lineEdit_carbMax->toSI() );
-   s->setAbvMin_pct( lineEdit_abvMin->toSI() );
-   s->setAbvMax_pct( lineEdit_abvMax->toSI() );
-   s->setProfile( textEdit_profile->toPlainText() );
-   s->setIngredients( textEdit_ingredients->toPlainText() );
-   s->setExamples( textEdit_examples->toPlainText() );
-   s->setNotes( textEdit_notes->toPlainText() );
+   this->obsStyle->setName(lineEdit_name->text());
+   this->obsStyle->setCategory( lineEdit_category->text() );
+   this->obsStyle->setCategoryNumber( lineEdit_categoryNumber->text() );
+   this->obsStyle->setStyleLetter( lineEdit_styleLetter->text() );
+   this->obsStyle->setStyleGuide( lineEdit_styleGuide->text() );
+   this->obsStyle->setType( static_cast<Style::Type>(comboBox_type->currentIndex()) );
+   this->obsStyle->setOgMin( lineEdit_ogMin->toSI() );
+   this->obsStyle->setOgMax( lineEdit_ogMax->toSI() );
+   this->obsStyle->setFgMin( lineEdit_fgMin->toSI() );
+   this->obsStyle->setFgMax( lineEdit_fgMax->toSI() );
+   this->obsStyle->setIbuMin( lineEdit_ibuMin->toSI() );
+   this->obsStyle->setIbuMax( lineEdit_ibuMax->toSI() );
+   this->obsStyle->setColorMin_srm( lineEdit_colorMin->toSI() );
+   this->obsStyle->setColorMax_srm( lineEdit_colorMax->toSI() );
+   this->obsStyle->setCarbMin_vol( lineEdit_carbMin->toSI() );
+   this->obsStyle->setCarbMax_vol( lineEdit_carbMax->toSI() );
+   this->obsStyle->setAbvMin_pct( lineEdit_abvMin->toSI() );
+   this->obsStyle->setAbvMax_pct( lineEdit_abvMax->toSI() );
+   this->obsStyle->setProfile( textEdit_profile->toPlainText() );
+   this->obsStyle->setIngredients( textEdit_ingredients->toPlainText() );
+   this->obsStyle->setExamples( textEdit_examples->toPlainText() );
+   this->obsStyle->setNotes( textEdit_notes->toPlainText() );
 
-   if ( s->cacheOnly() ) {
-      ObjectStoreWrapper::insert(*s);
-      s->setCacheOnly(false);
+   if (this->obsStyle->key() < 0) {
+      ObjectStoreWrapper::insert(*this->obsStyle);
    }
 
    setVisible(false);
+   return;
 }
 
 void StyleEditor::newStyle()

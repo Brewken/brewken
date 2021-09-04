@@ -37,14 +37,14 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Salt>::getInstance();
 }
 
-Salt::Salt(QString name, bool cache) :
-   NamedEntity(-1, cache, name, true),
-   m_amount(0.0),
-   m_add_to(NEVER),
-   m_type(NONE),
-   m_amount_is_weight(true),
-   m_percent_acid(0.0),
-   m_is_acid(false) {
+Salt::Salt(QString name) :
+   NamedEntity       {name, true},
+   m_amount          {0.0},
+   m_add_to          {NEVER},
+   m_type            {NONE},
+   m_amount_is_weight{true},
+   m_percent_acid    {0.0},
+   m_is_acid         {false} {
    return;
 }
 

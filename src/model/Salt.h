@@ -79,7 +79,7 @@ public:
 
    Q_ENUMS(WhenToAdd Types)
 
-   Salt(QString name = "", bool cache = true);
+   Salt(QString name = "");
    Salt(NamedParameterBundle const & namedParameterBundle);
    Salt(Salt const & other);
 

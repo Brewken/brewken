@@ -81,9 +81,9 @@ class BrewNote : public NamedEntity {
    Q_OBJECT
 
 public:
-   BrewNote(QString name = "", bool cache = true);
+   BrewNote(QString name = "");
    BrewNote(Recipe const & recipe);
-   BrewNote(QDate dateNow, bool cache = true, QString const & name = "");
+   BrewNote(QDate dateNow, QString const & name = "");
    BrewNote(NamedParameterBundle const & namedParameterBundle);
    BrewNote(BrewNote const & other);
 

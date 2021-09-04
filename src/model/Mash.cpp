@@ -83,8 +83,8 @@ ObjectStore & Mash::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Mash>::getInstance();
 }
 
-Mash::Mash(QString name, bool cache) :
-   NamedEntity{-1, cache, name, true},
+Mash::Mash(QString name) :
+   NamedEntity{name, true},
    pimpl{std::make_unique<impl>(*this)},
    m_grainTemp_c(0.0),
    m_notes(QString()),

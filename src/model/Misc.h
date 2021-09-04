@@ -68,7 +68,7 @@ public:
    enum AmountType { AmountType_Weight, AmountType_Volume };
    Q_ENUMS( Type Use AmountType )
 
-   Misc(QString name = "", bool cache = true);
+   Misc(QString name = "");
    Misc(NamedParameterBundle const & namedParameterBundle);
    Misc(Misc const & other);
 

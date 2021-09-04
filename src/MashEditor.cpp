@@ -53,7 +53,7 @@ void MashEditor::saveAndClose() {
    bool isNew = false;
 
    if (this->mashObs == nullptr) {
-      this->mashObs = new Mash(lineEdit_name->text(), true);
+      this->mashObs = new Mash(lineEdit_name->text());
       isNew = true;
    }
    qDebug() << Q_FUNC_INFO << "Saving" << (isNew ? "new" : "existing") << "mash (#" << this->mashObs->key() << ")";
@@ -71,7 +71,6 @@ void MashEditor::saveAndClose() {
    mashObs->setNotes(textEdit_notes->toPlainText());
 
    if (isNew) {
-      mashObs->setCacheOnly(false);
       ObjectStoreWrapper::insert(*mashObs);
       this->m_rec->setMash(this->mashObs);
    }

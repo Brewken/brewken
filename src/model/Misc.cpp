@@ -66,15 +66,15 @@ Misc::Misc(Misc const & other) :
    return;
 }
 
-Misc::Misc(QString name, bool cache) :
-   NamedEntityWithInventory{-1, cache, name, true},
-   m_type                  {Misc::Spice          },
-   m_use                   {Misc::Boil           },
-   m_time                  {0.0                  },
-   m_amount                {0.0                  },
-   m_amountIsWeight        {false                },
-   m_useFor                {""                   },
-   m_notes                 {""                   } {
+Misc::Misc(QString name) :
+   NamedEntityWithInventory{name, true},
+   m_type                  {Misc::Spice},
+   m_use                   {Misc::Boil },
+   m_time                  {0.0        },
+   m_amount                {0.0        },
+   m_amountIsWeight        {false      },
+   m_useFor                {""         },
+   m_notes                 {""         } {
    return;
 }
 

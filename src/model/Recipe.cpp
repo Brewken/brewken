@@ -297,8 +297,8 @@ ObjectStore & Recipe::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Recipe>::getInstance();
 }
 
-Recipe::Recipe(QString name, bool cache) :
-   NamedEntity         {-1, cache, name, true        },
+Recipe::Recipe(QString name) :
+   NamedEntity         {name, true                   },
    pimpl               {std::make_unique<impl>(*this)},
    m_type              {"All Grain"                  },
    m_brewer            {""                           },

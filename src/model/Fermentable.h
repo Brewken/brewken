@@ -82,7 +82,7 @@ public:
    enum AdditionTime {Normal, Late};
    Q_ENUMS( Type AdditionMethod AdditionTime )
 
-   Fermentable( QString name = "", bool cache = true );
+   Fermentable(QString name = "");
    Fermentable(NamedParameterBundle const & namedParameterBundle);
    Fermentable(Fermentable const & other);
 

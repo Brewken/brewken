@@ -51,45 +51,43 @@ void FermentableEditor::setFermentable( Fermentable* newFerm ) {
    return;
 }
 
-void FermentableEditor::save()
-{
-   if( !obsFerm )
-   {
+void FermentableEditor::save() {
+   if (!this->obsFerm) {
       setVisible(false);
       return;
    }
 
-   obsFerm->setName(lineEdit_name->text());
+   this->obsFerm->setName(lineEdit_name->text());
 
    // NOTE: the following assumes that Fermentable::Type is enumerated in the same
    // order as the combobox.
-   obsFerm->setType( static_cast<Fermentable::Type>(comboBox_type->currentIndex()) );
+   this->obsFerm->setType( static_cast<Fermentable::Type>(comboBox_type->currentIndex()) );
 
-   obsFerm->setAmount_kg(lineEdit_amount->toSI());
-   obsFerm->setYield_pct(lineEdit_yield->toSI());
-   obsFerm->setColor_srm(lineEdit_color->toSI());
-   obsFerm->setAddAfterBoil( (checkBox_addAfterBoil->checkState() == Qt::Checked)? true : false );
-   obsFerm->setOrigin( lineEdit_origin->text() );
-   obsFerm->setSupplier( lineEdit_supplier->text() );
-   obsFerm->setCoarseFineDiff_pct( lineEdit_coarseFineDiff->toSI() );
-   obsFerm->setMoisture_pct( lineEdit_moisture->toSI() );
-   obsFerm->setDiastaticPower_lintner( lineEdit_diastaticPower->toSI() );
-   obsFerm->setProtein_pct( lineEdit_protein->toSI() );
-   obsFerm->setMaxInBatch_pct( lineEdit_maxInBatch->toSI() );
-   obsFerm->setRecommendMash( (checkBox_recommendMash->checkState() == Qt::Checked) ? true : false );
-   obsFerm->setIsMashed( (checkBox_isMashed->checkState() == Qt::Checked) ? true : false );
-   obsFerm->setIbuGalPerLb( lineEdit_ibuGalPerLb->toSI() );
-   obsFerm->setNotes( textEdit_notes->toPlainText() );
+   this->obsFerm->setAmount_kg(lineEdit_amount->toSI());
+   this->obsFerm->setYield_pct(lineEdit_yield->toSI());
+   this->obsFerm->setColor_srm(lineEdit_color->toSI());
+   this->obsFerm->setAddAfterBoil( (checkBox_addAfterBoil->checkState() == Qt::Checked)? true : false );
+   this->obsFerm->setOrigin( lineEdit_origin->text() );
+   this->obsFerm->setSupplier( lineEdit_supplier->text() );
+   this->obsFerm->setCoarseFineDiff_pct( lineEdit_coarseFineDiff->toSI() );
+   this->obsFerm->setMoisture_pct( lineEdit_moisture->toSI() );
+   this->obsFerm->setDiastaticPower_lintner( lineEdit_diastaticPower->toSI() );
+   this->obsFerm->setProtein_pct( lineEdit_protein->toSI() );
+   this->obsFerm->setMaxInBatch_pct( lineEdit_maxInBatch->toSI() );
+   this->obsFerm->setRecommendMash( (checkBox_recommendMash->checkState() == Qt::Checked) ? true : false );
+   this->obsFerm->setIsMashed( (checkBox_isMashed->checkState() == Qt::Checked) ? true : false );
+   this->obsFerm->setIbuGalPerLb( lineEdit_ibuGalPerLb->toSI() );
+   this->obsFerm->setNotes( textEdit_notes->toPlainText() );
 
-   if ( obsFerm->cacheOnly() ) {
-      ObjectStoreWrapper::insert(*obsFerm);
-      obsFerm->setCacheOnly(false);
+   if (this->obsFerm->key() < 0) {
+      ObjectStoreWrapper::insert(*this->obsFerm);
    }
 
    // I could do this in the database code, but it makes sense to me here.
-   obsFerm->setInventoryAmount(lineEdit_inventory->toSI());
+   this->obsFerm->setInventoryAmount(lineEdit_inventory->toSI());
 
    setVisible(false);
+   return;
 }
 
 void FermentableEditor::clearAndClose()
@@ -220,7 +218,8 @@ void FermentableEditor::newFermentable(QString folder)  {
       return;
    }
 
-   Fermentable* f = new Fermentable(name,true);
+   // .:TODO:. Change to shared_ptr as currently leads to memory leak in clearAndClose()
+   Fermentable* f = new Fermentable(name);
 
    if ( ! folder.isEmpty() ) {
       f->setFolder(folder);

@@ -65,7 +65,7 @@ class Mash : public NamedEntity {
    Q_CLASSINFO("signal", "mashs")
 
 public:
-   Mash(QString name = "", bool cache = true);
+   Mash(QString name = "");
    Mash(NamedParameterBundle const & namedParameterBundle);
    Mash(Mash const& other);
 

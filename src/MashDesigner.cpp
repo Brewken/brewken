@@ -133,7 +133,8 @@ bool MashDesigner::nextStep(int step)
    if ( step >= 0 && step < mash->mashSteps().size() )
       mashStep = mash->mashSteps()[step];
    else {
-      mashStep = new MashStep("", true);
+      // .:TODO:. Change to shared_ptr as potential memory leak
+      mashStep = new MashStep("");
    }
 
    // Clear out some of the fields.
@@ -168,7 +169,6 @@ void MashDesigner::saveStep() {
    if (this->mashStep->key() < 0) {
       this->mashStep->setMashId(this->mash->key());
       ObjectStoreWrapper::insert(*this->mashStep);
-      this->mashStep->setCacheOnly(false);
    }
    return;
 }
@@ -353,7 +353,8 @@ bool MashDesigner::initializeMash() {
 
    this->mash = recObs->mash();
    if (this->mash == nullptr) {
-      this->mash = new Mash(QString(""), true);
+      // .:TODO:. Change to shared_ptr as potential memory leak
+      this->mash = new Mash("");
    } else {
       this->mash->removeAllMashSteps();
    }
@@ -383,7 +384,6 @@ bool MashDesigner::initializeMash() {
 
    if (this->mash->key() < 0) {
       ObjectStoreWrapper::insert(*mash);
-      this->mash->setCacheOnly(false);
       this->recObs->setMash(mash);
    }
    return true;

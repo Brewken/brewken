@@ -126,27 +126,27 @@ void MashStepEditor::setMashStep(MashStep* step) {
    }
 }
 
-void MashStepEditor::saveAndClose()
-{
-   obs->setName(lineEdit_name->text());
-   obs->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
-   obs->setInfuseAmount_l(lineEdit_infuseAmount->toSI());
-   obs->setInfuseTemp_c(lineEdit_infuseTemp->toSI());
-   obs->setDecoctionAmount_l(lineEdit_decoctionAmount->toSI());
-   obs->setStepTemp_c(lineEdit_stepTemp->toSI());
-   obs->setStepTime_min(lineEdit_stepTime->toSI());
-   obs->setRampTime_min(lineEdit_rampTime->toSI());
-   obs->setEndTemp_c(lineEdit_endTemp->toSI());
+void MashStepEditor::saveAndClose() {
+   this->obs->setName(lineEdit_name->text());
+   this->obs->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
+   this->obs->setInfuseAmount_l(lineEdit_infuseAmount->toSI());
+   this->obs->setInfuseTemp_c(lineEdit_infuseTemp->toSI());
+   this->obs->setDecoctionAmount_l(lineEdit_decoctionAmount->toSI());
+   this->obs->setStepTemp_c(lineEdit_stepTemp->toSI());
+   this->obs->setStepTime_min(lineEdit_stepTime->toSI());
+   this->obs->setRampTime_min(lineEdit_rampTime->toSI());
+   this->obs->setEndTemp_c(lineEdit_endTemp->toSI());
 
-   if ( obs->cacheOnly() ) {
+   if (this->obs->key() < 0) {
       // This is a new MashStep, so we need to store it.
       // We'll ask MainWindow to do this for us, because then it can be an undoable action.
       //
       // The Mash of this MashStep should already have been set by the caller
-      Brewken::mainWindow()->addMashStepToMash(obs);
+      Brewken::mainWindow()->addMashStepToMash(this->obs);
    }
 
    setVisible(false);
+   return;
 }
 
 void MashStepEditor::grayOutStuff(const QString& text)

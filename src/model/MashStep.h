@@ -56,21 +56,15 @@ class MashStep : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashsteps")
 
-   // this seems to be a class with a lot of friends
-
-   friend class MashStepItemDelegate;
-   friend class MashWizard;
-   friend class MashDesigner;
-   friend class MainWindow;
 public:
 
    //! \brief The type of step.
    enum Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
    Q_ENUMS( Type )
 
-   MashStep(QString name = "", bool cache = true);
+   MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
-   MashStep( MashStep const& other );
+   MashStep(MashStep const & other);
 
    virtual ~MashStep() = default;
 

@@ -55,7 +55,7 @@ class Instruction : public NamedEntity {
 
 
 public:
-   Instruction(QString name = "", bool cache = true);
+   Instruction(QString name = "");
    Instruction(NamedParameterBundle const & namedParameterBundle);
    Instruction(Instruction const & other);
 

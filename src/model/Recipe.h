@@ -141,7 +141,7 @@ class Recipe : public NamedEntity {
    friend class WaterDialog;
 public:
 
-   Recipe(QString name, bool cache = true);
+   Recipe(QString name);
    Recipe(NamedParameterBundle const & namedParameterBundle);
    Recipe(Recipe const & other);
 

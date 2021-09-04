@@ -28,11 +28,10 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-NamedEntity::NamedEntity(int key,  bool cache, QString t_name, bool t_display, QString folder) :
+NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
    QObject    {nullptr  },
-   m_key      {key      },
+   m_key      {-1       },
    parentKey  {-1       },
-   m_cacheOnly{cache    },
    m_folder   {folder   },
    m_name     {t_name   },
    m_display  {t_display},
@@ -45,7 +44,6 @@ NamedEntity::NamedEntity(NamedEntity const & other) :
    QObject     {nullptr          }, // QObject doesn't have a copy constructor, so just make a new one
    m_key       {-1               }, // We don't want to copy the other object's key/ID
    parentKey   {other.parentKey  },
-   m_cacheOnly {other.m_cacheOnly},
    m_folder    {other.m_folder   },
    m_name      {other.m_name     },
    m_display   {other.m_display  },
@@ -72,7 +70,6 @@ NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject{nullptr},
    m_key      {namedParameterBundle(PropertyNames::NamedEntity::key, -1)          },
    parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },
-   m_cacheOnly{false                                                              },
    m_folder   {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})},
    m_name     {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  },
    m_display  {namedParameterBundle(PropertyNames::NamedEntity::display, true)    },
@@ -243,10 +240,6 @@ int NamedEntity::getParentKey() const {
    return this->parentKey;
 }
 
-bool NamedEntity::cacheOnly() const {
-   return this->m_cacheOnly;
-}
-
 void NamedEntity::setParentKey(int parentKey) {
    this->parentKey = parentKey;
 
@@ -264,13 +257,8 @@ void NamedEntity::setParentKey(int parentKey) {
    return;
 }
 
-void NamedEntity::setCacheOnly(bool cache) {
-   // The m_cacheOnly member variable is not stored in the DB, so we don't call this->propagatePropertyChange etc here
-   this->m_cacheOnly = cache;
-   return;
-}
-
 void NamedEntity::setBeingModified(bool set) {
+   // The m_beingModified member variable is not stored in the DB, so we don't call this->propagatePropertyChange etc here
    this->m_beingModified = set;
    return;
 }
@@ -328,11 +316,6 @@ void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
 }
 
 void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bool notify) const {
-   // If we're in "cache only" mode, there's nothing to do
-   if (this->m_cacheOnly) {
-      return;
-   }
-
    // If we're already stored in the object store, tell it about the property change so that it can write it to the
    // database.  (We don't pass the new value as it will get read out of the object via propertyName.)
    if (this->m_key > 0) {

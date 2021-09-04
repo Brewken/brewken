@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * WaterDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * WaterDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -17,11 +18,15 @@
  =====================================================================================================================*/
 #ifndef WATERDIALOG_H
 #define WATERDIALOG_H
+#pragma once
 
-#include <QDialog>
-#include <QWidget>
+#include <memory>
+
 #include <QButtonGroup>
+#include <QDialog>
 #include <QVector>
+#include <QWidget>
+
 #include "ui_waterDialog.h"
 #include "Unit.h"
 #include "model/Water.h"
@@ -36,7 +41,6 @@ class Salt;
 
 /*!
  * \class WaterDialog
- *
  *
  * \brief Trying my hand at making water chemistry work
  */
@@ -76,7 +80,8 @@ private:
    WaterEditor* m_base_editor;
    WaterEditor* m_target_editor;
    Recipe* m_rec;
-   Water *m_base, *m_target;
+   std::shared_ptr<Water> m_base;
+   std::shared_ptr<Water> m_target;
    double m_mashRO;
    double m_spargeRO;
    double m_total_grains;
@@ -86,7 +91,7 @@ private:
    WaterSortFilterProxyModel *m_base_filter;
    WaterSortFilterProxyModel *m_target_filter;
 
-   void setDigits(Water* target);
+   void setDigits();
    void calculateGrainEquivalent();
 
    double calculateRA() const;

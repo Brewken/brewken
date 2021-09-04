@@ -370,7 +370,8 @@ void MashWizard::wizardry()
          int numSteps = spinBox_batches->value();
          double volPerBatch = spargeWater_l/numSteps; // its evil, but deal with it
          for(int i=0; i < numSteps; ++i ) {
-            mashStep = new MashStep("", true);
+            // .:TODO:. Change to shared_ptr as potential memory leak
+            mashStep = new MashStep("");
 
             mashStep->setType(MashStep::batchSparge);
             mashStep->setName(tr("Batch Sparge %1").arg(i+1));
@@ -381,7 +382,6 @@ void MashWizard::wizardry()
             mashStep->setStepTime_min(15);
             mashStep->setMashId(mash->key());
             ObjectStoreWrapper::insert(*mashStep);
-            mashStep->setCacheOnly(false);
             steps.append(mashStep);
             emit mashStep->changed(
                mashStep->metaObject()->property(
@@ -393,7 +393,8 @@ void MashWizard::wizardry()
       }
       // fly sparge, I think
       else {
-         mashStep = new MashStep("", true);
+         // .:TODO:. Change to shared_ptr as potential memory leak
+         mashStep = new MashStep("");
 
          mashStep->setName(tr("Fly Sparge"));
          mashStep->setType(MashStep::flySparge);
@@ -404,7 +405,6 @@ void MashWizard::wizardry()
          mashStep->setStepTime_min(15);
          mashStep->setMashId(mash->key());
          ObjectStoreWrapper::insert(*mashStep);
-         mashStep->setCacheOnly(false);
          steps.append(mashStep);
          emit mashStep->changed(
             mashStep->metaObject()->property(

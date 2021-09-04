@@ -56,42 +56,38 @@ void YeastEditor::setYeast( Yeast* y )
    }
 }
 
-void YeastEditor::save()
-{
-   Yeast* y = obsYeast;
-
-   if( y == nullptr )
-   {
+void YeastEditor::save() {
+   if (!this->obsYeast) {
       setVisible(false);
       return;
    }
 
-   y->setName(lineEdit_name->text());
-   y->setType(static_cast<Yeast::Type>(comboBox_type->currentIndex()));
-   y->setForm(static_cast<Yeast::Form>(comboBox_form->currentIndex()));
-   y->setAmountIsWeight( (checkBox_amountIsWeight->checkState() == Qt::Checked)? true : false );
-   y->setAmount( lineEdit_amount->toSI());
+   this->obsYeast->setName(lineEdit_name->text());
+   this->obsYeast->setType(static_cast<Yeast::Type>(comboBox_type->currentIndex()));
+   this->obsYeast->setForm(static_cast<Yeast::Form>(comboBox_form->currentIndex()));
+   this->obsYeast->setAmountIsWeight( (checkBox_amountIsWeight->checkState() == Qt::Checked)? true : false );
+   this->obsYeast->setAmount( lineEdit_amount->toSI());
 
-   y->setLaboratory( lineEdit_laboratory->text() );
-   y->setProductID( lineEdit_productID->text() );
-   y->setMinTemperature_c( lineEdit_minTemperature->toSI());
-   y->setMaxTemperature_c( lineEdit_maxTemperature->toSI());
-   y->setFlocculation( static_cast<Yeast::Flocculation>(comboBox_flocculation->currentIndex()) );
-   y->setAttenuation_pct(lineEdit_attenuation->toSI());
+   this->obsYeast->setLaboratory( lineEdit_laboratory->text() );
+   this->obsYeast->setProductID( lineEdit_productID->text() );
+   this->obsYeast->setMinTemperature_c( lineEdit_minTemperature->toSI());
+   this->obsYeast->setMaxTemperature_c( lineEdit_maxTemperature->toSI());
+   this->obsYeast->setFlocculation( static_cast<Yeast::Flocculation>(comboBox_flocculation->currentIndex()) );
+   this->obsYeast->setAttenuation_pct(lineEdit_attenuation->toSI());
 
-   y->setTimesCultured(lineEdit_timesCultured->text().toInt());
-   y->setMaxReuse(lineEdit_maxReuse->text().toInt());
-   y->setAddToSecondary( (checkBox_addToSecondary->checkState() == Qt::Checked)? true : false );
-   y->setBestFor(textEdit_bestFor->toPlainText());
-   y->setNotes(textEdit_notes->toPlainText());
+   this->obsYeast->setTimesCultured(lineEdit_timesCultured->text().toInt());
+   this->obsYeast->setMaxReuse(lineEdit_maxReuse->text().toInt());
+   this->obsYeast->setAddToSecondary( (checkBox_addToSecondary->checkState() == Qt::Checked)? true : false );
+   this->obsYeast->setBestFor(textEdit_bestFor->toPlainText());
+   this->obsYeast->setNotes(textEdit_notes->toPlainText());
 
-   if ( y->cacheOnly() ) {
-      ObjectStoreWrapper::insert(*y);
-      y->setCacheOnly(false);
+   if (this->obsYeast->key() < 0) {
+      ObjectStoreWrapper::insert(*this->obsYeast);
    }
    // do this late to make sure we've the row in the inventory table
-   y->setInventoryQuanta( lineEdit_inventory->text().toInt() );
+   this->obsYeast->setInventoryQuanta( lineEdit_inventory->text().toInt() );
    setVisible(false);
+   return;
 }
 
 void YeastEditor::clearAndClose()
@@ -229,6 +225,7 @@ void YeastEditor::newYeast(QString folder) {
       return;
    }
 
+   // .:TODO:. Change to shared_ptr as currently leads to memory leak in clearAndClose()
    Yeast* y = new Yeast(name);
 
    if ( ! folder.isEmpty() ) {
