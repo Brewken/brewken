@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -22,7 +22,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "HopTableModel.h"
 
 #include <QAbstractItemModel>
@@ -239,9 +239,7 @@ void HopTableModel::changedInventory(int invKey, BtStringConst const & propertyN
 
          if (invKey == holdmybeer->inventoryId()) {
 /// No need to update amount as it's only stored in one place (the inventory object) now
-///            holdmybeer->setCacheOnly(true);
 ///            holdmybeer->setInventoryAmount(newAmount);
-///            holdmybeer->setCacheOnly(false);
             emit dataChanged(QAbstractItemModel::createIndex(i, HOPINVENTORYCOL),
                              QAbstractItemModel::createIndex(i, HOPINVENTORYCOL));
          }

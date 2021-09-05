@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/NamedEntityWithInventory.cpp is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,18 +12,16 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/NamedEntityWithInventory.h"
 
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"
 
-NamedEntityWithInventory::NamedEntityWithInventory(int key,
-                                                   bool cache,
-                                                   QString t_name,
+NamedEntityWithInventory::NamedEntityWithInventory(QString t_name,
                                                    bool t_display,
                                                    QString folder) :
-   NamedEntity   {key, cache, t_name, t_display, folder},
+   NamedEntity   {t_name, t_display, folder},
    m_inventory_id{-1} {
    return;
 }

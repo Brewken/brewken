@@ -2333,7 +2333,6 @@ void MainWindow::newRecipe()
    }
 
    ObjectStoreWrapper::insert(*newRec);
-   newRec->setCacheOnly(false);
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?
@@ -2685,7 +2684,7 @@ void MainWindow::addMashStep() {
    }
 
    // This ultimately gets stored in MainWindow::addMashStepToMash()
-   MashStep* step = new MashStep("", true);
+   MashStep* step = new MashStep("");
    //step->setMash(recipeObs->mash());
    this->mashStepEditor->setMashStep(step);
    this->mashStepEditor->setVisible(true);

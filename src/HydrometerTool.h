@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * HydrometerTool.h is part of Brewken, and is copyright the following authors 2016-2021:
  *   • Jamie Daws <jdelectronics1@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef HYDROMETERTOOL_H
 #define HYDROMETERTOOL_H
 #pragma once

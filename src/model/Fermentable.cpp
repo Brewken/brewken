@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/Fermentable.h"
 
 #include <QDebug>
@@ -60,8 +60,8 @@ ObjectStore & Fermentable::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Fermentable>::getInstance();
 }
 
-Fermentable::Fermentable(QString name, bool cache) :
-   NamedEntityWithInventory{-1, cache, name, true},
+Fermentable::Fermentable(QString name) :
+   NamedEntityWithInventory{name, true},
    m_typeStr       {QString()         },
    m_type          {Fermentable::Grain},
    m_amountKg      {0.0               },

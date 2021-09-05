@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "SaltTableModel.h"
 
 #include <QAbstractItemModel>
@@ -147,10 +147,11 @@ void SaltTableModel::addSalts(QList<Salt*> salts)
    }
 }
 
-void SaltTableModel::catchSalt()
-{
-   Salt* gaq = new Salt(QString(),true);
+void SaltTableModel::catchSalt() {
+   // .:TODO:. Change to shared_ptr as potential memory leak
+   Salt* gaq = new Salt("");
    addSalt(gaq);
+   return;
 }
 
 double SaltTableModel::multiplier(Salt *s) const
@@ -329,17 +330,16 @@ void SaltTableModel::removeSalt(Salt* salt)
    emit newTotals();
 }
 
-void SaltTableModel::removeSalts(QList<int>deadSalts)
-{
+void SaltTableModel::removeSalts(QList<int>deadSalts) {
    QList<Salt*> dead;
 
    // I am removing the salts so the index of any salt
    // will change. I think this will work
-   foreach(int i, deadSalts) {
+   for (int i : deadSalts) {
       dead.append( saltObs.at(i));
    }
 
-   foreach( Salt* zombie, dead) {
+   for(Salt * zombie : dead) {
       int i = saltObs.indexOf(zombie);
 
       if ( i >= 0 ) {
@@ -350,13 +350,14 @@ void SaltTableModel::removeSalts(QList<int>deadSalts)
 
          // Dead salts do not malinger in the database. This will
          // delete the thing, not just mark it deleted
-         if ( ! zombie->cacheOnly() ) {
+         if (zombie->key() > 0) {
             this->m_rec->remove(zombie);
             ObjectStoreWrapper::hardDelete(*zombie);
          }
       }
    }
    emit newTotals();
+   return;
 }
 
 void SaltTableModel::removeAll()
@@ -652,11 +653,10 @@ void SaltTableModel::contextMenu(const QPoint &point)
 void SaltTableModel::saveAndClose() {
    // all of the writes should have been instantaneous unless
    // we've added a new salt. Wonder if this will work?
-   for (Salt* i : saltObs) {
-      if ( i->cacheOnly() && i->type() != Salt::NONE && i->addTo() != Salt::NEVER ) {
-         ObjectStoreWrapper::insert(*i);
-         i->setCacheOnly(false);
-         this->m_rec->add(i);
+   for (Salt* salt : saltObs) {
+      if (salt->key() < 0 && salt->type() != Salt::NONE && salt->addTo() != Salt::NEVER) {
+         ObjectStoreWrapper::insert(*salt);
+         this->m_rec->add(salt);
       }
    }
 }

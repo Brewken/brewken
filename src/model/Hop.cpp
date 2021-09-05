@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/Hop.h"
 
 #include <QDebug>
@@ -59,8 +59,8 @@ ObjectStore & Hop::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Hop>::getInstance();
 }
 
-Hop::Hop(QString name, bool cache) :
-   NamedEntityWithInventory{-1, cache, name, true},
+Hop::Hop(QString name) :
+   NamedEntityWithInventory{name, true},
    m_use              {Hop::Mash},
    m_type             {Hop::Bittering},
    m_form             {Hop::Leaf},

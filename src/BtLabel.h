@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * BtLabel.h is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 
 #ifndef BTLABEL_H
 #define BTLABEL_H

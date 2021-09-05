@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MODEL_FERMENTABLE_H
 #define MODEL_FERMENTABLE_H
 #pragma once
@@ -82,7 +82,7 @@ public:
    enum AdditionTime {Normal, Late};
    Q_ENUMS( Type AdditionMethod AdditionTime )
 
-   Fermentable( QString name = "", bool cache = true );
+   Fermentable(QString name = "");
    Fermentable(NamedParameterBundle const & namedParameterBundle);
    Fermentable(Fermentable const & other);
 

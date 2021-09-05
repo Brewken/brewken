@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/Salt.h"
 
 #include <QDebug>
@@ -37,14 +37,14 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Salt>::getInstance();
 }
 
-Salt::Salt(QString name, bool cache) :
-   NamedEntity(-1, cache, name, true),
-   m_amount(0.0),
-   m_add_to(NEVER),
-   m_type(NONE),
-   m_amount_is_weight(true),
-   m_percent_acid(0.0),
-   m_is_acid(false) {
+Salt::Salt(QString name) :
+   NamedEntity       {name, true},
+   m_amount          {0.0},
+   m_add_to          {NEVER},
+   m_type            {NONE},
+   m_amount_is_weight{true},
+   m_percent_acid    {0.0},
+   m_is_acid         {false} {
    return;
 }
 

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * BtDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "BtDigitWidget.h"
 
 #include <iostream>

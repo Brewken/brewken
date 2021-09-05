@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * Testing.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "Testing.h"
 
 #include <exception>
@@ -149,7 +149,6 @@ void Testing::initTestCase() {
       // Cascade pellets at 4% AA
       this->cascade_4pct = std::make_shared<Hop>();
       ObjectStoreWrapper::insert(this->cascade_4pct);
-      this->cascade_4pct->setCacheOnly(false);
       this->cascade_4pct->setName("Cascade 4pct");
       this->cascade_4pct->setAlpha_pct(4.0);
       this->cascade_4pct->setUse(Hop::Boil);

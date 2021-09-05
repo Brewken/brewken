@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/MashStep.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/MashStep.h"
 
 #include <QDebug>
@@ -56,18 +56,18 @@ ObjectStore & MashStep::getObjectStoreTypedInstance() const {
 
 //==============================CONSTRUCTORS====================================
 
-MashStep::MashStep(QString name, bool cache) :
-   NamedEntity(-1, cache, name, true),
-   m_type(static_cast<MashStep::Type>(0)),
-   m_infuseAmount_l(0.0),
-   m_stepTemp_c(0.0),
-   m_stepTime_min(0.0),
-   m_rampTime_min(0.0),
-   m_endTemp_c(0.0),
-   m_infuseTemp_c(0.0),
-   m_decoctionAmount_l(0.0),
-   m_stepNumber(0.0),
-   mashId(-1) {
+MashStep::MashStep(QString name) :
+   NamedEntity        {name, true},
+   m_type             {MashStep::Infusion},
+   m_infuseAmount_l   {0.0},
+   m_stepTemp_c       {0.0},
+   m_stepTime_min     {0.0},
+   m_rampTime_min     {0.0},
+   m_endTemp_c        {0.0},
+   m_infuseTemp_c     {0.0},
+   m_decoctionAmount_l{0.0},
+   m_stepNumber       {0},
+   mashId             {-1} {
    return;
 }
 

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MODEL_MASHSTEP_H
 #define MODEL_MASHSTEP_H
 #pragma once
@@ -56,21 +56,15 @@ class MashStep : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashsteps")
 
-   // this seems to be a class with a lot of friends
-
-   friend class MashStepItemDelegate;
-   friend class MashWizard;
-   friend class MashDesigner;
-   friend class MainWindow;
 public:
 
    //! \brief The type of step.
    enum Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
    Q_ENUMS( Type )
 
-   MashStep(QString name = "", bool cache = true);
+   MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
-   MashStep( MashStep const& other );
+   MashStep(MashStep const & other);
 
    virtual ~MashStep() = default;
 
@@ -109,7 +103,6 @@ public:
    void setDecoctionAmount_l( double var);
    void setStepNumber(int stepNumber);
    void setMashId(int mashId);
-//   void setMash(Mash * mash);
 
    Type type() const;
    const QString typeString() const;
@@ -122,7 +115,6 @@ public:
    double infuseTemp_c() const;
    double decoctionAmount_l() const;
    int getMashId() const;
-//   Mash * mash() const;
 
    //! What number this step is in the mash.
    int stepNumber() const;

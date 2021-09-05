@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MODEL_BREWNOTE_H
 #define MODEL_BREWNOTE_H
 #pragma once
@@ -81,9 +81,9 @@ class BrewNote : public NamedEntity {
    Q_OBJECT
 
 public:
-   BrewNote(QString name = "", bool cache = true);
+   BrewNote(QString name = "");
    BrewNote(Recipe const & recipe);
-   BrewNote(QDate dateNow, bool cache = true, QString const & name = "");
+   BrewNote(QDate dateNow, QString const & name = "");
    BrewNote(NamedParameterBundle const & namedParameterBundle);
    BrewNote(BrewNote const & other);
 

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * XmlRecord.cpp is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "xml/XmlRecord.h"
 
 #include <QDate>
@@ -105,6 +105,14 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
       // if there are missing _required_ fields or if string fields that are present are not allowed to be blank.  (See
       // comments in BeerXml.xsd for why it is, in practice, plausible and acceptable for some "required" text fields
       // to be empty/blank.)
+      //
+      // Equally, although we only look for nodes we know about, some of these we won't use.  If there is no property
+      // name in our field definition then it's a field we neither read nor write.  We'll parse it but we won't try to
+      // pass it to the object we're creating.  But there are some fields that are "write only", such as IBU on Recipe.
+      // These have a property name in the field definition, so they will be written out in XmlRecord::toXml, but the
+      // relevant object constructor ignores them when they appear in a NamedParameterBundle.  (In the case of IBU on
+      // Recipe, this is because it is a calculated value.  It is helpful to some users to export it in the XML, but
+      // there is no point trying to read it in from XML as the value would get overwritten by our own calculated one.)
       //
       // We're not expecting multiple instances of simple fields (strings, numbers, etc) and XSD parsing should mostly
       // have flagged up errors if there were any present.  But it is often valid to have multiple child records (eg

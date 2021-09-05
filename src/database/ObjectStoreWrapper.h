@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStoreWrapper.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_OBJECTSTOREWRAPPER_H
 #define DATABASE_OBJECTSTOREWRAPPER_H
 #pragma once
@@ -120,13 +120,6 @@ namespace ObjectStoreWrapper {
 
    template<class NE> void hardDelete(NE const & ne) {
       ObjectStoreTyped<NE>::getInstance().hardDelete(ne.key());
-      return;
-   }
-
-   template<class NE> void hardDelete(std::shared_ptr<NE> ne) {
-      if (ne.get()) {
-        ObjectStoreTyped<NE>::getInstance().hardDelete(ne->key());
-      }
       return;
    }
 

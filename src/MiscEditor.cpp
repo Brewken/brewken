@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * MiscEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "MiscEditor.h"
 
 #include <QtGui>
@@ -57,12 +57,8 @@ void MiscEditor::setMisc( Misc* m )
    }
 }
 
-void MiscEditor::save()
-{
-   Misc* m = obsMisc;
-
-   if( m == nullptr )
-   {
+void MiscEditor::save() {
+   if (this->obsMisc == nullptr) {
       setVisible(false);
       return;
    }
@@ -70,23 +66,23 @@ void MiscEditor::save()
    qDebug() << Q_FUNC_INFO << comboBox_type->currentIndex();
    qDebug() << Q_FUNC_INFO << comboBox_use->currentIndex();
 
-   m->setName(lineEdit_name->text());
-   m->setType( static_cast<Misc::Type>(comboBox_type->currentIndex()) );
-   m->setUse( static_cast<Misc::Use>(comboBox_use->currentIndex()) );
-   m->setTime(lineEdit_time->toSI());
-   m->setAmountIsWeight( (checkBox_isWeight->checkState() == Qt::Checked)? true : false );
-   m->setAmount( lineEdit_amount->toSI());
-   m->setUseFor(textEdit_useFor->toPlainText());
-   m->setNotes( textEdit_notes->toPlainText() );
+   this->obsMisc->setName(lineEdit_name->text());
+   this->obsMisc->setType( static_cast<Misc::Type>(comboBox_type->currentIndex()) );
+   this->obsMisc->setUse( static_cast<Misc::Use>(comboBox_use->currentIndex()) );
+   this->obsMisc->setTime(lineEdit_time->toSI());
+   this->obsMisc->setAmountIsWeight( (checkBox_isWeight->checkState() == Qt::Checked)? true : false );
+   this->obsMisc->setAmount( lineEdit_amount->toSI());
+   this->obsMisc->setUseFor(textEdit_useFor->toPlainText());
+   this->obsMisc->setNotes( textEdit_notes->toPlainText() );
 
-   if ( m->cacheOnly() ) {
+   if (this->obsMisc->key() < 0) {
       qDebug() << Q_FUNC_INFO << "Inserting into database";
-      ObjectStoreWrapper::insert(*m);
-      m->setCacheOnly(false);
+      ObjectStoreWrapper::insert(*this->obsMisc);
    }
    // do this late to make sure we've the row in the inventory table
-   m->setInventoryAmount(lineEdit_inventory->toSI());
+   this->obsMisc->setInventoryAmount(lineEdit_inventory->toSI());
    setVisible(false);
+   return;
 }
 
 void MiscEditor::clearAndClose()
@@ -183,7 +179,8 @@ void MiscEditor::newMisc(QString folder) {
       return;
    }
 
-   Misc* m = new Misc(name,true);
+   // .:TODO:. This leads to a memory leak in clearAndClose().  Change to shared_ptr
+   Misc* m = new Misc(name);
 
    if ( ! folder.isEmpty() ) {
       m->setFolder(folder);

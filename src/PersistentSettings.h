@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef PERSISTENTSETTINGS_H
 #define PERSISTENTSETTINGS_H
 #pragma once

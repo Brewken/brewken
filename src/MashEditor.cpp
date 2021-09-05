@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "MashEditor.h"
 
 #include <QDebug>
@@ -53,7 +53,7 @@ void MashEditor::saveAndClose() {
    bool isNew = false;
 
    if (this->mashObs == nullptr) {
-      this->mashObs = new Mash(lineEdit_name->text(), true);
+      this->mashObs = new Mash(lineEdit_name->text());
       isNew = true;
    }
    qDebug() << Q_FUNC_INFO << "Saving" << (isNew ? "new" : "existing") << "mash (#" << this->mashObs->key() << ")";
@@ -71,7 +71,6 @@ void MashEditor::saveAndClose() {
    mashObs->setNotes(textEdit_notes->toPlainText());
 
    if (isNew) {
-      mashObs->setCacheOnly(false);
       ObjectStoreWrapper::insert(*mashObs);
       this->m_rec->setMash(this->mashObs);
    }

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "HopEditor.h"
 
 #include <QtGui>
@@ -58,42 +58,38 @@ void HopEditor::setHop( Hop* h )
    }
 }
 
-void HopEditor::save()
-{
-   Hop* h = obsHop;
-
-   if( h == nullptr )
-   {
+void HopEditor::save() {
+   if (!this->obsHop) {
       setVisible(false);
       return;
    }
 
-   h->setName(lineEdit_name->text());
-   h->setAlpha_pct(lineEdit_alpha->toSI());
-   h->setAmount_kg(lineEdit_amount->toSI());
-   h->setUse(static_cast<Hop::Use>(comboBox_use->currentIndex()));
-   h->setTime_min(lineEdit_time->toSI());
-   h->setType(static_cast<Hop::Type>(comboBox_type->currentIndex()));
-   h->setForm(static_cast<Hop::Form>(comboBox_form->currentIndex()));
-   h->setBeta_pct(lineEdit_beta->toSI());
-   h->setHsi_pct(lineEdit_HSI->toSI());
-   h->setOrigin(lineEdit_origin->text());
-   h->setHumulene_pct(lineEdit_humulene->toSI());
-   h->setCaryophyllene_pct(lineEdit_caryophyllene->toSI());
-   h->setCohumulone_pct(lineEdit_cohumulone->toSI());
-   h->setMyrcene_pct(lineEdit_myrcene->toSI());
+   this->obsHop->setName(lineEdit_name->text());
+   this->obsHop->setAlpha_pct(lineEdit_alpha->toSI());
+   this->obsHop->setAmount_kg(lineEdit_amount->toSI());
+   this->obsHop->setUse(static_cast<Hop::Use>(comboBox_use->currentIndex()));
+   this->obsHop->setTime_min(lineEdit_time->toSI());
+   this->obsHop->setType(static_cast<Hop::Type>(comboBox_type->currentIndex()));
+   this->obsHop->setForm(static_cast<Hop::Form>(comboBox_form->currentIndex()));
+   this->obsHop->setBeta_pct(lineEdit_beta->toSI());
+   this->obsHop->setHsi_pct(lineEdit_HSI->toSI());
+   this->obsHop->setOrigin(lineEdit_origin->text());
+   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI());
+   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI());
+   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI());
+   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI());
 
-   h->setSubstitutes(textEdit_substitutes->toPlainText());
-   h->setNotes(textEdit_notes->toPlainText());
+   this->obsHop->setSubstitutes(textEdit_substitutes->toPlainText());
+   this->obsHop->setNotes(textEdit_notes->toPlainText());
 
-   if ( h->cacheOnly() ) {
-      ObjectStoreWrapper::insert(*h);
-      h->setCacheOnly(false);
+   if (this->obsHop->key() < 0) {
+      ObjectStoreWrapper::insert(*this->obsHop);
    }
 
    // do this late to make sure we've the row in the inventory table
-   h->setInventoryAmount(lineEdit_inventory->toSI());
+   this->obsHop->setInventoryAmount(lineEdit_inventory->toSI());
    setVisible(false);
+   return;
 }
 
 void HopEditor::clearAndClose()
@@ -222,7 +218,8 @@ void HopEditor::newHop(QString folder) {
       return;
    }
 
-   Hop* h = new Hop(name,true);
+   // .:TODO:. Change this to shared_ptr as currently results in memory leak in clearAndClose()
+   Hop* h = new Hop(name);
 
    if ( ! folder.isEmpty() ) {
       h->setFolder(folder);

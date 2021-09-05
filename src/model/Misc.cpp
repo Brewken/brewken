@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/Misc.h"
 
 #include <iostream>
@@ -66,15 +66,15 @@ Misc::Misc(Misc const & other) :
    return;
 }
 
-Misc::Misc(QString name, bool cache) :
-   NamedEntityWithInventory{-1, cache, name, true},
-   m_type                  {Misc::Spice          },
-   m_use                   {Misc::Boil           },
-   m_time                  {0.0                  },
-   m_amount                {0.0                  },
-   m_amountIsWeight        {false                },
-   m_useFor                {""                   },
-   m_notes                 {""                   } {
+Misc::Misc(QString name) :
+   NamedEntityWithInventory{name, true},
+   m_type                  {Misc::Spice},
+   m_use                   {Misc::Boil },
+   m_time                  {0.0        },
+   m_amount                {0.0        },
+   m_amountIsWeight        {false      },
+   m_useFor                {""         },
+   m_notes                 {""         } {
    return;
 }
 

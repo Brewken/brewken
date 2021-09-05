@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * Html.h is part of Brewken, and is copyright the following authors 2016:
  *   • Mark de Wever <koraq@xs4all.nl>
  *
@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 
 class QString;
 
