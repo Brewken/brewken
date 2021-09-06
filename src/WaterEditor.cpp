@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "WaterEditor.h"
 
 #include <QDebug>
@@ -74,6 +74,7 @@ void WaterEditor::newWater(QString folder) {
 
    qDebug() << Q_FUNC_INFO << "Creating new Water, " << name;
 
+   // .:TODO:. Change to shared_ptr as currently leads to memory leak in clearAndClose()
    Water* w = new Water(name);
    if ( ! folder.isEmpty() ) {
       w->setFolder(folder);
@@ -160,9 +161,8 @@ void WaterEditor::changed(QMetaProperty prop, QVariant /*val*/)
    return;
 }
 
-void WaterEditor::saveAndClose()
-{
-   if (this->obs == nullptr) {
+void WaterEditor::saveAndClose() {
+   if (!this->obs) {
       return;
    }
 
@@ -179,10 +179,9 @@ void WaterEditor::saveAndClose()
    this->obs->setAlkalinityAsHCO3(comboBox_alk->currentText() == QString("HCO3"));
    this->obs->setNotes( plainTextEdit_notes->toPlainText());
 
-   if (this->obs->cacheOnly()) {
+   if (this->obs->key() < 0) {
       qDebug() << Q_FUNC_INFO << "writing " << this->obs->name();
       ObjectStoreWrapper::insert(*this->obs);
-      this->obs->setCacheOnly(false);
    }
 
    setVisible(false);

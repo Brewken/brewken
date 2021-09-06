@@ -219,28 +219,28 @@ void EquipmentEditor::save() {
          return;
    }
 
-   obsEquip->setName( lineEdit_name->text() );
-   obsEquip->setBoilSize_l( lineEdit_boilSize->toSI() );
-   obsEquip->setBatchSize_l( lineEdit_batchSize->toSI() );
-   obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI() );
+   this->obsEquip->setName( lineEdit_name->text() );
+   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSI() );
+   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSI() );
+   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI() );
 
-   obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI() );
+   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI() );
 
-   obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toSI() );
-   obsEquip->setBoilTime_min( lineEdit_boilTime->toSI());
-   obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI() );
-   obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI() );
-   obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI() );
-   obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI() );
-   obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI() );
-   obsEquip->setGrainAbsorption_LKg( ga_LKg );
-   obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI() );
-   obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toSI() );
+   this->obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toSI() );
+   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSI());
+   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI() );
+   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI() );
+   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI() );
+   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI() );
+   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI() );
+   this->obsEquip->setGrainAbsorption_LKg( ga_LKg );
+   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI() );
+   this->obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toSI() );
 
-   obsEquip->setNotes(textEdit_notes->toPlainText());
-   obsEquip->setCalcBoilVolume(checkBox_calcBoilVolume->checkState() == Qt::Checked);
+   this->obsEquip->setNotes(textEdit_notes->toPlainText());
+   this->obsEquip->setCalcBoilVolume(checkBox_calcBoilVolume->checkState() == Qt::Checked);
 
-   if ( obsEquip->cacheOnly() ) {
+   if (this->obsEquip->key() < 0) {
       ObjectStoreWrapper::insert(*obsEquip);
    }
    setVisible(false);
@@ -258,6 +258,7 @@ void EquipmentEditor::newEquipment(QString folder) {
    if( name.isEmpty() )
       return;
 
+   // .:TODO:. Change to shared_ptr as currently leads to memory leak
    Equipment* e = new Equipment(name);
 
    if ( ! folder.isEmpty() )

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "SimpleUndoableUpdate.h"
 
 // Uncomment the following and the stacktrace stuff below to debug issues tripping the isValid assert below

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Hop.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MODEL_HOP_H
 #define MODEL_HOP_H
 #pragma once
@@ -79,7 +79,7 @@ public:
    enum Use {Mash, First_Wort, Boil, UseAroma, Dry_Hop }; // NOTE: way bad. We have a duplicate enum (Aroma)
    Q_ENUMS( Type Form Use )
 
-   Hop(QString name = "", bool cache = true);
+   Hop(QString name = "");
    Hop(NamedParameterBundle const & namedParameterBundle);
    Hop(Hop const & other);
 

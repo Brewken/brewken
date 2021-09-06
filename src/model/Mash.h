@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -18,10 +18,12 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MODEL_MASH_H
 #define MODEL_MASH_H
 #pragma once
+
+#include <memory> // For PImpl
 
 #include <QSqlRecord>
 #include <QVector>
@@ -62,15 +64,12 @@ class Mash : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashs")
 
-
-   friend class MashDesigner;
-   friend class MashEditor;
 public:
-   Mash(QString name = "", bool cache = true);
+   Mash(QString name = "");
    Mash(NamedParameterBundle const & namedParameterBundle);
    Mash(Mash const& other);
 
-   virtual ~Mash() = default;
+   virtual ~Mash();
 
    //! \brief The initial grain temp in Celsius.
    Q_PROPERTY( double grainTemp_c READ grainTemp_c WRITE setGrainTemp_c /*NOTIFY changed*/ /*changedGrainTemp_c*/ )
@@ -167,6 +166,10 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
+
    double m_grainTemp_c;
    QString m_notes;
    double m_tunTemp_c;
@@ -175,9 +178,6 @@ private:
    double m_tunWeight_kg;
    double m_tunSpecificHeat_calGC;
    bool m_equipAdjust;
-
-//   QList<MashStep*> m_mashSteps;
-   QVector<int> mashStepIds;
 
 };
 

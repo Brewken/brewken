@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStoreWrapper.h is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_OBJECTSTOREWRAPPER_H
 #define DATABASE_OBJECTSTOREWRAPPER_H
 #pragma once
@@ -35,6 +35,13 @@ namespace ObjectStoreWrapper {
     */
    template<class NE> NE * getByIdRaw(int id) {
       return ObjectStoreTyped<NE>::getInstance().getById(id).get();
+   }
+
+   /**
+    * \brief Similar to \c getById but returns a list of cached objects matching a supplied list of IDs
+    */
+   template<class NE> QList<std::shared_ptr<NE> > getByIds(QVector<int> const & listOfIds) {
+      return ObjectStoreTyped<NE>::getInstance().getByIds(listOfIds);
    }
 
    template<class NE> QList<std::shared_ptr<NE> > getAll() {
@@ -113,13 +120,6 @@ namespace ObjectStoreWrapper {
 
    template<class NE> void hardDelete(NE const & ne) {
       ObjectStoreTyped<NE>::getInstance().hardDelete(ne.key());
-      return;
-   }
-
-   template<class NE> void hardDelete(std::shared_ptr<NE> ne) {
-      if (ne.get()) {
-        ObjectStoreTyped<NE>::getInstance().hardDelete(ne->key());
-      }
       return;
    }
 

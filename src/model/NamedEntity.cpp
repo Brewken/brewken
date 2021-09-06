@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/NamedEntity.h"
 
 #include <typeinfo>
@@ -28,11 +28,10 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-NamedEntity::NamedEntity(int key,  bool cache, QString t_name, bool t_display, QString folder) :
+NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
    QObject    {nullptr  },
-   m_key      {key      },
+   m_key      {-1       },
    parentKey  {-1       },
-   m_cacheOnly{cache    },
    m_folder   {folder   },
    m_name     {t_name   },
    m_display  {t_display},
@@ -45,7 +44,6 @@ NamedEntity::NamedEntity(NamedEntity const & other) :
    QObject     {nullptr          }, // QObject doesn't have a copy constructor, so just make a new one
    m_key       {-1               }, // We don't want to copy the other object's key/ID
    parentKey   {other.parentKey  },
-   m_cacheOnly {other.m_cacheOnly},
    m_folder    {other.m_folder   },
    m_name      {other.m_name     },
    m_display   {other.m_display  },
@@ -72,7 +70,6 @@ NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject{nullptr},
    m_key      {namedParameterBundle(PropertyNames::NamedEntity::key, -1)          },
    parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },
-   m_cacheOnly{false                                                              },
    m_folder   {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})},
    m_name     {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  },
    m_display  {namedParameterBundle(PropertyNames::NamedEntity::display, true)    },
@@ -96,6 +93,15 @@ void NamedEntity::makeChild(NamedEntity const & copiedFrom) {
    if (this->parentKey <= 0) {
       this->parentKey = copiedFrom.m_key;
    }
+
+   //
+   // A _child_ of a Hop (or Style/Fermentable/etc) is "an instance of use of" the parent Hop (etc).  Thus we don't want
+   // it to show up in the list of all Hops (etc).
+   //
+   // .:TBD:. It would be nicer to do away with m_display and have NamedEntity::display() do some logic (eg don't
+   // display if deleted or has a parent) that might be overridden by Recipe to add the extra logic around ancestors.
+   //
+   this->m_display = false;
 
    // So, now, we should have some plausible parent ID, and in particular we should not be our own parent!
    Q_ASSERT(this->parentKey != this->m_key);
@@ -234,10 +240,6 @@ int NamedEntity::getParentKey() const {
    return this->parentKey;
 }
 
-bool NamedEntity::cacheOnly() const {
-   return this->m_cacheOnly;
-}
-
 void NamedEntity::setParentKey(int parentKey) {
    this->parentKey = parentKey;
 
@@ -255,13 +257,8 @@ void NamedEntity::setParentKey(int parentKey) {
    return;
 }
 
-void NamedEntity::setCacheOnly(bool cache) {
-   // The m_cacheOnly member variable is not stored in the DB, so we don't call this->propagatePropertyChange etc here
-   this->m_cacheOnly = cache;
-   return;
-}
-
 void NamedEntity::setBeingModified(bool set) {
+   // The m_beingModified member variable is not stored in the DB, so we don't call this->propagatePropertyChange etc here
    this->m_beingModified = set;
    return;
 }
@@ -310,16 +307,15 @@ void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
    // At the moment, the only thing we want to do in this pre-change check is to see whether we need to version a
    // Recipe.  Obviously we leave all the details of that to the Recipe-related namespace.
    //
-   RecipeHelper::prepareForPropertyChange(*this, propertyName);
+   // Obviously nothing gets versioned if it's not yet in the DB
+   //
+   if (this->key() > 0) {
+      RecipeHelper::prepareForPropertyChange(*this, propertyName);
+   }
    return;
 }
 
 void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bool notify) const {
-   // If we're in "cache only" mode, there's nothing to do
-   if (this->m_cacheOnly) {
-      return;
-   }
-
    // If we're already stored in the object store, tell it about the property change so that it can write it to the
    // database.  (We don't pass the new value as it will get read out of the object via propertyName.)
    if (this->m_key > 0) {

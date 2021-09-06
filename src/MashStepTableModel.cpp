@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "MashStepTableModel.h"
 
 #include <QAbstractTableModel>
@@ -63,7 +63,7 @@ void MashStepTableModel::addMashStep(MashStep * mashStep)
    int size {this->steps.size()};
    beginInsertRows( QModelIndex(), size, size );
    this->steps.append(mashStep);
-   connect( mashStep, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
+   connect(mashStep, &NamedEntity::changed, this, &MashStepTableModel::mashStepChanged);
    //reset(); // Tell everybody that the table has changed.
    endInsertRows();
    return;

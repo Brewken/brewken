@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * MashWizard.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Adam Hawes <ach@hawes.net.au>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "MashWizard.h"
 
 #include <QButtonGroup>
@@ -48,9 +48,10 @@ MashWizard::MashWizard(QWidget* parent) : QDialog(parent)
 
 //   radioButton_batchSparge->setChecked(true);
 
-   connect(bGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(toggleSpinBox(QAbstractButton*)));
-   connect(buttonBox, &QDialogButtonBox::accepted, this, &MashWizard::wizardry );
-   connect(buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close );
+   connect(bGroup,    QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this, &MashWizard::toggleSpinBox);
+   connect(buttonBox, &QDialogButtonBox::accepted,                                    this, &MashWizard::wizardry);
+   connect(buttonBox, &QDialogButtonBox::rejected,                                    this, &QWidget::close);
+   return;
 }
 
 void MashWizard::toggleSpinBox(QAbstractButton* button)
@@ -159,7 +160,6 @@ void MashWizard::wizardry()
       return;
 
    Mash* mash = recObs->mash();
-   MashStep* mashStep;
    int i, j;
    double thickness_LKg;
    double thickNum;
@@ -182,7 +182,7 @@ void MashWizard::wizardry()
    QList<MashStep*> tmp;
 
    // We ensured that there was at least one mash step when we displayed the thickness dialog in show().
-   mashStep = steps.at(0);
+   MashStep* mashStep = steps.at(0);
    if ( mashStep == nullptr ) {
       qCritical() << "MashWizard::wizardry(): first mash step was null.";
       return;
@@ -370,7 +370,8 @@ void MashWizard::wizardry()
          int numSteps = spinBox_batches->value();
          double volPerBatch = spargeWater_l/numSteps; // its evil, but deal with it
          for(int i=0; i < numSteps; ++i ) {
-            mashStep = new MashStep("", true);
+            // .:TODO:. Change to shared_ptr as potential memory leak
+            mashStep = new MashStep("");
 
             mashStep->setType(MashStep::batchSparge);
             mashStep->setName(tr("Batch Sparge %1").arg(i+1));
@@ -379,9 +380,8 @@ void MashWizard::wizardry()
             mashStep->setEndTemp_c(tw);
             mashStep->setStepTemp_c(tf);
             mashStep->setStepTime_min(15);
-            //mashStep->setMash(mash);
+            mashStep->setMashId(mash->key());
             ObjectStoreWrapper::insert(*mashStep);
-            mashStep->setCacheOnly(false);
             steps.append(mashStep);
             emit mashStep->changed(
                mashStep->metaObject()->property(
@@ -393,7 +393,8 @@ void MashWizard::wizardry()
       }
       // fly sparge, I think
       else {
-         mashStep = new MashStep("", true);
+         // .:TODO:. Change to shared_ptr as potential memory leak
+         mashStep = new MashStep("");
 
          mashStep->setName(tr("Fly Sparge"));
          mashStep->setType(MashStep::flySparge);
@@ -402,9 +403,8 @@ void MashWizard::wizardry()
          mashStep->setEndTemp_c(tw);
          mashStep->setStepTemp_c(tf);
          mashStep->setStepTime_min(15);
-         //mashStep->setMash(mash);
+         mashStep->setMashId(mash->key());
          ObjectStoreWrapper::insert(*mashStep);
-         mashStep->setCacheOnly(false);
          steps.append(mashStep);
          emit mashStep->changed(
             mashStep->metaObject()->property(

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -15,14 +15,13 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_DATABASESCHEMAHELPER_H
 #define DATABASE_DATABASESCHEMAHELPER_H
 #pragma once
 
 #include <QSqlDatabase>
 
-//#include "Brewken.h"
 #include "Database.h"
 
 class QTextStream;
@@ -51,7 +50,7 @@ namespace DatabaseSchemaHelper {
    int currentVersion(QSqlDatabase db = QSqlDatabase());
 
    //! \brief does the heavy lifting to copy the contents from one db to the next
-   void copyDatabase(Database::DbType oldType, Database::DbType newType, QSqlDatabase connectionNew);
+   bool copyToNewDatabase(Database & newDatabase, QSqlDatabase & connectionNew);
 
    /**
     * \brief Populates (or updates) default Recipes, Hops, Styles, etc in the DB

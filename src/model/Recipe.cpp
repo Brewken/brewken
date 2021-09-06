@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/Recipe.h"
 
 #include <cmath> // For pow/log
@@ -297,9 +297,9 @@ ObjectStore & Recipe::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Recipe>::getInstance();
 }
 
-Recipe::Recipe(QString name, bool cache) :
-   NamedEntity         {-1, cache, name, true        },
-   pimpl               {new impl{*this}              },
+Recipe::Recipe(QString name) :
+   NamedEntity         {name, true                   },
+   pimpl               {std::make_unique<impl>(*this)},
    m_type              {"All Grain"                  },
    m_brewer            {""                           },
    m_asstBrewer        {"Brewken: free beer software"},
@@ -340,45 +340,45 @@ Recipe::Recipe(QString name, bool cache) :
 
 Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle},
-   pimpl{new impl{*this}},
-m_type              {
-   // .:TODO:. Change so we store enum not string!
-   RECIPE_TYPE_STRING_TO_TYPE.key(static_cast<Recipe::Type>(namedParameterBundle(PropertyNames::Recipe::recipeType).toInt()))
-},
-m_brewer            {namedParameterBundle(PropertyNames::Recipe::brewer).toString()},
-m_asstBrewer        {namedParameterBundle(PropertyNames::Recipe::asstBrewer).toString()},
-m_batchSize_l       {namedParameterBundle(PropertyNames::Recipe::batchSize_l).toDouble()},
-m_boilSize_l        {namedParameterBundle(PropertyNames::Recipe::boilSize_l).toDouble()},
-m_boilTime_min      {namedParameterBundle(PropertyNames::Recipe::boilTime_min).toDouble()},
-m_efficiency_pct    {namedParameterBundle(PropertyNames::Recipe::efficiency_pct).toDouble()},
-m_fermentationStages{namedParameterBundle(PropertyNames::Recipe::fermentationStages).toInt()},
-m_primaryAge_days   {namedParameterBundle(PropertyNames::Recipe::primaryAge_days).toDouble()},
-m_primaryTemp_c     {namedParameterBundle(PropertyNames::Recipe::primaryTemp_c).toDouble()},
-m_secondaryAge_days {namedParameterBundle(PropertyNames::Recipe::secondaryAge_days).toDouble()},
-m_secondaryTemp_c   {namedParameterBundle(PropertyNames::Recipe::secondaryTemp_c).toDouble()},
-m_tertiaryAge_days  {namedParameterBundle(PropertyNames::Recipe::tertiaryAge_days).toDouble()},
-m_tertiaryTemp_c    {namedParameterBundle(PropertyNames::Recipe::tertiaryTemp_c).toDouble()},
-m_age               {namedParameterBundle(PropertyNames::Recipe::age).toDouble()},
-m_ageTemp_c         {namedParameterBundle(PropertyNames::Recipe::ageTemp_c).toDouble()},
-m_date              {namedParameterBundle(PropertyNames::Recipe::date).toDate()},
-m_carbonation_vols  {namedParameterBundle(PropertyNames::Recipe::carbonation_vols).toDouble()},
-m_forcedCarbonation {namedParameterBundle(PropertyNames::Recipe::forcedCarbonation).toBool()},
-m_primingSugarName  {namedParameterBundle(PropertyNames::Recipe::primingSugarName).toString()},
-m_carbonationTemp_c {namedParameterBundle(PropertyNames::Recipe::carbonationTemp_c).toDouble()},
-m_primingSugarEquiv {namedParameterBundle(PropertyNames::Recipe::primingSugarEquiv).toDouble()},
-m_kegPrimingFactor  {namedParameterBundle(PropertyNames::Recipe::kegPrimingFactor).toDouble()},
-m_notes             {namedParameterBundle(PropertyNames::Recipe::notes).toString()},
-m_tasteNotes        {namedParameterBundle(PropertyNames::Recipe::tasteNotes).toString()},
-m_tasteRating       {namedParameterBundle(PropertyNames::Recipe::tasteRating).toDouble()},
-styleId             {namedParameterBundle(PropertyNames::Recipe::styleId).toInt()},
-mashId              {namedParameterBundle(PropertyNames::Recipe::mashId).toInt()},
-equipmentId         {namedParameterBundle(PropertyNames::Recipe::equipmentId).toInt()},
-m_og                {namedParameterBundle(PropertyNames::Recipe::og).toDouble()},
-m_fg                {namedParameterBundle(PropertyNames::Recipe::fg).toDouble()},
-m_locked            {namedParameterBundle(PropertyNames::Recipe::locked).toBool()},
-m_ancestor_id       {namedParameterBundle(PropertyNames::Recipe::ancestorId).toInt()},
-m_ancestors         {},
-m_hasDescendants    {false                                                                     } {
+   pimpl{std::make_unique<impl>(*this)},
+   m_type              {
+      // .:TODO:. Change so we store enum not string!
+      RECIPE_TYPE_STRING_TO_TYPE.key(static_cast<Recipe::Type>(namedParameterBundle(PropertyNames::Recipe::recipeType).toInt()))
+   },
+   m_brewer            {namedParameterBundle(PropertyNames::Recipe::brewer).toString()},
+   m_asstBrewer        {namedParameterBundle(PropertyNames::Recipe::asstBrewer).toString()},
+   m_batchSize_l       {namedParameterBundle(PropertyNames::Recipe::batchSize_l).toDouble()},
+   m_boilSize_l        {namedParameterBundle(PropertyNames::Recipe::boilSize_l).toDouble()},
+   m_boilTime_min      {namedParameterBundle(PropertyNames::Recipe::boilTime_min).toDouble()},
+   m_efficiency_pct    {namedParameterBundle(PropertyNames::Recipe::efficiency_pct).toDouble()},
+   m_fermentationStages{namedParameterBundle(PropertyNames::Recipe::fermentationStages).toInt()},
+   m_primaryAge_days   {namedParameterBundle(PropertyNames::Recipe::primaryAge_days).toDouble()},
+   m_primaryTemp_c     {namedParameterBundle(PropertyNames::Recipe::primaryTemp_c).toDouble()},
+   m_secondaryAge_days {namedParameterBundle(PropertyNames::Recipe::secondaryAge_days).toDouble()},
+   m_secondaryTemp_c   {namedParameterBundle(PropertyNames::Recipe::secondaryTemp_c).toDouble()},
+   m_tertiaryAge_days  {namedParameterBundle(PropertyNames::Recipe::tertiaryAge_days).toDouble()},
+   m_tertiaryTemp_c    {namedParameterBundle(PropertyNames::Recipe::tertiaryTemp_c).toDouble()},
+   m_age               {namedParameterBundle(PropertyNames::Recipe::age).toDouble()},
+   m_ageTemp_c         {namedParameterBundle(PropertyNames::Recipe::ageTemp_c).toDouble()},
+   m_date              {namedParameterBundle(PropertyNames::Recipe::date).toDate()},
+   m_carbonation_vols  {namedParameterBundle(PropertyNames::Recipe::carbonation_vols).toDouble()},
+   m_forcedCarbonation {namedParameterBundle(PropertyNames::Recipe::forcedCarbonation).toBool()},
+   m_primingSugarName  {namedParameterBundle(PropertyNames::Recipe::primingSugarName).toString()},
+   m_carbonationTemp_c {namedParameterBundle(PropertyNames::Recipe::carbonationTemp_c).toDouble()},
+   m_primingSugarEquiv {namedParameterBundle(PropertyNames::Recipe::primingSugarEquiv).toDouble()},
+   m_kegPrimingFactor  {namedParameterBundle(PropertyNames::Recipe::kegPrimingFactor).toDouble()},
+   m_notes             {namedParameterBundle(PropertyNames::Recipe::notes).toString()},
+   m_tasteNotes        {namedParameterBundle(PropertyNames::Recipe::tasteNotes).toString()},
+   m_tasteRating       {namedParameterBundle(PropertyNames::Recipe::tasteRating).toDouble()},
+   styleId             {namedParameterBundle(PropertyNames::Recipe::styleId).toInt()},
+   mashId              {namedParameterBundle(PropertyNames::Recipe::mashId).toInt()},
+   equipmentId         {namedParameterBundle(PropertyNames::Recipe::equipmentId).toInt()},
+   m_og                {namedParameterBundle(PropertyNames::Recipe::og).toDouble()},
+   m_fg                {namedParameterBundle(PropertyNames::Recipe::fg).toDouble()},
+   m_locked            {namedParameterBundle(PropertyNames::Recipe::locked).toBool()},
+   m_ancestor_id       {namedParameterBundle(PropertyNames::Recipe::ancestorId).toInt()},
+   m_ancestors         {},
+   m_hasDescendants    {false                                                                     } {
    // At this stage, we haven't set any Hops, Fermentables, etc.  This is deliberate because the caller typically needs
    // to access subsidiary records to obtain this info.   Callers will usually use setters (setHopIds, etc but via
    // setProperty) to finish constructing the object.
@@ -388,43 +388,43 @@ m_hasDescendants    {false                                                      
 
 Recipe::Recipe(Recipe const & other) :
    NamedEntity{other},
-   pimpl{new impl{*this}},
-m_type              {other.m_type              },
-m_brewer            {other.m_brewer            },
-m_asstBrewer        {other.m_asstBrewer        },
-m_batchSize_l       {other.m_batchSize_l       },
-m_boilSize_l        {other.m_boilSize_l        },
-m_boilTime_min      {other.m_boilTime_min      },
-m_efficiency_pct    {other.m_efficiency_pct    },
-m_fermentationStages{other.m_fermentationStages},
-m_primaryAge_days   {other.m_primaryAge_days   },
-m_primaryTemp_c     {other.m_primaryTemp_c     },
-m_secondaryAge_days {other.m_secondaryAge_days },
-m_secondaryTemp_c   {other.m_secondaryTemp_c   },
-m_tertiaryAge_days  {other.m_tertiaryAge_days  },
-m_tertiaryTemp_c    {other.m_tertiaryTemp_c    },
-m_age               {other.m_age               },
-m_ageTemp_c         {other.m_ageTemp_c         },
-m_date              {other.m_date              },
-m_carbonation_vols  {other.m_carbonation_vols  },
-m_forcedCarbonation {other.m_forcedCarbonation },
-m_primingSugarName  {other.m_primingSugarName  },
-m_carbonationTemp_c {other.m_carbonationTemp_c },
-m_primingSugarEquiv {other.m_primingSugarEquiv },
-m_kegPrimingFactor  {other.m_kegPrimingFactor  },
-m_notes             {other.m_notes             },
-m_tasteNotes        {other.m_tasteNotes        },
-m_tasteRating       {other.m_tasteRating       },
-styleId             {other.styleId             },  // But see additional logic in body
-mashId              {other.mashId              },  // But see additional logic in body
-equipmentId         {other.equipmentId         },  // But see additional logic in body
-m_og                {other.m_og                },
-m_fg                {other.m_fg                },
-m_locked            {other.m_locked            },
-// Copying a Recipe doesn't copy its descendants
-m_ancestor_id       {-1                        },
-m_ancestors         {},
-m_hasDescendants    {false                     } {
+   pimpl{std::make_unique<impl>(*this)},
+   m_type              {other.m_type              },
+   m_brewer            {other.m_brewer            },
+   m_asstBrewer        {other.m_asstBrewer        },
+   m_batchSize_l       {other.m_batchSize_l       },
+   m_boilSize_l        {other.m_boilSize_l        },
+   m_boilTime_min      {other.m_boilTime_min      },
+   m_efficiency_pct    {other.m_efficiency_pct    },
+   m_fermentationStages{other.m_fermentationStages},
+   m_primaryAge_days   {other.m_primaryAge_days   },
+   m_primaryTemp_c     {other.m_primaryTemp_c     },
+   m_secondaryAge_days {other.m_secondaryAge_days },
+   m_secondaryTemp_c   {other.m_secondaryTemp_c   },
+   m_tertiaryAge_days  {other.m_tertiaryAge_days  },
+   m_tertiaryTemp_c    {other.m_tertiaryTemp_c    },
+   m_age               {other.m_age               },
+   m_ageTemp_c         {other.m_ageTemp_c         },
+   m_date              {other.m_date              },
+   m_carbonation_vols  {other.m_carbonation_vols  },
+   m_forcedCarbonation {other.m_forcedCarbonation },
+   m_primingSugarName  {other.m_primingSugarName  },
+   m_carbonationTemp_c {other.m_carbonationTemp_c },
+   m_primingSugarEquiv {other.m_primingSugarEquiv },
+   m_kegPrimingFactor  {other.m_kegPrimingFactor  },
+   m_notes             {other.m_notes             },
+   m_tasteNotes        {other.m_tasteNotes        },
+   m_tasteRating       {other.m_tasteRating       },
+   styleId             {other.styleId             },  // But see additional logic in body
+   mashId              {other.mashId              },  // But see additional logic in body
+   equipmentId         {other.equipmentId         },  // But see additional logic in body
+   m_og                {other.m_og                },
+   m_fg                {other.m_fg                },
+   m_locked            {other.m_locked            },
+   // Copying a Recipe doesn't copy its descendants
+   m_ancestor_id       {-1                        },
+   m_ancestors         {},
+   m_hasDescendants    {false                     } {
    setObjectName("Recipe"); // .:TBD:. Would be good to understand why we need this
 
    //
@@ -437,6 +437,9 @@ m_hasDescendants    {false                     } {
    // Hops, Fermentables etc as some attributes of the recipe (eg how much and when to add) are stored inside these
    // ingredients.
    //
+   // We _don't_ want to copy BrewNotes (an instance of brewing the Recipe).  (This is easy not to do as we don't
+   // currently store BrewNote IDs in Recipe.)
+   //
    this->pimpl->copyList<Fermentable>(*this, other);
    this->pimpl->copyList<Hop> (*this, other);
    this->pimpl->copyList<Instruction>(*this, other);
@@ -444,8 +447,6 @@ m_hasDescendants    {false                     } {
    this->pimpl->copyList<Salt> (*this, other);
    this->pimpl->copyList<Water> (*this, other);
    this->pimpl->copyList<Yeast> (*this, other);
-
-   // .:TBD:. What about BrewNotes?  We don't currently store their IDs in Recipe
 
    //
    // You might think that Style, Mash and Equipment could safely be shared between Recipes.   However, AFAICT, none of
@@ -479,7 +480,6 @@ m_hasDescendants    {false                     } {
 
    return;
 }
-
 
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
@@ -2735,15 +2735,6 @@ QList<BrewNote *> RecipeHelper::brewNotesForRecipeAndAncestors(Recipe const & re
 }
 
 void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst const & propertyName) {
-   //
-   // .:TBD:. MY 2021-07-23  This is largely working, in that, with automatic versioning enabled, every time you make a
-   // change to something (a Recipe's own field or a field on an ingredient, the Mash, etc) it generates a new version
-   // of the Recipe.  However, I wonder it's really what we want.  If every single property change generates a new
-   // version of the Recipe then you could end up with a lot of Recipe versions.  If we moved the automatic versioning
-   // logic from the model to the UI then it could be a bit smarter -- eg if the user changes two properties on a
-   // Fermentable in one edit then, when they click Save, it could generate one new version of the Recipe rather than
-   // two.
-   //
 
    //
    // If the user has said they don't want versioning, just return
@@ -2755,10 +2746,22 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst cons
    qDebug() <<
       Q_FUNC_INFO << "Modifying: " << ne.metaObject()->className() << "#" << ne.key() << "property" << propertyName;
 
-   // If the object we're about to change a property on is a Recipe or is used in a Recipe, then that Recipe probably
-   // needs a new version -- unless it's already being versioned.
+   //
+   // If the object we're about to change a property on is a Recipe or is used in a Recipe, then it might need a new
+   // version -- unless it's already being versioned.
+   //
    Recipe * owner = ne.getOwningRecipe();
    if (!owner || owner->isBeingModified()) {
+      // Change is not related to a recipe or the recipe is already being modified
+      return;
+   }
+
+   //
+   // Automatic versioning means that, once a recipe is brewed, it is "soft locked" and the first change should spawn a
+   // new version.  Any subsequent change should not spawn a new version until it is brewed again.
+   //
+   if (owner->brewNotes().empty()) {
+      // Recipe hasn't been brewed
       return;
    }
 
@@ -2790,6 +2793,10 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst cons
    ObjectStoreWrapper::insert(spawn);
 
    qDebug() << Q_FUNC_INFO << "Copied Recipe #" << owner->key() << "to new Recipe #" << spawn->key();
+
+   // We assert that the newly created version of the recipe has not yet been brewed (and therefore will not get
+   // automatically versioned on subsequent changes before it is brewed).
+   Q_ASSERT(spawn->brewNotes().empty());
 
    //
    // By default, copying a Recipe does not copy all its ancestry.  Here, we want the copy to become our ancestor (ie

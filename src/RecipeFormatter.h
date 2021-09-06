@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * RecipeFormatter.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef RECIPE_FORMATTER_H
 #define RECIPE_FORMATTER_H
 #pragma once
@@ -62,7 +62,6 @@ public:
    QString getToolTip(Misc* misc);
    QString getToolTip(Yeast* yeast);
    QString getToolTip(Water* water);
-   QString getLabelToolTip();
 
    /*!
     * \brief Show the print preview

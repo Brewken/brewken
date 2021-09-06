@@ -97,6 +97,7 @@
 #include "HopEditor.h"
 #include "HopSortFilterProxyModel.h"
 #include "HopTableModel.h"
+#include "Html.h"
 #include "HydrometerTool.h"
 #include "InventoryFormatter.h"
 #include "MashDesigner.h"
@@ -144,6 +145,33 @@
 #include "YeastEditor.h"
 #include "YeastSortFilterProxyModel.h"
 #include "YeastTableModel.h"
+
+namespace {
+
+   /**
+    * \brief Generates the pop-up you see when you hover over the Brewken image above the trees, which is supposed to
+    *        show the database type you are connected to, and some useful information with respect to that database.
+    */
+   QString getLabelToolTip() {
+      Database const & database = Database::instance();
+      QString toolTip{};
+      QTextStream toolTipAsStream{&toolTip};
+      toolTipAsStream <<
+         "<html><head><style type=\"text/css\">" << Html::getCss(":/css/tooltip.css") << "</style></head>"
+         "<body>"
+         "<div id=\"headerdiv\">"
+         "<table id=\"tooltip\">"
+         "<caption>Using " << DatabaseHelper::getNameFromDbTypeName(database.dbType()) << "</caption>";
+      auto connectionParms = database.displayableConnectionParms();
+      for (auto parm : connectionParms) {
+         toolTipAsStream <<
+            "<tr><td class=\"left\">" << parm.first << ": </td><td class=\"value\">" << parm.second << "</td>";
+      }
+      toolTipAsStream << "</table></body></html>";
+      return toolTip;
+   }
+
+}
 
 // This private implementation class holds all private non-virtual members of MainWindow
 class MainWindow::impl {
@@ -377,12 +405,13 @@ void MainWindow::init() {
 
    // No connections from the database yet? Oh FSM, that probably means I'm
    // doing it wrong again.
-   // .:TODO:. Change this so we use the newere deleted signal!
+   // .:TODO:. Change this so we use the newer deleted signal!
    connect(&ObjectStoreTyped<BrewNote>::getInstance(), &ObjectStoreTyped<BrewNote>::signalObjectDeleted, this, &MainWindow::closeBrewNote);
 
-   // setup the pretty tool tip. It doesn't really belong anywhere, so here it
-   // is
-   label_Brewken->setToolTip( recipeFormatter->getLabelToolTip());
+   // Set up the pretty tool tip. It doesn't really belong anywhere, so here it is
+   // .:TODO:. When we allow users to change databases without restarting, we'll need to make sure to call this whenever
+   // the databae is changed (as setToolTip() just takes static text as its parameter).
+   label_Brewken->setToolTip(getLabelToolTip());
 
    qDebug() << Q_FUNC_INFO << "MainWindow initialisation complete";
    return;
@@ -2309,7 +2338,6 @@ void MainWindow::newRecipe()
    }
 
    ObjectStoreWrapper::insert(*newRec);
-   newRec->setCacheOnly(false);
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?
@@ -2611,7 +2639,7 @@ void MainWindow::backup()
    // If the filename returned from the dialog is empty, it means the user clicked cancel, so we should stop trying to do the backup
    if (!backupFileName.isEmpty())
    {
-      bool success = Database::backupToFile(backupFileName);
+      bool success = Database::instance().backupToFile(backupFileName);
 
       if( ! success )
          QMessageBox::warning( this, tr("Oops!"), tr("Could not copy the files for some reason."));
@@ -2633,7 +2661,7 @@ void MainWindow::restoreFromBackup()
    }
 
    QString restoreDbFile = QFileDialog::getOpenFileName(this, tr("Choose File"), "", tr("SQLite (*.sqlite)"));
-   bool success = Database::restoreFromFile(restoreDbFile);
+   bool success = Database::instance().restoreFromFile(restoreDbFile);
 
    if( ! success )
       QMessageBox::warning( this, tr("Oops!"), tr("For some reason, the operation failed.") );
@@ -2661,7 +2689,7 @@ void MainWindow::addMashStep() {
    }
 
    // This ultimately gets stored in MainWindow::addMashStepToMash()
-   MashStep* step = new MashStep("", true);
+   MashStep* step = new MashStep("");
    //step->setMash(recipeObs->mash());
    this->mashStepEditor->setMashStep(step);
    this->mashStepEditor->setVisible(true);
@@ -2841,28 +2869,11 @@ void MainWindow::copyRecipe()
       return;
    }
 
-/*
-   Recipe* newRec = Database::instance().newRecipe(recipeObs); // Create a deep copy.
-   if ( newRec )
-      newRec->setName(name);
-   */
    auto newRec = std::make_shared<Recipe>(*this->recipeObs); // Create a deep copy
    newRec->setName(name);
    ObjectStoreTyped<Recipe>::getInstance().insert(newRec);
    return;
 }
-
-/*void MainWindow::setMashToCurrentlySelected()
-{
-   if( recipeObs == nullptr )
-      return;
-
-   Mash* selected = mashListModel->at(mashComboBox->currentIndex());
-   if (selected) {
-      Database::instance().newMash(selected);
-      mashButton->setMash(selected);
-   }
-}*/
 
 void MainWindow::saveMash() {
    if ( recipeObs == nullptr || recipeObs->mash() == nullptr ) {

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/ObjectStoreTyped.cpp is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -12,11 +12,12 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "database/ObjectStoreTyped.h"
 
 #include  <mutex> // for std::once_flag
 
+#include "database/DbTransaction.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -787,6 +788,21 @@ bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection) {
    return true;
 }
 
-QVector<ObjectStore const *> GetAllObjectStores() {
-   return AllObjectStores;
+bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase & connectionNew) {
+   //
+   // Start transaction
+   // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
+   // having called dbTransaction.commit().  (It will also turn foreign keys back on either way -- whether the
+   // transaction is committed or rolled back.)
+   //
+   DbTransaction dbTransaction{newDatabase, connectionNew, DbTransaction::DISABLE_FOREIGN_KEYS};
+
+   for (ObjectStore const * objectStore : AllObjectStores) {
+      if (!objectStore->writeAllToNewDb(newDatabase, connectionNew)) {
+         return false;
+      }
+   }
+
+   dbTransaction.commit();
+   return true;
 }

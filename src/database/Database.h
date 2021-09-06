@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * database/Database.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
@@ -24,15 +24,18 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef DATABASE_H
 #define DATABASE_H
+#pragma once
 
 #include <memory> // For PImpl
 
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <QString>
+
+class BtStringConst;
 
 /*!
  * \class Database
@@ -105,13 +108,13 @@ public:
    static char const * getDefaultBackupFileName();
 
    //! backs up database to chosen file
-   static bool backupToFile(QString newDbFileName);
+   bool backupToFile(QString newDbFileName);
 
    //! backs up database to 'dir' in chosen directory
-   static bool backupToDir(QString dir, QString filename="");
+   bool backupToDir(QString dir, QString filename="");
 
    //! \brief Reverts database to that of chosen file.
-   static bool restoreFromFile(QString newDbFileStr);
+   bool restoreFromFile(QString newDbFileStr);
 
    static bool verifyDbConnection(Database::DbType testDb,
                                   QString const& hostname,
@@ -134,15 +137,7 @@ public:
     * will be the final implementation -- I can't help but think I should be
     * subclassing something
     */
-   Database::DbType dbType();
-
-   /*!
-    * \brief Different databases use different values for true and false.
-    * This method handles that difference, in a marginally extensible way
-    *
-    * .:TODO:. Pretty sure we can kill this once we retire TableSchema.cpp
-    */
-   static QString dbBoolean(bool flag, Database::DbType whichDb = Database::NODB);
+   Database::DbType dbType() const;
 
    /**
     * \brief Turn foreign key constraints on or off.  Typically, turning them off is only required during copying the
@@ -161,20 +156,16 @@ public:
     *           double
     *           QString
     *           QDate
-    *
-    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   template<typename T> char const * getDbNativeTypeName(Database::DbType whichDb = Database::NODB) const;
+   template<typename T> char const * getDbNativeTypeName() const;
 
    /**
     * \brief Returns the text we need to use to specify an integer column as primary key when creating a table, eg:
-    *           "PRIMARY KEY" for SQLite
+    *           "INTEGER PRIMARY KEY" for SQLite
     *           "SERIAL PRIMARY KEY" for PostgreSQL
     *           "AUTO_INCREMENT PRIMARY KEY" for MySQL / MariaDB
-    *
-    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getDbNativeIntPrimaryKeyModifier(Database::DbType whichDb = Database::NODB) const;
+   char const * getDbNativePrimaryKeyDeclaration() const;
 
    /**
     * \brief Returns a text template for an ALTER TABLE query to add a foreign key column to a table.  Callers should
@@ -183,15 +174,34 @@ public:
     *           • column name (to add) as argument 2
     *           • foreign key table name as argument 3
     *           • foreign key column name as argument 4
-    *
-    * \param whichDb Only needs to be specified if you want something other than the current DB
     */
-   char const * getSqlToAddColumnAsForeignKey(Database::DbType whichDb = Database::NODB) const;
+   char const * getSqlToAddColumnAsForeignKey() const;
 
    /*! Stores the date that we last asked the user to merge the
     *  data-space database to the user-space database.
     */
    static QDateTime lastDbMergeRequest;
+
+   /**
+    * \brief Returns a displayable set of name-value pairs for the connection details for the current database,
+    *        \b excluding password
+    */
+   QList<QPair<QString, QString>> displayableConnectionParms() const;
+
+   /**
+    * \brief This member function should be called after you have manually inserted into a primary key column that is
+    *        normally automatically populated by the database.  When you do such manual inserts, some databases (eg
+    *        PostgreSQL) need to be told to update the value they would use for the next automatically generated ID.
+    *
+    * \param connection The connection you used to do the manual inserts
+    * \param tableName  The table you inserted into
+    * \param columName  The primary key column on that table
+    *
+    * \return \c false if there was an error, \c true otherwise
+    */
+   bool updatePrimaryKeySequenceIfNecessary(QSqlDatabase & connection,
+                                            BtStringConst const & tableName,
+                                            BtStringConst const & columnName) const;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -214,5 +224,14 @@ private:
    //! Load database from file.
    bool load();
 };
+
+namespace DatabaseHelper {
+
+   /**
+    * \return displayable name for a given DB type
+    */
+   char const * getNameFromDbTypeName(Database::DbType whichDb);
+
+}
 
 #endif

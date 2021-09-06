@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "model/Style.h"
 
 #include <QDebug>
@@ -48,29 +48,29 @@ ObjectStore & Style::getObjectStoreTypedInstance() const {
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
-Style::Style(QString t_name, bool cacheOnly) :
-   NamedEntity(-1, cacheOnly, t_name, true),
-   m_category(QString()),
-   m_categoryNumber(QString()),
-   m_styleLetter(QString()),
-   m_styleGuide(QString()),
-   m_type(static_cast<Style::Type>(0)),
-   m_ogMin(0.0),
-   m_ogMax(0.0),
-   m_fgMin(0.0),
-   m_fgMax(0.0),
-   m_ibuMin(0.0),
-   m_ibuMax(0.0),
-   m_colorMin_srm(0.0),
-   m_colorMax_srm(0.0),
-   m_carbMin_vol(0.0),
-   m_carbMax_vol(0.0),
-   m_abvMin_pct(0.0),
-   m_abvMax_pct(0.0),
-   m_notes(QString()),
-   m_profile(QString()),
-   m_ingredients(QString()),
-   m_examples(QString()) {
+Style::Style(QString t_name) :
+   NamedEntity     {t_name, true},
+   m_category      {""},
+   m_categoryNumber{""},
+   m_styleLetter   {""},
+   m_styleGuide    {""},
+   m_type          {Style::Lager},
+   m_ogMin         {0.0},
+   m_ogMax         {0.0},
+   m_fgMin         {0.0},
+   m_fgMax         {0.0},
+   m_ibuMin        {0.0},
+   m_ibuMax        {0.0},
+   m_colorMin_srm  {0.0},
+   m_colorMax_srm  {0.0},
+   m_carbMin_vol   {0.0},
+   m_carbMax_vol   {0.0},
+   m_abvMin_pct    {0.0},
+   m_abvMax_pct    {0.0},
+   m_notes         {""},
+   m_profile       {""},
+   m_ingredients   {""},
+   m_examples      {""} {
    return;
 }
 
@@ -99,7 +99,6 @@ Style::Style(Style const & other) :
    m_examples      {other.m_examples      } {
    return;
 }
-
 
 Style::Style(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity     {namedParameterBundle},

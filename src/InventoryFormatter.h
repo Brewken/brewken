@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * InventoryFormatter.h is part of Brewken, and is copyright the following authors 2016-2021:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef INVENTORY_FORMATTER_H
 #define INVENTORY_FORMATTER_H
 

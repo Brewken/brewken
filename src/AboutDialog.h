@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * AboutDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef ABOUTDIALOG_H
 #define ABOUTDIALOG_H
 #pragma once

@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * model/Water.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #ifndef MODEL_WATER_H
 #define MODEL_WATER_H
 #pragma once
@@ -81,7 +81,7 @@ public:
 
    Q_ENUM(Types Ions)
 
-   Water(QString name = "", bool cache = true);
+   Water(QString name = "");
    Water(NamedParameterBundle const & namedParameterBundle);
    Water(Water const & other);
 

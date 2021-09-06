@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * RecipeFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 #include "RecipeFormatter.h"
 
 #include <QClipboard>
@@ -1458,48 +1458,6 @@ QString RecipeFormatter::getToolTip(Water* water) {
 
 void RecipeFormatter::toTextClipboard() {
    QApplication::clipboard()->setText(this->pimpl->getTextFormat());
-}
-
-QString RecipeFormatter::getLabelToolTip() {
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( "Using PostgreSQL");
-
-   // First row -- hostname and port
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-         .arg(tr("Hostname"))
-         .arg(PersistentSettings::value(PersistentSettings::Names::dbHostname).toString());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-         .arg(tr("Port"))
-         .arg(PersistentSettings::value(PersistentSettings::Names::dbPortnum).toInt());
-   // Second row -- schema and database
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-         .arg(tr("Schema"))
-         .arg(PersistentSettings::value(PersistentSettings::Names::dbSchema).toString());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-         .arg(tr("Database"))
-         .arg(PersistentSettings::value(PersistentSettings::Names::dbName).toString());
-
-   // third row -- username and is the password saved (NOTE: NOT THE
-   // PASSWORD ITSELF)
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-         .arg(tr("Username"))
-         .arg(PersistentSettings::value(PersistentSettings::Names::dbUsername).toString());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-         .arg(tr("Saved Password"))
-         .arg( PersistentSettings::contains(PersistentSettings::Names::dbPassword) ? "Yes" : "No");
-
-
-   body += "</table></body></html>";
-
-   return header + body;
 }
 
 void RecipeFormatter::printPreview() {

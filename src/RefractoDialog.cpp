@@ -1,4 +1,4 @@
-/**
+/*======================================================================================================================
  * RefractoDialog.cpp is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
- */
+ =====================================================================================================================*/
 
 #include <QString>
 #include <QDebug>
