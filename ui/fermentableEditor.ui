@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>316</height>
+    <width>661</width>
+    <height>348</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -343,44 +343,6 @@
          </property>
          <property name="editField" stdset="0">
           <string notr="true">yield_pct</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="3">
-        <widget class="BtMassLabel" name="label_amount">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="toolTip">
-          <string>Required</string>
-         </property>
-         <property name="text">
-          <string>Default Amount</string>
-         </property>
-         <property name="buddy">
-          <cstring>lineEdit_amount</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="4">
-        <widget class="BtMassEdit" name="lineEdit_amount">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Amount</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">amount_kg</string>
          </property>
         </widget>
        </item>
@@ -834,7 +796,6 @@
   <tabstop>checkBox_addAfterBoil</tabstop>
   <tabstop>checkBox_recommendMash</tabstop>
   <tabstop>checkBox_isMashed</tabstop>
-  <tabstop>lineEdit_amount</tabstop>
   <tabstop>lineEdit_origin</tabstop>
   <tabstop>lineEdit_supplier</tabstop>
   <tabstop>lineEdit_moisture</tabstop>
@@ -852,22 +813,6 @@
   <include location="../brewken.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>label_amount</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
-   <receiver>lineEdit_amount</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>65</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>165</x>
-     <y>90</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>label_inventory</sender>
    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
