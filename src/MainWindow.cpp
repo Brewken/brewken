@@ -178,7 +178,7 @@ public:
       QFileDialog fileOpener{mainWindow,
                              tr("Open"),
                              this->fileOpenDirectory,
-                             tr("BeerXML files (*.xml)")};
+                             tr("BeerJSON files (*.json);;BeerXML files (*.xml)")};
       fileOpener.setAcceptMode(QFileDialog::AcceptOpen);
       fileOpener.setFileMode(QFileDialog::ExistingFiles);
       fileOpener.setViewMode(QFileDialog::List);
@@ -192,7 +192,7 @@ public:
       qDebug() << Q_FUNC_INFO << "Directory " << fileOpener.directory();
       this->fileOpenDirectory = fileOpener.directory().canonicalPath();
 
-      foreach( QString filename, fileOpener.selectedFiles() ) {
+      for (QString filename : fileOpener.selectedFiles()) {
          //
          // I guess if the user were importing a lot of files in one go, it might be annoying to have a separate result
          // message for each one, but TBD whether that's much of a use case.  For now, we keep things simple.
@@ -200,7 +200,12 @@ public:
          qDebug() << Q_FUNC_INFO << "Importing " << filename;
          QString userMessage;
          QTextStream userMessageAsStream{&userMessage};
-         bool succeeded = BeerXML::getInstance().importFromXML(filename, userMessageAsStream);
+         bool succeeded = false;
+         if (filename.endsWith("json", Qt::CaseInsensitive)) {
+            succeeded = true;
+         } else if (filename.endsWith("xml", Qt::CaseInsensitive)) {
+            succeeded = BeerXML::getInstance().importFromXML(filename, userMessageAsStream);
+         }
          qDebug() << Q_FUNC_INFO << "Import " << (succeeded ? "succeeded" : "failed");
          this->importExportMsg(IMPORT, filename, succeeded, userMessage);
       }

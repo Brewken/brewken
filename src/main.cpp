@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#include <boost/json/src.hpp> // Needs to be included exactly once in the code to use header-only version of Boost.JSON
+
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xalanc/Include/PlatformDefinitions.hpp>
 
