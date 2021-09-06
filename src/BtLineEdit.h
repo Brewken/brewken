@@ -60,15 +60,17 @@ class BtLineEdit : public QLineEdit
 public:
 
    /*! \brief Initialize the BtLineEdit with the parent and do some things with the type
-   * \param parent - QWidget* to the parent object
-   * \param lType - the type of label: none, gravity, mass or volume
-   * \param maximalDisplayString - an example of the widest string this widget would be expected to need to display
-   * \return the initialized widget
-   * \todo Not sure if I can get the name of the widget being created.
-   *       Not sure how to signal the parent to redisplay
-   */
+    * \param parent - QWidget* to the parent object
+    * \param lType - the type of label: none, gravity, mass or volume
+    * \param maximalDisplayString - an example of the widest string this widget would be expected to need to display
+    * \return the initialized widget
+    * \todo Not sure if I can get the name of the widget being created.
+    *       Not sure how to signal the parent to redisplay
+    */
+   BtLineEdit(QWidget* parent = nullptr,
+              Unit::UnitType type = Unit::None,
+              QString const & maximalDisplayString = "100.000 srm");
 
-   BtLineEdit(QWidget* parent = nullptr, Unit::UnitType type = Unit::None, QString const & maximalDisplayString = "100.000 L");
    double toSI(Unit::unitDisplay oldUnit = Unit::noUnit, Unit::unitScale oldScale = Unit::noScale, bool force = false);
    // Use this when you want to do something with the returned QString
    QString displayAmount( double amount, int precision = 3);
