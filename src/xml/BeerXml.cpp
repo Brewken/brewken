@@ -547,7 +547,7 @@ public:
     */
    impl() : BeerXml1Coding{
                "BeerXML 1.0",
-               ":/xsd/beerxml/v1/BeerXml.xsd",
+               ":/schemas/beerxml/v1/BeerXml.xsd",
                QHash<QString, XmlCoding::XmlRecordDefinition>{
                   {BEER_XML_RECORD_NAME<void>       , {&XmlCoding::construct<void>,        &BEER_XML_RECORD_FIELDS<void>       } }, //Root
                   {BEER_XML_RECORD_NAME<Hop>        , {&XmlCoding::construct<Hop>,         &BEER_XML_RECORD_FIELDS<Hop>        } },
@@ -600,7 +600,7 @@ public:
       QFile inputFile;
       inputFile.setFileName(fileName);
 
-      if(! inputFile.open(QIODevice::ReadOnly)) {
+      if(!inputFile.open(QIODevice::ReadOnly)) {
          qWarning() << Q_FUNC_INFO << ": Could not open " << fileName << " for reading";
          return false;
       }
@@ -615,9 +615,9 @@ public:
       //
       // † The BeerXML 1.0 standard diverges from valid/standard XML in a few ways:
       //    • It mandates an XML Declaration (which it calls the "XML Header"), which is normally an optional part of
-      //       any UTF-8 encoded XML document.  (This is perhaps because it seems to mandate an ISO-8859-1 coding of
-      //       BeerXML files, though there is no explicit discussion of file encodings in the standard, and this seems
-      //       an unnecessary constraint to place on files.)
+      //      any UTF-8 encoded XML document.  (This is perhaps because it seems to mandate an ISO-8859-1 coding of
+      //      BeerXML files, though there is no explicit discussion of file encodings in the standard, and this seems
+      //      an unnecessary constraint to place on files.)
       //    • It omits to specify a single root element, even though this is a required part of any valid XML document.
       //    • It uses "TRUE" and "FALSE" (ie caps) for boolean values instead of the XML standard "true" and "false"
       //      (ie lower case).

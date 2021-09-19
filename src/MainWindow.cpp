@@ -100,6 +100,7 @@
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "InventoryFormatter.h"
+#include "json/BeerJson.h"
 #include "MashDesigner.h"
 #include "MashEditor.h"
 #include "MashListModel.h"
@@ -230,7 +231,7 @@ public:
          QTextStream userMessageAsStream{&userMessage};
          bool succeeded = false;
          if (filename.endsWith("json", Qt::CaseInsensitive)) {
-            succeeded = true;
+            succeeded = BeerJson::import(filename, userMessageAsStream);
          } else if (filename.endsWith("xml", Qt::CaseInsensitive)) {
             succeeded = BeerXML::getInstance().importFromXML(filename, userMessageAsStream);
          }

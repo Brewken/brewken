@@ -51,8 +51,6 @@ public:
     */
    template<class NE> void toXml(QList<NE *> & nes, QFile & outFile) const;
 
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
    /*! Import ingredients, recipes, etc from BeerXML documents.
     * \param filename
     * \param userMessage Where to write any (brief!) message we want to be shown to the user after the import.
@@ -60,7 +58,7 @@ public:
     * \return true if succeeded, false otherwise
     */
    bool importFromXML(QString const & filename, QTextStream & userMessage);
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;

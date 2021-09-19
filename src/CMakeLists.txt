@@ -145,6 +145,9 @@ SET( Brewken_SRCS
     ${SRCDIR}/IbuMethods.cpp
     ${SRCDIR}/InstructionWidget.cpp
     ${SRCDIR}/InventoryFormatter.cpp
+    ${SRCDIR}/json/BeerJson.cpp
+    ${SRCDIR}/json/JsonSchema.cpp
+    ${SRCDIR}/json/JsonUtils.cpp
     ${SRCDIR}/Logging.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
@@ -205,7 +208,9 @@ SET( Brewken_SRCS
     ${SRCDIR}/TimerWidget.cpp
     ${SRCDIR}/Unit.cpp
     ${SRCDIR}/UnitSystem.cpp
+    ${SRCDIR}/utils/BtException.cpp
     ${SRCDIR}/utils/BtStringConst.cpp
+    ${SRCDIR}/utils/BtStringStream.cpp
     ${SRCDIR}/WaterButton.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp

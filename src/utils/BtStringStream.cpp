@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/BeerJson.h is part of Brewken, and is copyright the following authors 2021:
+ * utils/BtStringStream.cpp is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,26 +13,18 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef JSON_BEERJSON_H
-#define JSON_BEERJSON_H
-#pragma once
+#include "utils/BtStringStream.h"
 
-class QString;
-class QTextStream;
-
-namespace BeerJson {
-   /*!
-    * \brief Import ingredients, recipes, etc from a BeerJSON file
-    *
-    * \param filename
-    * \param userMessage Where to write any (brief!) message we want to be shown to the user after the import.
-    *                    Typically this is either the reason the import failed or a summary of what was imported.
-    *
-    * \return true if succeeded, false otherwise
-    */
-   bool import(QString const & filename, QTextStream & userMessage);
-
-
+BtStringStream::BtStringStream() :
+   QTextStream{},
+   theString{} {
+      this->setString(&this->theString);
+      return;
 }
 
-#endif
+BtStringStream::~BtStringStream() = default;
+
+QString const & BtStringStream::asString() const {
+   // Callers could also use *this->string(), but that's a bit more clunky
+   return this->theString;
+}

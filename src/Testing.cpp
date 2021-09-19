@@ -25,6 +25,8 @@
 #include <iostream> // For std::cout
 #include <math.h>
 
+#include <boost/json/src.hpp> // Needs to be included exactly once in the code to use header-only version of Boost.JSON
+
 #include <xercesc/util/PlatformUtils.hpp>
 
 #include <QDebug>

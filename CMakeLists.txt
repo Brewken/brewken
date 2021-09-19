@@ -282,6 +282,21 @@ INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
 #message( "Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS} )
 #message( "Xalan-C++ libraries: " ${XalanC_LIBRARIES} )
 
+#=======================================================Valijson========================================================
+# Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
+# (via git clone https://github.com/tristanpenman/valijson third-party/valijson).  Then the following also come from
+# https://github.com/tristanpenman/valijson#readme
+#
+# Valijson is a header-only library, so we don't need to build or link to any libraries etc (unless you want to build
+# its test suite - in which case, uncomment the add_subdirectory line and add ValiJSON::valijson to both lists of
+# target_link_libraries in src/CMakeLists.txt).
+#
+set(valijson_BUILD_TESTS OFF)
+add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
+INCLUDE_DIRECTORIES(${ROOTDIR}/third-party/valijson/include)
+#add_subdirectory(third-party/valijson)
+
+
 #=========================Configure Brewken.qrc.in==========================
 
 SET( Brewken_QRC "${CMAKE_CURRENT_SOURCE_DIR}/brewken.qrc" )

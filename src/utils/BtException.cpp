@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/BeerJson.h is part of Brewken, and is copyright the following authors 2021:
+ * utils/BtException.cpp is part of Brewken, and is copyright the following authors 2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,26 +13,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef JSON_BEERJSON_H
-#define JSON_BEERJSON_H
-#pragma once
+#include "utils/BtException.h"
 
-class QString;
-class QTextStream;
+#include <sstream>
 
-namespace BeerJson {
-   /*!
-    * \brief Import ingredients, recipes, etc from a BeerJSON file
-    *
-    * \param filename
-    * \param userMessage Where to write any (brief!) message we want to be shown to the user after the import.
-    *                    Typically this is either the reason the import failed or a summary of what was imported.
-    *
-    * \return true if succeeded, false otherwise
-    */
-   bool import(QString const & filename, QTextStream & userMessage);
+#include <boost/stacktrace.hpp>
 
-
+BtException::BtException(QString const & what_arg) :
+   std::runtime_error{what_arg.toStdString()} {
+   // Note that we intentionally do not do any logging here.  It is far more useful for logging to be done by the
+   // caller as the log message will then include a relevant reference to the source (file name and line number).
+   std::ostringstream stack;
+   stack << boost::stacktrace::stacktrace();
+   this->stackTrace = QString::fromStdString(stack.str());
+   return;
 }
 
-#endif
+BtException::~BtException() = default;
+
+QString const & BtException::getStackTrace() const {
+   return this->stackTrace;
+}
