@@ -20,6 +20,7 @@
 #include <memory>
 
 #include <QTextStream>
+#include <QVector>
 
 #include <xalanc/DOMSupport/DOMSupport.hpp>
 #include <xalanc/XalanDOM/XalanNode.hpp>
@@ -27,6 +28,7 @@
 
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
+#include "utils/EnumStringMapping.h"
 #include "xml/XmlRecordCount.h"
 #include "xml/XQString.h"
 
@@ -71,16 +73,6 @@ public:
    };
 
    /**
-    * \brief Map from a string in an XML file to the value of an enum in a Brewken class
-    *
-    * Could use QMap or QHash here.  Doubt it makes much difference either way for the quantity of data / number of
-    * look-ups we're doing.  (Documentation says QHash is "significantly faster" if you don't need ordering, but some
-    * people say that's only true beyond a certain number of elements stored.  We could benchmark it if we were anxious
-    * about performance here.)
-    */
-   typedef QHash<QString, int> EnumLookupMap;
-
-   /**
     * \brief How to parse every field that we want to be able to read out of the XML file.  See class description for
     *        more details.
     */
@@ -89,7 +81,7 @@ public:
       XQString            xPath;
       BtStringConst const & propertyName;  // If fieldType == RecordComplex, then this is used only on export
                                            // If fieldType == RequiredConstant, then this is actually the constant value
-      EnumLookupMap const * stringToEnum;
+      EnumStringMapping const * enumMapping;
    };
 
    typedef QVector<FieldDefinition> FieldDefinitions;

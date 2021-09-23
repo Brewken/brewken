@@ -82,19 +82,19 @@ namespace {
    // Field mappings for <HOP>...</HOP> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Hop>{"HOP"};
-   XmlRecord::EnumLookupMap const BEER_XML_HOP_USE_MAPPER {
+   EnumStringMapping const BEER_XML_HOP_USE_MAPPER {
       {"Boil",       Hop::Boil},
       {"Dry Hop",    Hop::Dry_Hop},
       {"Mash",       Hop::Mash},
       {"First Wort", Hop::First_Wort},
       {"Aroma",      Hop::UseAroma}
    };
-   XmlRecord::EnumLookupMap const BEER_XML_HOP_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_HOP_TYPE_MAPPER {
       {"Bittering", Hop::Bittering},
       {"Aroma",     Hop::Aroma},
       {"Both",      Hop::Both}
    };
-   XmlRecord::EnumLookupMap const BEER_XML_HOP_FORM_MAPPER {
+   EnumStringMapping const BEER_XML_HOP_FORM_MAPPER {
       {"Pellet", Hop::Pellet},
       {"Plug",   Hop::Plug},
       {"Leaf",   Hop::Leaf}
@@ -127,7 +127,7 @@ namespace {
    // Field mappings for <FERMENTABLE>...</FERMENTABLE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Fermentable>{"FERMENTABLE"};
-   XmlRecord::EnumLookupMap const BEER_XML_FERMENTABLE_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_FERMENTABLE_TYPE_MAPPER {
       {"Grain",       Fermentable::Grain},
       {"Sugar",       Fermentable::Sugar},
       {"Extract",     Fermentable::Extract},
@@ -164,20 +164,20 @@ namespace {
    // Field mappings for <YEAST>...</YEAST> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Yeast>{"YEAST"};
-   XmlRecord::EnumLookupMap const BEER_XML_YEAST_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_YEAST_TYPE_MAPPER {
       {"Ale",       Yeast::Ale},
       {"Lager",     Yeast::Lager},
       {"Wheat",     Yeast::Wheat},
       {"Wine",      Yeast::Wine},
       {"Champagne", Yeast::Champagne}
    };
-   XmlRecord::EnumLookupMap const BEER_XML_YEAST_FORM_MAPPER {
+   EnumStringMapping const BEER_XML_YEAST_FORM_MAPPER {
       {"Liquid",  Yeast::Liquid},
       {"Dry",     Yeast::Dry},
       {"Slant",   Yeast::Slant},
       {"Culture", Yeast::Culture}
    };
-   XmlRecord::EnumLookupMap const BEER_XML_YEAST_FLOCCULATION_MAPPER {
+   EnumStringMapping const BEER_XML_YEAST_FLOCCULATION_MAPPER {
       {"Low",       Yeast::Low},
       {"Medium",    Yeast::Medium},
       {"High",      Yeast::High},
@@ -213,7 +213,7 @@ namespace {
    // Field mappings for <MISC>...</MISC> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Misc>{"MISC"};
-   XmlRecord::EnumLookupMap const BEER_XML_MISC_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_MISC_TYPE_MAPPER {
       {"Spice",       Misc::Spice},
       {"Fining",      Misc::Fining},
       {"Water Agent", Misc::Water_Agent},
@@ -221,7 +221,7 @@ namespace {
       {"Flavor",      Misc::Flavor},
       {"Other",       Misc::Other}
    };
-   XmlRecord::EnumLookupMap const BEER_XML_MISC_USE_MAPPER {
+   EnumStringMapping const BEER_XML_MISC_USE_MAPPER {
       {"Boil",      Misc::Boil},
       {"Mash",      Misc::Mash},
       {"Primary",   Misc::Primary},
@@ -268,7 +268,7 @@ namespace {
    // Field mappings for <STYLE>...</STYLE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Style>{"STYLE"};
-   XmlRecord::EnumLookupMap const BEER_XML_STYLE_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_STYLE_TYPE_MAPPER {
       {"Lager", Style::Lager},
       {"Ale",   Style::Ale},
       {"Mead",  Style::Mead},
@@ -319,7 +319,7 @@ namespace {
    // Field mappings for <MASH_STEP>...</MASH_STEP> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<MashStep>{"MASH_STEP"};
-   XmlRecord::EnumLookupMap const BEER_XML_MASH_STEP_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_MASH_STEP_TYPE_MAPPER {
       {"Infusion",     MashStep::Infusion},
       {"Temperature",  MashStep::Temperature},
       {"Decoction",    MashStep::Decoction}
@@ -466,7 +466,7 @@ namespace {
    // Field mappings for <RECIPE>...</RECIPE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Recipe>{"RECIPE"};
-   XmlRecord::EnumLookupMap const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
+   EnumStringMapping const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
       {"Extract",      Recipe::Extract},
       {"Partial Mash", Recipe::PartialMash},
       {"All Grain",    Recipe::AllGrain}

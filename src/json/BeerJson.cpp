@@ -34,96 +34,114 @@
 #include "json/JsonUtils.h"
 #include "model/Recipe.h"
 
-//
-//                                 ****************************************************
-//                                 * General note about JSON libraries and frameworks *
-//                                 ****************************************************
-//
-// There are several C++ JSON libraries, including some Qt classes (https://doc.qt.io/qt-5/json.html), RapidJSON
-// (https://rapidjson.org/) "JSON for Modern C++" AKA "nlohmann JSON" (https://github.com/nlohmann/json) and Boost.JSON
-// (https://www.boost.org/doc/libs/1_77_0/libs/json/doc/html/index.html).
-//
-// I am reluctant to use the Qt classes, even though we are a Qt app, because Qt have a history of dropping support for
-// "non-core" features (see comments in xml/XmlCoding.cpp for example).
-//
-// The Boost library is one of the newer implementations but has some design advantages over other libraries (see
-// https://www.boost.org/doc/libs/1_77_0/libs/json/doc/html/json/comparison.html).  Boost libraries in general are seen
-// to be high quality and several of them have become the basis for C++ Standard Library features.  So, using the Boost
-// library seems like a safe bet.
-//
-// Schema validation in JSON is also a relatively new thing.  There are several C++ validators (see
-// https://json-schema.org/implementations.html#validator-c++) but we like Valijson
-// (https://github.com/tristanpenman/valijson) in particular because it is not tied to one underlying JSON library.
-//
-//
-
 namespace {
-   /**
-    * \brief Amongst other things, this is the callback Valijson uses to obtain referenced schema documents
-    */
-/*   boost::json::value const * fetchReferencedDocument(std::string const & uri) {
-      // We assume that we're only going to be asked to fetch relative documents, not go out and fetch something over
-      // HTTP etc.  This is reasonable, because we're talking about schema documents here which we control and ship with
-      // the product.
-      QString schemaFilePath = QString(":/schemas/beerjson/1.0/%1").arg(uri.c_str());
 
-      qDebug() << Q_FUNC_INFO << "Reading" << uri.c_str() << "as" << schemaFilePath;
-
-      QFile schemaFile(schemaFilePath);
-      if (!schemaFile.open(QIODevice::ReadOnly)) {
-         // This should pretty much never happen, as we're loading from a QResource compiled into the binary rather
-         // than reading from the file system at run-time.
-         qCritical() <<
-            Q_FUNC_INFO << "Could not open schema file resource " << schemaFile.fileName() << " for reading";
-         throw std::runtime_error("Could not open schema file resource");
-      }
-
-      // readAll doesn't report errors, but we really aren't expecting any on reading a QResource
-      QByteArray schemaData = schemaFile.readAll();
-      qDebug() <<
-         Q_FUNC_INFO << "Schema file " << schemaFile.fileName() << ": " << schemaData.length() << " bytes";
-
-      boost::json::string_view schemaStringView{schemaData.data()};
-      boost::json::parse_options schemaParseOptions;
-      schemaParseOptions.allow_comments = true;
-      boost::json::error_code errorCode;
-      boost::json::value * schemaDocument = new boost::json::value(boost::json::parse(schemaStringView, errorCode, {}, schemaParseOptions));
-      if (errorCode) {
-         // This is almost certainly a coding error, since we're the ones creating and shipping the schema file!
-         qCritical() <<
-            Q_FUNC_INFO << "Parsing schema file" << schemaFile.fileName() << "failed:" <<
-            errorCode.message().c_str();
-         throw std::runtime_error("Error parsing schema file");
-      }
-      qDebug() << Q_FUNC_INFO << "Boost.JSON schema document read";
-
-      return schemaDocument;
-   }*/
-
-   /**
-    * \brief Called from Valijson to free a resource obtained from \c fetchReferencedDocument()
-    */
-/*   void freeReferencedDocument(boost::json::value const * document) {
-      qDebug() << Q_FUNC_INFO;
-      delete document;
-      return;
-   }*/
 
    // This function first validates the input file against a JSON schema (https://json-schema.org/)
    bool validateAndLoad(QString const & fileName, QTextStream & userMessage) {
+      boost::json::value inputDocument;
       try {
-         boost::json::value inputDocument = JsonUtils::loadJsonDocument(fileName);
+         inputDocument = JsonUtils::loadJsonDocument(fileName);
 
          static JsonSchema schema{":/schemas/beerjson/1.0", "beer.json"};
 
-         return schema.validate(inputDocument, userMessage);
+         if (!schema.validate(inputDocument, userMessage)) {
+            qWarning() << Q_FUNC_INFO << "Schema validation failed";
+            return false;
+         }
 
       } catch (std::exception const & exception) {
-         qWarning() << Q_FUNC_INFO << "Caught exception:" << exception.what();
+         qWarning() <<
+            Q_FUNC_INFO << "Caught exception while reading and validating " << fileName << ":" << exception.what();
          userMessage << exception.what();
          return false;
       }
+
+      // Now we've loaded the JSON document into memory and determined that it's valid BeerJSON, we need to extract the
+      // data from it
+      // .:TODO:. IMPLEMENT THIS!
+
+      // Per https://www.json.org/json-en.html, a JSON object is an unordered set of name/value pairs, so there's no
+      // constraint about what order we parse things
+
+      // We're expecting the root of the JSON document to be an object named "beerjson".  This should have been
+      // established by the validation above.
+      Q_ASSERT(inputDocument.is_object());
+      boost::json::object documentRoot = inputDocument.as_object();
+      Q_ASSERT(documentRoot.contains("beerjson"));
+      Q_ASSERT(documentRoot["beerjson"].is_object());
+      boost::json::object beerJson = documentRoot["beerjson"].as_object();
+
+      for (auto ii : beerJson) {
+         qDebug() << Q_FUNC_INFO << ii.key().data();
+      }
+
+      //
+      // Per https://www.json.org/json-en.html, in JSON, a value is one of the following:
+      //    object
+      //    array
+      //    string
+      //    number
+      //    "true"
+      //    "false"
+      //    "null"
+      // A JSON Schema also offers "integer" as a specialisation of number (integer being a JSON type used in the
+      // definition of number).
+      // Correspondingly (more or less), if you have a boost::json::value then its kind() member function will return
+      // one of the following values:
+      //    json::kind::object
+      //    json::kind::array
+      //    json::kind::string
+      //    json::kind::uint64
+      //    json::kind::int64
+      //    json::kind::double_
+      //    json::kind::bool_
+      //    json::kind::null
+      //
+      // For each type of object T that we want to read from a JSON file (eg T is Recipe, Hop, etc) we need to provide
+      // an implementation of the following function:
+      //    T tag_invoke(value_to_tag<T>, value const & jv);
+      // Note:
+      //    (1) The value_to_tag<T> type is empty and has no members.  It is just a trick used by the library to ensure
+      //        the right overload of tag_invoke is called.
+      //    (2) We do not call tag_invoke() ourselves.  Instead, we call
+      //        template<class T> T boost::json::value_to(value const & jv).
+      // Inside tag_invoke(), nothing hugely clever is happening.  We just extract each of the fields we care about from
+      // jv into a new object of type T, for each field calling the relevant specialisation of boost::json::value_to(),
+      // eg something along the following lines:
+      //    T newObject;
+      //    newObject.id = value_to<int>(jv.as_object().at("id"));
+      //    newObject.name = value_to<std::string>(jv.as_object().at("name"));
+      //    ...
+      //    return newObject;
+      // Of course we would like to do all these field mappings in data rather than in code, so we take a slightly more
+      // elaborate approach.
+      //
+      //
+      // At top level, a BeerJSON document consists of the following objects (where "[]" means "array of"):
+      //   version:                   VersionType                  required
+      //   fermentables:              FermentableType[]            optional
+      //   miscellaneous_ingredients: MiscellaneousType[]          optional
+      //   hop_varieties:             VarietyInformation[]         optional
+      //   cultures:                  CultureInformation[]         optional
+      //   profiles:                  WaterBase[]                  optional
+      //   styles:                    StyleType[]                  optional
+      //   mashes:                    MashProcedureType[]          optional
+      //   fermentations:             FermentationProcedureType[]  optional
+      //   recipes:                   RecipeType[]                 optional
+      //   equipments:                EquipmentType[]              optional
+      //   boil:                      BoilProcedureType[]          optional
+      //   packaging:                 PackagingProcedureType[]     optional
+      //
+      // A lot of the base types in BeerJSON consist of unit & value, where unit is an enum (ie string with restricted
+      // set of values) and value is a decimal or integer number.
+      //
+      //
+
+      userMessage << "BeerJSON support is not yet complete!";
+      return false;
    }
+
 }
 
 bool BeerJson::import(QString const & filename, QTextStream & userMessage) {

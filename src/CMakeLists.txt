@@ -211,6 +211,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/utils/BtException.cpp
     ${SRCDIR}/utils/BtStringConst.cpp
     ${SRCDIR}/utils/BtStringStream.cpp
+    ${SRCDIR}/utils/EnumStringMapping.cpp
     ${SRCDIR}/WaterButton.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp

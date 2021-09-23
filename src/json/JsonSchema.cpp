@@ -27,6 +27,29 @@
 #include "json/JsonUtils.h"
 #include "utils/BtStringStream.h"
 
+//
+//                                 ****************************************************
+//                                 * General note about JSON libraries and frameworks *
+//                                 ****************************************************
+//
+// There are several C++ JSON libraries, including some Qt classes (https://doc.qt.io/qt-5/json.html), RapidJSON
+// (https://rapidjson.org/) "JSON for Modern C++" AKA "nlohmann JSON" (https://github.com/nlohmann/json) and Boost.JSON
+// (https://www.boost.org/doc/libs/1_77_0/libs/json/doc/html/index.html).
+//
+// I am reluctant to use the Qt classes, even though we are a Qt app, because Qt have a history of dropping support for
+// "non-core" features (see comments in xml/XmlCoding.cpp for example).
+//
+// The Boost library is one of the newer implementations but has some design advantages over other libraries (see
+// https://www.boost.org/doc/libs/1_77_0/libs/json/doc/html/json/comparison.html).  Boost libraries in general are seen
+// to be high quality and several of them have become the basis for C++ Standard Library features.  So, using the Boost
+// library seems like a safe bet.
+//
+// Schema validation in JSON is also a relatively new thing.  There are several C++ validators (see
+// https://json-schema.org/implementations.html#validator-c++) but we like Valijson
+// (https://github.com/tristanpenman/valijson) in particular because it is not tied to one underlying JSON library.
+//
+//
+
 // Private implementation details that don't need access to class member variables
 namespace {
    //

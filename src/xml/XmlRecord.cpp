@@ -177,9 +177,9 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                bool parsedValueOk = false;
                QVariant parsedValue;
 
-               // A field should have a stringToEnum mapping if and only if it's of type Enum
+               // A field should have an enumMapping if and only if it's of type Enum
                // Anything else is a coding error at the caller
-               Q_ASSERT((XmlRecord::Enum == fieldDefinition->fieldType) != (nullptr == fieldDefinition->stringToEnum));
+               Q_ASSERT((XmlRecord::Enum == fieldDefinition->fieldType) != (nullptr == fieldDefinition->enumMapping));
 
                switch(fieldDefinition->fieldType) {
 
@@ -324,16 +324,19 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
 
                   case XmlRecord::Enum:
                      // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
-                     Q_ASSERT(nullptr != fieldDefinition->stringToEnum);
-                     if (!fieldDefinition->stringToEnum->contains(value)) {
-                        // This is probably a coding error as the XSD parsing should already have verified that the
-                        // contents of the node are one of the expected values.
-                        qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as value not recognised";
-                     } else {
-                        parsedValue.setValue(fieldDefinition->stringToEnum->value(value));
-                        parsedValueOk = true;
+                     Q_ASSERT(nullptr != fieldDefinition->enumMapping);
+                     {
+                        auto match = fieldDefinition->enumMapping->stringToEnum(value);
+                        if (!match) {
+                           // This is probably a coding error as the XSD parsing should already have verified that the
+                           // contents of the node are one of the expected values.
+                           qWarning() <<
+                              Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
+                              value << " as value not recognised";
+                        } else {
+                           parsedValue.setValue(match.value());
+                           parsedValueOk = true;
+                        }
                      }
                      break;
 
@@ -793,19 +796,20 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                break;
 
             case XmlRecord::Enum:
-               // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
-               Q_ASSERT(nullptr != fieldDefinition.stringToEnum);
-               // When writing out XML, we have the value of the EnumLookupMap (an int) and need to find the corresponding
-               // key (a string).  Fortunately, the underlying QHash already does all the heavy lifting.
-               valueAsText = fieldDefinition.stringToEnum->key(value.toInt());
-               if (valueAsText == "") {
-                  // It's a coding error if we couldn't find the enum value the enum mapping
-                  qCritical() << Q_FUNC_INFO <<
-                     "Could not find string representation of enum property" << fieldDefinition.propertyName <<
-                     "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
-                     namedEntityToExport.metaObject()->className();
-                  Q_ASSERT(false); // Stop here on a debug build
-                  continue;        // Soldier on in a prod build
+               // It's definitely a coding error if there is no enumMapping for a field declared as Enum!
+               Q_ASSERT(nullptr != fieldDefinition.enumMapping);
+               {
+                  auto match = fieldDefinition.enumMapping->enumToString(value.toInt());
+                  if (!match) {
+                     // It's a coding error if we couldn't find the enum value the enum mapping
+                     qCritical() << Q_FUNC_INFO <<
+                        "Could not find string representation of enum property" << fieldDefinition.propertyName <<
+                        "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
+                        namedEntityToExport.metaObject()->className();
+                     Q_ASSERT(false); // Stop here on a debug build
+                     continue;        // Soldier on in a prod build
+                  }
+                  valueAsText = match.value();
                }
                break;
 
