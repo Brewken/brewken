@@ -502,12 +502,14 @@ double WaterDialog::calculateMashpH()
 void WaterDialog::saveAndClose() {
    m_salt_table_model->saveAndClose();
    if (m_base != nullptr && m_base->key() < 0) {
-      ObjectStoreWrapper::insert(*m_base);
-      this->m_rec->add(this->m_base);
+      std::shared_ptr<Water> water{this->m_base};
+      ObjectStoreWrapper::insert(water);
+      this->m_rec->add(water);
    }
    if (m_target != nullptr && m_target->key() < 0) {
-      ObjectStoreWrapper::insert(*m_target);
-      this->m_rec->add(this->m_target);
+      std::shared_ptr<Water> water{this->m_target};
+      ObjectStoreWrapper::insert(water);
+      this->m_rec->add(water);
    }
 
    setVisible(false);

@@ -102,6 +102,9 @@ MashStep::MashStep(MashStep const & other) :
 }
 
 
+MashStep::~MashStep() = default;
+
+
 //================================"SET" METHODS=================================
 void MashStep::setInfuseTemp_c(double var) {
    this->setAndNotify(PropertyNames::MashStep::infuseTemp_c, this->m_infuseTemp_c, var);

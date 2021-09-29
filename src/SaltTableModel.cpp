@@ -351,7 +351,8 @@ void SaltTableModel::removeSalts(QList<int>deadSalts) {
          // Dead salts do not malinger in the database. This will
          // delete the thing, not just mark it deleted
          if (zombie->key() > 0) {
-            this->m_rec->remove(zombie);
+            auto zombiePtr{ObjectStoreWrapper::getSharedFromRaw(zombie)};
+            this->m_rec->remove(zombiePtr);
             ObjectStoreWrapper::hardDelete(*zombie);
          }
       }
@@ -655,10 +656,12 @@ void SaltTableModel::saveAndClose() {
    // we've added a new salt. Wonder if this will work?
    for (Salt* salt : saltObs) {
       if (salt->key() < 0 && salt->type() != Salt::NONE && salt->addTo() != Salt::NEVER) {
-         ObjectStoreWrapper::insert(*salt);
-         this->m_rec->add(salt);
+         std::shared_ptr<Salt> saltPtr{salt};
+         ObjectStoreWrapper::insert(saltPtr);
+         this->m_rec->add(saltPtr);
       }
    }
+   return;
 }
 //==========================CLASS SaltItemDelegate===============================
 

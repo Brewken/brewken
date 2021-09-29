@@ -18,15 +18,14 @@
  =====================================================================================================================*/
 #ifndef MASHSTEPEDITOR_H
 #define MASHSTEPEDITOR_H
-
-class MashStepEditor;
+#include <memory>
 
 #include <QDialog>
 #include <QWidget>
 #include <QMetaProperty>
 #include <QVariant>
+
 #include "ui_mashStepEditor.h"
-#include "MainWindow.h"
 
 // Forward declarations.
 class MashStep;
@@ -34,7 +33,6 @@ class Mash;
 
 /*!
  * \class MashStepEditor
- *
  *
  * \brief View/controller dialog for editing mash steps.
  */
@@ -45,7 +43,7 @@ public:
    MashStepEditor(QWidget* parent=nullptr);
    virtual ~MashStepEditor() {}
 
-   void setMashStep(MashStep* step);
+   void setMashStep(std::shared_ptr<MashStep> step);
 
 public slots:
    void saveAndClose();
@@ -65,7 +63,7 @@ private:
     */
    void showChanges(QMetaProperty* metaProp = 0);
    void clear();
-   MashStep* obs;
+   std::shared_ptr<MashStep> obs;
 };
 
-#endif   /* MASHSTEPEDITOR_H */
+#endif

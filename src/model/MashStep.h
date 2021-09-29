@@ -56,6 +56,12 @@ class MashStep : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashsteps")
 
+   // this seems to be a class with a lot of friends
+
+   friend class MashStepItemDelegate;
+   friend class MashWizard;
+   friend class MashDesigner;
+   friend class MainWindow;
 public:
 
    //! \brief The type of step.
@@ -64,9 +70,9 @@ public:
 
    MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
-   MashStep(MashStep const & other);
+   MashStep( MashStep const& other );
 
-   virtual ~MashStep() = default;
+   virtual ~MashStep();
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
