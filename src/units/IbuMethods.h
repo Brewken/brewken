@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * IbuMethods.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * units/IbuMethods.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef IBUMETHODS_H
-#define IBUMETHODS_H
+#ifndef UNITS_IBUMETHODS_H
+#define UNITS_IBUMETHODS_H
 #pragma once
 
 class QString;

@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * ColorMethods.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * units/ColorMethods.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,27 +14,31 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef COLORMETHODS_H
-#define COLORMETHODS_H
+#ifndef UNITS_COLORMETHODS_H
+#define UNITS_COLORMETHODS_H
 #pragma once
 
+class QString;
+
 /*!
- * \class ColorMethods
+ * \namespace ColorMethods
  *
- * \brief Converts malt color units to SRM.
+ * \brief Convert malt color units to SRM.
  */
-class ColorMethods
-{
-public:
-   ColorMethods();
-   ~ColorMethods();
+namespace ColorMethods {
+   //! \brief The formula used to get beer color.
+   enum ColorType {MOSHER, DANIEL, MOREY};
+
+   extern ColorType colorFormula;
+
+   //! \brief return the color formula name
+   QString colorFormulaName();
+
+   void loadColorFormulaSettings();
+   void saveColorFormulaSettings();
 
    //! Depending on selected algorithm, convert malt color units to SRM.
-   static double mcuToSrm(double mcu);
-private:
-   static double morey(double mcu);
-   static double daniel(double mcu);
-   static double mosher(double mcu);
-};
+   double mcuToSrm(double mcu);
+}
 
 #endif

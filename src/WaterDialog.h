@@ -28,9 +28,10 @@
 #include <QWidget>
 
 #include "ui_waterDialog.h"
-#include "Unit.h"
+
 #include "model/Water.h"
 #include "model/Salt.h"
+#include "units/Unit.h"
 
 class WaterListModel;
 class WaterSortFilterProxyModel;

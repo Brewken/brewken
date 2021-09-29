@@ -31,7 +31,7 @@
 #include "Brewken.h"
 #include "BtLineEdit.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 #include "widgets/ToggleSwitch.h"
 
 // Settings we only use in this file under the PersistentSettings::Sections::alcoholTool section

@@ -62,7 +62,6 @@
 #include "utils/BtStringConst.h"
 
 namespace {
-
    //
    // Constants for DB native type names etc
    //
@@ -220,7 +219,8 @@ public:
                                    dbConName{},
                                    loaded{false},
                                    loadWasSuccessful{false},
-                                   mutex{} {
+                                   mutex{},
+                                   userDatabaseDidNotExist{false} {
       return;
    }
 
@@ -255,7 +255,7 @@ public:
 
       // If there's no dbFile, try to copy from dataDbFile.
       if (!this->dbFile.exists()) {
-         Brewken::userDatabaseDidNotExist = true;
+         userDatabaseDidNotExist = true;
 
          // Have to wait until db is open before creating from scratch.
          if (this->dataDbFile.exists()) {
@@ -498,6 +498,9 @@ public:
    // Used for locking member functions that must be single-threaded
    QMutex mutex;
 
+   bool userDatabaseDidNotExist;
+
+
    // These are for SQLite databases
    QFile dbFile;
    QString dbFileName;
@@ -666,7 +669,7 @@ void Database::checkForNewDefaultData() {
    // See if there are new ingredients that we need to merge from the data-space db.
    // Don't do this if we JUST copied the dataspace database.
    if (this->pimpl->dataDbFile.fileName() != this->pimpl->dbFile.fileName() &&
-       !Brewken::userDatabaseDidNotExist &&
+       !this->pimpl->userDatabaseDidNotExist &&
        QFileInfo(this->pimpl->dataDbFile).lastModified() > Database::lastDbMergeRequest) {
       if( Brewken::isInteractive() &&
          QMessageBox::question(

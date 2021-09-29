@@ -72,8 +72,8 @@ extern void qt_set_sequence_auto_mnemonic(bool b);
 #include <QTextStream>
 #include <QTranslator>
 
-#include "UnitSystem.h"
 #include "Logging.h"
+#include "units/UnitSystem.h"
 #include "utils/BtStringConst.h"
 
 class NamedEntity;
@@ -96,25 +96,14 @@ class Brewken : public QObject
    Q_ENUMS(delOptions)
 
    friend class OptionDialog;
-   friend class ColorMethods;
    friend class RecipeFormatter;
    friend class Unit;
-   friend class Database;
 
    friend class MainWindow;
    friend class Testing;
 
 public:
    Brewken();
-
-   //! \brief The formula used to get beer color.
-   enum ColorType {MOSHER, DANIEL, MOREY};
-   //! \brief The units to display color in.
-   enum ColorUnitType {SRM, EBC};
-   //! \brief Units for density
-   enum DensityUnitType {SG,PLATO};
-   //! \brief The units for the diastatic power.
-   enum DiastaticPowerUnitType {LINTNER, WK};
 
    enum RangeType {
       DENSITY,
@@ -148,10 +137,10 @@ public:
     *  \param units the units that \c amount is in
     *  \param precision how many decimal places
     *  \param unitDisplay which unit system to use, defaulting to "noUnit" which means use the system default
-    *  \param Unit::unitScale which scale to use, defaulting to Unit::noScale which means use the largest scale that generates a value > 1
+    *  \param Unit::RelativeScale which scale to use, defaulting to Unit::noScale which means use the largest scale that generates a value > 1
     */
    static QString displayAmount( double amount, Unit const * units=nullptr, int precision=3,
-                                 Unit::unitDisplay displayUnit = Unit::noUnit, Unit::unitScale displayScale = Unit::noScale );
+                                 Unit::unitDisplay displayUnit = Unit::noUnit, Unit::RelativeScale displayScale = Unit::noScale );
    /*!
     * \brief Displays an amount in the appropriate units.
     *
@@ -186,7 +175,7 @@ public:
     *  \param precision how many decimal places
     */
    static double amountDisplay( double amount, Unit const * units=nullptr, int precision=3,
-                                 Unit::unitDisplay displayUnit = Unit::noUnit, Unit::unitScale displayScale = Unit::noScale );
+                                 Unit::unitDisplay displayUnit = Unit::noUnit, Unit::RelativeScale displayScale = Unit::noScale );
    /*!
     * \brief Displays an amount in the appropriate units.
     *
@@ -218,10 +207,7 @@ public:
 
    //! \return SI amount for the string
    static double qStringToSI( QString qstr, Unit const * unit,
-         Unit::unitDisplay dispUnit = Unit::noUnit, Unit::unitScale dispScale = Unit::noScale);
-
-   //! \brief return the color formula name
-   static QString colorFormulaName();
+         Unit::unitDisplay dispUnit = Unit::noUnit, Unit::RelativeScale dispScale = Unit::noScale);
 
    // One method to rule them all, and in darkness bind them
    static UnitSystem const * findUnitSystem(Unit const * unit, Unit::unitDisplay display);
@@ -237,11 +223,8 @@ public:
    //! \return the date format
    static Unit::unitDisplay getDateFormat();
    //! \return the volume system
-   static SystemOfMeasurement getVolumeUnitSystem();
+   static SystemsOfMeasurement::MassOrVolumeScales getVolumeUnitSystem();
 
-   //! \brief Read options from file. This is deprecated, but we need it
-   // around for the conversion
-//   static void convertPersistentOptions();
    //! \brief Every so often, we need to update the config file itself. This does that.
    static void updateConfig();
    //! \brief Read options from options. This replaces readPersistentOptions()
@@ -275,11 +258,11 @@ public:
    static QMenu* setupColorMenu(QWidget* parent, Unit::unitDisplay unit);
    static QMenu* setupDateMenu(QWidget* parent, Unit::unitDisplay unit);
    static QMenu* setupDensityMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupMassMenu(QWidget* parent, Unit::unitDisplay unit, Unit::unitScale scale = Unit::noScale, bool generateScale = true);
+   static QMenu* setupMassMenu(QWidget* parent, Unit::unitDisplay unit, Unit::RelativeScale scale = Unit::noScale, bool generateScale = true);
    static QMenu* setupTemperatureMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupVolumeMenu(QWidget* parent, Unit::unitDisplay unit, Unit::unitScale scale = Unit::noScale, bool generateScale = true);
+   static QMenu* setupVolumeMenu(QWidget* parent, Unit::unitDisplay unit, Unit::RelativeScale scale = Unit::noScale, bool generateScale = true);
    static QMenu* setupDiastaticPowerMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupTimeMenu(QWidget* parent, Unit::unitScale scale);
+   static QMenu* setupTimeMenu(QWidget* parent, Unit::RelativeScale scale);
    static void generateAction(QMenu* menu, QString text, QVariant data, QVariant currentVal, QActionGroup* qgrp = nullptr);
 
    //! \return the main window.
@@ -292,29 +275,12 @@ private:
    static QTranslator* btTrans;
    static QString currentLanguage;
    static QSettings btSettings;
-   static bool userDatabaseDidNotExist;
    static QFile pidFile;
    static bool _isInteractive;
 
    //! \brief If this option is false, do not bother the user about new versions.
    static bool checkVersion;
 
-   // Options to be edited ONLY by the OptionDialog============================
-   // Whether or not to display plato instead of SG.
-
-   static SystemOfMeasurement weightUnitSystem;
-   static SystemOfMeasurement volumeUnitSystem;
-
-   // Sigh. You knew this was coming right? But I think I can clean a lot of
-   // shit up with some clever work.
-   static QHash<int, UnitSystem const *> thingToUnitSystem;
-
-   static TempScale tempScale;
-   static ColorType colorFormula;
-   static ColorUnitType colorUnit;
-   static DensityUnitType densityUnit;
-   static DiastaticPowerUnitType diastaticPowerUnit;
-   static Unit::unitDisplay dateFormat;
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
    /*!
@@ -346,16 +312,6 @@ public:
 
 private:
    /*!
-    *  \brief Helper to get option values from XML.
-    *
-    *  If \b hasOption is not null,
-    *  is set to true iff the option exists in the document.
-    */
-/*   static QString getOptionValue(const QDomDocument& optionsDoc,
-                                 const QString& option,
-                                 bool* hasOption = nullptr);
-*/
-   /*!
     *  \brief Copies the SQLite database file to another directory.
     *  \returns false iff the copy is unsuccessful.
     */
@@ -368,15 +324,6 @@ private:
    static void checkForNewVersion(MainWindow* mw);
 
    static void loadMap();
-
-   //! \return the weight system
-   static SystemOfMeasurement getWeightUnitSystem();
-   //! \return the temperature scale
-   static TempScale getTemperatureScale();
-   //! \return the color units
-   static Unit::unitDisplay getColorUnit();
-   //! \return the diastatic power units
-   static Unit::unitDisplay getDiastaticPowerUnit();
 };
 
 

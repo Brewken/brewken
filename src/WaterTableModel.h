@@ -30,7 +30,7 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "Unit.h"
+#include "units/Unit.h"
 // Forward declarations.
 class Water;
 class WaterTableWidget;
@@ -83,10 +83,10 @@ private:
    WaterTableWidget* parentTableWidget;
 
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::unitScale displayScale);
+   void setDisplayScale(int column, Unit::RelativeScale displayScale);
    QString generateName(int column) const;
    Unit::unitDisplay displayUnit(int column) const;
-   Unit::unitScale displayScale(int column) const;
+   Unit::RelativeScale displayScale(int column) const;
 };
 
 /*!

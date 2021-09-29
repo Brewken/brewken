@@ -36,7 +36,7 @@
 #include "model/Recipe.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 #include "WaterTableWidget.h"
 
 WaterTableModel::WaterTableModel(WaterTableWidget* parent)
@@ -288,7 +288,7 @@ bool WaterTableModel::setData( const QModelIndex& index, const QVariant& value, 
       return retval;
 
    Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::unitScale   dspScl  = displayScale(index.column());
+   Unit::RelativeScale   dspScl  = displayScale(index.column());
 
    switch( index.column() )
    {
@@ -334,14 +334,14 @@ Unit::unitDisplay WaterTableModel::displayUnit(int column) const
    return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale WaterTableModel::displayScale(int column) const
+Unit::RelativeScale WaterTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -369,7 +369,7 @@ void WaterTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
 }
 
 // Setting the scale should clear any cell-level scaling options
-void WaterTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
+void WaterTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
 {
    // Yeast* row; //disabled per-cell magic
 

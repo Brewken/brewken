@@ -37,10 +37,10 @@
 
 #include <QDebug>
 #include <QDesktopServices>
-#include <QDomElement>
-#include <QDomNode>
-#include <QDomNodeList>
-#include <QDomText>
+//#include <QDomElement>
+//#include <QDomNode>
+//#include <QDomNodeList>
+//#include <QDomText>
 #include <QEventLoop>
 #include <QFile>
 #include <QIODevice>
@@ -64,7 +64,7 @@
 #include "config.h"
 #include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
-#include "IbuMethods.h"
+#include "units/IbuMethods.h"
 #include "MainWindow.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -75,8 +75,9 @@
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
-#include "UnitSystem.h"
+#include "units/ColorMethods.h"
+#include "units/Unit.h"
+#include "units/UnitSystem.h"
 
 // Needed for kill(2)
 #if defined(Q_OS_UNIX)
@@ -150,27 +151,13 @@ MainWindow* Brewken::m_mainWindow = nullptr;
 QDomDocument* Brewken::optionsDoc;
 QTranslator* Brewken::defaultTrans = new QTranslator();
 QTranslator* Brewken::btTrans = new QTranslator();
-bool Brewken::userDatabaseDidNotExist = false;
 bool Brewken::_isInteractive = true;
 
 QString Brewken::currentLanguage = "en";
 
 bool Brewken::checkVersion = true;
 
-SystemOfMeasurement Brewken::weightUnitSystem = SI;
-SystemOfMeasurement Brewken::volumeUnitSystem = SI;
-
-TempScale Brewken::tempScale = Celsius;
 Unit::unitDisplay Brewken::dateFormat = Unit::displaySI;
-
-Brewken::ColorType Brewken::colorFormula = Brewken::MOREY;
-Brewken::ColorUnitType Brewken::colorUnit = Brewken::SRM;
-Brewken::DensityUnitType Brewken::densityUnit = Brewken::SG;
-Brewken::DiastaticPowerUnitType Brewken::diastaticPowerUnit = Brewken::LINTNER;
-
-QHash<int, UnitSystem const *> Brewken::thingToUnitSystem;
-
-
 
 
 // .:TODO:. This needs to be updated
@@ -235,31 +222,6 @@ const QString& Brewken::getCurrentLanguage()
    return currentLanguage;
 }
 
-SystemOfMeasurement Brewken::getWeightUnitSystem()
-{
-   return weightUnitSystem;
-}
-
-SystemOfMeasurement Brewken::getVolumeUnitSystem()
-{
-   return volumeUnitSystem;
-}
-
-Unit::unitDisplay Brewken::getColorUnit()
-{
-   if ( colorUnit == Brewken::SRM )
-      return Unit::displaySrm;
-
-   return Unit::displayEbc;
-}
-
-Unit::unitDisplay Brewken::getDiastaticPowerUnit()
-{
-   if ( diastaticPowerUnit == Brewken::LINTNER )
-      return Unit::displayLintner;
-
-   return Unit::displayWK;
-}
 
 Unit::unitDisplay Brewken::getDateFormat()
 {
@@ -274,7 +236,7 @@ Unit::unitDisplay Brewken::getDensityUnit()
    return Unit::displayPlato;
 }
 
-TempScale Brewken::getTemperatureScale()
+SystemsOfMeasurement::TempScale Brewken::getTemperatureScale()
 {
    return tempScale;
 }
@@ -471,12 +433,12 @@ void Brewken::readSystemOptions()
    if( text == "Fahrenheit" )
    {
       tempScale = Fahrenheit;
-      thingToUnitSystem.insert(Unit::Temp,&UnitSystems::fahrenheitTempUnitSystem);
+      thingToUnitSystem.insert(Unit::Temperature,&UnitSystems::fahrenheitTempUnitSystem);
    }
    else
    {
       tempScale = Celsius;
-      thingToUnitSystem.insert(Unit::Temp,&UnitSystems::celsiusTempUnitSystem);
+      thingToUnitSystem.insert(Unit::Temperature,&UnitSystems::celsiusTempUnitSystem);
    }
 
    //======================Time======================
@@ -487,17 +449,7 @@ void Brewken::readSystemOptions()
    IbuMethods::loadIbuFormula();
 
    //========================Color Formula======================
-   text = PersistentSettings::value(PersistentSettings::Names::color_formula, "morey").toString();
-   if( text == "morey" )
-      colorFormula = MOREY;
-   else if( text == "daniel" )
-      colorFormula = DANIEL;
-   else if( text == "mosher" )
-      colorFormula = MOSHER;
-   else
-   {
-      qCritical() << QString("Bad color_formula type: %1").arg(text);
-   }
+   ColorMethods::loadColorFormulaSettings();
 
    //========================Density==================
 
@@ -560,24 +512,13 @@ void Brewken::saveSystemOptions() {
    //setOption("user_data_dir", userDataDir);
    PersistentSettings::insert(PersistentSettings::Names::weight_unit_system, thingToUnitSystem.value(Unit::Mass)->unitType());
    PersistentSettings::insert(PersistentSettings::Names::volume_unit_system, thingToUnitSystem.value(Unit::Volume)->unitType());
-   PersistentSettings::insert(PersistentSettings::Names::temperature_scale, thingToUnitSystem.value(Unit::Temp)->unitType());
+   PersistentSettings::insert(PersistentSettings::Names::temperature_scale, thingToUnitSystem.value(Unit::Temperature)->unitType());
    PersistentSettings::insert(PersistentSettings::Names::use_plato, densityUnit == PLATO);
    PersistentSettings::insert(PersistentSettings::Names::date_format, dateFormat);
 
    IbuMethods::saveIbuFormula();
 
-   switch(colorFormula)
-   {
-      case MOREY:
-         PersistentSettings::insert(PersistentSettings::Names::color_formula, "morey");
-         break;
-      case DANIEL:
-         PersistentSettings::insert(PersistentSettings::Names::color_formula, "daniel");
-         break;
-      case MOSHER:
-         PersistentSettings::insert(PersistentSettings::Names::color_formula, "mosher");
-         break;
-   }
+   ColorMethods::saveColorFormulaSettings();
 
    switch(colorUnit)
    {
@@ -619,8 +560,8 @@ void Brewken::loadMap()
    // ==== time is empty ==== (this zen moment was free)
 
    // ==== temp ====
-   thingToUnitSystem.insert(Unit::Temp | Unit::displaySI,&UnitSystems::celsiusTempUnitSystem );
-   thingToUnitSystem.insert(Unit::Temp | Unit::displayUS,&UnitSystems::fahrenheitTempUnitSystem );
+   thingToUnitSystem.insert(Unit::Temperature | Unit::displaySI,&UnitSystems::celsiusTempUnitSystem );
+   thingToUnitSystem.insert(Unit::Temperature | Unit::displayUS,&UnitSystems::fahrenheitTempUnitSystem );
 
    // ==== color ====
    thingToUnitSystem.insert(Unit::Color | Unit::displaySrm,&UnitSystems::srmColorUnitSystem );
@@ -693,7 +634,7 @@ double Brewken::toDouble(QString text, QString caller) {
 
 // Displays "amount" of units "units" in the proper format.
 // If "units" is null, just return the amount.
-QString Brewken::displayAmount( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale)
+QString Brewken::displayAmount( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::RelativeScale displayScale)
 {
    int fieldWidth = 0;
    char format = 'f';
@@ -728,7 +669,7 @@ QString Brewken::displayAmount(NamedEntity* element, QObject* object, BtStringCo
    double amount = 0.0;
    QString value;
    bool ok = false;
-   Unit::unitScale dispScale;
+   Unit::RelativeScale dispScale;
    Unit::unitDisplay dispUnit;
 
    if ( element->property(*propertyName).canConvert(QVariant::Double) )
@@ -742,7 +683,7 @@ QString Brewken::displayAmount(NamedEntity* element, QObject* object, BtStringCo
                .arg(value);
       // Get the display units and scale
       dispUnit  = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit,  object->objectName(), PersistentSettings::UNIT).toInt());
-      dispScale = static_cast<Unit::unitScale>(PersistentSettings::value(  propertyName, Unit::noScale, object->objectName(), PersistentSettings::SCALE).toInt());
+      dispScale = static_cast<Unit::RelativeScale>(PersistentSettings::value(  propertyName, Unit::noScale, object->objectName(), PersistentSettings::SCALE).toInt());
 
       return displayAmount(amount, units, precision, dispUnit, dispScale);
    }
@@ -756,18 +697,18 @@ QString Brewken::displayAmount(double amt,
                                BtStringConst const & propertyName,
                                Unit const * units,
                                int precision) {
-   Unit::unitScale dispScale;
+   Unit::RelativeScale dispScale;
    Unit::unitDisplay dispUnit;
 
    // Get the display units and scale
    dispUnit  = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit,  section, PersistentSettings::UNIT).toInt());
-   dispScale = static_cast<Unit::unitScale>(PersistentSettings::value(  propertyName, Unit::noScale, section, PersistentSettings::SCALE).toInt());
+   dispScale = static_cast<Unit::RelativeScale>(PersistentSettings::value(  propertyName, Unit::noScale, section, PersistentSettings::SCALE).toInt());
 
    return displayAmount(amt, units, precision, dispUnit, dispScale);
 
 }
 
-double Brewken::amountDisplay( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::unitScale displayScale) {
+double Brewken::amountDisplay( double amount, Unit const * units, int precision, Unit::unitDisplay displayUnits, Unit::RelativeScale displayScale) {
 
    // Check for insane values.
    if( Algorithms::isNan(amount) || Algorithms::isInf(amount) )
@@ -796,7 +737,7 @@ double Brewken::amountDisplay(NamedEntity* element, QObject* object, BtStringCon
    double amount = 0.0;
    QString value;
    bool ok = false;
-   Unit::unitScale dispScale;
+   Unit::RelativeScale dispScale;
    Unit::unitDisplay dispUnit;
 
    if ( element->property(*propertyName).canConvert(QVariant::Double) ) {
@@ -808,7 +749,7 @@ double Brewken::amountDisplay(NamedEntity* element, QObject* object, BtStringCon
       }
       // Get the display units and scale
       dispUnit  = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit,  object->objectName(), PersistentSettings::UNIT).toInt());
-      dispScale = static_cast<Unit::unitScale>(PersistentSettings::value(  propertyName, Unit::noScale, object->objectName(), PersistentSettings::SCALE).toInt());
+      dispScale = static_cast<Unit::RelativeScale>(PersistentSettings::value(  propertyName, Unit::noScale, object->objectName(), PersistentSettings::SCALE).toInt());
 
       return amountDisplay(amount, units, precision, dispUnit, dispScale);
    }
@@ -857,25 +798,10 @@ QString Brewken::displayThickness( double thick_lkg, bool showUnits )
       return QString("%L1").arg(num/den, fieldWidth, format, precision).arg(volUnit->getUnitName()).arg(weightUnit->getUnitName());
 }
 
-double Brewken::qStringToSI(QString qstr, Unit const * unit, Unit::unitDisplay dispUnit, Unit::unitScale dispScale)
+double Brewken::qStringToSI(QString qstr, Unit const * unit, Unit::unitDisplay dispUnit, Unit::RelativeScale dispScale)
 {
    UnitSystem const * temp = findUnitSystem(unit, dispUnit);
    return temp->qstringToSI(qstr,temp->unit(),false,dispScale);
-}
-
-QString Brewken::colorFormulaName()
-{
-
-   switch( Brewken::colorFormula )
-   {
-      case Brewken::MOREY:
-         return "Morey";
-      case Brewken::DANIEL:
-         return "Daniels";
-      case Brewken::MOSHER:
-         return "Mosher";
-   }
-   return tr("Unknown");
 }
 
 QString Brewken::colorUnitName(Unit::unitDisplay display)
@@ -1029,7 +955,7 @@ QMenu* Brewken::setupDensityMenu(QWidget* parent, Unit::unitDisplay unit)
    return menu;
 }
 
-QMenu* Brewken::setupMassMenu(QWidget* parent, Unit::unitDisplay unit, Unit::unitScale scale, bool generateScale)
+QMenu* Brewken::setupMassMenu(QWidget* parent, Unit::unitDisplay unit, Unit::RelativeScale scale, bool generateScale)
 {
    QMenu* menu = new QMenu(parent);
    QMenu* sMenu;
@@ -1088,7 +1014,7 @@ QMenu* Brewken::setupTemperatureMenu(QWidget* parent, Unit::unitDisplay unit)
 }
 
 // Time menus only have scale
-QMenu* Brewken::setupTimeMenu(QWidget* parent, Unit::unitScale scale)
+QMenu* Brewken::setupTimeMenu(QWidget* parent, Unit::RelativeScale scale)
 {
    QMenu* menu = new QMenu(parent);
    QMenu* sMenu = new QMenu(menu);
@@ -1106,7 +1032,7 @@ QMenu* Brewken::setupTimeMenu(QWidget* parent, Unit::unitScale scale)
    return menu;
 }
 
-QMenu* Brewken::setupVolumeMenu(QWidget* parent, Unit::unitDisplay unit, Unit::unitScale scale, bool generateScale)
+QMenu* Brewken::setupVolumeMenu(QWidget* parent, Unit::unitDisplay unit, Unit::RelativeScale scale, bool generateScale)
 {
    QMenu* menu = new QMenu(parent);
    QActionGroup* qgrp = new QActionGroup(parent);

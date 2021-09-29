@@ -17,20 +17,19 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "RecipeExtrasWidget.h"
 
 #include <QDate>
 #include <QWidget>
 #include <QDebug>
-#include "RecipeExtrasWidget.h"
-#include "Unit.h"
+
 #include "Brewken.h"
-#include "model/Recipe.h"
 #include "BtLabel.h"
 #include "MainWindow.h"
+#include "model/Recipe.h"
+#include "units/Unit.h"
 
-RecipeExtrasWidget::RecipeExtrasWidget(QWidget* parent)
-   : QWidget(parent), recipe(0)
-{
+RecipeExtrasWidget::RecipeExtrasWidget(QWidget* parent) : QWidget(parent), recipe(nullptr) {
    setupUi(this);
 
    ratingChanged = false;

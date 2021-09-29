@@ -27,7 +27,7 @@
 #include "Algorithms.h"
 #include "Brewken.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent)
 {
@@ -58,7 +58,7 @@ PitchDialog::~PitchDialog()
 {
 }
 
-void PitchDialog::updateProductionDate(Unit::unitDisplay dsp, Unit::unitScale scl)
+void PitchDialog::updateProductionDate(Unit::unitDisplay dsp, Unit::RelativeScale scl)
 {
    QString format;
    // I need the new unit, not the old

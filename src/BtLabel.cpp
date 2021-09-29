@@ -94,13 +94,13 @@ void BtLabel::initializeProperty()
 void BtLabel::initializeMenu()
 {
    Unit::unitDisplay unit;
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
 
    if ( _menu )
       return;
 
    unit  = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
-   scale = static_cast<Unit::unitScale>(PersistentSettings::value(propertyName, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+   scale = static_cast<Unit::RelativeScale>(PersistentSettings::value(propertyName, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
 
    switch( whatAmI )
    {
@@ -156,7 +156,7 @@ void BtLabel::popContextMenu(const QPoint& point)
 
    invoked = _menu->exec(widgie->mapToGlobal(point));
    Unit::unitDisplay unit = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
-   Unit::unitScale scale  = static_cast<Unit::unitScale>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::SCALE).toInt());
+   Unit::RelativeScale scale  = static_cast<Unit::RelativeScale>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::SCALE).toInt());
 
    if ( invoked == 0 )
       return;

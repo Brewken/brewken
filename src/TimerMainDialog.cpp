@@ -20,7 +20,7 @@
 #include <QMessageBox>
 #include <QToolTip>
 
-#include "Unit.h"
+#include "units/Unit.h"
 
 TimerMainDialog::TimerMainDialog(MainWindow* parent) : QDialog(parent),
     mainWindow(parent),

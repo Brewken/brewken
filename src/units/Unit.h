@@ -28,25 +28,72 @@
 #include <QObject>
 #include <QString>
 
-enum SystemOfMeasurement {
-    SI = 0,
-    USCustomary = 1,
-    Imperial = 2,
-    ImperialAndUS = 3,
-    Any = 4
-};
+namespace SystemsOfMeasurement {
+   /**
+    * \enum SystemOfMeasurement tells us which sets of units to use for \c Unit::QuantityType of \c Unit::Mass or
+    *       \c Unit::Volume.  These are the quantity types where we have multiple units in each system (eg milligrams,
+    *       grams and kilograms in the metric aka SI system for mass), so we need a group name.  For other quantity types,
+    *       such as \c Unit::Temperature, there is only one unit in each system of measurement (eg degrees Fahrenheit in US
+    *       customary units) and/or we don't want to use the "standard" unit (eg technically we should use Kelvin in the
+    *       metric/SI system, but outside the science lab, it's more sensible to use degrees Celsius) and/or the name of
+    *       the system of measurement is the same as the unit of measurement (eg SRM and EBC for \c Unit::Color).  So in
+    *       those cases, we use the unit itself rather than having a separate enum for system of measurement.
+    */
+   enum MassOrVolumeScales {
+      SI = 0,
+      USCustomary = 1,
+      Imperial = 2,
+   //    ImperialAndUS = 3, Not used and I'm not even sure what it means!
+      Any = 4 // .:TODO:. This is a hack for the Unit class that we need to remove
+   };
 
-enum TempScale {
-    Celsius,
-    Fahrenheit,
-    Kelvin
-};
+   /**
+    * \enum TempScale tells us which units to use for for \c Unit::QuantityType of \c Unit::Temperature
+    */
+   enum TempScale {
+      Celsius,
+      Fahrenheit,
+      Kelvin
+   };
+
+   //! \brief The units to display color in.
+   enum ColorUnitType {SRM, EBC};
+
+   //! \brief Units for density
+   enum DensityUnitType {SG, PLATO};
+
+   //! \brief The units for the diastatic power.
+   enum DiastaticPowerUnitType {LINTNER, WK};
+
+   // Options to be edited ONLY by the OptionDialog============================
+   // Whether or not to display plato instead of SG.
+
+   extern MassOrVolumeScales weightUnitSystem;
+   extern MassOrVolumeScales volumeUnitSystem;
+
+   // Sigh. You knew this was coming right? But I think I can clean a lot of
+   // shit up with some clever work.
+   extern QHash<int, UnitSystem const *> thingToUnitSystem;
+
+   extern TempScale tempScale;
+   extern ColorUnitType colorUnit;
+   extern DensityUnitType densityUnit;
+   extern DiastaticPowerUnitType diastaticPowerUnit;
+
+   // .:TODO:. At the moment, this can take the following values:
+   //   Unit::displayUS  = mm-dd-YYYY
+   //   Unit::displayImp = dd-mm-YYYY
+   //   Unit::displaySI  = YYYY-mm-dd
+   // This looks like a bit of a hack to avoid creating a new enum (perhaps because Qt::DateFormat is not suitable)
+   // We should fix this!
+   static Unit::unitDisplay dateFormat;
+
+}
 
 // TODO: implement ppm, percent, ibuGalPerLb,
 
 /*!
  * \class Unit
- *
  *
  * \brief Interface for arbitrary physical units and their formatting.
  */
@@ -54,12 +101,15 @@ class Unit : public QObject {
 Q_OBJECT
 
 Q_ENUMS(unitDisplay)
-Q_ENUMS(unitScale)
-Q_ENUMS(UnitType)
+Q_ENUMS(RelativeScale)
+Q_ENUMS(QuantityType)
 
 public:
-   // Did you know you need these to be *INSIDE* the class definition for
-   // Qt to see them?
+   // Did you know you need these various enums to be *INSIDE* the class definition for Qt to see them?
+
+   /**
+    *
+    */
    enum unitDisplay {
       noUnit         = -1,
       displayDef     = 0x000,
@@ -74,7 +124,15 @@ public:
       displayWK      = 0x401
    };
 
-   enum unitScale {
+   /**
+    * For some types of quantity, a given system of measurement will have multiple units, so we need to be able to order
+    * these units by relative size, eg, for fluid volume:
+    *   fluid teaspoon < tablespoon < cup < pint < quart < gallon   (in both imperial units and US customary units)
+    *   milliliters < liters                                        (in metric system)
+    * We only worry about units we actually use/permit, thus we don't, for example, care about where minims, fluid
+    * drams, gills etc fit in on the imperial / US customary volume scales, as we don't support them.
+    */
+   enum RelativeScale {
       noScale = -1,
       scaleExtraSmall = 0,
       scaleSmall = 1,
@@ -85,11 +143,14 @@ public:
       scaleWithout=1000
    };
 
-   enum UnitType {
+   /**
+    * \brief The various types of quantity (https://en.wikipedia.org/wiki/Quantity) that we need to be able to measure
+    */
+   enum QuantityType {
       Mass           = 0x100000,
       Volume         = 0x200000,
       Time           = 0x300000,
-      Temp           = 0x400000,
+      Temperature    = 0x400000,
       Color          = 0x500000,
       Density        = 0x600000,
       String         = 0x700000,
@@ -101,8 +162,8 @@ public:
    /**
     * \brief Construct a type of unit
     */
-   Unit(UnitType const unitType,
-        SystemOfMeasurement const systemOfMeasurement,
+   Unit(QuantityType const unitType,
+        SystemsOfMeasurement::MassOrVolumeScales const systemOfMeasurement,
         QString const unitName,
         QString const siUnitName,
         std::function<double(double)> convertToCanonical,
@@ -125,8 +186,7 @@ public:
    QString const & getUnitName() const;
    QString const & getSIUnitName() const;
 
-   Unit::UnitType getUnitType() const;
-   SystemOfMeasurement getUnitOrTempSystem() const;
+   Unit::QuantityType getUnitType() const;
 
    /**
     * \brief Used by \c UnitSystem
@@ -142,8 +202,8 @@ public:
    static QString convert(QString qstr, QString toUnit);
 
 private:
-   UnitType const unitType;
-   SystemOfMeasurement const systemOfMeasurement;
+   QuantityType const unitType;
+   SystemsOfMeasurement::MassOrVolumeScales const systemOfMeasurement;
    QString const unitName;
    QString const siUnitName;
    std::function<double(double)> convertToCanonical;
@@ -168,12 +228,12 @@ namespace Units {
    extern Unit const us_gallons;
    extern Unit const us_quarts;
    extern Unit const us_cups;
+   extern Unit const us_tablespoons;
+   extern Unit const us_teaspoons;
    extern Unit const imperial_barrels;
    extern Unit const imperial_gallons;
    extern Unit const imperial_quarts;
    extern Unit const imperial_cups;
-   extern Unit const us_tablespoons;
-   extern Unit const us_teaspoons;
    extern Unit const imperial_tablespoons;
    extern Unit const imperial_teaspoons;
    // === Time ===

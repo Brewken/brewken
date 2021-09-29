@@ -26,11 +26,9 @@
 #include "model/Style.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
-StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor)
-   : QDialog(parent), obsStyle(0)
-{
+StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog(parent), obsStyle(nullptr) {
    setupUi(this);
    if ( singleStyleEditor )
    {

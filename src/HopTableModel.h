@@ -89,9 +89,9 @@ public:
    // column
 
    Unit::unitDisplay displayUnit(int column) const;
-   Unit::unitScale displayScale(int column) const;
+   Unit::RelativeScale displayScale(int column) const;
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::unitScale displayScale);
+   void setDisplayScale(int column, Unit::RelativeScale displayScale);
 
 
    QString generateName(int column) const;

@@ -44,7 +44,7 @@
 #include "model/Hop.h"
 #include "model/Inventory.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 #include "utils/BtStringConst.h"
 
 HopTableModel::HopTableModel(QTableView * parent, bool editable) :
@@ -290,7 +290,7 @@ int HopTableModel::columnCount(const QModelIndex & /*parent*/) const {
 QVariant HopTableModel::data(const QModelIndex & index, int role) const {
    Hop * row;
    int col = index.column();
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
    Unit::unitDisplay unit;
 
    // Ensure the row is ok.
@@ -411,7 +411,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
    row = hopObs[index.row()];
 
    Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::unitScale   dspScl  = displayScale(index.column());
+   Unit::RelativeScale   dspScl  = displayScale(index.column());
    switch (index.column()) {
       case HOPNAMECOL:
          retVal = value.canConvert(QVariant::String);
@@ -503,14 +503,14 @@ Unit::unitDisplay HopTableModel::displayUnit(int column) const {
                                                                    PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale HopTableModel::displayScale(int column) const {
+Unit::RelativeScale HopTableModel::displayScale(int column) const {
    QString attribute = generateName(column);
 
    if (attribute.isEmpty()) {
       return Unit::noScale;
    }
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(),
+   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(),
                                                                  PersistentSettings::SCALE).toInt());
 }
 
@@ -532,7 +532,7 @@ void HopTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit) {
 }
 
 // Setting the scale should clear any cell-level scaling options
-void HopTableModel::setDisplayScale(int column, Unit::unitScale displayScale) {
+void HopTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale) {
    // Fermentable* row; //disabled per-cell magic
 
    QString attribute = generateName(column);
@@ -570,7 +570,7 @@ void HopTableModel::contextMenu(const QPoint & point) {
 
    int selected = hView->logicalIndexAt(point);
    Unit::unitDisplay currentUnit;
-   Unit::unitScale  currentScale;
+   Unit::RelativeScale  currentScale;
 
    // Since we need to call generateVolumeMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
@@ -601,7 +601,7 @@ void HopTableModel::contextMenu(const QPoint & point) {
    if (selected != HOPTIMECOL && pMenu == menu) {
       setDisplayUnit(selected, static_cast<Unit::unitDisplay>(invoked->data().toInt()));
    } else {
-      setDisplayScale(selected, static_cast<Unit::unitScale>(invoked->data().toInt()));
+      setDisplayScale(selected, static_cast<Unit::RelativeScale>(invoked->data().toInt()));
    }
 
 }

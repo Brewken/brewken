@@ -20,8 +20,8 @@
 #include <QLabel>
 #include <QWidget>
 #include <QString>
-#include "Unit.h"
-#include "UnitSystem.h"
+#include "units/Unit.h"
+#include "units/UnitSystem.h"
 
 /*!
  * \class BtDigitWidget
@@ -42,7 +42,7 @@ class BtDigitWidget : public QLabel
 public:
    enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
 
-   BtDigitWidget(QWidget* parent = 0, Unit::UnitType type = Unit::None, Unit const * units = nullptr );
+   BtDigitWidget(QWidget* parent = 0, Unit::QuantityType type = Unit::None, Unit const * units = nullptr );
 
    //! \brief Displays the given \c num with precision \c prec.
    void display( double num, int prec = 0 );
@@ -88,13 +88,13 @@ public:
    QString displayAmount( double amount, int precision = 2 );
 
 public slots:
-   void displayChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale);
+   void displayChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale);
 
 private:
    QString m_section, m_editField;
-   Unit::UnitType m_type;
+   Unit::QuantityType m_type;
    Unit::unitDisplay m_forceUnit;
-   Unit::unitScale m_forceScale;
+   Unit::RelativeScale m_forceScale;
    Unit const * m_units;
    QWidget* m_parent;
 

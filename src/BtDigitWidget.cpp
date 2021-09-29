@@ -27,10 +27,10 @@
 
 #include "Brewken.h"
 #include "PersistentSettings.h"
-#include "UnitSystem.h"
-#include "Unit.h"
+#include "units/UnitSystem.h"
+#include "units/Unit.h"
 
-BtDigitWidget::BtDigitWidget(QWidget *parent, Unit::UnitType type, Unit const * units) : QLabel(parent),
+BtDigitWidget::BtDigitWidget(QWidget *parent, Unit::QuantityType type, Unit const * units) : QLabel(parent),
    m_type(type),
    m_forceUnit( Unit::noUnit ),
    m_forceScale( Unit::noScale ),
@@ -210,13 +210,13 @@ QString BtDigitWidget::forcedUnit() const
 QString BtDigitWidget::forcedScale() const
 {
    const QMetaObject &mo = Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("unitScale");
+   int index = mo.indexOfEnumerator("RelativeScale");
    QMetaEnum scaleEnum = mo.enumerator(index);
 
    return QString( scaleEnum.valueToKey(m_forceScale) );
 }
 
-void BtDigitWidget::setType(int type) { m_type = (Unit::UnitType)type;}
+void BtDigitWidget::setType(int type) { m_type = (Unit::QuantityType)type;}
 void BtDigitWidget::setEditField( QString editField) { m_editField = editField; }
 
 // The cascade looks a little odd, but it is intentional.
@@ -244,13 +244,13 @@ void BtDigitWidget::setForcedUnit( QString forcedUnit )
 void BtDigitWidget::setForcedScale( QString forcedScale )
 {
    const QMetaObject &mo = Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("unitScale");
+   int index = mo.indexOfEnumerator("RelativeScale");
    QMetaEnum unitEnum = mo.enumerator(index);
 
-   m_forceScale = (Unit::unitScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
+   m_forceScale = (Unit::RelativeScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
 }
 
-void BtDigitWidget::displayChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale)
+void BtDigitWidget::displayChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale)
 {
    // This is where it gets hard
    double val = -1.0;
@@ -283,10 +283,10 @@ void BtDigitWidget::displayChanged(Unit::unitDisplay oldUnit, Unit::unitScale ol
 QString BtDigitWidget::displayAmount(double amount, int precision)
 {
    Unit::unitDisplay unitDsp;
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
 
    unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::value(m_editField, Unit::noUnit, m_section, PersistentSettings::UNIT).toInt());
-   scale    = static_cast<Unit::unitScale>(PersistentSettings::value(m_editField, Unit::noScale, m_section, PersistentSettings::SCALE).toInt());
+   scale    = static_cast<Unit::RelativeScale>(PersistentSettings::value(m_editField, Unit::noScale, m_section, PersistentSettings::SCALE).toInt());
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the

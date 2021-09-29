@@ -133,10 +133,59 @@ namespace {
       //   boil:                      BoilProcedureType[]          optional
       //   packaging:                 PackagingProcedureType[]     optional
       //
-      // A lot of the base types in BeerJSON consist of unit & value, where unit is an enum (ie string with restricted
-      // set of values) and value is a decimal or integer number.
+      // In contrast with BeerXML and our database store, where we specify a canonical unit of measure for each field
+      // (eg temperatures are always stored as degrees celcius), BeerJSON allows lots of different units of measure.
+      // Thus a lot of the base types in BeerJSON consist of unit & value, where unit is an enum (ie string with
+      // restricted set of values) and value is a decimal or integer number.  This is a more universal approach in
+      // allowing multiple units to be used for temperature, time, color, etc, but it also means we have a lot more
+      // "base" types than for BeerXML or ObjectStore.  (It also means that it's harder for the schema to do bounds
+      // validation on such values.)
       //
+      // In some cases, BeerJSON only allows one unit of measurement, but the same structure of {unit, value} is
+      // maintained, presumably for consistency and extensibility.
       //
+      // The main BeerJSON base types are:
+      //
+      //    VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz", "ipt", "iqt", "igal", "ibbl"}
+      //                        value : decimal
+      //    MassType:           unit ∈ {"mg", "g", "kg", "lb", "oz"}
+      //                        value : decimal
+      //    DiastaticPowerType: unit ∈ {"Lintner", "WK"}
+      //                        value : decimal
+      //    TemperatureType:    unit ∈ {"C", "F"}
+      //                        value : decimal
+      //    PressureType:       unit ∈ {"kPa", "psi", "bar" }
+      //                        value : decimal
+      //    AcidityType:        unit ∈ {"pH"} (NB: one-element set)
+      //                        value : decimal
+      //    TimeType:           unit ∈ {"sec", "min", "hr", "day", "week"}
+      //                        value : integer
+      //    ColorType:          unit ∈ {"EBC", "Lovi", "SRM"}
+      //                        value : decimal
+      //    CarbonationType:    unit ∈ {"vols", "g/l"}
+      //                        value : decimal
+      //    BitternessType:     unit ∈ {"IBUs"} (NB: one-element set)
+      //                        value : decimal
+      //    GravityType:        unit ∈ {"sg", "plato", "brix" }
+      //                        value : decimal
+      //    SpecificHeatType:   unit ∈ {"Cal/(g C)", "J/(kg K)", "BTU/(lb F)" }
+      //                        value : decimal
+      //    ConcentrationType:  unit ∈ {"ppm", "ppb", "mg/l"}
+      //                        value : decimal
+      //    SpecificVolumeType: unit ∈ {"qt/lb", "gal/lb", "gal/oz", "l/g", "l/kg", "floz/oz", "m^3/kg", "ft^3/lb"}
+      //                        value : decimal
+      //    UnitType:           unit ∈ {"1", "unit", "each", "dimensionless", "pkg"}
+      //                        value : decimal
+      //    ViscosityType:      unit ∈ {"cP", "mPa-s"}
+      //                        value : decimal
+      //
+      // Furthermore, for many of these types, an additional "range" type is defined - eg GravityRangeType,
+      // BitternessRangeType, etc are used in beer styles.  The range type is just an object with two required elements,
+      // minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType, BitternessType
+      // for the members of BitternessRangeType, etc).
+      //
+
+      /////
 
       userMessage << "BeerJSON support is not yet complete!";
       return false;

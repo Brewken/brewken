@@ -29,7 +29,7 @@
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Hop.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 HopEditor::HopEditor(QWidget * parent) :
    QDialog(parent),

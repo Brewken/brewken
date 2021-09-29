@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * IbuMethods.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * units/IbuMethods.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "IbuMethods.h"
+#include "units/IbuMethods.h"
 
 #include <cmath>
 

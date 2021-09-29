@@ -17,14 +17,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "UnitSystem.h"
+#include "units/UnitSystem.h"
 
 #include <QDebug>
 #include <QLocale>
 #include <QRegExp>
 
 #include "Brewken.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 namespace {
    int const fieldWidth = 0;
@@ -42,10 +42,10 @@ namespace {
    };
 }
 
-UnitSystem::UnitSystem(Unit::UnitType type,
+UnitSystem::UnitSystem(Unit::QuantityType type,
                        Unit const * thickness,
                        Unit const * defaultUnit,
-                       std::initializer_list<std::pair<Unit::unitScale, Unit const *> > scaleToUnitEntries,
+                       std::initializer_list<std::pair<Unit::RelativeScale, Unit const *> > scaleToUnitEntries,
                        std::initializer_list<std::pair<QString, Unit const *> > qstringToUnitEntries,
                        char const * name) :
    type{type},
@@ -57,7 +57,7 @@ UnitSystem::UnitSystem(Unit::UnitType type,
    return;
 }
 
-double UnitSystem::qstringToSI(QString qstr, Unit const * defUnit, bool force, Unit::unitScale scale) const {
+double UnitSystem::qstringToSI(QString qstr, Unit const * defUnit, bool force, Unit::RelativeScale scale) const {
    Unit const * u = defUnit;
    Unit const * found = 0;
 
@@ -100,7 +100,7 @@ double UnitSystem::qstringToSI(QString qstr, Unit const * defUnit, bool force, U
    return u->toSI(amt);
 }
 
-QString UnitSystem::displayAmount(double amount, Unit const * units, int precision, Unit::unitScale scale) const {
+QString UnitSystem::displayAmount(double amount, Unit const * units, int precision, Unit::RelativeScale scale) const {
    // If the precision is not specified, we take the default one
    if (precision < 0) {
       precision = defaultPrecision;
@@ -115,12 +115,12 @@ QString UnitSystem::displayAmount(double amount, Unit const * units, int precisi
    return QString("%L1 %2").arg(result.first, fieldWidth, format, precision).arg(result.second);
 }
 
-double UnitSystem::amountDisplay(double amount, Unit const * units, Unit::unitScale scale) const {
+double UnitSystem::amountDisplay(double amount, Unit const * units, Unit::RelativeScale scale) const {
    // Essentially we're just returning the numeric part of the displayable amount
    return this->displayableAmount(amount, units, scale).first;
 }
 
-Unit const * UnitSystem::scaleUnit(Unit::unitScale scale) const {
+Unit const * UnitSystem::scaleUnit(Unit::RelativeScale scale) const {
    return this->scaleToUnit.contains(scale) ? this->scaleToUnit.value(scale) : nullptr;
 }
 
@@ -136,7 +136,7 @@ QString const & UnitSystem::unitType() const {
    return this->name;
 }
 
-std::pair<double, QString> UnitSystem::displayableAmount(double amount, Unit const * units, Unit::unitScale scale) const {
+std::pair<double, QString> UnitSystem::displayableAmount(double amount, Unit const * units, Unit::RelativeScale scale) const {
    // Special cases
    if (units == nullptr || units->getUnitType() != this->type) {
       return std::pair(amount, "");
@@ -243,14 +243,14 @@ UnitSystem const UnitSystems::siVolumeUnitSystem = UnitSystem(Unit::Volume,
                                                                {"l",  &Units::liters     }},
                                                               "SI");
 
-UnitSystem const UnitSystems::celsiusTempUnitSystem = UnitSystem(Unit::Temp,
+UnitSystem const UnitSystems::celsiusTempUnitSystem = UnitSystem(Unit::Temperature,
                                                                  nullptr,
                                                                  &Units::celsius,
                                                                  {{Unit::scaleWithout, &Units::celsius}},
                                                                  {{"C", &Units::celsius}},
                                                                  "SI");
 
-UnitSystem const UnitSystems::fahrenheitTempUnitSystem = UnitSystem(Unit::Temp,
+UnitSystem const UnitSystems::fahrenheitTempUnitSystem = UnitSystem(Unit::Temperature,
                                                                     nullptr,
                                                                     &Units::fahrenheit,
                                                                     {{Unit::scaleWithout, &Units::fahrenheit}},

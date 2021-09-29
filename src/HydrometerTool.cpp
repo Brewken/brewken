@@ -31,7 +31,7 @@
 
 #include "Algorithms.h"
 #include "Brewken.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
    doLayout();

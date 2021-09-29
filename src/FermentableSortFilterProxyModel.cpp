@@ -19,14 +19,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
-#include "Unit.h"
 #include "FermentableSortFilterProxyModel.h"
+
+#include <iostream>
+
+#include <QDebug>
+
+#include "Brewken.h"
 #include "FermentableTableModel.h"
 #include "model/Fermentable.h"
-#include "Brewken.h"
-#include <iostream>
-#include <QDebug>
+#include "units/Unit.h"
 
 FermentableSortFilterProxyModel::FermentableSortFilterProxyModel(QObject *parent, bool filt)
 : QSortFilterProxyModel(parent)

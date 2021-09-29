@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -17,6 +18,7 @@
  =====================================================================================================================*/
 #ifndef SALTTABLEMODEL_H
 #define SALTTABLEMODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
 #include <QItemDelegate>
@@ -29,8 +31,8 @@
 
 #include "model/Salt.h"
 #include "model/Water.h"
+#include "units/Unit.h"
 
-#include "Unit.h"
 // Forward declarations.
 class Recipe;
 class WaterDialog;
@@ -104,12 +106,12 @@ private:
    double spargePct;
 
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::unitScale displayScale);
+   void setDisplayScale(int column, Unit::RelativeScale displayScale);
    double multiplier(Salt *s) const;
 
    QString generateName(int column) const;
    Unit::unitDisplay displayUnit(int column) const;
-   Unit::unitScale displayScale(int column) const;
+   Unit::RelativeScale displayScale(int column) const;
 };
 
 /*!

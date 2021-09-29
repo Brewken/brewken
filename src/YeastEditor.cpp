@@ -29,7 +29,7 @@
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Yeast.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 YeastEditor::YeastEditor(QWidget * parent) :
    QDialog(parent),

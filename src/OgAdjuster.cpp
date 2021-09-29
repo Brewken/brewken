@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * OgAdjuster.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * OgAdjuster.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -18,19 +19,20 @@
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
 #include "OgAdjuster.h"
-#include "model/Equipment.h"
-#include "Brewken.h"
-#include "Unit.h"
-#include "Algorithms.h"
-#include "model/Recipe.h"
 
-OgAdjuster::OgAdjuster( QWidget* parent ) : QDialog(parent)
-{
+#include "Algorithms.h"
+#include "Brewken.h"
+#include "model/Equipment.h"
+#include "model/Recipe.h"
+#include "units/Unit.h"
+
+OgAdjuster::OgAdjuster( QWidget* parent ) : QDialog(parent) {
    setupUi(this);
 
    recObs = 0;
 
    connect( pushButton_calculate, &QAbstractButton::clicked, this, &OgAdjuster::calculate );
+   return;
 }
 
 

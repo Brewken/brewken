@@ -28,7 +28,6 @@
 
 #include "Brewken.h"
 #include "BtDigitWidget.h"
-#include "ColorMethods.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
@@ -41,6 +40,7 @@
 #include "WaterListModel.h"
 #include "WaterSortFilterProxyModel.h"
 #include "WaterTableModel.h"
+#include "units/ColorMethods.h"
 
 WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
    m_ppm_digits( QVector<BtDigitWidget*>(Water::numIons) ),

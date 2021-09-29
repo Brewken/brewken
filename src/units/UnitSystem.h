@@ -23,7 +23,7 @@
 
 #include <QMap>
 #include <QString>
-#include "Unit.h"
+#include "units/Unit.h"
 
 /*!
  * \class UnitSystem
@@ -42,10 +42,10 @@ public:
     * \param qstringToUnitEntries
     * \param name
     */
-   UnitSystem(Unit::UnitType type,
+   UnitSystem(Unit::QuantityType type,
               Unit const * thickness,
               Unit const * defaultUnit,
-              std::initializer_list<std::pair<Unit::unitScale, Unit const *> > scaleToUnitEntries,
+              std::initializer_list<std::pair<Unit::RelativeScale, Unit const *> > scaleToUnitEntries,
               std::initializer_list<std::pair<QString, Unit const *> > qstringToUnitEntries,
               char const * name);
 
@@ -62,7 +62,7 @@ public:
     *
     * \return
     */
-   QString displayAmount(double amount, Unit const * units, int precision = -1, Unit::unitScale scale = Unit::noScale) const;
+   QString displayAmount(double amount, Unit const * units, int precision = -1, Unit::RelativeScale scale = Unit::noScale) const;
 
    /*!
     * \brief Returns the double representing the appropriate unit and scale. Similar in nature to \c displayAmount(),
@@ -74,7 +74,7 @@ public:
     *
     * \return
     */
-   double amountDisplay(double amount, Unit const * units, Unit::unitScale scale = Unit::noScale) const;
+   double amountDisplay(double amount, Unit const * units, Unit::RelativeScale scale = Unit::noScale) const;
 
    /*!
     * \brief Converts 'qstr' (consisting of a decimal amount, followed by a unit string) to the appropriate SI amount
@@ -87,12 +87,12 @@ public:
     *
     * \return
     */
-   double qstringToSI(QString qstr, Unit const * defUnit = nullptr, bool force = false, Unit::unitScale scale = Unit::noScale) const;
+   double qstringToSI(QString qstr, Unit const * defUnit = nullptr, bool force = false, Unit::RelativeScale scale = Unit::noScale) const;
 
    /*!
     * \brief
     */
-   Unit const * scaleUnit(Unit::unitScale scale) const;
+   Unit const * scaleUnit(Unit::RelativeScale scale) const;
 
    /*!
     * \brief Returns the unit associated with thickness. If this unit system is US weight, it would return lb. If it
@@ -111,23 +111,23 @@ public:
     * \brief Returns the name of the system of measurement for this unit system
     *
     * .:TODO:.  This is a bit confusing.  It can be a string representation of either
-    *           Unit::SystemOfMeasurement, Unit::TempScale or Unit::UnitType!
+    *           SystemsOfMeasurement::MassOrVolumeScales, SystemsOfMeasurement::TempScale or Unit::QuantityType!
     */
    QString const & unitType() const;
 
 private:
    // This does most of the work for displayAmount() and amountDisplay()
-   std::pair<double, QString> displayableAmount(double amount, Unit const * units, Unit::unitScale scale) const;
+   std::pair<double, QString> displayableAmount(double amount, Unit const * units, Unit::RelativeScale scale) const;
 
-   Unit::UnitType const type;
+   Unit::QuantityType const type;
    Unit const * thickness;
    Unit const * defaultUnit;
 
-   // Map from a Unit::unitScale to a concrete Unit - eg in the US weight UnitSystem,
+   // Map from a Unit::RelativeScale to a concrete Unit - eg in the US weight UnitSystem,
    // Unit::scaleExtraSmall maps to Units::ounces and Unit::scaleSmall maps to Units::pounds
    //
    // Because it's a map, when we iterate over it, we'll traverse from smallest to largest.
-   QMap<Unit::unitScale, Unit const *> const scaleToUnit;
+   QMap<Unit::RelativeScale, Unit const *> const scaleToUnit;
 
    // Map from SI abbreviation to a concrete \c Unit
    QMap<QString, Unit const *> const qstringToUnit;

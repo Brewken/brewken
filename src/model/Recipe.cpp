@@ -34,10 +34,9 @@
 
 #include "Algorithms.h"
 #include "Brewken.h"
-#include "ColorMethods.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
-#include "IbuMethods.h"
+#include "units/IbuMethods.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -53,6 +52,7 @@
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
 #include "PreInstruction.h"
+#include "units/ColorMethods.h"
 
 
 namespace {

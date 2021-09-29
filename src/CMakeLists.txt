@@ -117,7 +117,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/BtTreeItem.cpp
     ${SRCDIR}/BtTreeModel.cpp
     ${SRCDIR}/BtTreeView.cpp
-    ${SRCDIR}/ColorMethods.cpp
     ${SRCDIR}/ConverterTool.cpp
     ${SRCDIR}/CustomComboBox.cpp
     ${SRCDIR}/database/BtSqlQuery.cpp
@@ -142,7 +141,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/Html.cpp
     ${SRCDIR}/HydrometerTool.cpp
     ${SRCDIR}/IbuGuSlider.cpp
-    ${SRCDIR}/IbuMethods.cpp
     ${SRCDIR}/InstructionWidget.cpp
     ${SRCDIR}/InventoryFormatter.cpp
     ${SRCDIR}/json/BeerJson.cpp
@@ -206,8 +204,10 @@ SET( Brewken_SRCS
     ${SRCDIR}/TimerListDialog.cpp
     ${SRCDIR}/TimerMainDialog.cpp
     ${SRCDIR}/TimerWidget.cpp
-    ${SRCDIR}/Unit.cpp
-    ${SRCDIR}/UnitSystem.cpp
+    ${SRCDIR}/units/ColorMethods.cpp
+    ${SRCDIR}/units/IbuMethods.cpp
+    ${SRCDIR}/units/Unit.cpp
+    ${SRCDIR}/units/UnitSystem.cpp
     ${SRCDIR}/utils/BtException.cpp
     ${SRCDIR}/utils/BtStringConst.cpp
     ${SRCDIR}/utils/BtStringStream.cpp
@@ -375,7 +375,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/TimerListDialog.h
     ${SRCDIR}/TimerMainDialog.h
     ${SRCDIR}/TimerWidget.h
-    ${SRCDIR}/Unit.h
+    ${SRCDIR}/units/Unit.h
     ${SRCDIR}/WaterButton.h
     ${SRCDIR}/WaterDialog.h
     ${SRCDIR}/WaterEditor.h

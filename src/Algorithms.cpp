@@ -23,7 +23,7 @@
 #include <QVector>
 
 #include "PhysicalConstants.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 namespace {
 

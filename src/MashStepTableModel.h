@@ -31,7 +31,7 @@
 
 #include "model/MashStep.h"
 #include "model/Mash.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 class MashStepItemDelegate;
 
@@ -73,9 +73,9 @@ public:
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
    Unit::unitDisplay displayUnit(int column) const;
-   Unit::unitScale displayScale(int column) const;
+   Unit::RelativeScale displayScale(int column) const;
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::unitScale displayScale);
+   void setDisplayScale(int column, Unit::RelativeScale displayScale);
    QString generateName(int column) const;
 
 public slots:

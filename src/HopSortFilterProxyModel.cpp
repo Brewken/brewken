@@ -17,13 +17,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "HopSortFilterProxyModel.h"
+
+#include <iostream>
 
 #include "Brewken.h"
-#include "HopSortFilterProxyModel.h"
 #include "HopTableModel.h"
 #include "model/Hop.h"
-#include "Unit.h"
-#include <iostream>
+#include "units/Unit.h"
 
 HopSortFilterProxyModel::HopSortFilterProxyModel(QObject *parent, bool filt)
 : QSortFilterProxyModel(parent)

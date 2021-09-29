@@ -42,12 +42,13 @@
 #include "Brewken.h"
 #include "BtLineEdit.h"
 #include "database/Database.h"
-#include "IbuMethods.h"
+#include "units/IbuMethods.h"
 #include "Logging.h"
 #include "MainWindow.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
-#include "UnitSystem.h"
+#include "units/ColorMethods.h"
+#include "units/Unit.h"
+#include "units/UnitSystem.h"
 
 //
 // Anonymous namespace for constants, global variables and functions used only in this file
@@ -393,7 +394,7 @@ public:
       optionDialog.diastaticPowerComboBox->setCurrentIndex(optionDialog.diastaticPowerComboBox->findData(
                                                               Brewken::diastaticPowerUnit));
 
-      optionDialog.colorFormulaComboBox->setCurrentIndex(optionDialog.colorFormulaComboBox->findData(Brewken::colorFormula));
+      optionDialog.colorFormulaComboBox->setCurrentIndex(optionDialog.colorFormulaComboBox->findData(ColorMethods::colorFormula));
       optionDialog.ibuFormulaComboBox->setCurrentIndex(optionDialog.ibuFormulaComboBox->findData(IbuMethods::ibuFormula));
 
       // User data directory
@@ -563,9 +564,9 @@ void OptionDialog::configure_formulaCombos() {
    ibuFormulaComboBox->addItem(tr("Rager's approximation"), QVariant(IbuMethods::RAGER));
    ibuFormulaComboBox->addItem(tr("Noonan's approximation"), QVariant(IbuMethods::NOONAN));
 
-   colorFormulaComboBox->addItem(tr("Mosher's approximation"), QVariant(Brewken::MOSHER));
-   colorFormulaComboBox->addItem(tr("Daniel's approximation"), QVariant(Brewken::DANIEL));
-   colorFormulaComboBox->addItem(tr("Morey's approximation"), QVariant(Brewken::MOREY));
+   colorFormulaComboBox->addItem(tr("Mosher's approximation"), QVariant(ColorMethods::MOSHER));
+   colorFormulaComboBox->addItem(tr("Daniel's approximation"), QVariant(ColorMethods::DANIEL));
+   colorFormulaComboBox->addItem(tr("Morey's approximation"), QVariant(ColorMethods::MOREY));
 }
 
 void OptionDialog::configure_logging() {
@@ -810,7 +811,7 @@ void OptionDialog::saveFormulae() {
    int ndx = ibuFormulaComboBox->itemData(ibuFormulaComboBox->currentIndex()).toInt(&okay);
    IbuMethods::ibuFormula = static_cast<IbuMethods::IbuType>(ndx);
    ndx = colorFormulaComboBox->itemData(colorFormulaComboBox->currentIndex()).toInt(&okay);
-   Brewken::colorFormula = static_cast<Brewken::ColorType>(ndx);
+   ColorMethods::colorFormula = static_cast<ColorMethods::ColorType>(ndx);
 
    PersistentSettings::insert(PersistentSettings::Names::mashHopAdjustment, ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
    PersistentSettings::insert(PersistentSettings::Names::firstWortHopAdjustment, ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
@@ -978,11 +979,11 @@ bool OptionDialog::saveTemperatureUnits() {
       case Celsius:
       default:
          Brewken::tempScale = Celsius;
-         Brewken::thingToUnitSystem.insert(Unit::Temp, &UnitSystems::celsiusTempUnitSystem);
+         Brewken::thingToUnitSystem.insert(Unit::Temperature, &UnitSystems::celsiusTempUnitSystem);
          break;
       case Fahrenheit:
          Brewken::tempScale = Fahrenheit;
-         Brewken::thingToUnitSystem.insert(Unit::Temp, &UnitSystems::fahrenheitTempUnitSystem);
+         Brewken::thingToUnitSystem.insert(Unit::Temperature, &UnitSystems::fahrenheitTempUnitSystem);
          break;
    }
    return okay;

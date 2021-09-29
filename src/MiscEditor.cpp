@@ -28,7 +28,7 @@
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Misc.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 MiscEditor::MiscEditor(QWidget * parent) :
    QDialog(parent),

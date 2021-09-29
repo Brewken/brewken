@@ -50,7 +50,7 @@ public slots:
    void toggleViabilityFromDate(int state);
    void updateViabilityFromDate(QDate date);
 
-   void updateProductionDate(Unit::unitDisplay dsp, Unit::unitScale scl);
+   void updateProductionDate(Unit::unitDisplay dsp, Unit::RelativeScale scl);
 
 private:
 

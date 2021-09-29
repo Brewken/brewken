@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * ConverterTool.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * ConverterTool.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,13 +15,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #include "ConverterTool.h"
-#include "Unit.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QSpacerItem>
+
+#include "units/Unit.h"
 
 ConverterTool::ConverterTool(QWidget* parent) : QDialog(parent)
 {

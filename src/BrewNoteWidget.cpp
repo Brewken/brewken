@@ -60,7 +60,7 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
 
 // I should really do this better, but I really cannot bring myself to do
 // another UnitSystem for one input field.
-void BrewNoteWidget::updateDateFormat(Unit::unitDisplay display,Unit::unitScale scale) {
+void BrewNoteWidget::updateDateFormat(Unit::unitDisplay display,Unit::RelativeScale scale) {
    QString format;
    // I need the new unit, not the old
    Unit::unitDisplay unitDsp = static_cast<Unit::unitDisplay>(
@@ -86,7 +86,7 @@ void BrewNoteWidget::updateDateFormat(Unit::unitDisplay display,Unit::unitScale 
 }
 
 
-void BrewNoteWidget::updateProjOg(Unit::unitDisplay oldUnit, Unit::unitScale oldScale)
+void BrewNoteWidget::updateProjOg(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale)
 {
    double low  = 0.95;
    double high = 1.05;

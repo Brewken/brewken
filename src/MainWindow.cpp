@@ -136,7 +136,7 @@
 #include "TimerMainDialog.h"
 #include "UndoableAddOrRemove.h"
 #include "UndoableAddOrRemoveList.h"
-#include "Unit.h"
+#include "units/Unit.h"
 #include "utils/BtStringConst.h"
 #include "WaterDialog.h"
 #include "WaterEditor.h"

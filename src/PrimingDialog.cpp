@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * PrimingDialog.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * PrimingDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
@@ -16,14 +17,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "PrimingDialog.h"
 
 #include <cmath>
-#include "PrimingDialog.h"
-#include "Unit.h"
-#include "Brewken.h"
 
-PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent)
-{
+#include "Brewken.h"
+#include "units/Unit.h"
+
+PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    setupUi(this);
 
    sugarGroup = new QButtonGroup(this);
@@ -35,11 +36,10 @@ PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent)
    sugarGroup->addButton(radioButton_dme);
 
    connect( pushButton_calculate, &QAbstractButton::clicked, this, &PrimingDialog::calculate );
+   return;
 }
 
-PrimingDialog::~PrimingDialog()
-{
-}
+PrimingDialog::~PrimingDialog() = default;
 
 void PrimingDialog::calculate()
 {

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 FermentableEditor::FermentableEditor(QWidget * parent) :
    QDialog(parent), obsFerm(nullptr) {

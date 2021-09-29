@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "Unit.h"
+#include "units/Unit.h"
 
 #include <string>
 #include <iostream>
@@ -31,6 +31,42 @@
 
 namespace {
 
+/*
+   //! \return the weight system
+   static SystemsOfMeasurement::MassOrVolumeScales getWeightUnitSystem();
+   //! \return the temperature scale
+   static SystemsOfMeasurement::TempScale getTemperatureScale();
+   //! \return the color units
+   static Unit::unitDisplay getColorUnit();
+   //! \return the diastatic power units
+   static Unit::unitDisplay getDiastaticPowerUnit();
+*/
+/*   SystemsOfMeasurement::MassOrVolumeScales Brewken::getWeightUnitSystem()
+   {
+      return weightUnitSystem;
+   }
+
+   SystemsOfMeasurement::MassOrVolumeScales Brewken::getVolumeUnitSystem()
+   {
+      return volumeUnitSystem;
+   }
+
+   Unit::unitDisplay Brewken::getColorUnit()
+   {
+      if ( colorUnit == Brewken::SRM )
+         return Unit::displaySrm;
+
+      return Unit::displayEbc;
+   }
+
+   Unit::unitDisplay Brewken::getDiastaticPowerUnit()
+   {
+      if ( diastaticPowerUnit == Brewken::LINTNER )
+         return Unit::displayLintner;
+
+      return Unit::displayWK;
+   }
+*/
    QString unitFromString(QString qstr) {
       QRegExp amtUnit;
 
@@ -74,8 +110,18 @@ namespace {
 
 }
 
-Unit::Unit(UnitType const unitType,
-           SystemOfMeasurement const systemOfMeasurement,
+SystemsOfMeasurement::MassOrVolumeScales     SystemsOfMeasurement::weightUnitSystem   = SystemsOfMeasurement::SI;
+SystemsOfMeasurement::MassOrVolumeScales     SystemsOfMeasurement::volumeUnitSystem   = SystemsOfMeasurement::SI;
+SystemsOfMeasurement::TempScale              SystemsOfMeasurement::tempScale          = SystemsOfMeasurement::Celsius;
+SystemsOfMeasurement::ColorUnitType          SystemsOfMeasurement::colorUnit          = SystemsOfMeasurement::SRM;
+SystemsOfMeasurement::DensityUnitType        SystemsOfMeasurement::densityUnit        = SystemsOfMeasurement::SG;
+SystemsOfMeasurement::DiastaticPowerUnitType SystemsOfMeasurement::diastaticPowerUnit = SystemsOfMeasurement::LINTNER;
+
+QHash<int, UnitSystem const *> SystemsOfMeasurement::thingToUnitSystem;
+
+
+Unit::Unit(QuantityType const unitType,
+           SystemsOfMeasurement::MassOrVolumeScales const systemOfMeasurement,
            QString const unitName,
            QString const siUnitName,
            std::function<double(double)> convertToCanonical,
@@ -108,12 +154,8 @@ QString const & Unit::getSIUnitName() const {
    return this->siUnitName;
 }
 
-Unit::UnitType Unit::getUnitType() const {
+Unit::QuantityType Unit::getUnitType() const {
    return this->unitType;
-}
-
-SystemOfMeasurement Unit::getUnitOrTempSystem() const {
-   return this->systemOfMeasurement;
 }
 
 double Unit::boundary() const {
@@ -169,7 +211,7 @@ Unit const * Unit::getUnit(QString& name, bool matchCurrentSystem) {
          continue;
       }
 
-      int system = u->getUnitOrTempSystem();
+      int system = u->systemOfMeasurement;
 
       // Save this for later if we need it
       if( system == USCustomary ) {
@@ -217,9 +259,9 @@ Unit const Units::minutes              = Unit{Unit::Time,           Any,        
 Unit const Units::hours                = Unit{Unit::Time,           Any,         "hr",   "min", [](double x){return x*60.0;},          [](double y){return y/60.0;},           2.0};
 Unit const Units::days                 = Unit{Unit::Time,           Any,         "day",  "min", [](double x){return x*1440.0;},        [](double y){return y/1440.0;},         1.0};
 // === Temperature ===
-Unit const Units::celsius              = Unit{Unit::Temp,           SI,          "C",    "C",   [](double x){return x;},               [](double y){return y;},                1.0};
-Unit const Units::fahrenheit           = Unit{Unit::Temp,           USCustomary, "F",    "C",   [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0};
-Unit const Units::kelvin               = Unit{Unit::Temp,           SI,          "K",    "C",   [](double x){return x - 273.15;},      [](double y){return y + 273.15;},       1.0};
+Unit const Units::celsius              = Unit{Unit::Temperature,           SI,          "C",    "C",   [](double x){return x;},               [](double y){return y;},                1.0};
+Unit const Units::fahrenheit           = Unit{Unit::Temperature,           USCustomary, "F",    "C",   [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0};
+Unit const Units::kelvin               = Unit{Unit::Temperature,           SI,          "K",    "C",   [](double x){return x - 273.15;},      [](double y){return y + 273.15;},       1.0};
 // === Color ===
 // I will consider the standard unit of color  to be SRM.
 Unit const Units::srm                  = Unit{Unit::Color,          SI,          "srm",  "srm", [](double x){return x;},               [](double y){return y;},                1.0};

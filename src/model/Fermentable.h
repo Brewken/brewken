@@ -31,7 +31,7 @@
 #include <QSqlRecord>
 
 #include "model/NamedEntityWithInventory.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================

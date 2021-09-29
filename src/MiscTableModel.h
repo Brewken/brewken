@@ -19,22 +19,23 @@
  =====================================================================================================================*/
 #ifndef MISCTABLEMODEL_H
 #define MISCTABLEMODEL_H
+#pragma once
 
 #include <memory>
 
-#include <QAbstractTableModel>
 #include <QAbstractItemModel>
-#include <QWidget>
-#include <QModelIndex>
-#include <QVariant>
+#include <QAbstractTableModel>
 #include <QItemDelegate>
-#include <QStyleOptionViewItem>
 #include <QList>
 #include <QMetaProperty>
+#include <QModelIndex>
+#include <QStyleOptionViewItem>
 #include <QTableView>
+#include <QVariant>
+#include <QWidget>
 
-#include "Unit.h"
 #include "Brewken.h"
+#include "units/Unit.h"
 
 
 // Forward declarations.
@@ -89,9 +90,9 @@ public:
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
    Unit::unitDisplay displayUnit(int column) const;
-   Unit::unitScale displayScale(int column) const;
+   Unit::RelativeScale displayScale(int column) const;
    void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::unitScale displayScale);
+   void setDisplayScale(int column, Unit::RelativeScale displayScale);
    QString generateName(int column) const;
    bool remove(Misc * misc);
 

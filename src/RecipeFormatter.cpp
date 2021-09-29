@@ -28,7 +28,7 @@
 
 #include "Brewken.h"
 #include "Html.h"
-#include "IbuMethods.h"
+#include "units/IbuMethods.h"
 #include "MainWindow.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
@@ -42,7 +42,8 @@
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/ColorMethods.h"
+#include "units/Unit.h"
 
 namespace {
    //! Get the maximum number of characters in a list of strings.
@@ -333,7 +334,7 @@ public:
                      "<td class=\"value\">%2 (%3)</td>")
             .arg(tr("Color"))
             .arg(Brewken::displayAmount(rec->color_srm(),PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::color_srm, &Units::srm, 1))
-            .arg(Brewken::colorFormulaName());
+            .arg(ColorMethods::colorFormulaName());
 
       body += QString("<td align=\"right\" class=\"right\">%1</td>"
                      "<td class=\"value\">%2</td></tr>")
@@ -377,7 +378,7 @@ public:
                                  .arg(IbuMethods::ibuFormulaName()));
       entry.append(tr("Color"));
       value.append(QString("%1 (%2)").arg(Brewken::displayAmount(rec->color_srm(),PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::color_srm, &Units::srm, 1))
-                              .arg(Brewken::colorFormulaName()));
+                              .arg(ColorMethods::colorFormulaName()));
 
       padAllToMaxLength(&entry);
       padAllToMaxLength(&value);
@@ -1179,7 +1180,7 @@ QString RecipeFormatter::getToolTip(Recipe* rec) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2 (%3)</td>")
            .arg(tr("Color"))
            .arg(Brewken::displayAmount(rec->color_srm(),&Units::srm, 1))
-           .arg(Brewken::colorFormulaName());
+           .arg(ColorMethods::colorFormulaName());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2 (%3)</td></tr>")
            .arg(tr("IBU"))
            .arg(Brewken::displayAmount(rec->IBU(), nullptr, 1))

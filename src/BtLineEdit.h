@@ -26,7 +26,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "Unit.h"
+#include "units/Unit.h"
 
 class BtGenericEdit;
 class BtMassEdit;
@@ -68,10 +68,10 @@ public:
     *       Not sure how to signal the parent to redisplay
     */
    BtLineEdit(QWidget* parent = nullptr,
-              Unit::UnitType type = Unit::None,
+              Unit::QuantityType type = Unit::None,
               QString const & maximalDisplayString = "100.000 srm");
 
-   double toSI(Unit::unitDisplay oldUnit = Unit::noUnit, Unit::unitScale oldScale = Unit::noScale, bool force = false);
+   double toSI(Unit::unitDisplay oldUnit = Unit::noUnit, Unit::RelativeScale oldScale = Unit::noScale, bool force = false);
    // Use this when you want to do something with the returned QString
    QString displayAmount( double amount, int precision = 3);
 
@@ -104,7 +104,7 @@ public:
 
 public slots:
    void onLineChanged();
-   void lineChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale);
+   void lineChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale);
 
 signals:
    void textModified();
@@ -117,9 +117,9 @@ private:
 protected:
    QWidget *btParent;
    QString _section, _editField;
-   Unit::UnitType _type;
+   Unit::QuantityType _type;
    Unit::unitDisplay _forceUnit;
-   Unit::unitScale _forceScale;
+   Unit::RelativeScale _forceScale;
    Unit const * _units;
 
 };

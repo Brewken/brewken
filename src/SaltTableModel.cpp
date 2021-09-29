@@ -41,7 +41,7 @@
 #include "model/Recipe.h"
 #include "model/Salt.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 #include "WaterDialog.h"
 
 static QStringList addToName = QStringList() << QObject::tr("Never")
@@ -502,7 +502,7 @@ bool SaltTableModel::setData( const QModelIndex& index, const QVariant& value, i
 
    Unit const * unit = row->amountIsWeight() ? &Units::kilograms: &Units::liters;
    Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::unitScale   dspScl  = displayScale(index.column());
+   Unit::RelativeScale   dspScl  = displayScale(index.column());
 
    switch( index.column() ) {
       case SALTNAMECOL:
@@ -564,14 +564,14 @@ Unit::unitDisplay SaltTableModel::displayUnit(int column) const
    return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale SaltTableModel::displayScale(int column) const
+Unit::RelativeScale SaltTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 void SaltTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
@@ -587,7 +587,7 @@ void SaltTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
 }
 
 // Setting the scale should clear any cell-level scaling options
-void SaltTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
+void SaltTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
 {
 
    QString attribute = generateName(column);
@@ -621,7 +621,7 @@ void SaltTableModel::contextMenu(const QPoint &point)
 
    int selected = hView->logicalIndexAt(point);
    Unit::unitDisplay currentUnit;
-   Unit::unitScale  currentScale;
+   Unit::RelativeScale  currentScale;
 
    currentUnit  = displayUnit(selected);
    currentScale = displayScale(selected);
@@ -646,7 +646,7 @@ void SaltTableModel::contextMenu(const QPoint &point)
    if ( pMenu == menu )
       setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
    else
-      setDisplayScale(selected,static_cast<Unit::unitScale>(invoked->data().toInt()));
+      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
 
 }
 

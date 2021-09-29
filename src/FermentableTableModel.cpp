@@ -49,7 +49,7 @@
 #include "model/Recipe.h"
 #include "utils/BtStringConst.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
@@ -274,7 +274,7 @@ int FermentableTableModel::columnCount(const QModelIndex& /*parent*/) const
 }
 
 QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const {
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
    Unit::unitDisplay unit;
 
    // Ensure the row is OK
@@ -449,7 +449,7 @@ void FermentableTableModel::setDisplayUnit(const QModelIndex& index, Unit::unitD
    row->setDisplayUnit(displayUnit);
 }
 
-Unit::unitScale FermentableTableModel::displayScale(const QModelIndex& index)
+Unit::RelativeScale FermentableTableModel::displayScale(const QModelIndex& index)
 {
    Fermentable* row;
 
@@ -461,7 +461,7 @@ Unit::unitScale FermentableTableModel::displayScale(const QModelIndex& index)
    return row->displayScale();
 }
 
-void FermentableTableModel::setDisplayScale(const QModelIndex& index, Unit::unitScale displayScale)
+void FermentableTableModel::setDisplayScale(const QModelIndex& index, Unit::RelativeScale displayScale)
 {
    Fermentable* row;
 
@@ -483,14 +483,14 @@ Unit::unitDisplay FermentableTableModel::displayUnit(int column) const
    return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale FermentableTableModel::displayScale(int column) const
+Unit::RelativeScale FermentableTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -518,7 +518,7 @@ void FermentableTableModel::setDisplayUnit(int column, Unit::unitDisplay display
 }
 
 // Setting the scale should clear any cell-level scaling options
-void FermentableTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
+void FermentableTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
 {
    // Fermentable* row; //disabled per-cell magic
 
@@ -567,7 +567,7 @@ void FermentableTableModel::contextMenu(const QPoint &point)
 
    int selected = hView->logicalIndexAt(point);
    Unit::unitDisplay currentUnit;
-   Unit::unitScale  currentScale;
+   Unit::RelativeScale  currentScale;
 
    // Since we need to call setupMassMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
@@ -598,7 +598,7 @@ void FermentableTableModel::contextMenu(const QPoint &point)
    if ( pMenu == menu )
       setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
    else
-      setDisplayScale(selected,static_cast<Unit::unitScale>(invoked->data().toInt()));
+      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
 
 }
 
@@ -615,7 +615,7 @@ bool FermentableTableModel::setData( const QModelIndex& index, const QVariant& v
       row = fermObs[index.row()];
 
    Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::unitScale   dspScl  = displayScale(index.column());
+   Unit::RelativeScale   dspScl  = displayScale(index.column());
 
    switch( index.column() )
    {

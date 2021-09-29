@@ -30,15 +30,15 @@
 #include "Brewken.h"
 #include "model/NamedEntity.h"
 #include "PersistentSettings.h"
-#include "UnitSystem.h"
-#include "Unit.h"
+#include "units/UnitSystem.h"
+#include "units/Unit.h"
 
 namespace {
    int const min_text_size = 8;
    int const max_text_size = 50;
 }
 
-BtLineEdit::BtLineEdit(QWidget *parent, Unit::UnitType type, QString const & maximalDisplayString) :
+BtLineEdit::BtLineEdit(QWidget *parent, Unit::QuantityType type, QString const & maximalDisplayString) :
    QLineEdit(parent),
    btParent(parent),
    _type(type),
@@ -61,7 +61,7 @@ void BtLineEdit::onLineChanged()
    lineChanged(Unit::noUnit,Unit::noScale);
 }
 
-void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale)
+void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale)
 {
    // This is where it gets hard
    double val = -1.0;
@@ -89,7 +89,7 @@ void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale
    {
       case Unit::Mass:
       case Unit::Volume:
-      case Unit::Temp:
+      case Unit::Temperature:
       case Unit::Time:
       case Unit::Density:
          val = toSI(oldUnit,oldScale,force);
@@ -120,10 +120,10 @@ void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale
    }
 }
 
-double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool force) {
+double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::RelativeScale oldScale,bool force) {
    Unit const *       works;
    Unit::unitDisplay dspUnit  = oldUnit;
-   Unit::unitScale   dspScale = oldScale;
+   Unit::RelativeScale   dspScale = oldScale;
 
    // If force is set, just use what is provided in the call. If we are
    // not forcing the unit & scale, we need to read the configured properties
@@ -139,7 +139,7 @@ double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool 
       if( _forceScale != Unit::noScale )
          dspScale = _forceScale;
       else
-         dspScale  = static_cast<Unit::unitScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+         dspScale  = static_cast<Unit::RelativeScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
    }
 
    // Find the unit system containing dspUnit
@@ -172,7 +172,7 @@ double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::unitScale oldScale,bool 
 QString BtLineEdit::displayAmount( double amount, int precision)
 {
    Unit::unitDisplay unitDsp;
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
 
    if ( _forceUnit != Unit::noUnit ) {
       unitDsp = _forceUnit;
@@ -180,7 +180,7 @@ QString BtLineEdit::displayAmount( double amount, int precision)
       unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::value(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
    }
 
-   scale = static_cast<Unit::unitScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+   scale = static_cast<Unit::RelativeScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the
@@ -302,13 +302,13 @@ QString BtLineEdit::forcedUnit() const
 QString BtLineEdit::forcedScale() const
 {
    const QMetaObject &mo = Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("unitScale");
+   int index = mo.indexOfEnumerator("RelativeScale");
    QMetaEnum scaleEnum = mo.enumerator(index);
 
    return QString( scaleEnum.valueToKey(_forceScale) );
 }
 
-void BtLineEdit::setType(int type) { _type = (Unit::UnitType)type;}
+void BtLineEdit::setType(int type) { _type = (Unit::QuantityType)type;}
 void BtLineEdit::setEditField( QString editField) { _editField = editField; }
 
 // The cascade looks a little odd, but it is intentional.
@@ -336,10 +336,10 @@ void BtLineEdit::setForcedUnit( QString forcedUnit )
 void BtLineEdit::setForcedScale( QString forcedScale )
 {
    const QMetaObject &mo = Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("unitScale");
+   int index = mo.indexOfEnumerator("RelativeScale");
    QMetaEnum unitEnum = mo.enumerator(index);
 
-   _forceScale = (Unit::unitScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
+   _forceScale = (Unit::RelativeScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
 }
 
 void BtLineEdit::calculateDisplaySize(QString const & maximalDisplayString) {
@@ -408,7 +408,7 @@ BtVolumeEdit::BtVolumeEdit(QWidget *parent)
 }
 
 BtTemperatureEdit::BtTemperatureEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Temp)
+   : BtLineEdit(parent,Unit::Temperature)
 {
    _units = &Units::celsius;
 }

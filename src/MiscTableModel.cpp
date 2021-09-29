@@ -34,7 +34,7 @@
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "units/Unit.h"
 #include "utils/BtStringConst.h"
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
@@ -189,7 +189,7 @@ QVariant MiscTableModel::data( const QModelIndex& index, int role ) const
 {
    Misc* row;
    Unit::unitDisplay unit;
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
 
    // Ensure the row is ok.
    if( index.row() >= static_cast<int>(miscObs.size() ))
@@ -313,7 +313,7 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
    unit = row->amountIsWeight() ? &Units::kilograms: &Units::liters;
 
    Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::unitScale   dspScl  = displayScale(index.column());
+   Unit::RelativeScale   dspScl  = displayScale(index.column());
 
    switch (col )
    {
@@ -447,14 +447,14 @@ Unit::unitDisplay MiscTableModel::displayUnit(int column) const
    return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale MiscTableModel::displayScale(int column) const
+Unit::RelativeScale MiscTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -474,7 +474,7 @@ void MiscTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
 }
 
 // Setting the scale should clear any cell-level scaling options
-void MiscTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
+void MiscTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
 {
    QString attribute = generateName(column);
 
@@ -513,7 +513,7 @@ void MiscTableModel::contextMenu(const QPoint &point)
 
    int selected = hView->logicalIndexAt(point);
    Unit::unitDisplay currentUnit;
-   Unit::unitScale  currentScale;
+   Unit::RelativeScale  currentScale;
 
    // Since we need to call generateVolumeMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
@@ -542,7 +542,7 @@ void MiscTableModel::contextMenu(const QPoint &point)
       return;
 
    if ( selected == MISCTIMECOL )
-      setDisplayScale(selected,static_cast<Unit::unitScale>(invoked->data().toInt()));
+      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
    else
       setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
 }

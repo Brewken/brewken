@@ -38,7 +38,7 @@
 #include "model/MashStep.h"
 #include "PersistentSettings.h"
 #include "SimpleUndoableUpdate.h"
-#include "Unit.h"
+#include "units/Unit.h"
 
 MashStepTableModel::MashStepTableModel(QTableView* parent)
    : QAbstractTableModel(parent),
@@ -219,7 +219,7 @@ QVariant MashStepTableModel::data( const QModelIndex& index, int role ) const
 {
    MashStep* row;
    Unit::unitDisplay unit;
-   Unit::unitScale scale;
+   Unit::RelativeScale scale;
    int col = index.column();
 
    if( mashObs == nullptr )
@@ -321,7 +321,7 @@ bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& valu
       row = steps[index.row()];
 
    Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::unitScale   dspScl  = displayScale(index.column());
+   Unit::RelativeScale   dspScl  = displayScale(index.column());
 
    switch( index.column() )
    {
@@ -441,14 +441,14 @@ Unit::unitDisplay MashStepTableModel::displayUnit(int column) const
    return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::unitScale MashStepTableModel::displayScale(int column) const
+Unit::RelativeScale MashStepTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
       return Unit::noScale;
 
-   return static_cast<Unit::unitScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
@@ -476,7 +476,7 @@ void MashStepTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUni
 }
 
 // Setting the scale should clear any cell-level scaling options
-void MashStepTableModel::setDisplayScale(int column, Unit::unitScale displayScale)
+void MashStepTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
 {
    // MashStep* row; //disabled per-cell magic
 
@@ -527,7 +527,7 @@ void MashStepTableModel::contextMenu(const QPoint &point)
 
    int selected = hView->logicalIndexAt(point);
    Unit::unitDisplay currentUnit;
-   Unit::unitScale  currentScale;
+   Unit::RelativeScale  currentScale;
 
    // Since we need to call generateVolumeMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
@@ -562,7 +562,7 @@ void MashStepTableModel::contextMenu(const QPoint &point)
    if ( pMenu == menu )
       setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
    else
-      setDisplayScale(selected,static_cast<Unit::unitScale>(invoked->data().toInt()));
+      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
 }
 
 //==========================CLASS MashStepItemDelegate===============================

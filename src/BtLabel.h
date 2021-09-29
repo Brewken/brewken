@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #ifndef BTLABEL_H
 #define BTLABEL_H
 
@@ -26,7 +25,7 @@
 #include <QAction>
 #include <QPoint>
 
-#include "UnitSystem.h"
+#include "units/UnitSystem.h"
 
 class BtLabel;
 class BtColorLabel;
@@ -73,7 +72,7 @@ public slots:
 
 
 signals:
-   void labelChanged(Unit::unitDisplay oldUnit, Unit::unitScale oldScale);
+   void labelChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale);
 
 // Using protected instead of private allows me to not use the friends
 // declaration
