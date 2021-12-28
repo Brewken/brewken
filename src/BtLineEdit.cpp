@@ -22,31 +22,34 @@
  =====================================================================================================================*/
 #include "BtLineEdit.h"
 
-#include <QSettings>
 #include <QDebug>
+#include <QSettings>
 #include <QStyle>
 
 #include "Algorithms.h"
 #include "Brewken.h"
+#include "Localization.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
+#include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
 #include "PersistentSettings.h"
-#include "units/UnitSystem.h"
-#include "units/Unit.h"
 
 namespace {
    int const min_text_size = 8;
    int const max_text_size = 50;
 }
 
-BtLineEdit::BtLineEdit(QWidget *parent, Unit::QuantityType type, QString const & maximalDisplayString) :
+BtLineEdit::BtLineEdit(QWidget *parent,
+                       Measurement::PhysicalQuantity physicalQuantity,
+                       QString const & maximalDisplayString) :
    QLineEdit(parent),
    btParent(parent),
-   _type(type),
-   _forceUnit(Unit::noUnit),
-   _forceScale(Unit::noScale)
-{
-   _section = property("configSection").toString();
-   connect(this,&QLineEdit::editingFinished,this,&BtLineEdit::onLineChanged);
+   physicalQuantity(physicalQuantity),
+   forcedUnitSystem(nullptr)/*,
+   forcedRelativeScale(Measurement::UnitSystem::noScale)*/ {
+   this->_section = property("configSection").toString();
+   connect(this, &QLineEdit::editingFinished, this, &BtLineEdit::onLineChanged);
 
    // We can work out (and store) our display size here, but not yet set it.  The way the Designer UI Files work is to
    // generate code that calls setters such as setMaximumWidth() etc, which would override anything we do here in the
@@ -56,144 +59,156 @@ BtLineEdit::BtLineEdit(QWidget *parent, Unit::QuantityType type, QString const &
    return;
 }
 
-void BtLineEdit::onLineChanged()
-{
-   lineChanged(Unit::noUnit,Unit::noScale);
+BtLineEdit::~BtLineEdit() = default;
+
+void BtLineEdit::onLineChanged() {
+   this->lineChanged(nullptr, Measurement::UnitSystem::noScale);
+   return;
 }
 
-void BtLineEdit::lineChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale)
-{
+void BtLineEdit::lineChanged(Measurement::UnitSystem const * oldUnitSystem,
+                             Measurement::UnitSystem::RelativeScale oldScale) {
    // This is where it gets hard
    double val = -1.0;
    QString amt;
-   bool force = Brewken::hasUnits(text());
-   bool ok = false;
-   bool wasChanged = sender() == this;
 
    // editingFinished happens on focus being lost, regardless of anything
    // being changed. I am hoping this short circuits properly and we do
    // nothing if nothing changed.
-   if ( sender() == this && ! isModified() )
-   {
+   if ( sender() == this && ! isModified() ) {
       return;
    }
 
-   if (text().isEmpty())
-   {
+   if (text().isEmpty()) {
       return;
    }
 
    // The idea here is we need to first translate the field into a known
    // amount (aka to SI) and then into the unit we want.
-   switch( _type )
-   {
-      case Unit::Mass:
-      case Unit::Volume:
-      case Unit::Temperature:
-      case Unit::Time:
-      case Unit::Density:
-         val = toSI(oldUnit,oldScale,force);
-         amt = displayAmount(val,3);
+   switch(this->physicalQuantity) {
+      case Measurement::PhysicalQuantity::Mass:
+      case Measurement::PhysicalQuantity::Volume:
+      case Measurement::PhysicalQuantity::Temperature:
+      case Measurement::PhysicalQuantity::Time:
+      case Measurement::PhysicalQuantity::Density:
+         val = this->convertToSI(oldUnitSystem, oldScale);
+         amt = this->displayAmount(val, 3);
          break;
-      case Unit::Color:
-         val = toSI(oldUnit,oldScale,force);
-         amt = displayAmount(val,0);
+      case Measurement::PhysicalQuantity::Color:
+         val = this->convertToSI(oldUnitSystem, oldScale);
+         amt = this->displayAmount(val, 0);
          break;
-      case Unit::String:
-         amt = text();
+      case Measurement::PhysicalQuantity::String:
+         amt = this->text();
          break;
-      case Unit::DiastaticPower:
-         val = toSI(oldUnit,oldScale,force);
-         amt = displayAmount(val,3);
+      case Measurement::PhysicalQuantity::DiastaticPower:
+         val = this->convertToSI(oldUnitSystem, oldScale);
+         amt = this->displayAmount(val, 3);
          break;
-      case Unit::None:
+      case Measurement::PhysicalQuantity::None:
       default:
-         val = Brewken::toDouble(text(),&ok);
-         if ( ! ok )
-            qWarning() << QString("%1: failed to convert %2 (%3:%4) to double").arg(Q_FUNC_INFO).arg(text()).arg(_section).arg(_editField);
-         amt = displayAmount(val);
+         {
+            bool ok = false;
+            val = Localization::toDouble(text(), &ok);
+            if ( ! ok )
+               qWarning() << QString("%1: failed to convert %2 (%3:%4) to double").arg(Q_FUNC_INFO).arg(text()).arg(_section).arg(_editField);
+            amt = displayAmount(val);
+         }
    }
    QLineEdit::setText(amt);
 
-   if ( wasChanged ) {
+   if (sender() == this) {
       emit textModified();
    }
+
+   return;
 }
 
-double BtLineEdit::toSI(Unit::unitDisplay oldUnit,Unit::RelativeScale oldScale,bool force) {
-   Unit const *       works;
-   Unit::unitDisplay dspUnit  = oldUnit;
-   Unit::RelativeScale   dspScale = oldScale;
-
-   // If force is set, just use what is provided in the call. If we are
-   // not forcing the unit & scale, we need to read the configured properties
-   if ( ! force )
-   {
-      // If the display unit is forced, use this unit the default one.
-      if ( _forceUnit != Unit::noUnit )
-         dspUnit = _forceUnit;
-      else
-         dspUnit   = static_cast<Unit::unitDisplay>(PersistentSettings::value(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+double BtLineEdit::convertToSI(Measurement::UnitSystem const * oldUnitSystem,
+                               Measurement::UnitSystem::RelativeScale oldScale) {
+   Measurement::UnitSystem const * dspUnitSystem  = oldUnitSystem;
+   Measurement::UnitSystem::RelativeScale   dspScale = oldScale;
+   // If units are specified in the text, just use those.  Otherwise, if we are not forcing the unit & scale, we need to
+   // read the configured properties
+   if (!Localization::hasUnits(this->text())) {
+      // If the display unit system is forced, use this as the default one.
+      if (this->forcedUnitSystem != nullptr) {
+         dspUnitSystem = this->forcedUnitSystem;
+      } else {
+         dspUnitSystem = Measurement::getUnitSystemForField(this->_editField, this->_section);
+      }
 
       // If the display scale is forced, use this scale as the default one.
-      if( _forceScale != Unit::noScale )
-         dspScale = _forceScale;
-      else
-         dspScale  = static_cast<Unit::RelativeScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+//      if (this->forcedRelativeScale != Measurement::UnitSystem::noScale) {
+//         dspScale = this->forcedRelativeScale;
+//      } else {
+         dspScale = Measurement::getRelativeScaleForField(this->_editField, this->_section);
+//      }
    }
 
-   // Find the unit system containing dspUnit
-   UnitSystem const * temp = Brewken::findUnitSystem(_units, dspUnit);
-   if ( temp ) {
-      // If we found it, find the unit referred by dspScale
-      works = temp->scaleUnit(dspScale);
-      if (! works )
+   if (nullptr != dspUnitSystem) {
+      Measurement::Unit const * works = dspUnitSystem->scaleUnit(dspScale);
+      if (!works) {
          // If we didn't find the unit, default to the UnitSystem's default
          // unit
-         works = temp->unit();
+         works = dspUnitSystem->unit();
+      }
 
-      // get the qstringToSI() from the unit system, using the found unit.
-      // Force the issue in qstringToSI() unless dspScale is Unit::noScale.
-
-      return temp->qstringToSI(text(), works, dspScale != Unit::noScale, dspScale);
+      return dspUnitSystem->qstringToSI(this->text(), works, dspScale);
    }
-   else if ( _type == Unit::String )
+
+   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
       return 0.0;
+   }
 
    // If all else fails, simply try to force the contents of the field to a
    // double. This doesn't seem advisable?
    bool ok = false;
-   double amt = toDouble(&ok);
-   if ( ! ok )
-      qWarning() << QString("%1 : could not convert %2 (%3:%4) to double").arg(Q_FUNC_INFO).arg(text()).arg(_section).arg(_editField);
+   double amt = this->toDouble(&ok);
+   if (!ok) {
+      qWarning() <<
+         Q_FUNC_INFO << "Could not convert " << text() << " (" << this->_section << ":" << this->_editField <<
+         ") to double";
+   }
+
    return amt;
 }
 
-QString BtLineEdit::displayAmount( double amount, int precision)
-{
-   Unit::unitDisplay unitDsp;
-   Unit::RelativeScale scale;
+double BtLineEdit::toSI() {
+   bool ok = false;
+   double amt = this->toDouble(&ok);
+   if (!ok) {
+      qWarning() <<
+         Q_FUNC_INFO << "Could not convert " << text() << " (" << this->_section << ":" << this->_editField <<
+         ") to double";
+   }
+   return this->_units->toSI(amt);
+}
 
-   if ( _forceUnit != Unit::noUnit ) {
-      unitDsp = _forceUnit;
+QString BtLineEdit::displayAmount( double amount, int precision) {
+   Measurement::UnitSystem const * displayUnitSystem;
+   if (this->forcedUnitSystem != nullptr) {
+      displayUnitSystem = this->forcedUnitSystem;
    } else {
-      unitDsp  = static_cast<Unit::unitDisplay>(PersistentSettings::value(_editField, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
+      displayUnitSystem = Measurement::getUnitSystemForField(this->_editField, this->_section);
    }
 
-   scale = static_cast<Unit::RelativeScale>(PersistentSettings::value(_editField, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
+   Measurement::UnitSystem::RelativeScale relativeScale = Measurement::getRelativeScaleForField(this->_editField,
+                                                                                                this->_section);
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the
    // unit and scale.
-   return Brewken::displayAmount(amount, _units, precision, unitDsp, scale);
+   return Measurement::displayAmount(amount, _units, precision, displayUnitSystem, relativeScale);
 }
 
-double BtLineEdit::toDouble(bool* ok)
-{
+double BtLineEdit::toDouble(bool* ok) {
    QRegExp amtUnit;
 
-   if ( ok )
+   if ( ok ) {
       *ok = true;
+   }
+
    // Make sure we get the right decimal point (. or ,) and the right grouping
    // separator (, or .). Some locales write 1.000,10 and other write
    // 1,000.10. We need to catch both
@@ -204,36 +219,34 @@ double BtLineEdit::toDouble(bool* ok)
    amtUnit.setCaseSensitivity(Qt::CaseInsensitive);
 
    // if the regex dies, return 0.0
-   if (amtUnit.indexIn(text()) == -1)
-   {
-      if ( ok )
+   if (amtUnit.indexIn(text()) == -1) {
+      if ( ok ) {
          *ok = false;
+      }
       return 0.0;
    }
 
-   return Brewken::toDouble(amtUnit.cap(1), "BtLineEdit::toDouble()");
+   return Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
 }
 
-void BtLineEdit::setText( double amount, int precision)
-{
+void BtLineEdit::setText( double amount, int precision) {
    QLineEdit::setText( displayAmount(amount,precision) );
    this->setDisplaySize();
    return;
 }
 
-void BtLineEdit::setText( NamedEntity* element, int precision )
-{
+void BtLineEdit::setText(NamedEntity * element, int precision) {
    double amount = 0.0;
    QString display;
 
-   if ( _type == Unit::String ) {
+   if (physicalQuantity == Measurement::PhysicalQuantity::String ) {
       display = element->property(_editField.toLatin1().constData()).toString();
    } else if ( element->property(_editField.toLatin1().constData()).canConvert(QVariant::Double) ) {
       bool ok = false;
       // Get the value from the element, and put it in a QVariant
       QVariant tmp = element->property(_editField.toLatin1().constData());
       // It is important here to use QVariant::toDouble() instead of going
-      // through toString() and then Brewken::toDouble().
+      // through toString() and then Localization::toDouble().
       amount = tmp.toDouble(&ok);
       if ( !ok ) {
          qWarning() << QString("%1 could not convert %2 (%3:%4) to double")
@@ -249,7 +262,7 @@ void BtLineEdit::setText( NamedEntity* element, int precision )
    }
 
    QLineEdit::setText(display);
-   this->setDisplaySize(_type == Unit::String);
+   this->setDisplaySize(physicalQuantity == Measurement::PhysicalQuantity::String);
    return;
 }
 
@@ -257,13 +270,14 @@ void BtLineEdit::setText( QString amount, int precision) {
    bool ok = false;
    bool force = false;
 
-   if ( _type == Unit::String ) {
+   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
       QLineEdit::setText(amount);
       force = true;
    } else {
-      double amt = Brewken::toDouble(amount,&ok);
-      if ( !ok ) {
-         qWarning() << QString("%1 could not convert %2 (%3:%4) to double").arg(Q_FUNC_INFO).arg(amount).arg(_section).arg(_editField);
+      double amt = Localization::toDouble(amount, &ok);
+      if (!ok) {
+         qWarning() <<
+            Q_FUNC_INFO << "Could not convert" << amount << "(" << _section << ":" << _editField << ") to double";
       }
       QLineEdit::setText(displayAmount(amt, precision));
    }
@@ -277,70 +291,110 @@ void BtLineEdit::setText( QVariant amount, int precision) {
    return;
 }
 
-int BtLineEdit::type() const { return (int)_type; }
-QString BtLineEdit::editField() const { return _editField; }
-QString BtLineEdit::configSection()
-{
-   if ( _section.isEmpty() ) {
+int BtLineEdit::type() const {
+   // .:TBD:. Why can't we just return PhysicalQuantity?
+   return static_cast<int>(this->physicalQuantity);
+}
+
+QString BtLineEdit::editField() const {
+   return this->_editField;
+}
+
+QString BtLineEdit::configSection() {
+   if (this->_section.isEmpty() ) {
       setConfigSection("");
    }
 
-   return _section;
+   return this->_section;
 }
 
+/*
 // Once we require >qt5.5, we can replace this noise with
 // QMetaEnum::fromType()
 QString BtLineEdit::forcedUnit() const
 {
-   const QMetaObject &mo = Unit::staticMetaObject;
+   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
    int index = mo.indexOfEnumerator("unitDisplay");
    QMetaEnum unitEnum = mo.enumerator(index);
 
-   return QString( unitEnum.valueToKey(_forceUnit) );
+   return QString( unitEnum.valueToKey(this->forcedUnitSystem) );
 }
 
 QString BtLineEdit::forcedScale() const
 {
-   const QMetaObject &mo = Unit::staticMetaObject;
+   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
    int index = mo.indexOfEnumerator("RelativeScale");
    QMetaEnum scaleEnum = mo.enumerator(index);
 
-   return QString( scaleEnum.valueToKey(_forceScale) );
+   return QString( scaleEnum.valueToKey(this->_forceScale) );
+}
+*/
+
+void BtLineEdit::setType(int type) {
+   // .:TBD:. Why do we need to pass in int and then cast?  Why not pass PhysicalQuantity?
+   this->physicalQuantity = static_cast<Measurement::PhysicalQuantity>(type);
+   return;
 }
 
-void BtLineEdit::setType(int type) { _type = (Unit::QuantityType)type;}
-void BtLineEdit::setEditField( QString editField) { _editField = editField; }
+void BtLineEdit::setEditField( QString editField) {
+   this->_editField = editField;
+   return;
+}
 
 // The cascade looks a little odd, but it is intentional.
-void BtLineEdit::setConfigSection( QString configSection)
-{
-   _section = configSection;
+void BtLineEdit::setConfigSection( QString configSection) {
+   this->_section = configSection;
 
-   if ( _section.isEmpty() )
-      _section = btParent->property("configSection").toString();
+   if (this->_section.isEmpty()) {
+      this->_section = btParent->property("configSection").toString();
+   }
 
-   if ( _section.isEmpty() )
-      _section = btParent->objectName();
+   if (this->_section.isEmpty()) {
+      this->_section = btParent->objectName();
+   }
+   return;
 }
 
+/*
 // previous comment about qt5.5 applies
-void BtLineEdit::setForcedUnit( QString forcedUnit )
-{
-   const QMetaObject &mo = Unit::staticMetaObject;
+void BtLineEdit::setForcedUnit( QString forcedUnit ) {
+   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
    int index = mo.indexOfEnumerator("unitDisplay");
    QMetaEnum unitEnum = mo.enumerator(index);
 
-   _forceUnit = (Unit::unitDisplay)unitEnum.keyToValue(forcedUnit.toStdString().c_str());
+   this->_forceUnit = (Measurement::Unit::unitDisplay)unitEnum.keyToValue(forcedUnit.toStdString().c_str());
+   return;
 }
 
-void BtLineEdit::setForcedScale( QString forcedScale )
-{
-   const QMetaObject &mo = Unit::staticMetaObject;
+void BtLineEdit::setForcedScale( QString forcedScale ) {
+   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
    int index = mo.indexOfEnumerator("RelativeScale");
    QMetaEnum unitEnum = mo.enumerator(index);
 
-   _forceScale = (Unit::RelativeScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
+   this->_forceScale = (Measurement::UnitSystem::RelativeScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
+   return;
 }
+*/
+
+Measurement::UnitSystem const * BtLineEdit::getForcedUnitSystem() const {
+   return this->forcedUnitSystem;
+}
+
+void BtLineEdit::setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem) {
+   this->forcedUnitSystem = forcedUnitSystem;
+   return;
+}
+
+/*
+Measurement::UnitSystem::RelativeScale BtLineEdit::getForcedRelativeScale() const {
+   return this->forcedRelativeScale;
+}
+
+void BtLineEdit::setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale) {
+   this->forcedRelativeScale = forcedRelativeScale;
+   return;
+}
+*/
 
 void BtLineEdit::calculateDisplaySize(QString const & maximalDisplayString) {
    //
@@ -389,82 +443,70 @@ void BtLineEdit::setDisplaySize(bool recalculate) {
    return;
 }
 
-BtGenericEdit::BtGenericEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::None)
-{
-   _units = 0;
+BtGenericEdit::BtGenericEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::None) {
+   this->_units = 0;
+   return;
 }
 
-BtMassEdit::BtMassEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Mass)
-{
-   _units = &Units::kilograms;
+BtMassEdit::BtMassEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mass) {
+   this->_units = &Measurement::Units::kilograms;
+   return;
 }
 
-BtVolumeEdit::BtVolumeEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Volume)
-{
-   _units = &Units::liters;
+BtVolumeEdit::BtVolumeEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Volume) {
+   this->_units = &Measurement::Units::liters;
+   return;
 }
 
-BtTemperatureEdit::BtTemperatureEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Temperature)
-{
-   _units = &Units::celsius;
+BtTemperatureEdit::BtTemperatureEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Temperature) {
+   this->_units = &Measurement::Units::celsius;
+   return;
 }
 
-BtTimeEdit::BtTimeEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Time)
-{
-   _units = &Units::minutes;
+BtTimeEdit::BtTimeEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Time) {
+   this->_units = &Measurement::Units::minutes;
+   return;
 }
 
-BtDensityEdit::BtDensityEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Density)
-{
-   _units = &Units::sp_grav;
+BtDensityEdit::BtDensityEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Density) {
+   this->_units = &Measurement::Units::sp_grav;
+   return;
 }
 
-BtColorEdit::BtColorEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Color)
-{
-   _units = &Units::srm;
+BtColorEdit::BtColorEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Color) {
+   this->_units = &Measurement::Units::srm;
+   return;
 }
 
-BtStringEdit::BtStringEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::String)
-{
-   _units = 0;
+BtStringEdit::BtStringEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::String) {
+   this->_units = 0;
+   return;
 }
 
-BtMixedEdit::BtMixedEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::Mixed)
-{
+BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mixed) {
    // This is probably pure evil I will later regret
-   _type = Unit::Volume;
-   _units = &Units::liters;
+   this->physicalQuantity = Measurement::PhysicalQuantity::Volume;
+   this->_units = &Measurement::Units::liters;
+   return;
 }
 
-void BtMixedEdit::setIsWeight(bool state)
-{
+void BtMixedEdit::setIsWeight(bool state) {
    // But you have to admit, this is clever
-   if (state)
-   {
-      _type = Unit::Mass;
-      _units = &Units::kilograms;
-   }
-   else
-   {
-      _type = Unit::Volume;
-      _units = &Units::liters;
+   if (state) {
+      this->physicalQuantity = Measurement::PhysicalQuantity::Mass;
+      this->_units = &Measurement::Units::kilograms;
+   } else {
+      this->physicalQuantity = Measurement::PhysicalQuantity::Volume;
+      this->_units = &Measurement::Units::liters;
    }
 
    // maybe? My head hurts now
-   onLineChanged();
+   this->onLineChanged();
+   return;
 }
 
-BtDiastaticPowerEdit::BtDiastaticPowerEdit(QWidget *parent)
-   : BtLineEdit(parent,Unit::DiastaticPower)
-{
-   _units = &Units::lintner;
+BtDiastaticPowerEdit::BtDiastaticPowerEdit(QWidget *parent) :
+   BtLineEdit(parent, Measurement::PhysicalQuantity::DiastaticPower) {
+   this->_units = &Measurement::Units::lintner;
+   return;
 }

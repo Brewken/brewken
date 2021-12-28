@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "SaltTableModel.h"
+#include "tableModels/SaltTableModel.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
@@ -34,14 +34,14 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
 #include "WaterDialog.h"
 
 static QStringList addToName = QStringList() << QObject::tr("Never")
@@ -61,11 +61,10 @@ static QStringList saltNames = QStringList() << QObject::tr("None")
                                              << QObject::tr("H3PO4")
                                              << QObject::tr("Acid malt");
 
-SaltTableModel::SaltTableModel(QTableView* parent)
-   : QAbstractTableModel(parent),
-     m_rec(nullptr),
-     parentTableWidget(parent)
-{
+SaltTableModel::SaltTableModel(QTableView* parent) :
+   BtTableModel{parent, false},
+   m_rec{nullptr},
+   parentTableWidget{parent} {
    saltObs.clear();
    setObjectName("saltTable");
 
@@ -76,11 +75,12 @@ SaltTableModel::SaltTableModel(QTableView* parent)
    parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &SaltTableModel::contextMenu);
+   return;
 }
 
-SaltTableModel::~SaltTableModel()
-{
+SaltTableModel::~SaltTableModel() {
    saltObs.clear();
+   return;
 }
 
 void SaltTableModel::observeRecipe(Recipe* rec)
@@ -408,49 +408,53 @@ int SaltTableModel::columnCount(const QModelIndex& /*parent*/) const
    return SALTNUMCOLS;
 }
 
-QVariant SaltTableModel::data( const QModelIndex& index, int role ) const
-{
-   Salt* row;
-   int col = index.column();
-   Unit::unitDisplay unit;
-
+QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
    // Ensure the row is ok.
-   if( index.row() >= static_cast<int>(saltObs.size()) ) {
-      qWarning() << tr("Bad model index. row = %1").arg(index.row());
+   if (index.row() >= static_cast<int>(this->saltObs.size())) {
+      qWarning() << Q_FUNC_INFO << "Bad model index. row = " << index.row();
       return QVariant();
    }
-   else
-      row = saltObs[index.row()];
 
-   Unit const * rightUnit = row->amountIsWeight() ? &Units::kilograms: &Units::liters;
-   switch( index.column() ) {
+   Measurement::UnitSystem const * unitSystem;
+
+   Salt* row = this->saltObs[index.row()];
+   Measurement::Unit const * rightUnit = row->amountIsWeight() ? &Measurement::Units::kilograms: &Measurement::Units::liters;
+
+   int col = index.column();
+   switch (col) {
       case SALTNAMECOL:
-         if ( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant( saltNames.at(row->type()));
-         else if ( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant( row->type());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case SALTAMOUNTCOL:
-         if ( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
-         unit = displayUnit(col);
-
-         return QVariant( Brewken::displayAmount(row->amount(), rightUnit, 3, unit, Unit::noScale ) );
+         }
+         unitSystem  = this->displayUnitSystem(col);
+         return QVariant(Measurement::displayAmount(row->amount(),
+                                                    rightUnit,
+                                                    3,
+                                                    unitSystem,
+                                                    Measurement::UnitSystem::noScale));
       case SALTADDTOCOL:
-         if ( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant( addToName.at(row->addTo()));
-         else if ( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant( row->addTo());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case SALTPCTACIDCOL:
-         if ( role == Qt::DisplayRole &&  row->isAcid() ) {
+         if (role == Qt::DisplayRole && row->isAcid()) {
             return QVariant( row->percentAcid() );
          }
          return QVariant();
       default :
-         qWarning() << tr("Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return QVariant();
    }
 }
@@ -490,22 +494,21 @@ Qt::ItemFlags SaltTableModel::flags(const QModelIndex& index ) const
    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
 
-bool SaltTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   Salt *row;
-   bool retval = false;
-
-   if( index.row() >= saltObs.size() || role != Qt::EditRole ) {
+bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
+   if (index.row() >= this->saltObs.size() || role != Qt::EditRole) {
       return false;
    }
 
-   row = saltObs[index.row()];
+   bool retval = false;
 
-   Unit const * unit = row->amountIsWeight() ? &Units::kilograms: &Units::liters;
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   Salt * row = saltObs[index.row()];
 
-   switch( index.column() ) {
+   Measurement::PhysicalQuantity physicalQuantity =
+      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume;
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
+
+   switch (index.column()) {
       case SALTNAMECOL:
          retval = value.canConvert(QVariant::Int);
          if ( retval ) {
@@ -526,18 +529,18 @@ bool SaltTableModel::setData( const QModelIndex& index, const QVariant& value, i
       case SALTAMOUNTCOL:
          retval = value.canConvert(QVariant::Double);
          if ( retval ) {
-            row->setAmount( Brewken::qStringToSI(value.toString(), unit, dspUnit, dspScl) );
+            row->setAmount( Measurement::qStringToSI(value.toString(), physicalQuantity, dspUnitSystem, dspScl) );
          }
          break;
       case SALTADDTOCOL:
          retval = value.canConvert(QVariant::Int);
-         if ( retval ) {
+         if (retval) {
             row->setAddTo( static_cast<Salt::WhenToAdd>(value.toInt()) );
          }
          break;
       case SALTPCTACIDCOL:
          retval = row->isAcid() && value.canConvert(QVariant::Double);
-         if ( retval ) {
+         if (retval) {
             row->setPercentAcid(value.toDouble());
          }
          break;
@@ -546,8 +549,9 @@ bool SaltTableModel::setData( const QModelIndex& index, const QVariant& value, i
          qWarning() << tr("Bad column: %1").arg(index.column());
    }
 
-   if ( retval && row->addTo() != Salt::NEVER )
+   if ( retval && row->addTo() != Salt::NEVER ) {
       emit newTotals();
+   }
    emit dataChanged(index,index);
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
    headerView->resizeSections(QHeaderView::ResizeToContents);
@@ -555,27 +559,28 @@ bool SaltTableModel::setData( const QModelIndex& index, const QVariant& value, i
    return retval;
 }
 
-Unit::unitDisplay SaltTableModel::displayUnit(int column) const
+/*
+Measurement::Unit::unitDisplay SaltTableModel::displayUnit(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noUnit;
+      return Measurement::Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
+   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::RelativeScale SaltTableModel::displayScale(int column) const
+Measurement::UnitSystem::RelativeScale SaltTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noScale;
+      return Measurement::UnitSystem::noScale;
 
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
-void SaltTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
+void SaltTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
 {
    QString attribute = generateName(column);
 
@@ -583,12 +588,12 @@ void SaltTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
       return;
 
    PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute,Unit::noScale,this->objectName(),PersistentSettings::SCALE);
+   PersistentSettings::insert(attribute,Measurement::UnitSystem::noScale,this->objectName(),PersistentSettings::SCALE);
 
 }
 
 // Setting the scale should clear any cell-level scaling options
-void SaltTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
+void SaltTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
 {
 
    QString attribute = generateName(column);
@@ -598,10 +603,9 @@ void SaltTableModel::setDisplayScale(int column, Unit::RelativeScale displayScal
 
    PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
 
-}
+}*/
 
-QString SaltTableModel::generateName(int column) const
-{
+QString SaltTableModel::generateName(int column) const {
    QString attribute;
 
    switch(column)
@@ -615,40 +619,25 @@ QString SaltTableModel::generateName(int column) const
    return attribute;
 }
 
-void SaltTableModel::contextMenu(const QPoint &point)
-{
+void SaltTableModel::contextMenu(QPoint const & point) {
    QObject* calledBy = sender();
    QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-
    int selected = hView->logicalIndexAt(point);
-   Unit::unitDisplay currentUnit;
-   Unit::RelativeScale  currentScale;
 
-   currentUnit  = displayUnit(selected);
-   currentScale = displayScale(selected);
+   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
+   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
 
    QMenu* menu;
-   QAction* invoked;
-
-   switch(selected)
-   {
+   switch (selected) {
       case SALTAMOUNTCOL:
-         menu = Brewken::setupMassMenu(parentTableWidget,currentUnit, currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       default:
          return;
    }
 
-   invoked = menu->exec(hView->mapToGlobal(point));
-   if ( invoked == nullptr )
-      return;
-
-   QWidget* pMenu = invoked->parentWidget();
-   if ( pMenu == menu )
-      setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
-   else
-      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
-
+   this->doContextMenu(point, hView, menu, selected);
+   return;
 }
 
 void SaltTableModel::saveAndClose() {

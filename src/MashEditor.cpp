@@ -24,10 +24,10 @@
 
 #include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
-#include "units/Unit.h"
 
 MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    setupUi(this);

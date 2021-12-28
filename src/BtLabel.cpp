@@ -23,150 +23,166 @@
 #include <QDebug>
 
 #include "Brewken.h"
+#include "measurement/Measurement.h"
 #include "model/Style.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 
-/*!
- * \brief Initialize the BtLabel with the parent and do some things with the type
- *
- * \param parent - QWidget* to the parent object
- * \param lType - the type of label: none, gravity, mass or volume
- * \return the initialized widget
- * \todo Not sure if I can get the name of the widget being created.
- *       Not sure how to signal the parent to redisplay
- */
 
-BtLabel::BtLabel(QWidget *parent, LabelType lType) :
-   QLabel(parent)
-{
-   whatAmI = lType;
-   btParent = parent;
-   _menu = 0;
-
+BtLabel::BtLabel(QWidget *parent,
+                 LabelType lType) :
+   QLabel{parent},
+   whatAmI{lType},
+   btParent{parent},
+   _menu{nullptr} {
    connect(this, &QWidget::customContextMenuRequested, this, &BtLabel::popContextMenu);
    return;
 }
 
-void BtLabel::initializeSection()
-{
-   QWidget* mybuddy;
+BtLabel::~BtLabel() = default;
 
-   if ( ! _section.isEmpty() )
+void BtLabel::initializeSection() {
+   if (!this->_section.isEmpty()) {
       return;
+   }
 
    // as much as I dislike it, dynamic properties can't be referenced on
    // initialization.
-   mybuddy = buddy();
+   QWidget * mybuddy = buddy();
+
+   //
    // If the label has the configSection defined, use it
    // otherwise, if the paired field has a configSection, use it
    // otherwise, if the parent object has a configSection, use it
    // if all else fails, get the parent's object name
-   if ( property("configSection").isValid() )
-      _section = property("configSection").toString();
-   else if ( mybuddy && mybuddy->property("configSection").isValid() )
-      _section = mybuddy->property("configSection").toString();
-   else if ( btParent->property("configSection").isValid() )
-      _section = btParent->property("configSection").toString();
-   else
-   {
-      qDebug() << "this failed" << this;
-      _section = btParent->objectName();
+   //
+   if ( property("configSection").isValid() ) {
+      this->_section = property("configSection").toString();
+   } else if (mybuddy && mybuddy->property("configSection").isValid() ) {
+      this->_section = mybuddy->property("configSection").toString();
+   } else if (this->btParent->property("configSection").isValid() ) {
+      this->_section = this->btParent->property("configSection").toString();
+   } else {
+      qDebug() << Q_FUNC_INFO << "this failed" << this;
+      this->_section = this->btParent->objectName();
+   }
+   return;
+}
+
+void BtLabel::initializeProperty() {
+
+   if ( ! propertyName.isEmpty() ) {
+      return;
+   }
+
+   QWidget* mybuddy = buddy();
+   if ( property("editField").isValid() ) {
+      propertyName = property("editField").toString();
+   } else if ( mybuddy && mybuddy->property("editField").isValid() ) {
+      propertyName = mybuddy->property("editField").toString();
+   } else {
+      qDebug() << Q_FUNC_INFO  << "That failed miserably";
    }
 }
 
-void BtLabel::initializeProperty()
-{
-   QWidget* mybuddy;
-
-   if ( ! propertyName.isEmpty() )
+void BtLabel::initializeMenu() {
+   // .:TBD:. At the moment, we don't initialise the menu if it already exists, however this is not quite correct as the
+   // sub-menu for relative scale needs to change when a different unit system is selected
+   if (this->_menu) {
       return;
+   }
 
-   mybuddy = buddy();
-   if ( property("editField").isValid() )
-      propertyName = property("editField").toString();
-   else if ( mybuddy && mybuddy->property("editField").isValid() )
-      propertyName = mybuddy->property("editField").toString();
-   else
-      qDebug() << "That failed miserably";
-}
+   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName, this->_section);
+   Measurement::UnitSystem::RelativeScale relativeScale = Measurement::getRelativeScaleForField(this->propertyName,
+                                                                                                _section);
 
-void BtLabel::initializeMenu()
-{
-   Unit::unitDisplay unit;
-   Unit::RelativeScale scale;
-
-   if ( _menu )
-      return;
-
-   unit  = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
-   scale = static_cast<Unit::RelativeScale>(PersistentSettings::value(propertyName, Unit::noScale, _section, PersistentSettings::SCALE).toInt());
-
-   switch( whatAmI )
-   {
+   switch (whatAmI) {
       case COLOR:
-         _menu = Brewken::setupColorMenu(btParent,unit);
+      case DENSITY:
+      case MASS:
+      case TEMPERATURE:
+      case VOLUME:
+      case TIME:
+      case DIASTATIC_POWER:
+         this->_menu = unitSystem->createUnitSystemMenu(btParent, relativeScale);
+         break;
+
+      case MIXED:
+         // This looks weird, but it works.
+         this->_menu = unitSystem->createUnitSystemMenu(btParent, relativeScale, false); // no scale menu
+         break;
+
+/*
+      case COLOR:
+         this->_menu = Brewken::setupColorMenu(btParent, unitSystem);
          break;
       case DENSITY:
-         _menu = Brewken::setupDensityMenu(btParent,unit);
+         this->_menu = Brewken::setupDensityMenu(btParent, unitSystem);
          break;
       case MASS:
-         _menu = Brewken::setupMassMenu(btParent,unit,scale);
+         this->_menu = Brewken::setupMassMenu(btParent, unitSystem, relativeScale);
          break;
       case MIXED:
          // This looks weird, but it works.
-         _menu = Brewken::setupVolumeMenu(btParent,unit,scale,false); // no scale menu
+         this->_menu = Brewken::setupVolumeMenu(btParent, unitSystem, relativeScale, false); // no scale menu
          break;
       case TEMPERATURE:
-         _menu = Brewken::setupTemperatureMenu(btParent,unit);
+         this->_menu = Brewken::setupTemperatureMenu(btParent, unitSystem);
          break;
       case VOLUME:
-         _menu = Brewken::setupVolumeMenu(btParent,unit,scale);
+         this->_menu = Brewken::setupVolumeMenu(btParent, unitSystem, relativeScale);
          break;
       case TIME:
-         _menu = Brewken::setupTimeMenu(btParent,scale); //scale menu only
+         this->_menu = Brewken::setupTimeMenu(btParent, relativeScale); //scale menu only
          break;
       case DATE:
-         _menu = Brewken::setupDateMenu(btParent,unit); // unit only
+         this->_menu = Brewken::setupDateMenu(btParent, unitSystem); // unit only
          break;
       case DIASTATIC_POWER:
-         _menu = Brewken::setupDiastaticPowerMenu(btParent,unit);
-         break;
+         this->_menu = Brewken::setupDiastaticPowerMenu(btParent, unitSystem);
+         break;*/
       default:
-         return;
+         // Nothing to set up if we're of type NONE
+         break;
    }
+   return;
 }
 
-void BtLabel::popContextMenu(const QPoint& point)
-{
+void BtLabel::popContextMenu(const QPoint& point) {
+   // For the moment, at least, we do not allow people to choose date formats per-field.  (Although you might want to
+   // mix and match metric and imperial systems in certain circumstances, it's less clear that there's a benefit to
+   // mixing and matching date formats.)
+   if (this->whatAmI == BtLabel::DATE) {
+      return;
+   }
+
    QObject* calledBy = sender();
-   QWidget* widgie;
-   QAction *invoked;
-
-   if ( calledBy == 0 )
+   if (calledBy == nullptr) {
       return;
+   }
 
-   widgie = qobject_cast<QWidget*>(calledBy);
-   if ( widgie == 0 )
+   QWidget * widgie = qobject_cast<QWidget*>(calledBy);
+   if (widgie == nullptr) {
       return;
+   }
 
-   initializeProperty();
-   initializeSection();
-   initializeMenu();
+   this->initializeProperty();
+   this->initializeSection();
+   this->initializeMenu();
 
-   invoked = _menu->exec(widgie->mapToGlobal(point));
-   Unit::unitDisplay unit = static_cast<Unit::unitDisplay>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::UNIT).toInt());
-   Unit::RelativeScale scale  = static_cast<Unit::RelativeScale>(PersistentSettings::value(propertyName, Unit::noUnit, _section, PersistentSettings::SCALE).toInt());
-
-   if ( invoked == 0 )
+   QAction * invoked = _menu->exec(widgie->mapToGlobal(point));
+   if (invoked == nullptr) {
       return;
+   }
 
+   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(propertyName, _section);
+   Measurement::UnitSystem::RelativeScale scale = Measurement::getRelativeScaleForField(propertyName, _section);
    QWidget* pMenu = invoked->parentWidget();
    if ( pMenu == _menu ) {
       PersistentSettings::insert(propertyName, invoked->data(), _section, PersistentSettings::UNIT);
       // reset the scale if required
       if (PersistentSettings::contains(propertyName, _section, PersistentSettings::SCALE) ) {
-         PersistentSettings::insert(propertyName, Unit::noScale, _section, PersistentSettings::SCALE);
+         PersistentSettings::insert(propertyName, Measurement::UnitSystem::noScale, _section, PersistentSettings::SCALE);
       }
    } else {
       PersistentSettings::insert(propertyName, invoked->data(), _section, PersistentSettings::SCALE);
@@ -187,57 +203,23 @@ void BtLabel::popContextMenu(const QPoint& point)
    // Hmm. For the color fields, I want to include the ecb or srm in the label
    // text here.
    if ( whatAmI == COLOR ) {
-      Unit::unitDisplay disp = (Unit::unitDisplay)invoked->data().toInt();
-      setText( tr("Color (%1)").arg(Brewken::colorUnitName(disp)));
+      Measurement::UnitSystem const * const disp = Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString());
+      setText( tr("Color (%1)").arg(disp->unit()->name));
    }
 
    // Remember, we need the original unit, not the new one.
 
-   emit labelChanged(unit,scale);
+   emit changedUnitSystemOrScale(unitSystem,scale);
 
+   return;
 }
 
-BtColorLabel::BtColorLabel(QWidget *parent)
-   : BtLabel(parent,COLOR)
-{
-}
-
-BtDateLabel::BtDateLabel(QWidget *parent)
-   : BtLabel(parent,DATE)
-{
-}
-
-BtDensityLabel::BtDensityLabel(QWidget *parent)
-   : BtLabel(parent,DENSITY)
-{
-}
-
-BtMassLabel::BtMassLabel(QWidget *parent)
-   : BtLabel(parent,MASS)
-{
-}
-
-BtMixedLabel::BtMixedLabel(QWidget *parent)
-   : BtLabel(parent,MIXED)
-{
-}
-
-BtTemperatureLabel::BtTemperatureLabel(QWidget *parent)
-   : BtLabel(parent,TEMPERATURE)
-{
-}
-
-BtTimeLabel::BtTimeLabel(QWidget *parent)
-   : BtLabel(parent,TIME)
-{
-}
-
-BtVolumeLabel::BtVolumeLabel(QWidget *parent)
-   : BtLabel(parent,VOLUME)
-{
-}
-
-BtDiastaticPowerLabel::BtDiastaticPowerLabel(QWidget *parent)
-   : BtLabel(parent,DIASTATIC_POWER)
-{
-}
+BtColorLabel::BtColorLabel(QWidget *parent) :                   BtLabel(parent, COLOR)           { return; }
+BtDateLabel::BtDateLabel(QWidget *parent) :                     BtLabel(parent, DATE)            { return; }
+BtDensityLabel::BtDensityLabel(QWidget *parent) :               BtLabel(parent, DENSITY)         { return; }
+BtMassLabel::BtMassLabel(QWidget *parent) :                     BtLabel(parent, MASS)            { return; }
+BtMixedLabel::BtMixedLabel(QWidget *parent) :                   BtLabel(parent, MIXED)           { return; }
+BtTemperatureLabel::BtTemperatureLabel(QWidget *parent) :       BtLabel(parent, TEMPERATURE)     { return; }
+BtTimeLabel::BtTimeLabel(QWidget *parent) :                     BtLabel(parent, TIME)            { return; }
+BtVolumeLabel::BtVolumeLabel(QWidget *parent) :                 BtLabel(parent, VOLUME)          { return; }
+BtDiastaticPowerLabel::BtDiastaticPowerLabel(QWidget *parent) : BtLabel(parent, DIASTATIC_POWER) { return; }

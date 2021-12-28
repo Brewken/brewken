@@ -23,10 +23,10 @@
 #include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Style.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
-#include "units/Unit.h"
 
 StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog(parent), obsStyle(nullptr) {
    setupUi(this);

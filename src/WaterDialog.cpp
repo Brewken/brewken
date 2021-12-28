@@ -29,18 +29,18 @@
 #include "Brewken.h"
 #include "BtDigitWidget.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/ColorMethods.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
-#include "SaltTableModel.h"
 #include "WaterButton.h"
 #include "WaterEditor.h"
 #include "WaterListModel.h"
 #include "WaterSortFilterProxyModel.h"
-#include "WaterTableModel.h"
-#include "units/ColorMethods.h"
+#include "tableModels/SaltTableModel.h"
+#include "tableModels/WaterTableModel.h"
 
 WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
    m_ppm_digits( QVector<BtDigitWidget*>(Water::numIons) ),
@@ -453,7 +453,7 @@ double WaterDialog::calculateGristpH()
 
    if ( m_rec && m_rec->fermentables().size() ) {
 
-      double platoRatio = 1/Units::plato.fromSI(m_rec->og());
+      double platoRatio = 1/Measurement::Units::plato.fromSI(m_rec->og());
       double color = m_rec->color_srm();
       double colorFromGrain = 0.0;
 

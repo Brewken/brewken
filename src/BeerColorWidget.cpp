@@ -34,7 +34,7 @@ BeerColorWidget::BeerColorWidget(QWidget* parent) : QWidget(parent)
    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
    setMinimumSize(90, 130);
 
-   glass = QImage(GLASS);
+   glass = QImage(":/images/glass2.png");
    recObs = 0;
 }
 

@@ -30,6 +30,7 @@
 #include "Algorithms.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
+#include "measurement/Measurement.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
@@ -77,8 +78,9 @@ void MashWizard::setRecipe(Recipe* rec)
 
 void MashWizard::show()
 {
-   if( recObs == nullptr || recObs->mash() == nullptr )
+   if( recObs == nullptr || recObs->mash() == nullptr ) {
       return;
+   }
 
    // Ensure at least one mash step.
    if( recObs->mash()->mashSteps().size() == 0 )
@@ -87,11 +89,11 @@ void MashWizard::show()
       return;
    }
 
-   Brewken::getThicknessUnits(&volumeUnit,&weightUnit);
-   label_mashThickness->setText(tr("Mash thickness (%1/%2)").arg(volumeUnit->getUnitName(),weightUnit->getUnitName()));
+   Measurement::getThicknessUnits(&volumeUnit,&weightUnit);
+   label_mashThickness->setText(tr("Mash thickness (%1/%2)").arg(volumeUnit->name, weightUnit->name));
 
-   MashStep *firstStep = recObs->mash()->mashSteps().first();
-   MashStep *lastStep = recObs->mash()->mashSteps().last();
+   MashStep * firstStep = recObs->mash()->mashSteps().first();
+   MashStep * lastStep  = recObs->mash()->mashSteps().last();
 
    // Recalculate the mash thickness
    double thickNum = firstStep->infuseAmount_l()/recObs->grainsInMash_kg();

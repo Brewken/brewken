@@ -25,74 +25,75 @@
 
 #include <QDebug>
 
-#include "Brewken.h"
-#include "FermentableTableModel.h"
+#include "Localization.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Fermentable.h"
-#include "units/Unit.h"
+#include "tableModels/FermentableTableModel.h"
 
-FermentableSortFilterProxyModel::FermentableSortFilterProxyModel(QObject *parent, bool filt)
-: QSortFilterProxyModel(parent)
-{
-   filter = filt;
+FermentableSortFilterProxyModel::FermentableSortFilterProxyModel(QObject *parent, bool filt) :
+   QSortFilterProxyModel{parent},
+   filter{filt} {
+   return;
 }
 
-bool FermentableSortFilterProxyModel::lessThan(const QModelIndex &left,
-                                         const QModelIndex &right) const
-{
+bool FermentableSortFilterProxyModel::lessThan(QModelIndex const & left,
+                                               QModelIndex const & right) const {
    QVariant leftFermentable = sourceModel()->data(left);
    QVariant rightFermentable = sourceModel()->data(right);
-   double leftDouble, rightDouble;
 
-   Unit const * unit = &Units::kilograms;
-   Unit const * colorunit = &Units::srm;
-
-   switch( left.column() )
-   {
+   switch (left.column()) {
       case FERMINVENTORYCOL:
          // If the numbers are equal, compare the names and be done with it
-         if (Brewken::qStringToSI(leftFermentable.toString(), unit) == Brewken::qStringToSI(rightFermentable.toString(),unit))
+         if (Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) ==
+             Measurement::qStringToSI(rightFermentable.toString(), Measurement::PhysicalQuantity::Mass)) {
             return getName(right) < getName(left);
-         // Show non-zero entries first.
-         else if (Brewken::qStringToSI(leftFermentable.toString(), unit) == 0.0 && this->sortOrder() == Qt::AscendingOrder)
+         } else if (Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) == 0.0 &&
+                    this->sortOrder() == Qt::AscendingOrder) {
+            // Show non-zero entries first.
             return false;
-         else
-            return Brewken::qStringToSI(leftFermentable.toString(),unit) < Brewken::qStringToSI(rightFermentable.toString(),unit);
+         }
+         return Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightFermentable.toString(), Measurement::PhysicalQuantity::Mass);
+
       case FERMAMOUNTCOL:
          // If the numbers are equal, compare the names and be done with it
-         if (Brewken::qStringToSI(leftFermentable.toString(), unit) == Brewken::qStringToSI(rightFermentable.toString(),unit))
+         if (Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) ==
+             Measurement::qStringToSI(rightFermentable.toString(), Measurement::PhysicalQuantity::Mass)) {
             return getName(right) < getName(left);
-         else
-            return Brewken::qStringToSI(leftFermentable.toString(),unit) < Brewken::qStringToSI(rightFermentable.toString(),unit);
+         }
+         return Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightFermentable.toString(), Measurement::PhysicalQuantity::Mass);
+
       case FERMYIELDCOL:
-         leftDouble = toDouble(leftFermentable);
-         rightDouble = toDouble(rightFermentable);
+         {
+            double leftDouble = toDouble(leftFermentable);
+            double rightDouble = toDouble(rightFermentable);
 
-         if (leftDouble == rightDouble)
-            return getName(right) < getName(left);
-         else
+            if (leftDouble == rightDouble) {
+               return getName(right) < getName(left);
+            }
             return leftDouble < rightDouble;
+         }
+
       case FERMCOLORCOL:
-         leftDouble = Brewken::qStringToSI(leftFermentable.toString(),colorunit);
-         rightDouble = Brewken::qStringToSI(rightFermentable.toString(),colorunit);
-
-         if (leftDouble == rightDouble)
-            return getName(right) < getName(left);
-         else
+         {
+            double leftDouble = Measurement::qStringToSI(leftFermentable.toString(),
+                                                         Measurement::PhysicalQuantity::Color);
+            double rightDouble = Measurement::qStringToSI(rightFermentable.toString(),
+                                                          Measurement::PhysicalQuantity::Color);
+            if (leftDouble == rightDouble) {
+               return getName(right) < getName(left);
+            }
             return leftDouble < rightDouble;
+         }
    }
 
    return leftFermentable.toString() < rightFermentable.toString();
 }
 
-double FermentableSortFilterProxyModel::toDouble(QVariant side) const
-{
-   double amt;
-   bool ok = false;
-
-   amt = Brewken::toDouble(side.toString(), &ok);
-   if ( ! ok )
-      qWarning() << QString("FermentableSortFilterProxyModel::lessThan could not convert %1 to double").arg(side.toString());
-   return amt;
+double FermentableSortFilterProxyModel::toDouble(QVariant side) const {
+   return Localization::toDouble(side.toString(), Q_FUNC_INFO);
 }
 
 QString FermentableSortFilterProxyModel::getName( const QModelIndex &index ) const

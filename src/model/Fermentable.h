@@ -30,8 +30,8 @@
 #include <QString>
 #include <QSqlRecord>
 
+#include "measurement/Unit.h"
 #include "model/NamedEntityWithInventory.h"
-#include "units/Unit.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================

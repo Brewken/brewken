@@ -26,11 +26,10 @@
 
 #include "Algorithms.h"
 #include "Brewken.h"
+#include "measurement/Unit.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
 
-PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent)
-{
+PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent) {
    setupUi(this);
 
    // Set default dates
@@ -38,51 +37,48 @@ PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent)
    dateEdit_ProductionDate->setDate(QDate::currentDate());
    updateViabilityFromDate(QDate::currentDate());
 
-   connect( lineEdit_vol, &BtLineEdit::textModified, this, &PitchDialog::calculate);
-   connect( lineEdit_OG, &BtLineEdit::textModified, this, &PitchDialog::calculate);
-   connect( slider_pitchRate, &QAbstractSlider::valueChanged, this, &PitchDialog::calculate );
-   connect( slider_pitchRate, &QAbstractSlider::valueChanged, this, &PitchDialog::updateShownPitchRate );
-   connect( spinBox_Viability, SIGNAL(valueChanged(int)), this, SLOT(calculate()));
-   connect( spinBox_VialsPitched, SIGNAL(valueChanged(int)), this, SLOT(calculate()));
-   connect( comboBox_AerationMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(calculate()));
-   connect( dateEdit_ProductionDate, &QDateTimeEdit::dateChanged, this, &PitchDialog::updateViabilityFromDate);
-   connect( checkBox_CalculateViability, &QCheckBox::stateChanged, this, &PitchDialog::toggleViabilityFromDate);
+   connect(lineEdit_vol,                &BtLineEdit::textModified,                           this, &PitchDialog::calculate);
+   connect(lineEdit_OG,                 &BtLineEdit::textModified,                           this, &PitchDialog::calculate);
+   connect(slider_pitchRate,            &QAbstractSlider::valueChanged,                      this, &PitchDialog::calculate);
+   connect(slider_pitchRate,            &QAbstractSlider::valueChanged,                      this, &PitchDialog::updateShownPitchRate);
+   connect(spinBox_Viability,           QOverload<int>::of(&QSpinBox::valueChanged),         this, &PitchDialog::calculate);
+   connect(spinBox_VialsPitched,        QOverload<int>::of(&QSpinBox::valueChanged),         this, &PitchDialog::calculate);
+   connect(comboBox_AerationMethod,     QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PitchDialog::calculate);
+   connect(dateEdit_ProductionDate,     &QDateTimeEdit::dateChanged,                         this, &PitchDialog::updateViabilityFromDate);
+   connect(checkBox_CalculateViability, &QCheckBox::stateChanged,                            this, &PitchDialog::toggleViabilityFromDate);
 
    // Dates are a little more cranky
-   connect(label_productionDate,&BtLabel::labelChanged,this,&PitchDialog::updateProductionDate);
-   updateProductionDate(Unit::noUnit,Unit::noScale);
+///   connect(label_productionDate,        &BtLabel::changedUnitSystemOrScale,                  this, &PitchDialog::updateProductionDate);
+///   this->updateProductionDate(Measurement::Unit::noUnit, Measurement::UnitSystem::noScale);
    updateShownPitchRate(0);
+   return;
 }
 
-PitchDialog::~PitchDialog()
-{
-}
+PitchDialog::~PitchDialog() = default;
 
-void PitchDialog::updateProductionDate(Unit::unitDisplay dsp, Unit::RelativeScale scl)
-{
+/*
+void PitchDialog::updateProductionDate(Measurement::UnitSystem const * unitSystem,
+                                       Measurement::UnitSystem::RelativeScale scl) {
    QString format;
    // I need the new unit, not the old
-   Unit::unitDisplay unitDsp = static_cast<Unit::unitDisplay>(
-      PersistentSettings::value(PersistentSettings::Names::productionDate,
-                                Brewken::getDateFormat(),
-                                PersistentSettings::Sections::pitchRateCalc,
-                                PersistentSettings::UNIT).toInt()
-   );
-
+   auto displayUnitSystem = Measurement::getUnitSystemForField(PersistentSettings::Names::productionDate,
+                                                               PersistentSettings::Sections::pitchRateCalc);
+   //// TODO Gah, this is not a UnitSystem, so we need to change it to dates...
    switch(unitDsp)
    {
-      case Unit::displayUS:
+      case Measurement::Unit::displayUS:
          format = "MM-dd-yyyy";
          break;
-      case Unit::displayImp:
+      case Measurement::Unit::displayImp:
          format = "dd-MM-yyyy";
          break;
-      case Unit::displaySI:
+      case Measurement::Unit::displaySI:
       default:
          format = "yyyy-MM-dd";
    }
-   dateEdit_ProductionDate->setDisplayFormat(format);
+   this->dateEdit_ProductionDate->setDisplayFormat(format);
 }
+*/
 
 void PitchDialog::setWortVolume_l(double volume)
 {

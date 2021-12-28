@@ -28,8 +28,8 @@
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Hop.h"
-#include "units/Unit.h"
 
 HopEditor::HopEditor(QWidget * parent) :
    QDialog(parent),

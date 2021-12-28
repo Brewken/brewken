@@ -31,16 +31,16 @@
 
 #include "Algorithms.h"
 #include "Brewken.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
 
 HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
    doLayout();
 
    connect( pushButton_convert, &QAbstractButton::clicked, this, &HydrometerTool::convert );
-   connect(label_inputTemp, &BtLabel::labelChanged, lineEdit_inputTemp, &BtLineEdit::lineChanged);
-   connect(label_inputSg, &BtLabel::labelChanged, lineEdit_inputSg, &BtLineEdit::lineChanged);
-   connect(label_outputSg, &BtLabel::labelChanged, lineEdit_outputSg, &BtLineEdit::lineChanged);
-   connect(label_calibratedTemp, &BtLabel::labelChanged, lineEdit_calibratedTemp, &BtLineEdit::lineChanged);
+   connect(label_inputTemp, &BtLabel::changedUnitSystemOrScale, lineEdit_inputTemp, &BtLineEdit::lineChanged);
+   connect(label_inputSg, &BtLabel::changedUnitSystemOrScale, lineEdit_inputSg, &BtLineEdit::lineChanged);
+   connect(label_outputSg, &BtLabel::changedUnitSystemOrScale, lineEdit_outputSg, &BtLineEdit::lineChanged);
+   connect(label_calibratedTemp, &BtLabel::changedUnitSystemOrScale, lineEdit_calibratedTemp, &BtLineEdit::lineChanged);
 
    QMetaObject::connectSlotsByName(this);
    return;
@@ -85,7 +85,9 @@ void HydrometerTool::doLayout() {
     lineEdit_outputSg = new BtDensityEdit(groupBox_inputSg);
         lineEdit_outputSg->setMinimumSize(QSize(80, 0));
         lineEdit_outputSg->setMaximumSize(QSize(80, 16777215));
-        lineEdit_outputSg->setProperty("forcedUnit",QVariant(QStringLiteral("displaySG")));
+//        lineEdit_outputSg->setProperty("forcedUnit",QVariant(QStringLiteral("displaySG")));
+      lineEdit_outputSg->setForcedUnitSystem(&Measurement::UnitSystems::density_SpecificGravity);
+
         lineEdit_outputSg->setReadOnly(true);
 
 #ifndef QT_NO_SHORTCUT

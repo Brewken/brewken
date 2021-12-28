@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,25 +17,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MISCTABLEMODEL_H
-#define MISCTABLEMODEL_H
+#ifndef TABLEMODELS_MISCTABLEMODEL_H
+#define TABLEMODELS_MISCTABLEMODEL_H
 #pragma once
 
 #include <memory>
 
 #include <QAbstractItemModel>
-#include <QAbstractTableModel>
 #include <QItemDelegate>
 #include <QList>
 #include <QMetaProperty>
 #include <QModelIndex>
 #include <QStyleOptionViewItem>
-#include <QTableView>
 #include <QVariant>
 #include <QWidget>
 
 #include "Brewken.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
+#include "tableModels/BtTableModel.h"
 
 
 // Forward declarations.
@@ -52,12 +51,13 @@ enum{MISCNAMECOL, MISCTYPECOL, MISCUSECOL, MISCTIMECOL, MISCAMOUNTCOL, MISCINVEN
  *
  * \brief Table model for a list of miscs.
  */
-class MiscTableModel : public QAbstractTableModel {
+class MiscTableModel : public BtTableModel {
    Q_OBJECT
 
 public:
    MiscTableModel(QTableView* parent=nullptr, bool editable=true);
-   virtual ~MiscTableModel() {}
+   virtual ~MiscTableModel();
+
    //! \brief Observe a recipe's list of miscs.
    void observeRecipe(Recipe* rec);
    //! \brief If true, we model the database's list of miscs.
@@ -88,13 +88,10 @@ public:
    virtual Qt::ItemFlags flags(const QModelIndex& index ) const;
    //! \brief Reimplemented from QAbstractTableModel
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
-
-   Unit::unitDisplay displayUnit(int column) const;
-   Unit::RelativeScale displayScale(int column) const;
-   void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::RelativeScale displayScale);
-   QString generateName(int column) const;
    bool remove(Misc * misc);
+
+protected:
+   virtual QString generateName(int column) const;
 
 public slots:
    //! \brief Add a misc to the model.
@@ -118,10 +115,10 @@ private:
 };
 
 /*!
- *  \class MiscItemDelegate
+ * \class MiscItemDelegate
  *
- *  \brief Item delegate for misc tables.
- *  \sa MiscTableModel
+ * \brief Item delegate for misc tables.
+ * \sa MiscTableModel
  */
 class MiscItemDelegate : public QItemDelegate {
    Q_OBJECT

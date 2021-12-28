@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -21,25 +21,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "MiscTableModel.h"
+#include "tableModels/MiscTableModel.h"
 
 #include <QComboBox>
 #include <QHeaderView>
 #include <QLineEdit>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Inventory.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
 #include "utils/BtStringConst.h"
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
-   QAbstractTableModel(parent),
-   editable(editable),
+   BtTableModel{parent, editable},
    _inventoryEditable(false),
    recObs(nullptr),
    parentTableWidget(parent) {
@@ -56,6 +55,8 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    connect(&ObjectStoreTyped<InventoryMisc>::getInstance(), &ObjectStoreTyped<InventoryMisc>::signalPropertyChanged, this, &MiscTableModel::changedInventory);
    return;
 }
+
+MiscTableModel::~MiscTableModel() = default;
 
 void MiscTableModel::observeRecipe(Recipe* rec)
 {
@@ -185,82 +186,83 @@ int MiscTableModel::columnCount(const QModelIndex& /*parent*/) const
    return MISCNUMCOLS;
 }
 
-QVariant MiscTableModel::data( const QModelIndex& index, int role ) const
-{
-   Misc* row;
-   Unit::unitDisplay unit;
-   Unit::RelativeScale scale;
+QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
 
    // Ensure the row is ok.
-   if( index.row() >= static_cast<int>(miscObs.size() ))
-   {
-      qWarning() << QString("Bad model index. row = %1").arg(index.row());
+   if (index.row() >= static_cast<int>(this->miscObs.size())) {
+      qWarning() << Q_FUNC_INFO << "Bad model index. row = " << index.row();
       return QVariant();
    }
-   else
-      row = miscObs[index.row()];
+
+   Misc * row = this->miscObs[index.row()];
 
    // Deal with the column and return the right data.
-   switch( index.column() )
-   {
+   switch (index.column()) {
       case MISCNAMECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->name());
-         else
-            return QVariant();
+         }
+         break;
       case MISCTYPECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->typeStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->type());
-         else
-            return QVariant();
+         }
+         break;
       case MISCUSECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->useStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->use());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case MISCTIMECOL:
-         if( role != Qt::DisplayRole )
-            return QVariant();
-
-         scale = displayScale(MISCTIMECOL);
-
-         return QVariant( Brewken::displayAmount(row->time(), &Units::minutes, 3, Unit::noUnit, scale) );
+         if (role == Qt::DisplayRole) {
+            Measurement::UnitSystem::RelativeScale scale = this->displayScale(MISCTIMECOL);
+            return QVariant( Measurement::displayAmount(row->time(), &Measurement::Units::minutes, 3, nullptr, scale) );
+         }
+         break;
       case MISCINVENTORYCOL:
-         if( role != Qt::DisplayRole )
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            Measurement::UnitSystem const * unitSystem = this->displayUnitSystem(index.column());
+            return QVariant( Measurement::displayAmount(row->inventory(), row->amountIsWeight()? &Measurement::Units::kilograms : &Measurement::Units::liters, 3, unitSystem, Measurement::UnitSystem::noScale )
 
-         unit = displayUnit(index.column());
-         return QVariant( Brewken::displayAmount(row->inventory(), row->amountIsWeight()? &Units::kilograms : &Units::liters, 3, unit, Unit::noScale ) );
+            );
+         }
+         break;
       case MISCAMOUNTCOL:
-         if( role != Qt::DisplayRole )
-            return QVariant();
-
-         unit = displayUnit(index.column());
-         return QVariant( Brewken::displayAmount(row->amount(), row->amountIsWeight()? &Units::kilograms : &Units::liters, 3, unit, Unit::noScale ) );
-
+         if (role == Qt::DisplayRole) {
+            Measurement::UnitSystem const * unitSystem = this->displayUnitSystem(index.column());
+            return QVariant(
+               Measurement::displayAmount(row->amount(),
+                                          row->amountIsWeight() ? &Measurement::Units::kilograms : &Measurement::Units::liters,
+                                          3,
+                                          unitSystem,
+                                          Measurement::UnitSystem::noScale)
+            );
+         }
+         break;
       case MISCISWEIGHT:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->amountTypeStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->amountType());
-         else
-            return QVariant();
+         }
+         break;
       default:
          qWarning() << QString("Bad model index. column = %1").arg(index.column());
+         break;
    }
    return QVariant();
 }
 
-QVariant MiscTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
-{
-   if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-   {
-      switch( section )
-      {
+QVariant MiscTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      switch (section) {
          case MISCNAMECOL:
             return QVariant(tr("Name"));
          case MISCTYPECOL:
@@ -279,16 +281,14 @@ QVariant MiscTableModel::headerData( int section, Qt::Orientation orientation, i
             return QVariant();
       }
    }
-   else
-      return QVariant();
+
+   return QVariant();
 }
 
-Qt::ItemFlags MiscTableModel::flags(const QModelIndex& index ) const
-{
+Qt::ItemFlags MiscTableModel::flags(QModelIndex const & index) const {
    int col = index.column();
    Qt::ItemFlags defaults = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
-   switch( col )
-   {
+   switch (col) {
       case MISCNAMECOL:
          return defaults;
       case MISCINVENTORYCOL:
@@ -298,83 +298,92 @@ Qt::ItemFlags MiscTableModel::flags(const QModelIndex& index ) const
    }
 }
 
-bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   Misc *row;
-   int col;
-   Unit const * unit;
+bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
 
-   if( index.row() >= static_cast<int>(miscObs.size()) )
+   if (index.row() >= static_cast<int>(miscObs.size())) {
       return false;
-   else
-      row = miscObs[index.row()];
+   }
 
-   col = index.column();
-   unit = row->amountIsWeight() ? &Units::kilograms: &Units::liters;
+   Misc *row = miscObs[index.row()];
 
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   int col = index.column();
+
+   Measurement::PhysicalQuantity physicalQuantity =
+      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass: Measurement::PhysicalQuantity::Volume;
+
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
 
    switch (col )
    {
       case MISCNAMECOL:
-         if( value.canConvert(QVariant::String) )
-         {
+         if (value.canConvert(QVariant::String)) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntity::name,
                                                   value.toString(),
                                                   tr("Change Misc Name"));
-         }
-         else
+         } else {
             return false;
+         }
          break;
       case MISCTYPECOL:
-         if( ! value.canConvert(QVariant::Int) )
+         if (!value.canConvert(QVariant::Int)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Misc::type,
                                                static_cast<Misc::Type>(value.toInt()),
                                                tr("Change Misc Type"));
          break;
       case MISCUSECOL:
-         if( ! value.canConvert(QVariant::Int) )
+         if (!value.canConvert(QVariant::Int)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Misc::use,
                                                static_cast<Misc::Use>(value.toInt()),
                                                tr("Change Misc Use"));
          break;
       case MISCTIMECOL:
-         if( ! value.canConvert(QVariant::String) )
+         if (!value.canConvert(QVariant::String)) {
             return false;
-
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Misc::time,
-                                               Brewken::qStringToSI(value.toString(), &Units::minutes, dspUnit, dspScl),
+                                               Measurement::qStringToSI(value.toString(),
+                                                                        Measurement::PhysicalQuantity::Time,
+                                                                        dspUnitSystem,
+                                                                        dspScl),
                                                tr("Change Misc Time"));
          break;
       case MISCINVENTORYCOL:
-         if( ! value.canConvert(QVariant::String) )
+         if (!value.canConvert(QVariant::String)) {
             return false;
-
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntityWithInventory::inventory,
-                                               Brewken::qStringToSI(value.toString(), unit, dspUnit,dspScl),
+                                               Measurement::qStringToSI(value.toString(),
+                                                                        physicalQuantity,
+                                                                        dspUnitSystem,
+                                                                        dspScl),
                                                tr("Change Misc Inventory Amount"));
          break;
       case MISCAMOUNTCOL:
-         if( ! value.canConvert(QVariant::String) )
+         if (!value.canConvert(QVariant::String)) {
             return false;
-
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Misc::amount,
-                                               Brewken::qStringToSI(value.toString(), unit, dspUnit,dspScl),
+                                               Measurement::qStringToSI(value.toString(),
+                                                                        physicalQuantity,
+                                                                        dspUnitSystem,
+                                                                        dspScl),
                                                tr("Change Misc Amount"));
          break;
       case MISCISWEIGHT:
-         if( ! value.canConvert(QVariant::Int) )
+         if (!value.canConvert(QVariant::Int)) {
             return false;
-
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Misc::amountType,
                                                static_cast<Misc::AmountType>(value.toInt()),
@@ -384,7 +393,7 @@ bool MiscTableModel::setData( const QModelIndex& index, const QVariant& value, i
          return false;
    }
 
-   emit dataChanged( index, index );
+   emit dataChanged(index, index);
    return true;
 }
 
@@ -432,36 +441,36 @@ void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    return;
 }
 
-Misc* MiscTableModel::getMisc(unsigned int i)
-{
+Misc * MiscTableModel::getMisc(unsigned int i) {
    return miscObs[static_cast<int>(i)];
 }
 
-Unit::unitDisplay MiscTableModel::displayUnit(int column) const
+/*
+Measurement::Unit::unitDisplay MiscTableModel::displayUnit(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noUnit;
+      return Measurement::Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
+   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, Measurement::Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::RelativeScale MiscTableModel::displayScale(int column) const
+Measurement::UnitSystem::RelativeScale MiscTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noScale;
+      return Measurement::UnitSystem::noScale;
 
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
+   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
 }
 
 // We need to:
 //   o clear the custom scale if set
 //   o clear any custom unit from the rows
 //      o which should have the side effect of clearing any scale
-void MiscTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
+void MiscTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
 {
    QString attribute = generateName(column);
 
@@ -469,12 +478,12 @@ void MiscTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
       return;
 
    PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute,Unit::noScale,this->objectName(),PersistentSettings::SCALE);
+   PersistentSettings::insert(attribute,Measurement::UnitSystem::noScale,this->objectName(),PersistentSettings::SCALE);
 
 }
 
 // Setting the scale should clear any cell-level scaling options
-void MiscTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
+void MiscTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
 {
    QString attribute = generateName(column);
 
@@ -483,7 +492,7 @@ void MiscTableModel::setDisplayScale(int column, Unit::RelativeScale displayScal
 
    PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
 
-}
+}*/
 
 QString MiscTableModel::generateName(int column) const
 {
@@ -506,45 +515,32 @@ QString MiscTableModel::generateName(int column) const
    return attribute;
 }
 
-void MiscTableModel::contextMenu(const QPoint &point)
-{
+void MiscTableModel::contextMenu(const QPoint &point) {
    QObject* calledBy = sender();
    QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-
    int selected = hView->logicalIndexAt(point);
-   Unit::unitDisplay currentUnit;
-   Unit::RelativeScale  currentScale;
 
    // Since we need to call generateVolumeMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
-
-   currentUnit  = displayUnit(selected);
-   currentScale = displayScale(selected);
+   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
+   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
 
    QMenu* menu;
-   QAction* invoked;
 
-   switch(selected)
-   {
+   switch (selected) {
       case MISCINVENTORYCOL:
       case MISCAMOUNTCOL:
-         menu = Brewken::setupMassMenu(parentTableWidget,currentUnit, currentScale, false);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale, false);
          break;
       case MISCTIMECOL:
-         menu = Brewken::setupTimeMenu(parentTableWidget,currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       default:
          return;
    }
 
-   invoked = menu->exec(hView->mapToGlobal(point));
-   if ( invoked == nullptr )
-      return;
-
-   if ( selected == MISCTIMECOL )
-      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
-   else
-      setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
+   this->doContextMenu(point, hView, menu, selected);
+   return;
 }
 
 //======================CLASS MiscItemDelegate===========================

@@ -20,10 +20,9 @@
 #define BREWNOTEWIDGET_H
 #pragma once
 
-#include <QWidget>
-#include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
+#include <QWidget>
 #include "ui_brewNoteWidget.h"
 
 // Forward declarations.
@@ -34,13 +33,12 @@ class BrewNote;
  *
  * \brief View/controller widget that edits BrewNotes.
  */
-class BrewNoteWidget : public QWidget, public Ui::brewNoteWidget
-{
+class BrewNoteWidget : public QWidget, public Ui::brewNoteWidget {
     Q_OBJECT
 
 public:
-   BrewNoteWidget(QWidget *parent = 0);
-   virtual ~BrewNoteWidget() {}
+   BrewNoteWidget(QWidget *parent = nullptr);
+   virtual ~BrewNoteWidget();
 
    void setBrewNote(BrewNote* bNote);
    bool isBrewNote(BrewNote* note);
@@ -61,7 +59,8 @@ public slots:
    void updateFG();
    void updateFinalVolume_l();
    void updateFermentDate(QDate const & datetime);
-   void updateDateFormat(Unit::unitDisplay display,Unit::RelativeScale scale);
+// .:TODO:. FIX THIS!
+//   void updateDateFormat(Measurement::Unit::unitDisplay display,Measurement::UnitSystem::RelativeScale scale);
 
    void updateNotes();
 //   void saveAll();
@@ -69,13 +68,10 @@ public slots:
    void changed(QMetaProperty,QVariant);
    void showChanges(QString field = "");
 
-   void updateProjOg(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale);
-
+   void updateProjOg(Measurement::UnitSystem const * oldUnitSystem, Measurement::UnitSystem::RelativeScale oldScale);
 
 private:
    BrewNote* bNoteObs;
-
-
 };
 
 #endif

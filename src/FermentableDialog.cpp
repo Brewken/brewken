@@ -29,10 +29,10 @@
 #include "database/ObjectStoreWrapper.h"
 #include "FermentableEditor.h"
 #include "FermentableSortFilterProxyModel.h"
-#include "FermentableTableModel.h"
 #include "MainWindow.h"
 #include "model/Fermentable.h"
 #include "model/Recipe.h"
+#include "tableModels/FermentableTableModel.h"
 
 
 FermentableDialog::FermentableDialog(MainWindow* parent) :

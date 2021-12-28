@@ -25,11 +25,11 @@ class NamedMashEditor;
 #include <QVariant>
 
 #include "ui_namedMashEditor.h"
-#include "MashStepTableModel.h"
 #include "MashListModel.h"
 #include "MashStepEditor.h"
 #include "EquipmentListModel.h"
 #include "NamedEntitySortProxyModel.h"
+#include "tableModels/MashStepTableModel.h"
 
 
 // Forward declarations.

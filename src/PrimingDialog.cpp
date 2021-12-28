@@ -22,7 +22,7 @@
 #include <cmath>
 
 #include "Brewken.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
 
 PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    setupUi(this);

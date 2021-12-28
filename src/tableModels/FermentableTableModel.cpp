@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "FermentableTableModel.h"
+#include "tableModels/FermentableTableModel.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -41,21 +41,20 @@
 #include <QVector>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Fermentable.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
-#include "utils/BtStringConst.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
+#include "utils/BtStringConst.h"
 
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
-   QAbstractTableModel(parent),
+   BtTableModel{parent, editable},
    parentTableWidget(parent),
-   editable(editable),
    _inventoryEditable(false),
    recObs(nullptr),
    displayPercentages(false),
@@ -75,6 +74,8 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
    connect(&ObjectStoreTyped<InventoryFermentable>::getInstance(), &ObjectStoreTyped<InventoryFermentable>::signalPropertyChanged, this, &FermentableTableModel::changedInventory);
    return;
 }
+
+FermentableTableModel::~FermentableTableModel() = default;
 
 void FermentableTableModel::observeRecipe(Recipe* rec) {
    if (this->recObs) {
@@ -275,8 +276,8 @@ int FermentableTableModel::columnCount(const QModelIndex& /*parent*/) const
 }
 
 QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const {
-   Unit::RelativeScale scale;
-   Unit::unitDisplay unit;
+   Measurement::UnitSystem::RelativeScale scale;
+   Measurement::UnitSystem const * unitSystem;
 
    // Ensure the row is OK
    if (index.row() >= static_cast<int>(fermObs.size() )) {
@@ -292,66 +293,68 @@ QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const
    }
 
    int col = index.column();
-   switch( col )
-   {
+   switch (col) {
       case FERMNAMECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->name());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case FERMTYPECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->typeStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->type());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case FERMINVENTORYCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
 
          // So just query the columns
-         unit  = displayUnit(col);
-         scale = displayScale(col);
-
-         return QVariant( Brewken::displayAmount(row->inventory(), &Units::kilograms, 3, unit, scale) );
+         unitSystem  = this->displayUnitSystem(col);
+         scale = this->displayScale(col);
+         return QVariant( Measurement::displayAmount(row->inventory(), &Measurement::Units::kilograms, 3, unitSystem, scale) );
       case FERMAMOUNTCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
 
          // So just query the columns
-         unit  = displayUnit(col);
+         unitSystem  = this->displayUnitSystem(col);
          scale = displayScale(col);
-
-         return QVariant( Brewken::displayAmount(row->amount_kg(), &Units::kilograms, 3, unit, scale) );
+         return QVariant( Measurement::displayAmount(row->amount_kg(), &Measurement::Units::kilograms, 3, unitSystem, scale) );
       case FERMISMASHEDCOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->additionMethodStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->additionMethod());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case FERMAFTERBOIL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->additionTimeStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->additionTime());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case FERMYIELDCOL:
-         if( role == Qt::DisplayRole )
-            return QVariant( Brewken::displayAmount(row->yield_pct(), nullptr) );
-         else
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            return QVariant( Measurement::displayAmount(row->yield_pct(), nullptr) );
+         }
+         return QVariant();
       case FERMCOLORCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
 
-         unit  = displayUnit(col);
-
-         return QVariant( Brewken::displayAmount(row->color_srm(), &Units::srm, 0, unit) );
+         unitSystem  = this->displayUnitSystem(col);
+         return QVariant( Measurement::displayAmount(row->color_srm(), &Measurement::Units::srm, 0, unitSystem) );
       default :
-         qCritical() << tr("Bad column: %1").arg(col);
+         qCritical() << Q_FUNC_INFO << "Bad column: " << col;
          return QVariant();
    }
 }
@@ -427,19 +430,19 @@ Qt::ItemFlags FermentableTableModel::flags(const QModelIndex& index ) const
 /* --maf--
    The cell-specific work has been momentarily disabled until I can find a
    better way to implement. PLEASE DO NOT DELETE
-Unit::unitDisplay FermentableTableModel::displayUnit(const QModelIndex& index)
+Measurement::Unit::unitDisplay FermentableTableModel::displayUnit(const QModelIndex& index)
 {
    Fermentable* row;
 
    if ( index.row() >= fermObs.size() )
-      return Unit::noUnit;
+      return Measurement::Unit::noUnit;
 
    row = fermObs[index.row()];
 
    return row->displayUnit();
 }
 
-void FermentableTableModel::setDisplayUnit(const QModelIndex& index, Unit::unitDisplay displayUnit)
+void FermentableTableModel::setDisplayUnit(const QModelIndex& index, Measurement::Unit::unitDisplay displayUnit)
 {
    Fermentable* row;
 
@@ -450,19 +453,19 @@ void FermentableTableModel::setDisplayUnit(const QModelIndex& index, Unit::unitD
    row->setDisplayUnit(displayUnit);
 }
 
-Unit::RelativeScale FermentableTableModel::displayScale(const QModelIndex& index)
+Measurement::UnitSystem::RelativeScale FermentableTableModel::displayScale(const QModelIndex& index)
 {
    Fermentable* row;
 
    if ( index.row() >= fermObs.size() )
-      return Unit::noScale;
+      return Measurement::UnitSystem::noScale;
 
    row = fermObs[index.row()];
 
    return row->displayScale();
 }
 
-void FermentableTableModel::setDisplayScale(const QModelIndex& index, Unit::RelativeScale displayScale)
+void FermentableTableModel::setDisplayScale(const QModelIndex& index, Measurement::UnitSystem::RelativeScale displayScale)
 {
    Fermentable* row;
 
@@ -472,72 +475,72 @@ void FermentableTableModel::setDisplayScale(const QModelIndex& index, Unit::Rela
    row = fermObs[index.row()];
    row->setDisplayScale(displayScale);
 }
+
+Measurement::UnitSystem const * FermentableTableModel::displayUnitSystem(int column) const {
+   QString attribute = generateName(column);
+
+   if ( attribute.isEmpty() ) {
+      return nullptr;
+   }
+
+   return Measurement::getUnitSystemForField(attribute, this->objectName());
+}
+
+Measurement::UnitSystem::RelativeScale FermentableTableModel::displayScale(int column) const {
+   QString attribute = generateName(column);
+
+   if ( attribute.isEmpty() ) {
+      return Measurement::UnitSystem::noScale;
+   }
+
+   return Measurement::getRelativeScaleForField(attribute, this->objectName());
+}
 */
 
-Unit::unitDisplay FermentableTableModel::displayUnit(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Unit::noUnit;
-
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Unit::RelativeScale FermentableTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Unit::noScale;
-
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
-}
-
-// We need to:
-//   o clear the custom scale if set
-//   o clear any custom unit from the rows
-//      o which should have the side effect of clearing any scale
-void FermentableTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
-{
-   // Fermentable* row; // disabled per-cell magic
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
-
-   /* Disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getFermentable(i);
-      row->setDisplayUnit(Unit::noUnit);
-   }
-   */
-}
-
-// Setting the scale should clear any cell-level scaling options
-void FermentableTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
-{
-   // Fermentable* row; //disabled per-cell magic
-
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
-
-   /* disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getFermentable(i);
-      row->setDisplayScale(Unit::noScale);
-   }
-   */
-}
+///// We need to:
+/////   o clear the custom scale if set
+/////   o clear any custom unit from the rows
+/////      o which should have the side effect of clearing any scale
+///void FermentableTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
+///{
+///   // Fermentable* row; // disabled per-cell magic
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
+///   PersistentSettings::insert(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE);
+///
+///   /* Disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getFermentable(i);
+///      row->setDisplayUnit(Measurement::Unit::noUnit);
+///   }
+///   */
+///}
+///
+///// Setting the scale should clear any cell-level scaling options
+///void FermentableTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
+///{
+///   // Fermentable* row; //disabled per-cell magic
+///
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
+///
+///   /* disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getFermentable(i);
+///      row->setDisplayScale(Measurement::UnitSystem::noScale);
+///   }
+///   */
+///}
 
 QString FermentableTableModel::generateName(int column) const
 {
@@ -561,76 +564,58 @@ QString FermentableTableModel::generateName(int column) const
 }
 
 // oofrab
-void FermentableTableModel::contextMenu(const QPoint &point)
-{
+void FermentableTableModel::contextMenu(const QPoint &point) {
    QObject* calledBy = sender();
    QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-
    int selected = hView->logicalIndexAt(point);
-   Unit::unitDisplay currentUnit;
-   Unit::RelativeScale  currentScale;
 
    // Since we need to call setupMassMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
-   currentUnit  = displayUnit(selected);
-   currentScale = displayScale(selected);
+   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
+   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
 
    QMenu* menu;
-   QAction* invoked;
 
-   switch(selected)
-   {
+   switch(selected) {
       case FERMINVENTORYCOL:
       case FERMAMOUNTCOL:
-         menu = Brewken::setupMassMenu(parentTableWidget,currentUnit, currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       case FERMCOLORCOL:
-         menu = Brewken::setupColorMenu(parentTableWidget,currentUnit);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget);
          break;
       default:
          return;
    }
 
-   invoked = menu->exec(hView->mapToGlobal(point));
-   if ( invoked == nullptr )
-      return;
-
-   QWidget* pMenu = invoked->parentWidget();
-   if ( pMenu == menu )
-      setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
-   else
-      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
-
+   this->doContextMenu(point, hView, menu, selected);
+   return;
 }
 
-bool FermentableTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   Fermentable* row;
-   bool retVal = false;
-
-   if( index.row() >= static_cast<int>(fermObs.size() ))
-   {
+bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
+   if (index.row() >= static_cast<int>(this->fermObs.size())) {
       return false;
    }
-   else
-      row = fermObs[index.row()];
 
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   bool retVal = false;
+   Fermentable* row = fermObs[index.row()];
 
-   switch( index.column() )
-   {
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
+
+   switch (index.column()) {
       case FERMNAMECOL:
          retVal = value.canConvert(QVariant::String);
-         if ( retVal )
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntity::name,
                                                   value.toString(),
                                                   tr("Change Fermentable Name"));
+         }
          break;
       case FERMTYPECOL:
          retVal = value.canConvert(QVariant::Int);
-         if ( retVal ) {
+         if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::Type>() here (as the Q_PROPERTY system will do the casting for us).
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::type,
@@ -640,30 +625,37 @@ bool FermentableTableModel::setData( const QModelIndex& index, const QVariant& v
          break;
       case FERMINVENTORYCOL:
          retVal = value.canConvert(QVariant::String);
-         if( retVal ) {
+         if (retVal) {
             // Inventory amount is in kg, but is just called "inventory" rather than "inventory_kg" in the Q_PROPERTY declaration in the Fermentable class
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntityWithInventory::inventory,
-                                                  Brewken::qStringToSI(value.toString(), &Units::kilograms,dspUnit,dspScl),
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Mass,
+                                                                           dspUnitSystem,
+                                                                           dspScl),
                                                   tr("Change Inventory Amount"));
          }
          break;
       case FERMAMOUNTCOL:
          retVal = value.canConvert(QVariant::String);
-         if( retVal ) {
+         if (retVal) {
             // This is where the amount of a fermentable in a recipe gets updated
             // We need to refer back to the MainWindow to make this an undoable operation
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::amount_kg,
-                                                  Brewken::qStringToSI(value.toString(), &Units::kilograms,dspUnit,dspScl),
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Mass,
+                                                                           dspUnitSystem,
+                                                                           dspScl),
                                                   tr("Change Fermentable Amount"));
-            if( rowCount() > 0 )
+            if (rowCount() > 0) {
                headerDataChanged( Qt::Vertical, 0, rowCount()-1 ); // Need to re-show header (grain percent).
+            }
          }
          break;
       case FERMISMASHEDCOL:
          retVal = value.canConvert(QVariant::Int);
-         if( retVal ) {
+         if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionMethod>() here (as the Q_PROPERTY system will do the casting for us).
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::additionMethod,
@@ -673,7 +665,7 @@ bool FermentableTableModel::setData( const QModelIndex& index, const QVariant& v
          break;
       case FERMAFTERBOIL:
          retVal = value.canConvert(QVariant::Int);
-         if( retVal ) {
+         if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionTime>() here (as the Q_PROPERTY system will do the casting for us).
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::additionTime,
@@ -683,7 +675,7 @@ bool FermentableTableModel::setData( const QModelIndex& index, const QVariant& v
          break;
       case FERMYIELDCOL:
          retVal = value.canConvert(QVariant::Double);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::yield_pct,
                                                   value.toDouble(),
@@ -692,15 +684,18 @@ bool FermentableTableModel::setData( const QModelIndex& index, const QVariant& v
          break;
       case FERMCOLORCOL:
          retVal = value.canConvert(QVariant::Double);
-         if( retVal ) {
+         if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::color_srm,
-                                                  Brewken::qStringToSI(value.toString(), &Units::srm, dspUnit, dspScl),
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Color,
+                                                                           dspUnitSystem,
+                                                                           dspScl),
                                                   tr("Change Color"));
          }
          break;
       default:
-         qWarning() << tr("Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return false;
    }
    return retVal;

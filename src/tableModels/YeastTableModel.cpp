@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "YeastTableModel.h"
+#include "tableModels/YeastTableModel.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
@@ -36,18 +36,17 @@
 #include <QVector>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable) :
-   QAbstractTableModel(parent),
-   editable(editable),
+   BtTableModel{parent, editable},
    _inventoryEditable(false),
    parentTableWidget(parent),
    recObs(nullptr) {
@@ -65,6 +64,8 @@ YeastTableModel::YeastTableModel(QTableView* parent, bool editable) :
    connect(&ObjectStoreTyped<InventoryYeast>::getInstance(), &ObjectStoreTyped<InventoryYeast>::signalPropertyChanged, this, &YeastTableModel::changedInventory);
    return;
 }
+
+YeastTableModel::~YeastTableModel() = default;
 
 void YeastTableModel::addYeast(int yeastId) {
    Yeast* yeast = ObjectStoreWrapper::getByIdRaw<Yeast>(yeastId);
@@ -236,69 +237,68 @@ int YeastTableModel::columnCount(const QModelIndex& /*parent*/) const
    return YEASTNUMCOLS;
 }
 
-QVariant YeastTableModel::data( const QModelIndex& index, int role ) const
-{
-   Yeast* row;
-   Unit::unitDisplay unit;
-
+QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
    // Ensure the row is ok.
-   if( index.row() >= static_cast<int>(yeastObs.size() ))
-   {
-      qWarning() << tr("Bad model index. row = %1").arg(index.row());
+   if (index.row() >= static_cast<int>(this->yeastObs.size())) {
+      qWarning() << Q_FUNC_INFO << "Bad model index. row = " << index.row();
       return QVariant();
    }
-   else
-      row = yeastObs[index.row()];
 
-   switch( index.column() )
-   {
+   Measurement::UnitSystem const * unitSystem;
+
+   Yeast* row = yeastObs[index.row()];
+
+   switch (index.column()) {
       case YEASTNAMECOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
-
+         }
          return QVariant(row->name());
       case YEASTTYPECOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->typeStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->type());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case YEASTLABCOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->laboratory());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case YEASTPRODIDCOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->productID());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case YEASTFORMCOL:
-         if( role == Qt::DisplayRole )
+         if (role == Qt::DisplayRole) {
             return QVariant(row->formStringTr());
-         else if( role == Qt::UserRole )
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->form());
-         else
-            return QVariant();
+         }
+         return QVariant();
       case YEASTINVENTORYCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
-         return QVariant( row->inventory() );
+         }
+         return QVariant(row->inventory());
       case YEASTAMOUNTCOL:
-         if( role != Qt::DisplayRole )
+         if (role != Qt::DisplayRole) {
             return QVariant();
+         }
 
-         unit  = displayUnit(index.column());
-
-         return QVariant(Brewken::displayAmount(row->amount(),
-                                                row->amountIsWeight() ? &Units::kilograms : &Units::liters,
+         unitSystem = this->displayUnitSystem(index.column());
+         return QVariant(Measurement::displayAmount(row->amount(),
+                                                row->amountIsWeight() ? &Measurement::Units::kilograms : &Measurement::Units::liters,
                                                 3,
-                                                unit,
-                                                Unit::noScale));
+                                                unitSystem,
+                                                Measurement::UnitSystem::noScale));
 
       default :
-         qWarning() << tr("Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return QVariant();
    }
 }
@@ -347,160 +347,165 @@ Qt::ItemFlags YeastTableModel::flags(const QModelIndex& index ) const
    }
 }
 
-bool YeastTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   Yeast *row;
-   Unit const * unit;
-
-   if( index.row() >= static_cast<int>(yeastObs.size()) || role != Qt::EditRole )
+bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
+   if (index.row() >= static_cast<int>(this->yeastObs.size()) || role != Qt::EditRole) {
       return false;
-   else
-      row = yeastObs[index.row()];
+   }
 
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   Yeast * row = this->yeastObs[index.row()];
+   Measurement::PhysicalQuantity physicalQuantity =
+      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume;
 
-   switch( index.column() )
-   {
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
+
+   switch (index.column()) {
       case YEASTNAMECOL:
-         if( ! value.canConvert(QVariant::String))
+         if (!value.canConvert(QVariant::String)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntity::name,
                                                value.toString(),
                                                tr("Change Yeast Name"));
          break;
       case YEASTLABCOL:
-         if( ! value.canConvert(QVariant::String) )
+         if (!value.canConvert(QVariant::String)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::laboratory,
                                                value.toString(),
                                                tr("Change Yeast Laboratory"));
          break;
       case YEASTPRODIDCOL:
-         if( ! value.canConvert(QVariant::String) )
+         if (!value.canConvert(QVariant::String)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::productID,
                                                value.toString(),
                                                tr("Change Yeast Product ID"));
          break;
       case YEASTTYPECOL:
-         if( ! value.canConvert(QVariant::Int) )
+         if (!value.canConvert(QVariant::Int)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::type,
                                                static_cast<Yeast::Type>(value.toInt()),
                                                tr("Change Yeast Type"));
          break;
       case YEASTFORMCOL:
-         if( ! value.canConvert(QVariant::Int) )
+         if (!value.canConvert(QVariant::Int)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::form,
                                                static_cast<Yeast::Form>(value.toInt()),
                                                tr("Change Yeast Form"));
          break;
       case YEASTINVENTORYCOL:
-         if( ! value.canConvert(QVariant::Int) )
+         if (!value.canConvert(QVariant::Int)) {
             return false;
+         }
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntityWithInventory::inventory,
                                                value.toInt(),
                                                tr("Change Yeast Inventory Unit Size")); // .:TBD:. MY 2020-12-11 Whilst it's admirably concise, I find "quanta" unclear, and I'm not sure it's that easy to translate either
          break;
       case YEASTAMOUNTCOL:
-         if( ! value.canConvert(QVariant::String) )
+         if (!value.canConvert(QVariant::String)) {
             return false;
+         }
 
-         unit = row->amountIsWeight() ? &Units::kilograms : &Units::liters;
 
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::amount,
-                                               Brewken::qStringToSI(value.toString(), unit, dspUnit, dspScl),
+                                               Measurement::qStringToSI(value.toString(),
+                                                                        physicalQuantity,
+                                                                        dspUnitSystem,
+                                                                        dspScl),
                                                tr("Change Yeast Amount"));
          break;
 
       default:
-         qWarning() << tr("Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return false;
    }
    return true;
 }
 
-Yeast* YeastTableModel::getYeast(unsigned int i)
-{
+Yeast * YeastTableModel::getYeast(unsigned int i) {
    return yeastObs[static_cast<int>(i)];
 }
-
-Unit::unitDisplay YeastTableModel::displayUnit(int column) const
+/*
+Measurement::Unit::unitDisplay YeastTableModel::displayUnit(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noUnit;
+      return Measurement::Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
+   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::RelativeScale YeastTableModel::displayScale(int column) const
+Measurement::UnitSystem::RelativeScale YeastTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noScale;
+      return Measurement::UnitSystem::noScale;
 
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
-}
+   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+}*/
 
-// We need to:
-//   o clear the custom scale if set
-//   o clear any custom unit from the rows
-//      o which should have the side effect of clearing any scale
-void YeastTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
-{
-   // Yeast* row; // disabled per-cell magic
-   QString attribute = generateName(column);
+///// We need to:
+/////   o clear the custom scale if set
+/////   o clear any custom unit from the rows
+/////      o which should have the side effect of clearing any scale
+///void YeastTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
+///{
+///   // Yeast* row; // disabled per-cell magic
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
+///   PersistentSettings::insert(attribute,Measurement::UnitSystem::noScale,this->objectName(),PersistentSettings::SCALE);
+///
+///   /* Disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getYeast(i);
+///      row->setDisplayUnit(Measurement::Unit::noUnit);
+///   }
+///   */
+///}
+///
+///// Setting the scale should clear any cell-level scaling options
+///void YeastTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
+///{
+///   // Yeast* row; //disabled per-cell magic
+///
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
+///
+///   /* disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getYeast(i);
+///      row->setDisplayScale(Measurement::UnitSystem::noScale);
+///   }
+///   */
+///}
 
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute,Unit::noScale,this->objectName(),PersistentSettings::SCALE);
-
-   /* Disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getYeast(i);
-      row->setDisplayUnit(Unit::noUnit);
-   }
-   */
-}
-
-// Setting the scale should clear any cell-level scaling options
-void YeastTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
-{
-   // Yeast* row; //disabled per-cell magic
-
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
-
-   /* disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getYeast(i);
-      row->setDisplayScale(Unit::noScale);
-   }
-   */
-}
-
-QString YeastTableModel::generateName(int column) const
-{
+QString YeastTableModel::generateName(int column) const {
    QString attribute;
 
    switch(column)
@@ -514,35 +519,26 @@ QString YeastTableModel::generateName(int column) const
    return attribute;
 }
 
-void YeastTableModel::contextMenu(const QPoint &point)
-{
+void YeastTableModel::contextMenu(QPoint const & point) {
    QObject* calledBy = sender();
    QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-
    int selected = hView->logicalIndexAt(point);
-   Unit::unitDisplay currentUnit;
-   Unit::RelativeScale  currentScale;
 
-   currentUnit  = displayUnit(selected);
-   currentScale = displayScale(selected);
+   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
+   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
 
    QMenu* menu;
-   QAction* invoked;
 
-   switch(selected)
-   {
+   switch (selected) {
       case YEASTAMOUNTCOL:
-         menu = Brewken::setupMassMenu(parentTableWidget,currentUnit, currentScale, false);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale, false);
          break;
       default:
          return;
    }
 
-   invoked = menu->exec(hView->mapToGlobal(point));
-   if ( invoked == nullptr )
-      return;
-
-   setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
+   this->doContextMenu(point, hView, menu, selected);
+   return;
 }
 
 

@@ -28,8 +28,8 @@
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Fermentable.h"
-#include "units/Unit.h"
 
 FermentableEditor::FermentableEditor( QWidget* parent ) :
    QDialog(parent), obsFerm(nullptr) {

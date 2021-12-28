@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "WaterTableModel.h"
+#include "tableModels/WaterTableModel.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
@@ -31,18 +31,23 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "Localization.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Recipe.h"
 #include "model/Water.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
 #include "WaterTableWidget.h"
 
-WaterTableModel::WaterTableModel(WaterTableWidget* parent)
-   : QAbstractTableModel(parent), recObs(nullptr), parentTableWidget(parent)
-{
+WaterTableModel::WaterTableModel(WaterTableWidget* parent) :
+   BtTableModel{parent, false},
+   recObs{nullptr},
+   parentTableWidget{parent} {
+   return;
 }
+
+WaterTableModel::~WaterTableModel() = default;
 
 void WaterTableModel::observeRecipe(Recipe* rec)
 {
@@ -210,19 +215,19 @@ QVariant WaterTableModel::data( const QModelIndex& index, int role ) const
       case WATERNAMECOL:
          return QVariant(row->name());
       case WATERAMOUNTCOL:
-         return QVariant( Brewken::displayAmount(row->amount(), &Units::liters) );
+         return QVariant( Measurement::displayAmount(row->amount(), &Measurement::Units::liters) );
       case WATERCALCIUMCOL:
-         return QVariant( Brewken::displayAmount(row->calcium_ppm(), nullptr) );
+         return QVariant( Measurement::displayAmount(row->calcium_ppm(), nullptr) );
       case WATERBICARBONATECOL:
-         return QVariant( Brewken::displayAmount(row->bicarbonate_ppm(), nullptr) );
+         return QVariant( Measurement::displayAmount(row->bicarbonate_ppm(), nullptr) );
       case WATERSULFATECOL:
-         return QVariant( Brewken::displayAmount(row->sulfate_ppm(), nullptr) );
+         return QVariant( Measurement::displayAmount(row->sulfate_ppm(), nullptr) );
       case WATERCHLORIDECOL:
-         return QVariant( Brewken::displayAmount(row->chloride_ppm(), nullptr) );
+         return QVariant( Measurement::displayAmount(row->chloride_ppm(), nullptr) );
       case WATERSODIUMCOL:
-         return QVariant( Brewken::displayAmount(row->sodium_ppm(), nullptr) );
+         return QVariant( Measurement::displayAmount(row->sodium_ppm(), nullptr) );
       case WATERMAGNESIUMCOL:
-         return QVariant( Brewken::displayAmount(row->magnesium_ppm(), nullptr) );
+         return QVariant( Measurement::displayAmount(row->magnesium_ppm(), nullptr) );
       default :
          qWarning() << tr("Bad column: %1").arg(index.column());
          return QVariant();
@@ -273,128 +278,127 @@ Qt::ItemFlags WaterTableModel::flags(const QModelIndex& index ) const
    }
 }
 
-bool WaterTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   Water *row;
-   bool retval = false;
-
-   if( index.row() >= waterObs.size() || role != Qt::EditRole )
+bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
+   if (index.row() >= waterObs.size() || role != Qt::EditRole) {
       return false;
-   else
-      row = waterObs[index.row()];
+   }
 
-   retval = value.canConvert(QVariant::String);
-   if ( ! retval )
+   bool retval = value.canConvert(QVariant::String);
+   if (!retval) {
       return retval;
+   }
 
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
 
-   switch( index.column() )
-   {
+   Water * row = this->waterObs[index.row()];
+
+   switch (index.column()) {
       case WATERNAMECOL:
          row->setName(value.toString());
          break;
       case WATERAMOUNTCOL:
-         row->setAmount( Brewken::qStringToSI(value.toString(), &Units::liters, dspUnit, dspScl) );
+         row->setAmount(Measurement::qStringToSI(value.toString(),
+                                                 Measurement::PhysicalQuantity::Volume,
+                                                 dspUnitSystem,
+                                                 dspScl));
          break;
       case WATERCALCIUMCOL:
-         row->setCalcium_ppm( Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));
+         row->setCalcium_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
       case WATERBICARBONATECOL:
-         row->setBicarbonate_ppm(Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));
+         row->setBicarbonate_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
       case WATERSULFATECOL:
-         row->setSulfate_ppm( Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));
+         row->setSulfate_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
       case WATERCHLORIDECOL:
-         row->setChloride_ppm( Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));
+         row->setChloride_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
       case WATERSODIUMCOL:
-         row->setSodium_ppm( Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));
+         row->setSodium_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
       case WATERMAGNESIUMCOL:
-         row->setMagnesium_ppm( Brewken::toDouble(value.toString(), "WaterTableModel::setData()"));
+         row->setMagnesium_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
       default:
          retval = false;
-         qWarning() << tr("Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
    }
 
    return retval;
 }
 
-Unit::unitDisplay WaterTableModel::displayUnit(int column) const
+/*
+Measurement::Unit::unitDisplay WaterTableModel::displayUnit(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noUnit;
+      return Measurement::Unit::noUnit;
 
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
+   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-Unit::RelativeScale WaterTableModel::displayScale(int column) const
+Measurement::UnitSystem::RelativeScale WaterTableModel::displayScale(int column) const
 {
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return Unit::noScale;
+      return Measurement::UnitSystem::noScale;
 
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
-}
+   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
+}*/
 
-// We need to:
-//   o clear the custom scale if set
-//   o clear any custom unit from the rows
-//      o which should have the side effect of clearing any scale
-void WaterTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
-{
-   // Yeast* row; // disabled per-cell magic
-   QString attribute = generateName(column);
+///// We need to:
+/////   o clear the custom scale if set
+/////   o clear any custom unit from the rows
+/////      o which should have the side effect of clearing any scale
+///void WaterTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
+///{
+///   // Yeast* row; // disabled per-cell magic
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
+///   PersistentSettings::insert(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE);
+///
+///   /* Disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getYeast(i);
+///      row->setDisplayUnit(Measurement::Unit::noUnit);
+///   }
+///   */
+///}
+///
+///// Setting the scale should clear any cell-level scaling options
+///void WaterTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
+///{
+///   // Yeast* row; //disabled per-cell magic
+///
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
+///
+///   /* disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getYeast(i);
+///      row->setDisplayScale(Measurement::UnitSystem::noScale);
+///   }
+///   */
+///}
 
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
-
-   /* Disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getYeast(i);
-      row->setDisplayUnit(Unit::noUnit);
-   }
-   */
-}
-
-// Setting the scale should clear any cell-level scaling options
-void WaterTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
-{
-   // Yeast* row; //disabled per-cell magic
-
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
-
-   /* disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getYeast(i);
-      row->setDisplayScale(Unit::noScale);
-   }
-   */
-}
-
-QString WaterTableModel::generateName(int column) const
-{
+QString WaterTableModel::generateName(int column) const {
    QString attribute;
 
-   switch(column)
-   {
+   switch (column) {
       case WATERAMOUNTCOL:
          attribute = "amount";
          break;

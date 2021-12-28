@@ -20,8 +20,8 @@
 
 #include "Brewken.h"
 #include "MainWindow.h"
+#include "measurement/Unit.h"
 #include "model/MashStep.h"
-#include "units/Unit.h"
 
 MashStepEditor::MashStepEditor(QWidget* parent) : QDialog{parent}, obs(nullptr) {
    this->setupUi(this);

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,51 +16,44 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef SALTTABLEMODEL_H
-#define SALTTABLEMODEL_H
-#pragma once
+#ifndef TABLEMODELS_MASHSTEPTABLEMODEL_H
+#define TABLEMODELS_MASHSTEPTABLEMODEL_H
 
-#include <QAbstractTableModel>
 #include <QItemDelegate>
-#include <QList>
 #include <QMetaProperty>
 #include <QModelIndex>
-#include <QTableView>
 #include <QVariant>
+#include <QVector>
 #include <QWidget>
 
-#include "model/Salt.h"
-#include "model/Water.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
+#include "model/MashStep.h"
+#include "model/Mash.h"
+#include "tableModels/BtTableModel.h"
 
-// Forward declarations.
-class Recipe;
-class WaterDialog;
-class Mash;
-class SaltItemDelegate;
+class MashStepItemDelegate;
 
-enum{ SALTNAMECOL,
-      SALTAMOUNTCOL,
-      SALTADDTOCOL,
-      SALTPCTACIDCOL,
-      SALTNUMCOLS /*This one MUST be last*/};
+enum{ MASHSTEPNAMECOL, MASHSTEPTYPECOL, MASHSTEPAMOUNTCOL, MASHSTEPTEMPCOL, MASHSTEPTARGETTEMPCOL, MASHSTEPTIMECOL, MASHSTEPNUMCOLS /*This one MUST be last*/};
+
 /*!
- * \class SaltTableModel
+ * \class MashStepTableModel
  *
- *
- * \brief Table model for salts.
+ * \brief Model for the list of mash steps in a mash.
  */
-class SaltTableModel : public QAbstractTableModel
-{
+class MashStepTableModel : public BtTableModel {
    Q_OBJECT
 
 public:
-   SaltTableModel(QTableView* parent=nullptr);
-   ~SaltTableModel();
-   void observeRecipe(Recipe* rec);
-   void addSalt(Salt* salt);
-   void addSalts(QList<Salt*> salts);
-   void removeAll();
+   MashStepTableModel(QTableView* parent = nullptr);
+   virtual ~MashStepTableModel();
+
+   //! Set the mash whose mash steps we want to model.
+   void setMash( Mash* m );
+
+   Mash * getMash() const;
+
+   //! \returns the mash step at model index \b i.
+   MashStep* getMashStep(unsigned int i);
 
    //! Reimplemented from QAbstractTableModel.
    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -75,57 +68,47 @@ public:
    //! Reimplemented from QAbstractTableModel.
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-   double total_Ca() const;
-   double total_Cl() const;
-   double total_CO3() const;
-   double total_HCO3() const;
-   double total_Mg() const;
-   double total_Na() const;
-   double total_SO4() const;
+   //! \returns true if mashStep is successfully found and removed.
+   bool remove(MashStep * MashStep);
 
-   double total(Water::Ions ion) const;
-   double total( Salt::Types type ) const;
-   double totalAcidWeight(Salt::Types type) const;
-
-   void removeSalts(QList<int>deadSalts);
-   void saveAndClose();
+protected:
+   virtual QString generateName(int column) const;
 
 public slots:
-   void changed(QMetaProperty,QVariant);
-   void removeSalt(Salt* salt);
-   void catchSalt();
+   //! \brief Add a MashStep to the model.
+   void addMashStep(int mashStep);
+
+   void removeMashStep(int mashStepId, std::shared_ptr<QObject> object);
+
+   void moveStepUp(int i);
+   void moveStepDown(int i);
+   void mashChanged();
+   void mashStepChanged(QMetaProperty,QVariant);
+
    void contextMenu(const QPoint &point);
 
-signals:
-   void newTotals();
 
 private:
-   QList<Salt*> saltObs;
-   Recipe* m_rec;
+   Mash* mashObs;
    QTableView* parentTableWidget;
-   double spargePct;
+   QList<MashStep*> steps;
 
-   void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::RelativeScale displayScale);
-   double multiplier(Salt *s) const;
-
-   QString generateName(int column) const;
-   Unit::unitDisplay displayUnit(int column) const;
-   Unit::RelativeScale displayScale(int column) const;
+//   void reorderMashSteps();
+   void reorderMashStep(MashStep *step, int current);
 };
 
 /*!
- * \class SaltItemDelegate
+ * \class MashStepItemDelegate
  *
  *
- * Item delegate for salt tables.
+ * An item delegate for mash step tables.
  */
-class SaltItemDelegate : public QItemDelegate
+class MashStepItemDelegate : public QItemDelegate
 {
    Q_OBJECT
 
 public:
-   SaltItemDelegate(QObject* parent = nullptr);
+   MashStepItemDelegate(QObject* parent = 0);
 
    // Inherited functions.
    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -133,12 +116,7 @@ public:
    virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
    virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-   void observeRecipe(Recipe *rec);
-
 private:
-   Mash* m_mash;
-   // I really dislike this
-
 };
 
-#endif   // SALTTABLEMODEL_H
+#endif

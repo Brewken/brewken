@@ -26,8 +26,8 @@
 #include "Brewken.h"
 #include "BtLabel.h"
 #include "MainWindow.h"
+#include "measurement/Unit.h"
 #include "model/Recipe.h"
-#include "units/Unit.h"
 
 RecipeExtrasWidget::RecipeExtrasWidget(QWidget* parent) : QWidget(parent), recipe(nullptr) {
    setupUi(this);

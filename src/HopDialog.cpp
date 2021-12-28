@@ -31,10 +31,10 @@
 #include "database/ObjectStoreWrapper.h"
 #include "HopEditor.h"
 #include "HopSortFilterProxyModel.h"
-#include "HopTableModel.h"
 #include "MainWindow.h"
 #include "model/Hop.h"
 #include "model/Recipe.h"
+#include "tableModels/HopTableModel.h"
 
 HopDialog::HopDialog(MainWindow* parent) :
    QDialog(parent),

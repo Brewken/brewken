@@ -42,7 +42,6 @@
 #define AddSettingName(name) namespace PersistentSettings::Names { BtStringConst const name{#name}; }
 AddSettingName(check_version)
 AddSettingName(color_formula)
-AddSettingName(color_unit)
 AddSettingName(config_version)
 AddSettingName(converted)
 AddSettingName(count)                            // backups section
@@ -56,7 +55,6 @@ AddSettingName(dbType)
 AddSettingName(dbUsername)
 AddSettingName(defaultEquipmentKey)
 AddSettingName(deletewhat)
-AddSettingName(diastatic_power_unit)
 AddSettingName(directory)                        // backups section
 AddSettingName(files)                            // backups section
 AddSettingName(firstWortHopAdjustment)
@@ -75,7 +73,6 @@ AddSettingName(recipeKey)
 AddSettingName(showsnapshots)
 AddSettingName(splitter_horizontal_State)        // MainWindow section
 AddSettingName(splitter_vertical_State)          // MainWindow section
-AddSettingName(temperature_scale)
 AddSettingName(treeView_equip_headerState)       // MainWindow section
 AddSettingName(treeView_ferm_headerState)        // MainWindow section
 AddSettingName(treeView_hops_headerState)        // MainWindow section
@@ -83,11 +80,14 @@ AddSettingName(treeView_misc_headerState)        // MainWindow section
 AddSettingName(treeView_recipe_headerState)      // MainWindow section
 AddSettingName(treeView_style_headerState)       // MainWindow section
 AddSettingName(treeView_yeast_headerState)       // MainWindow section
-AddSettingName(use_plato)
+AddSettingName(unitSystem_color)
+AddSettingName(unitSystem_density)
+AddSettingName(unitSystem_diastaticPower)
+AddSettingName(unitSystem_temperature)
+AddSettingName(unitSystem_volume)
+AddSettingName(unitSystem_weight)
 AddSettingName(UserDataDirectory)
 AddSettingName(versioning)
-AddSettingName(volume_unit_system)
-AddSettingName(weight_unit_system)
 AddSettingName(windowState)
 #undef AddSettingName
 //=========================================== End of setting NAME constants ============================================

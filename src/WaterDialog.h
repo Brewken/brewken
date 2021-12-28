@@ -29,9 +29,9 @@
 
 #include "ui_waterDialog.h"
 
+#include "measurement/Unit.h"
 #include "model/Water.h"
 #include "model/Salt.h"
-#include "units/Unit.h"
 
 class WaterListModel;
 class WaterSortFilterProxyModel;

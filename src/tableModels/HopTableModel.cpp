@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Luke Vincent <luke.r.vincent@gmail.com>
@@ -23,7 +23,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "HopTableModel.h"
+#include "tableModels/HopTableModel.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
@@ -38,17 +38,18 @@
 #include <QVector>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "Localization.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Hop.h"
 #include "model/Inventory.h"
 #include "PersistentSettings.h"
-#include "units/Unit.h"
 #include "utils/BtStringConst.h"
 
 HopTableModel::HopTableModel(QTableView * parent, bool editable) :
-   QAbstractTableModel(parent),
+   BtTableModel{parent, editable},
    colFlags(HOPNUMCOLS),
    _inventoryEditable(false),
    recObs(nullptr),
@@ -81,6 +82,7 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
 
 HopTableModel::~HopTableModel() {
    this->hopObs.clear();
+   return;
 }
 
 void HopTableModel::observeRecipe(Recipe * rec) {
@@ -279,76 +281,77 @@ int HopTableModel::columnCount(const QModelIndex & /*parent*/) const {
 }
 
 QVariant HopTableModel::data(const QModelIndex & index, int role) const {
-   Hop * row;
+
    int col = index.column();
-   Unit::RelativeScale scale;
-   Unit::unitDisplay unit;
 
    // Ensure the row is ok.
    if (index.row() >= static_cast<int>(hopObs.size())) {
-      qWarning() << QString("Bad model index. row = %1").arg(index.row());
+      qWarning() << Q_FUNC_INFO << "Bad model index. row =" << index.row();
       return QVariant();
-   } else {
-      row = hopObs[index.row()];
    }
+
+   Hop * row = hopObs[index.row()];
 
    switch (index.column()) {
       case HOPNAMECOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->name());
-         } else {
-            return QVariant();
          }
+         return QVariant();
+
       case HOPALPHACOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Brewken::displayAmount(row->alpha_pct(), nullptr));
-         } else {
-            return QVariant();
+            return QVariant(Measurement::displayAmount(row->alpha_pct(), nullptr));
          }
+         return QVariant();
+
       case HOPINVENTORYCOL:
          if (role != Qt::DisplayRole) {
             return QVariant();
          }
-         unit = displayUnit(col);
-         scale = displayScale(col);
-
-         return QVariant(Brewken::displayAmount(row->inventory(), &Units::kilograms, 3, unit, scale));
+         return QVariant(Measurement::displayAmount(row->inventory(),
+                                                    &Measurement::Units::kilograms,
+                                                    3,
+                                                    this->displayUnitSystem(col),
+                                                    this->displayScale(col)));
 
       case HOPAMOUNTCOL:
          if (role != Qt::DisplayRole) {
             return QVariant();
          }
-         unit = displayUnit(col);
-         scale = displayScale(col);
-
-         return QVariant(Brewken::displayAmount(row->amount_kg(), &Units::kilograms, 3, unit, scale));
+         return QVariant(Measurement::displayAmount(row->amount_kg(),
+                                                    &Measurement::Units::kilograms,
+                                                    3,
+                                                    this->displayUnitSystem(col),
+                                                    this->displayScale(col)));
 
       case HOPUSECOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->useStringTr());
          } else if (role == Qt::UserRole) {
             return QVariant(row->use());
-         } else {
-            return QVariant();
          }
+         return QVariant();
+
       case HOPTIMECOL:
          if (role != Qt::DisplayRole) {
             return QVariant();
          }
-
-         scale = displayScale(col);
-
-         return QVariant(Brewken::displayAmount(row->time_min(), &Units::minutes, 3, Unit::noUnit, scale));
+         return QVariant(Measurement::displayAmount(row->time_min(),
+                                                    &Measurement::Units::minutes,
+                                                    3,
+                                                    &Measurement::UnitSystems::time_CoordinatedUniversalTime,
+                                                    this->displayScale(col)));
       case HOPFORMCOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->formStringTr());
          } else if (role == Qt::UserRole) {
             return QVariant(row->form());
-         } else {
-            return QVariant();
          }
+         return QVariant();
+
       default :
-         qWarning() << QString("HopTableModel::data Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return QVariant();
    }
 }
@@ -401,8 +404,8 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
 
    row = hopObs[index.row()];
 
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   auto dspUnitSystem = this->displayUnitSystem(index.column());
+   auto dspScl        = this->displayScale(index.column());
    switch (index.column()) {
       case HOPNAMECOL:
          retVal = value.canConvert(QVariant::String);
@@ -416,9 +419,9 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPALPHACOL:
          retVal = value.canConvert(QVariant::Double);
          if (retVal) {
-            amt = Brewken::toDouble(value.toString(), &retVal);
-            if (! retVal) {
-               qWarning() << QString("HopTableModel::setData() could not convert %1 to double").arg(value.toString());
+            amt = Localization::toDouble(value.toString(), &retVal);
+            if (!retVal) {
+               qWarning() << Q_FUNC_INFO << "Could not convert" << value.toString() << "to double";
             }
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::alpha_pct,
@@ -432,7 +435,10 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntityWithInventory::inventory,
-                                                  Brewken::qStringToSI(value.toString(), &Units::kilograms, displayUnit(HOPINVENTORYCOL)),
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Mass,
+                                                                           dspUnitSystem,
+                                                                           dspScl),
                                                   tr("Change Hop Inventory Amount"));
          }
          break;
@@ -441,7 +447,10 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::amount_kg,
-                                                  Brewken::qStringToSI(value.toString(), &Units::kilograms, dspUnit, dspScl),
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Mass,
+                                                                           dspUnitSystem,
+                                                                           dspScl),
                                                   tr("Change Hop Amount"));
          }
          break;
@@ -468,72 +477,23 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::time_min,
-                                                  Brewken::qStringToSI(value.toString(), &Units::minutes, dspUnit, dspScl),
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Time,
+                                                                           dspUnitSystem,
+                                                                           dspScl),
                                                   tr("Change Hop Time"));
          }
          break;
       default:
-         qWarning() << QString("HopTableModel::setdata Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return false;
    }
+
    if (retVal) {
       headerDataChanged(Qt::Vertical, index.row(), index.row());   // Need to re-show header (IBUs).
    }
 
    return retVal;
-}
-
-Unit::unitDisplay HopTableModel::displayUnit(int column) const {
-   QString attribute = generateName(column);
-
-   if (attribute.isEmpty()) {
-      return Unit::noUnit;
-   }
-
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(),
-                                                                   PersistentSettings::UNIT).toInt());
-}
-
-Unit::RelativeScale HopTableModel::displayScale(int column) const {
-   QString attribute = generateName(column);
-
-   if (attribute.isEmpty()) {
-      return Unit::noScale;
-   }
-
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(),
-                                                                 PersistentSettings::SCALE).toInt());
-}
-
-// We need to:
-//   o clear the custom scale if set
-//   o clear any custom unit from the rows
-//      o which should have the side effect of clearing any scale
-void HopTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit) {
-   // Hop* row; // disabled per-cell magic
-   QString attribute = generateName(column);
-
-   if (attribute.isEmpty()) {
-      return;
-   }
-
-   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
-
-}
-
-// Setting the scale should clear any cell-level scaling options
-void HopTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale) {
-   // Fermentable* row; //disabled per-cell magic
-
-   QString attribute = generateName(column);
-
-   if (attribute.isEmpty()) {
-      return;
-   }
-
-   PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
-
 }
 
 QString HopTableModel::generateName(int column) const {
@@ -555,45 +515,44 @@ QString HopTableModel::generateName(int column) const {
    return attribute;
 }
 
-void HopTableModel::contextMenu(const QPoint & point) {
+void HopTableModel::contextMenu(QPoint const & point) {
    QObject * calledBy = sender();
    QHeaderView * hView = qobject_cast<QHeaderView *>(calledBy);
 
    int selected = hView->logicalIndexAt(point);
-   Unit::unitDisplay currentUnit;
-   Unit::RelativeScale  currentScale;
 
    // Since we need to call generateVolumeMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
-   currentUnit  = displayUnit(selected);
-   currentScale = displayScale(selected);
+   auto currentUnitSystem  = this->displayUnitSystem(selected);
+   auto currentScale       = this->displayScale(selected);
 
    QMenu * menu;
-   QAction * invoked;
 
    switch (selected) {
       case HOPINVENTORYCOL:
       case HOPAMOUNTCOL:
-         menu = Brewken::setupMassMenu(parentTableWidget, currentUnit, currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       case HOPTIMECOL:
-         menu = Brewken::setupTimeMenu(parentTableWidget, currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       default:
          return;
    }
 
-   invoked = menu->exec(hView->mapToGlobal(point));
+   QAction * invoked = menu->exec(hView->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }
 
-   QWidget * pMenu = invoked->parentWidget();
-   if (selected != HOPTIMECOL && pMenu == menu) {
-      setDisplayUnit(selected, static_cast<Unit::unitDisplay>(invoked->data().toInt()));
+   QWidget* pMenu = invoked->parentWidget();
+   if (pMenu == menu) {
+      this->setDisplayUnitSystem(selected,
+                                 Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString()));
    } else {
-      setDisplayScale(selected, static_cast<Unit::RelativeScale>(invoked->data().toInt()));
+      this->setDisplayScale(selected, static_cast<Measurement::UnitSystem::RelativeScale>(invoked->data().toInt()));
    }
+   return;
 
 }
 

@@ -22,9 +22,9 @@
 
 #include "Algorithms.h"
 #include "Brewken.h"
+#include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
-#include "units/Unit.h"
 
 OgAdjuster::OgAdjuster( QWidget* parent ) : QDialog(parent) {
    setupUi(this);

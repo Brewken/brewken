@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
+ *   • Markus Mårtensson <mackan.90@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Samuel Östling <MrOstling@gmail.com>
@@ -17,51 +18,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef YEASTTABLEMODEL_H
-#define YEASTTABLEMODEL_H
+#ifndef TABLEMODELS_HOPTABLEMODEL_H
+#define TABLEMODELS_HOPTABLEMODEL_H
 #pragma once
 
-#include <memory>
-
-#include <QAbstractTableModel>
 #include <QItemDelegate>
-#include <QList>
-#include <QMetaProperty>
 #include <QModelIndex>
-#include <QTableView>
 #include <QVariant>
+#include <QVector>
 #include <QWidget>
 
-#include "Brewken.h"
-#include "units/Unit.h"
+#include "model/Hop.h"
+#include "model/Recipe.h"
+#include "tableModels/BtTableModel.h"
 
-// Forward declarations.
-class Yeast;
-class YeastTableWidget;
-class YeastItemDelegate;
-class Recipe;
+class BtStringConst;
+class HopTableModel;
+class HopItemDelegate;
 
-enum{ YEASTNAMECOL, YEASTLABCOL, YEASTPRODIDCOL, YEASTTYPECOL, YEASTFORMCOL, YEASTAMOUNTCOL, YEASTINVENTORYCOL, YEASTNUMCOLS /*This one MUST be last*/};
+enum{HOPNAMECOL, HOPALPHACOL, HOPAMOUNTCOL, HOPINVENTORYCOL, HOPFORMCOL, HOPUSECOL, HOPTIMECOL, HOPNUMCOLS /*This one MUST be last*/};
 
 /*!
- * \class YeastTableModel
+ * \class HopTableModel
  *
- * \brief Table model for yeasts.
+ * \brief Model class for a list of hops.
  */
-class YeastTableModel : public QAbstractTableModel {
+class HopTableModel : public BtTableModel {
    Q_OBJECT
 
 public:
-   YeastTableModel(QTableView* parent=nullptr, bool editable=true);
-   virtual ~YeastTableModel() {}
+
+   HopTableModel(QTableView* parent=nullptr, bool editable=true);
+   virtual ~HopTableModel();
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);
-   //! \brief If true, we model the database's list of yeasts.
+   //! \brief If true, we model the database's list of hops.
    void observeDatabase(bool val);
-   //! \brief Add \c yeasts to the model.
-   void addYeasts(QList<Yeast*> yeasts);
-   //! \brief Get the yeast at model index \c i.
-   Yeast* getYeast(unsigned int i);
+   //! \brief Show ibus in the vertical header.
+   void setShowIBUs( bool var );
+   //! \brief Watch all the \c hops for changes.
+   void addHops(QList<Hop*> hops);
+   //! \brief Return the \c i-th hop in the model.
+   Hop* getHop(int i);
    //! \brief Clear the model.
    void removeAll();
 
@@ -70,7 +68,7 @@ public:
     *
     * The default is that the inventory column is not editable
     */
-   void setInventoryEditable( bool var ) { _inventoryEditable = var; }
+   void setInventoryEditable( bool var ) { _inventoryEditable = var; colFlags[HOPINVENTORYCOL] = Qt::ItemIsEnabled | (_inventoryEditable ? Qt::ItemIsEditable : Qt::NoItemFlags); }
 
    //! \brief Reimplemented from QAbstractTableModel.
    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -85,45 +83,44 @@ public:
    //! \brief Reimplemented from QAbstractTableModel.
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-   Unit::unitDisplay displayUnit(int column) const;
-   Unit::RelativeScale displayScale(int column) const;
-   void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::RelativeScale displayScale);
-   QString generateName(int column) const;
-   void remove(Yeast * yeast);
+   //! \returns true if "hop" is successfully found and removed.
+   bool remove(Hop* hop);
+
+protected:
+   virtual QString generateName(int column) const;
 
 public slots:
-   //! \brief Add a \c yeast to the model.
-   void addYeast(int yeastId);
-   //! \brief Remove a \c yeast from the model.
-   void removeYeast(int yeastId, std::shared_ptr<QObject> object);
-
-   void contextMenu(const QPoint &point);
-private slots:
-   //! \brief Catch changes to Recipe, Database, and Yeast.
    void changed(QMetaProperty, QVariant);
    void changedInventory(int invKey, BtStringConst const & propertyName);
+   //! \brief Add a hop to the model.
+//   void addHop(Hop* hop);
+   void addHop(int hopId);
+   void removeHop(int hopId, std::shared_ptr<QObject> object);
+
+   void contextMenu(const QPoint &point);
 
 private:
-   bool editable;
+   QVector<Qt::ItemFlags> colFlags;
    bool _inventoryEditable;
-   QList<Yeast*> yeastObs;
-   QTableView* parentTableWidget;
+   QList<Hop*> hopObs;
    Recipe* recObs;
+   QTableView* parentTableWidget;
+   bool showIBUs; // True if you want to show the IBU contributions in the table rows.
 };
 
 /*!
- * \class YeastItemDelegate
+ *  \class HopItemDelegate
  *
  *
- * Item delegate for yeast tables.
+ *  \brief An item delegate for hop tables.
+ *  \sa HopTableModel
  */
-class YeastItemDelegate : public QItemDelegate
+class HopItemDelegate : public QItemDelegate
 {
    Q_OBJECT
 
 public:
-   YeastItemDelegate(QObject* parent = nullptr);
+   HopItemDelegate(QObject* parent = nullptr);
 
    // Inherited functions.
    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

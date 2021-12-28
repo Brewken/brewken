@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "MashStepTableModel.h"
+#include "tableModels/MashStepTableModel.h"
 
 #include <QAbstractTableModel>
 #include <QComboBox>
@@ -33,18 +33,18 @@
 #include <QVector>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/MashStep.h"
 #include "PersistentSettings.h"
 #include "SimpleUndoableUpdate.h"
-#include "units/Unit.h"
 
-MashStepTableModel::MashStepTableModel(QTableView* parent)
-   : QAbstractTableModel(parent),
-     mashObs(nullptr),
-     parentTableWidget(parent) {
+MashStepTableModel::MashStepTableModel(QTableView* parent) :
+   BtTableModel{parent, false},
+   mashObs(nullptr),
+   parentTableWidget(parent) {
    setObjectName("mashStepTableModel");
 
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
@@ -54,6 +54,8 @@ MashStepTableModel::MashStepTableModel(QTableView* parent)
    connect(&ObjectStoreTyped<MashStep>::getInstance(), &ObjectStoreTyped<MashStep>::signalObjectDeleted,  this, &MashStepTableModel::removeMashStep);
    return;
 }
+
+MashStepTableModel::~MashStepTableModel() = default;
 
 void MashStepTableModel::addMashStep(int mashStepId) {
    MashStep * mashStep = ObjectStoreWrapper::getByIdRaw<MashStep>(mashStepId);
@@ -220,56 +222,47 @@ int MashStepTableModel::columnCount(const QModelIndex& /*parent*/) const
    return MASHSTEPNUMCOLS;
 }
 
-QVariant MashStepTableModel::data( const QModelIndex& index, int role ) const
-{
-   MashStep* row;
-   Unit::unitDisplay unit;
-   Unit::RelativeScale scale;
-   int col = index.column();
-
-   if( mashObs == nullptr )
-      return QVariant();
-
-   // Ensure the row is ok.
-   if( index.row() >= static_cast<int>(steps.size()) )
-   {
-      qWarning() << tr("Bad model index. row = %1").arg(index.row());
+QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
+   if (this->mashObs == nullptr) {
       return QVariant();
    }
-   else
-      row = steps[index.row()];
 
    // Make sure we only respond to the DisplayRole role.
-   if( role != Qt::DisplayRole )
+   if (role != Qt::DisplayRole) {
       return QVariant();
+   }
 
-   switch( col )
-   {
+   // Ensure the row is ok.
+   if (index.row() >= static_cast<int>(this->steps.size())) {
+      qWarning() << Q_FUNC_INFO << "Bad model index. row = " << index.row();
+      return QVariant();
+   }
+
+   MashStep* row = this->steps[index.row()];
+
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
+
+   int col = index.column();
+   switch (col) {
       case MASHSTEPNAMECOL:
          return QVariant(row->name());
       case MASHSTEPTYPECOL:
          return QVariant(row->typeStringTr());
       case MASHSTEPAMOUNTCOL:
-
-         unit = displayUnit(col);
-         scale = displayScale(col);
-
          return (row->type() == MashStep::Decoction)
-                ? QVariant( Brewken::displayAmount(row->decoctionAmount_l(), &Units::liters, 3, unit, scale ) )
-                : QVariant( Brewken::displayAmount(row->infuseAmount_l(), &Units::liters, 3, unit, scale) );
+                ? QVariant( Measurement::displayAmount(row->decoctionAmount_l(), &Measurement::Units::liters, 3, dspUnitSystem, dspScl ) )
+                : QVariant( Measurement::displayAmount(row->infuseAmount_l(), &Measurement::Units::liters, 3, dspUnitSystem, dspScl) );
       case MASHSTEPTEMPCOL:
-         unit = displayUnit(col);
          return (row->type() == MashStep::Decoction)
                 ? QVariant("---")
-                : QVariant( Brewken::displayAmount(row->infuseTemp_c(), &Units::celsius, 3, unit, Unit::noScale) );
+                : QVariant( Measurement::displayAmount(row->infuseTemp_c(), &Measurement::Units::celsius, 3, dspUnitSystem, Measurement::UnitSystem::noScale) );
       case MASHSTEPTARGETTEMPCOL:
-         unit = displayUnit(col);
-         return QVariant( Brewken::displayAmount(row->stepTemp_c(), &Units::celsius,3, unit, Unit::noScale) );
+         return QVariant( Measurement::displayAmount(row->stepTemp_c(), &Measurement::Units::celsius, 3, dspUnitSystem, Measurement::UnitSystem::noScale) );
       case MASHSTEPTIMECOL:
-         scale = displayScale(col);
-         return QVariant( Brewken::displayAmount(row->stepTime_min(), &Units::minutes,3,Unit::noUnit,scale) );
+         return QVariant( Measurement::displayAmount(row->stepTime_min(), &Measurement::Units::minutes, 3, nullptr, dspScl) );
       default :
-         qWarning() << tr("Bad column: %1").arg(index.column());
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return QVariant();
    }
 }
@@ -313,113 +306,118 @@ Qt::ItemFlags MashStepTableModel::flags(const QModelIndex& index ) const
    }
 }
 
-bool MashStepTableModel::setData( const QModelIndex& index, const QVariant& value, int role )
-{
-   MashStep *row;
+bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
 
-   if( mashObs == nullptr )
+   if (this->mashObs == nullptr) {
       return false;
+   }
 
-   if( index.row() >= static_cast<int>(steps.size()) || role != Qt::EditRole )
+   if (index.row() >= static_cast<int>(steps.size()) || role != Qt::EditRole ) {
       return false;
-   else
-      row = steps[index.row()];
+   }
 
-   Unit::unitDisplay dspUnit = displayUnit(index.column());
-   Unit::RelativeScale   dspScl  = displayScale(index.column());
+   MashStep * row = this->steps[index.row()];
 
-   switch( index.column() )
-   {
+   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
+   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
+
+   switch (index.column()) {
       case MASHSTEPNAMECOL:
-         if( value.canConvert(QVariant::String))
-         {
+         if (value.canConvert(QVariant::String)) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                      PropertyNames::NamedEntity::name,
                                                      value.toString(),
                                                      tr("Change Mash Step Name"));
             return true;
          }
-         else
-            return false;
+         return false;
+
       case MASHSTEPTYPECOL:
-         if( value.canConvert(QVariant::Int) )
-         {
+         if (value.canConvert(QVariant::Int)) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                   PropertyNames::MashStep::type,
                                                   static_cast<MashStep::Type>(value.toInt()),
                                                   tr("Change Mash Step Type"));
             return true;
          }
-         else
-            return false;
+         return false;
+
       case MASHSTEPAMOUNTCOL:
-         if( value.canConvert(QVariant::String) )
-         {
+         if (value.canConvert(QVariant::String)) {
             if( row->type() == MashStep::Decoction ) {
                Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                        PropertyNames::MashStep::decoctionAmount_l,
-                                                        Brewken::qStringToSI(value.toString(),&Units::liters,dspUnit,dspScl),
-                                                        tr("Change Mash Step Decoction Amount"));
+                                                     PropertyNames::MashStep::decoctionAmount_l,
+                                                     Measurement::qStringToSI(value.toString(),
+                                                                              Measurement::PhysicalQuantity::Volume,
+                                                                              dspUnitSystem,dspScl),
+                                                     tr("Change Mash Step Decoction Amount"));
             } else {
                Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                        PropertyNames::MashStep::infuseAmount_l,
-                                                        Brewken::qStringToSI(value.toString(),&Units::liters,dspUnit,dspScl),
-                                                        tr("Change Mash Step Infuse Amount"));
+                                                     PropertyNames::MashStep::infuseAmount_l,
+                                                     Measurement::qStringToSI(value.toString(),
+                                                                              Measurement::PhysicalQuantity::Volume,
+                                                                              dspUnitSystem,dspScl),
+                                                     tr("Change Mash Step Infuse Amount"));
             }
             return true;
          }
-         else
-            return false;
+         return false;
+
       case MASHSTEPTEMPCOL:
-         if( value.canConvert(QVariant::String) && row->type() != MashStep::Decoction )
-         {
+         if (value.canConvert(QVariant::String) && row->type() != MashStep::Decoction) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                      PropertyNames::MashStep::infuseTemp_c,
-                                                      Brewken::qStringToSI(value.toString(),&Units::celsius,dspUnit,dspScl),
-                                                      tr("Change Mash Step Infuse Temp"));
+                                                  PropertyNames::MashStep::infuseTemp_c,
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Temperature,
+                                                                           dspUnitSystem,dspScl),
+                                                  tr("Change Mash Step Infuse Temp"));
             return true;
          }
-         else
-            return false;
+         return false;
+
       case MASHSTEPTARGETTEMPCOL:
-         if( value.canConvert(QVariant::String) )
-         {
+         if (value.canConvert(QVariant::String)) {
             // Two changes, but we want to group together as one undo/redo step
             //
             // We don't assign the pointer (returned by new) to second SimpleUndoableUpdate we create because, in the
             // constructor, it gets linked to the first one, which then "owns" it.
             auto targetTempUpdate = new SimpleUndoableUpdate(*row,
                                                              PropertyNames::MashStep::stepTemp_c,
-                                                             Brewken::qStringToSI(value.toString(),&Units::celsius,dspUnit,dspScl),
+                                                             Measurement::qStringToSI(value.toString(),
+                                                                                      Measurement::PhysicalQuantity::Temperature,
+                                                                                      dspUnitSystem,dspScl),
                                                              tr("Change Mash Step Temp"));
             new SimpleUndoableUpdate(*row,
                                      PropertyNames::MashStep::endTemp_c,
-                                     Brewken::qStringToSI(value.toString(),&Units::celsius,dspUnit,dspScl),
+                                     Measurement::qStringToSI(value.toString(),
+                                                              Measurement::PhysicalQuantity::Temperature,
+                                                              dspUnitSystem,dspScl),
                                      tr("Change Mash Step End Temp"),
                                      targetTempUpdate);
             Brewken::mainWindow()->doOrRedoUpdate(targetTempUpdate);
             return true;
          }
-         else
-            return false;
+         return false;
+
       case MASHSTEPTIMECOL:
-         if( value.canConvert(QVariant::String) )
-         {
+         if (value.canConvert(QVariant::String)) {
             Brewken::mainWindow()->doOrRedoUpdate(*row,
-                                                      PropertyNames::MashStep::stepTime_min,
-                                                      Brewken::qStringToSI(value.toString(),&Units::minutes,dspUnit,dspScl),
-                                                      tr("Change Mash Step Time"));
+                                                  PropertyNames::MashStep::stepTime_min,
+                                                  Measurement::qStringToSI(value.toString(),
+                                                                           Measurement::PhysicalQuantity::Time,
+                                                                           dspUnitSystem,dspScl),
+                                                  tr("Change Mash Step Time"));
             return true;
          }
-         else
-            return false;
+         return false;
+
       default:
          return false;
    }
 }
 
 void MashStepTableModel::moveStepUp(int i) {
-   if( this->mashObs == nullptr || i == 0 || i >= this->steps.size() ) {
+   if (this->mashObs == nullptr || i == 0 || i >= this->steps.size()) {
       return;
    }
 
@@ -428,7 +426,7 @@ void MashStepTableModel::moveStepUp(int i) {
 }
 
 void MashStepTableModel::moveStepDown(int i) {
-   if( this->mashObs == nullptr ||  i+1 >= steps.size() ) {
+   if (this->mashObs == nullptr ||  i+1 >= steps.size()) {
       return;
    }
 
@@ -436,70 +434,72 @@ void MashStepTableModel::moveStepDown(int i) {
    return;
 }
 
-Unit::unitDisplay MashStepTableModel::displayUnit(int column) const
-{
+/*
+Measurement::Unit::unitDisplay MashStepTableModel::displayUnit(int column) const {
    QString attribute = generateName(column);
 
-   if ( attribute.isEmpty() )
-      return Unit::noUnit;
-
-   return static_cast<Unit::unitDisplay>(PersistentSettings::value(attribute, Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Unit::RelativeScale MashStepTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Unit::noScale;
-
-   return static_cast<Unit::RelativeScale>(PersistentSettings::value(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
-}
-
-// We need to:
-//   o clear the custom scale if set
-//   o clear any custom unit from the rows
-//      o which should have the side effect of clearing any scale
-void MashStepTableModel::setDisplayUnit(int column, Unit::unitDisplay displayUnit)
-{
-   // MashStep* row; // disabled per-cell magic
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute, Unit::noScale, this->objectName(), PersistentSettings::SCALE);
-
-   /* Disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getMashStep(i);
-      row->setDisplayUnit(Unit::noUnit);
+   if ( attribute.isEmpty() ) {
+      return Measurement::Unit::noUnit;
    }
-   */
+
+   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, Measurement::Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
 }
 
-// Setting the scale should clear any cell-level scaling options
-void MashStepTableModel::setDisplayScale(int column, Unit::RelativeScale displayScale)
+Measurement::UnitSystem::RelativeScale MashStepTableModel::displayScale(int column) const
 {
-   // MashStep* row; //disabled per-cell magic
-
    QString attribute = generateName(column);
 
    if ( attribute.isEmpty() )
-      return;
+      return Measurement::UnitSystem::noScale;
 
-   PersistentSettings::insert(attribute,displayScale, this->objectName(), PersistentSettings::SCALE);
-
-   /* disabled cell-specific code
-   for (int i = 0; i < rowCount(); ++i )
-   {
-      row = getMashStep(i);
-      row->setDisplayScale(Unit::noScale);
-   }
-   */
+   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
 }
+*/
+
+///// We need to:
+/////   o clear the custom scale if set
+/////   o clear any custom unit from the rows
+/////      o which should have the side effect of clearing any scale
+///void MashStepTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
+///{
+///   // MashStep* row; // disabled per-cell magic
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
+///   PersistentSettings::insert(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE);
+///
+///   /* Disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getMashStep(i);
+///      row->setDisplayUnit(Measurement::Unit::noUnit);
+///   }
+///   */
+///}
+///
+///// Setting the scale should clear any cell-level scaling options
+///void MashStepTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
+///{
+///   // MashStep* row; //disabled per-cell magic
+///
+///   QString attribute = generateName(column);
+///
+///   if ( attribute.isEmpty() )
+///      return;
+///
+///   PersistentSettings::insert(attribute,displayScale, this->objectName(), PersistentSettings::SCALE);
+///
+///   /* disabled cell-specific code
+///   for (int i = 0; i < rowCount(); ++i )
+///   {
+///      row = getMashStep(i);
+///      row->setDisplayScale(Measurement::UnitSystem::noScale);
+///   }
+///   */
+///}
 
 QString MashStepTableModel::generateName(int column) const
 {
@@ -525,49 +525,35 @@ QString MashStepTableModel::generateName(int column) const
    return attribute;
 }
 
-void MashStepTableModel::contextMenu(const QPoint &point)
-{
+void MashStepTableModel::contextMenu(QPoint const & point) {
    QObject* calledBy = sender();
    QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-
    int selected = hView->logicalIndexAt(point);
-   Unit::unitDisplay currentUnit;
-   Unit::RelativeScale  currentScale;
 
    // Since we need to call generateVolumeMenu() two different ways, we need
    // to figure out the currentUnit and Scale here
-
-   currentUnit  = displayUnit(selected);
-   currentScale = displayScale(selected);
+   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
+   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
 
    QMenu* menu;
-   QAction* invoked;
 
-   switch(selected)
-   {
+   switch (selected) {
       case MASHSTEPAMOUNTCOL:
-         menu = Brewken::setupVolumeMenu(parentTableWidget,currentUnit, currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       case MASHSTEPTEMPCOL:
       case MASHSTEPTARGETTEMPCOL:
-         menu = Brewken::setupTemperatureMenu(parentTableWidget,currentUnit);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget);
          break;
       case MASHSTEPTIMECOL:
-         menu = Brewken::setupTimeMenu(parentTableWidget,currentScale);
+         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
          break;
       default:
          return;
    }
 
-   invoked = menu->exec(hView->mapToGlobal(point));
-   if ( invoked == nullptr )
-      return;
-
-   QWidget* pMenu = invoked->parentWidget();
-   if ( pMenu == menu )
-      setDisplayUnit(selected,static_cast<Unit::unitDisplay>(invoked->data().toInt()));
-   else
-      setDisplayScale(selected,static_cast<Unit::RelativeScale>(invoked->data().toInt()));
+   this->doContextMenu(point, hView, menu, selected);
+   return;
 }
 
 //==========================CLASS MashStepItemDelegate===============================

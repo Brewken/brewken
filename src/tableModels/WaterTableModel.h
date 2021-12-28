@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,48 +16,49 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MASHSTEPTABLEMODEL_H
-#define MASHSTEPTABLEMODEL_H
+#ifndef TABLEMODELS_WATERTABLEMODEL_H
+#define TABLEMODELS_WATERTABLEMODEL_H
+#pragma once
 
-#include <QAbstractTableModel>
-#include <QWidget>
+#include <memory>
+
+#include <QItemDelegate>
+#include <QList>
+#include <QMetaProperty>
 #include <QModelIndex>
 #include <QVariant>
-#include <QMetaProperty>
-#include <QVariant>
-#include <QItemDelegate>
-#include <QVector>
-#include <QTableView>
+#include <QWidget>
 
-#include "model/MashStep.h"
-#include "model/Mash.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
+#include "tableModels/BtTableModel.h"
 
-class MashStepItemDelegate;
+// Forward declarations.
+class Water;
+class WaterTableWidget;
+class Recipe;
 
-enum{ MASHSTEPNAMECOL, MASHSTEPTYPECOL, MASHSTEPAMOUNTCOL, MASHSTEPTEMPCOL, MASHSTEPTARGETTEMPCOL, MASHSTEPTIMECOL, MASHSTEPNUMCOLS /*This one MUST be last*/};
+class WaterItemDelegate;
+
+enum{ WATERNAMECOL, WATERAMOUNTCOL, WATERCALCIUMCOL, WATERBICARBONATECOL,
+      WATERSULFATECOL, WATERCHLORIDECOL, WATERSODIUMCOL, WATERMAGNESIUMCOL,
+      WATERNUMCOLS /*This one MUST be last*/};
 
 /*!
- * \class MashStepTableModel
+ * \class WaterTableModel
  *
- *
- * \brief Model for the list of mash steps in a mash.
+ * \brief Table model for waters.
  */
-class MashStepTableModel : public QAbstractTableModel
-{
+class WaterTableModel : public BtTableModel {
    Q_OBJECT
 
 public:
-   MashStepTableModel(QTableView* parent=0);
-   virtual ~MashStepTableModel() = default;
+   WaterTableModel(WaterTableWidget* parent=0);
+   virtual ~WaterTableModel();
 
-   //! Set the mash whose mash steps we want to model.
-   void setMash( Mash* m );
-
-   Mash * getMash() const;
-
-   //! \returns the mash step at model index \b i.
-   MashStep* getMashStep(unsigned int i);
+   void addWaters(QList<Water*> waters);
+   void observeRecipe(Recipe* rec);
+   void observeDatabase(bool val);
+   void removeAll();
 
    //! Reimplemented from QAbstractTableModel.
    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -72,50 +73,31 @@ public:
    //! Reimplemented from QAbstractTableModel.
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-   Unit::unitDisplay displayUnit(int column) const;
-   Unit::RelativeScale displayScale(int column) const;
-   void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::RelativeScale displayScale);
-   QString generateName(int column) const;
-
-   //! \returns true if mashStep is successfully found and removed.
-   bool remove(MashStep * MashStep);
+protected:
+   virtual QString generateName(int column) const;
 
 public slots:
-   //! \brief Add a MashStep to the model.
-   void addMashStep(int mashStep);
-
-   void removeMashStep(int mashStepId, std::shared_ptr<QObject> object);
-
-   void moveStepUp(int i);
-   void moveStepDown(int i);
-   void mashChanged();
-   void mashStepChanged(QMetaProperty,QVariant);
-
-   void contextMenu(const QPoint &point);
-
+   void changed(QMetaProperty,QVariant);
+   void addWater(int waterId);
+   void removeWater(int waterId, std::shared_ptr<QObject> object);
 
 private:
-   Mash* mashObs;
-   QTableView* parentTableWidget;
-   QList<MashStep*> steps;
+   QList<Water*> waterObs;
+   Recipe* recObs;
+   WaterTableWidget* parentTableWidget;
 
-//   void reorderMashSteps();
-   void reorderMashStep(MashStep *step, int current);
 };
 
 /*!
- * \class MashStepItemDelegate
+ * \class WaterItemDelegate
  *
- *
- * An item delegate for mash step tables.
+ * \brief Item delegate for water tables.
  */
-class MashStepItemDelegate : public QItemDelegate
-{
+class WaterItemDelegate : public QItemDelegate {
    Q_OBJECT
 
 public:
-   MashStepItemDelegate(QObject* parent = 0);
+   WaterItemDelegate(QObject* parent = 0);
 
    // Inherited functions.
    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

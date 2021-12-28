@@ -1,5 +1,5 @@
-/*======================================================================================================================
- * FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+   /*======================================================================================================================
+ * tableModels/FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,23 +17,23 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef FERMENTABLETABLEMODEL_H
-#define FERMENTABLETABLEMODEL_H
+#ifndef TABLEMODELS_FERMENTABLETABLEMODEL_H
+#define TABLEMODELS_FERMENTABLETABLEMODEL_H
+#pragma once
 
 #include <memory>
 
 #include <QAbstractItemDelegate>
-#include <QAbstractTableModel>
 #include <QItemDelegate>
 #include <QList>
 #include <QMetaProperty>
 #include <QModelIndex>
-#include <QTableView>
 #include <QVariant>
 #include <QWidget>
 
 #include "Brewken.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
+#include "tableModels/BtTableModel.h"
 
 // Forward declarations.
 class BtStringConst;
@@ -46,16 +46,15 @@ enum{FERMNAMECOL, FERMTYPECOL, FERMAMOUNTCOL, FERMINVENTORYCOL, FERMISMASHEDCOL,
 /*!
  * \class FermentableTableModel
  *
- *
  * \brief A table model for a list of fermentables.
  */
-class FermentableTableModel : public QAbstractTableModel
-{
+class FermentableTableModel : public BtTableModel {
    Q_OBJECT
 
 public:
    FermentableTableModel(QTableView* parent=nullptr, bool editable=true);
-   virtual ~FermentableTableModel() {}
+   virtual ~FermentableTableModel();
+
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);
    //! \brief If true, we model the database's list of fermentables.
@@ -74,11 +73,6 @@ public:
     * The default is that the inventory column is not editable
     */
    void setInventoryEditable( bool var ) { _inventoryEditable = var; }
-
-   Unit::unitDisplay displayUnit(int column) const;
-   Unit::RelativeScale displayScale(int column) const;
-   void setDisplayUnit(int column, Unit::unitDisplay displayUnit);
-   void setDisplayScale(int column, Unit::RelativeScale displayScale);
 
    //! \brief Reimplemented from QAbstractTableModel.
    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -115,9 +109,10 @@ private slots:
 private:
    //! \brief Recalculate the total amount of grains in the model.
    void updateTotalGrains();
-   QString generateName(int column) const;
+protected:
+   virtual QString generateName(int column) const;
 
-   bool editable;
+private:
    bool _inventoryEditable;
    QList<Fermentable*> fermObs;
    Recipe* recObs;
@@ -129,11 +124,8 @@ private:
 /*!
  * \brief An item delegate for Fermentable tables.
  * \sa FermentableTableModel.
- *
- *
  */
-class FermentableItemDelegate : public QItemDelegate
-{
+class FermentableItemDelegate : public QItemDelegate {
    Q_OBJECT
 
 public:
@@ -154,4 +146,4 @@ public:
 private:
 };
 
-#endif   /* FERMENTABLETABLEMODEL_H */
+#endif

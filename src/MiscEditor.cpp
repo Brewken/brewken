@@ -27,8 +27,8 @@
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Misc.h"
-#include "units/Unit.h"
 
 MiscEditor::MiscEditor(QWidget * parent) :
    QDialog(parent),

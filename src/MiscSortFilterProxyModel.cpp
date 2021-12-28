@@ -21,10 +21,11 @@
 
 #include <QAbstractItemModel>
 
-#include "MiscTableModel.h"
+#include "measurement/Measurement.h"
+#include "measurement/PhysicalQuantity.h"
+#include "measurement/Unit.h"
 #include "model/Misc.h"
-#include "Brewken.h"
-#include "units/Unit.h"
+#include "tableModels/MiscTableModel.h"
 
 MiscSortFilterProxyModel::MiscSortFilterProxyModel(QObject *parent, bool filt)
 : QSortFilterProxyModel(parent)
@@ -33,29 +34,33 @@ MiscSortFilterProxyModel::MiscSortFilterProxyModel(QObject *parent, bool filt)
 }
 
 bool MiscSortFilterProxyModel::lessThan(const QModelIndex &left,
-                                        const QModelIndex &right) const
-{
+                                        const QModelIndex &right) const {
    QAbstractItemModel* source = sourceModel();
    QVariant leftMisc, rightMisc;
-   if( source )
-   {
+   if (source) {
       leftMisc = source->data(left);
       rightMisc = source->data(right);
    }
 
-   switch( left.column() )
-   {
-   case MISCINVENTORYCOL:
-         if (Brewken::qStringToSI(leftMisc.toString(), &Units::kilograms) == 0.0 && this->sortOrder() == Qt::AscendingOrder)
+   switch (left.column()) {
+       case MISCINVENTORYCOL:
+         if (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass) == 0.0 &&
+             this->sortOrder() == Qt::AscendingOrder) {
             return false;
-         else
-            return Brewken::qStringToSI(leftMisc.toString(), &Units::kilograms) < Brewken::qStringToSI(rightMisc.toString(), &Units::kilograms);
-   case MISCAMOUNTCOL:
-         return Brewken::qStringToSI(leftMisc.toString(), &Units::kilograms) < Brewken::qStringToSI(rightMisc.toString(), &Units::kilograms);
-   case MISCTIMECOL:
-      return Brewken::qStringToSI(leftMisc.toString(), &Units::minutes) < Brewken::qStringToSI(rightMisc.toString(), &Units::minutes);
-    default:
-      return leftMisc.toString() < rightMisc.toString();
+         }
+         return (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass) <
+                 Measurement::qStringToSI(rightMisc.toString(), Measurement::PhysicalQuantity::Mass));
+
+      case MISCAMOUNTCOL:
+         return (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass) <
+                 Measurement::qStringToSI(rightMisc.toString(), Measurement::PhysicalQuantity::Mass));
+
+      case MISCTIMECOL:
+         return (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Time) <
+                 Measurement::qStringToSI(rightMisc.toString(), Measurement::PhysicalQuantity::Time));
+
+      default:
+         return leftMisc.toString() < rightMisc.toString();
    }
 }
 

@@ -131,13 +131,11 @@ SET( Brewken_SRCS
     ${SRCDIR}/FermentableDialog.cpp
     ${SRCDIR}/FermentableEditor.cpp
     ${SRCDIR}/FermentableSortFilterProxyModel.cpp
-    ${SRCDIR}/FermentableTableModel.cpp
     ${SRCDIR}/HeatCalculations.cpp
     ${SRCDIR}/HelpDialog.cpp
     ${SRCDIR}/HopDialog.cpp
     ${SRCDIR}/HopEditor.cpp
     ${SRCDIR}/HopSortFilterProxyModel.cpp
-    ${SRCDIR}/HopTableModel.cpp
     ${SRCDIR}/Html.cpp
     ${SRCDIR}/HydrometerTool.cpp
     ${SRCDIR}/IbuGuSlider.cpp
@@ -146,6 +144,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/json/BeerJson.cpp
     ${SRCDIR}/json/JsonSchema.cpp
     ${SRCDIR}/json/JsonUtils.cpp
+    ${SRCDIR}/Localization.cpp
     ${SRCDIR}/Logging.cpp
     ${SRCDIR}/MainWindow.cpp
     ${SRCDIR}/MashButton.cpp
@@ -154,14 +153,18 @@ SET( Brewken_SRCS
     ${SRCDIR}/MashEditor.cpp
     ${SRCDIR}/MashListModel.cpp
     ${SRCDIR}/MashStepEditor.cpp
-    ${SRCDIR}/MashStepTableModel.cpp
     ${SRCDIR}/MashStepTableWidget.cpp
     ${SRCDIR}/MashWizard.cpp
     ${SRCDIR}/matrix.cpp
+    ${SRCDIR}/measurement/ColorMethods.cpp
+    ${SRCDIR}/measurement/IbuMethods.cpp
+    ${SRCDIR}/measurement/Measurement.cpp
+    ${SRCDIR}/measurement/PhysicalQuantity.cpp
+    ${SRCDIR}/measurement/Unit.cpp
+    ${SRCDIR}/measurement/UnitSystem.cpp
     ${SRCDIR}/MiscDialog.cpp
     ${SRCDIR}/MiscEditor.cpp
     ${SRCDIR}/MiscSortFilterProxyModel.cpp
-    ${SRCDIR}/MiscTableModel.cpp
     ${SRCDIR}/model/BrewNote.cpp
     ${SRCDIR}/model/Equipment.cpp
     ${SRCDIR}/model/Fermentable.cpp
@@ -192,7 +195,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/RecipeExtrasWidget.cpp
     ${SRCDIR}/RecipeFormatter.cpp
     ${SRCDIR}/RefractoDialog.cpp
-    ${SRCDIR}/SaltTableModel.cpp
     ${SRCDIR}/ScaleRecipeTool.cpp
     ${SRCDIR}/SimpleUndoableUpdate.cpp
     ${SRCDIR}/StrikeWaterDialog.cpp
@@ -201,13 +203,17 @@ SET( Brewken_SRCS
     ${SRCDIR}/StyleListModel.cpp
     ${SRCDIR}/StyleRangeWidget.cpp
     ${SRCDIR}/StyleSortFilterProxyModel.cpp
+    ${SRCDIR}/tableModels/BtTableModel.cpp
+    ${SRCDIR}/tableModels/FermentableTableModel.cpp
+    ${SRCDIR}/tableModels/HopTableModel.cpp
+    ${SRCDIR}/tableModels/MashStepTableModel.cpp
+    ${SRCDIR}/tableModels/MiscTableModel.cpp
+    ${SRCDIR}/tableModels/SaltTableModel.cpp
+    ${SRCDIR}/tableModels/WaterTableModel.cpp
+    ${SRCDIR}/tableModels/YeastTableModel.cpp
     ${SRCDIR}/TimerListDialog.cpp
     ${SRCDIR}/TimerMainDialog.cpp
     ${SRCDIR}/TimerWidget.cpp
-    ${SRCDIR}/units/ColorMethods.cpp
-    ${SRCDIR}/units/IbuMethods.cpp
-    ${SRCDIR}/units/Unit.cpp
-    ${SRCDIR}/units/UnitSystem.cpp
     ${SRCDIR}/utils/BtException.cpp
     ${SRCDIR}/utils/BtStringConst.cpp
     ${SRCDIR}/utils/BtStringStream.cpp
@@ -217,7 +223,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/WaterEditor.cpp
     ${SRCDIR}/WaterListModel.cpp
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
-    ${SRCDIR}/WaterTableModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
     ${SRCDIR}/widgets/Animator.cpp
     ${SRCDIR}/widgets/SelectionControl.cpp
@@ -234,7 +239,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/YeastDialog.cpp
     ${SRCDIR}/YeastEditor.cpp
     ${SRCDIR}/YeastSortFilterProxyModel.cpp
-    ${SRCDIR}/YeastTableModel.cpp
 )
 
 # List of all the *.ui
@@ -315,11 +319,9 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/FermentableDialog.h
     ${SRCDIR}/FermentableEditor.h
     ${SRCDIR}/FermentableSortFilterProxyModel.h
-    ${SRCDIR}/FermentableTableModel.h
     ${SRCDIR}/HopDialog.h
     ${SRCDIR}/HopEditor.h
     ${SRCDIR}/HopSortFilterProxyModel.h
-    ${SRCDIR}/HopTableModel.h
     ${SRCDIR}/HydrometerTool.h
     ${SRCDIR}/IbuGuSlider.h
     ${SRCDIR}/InstructionWidget.h
@@ -330,13 +332,12 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/MashEditor.h
     ${SRCDIR}/MashListModel.h
     ${SRCDIR}/MashStepEditor.h
-    ${SRCDIR}/MashStepTableModel.h
     ${SRCDIR}/MashStepTableWidget.h
     ${SRCDIR}/MashWizard.h
+    ${SRCDIR}/measurement/Unit.h
     ${SRCDIR}/MiscDialog.h
     ${SRCDIR}/MiscEditor.h
     ${SRCDIR}/MiscSortFilterProxyModel.h
-    ${SRCDIR}/MiscTableModel.h
     ${SRCDIR}/model/BrewNote.h
     ${SRCDIR}/model/Equipment.h
     ${SRCDIR}/model/Fermentable.h
@@ -363,7 +364,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/RecipeExtrasWidget.h
     ${SRCDIR}/RecipeFormatter.h
     ${SRCDIR}/RefractoDialog.h
-    ${SRCDIR}/SaltTableModel.h
     ${SRCDIR}/ScaleRecipeTool.h
     ${SRCDIR}/SimpleUndoableUpdate.h
     ${SRCDIR}/StrikeWaterDialog.h
@@ -372,16 +372,22 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/StyleListModel.h
     ${SRCDIR}/StyleRangeWidget.h
     ${SRCDIR}/StyleSortFilterProxyModel.h
+    ${SRCDIR}/tableModels/BtTableModel.h
+    ${SRCDIR}/tableModels/FermentableTableModel.h
+    ${SRCDIR}/tableModels/HopTableModel.h
+    ${SRCDIR}/tableModels/MashStepTableModel.h
+    ${SRCDIR}/tableModels/MiscTableModel.h
+    ${SRCDIR}/tableModels/SaltTableModel.h
+    ${SRCDIR}/tableModels/WaterTableModel.h
+    ${SRCDIR}/tableModels/YeastTableModel.h
     ${SRCDIR}/TimerListDialog.h
     ${SRCDIR}/TimerMainDialog.h
     ${SRCDIR}/TimerWidget.h
-    ${SRCDIR}/units/Unit.h
     ${SRCDIR}/WaterButton.h
     ${SRCDIR}/WaterDialog.h
     ${SRCDIR}/WaterEditor.h
     ${SRCDIR}/WaterListModel.h
     ${SRCDIR}/WaterSortFilterProxyModel.h
-    ${SRCDIR}/WaterTableModel.h
     ${SRCDIR}/WaterTableWidget.h
     ${SRCDIR}/widgets/Animator.h
     ${SRCDIR}/widgets/SelectionControl.h
@@ -389,7 +395,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/YeastDialog.h
     ${SRCDIR}/YeastEditor.h
     ${SRCDIR}/YeastSortFilterProxyModel.h
-    ${SRCDIR}/YeastTableModel.h
 )
 
 SET( FILES_TO_TRANSLATE

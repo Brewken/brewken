@@ -29,10 +29,11 @@
 #include <QVector>
 
 #include "Brewken.h"
-//#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Html.h"
 #include "InstructionWidget.h"
+#include "measurement/Measurement.h"
+#include "measurement/UnitSystem.h"
 #include "model/Equipment.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
@@ -53,10 +54,10 @@ namespace {
       if ( ! equipment ) {
          return "unknown";
       } else {
-         return Brewken::displayAmount(equipment->boilTime_min(),
+         return Measurement::displayAmount(equipment->boilTime_min(),
                                        PersistentSettings::Sections::tab_recipe,
                                        PropertyNames::Recipe::boilTime_min,
-                                       &Units::minutes);
+                                       &Measurement::Units::minutes);
       }
    }
 }
@@ -68,13 +69,14 @@ BrewDayScrollWidget::BrewDayScrollWidget(QWidget* parent) : QWidget{parent},
    this->setupUi(this);
    this->setObjectName("BrewDayScrollWidget");
 
-   connect( listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(showInstruction(int)) );
-   connect(btTextEdit,SIGNAL(textModified()), this, SLOT(saveInstruction()));
-   connect( pushButton_insert, SIGNAL(clicked()), this, SLOT(insertInstruction()) );
-   connect( pushButton_remove, SIGNAL(clicked()), this, SLOT(removeSelectedInstruction()) );
-   connect( pushButton_up, SIGNAL(clicked()), this, SLOT(pushInstructionUp()) );
-   connect( pushButton_down, SIGNAL(clicked()), this, SLOT(pushInstructionDown()) );
-   connect( pushButton_generateInstructions, SIGNAL(clicked()), this, SLOT(generateInstructions()) );
+   connect(listWidget,                      SIGNAL(currentRowChanged(int)), this, SLOT(showInstruction(int)) );
+   connect(btTextEdit,                      SIGNAL(textModified()),         this, SLOT(saveInstruction()));
+   connect(pushButton_insert,               SIGNAL(clicked()),              this, SLOT(insertInstruction()) );
+   connect(pushButton_remove,               SIGNAL(clicked()),              this, SLOT(removeSelectedInstruction()) );
+   connect(pushButton_up,                   SIGNAL(clicked()),              this, SLOT(pushInstructionUp()) );
+   connect(pushButton_down,                 SIGNAL(clicked()),              this, SLOT(pushInstructionDown()) );
+   connect(pushButton_generateInstructions, SIGNAL(clicked()),              this, SLOT(generateInstructions()) );
+   return;
 }
 
 void BrewDayScrollWidget::saveInstruction() {
@@ -120,12 +122,13 @@ void BrewDayScrollWidget::removeSelectedInstruction() {
    if (row < 0) {
       return;
    }
-  this->recObs->remove(ObjectStoreWrapper::getSharedFromRaw(recIns[row]));
+   this->recObs->remove(ObjectStoreWrapper::getSharedFromRaw(recIns[row]));
 
-   if(recIns.isEmpty()) {
+   if (recIns.isEmpty()) {
       btTextEdit->clear();
       btTextEdit->setEnabled(false);
    }
+   return;
 }
 
 void BrewDayScrollWidget::pushInstructionUp() {
@@ -138,8 +141,9 @@ void BrewDayScrollWidget::pushInstructionUp() {
       return;
    }
 
-  this->recObs->swapInstructions(recIns[row], recIns[row-1]);
+   this->recObs->swapInstructions(recIns[row], recIns[row-1]);
    listWidget->setCurrentRow(row-1);
+   return;
 }
 
 void BrewDayScrollWidget::pushInstructionDown() {
@@ -153,8 +157,9 @@ void BrewDayScrollWidget::pushInstructionDown() {
       return;
    }
 
-  this->recObs->swapInstructions(recIns[row], recIns[row+1]);
+   this->recObs->swapInstructions(recIns[row], recIns[row+1]);
    listWidget->setCurrentRow(row+1);
+   return;
 }
 
 
@@ -249,6 +254,7 @@ void BrewDayScrollWidget::setRecipe(Recipe* rec) {
    }
 
    showChanges();
+   return;
 }
 
 void BrewDayScrollWidget::insertInstruction() {
@@ -306,6 +312,7 @@ void BrewDayScrollWidget::acceptInsChanges(QMetaProperty prop, QVariant /*value*
 
 void BrewDayScrollWidget::clear() {
    listWidget->clear();
+   return;
 }
 
 void BrewDayScrollWidget::showChanges() {
@@ -315,6 +322,7 @@ void BrewDayScrollWidget::showChanges() {
    }
 
    repopulateListWidget();
+   return;
 }
 
 void BrewDayScrollWidget::repopulateListWidget() {
@@ -368,35 +376,35 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
             .arg(tr("Boil Time"))
             .arg(boilTime(recObs->equipment()))
             .arg(tr("Efficiency"))
-            .arg(Brewken::displayAmount(recObs->efficiency_pct(),nullptr,0));
+            .arg(Measurement::displayAmount(recObs->efficiency_pct(),nullptr,0));
 
    // third row: pre-Boil Volume and Preboil Gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Boil Volume"))
-            .arg(Brewken::displayAmount(recObs->boilVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilVolume_l, &Units::liters,2))
+            .arg(Measurement::displayAmount(recObs->boilVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilVolume_l, &Measurement::Units::liters,2))
             .arg(tr("Preboil Gravity"))
-            .arg(Brewken::displayAmount(recObs->boilGrav(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Units::sp_grav, 3));
+            .arg(Measurement::displayAmount(recObs->boilGrav(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Measurement::Units::sp_grav, 3));
 
    // fourth row: Final volume and starting gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Final Volume"))
-            .arg(Brewken::displayAmount(recObs->finalVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::finalVolume_l, &Units::liters,2))
+            .arg(Measurement::displayAmount(recObs->finalVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::finalVolume_l, &Measurement::Units::liters,2))
             .arg(tr("Starting Gravity"))
-            .arg(Brewken::displayAmount(recObs->og(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Units::sp_grav, 3));
+            .arg(Measurement::displayAmount(recObs->og(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Measurement::Units::sp_grav, 3));
 
    // fifth row: IBU and Final gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("IBU"))
-            .arg( Brewken::displayAmount(recObs->IBU(),nullptr,1))
+            .arg( Measurement::displayAmount(recObs->IBU(),nullptr,1))
             .arg(tr("Final Gravity"))
-            .arg(Brewken::displayAmount(recObs->fg(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::fg, &Units::sp_grav, 3));
+            .arg(Measurement::displayAmount(recObs->fg(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::fg, &Measurement::Units::sp_grav, 3));
 
    // sixth row: ABV and estimate calories
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2%</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("ABV"))
-            .arg( Brewken::displayAmount(recObs->ABV_pct(),nullptr,1) )
-            .arg( Brewken::getVolumeUnitSystem() == SI ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-            .arg( Brewken::displayAmount(Brewken::getVolumeUnitSystem() == SI ?this->recObs->calories33cl() :this->recObs->calories12oz(),nullptr,0) );
+            .arg(Measurement::displayAmount(recObs->ABV_pct(),nullptr,1) )
+            .arg(Measurement::getDisplayUnitSystem(Measurement::Volume) == Measurement::UnitSystems::volume_Metric ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
+            .arg(Measurement::displayAmount(Measurement::getDisplayUnitSystem(Measurement::Volume) == Measurement::UnitSystems::volume_Metric ? this->recObs->calories33cl() : this->recObs->calories12oz(), nullptr, 0) );
 
    body += "</table>";
 
@@ -414,13 +422,13 @@ QString BrewDayScrollWidget::buildInstructionTable() {
    QList<Instruction*> instructions = this->recObs->instructions();
    QList<MashStep*> mashSteps = this->recObs->mash()->mashSteps();
    int size = instructions.size();
-   for(int i = 0; i < size; ++i ) {
+   for (int i = 0; i < size; ++i ) {
 
       Instruction* ins = instructions[i];
 
       QString stepTime;
       if (ins->interval() > 0.0 ) {
-         stepTime = Brewken::displayAmount(ins->interval(), &Units::minutes, 0);
+         stepTime = Measurement::displayAmount(ins->interval(), &Measurement::Units::minutes, 0);
       } else {
          stepTime = "--";
       }

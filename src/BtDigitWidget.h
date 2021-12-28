@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,57 +17,71 @@
  =====================================================================================================================*/
 #ifndef BTDIGITWIDGET_H
 #define BTDIGITWIDGET_H
+#pragma once
+
+#include <memory> // For PImpl
 
 #include <QLabel>
-#include <QWidget>
 #include <QString>
-#include "units/Unit.h"
-#include "units/UnitSystem.h"
+#include <QWidget>
+
+#include "measurement/PhysicalQuantity.h"
+#include "measurement/Unit.h"
+#include "measurement/UnitSystem.h"
 
 /*!
  * \class BtDigitWidget
  *
- *
  * \brief Widget that displays colored numbers, depending on if the number is ok, high, or low.
  * \todo Make this thing directly accept signals from the model items it is supposed to watch.
+ *
+ * .:TBD:. This seems to share a lot with \c BtLineEdit. Could we pull out the common bits?
  */
-class BtDigitWidget : public QLabel
-{
+class BtDigitWidget : public QLabel {
    Q_OBJECT
    Q_PROPERTY( int     type              READ type              WRITE setType              STORED false)
    Q_PROPERTY( QString configSection     READ configSection     WRITE setConfigSection     STORED false)
    Q_PROPERTY( QString editField         READ editField         WRITE setEditField         STORED false)
-   Q_PROPERTY( QString forcedUnit        READ forcedUnit        WRITE setForcedUnit        STORED false)
-   Q_PROPERTY( QString forcedScale       READ forcedScale       WRITE setForcedScale       STORED false)
+///   Q_PROPERTY( QString forcedUnit        READ forcedUnit        WRITE setForcedUnit        STORED false)
+///   Q_PROPERTY( QString forcedScale       READ forcedScale       WRITE setForcedScale       STORED false)
 
 public:
    enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
 
-   BtDigitWidget(QWidget* parent = 0, Unit::QuantityType type = Unit::None, Unit const * units = nullptr );
+   BtDigitWidget(QWidget* parent = 0,
+                 Measurement::PhysicalQuantity type = Measurement::None,
+                 Measurement::Unit const * units = nullptr);
+   virtual ~BtDigitWidget();
 
    //! \brief Displays the given \c num with precision \c prec.
    void display( double num, int prec = 0 );
+
    //! \brief Display a QString.
    void display(QString str);
 
    //! \brief Set the lower limit of the "good" range.
    void setLowLim(double num);
+
    //! \brief Set the upper limit of the "good" range.
    void setHighLim(double num);
+
    //! \brief Always use a constant color. Use a constantColor of NONE to
    //!  unset
    void setConstantColor( ColorType c );
+
    //! \brief Convience method to set high and low limits in one call
    void setLimits(double low, double high);
+
    //! \brief Methods to set the low, good and high messages
    void setLowMsg(QString msg);
    void setGoodMsg(QString msg);
    void setHighMsg(QString msg);
+
    //! \brief the array needs to be low, good, high
    void setMessages(QStringList msgs);
 
-   void setText( double amount, int precision = 2);
-   void setText( QString amount, int precision = 2);
+   void setText(double amount, int precision = 2);
+   void setText(QString amount, int precision = 2);
 
    // By defining the setters/getters, we can remove the need for
    // initializeProperties.
@@ -79,57 +94,38 @@ public:
    int type() const;
    void setType(int type);
 
-   QString forcedUnit() const;
-   void setForcedUnit(QString forcedUnit);
+   Measurement::UnitSystem const * getForcedUnitSystem() const;
+   void setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem);
 
-   QString forcedScale() const;
-   void setForcedScale(QString forcedScale);
+   Measurement::UnitSystem::RelativeScale getForcedScale() const;
+   void setForcedScale(Measurement::UnitSystem::RelativeScale forcedScale);
 
-   QString displayAmount( double amount, int precision = 2 );
+   QString displayAmount(double amount, int precision = 2);
 
-public slots:
-   void displayChanged(Unit::unitDisplay oldUnit, Unit::RelativeScale oldScale);
+/* LOOKS LIKE NOT USED
+ * public slots:
+   void displayChanged(Measurement::Unit::unitDisplay oldUnit, Measurement::UnitSystem::RelativeScale oldScale);*/
 
 private:
-   QString m_section, m_editField;
-   Unit::QuantityType m_type;
-   Unit::unitDisplay m_forceUnit;
-   Unit::RelativeScale m_forceScale;
-   Unit const * m_units;
-   QWidget* m_parent;
-
-   unsigned int m_rgblow;
-   unsigned int m_rgbgood;
-   unsigned int m_rgbhigh;
-   double m_lowLim;
-   double m_highLim;
-   QString m_styleSheet;
-   bool m_constantColor;
-   ColorType m_color;
-   double m_lastNum;
-   int m_lastPrec;
-
-   QString m_low_msg;
-   QString m_good_msg;
-   QString m_high_msg;
-
-   void adjustColors();
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
-class BtMassDigit: public BtDigitWidget
-{
+// TODO GET RID OF THESE CHILD CLASSES
+
+class BtMassDigit: public BtDigitWidget {
    Q_OBJECT
 
 public:
    BtMassDigit(QWidget* parent);
 };
 
-class BtGenericDigit: public BtDigitWidget
-{
+class BtGenericDigit: public BtDigitWidget {
    Q_OBJECT
 
 public:
    BtGenericDigit(QWidget* parent);
 };
 
-#endif // BTDIGITWIDGET_H
+#endif

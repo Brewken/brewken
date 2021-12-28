@@ -28,8 +28,8 @@
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Yeast.h"
-#include "units/Unit.h"
 
 YeastEditor::YeastEditor(QWidget * parent) :
    QDialog(parent),
