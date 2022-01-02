@@ -28,16 +28,6 @@
 
 #include "measurement/UnitSystem.h"
 
-/*class BtColorLabel;
-class BtDensityLabel;
-class BtMassLabel;
-class BtTemperatureLabel;
-class BtVolumeLabel;
-class BtTimeLabel;
-class BtMixedLabel;
-class BtDateLabel;
-class BtDiastaticPowerLabel;*/
-
 /*!
  * \class BtLabel
  *
@@ -65,7 +55,6 @@ class BtDiastaticPowerLabel;*/
  */
 class BtLabel : public QLabel {
    Q_OBJECT
-   Q_ENUMS(LabelType)
 
 public:
    /*!
@@ -81,6 +70,7 @@ public:
     *
     */
    enum LabelType {
+      // .:TODO:. Do some assignment here that allows clever casting
       NONE,
       COLOR,
       DENSITY,
@@ -103,14 +93,31 @@ public:
     * \todo Not sure if I can get the name of the widget being created.
     *       Not sure how to signal the parent to redisplay
     */
-   BtLabel(QWidget* parent = 0, LabelType lType = NONE);
+   BtLabel(QWidget* parent = nullptr, LabelType lType = NONE);
 
    virtual ~BtLabel();
+
+   /**
+    * \brief We override the \c QWidget event handlers \c enterEvent and \c leaveEvent to implement mouse-over effects
+    *        on the label text - specifically to give the user a visual clue that the label text is (right)-clickable
+    */
+   virtual void enterEvent(QEvent* event);
+   virtual void leaveEvent(QEvent* event);
+
+   /**
+    * \brief We override the \c QWidget event handler \c mouseReleaseEvent to capture left mouse clicks on us.  (Right
+    *        clicks get notified to us via the \c QWidget::customContextMenuRequested signal.)
+    */
+   virtual void mouseReleaseEvent (QMouseEvent * event);
+
+private:
+   void textEffect(bool enabled);
 
 public slots:
    void popContextMenu(const QPoint &point);
 
 signals:
+   // This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
    void changedUnitSystemOrScale(Measurement::UnitSystem const * oldUnitSystem,
                                  Measurement::UnitSystem::RelativeScale oldScale);
 
@@ -119,9 +126,9 @@ signals:
 protected:
    LabelType whatAmI;
    QString propertyName;
-   QString _section;
+   QString configSection;
    QWidget *btParent;
-   QMenu* _menu;
+   QMenu* contextMenu;
 
    void initializeSection();
    void initializeProperty();
@@ -140,58 +147,13 @@ protected:
 // templates, so we can't do that for classes that need to use the Q_OBJECT macro (required for classes that declare
 // their own signals and slots or that use other services provided by Qt's meta-object system).
 //
-class BtColorLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtColorLabel(QWidget* parent = 0);
-};
-
-class BtDensityLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtDensityLabel(QWidget* parent = 0);
-};
-
-class BtMassLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtMassLabel(QWidget* parent = 0);
-};
-
-class BtTemperatureLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtTemperatureLabel(QWidget* parent = 0);
-};
-
-class BtVolumeLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtVolumeLabel(QWidget* parent = 0);
-};
-
-class BtTimeLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtTimeLabel(QWidget* parent = 0);
-};
-
-class BtMixedLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtMixedLabel(QWidget* parent = 0);
-};
-
-class BtDateLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtDateLabel(QWidget* parent = 0);
-};
-
-class BtDiastaticPowerLabel : public BtLabel {
-   Q_OBJECT
-public:
-   BtDiastaticPowerLabel(QWidget* parent = 0);
-};
-
+class BtColorLabel :          public BtLabel { Q_OBJECT public: BtColorLabel(QWidget* parent = nullptr); };
+class BtDensityLabel :        public BtLabel { Q_OBJECT public: BtDensityLabel(QWidget* parent = nullptr); };
+class BtMassLabel :           public BtLabel { Q_OBJECT public: BtMassLabel(QWidget* parent = nullptr); };
+class BtTemperatureLabel :    public BtLabel { Q_OBJECT public: BtTemperatureLabel(QWidget* parent = nullptr); };
+class BtVolumeLabel :         public BtLabel { Q_OBJECT public: BtVolumeLabel(QWidget* parent = nullptr); };
+class BtTimeLabel :           public BtLabel { Q_OBJECT public: BtTimeLabel(QWidget* parent = nullptr); };
+class BtMixedLabel :          public BtLabel { Q_OBJECT public: BtMixedLabel(QWidget* parent = nullptr); };
+class BtDateLabel :           public BtLabel { Q_OBJECT public: BtDateLabel(QWidget* parent = nullptr); };
+class BtDiastaticPowerLabel : public BtLabel { Q_OBJECT public: BtDiastaticPowerLabel(QWidget* parent = nullptr); };
 #endif

@@ -108,7 +108,11 @@ bool Localization::hasUnits(QString qstr) {
    QRegExp amtUnit("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
    amtUnit.indexIn(qstr);
 
-   return amtUnit.cap(2).size() > 0;
+   bool result = amtUnit.cap(2).size() > 0;
+
+   qDebug() << Q_FUNC_INFO << qstr << (result ? "has" : "does not have") << "units";
+
+   return result;
 }
 
 double Localization::toDouble(QString text, bool* ok) {

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * measurement/UnitSystem.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -27,9 +27,6 @@
 #include <QString>
 
 #include "measurement/PhysicalQuantity.h"
-
-class QMenu;
-class QWidget;
 
 namespace Measurement {
    class Unit;
@@ -114,7 +111,8 @@ namespace Measurement {
 
       /**
        * \brief The name that uniquely identifies this unit system.  This is not for display to the user, but rather so
-       *        that we can save preferences via \c PersistentSettings
+       *        that we can save preferences via \c PersistentSettings.  It must be the \b same as the global variable
+       *        in the \c UnitSystems namespace (because we rely on this in some places).
        */
       QString const uniqueName;
 
@@ -179,6 +177,11 @@ namespace Measurement {
                          Unit const * defUnit = nullptr,
                          UnitSystem::RelativeScale scale = UnitSystem::noScale) const;
 
+      /**
+       * \brief returns all the \c UnitSystem::RelativeScale for this \c UnitSystem
+       */
+      QList<UnitSystem::RelativeScale> getRelativeScales() const;
+
       /*!
        * \brief Returns the \c Unit corresponding to \c scale in this \c UnitSystem
        */
@@ -211,20 +214,6 @@ namespace Measurement {
       Measurement::PhysicalQuantity getPhysicalQuantity() const;
 
       /**
-       * \brief For this \c UnitSystem, creates a \c QMenu (or two) for changing the \c UnitSystem and/or
-       *        \c RelativeScale used to display the \c PhysicalQuantity,
-       *
-       * \param parent
-       * \param relativeScale
-       * \param generateScale
-       *
-       * \return New \c QMenu owned by \c parent
-       */
-      QMenu * createUnitSystemMenu(QWidget* parent,
-                                   RelativeScale const relativeScale = Measurement::UnitSystem::noScale,
-                                   bool const generateScale = true) const;
-
-      /**
        * \brief Returns a pointer to the named \c UnitSystem.  This make it easy to store in \c PersistentSettings the
        *        user's choices about which \c UnitSystem to use for each \c PhysicalQuantity
        * \param name
@@ -236,6 +225,9 @@ namespace Measurement {
        * \brief Returns a list of all the \c UnitSystem instances that relate to a particular \c PhysicalQuantity
        */
       static QList<UnitSystem const *> getUnitSystems(Measurement::PhysicalQuantity physicalQuantity);
+
+      static QString relativeScaleToString(Measurement::UnitSystem::RelativeScale relativeScale);
+      static Measurement::UnitSystem::RelativeScale relativeScaleFromString(QString relativeScaleAsString);
 
    private:
       // Private implementation details - see https://herbsutter.com/gotw/_100/

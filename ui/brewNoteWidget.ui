@@ -781,7 +781,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -789,7 +789,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -802,7 +802,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -810,7 +810,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -818,7 +818,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -826,7 +826,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -846,9 +846,9 @@
  <connections>
   <connection>
    <sender>btLabel_Sg</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_SG</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>70</x>
@@ -862,9 +862,9 @@
   </connection>
   <connection>
    <sender>btLabel_volIntoBk</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_volIntoBK</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>58</x>
@@ -878,9 +878,9 @@
   </connection>
   <connection>
    <sender>btLabel_strikeTemp</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_strikeTemp</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>48</x>
@@ -894,9 +894,9 @@
   </connection>
   <connection>
    <sender>btLabel_mashFinTemp</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_mashFinTemp</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>51</x>
@@ -910,9 +910,9 @@
   </connection>
   <connection>
    <sender>btLabel_Og</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_OG</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
@@ -926,9 +926,9 @@
   </connection>
   <connection>
    <sender>btLabel_postBoilVol</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_postBoilVol</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
@@ -942,9 +942,9 @@
   </connection>
   <connection>
    <sender>btLabel_volIntoFerm</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_volIntoFerm</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>76</x>
@@ -958,9 +958,9 @@
   </connection>
   <connection>
    <sender>btLabel_pitchTemp</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_pitchTemp</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>105</x>
@@ -974,9 +974,9 @@
   </connection>
   <connection>
    <sender>btLabel_postFermentFg</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_FG</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>50</x>
@@ -990,9 +990,9 @@
   </connection>
   <connection>
    <sender>btLabel_finalVolume</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_finalVol</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>38</x>

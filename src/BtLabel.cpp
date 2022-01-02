@@ -21,12 +21,14 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <QMouseEvent>
 
 #include "Brewken.h"
 #include "measurement/Measurement.h"
 #include "model/Style.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
 
 
 BtLabel::BtLabel(QWidget *parent,
@@ -34,15 +36,39 @@ BtLabel::BtLabel(QWidget *parent,
    QLabel{parent},
    whatAmI{lType},
    btParent{parent},
-   _menu{nullptr} {
+   contextMenu{nullptr} {
    connect(this, &QWidget::customContextMenuRequested, this, &BtLabel::popContextMenu);
    return;
 }
 
 BtLabel::~BtLabel() = default;
 
+void BtLabel::enterEvent(QEvent* event) {
+   this->textEffect(true);
+   return;
+}
+
+void BtLabel::leaveEvent(QEvent* event) {
+   this->textEffect(false);
+   return;
+}
+
+void BtLabel::mouseReleaseEvent (QMouseEvent * event) {
+   // For the moment, we want left-click and right-click to have the same effect, so when we get a left-click event, we
+   // send ourselves the right-click signal, which will then fire BtLabel::popContextMenu().
+   emit this->QWidget::customContextMenuRequested(event->pos());
+   return;
+}
+
+void BtLabel::textEffect(bool enabled) {
+   QFont myFont = this->font();
+   myFont.setUnderline(enabled);
+   this->setFont(myFont);
+   return;
+}
+
 void BtLabel::initializeSection() {
-   if (!this->_section.isEmpty()) {
+   if (!this->configSection.isEmpty()) {
       return;
    }
 
@@ -56,46 +82,91 @@ void BtLabel::initializeSection() {
    // otherwise, if the parent object has a configSection, use it
    // if all else fails, get the parent's object name
    //
-   if ( property("configSection").isValid() ) {
-      this->_section = property("configSection").toString();
+   if (this->property("configSection").isValid()) {
+      this->configSection = property("configSection").toString();
    } else if (mybuddy && mybuddy->property("configSection").isValid() ) {
-      this->_section = mybuddy->property("configSection").toString();
+      this->configSection = mybuddy->property("configSection").toString();
    } else if (this->btParent->property("configSection").isValid() ) {
-      this->_section = this->btParent->property("configSection").toString();
+      this->configSection = this->btParent->property("configSection").toString();
    } else {
-      qDebug() << Q_FUNC_INFO << "this failed" << this;
-      this->_section = this->btParent->objectName();
+      qWarning() << Q_FUNC_INFO << "this failed" << this;
+      this->configSection = this->btParent->objectName();
    }
    return;
 }
 
 void BtLabel::initializeProperty() {
 
-   if ( ! propertyName.isEmpty() ) {
+   if (!this->propertyName.isEmpty()) {
       return;
    }
 
    QWidget* mybuddy = buddy();
-   if ( property("editField").isValid() ) {
-      propertyName = property("editField").toString();
-   } else if ( mybuddy && mybuddy->property("editField").isValid() ) {
-      propertyName = mybuddy->property("editField").toString();
+   if (this->property("editField").isValid()) {
+      this->propertyName = this->property("editField").toString();
+   } else if (mybuddy && mybuddy->property("editField").isValid()) {
+      this->propertyName = mybuddy->property("editField").toString();
    } else {
-      qDebug() << Q_FUNC_INFO  << "That failed miserably";
+      qWarning() << Q_FUNC_INFO  << "That failed miserably";
    }
+   return;
 }
 
 void BtLabel::initializeMenu() {
-   // .:TBD:. At the moment, we don't initialise the menu if it already exists, however this is not quite correct as the
-   // sub-menu for relative scale needs to change when a different unit system is selected
-   if (this->_menu) {
-      return;
+   // If a context menu already exists, we need to delete it and recreate it.  We can't always reuse an existing menu
+   // because the sub-menu for relative scale needs to change when a different unit system is selected.  (In theory we
+   // could only recreate the context menu when a different unit system is selected, but that adds complication.)
+   if (this->contextMenu) {
+      // NB: Although the existing menu is "owned" by this->btParent, it is fine for us to delete it here.  The Qt
+      // ownership in this context merely guarantees that this->btParent will, in its own destructor, delete the menu if
+      // it still exists.
+      delete this->contextMenu;
+      this->contextMenu = nullptr;
    }
 
-   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName, this->_section);
+   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName, this->configSection);
    Measurement::UnitSystem::RelativeScale relativeScale = Measurement::getRelativeScaleForField(this->propertyName,
-                                                                                                _section);
-
+                                                                                                this->configSection);
+   qDebug() <<
+      Q_FUNC_INFO << "unitSystem=" << (nullptr == unitSystem ? "NULL" : unitSystem->uniqueName) << ", relativeScale=" <<
+      relativeScale;
+   if (nullptr == unitSystem) {
+      Measurement::PhysicalQuantity physicalQuantity = Measurement::PhysicalQuantity::None;
+      switch (whatAmI) {
+         case COLOR:
+            physicalQuantity = Measurement::PhysicalQuantity::Color;
+            break;
+         case DENSITY:
+            physicalQuantity = Measurement::PhysicalQuantity::Density;
+            break;
+         case MASS:
+            physicalQuantity = Measurement::PhysicalQuantity::Mass;
+            break;
+         case TEMPERATURE:
+            physicalQuantity = Measurement::PhysicalQuantity::Temperature;
+            break;
+         case VOLUME:
+            physicalQuantity = Measurement::PhysicalQuantity::Volume;
+            break;
+         case TIME:
+            physicalQuantity = Measurement::PhysicalQuantity::Time;
+            break;
+         case DIASTATIC_POWER:
+            physicalQuantity = Measurement::PhysicalQuantity::DiastaticPower;
+            break;
+         case MIXED:
+            physicalQuantity = Measurement::PhysicalQuantity::Mixed;
+            break;
+         default:
+            // Nothing to set up if we're of type NONE
+            break;
+      }
+      if (Measurement::PhysicalQuantity::None == physicalQuantity) {
+         return;
+      }
+      unitSystem = &Measurement::getDisplayUnitSystem(physicalQuantity);
+      qDebug() << Q_FUNC_INFO << "unitSystem=" << unitSystem->uniqueName;
+   }
    switch (whatAmI) {
       case COLOR:
       case DENSITY:
@@ -104,43 +175,14 @@ void BtLabel::initializeMenu() {
       case VOLUME:
       case TIME:
       case DIASTATIC_POWER:
-         this->_menu = unitSystem->createUnitSystemMenu(btParent, relativeScale);
+         this->contextMenu = new UnitAndScalePopUpMenu(this->btParent, *unitSystem, relativeScale);
          break;
 
       case MIXED:
          // This looks weird, but it works.
-         this->_menu = unitSystem->createUnitSystemMenu(btParent, relativeScale, false); // no scale menu
+         this->contextMenu = new UnitAndScalePopUpMenu(this->btParent, *unitSystem, relativeScale, false); // no scale menu
          break;
 
-/*
-      case COLOR:
-         this->_menu = Brewken::setupColorMenu(btParent, unitSystem);
-         break;
-      case DENSITY:
-         this->_menu = Brewken::setupDensityMenu(btParent, unitSystem);
-         break;
-      case MASS:
-         this->_menu = Brewken::setupMassMenu(btParent, unitSystem, relativeScale);
-         break;
-      case MIXED:
-         // This looks weird, but it works.
-         this->_menu = Brewken::setupVolumeMenu(btParent, unitSystem, relativeScale, false); // no scale menu
-         break;
-      case TEMPERATURE:
-         this->_menu = Brewken::setupTemperatureMenu(btParent, unitSystem);
-         break;
-      case VOLUME:
-         this->_menu = Brewken::setupVolumeMenu(btParent, unitSystem, relativeScale);
-         break;
-      case TIME:
-         this->_menu = Brewken::setupTimeMenu(btParent, relativeScale); //scale menu only
-         break;
-      case DATE:
-         this->_menu = Brewken::setupDateMenu(btParent, unitSystem); // unit only
-         break;
-      case DIASTATIC_POWER:
-         this->_menu = Brewken::setupDiastaticPowerMenu(btParent, unitSystem);
-         break;*/
       default:
          // Nothing to set up if we're of type NONE
          break;
@@ -170,46 +212,46 @@ void BtLabel::popContextMenu(const QPoint& point) {
    this->initializeSection();
    this->initializeMenu();
 
-   QAction * invoked = _menu->exec(widgie->mapToGlobal(point));
+   QAction * invoked = this->contextMenu->exec(widgie->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }
 
-   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(propertyName, _section);
-   Measurement::UnitSystem::RelativeScale scale = Measurement::getRelativeScaleForField(propertyName, _section);
+   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName, this->configSection);
+   Measurement::UnitSystem::RelativeScale scale = Measurement::getRelativeScaleForField(this->propertyName, this->configSection);
    QWidget* pMenu = invoked->parentWidget();
-   if ( pMenu == _menu ) {
-      PersistentSettings::insert(propertyName, invoked->data(), _section, PersistentSettings::UNIT);
+   if (pMenu == this->contextMenu) {
+      PersistentSettings::insert(this->propertyName, invoked->data(), this->configSection, PersistentSettings::UNIT);
       // reset the scale if required
-      if (PersistentSettings::contains(propertyName, _section, PersistentSettings::SCALE) ) {
-         PersistentSettings::insert(propertyName, Measurement::UnitSystem::noScale, _section, PersistentSettings::SCALE);
+      if (PersistentSettings::contains(this->propertyName, this->configSection, PersistentSettings::SCALE) ) {
+         PersistentSettings::insert(this->propertyName, Measurement::UnitSystem::noScale, this->configSection, PersistentSettings::SCALE);
       }
    } else {
-      PersistentSettings::insert(propertyName, invoked->data(), _section, PersistentSettings::SCALE);
+      PersistentSettings::insert(this->propertyName, invoked->data(), this->configSection, PersistentSettings::SCALE);
    }
 
    // To make this all work, I need to set ogMin and ogMax when og is set.
-   if ( propertyName == "og" ) {
-      PersistentSettings::insert(PropertyNames::Style::ogMin, invoked->data(),_section, PersistentSettings::UNIT);
-      PersistentSettings::insert(PropertyNames::Style::ogMax, invoked->data(),_section, PersistentSettings::UNIT);
-   } else if ( propertyName == "fg" ) {
-      PersistentSettings::insert(PropertyNames::Style::fgMin, invoked->data(),_section, PersistentSettings::UNIT);
-      PersistentSettings::insert(PropertyNames::Style::fgMax, invoked->data(),_section, PersistentSettings::UNIT);
-   } else if ( propertyName == "color_srm" ) {
-      PersistentSettings::insert(PropertyNames::Style::colorMin_srm, invoked->data(),_section, PersistentSettings::UNIT);
-      PersistentSettings::insert(PropertyNames::Style::colorMax_srm, invoked->data(),_section, PersistentSettings::UNIT);
+   if (this->propertyName == "og") {
+      PersistentSettings::insert(PropertyNames::Style::ogMin, invoked->data(), this->configSection, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::ogMax, invoked->data(), this->configSection, PersistentSettings::UNIT);
+   } else if (this->propertyName == "fg") {
+      PersistentSettings::insert(PropertyNames::Style::fgMin, invoked->data(), this->configSection, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::fgMax, invoked->data(), this->configSection, PersistentSettings::UNIT);
+   } else if (this->propertyName == "color_srm") {
+      PersistentSettings::insert(PropertyNames::Style::colorMin_srm, invoked->data(), this->configSection, PersistentSettings::UNIT);
+      PersistentSettings::insert(PropertyNames::Style::colorMax_srm, invoked->data(), this->configSection, PersistentSettings::UNIT);
    }
 
    // Hmm. For the color fields, I want to include the ecb or srm in the label
    // text here.
-   if ( whatAmI == COLOR ) {
+   if (whatAmI == COLOR) {
       Measurement::UnitSystem const * const disp = Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString());
       setText( tr("Color (%1)").arg(disp->unit()->name));
    }
 
    // Remember, we need the original unit, not the new one.
 
-   emit changedUnitSystemOrScale(unitSystem,scale);
+   emit changedUnitSystemOrScale(unitSystem, scale);
 
    return;
 }

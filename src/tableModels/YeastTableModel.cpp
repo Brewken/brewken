@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -44,6 +44,7 @@
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable) :
    BtTableModel{parent, editable},
@@ -412,7 +413,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          Brewken::mainWindow()->doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntityWithInventory::inventory,
                                                value.toInt(),
-                                               tr("Change Yeast Inventory Unit Size")); // .:TBD:. MY 2020-12-11 Whilst it's admirably concise, I find "quanta" unclear, and I'm not sure it's that easy to translate either
+                                               tr("Change Yeast Inventory Unit Size"));
          break;
       case YEASTAMOUNTCOL:
          if (!value.canConvert(QVariant::String)) {
@@ -439,71 +440,6 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
 Yeast * YeastTableModel::getYeast(unsigned int i) {
    return yeastObs[static_cast<int>(i)];
 }
-/*
-Measurement::Unit::unitDisplay YeastTableModel::displayUnit(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::Unit::noUnit;
-
-   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Measurement::UnitSystem::RelativeScale YeastTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::UnitSystem::noScale;
-
-   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
-}*/
-
-///// We need to:
-/////   o clear the custom scale if set
-/////   o clear any custom unit from the rows
-/////      o which should have the side effect of clearing any scale
-///void YeastTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
-///{
-///   // Yeast* row; // disabled per-cell magic
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
-///   PersistentSettings::insert(attribute,Measurement::UnitSystem::noScale,this->objectName(),PersistentSettings::SCALE);
-///
-///   /* Disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getYeast(i);
-///      row->setDisplayUnit(Measurement::Unit::noUnit);
-///   }
-///   */
-///}
-///
-///// Setting the scale should clear any cell-level scaling options
-///void YeastTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
-///{
-///   // Yeast* row; //disabled per-cell magic
-///
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
-///
-///   /* disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getYeast(i);
-///      row->setDisplayScale(Measurement::UnitSystem::noScale);
-///   }
-///   */
-///}
 
 QString YeastTableModel::generateName(int column) const {
    QString attribute;
@@ -531,7 +467,7 @@ void YeastTableModel::contextMenu(QPoint const & point) {
 
    switch (selected) {
       case YEASTAMOUNTCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale, false);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale, false);
          break;
       default:
          return;

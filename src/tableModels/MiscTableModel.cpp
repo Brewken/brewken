@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -36,6 +36,8 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
+
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    BtTableModel{parent, editable},
@@ -445,61 +447,10 @@ Misc * MiscTableModel::getMisc(unsigned int i) {
    return miscObs[static_cast<int>(i)];
 }
 
-/*
-Measurement::Unit::unitDisplay MiscTableModel::displayUnit(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::Unit::noUnit;
-
-   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, Measurement::Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Measurement::UnitSystem::RelativeScale MiscTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::UnitSystem::noScale;
-
-   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
-}
-
-// We need to:
-//   o clear the custom scale if set
-//   o clear any custom unit from the rows
-//      o which should have the side effect of clearing any scale
-void MiscTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute,Measurement::UnitSystem::noScale,this->objectName(),PersistentSettings::SCALE);
-
-}
-
-// Setting the scale should clear any cell-level scaling options
-void MiscTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
-
-}*/
-
-QString MiscTableModel::generateName(int column) const
-{
+QString MiscTableModel::generateName(int column) const {
    QString attribute;
 
-   switch(column)
-   {
+   switch(column) {
       case MISCINVENTORYCOL:
          attribute = *PropertyNames::NamedEntityWithInventory::inventory;
          break;
@@ -530,10 +481,10 @@ void MiscTableModel::contextMenu(const QPoint &point) {
    switch (selected) {
       case MISCINVENTORYCOL:
       case MISCAMOUNTCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale, false);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale, false);
          break;
       case MISCTIMECOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       default:
          return;

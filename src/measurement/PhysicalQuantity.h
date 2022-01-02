@@ -86,7 +86,7 @@ namespace Measurement {
       Temperature    = 0x400000,
       Color          = 0x500000,
       Density        = 0x600000, // Sometimes referred to in comments as "gravity" as a shorthand for "specific gravity"
-      String         = 0x700000, // Not sure what this is!
+      String         = 0x700000, // Not sure what this is! .:TODO:. CAN WE GET RID OF THIS
       Mixed          = 0x800000, // Not sure what this is!
       DiastaticPower = 0x900000,
       None           = 0x000000

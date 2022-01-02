@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -43,6 +43,7 @@
 #include "model/Salt.h"
 #include "PersistentSettings.h"
 #include "WaterDialog.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
 
 static QStringList addToName = QStringList() << QObject::tr("Never")
                                              << QObject::tr("Mash")
@@ -559,52 +560,6 @@ bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, 
    return retval;
 }
 
-/*
-Measurement::Unit::unitDisplay SaltTableModel::displayUnit(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::Unit::noUnit;
-
-   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Measurement::UnitSystem::RelativeScale SaltTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::UnitSystem::noScale;
-
-   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
-}
-
-void SaltTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayUnit,this->objectName(),PersistentSettings::UNIT);
-   PersistentSettings::insert(attribute,Measurement::UnitSystem::noScale,this->objectName(),PersistentSettings::SCALE);
-
-}
-
-// Setting the scale should clear any cell-level scaling options
-void SaltTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
-{
-
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return;
-
-   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
-
-}*/
-
 QString SaltTableModel::generateName(int column) const {
    QString attribute;
 
@@ -630,7 +585,7 @@ void SaltTableModel::contextMenu(QPoint const & point) {
    QMenu* menu;
    switch (selected) {
       case SALTAMOUNTCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       default:
          return;

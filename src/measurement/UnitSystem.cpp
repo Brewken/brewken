@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -22,12 +22,12 @@
 #include <QApplication>
 #include <QDebug>
 #include <QLocale>
-#include <QMenu>
 #include <QRegExp>
 
 #include "Brewken.h"
 #include "Localization.h"
 #include "measurement/Unit.h"
+#include "utils/EnumStringMapping.h"
 
 namespace {
    int const fieldWidth = 0;
@@ -47,63 +47,29 @@ namespace {
    QMultiMap<Measurement::PhysicalQuantity, Measurement::UnitSystem const *> physicalQuantityToUnitSystems;
 
    // Used by UnitSystem::getInstanceByName()
-   QMap<QString, Measurement::UnitSystem const *> nameToUnitSystem; /*{
-      {Measurement::mass_ImperialAndUsCustomary.name,         &Measurement::mass_ImperialAndUsCustomary                   },
-      {Measurement::mass_Metric.name,                         &Measurement::mass_Metric                        },
+   QMap<QString, Measurement::UnitSystem const *> nameToUnitSystem;
 
-      {Measurement::volume_Imperial.name,                     &Measurement::volume_Imperial                    },
-      {Measurement::volume_UsCustomary.name,                  &Measurement::volume_UsCustomary                 },
-      {Measurement::volume_Metric.name,                       &Measurement::volume_Metric                      },
-
-      {Measurement::temperature_MetricIsCelsius.name,         &Measurement::temperature_MetricIsCelsius        },
-      {Measurement::temperature_UsCustomaryIsFahrenheit.name, &Measurement::temperature_UsCustomaryIsFahrenheit},
-
-      {Measurement::time_CoordinatedUniversalTime.name,       &Measurement::time_CoordinatedUniversalTime      },
-
-      {Measurement::color_StandardReferenceMethod.name,       &Measurement::color_StandardReferenceMethod      },
-      {Measurement::color_EuropeanBreweryConvention.name,     &Measurement::color_EuropeanBreweryConvention    },
-
-      {Measurement::density_SpecificGravity.name,             &Measurement::density_SpecificGravity            },
-      {Measurement::density_Plato.name,                       &Measurement::density_Plato                      },
-
-      {Measurement::diastaticPower_Lintner.name,              &Measurement::diastaticPower_Lintner             },
-      {Measurement::diastaticPower_WindischKolbach.name,      &Measurement::diastaticPower_WindischKolbach     }
-   };*/
-
-   /**
-    * \brief Used by UnitSystems::createUnitSystemMenu()
-    *
-    * \param menu
-    * \param text
-    * \param data
-    * \param currentVal
-    * \param actionGroup
-    */
-   void generateAction(QMenu * menu, QString text, QVariant data, QVariant currentVal, QActionGroup* actionGroup) {
-      QAction* action = new QAction(menu);
-
-      action->setText(text);
-      action->setData(data);
-      action->setCheckable(true);
-      action->setChecked(currentVal == data);;
-      if (actionGroup) {
-         actionGroup->addAction(action);
-      }
-
-      menu->addAction(action);
-      return;
-   }
-
+   // We sometimes want to be able to access RelativeScale enum values via a string name (eg code generated from .ui
+   // files) so it's useful to be able to map between them.  There is some functionality built in to Qt to do this via
+   // QMetaEnum, but this is at the cost of inheriting from QObject, which seems overkill here.  Alternatively, we could
+   // use Magic Enum C++ -- see https://github.com/Neargye/magic_enum -- at the cost of having to convert between
+   // std::string and QString.  For the moment, this more manual approach seems appropriate to the scale of what we
+   // need.
+   EnumStringMapping const relativeScaleToName {
+      {"noScale"        , Measurement::UnitSystem::RelativeScale::noScale        },
+      {"scaleExtraSmall", Measurement::UnitSystem::RelativeScale::scaleExtraSmall},
+      {"scaleSmall"     , Measurement::UnitSystem::RelativeScale::scaleSmall     },
+      {"scaleMedium"    , Measurement::UnitSystem::RelativeScale::scaleMedium    },
+      {"scaleLarge"     , Measurement::UnitSystem::RelativeScale::scaleLarge     },
+      {"scaleExtraLarge", Measurement::UnitSystem::RelativeScale::scaleExtraLarge},
+      {"scaleHuge"      , Measurement::UnitSystem::RelativeScale::scaleHuge      },
+      {"scaleWithout"   , Measurement::UnitSystem::RelativeScale::scaleWithout   }
+   };
 }
 
 // This private implementation class holds all private non-virtual members of UnitSystem
 class Measurement::UnitSystem::impl {
 public:
-/*   struct RelativeScaleOfUnit {
-      Measurement::UnitSystem::RelativeScale const relativeScale;
-      Measurement::Unit const & unit;
-   };*/
-
    /**
     * Constructor
     */
@@ -311,6 +277,10 @@ double Measurement::UnitSystem::amountDisplay(double amount,
    return this->pimpl->displayableAmount(amount, units, scale).first;
 }
 
+QList<Measurement::UnitSystem::RelativeScale> Measurement::UnitSystem::getRelativeScales() const {
+   return this->pimpl->scaleToUnit.keys();;
+}
+
 Measurement::Unit const * Measurement::UnitSystem::scaleUnit(Measurement::UnitSystem::RelativeScale scale) const {
    return this->pimpl->getUnitForRelativeScale(scale);
 }
@@ -322,11 +292,6 @@ Measurement::Unit const * Measurement::UnitSystem::thicknessUnit() const {
 Measurement::Unit const * Measurement::UnitSystem::unit() const {
    return this->pimpl->defaultUnit;
 }
-
-/*QString const & Measurement::UnitSystem::unitType() const {
-   // .:TBD:. Think we don't need this!
-   return this->name;
-}*/
 
 Measurement::PhysicalQuantity Measurement::UnitSystem::getPhysicalQuantity() const {
    return this->pimpl->physicalQuantity;
@@ -340,42 +305,26 @@ QList<Measurement::UnitSystem const *> Measurement::UnitSystem::getUnitSystems(M
    return physicalQuantityToUnitSystems.values(physicalQuantity);
 }
 
-
-QMenu * Measurement::UnitSystem::createUnitSystemMenu(QWidget * parent,
-                                                      Measurement::UnitSystem::RelativeScale const relativeScale,
-                                                      bool const generateScale) const {
-   QMenu * menu = new QMenu(parent);
-   QActionGroup * actionGroup = new QActionGroup(parent);
-
-   // We assert that at least one UnitSystem exists for any given PhysicalQuantity
-   Q_ASSERT(physicalQuantityToUnitSystems.contains(this->pimpl->physicalQuantity));
-
-   // If there are other UnitSystems for this one's PhysicalQuantity then we want the user to be able to select
-   // between them
-   auto unitSystems = physicalQuantityToUnitSystems.values(this->pimpl->physicalQuantity);
-   if (unitSystems.size() > 1) {
-      generateAction(menu, QApplication::translate("UnitSystem", "Default"), QVariant(), this->uniqueName, actionGroup);
-      for (auto system : unitSystems) {
-         generateAction(menu, system->systemOfMeasurementName, system->uniqueName, this->uniqueName, actionGroup);
-      }
+QString Measurement::UnitSystem::relativeScaleToString(Measurement::UnitSystem::RelativeScale relativeScale) {
+   auto result = relativeScaleToName.enumToString(relativeScale);
+   if (!result) {
+      // It's a coding error if we didn't define a name for a RelativeScale
+      qCritical() << Q_FUNC_INFO << "Unable to find a name for RelativeScale #" << relativeScale;
+      Q_ASSERT(false); // Stop here on a debug build
    }
 
-   // If this UnitSystem has more than one Unit, allow the user to select a Unit for the scale
-   if (this->pimpl->scaleToUnit.size() > 1) {
-      QMenu * subMenu = new QMenu(menu);
-      generateAction(subMenu,
-                     QApplication::translate("UnitSystem", "Default"),
-                     Measurement::UnitSystem::noScale,
-                     relativeScale,
-                     actionGroup);
-      for (auto unitInfo = this->pimpl->scaleToUnit.begin(); unitInfo != this->pimpl->scaleToUnit.end(); ++unitInfo) {
-         generateAction(subMenu, unitInfo.value()->name, unitInfo.key(), this->uniqueName, actionGroup);
-      }
-      subMenu->setTitle(QApplication::translate("UnitSystem", "Scale"));
-      menu->addMenu(subMenu);
+   return *result;
+}
+
+Measurement::UnitSystem::RelativeScale Measurement::UnitSystem::relativeScaleFromString(QString relativeScaleAsString) {
+   auto result = relativeScaleToName.stringToEnum(relativeScaleAsString);
+   if (!result) {
+      // It's a coding error if someone sent us an invalid name for a RelativeScale
+      qCritical() << Q_FUNC_INFO << "Unable to find RelativeScale called" << relativeScaleAsString;
+      Q_ASSERT(false); // Stop here on a debug build
    }
 
-   return menu;
+   return static_cast<Measurement::UnitSystem::RelativeScale>(*result);
 }
 
 
@@ -389,7 +338,7 @@ namespace Measurement::UnitSystems {
                                                              &Measurement::Units::pounds,
                                                              &Measurement::Units::pounds,
                                                              {{UnitSystem::scaleExtraSmall, &Measurement::Units::ounces},
-                                                                {UnitSystem::scaleSmall,      &Measurement::Units::pounds}},
+                                                              {UnitSystem::scaleSmall,      &Measurement::Units::pounds}},
                                                              "mass_ImperialAndUsCustomary",
                                                              QT_TR_NOOP("US Customary / Imperial"));
 

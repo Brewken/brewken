@@ -225,8 +225,10 @@ SET( Brewken_SRCS
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
     ${SRCDIR}/widgets/Animator.cpp
+    ${SRCDIR}/widgets/NumberWithUnits.cpp
     ${SRCDIR}/widgets/SelectionControl.cpp
     ${SRCDIR}/widgets/ToggleSwitch.cpp
+    ${SRCDIR}/widgets/UnitAndScalePopUpMenu.cpp
     ${SRCDIR}/xml/BeerXml.cpp
     ${SRCDIR}/xml/BtDomErrorHandler.cpp
     ${SRCDIR}/xml/XercesHelpers.cpp
@@ -392,6 +394,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/widgets/Animator.h
     ${SRCDIR}/widgets/SelectionControl.h
     ${SRCDIR}/widgets/ToggleSwitch.h
+    ${SRCDIR}/widgets/UnitAndScalePopUpMenu.h
     ${SRCDIR}/YeastDialog.h
     ${SRCDIR}/YeastEditor.h
     ${SRCDIR}/YeastSortFilterProxyModel.h

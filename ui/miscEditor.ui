@@ -413,7 +413,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -421,7 +421,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -429,7 +429,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -437,7 +437,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
     <slot>setIsWeight(bool)</slot>
    </slots>
   </customwidget>
@@ -461,9 +461,9 @@
  <connections>
   <connection>
    <sender>label_time</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_time</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>
@@ -477,9 +477,9 @@
   </connection>
   <connection>
    <sender>label_inventory</sender>
-   <signal>labelChanged(Unit::unitDisplay,Unit::unitScale)</signal>
+   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
    <receiver>lineEdit_inventory</receiver>
-   <slot>lineChanged(Unit::unitDisplay,Unit::unitScale)</slot>
+   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>108</x>

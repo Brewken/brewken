@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -40,6 +40,8 @@
 #include "model/MashStep.h"
 #include "PersistentSettings.h"
 #include "SimpleUndoableUpdate.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
+
 
 MashStepTableModel::MashStepTableModel(QTableView* parent) :
    BtTableModel{parent, false},
@@ -539,14 +541,14 @@ void MashStepTableModel::contextMenu(QPoint const & point) {
 
    switch (selected) {
       case MASHSTEPAMOUNTCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       case MASHSTEPTEMPCOL:
       case MASHSTEPTARGETTEMPCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem);
          break;
       case MASHSTEPTIMECOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       default:
          return;

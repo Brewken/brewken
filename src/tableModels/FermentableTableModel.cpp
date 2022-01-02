@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -50,6 +50,7 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
 
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
@@ -579,10 +580,10 @@ void FermentableTableModel::contextMenu(const QPoint &point) {
    switch(selected) {
       case FERMINVENTORYCOL:
       case FERMAMOUNTCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       case FERMCOLORCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem);
          break;
       default:
          return;

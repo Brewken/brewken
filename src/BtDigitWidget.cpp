@@ -38,16 +38,8 @@ public:
    /**
     * Constructor
     */
-   impl(BtDigitWidget & self,
-        Measurement::PhysicalQuantity type,
-        Measurement::Unit const * units,
-        QWidget *parent) :
-      self                    {self},
-      m_type{type},
-      m_forceUnitSystem{nullptr},
-      m_forceScale{Measurement::UnitSystem::noScale},
-      m_units{units},
-      m_parent{parent},
+   impl(BtDigitWidget & self) :
+      self{self},
       m_rgblow{0x0000d0},
       m_rgbgood{0x008000},
       m_rgbhigh{0xd00000},
@@ -105,13 +97,6 @@ public:
    // Member variables for impl
    BtDigitWidget & self;
 
-   QString m_section, m_editField;
-   Measurement::PhysicalQuantity m_type;
-   Measurement::UnitSystem const * m_forceUnitSystem;
-   Measurement::UnitSystem::RelativeScale m_forceScale;
-   Measurement::Unit const * m_units;
-   QWidget* m_parent;
-
    unsigned int m_rgblow;
    unsigned int m_rgbgood;
    unsigned int m_rgbhigh;
@@ -130,14 +115,24 @@ public:
 };
 
 BtDigitWidget::BtDigitWidget(QWidget *parent,
-                             Measurement::PhysicalQuantity type,
+                             Measurement::PhysicalQuantity physicalQuantity,
                              Measurement::Unit const * units) :
    QLabel(parent),
-   pimpl{std::make_unique<impl>(*this, type, units, parent)} {
+   NumberWithUnits(parent, physicalQuantity, units),
+   pimpl{std::make_unique<impl>(*this)} {
    return;
 }
 
 BtDigitWidget::~BtDigitWidget() = default;
+
+QString BtDigitWidget::getWidgetText() const {
+   return this->text();
+}
+
+void BtDigitWidget::setWidgetText(QString text) {
+   this->QLabel::setText(text);
+   return;
+}
 
 void BtDigitWidget::display(QString str) {
    static bool converted;
@@ -211,117 +206,19 @@ void BtDigitWidget::setMessages( QStringList msgs ) {
    return;
 }
 
-
-int BtDigitWidget::type() const { return static_cast<int>(this->pimpl->m_type); }
-QString BtDigitWidget::editField() const { return this->pimpl->m_editField; }
-QString BtDigitWidget::configSection() {
-   if (this->pimpl->m_section.isEmpty()) {
-      setConfigSection("");
-   }
-
-   return this->pimpl->m_section;
-}
-
-Measurement::UnitSystem const * BtDigitWidget::getForcedUnitSystem() const {
-   return this->pimpl->m_forceUnitSystem;
-}
-
-void BtDigitWidget::setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem) {
-   this->pimpl->m_forceUnitSystem = forcedUnitSystem;
-   return;
-}
-
-Measurement::UnitSystem::RelativeScale BtDigitWidget::getForcedScale() const {
-   return this->pimpl->m_forceScale;
-}
-
-void BtDigitWidget::setForcedScale(Measurement::UnitSystem::RelativeScale forcedScale) {
-   this->pimpl->m_forceScale = forcedScale;
-   return;
-}
-
-void BtDigitWidget::setType(int type) {
-   this->pimpl->m_type = (Measurement::PhysicalQuantity)type;
-   return;
-}
-void BtDigitWidget::setEditField(QString editField) {
-   this->pimpl->m_editField = editField;
-   return;
-}
-
-// The cascade looks a little odd, but it is intentional.
-void BtDigitWidget::setConfigSection(QString configSection) {
-   this->pimpl->m_section = configSection;
-
-   if (this->pimpl->m_section.isEmpty()) {
-      this->pimpl->m_section = this->pimpl->m_parent->property("configSection").toString();
-   }
-
-   if (this->pimpl->m_section.isEmpty()) {
-      this->pimpl->m_section = this->pimpl->m_parent->objectName();
-   }
-   return;
-}
-
-/* NOT USED!
-void BtDigitWidget::displayChanged(Measurement::Unit::unitDisplay oldUnit,
+void BtDigitWidget::displayChanged(Measurement::UnitSystem const * oldUnitSystem,
                                    Measurement::UnitSystem::RelativeScale oldScale) {
-   // This is where it gets hard
-
-   if (this->text().isEmpty()) {
-      return;
-   }
-
-   // The idea here is we need to first translate the field into a known
-   // amount (aka to SI) and then into the unit we want.
-   QString amt;
-   switch (this->m_type) {
-      case Measurement::Unit::Mass:
-         amt = this->displayAmount(this->m_lastNum, 2);
-         break;
-
-      case Measurement::Unit::String:
-         amt = this->text();
-         break;
-
-      case Measurement::Unit::None:
-      default:
-         {
-            bool ok = false;
-            double val = Localization::toDouble(this->text(), &ok);
-            if (!ok) {
-               qWarning() <<
-                  Q_FUNC_INFO << "failed to convert " << this->text() << "(" << this->m_section << ":" <<
-                  this->m_editField << ") to double";
-            }
-            amt = this->displayAmount(val);
-         }
-         break;
-   }
-
-   this->QLabel::setText(amt);
+   this->textOrUnitsChanged(oldUnitSystem, oldScale);
 
    return;
-}
-*/
-
-QString BtDigitWidget::displayAmount(double amount, int precision) {
-
-   auto unitSystem    = Measurement::getUnitSystemForField   (this->pimpl->m_editField, this->pimpl->m_section);
-   auto relativeScale = Measurement::getRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_section);
-
-   // I find this a nice level of abstraction. This lets all of the setText()
-   // methods make a single call w/o having to do the logic for finding the
-   // unit and scale.
-   return Measurement::displayAmount(amount, this->pimpl->m_units, precision, unitSystem, relativeScale);
 }
 
 void BtDigitWidget::setText(QString amount, int precision) {
    double amt;
    bool ok = false;
 
-   setConfigSection("");
-   if (this->pimpl->m_type == Measurement::String) {
+   this->setConfigSection("");
+   if (this->physicalQuantity == Measurement::String) {
       QLabel::setText(amount);
    } else {
       amt = Localization::toDouble(amount, &ok);
@@ -329,8 +226,8 @@ void BtDigitWidget::setText(QString amount, int precision) {
          qWarning() << QString("%1 could not convert %2 (%3:%4) to double")
                .arg(Q_FUNC_INFO)
                .arg(amount)
-               .arg(this->pimpl->m_section)
-               .arg(this->pimpl->m_editField);
+               .arg(this->configSection)
+               .arg(this->editField);
       }
       this->pimpl->m_lastNum = amt;
       this->pimpl->m_lastPrec = precision;

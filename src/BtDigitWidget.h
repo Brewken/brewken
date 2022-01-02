@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -28,33 +28,42 @@
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "widgets/NumberWithUnits.h"
 
 /*!
  * \class BtDigitWidget
  *
- * \brief Widget that displays colored numbers, depending on if the number is ok, high, or low.
+ * \brief Widget that displays colored numbers, depending on if the number is ok, high, or low.  Currently only used in
+ *        waterDialog.ui (ie Water Chemistry Dialog).
+ *
  * \todo Make this thing directly accept signals from the model items it is supposed to watch.
  *
- * .:TBD:. This seems to share a lot with \c BtLineEdit. Could we pull out the common bits?
+ *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
+ *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
+ *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
+ *        put Q_PROPERTY declarations for NumberWithUnits attributes here rather than in NumberWithUnits itself.
  */
-class BtDigitWidget : public QLabel {
+class BtDigitWidget : public QLabel, public NumberWithUnits {
    Q_OBJECT
-   Q_PROPERTY( int     type              READ type              WRITE setType              STORED false)
-   Q_PROPERTY( QString configSection     READ configSection     WRITE setConfigSection     STORED false)
-   Q_PROPERTY( QString editField         READ editField         WRITE setEditField         STORED false)
-///   Q_PROPERTY( QString forcedUnit        READ forcedUnit        WRITE setForcedUnit        STORED false)
-///   Q_PROPERTY( QString forcedScale       READ forcedScale       WRITE setForcedScale       STORED false)
+   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
+   Q_PROPERTY(QString configSection        READ getConfigSection                 WRITE setConfigSection                 STORED false)
+   Q_PROPERTY(QString editField            READ getEditField                     WRITE setEditField                     STORED false)
+   Q_PROPERTY(QString forcedUnitSystem     READ getForcedUnitSystemViaString     WRITE setForcedUnitSystemViaString     STORED false)
+   Q_PROPERTY(QString forcedRelativeScale  READ getForcedRelativeScaleViaString  WRITE setForcedRelativeScaleViaString  STORED false)
 
 public:
    enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
 
-   BtDigitWidget(QWidget* parent = 0,
-                 Measurement::PhysicalQuantity type = Measurement::None,
+   BtDigitWidget(QWidget * parent = nullptr,
+                 Measurement::PhysicalQuantity physicalQuantity = Measurement::None,
                  Measurement::Unit const * units = nullptr);
    virtual ~BtDigitWidget();
 
+   virtual QString getWidgetText() const;
+   virtual void setWidgetText(QString text);
+
    //! \brief Displays the given \c num with precision \c prec.
-   void display( double num, int prec = 0 );
+   void display(double num, int prec = 0);
 
    //! \brief Display a QString.
    void display(QString str);
@@ -67,7 +76,7 @@ public:
 
    //! \brief Always use a constant color. Use a constantColor of NONE to
    //!  unset
-   void setConstantColor( ColorType c );
+   void setConstantColor(ColorType c);
 
    //! \brief Convience method to set high and low limits in one call
    void setLimits(double low, double high);
@@ -80,31 +89,16 @@ public:
    //! \brief the array needs to be low, good, high
    void setMessages(QStringList msgs);
 
-   void setText(double amount, int precision = 2);
    void setText(QString amount, int precision = 2);
+   void setText(double amount, int precision = 2);
 
-   // By defining the setters/getters, we can remove the need for
-   // initializeProperties.
-   QString editField() const;
-   void setEditField( QString editField );
-
-   QString configSection();
-   void setConfigSection( QString configSection );
-
-   int type() const;
-   void setType(int type);
-
-   Measurement::UnitSystem const * getForcedUnitSystem() const;
-   void setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem);
-
-   Measurement::UnitSystem::RelativeScale getForcedScale() const;
-   void setForcedScale(Measurement::UnitSystem::RelativeScale forcedScale);
-
-   QString displayAmount(double amount, int precision = 2);
-
-/* LOOKS LIKE NOT USED
- * public slots:
-   void displayChanged(Measurement::Unit::unitDisplay oldUnit, Measurement::UnitSystem::RelativeScale oldScale);*/
+public slots:
+   /**
+    * \brief Received from \c BtLabel when the user has change \c UnitSystem
+    *
+    * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
+    */
+   void displayChanged(Measurement::UnitSystem const * oldUnitSystem, Measurement::UnitSystem::RelativeScale oldScale);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -112,20 +106,10 @@ private:
    std::unique_ptr<impl> pimpl;
 };
 
-// TODO GET RID OF THESE CHILD CLASSES
-
-class BtMassDigit: public BtDigitWidget {
-   Q_OBJECT
-
-public:
-   BtMassDigit(QWidget* parent);
-};
-
-class BtGenericDigit: public BtDigitWidget {
-   Q_OBJECT
-
-public:
-   BtGenericDigit(QWidget* parent);
-};
+//
+// See comment in BtLabel.h for why we need these trivial child classes to use in .ui files
+//
+class BtMassDigit :    public BtDigitWidget { Q_OBJECT public: BtMassDigit(QWidget * parent); };
+class BtGenericDigit : public BtDigitWidget { Q_OBJECT public: BtGenericDigit(QWidget * parent); };
 
 #endif

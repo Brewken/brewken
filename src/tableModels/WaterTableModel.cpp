@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -328,72 +328,6 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
 
    return retval;
 }
-
-/*
-Measurement::Unit::unitDisplay WaterTableModel::displayUnit(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::Unit::noUnit;
-
-   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Measurement::UnitSystem::RelativeScale WaterTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::UnitSystem::noScale;
-
-   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, QVariant(-1), this->objectName(), PersistentSettings::SCALE).toInt());
-}*/
-
-///// We need to:
-/////   o clear the custom scale if set
-/////   o clear any custom unit from the rows
-/////      o which should have the side effect of clearing any scale
-///void WaterTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
-///{
-///   // Yeast* row; // disabled per-cell magic
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-///   PersistentSettings::insert(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE);
-///
-///   /* Disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getYeast(i);
-///      row->setDisplayUnit(Measurement::Unit::noUnit);
-///   }
-///   */
-///}
-///
-///// Setting the scale should clear any cell-level scaling options
-///void WaterTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
-///{
-///   // Yeast* row; //disabled per-cell magic
-///
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute,displayScale,this->objectName(),PersistentSettings::SCALE);
-///
-///   /* disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getYeast(i);
-///      row->setDisplayScale(Measurement::UnitSystem::noScale);
-///   }
-///   */
-///}
 
 QString WaterTableModel::generateName(int column) const {
    QString attribute;

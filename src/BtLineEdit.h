@@ -30,17 +30,8 @@
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "widgets/NumberWithUnits.h"
 
-/*class BtGenericEdit;
-class BtMassEdit;
-class BtVolumeEdit;
-class BtTemperatureEdit;
-class BtTimeEdit;
-class BtDensityEdit;
-class BtColorEdit;
-class BtMixedEdit;
-class BtDiastaticPowerEdit;
-class BtStringEdit;*/
 class NamedEntity;
 
 /*!
@@ -52,17 +43,21 @@ class NamedEntity;
  *
  *        A \c BtLineEdit (or subclass thereof) will usually have a corresponding \c BtLabel (or subclass thereof).
  *        See comment in BtLabel.h for more details on the relationship between the two classes.
+ *
+ *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
+ *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
+ *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
+ *        put Q_PROPERTY declarations for NumberWithUnits attributes here rather than in NumberWithUnits itself.
  */
-class BtLineEdit : public QLineEdit {
+class BtLineEdit : public QLineEdit, public NumberWithUnits {
    Q_OBJECT
-   Q_PROPERTY( int     type              READ type              WRITE setType              STORED false)
-   Q_PROPERTY( QString configSection     READ configSection     WRITE setConfigSection     STORED false)
-   Q_PROPERTY( QString editField         READ editField         WRITE setEditField         STORED false)
-///   Q_PROPERTY( QString forcedUnit        READ forcedUnit        WRITE setForcedUnit        STORED false)
-///   Q_PROPERTY( QString forcedScale       READ forcedScale       WRITE setForcedScale       STORED false)
+   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
+   Q_PROPERTY(QString configSection        READ getConfigSection                 WRITE setConfigSection                 STORED false)
+   Q_PROPERTY(QString editField            READ getEditField                     WRITE setEditField                     STORED false)
+   Q_PROPERTY(QString forcedUnitSystem     READ getForcedUnitSystemViaString     WRITE setForcedUnitSystemViaString     STORED false)
+   Q_PROPERTY(QString forcedRelativeScale  READ getForcedRelativeScaleViaString  WRITE setForcedRelativeScaleViaString  STORED false)
 
 public:
-
    /*!
     * \brief Initialize the BtLineEdit with the parent and do some things with the type
     *
@@ -75,28 +70,13 @@ public:
     */
    BtLineEdit(QWidget* parent = nullptr,
               Measurement::PhysicalQuantity type = Measurement::None,
+              Measurement::Unit const * units = nullptr,
               QString const & maximalDisplayString = "100.000 srm");
 
    virtual ~BtLineEdit();
 
-private:
-   /**
-    * \brief Returns the contents of the field converted, if necessary, to SI units
-    *
-    * \param oldUnitSystem (optional)
-    * \param oldScale (optional)
-    */
-   double convertToSI(Measurement::UnitSystem const * oldUnitSystem = nullptr,
-                      Measurement::UnitSystem::RelativeScale oldScale = Measurement::UnitSystem::noScale);
-public:
-
-   /**
-    * \brief Returns the contents of the field converted, if necessary, to SI units
-    */
-   double toSI();
-
-   // Use this when you want to do something with the returned QString
-   QString displayAmount( double amount, int precision = 3);
+   virtual QString getWidgetText() const;
+   virtual void setWidgetText(QString text);
 
    // Use one of these when you just want to set the text
    void setText(NamedEntity* element, int precision = 3);
@@ -104,31 +84,13 @@ public:
    void setText(QString amount, int precision = 3);
    void setText(QVariant amount, int precision = 3);
 
-   // Too many places still use getDouble, which just hoses me down. We're
-   // gonna fix this.
-   double  toDouble(bool* ok);
-
-   // By defining the setters/getters, we can remove the need for
-   // initializeProperties.
-   QString editField() const;
-   void setEditField( QString editField );
-
-   QString configSection();
-   void setConfigSection( QString configSection );
-
-   int type() const;
-   void setType(int type);
-
-   Measurement::UnitSystem const * getForcedUnitSystem() const;
-   void setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem);
-
-//   Measurement::UnitSystem::RelativeScale getForcedRelativeScale() const;
-//   void setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale);
 
 public slots:
    void onLineChanged();
    /**
     * \brief Received from \c BtLabel when the user has change \c UnitSystem
+    *
+    * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
     */
    void lineChanged(Measurement::UnitSystem const * oldUnitSystem, Measurement::UnitSystem::RelativeScale oldScale);
 
@@ -141,13 +103,6 @@ private:
    int desiredWidthInPixels;
 
 protected:
-   QWidget * btParent;
-   QString _section;
-   QString _editField;
-   Measurement::PhysicalQuantity physicalQuantity;
-   Measurement::UnitSystem const * forcedUnitSystem;
-//   Measurement::UnitSystem::RelativeScale forcedRelativeScale;
-   Measurement::Unit const * _units;
 
 };
 
@@ -172,7 +127,5 @@ public:
 public slots:
    void setIsWeight(bool state);
 };
-
-
 
 #endif

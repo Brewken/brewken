@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/HopTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Luke Vincent <luke.r.vincent@gmail.com>
@@ -47,6 +47,7 @@
 #include "model/Inventory.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
+#include "widgets/UnitAndScalePopUpMenu.h"
 
 HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    BtTableModel{parent, editable},
@@ -531,10 +532,10 @@ void HopTableModel::contextMenu(QPoint const & point) {
    switch (selected) {
       case HOPINVENTORYCOL:
       case HOPAMOUNTCOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       case HOPTIMECOL:
-         menu = currentUnitSystem->createUnitSystemMenu(parentTableWidget, currentScale);
+         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
          break;
       default:
          return;

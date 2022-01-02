@@ -44,6 +44,8 @@ class Salt;
  * \class WaterDialog
  *
  * \brief Trying my hand at making water chemistry work
+ *
+ * .:TBD:. This class (and associated UI files etc) might better be called Water Chemistry Dialog
  */
 class WaterDialog : public QDialog, public Ui::waterDialog
 {
