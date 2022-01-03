@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -87,14 +87,10 @@ public:
    void removeSalts(QList<int>deadSalts);
    void saveAndClose();
 
-protected:
-   virtual QString generateName(int column) const;
-
 public slots:
    void changed(QMetaProperty,QVariant);
    void removeSalt(Salt* salt);
    void catchSalt();
-   void contextMenu(const QPoint &point);
 
 signals:
    void newTotals();
@@ -102,7 +98,6 @@ signals:
 private:
    QList<Salt*> saltObs;
    Recipe* m_rec;
-   QTableView* parentTableWidget;
    double spargePct;
 
    double multiplier(Salt *s) const;

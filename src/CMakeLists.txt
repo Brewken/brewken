@@ -214,6 +214,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/TimerListDialog.cpp
     ${SRCDIR}/TimerMainDialog.cpp
     ${SRCDIR}/TimerWidget.cpp
+    ${SRCDIR}/UiAmountWithUnits.cpp
     ${SRCDIR}/utils/BtException.cpp
     ${SRCDIR}/utils/BtStringConst.cpp
     ${SRCDIR}/utils/BtStringStream.cpp
@@ -225,7 +226,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/WaterSortFilterProxyModel.cpp
     ${SRCDIR}/WaterTableWidget.cpp
     ${SRCDIR}/widgets/Animator.cpp
-    ${SRCDIR}/widgets/NumberWithUnits.cpp
     ${SRCDIR}/widgets/SelectionControl.cpp
     ${SRCDIR}/widgets/ToggleSwitch.cpp
     ${SRCDIR}/widgets/UnitAndScalePopUpMenu.cpp

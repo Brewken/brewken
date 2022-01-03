@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -73,9 +73,6 @@ public:
    //! Reimplemented from QAbstractTableModel.
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-protected:
-   virtual QString generateName(int column) const;
-
 public slots:
    void changed(QMetaProperty,QVariant);
    void addWater(int waterId);
@@ -84,8 +81,6 @@ public slots:
 private:
    QList<Water*> waterObs;
    Recipe* recObs;
-   WaterTableWidget* parentTableWidget;
-
 };
 
 /*!

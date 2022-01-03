@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -88,26 +88,20 @@ public:
 
    void remove(Yeast * yeast);
 
-protected:
-   virtual QString generateName(int column) const;
-
 public slots:
    //! \brief Add a \c yeast to the model.
    void addYeast(int yeastId);
    //! \brief Remove a \c yeast from the model.
    void removeYeast(int yeastId, std::shared_ptr<QObject> object);
 
-   void contextMenu(const QPoint &point);
 private slots:
    //! \brief Catch changes to Recipe, Database, and Yeast.
    void changed(QMetaProperty, QVariant);
    void changedInventory(int invKey, BtStringConst const & propertyName);
 
 private:
-   bool editable;
    bool _inventoryEditable;
    QList<Yeast*> yeastObs;
-   QTableView* parentTableWidget;
    Recipe* recObs;
 };
 

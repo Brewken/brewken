@@ -50,12 +50,21 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
-#include "widgets/UnitAndScalePopUpMenu.h"
 
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
-   BtTableModel{parent, editable},
-   parentTableWidget(parent),
+   BtTableModel{
+      parent,
+      editable,
+      {{FERMNAMECOL,      {Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMTYPECOL,      {Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMAMOUNTCOL,    {Measurement::PhysicalQuantity::Mass,  "amount_kg"   }},
+       {FERMINVENTORYCOL, {Measurement::PhysicalQuantity::Mass,  "inventory_kg"}},
+       {FERMISMASHEDCOL,  {Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMAFTERBOIL,    {Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMYIELDCOL,     {Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMCOLORCOL,     {Measurement::PhysicalQuantity::Color, "color_srm"   }}}
+   },
    _inventoryEditable(false),
    recObs(nullptr),
    displayPercentages(false),
@@ -428,170 +437,6 @@ Qt::ItemFlags FermentableTableModel::flags(const QModelIndex& index ) const
    }
 }
 
-/* --maf--
-   The cell-specific work has been momentarily disabled until I can find a
-   better way to implement. PLEASE DO NOT DELETE
-Measurement::Unit::unitDisplay FermentableTableModel::displayUnit(const QModelIndex& index)
-{
-   Fermentable* row;
-
-   if ( index.row() >= fermObs.size() )
-      return Measurement::Unit::noUnit;
-
-   row = fermObs[index.row()];
-
-   return row->displayUnit();
-}
-
-void FermentableTableModel::setDisplayUnit(const QModelIndex& index, Measurement::Unit::unitDisplay displayUnit)
-{
-   Fermentable* row;
-
-   if ( index.row() >= fermObs.size() )
-      return;
-
-   row = fermObs[index.row()];
-   row->setDisplayUnit(displayUnit);
-}
-
-Measurement::UnitSystem::RelativeScale FermentableTableModel::displayScale(const QModelIndex& index)
-{
-   Fermentable* row;
-
-   if ( index.row() >= fermObs.size() )
-      return Measurement::UnitSystem::noScale;
-
-   row = fermObs[index.row()];
-
-   return row->displayScale();
-}
-
-void FermentableTableModel::setDisplayScale(const QModelIndex& index, Measurement::UnitSystem::RelativeScale displayScale)
-{
-   Fermentable* row;
-
-   if ( index.row() >= fermObs.size() )
-      return;
-
-   row = fermObs[index.row()];
-   row->setDisplayScale(displayScale);
-}
-
-Measurement::UnitSystem const * FermentableTableModel::displayUnitSystem(int column) const {
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() ) {
-      return nullptr;
-   }
-
-   return Measurement::getUnitSystemForField(attribute, this->objectName());
-}
-
-Measurement::UnitSystem::RelativeScale FermentableTableModel::displayScale(int column) const {
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() ) {
-      return Measurement::UnitSystem::noScale;
-   }
-
-   return Measurement::getRelativeScaleForField(attribute, this->objectName());
-}
-*/
-
-///// We need to:
-/////   o clear the custom scale if set
-/////   o clear any custom unit from the rows
-/////      o which should have the side effect of clearing any scale
-///void FermentableTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
-///{
-///   // Fermentable* row; // disabled per-cell magic
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-///   PersistentSettings::insert(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE);
-///
-///   /* Disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getFermentable(i);
-///      row->setDisplayUnit(Measurement::Unit::noUnit);
-///   }
-///   */
-///}
-///
-///// Setting the scale should clear any cell-level scaling options
-///void FermentableTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
-///{
-///   // Fermentable* row; //disabled per-cell magic
-///
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute, displayScale, this->objectName(), PersistentSettings::SCALE);
-///
-///   /* disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getFermentable(i);
-///      row->setDisplayScale(Measurement::UnitSystem::noScale);
-///   }
-///   */
-///}
-
-QString FermentableTableModel::generateName(int column) const
-{
-   QString attribute;
-
-   switch(column)
-   {
-      case FERMINVENTORYCOL:
-         attribute = "inventory_kg";
-         break;
-      case FERMAMOUNTCOL:
-         attribute = "amount_kg";
-         break;
-      case FERMCOLORCOL:
-         attribute = "color_srm";
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
-}
-
-// oofrab
-void FermentableTableModel::contextMenu(const QPoint &point) {
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-   int selected = hView->logicalIndexAt(point);
-
-   // Since we need to call setupMassMenu() two different ways, we need
-   // to figure out the currentUnit and Scale here
-   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
-   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
-
-   QMenu* menu;
-
-   switch(selected) {
-      case FERMINVENTORYCOL:
-      case FERMAMOUNTCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      case FERMCOLORCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem);
-         break;
-      default:
-         return;
-   }
-
-   this->doContextMenu(point, hView, menu, selected);
-   return;
-}
 
 bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
    if (index.row() >= static_cast<int>(this->fermObs.size())) {

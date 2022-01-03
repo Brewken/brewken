@@ -115,10 +115,10 @@ public:
 };
 
 BtDigitWidget::BtDigitWidget(QWidget *parent,
-                             Measurement::PhysicalQuantity physicalQuantity,
+                             BtFieldType fieldType,
                              Measurement::Unit const * units) :
    QLabel(parent),
-   NumberWithUnits(parent, physicalQuantity, units),
+   UiAmountWithUnits(parent, fieldType, units),
    pimpl{std::make_unique<impl>(*this)} {
    return;
 }
@@ -218,7 +218,8 @@ void BtDigitWidget::setText(QString amount, int precision) {
    bool ok = false;
 
    this->setConfigSection("");
-   if (this->physicalQuantity == Measurement::String) {
+   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
+       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
       QLabel::setText(amount);
    } else {
       amt = Localization::toDouble(amount, &ok);
@@ -245,11 +246,11 @@ void BtDigitWidget::setText(double amount, int precision) {
 }
 
 BtMassDigit::BtMassDigit(QWidget* parent) :
-   BtDigitWidget{parent, Measurement::Mass, &Measurement::Units::kilograms} {
+   BtDigitWidget{parent, Measurement::PhysicalQuantity::Mass, &Measurement::Units::kilograms} {
    return;
 }
 
 BtGenericDigit::BtGenericDigit(QWidget* parent) :
-   BtDigitWidget{parent, Measurement::None, nullptr} {
+   BtDigitWidget{parent, NonPhysicalQuantity::Count, nullptr} {
    return;
 }

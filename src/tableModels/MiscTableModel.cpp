@@ -36,14 +36,21 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
-#include "widgets/UnitAndScalePopUpMenu.h"
-
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
-   BtTableModel{parent, editable},
+   BtTableModel{
+      parent,
+      editable,
+      {{MISCNAMECOL,      {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {MISCTYPECOL,      {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {MISCUSECOL,       {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {MISCTIMECOL,      {Measurement::PhysicalQuantity::Time,  *PropertyNames::Misc::time                         }},
+       {MISCAMOUNTCOL,    {Measurement::PhysicalQuantity::Mixed, *PropertyNames::Misc::amount                       }},
+       {MISCINVENTORYCOL, {Measurement::PhysicalQuantity::Mixed, *PropertyNames::NamedEntityWithInventory::inventory}},
+       {MISCISWEIGHT,     {Measurement::PhysicalQuantity::None,  ""                                                 }}}
+   },
    _inventoryEditable(false),
-   recObs(nullptr),
-   parentTableWidget(parent) {
+   recObs(nullptr) {
    miscObs.clear();
    setObjectName("miscTableModel");
 
@@ -445,53 +452,6 @@ void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
 
 Misc * MiscTableModel::getMisc(unsigned int i) {
    return miscObs[static_cast<int>(i)];
-}
-
-QString MiscTableModel::generateName(int column) const {
-   QString attribute;
-
-   switch(column) {
-      case MISCINVENTORYCOL:
-         attribute = *PropertyNames::NamedEntityWithInventory::inventory;
-         break;
-      case MISCAMOUNTCOL:
-         attribute = *PropertyNames::Misc::amount;
-         break;
-      case MISCTIMECOL:
-         attribute = *PropertyNames::Misc::time;
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
-}
-
-void MiscTableModel::contextMenu(const QPoint &point) {
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-   int selected = hView->logicalIndexAt(point);
-
-   // Since we need to call generateVolumeMenu() two different ways, we need
-   // to figure out the currentUnit and Scale here
-   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
-   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
-
-   QMenu* menu;
-
-   switch (selected) {
-      case MISCINVENTORYCOL:
-      case MISCAMOUNTCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale, false);
-         break;
-      case MISCTIMECOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      default:
-         return;
-   }
-
-   this->doContextMenu(point, hView, menu, selected);
-   return;
 }
 
 //======================CLASS MiscItemDelegate===========================

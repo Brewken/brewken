@@ -19,6 +19,7 @@
 
 #include <QApplication>
 
+#include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
 
@@ -49,35 +50,47 @@ namespace {
 }
 
 UnitAndScalePopUpMenu::UnitAndScalePopUpMenu(QWidget * parent,
-                                             Measurement::UnitSystem const & unitSystem,
-                                             Measurement::UnitSystem::RelativeScale const relativeScale,
-                                             bool const generateScale) :
+                                             Measurement::PhysicalQuantity physicalQuantity,
+                                             Measurement::UnitSystem const * forcedUnitSystem,
+                                             Measurement::UnitSystem::RelativeScale const forcedRelativeScale) :
    QMenu(parent) {
 
    // .:TODO:. This is mostly working but not displaying "default" as selected value when it should be
    QActionGroup * actionGroup = new QActionGroup(parent);
 
-   // If there are other UnitSystems for this one's PhysicalQuantity then we want the user to be able to select
-   // between them
-   auto unitSystems = Measurement::UnitSystem::getUnitSystems(unitSystem.getPhysicalQuantity());
+   // If there are multiple UnitSystems for the PhysicalQuantity then we want the user to be able to select between them
+   auto unitSystems = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
    if (unitSystems.size() > 1) {
-      generateAction(this, QApplication::translate("UnitSystem", "Default"), QVariant(), "", actionGroup);
+      QString forcedUnitSystemUniqueName{forcedUnitSystem ? forcedUnitSystem->uniqueName : ""};
+      generateAction(this,
+                     QApplication::translate("UnitSystem", "Default"),
+                     "",
+                     forcedUnitSystemUniqueName,
+                     actionGroup);
       for (auto system : unitSystems) {
-         generateAction(this, system->systemOfMeasurementName, system->uniqueName, unitSystem.uniqueName, actionGroup);
+         generateAction(this,
+                        system->systemOfMeasurementName,
+                        system->uniqueName,
+                        forcedUnitSystemUniqueName,
+                        actionGroup);
       }
    }
 
-   // If this UnitSystem has more than one Unit, allow the user to select a Unit for the scale
+   // If the UnitSystem currently used to display the field has more than one Unit, allow the user to select a forced
+   // Unit for the scale
+   Measurement::UnitSystem const & unitSystem{
+      forcedUnitSystem ? *forcedUnitSystem : Measurement::getDisplayUnitSystem(physicalQuantity)
+   };
    auto relativeScales = unitSystem.getRelativeScales();
    if (relativeScales.size() > 1) {
       QMenu * subMenu = new QMenu(this);
       generateAction(subMenu,
                      QApplication::translate("UnitSystem", "Default"),
                      Measurement::UnitSystem::noScale,
-                     relativeScale,
+                     forcedRelativeScale,
                      actionGroup);
       for (auto scale : relativeScales) {
-         generateAction(subMenu, unitSystem.scaleUnit(scale)->name, scale, relativeScale, actionGroup);
+         generateAction(subMenu, unitSystem.scaleUnit(scale)->name, scale, forcedRelativeScale, actionGroup);
       }
       subMenu->setTitle(QApplication::translate("UnitSystem", "Scale"));
       this->addMenu(subMenu);

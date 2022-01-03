@@ -27,10 +27,11 @@
 #include <QString>
 #include <QWidget>
 
+#include "BtFieldType.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
-#include "widgets/NumberWithUnits.h"
+#include "UiAmountWithUnits.h"
 
 class NamedEntity;
 
@@ -47,11 +48,11 @@ class NamedEntity;
  *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
  *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
  *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
- *        put Q_PROPERTY declarations for NumberWithUnits attributes here rather than in NumberWithUnits itself.
+ *        put Q_PROPERTY declarations for UiAmountWithUnits attributes here rather than in UiAmountWithUnits itself.
  */
-class BtLineEdit : public QLineEdit, public NumberWithUnits {
+class BtLineEdit : public QLineEdit, public UiAmountWithUnits {
    Q_OBJECT
-   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
+///   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
    Q_PROPERTY(QString configSection        READ getConfigSection                 WRITE setConfigSection                 STORED false)
    Q_PROPERTY(QString editField            READ getEditField                     WRITE setEditField                     STORED false)
    Q_PROPERTY(QString forcedUnitSystem     READ getForcedUnitSystemViaString     WRITE setForcedUnitSystemViaString     STORED false)
@@ -69,7 +70,7 @@ public:
     *       Not sure how to signal the parent to redisplay
     */
    BtLineEdit(QWidget* parent = nullptr,
-              Measurement::PhysicalQuantity type = Measurement::None,
+              BtFieldType fieldType = NonPhysicalQuantity::String,
               Measurement::Unit const * units = nullptr,
               QString const & maximalDisplayString = "100.000 srm");
 
@@ -101,9 +102,6 @@ private:
    void calculateDisplaySize(QString const & maximalDisplayString);
    void setDisplaySize(bool recalculate = false);
    int desiredWidthInPixels;
-
-protected:
-
 };
 
 //

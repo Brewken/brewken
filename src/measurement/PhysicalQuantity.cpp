@@ -28,7 +28,7 @@ namespace {
       {"Temperature"   , Measurement::PhysicalQuantity::Temperature   },
       {"Color"         , Measurement::PhysicalQuantity::Color         },
       {"Density"       , Measurement::PhysicalQuantity::Density       },
-      {"String"        , Measurement::PhysicalQuantity::String        },
+//      {"String"        , Measurement::PhysicalQuantity::String        },
       {"Mixed"         , Measurement::PhysicalQuantity::Mixed         },
       {"DiastaticPower", Measurement::PhysicalQuantity::DiastaticPower},
       {"None"          , Measurement::PhysicalQuantity::None          }

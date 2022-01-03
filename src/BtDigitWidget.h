@@ -25,10 +25,11 @@
 #include <QString>
 #include <QWidget>
 
+#include "BtFieldType.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
-#include "widgets/NumberWithUnits.h"
+#include "UiAmountWithUnits.h"
 
 /*!
  * \class BtDigitWidget
@@ -41,11 +42,11 @@
  *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
  *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
  *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
- *        put Q_PROPERTY declarations for NumberWithUnits attributes here rather than in NumberWithUnits itself.
+ *        put Q_PROPERTY declarations for UiAmountWithUnits attributes here rather than in UiAmountWithUnits itself.
  */
-class BtDigitWidget : public QLabel, public NumberWithUnits {
+class BtDigitWidget : public QLabel, public UiAmountWithUnits {
    Q_OBJECT
-   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
+///   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
    Q_PROPERTY(QString configSection        READ getConfigSection                 WRITE setConfigSection                 STORED false)
    Q_PROPERTY(QString editField            READ getEditField                     WRITE setEditField                     STORED false)
    Q_PROPERTY(QString forcedUnitSystem     READ getForcedUnitSystemViaString     WRITE setForcedUnitSystemViaString     STORED false)
@@ -54,8 +55,8 @@ class BtDigitWidget : public QLabel, public NumberWithUnits {
 public:
    enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
 
-   BtDigitWidget(QWidget * parent = nullptr,
-                 Measurement::PhysicalQuantity physicalQuantity = Measurement::None,
+   BtDigitWidget(QWidget * parent,
+                 BtFieldType fieldType,
                  Measurement::Unit const * units = nullptr);
    virtual ~BtDigitWidget();
 

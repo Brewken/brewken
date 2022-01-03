@@ -32,9 +32,9 @@
 
 
 BtLabel::BtLabel(QWidget *parent,
-                 LabelType lType) :
+                 BtFieldType fieldType) :
    QLabel{parent},
-   whatAmI{lType},
+   fieldType{fieldType},
    btParent{parent},
    contextMenu{nullptr} {
    connect(this, &QWidget::customContextMenuRequested, this, &BtLabel::popContextMenu);
@@ -124,68 +124,30 @@ void BtLabel::initializeMenu() {
       this->contextMenu = nullptr;
    }
 
-   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName, this->configSection);
-   Measurement::UnitSystem::RelativeScale relativeScale = Measurement::getRelativeScaleForField(this->propertyName,
-                                                                                                this->configSection);
+   Measurement::UnitSystem const * forcedUnitSystem =
+      Measurement::getUnitSystemForField(this->propertyName, this->configSection);
+   Measurement::UnitSystem::RelativeScale forcedRelativeScale =
+      Measurement::getRelativeScaleForField(this->propertyName, this->configSection);
    qDebug() <<
-      Q_FUNC_INFO << "unitSystem=" << (nullptr == unitSystem ? "NULL" : unitSystem->uniqueName) << ", relativeScale=" <<
-      relativeScale;
-   if (nullptr == unitSystem) {
-      Measurement::PhysicalQuantity physicalQuantity = Measurement::PhysicalQuantity::None;
-      switch (whatAmI) {
-         case COLOR:
-            physicalQuantity = Measurement::PhysicalQuantity::Color;
-            break;
-         case DENSITY:
-            physicalQuantity = Measurement::PhysicalQuantity::Density;
-            break;
-         case MASS:
-            physicalQuantity = Measurement::PhysicalQuantity::Mass;
-            break;
-         case TEMPERATURE:
-            physicalQuantity = Measurement::PhysicalQuantity::Temperature;
-            break;
-         case VOLUME:
-            physicalQuantity = Measurement::PhysicalQuantity::Volume;
-            break;
-         case TIME:
-            physicalQuantity = Measurement::PhysicalQuantity::Time;
-            break;
-         case DIASTATIC_POWER:
-            physicalQuantity = Measurement::PhysicalQuantity::DiastaticPower;
-            break;
-         case MIXED:
-            physicalQuantity = Measurement::PhysicalQuantity::Mixed;
-            break;
-         default:
-            // Nothing to set up if we're of type NONE
-            break;
-      }
-      if (Measurement::PhysicalQuantity::None == physicalQuantity) {
-         return;
-      }
-      unitSystem = &Measurement::getDisplayUnitSystem(physicalQuantity);
-      qDebug() << Q_FUNC_INFO << "unitSystem=" << unitSystem->uniqueName;
+      Q_FUNC_INFO << "forcedUnitSystem=" << (nullptr == forcedUnitSystem ? "NULL" : forcedUnitSystem->uniqueName) <<
+      ", forcedRelativeScale=" << forcedRelativeScale;
+
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
+       Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+      return;
    }
-   switch (whatAmI) {
-      case COLOR:
-      case DENSITY:
-      case MASS:
-      case TEMPERATURE:
-      case VOLUME:
-      case TIME:
-      case DIASTATIC_POWER:
-         this->contextMenu = new UnitAndScalePopUpMenu(this->btParent, *unitSystem, relativeScale);
-         break;
 
-      case MIXED:
-         // This looks weird, but it works.
-         this->contextMenu = new UnitAndScalePopUpMenu(this->btParent, *unitSystem, relativeScale, false); // no scale menu
-         break;
+   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
 
-      default:
-         // Nothing to set up if we're of type NONE
-         break;
+   if (Measurement::PhysicalQuantity::Mixed == physicalQuantity) {
+      // .:TBD:. CHECK THIS STILL WORKS WITH NEW SYSTEM
+      // This looks weird, but it works.
+      this->contextMenu = new UnitAndScalePopUpMenu(this->btParent, physicalQuantity, forcedUnitSystem, forcedRelativeScale/*, false*/); // no scale menu
+   } else {
+      this->contextMenu = new UnitAndScalePopUpMenu(this->btParent,
+                                                      physicalQuantity,
+                                                      forcedUnitSystem,
+                                                      forcedRelativeScale);
    }
    return;
 }
@@ -194,7 +156,7 @@ void BtLabel::popContextMenu(const QPoint& point) {
    // For the moment, at least, we do not allow people to choose date formats per-field.  (Although you might want to
    // mix and match metric and imperial systems in certain circumstances, it's less clear that there's a benefit to
    // mixing and matching date formats.)
-   if (this->whatAmI == BtLabel::DATE) {
+   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType)) {
       return;
    }
 
@@ -244,7 +206,8 @@ void BtLabel::popContextMenu(const QPoint& point) {
 
    // Hmm. For the color fields, I want to include the ecb or srm in the label
    // text here.
-   if (whatAmI == COLOR) {
+   if (std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) &&
+       Measurement::PhysicalQuantity::Color == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
       Measurement::UnitSystem const * const disp = Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString());
       setText( tr("Color (%1)").arg(disp->unit()->name));
    }
@@ -256,12 +219,12 @@ void BtLabel::popContextMenu(const QPoint& point) {
    return;
 }
 
-BtColorLabel::BtColorLabel(QWidget *parent) :                   BtLabel(parent, COLOR)           { return; }
-BtDateLabel::BtDateLabel(QWidget *parent) :                     BtLabel(parent, DATE)            { return; }
-BtDensityLabel::BtDensityLabel(QWidget *parent) :               BtLabel(parent, DENSITY)         { return; }
-BtMassLabel::BtMassLabel(QWidget *parent) :                     BtLabel(parent, MASS)            { return; }
-BtMixedLabel::BtMixedLabel(QWidget *parent) :                   BtLabel(parent, MIXED)           { return; }
-BtTemperatureLabel::BtTemperatureLabel(QWidget *parent) :       BtLabel(parent, TEMPERATURE)     { return; }
-BtTimeLabel::BtTimeLabel(QWidget *parent) :                     BtLabel(parent, TIME)            { return; }
-BtVolumeLabel::BtVolumeLabel(QWidget *parent) :                 BtLabel(parent, VOLUME)          { return; }
-BtDiastaticPowerLabel::BtDiastaticPowerLabel(QWidget *parent) : BtLabel(parent, DIASTATIC_POWER) { return; }
+BtColorLabel::BtColorLabel(QWidget *parent) :                   BtLabel(parent, Measurement::PhysicalQuantity::Color)          { return; }
+BtDateLabel::BtDateLabel(QWidget *parent) :                     BtLabel(parent, NonPhysicalQuantity::Date)                     { return; }
+BtDensityLabel::BtDensityLabel(QWidget *parent) :               BtLabel(parent, Measurement::PhysicalQuantity::Density)        { return; }
+BtMassLabel::BtMassLabel(QWidget *parent) :                     BtLabel(parent, Measurement::PhysicalQuantity::Mass)           { return; }
+BtMixedLabel::BtMixedLabel(QWidget *parent) :                   BtLabel(parent, Measurement::PhysicalQuantity::Mixed)          { return; }
+BtTemperatureLabel::BtTemperatureLabel(QWidget *parent) :       BtLabel(parent, Measurement::PhysicalQuantity::Temperature)    { return; }
+BtTimeLabel::BtTimeLabel(QWidget *parent) :                     BtLabel(parent, Measurement::PhysicalQuantity::Time)           { return; }
+BtVolumeLabel::BtVolumeLabel(QWidget *parent) :                 BtLabel(parent, Measurement::PhysicalQuantity::Volume)         { return; }
+BtDiastaticPowerLabel::BtDiastaticPowerLabel(QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::DiastaticPower) { return; }

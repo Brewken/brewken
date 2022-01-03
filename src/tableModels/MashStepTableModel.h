@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -71,9 +71,6 @@ public:
    //! \returns true if mashStep is successfully found and removed.
    bool remove(MashStep * MashStep);
 
-protected:
-   virtual QString generateName(int column) const;
-
 public slots:
    //! \brief Add a MashStep to the model.
    void addMashStep(int mashStep);
@@ -85,12 +82,8 @@ public slots:
    void mashChanged();
    void mashStepChanged(QMetaProperty,QVariant);
 
-   void contextMenu(const QPoint &point);
-
-
 private:
    Mash* mashObs;
-   QTableView* parentTableWidget;
    QList<MashStep*> steps;
 
 //   void reorderMashSteps();
@@ -100,11 +93,9 @@ private:
 /*!
  * \class MashStepItemDelegate
  *
- *
  * An item delegate for mash step tables.
  */
-class MashStepItemDelegate : public QItemDelegate
-{
+class MashStepItemDelegate : public QItemDelegate {
    Q_OBJECT
 
 public:

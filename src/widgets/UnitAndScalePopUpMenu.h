@@ -27,23 +27,26 @@ class UnitAndScalePopUpMenu : public QMenu {
 Q_OBJECT
 public:
    /**
-    * \brief For a given \c UnitSystem, creates a \c QMenu (possibly with a sub-menu) for changing the \c UnitSystem
-    *        and/or \c RelativeScale used to display a particular field.  (Note that the \c UnitAndScalePopUpMenu itself
-    *        has no knowledge of the field; it is for the creator to manage the effects of menu choices on how the field
-    *        is displayed.)
+    * \brief A \c QMenu (possibly with a sub-menu) for specifying/changing a "forced" \c UnitSystem and/or
+    *        \c RelativeScale used to display a particular UI field.  This allows it to be different from the global
+    *        default (eg so the user can specify a particular weight field is shown in metric even though they have set
+    *        US Customary as the default for weight fields).
+    *
+    *        Note that the \c UnitAndScalePopUpMenu itself has no knowledge of the field; it is for the creator to
+    *        manage the effects of menu choices on how the field is displayed.
     *
     * \param parent
-    * \param unitSystem the current \c UnitSystem being used to display the field
-    * \param relativeScale if set to something other than \c UnitSystem::noScale, this is the forced scale for
-    *                      displaying the field
-    * \param generateScale
+    * \param physicalQuantity the physical quantity of the value in the UI field
+    * \param forcedUnitSystem the current \c UnitSystem specified for the UI field, or \c nullptr for the global default
+    * \param forcedRelativeScale if set to something other than \c UnitSystem::noScale, this is the forced scale for
+    *                            displaying the field
     *
     * \return New \c QMenu owned by \c parent
     */
    UnitAndScalePopUpMenu(QWidget * parent,
-                         Measurement::UnitSystem const & unitSystem,
-                         Measurement::UnitSystem::RelativeScale const relativeScale = Measurement::UnitSystem::noScale,
-                         bool const generateScale = true);
+                         Measurement::PhysicalQuantity physicalQuantity,
+                         Measurement::UnitSystem const * forcedUnitSystem = nullptr,
+                         Measurement::UnitSystem::RelativeScale const forcedRelativeScale = Measurement::UnitSystem::noScale);
    virtual ~UnitAndScalePopUpMenu();
 };
 

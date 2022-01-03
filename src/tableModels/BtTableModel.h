@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/BtTableModel.h is part of Brewken, and is copyright the following authors 2021:
+ * tableModels/BtTableModel.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -22,6 +22,8 @@
 
 #include "measurement/UnitSystem.h"
 
+class QPoint;
+
 /*!
  * \class BtTableModel
  *
@@ -30,7 +32,15 @@
 class BtTableModel : public QAbstractTableModel {
    Q_OBJECT
 public:
-   BtTableModel(QTableView * parent = nullptr, bool editable = true);
+   struct ColumnInfo {
+      //headerName
+      Measurement::PhysicalQuantity physicalQuantity;
+      QString attribute;
+   };
+
+   BtTableModel(QTableView * parent,
+                bool editable,
+                std::initializer_list<std::pair<int const, ColumnInfo> > columnIdToInfo);
    virtual ~BtTableModel();
 
    // Stuff for setting display units and scales -- per cell first, then by
@@ -40,11 +50,21 @@ public:
    void setDisplayUnitSystem(int column, Measurement::UnitSystem const * displayUnitSystem);
    void setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale);
 
-protected:
-   bool editable;
-   virtual QString generateName(int column) const = 0;
+private:
+   QString                       columnGetAttribute       (int column) const;
+   Measurement::PhysicalQuantity columnGetPhysicalQuantity(int column) const;
    void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
 
+public slots:
+   //! \brief pops the context menu for changing units and scales
+   void contextMenu(QPoint const & point);
+
+protected:
+   QTableView* parentTableWidget;
+   bool editable;
+
+private:
+   QMap<int, ColumnInfo> columnIdToInfo;
 };
 
 #endif

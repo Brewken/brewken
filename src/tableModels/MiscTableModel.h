@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -90,16 +90,11 @@ public:
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
    bool remove(Misc * misc);
 
-protected:
-   virtual QString generateName(int column) const;
-
 public slots:
    //! \brief Add a misc to the model.
    void addMisc(int miscId);
    //! \brief Remove a misc from the model.
    void removeMisc(int miscId, std::shared_ptr<QObject> object);
-
-   void contextMenu(const QPoint &point);
 
 private slots:
    //! \brief Catch changes to Recipe, Database, and Misc.
@@ -107,11 +102,9 @@ private slots:
    void changedInventory(int invKey, BtStringConst const & propertyName);
 
 private:
-   bool editable;
    bool _inventoryEditable;
    QList<Misc*> miscObs;
    Recipe* recObs;
-   QTableView* parentTableWidget;
 };
 
 /*!

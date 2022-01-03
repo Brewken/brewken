@@ -29,7 +29,7 @@ class BtStringConst;
 class NamedEntity;
 
 namespace Measurement {
-   enum RangeType {
+   enum class RangeType {
       DENSITY,
       COLOR
    };

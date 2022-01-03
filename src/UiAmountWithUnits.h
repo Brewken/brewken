@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/NumberWithUnits.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * UiAmountWithUnits.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -19,12 +19,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef WIDGETS_NUMBERWITHUNITS_H
-#define WIDGETS_NUMBERWITHUNITS_H
+#ifndef UIAMOUNTWITHUNITS_H
+#define UIAMOUNTWITHUNITS_H
 #pragma once
 
 #include <QString>
 
+#include "BtFieldType.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
@@ -32,20 +33,20 @@
 class QWidget;
 
 /**
-    * .:TODO:. Rename this UiAmountWithUnits and move it out of widgets folder
-    *
- * \class NumberWithUnits Not strictly a widget, but a base class, suitable for combining with \c QLabel, \c QLineEdit,
- *                        etc, that handles all the unit transformation such a widget would need to do.
+ * \class UiAmountWithUnits A base class, suitable for combining with \c QLabel, \c QLineEdit, etc, that handles all the
+ *                          unit transformation such a widget would need to do.
  */
-class NumberWithUnits {
+class UiAmountWithUnits {
 public:
    /**
-    *
+    * \param
+    * \param
+    * \param units
     */
-   NumberWithUnits(QWidget * parent = nullptr,
-                   Measurement::PhysicalQuantity physicalQuantity = Measurement::PhysicalQuantity::None,
-                   Measurement::Unit const * units = nullptr);
-   virtual ~NumberWithUnits();
+   UiAmountWithUnits(QWidget * parent,
+                     BtFieldType fieldType,
+                     Measurement::Unit const * units = nullptr);
+   virtual ~UiAmountWithUnits();
 
    /**
     * \brief A class inheriting from this class is also expected to also inherit from a \c QWidget such as \c QLabel or
@@ -100,12 +101,12 @@ public:
    void    setConfigSection(QString configSection);
    QString getConfigSection();
 
-   void setType(int type);
-   int type() const;
+///   void setType(int type);
+///   int type() const;
 
    // Too many places still use getDouble, which just hoses me down. We're
    // gonna fix this.
-   double  toDouble(bool* ok) const;
+   double toDouble(bool * ok) const;
 
    /**
     * \brief Returns the contents of the field converted, if necessary, to SI units
@@ -138,7 +139,7 @@ protected:
 private:
    QWidget * parent;
 protected:
-   Measurement::PhysicalQuantity physicalQuantity;
+   BtFieldType fieldType;
    Measurement::Unit const * units;
    Measurement::UnitSystem const * forcedUnitSystem;
    Measurement::UnitSystem::RelativeScale forcedRelativeScale;

@@ -86,16 +86,14 @@ namespace Measurement {
       Temperature    = 0x400000,
       Color          = 0x500000,
       Density        = 0x600000, // Sometimes referred to in comments as "gravity" as a shorthand for "specific gravity"
-      String         = 0x700000, // Not sure what this is! .:TODO:. CAN WE GET RID OF THIS
-      Mixed          = 0x800000, // Not sure what this is!
+//      String         = 0x700000, // Not sure what this is! .:TODO:. CAN WE GET RID OF THIS
+      Mixed          = 0x800000, // This is used for quantities where we allow measurement as either Mass or Volume
       DiastaticPower = 0x900000,
-      None           = 0x000000
+      None           = 0x000000 // .:TBD:. Would be good to see if we can remove this!
    };
 
    /**
     * \brief Return the name of a \c PhysicalQuantity suitable either for display to the user or logging
-    *
-    * .:TODO:. We need to implement this!
     */
    QString getDisplayName(PhysicalQuantity physicalQuantity);
 }

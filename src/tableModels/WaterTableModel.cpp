@@ -41,9 +41,19 @@
 #include "WaterTableWidget.h"
 
 WaterTableModel::WaterTableModel(WaterTableWidget* parent) :
-   BtTableModel{parent, false},
-   recObs{nullptr},
-   parentTableWidget{parent} {
+   BtTableModel{
+      parent,
+      false,
+      {{WATERNAMECOL,        {Measurement::PhysicalQuantity::None,   ""      }},
+       {WATERAMOUNTCOL,      {Measurement::PhysicalQuantity::Volume, "amount"}},
+       {WATERCALCIUMCOL,     {Measurement::PhysicalQuantity::None,   ""      }},
+       {WATERBICARBONATECOL, {Measurement::PhysicalQuantity::None,   ""      }},
+       {WATERSULFATECOL,     {Measurement::PhysicalQuantity::None,   ""      }},
+       {WATERCHLORIDECOL,    {Measurement::PhysicalQuantity::None,   ""      }},
+       {WATERSODIUMCOL,      {Measurement::PhysicalQuantity::None,   ""      }},
+       {WATERMAGNESIUMCOL,   {Measurement::PhysicalQuantity::None,   ""      }}}
+   },
+   recObs{nullptr} {
    return;
 }
 
@@ -327,19 +337,6 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
    }
 
    return retval;
-}
-
-QString WaterTableModel::generateName(int column) const {
-   QString attribute;
-
-   switch (column) {
-      case WATERAMOUNTCOL:
-         attribute = "amount";
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
 }
 
 //==========================CLASS HopItemDelegate===============================

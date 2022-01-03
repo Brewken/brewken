@@ -44,12 +44,20 @@
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "widgets/UnitAndScalePopUpMenu.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable) :
-   BtTableModel{parent, editable},
+   BtTableModel{
+      parent,
+      editable,
+      {{YEASTNAMECOL,      {Measurement::PhysicalQuantity::None,  ""      }},
+       {YEASTLABCOL,       {Measurement::PhysicalQuantity::None,  ""      }},
+       {YEASTPRODIDCOL,    {Measurement::PhysicalQuantity::None,  ""      }},
+       {YEASTTYPECOL,      {Measurement::PhysicalQuantity::None,  ""      }},
+       {YEASTFORMCOL,      {Measurement::PhysicalQuantity::None,  ""      }},
+       {YEASTAMOUNTCOL,    {Measurement::PhysicalQuantity::Mixed, "amount"}},
+       {YEASTINVENTORYCOL, {Measurement::PhysicalQuantity::None,  ""      }}}
+   },
    _inventoryEditable(false),
-   parentTableWidget(parent),
    recObs(nullptr) {
 
    yeastObs.clear();
@@ -439,42 +447,6 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
 
 Yeast * YeastTableModel::getYeast(unsigned int i) {
    return yeastObs[static_cast<int>(i)];
-}
-
-QString YeastTableModel::generateName(int column) const {
-   QString attribute;
-
-   switch(column)
-   {
-      case YEASTAMOUNTCOL:
-         attribute = "amount";
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
-}
-
-void YeastTableModel::contextMenu(QPoint const & point) {
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-   int selected = hView->logicalIndexAt(point);
-
-   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
-   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
-
-   QMenu* menu;
-
-   switch (selected) {
-      case YEASTAMOUNTCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale, false);
-         break;
-      default:
-         return;
-   }
-
-   this->doContextMenu(point, hView, menu, selected);
-   return;
 }
 
 

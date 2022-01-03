@@ -47,14 +47,22 @@
 #include "model/Inventory.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
-#include "widgets/UnitAndScalePopUpMenu.h"
 
 HopTableModel::HopTableModel(QTableView * parent, bool editable) :
-   BtTableModel{parent, editable},
+   BtTableModel{
+      parent,
+      editable,
+      {{HOPNAMECOL,      {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPALPHACOL,     {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPAMOUNTCOL,    {Measurement::PhysicalQuantity::Mass,  *PropertyNames::Hop::amount_kg                     }},
+       {HOPINVENTORYCOL, {Measurement::PhysicalQuantity::Mass,  *PropertyNames::NamedEntityWithInventory::inventory}},
+       {HOPFORMCOL,      {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPUSECOL,       {Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPTIMECOL,      {Measurement::PhysicalQuantity::Time,  *PropertyNames::Hop::time_min                      }}}
+   },
    colFlags(HOPNUMCOLS),
    _inventoryEditable(false),
    recObs(nullptr),
-   parentTableWidget(parent),
    showIBUs(false) {
    this->hopObs.clear();
    this->setObjectName("hopTable");
@@ -117,24 +125,6 @@ void HopTableModel::observeDatabase(bool val) {
    }
 }
 
-/*void HopTableModel::addHop(Hop * hop) {
-   if (hop == nullptr || hopObs.contains(hop)) {
-      return;
-   }
-
-   // If we are observing the database, ensure that the item is undeleted and
-   // fit to display.
-   if (recObs == nullptr && (hop->deleted() || !hop->display())) {
-      return;
-   }
-
-   int size = hopObs.size();
-   beginInsertRows(QModelIndex(), size, size);
-   hopObs.append(hop);
-   connect(hop, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
-   //reset(); // Tell everybody that the table has changed.
-   endInsertRows();
-}*/
 void HopTableModel::addHop(int hopId) {
    auto hopAdded = ObjectStoreTyped<Hop>::getInstance().getById(hopId);
    if (!hopAdded) {
@@ -495,66 +485,6 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
    }
 
    return retVal;
-}
-
-QString HopTableModel::generateName(int column) const {
-   QString attribute;
-
-   switch (column) {
-      case HOPINVENTORYCOL:
-         attribute = *PropertyNames::NamedEntityWithInventory::inventory;
-         break;
-      case HOPAMOUNTCOL:
-         attribute = *PropertyNames::Hop::amount_kg;
-         break;
-      case HOPTIMECOL:
-         attribute = *PropertyNames::Hop::time_min;
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
-}
-
-void HopTableModel::contextMenu(QPoint const & point) {
-   QObject * calledBy = sender();
-   QHeaderView * hView = qobject_cast<QHeaderView *>(calledBy);
-
-   int selected = hView->logicalIndexAt(point);
-
-   // Since we need to call generateVolumeMenu() two different ways, we need
-   // to figure out the currentUnit and Scale here
-   auto currentUnitSystem  = this->displayUnitSystem(selected);
-   auto currentScale       = this->displayScale(selected);
-
-   QMenu * menu;
-
-   switch (selected) {
-      case HOPINVENTORYCOL:
-      case HOPAMOUNTCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      case HOPTIMECOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      default:
-         return;
-   }
-
-   QAction * invoked = menu->exec(hView->mapToGlobal(point));
-   if (invoked == nullptr) {
-      return;
-   }
-
-   QWidget* pMenu = invoked->parentWidget();
-   if (pMenu == menu) {
-      this->setDisplayUnitSystem(selected,
-                                 Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString()));
-   } else {
-      this->setDisplayScale(selected, static_cast<Measurement::UnitSystem::RelativeScale>(invoked->data().toInt()));
-   }
-   return;
-
 }
 
 // Returns null on failure.

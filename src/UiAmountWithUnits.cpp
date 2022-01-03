@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/NumberWithUnits.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * UiAmountWithUnits.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "widgets/NumberWithUnits.h"
+#include "UiAmountWithUnits.h"
 
 #include <QDebug>
 #include <QVariant>
@@ -29,29 +29,29 @@
 #include "Localization.h"
 #include "measurement/Measurement.h"
 
-NumberWithUnits::NumberWithUnits(QWidget * parent,
-                                 Measurement::PhysicalQuantity physicalQuantity,
-                                 Measurement::Unit const * units) :
+UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
+                                     BtFieldType fieldType,
+                                     Measurement::Unit const * units) :
    parent{parent},
-   physicalQuantity{physicalQuantity},
+   fieldType{fieldType},
    units{units},
    forcedUnitSystem{nullptr},
    forcedRelativeScale(Measurement::UnitSystem::noScale) {
    return;
 }
 
-NumberWithUnits::~NumberWithUnits() = default;
+UiAmountWithUnits::~UiAmountWithUnits() = default;
 
-Measurement::UnitSystem const * NumberWithUnits::getForcedUnitSystem() const {
+Measurement::UnitSystem const * UiAmountWithUnits::getForcedUnitSystem() const {
    return this->forcedUnitSystem;
 }
 
-void NumberWithUnits::setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem) {
+void UiAmountWithUnits::setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem) {
    this->forcedUnitSystem = forcedUnitSystem;
    return;
 }
 
-void NumberWithUnits::setForcedUnitSystemViaString(QString forcedUnitSystemAsString) {
+void UiAmountWithUnits::setForcedUnitSystemViaString(QString forcedUnitSystemAsString) {
    this->forcedUnitSystem = Measurement::UnitSystem::getInstanceByUniqueName(forcedUnitSystemAsString);
    if (nullptr == this->forcedUnitSystem && forcedUnitSystemAsString!= "") {
       // It's a coding error if someone sent us an invalid name for a UnitSystem.  (Note that the variable names of the
@@ -63,16 +63,16 @@ void NumberWithUnits::setForcedUnitSystemViaString(QString forcedUnitSystemAsStr
    return;
 }
 
-QString NumberWithUnits::getForcedUnitSystemViaString() const {
+QString UiAmountWithUnits::getForcedUnitSystemViaString() const {
    return (nullptr == this->forcedUnitSystem) ? "" : this->forcedUnitSystem->uniqueName;
 }
 
-void NumberWithUnits::setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale) {
+void UiAmountWithUnits::setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale) {
    this->forcedRelativeScale = forcedRelativeScale;
    return;
 }
 
-Measurement::UnitSystem::RelativeScale NumberWithUnits::getForcedRelativeScale() const {
+Measurement::UnitSystem::RelativeScale UiAmountWithUnits::getForcedRelativeScale() const {
    return this->forcedRelativeScale;
 }
 
@@ -80,7 +80,7 @@ Measurement::UnitSystem::RelativeScale NumberWithUnits::getForcedRelativeScale()
    * \brief QString version of \c setForcedRelativeScale to work with code generated from .ui files (via Q_PROPERTY
    *        declared in subclass of this class)
    */
-void NumberWithUnits::setForcedRelativeScaleViaString(QString forcedRelativeScaleAsString) {
+void UiAmountWithUnits::setForcedRelativeScaleViaString(QString forcedRelativeScaleAsString) {
    this->forcedRelativeScale = Measurement::UnitSystem::relativeScaleFromString(forcedRelativeScaleAsString);
    return;
 }
@@ -89,53 +89,53 @@ void NumberWithUnits::setForcedRelativeScaleViaString(QString forcedRelativeScal
    * \brief QString version of \c getForcedRelativeScale to work with code generated from .ui files (via Q_PROPERTY
    *        declared in subclass of this class)
    */
-QString NumberWithUnits::getForcedRelativeScaleViaString() const {
+QString UiAmountWithUnits::getForcedRelativeScaleViaString() const {
    return Measurement::UnitSystem::relativeScaleToString(this->forcedRelativeScale);
 }
 
-void NumberWithUnits::setEditField(QString editField) {
+void UiAmountWithUnits::setEditField(QString editField) {
    this->editField = editField;
    return;
 }
 
-QString NumberWithUnits::getEditField() const {
+QString UiAmountWithUnits::getEditField() const {
    return this->editField;
 }
 
-// The cascade looks a little odd, but it is intentional.
-void NumberWithUnits::setConfigSection(QString configSection) {
+void UiAmountWithUnits::setConfigSection(QString configSection) {
+   // The cascade looks a little odd, but it is intentional.
    this->configSection = configSection;
-
    if (this->configSection.isEmpty()) {
       this->configSection = this->parent->property("configSection").toString();
    }
-
    if (this->configSection.isEmpty()) {
       this->configSection = this->parent->objectName();
    }
    return;
 }
 
-QString NumberWithUnits::getConfigSection() {
+QString UiAmountWithUnits::getConfigSection() {
    if (this->configSection.isEmpty()) {
+      // Setting the config section to blank will actually attempt to populate it with default values -- see
+      // UiAmountWithUnits::setConfigSection()
       this->setConfigSection("");
    }
 
    return this->configSection;
 }
 
-void NumberWithUnits::setType(int type) {
+/*void UiAmountWithUnits::setType(int type) {
    // .:TBD:. Why do we need to pass in int and then cast?  Why not pass PhysicalQuantity?
    this->physicalQuantity = static_cast<Measurement::PhysicalQuantity>(type);
    return;
-}
+}*/
 
-int NumberWithUnits::type() const {
+/*int UiAmountWithUnits::type() const {
    // .:TBD:. Why can't we just return PhysicalQuantity?
    return static_cast<int>(this->physicalQuantity);
-}
+}*/
 
-double NumberWithUnits::toDouble(bool * ok) const {
+double UiAmountWithUnits::toDouble(bool * ok) const {
    if (ok) {
       *ok = true;
    }
@@ -161,7 +161,7 @@ double NumberWithUnits::toDouble(bool * ok) const {
    return Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
 }
 
-double NumberWithUnits::toSI() {
+double UiAmountWithUnits::toSI() {
    bool ok = false;
    double amt = this->toDouble(&ok);
    if (!ok) {
@@ -173,7 +173,7 @@ double NumberWithUnits::toSI() {
 }
 
 
-QString NumberWithUnits::displayAmount( double amount, int precision) {
+QString UiAmountWithUnits::displayAmount( double amount, int precision) {
    Measurement::UnitSystem const * displayUnitSystem;
    if (this->forcedUnitSystem != nullptr) {
       displayUnitSystem = this->forcedUnitSystem;
@@ -190,7 +190,7 @@ QString NumberWithUnits::displayAmount( double amount, int precision) {
    return Measurement::displayAmount(amount, this->units, precision, displayUnitSystem, relativeScale);
 }
 
-void NumberWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUnitSystem,
+void UiAmountWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUnitSystem,
                                          Measurement::UnitSystem::RelativeScale oldScale) {
    // This is where it gets hard
    double val = -1.0;
@@ -200,40 +200,45 @@ void NumberWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUnit
       return;
    }
 
-   // The idea here is we need to first translate the field into a known
-   // amount (aka to SI) and then into the unit we want.
-   switch(this->physicalQuantity) {
-      case Measurement::PhysicalQuantity::Mass:
-      case Measurement::PhysicalQuantity::Volume:
-      case Measurement::PhysicalQuantity::Temperature:
-      case Measurement::PhysicalQuantity::Time:
-      case Measurement::PhysicalQuantity::Density:
-         val = this->convertToSI(oldUnitSystem, oldScale);
-         amt = this->displayAmount(val, 3);
-         break;
-      case Measurement::PhysicalQuantity::Color:
-         val = this->convertToSI(oldUnitSystem, oldScale);
-         amt = this->displayAmount(val, 0);
-         break;
-      case Measurement::PhysicalQuantity::String:
-         amt = this->getWidgetText();
-         break;
-      case Measurement::PhysicalQuantity::DiastaticPower:
-         val = this->convertToSI(oldUnitSystem, oldScale);
-         amt = this->displayAmount(val, 3);
-         break;
-      case Measurement::PhysicalQuantity::None:
-      default:
-         {
-            bool ok = false;
-            val = Localization::toDouble(this->getWidgetText(), &ok);
-            if (!ok) {
-               qWarning() <<
-                  Q_FUNC_INFO << " failed to convert" << this->getWidgetText() << "(" << this->configSection << ":" <<
-                  this->editField << ") to double";
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
+       Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+      amt = this->getWidgetText();
+   } else {
+
+      Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
+
+      // The idea here is we need to first translate the field into a known
+      // amount (aka to SI) and then into the unit we want.
+      switch(physicalQuantity) {
+         case Measurement::PhysicalQuantity::Mass:
+         case Measurement::PhysicalQuantity::Volume:
+         case Measurement::PhysicalQuantity::Temperature:
+         case Measurement::PhysicalQuantity::Time:
+         case Measurement::PhysicalQuantity::Density:
+            val = this->convertToSI(oldUnitSystem, oldScale);
+            amt = this->displayAmount(val, 3);
+            break;
+         case Measurement::PhysicalQuantity::Color:
+            val = this->convertToSI(oldUnitSystem, oldScale);
+            amt = this->displayAmount(val, 0);
+            break;
+         case Measurement::PhysicalQuantity::DiastaticPower:
+            val = this->convertToSI(oldUnitSystem, oldScale);
+            amt = this->displayAmount(val, 3);
+            break;
+         case Measurement::PhysicalQuantity::None:
+         default:
+            {
+               bool ok = false;
+               val = Localization::toDouble(this->getWidgetText(), &ok);
+               if (!ok) {
+                  qWarning() <<
+                     Q_FUNC_INFO << " failed to convert" << this->getWidgetText() << "(" << this->configSection << ":" <<
+                     this->editField << ") to double";
+               }
+               amt = displayAmount(val);
             }
-            amt = displayAmount(val);
-         }
+      }
    }
    qDebug() << Q_FUNC_INFO << "Interpreted" << this->getWidgetText() << "as" << amt;
    this->setWidgetText(amt);
@@ -270,7 +275,7 @@ void NumberWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUnit
    return;
 }
 
-double NumberWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSystem,
+double UiAmountWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSystem,
                                     Measurement::UnitSystem::RelativeScale oldScale) {
    qDebug() <<
       Q_FUNC_INFO << "Old Unit system:" << (nullptr == oldUnitSystem ? "NULL" : oldUnitSystem->uniqueName) <<
@@ -321,9 +326,9 @@ double NumberWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSyste
       return dspUnitSystem->qstringToSI(this->getWidgetText(), works, dspScale);
    }
 
-   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
+/*   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
       return 0.0;
-   }
+   }*/
 
 //      return Measurement::qStringToSI(this->text(), this->physicalQuantity, dspUnitSystem, dspScale)
 
@@ -333,8 +338,8 @@ double NumberWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSyste
    double amt = this->toDouble(&ok);
    if (!ok) {
       qWarning() <<
-         Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" << this->editField <<
-         ") to double";
+         Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" <<
+         this->editField << ") to double";
    }
 
    return amt;

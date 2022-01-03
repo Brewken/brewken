@@ -43,7 +43,6 @@
 #include "model/Salt.h"
 #include "PersistentSettings.h"
 #include "WaterDialog.h"
-#include "widgets/UnitAndScalePopUpMenu.h"
 
 static QStringList addToName = QStringList() << QObject::tr("Never")
                                              << QObject::tr("Mash")
@@ -63,9 +62,15 @@ static QStringList saltNames = QStringList() << QObject::tr("None")
                                              << QObject::tr("Acid malt");
 
 SaltTableModel::SaltTableModel(QTableView* parent) :
-   BtTableModel{parent, false},
-   m_rec{nullptr},
-   parentTableWidget{parent} {
+   BtTableModel{
+      parent,
+      false,
+      {{SALTNAMECOL,    {Measurement::PhysicalQuantity::None,  ""      }},
+       {SALTAMOUNTCOL,  {Measurement::PhysicalQuantity::Mixed, "amount"}},
+       {SALTADDTOCOL,   {Measurement::PhysicalQuantity::None,  ""      }},
+       {SALTPCTACIDCOL, {Measurement::PhysicalQuantity::None,  ""      }}}
+   },
+   m_rec{nullptr} {
    saltObs.clear();
    setObjectName("saltTable");
 
@@ -558,41 +563,6 @@ bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, 
    headerView->resizeSections(QHeaderView::ResizeToContents);
 
    return retval;
-}
-
-QString SaltTableModel::generateName(int column) const {
-   QString attribute;
-
-   switch(column)
-   {
-      case SALTAMOUNTCOL:
-         attribute = "amount";
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
-}
-
-void SaltTableModel::contextMenu(QPoint const & point) {
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-   int selected = hView->logicalIndexAt(point);
-
-   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
-   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
-
-   QMenu* menu;
-   switch (selected) {
-      case SALTAMOUNTCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      default:
-         return;
-   }
-
-   this->doContextMenu(point, hView, menu, selected);
-   return;
 }
 
 void SaltTableModel::saveAndClose() {

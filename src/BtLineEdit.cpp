@@ -41,11 +41,11 @@ namespace {
 }
 
 BtLineEdit::BtLineEdit(QWidget *parent,
-                       Measurement::PhysicalQuantity physicalQuantity,
+                       BtFieldType fieldType,
                        Measurement::Unit const * units,
                        QString const & maximalDisplayString) :
    QLineEdit(parent),
-   NumberWithUnits(parent, physicalQuantity, units) {
+   UiAmountWithUnits(parent, fieldType, units) {
    this->configSection = property("configSection").toString();
    connect(this, &QLineEdit::editingFinished, this, &BtLineEdit::onLineChanged);
 
@@ -103,8 +103,11 @@ void BtLineEdit::setText(double amount, int precision) {
 void BtLineEdit::setText(NamedEntity * element, int precision) {
    QString display;
 
-   if (physicalQuantity == Measurement::PhysicalQuantity::String ) {
+   bool force = false;
+   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
+       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
       display = element->property(editField.toLatin1().constData()).toString();
+      force = true;
    } else if ( element->property(editField.toLatin1().constData()).canConvert(QVariant::Double) ) {
       bool ok = false;
       // Get the value from the element, and put it in a QVariant
@@ -124,14 +127,15 @@ void BtLineEdit::setText(NamedEntity * element, int precision) {
    }
 
    this->setWidgetText(display);
-   this->setDisplaySize(physicalQuantity == Measurement::PhysicalQuantity::String);
+   this->setDisplaySize(force);
    return;
 }
 
 void BtLineEdit::setText(QString amount, int precision) {
    bool force = false;
 
-   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
+   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
+       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
       this->setWidgetText(amount);
       force = true;
    } else {
@@ -284,13 +288,13 @@ BtColorEdit::BtColorEdit(QWidget *parent) : BtLineEdit(parent, Measurement::Phys
    return;
 }
 
-BtStringEdit::BtStringEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::String, nullptr) {
+BtStringEdit::BtStringEdit(QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String, nullptr) {
    return;
 }
 
 BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mixed) {
    // This is probably pure evil I will later regret
-   this->physicalQuantity = Measurement::PhysicalQuantity::Volume;
+   this->fieldType = Measurement::PhysicalQuantity::Volume;
    this->units = &Measurement::Units::liters;
    return;
 }
@@ -298,10 +302,10 @@ BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::Phys
 void BtMixedEdit::setIsWeight(bool state) {
    // But you have to admit, this is clever
    if (state) {
-      this->physicalQuantity = Measurement::PhysicalQuantity::Mass;
+      this->fieldType = Measurement::PhysicalQuantity::Mass;
       this->units = &Measurement::Units::kilograms;
    } else {
-      this->physicalQuantity = Measurement::PhysicalQuantity::Volume;
+      this->fieldType = Measurement::PhysicalQuantity::Volume;
       this->units = &Measurement::Units::liters;
    }
 

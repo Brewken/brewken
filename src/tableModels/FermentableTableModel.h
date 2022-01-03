@@ -1,5 +1,5 @@
    /*======================================================================================================================
- * tableModels/FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -87,8 +87,6 @@ public:
    //! \brief Reimplemented from QAbstractTableModel.
    virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-   QTableView* parentTableWidget;
-
    //! \returns true if "ferm" is successfully found and removed.
    bool remove(Fermentable * ferm);
 
@@ -97,8 +95,6 @@ public slots:
    void addFermentable(int fermId);
 
    void removeFermentable(int fermId, std::shared_ptr<QObject> object);
-   //! \brief pops the context menu for changing units and scales
-   void contextMenu(const QPoint &point);
 
 private slots:
    //! \brief Catch changes to Recipe, Database, and Fermentable.
@@ -109,8 +105,6 @@ private slots:
 private:
    //! \brief Recalculate the total amount of grains in the model.
    void updateTotalGrains();
-protected:
-   virtual QString generateName(int column) const;
 
 private:
    bool _inventoryEditable;

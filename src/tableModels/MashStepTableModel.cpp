@@ -40,13 +40,19 @@
 #include "model/MashStep.h"
 #include "PersistentSettings.h"
 #include "SimpleUndoableUpdate.h"
-#include "widgets/UnitAndScalePopUpMenu.h"
-
 
 MashStepTableModel::MashStepTableModel(QTableView* parent) :
-   BtTableModel{parent, false},
-   mashObs(nullptr),
-   parentTableWidget(parent) {
+   BtTableModel{
+      parent,
+      false,
+      {{MASHSTEPNAMECOL,       {Measurement::PhysicalQuantity::None,        ""                                    }},
+       {MASHSTEPTYPECOL,       {Measurement::PhysicalQuantity::None,        ""                                    }},
+       {MASHSTEPAMOUNTCOL,     {Measurement::PhysicalQuantity::Volume,      "amount"                              }}, // Not a real property name
+       {MASHSTEPTEMPCOL,       {Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::infuseTemp_c}},
+       {MASHSTEPTARGETTEMPCOL, {Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::stepTemp_c  }},
+       {MASHSTEPTIMECOL,       {Measurement::PhysicalQuantity::Time,        *PropertyNames::Misc::time            }}}
+   },
+   mashObs(nullptr) {
    setObjectName("mashStepTableModel");
 
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
@@ -436,133 +442,10 @@ void MashStepTableModel::moveStepDown(int i) {
    return;
 }
 
-/*
-Measurement::Unit::unitDisplay MashStepTableModel::displayUnit(int column) const {
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() ) {
-      return Measurement::Unit::noUnit;
-   }
-
-   return static_cast<Measurement::Unit::unitDisplay>(PersistentSettings::value(attribute, Measurement::Unit::noUnit, this->objectName(), PersistentSettings::UNIT).toInt());
-}
-
-Measurement::UnitSystem::RelativeScale MashStepTableModel::displayScale(int column) const
-{
-   QString attribute = generateName(column);
-
-   if ( attribute.isEmpty() )
-      return Measurement::UnitSystem::noScale;
-
-   return static_cast<Measurement::UnitSystem::RelativeScale>(PersistentSettings::value(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE).toInt());
-}
-*/
-
-///// We need to:
-/////   o clear the custom scale if set
-/////   o clear any custom unit from the rows
-/////      o which should have the side effect of clearing any scale
-///void MashStepTableModel::setDisplayUnit(int column, Measurement::Unit::unitDisplay displayUnit)
-///{
-///   // MashStep* row; // disabled per-cell magic
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute, displayUnit, this->objectName(), PersistentSettings::UNIT);
-///   PersistentSettings::insert(attribute, Measurement::UnitSystem::noScale, this->objectName(), PersistentSettings::SCALE);
-///
-///   /* Disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getMashStep(i);
-///      row->setDisplayUnit(Measurement::Unit::noUnit);
-///   }
-///   */
-///}
-///
-///// Setting the scale should clear any cell-level scaling options
-///void MashStepTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale)
-///{
-///   // MashStep* row; //disabled per-cell magic
-///
-///   QString attribute = generateName(column);
-///
-///   if ( attribute.isEmpty() )
-///      return;
-///
-///   PersistentSettings::insert(attribute,displayScale, this->objectName(), PersistentSettings::SCALE);
-///
-///   /* disabled cell-specific code
-///   for (int i = 0; i < rowCount(); ++i )
-///   {
-///      row = getMashStep(i);
-///      row->setDisplayScale(Measurement::UnitSystem::noScale);
-///   }
-///   */
-///}
-
-QString MashStepTableModel::generateName(int column) const
-{
-   QString attribute;
-
-   switch(column)
-   {
-      case MASHSTEPAMOUNTCOL:
-         attribute = "amount"; // Not a real property name
-         break;
-      case MASHSTEPTEMPCOL:
-         attribute = *PropertyNames::MashStep::infuseTemp_c;
-         break;
-      case MASHSTEPTARGETTEMPCOL:
-         attribute = *PropertyNames::MashStep::stepTemp_c;
-         break;
-      case MASHSTEPTIMECOL:
-         attribute = *PropertyNames::Misc::time;
-         break;
-      default:
-         attribute = "";
-   }
-   return attribute;
-}
-
-void MashStepTableModel::contextMenu(QPoint const & point) {
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
-   int selected = hView->logicalIndexAt(point);
-
-   // Since we need to call generateVolumeMenu() two different ways, we need
-   // to figure out the currentUnit and Scale here
-   Measurement::UnitSystem const * currentUnitSystem  = this->displayUnitSystem(selected);
-   Measurement::UnitSystem::RelativeScale currentScale = this->displayScale(selected);
-
-   QMenu* menu;
-
-   switch (selected) {
-      case MASHSTEPAMOUNTCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      case MASHSTEPTEMPCOL:
-      case MASHSTEPTARGETTEMPCOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem);
-         break;
-      case MASHSTEPTIMECOL:
-         menu = new UnitAndScalePopUpMenu(parentTableWidget, *currentUnitSystem, currentScale);
-         break;
-      default:
-         return;
-   }
-
-   this->doContextMenu(point, hView, menu, selected);
-   return;
-}
-
 //==========================CLASS MashStepItemDelegate===============================
 
-MashStepItemDelegate::MashStepItemDelegate(QObject* parent)
-        : QItemDelegate(parent)
-{
+MashStepItemDelegate::MashStepItemDelegate(QObject* parent) : QItemDelegate(parent) {
+   return;
 }
 
 QWidget* MashStepItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const

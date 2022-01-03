@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Markus Mårtensson <mackan.90@gmail.com>
@@ -47,9 +47,9 @@ class HopTableModel : public BtTableModel {
    Q_OBJECT
 
 public:
-
    HopTableModel(QTableView* parent=nullptr, bool editable=true);
    virtual ~HopTableModel();
+
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);
    //! \brief If true, we model the database's list of hops.
@@ -86,37 +86,28 @@ public:
    //! \returns true if "hop" is successfully found and removed.
    bool remove(Hop* hop);
 
-protected:
-   virtual QString generateName(int column) const;
-
 public slots:
    void changed(QMetaProperty, QVariant);
    void changedInventory(int invKey, BtStringConst const & propertyName);
    //! \brief Add a hop to the model.
-//   void addHop(Hop* hop);
    void addHop(int hopId);
    void removeHop(int hopId, std::shared_ptr<QObject> object);
-
-   void contextMenu(const QPoint &point);
 
 private:
    QVector<Qt::ItemFlags> colFlags;
    bool _inventoryEditable;
    QList<Hop*> hopObs;
    Recipe* recObs;
-   QTableView* parentTableWidget;
    bool showIBUs; // True if you want to show the IBU contributions in the table rows.
 };
 
 /*!
  *  \class HopItemDelegate
  *
- *
  *  \brief An item delegate for hop tables.
  *  \sa HopTableModel
  */
-class HopItemDelegate : public QItemDelegate
-{
+class HopItemDelegate : public QItemDelegate {
    Q_OBJECT
 
 public:

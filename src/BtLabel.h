@@ -26,6 +26,7 @@
 #include <QMenu>
 #include <QPoint>
 
+#include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
 
 /*!
@@ -69,7 +70,7 @@ public:
     *          NONE - there is no context menu for this label
     *
     */
-   enum LabelType {
+/*   enum LabelType {
       // .:TODO:. Do some assignment here that allows clever casting
       NONE,
       COLOR,
@@ -81,7 +82,7 @@ public:
       MIXED,
       DATE,
       DIASTATIC_POWER
-   };
+   };*/
 
 
    /*!
@@ -93,7 +94,7 @@ public:
     * \todo Not sure if I can get the name of the widget being created.
     *       Not sure how to signal the parent to redisplay
     */
-   BtLabel(QWidget* parent = nullptr, LabelType lType = NONE);
+   BtLabel(QWidget* parent/* = nullptr*/, BtFieldType fieldType/* = NONE*/);
 
    virtual ~BtLabel();
 
@@ -124,7 +125,7 @@ signals:
 // Using protected instead of private allows me to not use the friends
 // declaration
 protected:
-   LabelType whatAmI;
+   BtFieldType fieldType;
    QString propertyName;
    QString configSection;
    QWidget *btParent;
