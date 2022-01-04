@@ -16,6 +16,9 @@
  =====================================================================================================================*/
 #include "WaterListModel.h"
 
+#include <QAbstractListModel>
+#include <QWidget>
+
 #include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"
 #include "model/Water.h"

@@ -28,7 +28,6 @@
 #include <QWidget>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "BtLineEdit.h"
 #include "PersistentSettings.h"
 #include "measurement/Unit.h"

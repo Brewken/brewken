@@ -21,7 +21,6 @@
 
 #include <cmath>
 
-#include "Brewken.h"
 #include "measurement/Unit.h"
 
 PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {

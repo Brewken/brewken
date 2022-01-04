@@ -20,6 +20,8 @@
 
 #include <memory>
 
+#include <QApplication> // For qApp
+#include <QDebug>
 #include <QDir>
 #include <QLibraryInfo>
 #include <QLocale>

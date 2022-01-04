@@ -18,11 +18,14 @@
 #pragma once
 
 #include <QAbstractTableModel>
+#include <QHeaderView>
+#include <QMap>
+#include <QMenu>
+#include <QPoint>
 #include <QTableView>
 
 #include "measurement/UnitSystem.h"
 
-class QPoint;
 
 /*!
  * \class BtTableModel

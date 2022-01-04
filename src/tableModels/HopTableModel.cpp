@@ -401,7 +401,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPNAMECOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntity::name,
                                                   value.toString(),
                                                   tr("Change Hop Name"));
@@ -414,7 +414,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
             if (!retVal) {
                qWarning() << Q_FUNC_INFO << "Could not convert" << value.toString() << "to double";
             }
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::alpha_pct,
                                                   amt,
                                                   tr("Change Hop Alpha %"));
@@ -424,7 +424,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPINVENTORYCOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntityWithInventory::inventory,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Mass,
@@ -436,7 +436,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPAMOUNTCOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::amount_kg,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Mass,
@@ -448,7 +448,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPUSECOL:
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::use,
                                                   static_cast<Hop::Use>(value.toInt()),
                                                   tr("Change Hop Use"));
@@ -457,7 +457,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPFORMCOL:
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::form,
                                                   static_cast<Hop::Form>(value.toInt()),
                                                   tr("Change Hop Form"));
@@ -466,7 +466,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPTIMECOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::time_min,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Time,

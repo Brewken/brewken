@@ -327,7 +327,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
    {
       case MISCNAMECOL:
          if (value.canConvert(QVariant::String)) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntity::name,
                                                   value.toString(),
                                                   tr("Change Misc Name"));
@@ -339,7 +339,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::type,
                                                static_cast<Misc::Type>(value.toInt()),
                                                tr("Change Misc Type"));
@@ -348,7 +348,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::use,
                                                static_cast<Misc::Use>(value.toInt()),
                                                tr("Change Misc Use"));
@@ -357,7 +357,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::time,
                                                Measurement::qStringToSI(value.toString(),
                                                                         Measurement::PhysicalQuantity::Time,
@@ -369,7 +369,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntityWithInventory::inventory,
                                                Measurement::qStringToSI(value.toString(),
                                                                         physicalQuantity,
@@ -381,7 +381,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::amount,
                                                Measurement::qStringToSI(value.toString(),
                                                                         physicalQuantity,
@@ -393,7 +393,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::amountType,
                                                static_cast<Misc::AmountType>(value.toInt()),
                                                tr("Change Misc Amount Type"));

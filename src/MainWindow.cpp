@@ -173,6 +173,13 @@ namespace {
       return toolTip;
    }
 
+   // We only want one instance of MainWindow, but we'd also like to be able to delete it when the program shuts down
+   MainWindow * mainWindowInstance = nullptr;
+
+   void createMainWindowInstance() {
+      mainWindowInstance = new MainWindow();
+      return;
+   }
 }
 
 // This private implementation class holds all private non-virtual members of MainWindow
@@ -421,6 +428,22 @@ void MainWindow::init() {
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header file)
 MainWindow::~MainWindow() = default;
 
+MainWindow & MainWindow::instance() {
+   //
+   // Since C++11, there is a standard thread-safe way to ensure a function is called exactly once
+   //
+   static std::once_flag initFlag_MainWindow;
+
+   std::call_once(initFlag_MainWindow, createMainWindowInstance);
+
+   Q_ASSERT(mainWindowInstance);
+   return *mainWindowInstance;
+}
+
+void MainWindow::DeleteMainWindow() {
+   delete mainWindowInstance;
+   mainWindowInstance = nullptr;
+}
 
 void MainWindow::setSizesInPixelsBasedOnDpi()
 {

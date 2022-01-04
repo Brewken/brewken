@@ -23,6 +23,7 @@
 #pragma once
 
 #include <QItemDelegate>
+#include <QMetaProperty>
 #include <QModelIndex>
 #include <QVariant>
 #include <QVector>

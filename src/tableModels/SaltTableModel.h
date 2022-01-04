@@ -24,6 +24,7 @@
 #include <QList>
 #include <QMetaProperty>
 #include <QModelIndex>
+#include <QStyleOptionViewItem>
 #include <QVariant>
 #include <QWidget>
 

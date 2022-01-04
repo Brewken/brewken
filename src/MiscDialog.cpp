@@ -176,7 +176,7 @@ void MiscDialog::addMisc(const QModelIndex& index)
          return;
    }
 
-   Brewken::mainWindow()->addMiscToRecipe(miscTableModel->getMisc(translated.row()));
+   MainWindow::instance().addMiscToRecipe(miscTableModel->getMisc(translated.row()));
 
    return;
 }

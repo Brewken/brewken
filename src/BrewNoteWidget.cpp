@@ -23,7 +23,6 @@
 #include <QDate>
 #include <QDebug>
 
-#include "Brewken.h"
 #include "measurement/Measurement.h"
 #include "model/BrewNote.h"
 #include "PersistentSettings.h"
@@ -100,7 +99,7 @@ void BrewNoteWidget::updateProjOg(Measurement::UnitSystem const * oldUnitSystem,
 
 
    if (nullptr == displayUnitSystem) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(Measurement::Volume);
+      displayUnitSystem = &Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume);
    }
 
    if (*displayUnitSystem == Measurement::UnitSystems::density_Plato) {

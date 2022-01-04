@@ -27,7 +27,6 @@
 #include <QStyle>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "Localization.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"

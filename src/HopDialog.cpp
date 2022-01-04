@@ -178,7 +178,7 @@ void HopDialog::addHop(const QModelIndex& index)
          return;
    }
 
-   Brewken::mainWindow()->addHopToRecipe(hopTableModel->getHop(translated.row()));
+   MainWindow::instance().addHopToRecipe(hopTableModel->getHop(translated.row()));
 
    return;
 }

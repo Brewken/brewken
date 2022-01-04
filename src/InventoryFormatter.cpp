@@ -215,7 +215,7 @@ namespace {
 
    void createOrUpdateDialog() {
       if (nullptr == dialog) {
-         dialog = new BtPrintPreview(Brewken::mainWindow());
+         dialog = new BtPrintPreview(&MainWindow::instance());
          dialog->setWindowTitle(QObject::tr("Inventory Print Preview"));
       }
       dialog->setContent(createInventoryHeader() +

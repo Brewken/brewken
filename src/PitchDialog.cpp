@@ -25,7 +25,6 @@
 #include <QChar>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "measurement/Unit.h"
 #include "PersistentSettings.h"
 

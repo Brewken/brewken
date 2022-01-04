@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -107,14 +107,20 @@ class YeastTableModel;
  *
  * \brief Brewken's main window. This is a view/controller class.
  */
-class MainWindow : public QMainWindow, public Ui::mainWindow
-{
+class MainWindow : public QMainWindow, public Ui::mainWindow {
    Q_OBJECT
 
    friend class OptionDialog;
 public:
    MainWindow(QWidget* parent=nullptr);
    virtual ~MainWindow();
+
+   static MainWindow & instance();
+   /**
+    * \brief Call at program termination to clean-up.  Caller's responsibility not to subsequently call (or use the
+    *        return value from) \c MainWindow::instance().
+    */
+   static void DeleteMainWindow();
 
    /**
     * \brief This needs to be called immediately after the constructor.  It does the remaining initialisation of the

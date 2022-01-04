@@ -145,8 +145,6 @@ namespace {
 
 }
 
-MainWindow* Brewken::m_mainWindow = nullptr;
-QDomDocument* Brewken::optionsDoc;
 bool Brewken::_isInteractive = true;
 
 bool Brewken::checkVersion = true;
@@ -163,12 +161,6 @@ void Brewken::checkForNewVersion(MainWindow* mw)
    QUrl url("https://github.com/Brewken/brewken/releases/latest");
    QNetworkReply* reply = manager.get( QNetworkRequest(url) );
    QObject::connect( reply, &QNetworkReply::finished, mw, &MainWindow::finishCheckingVersion );
-}
-
-bool Brewken::copyDataFiles(const QDir newPath)
-{
-   QString dbFileName = "database.sqlite";
-   return QFile::copy(PersistentSettings::getUserDataDir().filePath(dbFileName), newPath.filePath(dbFileName));
 }
 
 QDir Brewken::getResourceDir() {
@@ -221,8 +213,6 @@ bool Brewken::initialize()
 
    readSystemOptions();
 
-   loadMap();
-
    Localization::loadTranslations(); // Do internationalization.
 
 #if defined(Q_OS_MAC)
@@ -238,7 +228,7 @@ bool Brewken::initialize()
 void Brewken::cleanup() {
    qDebug() << "Brewken is cleaning up.";
    // Should I do qApp->removeTranslator() first?
-   delete m_mainWindow;
+   MainWindow::DeleteMainWindow();
 
    Database::instance().unload();
    return;
@@ -267,12 +257,14 @@ int Brewken::run() {
    }
    qInfo() << QString("Starting Brewken v%1 on %2.").arg(VERSIONSTRING).arg(QSysInfo::prettyProductName());
    Database::instance().checkForNewDefaultData();
-   m_mainWindow = new MainWindow();
-   m_mainWindow->init();
-   m_mainWindow->setVisible(true);
-   splashScreen.finish(m_mainWindow);
 
-   checkForNewVersion(m_mainWindow);
+   // .:TBD:. Could maybe move the calls to init and setVisible inside createMainWindowInstance() in MainWindow.cpp
+   MainWindow & mainWindow = MainWindow::instance();
+   mainWindow.init();
+   mainWindow.setVisible(true);
+   splashScreen.finish(&mainWindow);
+
+   checkForNewVersion(&mainWindow);
    do {
       ret = qApp->exec();
    } while (ret == 1000);
@@ -351,266 +343,4 @@ void Brewken::saveSystemOptions() {
    Measurement::saveDisplayScales();
 
    return;
-}
-
-// the defaults come from readSystemOptions. This just fleshes out the hash
-// for later use.
-void Brewken::loadMap()
-{
-/*   // ==== mass ====
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Mass | Measurement::Unit::displaySI, &Measurement::mass_Metric );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Mass | Measurement::Unit::displayUS, &Measurement::mass_ImperialAndUsCustomary );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Mass | Measurement::Unit::displayImp,&Measurement::mass_ImperialAndUsCustomary );
-
-   // ==== volume ====
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Volume | Measurement::Unit::displaySI, &Measurement::volume_Metric );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Volume | Measurement::Unit::displayUS, &Measurement::volume_UsCustomary );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Volume | Measurement::Unit::displayImp,&Measurement::volume_Imperial );
-
-   // ==== time is empty ==== (this zen moment was free)
-
-   // ==== temp ====
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Temperature | Measurement::Unit::displaySI,&Measurement::temperature_MetricIsCelsius );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Temperature | Measurement::Unit::displayUS,&Measurement::temperature_UsCustomaryIsFahrenheit );
-
-   // ==== color ====
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Color | Measurement::Unit::displaySrm,&Measurement::color_StandardReferenceMethod );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Color | Measurement::Unit::displayEbc,&Measurement::color_EuropeanBreweryConvention );
-
-   // ==== density ====
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Density | Measurement::Unit::displaySg,   &Measurement::density_SpecificGravity );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::Density | Measurement::Unit::displayPlato,&Measurement::density_Plato );
-
-   // ==== diastatic power ====
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::DiastaticPower | Measurement::Unit::displayLintner,&Measurement::diastaticPower_Lintner );
-   Measurement::thingToUnitSystem.insert(Measurement::Unit::DiastaticPower | Measurement::Unit::displayWK,&Measurement::diastaticPower_WindischKolbach );
-   */
-}
-
-
-
-/*
-QString Brewken::colorUnitName(Measurement::Unit::unitDisplay display)
-{
-   if ( display == Measurement::Unit::noUnit )
-      display = getColorUnit();
-
-   if ( display == Measurement::Unit::displaySrm )
-      return QString("SRM");
-   else
-      return QString("EBC");
-}
-
-QString Brewken::diastaticPowerUnitName(Measurement::Unit::unitDisplay display)
-{
-   if ( display == Measurement::Unit::noUnit )
-      display = getDiastaticPowerUnit();
-
-   if ( display == Measurement::Unit::displayLintner )
-      return QString("Lintner");
-   else
-      return QString("WK");
-}
-*/
-
-/* TODO THESE NEED TO BE REINSTATED, BUT NOT NECESSARILY HERE
-// These are used in at least two places. I hate cut'n'paste coding so I am
-// putting them here.
-// I use a QActionGroup to make sure only one button is ever selected at once.
-// It allows me to cache the menus later and speeds the response time up.
-QMenu* Brewken::setupColorMenu(QWidget* parent, Measurement::Unit::unitDisplay unit)
-{
-   QMenu* menu = new QMenu(parent);
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(menu, tr("Default"), Measurement::Unit::noUnit, unit, qgrp);
-   generateAction(menu, tr("EBC"), Measurement::Unit::displayEbc, unit, qgrp);
-   generateAction(menu, tr("SRM"), Measurement::Unit::displaySrm, unit, qgrp);
-
-   return menu;
-}
-
-QMenu* Brewken::setupDateMenu(QWidget* parent, Measurement::Unit::unitDisplay unit)
-{
-   QMenu* menu = new QMenu(parent);
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(menu, tr("Default"),    Measurement::Unit::noUnit,     unit, qgrp);
-   generateAction(menu, tr("YYYY-mm-dd"), Measurement::Unit::displaySI,  unit, qgrp);
-   generateAction(menu, tr("dd-mm-YYYY"), Measurement::Unit::displayImp, unit, qgrp);
-   generateAction(menu, tr("mm-dd-YYYY"), Measurement::Unit::displayUS,  unit, qgrp);
-
-   return menu;
-}
-
-QMenu* Brewken::setupDensityMenu(QWidget* parent, Measurement::Unit::unitDisplay unit)
-{
-   QMenu* menu = new QMenu(parent);
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(menu, tr("Default"), Measurement::Unit::noUnit, unit, qgrp);
-   generateAction(menu, tr("Plato"), Measurement::Unit::displayPlato, unit, qgrp);
-   generateAction(menu, tr("Specific Gravity"), Measurement::Unit::displaySg, unit, qgrp);
-
-   return menu;
-}
-
-QMenu* Brewken::setupMassMenu(QWidget* parent, Measurement::Unit::unitDisplay unit, Measurement::UnitSystem::RelativeScale scale, bool generateScale)
-{
-   QMenu* menu = new QMenu(parent);
-   QMenu* sMenu;
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(menu, tr("Default"), Measurement::Unit::noUnit, unit, qgrp);
-   generateAction(menu, tr("SI"), Measurement::Unit::displaySI, unit, qgrp);
-   generateAction(menu, tr("US Customary"), Measurement::Unit::displayUS, unit, qgrp);
-
-   // Some places can't do scale -- like yeast tables and misc tables because
-   // they can be mixed. It doesn't stop the unit selection from working, but
-   // the scale menus don't make sense
-   if ( generateScale == false )
-      return menu;
-
-   if ( unit == Measurement::Unit::noUnit )
-   {
-      if ( Measurement::thingToUnitSystem.value(Measurement::Unit::Mass) == &Measurement::mass_ImperialAndUsCustomary )
-         unit = Measurement::Unit::displayUS;
-      else
-         unit = Measurement::Unit::displaySI;
-   }
-
-   sMenu = new QMenu(menu);
-   QActionGroup* qsgrp = new QActionGroup(menu);
-   switch(unit)
-   {
-      case Measurement::Unit::displaySI:
-         generateAction(sMenu, tr("Default"), Measurement::UnitSystem::noScale, scale,qsgrp);
-         generateAction(sMenu, tr("Milligrams"), Measurement::Unit::scaleExtraSmall, scale,qsgrp);
-         generateAction(sMenu, tr("Grams"), Measurement::Unit::scaleSmall, scale,qsgrp);
-         generateAction(sMenu, tr("Kilograms"), Measurement::Unit::scaleMedium, scale,qsgrp);
-         break;
-      default:
-         generateAction(sMenu, tr("Default"), Measurement::UnitSystem::noScale, scale,qsgrp);
-         generateAction(sMenu, tr("Ounces"), Measurement::Unit::scaleExtraSmall, scale,qsgrp);
-         generateAction(sMenu, tr("Pounds"), Measurement::Unit::scaleSmall, scale,qsgrp);
-         break;
-   }
-   sMenu->setTitle(tr("Scale"));
-   menu->addMenu(sMenu);
-
-   return menu;
-}
-
-QMenu* Brewken::setupTemperatureMenu(QWidget* parent, Measurement::Unit::unitDisplay unit)
-{
-   QMenu* menu = new QMenu(parent);
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(menu, tr("Default"), Measurement::Unit::noUnit, unit, qgrp);
-   generateAction(menu, tr("Celsius"), Measurement::Unit::displaySI, unit, qgrp);
-   generateAction(menu, tr("Fahrenheit"), Measurement::Unit::displayUS, unit, qgrp);
-
-   return menu;
-}
-
-// Time menus only have scale
-QMenu* Brewken::setupTimeMenu(QWidget* parent, Measurement::UnitSystem::RelativeScale scale)
-{
-   QMenu* menu = new QMenu(parent);
-   QMenu* sMenu = new QMenu(menu);
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(sMenu, tr("Default"), Measurement::UnitSystem::noScale, scale, qgrp);
-   generateAction(sMenu, tr("Seconds"), Measurement::Unit::scaleExtraSmall, scale, qgrp);
-   generateAction(sMenu, tr("Minutes"), Measurement::Unit::scaleSmall, scale, qgrp);
-   generateAction(sMenu, tr("Hours"),   Measurement::Unit::scaleMedium, scale, qgrp);
-   generateAction(sMenu, tr("Days"),    Measurement::Unit::scaleLarge, scale, qgrp);
-
-   sMenu->setTitle(tr("Scale"));
-   menu->addMenu(sMenu);
-
-   return menu;
-}
-
-QMenu* Brewken::setupVolumeMenu(QWidget* parent, Measurement::Unit::unitDisplay unit, Measurement::UnitSystem::RelativeScale scale, bool generateScale)
-{
-   QMenu* menu = new QMenu(parent);
-   QActionGroup* qgrp = new QActionGroup(parent);
-   QMenu* sMenu;
-
-   generateAction(menu, tr("Default"), Measurement::Unit::noUnit, unit, qgrp);
-   generateAction(menu, tr("SI"), Measurement::Unit::displaySI, unit, qgrp);
-   generateAction(menu, tr("US Customary"), Measurement::Unit::displayUS, unit, qgrp);
-   generateAction(menu, tr("British Imperial"), Measurement::Unit::displayImp, unit, qgrp);
-
-   if ( generateScale == false )
-      return menu;
-
-   if ( unit == Measurement::Unit::noUnit )
-   {
-      if ( Measurement::thingToUnitSystem.value(Measurement::Unit::Volume) == &Measurement::volume_UsCustomary )
-         unit = Measurement::Unit::displayUS;
-      else if ( Measurement::thingToUnitSystem.value(Measurement::Unit::Volume) == &Measurement::volume_Imperial )
-         unit = Measurement::Unit::displayImp;
-      else
-         unit = Measurement::Unit::displaySI;
-   }
-
-
-   sMenu = new QMenu(menu);
-   QActionGroup* qsgrp = new QActionGroup(menu);
-   switch(unit)
-   {
-      case Measurement::Unit::displaySI:
-         generateAction(sMenu, tr("Default"), Measurement::UnitSystem::noScale, scale,qsgrp);
-         generateAction(sMenu, tr("MilliLiters"), Measurement::Unit::scaleExtraSmall, scale,qsgrp);
-         generateAction(sMenu, tr("Liters"), Measurement::Unit::scaleSmall, scale,qsgrp);
-         break;
-        // I can cheat because Imperial and US use the same names
-      default:
-         generateAction(sMenu, tr("Default"), Measurement::UnitSystem::noScale, scale,qsgrp);
-         generateAction(sMenu, tr("Teaspoons"), Measurement::Unit::scaleExtraSmall, scale,qsgrp);
-         generateAction(sMenu, tr("Tablespoons"), Measurement::Unit::scaleSmall, scale,qsgrp);
-         generateAction(sMenu, tr("Cups"), Measurement::Unit::scaleMedium, scale,qsgrp);
-         generateAction(sMenu, tr("Quarts"), Measurement::Unit::scaleLarge, scale,qsgrp);
-         generateAction(sMenu, tr("Gallons"), Measurement::Unit::scaleExtraLarge, scale,qsgrp);
-         generateAction(sMenu, tr("Barrels"), Measurement::Unit::scaleHuge, scale,qsgrp);
-         break;
-   }
-   sMenu->setTitle(tr("Scale"));
-   menu->addMenu(sMenu);
-
-   return menu;
-}
-
-QMenu* Brewken::setupDiastaticPowerMenu(QWidget* parent, Measurement::Unit::unitDisplay unit)
-{
-   QMenu* menu = new QMenu(parent);
-   QActionGroup* qgrp = new QActionGroup(parent);
-
-   generateAction(menu, tr("Default"), Measurement::Unit::noUnit, unit, qgrp);
-   generateAction(menu, tr("WK"), Measurement::Unit::displayWK, unit, qgrp);
-   generateAction(menu, tr("Lintner"), Measurement::Unit::displayLintner, unit, qgrp);
-
-   return menu;
-}
-
-void Brewken::generateAction(QMenu* menu, QString text, QVariant data, QVariant currentVal, QActionGroup* qgrp)
-{
-   QAction* action = new QAction(menu);
-
-   action->setText(text);
-   action->setData(data);
-   action->setCheckable(true);
-   action->setChecked(currentVal == data);;
-   if ( qgrp )
-      qgrp->addAction(action);
-
-   menu->addAction(action);
-   return;
-}
-*/
-MainWindow* Brewken::mainWindow()
-{
-   return m_mainWindow;
 }

@@ -34,6 +34,7 @@
 #include <QSqlRecord>
 #include <QString>
 #include <QVariant>
+#include <QVector>
 
 #include "model/BrewNote.h"
 #include "model/NamedEntity.h"
@@ -134,7 +135,6 @@ class Yeast;
 class Recipe : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "recipes")
-
 
    friend class RecipeFormatter;
    friend class MainWindow;

@@ -24,7 +24,6 @@
 #include <QIcon>
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"

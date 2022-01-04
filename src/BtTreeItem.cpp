@@ -31,7 +31,6 @@
 #include <QVariant>
 #include <QVector>
 
-#include "Brewken.h"
 #include "BtFolder.h"
 #include "Localization.h"
 #include "measurement/Measurement.h"
@@ -45,7 +44,6 @@
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
-#include "tableModels/FermentableTableModel.h"
 
 namespace {
    QHash<BtTreeItem::ITEMTYPE, char const *> const ItemTypeToName {

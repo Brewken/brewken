@@ -44,6 +44,7 @@
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
+#include "utils/BtStringConst.h"
 
 YeastTableModel::YeastTableModel(QTableView* parent, bool editable) :
    BtTableModel{
@@ -373,7 +374,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntity::name,
                                                value.toString(),
                                                tr("Change Yeast Name"));
@@ -382,7 +383,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::laboratory,
                                                value.toString(),
                                                tr("Change Yeast Laboratory"));
@@ -391,7 +392,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::productID,
                                                value.toString(),
                                                tr("Change Yeast Product ID"));
@@ -400,7 +401,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::type,
                                                static_cast<Yeast::Type>(value.toInt()),
                                                tr("Change Yeast Type"));
@@ -409,7 +410,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::form,
                                                static_cast<Yeast::Form>(value.toInt()),
                                                tr("Change Yeast Form"));
@@ -418,7 +419,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::NamedEntityWithInventory::inventory,
                                                value.toInt(),
                                                tr("Change Yeast Inventory Unit Size"));
@@ -429,7 +430,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          }
 
 
-         Brewken::mainWindow()->doOrRedoUpdate(*row,
+         MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::amount,
                                                Measurement::qStringToSI(value.toString(),
                                                                         physicalQuantity,

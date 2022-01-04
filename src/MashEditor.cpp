@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
 #include "model/Equipment.h"

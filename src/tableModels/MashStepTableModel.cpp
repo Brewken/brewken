@@ -332,7 +332,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
    switch (index.column()) {
       case MASHSTEPNAMECOL:
          if (value.canConvert(QVariant::String)) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                      PropertyNames::NamedEntity::name,
                                                      value.toString(),
                                                      tr("Change Mash Step Name"));
@@ -342,7 +342,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 
       case MASHSTEPTYPECOL:
          if (value.canConvert(QVariant::Int)) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::MashStep::type,
                                                   static_cast<MashStep::Type>(value.toInt()),
                                                   tr("Change Mash Step Type"));
@@ -353,14 +353,14 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
       case MASHSTEPAMOUNTCOL:
          if (value.canConvert(QVariant::String)) {
             if( row->type() == MashStep::Decoction ) {
-               Brewken::mainWindow()->doOrRedoUpdate(*row,
+               MainWindow::instance().doOrRedoUpdate(*row,
                                                      PropertyNames::MashStep::decoctionAmount_l,
                                                      Measurement::qStringToSI(value.toString(),
                                                                               Measurement::PhysicalQuantity::Volume,
                                                                               dspUnitSystem,dspScl),
                                                      tr("Change Mash Step Decoction Amount"));
             } else {
-               Brewken::mainWindow()->doOrRedoUpdate(*row,
+               MainWindow::instance().doOrRedoUpdate(*row,
                                                      PropertyNames::MashStep::infuseAmount_l,
                                                      Measurement::qStringToSI(value.toString(),
                                                                               Measurement::PhysicalQuantity::Volume,
@@ -373,7 +373,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 
       case MASHSTEPTEMPCOL:
          if (value.canConvert(QVariant::String) && row->type() != MashStep::Decoction) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::MashStep::infuseTemp_c,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Temperature,
@@ -402,14 +402,14 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                                                               dspUnitSystem,dspScl),
                                      tr("Change Mash Step End Temp"),
                                      targetTempUpdate);
-            Brewken::mainWindow()->doOrRedoUpdate(targetTempUpdate);
+            MainWindow::instance().doOrRedoUpdate(targetTempUpdate);
             return true;
          }
          return false;
 
       case MASHSTEPTIMECOL:
          if (value.canConvert(QVariant::String)) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::MashStep::stepTime_min,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Time,

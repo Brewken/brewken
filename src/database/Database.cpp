@@ -39,6 +39,7 @@
 #include <iostream> // For writing to std::cerr in destructor
 #include <mutex>    // For std::once_flag etc
 
+#include <QDateTime>
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
@@ -715,7 +716,6 @@ void Database::checkForNewDefaultData() {
    return;
 }
 
-
 bool Database::createBlank(QString const& filename)
 {
    {
@@ -736,6 +736,13 @@ bool Database::createBlank(QString const& filename)
    QSqlDatabase::removeDatabase( "blank" );
    return true;
 }
+
+bool Database::copyDataFiles(const QDir newPath)
+{
+   QString dbFileName = "database.sqlite";
+   return QFile::copy(PersistentSettings::getUserDataDir().filePath(dbFileName), newPath.filePath(dbFileName));
+}
+
 
 bool Database::loadSuccessful()
 {

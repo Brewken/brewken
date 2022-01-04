@@ -30,6 +30,7 @@
 
 #include <QAbstractButton>
 #include <QCheckBox>
+#include <QDebug>
 #include <QFileDialog>
 #include <QIcon>
 #include <QMap>
@@ -39,7 +40,6 @@
 #include <QVector>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "BtLineEdit.h"
 #include "database/Database.h"
 #include "Localization.h"
@@ -903,9 +903,7 @@ void OptionDialog::saveLoggingSettings() {
       std::optional<QDir>(std::nullopt) : std::optional<QDir>(lineEdit_LogFileLocation->text())
    );
    // Make sure the main window updates.
-   if (Brewken::mainWindow()) {
-      Brewken::mainWindow()->showChanges();
-   }
+   MainWindow::instance().showChanges();
 }
 
 void OptionDialog::saveVersioningSettings() {
@@ -1013,7 +1011,7 @@ void OptionDialog::saveSqliteConfig() {
                                   tr("Copy Data"),
                                   tr("There do not seem to be any data files in this directory, so we will copy your old data here.")
                                  );
-         Brewken::copyDataFiles(newUserDataDir);
+         Database::copyDataFiles(newUserDataDir);
       }
 
       PersistentSettings::setUserDataDir(newUserDataDir);

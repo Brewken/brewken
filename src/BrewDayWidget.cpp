@@ -29,7 +29,6 @@
 #include <QPrinter>
 #include <QVector>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "InstructionWidget.h"
 #include "measurement/Measurement.h"
@@ -199,11 +198,15 @@ QString BrewDayWidget::buildTitleTable()
            .arg(tr("IBU"))
            .arg(Measurement::displayAmount(recObs->IBU(),0,1));
 
+   bool metricVolume = (
+      Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume) ==
+      Measurement::UnitSystems::volume_Metric
+   );
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
            .arg(tr("Predicted Efficiency"))
            .arg(Measurement::displayAmount(recObs->efficiency_pct(),0,0))
-           .arg(Measurement::getDisplayUnitSystem(Measurement::Volume) == Measurement::UnitSystems::volume_Metric ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-           .arg(Measurement::displayAmount(Measurement::getDisplayUnitSystem(Measurement::Volume) == Measurement::UnitSystems::volume_Metric ? recObs->calories33cl() : recObs->calories12oz(),0,0));
+           .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
+           .arg(Measurement::displayAmount(metricVolume ? recObs->calories33cl() : recObs->calories12oz(),0,0));
 
    body += "</table>";
 

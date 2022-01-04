@@ -24,7 +24,6 @@
 
 #include <QObject>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"

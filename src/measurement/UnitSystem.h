@@ -69,7 +69,11 @@ namespace Measurement {
        *        We only worry about units we actually use/permit, thus we don't, for example, care about where minims,
        *        fluid drams, gills etc fit in on the imperial / US customary volume scales, as we don't support them.
        *
-       * .:TBD:. Explain difference between \c noScale and \c scaleWithout
+       *        The \c scaleWithout value is used when a \c UnitSystem only has one \c Unit (eg as is typically the case
+       *        with temperature, color and density).
+       *
+       *        The \c noScale value does not correspond to a \c Unit and is used as "not specified" or "not known"
+       *        value.  (.:TODO:. At some point we should replace this usage with std::optional)
        */
       enum RelativeScale {
          noScale         = -1,

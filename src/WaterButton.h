@@ -20,11 +20,12 @@
 #include <QPushButton>
 #include <QMetaProperty>
 #include <QVariant>
+#include <QWidget>
+
 #include "model/Water.h"
 
 // Forward declarations.
 class Recipe;
-class QWidget;
 
 /*!
  * \class WaterButton

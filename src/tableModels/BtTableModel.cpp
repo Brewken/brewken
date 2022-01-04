@@ -124,8 +124,6 @@ void BtTableModel::contextMenu(QPoint const & point) {
    QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
    int selected = hView->logicalIndexAt(point);
 
-   // Since we need to call setupMassMenu() two different ways, we need
-   // to figure out the UnitSystem and RelativeScale here
    Measurement::UnitSystem const * forcedUnitSystem  = this->displayUnitSystem(selected);
    Measurement::UnitSystem::RelativeScale forcedScale = this->displayScale(selected);
    Measurement::PhysicalQuantity physicalQuantity = this->columnGetPhysicalQuantity(selected);

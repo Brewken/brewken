@@ -28,7 +28,6 @@
 #include <QPrinter>
 #include <QVector>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Html.h"
 #include "InstructionWidget.h"
@@ -400,11 +399,15 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
             .arg(Measurement::displayAmount(recObs->fg(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::fg, &Measurement::Units::sp_grav, 3));
 
    // sixth row: ABV and estimate calories
+   bool metricVolume = (
+      Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume) ==
+      Measurement::UnitSystems::volume_Metric
+   );
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2%</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("ABV"))
             .arg(Measurement::displayAmount(recObs->ABV_pct(),nullptr,1) )
-            .arg(Measurement::getDisplayUnitSystem(Measurement::Volume) == Measurement::UnitSystems::volume_Metric ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-            .arg(Measurement::displayAmount(Measurement::getDisplayUnitSystem(Measurement::Volume) == Measurement::UnitSystems::volume_Metric ? this->recObs->calories33cl() : this->recObs->calories12oz(), nullptr, 0) );
+            .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
+            .arg(Measurement::displayAmount(metricVolume ? this->recObs->calories33cl() : this->recObs->calories12oz(), nullptr, 0) );
 
    body += "</table>";
 

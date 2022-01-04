@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RelationalUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020:
+ * RelationalUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,11 +17,12 @@
 #define RELATIONAL_UNDOABLE_UPDATE_H
 #pragma once
 
-#include "Brewken.h" // For logging
 #include <QMetaType>
 #include <QString>
 #include <QUndoCommand>
 #include <QVariant>
+
+#include "Logging.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
 #include "StyleButton.h"
@@ -29,13 +30,11 @@
 /*!
  * \class RelationalUndoableUpdate
  *
- *
  * \brief Each instance of this class is a non-trivial undoable update to, eg, a recipe that cannot be represented with
  *        SimpleUndoableUpdate - eg because we're adding a link to another object.
  */
 template<class UU, class VV>
-class RelationalUndoableUpdate : public QUndoCommand
-{
+class RelationalUndoableUpdate : public QUndoCommand {
 public:
    /*!
     * \param updatee The object we are updating
@@ -100,7 +99,7 @@ private:
    {
       (this->updatee.*(this->setter))(isUndo ? this->oldValue : this->newValue);
       if (this->callback != nullptr) {
-         (Brewken::mainWindow()->*(this->callback))();
+         (MainWindow::instance().*(this->callback))();
       }
       return;
    }

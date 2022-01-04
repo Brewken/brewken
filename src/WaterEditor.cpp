@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Water.h"
 

@@ -22,6 +22,7 @@
 #include <QItemDelegate>
 #include <QMetaProperty>
 #include <QModelIndex>
+#include <QStyleOptionViewItem>
 #include <QVariant>
 #include <QVector>
 #include <QWidget>

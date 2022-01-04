@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include <limits>
-#include <Algorithms.h>
 #include "StrikeWaterDialog.h"
-#include "Brewken.h"
+
+#include <limits>
+
+#include <Algorithms.h>
 
 // From Northern Brewer ~0.38 but Jon Palmer suggest 0.41
 // to compensate for the lost to the tun even if the tun is pre-heaten

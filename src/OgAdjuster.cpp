@@ -21,7 +21,6 @@
 #include "OgAdjuster.h"
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"

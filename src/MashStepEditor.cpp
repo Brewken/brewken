@@ -18,7 +18,6 @@
  =====================================================================================================================*/
 #include "MashStepEditor.h"
 
-#include "Brewken.h"
 #include "MainWindow.h"
 #include "measurement/Unit.h"
 #include "model/MashStep.h"
@@ -140,7 +139,7 @@ void MashStepEditor::saveAndClose() {
       // We'll ask MainWindow to do this for us, because then it can be an undoable action.
       //
       // The Mash of this MashStep should already have been set by the caller
-      Brewken::mainWindow()->addMashStepToMash(this->obs);
+      MainWindow::instance().addMashStepToMash(this->obs);
    }
 
    setVisible(false);

@@ -17,7 +17,6 @@
 
 #include <iostream>
 
-#include "Brewken.h"
 #include "model/Yeast.h"
 #include "tableModels/WaterTableModel.h"
 

@@ -26,7 +26,6 @@
 #include <QFont>
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "BtDigitWidget.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/ColorMethods.h"

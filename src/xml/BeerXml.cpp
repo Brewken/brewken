@@ -19,6 +19,7 @@
 
 #include <stdexcept>
 
+#include <QApplication>
 #include <QDebug>
 #include <QDomNodeList>
 #include <QFile>
@@ -27,7 +28,6 @@
 #include <QTextCodec>
 #include <QTextStream>
 
-#include "Brewken.h"
 #include "config.h" // For VERSIONSTRING
 #include "model/BrewNote.h"
 #include "model/Equipment.h"

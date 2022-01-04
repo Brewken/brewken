@@ -203,7 +203,7 @@ void FermentableDialog::addFermentable(const QModelIndex& index)
          return;
    }
 
-   Brewken::mainWindow()->addFermentableToRecipe(fermTableModel->getFermentable(translated.row()));
+   MainWindow::instance().addFermentableToRecipe(fermTableModel->getFermentable(translated.row()));
 
    return;
 }

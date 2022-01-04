@@ -31,22 +31,13 @@
 #include "utils/BtStringConst.h"
 
 namespace {
-/*
-   Measurement::MassOrVolumeScales     weightUnitSystem   = Measurement::SI;
-   Measurement::MassOrVolumeScales     volumeUnitSystem   = Measurement::SI;
-   Measurement::TempScale              tempScale          = Measurement::Celsius;
-   Measurement::ColorUnitType          colorUnit          = Measurement::SRM;
-   Measurement::DensityUnitType        densityUnit        = Measurement::SG;
-   Measurement::DiastaticPowerUnitType diastaticPowerUnit = Measurement::LINTNER;
-*/
-//   QHash<int, UnitSystem const *> Measurement::thingToUnitSystem;
 
    /**
     * \brief Stores the current \c Measurement::UnitSystem being used for each \c Measurement::PhysicalQuantity
     *        Note that this is for input and display.  We always convert to a standard \c Measurement::Unit (usually
     *        Metric/SI where that's an option) for storing in the DB.
     */
-   QMap<int, Measurement::UnitSystem const *> physicalQuantityToUnitSystem;
+   QMap<Measurement::PhysicalQuantity, Measurement::UnitSystem const *> physicalQuantityToUnitSystem;
 
    //
    // Load the previous stored setting for which UnitSystem we use for a particular physical quantity
@@ -75,10 +66,8 @@ namespace {
       {Measurement::PhysicalQuantity::Volume,         &Measurement::Units::liters},
       {Measurement::PhysicalQuantity::Time,           &Measurement::Units::minutes},
       {Measurement::PhysicalQuantity::Temperature,    &Measurement::Units::celsius},
-      {Measurement::PhysicalQuantity::Color,          &Measurement::Units::srm},     // I will consider the standard unit of color  to be SRM.
+      {Measurement::PhysicalQuantity::Color,          &Measurement::Units::srm},     // We will consider the standard unit of color to be SRM.
       {Measurement::PhysicalQuantity::Density,        &Measurement::Units::sp_grav}, // Specific gravity (aka, Sg) will be the standard unit, since that is how we store things in the database.
-//      {Measurement::PhysicalQuantity::String,         nullptr},
-//      {Measurement::PhysicalQuantity::Mixed,          nullptr},
       {Measurement::PhysicalQuantity::DiastaticPower, &Measurement::Units::lintner}, // Lintner will be the standard unit, since that is how we store things in the database.
       {Measurement::PhysicalQuantity::None,           nullptr}
    };
@@ -86,12 +75,12 @@ namespace {
 }
 
 void Measurement::loadDisplayScales() {
-   loadDisplayScale(Measurement::Mass,           PersistentSettings::Names::unitSystem_weight,         Measurement::UnitSystems::mass_Metric);
-   loadDisplayScale(Measurement::Volume,         PersistentSettings::Names::unitSystem_volume,         Measurement::UnitSystems::volume_Metric);
-   loadDisplayScale(Measurement::Temperature,    PersistentSettings::Names::unitSystem_temperature,    Measurement::UnitSystems::temperature_MetricIsCelsius);
-   loadDisplayScale(Measurement::Density,        PersistentSettings::Names::unitSystem_density,        Measurement::UnitSystems::density_SpecificGravity);
-   loadDisplayScale(Measurement::Color,          PersistentSettings::Names::unitSystem_color,          Measurement::UnitSystems::color_StandardReferenceMethod);
-   loadDisplayScale(Measurement::DiastaticPower, PersistentSettings::Names::unitSystem_diastaticPower, Measurement::UnitSystems::diastaticPower_Lintner);
+   loadDisplayScale(Measurement::PhysicalQuantity::Mass,           PersistentSettings::Names::unitSystem_weight,         Measurement::UnitSystems::mass_Metric);
+   loadDisplayScale(Measurement::PhysicalQuantity::Volume,         PersistentSettings::Names::unitSystem_volume,         Measurement::UnitSystems::volume_Metric);
+   loadDisplayScale(Measurement::PhysicalQuantity::Temperature,    PersistentSettings::Names::unitSystem_temperature,    Measurement::UnitSystems::temperature_MetricIsCelsius);
+   loadDisplayScale(Measurement::PhysicalQuantity::Density,        PersistentSettings::Names::unitSystem_density,        Measurement::UnitSystems::density_SpecificGravity);
+   loadDisplayScale(Measurement::PhysicalQuantity::Color,          PersistentSettings::Names::unitSystem_color,          Measurement::UnitSystems::color_StandardReferenceMethod);
+   loadDisplayScale(Measurement::PhysicalQuantity::DiastaticPower, PersistentSettings::Names::unitSystem_diastaticPower, Measurement::UnitSystems::diastaticPower_Lintner);
 
    // These physical quantities only have one UnitSystem, so we don't bother storing it in PersistentSettings
    Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity::Time, Measurement::UnitSystems::time_CoordinatedUniversalTime);
@@ -100,16 +89,17 @@ void Measurement::loadDisplayScales() {
 }
 
 void Measurement::saveDisplayScales() {
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_weight,         Measurement::getDisplayUnitSystem(Measurement::Mass).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_volume,         Measurement::getDisplayUnitSystem(Measurement::Volume).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_temperature,    Measurement::getDisplayUnitSystem(Measurement::Temperature).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_density,        Measurement::getDisplayUnitSystem(Measurement::Density).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_color,          Measurement::getDisplayUnitSystem(Measurement::Color).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_diastaticPower, Measurement::getDisplayUnitSystem(Measurement::DiastaticPower).uniqueName);
+   PersistentSettings::insert(PersistentSettings::Names::unitSystem_weight,         Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Mass).uniqueName);
+   PersistentSettings::insert(PersistentSettings::Names::unitSystem_volume,         Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume).uniqueName);
+   PersistentSettings::insert(PersistentSettings::Names::unitSystem_temperature,    Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Temperature).uniqueName);
+   PersistentSettings::insert(PersistentSettings::Names::unitSystem_density,        Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Density).uniqueName);
+   PersistentSettings::insert(PersistentSettings::Names::unitSystem_color,          Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Color).uniqueName);
+   PersistentSettings::insert(PersistentSettings::Names::unitSystem_diastaticPower, Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::DiastaticPower).uniqueName);
    return;
 }
 
-void Measurement::setDisplayUnitSystem(PhysicalQuantity physicalQuantity, UnitSystem const & unitSystem) {
+void Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity physicalQuantity,
+                                       Measurement::UnitSystem const & unitSystem) {
    // It's a coding error if we try to store a UnitSystem against a PhysicalQuantity to which it does not relate!
    Q_ASSERT(physicalQuantity == unitSystem.getPhysicalQuantity());
    qDebug() <<
@@ -135,7 +125,9 @@ Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(PhysicalQuanti
    Measurement::UnitSystem const * unitSystem = physicalQuantityToUnitSystem.value(physicalQuantity, nullptr);
    if (nullptr == unitSystem) {
       // This is a coding error
-      qCritical() << Q_FUNC_INFO << "Unable to find display unit system for physical quantity" << physicalQuantity;
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to find display unit system for physical quantity" <<
+         Measurement::getDisplayName(physicalQuantity);
       Q_ASSERT(false);
    }
    return *unitSystem;
@@ -146,7 +138,9 @@ Measurement::Unit const & Measurement::getUnitForInternalStorage(PhysicalQuantit
    if (!physicalQuantityToUnit.contains(physicalQuantity) ||
        nullptr == physicalQuantityToUnit.value(physicalQuantity)) {
       // ...so it's a coding error if this is not the case
-      qCritical() << Q_FUNC_INFO << "No internal storage Unit defined for physical quantity" << physicalQuantity;
+      qCritical() <<
+         Q_FUNC_INFO << "No internal storage Unit defined for physical quantity" <<
+         Measurement::getDisplayName(physicalQuantity);
       Q_ASSERT(false);
    }
    return *physicalQuantityToUnit.value(physicalQuantity);

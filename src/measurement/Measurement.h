@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Measurement.h is part of Brewken, and is copyright the following authors 2010-2021:
+ * measurement/Measurement.h is part of Brewken, and is copyright the following authors 2010-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -20,7 +20,9 @@
 #define MEASUREMENT_SYSTEMSOFMEASUREMENT_H
 #pragma once
 
-#include <QHash>
+#include <QObject>
+#include <QPair>
+#include <QString>
 
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
@@ -29,22 +31,6 @@ class BtStringConst;
 class NamedEntity;
 
 namespace Measurement {
-   enum class RangeType {
-      DENSITY,
-      COLOR
-   };
-
-   /**
-    * .:TBD:. Think we can kill this
-    */
-/*   enum unitDisplay {
-      noUnit     = -1,
-      displayDef = 0x000,
-      displaySI  = 0x100,
-      displayUS  = 0x101,
-      displayImp = 0x102
-   };*/
-
    void loadDisplayScales();
    void saveDisplayScales();
 
@@ -52,12 +38,12 @@ namespace Measurement {
     * \brief Set the display \c UnitSystem for the specified \c PhysicalQuantity
     *        Obviously it is a requirement that the caller ensure that physicalQuantity == unitSystem.getPhysicalQuantity()
     */
-   void               setDisplayUnitSystem(PhysicalQuantity physicalQuantity, UnitSystem const & unitSystem);
+   void setDisplayUnitSystem(PhysicalQuantity physicalQuantity, UnitSystem const & unitSystem);
 
    /**
     * \brief Set the supplied \c UnitSystem as the display \c UnitSystem for the \c PhysicalQuantity to which it relates
     */
-   void               setDisplayUnitSystem(UnitSystem const & unitSystem);
+   void setDisplayUnitSystem(UnitSystem const & unitSystem);
 
    /**
     * \brief Get the display \c UnitSystem for the specified \c PhysicalQuantity
@@ -198,12 +184,6 @@ namespace Measurement {
                       Measurement::UnitSystem const * displayUnitSystem = nullptr,
                       Measurement::UnitSystem::RelativeScale relativeScale = Measurement::UnitSystem::noScale);
 
-   // One method to rule them all, and in darkness bind them
-//   UnitSystem const * findUnitSystem(Unit const * unit, Measurement::Unit::unitDisplay display);
-
-//   QString colorUnitName(Measurement::Unit::unitDisplay display);
-//   QString diastaticPowerUnitName(Measurement::Unit::unitDisplay display);
-
    Measurement::UnitSystem const * getUnitSystemForField(QString field, QString section);
    Measurement::UnitSystem::RelativeScale getRelativeScaleForField(QString field, QString section);
 
@@ -213,94 +193,6 @@ namespace Measurement {
    //! \return true iff the string has a valid unit substring at the end.
    bool hasUnits(QString qstr);
 
-}
-
-namespace Deleteme {
-
-   /**
-    * \enum SystemOfMeasurement tells us which sets of units to use for \c PhysicalQuantity of \c Mass or \c Volume.
-    *       These are the quantity types where we have multiple units in each system (eg milligrams, grams and kilograms
-    *       in the metric aka SI system for mass), so we need a group name.
-    *
-    *       For other quantity types, such as \c Measurement::Unit::Temperature, there is only one unit in each system of measurement
-    *       (eg degrees Fahrenheit in US customary units) and/or we don't want to use the "standard" unit (eg
-    *       technically we should use Kelvin in the metric/SI system, but outside the science lab, it's more sensible to
-    *       use degrees Celsius) and/or the name of the system of measurement is the same as the unit of measurement (eg
-    *       SRM and EBC for \c Measurement::Unit::Color).  So in those cases, we use the unit itself rather than having a separate
-    *       enum for system of measurement.
-    */
-   enum MassOrVolumeScales {
-      SI = 0,
-      USCustomary = 1,
-      Imperial = 2,
-   //    ImperialAndUS = 3, Not used and I'm not even sure what it means!
-      Any = 4 // .:TODO:. This is a hack for the Unit class that we need to remove
-   };
-
-   /**
-    * \enum TempScale tells us which units to use for for \c Measurement::PhysicalQuantity of \c Measurement::Unit::Temperature
-    */
-   enum TempScale {
-      Celsius,
-      Fahrenheit,
-      Kelvin
-   };
-
-   //
-   // The values assigned to the enums below have no inherent significance and are purely for backwards-compatibility.
-   //
-   // Previously, in addition to having an enum for the system/units of measurement for each physical property (color,
-   // density, diastatic power, etc) there was a generic enum called Measurement::Unit::unitDisplay that was used as the type for
-   // user choices of units to display, and thus was stored as a numeric value in PersistentSettings.  So that user
-   // settings loaded from a settings file don't change, we have transferred the values across from Measurement::Unit::unitDisplay
-   // to each of these enums that is specific to a particular physical property.
-   //
-   // .:TODO:. Rename UnitType to Scale
-   //
-
-   //! \brief The units to display color in.
-   enum ColorUnitType {
-      SRM = 0x200, // Formerly also Measurement::Unit::unitDisplay::displaySrm
-      EBC = 0x201  // Formerly also Measurement::Unit::unitDisplay::displayEbc
-   };
-
-   //! \brief Units for density
-   enum DensityUnitType {
-      SG    = 0x300, // Formerly also Measurement::Unit::unitDisplay::displaySg
-      PLATO = 0x301  // Formerly also Measurement::Unit::unitDisplay::displayPlato
-   };
-
-   //! \brief The units for the diastatic power.
-   enum DiastaticPowerUnitType {
-      LINTNER = 0x400, // Formerly also Measurement::Unit::unitDisplay::displayLintner
-      WK      = 0x401  // Formerly also Measurement::Unit::unitDisplay::displayWK
-   };
-
-
-   // You do know I will have to kill these too?
-   //! \return the density units
-   DensityUnitType getDensityUnit();
-
-   //! \return the volume system
-   MassOrVolumeScales getVolumeUnitSystem();
-
-
-/*
-   // Options to be edited ONLY by the OptionDialog============================
-   // Whether or not to display plato instead of SG.
-
-   extern MassOrVolumeScales weightUnitSystem;
-   extern MassOrVolumeScales volumeUnitSystem;
-
-   // Sigh. You knew this was coming right? But I think I can clean a lot of
-   // shit up with some clever work.
-   extern QHash<int, UnitSystem const *> thingToUnitSystem;
-
-   extern TempScale tempScale;
-   extern ColorUnitType colorUnit;
-   extern DensityUnitType densityUnit;
-   extern DiastaticPowerUnitType diastaticPowerUnit;
-   */
 }
 
 #endif

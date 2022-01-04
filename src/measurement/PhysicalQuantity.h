@@ -78,18 +78,17 @@ namespace Measurement {
     *       because they do not related to physical quantities, eg date & time format and language choice do not fit
     *       well in here
     */
-   enum PhysicalQuantity {
-      Mass           = 0x100000, // Elsewhere we use weight instead of mass because it's more idiomatic (despite being,
-                                 // strictly speaking, not the same thing)
-      Volume         = 0x200000,
-      Time           = 0x300000, // Note this is durations of time, NOT dates or times of day
-      Temperature    = 0x400000,
-      Color          = 0x500000,
-      Density        = 0x600000, // Sometimes referred to in comments as "gravity" as a shorthand for "specific gravity"
-//      String         = 0x700000, // Not sure what this is! .:TODO:. CAN WE GET RID OF THIS
-      Mixed          = 0x800000, // This is used for quantities where we allow measurement as either Mass or Volume
-      DiastaticPower = 0x900000,
-      None           = 0x000000 // .:TBD:. Would be good to see if we can remove this!
+   enum class PhysicalQuantity {
+      Mass,           // Elsewhere we use weight instead of mass because it's more idiomatic (despite being,
+                      // strictly speaking, not the same thing)
+      Volume,
+      Time,           // Note this is durations of time, NOT dates or times of day
+      Temperature,
+      Color,
+      Density,        // Sometimes referred to in comments as "gravity" as a shorthand for "specific gravity"
+      Mixed,          // This is used for quantities where we allow measurement as either Mass or Volume
+      DiastaticPower,
+      None            // .:TBD:. Would be good to see if we can remove this!
    };
 
    /**

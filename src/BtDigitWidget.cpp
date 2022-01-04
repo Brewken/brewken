@@ -25,7 +25,6 @@
 #include <QLocale>
 #include <QSettings>
 
-#include "Brewken.h"
 #include "Localization.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -25,7 +25,11 @@
 
 #include <memory> // For PImpl
 
+#include <QList>
+#include <QMetaProperty>
 #include <QSqlRecord>
+#include <QString>
+#include <QVariant>
 #include <QVector>
 
 #include "model/NamedEntity.h"

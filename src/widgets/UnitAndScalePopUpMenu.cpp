@@ -25,7 +25,7 @@
 
 namespace {
    /**
-    * \brief
+    * \brief Used by UnitAndScalePopUpMenu constructor
     *
     * \param menu
     * \param text
@@ -55,7 +55,6 @@ UnitAndScalePopUpMenu::UnitAndScalePopUpMenu(QWidget * parent,
                                              Measurement::UnitSystem::RelativeScale const forcedRelativeScale) :
    QMenu(parent) {
 
-   // .:TODO:. This is mostly working but not displaying "default" as selected value when it should be
    QActionGroup * actionGroup = new QActionGroup(parent);
 
    // If there are multiple UnitSystems for the PhysicalQuantity then we want the user to be able to select between them

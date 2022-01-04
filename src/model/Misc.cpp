@@ -27,7 +27,6 @@
 #include <QDebug>
 #include <QVector>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"

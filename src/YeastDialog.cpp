@@ -174,7 +174,7 @@ void YeastDialog::addYeast(const QModelIndex& index)
    }
 
    // Adds a copy of yeast.
-   Brewken::mainWindow()->addYeastToRecipe(yeastTableModel->getYeast(translated.row()));
+   MainWindow::instance().addYeastToRecipe(yeastTableModel->getYeast(translated.row()));
 
    return;
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -22,7 +22,9 @@ class NamedMashEditor;
 
 #include <QDialog>
 #include <QMetaProperty>
+#include <QString>
 #include <QVariant>
+#include <QWidget>
 
 #include "ui_namedMashEditor.h"
 #include "MashListModel.h"

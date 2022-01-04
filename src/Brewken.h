@@ -31,54 +31,12 @@
 
 #define CONFIG_VERSION 1
 
-/*
-#define BTICON ":/images/brewken.svg"
-//#define ICON96 ":/images/BrewkenIcon_96.png"
-#define GLASS ":/images/glass2.png"
-#define SMALLBARLEY ":/images/smallBarley.svg"
-#define SMALLHOP ":/images/smallHop.svg"
-#define SMALLWATER ":/images/smallWater.svg"
-#define SMALLYEAST ":/images/smallYeast.svg"
-#define SMALLKETTLE ":/images/smallKettle.svg"
-#define SMALLQUESTION ":/images/smallQuestion.svg"
-#define SMALLSTYLE ":/images/smallStyle.svg"
-#define SMALLPLUS ":/images/smallPlus.svg"
-#define SMALLMINUS ":/images/smallMinus.svg"
-#define SMALLARROW ":/images/smallArrow.svg"
-#define SMALLINFO ":/images/smallInfo.svg"
-#define SMALLOUTARROW ":/images/smallOutArrow.svg"
-#define SHRED ":/images/editshred.svg"
-#define EXITPNG ":/images/exit.svg"
-#define SAVEPNG ":/images/filesave.svg"
-#define SAVEDIRTYPNG ":/images/filesavedirty.svg"
-#define CLOCKPNG ":/images/clock.svg"
-#define SOUND ":/images/sound.png"
-#define STOP ":/images/alarm_stop.png"
-*/
-
 // need to use this to turn on Mac keyboard shortcuts (see https://doc.qt.io/qt-5/qkeysequence.html#qt_set_sequence_auto_mnemonic)
 extern void qt_set_sequence_auto_mnemonic(bool b);
 
-#include <QApplication>
-#include <QDateTime>
-#include <QDebug>
 #include <QDir>
-#include <QDomDocument>
-#include <QFile>
-#include <QList>
-#include <QMenu>
 #include <QMetaProperty>
-#include <QObject>
-#include <QSettings>
-#include <QString>
-#include <QTextStream>
-#include <QTranslator>
 
-#include "Logging.h"
-#include "measurement/UnitSystem.h"
-#include "utils/BtStringConst.h"
-
-class NamedEntity;
 class MainWindow;
 
 // Need these for changed(QMetaProperty,QVariant) to be emitted across threads.
@@ -93,15 +51,7 @@ Q_DECLARE_METATYPE( QMetaProperty )
  *
  * .:TODO:. Find #includes of this file that are no longer needed
  */
-class Brewken : public QObject
-{
-   Q_OBJECT
-   Q_ENUMS(DbType)
-   Q_ENUMS(delOptions)
-
-   friend class OptionDialog;
-   friend class RecipeFormatter;
-   friend class Unit;
+class Brewken {
 
    friend class MainWindow;
    friend class Testing;
@@ -132,27 +82,7 @@ public:
    //! \brief Writes the persisten options back to the options store
    static void saveSystemOptions();
 
-   // Grr. Shortcuts never, ever pay  off
-/*   TODO REINSTATE THESE!
-   static QMenu* setupColorMenu(QWidget* parent, Measurement::Unit::unitDisplay unit);
-   static QMenu* setupDateMenu(QWidget* parent, Measurement::Unit::unitDisplay unit);
-   static QMenu* setupDensityMenu(QWidget* parent, Measurement::Unit::unitDisplay unit);
-   static QMenu* setupMassMenu(QWidget* parent, Measurement::Unit::unitDisplay unit, Measurement::UnitSystem::RelativeScale scale = Measurement::UnitSystem::noScale, bool generateScale = true);
-   static QMenu* setupTemperatureMenu(QWidget* parent, Measurement::Unit::unitDisplay unit);
-   static QMenu* setupVolumeMenu(QWidget* parent, Measurement::Unit::unitDisplay unit, Measurement::UnitSystem::RelativeScale scale = Measurement::UnitSystem::noScale, bool generateScale = true);
-   static QMenu* setupDiastaticPowerMenu(QWidget* parent, Measurement::Unit::unitDisplay unit);
-   static QMenu* setupTimeMenu(QWidget* parent, Measurement::UnitSystem::RelativeScale scale);
-   static void generateAction(QMenu* menu, QString text, QVariant data, QVariant currentVal, QActionGroup* qgrp = nullptr);
-*/
-   //! \return the main window.
-   // .:TODO:. Move this to MainWindow class!
-   static MainWindow* mainWindow();
-
 private:
-   static MainWindow* m_mainWindow;
-   static QDomDocument* optionsDoc;
-   static QSettings btSettings;
-   static QFile pidFile;
    static bool _isInteractive;
 
    //! \brief If this option is false, do not bother the user about new versions.
@@ -188,17 +118,9 @@ public:
    static void setInteractive(bool val);
 
 private:
-   /*!
-    *  \brief Copies the SQLite database file to another directory.
-    *  \returns false iff the copy is unsuccessful.
-    */
-   static bool copyDataFiles(const QDir newPath);
-
 
    //! \brief Checks for a newer version and prompts user to download.
    static void checkForNewVersion(MainWindow* mw);
-
-   static void loadMap();
 };
 
 

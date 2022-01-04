@@ -18,7 +18,6 @@
  =====================================================================================================================*/
 #include "model/Instruction.h"
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"

@@ -30,7 +30,6 @@
 #include <QObject>
 #include <QVariant>
 
-#include "Brewken.h"
 #include "utils/BtStringConst.h"
 
 class NamedParameterBundle;

@@ -32,7 +32,6 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "measurement/Unit.h"
 #include "tableModels/BtTableModel.h"
 

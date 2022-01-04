@@ -20,7 +20,6 @@
 
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"

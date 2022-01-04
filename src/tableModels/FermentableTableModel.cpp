@@ -453,7 +453,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMNAMECOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntity::name,
                                                   value.toString(),
                                                   tr("Change Fermentable Name"));
@@ -463,7 +463,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::Type>() here (as the Q_PROPERTY system will do the casting for us).
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::type,
                                                   value.toInt(),
                                                   tr("Change Fermentable Type"));
@@ -473,7 +473,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
             // Inventory amount is in kg, but is just called "inventory" rather than "inventory_kg" in the Q_PROPERTY declaration in the Fermentable class
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::NamedEntityWithInventory::inventory,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Mass,
@@ -487,7 +487,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          if (retVal) {
             // This is where the amount of a fermentable in a recipe gets updated
             // We need to refer back to the MainWindow to make this an undoable operation
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::amount_kg,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Mass,
@@ -503,7 +503,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionMethod>() here (as the Q_PROPERTY system will do the casting for us).
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::additionMethod,
                                                   value.toInt(),
                                                   tr("Change Addition Method"));
@@ -513,7 +513,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionTime>() here (as the Q_PROPERTY system will do the casting for us).
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::additionTime,
                                                   value.toInt(),
                                                   tr("Change Addition Time"));
@@ -522,7 +522,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMYIELDCOL:
          retVal = value.canConvert(QVariant::Double);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::yield_pct,
                                                   value.toDouble(),
                                                   tr("Change Yield"));
@@ -531,7 +531,7 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMCOLORCOL:
          retVal = value.canConvert(QVariant::Double);
          if (retVal) {
-            Brewken::mainWindow()->doOrRedoUpdate(*row,
+            MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::color_srm,
                                                   Measurement::qStringToSI(value.toString(),
                                                                            Measurement::PhysicalQuantity::Color,

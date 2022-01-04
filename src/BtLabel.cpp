@@ -23,7 +23,6 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-#include "Brewken.h"
 #include "measurement/Measurement.h"
 #include "model/Style.h"
 #include "model/Recipe.h"

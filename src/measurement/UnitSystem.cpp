@@ -24,7 +24,6 @@
 #include <QLocale>
 #include <QRegExp>
 
-#include "Brewken.h"
 #include "Localization.h"
 #include "measurement/Unit.h"
 #include "utils/EnumStringMapping.h"

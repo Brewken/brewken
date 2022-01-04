@@ -410,7 +410,7 @@ void Testing::runTest()
 {
    QVERIFY( 1==1 );
    /*
-   MainWindow* mw = Brewken::mainWindow();
+   MainWindow& mw = Brewken::mainWindow();
    QVERIFY( mw );
    */
 }

@@ -28,7 +28,6 @@ namespace {
       {"Temperature"   , Measurement::PhysicalQuantity::Temperature   },
       {"Color"         , Measurement::PhysicalQuantity::Color         },
       {"Density"       , Measurement::PhysicalQuantity::Density       },
-//      {"String"        , Measurement::PhysicalQuantity::String        },
       {"Mixed"         , Measurement::PhysicalQuantity::Mixed         },
       {"DiastaticPower", Measurement::PhysicalQuantity::DiastaticPower},
       {"None"          , Measurement::PhysicalQuantity::None          }
@@ -39,7 +38,7 @@ QString Measurement::getDisplayName(Measurement::PhysicalQuantity physicalQuanti
    auto returnValue = physicalQuantityToName.enumToString(physicalQuantity);
    // It's a coding error if we don't find a result!
    if (!returnValue) {
-      qCritical() << Q_FUNC_INFO << "No mapping defined for PhysicalQuantity #" << physicalQuantity;
+      qCritical() << Q_FUNC_INFO << "No mapping defined for PhysicalQuantity #" << static_cast<int>(physicalQuantity);
       Q_ASSERT(false); // Stop here on debug builds
    }
    return *returnValue;

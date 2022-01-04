@@ -21,9 +21,9 @@
 
 #include <typeinfo>
 
+#include <QDebug>
 #include <QMetaProperty>
 
-#include "Brewken.h"
 #include "database/ObjectStore.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
