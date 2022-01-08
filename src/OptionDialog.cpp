@@ -606,8 +606,10 @@ void OptionDialog::configure_unitCombos() {
    // Populate combo boxes on the "Units" tab
    weightComboBox->addItem(tr("Metric / SI units"),
                            QVariant(Measurement::UnitSystems::mass_Metric.uniqueName));
-   weightComboBox->addItem(tr("US traditional / British imperial units"),
-                           QVariant(Measurement::UnitSystems::mass_ImperialAndUsCustomary.uniqueName));
+   weightComboBox->addItem(tr("US traditional units"),
+                           QVariant(Measurement::UnitSystems::mass_UsCustomary.uniqueName));
+   weightComboBox->addItem(tr("British imperial units"),
+                           QVariant(Measurement::UnitSystems::mass_Imperial.uniqueName));
 
    temperatureComboBox->addItem(tr("Celsius"),
                                 QVariant(Measurement::UnitSystems::temperature_MetricIsCelsius.uniqueName));

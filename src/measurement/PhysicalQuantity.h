@@ -52,14 +52,13 @@ namespace Measurement {
     *       what currently happens in the real world, where there is sometimes, for instance, partial migration from
     *       imperial to metric.
     *
-    *       To keep the code simple, we group related scales together into a \c UnitSystem, and it actually this that
-    *       users are choosing for each type of physical quantity.  Eg, the \c UnitSystem for metric mass has scales
-    *       (ie const \c Unit objects) for milligrams, grams and kilograms; the one for US Customary mass has pounds
-    *       and ounces.
+    *       To keep the code simple, we group related scales together into a \c UnitSystem.  Eg, the \c UnitSystem for
+    *       metric mass has scales (ie const \c Unit objects) for milligrams, grams and kilograms; the one for US
+    *       Customary mass has pounds and ounces.
     *
-    *       Thus, each \c Unit belongs to exactly one \c UnitSystem and each \c UnitSystem relates to exactly one
-    *       \c Measurement::PhysicalQuantity (which also means, of course, that \c Unit relates to exactly one
-    *       \c Measurement::PhysicalQuantity, as you would expect).
+    *       Thus, each \c Unit belongs to exactly one \c UnitSystem and, with one exception discussed below, each
+    *       \c UnitSystem relates to exactly one \c Measurement::PhysicalQuantity (which also means, of course, that
+    *       \c Unit relates to exactly one \c Measurement::PhysicalQuantity, as you would expect).
     *
     *       Additionally, each \c Unit knows how to convert itself to and from the canonical metric \c Unit that we
     *       use for internal storage of the corresponding physical quantity type.
@@ -73,6 +72,13 @@ namespace Measurement {
     *       It can also be that a \c UnitSystem has only one \c Unit (eg the two ways we support for measuring density
     *       each only have one scale).  In this case, it will feel to the user as though s/he is choosing a scale (aka
     *       \c Unit) directly rather than a \c UnitSystem, but of course the \c UnitSystem is still there and used.
+    *
+    *       The exception mentioned above is \c Measurement::PhysicalQuantity::Mixed which is used when we are allowing
+    *       a quantity to be measured either by mass or by volume, according to the user's choice.  Eg for \c Misc
+    *       ingredients, some will be best measured by weight and some by volume.  So, eg in \c MiscTableModel, we need
+    *       to offer the options of "Imperial", "US Customary" and "Metric/SI" for the amount column without
+    *       predetermining whether these will be volume or weight because that will depend on a per-row basis.)  This is
+    *       what motivates us to model \c SystemOfMeasurement explicitly. .:TODO:. Make this true!
     *
     *       NOTE that there are other things that users can configure that do not belong with this group of classes
     *       because they do not related to physical quantities, eg date & time format and language choice do not fit

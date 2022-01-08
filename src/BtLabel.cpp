@@ -139,14 +139,33 @@ void BtLabel::initializeMenu() {
    Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
 
    if (Measurement::PhysicalQuantity::Mixed == physicalQuantity) {
+
+      //
+      // Mixed needs some special handling because it is a "fake" physical quantity that means the user has the choice
+      // to measure by mass or by volume on a per-item basis.  This is useful because, eg some Misc ingredients are best
+      // measured by volume and others by mass.  Similarly, dry yeast is probably measured by mass whereas wet yeast is
+      // usually measured by volume.
+      //
+      // For real physical quantities, there is a one-to-one correspondence between UnitSystem and the pair
+      // (SystemOfMeasurement, PhysicalQuantity).  So, for any particular field holding a given PhysicalQuantity,
+      // offering the user a choice of SystemOfMeasurement implies the corresponding choice of UnitSystem, and a choice
+      // of RelativeScale corresponds to this UnitSystem.  So we just store the chosen UnitSystem and/or RelativeScale.
+      //
+      // For Mixed, where PhysicalQuantity varies per-item between two possibilities (Mass and Volume), the choice of
+      // SystemOfMeasurement is going to imply a different UnitSystem per-item depending on, eg Misc::amountIsWeight,
+      // Yeast::amountIsWeight, etc for that item.  Firstly, it doesn't make sense to offer the user a choice of
+      // RelativeScale here, so we suppress that option.
+      //
+      //
+
       // .:TBD:. CHECK THIS STILL WORKS WITH NEW SYSTEM
       // This looks weird, but it works.
-      this->contextMenu = new UnitAndScalePopUpMenu(this->btParent, physicalQuantity, forcedUnitSystem, forcedRelativeScale/*, false*/); // no scale menu
+      this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent, physicalQuantity, forcedUnitSystem, forcedRelativeScale/*, false*/); // no scale menu
    } else {
-      this->contextMenu = new UnitAndScalePopUpMenu(this->btParent,
-                                                      physicalQuantity,
-                                                      forcedUnitSystem,
-                                                      forcedRelativeScale);
+      this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent,
+                                                        physicalQuantity,
+                                                        forcedUnitSystem,
+                                                        forcedRelativeScale);
    }
    return;
 }
@@ -155,7 +174,7 @@ void BtLabel::popContextMenu(const QPoint& point) {
    // For the moment, at least, we do not allow people to choose date formats per-field.  (Although you might want to
    // mix and match metric and imperial systems in certain circumstances, it's less clear that there's a benefit to
    // mixing and matching date formats.)
-   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType)) {
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
       return;
    }
 
@@ -178,14 +197,19 @@ void BtLabel::popContextMenu(const QPoint& point) {
       return;
    }
 
-   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName, this->configSection);
-   Measurement::UnitSystem::RelativeScale scale = Measurement::getRelativeScaleForField(this->propertyName, this->configSection);
+   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName,
+                                                                                   this->configSection);
+   Measurement::UnitSystem::RelativeScale scale = Measurement::getRelativeScaleForField(this->propertyName,
+                                                                                        this->configSection);
    QWidget* pMenu = invoked->parentWidget();
    if (pMenu == this->contextMenu) {
       PersistentSettings::insert(this->propertyName, invoked->data(), this->configSection, PersistentSettings::UNIT);
       // reset the scale if required
       if (PersistentSettings::contains(this->propertyName, this->configSection, PersistentSettings::SCALE) ) {
-         PersistentSettings::insert(this->propertyName, Measurement::UnitSystem::noScale, this->configSection, PersistentSettings::SCALE);
+         PersistentSettings::insert(this->propertyName,
+                                    Measurement::UnitSystem::noScale,
+                                    this->configSection,
+                                    PersistentSettings::SCALE);
       }
    } else {
       PersistentSettings::insert(this->propertyName, invoked->data(), this->configSection, PersistentSettings::SCALE);
@@ -203,16 +227,19 @@ void BtLabel::popContextMenu(const QPoint& point) {
       PersistentSettings::insert(PropertyNames::Style::colorMax_srm, invoked->data(), this->configSection, PersistentSettings::UNIT);
    }
 
-   // Hmm. For the color fields, I want to include the ecb or srm in the label
-   // text here.
-   if (std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) &&
-       Measurement::PhysicalQuantity::Color == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+   //
+   // Hmm. For the color fields, we want to include the ecb or srm in the label text here.
+   //
+   // Assert that we already bailed above for fields that aren't a PhysicalQuantity, so we know std::get won't throw
+   // here.
+   //
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
+   if (Measurement::PhysicalQuantity::Color == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
       Measurement::UnitSystem const * const disp = Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString());
       setText( tr("Color (%1)").arg(disp->unit()->name));
    }
 
    // Remember, we need the original unit, not the new one.
-
    emit changedUnitSystemOrScale(unitSystem, scale);
 
    return;

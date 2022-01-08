@@ -23,11 +23,9 @@
 
 #include "measurement/UnitSystem.h"
 
-class UnitAndScalePopUpMenu : public QMenu {
-Q_OBJECT
-public:
+namespace UnitAndScalePopUpMenu {
    /**
-    * \brief A \c QMenu (possibly with a sub-menu) for specifying/changing a "forced" \c UnitSystem and/or
+    * \brief Creates a \c QMenu (possibly with a sub-menu) for specifying/changing a "forced" \c UnitSystem and/or
     *        \c RelativeScale used to display a particular UI field.  This allows it to be different from the global
     *        default (eg so the user can specify a particular weight field is shown in metric even though they have set
     *        US Customary as the default for weight fields).
@@ -43,11 +41,10 @@ public:
     *
     * \return New \c QMenu owned by \c parent
     */
-   UnitAndScalePopUpMenu(QWidget * parent,
-                         Measurement::PhysicalQuantity physicalQuantity,
-                         Measurement::UnitSystem const * forcedUnitSystem = nullptr,
-                         Measurement::UnitSystem::RelativeScale const forcedRelativeScale = Measurement::UnitSystem::noScale);
-   virtual ~UnitAndScalePopUpMenu();
-};
+   QMenu * create(QWidget * parent,
+                  Measurement::PhysicalQuantity physicalQuantity,
+                  Measurement::UnitSystem const * forcedUnitSystem,
+                  Measurement::UnitSystem::RelativeScale const forcedRelativeScale);
+}
 
 #endif

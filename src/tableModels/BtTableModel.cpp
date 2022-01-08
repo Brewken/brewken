@@ -128,7 +128,7 @@ void BtTableModel::contextMenu(QPoint const & point) {
    Measurement::UnitSystem::RelativeScale forcedScale = this->displayScale(selected);
    Measurement::PhysicalQuantity physicalQuantity = this->columnGetPhysicalQuantity(selected);
 
-   QMenu* menu = new UnitAndScalePopUpMenu(parentTableWidget, physicalQuantity, forcedUnitSystem, forcedScale);
+   QMenu* menu = UnitAndScalePopUpMenu::create(parentTableWidget, physicalQuantity, forcedUnitSystem, forcedScale);
    this->doContextMenu(point, hView, menu, selected);
    return;
 }

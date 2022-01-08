@@ -160,6 +160,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/measurement/IbuMethods.cpp
     ${SRCDIR}/measurement/Measurement.cpp
     ${SRCDIR}/measurement/PhysicalQuantity.cpp
+    ${SRCDIR}/measurement/SystemOfMeasurement.cpp
     ${SRCDIR}/measurement/Unit.cpp
     ${SRCDIR}/measurement/UnitSystem.cpp
     ${SRCDIR}/MiscDialog.cpp

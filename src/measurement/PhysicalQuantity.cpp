@@ -22,15 +22,15 @@
 
 namespace {
    EnumStringMapping const physicalQuantityToName {
-      {"Mass"          , Measurement::PhysicalQuantity::Mass          },
-      {"Volume"        , Measurement::PhysicalQuantity::Volume        },
-      {"Time"          , Measurement::PhysicalQuantity::Time          },
-      {"Temperature"   , Measurement::PhysicalQuantity::Temperature   },
-      {"Color"         , Measurement::PhysicalQuantity::Color         },
-      {"Density"       , Measurement::PhysicalQuantity::Density       },
-      {"Mixed"         , Measurement::PhysicalQuantity::Mixed         },
-      {"DiastaticPower", Measurement::PhysicalQuantity::DiastaticPower},
-      {"None"          , Measurement::PhysicalQuantity::None          }
+      {QT_TR_NOOP("Mass")          , Measurement::PhysicalQuantity::Mass          },
+      {QT_TR_NOOP("Volume")        , Measurement::PhysicalQuantity::Volume        },
+      {QT_TR_NOOP("Time")          , Measurement::PhysicalQuantity::Time          },
+      {QT_TR_NOOP("Temperature")   , Measurement::PhysicalQuantity::Temperature   },
+      {QT_TR_NOOP("Color")         , Measurement::PhysicalQuantity::Color         },
+      {QT_TR_NOOP("Density")       , Measurement::PhysicalQuantity::Density       },
+      {QT_TR_NOOP("Mixed")         , Measurement::PhysicalQuantity::Mixed         },
+      {QT_TR_NOOP("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower},
+      {QT_TR_NOOP("None")          , Measurement::PhysicalQuantity::None          }
    };
 }
 

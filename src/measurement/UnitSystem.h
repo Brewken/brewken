@@ -27,6 +27,7 @@
 #include <QString>
 
 #include "measurement/PhysicalQuantity.h"
+#include "measurement/SystemOfMeasurement.h"
 
 namespace Measurement {
    class Unit;
@@ -103,7 +104,7 @@ namespace Measurement {
                  std::initializer_list<std::pair<Measurement::UnitSystem::RelativeScale const,
                                                  Measurement::Unit const *> > scaleToUnit,
                  char const * const uniqueName,
-                 char const * const systemOfMeasurementName);
+                 SystemOfMeasurement const systemOfMeasurement);
 
       ~UnitSystem();
 
@@ -121,11 +122,9 @@ namespace Measurement {
       QString const uniqueName;
 
       /**
-       * \brief The name we display to the user to distinguish this \c UnitSystem from others relating to the same
-       *        \c PhysicalQuantity.  Typically the name of a system of measurement (eg Imperial or Metric/SI) or the
-       *        name of a scale (eg Fahrenheit or Celsius).
+       * \brief The system of measurement to which this \c UnitSystem relates
        */
-      QString const systemOfMeasurementName;
+      SystemOfMeasurement const systemOfMeasurement;
 
       /*!
        * \brief Returns a string appropriately displaying 'amount' of type 'units' in this UnitSystem.  This string
@@ -204,14 +203,6 @@ namespace Measurement {
        */
       Unit const * unit() const;
 
-      /*!
-       * \brief Returns the name of the system of measurement for this unit system
-       *
-       * .:TODO:.  This is a bit confusing.  It can be a string representation of either
-       *           Measurement::MassOrVolumeScales, Measurement::TempScale or Measurement::PhysicalQuantity!
-       */
-//      QString const & unitType() const;
-
       /**
        * \brief Return the \c PhysicalQuantity which this \c UnitSystem measures
        */
@@ -225,10 +216,13 @@ namespace Measurement {
        */
       static UnitSystem const * getInstanceByUniqueName(QString const name);
 
+      static UnitSystem const & getInstance(SystemOfMeasurement const systemOfMeasurement,
+                                            PhysicalQuantity const physicalQuantity);
+
       /**
        * \brief Returns a list of all the \c UnitSystem instances that relate to a particular \c PhysicalQuantity
        */
-      static QList<UnitSystem const *> getUnitSystems(Measurement::PhysicalQuantity physicalQuantity);
+      static QList<UnitSystem const *> getUnitSystems(Measurement::PhysicalQuantity const physicalQuantity);
 
       static QString relativeScaleToString(Measurement::UnitSystem::RelativeScale relativeScale);
       static Measurement::UnitSystem::RelativeScale relativeScaleFromString(QString relativeScaleAsString);
@@ -249,9 +243,11 @@ namespace Measurement {
    };
 
    namespace UnitSystems {
-      // For mass, there is no difference between US Customary and Imperial measurement systems, so they share a
-      // UnitSystem
-      extern UnitSystem const mass_ImperialAndUsCustomary;
+      // Note, per https://en.wikipedia.org/wiki/United_States_customary_units#Mass_and_weight, that "For the pound and
+      // smaller units, the US customary system and the British imperial system are identical.  However, they differ
+      // when dealing with units larger than the pound."
+      extern UnitSystem const mass_Imperial;
+      extern UnitSystem const mass_UsCustomary;
       extern UnitSystem const mass_Metric;
 
       extern UnitSystem const volume_Imperial;

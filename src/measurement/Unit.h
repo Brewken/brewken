@@ -33,23 +33,15 @@
 
 // TODO: implement ppm, percent, ibuGalPerLb,
 
-/*!
- * \class Unit
- *
- * \brief Interface for arbitrary physical units and their formatting.
- *
- * .:TBD:. Does this really need to inherit from QObject?
- */
 namespace Measurement {
    class UnitSystem;
 
-
-   class Unit /*: public QObject*/ {
-   //Q_OBJECT
-
-   //Q_ENUMS(unitDisplay)
-   //Q_ENUMS(RelativeScale)
-   //Q_ENUMS(PhysicalQuantity)
+   /*!
+    * \class Unit
+    *
+    * \brief Interface for arbitrary physical units and their formatting.
+    */
+   class Unit {
 
    public:
       // Did you know you need these various enums to be *INSIDE* the class definition for Qt to see them? TBD DO WE CARE ABOUT THIS ANY MORE?
@@ -160,6 +152,8 @@ namespace Measurement {
       extern Unit const milligrams;
       extern Unit const pounds;
       extern Unit const ounces;
+      extern Unit const imperial_pounds; // Same as pounds
+      extern Unit const imperial_ounces; // Same as ounces
       // === Volume ===
       extern Unit const liters;
       extern Unit const milliliters;

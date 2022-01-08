@@ -232,11 +232,14 @@ Measurement::Unit const * Measurement::Unit::getUnit(QString const & name,
 // Previously this was done with a huge number of subclasses, but lambdas mean that's no longer necessary
 namespace Measurement::Units {
    // === Mass ===
+   // See comment in measurement/UnitSystem.cpp for why we have separate entities for US Customary pounds/ounces and Imperials ones, even though they are, in fact, the same
    Unit const kilograms            = Unit{Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("kg"),   [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const grams                = Unit{Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("g"),    [](double x){return x/1000.0;},        [](double y){return y*1000.0;},         1.0};
    Unit const milligrams           = Unit{Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("mg"),   [](double x){return x/1000000.0;},     [](double y){return y*1000000.0;},      1.0};
-   Unit const pounds               = Unit{Measurement::UnitSystems::mass_ImperialAndUsCustomary,         QT_TR_NOOP("lb"),   [](double x){return x*0.45359237;},    [](double y){return y/0.45359237;},     1.0};
-   Unit const ounces               = Unit{Measurement::UnitSystems::mass_ImperialAndUsCustomary,         QT_TR_NOOP("oz"),   [](double x){return x*0.0283495231;},  [](double y){return y/0.0283495231;},   1.0};
+   Unit const pounds               = Unit{Measurement::UnitSystems::mass_UsCustomary,                    QT_TR_NOOP("lb"),   [](double x){return x*0.45359237;},    [](double y){return y/0.45359237;},     1.0};
+   Unit const ounces               = Unit{Measurement::UnitSystems::mass_UsCustomary,                    QT_TR_NOOP("oz"),   [](double x){return x*0.0283495231;},  [](double y){return y/0.0283495231;},   1.0};
+   Unit const imperial_pounds      = Unit{Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("lb"),   [](double x){return x*0.45359237;},    [](double y){return y/0.45359237;},     1.0};
+   Unit const imperial_ounces      = Unit{Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("oz"),   [](double x){return x*0.0283495231;},  [](double y){return y/0.0283495231;},   1.0};
    // === Volume ===
    Unit const liters               = Unit{Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("L"),    [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const milliliters          = Unit{Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("mL"),   [](double x){return x/1000.0;},        [](double y){return y*1000.0;},         1.0};

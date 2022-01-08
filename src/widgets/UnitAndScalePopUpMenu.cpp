@@ -49,11 +49,11 @@ namespace {
    }
 }
 
-UnitAndScalePopUpMenu::UnitAndScalePopUpMenu(QWidget * parent,
-                                             Measurement::PhysicalQuantity physicalQuantity,
-                                             Measurement::UnitSystem const * forcedUnitSystem,
-                                             Measurement::UnitSystem::RelativeScale const forcedRelativeScale) :
-   QMenu(parent) {
+QMenu * UnitAndScalePopUpMenu::create(QWidget * parent,
+                                      Measurement::PhysicalQuantity physicalQuantity,
+                                      Measurement::UnitSystem const * forcedUnitSystem,
+                                      Measurement::UnitSystem::RelativeScale const forcedRelativeScale) {
+   QMenu * menu = new QMenu{parent};
 
    QActionGroup * actionGroup = new QActionGroup(parent);
 
@@ -61,14 +61,14 @@ UnitAndScalePopUpMenu::UnitAndScalePopUpMenu(QWidget * parent,
    auto unitSystems = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
    if (unitSystems.size() > 1) {
       QString forcedUnitSystemUniqueName{forcedUnitSystem ? forcedUnitSystem->uniqueName : ""};
-      generateAction(this,
+      generateAction(menu,
                      QApplication::translate("UnitSystem", "Default"),
                      "",
                      forcedUnitSystemUniqueName,
                      actionGroup);
       for (auto system : unitSystems) {
-         generateAction(this,
-                        system->systemOfMeasurementName,
+         generateAction(menu,
+                        Measurement::getDisplayName(system->systemOfMeasurement),
                         system->uniqueName,
                         forcedUnitSystemUniqueName,
                         actionGroup);
@@ -82,7 +82,7 @@ UnitAndScalePopUpMenu::UnitAndScalePopUpMenu(QWidget * parent,
    };
    auto relativeScales = unitSystem.getRelativeScales();
    if (relativeScales.size() > 1) {
-      QMenu * subMenu = new QMenu(this);
+      QMenu * subMenu = new QMenu(menu);
       generateAction(subMenu,
                      QApplication::translate("UnitSystem", "Default"),
                      Measurement::UnitSystem::noScale,
@@ -92,10 +92,8 @@ UnitAndScalePopUpMenu::UnitAndScalePopUpMenu(QWidget * parent,
          generateAction(subMenu, unitSystem.scaleUnit(scale)->name, scale, forcedRelativeScale, actionGroup);
       }
       subMenu->setTitle(QApplication::translate("UnitSystem", "Scale"));
-      this->addMenu(subMenu);
+      menu->addMenu(subMenu);
    }
 
-   return;
+   return menu;
 }
-
-UnitAndScalePopUpMenu::~UnitAndScalePopUpMenu() = default;

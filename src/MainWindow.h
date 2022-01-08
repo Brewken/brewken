@@ -343,6 +343,15 @@ private:
    class impl;
    std::unique_ptr<impl> pimpl;
 
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
+   MainWindow(MainWindow const&) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   MainWindow& operator=(MainWindow const&) = delete;
+   //! No move constructor
+   MainWindow(MainWindow &&) = delete;
+   //! No move assignment
+   MainWindow & operator=(MainWindow &&) = delete;
+
    void removeHop(Hop & itemToRemove);
    void removeFermentable(Fermentable & itemToRemove);
    void removeMisc(Misc & itemToRemove);

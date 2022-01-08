@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLabel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtLabel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -41,11 +41,11 @@
  *        Moreover, the settings for each label are remembered (via PersistentSettings) for future times the program is
  *        run.
  *
- *        .:TODO:. This is currently a rather hidden feature of the program as there is no visual clue that right-
- *                 clicking on a field label will bring up a useful menu (and it is not common behaviour in other
- *                 software).  It would be good to have some visual clue(s) to the user that this feature exists.  Eg,
- *                 perhaps the label could have an annotation and/or there could be a text or mouse pointer change on
- *                 mouse-over.  Also, why shouldn't left-click also bring up the context menu.
+ *        This has been a rather hidden feature of the program as there were no visual clues that right-clicking on a
+ *        field label would bring up a useful menu (and it is not common behaviour in other software).  Where possible,
+ *        we have now made it so that
+ *          • mouseover on the label underlines the label text (hopefully making the user think of a clickable link),
+ *          • where left-clicking would otherwise have no effect, it now has the same effect as right-click.
  *
  *        A \c BtLabel (or subclass thereof) will usually have a corresponding \c BtLineEdit (or subclass thereof).
  *        These two widgets will be Qt buddies, which just means that the \c BtLineEdit accepts the input focus on
@@ -59,33 +59,6 @@ class BtLabel : public QLabel {
 
 public:
    /*!
-    * \enum LabelType What kinds of units are available for labels.  Mostly these are self-explanatory and correspond to
-    *       values in \c Measurement::PhysicalQuantity.  However there are the following additional special values:
-    *          MIXED - for fields that can either be weight or volume (depending on some other checkbox control), as
-    *                  used for quantities in Misc Editor
-    *          DATE - dates are not a measure of a physical quantity, so they don't have a unit system, but you can
-    *                 right-click on a BtDateLabel to select the date format for the corresponding entry field
-    *                 (.:TBD:. Is this really useful?  Would you actually want to be able to have different dates in
-    *                  different formats?  It seems not worth all the extra complexity it creates.)
-    *          NONE - there is no context menu for this label
-    *
-    */
-/*   enum LabelType {
-      // .:TODO:. Do some assignment here that allows clever casting
-      NONE,
-      COLOR,
-      DENSITY,
-      MASS,
-      TEMPERATURE,
-      VOLUME,
-      TIME,
-      MIXED,
-      DATE,
-      DIASTATIC_POWER
-   };*/
-
-
-   /*!
     * \brief Initialize the BtLabel with the parent and do some things with the type
     *
     * \param parent - QWidget* to the parent object
@@ -94,8 +67,7 @@ public:
     * \todo Not sure if I can get the name of the widget being created.
     *       Not sure how to signal the parent to redisplay
     */
-   BtLabel(QWidget* parent/* = nullptr*/, BtFieldType fieldType/* = NONE*/);
-
+   BtLabel(QWidget * parent, BtFieldType fieldType);
    virtual ~BtLabel();
 
    /**

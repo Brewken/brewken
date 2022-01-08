@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * measurement/UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -180,9 +180,9 @@ Measurement::UnitSystem::UnitSystem(Measurement::PhysicalQuantity const physical
                                     std::initializer_list<std::pair<Measurement::UnitSystem::RelativeScale const,
                                                                     Measurement::Unit const *> > scaleToUnit,
                                     char const * const uniqueName,
-                                    char const * const systemOfMeasurementName) :
+                                    SystemOfMeasurement const systemOfMeasurement) :
    uniqueName{uniqueName},
-   systemOfMeasurementName{systemOfMeasurementName},
+   systemOfMeasurement{systemOfMeasurement},
    pimpl{std::make_unique<impl>(*this,
                                 physicalQuantity,
                                 thickness,
@@ -300,7 +300,30 @@ Measurement::UnitSystem const * Measurement::UnitSystem::getInstanceByUniqueName
    return nameToUnitSystem.value(uniqueName, nullptr);
 }
 
-QList<Measurement::UnitSystem const *> Measurement::UnitSystem::getUnitSystems(Measurement::PhysicalQuantity physicalQuantity) {
+Measurement::UnitSystem const & Measurement::UnitSystem::getInstance(SystemOfMeasurement const systemOfMeasurement,
+                                                                     PhysicalQuantity const physicalQuantity) {
+   auto systemsForThisPhysicalQuantity = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
+   auto result = std::find_if(
+      systemsForThisPhysicalQuantity.begin(),
+      systemsForThisPhysicalQuantity.end(),
+      [systemOfMeasurement](Measurement::UnitSystem const * unitSystem) {
+         return unitSystem->systemOfMeasurement == systemOfMeasurement;
+      }
+   );
+
+   if (systemsForThisPhysicalQuantity.end() == result) {
+      // It's a coding error if we didn't find a match
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to find a UnitSystem for SystemOfMeasurement" <<
+         Measurement::getDisplayName(systemOfMeasurement) << "and PhysicalQuantity" <<
+         Measurement::getDisplayName(physicalQuantity);
+      Q_ASSERT(false); // Stop here on a debug build
+   }
+
+   return **result;
+}
+
+QList<Measurement::UnitSystem const *> Measurement::UnitSystem::getUnitSystems(Measurement::PhysicalQuantity const physicalQuantity) {
    return physicalQuantityToUnitSystems.values(physicalQuantity);
 }
 
@@ -333,14 +356,11 @@ Measurement::UnitSystem::RelativeScale Measurement::UnitSystem::relativeScaleFro
 //
 //---------------------------------------------------------------------------------------------------------------------
 namespace Measurement::UnitSystems {
-   UnitSystem const mass_ImperialAndUsCustomary = UnitSystem(PhysicalQuantity::Mass,
-                                                             &Measurement::Units::pounds,
-                                                             &Measurement::Units::pounds,
-                                                             {{UnitSystem::scaleExtraSmall, &Measurement::Units::ounces},
-                                                              {UnitSystem::scaleSmall,      &Measurement::Units::pounds}},
-                                                             "mass_ImperialAndUsCustomary",
-                                                             QT_TR_NOOP("US Customary / Imperial"));
-
+   //
+   // NB: For the mass_Xxxx and volume_Xxxx unit systems, to make Measurement::PhysicalQuantity::Mixed work, we rely on
+   //     systemOfMeasurementName being identical for identical systems of measurement (because, for reasons explained
+   //     in comments in measurement/PhysicalQuantity.h, we don't explicitly model system of measurement).
+   //
    UnitSystem const mass_Metric = UnitSystem(PhysicalQuantity::Mass,
                                              &Measurement::Units::kilograms,
                                              &Measurement::Units::kilograms,
@@ -348,19 +368,31 @@ namespace Measurement::UnitSystems {
                                               {UnitSystem::scaleSmall,      &Measurement::Units::grams     },
                                               {UnitSystem::scaleMedium,     &Measurement::Units::kilograms }},
                                              "mass_Metric",
-                                             QT_TR_NOOP("Metric (SI)"));
+                                             Measurement::SystemOfMeasurement::Metric);
 
-   UnitSystem const volume_Imperial = UnitSystem(PhysicalQuantity::Volume,
-                                                 &Measurement::Units::imperial_quarts,
-                                                 &Measurement::Units::imperial_gallons,
-                                                 {{UnitSystem::scaleExtraSmall, &Measurement::Units::imperial_teaspoons  },
-                                                  {UnitSystem::scaleSmall,      &Measurement::Units::imperial_tablespoons},
-                                                  {UnitSystem::scaleMedium,     &Measurement::Units::imperial_cups       },
-                                                  {UnitSystem::scaleLarge,      &Measurement::Units::imperial_quarts     },
-                                                  {UnitSystem::scaleExtraLarge, &Measurement::Units::imperial_gallons    },
-                                                  {UnitSystem::scaleHuge,       &Measurement::Units::imperial_barrels    }},
-                                                 "volume_Imperial",
-                                                 QT_TR_NOOP("Imperial"));
+   UnitSystem const mass_UsCustomary = UnitSystem(PhysicalQuantity::Mass,
+                                                  &Measurement::Units::pounds,
+                                                  &Measurement::Units::pounds,
+                                                  {{UnitSystem::scaleExtraSmall, &Measurement::Units::ounces},
+                                                   {UnitSystem::scaleSmall,      &Measurement::Units::pounds}},
+                                                  "mass_UsCustomary",
+                                                  Measurement::SystemOfMeasurement::UsCustomary);
+
+   UnitSystem const mass_Imperial = UnitSystem(PhysicalQuantity::Mass,
+                                               &Measurement::Units::imperial_pounds,
+                                               &Measurement::Units::imperial_pounds,
+                                               {{UnitSystem::scaleExtraSmall, &Measurement::Units::imperial_ounces},
+                                                {UnitSystem::scaleSmall,      &Measurement::Units::imperial_pounds}},
+                                               "mass_Imperial",
+                                               Measurement::SystemOfMeasurement::Imperial);
+
+   UnitSystem const volume_Metric = UnitSystem(PhysicalQuantity::Volume,
+                                               &Measurement::Units::liters,
+                                               &Measurement::Units::liters,
+                                               {{UnitSystem::scaleExtraSmall, &Measurement::Units::milliliters},
+                                                {UnitSystem::scaleSmall,      &Measurement::Units::liters     }},
+                                               "volume_Metric",
+                                               Measurement::SystemOfMeasurement::Metric);
 
    UnitSystem const volume_UsCustomary = UnitSystem(PhysicalQuantity::Volume,
                                                     &Measurement::Units::us_quarts,
@@ -372,29 +404,33 @@ namespace Measurement::UnitSystems {
                                                      {UnitSystem::scaleExtraLarge, &Measurement::Units::us_gallons    },
                                                      {UnitSystem::scaleHuge,       &Measurement::Units::us_barrels    }},
                                                     "volume_UsCustomary",
-                                                    QT_TR_NOOP("US Customary"));
+                                                    Measurement::SystemOfMeasurement::UsCustomary);
 
-   UnitSystem const volume_Metric = UnitSystem(PhysicalQuantity::Volume,
-                                               &Measurement::Units::liters,
-                                               &Measurement::Units::liters,
-                                               {{UnitSystem::scaleExtraSmall, &Measurement::Units::milliliters},
-                                                {UnitSystem::scaleSmall,      &Measurement::Units::liters     }},
-                                               "volume_Metric",
-                                               QT_TR_NOOP("Metric (SI)"));
+   UnitSystem const volume_Imperial = UnitSystem(PhysicalQuantity::Volume,
+                                                 &Measurement::Units::imperial_quarts,
+                                                 &Measurement::Units::imperial_gallons,
+                                                 {{UnitSystem::scaleExtraSmall, &Measurement::Units::imperial_teaspoons  },
+                                                  {UnitSystem::scaleSmall,      &Measurement::Units::imperial_tablespoons},
+                                                  {UnitSystem::scaleMedium,     &Measurement::Units::imperial_cups       },
+                                                  {UnitSystem::scaleLarge,      &Measurement::Units::imperial_quarts     },
+                                                  {UnitSystem::scaleExtraLarge, &Measurement::Units::imperial_gallons    },
+                                                  {UnitSystem::scaleHuge,       &Measurement::Units::imperial_barrels    }},
+                                                 "volume_Imperial",
+                                                 Measurement::SystemOfMeasurement::Imperial);
 
    UnitSystem const temperature_MetricIsCelsius = UnitSystem(PhysicalQuantity::Temperature,
                                                              nullptr,
                                                              &Measurement::Units::celsius,
                                                              {{UnitSystem::scaleWithout, &Measurement::Units::celsius}},
                                                              "temperature_MetricIsCelsius",
-                                                             QT_TR_NOOP("Celsius"));
+                                                             Measurement::SystemOfMeasurement::Metric);
 
    UnitSystem const temperature_UsCustomaryIsFahrenheit = UnitSystem(PhysicalQuantity::Temperature,
                                                                      nullptr,
                                                                      &Measurement::Units::fahrenheit,
                                                                      {{UnitSystem::scaleWithout, &Measurement::Units::fahrenheit}},
                                                                      "temperature_UsCustomaryIsFahrenheit",
-                                                                     QT_TR_NOOP("Fahrenheit"));
+                                                                     Measurement::SystemOfMeasurement::UsCustomary);
 
    UnitSystem const time_CoordinatedUniversalTime = UnitSystem(PhysicalQuantity::Time,
                                                                nullptr,
@@ -404,48 +440,48 @@ namespace Measurement::UnitSystems {
                                                                 {UnitSystem::scaleMedium,     &Measurement::Units::hours  },
                                                                 {UnitSystem::scaleLarge,      &Measurement::Units::days   }},
                                                                "time_CoordinatedUniversalTime",
-                                                               QT_TR_NOOP("Coordinated Universal Time"));
+                                                               Measurement::SystemOfMeasurement::StandardTimeUnits);
 
    UnitSystem const color_EuropeanBreweryConvention = UnitSystem(PhysicalQuantity::Color,
                                                                  nullptr,
                                                                  &Measurement::Units::ebc,
                                                                  {{UnitSystem::scaleWithout, &Measurement::Units::ebc}},
                                                                  "color_EuropeanBreweryConvention",
-                                                                 QT_TR_NOOP("EBC (European Brewery Convention)"));
+                                                                 Measurement::SystemOfMeasurement::EuropeanBreweryConvention);
 
    UnitSystem const color_StandardReferenceMethod = UnitSystem(PhysicalQuantity::Color,
                                                                nullptr,
                                                                &Measurement::Units::srm,
                                                                {{UnitSystem::scaleWithout, &Measurement::Units::srm}},
                                                                "color_StandardReferenceMethod",
-                                                               QT_TR_NOOP("SRM (Standard Reference Method)"));
+                                                               Measurement::SystemOfMeasurement::StandardReferenceMethod);
 
    UnitSystem const density_SpecificGravity = UnitSystem(PhysicalQuantity::Density,
                                                          nullptr,
                                                          &Measurement::Units::sp_grav,
                                                          {{UnitSystem::scaleWithout, &Measurement::Units::sp_grav}},
                                                          "density_SpecificGravity",
-                                                         QT_TR_NOOP("Specific Gravity"));
+                                                         Measurement::SystemOfMeasurement::SpecificGravity);
 
    UnitSystem const density_Plato = UnitSystem(PhysicalQuantity::Density,
                                                nullptr,
                                                &Measurement::Units::plato,
                                                {{UnitSystem::scaleWithout, &Measurement::Units::plato}},
                                                "density_Plato",
-                                               QT_TR_NOOP("Plato"));
+                                               Measurement::SystemOfMeasurement::Plato);
 
    UnitSystem const diastaticPower_Lintner = UnitSystem(PhysicalQuantity::DiastaticPower,
                                                         nullptr,
                                                         &Measurement::Units::lintner,
                                                         {{UnitSystem::scaleWithout, &Measurement::Units::lintner}},
                                                         "diastaticPower_Lintner",
-                                                        QT_TR_NOOP("Lintner"));
+                                                        Measurement::SystemOfMeasurement::Lintner);
 
    UnitSystem const diastaticPower_WindischKolbach = UnitSystem(PhysicalQuantity::DiastaticPower,
                                                                 nullptr,
                                                                 &Measurement::Units::wk,
                                                                 {{UnitSystem::scaleWithout, &Measurement::Units::wk}},
                                                                 "diastaticPower_WindischKolbach",
-                                                                QT_TR_NOOP("WK (Windisch Kolbach)"));
+                                                                Measurement::SystemOfMeasurement::WindischKolbach);
 
 }

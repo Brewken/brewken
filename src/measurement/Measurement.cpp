@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Measurement.cpp is part of Brewken, and is copyright the following authors 2010-2021:
+ * measurement/Measurement.cpp is part of Brewken, and is copyright the following authors 2010-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -51,7 +51,7 @@ namespace {
          qWarning() <<
             Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" <<
             Measurement::getDisplayName(physicalQuantity) << ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
-            defaultUnitSystem.systemOfMeasurementName << ")";
+            Measurement::getDisplayName(defaultUnitSystem.systemOfMeasurement) << ")";
          unitSystem = &defaultUnitSystem;
       }
       Measurement::setDisplayUnitSystem(physicalQuantity, *unitSystem);
@@ -116,7 +116,7 @@ void Measurement::setDisplayUnitSystem(UnitSystem const & unitSystem) {
    return;
 }
 
-
+// .:TODO:. Need to decide how to handle Mixed!
 Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(PhysicalQuantity physicalQuantity) {
    // It is a coding error if physicalQuantityToUnitSystem has not had data loaded into it by the time this function is
    // called.
@@ -309,28 +309,6 @@ QPair<double,double> Measurement::displayRange(QObject *guiObject,
    return range;
 }
 
-/*
-Measurement::UnitSystem const * Measurement::findUnitSystem(Unit const * unit, Measurement::Unit::unitDisplay display) {
-   if (!unit) {
-      return nullptr;
-   }
-
-   int key = unit->getPhysicalQuantity();
-
-   // noUnit means get the default UnitSystem. Through little planning on my
-   // part, it happens that is equivalent to just the unitType
-   if ( display != Measurement::Unit::noUnit ) {
-      key |= display;
-   }
-
-   if ( Measurement::thingToUnitSystem.contains( key ) ) {
-      return Measurement::thingToUnitSystem.value(key);
-   }
-
-   return nullptr;
-}
-*/
-
 void Measurement::getThicknessUnits(Unit const ** volumeUnit, Unit const ** weightUnit) {
    *volumeUnit = Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume).thicknessUnit();
    *weightUnit = Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Mass).thicknessUnit();
@@ -401,54 +379,3 @@ void Measurement::setRelativeScaleForField(QString field,
    PersistentSettings::insert(field, relativeScale, section, PersistentSettings::SCALE);
    return;
 }
-
-/*
-Measurement::Unit::unitDisplay Brewken::getDensityUnit()
-{
-   if ( densityUnit == Brewken::SG )
-      return Measurement::Unit::displaySg;
-
-   return Measurement::Unit::displayPlato;
-}
-
-Measurement::TempScale Brewken::getTemperatureScale()
-{
-   return tempScale;
-}
-*/
-/*
-   //! \return the weight system
-   static Measurement::MassOrVolumeScales getWeightUnitSystem();
-   //! \return the temperature scale
-   static Measurement::TempScale getTemperatureScale();
-   //! \return the color units
-   static Measurement::Unit::unitDisplay getColorUnit();
-   //! \return the diastatic power units
-   static Measurement::Unit::unitDisplay getDiastaticPowerUnit();
-*/
-/*   Measurement::MassOrVolumeScales Brewken::getWeightUnitSystem()
-   {
-      return weightUnitSystem;
-   }
-
-   Measurement::MassOrVolumeScales Brewken::getVolumeUnitSystem()
-   {
-      return volumeUnitSystem;
-   }
-
-   Measurement::Unit::unitDisplay Brewken::getColorUnit()
-   {
-      if ( colorUnit == Brewken::SRM )
-         return Measurement::Unit::displaySrm;
-
-      return Measurement::Unit::displayEbc;
-   }
-
-   Measurement::Unit::unitDisplay Brewken::getDiastaticPowerUnit()
-   {
-      if ( diastaticPowerUnit == Brewken::LINTNER )
-         return Measurement::Unit::displayLintner;
-
-      return Measurement::Unit::displayWK;
-   }
-*/
