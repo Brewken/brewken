@@ -167,14 +167,14 @@ void WaterEditor::saveAndClose() {
 
    this->obs->setName( lineEdit_name->text());
    this->obs->setAmount(0.0);
-   this->obs->setBicarbonate_ppm( lineEdit_alk->toSI() );
-   this->obs->setCalcium_ppm( lineEdit_ca->toSI() );
-   this->obs->setMagnesium_ppm( lineEdit_mg->toSI() );
-   this->obs->setSulfate_ppm( lineEdit_so4->toSI() );
-   this->obs->setSodium_ppm( lineEdit_na->toSI() );
-   this->obs->setChloride_ppm( lineEdit_cl->toSI() );
-   this->obs->setPh( lineEdit_ph->toSI() );
-   this->obs->setAlkalinity( lineEdit_alk->toSI());
+   this->obs->setBicarbonate_ppm( lineEdit_alk->toSiRaw() );
+   this->obs->setCalcium_ppm( lineEdit_ca->toSiRaw() );
+   this->obs->setMagnesium_ppm( lineEdit_mg->toSiRaw() );
+   this->obs->setSulfate_ppm( lineEdit_so4->toSiRaw() );
+   this->obs->setSodium_ppm( lineEdit_na->toSiRaw() );
+   this->obs->setChloride_ppm( lineEdit_cl->toSiRaw() );
+   this->obs->setPh( lineEdit_ph->toSiRaw() );
+   this->obs->setAlkalinity( lineEdit_alk->toSiRaw());
    this->obs->setAlkalinityAsHCO3(comboBox_alk->currentText() == QString("HCO3"));
    this->obs->setNotes( plainTextEdit_notes->toPlainText());
 

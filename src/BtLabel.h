@@ -20,6 +20,8 @@
 #define BTLABEL_H
 #pragma once
 
+#include <optional>
+
 #include <QAction>
 #include <QHash>
 #include <QLabel>
@@ -28,6 +30,7 @@
 
 #include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
+#include "UiAmountWithUnits.h" // For PreviousScaleInfo
 
 /*!
  * \class BtLabel
@@ -87,12 +90,36 @@ private:
    void textEffect(bool enabled);
 
 public slots:
+   /**
+    * \brief Shows the pop-up menu to allow the user to override the units and/or scale for this field
+    */
    void popContextMenu(const QPoint &point);
 
 signals:
-   // This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
-   void changedUnitSystemOrScale(Measurement::UnitSystem const * oldUnitSystem,
-                                 Measurement::UnitSystem::RelativeScale oldScale);
+   /**
+    * \brief Signal to say we changed the forced system of measurement and/or scale for a field (or group of fields)
+    *
+    *        NB: This is mostly referenced in .ui files, which compile to string-based connection syntax (see
+    *        https://doc.qt.io/qt-5/signalsandslots-syntaxes.html for difference from functor-based syntax that we
+    *        generally prefer to use in .cpp files).  Note too that, if you are manually editing a .ui file rather than
+    *        using Qt Designer, you must NOT put parameter names in the function declarations in the \<signal\> and
+    *        \<slot\> tags inside the \<connection\> tag.
+    *
+    *        The idea is that fields affected by a change in forced system of measurement or scale (including to/from
+    *        "default") can take current value, convert it to Metric/SI under the "old" settings, then redisplay it with
+    *        whatever the new settings are.  Because the fields don't store the "old" settings, we have to send them.
+    *        (They can get the new ones just by calling \c Measurement::getUnitSystemForField() etc.
+    *
+    *        There will always be an old \c SystemOfMeasurement, even if it's the global default for this field's
+    *        \c PhysicalQuantity.  There might not be an old \c RelativeScale though, hence the \c std::optional.
+    *
+    *          .:TODO:. Fix this comment and/or the code
+    *        Note that we are OK to use std::optional here as, per https://doc.qt.io/qt-5/signalsandslots.html, "Signals
+    *        and slots can take any number of arguments of any type. They are completely type safe."  HOWEVER, when
+    *        referring to the function signature in .ui files, we need to remember to escape '<' to "&lt;" and '>' to
+    *        "&gt;" because .ui files are XML.
+    */
+   void changedSystemOfMeasurementOrScale(PreviousScaleInfo previousScaleInfo);
 
 // Using protected instead of private allows me to not use the friends
 // declaration

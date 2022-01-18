@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -162,11 +162,20 @@ namespace PersistentSettings {
 
    /**
     * \brief What extension (if any) to add to the key when accessing a stored setting.  This is useful for associating
-    *        a stored value with its scale and/or unit
+    *        a stored value with its display scale and/or unit
     */
-   enum Extension {
+   enum class Extension {
       NONE,
+      /**
+       * \brief Used to store the forced (ie overriding general default) \c Measurement::UnitSystem::RelativeScale for
+       *        displaying a particular field.
+       */
       SCALE,
+      /**
+       * \brief Used to store the forced \c Measurement::SystemOfMeasurement for displaying a particular field.  (Other
+       *        than for fields that can be either weight or volume, this corresponds directly to a
+       *        \c Measurement::UnitSystem.)
+       */
       UNIT
    };
 
@@ -174,18 +183,18 @@ namespace PersistentSettings {
     * \brief Returns true if the persistent settings storage contains an item with "fully-qualified" key (generated
     *        from key, section and Extension); otherwise returns false.
     */
-   bool contains(QString const & key,            QString const section = QString(),  Extension extension = NONE);
-   bool contains(BtStringConst const & constKey, QString const section = QString(),  Extension extension = NONE);
-   bool contains(BtStringConst const & constKey, BtStringConst const & constSection, Extension extension = NONE);
+   bool contains(QString const & key,            QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   bool contains(BtStringConst const & constKey, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   bool contains(BtStringConst const & constKey, BtStringConst const & constSection, Extension extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Inserts a new item with the "fully-qualified" key (generated from key, section and Extension) and a value
     *        of value.
     *        If there is already an item with a corresponding key, that item's value is replaced with value.
     */
-   void insert(QString const & key,            QVariant value, QString const section = QString(),  Extension extension = NONE);
-   void insert(BtStringConst const & constKey, QVariant value, QString const section = QString(),  Extension extension = NONE);
-   void insert(BtStringConst const & constKey, QVariant value, BtStringConst const & constSection, Extension extension = NONE);
+   void insert(QString const & key,            QVariant value, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   void insert(BtStringConst const & constKey, QVariant value, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   void insert(BtStringConst const & constKey, QVariant value, BtStringConst const & constSection, Extension extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Returns the value associated with the "fully-qualified" key (generated from key, section and Extension).
@@ -193,17 +202,17 @@ namespace PersistentSettings {
     *        defaultValue.
     *        If no defaultValue is specified, the function returns a default-constructed value.
     */
-   QVariant value(QString const & key,            QVariant const defaultValue = QVariant(), QString const section = QString(),  Extension = NONE);
-   QVariant value(BtStringConst const & constKey, QVariant const defaultValue = QVariant(), QString const section = QString(),  Extension = NONE);
-   QVariant value(BtStringConst const & constKey, QVariant const defaultValue,              BtStringConst const & constSection, Extension = NONE);
+   QVariant value(QString const & key,            QVariant const defaultValue = QVariant(), QString const section = QString(),  Extension = PersistentSettings::Extension::NONE);
+   QVariant value(BtStringConst const & constKey, QVariant const defaultValue = QVariant(), QString const section = QString(),  Extension = PersistentSettings::Extension::NONE);
+   QVariant value(BtStringConst const & constKey, QVariant const defaultValue,              BtStringConst const & constSection, Extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Removes the item matching key (unless key is the name of a section, in which case it removes all keys in
     *        that section -- hence one reason you don't want keys and sections to share names).
     */
-   void remove(QString const & key,             QString const section = QString(),  Extension extension = NONE);
-   void remove(BtStringConst const & constName, QString const section = QString(),  Extension extension = NONE);
-   void remove(BtStringConst const & constName, BtStringConst const & constSection, Extension extension = NONE);
+   void remove(QString const & key,             QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   void remove(BtStringConst const & constName, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   void remove(BtStringConst const & constName, BtStringConst const & constSection, Extension extension = PersistentSettings::Extension::NONE);
 
 }
 #endif

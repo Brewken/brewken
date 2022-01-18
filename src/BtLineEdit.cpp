@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -33,6 +33,7 @@
 #include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
 #include "PersistentSettings.h"
+#include "utils/OptionalToStream.h"
 
 namespace {
    int const min_text_size = 8;
@@ -69,14 +70,28 @@ void BtLineEdit::setWidgetText(QString text) {
 
 void BtLineEdit::onLineChanged() {
    qDebug() <<
-      Q_FUNC_INFO << "this->units=" << (nullptr == this->units ? "NULL" : this->units->name) <<
-      ", this->forcedUnitSystem=" << (nullptr == this->forcedUnitSystem ? "NULL" : this->forcedUnitSystem->uniqueName);
-   this->lineChanged(nullptr, Measurement::UnitSystem::noScale);
+      Q_FUNC_INFO << "this->fieldType=" << this->fieldType << "this->units=" << (nullptr == this->units ? "NULL" : this->units->name) <<
+      ", this->forcedSystemOfMeasurement=" << this->forcedSystemOfMeasurement;
+
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
+       Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+      return;
+   }
+
+   Measurement::UnitSystem const & oldUnitSystem =
+      Measurement::getUnitSystemForField(this->editField,
+                                         this->configSection,
+                                         std::get<Measurement::PhysicalQuantity>(this->fieldType));
+   PreviousScaleInfo previousScaleInfo{
+      oldUnitSystem.systemOfMeasurement,
+      Measurement::getForcedRelativeScaleForField(this->editField, this->configSection)
+   };
+
+   this->lineChanged(previousScaleInfo);
    return;
 }
 
-void BtLineEdit::lineChanged(Measurement::UnitSystem const * oldUnitSystem,
-                             Measurement::UnitSystem::RelativeScale oldScale) {
+void BtLineEdit::lineChanged(PreviousScaleInfo previousScaleInfo) {
    // editingFinished happens on focus being lost, regardless of anything
    // being changed. I am hoping this short circuits properly and we do
    // nothing if nothing changed.
@@ -84,7 +99,7 @@ void BtLineEdit::lineChanged(Measurement::UnitSystem const * oldUnitSystem,
       return;
    }
 
-   this->textOrUnitsChanged(oldUnitSystem, oldScale);
+   this->textOrUnitsChanged(previousScaleInfo);
 
    if (sender() == this) {
       emit textModified();

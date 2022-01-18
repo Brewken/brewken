@@ -46,11 +46,11 @@
  */
 class BtDigitWidget : public QLabel, public UiAmountWithUnits {
    Q_OBJECT
-///   Q_PROPERTY(int     type                 READ type                             WRITE setType                          STORED false)
-   Q_PROPERTY(QString configSection        READ getConfigSection                 WRITE setConfigSection                 STORED false)
-   Q_PROPERTY(QString editField            READ getEditField                     WRITE setEditField                     STORED false)
-   Q_PROPERTY(QString forcedUnitSystem     READ getForcedUnitSystemViaString     WRITE setForcedUnitSystemViaString     STORED false)
-   Q_PROPERTY(QString forcedRelativeScale  READ getForcedRelativeScaleViaString  WRITE setForcedRelativeScaleViaString  STORED false)
+///   Q_PROPERTY(int     type                      READ type                                  WRITE setType                               STORED false)
+   Q_PROPERTY(QString configSection             READ getConfigSection                      WRITE setConfigSection                      STORED false)
+   Q_PROPERTY(QString editField                 READ getEditField                          WRITE setEditField                          STORED false)
+   Q_PROPERTY(QString forcedSystemOfMeasurement READ getForcedSystemOfMeasurementViaString WRITE setForcedSystemOfMeasurementViaString STORED false)
+   Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
 
 public:
    enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
@@ -99,7 +99,7 @@ public slots:
     *
     * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
     */
-   void displayChanged(Measurement::UnitSystem const * oldUnitSystem, Measurement::UnitSystem::RelativeScale oldScale);
+   void displayChanged(PreviousScaleInfo previousScaleInfo);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

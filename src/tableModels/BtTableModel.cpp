@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021:
+ * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
+ *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -23,6 +24,7 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "utils/OptionalToStream.h"
 #include "widgets/UnitAndScalePopUpMenu.h"
 
 BtTableModel::BtTableModel(QTableView * parent,
@@ -37,53 +39,65 @@ BtTableModel::BtTableModel(QTableView * parent,
 
 BtTableModel::~BtTableModel() = default;
 
-/* --maf--
-   The cell-specific work has been momentarily disabled until I can find a
-   better way to implement. PLEASE DO NOT DELETE
-*/
-Measurement::UnitSystem const * BtTableModel::displayUnitSystem(int column) const {
+std::optional<Measurement::SystemOfMeasurement> BtTableModel::getForcedSystemOfMeasurementForColumn(int column) const {
    QString attribute = this->columnGetAttribute(column);
-   if (attribute.isEmpty()) {
-      return nullptr;
-   }
-
-   return Measurement::getUnitSystemForField(attribute, this->objectName());
+   return attribute.isEmpty() ? std::nullopt : Measurement::getForcedSystemOfMeasurementForField(attribute,
+                                                                                                 this->objectName());
 }
 
-Measurement::UnitSystem::RelativeScale BtTableModel::displayScale(int column) const {
-   QString attribute = columnGetAttribute(column);
-   if ( attribute.isEmpty() ) {
-      return Measurement::UnitSystem::noScale;
-   }
-
-   return Measurement::getRelativeScaleForField(attribute, this->objectName());
+std::optional<Measurement::UnitSystem::RelativeScale> BtTableModel::getForcedRelativeScaleForColumn(int column) const {
+   QString attribute = this->columnGetAttribute(column);
+   return attribute.isEmpty() ? std::nullopt : Measurement::getForcedRelativeScaleForField(attribute,
+                                                                                           this->objectName());
 }
 
-void BtTableModel::setDisplayUnitSystem(int column, Measurement::UnitSystem const * unitSystem) {
-   // Hop* row; // disabled per-cell magic
+void BtTableModel::setForcedSystemOfMeasurementForColumn(int column, Measurement::SystemOfMeasurement systemOfMeasurement) {
    QString attribute = this->columnGetAttribute(column);
-   if (attribute.isEmpty()) {
-      return;
+   if (!attribute.isEmpty()) {
+      Measurement::setForcedSystemOfMeasurementForField(attribute, this->objectName(), systemOfMeasurement);
+      // As we're setting/changing the forced SystemOfMeasurement, we want to clear the forced RelativeScale
+      this->unsetForcedRelativeScaleForColumn(column);
    }
-
-   // If we're changing the UnitSystem then we want to clear the RelativeScale
-   Measurement::setUnitSystemForField(attribute, this->objectName(), unitSystem);
-   this->setDisplayScale(column, Measurement::UnitSystem::noScale);
-
    return;
 }
 
-// Setting the scale should clear any cell-level scaling options
-void BtTableModel::setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale) {
-   // Fermentable* row; //disabled per-cell magic
+void BtTableModel::setForcedRelativeScaleForColumn(int column, Measurement::UnitSystem::RelativeScale relativeScale) {
+   QString attribute = this->columnGetAttribute(column);
+   if (!attribute.isEmpty()) {
+      Measurement::setForcedRelativeScaleForField(attribute, this->objectName(), relativeScale);
+   }
+   return;
+}
+
+void BtTableModel::unsetForcedSystemOfMeasurementForColumn(int column) {
    QString attribute = this->columnGetAttribute(column);
    if (attribute.isEmpty()) {
-      return;
+      Measurement::unsetForcedSystemOfMeasurementForField(attribute, this->objectName());
+      // As we're removing the forced SystemOfMeasurement, we want to clear the forced RelativeScale
+      this->unsetForcedRelativeScaleForColumn(column);
+   }
+   return;
+}
+
+void BtTableModel::unsetForcedRelativeScaleForColumn(int column) {
+   QString attribute = this->columnGetAttribute(column);
+   if (!attribute.isEmpty()) {
+      Measurement::unsetForcedRelativeScaleForField(attribute, this->objectName());
+   }
+   return;
+}
+
+QVariant BtTableModel::getColumName(int column) const {
+   if (this->columnIdToInfo.contains(column)) {
+      return QVariant(this->columnIdToInfo.value(column).headerName);
    }
 
-   Measurement::setRelativeScaleForField(attribute, this->objectName(), displayScale);
+   qWarning() << Q_FUNC_INFO << "Bad column:" << column;
+   return QVariant();
+}
 
-   return;
+int BtTableModel::columnCount(QModelIndex const & /*parent*/) const {
+   return this->columnIdToInfo.size();
 }
 
 QString BtTableModel::columnGetAttribute(int column) const {
@@ -100,19 +114,39 @@ Measurement::PhysicalQuantity BtTableModel::columnGetPhysicalQuantity(int column
    return Measurement::PhysicalQuantity::None;
 }
 
-
 void BtTableModel::doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected) {
    QAction* invoked = menu->exec(hView->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }
 
-   QWidget* pMenu = invoked->parentWidget();
-   if (pMenu == menu) {
-      this->setDisplayUnitSystem(selected,
-                                 Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString()));
+   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
+   // whether it's the menu or the sub-menu that it came from.
+   bool isTopMenu{invoked->parentWidget() == menu};
+   if (isTopMenu) {
+      // It's the menu, so SystemOfMeasurement
+      std::optional<Measurement::SystemOfMeasurement> whatSelected =
+         UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
+      qDebug() << Q_FUNC_INFO << "Selected SystemOfMeasurement" << whatSelected;
+      if (!whatSelected) {
+         // Null means "Default", which means don't set a forced SystemOfMeasurement for this field
+         this->unsetForcedSystemOfMeasurementForColumn(selected);
+      } else {
+         this->setForcedSystemOfMeasurementForColumn(selected, *whatSelected);
+      }
+      // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale, but this is handled by
+      // unsetForcedSystemOfMeasurementForColumn() and setForcedSystemOfMeasurementForColumn()
    } else {
-      this->setDisplayScale(selected, static_cast<Measurement::UnitSystem::RelativeScale>(invoked->data().toInt()));
+      // It's the sub-menu, so UnitSystem::RelativeScale
+      std::optional<Measurement::UnitSystem::RelativeScale> whatSelected =
+         UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
+      qDebug() << Q_FUNC_INFO << "Selected RelativeScale" << whatSelected;
+      if (!whatSelected) {
+         // Null means "Default", which means don't set a forced RelativeScale for this field
+         this->unsetForcedRelativeScaleForColumn(selected);
+      } else {
+         this->setForcedRelativeScaleForColumn(selected, *whatSelected);
+      }
    }
    return;
 }
@@ -120,15 +154,12 @@ void BtTableModel::doContextMenu(QPoint const & point, QHeaderView * hView, QMen
 // oofrab
 void BtTableModel::contextMenu(QPoint const & point) {
    qDebug() << Q_FUNC_INFO;
-   QObject* calledBy = sender();
-   QHeaderView* hView = qobject_cast<QHeaderView*>(calledBy);
+   QHeaderView* hView = qobject_cast<QHeaderView*>(this->sender());
    int selected = hView->logicalIndexAt(point);
-
-   Measurement::UnitSystem const * forcedUnitSystem  = this->displayUnitSystem(selected);
-   Measurement::UnitSystem::RelativeScale forcedScale = this->displayScale(selected);
-   Measurement::PhysicalQuantity physicalQuantity = this->columnGetPhysicalQuantity(selected);
-
-   QMenu* menu = UnitAndScalePopUpMenu::create(parentTableWidget, physicalQuantity, forcedUnitSystem, forcedScale);
+   QMenu * menu = UnitAndScalePopUpMenu::create(parentTableWidget,
+                                                this->columnGetPhysicalQuantity(selected),
+                                                this->getForcedSystemOfMeasurementForColumn(selected),
+                                                this->getForcedRelativeScaleForColumn(selected));
    this->doContextMenu(point, hView, menu, selected);
    return;
 }

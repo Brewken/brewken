@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -271,14 +271,11 @@ QVariant BtTreeItem::dataFermentable(int column) {
          break;
       case FERMENTABLECOLORCOL:
          if (ferm) {
-            return QVariant(
-                      Measurement::displayAmount(
-                         ferm->color_srm(),
-                         &Measurement::Units::srm,
-                         0,
-                         Measurement::getUnitSystemForField(*PropertyNames::Fermentable::color_srm, "")
-                      )
-                   );
+            return QVariant(Measurement::displayAmount(ferm->color_srm(),
+                                                       BtString::EMPTY_STR,
+                                                       PropertyNames::Fermentable::color_srm,
+                                                       &Measurement::Units::srm,
+                                                       0));
          }
          break;
       default :

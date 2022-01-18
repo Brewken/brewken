@@ -45,12 +45,12 @@ MashStepTableModel::MashStepTableModel(QTableView* parent) :
    BtTableModel{
       parent,
       false,
-      {{MASHSTEPNAMECOL,       {Measurement::PhysicalQuantity::None,        ""                                    }},
-       {MASHSTEPTYPECOL,       {Measurement::PhysicalQuantity::None,        ""                                    }},
-       {MASHSTEPAMOUNTCOL,     {Measurement::PhysicalQuantity::Volume,      "amount"                              }}, // Not a real property name
-       {MASHSTEPTEMPCOL,       {Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::infuseTemp_c}},
-       {MASHSTEPTARGETTEMPCOL, {Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::stepTemp_c  }},
-       {MASHSTEPTIMECOL,       {Measurement::PhysicalQuantity::Time,        *PropertyNames::Misc::time            }}}
+      {{MASHSTEPNAMECOL,       {tr("Name"),          Measurement::PhysicalQuantity::None,        ""                                    }},
+       {MASHSTEPTYPECOL,       {tr("Type"),          Measurement::PhysicalQuantity::None,        ""                                    }},
+       {MASHSTEPAMOUNTCOL,     {tr("Amount"),        Measurement::PhysicalQuantity::Volume,      "amount"                              }}, // Not a real property name
+       {MASHSTEPTEMPCOL,       {tr("Infusion Temp"), Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::infuseTemp_c}},
+       {MASHSTEPTARGETTEMPCOL, {tr("Target Temp"),   Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::stepTemp_c  }},
+       {MASHSTEPTIMECOL,       {tr("Time"),          Measurement::PhysicalQuantity::Time,        *PropertyNames::Misc::time            }}}
    },
    mashObs(nullptr) {
    setObjectName("mashStepTableModel");
@@ -199,8 +199,7 @@ void MashStepTableModel::mashChanged()
    setMash( mashObs );
 }
 
-void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val)
-{
+void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val) {
    int i;
 
    MashStep* stepSender = qobject_cast<MashStep*>(sender());
@@ -213,21 +212,15 @@ void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val)
                         QAbstractItemModel::createIndex(i, MASHSTEPNUMCOLS-1));
    }
 
-   if( parentTableWidget )
-   {
+   if (parentTableWidget) {
       parentTableWidget->resizeColumnsToContents();
       parentTableWidget->resizeRowsToContents();
    }
+   return;
 }
 
-int MashStepTableModel::rowCount(const QModelIndex& /*parent*/) const
-{
+int MashStepTableModel::rowCount(const QModelIndex& /*parent*/) const {
    return steps.size();
-}
-
-int MashStepTableModel::columnCount(const QModelIndex& /*parent*/) const
-{
-   return MASHSTEPNUMCOLS;
 }
 
 QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
@@ -248,57 +241,60 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
 
    MashStep* row = this->steps[index.row()];
 
-   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
-   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
-
-   int col = index.column();
-   switch (col) {
+   int const column = index.column();
+   switch (column) {
       case MASHSTEPNAMECOL:
          return QVariant(row->name());
       case MASHSTEPTYPECOL:
          return QVariant(row->typeStringTr());
       case MASHSTEPAMOUNTCOL:
-         return (row->type() == MashStep::Decoction)
-                ? QVariant( Measurement::displayAmount(row->decoctionAmount_l(), &Measurement::Units::liters, 3, dspUnitSystem, dspScl ) )
-                : QVariant( Measurement::displayAmount(row->infuseAmount_l(), &Measurement::Units::liters, 3, dspUnitSystem, dspScl) );
+         return QVariant(
+            Measurement::displayAmount(
+               row->type() == MashStep::Decoction ? row->decoctionAmount_l() : row->infuseAmount_l(),
+               &Measurement::Units::liters,
+               3,
+               this->getForcedSystemOfMeasurementForColumn(column),
+               this->getForcedRelativeScaleForColumn(column)
+            )
+         );
       case MASHSTEPTEMPCOL:
-         return (row->type() == MashStep::Decoction)
-                ? QVariant("---")
-                : QVariant( Measurement::displayAmount(row->infuseTemp_c(), &Measurement::Units::celsius, 3, dspUnitSystem, Measurement::UnitSystem::noScale) );
+         if (row->type() == MashStep::Decoction) {
+            return QVariant("---");
+         }
+         return QVariant(
+            Measurement::displayAmount(row->infuseTemp_c(),
+                                       &Measurement::Units::celsius,
+                                       3,
+                                       this->getForcedSystemOfMeasurementForColumn(column),
+                                       std::nullopt)
+         );
       case MASHSTEPTARGETTEMPCOL:
-         return QVariant( Measurement::displayAmount(row->stepTemp_c(), &Measurement::Units::celsius, 3, dspUnitSystem, Measurement::UnitSystem::noScale) );
+         return QVariant(
+            Measurement::displayAmount(row->stepTemp_c(),
+                                       &Measurement::Units::celsius,
+                                       3,
+                                       this->getForcedSystemOfMeasurementForColumn(column),
+                                       std::nullopt)
+         );
       case MASHSTEPTIMECOL:
-         return QVariant( Measurement::displayAmount(row->stepTime_min(), &Measurement::Units::minutes, 3, nullptr, dspScl) );
+         return QVariant(
+            Measurement::displayAmount(row->stepTime_min(),
+                                       &Measurement::Units::minutes,
+                                       3,
+                                       std::nullopt,
+                                       this->getForcedRelativeScaleForColumn(column))
+         );
       default :
-         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
+         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
          return QVariant();
    }
 }
 
-QVariant MashStepTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
-{
-   if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-   {
-      switch( section )
-      {
-         case MASHSTEPNAMECOL:
-            return QVariant(tr("Name"));
-         case MASHSTEPTYPECOL:
-            return QVariant(tr("Type"));
-         case MASHSTEPAMOUNTCOL:
-            return QVariant(tr("Amount"));
-         case MASHSTEPTEMPCOL:
-            return QVariant(tr("Infusion Temp"));
-         case MASHSTEPTARGETTEMPCOL:
-            return QVariant(tr("Target Temp"));
-         case MASHSTEPTIMECOL:
-            return QVariant(tr("Time"));
-         default:
-            return QVariant();
-      }
+QVariant MashStepTableModel::headerData( int section, Qt::Orientation orientation, int role ) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      return this->getColumName(section);
    }
-   else
-      return QVariant();
+   return QVariant();
 }
 
 Qt::ItemFlags MashStepTableModel::flags(const QModelIndex& index ) const
@@ -326,10 +322,8 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 
    MashStep * row = this->steps[index.row()];
 
-   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
-   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
-
-   switch (index.column()) {
+   int const column = index.column();
+   switch (column) {
       case MASHSTEPNAMECOL:
          if (value.canConvert(QVariant::String)) {
             MainWindow::instance().doOrRedoUpdate(*row,
@@ -353,19 +347,25 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
       case MASHSTEPAMOUNTCOL:
          if (value.canConvert(QVariant::String)) {
             if( row->type() == MashStep::Decoction ) {
-               MainWindow::instance().doOrRedoUpdate(*row,
-                                                     PropertyNames::MashStep::decoctionAmount_l,
-                                                     Measurement::qStringToSI(value.toString(),
-                                                                              Measurement::PhysicalQuantity::Volume,
-                                                                              dspUnitSystem,dspScl),
-                                                     tr("Change Mash Step Decoction Amount"));
+               MainWindow::instance().doOrRedoUpdate(
+                  *row,
+                  PropertyNames::MashStep::decoctionAmount_l,
+                  Measurement::qStringToSI(value.toString(),
+                                           Measurement::PhysicalQuantity::Volume,
+                                           this->getForcedSystemOfMeasurementForColumn(column),
+                                           this->getForcedRelativeScaleForColumn(column)),
+                  tr("Change Mash Step Decoction Amount")
+               );
             } else {
-               MainWindow::instance().doOrRedoUpdate(*row,
-                                                     PropertyNames::MashStep::infuseAmount_l,
-                                                     Measurement::qStringToSI(value.toString(),
-                                                                              Measurement::PhysicalQuantity::Volume,
-                                                                              dspUnitSystem,dspScl),
-                                                     tr("Change Mash Step Infuse Amount"));
+               MainWindow::instance().doOrRedoUpdate(
+                  *row,
+                  PropertyNames::MashStep::infuseAmount_l,
+                  Measurement::qStringToSI(value.toString(),
+                                           Measurement::PhysicalQuantity::Volume,
+                                           this->getForcedSystemOfMeasurementForColumn(column),
+                                           this->getForcedRelativeScaleForColumn(column)),
+                  tr("Change Mash Step Infuse Amount")
+               );
             }
             return true;
          }
@@ -373,12 +373,15 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 
       case MASHSTEPTEMPCOL:
          if (value.canConvert(QVariant::String) && row->type() != MashStep::Decoction) {
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::MashStep::infuseTemp_c,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Temperature,
-                                                                           dspUnitSystem,dspScl),
-                                                  tr("Change Mash Step Infuse Temp"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::MashStep::infuseTemp_c,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Temperature,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Mash Step Infuse Temp")
+            );
             return true;
          }
          return false;
@@ -389,17 +392,21 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
             //
             // We don't assign the pointer (returned by new) to second SimpleUndoableUpdate we create because, in the
             // constructor, it gets linked to the first one, which then "owns" it.
-            auto targetTempUpdate = new SimpleUndoableUpdate(*row,
-                                                             PropertyNames::MashStep::stepTemp_c,
-                                                             Measurement::qStringToSI(value.toString(),
-                                                                                      Measurement::PhysicalQuantity::Temperature,
-                                                                                      dspUnitSystem,dspScl),
-                                                             tr("Change Mash Step Temp"));
+            auto targetTempUpdate = new SimpleUndoableUpdate(
+               *row,
+               PropertyNames::MashStep::stepTemp_c,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Temperature,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Mash Step Temp")
+            );
             new SimpleUndoableUpdate(*row,
                                      PropertyNames::MashStep::endTemp_c,
                                      Measurement::qStringToSI(value.toString(),
                                                               Measurement::PhysicalQuantity::Temperature,
-                                                              dspUnitSystem,dspScl),
+                                                              this->getForcedSystemOfMeasurementForColumn(column),
+                                                              this->getForcedRelativeScaleForColumn(column)),
                                      tr("Change Mash Step End Temp"),
                                      targetTempUpdate);
             MainWindow::instance().doOrRedoUpdate(targetTempUpdate);
@@ -409,12 +416,15 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 
       case MASHSTEPTIMECOL:
          if (value.canConvert(QVariant::String)) {
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::MashStep::stepTime_min,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Time,
-                                                                           dspUnitSystem,dspScl),
-                                                  tr("Change Mash Step Time"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::MashStep::stepTime_min,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Time,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Mash Step Time")
+            );
             return true;
          }
          return false;

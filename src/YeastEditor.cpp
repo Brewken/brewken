@@ -67,10 +67,10 @@ void YeastEditor::save() {
 
    this->obsYeast->setLaboratory(lineEdit_laboratory->text());
    this->obsYeast->setProductID(lineEdit_productID->text());
-   this->obsYeast->setMinTemperature_c(lineEdit_minTemperature->toSI());
-   this->obsYeast->setMaxTemperature_c(lineEdit_maxTemperature->toSI());
+   this->obsYeast->setMinTemperature_c(lineEdit_minTemperature->toSiRaw());
+   this->obsYeast->setMaxTemperature_c(lineEdit_maxTemperature->toSiRaw());
    this->obsYeast->setFlocculation(static_cast<Yeast::Flocculation>(comboBox_flocculation->currentIndex()));
-   this->obsYeast->setAttenuation_pct(lineEdit_attenuation->toSI());
+   this->obsYeast->setAttenuation_pct(lineEdit_attenuation->toSiRaw());
 
    this->obsYeast->setTimesCultured(lineEdit_timesCultured->text().toInt());
    this->obsYeast->setMaxReuse(lineEdit_maxReuse->text().toInt());

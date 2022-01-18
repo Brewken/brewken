@@ -36,7 +36,7 @@ class BtTableModel : public QAbstractTableModel {
    Q_OBJECT
 public:
    struct ColumnInfo {
-      //headerName
+      QString headerName;
       Measurement::PhysicalQuantity physicalQuantity;
       QString attribute;
    };
@@ -46,12 +46,23 @@ public:
                 std::initializer_list<std::pair<int const, ColumnInfo> > columnIdToInfo);
    virtual ~BtTableModel();
 
-   // Stuff for setting display units and scales -- per cell first, then by
-   // column
-   Measurement::UnitSystem const * displayUnitSystem(int column) const;
-   Measurement::UnitSystem::RelativeScale displayScale(int column) const;
-   void setDisplayUnitSystem(int column, Measurement::UnitSystem const * displayUnitSystem);
-   void setDisplayScale(int column, Measurement::UnitSystem::RelativeScale displayScale);
+   // Stuff for setting display units and scales -- per cell column
+   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurementForColumn(int column) const;
+   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScaleForColumn(int column) const;
+   void setForcedSystemOfMeasurementForColumn(int column, Measurement::SystemOfMeasurement systemOfMeasurement);
+   void setForcedRelativeScaleForColumn(int column, Measurement::UnitSystem::RelativeScale relativeScale);
+   void unsetForcedSystemOfMeasurementForColumn(int column);
+   void unsetForcedRelativeScaleForColumn(int column);
+
+   //! \brief Called from \c headerData()
+   QVariant getColumName(int column) const;
+
+   // Per https://doc.qt.io/qt-5/qabstracttablemodel.html, when subclassing QAbstractTableModel, you must implement
+   // rowCount(), columnCount(), and data(). Default implementations of the index() and parent() functions are provided
+   // by QAbstractTableModel. Well behaved models will also implement headerData().
+
+   //! \brief Reimplemented from QAbstractTableModel
+   virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
 
 private:
    QString                       columnGetAttribute       (int column) const;

@@ -149,8 +149,8 @@ Measurement::Unit const & Measurement::getUnitForInternalStorage(PhysicalQuantit
 QString Measurement::displayAmount(double amount,
                                    Measurement::Unit const * units,
                                    int precision,
-                                   Measurement::UnitSystem const * displayUnitSystem,
-                                   Measurement::UnitSystem::RelativeScale displayScale) {
+                                   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
+                                   std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
    // Check for insane values.
    if (Algorithms::isNan(amount) || Algorithms::isInf(amount)) {
       return "-";
@@ -164,22 +164,23 @@ QString Measurement::displayAmount(double amount,
       return QString("%L1").arg(amount, fieldWidth, format, precision);
    }
 
-   // If the caller didn't tell us what UnitSystem to use, get whatever one we're using generally for related physical
-   // property.
-   if (nullptr == displayUnitSystem) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(units->getPhysicalQuantity());
-   }
+   // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
+   // one we're using generally for related physical property.
+   PhysicalQuantity const physicalQuantity = units->getPhysicalQuantity();
+   Measurement::UnitSystem const & displayUnitSystem =
+      forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
+                                  Measurement::getDisplayUnitSystem(physicalQuantity);
 
    // If we cannot find a general unit system (which I think is actually a coding error), we'll just show in Metric/SI
-   if (nullptr == displayUnitSystem) {
+/*   if (nullptr == displayUnitSystem) {
       Measurement::PhysicalQuantity physicalQuantity = units->getPhysicalQuantity();
       Measurement::Unit const & siUnit = Measurement::getUnitForInternalStorage(physicalQuantity);
       double siAmount = units->toSI(amount);
       return QString("%L1 %2").arg(siAmount, fieldWidth, format, precision).arg(siUnit.name);
-   }
+   }*/
 
 //      qDebug() << Q_FUNC_INFO << "Display" << amount << units->getUnitName() << "in" << temp->unitType();
-   return displayUnitSystem->displayAmount(amount, units, precision, displayScale);
+   return displayUnitSystem.displayAmount(amount, units, precision, forcedScale);
 }
 
 QString Measurement::displayAmount(NamedEntity * namedEntity,
@@ -197,11 +198,13 @@ QString Measurement::displayAmount(NamedEntity * namedEntity,
          qWarning() << Q_FUNC_INFO << "Could not convert " << value << " to double";
       }
 
-      return displayAmount(amount,
-                           units,
-                           precision,
-                           getUnitSystemForField(*propertyName, guiObject->objectName()),
-                           getRelativeScaleForField(*propertyName, guiObject->objectName()));
+      return Measurement::displayAmount(
+         amount,
+         units,
+         precision,
+         Measurement::getForcedSystemOfMeasurementForField(*propertyName, guiObject->objectName()),
+         Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName())
+      );
    }
 
    return "?";
@@ -212,18 +215,18 @@ QString Measurement::displayAmount(double amount,
                                    BtStringConst const & propertyName,
                                    Measurement::Unit const * units,
                                    int precision) {
-   return displayAmount(amount,
-                        units,
-                        precision,
-                        getUnitSystemForField(*propertyName, *section),
-                        getRelativeScaleForField(*propertyName, *section));
+   return Measurement::displayAmount(amount,
+                                     units,
+                                     precision,
+                                     Measurement::getForcedSystemOfMeasurementForField(*propertyName, *section),
+                                     Measurement::getForcedRelativeScaleForField(*propertyName, *section));
 
 }
 
 double Measurement::amountDisplay(double amount,
                                   Measurement::Unit const * units,
-                                  Measurement::UnitSystem const * displayUnitSystem,
-                                  Measurement::UnitSystem::RelativeScale displayScale) {
+                                  std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
+                                  std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
 
    // Check for insane values.
    if (Algorithms::isNan(amount) || Algorithms::isInf(amount)) {
@@ -235,18 +238,14 @@ double Measurement::amountDisplay(double amount,
       return amount;
    }
 
-   // If the caller didn't tell us what UnitSystem to use, get whatever one we're using generally for related physical
-   // property.
-   if (nullptr == displayUnitSystem) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(units->getPhysicalQuantity());
-   }
+   // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
+   // one we're using generally for related physical property.
+   PhysicalQuantity const physicalQuantity = units->getPhysicalQuantity();
+   Measurement::UnitSystem const & displayUnitSystem =
+      forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
+                                  Measurement::getDisplayUnitSystem(physicalQuantity);
 
-   // If we cannot find a general unit system (which I think is actually a coding error), we'll just return Metric/SI
-   if (nullptr == displayUnitSystem) {
-      return units->toSI(amount);
-   }
-
-   return displayUnitSystem->amountDisplay(amount, units, displayScale);
+   return displayUnitSystem.amountDisplay(amount, units, forcedScale);
 }
 
 double Measurement::amountDisplay(NamedEntity * namedEntity,
@@ -263,10 +262,12 @@ double Measurement::amountDisplay(NamedEntity * namedEntity,
          qWarning() << Q_FUNC_INFO << "Could not convert" << value << "to double";
       }
 
-      return amountDisplay(amount,
-                           units,
-                           getUnitSystemForField(*propertyName, guiObject->objectName()),
-                           getRelativeScaleForField(*propertyName, guiObject->objectName()));
+      return Measurement::amountDisplay(
+         amount,
+         units,
+         Measurement::getForcedSystemOfMeasurementForField(*propertyName, guiObject->objectName()),
+         Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName())
+      );
    }
 
    return -1.0;
@@ -295,17 +296,13 @@ QPair<double,double> Measurement::displayRange(QObject *guiObject,
                                                double min,
                                                double max,
                                                Unit const & units) {
-   Measurement::UnitSystem const * displayUnitSystem = Measurement::getUnitSystemForField(*propertyName,
-                                                                                          guiObject->objectName());
-   if (nullptr == displayUnitSystem) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(units.getPhysicalQuantity());
-   }
-   Measurement::UnitSystem::RelativeScale displayRelativeScale =
-      Measurement::getRelativeScaleForField(*propertyName, guiObject->objectName());
+   auto forcedSystemOfMeasurement = Measurement::getForcedSystemOfMeasurementForField(*propertyName,
+                                                                                      guiObject->objectName());
+   auto forcedRelativeScale = Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName());
 
    QPair<double,double> range;
-   range.first  = Measurement::amountDisplay(min, &units, displayUnitSystem, displayRelativeScale);
-   range.second = Measurement::amountDisplay(max, &units, displayUnitSystem, displayRelativeScale);
+   range.first  = Measurement::amountDisplay(min, &units, forcedSystemOfMeasurement, forcedRelativeScale);
+   range.second = Measurement::amountDisplay(max, &units, forcedSystemOfMeasurement, forcedRelativeScale);
    return range;
 }
 
@@ -336,46 +333,79 @@ QString Measurement::displayThickness( double thick_lkg, bool showUnits ) {
 
 double Measurement::qStringToSI(QString qstr,
                                 Measurement::PhysicalQuantity const physicalQuantity,
-                                Measurement::UnitSystem const * displayUnitSystem,
-                                Measurement::UnitSystem::RelativeScale dispScale) {
-   // If the caller did not specify a UnitSystem, get the default one
-   if (nullptr == displayUnitSystem) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(physicalQuantity);
-   }
+                                std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
+                                std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
+
+   // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
+   // one we're using generally for related physical property.
+   Measurement::UnitSystem const & displayUnitSystem =
+      forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
+                                  Measurement::getDisplayUnitSystem(physicalQuantity);
+
    Measurement::Unit const * unit = &Measurement::getUnitForInternalStorage(physicalQuantity);
-   return displayUnitSystem->qstringToSI(qstr, unit, dispScale);
+   return displayUnitSystem.qstringToSI(qstr, unit, forcedScale);
 }
 
-Measurement::UnitSystem const * Measurement::getUnitSystemForField(QString field, QString section) {
-   return Measurement::UnitSystem::getInstanceByUniqueName(
+std::optional<Measurement::SystemOfMeasurement> Measurement::getForcedSystemOfMeasurementForField(QString const & field,
+                                                                                                  QString const & section) {
+   return Measurement::getFromUniqueName(
       PersistentSettings::value(field,
-                                "None", // This, or any invalid name, will give us nullptr return from getInstanceByUniqueName()
+                                "None", // This, or any invalid name, will give "no value" return from getFromUniqueName()
                                 section,
-                                PersistentSettings::UNIT).toString()
+                                PersistentSettings::Extension::UNIT).toString()
    );
 }
 
-Measurement::UnitSystem::RelativeScale Measurement::getRelativeScaleForField(QString field, QString section) {
-   return static_cast<Measurement::UnitSystem::RelativeScale>(
+std::optional<Measurement::UnitSystem::RelativeScale> Measurement::getForcedRelativeScaleForField(QString const & field,
+                                                                                                  QString const & section) {
+   return Measurement::UnitSystem::getScaleFromUniqueName(
       PersistentSettings::value(field,
-                                Measurement::UnitSystem::noScale,
+                                "None", // This, or any invalid name, will give "no value" return from getFromUniqueName()
                                 section,
-                                PersistentSettings::SCALE).toInt()
+                                PersistentSettings::Extension::SCALE).toString()
    );
 }
 
-void Measurement::setUnitSystemForField(QString field,
-                                        QString section,
-                                        Measurement::UnitSystem const * unitSystem) {
+void Measurement::setForcedSystemOfMeasurementForField(QString const & field,
+                                                       QString const & section,
+                                                       Measurement::SystemOfMeasurement systemOfMeasurement) {
    PersistentSettings::insert(field,
-                              nullptr == unitSystem ? "None" : unitSystem->uniqueName,
+                              Measurement::getUniqueName(systemOfMeasurement),
                               section,
-                              PersistentSettings::UNIT);
+                              PersistentSettings::Extension::UNIT);
    return;
 }
-void Measurement::setRelativeScaleForField(QString field,
-                                           QString section,
-                                           Measurement::UnitSystem::RelativeScale relativeScale) {
-   PersistentSettings::insert(field, relativeScale, section, PersistentSettings::SCALE);
+
+void Measurement::setForcedRelativeScaleForField(QString const & field,
+                                                 QString const & section,
+                                                 Measurement::UnitSystem::RelativeScale relativeScale) {
+   PersistentSettings::insert(field,
+                              Measurement::UnitSystem::getUniqueName(relativeScale),
+                              section,
+                              PersistentSettings::Extension::SCALE);
    return;
+}
+
+void Measurement::unsetForcedSystemOfMeasurementForField(QString const & field, QString const & section) {
+   PersistentSettings::remove(field,
+                              section,
+                              PersistentSettings::Extension::UNIT);
+   return;
+}
+
+void Measurement::unsetForcedRelativeScaleForField(QString const & field, QString const & section) {
+   PersistentSettings::remove(field,
+                              section,
+                              PersistentSettings::Extension::SCALE);
+   return;
+}
+
+Measurement::UnitSystem const & Measurement::getUnitSystemForField(QString const & field,
+                                                                   QString const & section,
+                                                                   Measurement::PhysicalQuantity physicalQuantity) {
+   auto forcedSystemOfMeasurement = Measurement::getForcedSystemOfMeasurementForField(field, section);
+   if (forcedSystemOfMeasurement) {
+      return Measurement::UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity);
+   }
+   return Measurement::getDisplayUnitSystem(physicalQuantity);
 }

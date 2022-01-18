@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * OgAdjuster.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * OgAdjuster.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -70,11 +70,11 @@ void OgAdjuster::calculate()
    bool okPlato = true;
 
    // Get inputs.
-   sg          = lineEdit_sg->toSI();
-   plato       = lineEdit_plato->toDouble(&okPlato);
-   temp_c      = lineEdit_temp->toSI();
-   hydroTemp_c = lineEdit_calTemp->toSI();
-   wort_l      = lineEdit_volume->toSI();
+   sg          = lineEdit_sg->toSiRaw();
+   plato       = lineEdit_plato->toDoubleRaw(&okPlato);
+   temp_c      = lineEdit_temp->toSiRaw();
+   hydroTemp_c = lineEdit_calTemp->toSiRaw();
+   wort_l      = lineEdit_volume->toSiRaw();
 
    // Make sure we got enough info.
    gotSG = sg != 0 && temp_c != 0 && hydroTemp_c != 0;

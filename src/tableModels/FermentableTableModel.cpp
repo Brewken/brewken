@@ -56,14 +56,14 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
    BtTableModel{
       parent,
       editable,
-      {{FERMNAMECOL,      {Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMTYPECOL,      {Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMAMOUNTCOL,    {Measurement::PhysicalQuantity::Mass,  "amount_kg"   }},
-       {FERMINVENTORYCOL, {Measurement::PhysicalQuantity::Mass,  "inventory_kg"}},
-       {FERMISMASHEDCOL,  {Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMAFTERBOIL,    {Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMYIELDCOL,     {Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMCOLORCOL,     {Measurement::PhysicalQuantity::Color, "color_srm"   }}}
+      {{FERMNAMECOL,      {tr("Name"),      Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMTYPECOL,      {tr("Type"),      Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMAMOUNTCOL,    {tr("Amount"),    Measurement::PhysicalQuantity::Mass,  "amount_kg"   }},
+       {FERMINVENTORYCOL, {tr("Inventory"), Measurement::PhysicalQuantity::Mass,  "inventory_kg"}},
+       {FERMISMASHEDCOL,  {tr("Method"),    Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMAFTERBOIL,    {tr("Addition"),  Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMYIELDCOL,     {tr("Yield %"),   Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMCOLORCOL,     {tr("Color"),     Measurement::PhysicalQuantity::Color, "color_srm"   }}}
    },
    _inventoryEditable(false),
    recObs(nullptr),
@@ -280,18 +280,10 @@ int FermentableTableModel::rowCount(const QModelIndex& /*parent*/) const
    return fermObs.size();
 }
 
-int FermentableTableModel::columnCount(const QModelIndex& /*parent*/) const
-{
-   return FERMNUMCOLS;
-}
-
 QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const {
-   Measurement::UnitSystem::RelativeScale scale;
-   Measurement::UnitSystem const * unitSystem;
-
    // Ensure the row is OK
    if (index.row() >= static_cast<int>(fermObs.size() )) {
-      qCritical() << Q_FUNC_INFO << tr("Bad model index. row = %1").arg(index.row());
+      qCritical() << Q_FUNC_INFO << "Bad model index. row = " << index.row();
       return QVariant();
    }
 
@@ -302,13 +294,13 @@ QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const
       return QVariant();
    }
 
-   int col = index.column();
-   switch (col) {
+   int const column = index.column();
+   switch (column) {
       case FERMNAMECOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->name());
          }
-         return QVariant();
+         break;
       case FERMTYPECOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->typeStringTr());
@@ -316,25 +308,31 @@ QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const
          if (role == Qt::UserRole) {
             return QVariant(row->type());
          }
-         return QVariant();
+         break;
       case FERMINVENTORYCOL:
-         if (role != Qt::DisplayRole) {
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            // So just query the columns
+            return QVariant(
+               Measurement::displayAmount(row->inventory(),
+                                          &Measurement::Units::kilograms,
+                                          3,
+                                          this->getForcedSystemOfMeasurementForColumn(column),
+                                          this->getForcedRelativeScaleForColumn(column))
+            );
          }
-
-         // So just query the columns
-         unitSystem  = this->displayUnitSystem(col);
-         scale = this->displayScale(col);
-         return QVariant( Measurement::displayAmount(row->inventory(), &Measurement::Units::kilograms, 3, unitSystem, scale) );
+         break;
       case FERMAMOUNTCOL:
-         if (role != Qt::DisplayRole) {
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            // So just query the columns
+            return QVariant(
+               Measurement::displayAmount(row->amount_kg(),
+                                          &Measurement::Units::kilograms,
+                                          3,
+                                          this->getForcedSystemOfMeasurementForColumn(column),
+                                          this->getForcedRelativeScaleForColumn(column))
+            );
          }
-
-         // So just query the columns
-         unitSystem  = this->displayUnitSystem(col);
-         scale = displayScale(col);
-         return QVariant( Measurement::displayAmount(row->amount_kg(), &Measurement::Units::kilograms, 3, unitSystem, scale) );
+         break;
       case FERMISMASHEDCOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->additionMethodStringTr());
@@ -342,7 +340,7 @@ QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const
          if (role == Qt::UserRole) {
             return QVariant(row->additionMethod());
          }
-         return QVariant();
+         break;
       case FERMAFTERBOIL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->additionTimeStringTr());
@@ -350,58 +348,40 @@ QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const
          if (role == Qt::UserRole) {
             return QVariant(row->additionTime());
          }
-         return QVariant();
+         break;
       case FERMYIELDCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant( Measurement::displayAmount(row->yield_pct(), nullptr) );
+            return QVariant(Measurement::displayAmount(row->yield_pct(), nullptr));
          }
-         return QVariant();
+         break;
       case FERMCOLORCOL:
-         if (role != Qt::DisplayRole) {
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            return QVariant(
+               Measurement::displayAmount(row->color_srm(),
+                                          &Measurement::Units::srm,
+                                          0,
+                                          this->getForcedSystemOfMeasurementForColumn(column),
+                                          std::nullopt)
+            );
          }
-
-         unitSystem  = this->displayUnitSystem(col);
-         return QVariant( Measurement::displayAmount(row->color_srm(), &Measurement::Units::srm, 0, unitSystem) );
+         break;
       default :
-         qCritical() << Q_FUNC_INFO << "Bad column: " << col;
-         return QVariant();
+         qCritical() << Q_FUNC_INFO << "Bad column: " << column;
+         break;
    }
+   return QVariant();
 }
 
-QVariant FermentableTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
-{
-   QString uName;
-   if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-   {
-      switch( section )
-      {
-         case FERMNAMECOL:
-            return QVariant(tr("Name"));
-         case FERMTYPECOL:
-            return QVariant(tr("Type"));
-         case FERMINVENTORYCOL:
-            return QVariant(tr("Inventory"));
-         case FERMAMOUNTCOL:
-            return QVariant(tr("Amount"));
-         case FERMISMASHEDCOL:
-            return QVariant(tr("Method"));
-         case FERMAFTERBOIL:
-            return QVariant(tr("Addition"));
-         case FERMYIELDCOL:
-            return QVariant(tr("Yield %"));
-         case FERMCOLORCOL:
-            return QVariant(tr("Color"));
-         default:
-            qWarning() << tr("Bad column: %1").arg(section);
-            return QVariant();
-      }
+QVariant FermentableTableModel::headerData( int section, Qt::Orientation orientation, int role ) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      return this->getColumName(section);
    }
-   else if( displayPercentages && orientation == Qt::Vertical && role == Qt::DisplayRole )
-   {
+
+   if (displayPercentages && orientation == Qt::Vertical && role == Qt::DisplayRole) {
       double perMass = 0.0;
-      if ( totalFermMass_kg > 0.0 )
+      if (totalFermMass_kg > 0.0 ) {
          perMass = fermObs[section]->amount_kg()/totalFermMass_kg;
+      }
       return QVariant( QString("%1%").arg( static_cast<double>(100.0) * perMass, 0, 'f', 0 ) );
    }
 
@@ -446,10 +426,8 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
    bool retVal = false;
    Fermentable* row = fermObs[index.row()];
 
-   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
-   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
-
-   switch (index.column()) {
+   int const column = index.column();
+   switch (column) {
       case FERMNAMECOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
@@ -462,7 +440,8 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMTYPECOL:
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
-            // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::Type>() here (as the Q_PROPERTY system will do the casting for us).
+            // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::Type>() here (as the
+            // Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::type,
                                                   value.toInt(),
@@ -473,13 +452,15 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
             // Inventory amount is in kg, but is just called "inventory" rather than "inventory_kg" in the Q_PROPERTY declaration in the Fermentable class
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::NamedEntityWithInventory::inventory,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Mass,
-                                                                           dspUnitSystem,
-                                                                           dspScl),
-                                                  tr("Change Inventory Amount"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::NamedEntityWithInventory::inventory,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Mass,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Inventory Amount")
+            );
          }
          break;
       case FERMAMOUNTCOL:
@@ -487,13 +468,15 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
          if (retVal) {
             // This is where the amount of a fermentable in a recipe gets updated
             // We need to refer back to the MainWindow to make this an undoable operation
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::amount_kg,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Mass,
-                                                                           dspUnitSystem,
-                                                                           dspScl),
-                                                  tr("Change Fermentable Amount"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::Fermentable::amount_kg,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Mass,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Fermentable Amount")
+            );
             if (rowCount() > 0) {
                headerDataChanged( Qt::Vertical, 0, rowCount()-1 ); // Need to re-show header (grain percent).
             }
@@ -502,7 +485,8 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMISMASHEDCOL:
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
-            // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionMethod>() here (as the Q_PROPERTY system will do the casting for us).
+            // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionMethod>() here
+            // (as the Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::additionMethod,
                                                   value.toInt(),
@@ -512,7 +496,8 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMAFTERBOIL:
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
-            // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionTime>() here (as the Q_PROPERTY system will do the casting for us).
+            // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionTime>() here
+            // (as the Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::additionTime,
                                                   value.toInt(),
@@ -531,13 +516,15 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
       case FERMCOLORCOL:
          retVal = value.canConvert(QVariant::Double);
          if (retVal) {
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::color_srm,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Color,
-                                                                           dspUnitSystem,
-                                                                           dspScl),
-                                                  tr("Change Color"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::Fermentable::color_srm,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Color,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Color")
+            );
          }
          break;
       default:
@@ -547,20 +534,19 @@ bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & 
    return retVal;
 }
 
-Fermentable* FermentableTableModel::getFermentable(unsigned int i)
-{
+Fermentable* FermentableTableModel::getFermentable(unsigned int i) {
    return fermObs.at(static_cast<int>(i));
 }
 
 //======================CLASS FermentableItemDelegate===========================
 
-FermentableItemDelegate::FermentableItemDelegate(QObject* parent)
-        : QItemDelegate(parent)
-{
+FermentableItemDelegate::FermentableItemDelegate(QObject* parent) : QItemDelegate(parent) {
+   return;
 }
 
-QWidget* FermentableItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
+QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
+                                               QStyleOptionViewItem const & option,
+                                               QModelIndex const & index) const {
    if( index.column() == FERMTYPECOL )
    {
       QComboBox *box = new QComboBox(parent);
@@ -577,7 +563,8 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent, const QStyleOpti
 
       return box;
    }
-   else if( index.column() == FERMISMASHEDCOL )
+
+   if( index.column() == FERMISMASHEDCOL )
    {
       QComboBox* box = new QComboBox(parent);
       QListWidget* list = new QListWidget(parent);
@@ -608,7 +595,8 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent, const QStyleOpti
 
       return box;
    }
-   else if( index.column() == FERMAFTERBOIL )
+
+   if( index.column() == FERMAFTERBOIL )
    {
       QComboBox* box = new QComboBox(parent);
 
@@ -621,8 +609,8 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent, const QStyleOpti
 
       return box;
    }
-   else
-      return new QLineEdit(parent);
+
+   return new QLineEdit(parent);
 }
 
 void FermentableItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const

@@ -17,6 +17,8 @@
 #define MEASUREMENT_SYSTEMOFMEASUREMENT_H
 #pragma once
 
+#include <optional>
+
 class QString;
 class QTextStream;
 
@@ -82,16 +84,28 @@ namespace Measurement {
    QString getDisplayName(SystemOfMeasurement systemOfMeasurement);
 
    /**
-    * \brief Return the fixed unique name of a \c SystemOfMeasurement suitable for storing in config files
+    * \brief Return the fixed unique name of a \c SystemOfMeasurement suitable for storing in config files.  (Of course
+    *        we could just store the raw int value, but that is less robust and makes debugging harder.)
     */
    QString getUniqueName(SystemOfMeasurement systemOfMeasurement);
 
+   /**
+    * \brief Get a \c SystemOfMeasurement from its unique name.  Useful for deserialising from config files etc.
+    */
+   std::optional<Measurement::SystemOfMeasurement> getFromUniqueName(QString const & uniqueName);
 }
 
 /**
  * \brief Convenience function for logging (output includes \c getUniqueName and \c getDisplayName in some wrapper
  *        text)
  */
-QTextStream & operator<<(QTextStream & stream, Measurement::SystemOfMeasurement const systemOfMeasurement);
+template<class S>
+S & operator<<(S & stream, Measurement::SystemOfMeasurement const systemOfMeasurement) {
+   stream <<
+      "SystemOfMeasurement #" << static_cast<int>(systemOfMeasurement) << ": " <<
+      Measurement::getUniqueName(systemOfMeasurement) << " (" <<
+      Measurement::getDisplayName(systemOfMeasurement) << ")";
+   return stream;
+}
 
 #endif

@@ -23,6 +23,8 @@
 #define UIAMOUNTWITHUNITS_H
 #pragma once
 
+#include <optional>
+
 #include <QString>
 
 #include "BtFieldType.h"
@@ -31,6 +33,11 @@
 #include "measurement/UnitSystem.h"
 
 class QWidget;
+
+struct PreviousScaleInfo {
+   Measurement::SystemOfMeasurement oldSystemOfMeasurement;
+   std::optional<Measurement::UnitSystem::RelativeScale> oldForcedScale = std::nullopt;
+};
 
 /**
  * \class UiAmountWithUnits A base class, suitable for combining with \c QLabel, \c QLineEdit, etc, that handles all the
@@ -63,29 +70,29 @@ public:
     */
    virtual void setWidgetText(QString text) = 0;
 
-   void setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem);
-   Measurement::UnitSystem const * getForcedUnitSystem() const;
+   void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
+   void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
+
+   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurement() const;
+   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScale() const;
 
    /**
-    * \brief QString version of \c setForcedUnitSystem to work with code generated from .ui files (via Q_PROPERTY
-    *        declared in subclass of this class)
+    * \brief QString version of \c setForcedSystemOfMeasurement to work with code generated from .ui files (via
+    *        Q_PROPERTY declared in subclass of this class)
     */
-   void setForcedUnitSystemViaString(QString forcedUnitSystemAsString);
+   void setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString);
 
    /**
-    * \brief QString version of \c getForcedUnitSystem to work with code generated from .ui files (via Q_PROPERTY
+    * \brief QString version of \c getForcedSystemOfMeasurement to work with code generated from .ui files (via Q_PROPERTY
     *        declared in subclass of this class)
     */
-   QString getForcedUnitSystemViaString() const;
-
-   void setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale);
-   Measurement::UnitSystem::RelativeScale getForcedRelativeScale() const;
+   QString getForcedSystemOfMeasurementViaString() const;
 
    /**
     * \brief QString version of \c setForcedRelativeScale to work with code generated from .ui files (via Q_PROPERTY
     *        declared in subclass of this class)
     */
-   void setForcedRelativeScaleViaString(QString forcedRelativeScaleAsString);
+   void setForcedRelativeScaleViaString(QString relativeScaleAsString);
 
    /**
     * \brief QString version of \c getForcedRelativeScale to work with code generated from .ui files (via Q_PROPERTY
@@ -93,8 +100,7 @@ public:
     */
    QString getForcedRelativeScaleViaString() const;
 
-   // By defining the setters/getters, we can remove the need for
-   // initializeProperties.
+   // By defining the setters/getters, we can remove the need for initializeProperties.
    void    setEditField(QString editField);
    QString getEditField() const;
 
@@ -104,16 +110,17 @@ public:
 ///   void setType(int type);
 ///   int type() const;
 
-   // Too many places still use getDouble, which just hoses me down. We're
-   // gonna fix this.
-   double toDouble(bool * ok) const;
+   /**
+    * \brief Converts the numeric part of the input field to a double, ignoring any string suffix.  So "5.5 gal" will
+    *        give 5.5, "20L" will return 20.0, and so on.
+    */
+   double toDoubleRaw(bool * ok) const;
 
    /**
-    * \brief Returns the contents of the field converted, if necessary, to SI units
-    *
-    * .:TBD:. Some overlap with \c convertToSI
+    * \brief Takes the numeric part of the field, assumes it measures \c this->units, and converts, if necessary, to SI
+    *        units (though usually this will be a no-op).  NB: As with \c toDoubleRaw, this ignores any string suffix.
     */
-   double toSI();
+   double toSiRaw();
 
    /**
     * \brief Use this when you want to do something with the returned QString
@@ -124,25 +131,34 @@ protected:
    /**
     * \brief
     */
-   void textOrUnitsChanged(Measurement::UnitSystem const * oldUnitSystem,
-                           Measurement::UnitSystem::RelativeScale oldScale);
+   void textOrUnitsChanged(PreviousScaleInfo previousScaleInfo);
 
    /**
     * \brief Returns the contents of the field converted, if necessary, to SI units
     *
-    * \param oldUnitSystem (optional)
+    * \param oldSystemOfMeasurement
     * \param oldScale (optional)
     */
-   double convertToSI(Measurement::UnitSystem const * oldUnitSystem = nullptr,
-                      Measurement::UnitSystem::RelativeScale oldScale = Measurement::UnitSystem::noScale);
+   double convertToSI(PreviousScaleInfo previousScaleInfo);
 
 private:
    QWidget * parent;
 protected:
    BtFieldType fieldType;
+   /**
+    * \brief If \c fieldType is a \c Measurement::PhysicalQuantity, this is the \c Measurement::Unit that should be used
+    *        to store the amount of this field.  This is normally fixed as our "standard" (normally metric) unit for the
+    *        \c Measurement::PhysicalQuantity of the field -- eg kilograms for Mass, liters for Volume,
+    *        celsius for Temperature, minutes for Time, etc.  However, for \c fieldType of
+    *        \c Measurement::PhysicalQuantity::Mixed, this will need to vary between \c Measurement::Units::kilograms
+    *        and \c Measurement::Units::liters depending on whether the current field is to be measured by weight or
+    *        volume.
+    *
+    *        If \c fieldType is not a \c Measurement::PhysicalQuantity, this will be \c nullptr
+    */
    Measurement::Unit const * units;
-   Measurement::UnitSystem const * forcedUnitSystem;
-   Measurement::UnitSystem::RelativeScale forcedRelativeScale;
+   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement;
+   std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale;
    QString editField;
    QString configSection;
 };

@@ -57,9 +57,9 @@ void PrimingDialog::calculate()
    double sugar_mol;
    double sugar_g;
 
-   beer_l = lineEdit_beerVol->toSI();
-   temp_c = lineEdit_temp->toSI();
-   desiredVols = lineEdit_vols->toSI();
+   beer_l = lineEdit_beerVol->toSiRaw();
+   temp_c = lineEdit_temp->toSiRaw();
+   desiredVols = lineEdit_vols->toSiRaw();
 
    residualVols = 1.57 * pow( 0.97, temp_c ); // Amount of CO2 still in suspension.
    addedVols = desiredVols - residualVols;

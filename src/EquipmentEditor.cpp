@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • David Grundberg <individ@acc.umu.se>
@@ -183,17 +183,17 @@ void EquipmentEditor::save() {
    inform = QString("%1%2")
             .arg(tr("The following values are not set:"))
             .arg(QString("<ul>"));
-   if ( qFuzzyCompare(lineEdit_tunVolume->toSI(),0.0) ) {
+   if ( qFuzzyCompare(lineEdit_tunVolume->toSiRaw(),0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("mash tun volume (all-grain and BIAB only)"));
    }
 
-   if ( qFuzzyCompare(lineEdit_batchSize->toSI(), 0.0) ) {
+   if ( qFuzzyCompare(lineEdit_batchSize->toSiRaw(), 0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("batch size"));
    }
 
-   if ( qFuzzyCompare(lineEdit_hopUtilization->toSI(), 0.0) ) {
+   if ( qFuzzyCompare(lineEdit_hopUtilization->toSiRaw(), 0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("hop utilization"));
    }
@@ -216,22 +216,22 @@ void EquipmentEditor::save() {
    }
 
    this->obsEquip->setName( lineEdit_name->text() );
-   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSI() );
-   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSI() );
-   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI() );
+   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSiRaw() );
+   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSiRaw() );
+   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSiRaw() );
 
-   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI() );
+   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSiRaw() );
 
-   this->obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toSI() );
-   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSI());
-   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI() );
-   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI() );
-   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI() );
-   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI() );
-   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI() );
+   this->obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toSiRaw() );
+   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSiRaw());
+   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSiRaw() );
+   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSiRaw() );
+   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSiRaw() );
+   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSiRaw() );
+   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSiRaw() );
    this->obsEquip->setGrainAbsorption_LKg( ga_LKg );
-   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI() );
-   this->obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toSI() );
+   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSiRaw() );
+   this->obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toSiRaw() );
 
    this->obsEquip->setNotes(textEdit_notes->toPlainText());
    this->obsEquip->setCalcBoilVolume(checkBox_calcBoilVolume->checkState() == Qt::Checked);
@@ -354,18 +354,18 @@ void EquipmentEditor::updateCheckboxRecord() {
       lineEdit_boilSize->setText(bar);
       lineEdit_boilSize->setEnabled(false);
    } else {
-      lineEdit_boilSize->setText(lineEdit_batchSize->toSI());
+      lineEdit_boilSize->setText(lineEdit_batchSize->toSiRaw());
       lineEdit_boilSize->setEnabled(true);
    }
    return;
 }
 
 double EquipmentEditor::calcBatchSize() {
-   double size     = lineEdit_batchSize->toSI();
-   double topUp    = lineEdit_topUpWater->toSI();
-   double trubLoss = lineEdit_trubChillerLoss->toSI();
-   double evapRate = lineEdit_evaporationRate->toSI();
-   double time     = lineEdit_boilTime->toSI();
+   double size     = lineEdit_batchSize->toSiRaw();
+   double topUp    = lineEdit_topUpWater->toSiRaw();
+   double trubLoss = lineEdit_trubChillerLoss->toSiRaw();
+   double evapRate = lineEdit_evaporationRate->toSiRaw();
+   double time     = lineEdit_boilTime->toSiRaw();
 
    return size - topUp + trubLoss + (time/60.0)*evapRate;
 }

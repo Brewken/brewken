@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -205,9 +205,8 @@ void BtDigitWidget::setMessages( QStringList msgs ) {
    return;
 }
 
-void BtDigitWidget::displayChanged(Measurement::UnitSystem const * oldUnitSystem,
-                                   Measurement::UnitSystem::RelativeScale oldScale) {
-   this->textOrUnitsChanged(oldUnitSystem, oldScale);
+void BtDigitWidget::displayChanged(PreviousScaleInfo previousScaleInfo) {
+   this->textOrUnitsChanged(previousScaleInfo);
 
    return;
 }

@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MEASUREMENT_SYSTEMSOFMEASUREMENT_H
-#define MEASUREMENT_SYSTEMSOFMEASUREMENT_H
+#ifndef MEASUREMENT_MEASUREMENT_H
+#define MEASUREMENT_MEASUREMENT_H
 #pragma once
+
+#include <optional>
 
 #include <QObject>
 #include <QPair>
@@ -63,15 +65,15 @@ namespace Measurement {
     * \param amount the amount to display
     * \param units the units that \c amount is in
     * \param precision how many decimal places
-    * \param displayUnitSystem which unit system to use, defaulting to \c nullptr which means use the system default
-    * \param displayScale which scale to use, defaulting to \c Measurement::UnitSystem::noScale which means use the
-    *                     largest scale that generates a value > 1
+    * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
+    *                                  system default
+    * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
     */
    QString displayAmount(double amount,
                          Measurement::Unit const * units = nullptr,
                          int precision = 3,
-                         Measurement::UnitSystem const * displayUnitSystem = nullptr,
-                         Measurement::UnitSystem::RelativeScale displayScale = Measurement::UnitSystem::noScale);
+                         std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
+                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 
    /*!
     * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.
@@ -108,14 +110,14 @@ namespace Measurement {
     *
     * \param amount the amount to display
     * \param units the units that \c amount is in
-    * \param displayUnitSystem which unit system to use, defaulting to \c nullptr which means use the system default
-    * \param displayScale which scale to use, defaulting to \c Measurement::UnitSystem::noScale which means use the
-    *                      largest scale that generates a value > 1
+    * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
+    *                                  system default
+    * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
     */
    double amountDisplay(double amount,
                         Unit const * units = nullptr,
-                        Measurement::UnitSystem const * displayUnitSystem = nullptr,
-                        Measurement::UnitSystem::RelativeScale displayScale = Measurement::UnitSystem::noScale);
+                        std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
+                        std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 
    /*!
     * \brief Converts a measurement (aka amount) to its numerical equivalent in the specified or default units.
@@ -174,25 +176,39 @@ namespace Measurement {
     * \param physicalQuantity Caller will already know whether the amount is a mass, volume, temperature etc, so they
     *                         should tell us via this parameter. (.:TBD:. We actually know this at compile-time, so we
     *                         could make it a template parameter, but I'm not sure it's worth the bother.)
-    * \param displayUnitSystem If supplied, this is the \c Measurement::UnitSystem configured for the field the user is
-    *                          entering
-    * \param relativeScale If supplied, this is the \c Measurement::UnitSystem::RelativeScale configured for the field
+    * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
+    *                                  system default
+    * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
     *                      the user is entering
     */
    double qStringToSI(QString qstr,
                       Measurement::PhysicalQuantity const physicalQuantity,
-                      Measurement::UnitSystem const * displayUnitSystem = nullptr,
-                      Measurement::UnitSystem::RelativeScale relativeScale = Measurement::UnitSystem::noScale);
+                      std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
+                      std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 
-   Measurement::UnitSystem const * getUnitSystemForField(QString field, QString section);
-   Measurement::UnitSystem::RelativeScale getRelativeScaleForField(QString field, QString section);
+   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurementForField(QString const & field,
+                                                                                        QString const & section);
+   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScaleForField(QString const & field,
+                                                                                        QString const & section);
 
-   void setUnitSystemForField(QString field, QString section, Measurement::UnitSystem const * unitSystem);
-   void setRelativeScaleForField(QString field, QString section, Measurement::UnitSystem::RelativeScale relativeScale);
+   void setForcedSystemOfMeasurementForField(QString const & field,
+                                             QString const & section,
+                                             Measurement::SystemOfMeasurement systemOfMeasurement);
+   void setForcedRelativeScaleForField(QString const & field,
+                                       QString const & section,
+                                       Measurement::UnitSystem::RelativeScale relativeScale);
 
-   //! \return true iff the string has a valid unit substring at the end.
-   bool hasUnits(QString qstr);
+   void unsetForcedSystemOfMeasurementForField(QString const & field, QString const & section);
+   void unsetForcedRelativeScaleForField(QString const & field, QString const & section);
 
+   /**
+    * \brief Returns the \c UnitSystem that should be used to display this field, based on the forced
+    *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
+    *        \c UnitSystem for the specified \c PhysicalQuantity
+    */
+   Measurement::UnitSystem const & getUnitSystemForField(QString const & field,
+                                                         QString const & section,
+                                                         Measurement::PhysicalQuantity physicalQuantity);
 }
 
 #endif

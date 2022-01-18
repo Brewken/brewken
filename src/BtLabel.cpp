@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -27,8 +27,8 @@
 #include "model/Style.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
+#include "utils/OptionalToStream.h"
 #include "widgets/UnitAndScalePopUpMenu.h"
-
 
 BtLabel::BtLabel(QWidget *parent,
                  BtFieldType fieldType) :
@@ -111,6 +111,8 @@ void BtLabel::initializeProperty() {
    return;
 }
 
+
+
 void BtLabel::initializeMenu() {
    // If a context menu already exists, we need to delete it and recreate it.  We can't always reuse an existing menu
    // because the sub-menu for relative scale needs to change when a different unit system is selected.  (In theory we
@@ -123,13 +125,13 @@ void BtLabel::initializeMenu() {
       this->contextMenu = nullptr;
    }
 
-   Measurement::UnitSystem const * forcedUnitSystem =
-      Measurement::getUnitSystemForField(this->propertyName, this->configSection);
-   Measurement::UnitSystem::RelativeScale forcedRelativeScale =
-      Measurement::getRelativeScaleForField(this->propertyName, this->configSection);
+   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement =
+      Measurement::getForcedSystemOfMeasurementForField(this->propertyName, this->configSection);
+   std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale =
+      Measurement::getForcedRelativeScaleForField(this->propertyName, this->configSection);
    qDebug() <<
-      Q_FUNC_INFO << "forcedUnitSystem=" << (nullptr == forcedUnitSystem ? "NULL" : forcedUnitSystem->uniqueName) <<
-      ", forcedRelativeScale=" << forcedRelativeScale;
+      Q_FUNC_INFO << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement << ", forcedRelativeScale=" <<
+      forcedRelativeScale;
 
    if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
        Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
@@ -138,35 +140,10 @@ void BtLabel::initializeMenu() {
 
    Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
 
-   if (Measurement::PhysicalQuantity::Mixed == physicalQuantity) {
-
-      //
-      // Mixed needs some special handling because it is a "fake" physical quantity that means the user has the choice
-      // to measure by mass or by volume on a per-item basis.  This is useful because, eg some Misc ingredients are best
-      // measured by volume and others by mass.  Similarly, dry yeast is probably measured by mass whereas wet yeast is
-      // usually measured by volume.
-      //
-      // For real physical quantities, there is a one-to-one correspondence between UnitSystem and the pair
-      // (SystemOfMeasurement, PhysicalQuantity).  So, for any particular field holding a given PhysicalQuantity,
-      // offering the user a choice of SystemOfMeasurement implies the corresponding choice of UnitSystem, and a choice
-      // of RelativeScale corresponds to this UnitSystem.  So we just store the chosen UnitSystem and/or RelativeScale.
-      //
-      // For Mixed, where PhysicalQuantity varies per-item between two possibilities (Mass and Volume), the choice of
-      // SystemOfMeasurement is going to imply a different UnitSystem per-item depending on, eg Misc::amountIsWeight,
-      // Yeast::amountIsWeight, etc for that item.  Firstly, it doesn't make sense to offer the user a choice of
-      // RelativeScale here, so we suppress that option.
-      //
-      //
-
-      // .:TBD:. CHECK THIS STILL WORKS WITH NEW SYSTEM
-      // This looks weird, but it works.
-      this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent, physicalQuantity, forcedUnitSystem, forcedRelativeScale/*, false*/); // no scale menu
-   } else {
-      this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent,
-                                                        physicalQuantity,
-                                                        forcedUnitSystem,
-                                                        forcedRelativeScale);
-   }
+   this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent,
+                                                      physicalQuantity,
+                                                      forcedSystemOfMeasurement,
+                                                      forcedRelativeScale);
    return;
 }
 
@@ -192,55 +169,93 @@ void BtLabel::popContextMenu(const QPoint& point) {
    this->initializeSection();
    this->initializeMenu();
 
+   // Show the pop-up menu and get back whatever the user seleted
    QAction * invoked = this->contextMenu->exec(widgie->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }
 
-   Measurement::UnitSystem const * unitSystem = Measurement::getUnitSystemForField(this->propertyName,
-                                                                                   this->configSection);
-   Measurement::UnitSystem::RelativeScale scale = Measurement::getRelativeScaleForField(this->propertyName,
-                                                                                        this->configSection);
-   QWidget* pMenu = invoked->parentWidget();
-   if (pMenu == this->contextMenu) {
-      PersistentSettings::insert(this->propertyName, invoked->data(), this->configSection, PersistentSettings::UNIT);
-      // reset the scale if required
-      if (PersistentSettings::contains(this->propertyName, this->configSection, PersistentSettings::SCALE) ) {
-         PersistentSettings::insert(this->propertyName,
-                                    Measurement::UnitSystem::noScale,
-                                    this->configSection,
-                                    PersistentSettings::SCALE);
+   // Save the current settings (which may come from system-wide defaults) for the signal below
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
+   Measurement::UnitSystem const & oldUnitSystem =
+      Measurement::getUnitSystemForField(this->propertyName,
+                                         this->configSection,
+                                         std::get<Measurement::PhysicalQuantity>(this->fieldType));
+   PreviousScaleInfo previousScaleInfo{
+      oldUnitSystem.systemOfMeasurement,
+      Measurement::getForcedRelativeScaleForField(this->propertyName, this->configSection)
+   };
+
+   // To make this all work, we need to set ogMin and ogMax when og is set etc
+   QVector<QString> fieldsToSet;
+   fieldsToSet.append(this->propertyName);
+   if (this->propertyName == "og") {
+      fieldsToSet.append(QString(*PropertyNames::Style::ogMin));
+      fieldsToSet.append(QString(*PropertyNames::Style::ogMax));
+   } else if (this->propertyName == "fg") {
+      fieldsToSet.append(QString(*PropertyNames::Style::fgMin));
+      fieldsToSet.append(QString(*PropertyNames::Style::fgMax));
+   } else if (this->propertyName == "color_srm") {
+      fieldsToSet.append(QString(*PropertyNames::Style::colorMin_srm));
+      fieldsToSet.append(QString(*PropertyNames::Style::colorMax_srm));
+   }
+
+   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
+   // whether it's the menu or the sub-menu that it came from.
+   bool isTopMenu{invoked->parentWidget() == this->contextMenu};
+   if (isTopMenu) {
+      // It's the menu, so SystemOfMeasurement
+      std::optional<Measurement::SystemOfMeasurement> whatSelected =
+         UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
+      qDebug() << Q_FUNC_INFO << "Selected SystemOfMeasurement" << whatSelected;
+      if (!whatSelected) {
+         // Null means "Default", which means don't set a forced SystemOfMeasurement for this field
+         for (auto field : fieldsToSet) {
+            Measurement::unsetForcedSystemOfMeasurementForField(field, this->configSection);
+         }
+      } else {
+         for (auto field : fieldsToSet) {
+            Measurement::setForcedSystemOfMeasurementForField(field, this->configSection, *whatSelected);
+         }
+      }
+      // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale
+      for (auto field : fieldsToSet) {
+         Measurement::unsetForcedRelativeScaleForField(field, this->configSection);
+      }
+
+      //
+      // Hmm. For the color fields, we want to include the ecb or srm in the label text here.
+      //
+      // Assert that we already bailed above for fields that aren't a PhysicalQuantity, so we know std::get won't throw
+      // here.
+      //
+      Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
+      if (Measurement::PhysicalQuantity::Color == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+         Measurement::UnitSystem const & disp =
+            Measurement::getUnitSystemForField(this->propertyName,
+                                               this->configSection,
+                                               Measurement::PhysicalQuantity::Color);
+         this->setText(tr("Color (%1)").arg(disp.unit()->name));
       }
    } else {
-      PersistentSettings::insert(this->propertyName, invoked->data(), this->configSection, PersistentSettings::SCALE);
-   }
-
-   // To make this all work, I need to set ogMin and ogMax when og is set.
-   if (this->propertyName == "og") {
-      PersistentSettings::insert(PropertyNames::Style::ogMin, invoked->data(), this->configSection, PersistentSettings::UNIT);
-      PersistentSettings::insert(PropertyNames::Style::ogMax, invoked->data(), this->configSection, PersistentSettings::UNIT);
-   } else if (this->propertyName == "fg") {
-      PersistentSettings::insert(PropertyNames::Style::fgMin, invoked->data(), this->configSection, PersistentSettings::UNIT);
-      PersistentSettings::insert(PropertyNames::Style::fgMax, invoked->data(), this->configSection, PersistentSettings::UNIT);
-   } else if (this->propertyName == "color_srm") {
-      PersistentSettings::insert(PropertyNames::Style::colorMin_srm, invoked->data(), this->configSection, PersistentSettings::UNIT);
-      PersistentSettings::insert(PropertyNames::Style::colorMax_srm, invoked->data(), this->configSection, PersistentSettings::UNIT);
-   }
-
-   //
-   // Hmm. For the color fields, we want to include the ecb or srm in the label text here.
-   //
-   // Assert that we already bailed above for fields that aren't a PhysicalQuantity, so we know std::get won't throw
-   // here.
-   //
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
-   if (Measurement::PhysicalQuantity::Color == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
-      Measurement::UnitSystem const * const disp = Measurement::UnitSystem::getInstanceByUniqueName(invoked->data().toString());
-      setText( tr("Color (%1)").arg(disp->unit()->name));
+      // It's the sub-menu, so UnitSystem::RelativeScale
+      std::optional<Measurement::UnitSystem::RelativeScale> whatSelected =
+         UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
+      qDebug() << Q_FUNC_INFO << "Selected RelativeScale" << whatSelected;
+      if (!whatSelected) {
+         // Null means "Default", which means don't set a forced RelativeScale for this field
+         for (auto field : fieldsToSet) {
+            Measurement::unsetForcedRelativeScaleForField(field, this->configSection);
+         }
+      } else {
+         for (auto field : fieldsToSet) {
+            Measurement::setForcedRelativeScaleForField(field, this->configSection, *whatSelected);
+         }
+      }
    }
 
    // Remember, we need the original unit, not the new one.
-   emit changedUnitSystemOrScale(unitSystem, scale);
+   emit changedSystemOfMeasurementOrScale(previousScaleInfo);
 
    return;
 }

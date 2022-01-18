@@ -28,6 +28,7 @@
 
 #include "Localization.h"
 #include "measurement/Measurement.h"
+#include "utils/OptionalToStream.h"
 
 UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
                                      BtFieldType fieldType,
@@ -35,62 +36,51 @@ UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
    parent{parent},
    fieldType{fieldType},
    units{units},
-   forcedUnitSystem{nullptr},
-   forcedRelativeScale(Measurement::UnitSystem::noScale) {
+   forcedSystemOfMeasurement{std::nullopt},
+   forcedRelativeScale(std::nullopt) {
    return;
 }
 
 UiAmountWithUnits::~UiAmountWithUnits() = default;
 
-Measurement::UnitSystem const * UiAmountWithUnits::getForcedUnitSystem() const {
-   return this->forcedUnitSystem;
-}
-
-void UiAmountWithUnits::setForcedUnitSystem(Measurement::UnitSystem const * forcedUnitSystem) {
-   this->forcedUnitSystem = forcedUnitSystem;
+void UiAmountWithUnits::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
+   this->forcedSystemOfMeasurement = systemOfMeasurement;
    return;
 }
 
-void UiAmountWithUnits::setForcedUnitSystemViaString(QString forcedUnitSystemAsString) {
-   this->forcedUnitSystem = Measurement::UnitSystem::getInstanceByUniqueName(forcedUnitSystemAsString);
-   if (nullptr == this->forcedUnitSystem && forcedUnitSystemAsString!= "") {
-      // It's a coding error if someone sent us an invalid name for a UnitSystem.  (Note that the variable names of the
-      // global constants in the Measurement::UnitSystems namespace are supposed to match the corresponding uniqueName
-      // member variables, per the comment in measurement/UnitSystem.h header file.)
-      qCritical() << Q_FUNC_INFO << "Unable to find UnitSystem called" << forcedUnitSystemAsString;
-      Q_ASSERT(false); // Stop here on a debug build
+std::optional<Measurement::SystemOfMeasurement> UiAmountWithUnits::getForcedSystemOfMeasurement() const {
+   return this->forcedSystemOfMeasurement;
+}
+
+void UiAmountWithUnits::setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString) {
+   this->forcedSystemOfMeasurement = Measurement::getFromUniqueName(systemOfMeasurementAsString);
+   return;
+}
+
+QString UiAmountWithUnits::getForcedSystemOfMeasurementViaString() const {
+   return this->forcedSystemOfMeasurement ? Measurement::getUniqueName(*this->forcedSystemOfMeasurement) : "";
+}
+
+void UiAmountWithUnits::setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
+   this->forcedRelativeScale = relativeScale;
+   return;
+}
+
+std::optional<Measurement::UnitSystem::RelativeScale> UiAmountWithUnits::getForcedRelativeScale() const {
+   return this->forcedRelativeScale;
+}
+
+void UiAmountWithUnits::setForcedRelativeScaleViaString(QString relativeScaleAsString) {
+   if (relativeScaleAsString == "") {
+      this->forcedRelativeScale = std::nullopt;
+   } else {
+      this->forcedRelativeScale = Measurement::UnitSystem::getScaleFromUniqueName(relativeScaleAsString);
    }
    return;
 }
 
-QString UiAmountWithUnits::getForcedUnitSystemViaString() const {
-   return (nullptr == this->forcedUnitSystem) ? "" : this->forcedUnitSystem->uniqueName;
-}
-
-void UiAmountWithUnits::setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale) {
-   this->forcedRelativeScale = forcedRelativeScale;
-   return;
-}
-
-Measurement::UnitSystem::RelativeScale UiAmountWithUnits::getForcedRelativeScale() const {
-   return this->forcedRelativeScale;
-}
-
-/**
-   * \brief QString version of \c setForcedRelativeScale to work with code generated from .ui files (via Q_PROPERTY
-   *        declared in subclass of this class)
-   */
-void UiAmountWithUnits::setForcedRelativeScaleViaString(QString forcedRelativeScaleAsString) {
-   this->forcedRelativeScale = Measurement::UnitSystem::relativeScaleFromString(forcedRelativeScaleAsString);
-   return;
-}
-
-/**
-   * \brief QString version of \c getForcedRelativeScale to work with code generated from .ui files (via Q_PROPERTY
-   *        declared in subclass of this class)
-   */
 QString UiAmountWithUnits::getForcedRelativeScaleViaString() const {
-   return Measurement::UnitSystem::relativeScaleToString(this->forcedRelativeScale);
+   return this->forcedRelativeScale ? Measurement::UnitSystem::getUniqueName(*this->forcedRelativeScale) : "";
 }
 
 void UiAmountWithUnits::setEditField(QString editField) {
@@ -135,7 +125,7 @@ QString UiAmountWithUnits::getConfigSection() {
    return static_cast<int>(this->physicalQuantity);
 }*/
 
-double UiAmountWithUnits::toDouble(bool * ok) const {
+double UiAmountWithUnits::toDoubleRaw(bool * ok) const {
    if (ok) {
       *ok = true;
    }
@@ -161,9 +151,13 @@ double UiAmountWithUnits::toDouble(bool * ok) const {
    return Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
 }
 
-double UiAmountWithUnits::toSI() {
+double UiAmountWithUnits::toSiRaw() {
+   // It's a coding error to call this function if we are not dealing with a physical quantity
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
+   Q_ASSERT(this->units);
+
    bool ok = false;
-   double amt = this->toDouble(&ok);
+   double amt = this->toDoubleRaw(&ok);
    if (!ok) {
       qWarning() <<
          Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" <<
@@ -173,25 +167,28 @@ double UiAmountWithUnits::toSI() {
 }
 
 
-QString UiAmountWithUnits::displayAmount( double amount, int precision) {
-   Measurement::UnitSystem const * displayUnitSystem;
-   if (this->forcedUnitSystem != nullptr) {
-      displayUnitSystem = this->forcedUnitSystem;
-   } else {
-      displayUnitSystem = Measurement::getUnitSystemForField(this->editField, this->configSection);
-   }
-
-   Measurement::UnitSystem::RelativeScale relativeScale = Measurement::getRelativeScaleForField(this->editField,
-                                                                                                this->configSection);
+QString UiAmountWithUnits::displayAmount(double amount, int precision) {
+   // Our overrides, if any, take precedence over others, if any
+   std::optional<Measurement::SystemOfMeasurement> overrideSystemOfMeasurement =
+      this->forcedSystemOfMeasurement ? this->forcedSystemOfMeasurement :
+                                        Measurement::getForcedSystemOfMeasurementForField(this->editField,
+                                                                                          this->configSection);
+   std::optional<Measurement::UnitSystem::RelativeScale> overrideRelativeScale =
+      this->forcedRelativeScale ? this->forcedRelativeScale :
+                                  Measurement::getForcedRelativeScaleForField(this->editField,
+                                                                              this->configSection);
 
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the
    // unit and scale.
-   return Measurement::displayAmount(amount, this->units, precision, displayUnitSystem, relativeScale);
+   return Measurement::displayAmount(amount,
+                                     this->units,
+                                     precision,
+                                     overrideSystemOfMeasurement,
+                                     overrideRelativeScale);
 }
 
-void UiAmountWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUnitSystem,
-                                         Measurement::UnitSystem::RelativeScale oldScale) {
+void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) {
    // This is where it gets hard
    double val = -1.0;
    QString amt;
@@ -215,16 +212,13 @@ void UiAmountWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUn
          case Measurement::PhysicalQuantity::Temperature:
          case Measurement::PhysicalQuantity::Time:
          case Measurement::PhysicalQuantity::Density:
-            val = this->convertToSI(oldUnitSystem, oldScale);
+         case Measurement::PhysicalQuantity::DiastaticPower:
+            val = this->convertToSI(previousScaleInfo);
             amt = this->displayAmount(val, 3);
             break;
          case Measurement::PhysicalQuantity::Color:
-            val = this->convertToSI(oldUnitSystem, oldScale);
+            val = this->convertToSI(previousScaleInfo);
             amt = this->displayAmount(val, 0);
-            break;
-         case Measurement::PhysicalQuantity::DiastaticPower:
-            val = this->convertToSI(oldUnitSystem, oldScale);
-            amt = this->displayAmount(val, 3);
             break;
          case Measurement::PhysicalQuantity::None:
          default:
@@ -270,27 +264,58 @@ void UiAmountWithUnits::textOrUnitsChanged(Measurement::UnitSystem const * oldUn
          break;
    }*/
 
-
    ////////
    return;
 }
 
-double UiAmountWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSystem,
-                                    Measurement::UnitSystem::RelativeScale oldScale) {
+double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
+   QString rawValue = this->getWidgetText();
    qDebug() <<
-      Q_FUNC_INFO << "Old Unit system:" << (nullptr == oldUnitSystem ? "NULL" : oldUnitSystem->uniqueName) <<
-      ", oldScale: " << oldScale;
+      Q_FUNC_INFO << "rawValue:" << rawValue <<  ", old SystemOfMeasurement:" << previousScaleInfo.oldSystemOfMeasurement <<
+      ", old ForcedScale: " << previousScaleInfo.oldForcedScale;
+
+   // It is a coding error if this function is called for a field is not holding a physical quantity.  Eg, it makes no
+   // sense to call convertToSI for a date or a string field, not least as there will be no sane value to supply for
+   // oldSystemOfMeasurement.
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
+   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
+
    // .:TBD:. 2021-12-31 MY: My gut instinct is that the logic here is more complicated than it needs to be.  It would
    //                        be nice to see if we can add some unit tests for all the edge cases and then simplify.
-   Measurement::UnitSystem const * dspUnitSystem  = oldUnitSystem;
-   Measurement::UnitSystem::RelativeScale   dspScale = oldScale;
-   // If units are specified in the text, try to use those.  Otherwise, if we are not forcing the unit & scale, we need
-   // to read the configured properties
-   if (Localization::hasUnits(this->getWidgetText())) {
+
+   Measurement::UnitSystem const & oldUnitSystem = Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement,
+                                                                                        physicalQuantity);
+
+   Measurement::Unit const * defaultUnit{
+      previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
+   };
+
+   //
+   // Measurement::UnitSystem::qStringToSI will handle all the logic to deal with any units specified by the user in the
+   // string.  (In theory, we just grab the units that the user has specified in the input text.  In reality, it's not
+   // that easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we
+   // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
+   // gallons, then we'll go with US customary gallons over Imperial ones.)
+   //
+   return oldUnitSystem.qstringToSI(rawValue, defaultUnit, previousScaleInfo.oldForcedScale);
+
+/*
+   //
+   // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
+   // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
+   // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
+   // specific field or, failing that, what is configured globally.
+   //
+   if (Localization::hasUnits(rawValue)) {
+      //
+      // User has specified units
+      //
       // In theory, we just grab the units that the user has specified in the input text.  In reality, it's not that
       // easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we have
       // old or current units then that helps with this - eg, if current units are US customary cups and user enters
-      // gallons, then we'll go with US customary gallons over Imperial ones.
+      // gallons, then we'll go with US customary gallons over Imperial ones.  (The logic to handle this is all inside
+      // Measurement::UnitSystem::qStringToSI
+      //
       if (nullptr == dspUnitSystem) {
          if (nullptr != this->units) {
             dspUnitSystem = &this->units->getUnitSystem();
@@ -323,7 +348,7 @@ double UiAmountWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSys
          works = dspUnitSystem->unit();
       }
 
-      return dspUnitSystem->qstringToSI(this->getWidgetText(), works, dspScale);
+      return dspUnitSystem->qstringToSI(rawValue, works, dspScale);
    }
 
 /*   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
@@ -334,13 +359,13 @@ double UiAmountWithUnits::convertToSI(Measurement::UnitSystem const * oldUnitSys
 
    // If all else fails, simply try to force the contents of the field to a
    // double. This doesn't seem advisable?
-   bool ok = false;
+/*   bool ok = false;
    double amt = this->toDouble(&ok);
    if (!ok) {
       qWarning() <<
-         Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" <<
+         Q_FUNC_INFO << "Could not convert " << rawValue << " (" << this->configSection << ":" <<
          this->editField << ") to double";
    }
 
-   return amt;
+   return amt;*/
 }

@@ -119,30 +119,32 @@ public:
    /**
     * \brief This does most of the work for displayAmount() and amountDisplay()
     *
-    * \param amount
-    * \param units
-    * \param scale
+    * \param amount the amount to display
+    * \param units  the units in which the amount is measured
+    * \param forcedScale  if specified, the \c RelativeScale from this \c UnitSystem to use for displaying
     *
     * \return
     */
    std::pair<double, QString> displayableAmount(double amount,
                                                 Measurement::Unit const * units,
-                                                Measurement::UnitSystem::RelativeScale scale) const {
+                                                std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
       // Special cases
       if (units == nullptr || units->getPhysicalQuantity() != this->physicalQuantity) {
          return std::pair(amount, "");
       }
 
-      // Short circuit if the 'without' key is defined
-      if (this->scaleToUnit.contains(Measurement::UnitSystem::RelativeScale::scaleWithout)) {
-         scale = Measurement::UnitSystem::RelativeScale::scaleWithout;
-      }
-
       double SIAmount = units->toSI(amount);
 
-      // If a specific scale is provided, just use that and don't loop.
-      if (this->scaleToUnit.contains(scale) ) {
-         Measurement::Unit const * bb = this->scaleToUnit.value(scale);
+      // Short circuit if there is only one Unit in this UnitSystem or if a specific scale is requested
+      if (this->scaleToUnit.size() == 1 || forcedScale) {
+         Measurement::Unit const * bb;
+         if (this->scaleToUnit.size() == 1) {
+            bb = this->scaleToUnit.first();
+         } else {
+            // It's a coding error to specify a forced scale that is not in the UnitSystem
+            Q_ASSERT(this->scaleToUnit.contains(*forcedScale));
+            bb = this->scaleToUnit.value(*forcedScale);
+         }
          return std::pair(bb->fromSI(SIAmount), bb->name);
       }
 
@@ -163,7 +165,6 @@ public:
       Q_ASSERT(last != nullptr);
       return std::pair(last->fromSI(SIAmount), last->name);
    }
-
 
    // Member variables for impl
    Measurement::UnitSystem & self;
@@ -206,7 +207,7 @@ bool Measurement::UnitSystem::operator==(UnitSystem const & other) const {
 
 double Measurement::UnitSystem::qstringToSI(QString qstr,
                                             Unit const * defUnit,
-                                            Measurement::UnitSystem::RelativeScale scale) const {
+                                            std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
 
    // make sure we can parse the string
    if (amtUnit.indexIn(qstr) == -1) {
@@ -234,9 +235,9 @@ double Measurement::UnitSystem::qstringToSI(QString qstr,
       if (!unitToUse) {
          unitToUse = Measurement::Unit::getUnit(unitName, this->pimpl->physicalQuantity);
       }
-   } else if (scale != Measurement::UnitSystem::noScale) {
+   } else if (forcedScale) {
       // The supplied string does not specify units, so, if a scale is set, use that
-      unitToUse = this->pimpl->getUnitForRelativeScale(scale);
+      unitToUse = this->pimpl->getUnitForRelativeScale(*forcedScale);
    }
 
    if (!unitToUse) {
@@ -254,16 +255,16 @@ double Measurement::UnitSystem::qstringToSI(QString qstr,
 QString Measurement::UnitSystem::displayAmount(double amount,
                                                Unit const * units,
                                                int precision,
-                                               Measurement::UnitSystem::RelativeScale scale) const {
+                                               std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
    // If the precision is not specified, we take the default one
    if (precision < 0) {
       precision = defaultPrecision;
    }
 
-   auto result = this->pimpl->displayableAmount(amount, units, scale);
+   auto result = this->pimpl->displayableAmount(amount, units, forcedScale);
 
    if (result.second.isEmpty()) {
-      return QString("%L1").arg(this->amountDisplay(result.first, units, scale), fieldWidth, format, precision);
+      return QString("%L1").arg(this->amountDisplay(result.first, units, forcedScale), fieldWidth, format, precision);
    }
 
    return QString("%L1 %2").arg(result.first, fieldWidth, format, precision).arg(result.second);
@@ -271,9 +272,9 @@ QString Measurement::UnitSystem::displayAmount(double amount,
 
 double Measurement::UnitSystem::amountDisplay(double amount,
                                               Unit const * units,
-                                              Measurement::UnitSystem::RelativeScale scale) const {
+                                              std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
    // Essentially we're just returning the numeric part of the displayable amount
-   return this->pimpl->displayableAmount(amount, units, scale).first;
+   return this->pimpl->displayableAmount(amount, units, forcedScale).first;
 }
 
 QList<Measurement::UnitSystem::RelativeScale> Measurement::UnitSystem::getRelativeScales() const {
@@ -296,7 +297,7 @@ Measurement::PhysicalQuantity Measurement::UnitSystem::getPhysicalQuantity() con
    return this->pimpl->physicalQuantity;
 }
 
-Measurement::UnitSystem const * Measurement::UnitSystem::getInstanceByUniqueName(QString const uniqueName) {
+Measurement::UnitSystem const * Measurement::UnitSystem::getInstanceByUniqueName(QString const & uniqueName) {
    return nameToUnitSystem.value(uniqueName, nullptr);
 }
 
@@ -327,7 +328,7 @@ QList<Measurement::UnitSystem const *> Measurement::UnitSystem::getUnitSystems(M
    return physicalQuantityToUnitSystems.values(physicalQuantity);
 }
 
-QString Measurement::UnitSystem::relativeScaleToString(Measurement::UnitSystem::RelativeScale relativeScale) {
+QString Measurement::UnitSystem::getUniqueName(Measurement::UnitSystem::RelativeScale relativeScale) {
    auto result = relativeScaleToName.enumToString(relativeScale);
    if (!result) {
       // It's a coding error if we didn't define a name for a RelativeScale
@@ -338,15 +339,8 @@ QString Measurement::UnitSystem::relativeScaleToString(Measurement::UnitSystem::
    return *result;
 }
 
-Measurement::UnitSystem::RelativeScale Measurement::UnitSystem::relativeScaleFromString(QString relativeScaleAsString) {
-   auto result = relativeScaleToName.stringToEnum(relativeScaleAsString);
-   if (!result) {
-      // It's a coding error if someone sent us an invalid name for a RelativeScale
-      qCritical() << Q_FUNC_INFO << "Unable to find RelativeScale called" << relativeScaleAsString;
-      Q_ASSERT(false); // Stop here on a debug build
-   }
-
-   return static_cast<Measurement::UnitSystem::RelativeScale>(*result);
+std::optional<Measurement::UnitSystem::RelativeScale> Measurement::UnitSystem::getScaleFromUniqueName(QString relativeScaleAsString) {
+   return relativeScaleToName.stringToEnum<Measurement::UnitSystem::RelativeScale>(relativeScaleAsString);
 }
 
 

@@ -152,12 +152,12 @@ bool MashDesigner::nextStep(int step)
 void MashDesigner::saveStep() {
    MashStep::Type type = static_cast<MashStep::Type>(comboBox_type->currentIndex());
    // Bound the target temperature to what can be achieved
-   double temp = this->bound_temp_c(lineEdit_temp->toSI());
+   double temp = this->bound_temp_c(lineEdit_temp->toSiRaw());
 
    this->mashStep->setName(lineEdit_name->text());
    this->mashStep->setType(type);
    this->mashStep->setStepTemp_c(temp);
-   this->mashStep->setStepTime_min(lineEdit_time->toSI());
+   this->mashStep->setStepTime_min(lineEdit_time->toSiRaw());
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
@@ -175,7 +175,7 @@ void MashDesigner::saveStep() {
 
 double MashDesigner::stepTemp_c()
 {
-   return lineEdit_temp->toSI();
+   return lineEdit_temp->toSiRaw();
 }
 
 bool MashDesigner::heating()

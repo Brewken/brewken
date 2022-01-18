@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RefractoDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * RefractoDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -43,9 +43,9 @@ void RefractoDialog::calculate() {
    bool haveOP = true;
    bool haveOG = true;
 
-   double originalPlato = lineEdit_op->toDouble(&haveOP);
-   double inputOG       = lineEdit_inputOG->toDouble(&haveOG);
-   double currentPlato  = lineEdit_cp->toDouble(&haveCP);
+   double originalPlato = lineEdit_op->toDoubleRaw(&haveOP);
+   double inputOG       = lineEdit_inputOG->toDoubleRaw(&haveOG);
+   double currentPlato  = lineEdit_cp->toDoubleRaw(&haveCP);
 
    clearOutputFields();
 

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -1017,12 +1017,12 @@ void MainWindow::setupTextEdit() {
    return;
 }
 
-// anything using a BtLabel::changedUnitSystemOrScale signal should go in here
+// anything using a BtLabel::changedSystemOfMeasurementOrScale signal should go in here
 void MainWindow::setupLabels() {
    // These are the sliders. I need to consider these harder, but small steps
-   connect(this->oGLabel,       &BtLabel::changedUnitSystemOrScale, this, &MainWindow::redisplayLabel);
-   connect(this->fGLabel,       &BtLabel::changedUnitSystemOrScale, this, &MainWindow::redisplayLabel);
-   connect(this->colorSRMLabel, &BtLabel::changedUnitSystemOrScale, this, &MainWindow::redisplayLabel);
+   connect(this->oGLabel,       &BtLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
+   connect(this->fGLabel,       &BtLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
+   connect(this->colorSRMLabel, &BtLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
    return;
 }
 
@@ -1428,13 +1428,10 @@ void MainWindow::updateDensitySlider(BtStringConst const & propertyNameMin,
                                      BtStringConst const & propertyNameCurrent,
                                      RangedSlider* slider,
                                      double max) {
-   Measurement::UnitSystem const * displayUnitSystem =
+   Measurement::UnitSystem const & displayUnitSystem =
       Measurement::getUnitSystemForField(*propertyNameCurrent,
-                                         *PersistentSettings::Sections::tab_recipe);
-   if (displayUnitSystem == nullptr) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Density);
-   }
-
+                                         *PersistentSettings::Sections::tab_recipe,
+                                         Measurement::PhysicalQuantity::Density);
    slider->setPreferredRange(Measurement::displayRange(recStyle,
                                                        this->tab_recipe,
                                                        propertyNameMin,
@@ -1446,7 +1443,7 @@ void MainWindow::updateDensitySlider(BtStringConst const & propertyNameMin,
                                               max,
                                               Measurement::Units::sp_grav));
 
-   if (*displayUnitSystem == Measurement::UnitSystems::density_Plato) {
+   if (displayUnitSystem == Measurement::UnitSystems::density_Plato) {
       slider->setPrecision(1);
       slider->setTickMarks(2,5);
    } else {
@@ -1460,12 +1457,10 @@ void MainWindow::updateColorSlider(BtStringConst const & propertyNameMin,
                                    BtStringConst const & propertyNameMax,
                                    BtStringConst const & propertyNameCurrent,
                                    RangedSlider * slider) {
-   Measurement::UnitSystem const * displayUnitSystem =
+   Measurement::UnitSystem const & displayUnitSystem =
       Measurement::getUnitSystemForField(*propertyNameCurrent,
-                                         *PersistentSettings::Sections::tab_recipe);
-   if (displayUnitSystem == nullptr) {
-      displayUnitSystem = &Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Color);
-   }
+                                         *PersistentSettings::Sections::tab_recipe,
+                                         Measurement::PhysicalQuantity::Color);
 
    slider->setPreferredRange(Measurement::displayRange(recStyle,
                                                        this->tab_recipe,
@@ -1477,7 +1472,7 @@ void MainWindow::updateColorSlider(BtStringConst const & propertyNameMin,
                                               1,
                                               44,
                                               Measurement::Units::srm));
-   slider->setTickMarks(*displayUnitSystem == Measurement::UnitSystems::color_StandardReferenceMethod ? 10 : 40, 2);
+   slider->setTickMarks(displayUnitSystem == Measurement::UnitSystems::color_StandardReferenceMethod ? 10 : 40, 2);
 
    return;
 }
@@ -1816,7 +1811,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::batchSize_l,
-                        lineEdit_batchSize->toSI(),
+                        lineEdit_batchSize->toSiRaw(),
                         tr("Change Batch Size"));
 }
 
@@ -1827,7 +1822,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::boilSize_l,
-                        lineEdit_boilSize->toSI(),
+                        lineEdit_boilSize->toSiRaw(),
                         tr("Change Boil Size"));
 }
 
@@ -1857,7 +1852,7 @@ void MainWindow::updateRecipeEfficiency() {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs, PropertyNames::Recipe::efficiency_pct, lineEdit_efficiency->toSI(), tr("Change Recipe Efficiency"));
+   this->doOrRedoUpdate(*this->recipeObs, PropertyNames::Recipe::efficiency_pct, lineEdit_efficiency->toSiRaw(), tr("Change Recipe Efficiency"));
    return;
 }
 

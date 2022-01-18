@@ -70,6 +70,16 @@ public:
       return this->enumToString(static_cast<int>(enumValue));
    }
 
+   /**
+    * \brief Convenience function for using \c stringToEnum with strongly typed enums (ie those declared as
+    *        "enum class")
+    */
+   template<typename E>
+   std::optional<E> stringToEnum(QString const & stringValue) const {
+      std::optional<int> result = this->stringToEnum(stringValue);
+      return result ? std::optional<E>{static_cast<E>(*result)} : std::optional<E>{std::nullopt};
+   }
+
 };
 
 #endif

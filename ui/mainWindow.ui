@@ -2314,7 +2314,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+    <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -2322,7 +2322,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+    <signal>(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -2345,7 +2345,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+    <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -2353,7 +2353,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -2366,7 +2366,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -2374,7 +2374,7 @@
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
    <slots>
-    <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+    <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -2382,7 +2382,7 @@
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
-    <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -2515,9 +2515,9 @@
  <connections>
   <connection>
    <sender>label_targetBoilSize</sender>
-   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_boilSize</receiver>
-   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+   <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>466</x>
@@ -2531,9 +2531,9 @@
   </connection>
   <connection>
    <sender>label_boilSg</sender>
-   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_boilSg</receiver>
-   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+   <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>466</x>
@@ -2547,9 +2547,9 @@
   </connection>
   <connection>
    <sender>label_boiltime</sender>
-   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_boilTime</receiver>
-   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+   <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>466</x>
@@ -2563,9 +2563,9 @@
   </connection>
   <connection>
    <sender>label_targetBatchSize</sender>
-   <signal>changedUnitSystemOrScale(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</signal>
+   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_batchSize</receiver>
-   <slot>lineChanged(Measurement::UnitSystem const *, Measurement::UnitSystem::RelativeScale)</slot>
+   <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>466</x>

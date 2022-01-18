@@ -65,10 +65,10 @@ SaltTableModel::SaltTableModel(QTableView* parent) :
    BtTableModel{
       parent,
       false,
-      {{SALTNAMECOL,    {Measurement::PhysicalQuantity::None,  ""      }},
-       {SALTAMOUNTCOL,  {Measurement::PhysicalQuantity::Mixed, "amount"}},
-       {SALTADDTOCOL,   {Measurement::PhysicalQuantity::None,  ""      }},
-       {SALTPCTACIDCOL, {Measurement::PhysicalQuantity::None,  ""      }}}
+      {{SALTNAMECOL,    {tr("Name"),     Measurement::PhysicalQuantity::None,  ""      }},
+       {SALTAMOUNTCOL,  {tr("Amount"),   Measurement::PhysicalQuantity::Mixed, "amount"}},
+       {SALTADDTOCOL,   {tr("Added To"), Measurement::PhysicalQuantity::None,  ""      }},
+       {SALTPCTACIDCOL, {tr("% Acid"),   Measurement::PhysicalQuantity::None,  ""      }}}
    },
    m_rec{nullptr} {
    saltObs.clear();
@@ -409,11 +409,6 @@ int SaltTableModel::rowCount(const QModelIndex& /*parent*/) const
    return saltObs.size();
 }
 
-int SaltTableModel::columnCount(const QModelIndex& /*parent*/) const
-{
-   return SALTNUMCOLS;
-}
-
 QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
    // Ensure the row is ok.
    if (index.row() >= static_cast<int>(this->saltObs.size())) {
@@ -421,13 +416,10 @@ QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
       return QVariant();
    }
 
-   Measurement::UnitSystem const * unitSystem;
-
    Salt* row = this->saltObs[index.row()];
-   Measurement::Unit const * rightUnit = row->amountIsWeight() ? &Measurement::Units::kilograms: &Measurement::Units::liters;
 
-   int col = index.column();
-   switch (col) {
+   int column = index.column();
+   switch (column) {
       case SALTNAMECOL:
          if (role == Qt::DisplayRole) {
             return QVariant( saltNames.at(row->type()));
@@ -440,12 +432,15 @@ QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
          if (role != Qt::DisplayRole) {
             return QVariant();
          }
-         unitSystem  = this->displayUnitSystem(col);
-         return QVariant(Measurement::displayAmount(row->amount(),
-                                                    rightUnit,
-                                                    3,
-                                                    unitSystem,
-                                                    Measurement::UnitSystem::noScale));
+         return QVariant(
+            Measurement::displayAmount(
+               row->amount(),
+               row->amountIsWeight() ? &Measurement::Units::kilograms: &Measurement::Units::liters,
+               3,
+               this->getForcedSystemOfMeasurementForColumn(column),
+               std::nullopt
+            )
+         );
       case SALTADDTOCOL:
          if (role == Qt::DisplayRole) {
             return QVariant( addToName.at(row->addTo()));
@@ -460,30 +455,16 @@ QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
          }
          return QVariant();
       default :
-         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
+         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
          return QVariant();
    }
 }
 
-QVariant SaltTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
-{
-   if( orientation == Qt::Horizontal && role == Qt::DisplayRole ) {
-      switch( section ) {
-         case SALTNAMECOL:
-            return QVariant(tr("Name"));
-         case SALTAMOUNTCOL:
-            return QVariant(tr("Amount"));
-         case SALTADDTOCOL:
-            return QVariant(tr("Added To"));
-         case SALTPCTACIDCOL:
-               return  QVariant(tr("% Acid"));
-         default:
-            qWarning() << tr("Bad column: %1").arg(section);
-            return QVariant();
-      }
+QVariant SaltTableModel::headerData( int section, Qt::Orientation orientation, int role ) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      return this->getColumName(section);
    }
-   else
-      return QVariant();
+   return QVariant();
 }
 
 Qt::ItemFlags SaltTableModel::flags(const QModelIndex& index ) const
@@ -509,15 +490,11 @@ bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, 
 
    Salt * row = saltObs[index.row()];
 
-   Measurement::PhysicalQuantity physicalQuantity =
-      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume;
-   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
-   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
-
-   switch (index.column()) {
+   int const column = index.column();
+   switch (column) {
       case SALTNAMECOL:
          retval = value.canConvert(QVariant::Int);
-         if ( retval ) {
+         if (retval) {
             int newType = value.toInt();
             Salt::Types oldType = row->type();
             row->setType(static_cast<Salt::Types>(newType));
@@ -534,8 +511,15 @@ bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, 
          break;
       case SALTAMOUNTCOL:
          retval = value.canConvert(QVariant::Double);
-         if ( retval ) {
-            row->setAmount( Measurement::qStringToSI(value.toString(), physicalQuantity, dspUnitSystem, dspScl) );
+         if (retval) {
+            row->setAmount(
+               Measurement::qStringToSI(
+                  value.toString(),
+                  row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume,
+                  this->getForcedSystemOfMeasurementForColumn(column),
+                  this->getForcedRelativeScaleForColumn(column)
+               )
+            );
          }
          break;
       case SALTADDTOCOL:

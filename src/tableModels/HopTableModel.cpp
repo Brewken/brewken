@@ -52,13 +52,13 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    BtTableModel{
       parent,
       editable,
-      {{HOPNAMECOL,      {Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {HOPALPHACOL,     {Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {HOPAMOUNTCOL,    {Measurement::PhysicalQuantity::Mass,  *PropertyNames::Hop::amount_kg                     }},
-       {HOPINVENTORYCOL, {Measurement::PhysicalQuantity::Mass,  *PropertyNames::NamedEntityWithInventory::inventory}},
-       {HOPFORMCOL,      {Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {HOPUSECOL,       {Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {HOPTIMECOL,      {Measurement::PhysicalQuantity::Time,  *PropertyNames::Hop::time_min                      }}}
+      {{HOPNAMECOL,      {tr("Name"),      Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPALPHACOL,     {tr("Alpha %"),   Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPAMOUNTCOL,    {tr("Amount"),    Measurement::PhysicalQuantity::Mass,  *PropertyNames::Hop::amount_kg                     }},
+       {HOPINVENTORYCOL, {tr("Inventory"), Measurement::PhysicalQuantity::Mass,  *PropertyNames::NamedEntityWithInventory::inventory}},
+       {HOPFORMCOL,      {tr("Form"),      Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPUSECOL,       {tr("Use"),       Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPTIMECOL,      {tr("Time"),      Measurement::PhysicalQuantity::Time,  *PropertyNames::Hop::time_min                      }}}
    },
    colFlags(HOPNUMCOLS),
    _inventoryEditable(false),
@@ -267,13 +267,8 @@ int HopTableModel::rowCount(const QModelIndex & /*parent*/) const {
    return hopObs.size();
 }
 
-int HopTableModel::columnCount(const QModelIndex & /*parent*/) const {
-   return HOPNUMCOLS;
-}
-
 QVariant HopTableModel::data(const QModelIndex & index, int role) const {
 
-   int col = index.column();
 
    // Ensure the row is ok.
    if (index.row() >= static_cast<int>(hopObs.size())) {
@@ -283,92 +278,72 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
 
    Hop * row = hopObs[index.row()];
 
-   switch (index.column()) {
+   int const column = index.column();
+   switch (column) {
       case HOPNAMECOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->name());
          }
-         return QVariant();
-
+         break;
       case HOPALPHACOL:
          if (role == Qt::DisplayRole) {
             return QVariant(Measurement::displayAmount(row->alpha_pct(), nullptr));
          }
-         return QVariant();
-
+         break;
       case HOPINVENTORYCOL:
-         if (role != Qt::DisplayRole) {
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            return QVariant(Measurement::displayAmount(row->inventory(),
+                                                      &Measurement::Units::kilograms,
+                                                      3,
+                                                      this->getForcedSystemOfMeasurementForColumn(column),
+                                                      this->getForcedRelativeScaleForColumn(column)));
          }
-         return QVariant(Measurement::displayAmount(row->inventory(),
-                                                    &Measurement::Units::kilograms,
-                                                    3,
-                                                    this->displayUnitSystem(col),
-                                                    this->displayScale(col)));
-
+         break;
       case HOPAMOUNTCOL:
-         if (role != Qt::DisplayRole) {
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            return QVariant(Measurement::displayAmount(row->amount_kg(),
+                                                      &Measurement::Units::kilograms,
+                                                      3,
+                                                      this->getForcedSystemOfMeasurementForColumn(column),
+                                                      this->getForcedRelativeScaleForColumn(column)));
          }
-         return QVariant(Measurement::displayAmount(row->amount_kg(),
-                                                    &Measurement::Units::kilograms,
-                                                    3,
-                                                    this->displayUnitSystem(col),
-                                                    this->displayScale(col)));
-
+         break;
       case HOPUSECOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->useStringTr());
-         } else if (role == Qt::UserRole) {
+         }
+         if (role == Qt::UserRole) {
             return QVariant(row->use());
          }
-         return QVariant();
-
+         break;
       case HOPTIMECOL:
-         if (role != Qt::DisplayRole) {
-            return QVariant();
+         if (role == Qt::DisplayRole) {
+            return QVariant(Measurement::displayAmount(row->time_min(),
+                                                      &Measurement::Units::minutes,
+                                                      3,
+                                                      std::nullopt,
+                                                      this->getForcedRelativeScaleForColumn(column)));
          }
-         return QVariant(Measurement::displayAmount(row->time_min(),
-                                                    &Measurement::Units::minutes,
-                                                    3,
-                                                    &Measurement::UnitSystems::time_CoordinatedUniversalTime,
-                                                    this->displayScale(col)));
+         break;
       case HOPFORMCOL:
          if (role == Qt::DisplayRole) {
             return QVariant(row->formStringTr());
          } else if (role == Qt::UserRole) {
             return QVariant(row->form());
          }
-         return QVariant();
-
+         break;
       default :
-         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
-         return QVariant();
+         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
+         break;
    }
+   return QVariant();
 }
 
 QVariant HopTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-      switch (section) {
-         case HOPNAMECOL:
-            return QVariant(tr("Name"));
-         case HOPALPHACOL:
-            return QVariant(tr("Alpha %"));
-         case HOPINVENTORYCOL:
-            return QVariant(tr("Inventory"));
-         case HOPAMOUNTCOL:
-            return QVariant(tr("Amount"));
-         case HOPUSECOL:
-            return QVariant(tr("Use"));
-         case HOPTIMECOL:
-            return QVariant(tr("Time"));
-         case HOPFORMCOL:
-            return QVariant(tr("Form"));
-         default:
-            qWarning() << QString("HopTableModel::headerdata Bad column: %1").arg(section);
-            return QVariant();
-      }
-   } else if (showIBUs && recObs && orientation == Qt::Vertical && role == Qt::DisplayRole) {
+      return this->getColumName(section);
+   }
+   if (showIBUs && recObs && orientation == Qt::Vertical && role == Qt::DisplayRole) {
       QList<double> ibus = recObs->IBUs();
 
       if (ibus.size() > section) {
@@ -395,9 +370,8 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
 
    row = hopObs[index.row()];
 
-   auto dspUnitSystem = this->displayUnitSystem(index.column());
-   auto dspScl        = this->displayScale(index.column());
-   switch (index.column()) {
+   int const column = index.column();
+   switch (column) {
       case HOPNAMECOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
@@ -424,25 +398,29 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPINVENTORYCOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::NamedEntityWithInventory::inventory,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Mass,
-                                                                           dspUnitSystem,
-                                                                           dspScl),
-                                                  tr("Change Hop Inventory Amount"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::NamedEntityWithInventory::inventory,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Mass,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Hop Inventory Amount")
+            );
          }
          break;
       case HOPAMOUNTCOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Hop::amount_kg,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Mass,
-                                                                           dspUnitSystem,
-                                                                           dspScl),
-                                                  tr("Change Hop Amount"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::Hop::amount_kg,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Mass,
+                                        this->getForcedSystemOfMeasurementForColumn(column),
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Hop Amount")
+            );
          }
          break;
       case HOPUSECOL:
@@ -466,17 +444,19 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HOPTIMECOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Hop::time_min,
-                                                  Measurement::qStringToSI(value.toString(),
-                                                                           Measurement::PhysicalQuantity::Time,
-                                                                           dspUnitSystem,
-                                                                           dspScl),
-                                                  tr("Change Hop Time"));
+            MainWindow::instance().doOrRedoUpdate(
+               *row,
+               PropertyNames::Hop::time_min,
+               Measurement::qStringToSI(value.toString(),
+                                        Measurement::PhysicalQuantity::Time,
+                                        std::nullopt,
+                                        this->getForcedRelativeScaleForColumn(column)),
+               tr("Change Hop Time")
+            );
          }
          break;
       default:
-         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
+         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
          return false;
    }
 
@@ -494,7 +474,7 @@ Hop * HopTableModel::getHop(int i) {
          return hopObs[i];
       }
    } else {
-      qWarning() << QString("HopTableModel::getHop( %1/%2 )").arg(i).arg(hopObs.size());
+      qWarning() << Q_FUNC_INFO << "this->hopObs is empty (" << i << "/" << hopObs.size() << ")";
    }
    return nullptr;
 }

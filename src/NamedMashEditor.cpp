@@ -99,12 +99,12 @@ void NamedMashEditor::saveAndClose() {
 
    this->mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
    this->mashObs->setName(lineEdit_name->text());
-   this->mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI());
-   this->mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI());
-   this->mashObs->setPh(lineEdit_spargePh->toSI());
-   this->mashObs->setTunTemp_c(lineEdit_tunTemp->toSI());
-   this->mashObs->setTunWeight_kg(lineEdit_tunMass->toSI());
-   this->mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI());
+   this->mashObs->setGrainTemp_c(lineEdit_grainTemp->toSiRaw());
+   this->mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSiRaw());
+   this->mashObs->setPh(lineEdit_spargePh->toSiRaw());
+   this->mashObs->setTunTemp_c(lineEdit_tunTemp->toSiRaw());
+   this->mashObs->setTunWeight_kg(lineEdit_tunMass->toSiRaw());
+   this->mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSiRaw());
 
    this->mashObs->setNotes( textEdit_notes->toPlainText() );
    return;

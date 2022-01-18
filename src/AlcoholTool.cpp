@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2021:
+ * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
@@ -30,7 +30,7 @@
 #include "Algorithms.h"
 #include "BtLineEdit.h"
 #include "PersistentSettings.h"
-#include "measurement/Unit.h"
+#include "measurement/SystemOfMeasurement.h"
 #include "widgets/ToggleSwitch.h"
 
 // Settings we only use in this file under the PersistentSettings::Sections::alcoholTool section
@@ -86,12 +86,10 @@ public:
 
    void doLayout() {
       this->input_og->setMinimumSize(QSize(80, 0));
-//      this->input_og->setProperty("forcedUnit", QVariant(QStringLiteral("displaySG")));
-      this->input_og->setForcedUnitSystem(&Measurement::UnitSystems::density_SpecificGravity);
+      this->input_og->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
       this->input_fg->setMinimumSize(QSize(80, 0));
-//      this->input_fg->setProperty("forcedUnit", QVariant(QStringLiteral("displaySG")));
-      this->input_fg->setForcedUnitSystem(&Measurement::UnitSystems::density_SpecificGravity);
+      this->input_fg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
       this->label_result->setObjectName(QStringLiteral("label_results"));
       this->label_result->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -144,13 +142,14 @@ public:
    }
 
    void updateCalculatedFields() {
-      double og = this->input_og->toSI();
-      double fg = this->input_fg->toSI();
+      double og = this->input_og->toSiRaw();
+      double fg = this->input_fg->toSiRaw();
       if (this->enableAdvancedInputs->isChecked()) {
          // User wants temperature correction
-         double calibrationTempInC = this->input_calibration_temperature->toSI();
-         double ogReadTempInC          = this->input_og_temperature->toSI();
-         double fgReadTempInC          = this->input_fg_temperature->toSI();
+         // .:TBD:. I think this might be doing the wrong thing when temp is in Fahrenheit
+         double calibrationTempInC = this->input_calibration_temperature->toSiRaw();
+         double ogReadTempInC          = this->input_og_temperature->toSiRaw();
+         double fgReadTempInC          = this->input_fg_temperature->toSiRaw();
          if (0.0 == calibrationTempInC || 0.0 == ogReadTempInC) {
             og = 0.0;
             this->corrected_og->setText("? sg");
@@ -256,7 +255,7 @@ public:
                                  this->enableAdvancedInputs->isChecked(),
                                  PersistentSettings::Sections::alcoholTool);
       PersistentSettings::insert(hydrometerCalibrationTemperatureInC,
-                                 this->input_calibration_temperature->toSI(),
+                                 this->input_calibration_temperature->toSiRaw(),
                                  PersistentSettings::Sections::alcoholTool);
       return;
    }

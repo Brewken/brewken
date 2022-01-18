@@ -33,8 +33,28 @@ enum class NonPhysicalQuantity {
 };
 
 /**
+ * \brief Return the name of a \c NonPhysicalQuantity suitable either for display to the user or logging
+ */
+QString GetDisplayName(NonPhysicalQuantity nonPhysicalQuantity);
+
+/**
  * \brief All types of value that can be shown in a UI field
  */
 typedef std::variant<Measurement::PhysicalQuantity, NonPhysicalQuantity> BtFieldType;
+
+/**
+ * \brief Convenience function to allow output of \c BtFieldType to \c QDebug or \c QTextStream stream
+ *
+ *        (For some reason, \c QDebug does not inherit from \c QTextStream so we template the stream class.)
+ */
+template<class S>
+S & operator<<(S & stream, BtFieldType fieldType) {
+   if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
+      stream << "NonPhysicalQuantity:" << GetDisplayName(std::get<NonPhysicalQuantity>(fieldType));
+   } else {
+      stream << "PhysicalQuantity:" << Measurement::getDisplayName(std::get<Measurement::PhysicalQuantity>(fieldType));
+   }
+   return stream;
+}
 
 #endif

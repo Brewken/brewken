@@ -72,10 +72,6 @@ QString Measurement::getUniqueName(SystemOfMeasurement systemOfMeasurement) {
    return *returnValue;
 }
 
-QTextStream & operator<<(QTextStream & stream, Measurement::SystemOfMeasurement const systemOfMeasurement) {
-   stream <<
-      "SystemOfMeasurement #" << static_cast<int>(systemOfMeasurement) << ": " <<
-      Measurement::getUniqueName(systemOfMeasurement) << " (" <<
-      Measurement::getDisplayName(systemOfMeasurement) << ")";
-   return stream;
+std::optional<Measurement::SystemOfMeasurement> Measurement::getFromUniqueName(QString const & uniqueName) {
+   return systemOfMeasurementToUniqueName.stringToEnum<Measurement::SystemOfMeasurement>(uniqueName);
 }

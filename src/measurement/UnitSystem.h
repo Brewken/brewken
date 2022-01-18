@@ -22,6 +22,7 @@
 #pragma once
 
 #include <memory> // For PImpl
+#include <optional>
 
 #include <QMap>
 #include <QString>
@@ -127,7 +128,7 @@ namespace Measurement {
       SystemOfMeasurement const systemOfMeasurement;
 
       /*!
-       * \brief Returns a string appropriately displaying 'amount' of type 'units' in this UnitSystem.  This string
+       * \brief Returns a string appropriately displaying 'amount' of type 'units' in this \c UnitSystem.  This string
        *        should also be recognised by \c qstringToSI()
        *
        * \param amount
@@ -140,21 +141,21 @@ namespace Measurement {
       QString displayAmount(double amount,
                             Unit const * units,
                             int precision = -1,
-                            UnitSystem::RelativeScale scale = UnitSystem::noScale) const;
+                            std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
 
       /*!
-       * \brief Returns the double representing the appropriate unit and scale. Similar in nature to \c displayAmount(),
-       *        but just returning raw doubles.
+       * \brief Converts the supplied the appropriate unit and scale to an amount in this \c UnitSystem. Similar in
+       *        nature to \c displayAmount(), but just returning raw doubles.
        *
-       * \param amount
-       * \param units
-       * \param scale
+       * \param amount The amount to convert
+       * \param units  The units of the amount to convert
+       * \param scale  Optional: the scale of this \c UnitSystem to use for the output
        *
        * \return
        */
       double amountDisplay(double amount,
                            Unit const * units,
-                           UnitSystem::RelativeScale scale = UnitSystem::noScale) const;
+                           std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
 
       /*!
        * \brief Converts 'qstr' (consisting of a decimal amount, optionally followed by a unit string) to the
@@ -170,15 +171,17 @@ namespace Measurement {
        *        Imperial volumes, but if the user enters "3 pints" in a field that's configured for metric/SI volumes
        *        then we can't know for certain whether Imperial or US pints were meant).
        *
-       * \param qstr
-       * \param defUnit
+       * .:TBD:. Feels like we have one too many parameters on this function!
+       *
+       * \param qstr    The string to convert
+       * \param defUnit The units to use if none are specified in the string
        * \param scale
        *
        * \return
        */
       double qstringToSI(QString qstr,
                          Unit const * defUnit = nullptr,
-                         UnitSystem::RelativeScale scale = UnitSystem::noScale) const;
+                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
 
       /**
        * \brief returns all the \c UnitSystem::RelativeScale for this \c UnitSystem
@@ -214,7 +217,7 @@ namespace Measurement {
        * \param name
        * \return \c null if no \c UnitSystem with the supplied name exists
        */
-      static UnitSystem const * getInstanceByUniqueName(QString const name);
+      static UnitSystem const * getInstanceByUniqueName(QString const & name);
 
       static UnitSystem const & getInstance(SystemOfMeasurement const systemOfMeasurement,
                                             PhysicalQuantity const physicalQuantity);
@@ -224,8 +227,13 @@ namespace Measurement {
        */
       static QList<UnitSystem const *> getUnitSystems(Measurement::PhysicalQuantity const physicalQuantity);
 
-      static QString relativeScaleToString(Measurement::UnitSystem::RelativeScale relativeScale);
-      static Measurement::UnitSystem::RelativeScale relativeScaleFromString(QString relativeScaleAsString);
+      static QString getUniqueName(Measurement::UnitSystem::RelativeScale relativeScale);
+
+      /**
+       * \brief Returns a \c RelativeScale from its unique name.  Useful for serialising.
+       *        Returns \c std::nullopt if no \c RelativeScale exists for the supplied name
+       */
+      static std::optional<Measurement::UnitSystem::RelativeScale> getScaleFromUniqueName(QString relativeScaleAsString);
 
    private:
       // Private implementation details - see https://herbsutter.com/gotw/_100/

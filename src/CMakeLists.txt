@@ -106,6 +106,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/BtColor.cpp
     ${SRCDIR}/BtDatePopup.cpp
     ${SRCDIR}/BtDigitWidget.cpp
+    ${SRCDIR}/BtFieldType.cpp
     ${SRCDIR}/BtFolder.cpp
     ${SRCDIR}/BtLabel.cpp
     ${SRCDIR}/BtLineEdit.cpp

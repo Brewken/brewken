@@ -40,48 +40,51 @@
 #include "PersistentSettings.h"
 #include "WaterTableWidget.h"
 
-WaterTableModel::WaterTableModel(WaterTableWidget* parent) :
+WaterTableModel::WaterTableModel(WaterTableWidget * parent) :
    BtTableModel{
-      parent,
-      false,
-      {{WATERNAMECOL,        {Measurement::PhysicalQuantity::None,   ""      }},
-       {WATERAMOUNTCOL,      {Measurement::PhysicalQuantity::Volume, "amount"}},
-       {WATERCALCIUMCOL,     {Measurement::PhysicalQuantity::None,   ""      }},
-       {WATERBICARBONATECOL, {Measurement::PhysicalQuantity::None,   ""      }},
-       {WATERSULFATECOL,     {Measurement::PhysicalQuantity::None,   ""      }},
-       {WATERCHLORIDECOL,    {Measurement::PhysicalQuantity::None,   ""      }},
-       {WATERSODIUMCOL,      {Measurement::PhysicalQuantity::None,   ""      }},
-       {WATERMAGNESIUMCOL,   {Measurement::PhysicalQuantity::None,   ""      }}}
-   },
-   recObs{nullptr} {
+   parent,
+   false,
+   {  {WATERNAMECOL,        {tr("Name"),              Measurement::PhysicalQuantity::None,   ""      }},
+      {WATERAMOUNTCOL,      {tr("Amount"),            Measurement::PhysicalQuantity::Volume, "amount"}},
+      {WATERCALCIUMCOL,     {tr("Calcium (ppm)"),     Measurement::PhysicalQuantity::None,   ""      }},
+      {WATERBICARBONATECOL, {tr("Bicarbonate (ppm)"), Measurement::PhysicalQuantity::None,   ""      }},
+      {WATERSULFATECOL,     {tr("Sulfate (ppm)"),     Measurement::PhysicalQuantity::None,   ""      }},
+      {WATERCHLORIDECOL,    {tr("Chloride (ppm)"),    Measurement::PhysicalQuantity::None,   ""      }},
+      {WATERSODIUMCOL,      {tr("Sodium (ppm)"),      Measurement::PhysicalQuantity::None,   ""      }},
+      {WATERMAGNESIUMCOL,   {tr("Magnesium (ppm)"),   Measurement::PhysicalQuantity::None,   ""      }}}
+},
+recObs{nullptr} {
    return;
 }
 
 WaterTableModel::~WaterTableModel() = default;
 
-void WaterTableModel::observeRecipe(Recipe* rec)
-{
-   if( recObs )
-   {
-      disconnect( recObs, nullptr, this, nullptr );
+void WaterTableModel::observeRecipe(Recipe * rec) {
+   if (recObs) {
+      disconnect(recObs, nullptr, this, nullptr);
       removeAll();
    }
 
    recObs = rec;
-   if( recObs )
-   {
-      connect( recObs, &NamedEntity::changed, this, &WaterTableModel::changed );
-      addWaters( recObs->waters() );
+   if (recObs) {
+      connect(recObs, &NamedEntity::changed, this, &WaterTableModel::changed);
+      addWaters(recObs->waters());
    }
 }
 
 void WaterTableModel::observeDatabase(bool val) {
-   if( val ) {
+   if (val) {
       observeRecipe(nullptr);
       removeAll();
-      connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectInserted, this, &WaterTableModel::addWater);
-      connect(&ObjectStoreTyped<Water>::getInstance(), &ObjectStoreTyped<Water>::signalObjectDeleted,  this, &WaterTableModel::removeWater);
-      this->addWaters( ObjectStoreTyped<Water>::getInstance().getAllRaw() );
+      connect(&ObjectStoreTyped<Water>::getInstance(),
+              &ObjectStoreTyped<Water>::signalObjectInserted,
+              this,
+              &WaterTableModel::addWater);
+      connect(&ObjectStoreTyped<Water>::getInstance(),
+              &ObjectStoreTyped<Water>::signalObjectDeleted,
+              this,
+              &WaterTableModel::removeWater);
+      this->addWaters(ObjectStoreTyped<Water>::getInstance().getAllRaw());
    } else {
       removeAll();
       disconnect(&ObjectStoreTyped<Water>::getInstance(), nullptr, this, nullptr);
@@ -90,57 +93,56 @@ void WaterTableModel::observeDatabase(bool val) {
 }
 
 void WaterTableModel::addWater(int waterId) {
-   Water* water = ObjectStoreWrapper::getByIdRaw<Water>(waterId);
-   if( waterObs.contains(water) )
+   Water * water = ObjectStoreWrapper::getByIdRaw<Water>(waterId);
+   if (waterObs.contains(water)) {
       return;
+   }
    // If we are observing the database, ensure that the item is undeleted and
    // fit to display.
-   if(
+   if (
       recObs == nullptr &&
       (
          water->deleted() ||
          !water->display()
       )
-   )
+   ) {
       return;
+   }
 
-   beginInsertRows( QModelIndex(), waterObs.size(), waterObs.size() );
+   beginInsertRows(QModelIndex(), waterObs.size(), waterObs.size());
    waterObs.append(water);
-   connect( water, &NamedEntity::changed, this, &WaterTableModel::changed );
+   connect(water, &NamedEntity::changed, this, &WaterTableModel::changed);
    endInsertRows();
 
-   if(parentTableWidget)
-   {
+   if (parentTableWidget) {
       parentTableWidget->resizeColumnsToContents();
       parentTableWidget->resizeRowsToContents();
    }
 }
 
-void WaterTableModel::addWaters(QList<Water*> waters)
-{
-   QList<Water*>::iterator i;
-   QList<Water*> tmp;
+void WaterTableModel::addWaters(QList<Water *> waters) {
+   QList<Water *>::iterator i;
+   QList<Water *> tmp;
 
-   for( i = waters.begin(); i != waters.end(); i++ )
-   {
-      if( !waterObs.contains(*i) )
+   for (i = waters.begin(); i != waters.end(); i++) {
+      if (!waterObs.contains(*i)) {
          tmp.append(*i);
+      }
    }
 
    int size = waterObs.size();
-   if (size+tmp.size())
-   {
-      beginInsertRows( QModelIndex(), size, size+tmp.size()-1 );
+   if (size + tmp.size()) {
+      beginInsertRows(QModelIndex(), size, size + tmp.size() - 1);
       waterObs.append(tmp);
 
-      for( i = tmp.begin(); i != tmp.end(); i++ )
-         connect( *i, &NamedEntity::changed, this, &WaterTableModel::changed );
+      for (i = tmp.begin(); i != tmp.end(); i++) {
+         connect(*i, &NamedEntity::changed, this, &WaterTableModel::changed);
+      }
 
       endInsertRows();
    }
 
-   if( parentTableWidget )
-   {
+   if (parentTableWidget) {
       parentTableWidget->resizeColumnsToContents();
       parentTableWidget->resizeRowsToContents();
    }
@@ -148,143 +150,103 @@ void WaterTableModel::addWaters(QList<Water*> waters)
 }
 
 void WaterTableModel::removeWater(int waterId, std::shared_ptr<QObject> object) {
-   Water* water = std::static_pointer_cast<Water>(object).get();
+   Water * water = std::static_pointer_cast<Water>(object).get();
    int i = waterObs.indexOf(water);
-   if( i >= 0 )
-   {
-      beginRemoveRows( QModelIndex(), i, i );
-      disconnect( water, nullptr, this, nullptr );
+   if (i >= 0) {
+      beginRemoveRows(QModelIndex(), i, i);
+      disconnect(water, nullptr, this, nullptr);
       waterObs.removeAt(i);
       endRemoveRows();
 
-      if(parentTableWidget)
-      {
+      if (parentTableWidget) {
          parentTableWidget->resizeColumnsToContents();
          parentTableWidget->resizeRowsToContents();
       }
    }
 }
 
-void WaterTableModel::removeAll()
-{
-   beginRemoveRows( QModelIndex(), 0, waterObs.size()-1 );
-   while( !waterObs.isEmpty() )
-   {
-      disconnect( waterObs.takeLast(), nullptr, this, nullptr );
+void WaterTableModel::removeAll() {
+   beginRemoveRows(QModelIndex(), 0, waterObs.size() - 1);
+   while (!waterObs.isEmpty()) {
+      disconnect(waterObs.takeLast(), nullptr, this, nullptr);
    }
    endRemoveRows();
 }
 
-void WaterTableModel::changed(QMetaProperty prop, QVariant val)
-{
+void WaterTableModel::changed(QMetaProperty prop, QVariant val) {
    int i;
 
    Q_UNUSED(prop)
    Q_UNUSED(val)
    // Find the notifier in the list
-   Water* waterSender = qobject_cast<Water*>(sender());
-   if( waterSender )
-   {
+   Water * waterSender = qobject_cast<Water *>(sender());
+   if (waterSender) {
       i = waterObs.indexOf(waterSender);
-      if( i >= 0 )
-         emit dataChanged( QAbstractItemModel::createIndex(i, 0),
-                           QAbstractItemModel::createIndex(i, WATERNUMCOLS-1));
+      if (i >= 0)
+         emit dataChanged(QAbstractItemModel::createIndex(i, 0),
+                          QAbstractItemModel::createIndex(i, WATERNUMCOLS - 1));
       return;
    }
 }
 
-int WaterTableModel::rowCount(const QModelIndex& /*parent*/) const
-{
+int WaterTableModel::rowCount(const QModelIndex & /*parent*/) const {
    return waterObs.size();
 }
 
-int WaterTableModel::columnCount(const QModelIndex& /*parent*/) const
-{
-   return WATERNUMCOLS;
-}
-
-QVariant WaterTableModel::data( const QModelIndex& index, int role ) const
-{
-   Water* row;
+QVariant WaterTableModel::data(const QModelIndex & index, int role) const {
+   Water * row;
 
    // Ensure the row is ok.
-   if( index.row() >= waterObs.size() )
-   {
+   if (index.row() >= waterObs.size()) {
       qWarning() << tr("Bad model index. row = %1").arg(index.row());
       return QVariant();
-   }
-   else
+   } else {
       row = waterObs[index.row()];
+   }
 
    // Make sure we only respond to the DisplayRole role.
-   if( role != Qt::DisplayRole )
+   if (role != Qt::DisplayRole) {
       return QVariant();
+   }
 
-   switch( index.column() )
-   {
+   switch (index.column()) {
       case WATERNAMECOL:
          return QVariant(row->name());
       case WATERAMOUNTCOL:
-         return QVariant( Measurement::displayAmount(row->amount(), &Measurement::Units::liters) );
+         return QVariant(Measurement::displayAmount(row->amount(), &Measurement::Units::liters));
       case WATERCALCIUMCOL:
-         return QVariant( Measurement::displayAmount(row->calcium_ppm(), nullptr) );
+         return QVariant(Measurement::displayAmount(row->calcium_ppm(), nullptr));
       case WATERBICARBONATECOL:
-         return QVariant( Measurement::displayAmount(row->bicarbonate_ppm(), nullptr) );
+         return QVariant(Measurement::displayAmount(row->bicarbonate_ppm(), nullptr));
       case WATERSULFATECOL:
-         return QVariant( Measurement::displayAmount(row->sulfate_ppm(), nullptr) );
+         return QVariant(Measurement::displayAmount(row->sulfate_ppm(), nullptr));
       case WATERCHLORIDECOL:
-         return QVariant( Measurement::displayAmount(row->chloride_ppm(), nullptr) );
+         return QVariant(Measurement::displayAmount(row->chloride_ppm(), nullptr));
       case WATERSODIUMCOL:
-         return QVariant( Measurement::displayAmount(row->sodium_ppm(), nullptr) );
+         return QVariant(Measurement::displayAmount(row->sodium_ppm(), nullptr));
       case WATERMAGNESIUMCOL:
-         return QVariant( Measurement::displayAmount(row->magnesium_ppm(), nullptr) );
+         return QVariant(Measurement::displayAmount(row->magnesium_ppm(), nullptr));
       default :
          qWarning() << tr("Bad column: %1").arg(index.column());
          return QVariant();
    }
 }
 
-QVariant WaterTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
-{
-   if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-   {
-      switch( section )
-      {
-         case WATERNAMECOL:
-            return QVariant(tr("Name"));
-         case WATERAMOUNTCOL:
-            return QVariant(tr("Amount"));
-         case WATERCALCIUMCOL:
-            return QVariant(tr("Calcium (ppm)"));
-         case WATERBICARBONATECOL:
-            return QVariant(tr("Bicarbonate (ppm)"));
-         case WATERSULFATECOL:
-            return QVariant(tr("Sulfate (ppm)"));
-         case WATERCHLORIDECOL:
-            return QVariant(tr("Chloride (ppm)"));
-         case WATERSODIUMCOL:
-            return QVariant(tr("Sodium (ppm)"));
-         case WATERMAGNESIUMCOL:
-            return QVariant(tr("Magnesium (ppm)"));
-         default:
-            qWarning() << tr("Bad column: %1").arg(section);
-            return QVariant();
-      }
+QVariant WaterTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      return this->getColumName(section);
    }
-   else
-      return QVariant();
+   return QVariant();
 }
 
-Qt::ItemFlags WaterTableModel::flags(const QModelIndex& index ) const
-{
+Qt::ItemFlags WaterTableModel::flags(const QModelIndex & index) const {
    int col = index.column();
-   switch(col)
-   {
+   switch (col) {
       case WATERNAMECOL:
          return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
       default:
          return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled |
-            Qt::ItemIsEnabled;
+                Qt::ItemIsEnabled;
    }
 }
 
@@ -298,20 +260,18 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
       return retval;
    }
 
-   Measurement::UnitSystem const * dspUnitSystem = this->displayUnitSystem(index.column());
-   Measurement::UnitSystem::RelativeScale   dspScl  = this->displayScale(index.column());
-
    Water * row = this->waterObs[index.row()];
 
-   switch (index.column()) {
+   int const column = index.column();
+   switch (column) {
       case WATERNAMECOL:
          row->setName(value.toString());
          break;
       case WATERAMOUNTCOL:
          row->setAmount(Measurement::qStringToSI(value.toString(),
                                                  Measurement::PhysicalQuantity::Volume,
-                                                 dspUnitSystem,
-                                                 dspScl));
+                                                 this->getForcedSystemOfMeasurementForColumn(column),
+                                                 this->getForcedRelativeScaleForColumn(column)));
          break;
       case WATERCALCIUMCOL:
          row->setCalcium_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
@@ -333,7 +293,8 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
          break;
       default:
          retval = false;
-         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
+         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
+         break;
    }
 
    return retval;
@@ -341,31 +302,29 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
 
 //==========================CLASS HopItemDelegate===============================
 
-WaterItemDelegate::WaterItemDelegate(QObject* parent)
-        : QItemDelegate(parent)
-{
+WaterItemDelegate::WaterItemDelegate(QObject * parent)
+   : QItemDelegate(parent) {
 }
 
-QWidget* WaterItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem& /*option*/, const QModelIndex& /*index*/) const
-{
+QWidget * WaterItemDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & /*option*/,
+                                          const QModelIndex & /*index*/) const {
    return new QLineEdit(parent);
 }
 
-void WaterItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-   QLineEdit* line = qobject_cast<QLineEdit*>(editor);
+void WaterItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const {
+   QLineEdit * line = qobject_cast<QLineEdit *>(editor);
    line->setText(index.model()->data(index, Qt::DisplayRole).toString());
 }
 
-void WaterItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-   QLineEdit* line = qobject_cast<QLineEdit*>(editor);
+void WaterItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const {
+   QLineEdit * line = qobject_cast<QLineEdit *>(editor);
 
-   if ( line->isModified() )
+   if (line->isModified()) {
       model->setData(index, line->text(), Qt::EditRole);
+   }
 }
 
-void WaterItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex& /*index*/) const
-{
+void WaterItemDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option,
+                                             const QModelIndex & /*index*/) const {
    editor->setGeometry(option.rect);
 }
