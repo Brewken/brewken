@@ -73,12 +73,8 @@ namespace Measurement {
        *
        *        The \c scaleWithout value is used when a \c UnitSystem only has one \c Unit (eg as is typically the case
        *        with temperature, color and density).
-       *
-       *        The \c noScale value does not correspond to a \c Unit and is used as "not specified" or "not known"
-       *        value.  (.:TODO:. At some point we should replace this usage with std::optional)
        */
       enum RelativeScale {
-         noScale         = -1,
          scaleExtraSmall = 0,
          scaleSmall      = 1,
          scaleMedium     = 2,

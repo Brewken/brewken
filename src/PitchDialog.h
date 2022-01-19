@@ -50,7 +50,7 @@ public slots:
    void toggleViabilityFromDate(int state);
    void updateViabilityFromDate(QDate date);
 
-///   void updateProductionDate(Measurement::UnitSystem const * unitSystem, Measurement::UnitSystem::RelativeScale scl);
+   void updateProductionDate();
 
 private:
 

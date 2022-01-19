@@ -23,6 +23,7 @@
 #include <QDate>
 #include <QDebug>
 
+#include "Localization.h"
 #include "measurement/Measurement.h"
 #include "model/BrewNote.h"
 #include "PersistentSettings.h"
@@ -59,38 +60,23 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
 ///   connect(btLabel_fermentDate, &BtLabel::changedSystemOfMeasurementOrScale, this, &BrewNoteWidget::updateDateFormat);
 
    // I think this might work
-///   updateDateFormat(Measurement::Unit::noUnit, Measurement::UnitSystem::noScale);
+   updateDateFormat();
 }
 
 BrewNoteWidget::~BrewNoteWidget() = default;
 
-////.:TODO:. REINSTATE
+//.:TBD:. See comment in PitchDialog::updateProductionDate() for how we might re-implement per-field date format
+// selection
 // I should really do this better, but I really cannot bring myself to do
 // another UnitSystem for one input field.
-/*void BrewNoteWidget::updateDateFormat(Measurement::Unit::unitDisplay display,Measurement::UnitSystem::RelativeScale scale) {
-   QString format;
-   // I need the new unit, not the old
-   Measurement::Unit::unitDisplay unitDsp = static_cast<Measurement::Unit::unitDisplay>(
-      PersistentSettings::value(PropertyNames::BrewNote::fermentDate,
-                                Brewken::getDateFormat(),
-                                PersistentSettings::Sections::page_postferment,
-                                PersistentSettings::Extension::UNIT).toInt()
-   );
-
-   switch(unitDsp) {
-      case Measurement::Unit::displayUS:
-         format = "MM-dd-yyyy";
-         break;
-      case Measurement::Unit::displayImp:
-         format = "dd-MM-yyyy";
-         break;
-      case Measurement::Unit::displaySI:
-      default:
-         format = "yyyy-MM-dd";
-   }
-   lineEdit_fermentDate->setDisplayFormat(format);
+void BrewNoteWidget::updateDateFormat() {
+//   auto dateFormat = Localization::getDateFormatForField(PersistentSettings::BrewNote::fermentDate,
+//                                                         PersistentSettings::Sections::page_postferment);
+   auto dateFormat = Localization::getDateFormat();
+   QString format = Localization::numericToStringDateFormat(dateFormat);
+   this->lineEdit_fermentDate->setDisplayFormat(format);
    return;
-}*/
+}
 
 
 void BrewNoteWidget::updateProjOg() {

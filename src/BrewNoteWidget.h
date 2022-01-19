@@ -20,7 +20,6 @@
 #define BREWNOTEWIDGET_H
 #pragma once
 
-
 #include <QDate>
 #include <QFocusEvent>
 #include <QString>
@@ -63,8 +62,7 @@ public slots:
    void updateFG();
    void updateFinalVolume_l();
    void updateFermentDate(QDate const & datetime);
-// .:TODO:. FIX THIS!
-//   void updateDateFormat(Measurement::Unit::unitDisplay display,Measurement::UnitSystem::RelativeScale scale);
+   void updateDateFormat();
 
    void updateNotes();
 //   void saveAll();

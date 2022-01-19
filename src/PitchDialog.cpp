@@ -25,6 +25,7 @@
 #include <QChar>
 
 #include "Algorithms.h"
+#include "Localization.h"
 #include "measurement/Unit.h"
 #include "PersistentSettings.h"
 
@@ -48,36 +49,24 @@ PitchDialog::PitchDialog(QWidget* parent) : QDialog(parent) {
 
    // Dates are a little more cranky
 ///   connect(label_productionDate,        &BtLabel::changedSystemOfMeasurementOrScale,                  this, &PitchDialog::updateProductionDate);
-///   this->updateProductionDate(Measurement::Unit::noUnit, Measurement::UnitSystem::noScale);
+   this->updateProductionDate();
    updateShownPitchRate(0);
    return;
 }
 
 PitchDialog::~PitchDialog() = default;
 
-/*
-void PitchDialog::updateProductionDate(Measurement::UnitSystem const * unitSystem,
-                                       Measurement::UnitSystem::RelativeScale scl) {
-   QString format;
+void PitchDialog::updateProductionDate() {
    // I need the new unit, not the old
-   auto displayUnitSystem = Measurement::getUnitSystemForField(PersistentSettings::Names::productionDate,
-                                                               PersistentSettings::Sections::pitchRateCalc);
-   //// TODO Gah, this is not a UnitSystem, so we need to change it to dates...
-   switch(unitDsp)
-   {
-      case Measurement::Unit::displayUS:
-         format = "MM-dd-yyyy";
-         break;
-      case Measurement::Unit::displayImp:
-         format = "dd-MM-yyyy";
-         break;
-      case Measurement::Unit::displaySI:
-      default:
-         format = "yyyy-MM-dd";
-   }
+   // .:TBD:. For the moment, we stick with whatever date format the user has set for the whole program.  Would need to
+   // uncomment the following line and implement the corresponding function in Localization, plus do an appropriate
+   // pop-up menu etc if we want to select date format per-field.
+//   auto dateFormat = Localization::getDateFormatForField(PersistentSettings::Names::productionDate,
+//                                                         PersistentSettings::Sections::pitchRateCalc);
+   auto dateFormat = Localization::getDateFormat();
+   QString format = Localization::numericToStringDateFormat(dateFormat);
    this->dateEdit_ProductionDate->setDisplayFormat(format);
 }
-*/
 
 void PitchDialog::setWortVolume_l(double volume)
 {
