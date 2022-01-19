@@ -73,8 +73,7 @@ void BtLineEdit::onLineChanged() {
       Q_FUNC_INFO << "this->fieldType=" << this->fieldType << "this->units=" << (nullptr == this->units ? "NULL" : this->units->name) <<
       ", this->forcedSystemOfMeasurement=" << this->forcedSystemOfMeasurement;
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
-       Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
       return;
    }
 
@@ -274,7 +273,7 @@ void BtLineEdit::setDisplaySize(bool recalculate) {
    return;
 }
 
-BtGenericEdit::BtGenericEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::None, nullptr) {
+BtGenericEdit::BtGenericEdit(QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String, nullptr) {
    return;
 }
 

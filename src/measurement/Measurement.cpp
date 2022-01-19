@@ -68,8 +68,7 @@ namespace {
       {Measurement::PhysicalQuantity::Temperature,    &Measurement::Units::celsius},
       {Measurement::PhysicalQuantity::Color,          &Measurement::Units::srm},     // We will consider the standard unit of color to be SRM.
       {Measurement::PhysicalQuantity::Density,        &Measurement::Units::sp_grav}, // Specific gravity (aka, Sg) will be the standard unit, since that is how we store things in the database.
-      {Measurement::PhysicalQuantity::DiastaticPower, &Measurement::Units::lintner}, // Lintner will be the standard unit, since that is how we store things in the database.
-      {Measurement::PhysicalQuantity::None,           nullptr}
+      {Measurement::PhysicalQuantity::DiastaticPower, &Measurement::Units::lintner}  // Lintner will be the standard unit, since that is how we store things in the database.
    };
 
 }

@@ -56,13 +56,13 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
    BtTableModel{
       parent,
       editable,
-      {{FERMNAMECOL,      {tr("Name"),      Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMTYPECOL,      {tr("Type"),      Measurement::PhysicalQuantity::None,  ""            }},
+      {{FERMNAMECOL,      {tr("Name"),      NonPhysicalQuantity::String,          ""            }},
+       {FERMTYPECOL,      {tr("Type"),      NonPhysicalQuantity::String,          ""            }},
        {FERMAMOUNTCOL,    {tr("Amount"),    Measurement::PhysicalQuantity::Mass,  "amount_kg"   }},
        {FERMINVENTORYCOL, {tr("Inventory"), Measurement::PhysicalQuantity::Mass,  "inventory_kg"}},
-       {FERMISMASHEDCOL,  {tr("Method"),    Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMAFTERBOIL,    {tr("Addition"),  Measurement::PhysicalQuantity::None,  ""            }},
-       {FERMYIELDCOL,     {tr("Yield %"),   Measurement::PhysicalQuantity::None,  ""            }},
+       {FERMISMASHEDCOL,  {tr("Method"),    NonPhysicalQuantity::String,          ""            }},
+       {FERMAFTERBOIL,    {tr("Addition"),  NonPhysicalQuantity::String,          ""            }},
+       {FERMYIELDCOL,     {tr("Yield %"),   NonPhysicalQuantity::Percentage,      ""            }},
        {FERMCOLORCOL,     {tr("Color"),     Measurement::PhysicalQuantity::Color, "color_srm"   }}}
    },
    _inventoryEditable(false),
@@ -275,12 +275,12 @@ void FermentableTableModel::changed(QMetaProperty prop, QVariant /*val*/)
    }
 }
 
-int FermentableTableModel::rowCount(const QModelIndex& /*parent*/) const
+int FermentableTableModel::rowCount(QModelIndex const & /*parent*/) const
 {
    return fermObs.size();
 }
 
-QVariant FermentableTableModel::data( const QModelIndex& index, int role ) const {
+QVariant FermentableTableModel::data(QModelIndex const & index, int role) const {
    // Ensure the row is OK
    if (index.row() >= static_cast<int>(fermObs.size() )) {
       qCritical() << Q_FUNC_INFO << "Bad model index. row = " << index.row();

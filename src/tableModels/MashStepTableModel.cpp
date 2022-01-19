@@ -45,8 +45,8 @@ MashStepTableModel::MashStepTableModel(QTableView* parent) :
    BtTableModel{
       parent,
       false,
-      {{MASHSTEPNAMECOL,       {tr("Name"),          Measurement::PhysicalQuantity::None,        ""                                    }},
-       {MASHSTEPTYPECOL,       {tr("Type"),          Measurement::PhysicalQuantity::None,        ""                                    }},
+      {{MASHSTEPNAMECOL,       {tr("Name"),          NonPhysicalQuantity::String,                ""                                    }},
+       {MASHSTEPTYPECOL,       {tr("Type"),          NonPhysicalQuantity::String,                ""                                    }},
        {MASHSTEPAMOUNTCOL,     {tr("Amount"),        Measurement::PhysicalQuantity::Volume,      "amount"                              }}, // Not a real property name
        {MASHSTEPTEMPCOL,       {tr("Infusion Temp"), Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::infuseTemp_c}},
        {MASHSTEPTARGETTEMPCOL, {tr("Target Temp"),   Measurement::PhysicalQuantity::Temperature, *PropertyNames::MashStep::stepTemp_c  }},

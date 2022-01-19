@@ -17,6 +17,8 @@
 #define TABLEMODELS_BTTABLEMODEL_H
 #pragma once
 
+#include <optional>
+
 #include <QAbstractTableModel>
 #include <QHeaderView>
 #include <QMap>
@@ -24,6 +26,7 @@
 #include <QPoint>
 #include <QTableView>
 
+#include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
 
 
@@ -37,7 +40,7 @@ class BtTableModel : public QAbstractTableModel {
 public:
    struct ColumnInfo {
       QString headerName;
-      Measurement::PhysicalQuantity physicalQuantity;
+      BtFieldType fieldType;
       QString attribute;
    };
 
@@ -49,10 +52,10 @@ public:
    // Stuff for setting display units and scales -- per cell column
    std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurementForColumn(int column) const;
    std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScaleForColumn(int column) const;
-   void setForcedSystemOfMeasurementForColumn(int column, Measurement::SystemOfMeasurement systemOfMeasurement);
-   void setForcedRelativeScaleForColumn(int column, Measurement::UnitSystem::RelativeScale relativeScale);
-   void unsetForcedSystemOfMeasurementForColumn(int column);
-   void unsetForcedRelativeScaleForColumn(int column);
+   void setForcedSystemOfMeasurementForColumn(int column,
+                                              std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
+   void setForcedRelativeScaleForColumn(int column,
+                                        std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
 
    //! \brief Called from \c headerData()
    QVariant getColumName(int column) const;
@@ -65,8 +68,8 @@ public:
    virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
 
 private:
-   QString                       columnGetAttribute       (int column) const;
-   Measurement::PhysicalQuantity columnGetPhysicalQuantity(int column) const;
+   QString     columnGetAttribute(int column) const;
+   BtFieldType columnGetFieldType(int column) const;
    void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
 
 public slots:

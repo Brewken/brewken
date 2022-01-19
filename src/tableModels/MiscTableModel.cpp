@@ -42,13 +42,13 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    BtTableModel{
       parent,
       editable,
-      {{MISCNAMECOL,      {tr("Name"),        Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {MISCTYPECOL,      {tr("Type"),        Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {MISCUSECOL,       {tr("Use"),         Measurement::PhysicalQuantity::None,  ""                                                 }},
+      {{MISCNAMECOL,      {tr("Name"),        NonPhysicalQuantity::String,          ""                                                 }},
+       {MISCTYPECOL,      {tr("Type"),        NonPhysicalQuantity::String,          ""                                                 }},
+       {MISCUSECOL,       {tr("Use"),         NonPhysicalQuantity::String,          ""                                                 }},
        {MISCTIMECOL,      {tr("Time"),        Measurement::PhysicalQuantity::Time,  *PropertyNames::Misc::time                         }},
        {MISCAMOUNTCOL,    {tr("Amount"),      Measurement::PhysicalQuantity::Mixed, *PropertyNames::Misc::amount                       }},
        {MISCINVENTORYCOL, {tr("Inventory"),   Measurement::PhysicalQuantity::Mixed, *PropertyNames::NamedEntityWithInventory::inventory}},
-       {MISCISWEIGHT,     {tr("Amount Type"), Measurement::PhysicalQuantity::None,  ""                                                 }}}
+       {MISCISWEIGHT,     {tr("Amount Type"), NonPhysicalQuantity::String,          ""                                                 }}}
    },
    _inventoryEditable(false),
    recObs(nullptr) {

@@ -133,8 +133,7 @@ void BtLabel::initializeMenu() {
       Q_FUNC_INFO << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement << ", forcedRelativeScale=" <<
       forcedRelativeScale;
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
-       Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
       return;
    }
 

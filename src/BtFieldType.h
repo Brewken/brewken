@@ -29,7 +29,8 @@
 enum class NonPhysicalQuantity {
    Date,
    String,
-   Count
+   Count,
+   Percentage
 };
 
 /**

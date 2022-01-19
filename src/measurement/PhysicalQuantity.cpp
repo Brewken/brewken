@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/PhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2021:
+ * measurement/PhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -29,8 +29,7 @@ namespace {
       {QT_TR_NOOP("Color")         , Measurement::PhysicalQuantity::Color         },
       {QT_TR_NOOP("Density")       , Measurement::PhysicalQuantity::Density       },
       {QT_TR_NOOP("Mixed")         , Measurement::PhysicalQuantity::Mixed         },
-      {QT_TR_NOOP("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower},
-      {QT_TR_NOOP("None")          , Measurement::PhysicalQuantity::None          }
+      {QT_TR_NOOP("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower}
    };
 }
 

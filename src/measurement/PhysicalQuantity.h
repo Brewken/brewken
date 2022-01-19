@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/PhysicalQuantity.h is part of Brewken, and is copyright the following authors 2021:
+ * measurement/PhysicalQuantity.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -93,8 +93,7 @@ namespace Measurement {
       Color,
       Density,        // Sometimes referred to in comments as "gravity" as a shorthand for "specific gravity"
       Mixed,          // This is used for quantities where we allow measurement as either Mass or Volume
-      DiastaticPower,
-      None            // .:TBD:. Would be good to see if we can remove this!
+      DiastaticPower
    };
 
    /**

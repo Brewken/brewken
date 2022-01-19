@@ -181,17 +181,16 @@ QString Measurement::Unit::convert(QString qstr, QString toUnit) {
 }
 
 Measurement::Unit const * Measurement::Unit::getUnit(QString const & name,
-                                                     Measurement::PhysicalQuantity physicalQuantity) {
+                                                     std::optional<Measurement::PhysicalQuantity> physicalQuantity) {
    // Under most circumstances, there is a one-to-one relationship between unit string and Unit. C will only map to
    // Measurement::Unit::Celsius, for example. If there's only one match, just return it.
    if (nameToUnit.count(name) == 1) {
       Measurement::Unit const * unitToReturn = nameToUnit.value(name);
-      if (physicalQuantity != Measurement::PhysicalQuantity::None &&
-          unitToReturn->getPhysicalQuantity() != physicalQuantity) {
+      if (physicalQuantity && unitToReturn->getPhysicalQuantity() != *physicalQuantity) {
          qWarning() <<
             Q_FUNC_INFO << "Unit" << name << "matches a unit of type" <<
             Measurement::getDisplayName(unitToReturn->getPhysicalQuantity()) << "but caller specified" <<
-            Measurement::getDisplayName(physicalQuantity);
+            Measurement::getDisplayName(*physicalQuantity);
          return nullptr;
       }
       return unitToReturn;
@@ -203,8 +202,7 @@ Measurement::Unit const * Measurement::Unit::getUnit(QString const & name,
    Measurement::Unit const * defUnit = nullptr;
    for (auto ii = nameToUnit.find(name); ii != nameToUnit.end() && ii.key() == name; ++ii) {
       Measurement::Unit const * u = ii.value();
-      if (physicalQuantity != Measurement::PhysicalQuantity::None &&
-          u->getPhysicalQuantity() != physicalQuantity) {
+      if (physicalQuantity && u->getPhysicalQuantity() != *physicalQuantity) {
          // If the caller knows the amount is, say, a Volume, don't bother trying to match against units for any other
          // physical quantity.
          continue;

@@ -50,13 +50,13 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
    BtTableModel{
       parent,
       editable,
-      {{YEASTNAMECOL,      {tr("Name"),       Measurement::PhysicalQuantity::None,  ""      }},
-       {YEASTLABCOL,       {tr("Laboratory"), Measurement::PhysicalQuantity::None,  ""      }},
-       {YEASTPRODIDCOL,    {tr("Product ID"), Measurement::PhysicalQuantity::None,  ""      }},
-       {YEASTTYPECOL,      {tr("Type"),       Measurement::PhysicalQuantity::None,  ""      }},
-       {YEASTFORMCOL,      {tr("Form"),       Measurement::PhysicalQuantity::None,  ""      }},
+      {{YEASTNAMECOL,      {tr("Name"),       NonPhysicalQuantity::String,          ""      }},
+       {YEASTLABCOL,       {tr("Laboratory"), NonPhysicalQuantity::String,          ""      }},
+       {YEASTPRODIDCOL,    {tr("Product ID"), NonPhysicalQuantity::String,          ""      }},
+       {YEASTTYPECOL,      {tr("Type"),       NonPhysicalQuantity::String,          ""      }},
+       {YEASTFORMCOL,      {tr("Form"),       NonPhysicalQuantity::String,          ""      }},
        {YEASTAMOUNTCOL,    {tr("Amount"),     Measurement::PhysicalQuantity::Mixed, "amount"}},
-       {YEASTINVENTORYCOL, {tr("Inventory"),  Measurement::PhysicalQuantity::None,  ""      }}}
+       {YEASTINVENTORYCOL, {tr("Inventory"),  NonPhysicalQuantity::Count,           ""      }}}
    },
    _inventoryEditable(false),
    recObs(nullptr) {

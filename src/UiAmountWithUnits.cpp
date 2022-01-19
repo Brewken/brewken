@@ -197,8 +197,7 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
       return;
    }
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
-       Measurement::PhysicalQuantity::None == std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
       amt = this->getWidgetText();
    } else {
 
@@ -220,7 +219,7 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
             val = this->convertToSI(previousScaleInfo);
             amt = this->displayAmount(val, 0);
             break;
-         case Measurement::PhysicalQuantity::None:
+         // .:TBD:. Check whether it's even possible to get here...
          default:
             {
                bool ok = false;
@@ -236,35 +235,6 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
    }
    qDebug() << Q_FUNC_INFO << "Interpreted" << this->getWidgetText() << "as" << amt;
    this->setWidgetText(amt);
-/////////
-   // The idea here is we need to first translate the field into a known
-   // amount (aka to SI) and then into the unit we want.
-/*   QString amt;
-   switch (this->m_type) {
-      case Measurement::Unit::Mass:
-         amt = this->displayAmount(this->m_lastNum, 2);
-         break;
-
-      case Measurement::Unit::String:
-         amt = this->text();
-         break;
-
-      case Measurement::Unit::None:
-      default:
-         {
-            bool ok = false;
-            double val = Localization::toDouble(this->text(), &ok);
-            if (!ok) {
-               qWarning() <<
-                  Q_FUNC_INFO << "failed to convert " << this->text() << "(" << this->m_section << ":" <<
-                  this->m_editField << ") to double";
-            }
-            amt = this->displayAmount(val);
-         }
-         break;
-   }*/
-
-   ////////
    return;
 }
 
@@ -280,16 +250,18 @@ double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
    Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
    Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
 
-   // .:TBD:. 2021-12-31 MY: My gut instinct is that the logic here is more complicated than it needs to be.  It would
-   //                        be nice to see if we can add some unit tests for all the edge cases and then simplify.
-
-   Measurement::UnitSystem const & oldUnitSystem = Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement,
-                                                                                        physicalQuantity);
+   Measurement::UnitSystem const & oldUnitSystem =
+      Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement, physicalQuantity);
 
    Measurement::Unit const * defaultUnit{
       previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
    };
 
+   //
+   // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
+   // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
+   // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
+   // specific field or, failing that, what is configured globally.
    //
    // Measurement::UnitSystem::qStringToSI will handle all the logic to deal with any units specified by the user in the
    // string.  (In theory, we just grab the units that the user has specified in the input text.  In reality, it's not
@@ -298,74 +270,4 @@ double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
    // gallons, then we'll go with US customary gallons over Imperial ones.)
    //
    return oldUnitSystem.qstringToSI(rawValue, defaultUnit, previousScaleInfo.oldForcedScale);
-
-/*
-   //
-   // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
-   // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
-   // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
-   // specific field or, failing that, what is configured globally.
-   //
-   if (Localization::hasUnits(rawValue)) {
-      //
-      // User has specified units
-      //
-      // In theory, we just grab the units that the user has specified in the input text.  In reality, it's not that
-      // easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we have
-      // old or current units then that helps with this - eg, if current units are US customary cups and user enters
-      // gallons, then we'll go with US customary gallons over Imperial ones.  (The logic to handle this is all inside
-      // Measurement::UnitSystem::qStringToSI
-      //
-      if (nullptr == dspUnitSystem) {
-         if (nullptr != this->units) {
-            dspUnitSystem = &this->units->getUnitSystem();
-         }
-      }
-   } else {
-      // If the display unit system is forced, use this as the default one.
-      if (this->forcedUnitSystem != nullptr) {
-         dspUnitSystem = this->forcedUnitSystem;
-         qDebug() << Q_FUNC_INFO << "Forced unit system:" << dspUnitSystem->uniqueName;
-      } else {
-         dspUnitSystem = Measurement::getUnitSystemForField(this->editField, this->configSection);
-         qDebug() <<
-            Q_FUNC_INFO << "Unit system for field:" << (nullptr == dspUnitSystem ? "NULL" : dspUnitSystem->uniqueName);
-      }
-
-      // If the display scale is forced, use this scale as the default one.
-//      if (this->forcedRelativeScale != Measurement::UnitSystem::noScale) {
-//         dspScale = this->forcedRelativeScale;
-//      } else {
-         dspScale = Measurement::getRelativeScaleForField(this->editField, this->configSection);
-//      }
-   }
-
-   if (nullptr != dspUnitSystem) {
-      Measurement::Unit const * works = dspUnitSystem->scaleUnit(dspScale);
-      if (!works) {
-         // If we didn't find the unit, default to the UnitSystem's default
-         // unit
-         works = dspUnitSystem->unit();
-      }
-
-      return dspUnitSystem->qstringToSI(rawValue, works, dspScale);
-   }
-
-/*   if (this->physicalQuantity == Measurement::PhysicalQuantity::String) {
-      return 0.0;
-   }*/
-
-//      return Measurement::qStringToSI(this->text(), this->physicalQuantity, dspUnitSystem, dspScale)
-
-   // If all else fails, simply try to force the contents of the field to a
-   // double. This doesn't seem advisable?
-/*   bool ok = false;
-   double amt = this->toDouble(&ok);
-   if (!ok) {
-      qWarning() <<
-         Q_FUNC_INFO << "Could not convert " << rawValue << " (" << this->configSection << ":" <<
-         this->editField << ") to double";
-   }
-
-   return amt;*/
 }

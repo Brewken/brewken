@@ -65,10 +65,10 @@ SaltTableModel::SaltTableModel(QTableView* parent) :
    BtTableModel{
       parent,
       false,
-      {{SALTNAMECOL,    {tr("Name"),     Measurement::PhysicalQuantity::None,  ""      }},
+      {{SALTNAMECOL,    {tr("Name"),     NonPhysicalQuantity::String,          ""      }},
        {SALTAMOUNTCOL,  {tr("Amount"),   Measurement::PhysicalQuantity::Mixed, "amount"}},
-       {SALTADDTOCOL,   {tr("Added To"), Measurement::PhysicalQuantity::None,  ""      }},
-       {SALTPCTACIDCOL, {tr("% Acid"),   Measurement::PhysicalQuantity::None,  ""      }}}
+       {SALTADDTOCOL,   {tr("Added To"), NonPhysicalQuantity::String,          ""      }},
+       {SALTPCTACIDCOL, {tr("% Acid"),   NonPhysicalQuantity::Percentage,      ""      }}}
    },
    m_rec{nullptr} {
    saltObs.clear();

@@ -116,12 +116,12 @@ namespace Measurement {
        * \param name
        * \param physicalQuantity If the caller knows what \c PhysicalQuantity the name relates to, this will help with
        *                         disambiguation (eg between Liters and Lintner, both of which have name/abbreviation
-       *                         "L").  Otherwise specify \c Measurement::PhysicalQuantity::None here.
+       *                         "L").  Otherwise specify \c std::nullopt here.
        *
        * \return \c nullptr if no sane match could be found
        */
       static Unit const * getUnit(QString const & name,
-                                  Measurement::PhysicalQuantity physicalQuantity = Measurement::PhysicalQuantity::None);
+                                  std::optional<Measurement::PhysicalQuantity> physicalQuantity = std::nullopt);
 
       /**
        * \brief Used by \c ConverterTool to do contextless conversions - ie where we don't know what \c PhysicalQuantity

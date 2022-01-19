@@ -52,12 +52,12 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    BtTableModel{
       parent,
       editable,
-      {{HOPNAMECOL,      {tr("Name"),      Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {HOPALPHACOL,     {tr("Alpha %"),   Measurement::PhysicalQuantity::None,  ""                                                 }},
+      {{HOPNAMECOL,      {tr("Name"),      NonPhysicalQuantity::String,          ""                                                 }},
+       {HOPALPHACOL,     {tr("Alpha %"),   NonPhysicalQuantity::Percentage,      ""                                                 }},
        {HOPAMOUNTCOL,    {tr("Amount"),    Measurement::PhysicalQuantity::Mass,  *PropertyNames::Hop::amount_kg                     }},
        {HOPINVENTORYCOL, {tr("Inventory"), Measurement::PhysicalQuantity::Mass,  *PropertyNames::NamedEntityWithInventory::inventory}},
-       {HOPFORMCOL,      {tr("Form"),      Measurement::PhysicalQuantity::None,  ""                                                 }},
-       {HOPUSECOL,       {tr("Use"),       Measurement::PhysicalQuantity::None,  ""                                                 }},
+       {HOPFORMCOL,      {tr("Form"),      NonPhysicalQuantity::String,          ""                                                 }},
+       {HOPUSECOL,       {tr("Use"),       NonPhysicalQuantity::String,          ""                                                 }},
        {HOPTIMECOL,      {tr("Time"),      Measurement::PhysicalQuantity::Time,  *PropertyNames::Hop::time_min                      }}}
    },
    colFlags(HOPNUMCOLS),
