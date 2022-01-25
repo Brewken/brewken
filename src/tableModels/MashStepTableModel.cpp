@@ -353,7 +353,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                   Measurement::qStringToSI(value.toString(),
                                            Measurement::PhysicalQuantity::Volume,
                                            this->getForcedSystemOfMeasurementForColumn(column),
-                                           this->getForcedRelativeScaleForColumn(column)),
+                                           this->getForcedRelativeScaleForColumn(column)).quantity,
                   tr("Change Mash Step Decoction Amount")
                );
             } else {
@@ -363,7 +363,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                   Measurement::qStringToSI(value.toString(),
                                            Measurement::PhysicalQuantity::Volume,
                                            this->getForcedSystemOfMeasurementForColumn(column),
-                                           this->getForcedRelativeScaleForColumn(column)),
+                                           this->getForcedRelativeScaleForColumn(column)).quantity,
                   tr("Change Mash Step Infuse Amount")
                );
             }
@@ -379,7 +379,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Temperature,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)),
+                                        this->getForcedRelativeScaleForColumn(column)).quantity,
                tr("Change Mash Step Infuse Temp")
             );
             return true;
@@ -398,7 +398,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Temperature,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)),
+                                        this->getForcedRelativeScaleForColumn(column)).quantity,
                tr("Change Mash Step Temp")
             );
             new SimpleUndoableUpdate(*row,
@@ -406,7 +406,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                                      Measurement::qStringToSI(value.toString(),
                                                               Measurement::PhysicalQuantity::Temperature,
                                                               this->getForcedSystemOfMeasurementForColumn(column),
-                                                              this->getForcedRelativeScaleForColumn(column)),
+                                                              this->getForcedRelativeScaleForColumn(column)).quantity,
                                      tr("Change Mash Step End Temp"),
                                      targetTempUpdate);
             MainWindow::instance().doOrRedoUpdate(targetTempUpdate);
@@ -422,7 +422,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Time,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)),
+                                        this->getForcedRelativeScaleForColumn(column)).quantity,
                tr("Change Mash Step Time")
             );
             return true;

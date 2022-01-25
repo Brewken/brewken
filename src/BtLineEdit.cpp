@@ -70,7 +70,7 @@ void BtLineEdit::setWidgetText(QString text) {
 
 void BtLineEdit::onLineChanged() {
    qDebug() <<
-      Q_FUNC_INFO << "this->fieldType=" << this->fieldType << "this->units=" << (nullptr == this->units ? "NULL" : this->units->name) <<
+      Q_FUNC_INFO << "this->fieldType=" << this->fieldType << ", this->units=" << this->units <<
       ", this->forcedSystemOfMeasurement=" << this->forcedSystemOfMeasurement;
 
    if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
@@ -81,10 +81,14 @@ void BtLineEdit::onLineChanged() {
       Measurement::getUnitSystemForField(this->editField,
                                          this->configSection,
                                          std::get<Measurement::PhysicalQuantity>(this->fieldType));
+   auto oldForcedRelativeScale = Measurement::getForcedRelativeScaleForField(this->editField, this->configSection);
    PreviousScaleInfo previousScaleInfo{
       oldUnitSystem.systemOfMeasurement,
-      Measurement::getForcedRelativeScaleForField(this->editField, this->configSection)
+      oldForcedRelativeScale
    };
+
+   qDebug() <<
+      Q_FUNC_INFO << "oldUnitSystem=" << oldUnitSystem << ", oldForcedRelativeScale=" << oldForcedRelativeScale;
 
    this->lineChanged(previousScaleInfo);
    return;
@@ -95,6 +99,7 @@ void BtLineEdit::lineChanged(PreviousScaleInfo previousScaleInfo) {
    // being changed. I am hoping this short circuits properly and we do
    // nothing if nothing changed.
    if (this->sender() == this && !isModified()) {
+      qDebug() << Q_FUNC_INFO << "Nothing changed";
       return;
    }
 
@@ -116,21 +121,22 @@ void BtLineEdit::setText(double amount, int precision) {
 void BtLineEdit::setText(NamedEntity * element, int precision) {
    QString display;
 
+   char const * const propertyName = this->editField.toLatin1().constData();
+   QVariant const propertyValue = element->property(propertyName);
+   qDebug() << Q_FUNC_INFO << "Read property" << propertyName << "as" << propertyValue;
    bool force = false;
    if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
        NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
-      display = element->property(editField.toLatin1().constData()).toString();
+      display = propertyValue.toString();
       force = true;
-   } else if ( element->property(editField.toLatin1().constData()).canConvert(QVariant::Double) ) {
+   } else if (propertyValue.canConvert(QVariant::Double)) {
       bool ok = false;
-      // Get the value from the element, and put it in a QVariant
-      QVariant tmp = element->property(editField.toLatin1().constData());
       // It is important here to use QVariant::toDouble() instead of going
       // through toString() and then Localization::toDouble().
-      double amount = tmp.toDouble(&ok);
+      double amount = propertyValue.toDouble(&ok);
       if (!ok) {
          qWarning() <<
-            Q_FUNC_INFO << "Could not convert " << tmp.toString() << " (" << this->configSection << ":" <<
+            Q_FUNC_INFO << "Could not convert " << propertyValue.toString() << " (" << this->configSection << ":" <<
             this->editField << ") to double";
       }
 
@@ -170,61 +176,6 @@ void BtLineEdit::setText(QVariant amount, int precision) {
    this->setText(amount.toString(), precision);
    return;
 }
-
-/*
-// Once we require >qt5.5, we can replace this noise with
-// QMetaEnum::fromType()
-QString BtLineEdit::forcedUnit() const
-{
-   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("unitDisplay");
-   QMetaEnum unitEnum = mo.enumerator(index);
-
-   return QString( unitEnum.valueToKey(this->forcedUnitSystem) );
-}
-
-QString BtLineEdit::forcedScale() const
-{
-   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("RelativeScale");
-   QMetaEnum scaleEnum = mo.enumerator(index);
-
-   return QString( scaleEnum.valueToKey(this->_forceScale) );
-}
-*/
-
-
-/*
-// previous comment about qt5.5 applies
-void BtLineEdit::setForcedUnit( QString forcedUnit ) {
-   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("unitDisplay");
-   QMetaEnum unitEnum = mo.enumerator(index);
-
-   this->_forceUnit = (Measurement::Unit::unitDisplay)unitEnum.keyToValue(forcedUnit.toStdString().c_str());
-   return;
-}
-
-void BtLineEdit::setForcedScale( QString forcedScale ) {
-   const QMetaObject &mo = Measurement::Unit::staticMetaObject;
-   int index = mo.indexOfEnumerator("RelativeScale");
-   QMetaEnum unitEnum = mo.enumerator(index);
-
-   this->_forceScale = (Measurement::UnitSystem::RelativeScale)unitEnum.keyToValue(forcedScale.toStdString().c_str());
-   return;
-}
-*/
-
-/*
-Measurement::UnitSystem::RelativeScale BtLineEdit::getForcedRelativeScale() const {
-   return this->forcedRelativeScale;
-}
-
-void BtLineEdit::setForcedRelativeScale(Measurement::UnitSystem::RelativeScale forcedRelativeScale) {
-   this->forcedRelativeScale = forcedRelativeScale;
-   return;
-}
-*/
 
 void BtLineEdit::calculateDisplaySize(QString const & maximalDisplayString) {
    //

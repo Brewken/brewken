@@ -78,11 +78,11 @@ namespace Measurement {
     *       ingredients, some will be best measured by weight and some by volume.  So, eg in \c MiscTableModel, we need
     *       to offer the options of "Imperial", "US Customary" and "Metric/SI" for the amount column without
     *       predetermining whether these will be volume or weight because that will depend on a per-row basis.)  This is
-    *       what motivates us to model \c SystemOfMeasurement explicitly. .:TODO:. Make this true!
+    *       what motivates us to model \c SystemOfMeasurement explicitly.
     *
     *       NOTE that there are other things that users can configure that do not belong with this group of classes
     *       because they do not related to physical quantities, eg date & time format and language choice do not fit
-    *       well in here
+    *       well in here -- see \c NonPhysicalQuantity in \headerfile BtFieldType.h
     */
    enum class PhysicalQuantity {
       Mass,           // Elsewhere we use weight instead of mass because it's more idiomatic (despite being,

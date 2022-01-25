@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -1036,7 +1036,7 @@ void Recipe::generateInstructions() {
          Measurement::qStringToSI(QInputDialog::getText(nullptr,
                                                         tr("Boil time"),
                                                         tr("You did not configure an equipment (which you really should), so tell me the boil time.")),
-                                  Measurement::PhysicalQuantity::Time);
+                                  Measurement::PhysicalQuantity::Time).quantity;
    }
 
    QString str = tr("Bring the wort to a boil and hold for %1.").arg(

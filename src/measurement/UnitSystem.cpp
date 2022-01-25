@@ -132,7 +132,7 @@ public:
          return std::pair(amount, "");
       }
 
-      double SIAmount = units->toSI(amount);
+      double SIAmount = units->toSI(amount).quantity;
 
       // Short circuit if there is only one Unit in this UnitSystem or if a specific scale is requested
       if (this->scaleToUnit.size() == 1 || forcedScale) {
@@ -152,7 +152,7 @@ public:
       // (e.g., mg, g, kg).
       Measurement::Unit const * last  = nullptr;
       for (auto it : this->scaleToUnit) {
-         if (last != nullptr && qAbs(SIAmount) < it->toSI(it->boundary())) {
+         if (last != nullptr && qAbs(SIAmount) < it->toSI(it->boundary()).quantity) {
             // Stop looping as we've found a unit that's too big to use (so we'll return the last one, ie the one smaller,
             // below)
             break;
@@ -204,18 +204,19 @@ bool Measurement::UnitSystem::operator==(UnitSystem const & other) const {
    return (this == &other || this->uniqueName == other.uniqueName);
 }
 
-double Measurement::UnitSystem::qstringToSI(QString qstr,
-                                            Unit const * defUnit,
-                                            std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
+Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr,
+                                                         Unit const * defUnit,
+                                                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
 
    // make sure we can parse the string
    if (amtUnit.indexIn(qstr) == -1) {
-      return 0.0;
+      qDebug() << Q_FUNC_INFO << "Unable to parse" << qstr;
+      return Amount{0.0, Measurement::Unit::getCanonicalUnit(this->pimpl->physicalQuantity)};
    }
 
-   double amt = Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
+   double const amt = Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
 
-   QString unitName = amtUnit.cap(2);
+   QString const unitName = amtUnit.cap(2);
 
    // Look first in this unit system. If you can't find it here, find it
    // globally. I *think* this finally has all the weird magic right. If the
@@ -224,8 +225,6 @@ double Measurement::UnitSystem::qstringToSI(QString qstr,
    // 3.17 US qt. If you mean 3 US qt, you are SOL unless you mark the field
    // as US Customary.
 
-   // .:TODO:. This is exactly the sort of thing we should have a bunch of tests for!
-
    Unit const * unitToUse = nullptr;
    if (!unitName.isEmpty()) {
       // The supplied string specifies units, so see if they are ones we recognise in this unit system
@@ -233,6 +232,11 @@ double Measurement::UnitSystem::qstringToSI(QString qstr,
       // If we didn't find the specified units in this UnitSystem, broaden the search and look in all units
       if (!unitToUse) {
          unitToUse = Measurement::Unit::getUnit(unitName, this->pimpl->physicalQuantity);
+      }
+      if (unitToUse) {
+         qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "interpreted as" << unitToUse->name;
+      } else {
+         qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "not recognised";
       }
    } else if (forcedScale) {
       // The supplied string does not specify units, so, if a scale is set, use that
@@ -245,10 +249,16 @@ double Measurement::UnitSystem::qstringToSI(QString qstr,
 
    // It is possible for unitToUse to be NULL at this point, so make sure we handle that case
    if (!unitToUse) {
-      return -1.0;
+      qDebug() << Q_FUNC_INFO << this->uniqueName << ": Couldn't determine units";
+      return Amount{-1.0, Measurement::Unit::getCanonicalUnit(this->pimpl->physicalQuantity)};
    }
 
-   return unitToUse->toSI(amt);
+   Measurement::Amount siAmount = unitToUse->toSI(amt);
+   qDebug() <<
+      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" << siAmount.quantity <<
+      "in" << siAmount.unit.name;
+
+   return siAmount;
 }
 
 QString Measurement::UnitSystem::displayAmount(double amount,

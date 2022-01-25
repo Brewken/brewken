@@ -257,8 +257,8 @@
               <property name="editField" stdset="0">
                <string notr="true">plato</string>
               </property>
-              <property name="forcedUnitSystem" stdset="0">
-               <string notr="true">density_Plato</string>
+              <property name="forcedSystemOfMeasurement" stdset="0">
+               <string notr="true">Plato</string>
               </property>
              </widget>
             </item>

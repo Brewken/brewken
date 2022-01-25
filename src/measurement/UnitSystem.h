@@ -27,6 +27,7 @@
 #include <QMap>
 #include <QString>
 
+#include "measurement/Amount.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/SystemOfMeasurement.h"
 
@@ -175,9 +176,9 @@ namespace Measurement {
        *
        * \return
        */
-      double qstringToSI(QString qstr,
-                         Unit const * defUnit = nullptr,
-                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
+      Measurement::Amount qstringToSI(QString qstr,
+                                      Unit const * defUnit = nullptr,
+                                      std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
 
       /**
        * \brief returns all the \c UnitSystem::RelativeScale for this \c UnitSystem
@@ -274,4 +275,23 @@ namespace Measurement {
 
    }
 }
+
+/**
+ * \brief Convenience function to allow output of \c Measurement::UnitSystem to \c QDebug or \c QTextStream stream etc
+ */
+template<class S>
+S & operator<<(S & stream, Measurement::UnitSystem const & unitSystem) {
+   stream << unitSystem.uniqueName;
+   return stream;
+}
+template<class S>
+S & operator<<(S & stream, Measurement::UnitSystem const * unitSystem) {
+   if (unitSystem) {
+      stream << *unitSystem;
+   } else {
+      stream << "NULL";
+   }
+   return stream;
+}
+
 #endif

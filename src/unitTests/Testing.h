@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Testing.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * unitTests/Testing.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -23,12 +23,7 @@
 #include <cstdint>
 #include <memory>
 
-#include <QDebug>
-#include <QDir>
-#include <QMutexLocker>
 #include <QObject>
-#include <QSettings>
-#include <QString>
 #include <QtTest/QtTest>
 
 class Equipment;
@@ -69,6 +64,9 @@ private slots:
 
    //! \brief Verify post-boil losses do not affect OG
    void postBoilLossOgTest();
+
+   //! \brief Verify conversion between US Customary & Metric units etc
+   void testUnitConversions();
 
    //! \brief Verify Log rotation is working
    void testLogRotation();

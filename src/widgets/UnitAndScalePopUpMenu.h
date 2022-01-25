@@ -38,8 +38,8 @@ namespace UnitAndScalePopUpMenu {
     *
     * \param parent the Qt Widget that is to "own" the newly-created \c QMenu, or \c nullptr if there is none
     * \param physicalQuantity the physical quantity of the value(s) in the UI field
-    * \param forcedUnitSystem the current \c SystemOfMeasurement, if any, specified for the UI field.  (If none is
-    *                         specified then the global default is used.)
+    * \param forcedSystemOfMeasurement the current \c SystemOfMeasurement, if any, specified for the UI field.  (If none
+    *                                  is specified then the global default is used.)
     * \param forcedRelativeScale the forced scale, if any, for displaying the field.  (NB: Should always be
     *                            \c std::nullopt_t if \c physicalQuantity is \c Measurement::PhysicalQuantity::Mixed.)
     *

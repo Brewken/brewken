@@ -53,6 +53,7 @@ std::optional<Measurement::SystemOfMeasurement> UiAmountWithUnits::getForcedSyst
 }
 
 void UiAmountWithUnits::setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString) {
+   qDebug() << Q_FUNC_INFO << systemOfMeasurementAsString;
    this->forcedSystemOfMeasurement = Measurement::getFromUniqueName(systemOfMeasurementAsString);
    return;
 }
@@ -71,6 +72,7 @@ std::optional<Measurement::UnitSystem::RelativeScale> UiAmountWithUnits::getForc
 }
 
 void UiAmountWithUnits::setForcedRelativeScaleViaString(QString relativeScaleAsString) {
+   qDebug() << Q_FUNC_INFO << relativeScaleAsString;
    if (relativeScaleAsString == "") {
       this->forcedRelativeScale = std::nullopt;
    } else {
@@ -163,11 +165,12 @@ double UiAmountWithUnits::toSiRaw() {
          Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" <<
          this->editField << ") to double";
    }
-   return this->units->toSI(amt);
+   return this->units->toSI(amt).quantity;
 }
 
 
 QString UiAmountWithUnits::displayAmount(double amount, int precision) {
+   // .:TODO:. I think we should just make these the same!
    // Our overrides, if any, take precedence over others, if any
    std::optional<Measurement::SystemOfMeasurement> overrideSystemOfMeasurement =
       this->forcedSystemOfMeasurement ? this->forcedSystemOfMeasurement :
@@ -193,12 +196,15 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
    double val = -1.0;
    QString amt;
 
-   if (this->getWidgetText().isEmpty()) {
+   QString rawValue = this->getWidgetText();
+   qDebug() << Q_FUNC_INFO << "rawValue" << rawValue;
+
+   if (rawValue.isEmpty()) {
       return;
    }
 
    if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
-      amt = this->getWidgetText();
+      amt = rawValue;
    } else {
 
       Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
@@ -223,17 +229,17 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
          default:
             {
                bool ok = false;
-               val = Localization::toDouble(this->getWidgetText(), &ok);
+               val = Localization::toDouble(rawValue, &ok);
                if (!ok) {
                   qWarning() <<
-                     Q_FUNC_INFO << " failed to convert" << this->getWidgetText() << "(" << this->configSection << ":" <<
+                     Q_FUNC_INFO << " failed to convert" << rawValue << "(" << this->configSection << ":" <<
                      this->editField << ") to double";
                }
                amt = displayAmount(val);
             }
       }
    }
-   qDebug() << Q_FUNC_INFO << "Interpreted" << this->getWidgetText() << "as" << amt;
+   qDebug() << Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amt;
    this->setWidgetText(amt);
    return;
 }
@@ -269,5 +275,7 @@ double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
    // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
    // gallons, then we'll go with US customary gallons over Imperial ones.)
    //
-   return oldUnitSystem.qstringToSI(rawValue, defaultUnit, previousScaleInfo.oldForcedScale);
+   auto amount = oldUnitSystem.qstringToSI(rawValue, defaultUnit, previousScaleInfo.oldForcedScale);
+   qDebug() << Q_FUNC_INFO << "Converted to" << amount;
+   return amount.quantity;
 }

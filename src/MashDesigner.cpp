@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -362,7 +362,7 @@ bool MashDesigner::initializeMash() {
    // Order matters. Don't do this until every that could return false has
    this->mash->setTunSpecificHeat_calGC(this->equip->tunSpecificHeat_calGC());
    this->mash->setTunWeight_kg(this->equip->tunWeight_kg());
-   this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature));
+   this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity);
 
    this->curStep = 0;
    this->addedWater_l = 0;

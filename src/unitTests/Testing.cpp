@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Testing.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -42,6 +42,9 @@
 
 #include "database/ObjectStoreWrapper.h"
 #include "Logging.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
+#include "measurement/UnitSystem.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -52,30 +55,27 @@
 
 namespace {
 
-   //! \brief True iff. a <= c <= b
-   static bool inRange( double c, double a, double b )
-   {
+   //! \brief True iff a <= c <= b
+   constexpr bool inRange(double c, double a, double b) {
       return (a <= c) && (c <= b);
    }
 
-   //! \brief True iff. b-tol <= a <= b+tol
-   static bool fuzzyComp( double a, double b, double tol )
-   {
-      bool ret = inRange( a, b-tol, b+tol );
-      if( !ret )
-         qDebug() << QString("a: %1, b: %2, tol: %3").arg(a).arg(b).arg(tol);
+   //! \brief True iff b - tolerance <= a <= b + tolerance
+   bool fuzzyComp(double a, double b, double tolerance) {
+      bool ret = inRange(a, b - tolerance, b + tolerance);
+      if (!ret) {
+         qDebug() << Q_FUNC_INFO << "a:" << a << ", b:" << b << ", tolerance:" << tolerance;
+      }
       return ret;
    }
 
    // method to fill dummy logs with content to build size
-   static QString randomStringGenerator()
-   {
-      QString posChars = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwwxyz";
-      int randomcharLength = 64;
+   QString randomStringGenerator() {
+      QString const posChars = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwwxyz";
+      int constexpr randomcharLength = 64;
 
       QString randSTR;
-      for (int i = 0; i < randomcharLength; i++)
-      {
+      for (int i = 0; i < randomcharLength; i++) {
 #if QT_VERSION < QT_VERSION_CHECK(5,10,0)
          int index = qrand() % posChars.length();
 #else
@@ -330,6 +330,32 @@ void Testing::postBoilLossOgTest()
    // The OG calc itself is verified in recipeCalcTest_*(), so just verify that
    // the two OGs are the same
    QVERIFY2( fuzzyComp(recLoss->og(), recNoLoss->og(), 0.002), "OG of recipe with post-boil loss is different from no-loss recipe" );
+}
+
+void Testing::testUnitConversions() {
+   // This is assuming '.' is the decimal separator and ',' is the digit group separator.  Might need to tweak this test
+   // a bit for systems with locales where ',' is the decimal separator and '.' or ' ' is the digit group separator.
+   // (Both can be got from QLocale::system().decimalPoint(), QLocale::system().groupSeparator().)
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500 gal").quantity,
+                      20.820,
+                      0.001),
+            "Unit conversion error (US gallons to Litres v1)");
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500",
+                                                                               &Measurement::Units::us_gallons).quantity,
+                      20.820,
+                      0.001),
+            "Unit conversion error (US gallons to Litres v2)");
+   QVERIFY2(fuzzyComp(Measurement::qStringToSI("5.500 gal",
+                                               Measurement::PhysicalQuantity::Volume).quantity,
+                      20.820,
+                      0.001),
+                      "Unit conversion error (US gallons to Litres v3)");
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI("9.994 P").quantity, 1.040, 0.001),
+            "Unit conversion error (Plato to SG)");
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI("1,083 ebc").quantity, 550, 1),
+            "Unit conversion error (EBC to SRM)");
+
+   return;
 }
 
 void Testing::testLogRotation() {

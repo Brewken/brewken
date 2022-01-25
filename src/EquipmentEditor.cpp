@@ -172,7 +172,7 @@ void EquipmentEditor::save() {
 
    double grainAbs = Localization::toDouble(lineEdit_grainAbsorption->text(), Q_FUNC_INFO);
 
-   double ga_LKg = grainAbs * volumeUnit->toSI(1.0) * weightUnit->fromSI(1.0);
+   double ga_LKg = grainAbs * volumeUnit->toSI(1.0).quantity * weightUnit->fromSI(1.0);
 
    QString message,inform,describe;
    bool problems=false;
@@ -279,7 +279,7 @@ void EquipmentEditor::resetAbsorption() {
    Measurement::Unit const * weightUnit = nullptr;
    Measurement::Unit const * volumeUnit = nullptr;
    Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
-   double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0);
+   double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity;
 
    lineEdit_grainAbsorption->setText(gaCustomUnits);
    return;
@@ -330,7 +330,7 @@ void EquipmentEditor::showChanges() {
 
    textEdit_notes->setText( e->notes() );
 
-   double gaCustomUnits = e->grainAbsorption_LKg() * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0);
+   double gaCustomUnits = e->grainAbsorption_LKg() * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity;
    lineEdit_grainAbsorption->setText(gaCustomUnits);
 
    lineEdit_boilingPoint->setText(e);

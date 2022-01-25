@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Unit.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * measurement/Unit.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QString>
 
+#include "measurement/Amount.h"
 #include "measurement/PhysicalQuantity.h"
 
 // TODO: implement ppm, percent, ibuGalPerLb,
@@ -59,17 +60,29 @@ namespace Measurement {
        *                 kilograms, "tsp" for teaspoons. Note that this needs to be unique within the \c UnitSystem to
        *                 which this \c Unit belongs but is \c not necessarily globally unique, eg "qt" refers to both
        *                 Imperial quarts and US Customary quarts; "L" refers to liters and Lintner.
-       * \param convertToCanonical
-       * \param convertFromCanonical
+       * \param convertToCanonical Converts a quantity of this \c Unit to a quantity of \c canonical \c Unit
+       * \param convertFromCanonical  Converts a quantity of \c canonical \c Unit to a quantity of this \c Unit
        * \param boundaryValue
+       * \param canonical The canonical units we use for \c PhysicalQuantity this \c Unit relates to.  \c nullptr means
+       *                  this \c Unit is the canonical one (and therefore \c convertToCanonical and
+       *                  \c convertFromCanonical are no-ops).  (Note that the canonical units may or may not be in the
+       *                  same \c UnitSystem as this \c Unit.  Eg canonical units for mass are kilograms so there's a
+       *                  conversion to do whether you're starting from pounds, grams, ounces or milligrams.)
        */
       Unit(UnitSystem const & unitSystem,
            QString const unitName,
            std::function<double(double)> convertToCanonical,
            std::function<double(double)> convertFromCanonical,
-           double boundaryValue = 1.0);
+           double boundaryValue,
+           Unit const * canonical = nullptr);
 
       ~Unit();
+
+      /**
+       * \brief Test whether two \c Unit references are the same.  (This is by no means a full test for equality,
+       *        since we assume there is only one, constant, instance of each different \c Unit.
+       */
+      bool operator==(Measurement::Unit const & other) const;
 
       /**
        * \brief The unit name will be the singular of the commonly used abbreviation.
@@ -77,9 +90,14 @@ namespace Measurement {
       QString const name;
 
       /**
+       * \brief Returns the canonical units we use for \c PhysicalQuantity this \c Unit relates to
+       */
+      Measurement::Unit const & getCanonical() const;
+
+      /**
        * \brief Convert an amount of this unit to its canonical system of measurement (usually, but not always, an SI measure)
        */
-      double toSI(double amt) const;
+      Measurement::Amount toSI(double amt) const;
 
       /**
        * \brief Convert an amount of this unit from its canonical system of measurement (usually, but not always, an SI measure)
@@ -91,7 +109,6 @@ namespace Measurement {
        *        convenience function to save you having to first get the \c Measurement::UnitSystem.
        */
       Measurement::PhysicalQuantity getPhysicalQuantity() const;
-
 
       /**
        * \brief Returns the \c Measurement::UnitSystem to which this \c Measurement::Unit belongs.
@@ -122,6 +139,15 @@ namespace Measurement {
        */
       static Unit const * getUnit(QString const & name,
                                   std::optional<Measurement::PhysicalQuantity> physicalQuantity = std::nullopt);
+
+      /**
+       * \brief Get the canonical \c Unit for a given \c PhysicalQuantity.  This will be the unit we use for storing
+       *        amounts of this type in the database - eg we always store volumes in liters and mass in kilograms.
+       *
+       *        Note that is not meaningful or permitted to call this function with
+       *        \c Measurement::PhysicalQuantity::Mixed as a parameter.
+       */
+      static Unit const & getCanonicalUnit(Measurement::PhysicalQuantity const physicalQuantity);
 
       /**
        * \brief Used by \c ConverterTool to do contextless conversions - ie where we don't know what \c PhysicalQuantity
@@ -187,6 +213,24 @@ namespace Measurement {
       extern Unit const lintner;
       extern Unit const wk;
    }
+}
+
+/**
+ * \brief Convenience function to allow output of \c Measurement::Unit to \c QDebug or \c QTextStream stream etc
+ */
+template<class S>
+S & operator<<(S & stream, Measurement::Unit const & unit) {
+   stream << unit.name << " (" << unit.getPhysicalQuantity() << ")";
+   return stream;
+}
+template<class S>
+S & operator<<(S & stream, Measurement::Unit const * unit) {
+   if (unit) {
+      stream << *unit;
+   } else {
+      stream << "NULL";
+   }
+   return stream;
 }
 
 #endif

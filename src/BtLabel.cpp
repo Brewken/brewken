@@ -73,7 +73,7 @@ void BtLabel::initializeSection() {
 
    // as much as I dislike it, dynamic properties can't be referenced on
    // initialization.
-   QWidget * mybuddy = buddy();
+   QWidget * mybuddy = this->buddy();
 
    //
    // If the label has the configSection defined, use it
@@ -100,7 +100,7 @@ void BtLabel::initializeProperty() {
       return;
    }
 
-   QWidget* mybuddy = buddy();
+   QWidget* mybuddy = this->buddy();
    if (this->property("editField").isValid()) {
       this->propertyName = this->property("editField").toString();
    } else if (mybuddy && mybuddy->property("editField").isValid()) {

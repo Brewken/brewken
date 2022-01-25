@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * FermentableSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jamie Daws <jdelectronics1@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -48,7 +48,8 @@ bool FermentableSortFilterProxyModel::lessThan(QModelIndex const & left,
          if (Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) ==
              Measurement::qStringToSI(rightFermentable.toString(), Measurement::PhysicalQuantity::Mass)) {
             return getName(right) < getName(left);
-         } else if (Measurement::qStringToSI(leftFermentable.toString(), Measurement::PhysicalQuantity::Mass) == 0.0 &&
+         } else if (Measurement::qStringToSI(leftFermentable.toString(),
+                                             Measurement::PhysicalQuantity::Mass).quantity == 0.0 &&
                     this->sortOrder() == Qt::AscendingOrder) {
             // Show non-zero entries first.
             return false;
@@ -78,14 +79,14 @@ bool FermentableSortFilterProxyModel::lessThan(QModelIndex const & left,
 
       case FERMCOLORCOL:
          {
-            double leftDouble = Measurement::qStringToSI(leftFermentable.toString(),
+            auto leftAmount = Measurement::qStringToSI(leftFermentable.toString(),
                                                          Measurement::PhysicalQuantity::Color);
-            double rightDouble = Measurement::qStringToSI(rightFermentable.toString(),
+            auto rightAmount = Measurement::qStringToSI(rightFermentable.toString(),
                                                           Measurement::PhysicalQuantity::Color);
-            if (leftDouble == rightDouble) {
+            if (leftAmount == rightAmount) {
                return getName(right) < getName(left);
             }
-            return leftDouble < rightDouble;
+            return leftAmount < rightAmount;
          }
    }
 

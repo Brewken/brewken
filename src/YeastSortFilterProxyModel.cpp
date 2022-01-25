@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * YeastSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * YeastSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -40,7 +40,7 @@ bool YeastSortFilterProxyModel::lessThan(const QModelIndex &left,
 
     switch (left.column()) {
       case YEASTINVENTORYCOL:
-         if (Measurement::qStringToSI(leftYeast.toString(), Measurement::PhysicalQuantity::Volume) == 0.0 &&
+         if (Measurement::qStringToSI(leftYeast.toString(), Measurement::PhysicalQuantity::Volume).quantity == 0.0 &&
             this->sortOrder() == Qt::AscendingOrder) {
             return false;
          }

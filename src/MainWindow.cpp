@@ -1832,7 +1832,7 @@ void MainWindow::updateRecipeBoilTime() {
    }
 
    Equipment* kit = recipeObs->equipment();
-   double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time);
+   double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity;
 
    // Here, we rely on a signal/slot connection to propagate the equipment
    // changes to recipeObs->boilTime_min and maybe recipeObs->boilSize_l
@@ -1852,7 +1852,10 @@ void MainWindow::updateRecipeEfficiency() {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs, PropertyNames::Recipe::efficiency_pct, lineEdit_efficiency->toSiRaw(), tr("Change Recipe Efficiency"));
+   this->doOrRedoUpdate(*this->recipeObs,
+                        PropertyNames::Recipe::efficiency_pct,
+                        lineEdit_efficiency->toSiRaw(),
+                        tr("Change Recipe Efficiency"));
    return;
 }
 

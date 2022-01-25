@@ -157,6 +157,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/MashStepTableWidget.cpp
     ${SRCDIR}/MashWizard.cpp
     ${SRCDIR}/matrix.cpp
+    ${SRCDIR}/measurement/Amount.cpp
     ${SRCDIR}/measurement/ColorMethods.cpp
     ${SRCDIR}/measurement/IbuMethods.cpp
     ${SRCDIR}/measurement/Measurement.cpp
@@ -601,10 +602,10 @@ target_link_libraries(
 
 #=================================Tests========================================
 
-#QT4_WRAP_CPP( testing_MOC_SRCS ${SRCDIR}/Testing.h )
+#QT4_WRAP_CPP( testing_MOC_SRCS ${SRCDIR}/unitTests/Testing.h )
 ADD_EXECUTABLE(
    Brewken_tests
-   ${SRCDIR}/Testing.cpp
+   ${SRCDIR}/unitTests/Testing.cpp
    ${testing_MOC_SRCS}
    $<TARGET_OBJECTS:btobjlib>
 )
@@ -645,6 +646,10 @@ ADD_TEST(
 ADD_TEST(
    NAME postBoilLossOgTest
    COMMAND Brewken_tests postBoilLossOgTest
+)
+ADD_TEST(
+   NAME testUnitConversions
+   COMMAND Brewken_tests testUnitConversions
 )
 add_test(
    NAME testLogRotation

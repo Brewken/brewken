@@ -115,11 +115,13 @@ void Measurement::setDisplayUnitSystem(UnitSystem const & unitSystem) {
    return;
 }
 
-// .:TODO:. Need to decide how to handle Mixed!
-Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(PhysicalQuantity physicalQuantity) {
+Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity physicalQuantity) {
    // It is a coding error if physicalQuantityToUnitSystem has not had data loaded into it by the time this function is
    // called.
    Q_ASSERT(!physicalQuantityToUnitSystem.isEmpty());
+
+   // It is a coding error to supply Measurement::PhysicalQuantity::Mixed as the parameter
+   Q_ASSERT(physicalQuantity != Measurement::PhysicalQuantity::Mixed);
 
    Measurement::UnitSystem const * unitSystem = physicalQuantityToUnitSystem.value(physicalQuantity, nullptr);
    if (nullptr == unitSystem) {
@@ -330,10 +332,10 @@ QString Measurement::displayThickness( double thick_lkg, bool showUnits ) {
    return QString("%L1").arg(num/den, fieldWidth, format, precision).arg(volUnit->name).arg(weightUnit->name);
 }
 
-double Measurement::qStringToSI(QString qstr,
-                                Measurement::PhysicalQuantity const physicalQuantity,
-                                std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                                std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
+Measurement::Amount Measurement::qStringToSI(QString qstr,
+                                             Measurement::PhysicalQuantity const physicalQuantity,
+                                             std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
+                                             std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.

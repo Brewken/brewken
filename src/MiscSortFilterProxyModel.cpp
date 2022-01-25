@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -44,7 +44,7 @@ bool MiscSortFilterProxyModel::lessThan(const QModelIndex &left,
 
    switch (left.column()) {
        case MISCINVENTORYCOL:
-         if (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass) == 0.0 &&
+         if (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass).quantity == 0.0 &&
              this->sortOrder() == Qt::AscendingOrder) {
             return false;
          }
