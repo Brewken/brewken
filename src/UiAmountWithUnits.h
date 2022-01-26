@@ -114,9 +114,6 @@ public:
    void    setConfigSection(QString configSection);
    QString getConfigSection();
 
-///   void setType(int type);
-///   int type() const;
-
    /**
     * \brief Converts the numeric part of the input field to a double, ignoring any string suffix.  So "5.5 gal" will
     *        give 5.5, "20L" will return 20.0, and so on.

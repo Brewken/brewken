@@ -126,17 +126,6 @@ QString UiAmountWithUnits::getConfigSection() {
    return this->configSection;
 }
 
-/*void UiAmountWithUnits::setType(int type) {
-   // .:TBD:. Why do we need to pass in int and then cast?  Why not pass PhysicalQuantity?
-   this->physicalQuantity = static_cast<Measurement::PhysicalQuantity>(type);
-   return;
-}*/
-
-/*int UiAmountWithUnits::type() const {
-   // .:TBD:. Why can't we just return PhysicalQuantity?
-   return static_cast<int>(this->physicalQuantity);
-}*/
-
 double UiAmountWithUnits::toDoubleRaw(bool * ok) const {
    if (ok) {
       *ok = true;
@@ -167,16 +156,6 @@ Measurement::Amount UiAmountWithUnits::toSI() {
    // It's a coding error to call this function if we are not dealing with a physical quantity
    Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType()));
    Q_ASSERT(this->units);
-
-/*   bool ok = false;
-   double amt = this->toDoubleRaw(&ok);
-   if (!ok) {
-      qWarning() <<
-         Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" <<
-         this->editField << ") to double";
-   }
-
-   return this->units->toSI(amt).quantity;*/
 
    return Measurement::qStringToSI(this->getWidgetText(),
                                    this->units->getPhysicalQuantity(),

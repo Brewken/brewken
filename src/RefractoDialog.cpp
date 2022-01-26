@@ -43,6 +43,8 @@ void RefractoDialog::calculate() {
    bool haveOP = true;
    bool haveOG = true;
 
+   // User can enter in specific gravity or Plato, but the lineEdit is going to convert it to Plato, so we can just
+   // grab the number
    double originalPlato = lineEdit_op->toDoubleRaw(&haveOP);
    double inputOG       = lineEdit_inputOG->toDoubleRaw(&haveOG);
    double currentPlato  = lineEdit_cp->toDoubleRaw(&haveCP);
