@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -179,14 +179,6 @@ public:
    QString notes() const;
    int getRecipeId() const;
 
-/*
- * .:TBD:. Think we can comment this out and rely on same function in base class!
- *
-   // ick, but I don't see another way. I need a unique key that has *nothing*
-   // to do with the data entered. The best one I can think of is the
-   // database's key
-   int key() const;
-*/
    // Calculations
    double calculateEffIntoBK_pct();
    double calculateOg();

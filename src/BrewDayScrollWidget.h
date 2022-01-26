@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayScrollWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BrewDayScrollWidget.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -24,8 +24,13 @@
 #include "ui_brewDayScrollWidget.h"
 
 #include <QFile>
+#include <QList>
+#include <QObject>
+#include <QMetaProperty>
 #include <QPrinter>
 #include <QSize>
+#include <QString>
+#include <QVariant>
 #include <QWidget>
 
 #include "model/Recipe.h"
@@ -33,7 +38,6 @@
 
 /*!
  * \class BrewDayScrollWidget
- *
  *
  * \brief Widget that displays the brewday info in a scrollable area.
  */

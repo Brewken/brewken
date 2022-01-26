@@ -19,7 +19,6 @@
  =====================================================================================================================*/
 #include "model/Equipment.h"
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
 #include "model/NamedParameterBundle.h"

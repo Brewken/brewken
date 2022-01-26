@@ -31,8 +31,8 @@
 #include "MainWindow.h"
 #include "model/Misc.h"
 #include "MiscEditor.h"
-#include "MiscTableModel.h"
 #include "MiscSortFilterProxyModel.h"
+#include "tableModels/MiscTableModel.h"
 
 MiscDialog::MiscDialog(MainWindow* parent) :
    QDialog(parent),
@@ -176,7 +176,7 @@ void MiscDialog::addMisc(const QModelIndex& index)
          return;
    }
 
-   Brewken::mainWindow()->addMiscToRecipe(miscTableModel->getMisc(translated.row()));
+   MainWindow::instance().addMiscToRecipe(miscTableModel->getMisc(translated.row()));
 
    return;
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -22,12 +22,11 @@
 #include <QDebug>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
-#include "units/Unit.h"
 
 MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    setupUi(this);
@@ -61,12 +60,12 @@ void MashEditor::saveAndClose() {
    mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
 
    mashObs->setName(lineEdit_name->text());
-   mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI());
-   mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI());
-   mashObs->setPh(lineEdit_spargePh->toSI());
-   mashObs->setTunTemp_c(lineEdit_tunTemp->toSI());
-   mashObs->setTunWeight_kg(lineEdit_tunMass->toSI());
-   mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI());
+   mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI().quantity);
+   mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI().quantity);
+   mashObs->setPh(lineEdit_spargePh->toSI().quantity);
+   mashObs->setTunTemp_c(lineEdit_tunTemp->toSI().quantity);
+   mashObs->setTunWeight_kg(lineEdit_tunMass->toSI().quantity);
+   mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI().quantity);
 
    mashObs->setNotes(textEdit_notes->toPlainText());
 
@@ -78,13 +77,14 @@ void MashEditor::saveAndClose() {
    return;
 }
 
-void MashEditor::fromEquipment()
-{
-   if( mashObs == nullptr )
+void MashEditor::fromEquipment() {
+   if (this->mashObs == nullptr) {
       return;
+   }
 
-   if ( m_equip == nullptr )
+   if (this->m_equip == nullptr) {
       return;
+   }
 
    lineEdit_tunMass->setText(m_equip);
    lineEdit_tunSpHeat->setText(m_equip);

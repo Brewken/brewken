@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * PersistentSettings.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -59,13 +59,13 @@ namespace {
       };
 
       switch (extension) {
-         case PersistentSettings::UNIT:
+         case PersistentSettings::Extension::UNIT:
             fullyQualifiedKey += "_unit";
             break;
-         case PersistentSettings::SCALE:
+         case PersistentSettings::Extension::SCALE:
             fullyQualifiedKey += "_scale";
             break;
-         case PersistentSettings::NONE:
+         case PersistentSettings::Extension::NONE:
          default:
             break;
       }

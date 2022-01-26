@@ -29,8 +29,8 @@
 #include <QString>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "Localization.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
@@ -485,11 +485,11 @@ Recipe * BrewNote::getOwningRecipe() {
 // Getters
 QDate BrewNote::brewDate() const { return m_brewDate; }
 QString BrewNote::brewDate_str() const { return m_brewDate.toString(); }
-QString BrewNote::brewDate_short() const { return Brewken::displayDateUserFormated(m_brewDate); }
+QString BrewNote::brewDate_short() const { return Localization::displayDateUserFormated(m_brewDate); }
 
 QDate BrewNote::fermentDate() const { return m_fermentDate; }
 QString BrewNote::fermentDate_str() const { return m_fermentDate.toString(); }
-QString BrewNote::fermentDate_short() const { return Brewken::displayDateUserFormated(m_fermentDate); }
+QString BrewNote::fermentDate_short() const { return Localization::displayDateUserFormated(m_fermentDate); }
 
 QString BrewNote::notes() const { return m_notes; }
 

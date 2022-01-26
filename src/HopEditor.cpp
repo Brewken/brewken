@@ -24,12 +24,11 @@
 #include <QIcon>
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Hop.h"
-#include "units/Unit.h"
 
 HopEditor::HopEditor(QWidget * parent) :
    QDialog(parent),
@@ -64,18 +63,18 @@ void HopEditor::save() {
    }
 
    this->obsHop->setName(lineEdit_name->text());
-   this->obsHop->setAlpha_pct(lineEdit_alpha->toSI());
+   this->obsHop->setAlpha_pct(lineEdit_alpha->toSI().quantity);
    this->obsHop->setUse(static_cast<Hop::Use>(comboBox_use->currentIndex()));
-   this->obsHop->setTime_min(lineEdit_time->toSI());
+   this->obsHop->setTime_min(lineEdit_time->toSI().quantity);
    this->obsHop->setType(static_cast<Hop::Type>(comboBox_type->currentIndex()));
    this->obsHop->setForm(static_cast<Hop::Form>(comboBox_form->currentIndex()));
-   this->obsHop->setBeta_pct(lineEdit_beta->toSI());
-   this->obsHop->setHsi_pct(lineEdit_HSI->toSI());
+   this->obsHop->setBeta_pct(lineEdit_beta->toSI().quantity);
+   this->obsHop->setHsi_pct(lineEdit_HSI->toSI().quantity);
    this->obsHop->setOrigin(lineEdit_origin->text());
-   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI());
-   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI());
-   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI());
-   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI());
+   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI().quantity);
+   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI().quantity);
+   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI().quantity);
+   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI().quantity);
 
    this->obsHop->setSubstitutes(textEdit_substitutes->toPlainText());
    this->obsHop->setNotes(textEdit_notes->toPlainText());
@@ -85,7 +84,7 @@ void HopEditor::save() {
    }
 
    // do this late to make sure we've the row in the inventory table
-   this->obsHop->setInventoryAmount(lineEdit_inventory->toSI());
+   this->obsHop->setInventoryAmount(lineEdit_inventory->toSI().quantity);
    setVisible(false);
    return;
 }

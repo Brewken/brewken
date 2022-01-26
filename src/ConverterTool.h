@@ -1,5 +1,6 @@
 /*======================================================================================================================
  * ConverterTool.h is part of Brewken, and is copyright the following authors 2009-2015:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,32 +19,29 @@
 #pragma once
 
 #include <QDialog>
-#include <QWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QLabel>
 #include <QEvent>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
 
 /*!
  * \brief Dialog to convert units.
- *
  */
-class ConverterTool : public QDialog
-{
+class ConverterTool : public QDialog {
    Q_OBJECT
 public:
-
-   ConverterTool(QWidget* parent=0);
+   ConverterTool(QWidget * parent = nullptr);
 
    //! \name Public UI Variables
    //! @{
-   QPushButton* pushButton_convert;
-   QLabel* inputLabel;
-   QLineEdit* inputLineEdit;
-   QLabel* outputLabel;
-   QLineEdit* outputLineEdit;
-   QLabel* outputUnitsLabel;
-   QLineEdit* outputUnitsLineEdit;
+   QPushButton * pushButton_convert;
+   QLabel *      inputLabel;
+   QLineEdit *   inputLineEdit;
+   QLabel *      outputLabel;
+   QLineEdit *   outputLineEdit;
+   QLabel *      outputUnitsLabel;
+   QLineEdit *   outputUnitsLineEdit;
    //! @}
 
 public slots:
@@ -51,12 +49,7 @@ public slots:
 
 protected:
 
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QDialog::changeEvent(event);
-   }
+   virtual void changeEvent(QEvent* event);
 
 private:
 

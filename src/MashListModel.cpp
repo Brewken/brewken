@@ -19,6 +19,8 @@
  =====================================================================================================================*/
 #include "MashListModel.h"
 
+#include <QWidget>
+
 #include "database/ObjectStoreWrapper.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"

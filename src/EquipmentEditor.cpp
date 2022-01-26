@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • David Grundberg <individ@acc.umu.se>
@@ -30,19 +30,19 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "BtLabel.h"
 #include "BtLineEdit.h"
-#include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "EquipmentListModel.h"
 #include "HeatCalculations.h"
+#include "Localization.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "NamedEntitySortProxyModel.h"
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
-#include "units/Unit.h"
 
 EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
    QDialog(parent) {
@@ -61,10 +61,10 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
 
    this->tabWidget_editor->tabBar()->setStyle( new BtHorizontalTabs );
    // Set grain absorption label based on units.
-   Unit const * weightUnit = nullptr;
-   Unit const * volumeUnit = nullptr;
-   Brewken::getThicknessUnits( &volumeUnit, &weightUnit );
-   label_absorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->getUnitName()).arg(weightUnit->getUnitName()));
+   Measurement::Unit const * weightUnit = nullptr;
+   Measurement::Unit const * volumeUnit = nullptr;
+   Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
+   label_absorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
 
    equipmentListModel = new EquipmentListModel(equipmentComboBox);
    equipmentSortProxyModel = new NamedEntitySortProxyModel(equipmentListModel);
@@ -166,17 +166,13 @@ void EquipmentEditor::save() {
       return;
    }
 
-   Unit const * weightUnit = nullptr;
-   Unit const * volumeUnit = nullptr;
-   Brewken::getThicknessUnits( &volumeUnit, &weightUnit );
-   bool ok = false;
+   Measurement::Unit const * weightUnit = nullptr;
+   Measurement::Unit const * volumeUnit = nullptr;
+   Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
 
-   double grainAbs = Brewken::toDouble( lineEdit_grainAbsorption->text(), &ok );
-   if ( ! ok ) {
-      qWarning() << QString("EquipmentEditor::save() could not convert %1 to double").arg(lineEdit_grainAbsorption->text());
-   }
+   double grainAbs = Localization::toDouble(lineEdit_grainAbsorption->text(), Q_FUNC_INFO);
 
-   double ga_LKg = grainAbs * volumeUnit->toSI(1.0) * weightUnit->fromSI(1.0);
+   double ga_LKg = grainAbs * volumeUnit->toSI(1.0).quantity * weightUnit->fromSI(1.0);
 
    QString message,inform,describe;
    bool problems=false;
@@ -187,17 +183,17 @@ void EquipmentEditor::save() {
    inform = QString("%1%2")
             .arg(tr("The following values are not set:"))
             .arg(QString("<ul>"));
-   if ( qFuzzyCompare(lineEdit_tunVolume->toSI(),0.0) ) {
+   if ( qFuzzyCompare(lineEdit_tunVolume->toSI().quantity,0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("mash tun volume (all-grain and BIAB only)"));
    }
 
-   if ( qFuzzyCompare(lineEdit_batchSize->toSI(), 0.0) ) {
+   if ( qFuzzyCompare(lineEdit_batchSize->toSI().quantity, 0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("batch size"));
    }
 
-   if ( qFuzzyCompare(lineEdit_hopUtilization->toSI(), 0.0) ) {
+   if ( qFuzzyCompare(lineEdit_hopUtilization->toSI().quantity, 0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("hop utilization"));
    }
@@ -220,22 +216,22 @@ void EquipmentEditor::save() {
    }
 
    this->obsEquip->setName( lineEdit_name->text() );
-   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSI() );
-   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSI() );
-   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI() );
+   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSI().quantity );
+   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSI().quantity );
+   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI().quantity );
 
-   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI() );
+   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI().quantity );
 
-   this->obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toSI() );
-   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSI());
-   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI() );
-   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI() );
-   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI() );
-   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI() );
-   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI() );
+   this->obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toSI().quantity );
+   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSI().quantity);
+   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI().quantity );
+   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI().quantity );
+   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI().quantity );
+   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI().quantity );
+   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI().quantity );
    this->obsEquip->setGrainAbsorption_LKg( ga_LKg );
-   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI() );
-   this->obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toSI() );
+   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI().quantity );
+   this->obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toSI().quantity );
 
    this->obsEquip->setNotes(textEdit_notes->toPlainText());
    this->obsEquip->setCalcBoilVolume(checkBox_calcBoilVolume->checkState() == Qt::Checked);
@@ -280,10 +276,10 @@ void EquipmentEditor::resetAbsorption() {
       return;
 
    // Get weight and volume units for grain absorption.
-   Unit const * weightUnit = nullptr;
-   Unit const * volumeUnit = nullptr;
-   Brewken::getThicknessUnits( &volumeUnit, &weightUnit );
-   double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0);
+   Measurement::Unit const * weightUnit = nullptr;
+   Measurement::Unit const * volumeUnit = nullptr;
+   Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
+   double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity;
 
    lineEdit_grainAbsorption->setText(gaCustomUnits);
    return;
@@ -303,10 +299,10 @@ void EquipmentEditor::showChanges() {
    }
 
    // Get weight and volume units for grain absorption.
-   Unit const * weightUnit = nullptr;
-   Unit const * volumeUnit = nullptr;
-   Brewken::getThicknessUnits( &volumeUnit, &weightUnit );
-   label_absorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->getUnitName()).arg(weightUnit->getUnitName()));
+   Measurement::Unit const * weightUnit = nullptr;
+   Measurement::Unit const * volumeUnit = nullptr;
+   Measurement::getThicknessUnits( &volumeUnit, &weightUnit );
+   label_absorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
 
    //equipmentComboBox->setIndexByEquipment(e);
 
@@ -334,7 +330,7 @@ void EquipmentEditor::showChanges() {
 
    textEdit_notes->setText( e->notes() );
 
-   double gaCustomUnits = e->grainAbsorption_LKg() * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0);
+   double gaCustomUnits = e->grainAbsorption_LKg() * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity;
    lineEdit_grainAbsorption->setText(gaCustomUnits);
 
    lineEdit_boilingPoint->setText(e);
@@ -358,18 +354,18 @@ void EquipmentEditor::updateCheckboxRecord() {
       lineEdit_boilSize->setText(bar);
       lineEdit_boilSize->setEnabled(false);
    } else {
-      lineEdit_boilSize->setText(lineEdit_batchSize->toSI());
+      lineEdit_boilSize->setText(lineEdit_batchSize->toSI().quantity);
       lineEdit_boilSize->setEnabled(true);
    }
    return;
 }
 
 double EquipmentEditor::calcBatchSize() {
-   double size     = lineEdit_batchSize->toSI();
-   double topUp    = lineEdit_topUpWater->toSI();
-   double trubLoss = lineEdit_trubChillerLoss->toSI();
-   double evapRate = lineEdit_evaporationRate->toSI();
-   double time     = lineEdit_boilTime->toSI();
+   double size     = lineEdit_batchSize->toSI().quantity;
+   double topUp    = lineEdit_topUpWater->toSI().quantity;
+   double trubLoss = lineEdit_trubChillerLoss->toSI().quantity;
+   double evapRate = lineEdit_evaporationRate->toSI().quantity;
+   double time     = lineEdit_boilTime->toSI().quantity;
 
    return size - topUp + trubLoss + (time/60.0)*evapRate;
 }

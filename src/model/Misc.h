@@ -118,7 +118,6 @@ public:
    void setNotes( const QString &var );
 
    // Get
-//   QString name() const;
    Type type() const;
    const QString typeString() const;
    const QString typeStringTr() const;

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -33,10 +33,12 @@
 #include <QObject>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
-#include "units/IbuMethods.h"
+#include "Localization.h"
+#include "measurement/ColorMethods.h"
+#include "measurement/IbuMethods.h"
+#include "measurement/Measurement.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -52,10 +54,51 @@
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
 #include "PreInstruction.h"
-#include "units/ColorMethods.h"
-
 
 namespace {
+   /**
+    * \brief Check whether the supplied instance of (subclass of) NamedEntity (a) is an "instance of use of" (ie has a
+    *        parent) and (b) is not used in any Recipe.
+    */
+   template<class NE> bool isUnusedInstanceOfUseOf(NE & var) {
+      NE * parentOfVar = static_cast<NE *>(var.getParent());
+      if (nullptr == parentOfVar) {
+         // The var has no parent and so is not "an instance of use of"
+         return false;
+      }
+
+      qDebug() <<
+         Q_FUNC_INFO << var.metaObject()->className() << "#" << var.key() << "has parent #" << parentOfVar->key();
+      //
+      // Parameter has a parent.  See if it (the parameter, not its parent!) is used in a recipe.
+      // (NB: The parent of the NamedEntity is not the same thing as its parent recipe.  We should perhaps find some
+      // different terms!)
+      //
+      auto matchingRecipe = ObjectStoreTyped<Recipe>::getInstance().findFirstMatching(
+         // NB: Important to do the lambda capture of var here by reference, otherwise we'll be passing in a copy of
+         //     var, which won't have an ID and therefore will never give a match.
+         [&var](Recipe * recipe) {
+            return recipe->uses(var);
+         }
+      );
+      if (matchingRecipe == nullptr) {
+         // The parameter is not already used in a recipe, so we'll be able to add it without making a copy
+         // Note that we can't just take the address of var and use it to make a new shared_ptr as that would mean
+         // we had two completely unrelated shared_ptr objects (one in the object store and one newly created here)
+         // pointing to the same address.  We need to get an instance of shared_ptr that's copied from (and thus
+         // shares the internal reference count of) the one held by the object store.
+         qDebug() << Q_FUNC_INFO << var.metaObject()->className() << "#" << var.key() << "not used in any recipe";
+         return true;
+      }
+
+      // The var is used in another Recipe.  (We shouldn't really find ourselves in this position, but the way the rest
+      // of the code works means that, even if we do, we should recover OK - or at least not make the situation any
+      // worse.)
+      qWarning() <<
+         Q_FUNC_INFO << var.metaObject()->className() << "#" << var.key() <<
+         "is unexpectedly already used in recipe #" << matchingRecipe->key();
+      return false;
+   }
 
    /**
     * \brief Decide whether the supplied instance of (subclass of) NamedEntity needs to be copied before being added to
@@ -68,6 +111,9 @@ namespace {
     *         another recipe), or var itself otherwise
     */
    template<class NE> std::shared_ptr<NE> copyIfNeeded(NE & var) {
+      // It's the caller's responsibility to ensure var is already in an ObjectStore
+      Q_ASSERT(var.key() > 0);
+
       //
       // If the supplied Hop/Fermentable/etc has no parent then we need to make a copy of it, because it's the master
       // instance of that Hop/Fermentable/etc.
@@ -76,31 +122,11 @@ namespace {
       // recipe (_including_ this one, because the same ingredient can be added more than once to a recipe - eg Hops
       // added at different times).
       //
-      NE * parentOfVar = static_cast<NE *>(var.getParent());
-      if (parentOfVar != nullptr) {
-         qDebug() <<
-                  Q_FUNC_INFO << var.metaObject()->className() << "#" << var.key() << "has parent #" << parentOfVar->key();
-         //
-         // Parameter has a parent.  See if it (the parameter, not its parent!) is used in a recipe.
-         // (NB: The parent of the NamedEntity is not the same thing as its parent recipe.  We should perhaps find some
-         // different terms!)
-         //
-         auto matchingRecipe = ObjectStoreTyped<Recipe>::getInstance().findFirstMatching(
-                                  // NB: Important to do the lambda capture of var here by reference, otherwise we'll be passing in a copy of
-                                  //     var, which won't have an ID and therefore will never give a match.
-         [&var](Recipe * recipe) {
-            return recipe->uses(var);
-         }
-                               );
-         if (matchingRecipe == nullptr) {
-            // The parameter is not already used in a recipe, so we'll be able to add it without making a copy
-            // Note that we can't just take the address of var and use it to make a new shared_ptr as that would mean
-            // we had two completely unrelated shared_ptr objects (one in the object store and one newly created here)
-            // pointing to the same address.  We need to get an instance of shared_ptr that's copied from (and thus
-            // shares the internal reference count of) the one held by the object store.
-            qDebug() << Q_FUNC_INFO << var.metaObject()->className() << "#" << var.key() << "not used in any recipe";
-            return ObjectStoreWrapper::getById<NE>(var.key());
-         }
+      // All this logic is handled in isUnusedInstanceOfUseOf() because it's the same process for checking it's OK to
+      // delete something when it's been removed from a Recipe.
+      //
+      if (isUnusedInstanceOfUseOf(var)) {
+         return ObjectStoreWrapper::getById<NE>(var.key());
       }
 
       qDebug() << Q_FUNC_INFO << "Making copy of " << var.metaObject()->className() << "#" << var.key();
@@ -560,7 +586,7 @@ void Recipe::mashFermentableIns() {
    str += tr("to the mash tun.");
    ins->setDirections(str);
 
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -588,7 +614,7 @@ void Recipe::saltWater(Salt::WhenToAdd when) {
    str += QString(tr(" into the %1 water").arg(tmp));
    ins->setDirections(str);
 
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -611,7 +637,7 @@ void Recipe::mashWaterIns() {
    str += tr("for upcoming infusions.");
    ins->setDirections(str);
 
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -632,26 +658,36 @@ QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining, double to
 
       if (mstep->isInfusion()) {
          str = tr("Add %1 water at %2 to mash to bring it to %3.")
-               .arg(Brewken::displayAmount(mstep->infuseAmount_l(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::infuseAmount_l,
-                                           &Units::liters))
-               .arg(Brewken::displayAmount(mstep->infuseTemp_c(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::infuseTemp_c,
-                                           &Units::celsius))
-               .arg(Brewken::displayAmount(mstep->stepTemp_c(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::stepTemp_c,
-                                           &Units::celsius));
+               .arg(Measurement::displayAmount(Measurement::Amount{mstep->infuseAmount_l(), Measurement::Units::liters},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::infuseAmount_l))
+               .arg(Measurement::displayAmount(Measurement::Amount{mstep->infuseTemp_c(), Measurement::Units::celsius},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::infuseTemp_c))
+               .arg(Measurement::displayAmount(Measurement::Amount{mstep->stepTemp_c(), Measurement::Units::celsius},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::stepTemp_c));
          totalWaterAdded_l += mstep->infuseAmount_l();
       } else if (mstep->isTemperature()) {
-         str = tr("Heat mash to %1.").arg(Brewken::displayAmount(mstep->stepTemp_c(), PersistentSettings::Sections::mashStepTableModel,
-                                                                 PropertyNames::MashStep::stepTemp_c, &Units::celsius));
+         str = tr("Heat mash to %1.").arg(Measurement::displayAmount(Measurement::Amount{mstep->stepTemp_c(),
+                                                                                         Measurement::Units::celsius},
+                                                                     PersistentSettings::Sections::mashStepTableModel,
+                                                                     PropertyNames::MashStep::stepTemp_c));
       } else if (mstep->isDecoction()) {
          str = tr("Bring %1 of the mash to a boil and return to the mash tun to bring it to %2.")
-               .arg(Brewken::displayAmount(mstep->decoctionAmount_l(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::decoctionAmount_l,
-                                           &Units::liters))
-               .arg(Brewken::displayAmount(mstep->stepTemp_c(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::stepTemp_c,
-                                           &Units::celsius));
+               .arg(Measurement::displayAmount(Measurement::Amount{mstep->decoctionAmount_l(),
+                                                                   Measurement::Units::liters},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::decoctionAmount_l))
+               .arg(Measurement::displayAmount(Measurement::Amount{mstep->stepTemp_c(), Measurement::Units::celsius},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::stepTemp_c));
       }
 
-      str += tr(" Hold for %1.").arg(Brewken::displayAmount(mstep->stepTime_min(), PersistentSettings::Sections::mashStepTableModel,
-                                                            PropertyNames::MashStep::stepTime_min, &Units::minutes));
+      str += tr(" Hold for %1.").arg(Measurement::displayAmount(Measurement::Amount{mstep->stepTime_min(),
+                                                                                    Measurement::Units::minutes},
+                                                                PersistentSettings::Sections::mashStepTableModel,
+                                                                PropertyNames::MashStep::stepTime_min));
 
       preins.push_back(PreInstruction(str, QString("%1 - %2").arg(mstep->typeStringTr()).arg(mstep->name()),
                                       timeRemaining));
@@ -687,10 +723,13 @@ QVector<PreInstruction> Recipe::hopSteps(Hop::Use type) {
             str = tr("Use %1 %2 for %3");
          }
 
-         str = str.arg(Brewken::displayAmount(hop->amount_kg(), PersistentSettings::Sections::hopTable, PropertyNames::Hop::amount_kg,
-                                              &Units::kilograms))
+         str = str.arg(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms},
+                                                  PersistentSettings::Sections::hopTable,
+                                                  PropertyNames::Hop::amount_kg))
                .arg(hop->name())
-               .arg(Brewken::displayAmount(hop->time_min(), PersistentSettings::Sections::hopTable, PropertyNames::Misc::time,  &Units::minutes));
+               .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes},
+                                               PersistentSettings::Sections::hopTable,
+                                               PropertyNames::Misc::time));
 
          preins.push_back(PreInstruction(str, tr("Hop addition"), hop->time_min()));
       }
@@ -700,14 +739,11 @@ QVector<PreInstruction> Recipe::hopSteps(Hop::Use type) {
 
 QVector<PreInstruction> Recipe::miscSteps(Misc::Use type) {
    QVector<PreInstruction> preins;
-   QString str;
-   Unit const * kindOf;
-   unsigned int i;
-   int size;
 
    QList<Misc *> mlist = miscs();
-   size = mlist.size();
-   for (i = 0; static_cast<int>(i) < size; ++i) {
+   int size = mlist.size();
+   for (unsigned int i = 0; static_cast<int>(i) < size; ++i) {
+      QString str;
       Misc * misc = mlist[static_cast<int>(i)];
       if (misc->use() == type) {
          if (type == Misc::Boil) {
@@ -725,10 +761,16 @@ QVector<PreInstruction> Recipe::miscSteps(Misc::Use type) {
             str = tr("Use %1 %2 for %3.");
          }
 
-         kindOf = misc->amountIsWeight() ? &Units::kilograms : &Units::liters;
-         str = str .arg(Brewken::displayAmount(misc->amount(), PersistentSettings::Sections::miscTableModel, PropertyNames::Misc::amount, kindOf))
+         str = str .arg(Measurement::displayAmount(Measurement::Amount{
+                                                      misc->amount(),
+                                                      misc->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+                                                   },
+                                                   PersistentSettings::Sections::miscTableModel,
+                                                   PropertyNames::Misc::amount))
                .arg(misc->name())
-               .arg(Brewken::displayAmount(misc->time(), PersistentSettings::Sections::miscTableModel, PropertyNames::Misc::time, &Units::minutes));
+               .arg(Measurement::displayAmount(Measurement::Amount{misc->time(), Measurement::Units::minutes},
+                                               PersistentSettings::Sections::miscTableModel,
+                                               PropertyNames::Misc::time));
 
          preins.push_back(PreInstruction(str, tr("Misc addition"), misc->time()));
       }
@@ -753,7 +795,7 @@ void Recipe::firstWortHopsIns() {
    ins->setName(tr("First wort hopping"));
    ins->setDirections(str);
 
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -766,15 +808,21 @@ void Recipe::topOffIns() {
 
    double wortInBoil_l = wortFromMash_l() - e->lauterDeadspace_l();
    QString str = tr("You should now have %1 wort.")
-                 .arg(Brewken::displayAmount(wortInBoil_l, PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilSize_l, &Units::liters));
+                 .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters},
+                                                 PersistentSettings::Sections::tab_recipe,
+                                                 PropertyNames::Recipe::boilSize_l));
    if (e->topUpKettle_l() != 0.0) {
       return;
    }
 
    wortInBoil_l += e->topUpKettle_l();
    QString tmp = tr(" Add %1 water to the kettle, bringing pre-boil volume to %2.")
-                 .arg(Brewken::displayAmount(e->topUpKettle_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilSize_l,  &Units::liters))
-                 .arg(Brewken::displayAmount(wortInBoil_l, PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilSize_l,  &Units::liters));
+                 .arg(Measurement::displayAmount(Measurement::Amount{e->topUpKettle_l(), Measurement::Units::liters},
+                                                 PersistentSettings::Sections::tab_recipe,
+                                                 PropertyNames::Recipe::boilSize_l))
+                 .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters},
+                                                 PersistentSettings::Sections::tab_recipe,
+                                                 PropertyNames::Recipe::boilSize_l));
 
    str += tmp;
 
@@ -783,7 +831,7 @@ void Recipe::topOffIns() {
    ins->setDirections(str);
    ins->addReagent(tmp);
 
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -829,8 +877,9 @@ PreInstruction Recipe::boilFermentablesPre(double timeRemaining) {
       }
 
       str += QString("%1 %2, ")
-             .arg(Brewken::displayAmount(ferm->amount_kg(), PersistentSettings::Sections::fermentableTable, PropertyNames::Fermentable::amount_kg,
-                                         &Units::kilograms))
+             .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+                                             PersistentSettings::Sections::fermentableTable,
+                                             PropertyNames::Fermentable::amount_kg))
              .arg(ferm->name());
    }
    str += ".";
@@ -858,8 +907,9 @@ PreInstruction Recipe::addExtracts(double timeRemaining) const {
       const Fermentable * ferm = flist[i];
       if (ferm->isExtract()) {
          str += QString("%1 %2, ")
-                .arg(Brewken::displayAmount(ferm->amount_kg(), PersistentSettings::Sections::fermentableTable, PropertyNames::Fermentable::amount_kg,
-                                            &Units::kilograms))
+                .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+                                                PersistentSettings::Sections::fermentableTable,
+                                                PropertyNames::Fermentable::amount_kg))
                 .arg(ferm->name());
       }
    }
@@ -883,8 +933,9 @@ void Recipe::postboilFermentablesIns() {
 
       hasFerms = true;
       tmp = QString("%1 %2, ")
-            .arg(Brewken::displayAmount(ferm->amount_kg(), PersistentSettings::Sections::fermentableTable, PropertyNames::Fermentable::amount_kg,
-                                        &Units::kilograms))
+            .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+                                            PersistentSettings::Sections::fermentableTable,
+                                            PropertyNames::Fermentable::amount_kg))
             .arg(ferm->name());
       str += tmp;
    }
@@ -899,7 +950,7 @@ void Recipe::postboilFermentablesIns() {
    ins->setDirections(str);
    ins->addReagent(tmp);
 
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -917,22 +968,29 @@ void Recipe::postboilIns() {
 
    double wort_l = e->wortEndOfBoil_l(wortInBoil_l);
    QString str = tr("You should have %1 wort post-boil.")
-                 .arg(Brewken::displayAmount(wort_l, PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::batchSize_l, &Units::liters));
+                 .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters},
+                                                 PersistentSettings::Sections::tab_recipe,
+                                                 PropertyNames::Recipe::batchSize_l));
    str += tr("\nYou anticipate losing %1 to trub and chiller loss.")
-          .arg(Brewken::displayAmount(e->trubChillerLoss_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::batchSize_l,
-                                      &Units::liters));
+          .arg(Measurement::displayAmount(Measurement::Amount{e->trubChillerLoss_l(), Measurement::Units::liters},
+                                          PersistentSettings::Sections::tab_recipe,
+                                          PropertyNames::Recipe::batchSize_l));
    wort_l -= e->trubChillerLoss_l();
    if (e->topUpWater_l() > 0.0)
       str += tr("\nAdd %1 top up water into primary.")
-             .arg(Brewken::displayAmount(e->topUpWater_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::batchSize_l,  &Units::liters));
+             .arg(Measurement::displayAmount(Measurement::Amount{e->topUpWater_l(), Measurement::Units::liters},
+                                             PersistentSettings::Sections::tab_recipe,
+                                             PropertyNames::Recipe::batchSize_l));
    wort_l += e->topUpWater_l();
    str += tr("\nThe final volume in the primary is %1.")
-          .arg(Brewken::displayAmount(wort_l, PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::batchSize_l,  &Units::liters));
+          .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters},
+                                          PersistentSettings::Sections::tab_recipe,
+                                          PropertyNames::Recipe::batchSize_l));
 
    auto ins = std::make_shared<Instruction>();
    ins->setName(tr("Post boil"));
    ins->setDirections(str);
-   this->addNew(ins);
+   this->add(ins);
 
    return;
 }
@@ -948,7 +1006,7 @@ void Recipe::addPreinstructions(QVector<PreInstruction> preins) {
       ins->setDirections(pi.getText());
       ins->setInterval(pi.getTime());
 
-      this->addNew(ins);
+      this->add(ins);
    }
    return;
 }
@@ -1006,24 +1064,24 @@ void Recipe::generateInstructions() {
    if (equipment() != nullptr) {
       timeRemaining = equipment()->boilTime_min();
    } else {
-      timeRemaining = Brewken::qStringToSI(QInputDialog::getText(nullptr,
-                                                                 tr("Boil time"),
-                                                                 tr("You did not configure an equipment (which you really should), so tell me the boil time.")),
-                                           &Units::minutes);
+      timeRemaining =
+         Measurement::qStringToSI(QInputDialog::getText(nullptr,
+                                                        tr("Boil time"),
+                                                        tr("You did not configure an equipment (which you really should), so tell me the boil time.")),
+                                  Measurement::PhysicalQuantity::Time).quantity;
    }
 
    QString str = tr("Bring the wort to a boil and hold for %1.").arg(
-      Brewken::displayAmount(timeRemaining,
-                             PersistentSettings::Sections::tab_recipe,
-                             PropertyNames::Recipe::boilTime_min,
-                             &Units::minutes)
+      Measurement::displayAmount(Measurement::Amount{timeRemaining, Measurement::Units::minutes},
+                                 PersistentSettings::Sections::tab_recipe,
+                                 PropertyNames::Recipe::boilTime_min)
    );
 
    auto startBoilIns = std::make_shared<Instruction>();
    startBoilIns->setName(tr("Start boil"));
    startBoilIns->setInterval(timeRemaining);
    startBoilIns->setDirections(str);
-   this->addNew(startBoilIns);
+   this->add(startBoilIns);
 
    /*** Get fermentables unless we haven't added yet ***/
    if (hasBoilFermentable()) {
@@ -1050,7 +1108,7 @@ void Recipe::generateInstructions() {
    auto flameoutIns = std::make_shared<Instruction>();
    flameoutIns->setName(tr("Flameout"));
    flameoutIns->setDirections(tr("Stop boiling the wort."));
-   this->addNew(flameoutIns);
+   this->add(flameoutIns);
 
    // Steeped aroma hops
    preinstructions.clear();
@@ -1080,30 +1138,29 @@ void Recipe::generateInstructions() {
    auto pitchIns = std::make_shared<Instruction>();
    pitchIns->setName(tr("Pitch yeast"));
    pitchIns->setDirections(str);
-   this->addNew(pitchIns);
+   this->add(pitchIns);
    /*** End primary yeast ***/
 
    /*** Primary misc ***/
    addPreinstructions(miscSteps(Misc::Primary));
 
    str = tr("Let ferment until FG is %1.").arg(
-      Brewken::displayAmount(fg(),
-                             PersistentSettings::Sections::tab_recipe,
-                             PropertyNames::Recipe::fg,
-                             &Units::sp_grav,
-                             3)
+      Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::sp_grav},
+                                 PersistentSettings::Sections::tab_recipe,
+                                 PropertyNames::Recipe::fg,
+                                 3)
    );
 
    auto fermentIns = std::make_shared<Instruction>();
    fermentIns->setName(tr("Ferment"));
    fermentIns->setDirections(str);
-   this->addNew(fermentIns);
+   this->add(fermentIns);
 
    str = tr("Transfer beer to secondary.");
    auto transferIns = std::make_shared<Instruction>();
    transferIns->setName(tr("Transfer to secondary"));
    transferIns->setDirections(str);
-   this->addNew(transferIns);
+   this->add(transferIns);
 
    /*** Secondary misc ***/
    addPreinstructions(miscSteps(Misc::Secondary));
@@ -1137,9 +1194,13 @@ QString Recipe::nextAddToBoil(double & time) {
       }
       if (h->time_min() < time && h->time_min() > max) {
          ret = tr("Add %1 %2 to boil at %3.")
-               .arg(Brewken::displayAmount(h->amount_kg(), PersistentSettings::Sections::hopTable, PropertyNames::Hop::amount_kg, &Units::kilograms))
+               .arg(Measurement::displayAmount(Measurement::Amount{h->amount_kg(), Measurement::Units::kilograms},
+                                               PersistentSettings::Sections::hopTable,
+                                               PropertyNames::Hop::amount_kg))
                .arg(h->name())
-               .arg(Brewken::displayAmount(h->time_min(), PersistentSettings::Sections::hopTable, PropertyNames::Misc::time,  &Units::minutes));
+               .arg(Measurement::displayAmount(Measurement::Amount{h->time_min(), Measurement::Units::minutes},
+                                               PersistentSettings::Sections::hopTable,
+                                               PropertyNames::Misc::time));
 
          max = h->time_min();
          foundSomething = true;
@@ -1156,13 +1217,19 @@ QString Recipe::nextAddToBoil(double & time) {
       if (m->time() < time && m->time() > max) {
          ret = tr("Add %1 %2 to boil at %3.");
          if (m->amountIsWeight()) {
-            ret = ret.arg(Brewken::displayAmount(m->amount(), PersistentSettings::Sections::miscTableModel, PropertyNames::Misc::amount, &Units::kilograms));
+            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::kilograms},
+                                                     PersistentSettings::Sections::miscTableModel,
+                                                     PropertyNames::Misc::amount));
          } else {
-            ret = ret.arg(Brewken::displayAmount(m->amount(), PersistentSettings::Sections::miscTableModel, PropertyNames::Misc::amount,  &Units::liters));
+            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::liters},
+                                                     PersistentSettings::Sections::miscTableModel,
+                                                     PropertyNames::Misc::amount));
          }
 
          ret = ret.arg(m->name());
-         ret = ret.arg(Brewken::displayAmount(m->time(), PersistentSettings::Sections::miscTableModel, PropertyNames::Misc::time, &Units::minutes));
+         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time(), Measurement::Units::minutes},
+                                                  PersistentSettings::Sections::miscTableModel,
+                                                  PropertyNames::Misc::time));
          max = m->time();
          foundSomething = true;
       }
@@ -1173,29 +1240,35 @@ QString Recipe::nextAddToBoil(double & time) {
 }
 
 //============================Relational Setters===============================
-template<class NE> NE * Recipe::add(std::shared_ptr<NE> ne) {
+template<class NE> std::shared_ptr<NE> Recipe::add(std::shared_ptr<NE> ne) {
+   // It's a coding error if we've ended up with a null shared_ptr
+   Q_ASSERT(ne);
+
+   // If the object being added is not already in the ObjectStore, we need to add it.  This is typically when we're
+   // adding a new Instruction (which is an object owned by Recipe) or undoing a remove of a Hop/Fermentable/etc (thus
+   // the "instance of use of" object was previously in the ObjectStore, but was removed and now we want to add it
+   // back).
+   if (ne->key() <= 0) {
+      // With shared pointer parameter, ObjectStoreWrapper::insert returns what we passed it (ie our shared pointer
+      // remains valid after the call).
+      qDebug() << Q_FUNC_INFO << "Inserting" << ne->metaObject()->className() << "in object store";
+      ObjectStoreWrapper::insert(ne);
+   } else {
+      //
+      // The object was already in the ObjectStore, so let's check whether we need to copy it.
+      //
+      // Note that std::shared_ptr does all the right things if this assignment ends up boiling down to ne = ne!
+      //
+      ne = copyIfNeeded(*ne);
+   }
+
    this->pimpl->accessIds<NE>().append(ne->key());
    connect(ne.get(), SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(acceptChangeToContainedObject(QMetaProperty,
                                                                                                         QVariant)));
    this->propagatePropertyChange(propertyToPropertyName<NE>());
 
    this->recalcIfNeeded(ne->metaObject()->className());
-   return ne.get();
-}
-
-/**
- * \brief Create and add a new Hop/Fermentable/Instruction etc, first to the relevant Object Store and then to this
- *        Recipe
- */
-template<class NE> void Recipe::addNew(std::shared_ptr<NE> ne) {
-   ObjectStoreWrapper::insert(ne);
-   this->add(ne);
-   return;
-}
-
-template<class NE> NE * Recipe::add(NE * var) {
-   std::shared_ptr<NE> neToAdd = copyIfNeeded(*var);
-   return this->add(neToAdd);
+   return ne;
 }
 
 //
@@ -1203,13 +1276,13 @@ template<class NE> NE * Recipe::add(NE * var) {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // means, amongst other things, that we can reference the pimpl.)
 //
-template Hop     *     Recipe::add(Hop     *     var);
-template Fermentable * Recipe::add(Fermentable * var);
-template Misc     *    Recipe::add(Misc     *    var);
-template Yeast    *    Recipe::add(Yeast    *    var);
-template Water    *    Recipe::add(Water    *    var);
-template Salt     *    Recipe::add(Salt     *    var);
-template Instruction * Recipe::add(Instruction * var);
+template std::shared_ptr<Hop        > Recipe::add(std::shared_ptr<Hop        > var);
+template std::shared_ptr<Fermentable> Recipe::add(std::shared_ptr<Fermentable> var);
+template std::shared_ptr<Misc       > Recipe::add(std::shared_ptr<Misc       > var);
+template std::shared_ptr<Yeast      > Recipe::add(std::shared_ptr<Yeast      > var);
+template std::shared_ptr<Water      > Recipe::add(std::shared_ptr<Water      > var);
+template std::shared_ptr<Salt       > Recipe::add(std::shared_ptr<Salt       > var);
+template std::shared_ptr<Instruction> Recipe::add(std::shared_ptr<Instruction> var);
 
 template<class NE> bool Recipe::uses(NE const & var) const {
    int idToLookFor = var.key();
@@ -1243,31 +1316,52 @@ template bool Recipe::uses(Yeast        const & var) const;
 template<> bool Recipe::uses<Equipment> (Equipment  const & var) const {
    return var.key() == this->equipmentId;
 }
-template<> bool Recipe::uses<Mash> (Mash       const & var) const {
+template<> bool Recipe::uses<Mash> (Mash const & var) const {
    return var.key() == this->mashId;
 }
-template<> bool Recipe::uses<Style> (Style      const & var) const {
+template<> bool Recipe::uses<Style> (Style const & var) const {
    return var.key() == this->styleId;
 }
 
-template<class NE> NE * Recipe::remove(NE * var) {
-   int idToLookFor = var->key();
-   if (!this->pimpl->accessIds<NE>().removeOne(idToLookFor)) {
-      // This shouldn't happen, but it doesn't inherently break anything, so just log a warning and carry on
-      qWarning() << Q_FUNC_INFO << "Tried to remove object with ID" << idToLookFor << "but couldn't find it";
+template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
+   // It's a coding error to supply a null shared pointer
+   Q_ASSERT(var);
+
+   int idToRemove = var->key();
+   if (!this->pimpl->accessIds<NE>().removeOne(idToRemove)) {
+      // It's a coding error if we try to remove something from the Recipe that wasn't in it in the first place!
+      qCritical() <<
+         Q_FUNC_INFO << "Tried to remove" << var->metaObject()->className() << "with ID" << idToRemove <<
+         "but couldn't find it in Recipe #" << this->key();
+      Q_ASSERT(false);
    } else {
       this->propagatePropertyChange(propertyToPropertyName<NE>());
       this->recalcIBU(); // .:TODO:. Don't need to do this recalculation when it's Instruction
    }
+
+   //
+   // Because Hop/Fermentable/etc objects in a Recipe are actually "Instance of use of Hop/Fermentable/etc" we usually
+   // want to delete the object from the ObjectStore at this point.  But, because we're a bit paranoid, we'll check
+   // first that the object we're removing has a parent (ie really is an "instance of use of") and is not used in any
+   // other Recipes.
+   //
+   if (isUnusedInstanceOfUseOf(*var)) {
+      qDebug() <<
+         Q_FUNC_INFO << "Deleting" << var->metaObject()->className() << "#" << var->key() <<
+         "as it is \"instance of use of\" that is no longer needed";
+      ObjectStoreWrapper::hardDelete<NE>(var->key());
+   }
+   // The caller now owns the removed object unless and until they pass it in to Recipe::add() (typically to undo the
+   // remove).
    return var;
 }
-template Hop     *     Recipe::remove(Hop     *     var);
-template Fermentable * Recipe::remove(Fermentable * var);
-template Misc     *    Recipe::remove(Misc     *    var);
-template Yeast    *    Recipe::remove(Yeast    *    var);
-template Water    *    Recipe::remove(Water    *    var);
-template Salt     *    Recipe::remove(Salt     *    var);
-template Instruction * Recipe::remove(Instruction * var);
+template std::shared_ptr<Hop        > Recipe::remove(std::shared_ptr<Hop        > var);
+template std::shared_ptr<Fermentable> Recipe::remove(std::shared_ptr<Fermentable> var);
+template std::shared_ptr<Misc       > Recipe::remove(std::shared_ptr<Misc       > var);
+template std::shared_ptr<Yeast      > Recipe::remove(std::shared_ptr<Yeast      > var);
+template std::shared_ptr<Water      > Recipe::remove(std::shared_ptr<Water      > var);
+template std::shared_ptr<Salt       > Recipe::remove(std::shared_ptr<Salt       > var);
+template std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var);
 
 int Recipe::instructionNumber(Instruction const & ins) const {
    return this->pimpl->instructionIds.indexOf(ins.key());
@@ -2332,7 +2426,6 @@ void Recipe::recalcOgFg() {
    double attenuation_pct = 0.0;
    double tmp_og, tmp_fg, tmp_pnts, tmp_ferm_pnts, tmp_nonferm_pnts;
    Yeast * yeast;
-   QHash<QString, double> sugars;
 
    m_og_fermentable = m_fg_fermentable = 0.0;
 
@@ -2345,12 +2438,12 @@ void Recipe::recalcOgFg() {
    // until we load these values from the database on startup, we have
    // to calculate.
    if (m_uninitializedCalcs) {
-      m_og = Brewken::toDouble(this, PropertyNames::Recipe::og, "Recipe::recalcOgFg()");
-      m_fg = Brewken::toDouble(this, PropertyNames::Recipe::fg, "Recipe::recalcOgFg()");
+      m_og = Localization::toDouble(*this, PropertyNames::Recipe::og, Q_FUNC_INFO);
+      m_fg = Localization::toDouble(*this, PropertyNames::Recipe::fg, Q_FUNC_INFO);
    }
 
    // Find out how much sugar we have.
-   sugars = calcTotalPoints();
+   QHash<QString, double> sugars = calcTotalPoints();
    sugar_kg                  = sugars.value("sugar_kg");  // Mass of sugar that *is* affected by mash efficiency
    sugar_kg_ignoreEfficiency =
       sugars.value("sugar_kg_ignoreEfficiency");  // Mass of sugar that *is not* affected by mash efficiency
@@ -2452,13 +2545,13 @@ void Recipe::recalcOgFg() {
 double Recipe::ibuFromHop(Hop const * hop) {
    Equipment * equip = equipment();
    double ibus = 0.0;
-   double fwhAdjust = Brewken::toDouble(
+   double fwhAdjust = Localization::toDouble(
       PersistentSettings::value(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
-      "Recipe::ibmFromHop()"
+      Q_FUNC_INFO
    );
-   double mashHopAdjust = Brewken::toDouble(
+   double mashHopAdjust = Localization::toDouble(
       PersistentSettings::value(PersistentSettings::Names::mashHopAdjustment, 0).toString(),
-      "Recipe::ibmFromHop()"
+      Q_FUNC_INFO
    );
 
    if (hop == nullptr) {
@@ -2529,13 +2622,15 @@ QList<QString> Recipe::getReagents(QList<Fermentable *> ferms) {
       if (ferms[i]->isMashed()) {
          if (i + 1 < ferms.size()) {
             tmp = QString("%1 %2, ")
-                  .arg(Brewken::displayAmount(ferms[i]->amount_kg(), PersistentSettings::Sections::fermentableTable, PropertyNames::Fermentable::amount_kg,
-                                              &Units::kilograms))
+                  .arg(Measurement::displayAmount(Measurement::Amount{ferms[i]->amount_kg(), Measurement::Units::kilograms},
+                                                  PersistentSettings::Sections::fermentableTable,
+                                                  PropertyNames::Fermentable::amount_kg))
                   .arg(ferms[i]->name());
          } else {
             tmp = QString("%1 %2 ")
-                  .arg(Brewken::displayAmount(ferms[i]->amount_kg(), PersistentSettings::Sections::fermentableTable, PropertyNames::Fermentable::amount_kg,
-                                              &Units::kilograms))
+                  .arg(Measurement::displayAmount(Measurement::Amount{ferms[i]->amount_kg(), Measurement::Units::kilograms},
+                                                  PersistentSettings::Sections::fermentableTable,
+                                                  PropertyNames::Fermentable::amount_kg))
                   .arg(ferms[i]->name());
          }
          reagents.append(tmp);
@@ -2551,7 +2646,9 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
    for (int i = 0; i < hops.size(); ++i) {
       if (firstWort && (hops[i]->use() == Hop::First_Wort)) {
          tmp = QString("%1 %2,")
-               .arg(Brewken::displayAmount(hops[i]->amount_kg(), PersistentSettings::Sections::hopTable, PropertyNames::Hop::amount_kg,  &Units::kilograms))
+               .arg(Measurement::displayAmount(Measurement::Amount{hops[i]->amount_kg(), Measurement::Units::kilograms},
+                                               PersistentSettings::Sections::hopTable,
+                                               PropertyNames::Hop::amount_kg))
                .arg(hops[i]->name());
          reagents.append(tmp);
       }
@@ -2570,16 +2667,20 @@ QList<QString> Recipe::getReagents(QList<MashStep *> msteps) {
 
       if (i + 1 < msteps.size()) {
          tmp = tr("%1 water to %2, ")
-               .arg(Brewken::displayAmount(msteps[i]->infuseAmount_l(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::infuseAmount_l,
-                                           &Units::liters))
-               .arg(Brewken::displayAmount(msteps[i]->infuseTemp_c(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::infuseTemp_c,
-                                           &Units::celsius));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::infuseAmount_l))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::infuseTemp_c));
       } else {
          tmp = tr("%1 water to %2 ")
-               .arg(Brewken::displayAmount(msteps[i]->infuseAmount_l(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::infuseAmount_l,
-                                           &Units::liters))
-               .arg(Brewken::displayAmount(msteps[i]->infuseTemp_c(), PersistentSettings::Sections::mashStepTableModel, PropertyNames::MashStep::infuseTemp_c,
-                                           &Units::celsius));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::infuseAmount_l))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius},
+                                               PersistentSettings::Sections::mashStepTableModel,
+                                               PropertyNames::MashStep::infuseTemp_c));
       }
       reagents.append(tmp);
    }
@@ -2594,14 +2695,18 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
 
    for (int i = 0; i < salts.size(); ++i) {
       Salt::WhenToAdd what = salts[i]->addTo();
-      Unit const * rightUnit = salts[i]->amountIsWeight() ? &Units::kilograms : &Units::liters;
+      Measurement::Unit const & rightUnit = salts[i]->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters;
       if (what == wanted) {
          tmp = tr("%1 %2, ")
-               .arg(Brewken::displayAmount(salts[i]->amount(), PersistentSettings::Sections::saltTable, PropertyNames::Salt::amount, rightUnit))
+               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit},
+                                               PersistentSettings::Sections::saltTable,
+                                               PropertyNames::Salt::amount))
                .arg(salts[i]->name());
       } else if (what == Salt::EQUAL) {
          tmp = tr("%1 %2, ")
-               .arg(Brewken::displayAmount(salts[i]->amount(), PersistentSettings::Sections::saltTable, PropertyNames::Salt::amount, rightUnit))
+               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit},
+                                               PersistentSettings::Sections::saltTable,
+                                               PropertyNames::Salt::amount))
                .arg(salts[i]->name());
       } else if (what == Salt::RATIO) {
          double ratio = 1.0;
@@ -2610,7 +2715,9 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
          }
          double amt = salts[i]->amount() * ratio;
          tmp = tr("%1 %2, ")
-               .arg(Brewken::displayAmount(amt, PersistentSettings::Sections::saltTable, PropertyNames::Salt::amount, rightUnit))
+               .arg(Measurement::displayAmount(Measurement::Amount{amt, rightUnit},
+                                               PersistentSettings::Sections::saltTable,
+                                               PropertyNames::Salt::amount))
                .arg(salts[i]->name());
       } else {
          continue;
@@ -2700,8 +2807,24 @@ void Recipe::hardDeleteOwnedEntities() {
    this->pimpl->hardDeleteAllMy<Water>      ();
    this->pimpl->hardDeleteAllMy<Yeast>      ();
 
+   return;
+}
+
+void Recipe::hardDeleteOrphanedEntities() {
+   //
    // Strictly a Recipe does not own its Mash.  However, if our Mash does not have a name and is not used by any other
-   // Recipe, then we delete it, on the grounds that it's not one the user intended to reuse across multiple Recipes.
+   // Recipe, then we want to delete it, on the grounds that it's not one the user intended to reuse across multiple
+   // Recipes.
+   //
+   // However, if we try to just delete the Mash Recipe::hardDeleteOwnedEntities(), we'd get a foreign key constraint
+   // violation error from the DB as, at that point, the Mash ID is still referenced by this Recipe.  (Unsetting the
+   // Mash ID in the Recipe record would be a bit tricky as we'd have to set it to NULL rather than just, say, -1 as,
+   // otherwise we'll get a different foreign key constraint violation error (because the DB can't find a Mash row with
+   // ID -1!).)
+   //
+   // At this point, however, the Recipe record has been removed from the database, so we can safely delete any orphaned
+   // Mash record.
+   //
    Mash * mash = this->mash();
    if (mash && mash->name() == "") {
       qDebug() << Q_FUNC_INFO << "Checking whether our unnamed Mash is used elsewhere";
@@ -2717,7 +2840,6 @@ void Recipe::hardDeleteOwnedEntities() {
          ObjectStoreWrapper::hardDelete<Mash>(*mash);
       }
    }
-
    return;
 }
 

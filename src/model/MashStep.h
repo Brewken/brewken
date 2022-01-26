@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -56,6 +56,12 @@ class MashStep : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "mashsteps")
 
+   // this seems to be a class with a lot of friends
+
+   friend class MashStepItemDelegate;
+   friend class MashWizard;
+   friend class MashDesigner;
+   friend class MainWindow;
 public:
 
    //! \brief The type of step.
@@ -64,9 +70,9 @@ public:
 
    MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
-   MashStep(MashStep const & other);
+   MashStep( MashStep const& other );
 
-   virtual ~MashStep() = default;
+   virtual ~MashStep();
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
@@ -88,7 +94,7 @@ public:
    Q_PROPERTY( double infuseTemp_c READ infuseTemp_c WRITE setInfuseTemp_c /*NOTIFY changed*/ /*changedInfuseTemp_c*/ )
    //! \brief The decoction amount in liters.
    Q_PROPERTY( double decoctionAmount_l READ decoctionAmount_l WRITE setDecoctionAmount_l /*NOTIFY changed*/ /*changedDecoctionAmount_l*/ )
-   //! \brief The step number in a sequence of other steps.
+   //! \brief The step number in a sequence of other steps.  Step numbers start from 1.
    Q_PROPERTY( int stepNumber READ stepNumber WRITE setStepNumber /*NOTIFY changed*/ STORED false )
    //! \brief The Mash to which this MashStep belongs
    Q_PROPERTY( int mashId READ getMashId WRITE setMashId )

@@ -19,11 +19,9 @@
 
 #include <QDebug>
 
-#include "Brewken.h"
 #include "BtFolder.h"
 #include "BtTreeModel.h"
 #include "BtTreeItem.h"
-
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"

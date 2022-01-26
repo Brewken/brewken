@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -21,9 +21,9 @@
 
 #include <typeinfo>
 
+#include <QDebug>
 #include <QMetaProperty>
 
-#include "Brewken.h"
 #include "database/ObjectStore.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
@@ -77,6 +77,8 @@ NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    m_beingModified{false} {
    return;
 }
+
+NamedEntity::~NamedEntity() = default;
 
 void NamedEntity::makeChild(NamedEntity const & copiedFrom) {
    // It's a coding error if we're not starting out with objects that are copies of each other
@@ -352,6 +354,12 @@ void NamedEntity::setParent(NamedEntity const & parentNamedEntity) {
 void NamedEntity::hardDeleteOwnedEntities() {
    // If we are not overridden in the subclass then there is no work to do
    qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "owns no other entities";
+   return;
+}
+
+void NamedEntity::hardDeleteOrphanedEntities() {
+   // If we are not overridden in the subclass then there is no work to do
+   qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "leaves no other entities as orphans";
    return;
 }
 

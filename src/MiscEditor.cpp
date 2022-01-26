@@ -23,12 +23,11 @@
 #include <QIcon>
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Misc.h"
-#include "units/Unit.h"
 
 MiscEditor::MiscEditor(QWidget * parent) :
    QDialog(parent),
@@ -68,7 +67,7 @@ void MiscEditor::save() {
    this->obsMisc->setName(lineEdit_name->text());
    this->obsMisc->setType(static_cast<Misc::Type>(comboBox_type->currentIndex()));
    this->obsMisc->setUse(static_cast<Misc::Use>(comboBox_use->currentIndex()));
-   this->obsMisc->setTime(lineEdit_time->toSI());
+   this->obsMisc->setTime(lineEdit_time->toSI().quantity);
    this->obsMisc->setAmountIsWeight((checkBox_isWeight->checkState() == Qt::Checked) ? true : false);
    this->obsMisc->setUseFor(textEdit_useFor->toPlainText());
    this->obsMisc->setNotes(textEdit_notes->toPlainText());
@@ -78,7 +77,7 @@ void MiscEditor::save() {
       ObjectStoreWrapper::insert(*this->obsMisc);
    }
    // do this late to make sure we've the row in the inventory table
-   this->obsMisc->setInventoryAmount(lineEdit_inventory->toSI());
+   this->obsMisc->setInventoryAmount(lineEdit_inventory->toSI().quantity);
    setVisible(false);
    return;
 }

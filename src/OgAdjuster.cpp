@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * OgAdjuster.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * OgAdjuster.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -21,10 +21,9 @@
 #include "OgAdjuster.h"
 
 #include "Algorithms.h"
-#include "Brewken.h"
+#include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
-#include "units/Unit.h"
 
 OgAdjuster::OgAdjuster( QWidget* parent ) : QDialog(parent) {
    setupUi(this);
@@ -71,11 +70,11 @@ void OgAdjuster::calculate()
    bool okPlato = true;
 
    // Get inputs.
-   sg          = lineEdit_sg->toSI();
-   plato       = lineEdit_plato->toDouble(&okPlato);
-   temp_c      = lineEdit_temp->toSI();
-   hydroTemp_c = lineEdit_calTemp->toSI();
-   wort_l      = lineEdit_volume->toSI();
+   sg          = lineEdit_sg->toSI().quantity;
+   plato       = lineEdit_plato->toDoubleRaw(&okPlato);
+   temp_c      = lineEdit_temp->toSI().quantity;
+   hydroTemp_c = lineEdit_calTemp->toSI().quantity;
+   wort_l      = lineEdit_volume->toSI().quantity;
 
    // Make sure we got enough info.
    gotSG = sg != 0 && temp_c != 0 && hydroTemp_c != 0;

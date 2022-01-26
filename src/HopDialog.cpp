@@ -31,10 +31,10 @@
 #include "database/ObjectStoreWrapper.h"
 #include "HopEditor.h"
 #include "HopSortFilterProxyModel.h"
-#include "HopTableModel.h"
 #include "MainWindow.h"
 #include "model/Hop.h"
 #include "model/Recipe.h"
+#include "tableModels/HopTableModel.h"
 
 HopDialog::HopDialog(MainWindow* parent) :
    QDialog(parent),
@@ -178,7 +178,7 @@ void HopDialog::addHop(const QModelIndex& index)
          return;
    }
 
-   Brewken::mainWindow()->addHopToRecipe(hopTableModel->getHop(translated.row()));
+   MainWindow::instance().addHopToRecipe(hopTableModel->getHop(translated.row()));
 
    return;
 }

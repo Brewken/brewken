@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Water.h"
 
@@ -168,14 +167,14 @@ void WaterEditor::saveAndClose() {
 
    this->obs->setName( lineEdit_name->text());
    this->obs->setAmount(0.0);
-   this->obs->setBicarbonate_ppm( lineEdit_alk->toSI() );
-   this->obs->setCalcium_ppm( lineEdit_ca->toSI() );
-   this->obs->setMagnesium_ppm( lineEdit_mg->toSI() );
-   this->obs->setSulfate_ppm( lineEdit_so4->toSI() );
-   this->obs->setSodium_ppm( lineEdit_na->toSI() );
-   this->obs->setChloride_ppm( lineEdit_cl->toSI() );
-   this->obs->setPh( lineEdit_ph->toSI() );
-   this->obs->setAlkalinity( lineEdit_alk->toSI());
+   this->obs->setBicarbonate_ppm( lineEdit_alk->toSI().quantity );
+   this->obs->setCalcium_ppm( lineEdit_ca->toSI().quantity );
+   this->obs->setMagnesium_ppm( lineEdit_mg->toSI().quantity );
+   this->obs->setSulfate_ppm( lineEdit_so4->toSI().quantity );
+   this->obs->setSodium_ppm( lineEdit_na->toSI().quantity );
+   this->obs->setChloride_ppm( lineEdit_cl->toSI().quantity );
+   this->obs->setPh( lineEdit_ph->toSI().quantity );
+   this->obs->setAlkalinity( lineEdit_alk->toSI().quantity);
    this->obs->setAlkalinityAsHCO3(comboBox_alk->currentText() == QString("HCO3"));
    this->obs->setNotes( plainTextEdit_notes->toPlainText());
 

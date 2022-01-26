@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HydrometerTool.cpp is part of Brewken, and is copyright the following authors 2016-2021:
+ * HydrometerTool.cpp is part of Brewken, and is copyright the following authors 2016-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jamie Daws <jdelectronics1@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -30,17 +30,16 @@
 #include <QWidget>
 
 #include "Algorithms.h"
-#include "Brewken.h"
-#include "units/Unit.h"
+#include "measurement/Unit.h"
 
 HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
-   doLayout();
+   this->doLayout();
 
-   connect( pushButton_convert, &QAbstractButton::clicked, this, &HydrometerTool::convert );
-   connect(label_inputTemp, &BtLabel::labelChanged, lineEdit_inputTemp, &BtLineEdit::lineChanged);
-   connect(label_inputSg, &BtLabel::labelChanged, lineEdit_inputSg, &BtLineEdit::lineChanged);
-   connect(label_outputSg, &BtLabel::labelChanged, lineEdit_outputSg, &BtLineEdit::lineChanged);
-   connect(label_calibratedTemp, &BtLabel::labelChanged, lineEdit_calibratedTemp, &BtLineEdit::lineChanged);
+   connect(pushButton_convert, &QAbstractButton::clicked, this, &HydrometerTool::convert );
+   connect(label_inputTemp,      &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_inputTemp,      &BtLineEdit::lineChanged);
+   connect(label_inputSg,        &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_inputSg,        &BtLineEdit::lineChanged);
+   connect(label_outputSg,       &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_outputSg,       &BtLineEdit::lineChanged);
+   connect(label_calibratedTemp, &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_calibratedTemp, &BtLineEdit::lineChanged);
 
    QMetaObject::connectSlotsByName(this);
    return;
@@ -85,7 +84,8 @@ void HydrometerTool::doLayout() {
     lineEdit_outputSg = new BtDensityEdit(groupBox_inputSg);
         lineEdit_outputSg->setMinimumSize(QSize(80, 0));
         lineEdit_outputSg->setMaximumSize(QSize(80, 16777215));
-        lineEdit_outputSg->setProperty("forcedUnit",QVariant(QStringLiteral("displaySG")));
+      lineEdit_outputSg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
+
         lineEdit_outputSg->setReadOnly(true);
 
 #ifndef QT_NO_SHORTCUT
@@ -143,9 +143,9 @@ void HydrometerTool::retranslateUi() {
 
 void HydrometerTool::convert() {
    double correctedGravity = Algorithms::correctSgForTemperature(
-      lineEdit_inputSg->toSI(),       // measured gravity
-      lineEdit_inputTemp->toSI(),     // temperature at time of reading in Celsius
-      lineEdit_calibratedTemp->toSI() // calibration temperature of hydrometer in Celsius
+      lineEdit_inputSg->toSI().quantity,       // measured gravity
+      lineEdit_inputTemp->toSI().quantity,     // temperature at time of reading in Celsius
+      lineEdit_calibratedTemp->toSI().quantity // calibration temperature of hydrometer in Celsius
    );
 
    lineEdit_outputSg->setText(correctedGravity);

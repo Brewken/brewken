@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -25,7 +25,11 @@
 
 #include <memory> // For PImpl
 
+#include <QList>
+#include <QMetaProperty>
 #include <QSqlRecord>
+#include <QString>
+#include <QVariant>
 #include <QVector>
 
 #include "model/NamedEntity.h"
@@ -152,10 +156,11 @@ public:
     */
    virtual void hardDeleteOwnedEntities();
 
+   std::shared_ptr<MashStep> addMashStep(std::shared_ptr<MashStep> mashStep);
+   std::shared_ptr<MashStep> removeMashStep(std::shared_ptr<MashStep> mashStep);
+
 public slots:
    void acceptMashStepChange(QMetaProperty, QVariant);
-   MashStep * addMashStep(MashStep * mashStep);
-   MashStep * removeMashStep(MashStep * mashStep);
 
 signals:
    // Emitted when the number of steps change, or when you should call mashSteps() again.

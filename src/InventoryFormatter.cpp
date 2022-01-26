@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2021:
+ * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -20,11 +20,12 @@
 #include <QDate>
 #include <QDialog>
 
-#include "Brewken.h"
 #include "BtPrintPreview.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Html.h"
+#include "Localization.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Inventory.h"
@@ -37,7 +38,7 @@ namespace {
       return Html::createHeader(QObject::tr("Inventory"), ":css/inventory.css") +
             QString("<h1>%1 &mdash; %2</h1>")
                   .arg(QObject::tr("Inventory"))
-                  .arg(Brewken::displayDateUserFormated(QDate::currentDate()));
+                  .arg(Localization::displayDateUserFormated(QDate::currentDate()));
    }
 
    /**
@@ -67,10 +68,9 @@ namespace {
                               "<td>%2</td>"
                               "</tr>")
                            .arg(fermentable->name())
-                           .arg(Brewken::displayAmount(fermentable->inventory(),
-                                                       PersistentSettings::Sections::fermentableTable,
-                                                       PropertyNames::NamedEntityWithInventory::inventory,
-                                                       &Units::kilograms));
+                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(), Measurement::Units::kilograms},
+                                                           PersistentSettings::Sections::fermentableTable,
+                                                           PropertyNames::NamedEntityWithInventory::inventory));
          }
          result += "</table>";
       }
@@ -107,10 +107,9 @@ namespace {
                               "</tr>")
                            .arg(hop->name())
                            .arg(hop->alpha_pct())
-                           .arg(Brewken::displayAmount(hop->inventory(),
-                                                       PersistentSettings::Sections::hopTable,
-                                                       PropertyNames::NamedEntityWithInventory::inventory,
-                                                       &Units::kilograms));
+                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(), Measurement::Units::kilograms},
+                                                           PersistentSettings::Sections::hopTable,
+                                                           PropertyNames::NamedEntityWithInventory::inventory));
          }
          result += "</table>";
       }
@@ -138,12 +137,14 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto miscellaneous : inventory) {
-            const QString displayAmount =
-                  Brewken::displayAmount(miscellaneous->inventory(),
-                                         PersistentSettings::Sections::miscTable,
-                                         PropertyNames::NamedEntityWithInventory::inventory,
-                        miscellaneous->amountIsWeight() ? (Unit*)&Units::kilograms
-                                                      : (Unit*)&Units::liters);
+            QString const displayAmount = Measurement::displayAmount(
+               Measurement::Amount{
+                  miscellaneous->inventory(),
+                  miscellaneous->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
+               PersistentSettings::Sections::miscTable,
+               PropertyNames::NamedEntityWithInventory::inventory
+            );
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
@@ -175,12 +176,14 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto yeast : inventory) {
-            const QString displayAmount =
-                  Brewken::displayAmount(yeast->inventory(),
-                                         PersistentSettings::Sections::yeastTable,
-                                         PropertyNames::NamedEntityWithInventory::inventory,
-                        yeast->amountIsWeight() ? (Unit*)&Units::kilograms
-                                                : (Unit*)&Units::liters);
+            QString const displayAmount = Measurement::displayAmount(
+               Measurement::Amount{
+                  yeast->inventory(),
+                  yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
+               PersistentSettings::Sections::yeastTable,
+               PropertyNames::NamedEntityWithInventory::inventory
+            );
 
             result += QString("<tr>"
                               "<td>%1</td>"
@@ -215,7 +218,7 @@ namespace {
 
    void createOrUpdateDialog() {
       if (nullptr == dialog) {
-         dialog = new BtPrintPreview(Brewken::mainWindow());
+         dialog = new BtPrintPreview(&MainWindow::instance());
          dialog->setWindowTitle(QObject::tr("Inventory Print Preview"));
       }
       dialog->setContent(createInventoryHeader() +

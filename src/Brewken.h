@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Brewken.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * Brewken.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -31,84 +31,23 @@
 
 #define CONFIG_VERSION 1
 
-#define BTICON ":/images/brewken.svg"
-//#define ICON96 ":/images/BrewkenIcon_96.png"
-#define GLASS ":/images/glass2.png"
-#define SMALLBARLEY ":/images/smallBarley.svg"
-#define SMALLHOP ":/images/smallHop.svg"
-#define SMALLWATER ":/images/smallWater.svg"
-#define SMALLYEAST ":/images/smallYeast.svg"
-#define SMALLKETTLE ":/images/smallKettle.svg"
-#define SMALLQUESTION ":/images/smallQuestion.svg"
-#define SMALLSTYLE ":/images/smallStyle.svg"
-#define SMALLPLUS ":/images/smallPlus.svg"
-#define SMALLMINUS ":/images/smallMinus.svg"
-#define SMALLARROW ":/images/smallArrow.svg"
-#define SMALLINFO ":/images/smallInfo.svg"
-#define SMALLOUTARROW ":/images/smallOutArrow.svg"
-#define SHRED ":/images/editshred.svg"
-#define EXITPNG ":/images/exit.svg"
-#define SAVEPNG ":/images/filesave.svg"
-#define SAVEDIRTYPNG ":/images/filesavedirty.svg"
-#define CLOCKPNG ":/images/clock.svg"
-#define SOUND ":/images/sound.png"
-#define STOP ":/images/alarm_stop.png"
-
 // need to use this to turn on Mac keyboard shortcuts (see https://doc.qt.io/qt-5/qkeysequence.html#qt_set_sequence_auto_mnemonic)
 extern void qt_set_sequence_auto_mnemonic(bool b);
 
-#include <QApplication>
-#include <QDateTime>
-#include <QDebug>
 #include <QDir>
-#include <QDomDocument>
-#include <QFile>
-#include <QList>
-#include <QMenu>
 #include <QMetaProperty>
-#include <QObject>
-#include <QSettings>
-#include <QString>
-#include <QTextStream>
-#include <QTranslator>
 
-#include "Logging.h"
-#include "units/UnitSystem.h"
-#include "utils/BtStringConst.h"
-
-class NamedEntity;
 class MainWindow;
 
 // Need these for changed(QMetaProperty,QVariant) to be emitted across threads.
 Q_DECLARE_METATYPE( QMetaProperty )
 
 /*!
- * \class Brewken
+ * \brief Figures out stuff from the system etc.
  *
- * \brief The main class. Figures out stuff from the system, formats things appropriately, handles translation, etc.
- *
- * TODO: Lots of things in this class belong elsewhere...
+ * TODO: The config & system options stuff probably belongs in a separate class, and the remainder of what's here might go in main or MainWindow...
  */
-class Brewken : public QObject
-{
-   Q_OBJECT
-   Q_ENUMS(DbType)
-   Q_ENUMS(delOptions)
-
-   friend class OptionDialog;
-   friend class RecipeFormatter;
-   friend class Unit;
-
-   friend class MainWindow;
-   friend class Testing;
-
-public:
-   Brewken();
-
-   enum RangeType {
-      DENSITY,
-      COLOR
-   };
+namespace Brewken {
 
    /**
     * \return the resource directory where some files that ship with Brewken live (default DB, sounds, translations)
@@ -117,169 +56,24 @@ public:
     *         https://doc.qt.io/qt-5/resources.html) but, for some files, we want the user also to be able to access
     *         the file directly.  Such files are stored in this directory.
     */
-   static QDir getResourceDir();
+   QDir getResourceDir();
 
    /*!
     * \brief Blocking call that executes the application.
     * \param userDirectory If !isEmpty, overwrites the current settings.
     * \return Exit code from the application.
     */
-   static int run();
-
-   static double toDouble(QString text, bool* ok = nullptr);
-   static double toDouble(const NamedEntity* element, BtStringConst const & propertyName, QString caller);
-   static double toDouble(QString text, QString caller);
-
-   /*!
-    *  \brief Displays an amount in the appropriate units.
-    *
-    *  \param amount the amount to display
-    *  \param units the units that \c amount is in
-    *  \param precision how many decimal places
-    *  \param unitDisplay which unit system to use, defaulting to "noUnit" which means use the system default
-    *  \param Unit::RelativeScale which scale to use, defaulting to Unit::noScale which means use the largest scale that generates a value > 1
-    */
-   static QString displayAmount( double amount, Unit const * units=nullptr, int precision=3,
-                                 Unit::unitDisplay displayUnit = Unit::noUnit, Unit::RelativeScale displayScale = Unit::noScale );
-   /*!
-    * \brief Displays an amount in the appropriate units.
-    *
-    * \param element Element whose amount we wish to display
-    * \param object the GUI object doing the display, used to access configured unit&scale
-    * \param propertyName the name of the property to display
-    * \param units which unit system it is in
-    * \param precision how many decimal places to use, defaulting to 3
-    */
-   static QString displayAmount( NamedEntity* element, QObject* object, BtStringConst const & propertyName, Unit const * units=nullptr, int precision=3 );
-
-   /*!
-    * \brief Displays an amount in the appropriate units.
-    *
-    * \param amount the amount to display
-    * \param section the name of the object to reference to get units&scales from the config file
-    * \param propertyName the property name to complete the lookup for units&scales
-    * \param units which unit system it is in
-    * \param precision how many decimal places to use, defaulting to 3
-    */
-   static QString displayAmount(double amount,
-                                BtStringConst const & section,
-                                BtStringConst const & propertyName,
-                                Unit const * units=nullptr,
-                                int precision = 3);
-
-   /*!
-    *  \brief Displays an amount in the appropriate units.
-    *
-    *  \param amount the amount to display
-    *  \param units the units that \c amount is in
-    *  \param precision how many decimal places
-    */
-   static double amountDisplay( double amount, Unit const * units=nullptr, int precision=3,
-                                 Unit::unitDisplay displayUnit = Unit::noUnit, Unit::RelativeScale displayScale = Unit::noScale );
-   /*!
-    * \brief Displays an amount in the appropriate units.
-    *
-    * \param element Element whose amount we wish to display
-    * \param propertyName the \c QObject::property of \c element that returns the
-    *        amount we wish to display
-    */
-   static double amountDisplay( NamedEntity* element, QObject* object, BtStringConst const & propertyName, Unit const * units=nullptr, int precision=3 );
-
-   //! \brief Display date formatted for the locale.
-   static QString displayDate( QDate const& date );
-   //! \brief Display date formatted based on the user defined options.
-   static QString displayDateUserFormated(QDate const &date);
-   //! \brief Displays thickness in appropriate units from standard thickness in L/kg.
-   static QString displayThickness( double thick_lkg, bool showUnits=true );
-   //! \brief Appropriate thickness units will be placed in \c *volumeUnit and \c *weightUnit.
-   static void getThicknessUnits( Unit const ** volumeUnit, Unit const ** weightUnit );
-
-   static QPair<double,double> displayRange(NamedEntity* element,
-                                            QObject *object,
-                                            BtStringConst const & propertyNameMin,
-                                            BtStringConst const & propertyNameMax,
-                                            RangeType _type = DENSITY);
-   static QPair<double,double> displayRange(QObject *object,
-                                            BtStringConst const & propertyName,
-                                            double min,
-                                            double max,
-                                            RangeType _type = DENSITY);
-
-   //! \return SI amount for the string
-   static double qStringToSI( QString qstr, Unit const * unit,
-         Unit::unitDisplay dispUnit = Unit::noUnit, Unit::RelativeScale dispScale = Unit::noScale);
-
-   // One method to rule them all, and in darkness bind them
-   static UnitSystem const * findUnitSystem(Unit const * unit, Unit::unitDisplay display);
-   static QString colorUnitName(Unit::unitDisplay display);
-   static QString diastaticPowerUnitName(Unit::unitDisplay display);
-
-   //! \return true iff the string has a valid unit substring at the end.
-   static bool hasUnits(QString qstr);
-
-   // You do know I will have to kill these too?
-   //! \return the density units
-   static Unit::unitDisplay getDensityUnit();
-   //! \return the date format
-   static Unit::unitDisplay getDateFormat();
-   //! \return the volume system
-   static SystemsOfMeasurement::MassOrVolumeScales getVolumeUnitSystem();
+   int run();
 
    //! \brief Every so often, we need to update the config file itself. This does that.
-   static void updateConfig();
+   void updateConfig();
    //! \brief Read options from options. This replaces readPersistentOptions()
-   static void readSystemOptions();
+   void readSystemOptions();
    //! \brief Writes the persisten options back to the options store
-   static void saveSystemOptions();
-
-   /*!
-    *  \brief Loads the Brewken translator with two letter ISO 639-1 code.
-    *
-    *  For example, for spanish, it would
-    *  be 'es'. Currently, this does NO checking to make sure the locale
-    *  code is acceptable.
-    *
-    *  \param twoLetterLanguage two letter ISO 639-1 code
-    */
-   static void setLanguage(QString twoLetterLanguage);
-   /*!
-    *  \brief Gets the 2-letter ISO 639-1 language code we are currently using.
-    *  \returns current 2-letter ISO 639-1 language code.
-    */
-   static const QString& getCurrentLanguage();
-   /*!
-    *  \brief Gets the ISO 639-1 language code for the system.
-    *  \returns current 2-letter ISO 639-1 system language code
-    */
-   static const QString& getSystemLanguage();
-
-
-   // Grr. Shortcuts never, ever pay  off
-   static QMenu* setupColorMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupDateMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupDensityMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupMassMenu(QWidget* parent, Unit::unitDisplay unit, Unit::RelativeScale scale = Unit::noScale, bool generateScale = true);
-   static QMenu* setupTemperatureMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupVolumeMenu(QWidget* parent, Unit::unitDisplay unit, Unit::RelativeScale scale = Unit::noScale, bool generateScale = true);
-   static QMenu* setupDiastaticPowerMenu(QWidget* parent, Unit::unitDisplay unit);
-   static QMenu* setupTimeMenu(QWidget* parent, Unit::RelativeScale scale);
-   static void generateAction(QMenu* menu, QString text, QVariant data, QVariant currentVal, QActionGroup* qgrp = nullptr);
-
-   //! \return the main window.
-   static MainWindow* mainWindow();
-
-private:
-   static MainWindow* m_mainWindow;
-   static QDomDocument* optionsDoc;
-   static QTranslator* defaultTrans;
-   static QTranslator* btTrans;
-   static QString currentLanguage;
-   static QSettings btSettings;
-   static QFile pidFile;
-   static bool _isInteractive;
+   void saveSystemOptions();
 
    //! \brief If this option is false, do not bother the user about new versions.
-   static bool checkVersion;
+   void setCheckVersion(bool value);
 
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -292,39 +86,25 @@ private:
     *
     * \returns false if anything goes awry, true if it's ok to start MainWindow
     */
-   static bool initialize();
+   bool initialize();
 
    /*!
     * \brief Run after QApplication exits to clean up shit, close database, etc.
     */
-   static void cleanup();
+   void cleanup();
 
-public:
    /*!
     * \brief If false, run Brewken in a way that requires no user interaction
     *
     * For example, if running a test case, ensure that no dialogs pop up that
     * prevent Brewken from starting
     */
-   static bool isInteractive();
+   bool isInteractive();
+
    //! \brief Set the mode to an interactive or non-interactive state
-   static void setInteractive(bool val);
+   void setInteractive(bool val);
 
-private:
-   /*!
-    *  \brief Copies the SQLite database file to another directory.
-    *  \returns false iff the copy is unsuccessful.
-    */
-   static bool copyDataFiles(const QDir newPath);
-
-
-   //! \brief Load translation files.
-   static void loadTranslations();
-   //! \brief Checks for a newer version and prompts user to download.
-   static void checkForNewVersion(MainWindow* mw);
-
-   static void loadMap();
-};
+}
 
 
 /*!
