@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -77,13 +77,14 @@ void MashEditor::saveAndClose() {
    return;
 }
 
-void MashEditor::fromEquipment()
-{
-   if( mashObs == nullptr )
+void MashEditor::fromEquipment() {
+   if (this->mashObs == nullptr) {
       return;
+   }
 
-   if ( m_equip == nullptr )
+   if (this->m_equip == nullptr) {
       return;
+   }
 
    lineEdit_tunMass->setText(m_equip);
    lineEdit_tunSpHeat->setText(m_equip);

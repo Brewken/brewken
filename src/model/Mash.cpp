@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -166,7 +166,13 @@ void Mash::setKey(int key) {
    this->NamedEntity::setKey(key);
    // Now give our ID (key) to our MashSteps
    for (auto mashStepId : this->pimpl->mashStepIds) {
-      ObjectStoreWrapper::getById<MashStep>(mashStepId)->setMashId(key);
+      if (!ObjectStoreWrapper::contains<MashStep>(mashStepId)) {
+         // This is almost certainly a coding error, as each MashStep is owned by one Mash, but we can (probably)
+         // recover by ignoring the missing MashStep.
+         qCritical() << Q_FUNC_INFO << "Unable to retrieve MashStep #" << mashStepId << "for Mash #" << this->key();
+      } else {
+         ObjectStoreWrapper::getById<MashStep>(mashStepId)->setMashId(key);
+      }
    }
    return;
 }
@@ -385,6 +391,7 @@ void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
 
 std::shared_ptr<MashStep> Mash::addMashStep(std::shared_ptr<MashStep> mashStep) {
    if (this->key() > 0) {
+      qDebug() << Q_FUNC_INFO << "Add MashStep #" << mashStep->key() << "to Mash #" << this->key();
       mashStep->setMashId(this->key());
    }
 
@@ -392,7 +399,7 @@ std::shared_ptr<MashStep> Mash::addMashStep(std::shared_ptr<MashStep> mashStep) 
 
    // MashStep needs to be in the DB for us to add it to the Mash
    if (mashStep->key() < 0) {
-      qDebug() << Q_FUNC_INFO << "Inserting MashStep in DB";
+      qDebug() << Q_FUNC_INFO << "Inserting MashStep in DB for Mash #" << this->key();
       ObjectStoreWrapper::insert(mashStep);
    }
 

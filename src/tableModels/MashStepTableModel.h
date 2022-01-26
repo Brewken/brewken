@@ -85,7 +85,6 @@ private:
    Mash* mashObs;
    QList<MashStep*> steps;
 
-//   void reorderMashSteps();
    void reorderMashStep(MashStep *step, int current);
 };
 

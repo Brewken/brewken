@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -102,7 +102,7 @@ public:
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
    // virtue of inheriting from QObject, but this declaration does no harm.
-   virtual ~NamedEntity() = default;
+   virtual ~NamedEntity();
 
    /**
     * \brief Turns a straight copy of an object into a "child" copy that can be used in a Recipe.  (A child copy is
@@ -231,6 +231,15 @@ public:
     *        By default this function does nothing.  Subclasses override it if needed.
     */
    virtual void hardDeleteOwnedEntities();
+
+   /**
+    * \brief Similar to \c hardDeleteOwnedEntities but for cases where the related entities need to be deleted
+    *        immediately \b after rather than immediately \b before the entity to which they are related.  (Which is
+    *        required typically depends on the order of the underlying foreign key relationships in the database.)
+    *
+    *        By default this function does nothing.  Subclasses override it if needed.
+    */
+   virtual void hardDeleteOrphanedEntities();
 
 signals:
    /*!

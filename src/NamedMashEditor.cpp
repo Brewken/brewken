@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * NamedMashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * NamedMashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Moreno <danielm5@users.noreply.github.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -204,12 +204,12 @@ void NamedMashEditor::clear()
 }
 
 void NamedMashEditor::addMashStep() {
-   if ( ! this->mashObs ) {
+   if (!this->mashObs) {
       return;
    }
 
+   // The call to Mash::addMashStep() will also store the MashStep in the ObjectStore / DB
    auto step = std::make_shared<MashStep>();
-   ObjectStoreWrapper::insert(step);
    this->mashObs->addMashStep(step);
    mashStepEditor->setMashStep(step);
    mashStepEditor->setVisible(true);

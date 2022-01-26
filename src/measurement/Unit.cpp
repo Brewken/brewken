@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Unit.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * measurement/Unit.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -30,12 +30,6 @@
 #include "Localization.h"
 #include "measurement/Measurement.h"
 #include "measurement/UnitSystem.h"
-
-//
-// ¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥
-// ¥¥ .:TODO:. Merge https://github.com/Brewtarget/brewtarget/pull/629 into Brewken
-// ¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥
-//
 
 namespace {
 
