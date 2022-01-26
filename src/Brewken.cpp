@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Brewken.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * Brewken.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -36,20 +36,9 @@
 #include <iostream>
 
 #include <QDebug>
-#include <QDesktopServices>
-#include <QEventLoop>
-#include <QFile>
-#include <QIODevice>
-#include <QLibraryInfo>
-#include <QLocale>
 #include <QMessageBox>
 #include <QObject>
-#include <QPixmap>
-#include <QSettings>
-#include <QSharedPointer>
-#include <QSplashScreen>
 #include <QString>
-#include <QTextStream>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
@@ -59,14 +48,11 @@
 #include "BtSplashScreen.h"
 #include "config.h"
 #include "database/Database.h"
-#include "database/ObjectStoreWrapper.h"
 #include "Localization.h"
 #include "MainWindow.h"
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
-#include "measurement/Unit.h"
-#include "measurement/UnitSystem.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Instruction.h"
@@ -84,6 +70,10 @@
 #endif
 
 namespace {
+
+   bool interactive = true;
+   bool checkVersion = true;
+
    /**
     * \brief Create a directory if it doesn't exist, popping a error dialog if creation fails
     */
@@ -143,24 +133,30 @@ namespace {
              createDir(PersistentSettings::getUserDataDir());
    }
 
+
+   /**
+    * \brief Checks for a newer version and prompts user to download.
+    *.:TODO:. This needs to be updated
+    */
+   void checkForNewVersion(MainWindow* mw) {
+
+      // Don't do anything if the checkVersion flag was set false
+      if (checkVersion == false ) {
+         return;
+      }
+
+      QNetworkAccessManager manager;
+      QUrl url("https://github.com/Brewken/brewken/releases/latest");
+      QNetworkReply* reply = manager.get( QNetworkRequest(url) );
+      QObject::connect( reply, &QNetworkReply::finished, mw, &MainWindow::finishCheckingVersion );
+      return;
+   }
+
 }
 
-bool Brewken::_isInteractive = true;
-
-bool Brewken::checkVersion = true;
-
-// .:TODO:. This needs to be updated
-void Brewken::checkForNewVersion(MainWindow* mw)
-{
-
-   // Don't do anything if the checkVersion flag was set false
-   if ( checkVersion == false )
-      return;
-
-   QNetworkAccessManager manager;
-   QUrl url("https://github.com/Brewken/brewken/releases/latest");
-   QNetworkReply* reply = manager.get( QNetworkRequest(url) );
-   QObject::connect( reply, &QNetworkReply::finished, mw, &MainWindow::finishCheckingVersion );
+void Brewken::setCheckVersion(bool value) {
+   checkVersion = value;
+   return;
 }
 
 QDir Brewken::getResourceDir() {
@@ -234,14 +230,13 @@ void Brewken::cleanup() {
    return;
 }
 
-bool Brewken::isInteractive()
-{
-   return _isInteractive;
+bool Brewken::isInteractive() {
+   return interactive;
 }
 
-void Brewken::setInteractive(bool val)
-{
-   _isInteractive = val;
+void Brewken::setInteractive(bool val) {
+   interactive = val;
+   return;
 }
 
 int Brewken::run() {
@@ -293,10 +288,7 @@ void Brewken::updateConfig() {
    return;
 }
 
-void Brewken::readSystemOptions()
-{
-   QString text;
-
+void Brewken::readSystemOptions() {
    // update the config file before we do anything
    updateConfig();
 
@@ -309,10 +301,6 @@ void Brewken::readSystemOptions()
    }
 
    Measurement::loadDisplayScales();
-
-   //======================Time======================
-   // Set the one and only time system.
-///   Measurement::thingToUnitSystem.insert(Measurement::Unit::Time,&Measurement::time_CoordinatedUniversalTime);
 
    //===================IBU===================
    IbuMethods::loadIbuFormula();
@@ -328,8 +316,6 @@ void Brewken::readSystemOptions()
 }
 
 void Brewken::saveSystemOptions() {
-   QString text;
-
    PersistentSettings::insert(PersistentSettings::Names::check_version, checkVersion);
    PersistentSettings::insert(PersistentSettings::Names::last_db_merge_req, Database::lastDbMergeRequest.toString(Qt::ISODate));
    //setOption("user_data_dir", userDataDir);

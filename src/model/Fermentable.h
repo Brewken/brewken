@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -68,8 +68,6 @@ AddPropertyName(yield_pct)
 class Fermentable : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "fermentables")
-
-   friend class Brewken;
 
    friend class FermentableDialog;
 public:

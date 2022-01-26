@@ -129,14 +129,12 @@ namespace Measurement {
        *        should also be recognised by \c qstringToSI()
        *
        * \param amount
-       * \param units
        * \param precision
        * \param scale
        *
        * \return
        */
-      QString displayAmount(double amount,
-                            Unit const * units,
+      QString displayAmount(Measurement::Amount const & amount,
                             int precision = -1,
                             std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
 
@@ -145,13 +143,11 @@ namespace Measurement {
        *        nature to \c displayAmount(), but just returning raw doubles.
        *
        * \param amount The amount to convert
-       * \param units  The units of the amount to convert
        * \param scale  Optional: the scale of this \c UnitSystem to use for the output
        *
        * \return
        */
-      double amountDisplay(double amount,
-                           Unit const * units,
+      double amountDisplay(Measurement::Amount const & amount,
                            std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
 
       /*!
@@ -168,17 +164,13 @@ namespace Measurement {
        *        Imperial volumes, but if the user enters "3 pints" in a field that's configured for metric/SI volumes
        *        then we can't know for certain whether Imperial or US pints were meant).
        *
-       * .:TBD:. Feels like we have one too many parameters on this function!
-       *
        * \param qstr    The string to convert
-       * \param defUnit The units to use if none are specified in the string
-       * \param scale
+       * \param defUnit The units to use to interpret the string if none are specified in the string (ie if it's just a
+       *                number)
        *
-       * \return
+       * \return Input value parsed and converted to the canonical \c Unit of this \c UnitSystem
        */
-      Measurement::Amount qstringToSI(QString qstr,
-                                      Unit const * defUnit = nullptr,
-                                      std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt) const;
+      Measurement::Amount qstringToSI(QString qstr, Unit const & defUnit) const;
 
       /**
        * \brief returns all the \c UnitSystem::RelativeScale for this \c UnitSystem

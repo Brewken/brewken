@@ -336,12 +336,12 @@ void Testing::testUnitConversions() {
    // This is assuming '.' is the decimal separator and ',' is the digit group separator.  Might need to tweak this test
    // a bit for systems with locales where ',' is the decimal separator and '.' or ' ' is the digit group separator.
    // (Both can be got from QLocale::system().decimalPoint(), QLocale::system().groupSeparator().)
-   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500 gal").quantity,
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500 gal", Measurement::Units::liters).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v1)");
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500",
-                                                                               &Measurement::Units::us_gallons).quantity,
+                                                                               Measurement::Units::us_gallons).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v2)");
@@ -350,10 +350,18 @@ void Testing::testUnitConversions() {
                       20.820,
                       0.001),
                       "Unit conversion error (US gallons to Litres v3)");
-   QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI("9.994 P").quantity, 1.040, 0.001),
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI("9.994 P",
+                                                                          Measurement::Units::sp_grav).quantity,
+                      1.040,
+                      0.001),
             "Unit conversion error (Plato to SG)");
-   QVERIFY2(fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI("1,083 ebc").quantity, 550, 1),
-            "Unit conversion error (EBC to SRM)");
+   QVERIFY2(
+      fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI("1,083 ebc",
+                                                                                    Measurement::Units::srm).quantity,
+                550,
+                1),
+      "Unit conversion error (EBC to SRM)"
+   );
 
    return;
 }

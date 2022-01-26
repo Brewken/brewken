@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Brewken.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * Brewken.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -43,21 +43,11 @@ class MainWindow;
 Q_DECLARE_METATYPE( QMetaProperty )
 
 /*!
- * \class Brewken
+ * \brief Figures out stuff from the system etc.
  *
- * \brief The main class. Figures out stuff from the system, formats things appropriately, handles translation, etc.
- *
- * TODO: Lots of things in this class belong elsewhere...
- *
- * .:TODO:. Find #includes of this file that are no longer needed
+ * TODO: The config & system options stuff probably belongs in a separate class, and the remainder of what's here might go in main or MainWindow...
  */
-class Brewken {
-
-   friend class MainWindow;
-   friend class Testing;
-
-public:
-   Brewken();
+namespace Brewken {
 
    /**
     * \return the resource directory where some files that ship with Brewken live (default DB, sounds, translations)
@@ -66,27 +56,24 @@ public:
     *         https://doc.qt.io/qt-5/resources.html) but, for some files, we want the user also to be able to access
     *         the file directly.  Such files are stored in this directory.
     */
-   static QDir getResourceDir();
+   QDir getResourceDir();
 
    /*!
     * \brief Blocking call that executes the application.
     * \param userDirectory If !isEmpty, overwrites the current settings.
     * \return Exit code from the application.
     */
-   static int run();
+   int run();
 
    //! \brief Every so often, we need to update the config file itself. This does that.
-   static void updateConfig();
+   void updateConfig();
    //! \brief Read options from options. This replaces readPersistentOptions()
-   static void readSystemOptions();
+   void readSystemOptions();
    //! \brief Writes the persisten options back to the options store
-   static void saveSystemOptions();
-
-private:
-   static bool _isInteractive;
+   void saveSystemOptions();
 
    //! \brief If this option is false, do not bother the user about new versions.
-   static bool checkVersion;
+   void setCheckVersion(bool value);
 
    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -99,29 +86,25 @@ private:
     *
     * \returns false if anything goes awry, true if it's ok to start MainWindow
     */
-   static bool initialize();
+   bool initialize();
 
    /*!
     * \brief Run after QApplication exits to clean up shit, close database, etc.
     */
-   static void cleanup();
+   void cleanup();
 
-public:
    /*!
     * \brief If false, run Brewken in a way that requires no user interaction
     *
     * For example, if running a test case, ensure that no dialogs pop up that
     * prevent Brewken from starting
     */
-   static bool isInteractive();
+   bool isInteractive();
+
    //! \brief Set the mode to an interactive or non-interactive state
-   static void setInteractive(bool val);
+   void setInteractive(bool val);
 
-private:
-
-   //! \brief Checks for a newer version and prompts user to download.
-   static void checkForNewVersion(MainWindow* mw);
-};
+}
 
 
 /*!

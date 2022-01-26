@@ -252,6 +252,13 @@ Measurement::Amount UiAmountWithUnits::convertToSI(PreviousScaleInfo previousSca
       previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
    };
 
+   // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
+   // oldUnitSystem.  However, we can recover.
+   if (!defaultUnit) {
+      qWarning() << Q_FUNC_INFO << "previousScaleInfo.oldForcedScale invalid?" << previousScaleInfo.oldForcedScale;
+      defaultUnit = oldUnitSystem.unit();
+   }
+
    //
    // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
    // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
@@ -264,7 +271,7 @@ Measurement::Amount UiAmountWithUnits::convertToSI(PreviousScaleInfo previousSca
    // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
    // gallons, then we'll go with US customary gallons over Imperial ones.)
    //
-   auto amount = oldUnitSystem.qstringToSI(rawValue, defaultUnit, previousScaleInfo.oldForcedScale);
+   auto amount = oldUnitSystem.qstringToSI(rawValue, *defaultUnit);
    qDebug() << Q_FUNC_INFO << "Converted to" << amount;
    return amount;
 }

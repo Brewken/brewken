@@ -29,6 +29,7 @@
 #include "model/Style.h" // For PropertyNames::Style::colorMin_srm, PropertyNames::Style::colorMax_srm
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
+#include "utils/OptionalToStream.h"
 
 namespace {
 
@@ -171,7 +172,7 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
 
 //      qDebug() << Q_FUNC_INFO << "Display" << amount << units->getUnitName() << "in" << temp->unitType();
-   return displayUnitSystem.displayAmount(amount.quantity, &amount.unit, precision, forcedScale);
+   return displayUnitSystem.displayAmount(amount, precision, forcedScale);
 }
 
 QString Measurement::displayAmount(NamedEntity * namedEntity,
@@ -211,29 +212,23 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
 
 }
 
-double Measurement::amountDisplay(double amount,
-                                  Measurement::Unit const * units,
+double Measurement::amountDisplay(Measurement::Amount const & amount,
                                   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                   std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
 
    // Check for insane values.
-   if (Algorithms::isNan(amount) || Algorithms::isInf(amount)) {
+   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
       return -1.0;
-   }
-
-   // Special case: we don't know the units of the supplied amount, so just return it as is
-   if (units == nullptr) {
-      return amount;
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = units->getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit.getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
 
-   return displayUnitSystem.amountDisplay(amount, units, forcedScale);
+   return displayUnitSystem.amountDisplay(amount, forcedScale);
 }
 
 double Measurement::amountDisplay(NamedEntity * namedEntity,
@@ -250,9 +245,13 @@ double Measurement::amountDisplay(NamedEntity * namedEntity,
          qWarning() << Q_FUNC_INFO << "Could not convert" << value << "to double";
       }
 
+      // Special case: we don't know the units of the supplied amount, so just return it as is
+      if (units == nullptr) {
+         return amount;
+      }
+
       return Measurement::amountDisplay(
-         amount,
-         units,
+         Measurement::Amount{amount, *units},
          Measurement::getForcedSystemOfMeasurementForField(*propertyName, guiObject->objectName()),
          Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName())
       );
@@ -289,8 +288,8 @@ QPair<double,double> Measurement::displayRange(QObject *guiObject,
    auto forcedRelativeScale = Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName());
 
    QPair<double,double> range;
-   range.first  = Measurement::amountDisplay(min, &units, forcedSystemOfMeasurement, forcedRelativeScale);
-   range.second = Measurement::amountDisplay(max, &units, forcedSystemOfMeasurement, forcedRelativeScale);
+   range.first  = Measurement::amountDisplay(Measurement::Amount{min, units}, forcedSystemOfMeasurement, forcedRelativeScale);
+   range.second = Measurement::amountDisplay(Measurement::Amount{max, units}, forcedSystemOfMeasurement, forcedRelativeScale);
    return range;
 }
 
@@ -323,15 +322,26 @@ Measurement::Amount Measurement::qStringToSI(QString qstr,
                                              Measurement::PhysicalQuantity const physicalQuantity,
                                              std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                              std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
-
-   // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
-   // one we're using generally for related physical property.
+   //
+   // If the caller told us that the SystemOfMeasurement and/or RelativeScale on the input (qstr) are "forced" then that
+   // information can be used to interpret a case where no (valid) unit is supplied in the input (ie it's just a number
+   // rather than number plus units) or where the supplied unit is ambiguous (eg US pints are different than Imperial
+   // pints).  Otherwise, just otherwise get whatever UnitSystem we're using generally for related physical property.
+   //
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
+   Measurement::Unit const * defaultUnit {
+      forcedScale ? displayUnitSystem.scaleUnit(*forcedScale) : &Measurement::getUnitForInternalStorage(physicalQuantity)
+   };
+   // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
+   // oldUnitSystem.  However, we can recover.
+   if (!defaultUnit) {
+      qWarning() << Q_FUNC_INFO << "forcedScale invalid?" << forcedScale;
+      defaultUnit = &Measurement::getUnitForInternalStorage(physicalQuantity);
+   }
 
-   Measurement::Unit const * unit = &Measurement::getUnitForInternalStorage(physicalQuantity);
-   return displayUnitSystem.qstringToSI(qstr, unit, forcedScale);
+   return displayUnitSystem.qstringToSI(qstr, *defaultUnit);
 }
 
 std::optional<Measurement::SystemOfMeasurement> Measurement::getForcedSystemOfMeasurementForField(QString const & field,

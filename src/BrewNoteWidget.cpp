@@ -84,8 +84,7 @@ void BrewNoteWidget::updateProjOg() {
    auto forcedSystemOfMeasurement =
       Measurement::getForcedSystemOfMeasurementForField(*PropertyNames::BrewNote::projOg,
                                                         *PersistentSettings::Sections::page_preboil);
-   double quant = Measurement::amountDisplay(this->bNoteObs->projOg(),
-                                             &Measurement::Units::sp_grav,
+   double quant = Measurement::amountDisplay(Measurement::Amount{this->bNoteObs->projOg(), Measurement::Units::sp_grav},
                                              forcedSystemOfMeasurement);
    this->lcdnumber_projectedOG->setLowLim( lowLimitPct  * quant);
    this->lcdnumber_projectedOG->setHighLim(highLimitPct * quant);

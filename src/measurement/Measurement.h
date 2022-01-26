@@ -113,13 +113,11 @@ namespace Measurement {
     * \brief Converts a measurement (aka amount) to its numerical equivalent in the specified or default units.
     *
     * \param amount the amount to display
-    * \param units the units that \c amount is in
     * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
     *                                  system default
     * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
     */
-   double amountDisplay(double amount,
-                        Unit const * units = nullptr,
+   double amountDisplay(Measurement::Amount const & amount,
                         std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 

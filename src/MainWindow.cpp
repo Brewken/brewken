@@ -3254,17 +3254,17 @@ void MainWindow::finishCheckingVersion()
                                    QMessageBox::Yes | QMessageBox::No,
                                    QMessageBox::Yes) == QMessageBox::Yes)
          {
-            // ... tell Brewken to stop bothering the user about the new version.
-            Brewken::checkVersion = false;
+            // ... make a note to stop bothering the user about the new version.
+            Brewken::setCheckVersion(false);
          }
       }
    }
    else // The current version is newest so...
    {
-      // ...tell Brewken to bother users about future new versions.
+      // ...make a note to bother users about future new versions.
       // This means that when a user downloads the new version, this
       // variable will always get reset to true.
-      Brewken::checkVersion = true;
+      Brewken::setCheckVersion(true);
    }
 }
 
