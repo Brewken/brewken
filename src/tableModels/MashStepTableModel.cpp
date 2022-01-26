@@ -250,8 +250,10 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
       case MASHSTEPAMOUNTCOL:
          return QVariant(
             Measurement::displayAmount(
-               row->type() == MashStep::Decoction ? row->decoctionAmount_l() : row->infuseAmount_l(),
-               &Measurement::Units::liters,
+               Measurement::Amount{
+                  row->type() == MashStep::Decoction ? row->decoctionAmount_l() : row->infuseAmount_l(),
+                  Measurement::Units::liters
+               },
                3,
                this->getForcedSystemOfMeasurementForColumn(column),
                this->getForcedRelativeScaleForColumn(column)
@@ -262,24 +264,21 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
             return QVariant("---");
          }
          return QVariant(
-            Measurement::displayAmount(row->infuseTemp_c(),
-                                       &Measurement::Units::celsius,
+            Measurement::displayAmount(Measurement::Amount{row->infuseTemp_c(), Measurement::Units::celsius},
                                        3,
                                        this->getForcedSystemOfMeasurementForColumn(column),
                                        std::nullopt)
          );
       case MASHSTEPTARGETTEMPCOL:
          return QVariant(
-            Measurement::displayAmount(row->stepTemp_c(),
-                                       &Measurement::Units::celsius,
+            Measurement::displayAmount(Measurement::Amount{row->stepTemp_c(), Measurement::Units::celsius},
                                        3,
                                        this->getForcedSystemOfMeasurementForColumn(column),
                                        std::nullopt)
          );
       case MASHSTEPTIMECOL:
          return QVariant(
-            Measurement::displayAmount(row->stepTime_min(),
-                                       &Measurement::Units::minutes,
+            Measurement::displayAmount(Measurement::Amount{row->stepTime_min(), Measurement::Units::minutes},
                                        3,
                                        std::nullopt,
                                        this->getForcedRelativeScaleForColumn(column))

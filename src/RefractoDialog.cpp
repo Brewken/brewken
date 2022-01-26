@@ -58,7 +58,7 @@ void RefractoDialog::calculate() {
    }
 
    double ri = Algorithms::refractiveIndex(currentPlato);
-   lineEdit_ri->setText(Measurement::displayAmount(ri));
+   lineEdit_ri->setText(Measurement::displayQuantity(ri, 3));
 
    if (!haveOG && haveOP) {
       inputOG = Algorithms::PlatoToSG_20C20C( originalPlato );

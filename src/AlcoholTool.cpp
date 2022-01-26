@@ -142,14 +142,13 @@ public:
    }
 
    void updateCalculatedFields() {
-      double og = this->input_og->toSiRaw();
-      double fg = this->input_fg->toSiRaw();
+      double og = this->input_og->toSI().quantity;
+      double fg = this->input_fg->toSI().quantity;
       if (this->enableAdvancedInputs->isChecked()) {
          // User wants temperature correction
-         // .:TBD:. I think this might be doing the wrong thing when temp is in Fahrenheit
-         double calibrationTempInC = this->input_calibration_temperature->toSiRaw();
-         double ogReadTempInC          = this->input_og_temperature->toSiRaw();
-         double fgReadTempInC          = this->input_fg_temperature->toSiRaw();
+         double calibrationTempInC = this->input_calibration_temperature->toSI().quantity;
+         double ogReadTempInC          = this->input_og_temperature->toSI().quantity;
+         double fgReadTempInC          = this->input_fg_temperature->toSI().quantity;
          if (0.0 == calibrationTempInC || 0.0 == ogReadTempInC) {
             og = 0.0;
             this->corrected_og->setText("? sg");
@@ -255,7 +254,7 @@ public:
                                  this->enableAdvancedInputs->isChecked(),
                                  PersistentSettings::Sections::alcoholTool);
       PersistentSettings::insert(hydrometerCalibrationTemperatureInC,
-                                 this->input_calibration_temperature->toSiRaw(),
+                                 this->input_calibration_temperature->toSI().quantity,
                                  PersistentSettings::Sections::alcoholTool);
       return;
    }

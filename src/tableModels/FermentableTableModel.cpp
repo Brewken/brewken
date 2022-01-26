@@ -313,8 +313,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          if (role == Qt::DisplayRole) {
             // So just query the columns
             return QVariant(
-               Measurement::displayAmount(row->inventory(),
-                                          &Measurement::Units::kilograms,
+               Measurement::displayAmount(Measurement::Amount{row->inventory(), Measurement::Units::kilograms},
                                           3,
                                           this->getForcedSystemOfMeasurementForColumn(column),
                                           this->getForcedRelativeScaleForColumn(column))
@@ -325,8 +324,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          if (role == Qt::DisplayRole) {
             // So just query the columns
             return QVariant(
-               Measurement::displayAmount(row->amount_kg(),
-                                          &Measurement::Units::kilograms,
+               Measurement::displayAmount(Measurement::Amount{row->amount_kg(), Measurement::Units::kilograms},
                                           3,
                                           this->getForcedSystemOfMeasurementForColumn(column),
                                           this->getForcedRelativeScaleForColumn(column))
@@ -351,14 +349,13 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          break;
       case FERMYIELDCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(row->yield_pct(), nullptr));
+            return QVariant(Measurement::displayQuantity(row->yield_pct(), 3));
          }
          break;
       case FERMCOLORCOL:
          if (role == Qt::DisplayRole) {
             return QVariant(
-               Measurement::displayAmount(row->color_srm(),
-                                          &Measurement::Units::srm,
+               Measurement::displayAmount(Measurement::Amount{row->color_srm(), Measurement::Units::srm},
                                           0,
                                           this->getForcedSystemOfMeasurementForColumn(column),
                                           std::nullopt)

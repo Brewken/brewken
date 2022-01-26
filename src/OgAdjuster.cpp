@@ -70,11 +70,11 @@ void OgAdjuster::calculate()
    bool okPlato = true;
 
    // Get inputs.
-   sg          = lineEdit_sg->toSiRaw();
+   sg          = lineEdit_sg->toSI().quantity;
    plato       = lineEdit_plato->toDoubleRaw(&okPlato);
-   temp_c      = lineEdit_temp->toSiRaw();
-   hydroTemp_c = lineEdit_calTemp->toSiRaw();
-   wort_l      = lineEdit_volume->toSiRaw();
+   temp_c      = lineEdit_temp->toSI().quantity;
+   hydroTemp_c = lineEdit_calTemp->toSI().quantity;
+   wort_l      = lineEdit_volume->toSI().quantity;
 
    // Make sure we got enough info.
    gotSG = sg != 0 && temp_c != 0 && hydroTemp_c != 0;

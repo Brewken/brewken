@@ -229,8 +229,7 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
          return QVariant();
       case MISCTIMECOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(row->time(),
-                                                       &Measurement::Units::minutes,
+            return QVariant(Measurement::displayAmount(Measurement::Amount{row->time(), Measurement::Units::minutes},
                                                        3,
                                                        std::nullopt,
                                                        this->getForcedRelativeScaleForColumn(column)));
@@ -239,9 +238,11 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
       case MISCINVENTORYCOL:
          if (role == Qt::DisplayRole) {
             return QVariant(
-               Measurement::displayAmount(row->inventory(),
-                                          row->amountIsWeight() ? &Measurement::Units::kilograms :
-                                                                  &Measurement::Units::liters,
+               Measurement::displayAmount(Measurement::Amount{
+                                             row->inventory(),
+                                             row->amountIsWeight() ? Measurement::Units::kilograms :
+                                                                     Measurement::Units::liters
+                                          },
                                           3,
                                           this->getForcedSystemOfMeasurementForColumn(column),
                                           std::nullopt)
@@ -251,9 +252,11 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
       case MISCAMOUNTCOL:
          if (role == Qt::DisplayRole) {
             return QVariant(
-               Measurement::displayAmount(row->amount(),
-                                          row->amountIsWeight() ? &Measurement::Units::kilograms :
-                                                                  &Measurement::Units::liters,
+               Measurement::displayAmount(Measurement::Amount{
+                                             row->amount(),
+                                             row->amountIsWeight() ? Measurement::Units::kilograms :
+                                                                     Measurement::Units::liters
+                                          },
                                           3,
                                           this->getForcedSystemOfMeasurementForColumn(column),
                                           std::nullopt)

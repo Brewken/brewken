@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2021:
+ * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -68,10 +68,9 @@ namespace {
                               "<td>%2</td>"
                               "</tr>")
                            .arg(fermentable->name())
-                           .arg(Measurement::displayAmount(fermentable->inventory(),
-                                                       PersistentSettings::Sections::fermentableTable,
-                                                       PropertyNames::NamedEntityWithInventory::inventory,
-                                                       &Measurement::Units::kilograms));
+                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(), Measurement::Units::kilograms},
+                                                           PersistentSettings::Sections::fermentableTable,
+                                                           PropertyNames::NamedEntityWithInventory::inventory));
          }
          result += "</table>";
       }
@@ -108,10 +107,9 @@ namespace {
                               "</tr>")
                            .arg(hop->name())
                            .arg(hop->alpha_pct())
-                           .arg(Measurement::displayAmount(hop->inventory(),
-                                                       PersistentSettings::Sections::hopTable,
-                                                       PropertyNames::NamedEntityWithInventory::inventory,
-                                                       &Measurement::Units::kilograms));
+                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(), Measurement::Units::kilograms},
+                                                           PersistentSettings::Sections::hopTable,
+                                                           PropertyNames::NamedEntityWithInventory::inventory));
          }
          result += "</table>";
       }
@@ -139,11 +137,13 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto miscellaneous : inventory) {
-            const QString displayAmount = Measurement::displayAmount(
-               miscellaneous->inventory(),
+            QString const displayAmount = Measurement::displayAmount(
+               Measurement::Amount{
+                  miscellaneous->inventory(),
+                  miscellaneous->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
                PersistentSettings::Sections::miscTable,
-               PropertyNames::NamedEntityWithInventory::inventory,
-               miscellaneous->amountIsWeight() ? &Measurement::Units::kilograms : &Measurement::Units::liters
+               PropertyNames::NamedEntityWithInventory::inventory
             );
             result += QString("<tr>"
                               "<td>%1</td>"
@@ -176,11 +176,14 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto yeast : inventory) {
-            const QString displayAmount = Measurement::displayAmount(
-               yeast->inventory(),
+            QString const displayAmount = Measurement::displayAmount(
+               Measurement::Amount{
+                  yeast->inventory(),
+                  yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
                PersistentSettings::Sections::yeastTable,
-               PropertyNames::NamedEntityWithInventory::inventory,
-               yeast->amountIsWeight() ? &Measurement::Units::kilograms : &Measurement::Units::liters);
+               PropertyNames::NamedEntityWithInventory::inventory
+            );
 
             result += QString("<tr>"
                               "<td>%1</td>"

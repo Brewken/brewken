@@ -42,8 +42,8 @@ MashDesigner::MashDesigner(QWidget* parent) : QDialog(parent) {
    this->mashStep = nullptr;
    this->prevStep = nullptr;
 
-   this->label_zeroVol->setText(Measurement::displayAmount(0, &Measurement::Units::liters));
-   this->label_zeroWort->setText(Measurement::displayAmount(0, &Measurement::Units::liters));
+   this->label_zeroVol->setText(Measurement::displayAmount(Measurement::Amount{0, Measurement::Units::liters}));
+   this->label_zeroWort->setText(Measurement::displayAmount(Measurement::Amount{0, Measurement::Units::liters}));
 
    // Update temp slider when we move amount slider.
    connect( horizontalSlider_amount, &QAbstractSlider::sliderMoved, this, &MashDesigner::updateTempSlider );
@@ -152,12 +152,12 @@ bool MashDesigner::nextStep(int step)
 void MashDesigner::saveStep() {
    MashStep::Type type = static_cast<MashStep::Type>(comboBox_type->currentIndex());
    // Bound the target temperature to what can be achieved
-   double temp = this->bound_temp_c(lineEdit_temp->toSiRaw());
+   double temp = this->bound_temp_c(lineEdit_temp->toSI().quantity);
 
    this->mashStep->setName(lineEdit_name->text());
    this->mashStep->setType(type);
    this->mashStep->setStepTemp_c(temp);
-   this->mashStep->setStepTime_min(lineEdit_time->toSiRaw());
+   this->mashStep->setStepTime_min(lineEdit_time->toSI().quantity);
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
@@ -175,7 +175,7 @@ void MashDesigner::saveStep() {
 
 double MashDesigner::stepTemp_c()
 {
-   return lineEdit_temp->toSiRaw();
+   return lineEdit_temp->toSI().quantity;
 }
 
 bool MashDesigner::heating()
@@ -372,8 +372,8 @@ bool MashDesigner::initializeMash() {
    this->MC = recObs->grainsInMash_kg() * HeatCalculations::Cgrain_calGC;
    this->grain_kg = recObs->grainsInMash_kg();
 
-   this->label_tunVol->setText(Measurement::displayAmount(equip->tunVolume_l(), &Measurement::Units::liters));
-   this->label_wortMax->setText(Measurement::displayAmount(recObs->targetCollectedWortVol_l(), &Measurement::Units::liters));
+   this->label_tunVol->setText(Measurement::displayAmount(Measurement::Amount{equip->tunVolume_l(), Measurement::Units::liters}));
+   this->label_wortMax->setText(Measurement::displayAmount(Measurement::Amount{recObs->targetCollectedWortVol_l(), Measurement::Units::liters}));
 
    this->updateMinAmt();
    this->updateMaxAmt();
@@ -414,7 +414,7 @@ void MashDesigner::updateFullness() {
    }
 
    this->progressBar_fullness->setValue(static_cast<int>(ratio*progressBar_fullness->maximum()));
-   this->label_mashVol->setText(Measurement::displayAmount(vol_l, &Measurement::Units::liters));
+   this->label_mashVol->setText(Measurement::displayAmount(Measurement::Amount{vol_l, Measurement::Units::liters}));
    this->label_thickness->setText(Measurement::displayThickness( (addedWater_l + (isInfusion() ? selectedAmount_l() : 0) )/grain_kg ));
    return;
 }
@@ -435,8 +435,7 @@ double MashDesigner::waterFromMash_l()
    return (waterAdded_l - absorption_lKg * recObs->grainsInMash_kg());
 }
 
-void MashDesigner::updateCollectedWort()
-{
+void MashDesigner::updateCollectedWort() {
    if( recObs == nullptr )
       return;
 
@@ -449,32 +448,27 @@ void MashDesigner::updateCollectedWort()
    if( ratio > 1 )
      ratio = 1;
 
-   label_wort->setText(Measurement::displayAmount(wort_l, &Measurement::Units::liters));
+   label_wort->setText(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
    progressBar_wort->setValue( static_cast<int>(ratio * progressBar_wort->maximum() ));
 }
 
-void MashDesigner::updateMinAmt()
-{
-   label_amtMin->setText(Measurement::displayAmount(minAmt_l(), &Measurement::Units::liters));
+void MashDesigner::updateMinAmt() {
+   label_amtMin->setText(Measurement::displayAmount(Measurement::Amount{minAmt_l(), Measurement::Units::liters}));
 }
 
-void MashDesigner::updateMaxAmt()
-{
-   label_amtMax->setText(Measurement::displayAmount(maxAmt_l(), &Measurement::Units::liters));
+void MashDesigner::updateMaxAmt() {
+   label_amtMax->setText(Measurement::displayAmount(Measurement::Amount{maxAmt_l(), Measurement::Units::liters}));
 }
 
-void MashDesigner::updateMinTemp()
-{
-   label_tempMin->setText(Measurement::displayAmount(minTemp_c(), &Measurement::Units::celsius));
+void MashDesigner::updateMinTemp() {
+   label_tempMin->setText(Measurement::displayAmount(Measurement::Amount{minTemp_c(), Measurement::Units::celsius}));
 }
 
-void MashDesigner::updateMaxTemp()
-{
-   label_tempMax->setText(Measurement::displayAmount(maxTemp_c(), &Measurement::Units::celsius));
+void MashDesigner::updateMaxTemp() {
+   label_tempMax->setText(Measurement::displayAmount(Measurement::Amount{maxTemp_c(), Measurement::Units::celsius}));
 }
 
-double MashDesigner::selectedAmount_l()
-{
+double MashDesigner::selectedAmount_l() {
    double ratio = horizontalSlider_amount->sliderPosition() / static_cast<double>(horizontalSlider_amount->maximum());
    double minAmt = minAmt_l();
    double maxAmt = maxAmt_l();
@@ -543,59 +537,56 @@ void MashDesigner::updateAmt()
    {
       double vol = horizontalSlider_amount->sliderPosition() / static_cast<double>(horizontalSlider_amount->maximum())* (maxAmt_l() - minAmt_l()) + minAmt_l();
 
-      label_amt->setText(Measurement::displayAmount( vol, &Measurement::Units::liters));
+      label_amt->setText(Measurement::displayAmount(Measurement::Amount{vol, Measurement::Units::liters}));
 
       if( mashStep != nullptr )
          mashStep->setInfuseAmount_l( vol );
    }
    else if( isDecoction() )
-      label_amt->setText(Measurement::displayAmount(mashStep->decoctionAmount_l(), &Measurement::Units::liters));
+      label_amt->setText(Measurement::displayAmount(Measurement::Amount{mashStep->decoctionAmount_l(), Measurement::Units::liters}));
    else
-      label_amt->setText(Measurement::displayAmount(0, &Measurement::Units::liters));
+      label_amt->setText(Measurement::displayAmount(Measurement::Amount{0, Measurement::Units::liters}));
 }
 
-void MashDesigner::updateTemp()
-{
-   double temp,maxT;
+void MashDesigner::updateTemp() {
 
-   if( mashStep == nullptr )
+   if (mashStep == nullptr) {
       return;
+   }
 
-   if( isInfusion() )
-   {
-      temp = horizontalSlider_temp->sliderPosition() / static_cast<double>(horizontalSlider_temp->maximum()) * (maxTemp_c() - minTemp_c()) + minTemp_c();
-      maxT = maxTemp_c();
+   if (isInfusion())  {
+      double temp = horizontalSlider_temp->sliderPosition() / static_cast<double>(horizontalSlider_temp->maximum()) * (maxTemp_c() - minTemp_c()) + minTemp_c();
+      double maxT = maxTemp_c();
       if ( temp > maxT )
          temp = maxT;
 
-      label_temp->setText(Measurement::displayAmount( temp, &Measurement::Units::celsius));
+      label_temp->setText(Measurement::displayAmount(Measurement::Amount{temp, Measurement::Units::celsius}));
 
-      if( mashStep != nullptr )
-         mashStep->setInfuseTemp_c( temp );
-   }
-   else if( isDecoction() )
-      label_temp->setText(Measurement::displayAmount( maxTemp_c(), &Measurement::Units::celsius));
-   else {
-
-      label_temp->setText(Measurement::displayAmount( stepTemp_c(), &Measurement::Units::celsius));
+      if (mashStep != nullptr) {
+         mashStep->setInfuseTemp_c(temp);
+      }
+   } else if (isDecoction()) {
+      label_temp->setText(Measurement::displayAmount(Measurement::Amount{maxTemp_c(), Measurement::Units::celsius}));
+   } else {
+      label_temp->setText(Measurement::displayAmount(Measurement::Amount{stepTemp_c(), Measurement::Units::celsius}));
    }
 }
 
-void MashDesigner::saveTargetTemp()
-{
+void MashDesigner::saveTargetTemp() {
    double temp = stepTemp_c();
 
    temp = bound_temp_c(temp);
 
    // be nice and reset the field so it displays in proper units
    lineEdit_temp->setText(temp);
-   if( mashStep != nullptr )
+   if (mashStep != nullptr) {
       mashStep->setStepTemp_c(temp);
+   }
 
-   if( isDecoction() )
-   {
-      if( mashStep != nullptr )
-         mashStep->setDecoctionAmount_l( getDecoctionAmount_l() );
+   if (isDecoction()) {
+      if (mashStep != nullptr) {
+         mashStep->setDecoctionAmount_l(getDecoctionAmount_l());
+      }
 
       updateAmtSlider();
       updateAmt();
@@ -614,14 +605,12 @@ void MashDesigner::saveTargetTemp()
    updateCollectedWort();
 }
 
-double MashDesigner::getDecoctionAmount_l()
-{
+double MashDesigner::getDecoctionAmount_l() {
    double m_w, m_g, r;
    double c_w, c_g;
    double tf, t1;
 
-   if( prevStep == nullptr )
-   {
+   if( prevStep == nullptr ) {
       QMessageBox::critical(this, tr("Decoction error"), tr("The first mash step cannot be a decoction."));
       qCritical() << "MashDesigner: First step not a decoction.";
       return 0;
@@ -637,8 +626,7 @@ double MashDesigner::getDecoctionAmount_l()
 
    // r is the ratio of water and grain to take out for decoction.
    r = ((MC)*(tf-t1)) / ((m_w*c_w + m_g*c_g)*(maxTemp_c()-tf) + (m_w*c_w + m_g*c_g)*(tf-t1));
-   if( r < 0 || r > 1 )
-   {
+   if( r < 0 || r > 1 ) {
       //QMessageBox::critical(this, tr("Decoction error"), tr("Something went wrong in decoction calculation.") );
       //Brewken::log(Brewken::ERROR, QString("MashDesigner Decoction: r=%1").arg(r));
       return 0;

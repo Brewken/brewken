@@ -69,18 +69,20 @@ void BtLineEdit::setWidgetText(QString text) {
 }
 
 void BtLineEdit::onLineChanged() {
+   auto const myFieldType = this->getFieldType();
    qDebug() <<
-      Q_FUNC_INFO << "this->fieldType=" << this->fieldType << ", this->units=" << this->units <<
-      ", this->forcedSystemOfMeasurement=" << this->forcedSystemOfMeasurement;
+      Q_FUNC_INFO << "this->fieldType=" << myFieldType << ", this->units=" << this->units <<
+      ", forcedSystemOfMeasurement=" << this->getForcedSystemOfMeasurement() << ", forcedRelativeScale=" <<
+      this->getForcedRelativeScale();
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(myFieldType)) {
       return;
    }
 
    Measurement::UnitSystem const & oldUnitSystem =
       Measurement::getUnitSystemForField(this->editField,
                                          this->configSection,
-                                         std::get<Measurement::PhysicalQuantity>(this->fieldType));
+                                         std::get<Measurement::PhysicalQuantity>(myFieldType));
    auto oldForcedRelativeScale = Measurement::getForcedRelativeScaleForField(this->editField, this->configSection);
    PreviousScaleInfo previousScaleInfo{
       oldUnitSystem.systemOfMeasurement,
@@ -125,8 +127,9 @@ void BtLineEdit::setText(NamedEntity * element, int precision) {
    QVariant const propertyValue = element->property(propertyName);
    qDebug() << Q_FUNC_INFO << "Read property" << propertyName << "as" << propertyValue;
    bool force = false;
-   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
-       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
+   auto const myFieldType = this->getFieldType();
+   if (std::holds_alternative<NonPhysicalQuantity>(myFieldType) &&
+       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(myFieldType)) {
       display = propertyValue.toString();
       force = true;
    } else if (propertyValue.canConvert(QVariant::Double)) {
@@ -153,8 +156,9 @@ void BtLineEdit::setText(NamedEntity * element, int precision) {
 void BtLineEdit::setText(QString amount, int precision) {
    bool force = false;
 
-   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
-       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
+   auto const myFieldType = this->getFieldType();
+   if (std::holds_alternative<NonPhysicalQuantity>(myFieldType) &&
+       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(myFieldType)) {
       this->setWidgetText(amount);
       force = true;
    } else {
@@ -258,7 +262,6 @@ BtStringEdit::BtStringEdit(QWidget *parent) : BtLineEdit(parent, NonPhysicalQuan
 
 BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mixed) {
    // This is probably pure evil I will later regret
-   this->fieldType = Measurement::PhysicalQuantity::Volume;
    this->units = &Measurement::Units::liters;
    return;
 }
@@ -266,10 +269,8 @@ BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::Phys
 void BtMixedEdit::setIsWeight(bool state) {
    // But you have to admit, this is clever
    if (state) {
-      this->fieldType = Measurement::PhysicalQuantity::Mass;
       this->units = &Measurement::Units::kilograms;
    } else {
-      this->fieldType = Measurement::PhysicalQuantity::Volume;
       this->units = &Measurement::Units::liters;
    }
 

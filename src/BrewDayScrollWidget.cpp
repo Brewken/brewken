@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Carles Muñoz Gorriz <carlesmu@internautas.org>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -41,23 +41,22 @@
 #include "TimerWidget.h"
 
 namespace {
-   QString styleName(Style* style) {
-      if ( ! style ) {
+   QString styleName(Style const * style) {
+      if (!style) {
          return "unknown";
-      } else {
-         return style->name();
       }
+
+      return style->name();
    }
 
-   QString boilTime(Equipment* equipment) {
-      if ( ! equipment ) {
+   QString boilTime(Equipment const * equipment) {
+      if (!equipment) {
          return "unknown";
-      } else {
-         return Measurement::displayAmount(equipment->boilTime_min(),
-                                       PersistentSettings::Sections::tab_recipe,
-                                       PropertyNames::Recipe::boilTime_min,
-                                       &Measurement::Units::minutes);
       }
+
+      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min(), Measurement::Units::minutes},
+                                        PersistentSettings::Sections::tab_recipe,
+                                        PropertyNames::Recipe::boilTime_min);
    }
 }
 
@@ -375,28 +374,43 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
             .arg(tr("Boil Time"))
             .arg(boilTime(recObs->equipment()))
             .arg(tr("Efficiency"))
-            .arg(Measurement::displayAmount(recObs->efficiency_pct(),nullptr,0));
+            .arg(Measurement::displayQuantity(recObs->efficiency_pct(), 0));
 
    // third row: pre-Boil Volume and Preboil Gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Boil Volume"))
-            .arg(Measurement::displayAmount(recObs->boilVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::boilVolume_l, &Measurement::Units::liters,2))
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters},
+                                            PersistentSettings::Sections::tab_recipe,
+                                            PropertyNames::Recipe::boilVolume_l,
+                                            2))
             .arg(tr("Preboil Gravity"))
-            .arg(Measurement::displayAmount(recObs->boilGrav(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Measurement::Units::sp_grav, 3));
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav},
+                                            PersistentSettings::Sections::tab_recipe,
+                                            PropertyNames::Recipe::og,
+                                            3));
 
    // fourth row: Final volume and starting gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Final Volume"))
-            .arg(Measurement::displayAmount(recObs->finalVolume_l(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::finalVolume_l, &Measurement::Units::liters,2))
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters},
+                                            PersistentSettings::Sections::tab_recipe,
+                                            PropertyNames::Recipe::finalVolume_l,
+                                            2))
             .arg(tr("Starting Gravity"))
-            .arg(Measurement::displayAmount(recObs->og(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::og, &Measurement::Units::sp_grav, 3));
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav},
+                                            PersistentSettings::Sections::tab_recipe,
+                                            PropertyNames::Recipe::og,
+                                            3));
 
    // fifth row: IBU and Final gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("IBU"))
-            .arg( Measurement::displayAmount(recObs->IBU(),nullptr,1))
+            .arg( Measurement::displayQuantity(recObs->IBU(), 1))
             .arg(tr("Final Gravity"))
-            .arg(Measurement::displayAmount(recObs->fg(), PersistentSettings::Sections::tab_recipe, PropertyNames::Recipe::fg, &Measurement::Units::sp_grav, 3));
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::sp_grav},
+                                            PersistentSettings::Sections::tab_recipe,
+                                            PropertyNames::Recipe::fg,
+                                            3));
 
    // sixth row: ABV and estimate calories
    bool metricVolume = (
@@ -405,9 +419,9 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
    );
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2%</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("ABV"))
-            .arg(Measurement::displayAmount(recObs->ABV_pct(),nullptr,1) )
+            .arg(Measurement::displayQuantity(recObs->ABV_pct(), 1) )
             .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-            .arg(Measurement::displayAmount(metricVolume ? this->recObs->calories33cl() : this->recObs->calories12oz(), nullptr, 0) );
+            .arg(Measurement::displayQuantity(metricVolume ? this->recObs->calories33cl() : this->recObs->calories12oz(), 0) );
 
    body += "</table>";
 
@@ -431,7 +445,7 @@ QString BrewDayScrollWidget::buildInstructionTable() {
 
       QString stepTime;
       if (ins->interval() > 0.0 ) {
-         stepTime = Measurement::displayAmount(ins->interval(), &Measurement::Units::minutes, 0);
+         stepTime = Measurement::displayAmount(Measurement::Amount{ins->interval(), Measurement::Units::minutes}, 0);
       } else {
          stepTime = "--";
       }

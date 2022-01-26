@@ -1811,7 +1811,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::batchSize_l,
-                        lineEdit_batchSize->toSiRaw(),
+                        lineEdit_batchSize->toSI().quantity,
                         tr("Change Batch Size"));
 }
 
@@ -1822,7 +1822,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::boilSize_l,
-                        lineEdit_boilSize->toSiRaw(),
+                        lineEdit_boilSize->toSI().quantity,
                         tr("Change Boil Size"));
 }
 
@@ -1854,7 +1854,7 @@ void MainWindow::updateRecipeEfficiency() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::efficiency_pct,
-                        lineEdit_efficiency->toSiRaw(),
+                        lineEdit_efficiency->toSI().quantity,
                         tr("Change Recipe Efficiency"));
    return;
 }

@@ -63,19 +63,19 @@ void FermentableEditor::save()
    // order as the combobox.
    obsFerm->setType( static_cast<Fermentable::Type>(comboBox_type->currentIndex()) );
 
-   obsFerm->setYield_pct(lineEdit_yield->toSiRaw());
-   obsFerm->setColor_srm(lineEdit_color->toSiRaw());
+   obsFerm->setYield_pct(lineEdit_yield->toSI().quantity);
+   obsFerm->setColor_srm(lineEdit_color->toSI().quantity);
    obsFerm->setAddAfterBoil( (checkBox_addAfterBoil->checkState() == Qt::Checked)? true : false );
    obsFerm->setOrigin( lineEdit_origin->text() );
    obsFerm->setSupplier( lineEdit_supplier->text() );
-   obsFerm->setCoarseFineDiff_pct( lineEdit_coarseFineDiff->toSiRaw() );
-   obsFerm->setMoisture_pct( lineEdit_moisture->toSiRaw() );
-   obsFerm->setDiastaticPower_lintner( lineEdit_diastaticPower->toSiRaw() );
-   obsFerm->setProtein_pct( lineEdit_protein->toSiRaw() );
-   obsFerm->setMaxInBatch_pct( lineEdit_maxInBatch->toSiRaw() );
+   obsFerm->setCoarseFineDiff_pct( lineEdit_coarseFineDiff->toSI().quantity );
+   obsFerm->setMoisture_pct( lineEdit_moisture->toSI().quantity );
+   obsFerm->setDiastaticPower_lintner( lineEdit_diastaticPower->toSI().quantity );
+   obsFerm->setProtein_pct( lineEdit_protein->toSI().quantity );
+   obsFerm->setMaxInBatch_pct( lineEdit_maxInBatch->toSI().quantity );
    obsFerm->setRecommendMash( (checkBox_recommendMash->checkState() == Qt::Checked) ? true : false );
    obsFerm->setIsMashed( (checkBox_isMashed->checkState() == Qt::Checked) ? true : false );
-   obsFerm->setIbuGalPerLb( lineEdit_ibuGalPerLb->toSiRaw() );
+   obsFerm->setIbuGalPerLb( lineEdit_ibuGalPerLb->toSI().quantity );
    obsFerm->setNotes( textEdit_notes->toPlainText() );
 
    if (this->obsFerm->key() < 0) {
@@ -84,7 +84,7 @@ void FermentableEditor::save()
 
    // Since inventory amount isn't really an attribute of the Fermentable, it's best to store it after we know the
    // Fermentable has a DB record.
-   this->obsFerm->setInventoryAmount(lineEdit_inventory->toSiRaw());
+   this->obsFerm->setInventoryAmount(lineEdit_inventory->toSI().quantity);
 
    setVisible(false);
    return;

@@ -35,54 +35,64 @@ UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
                                      Measurement::Unit const * units) :
    parent{parent},
    fieldType{fieldType},
-   units{units},
-   forcedSystemOfMeasurement{std::nullopt},
-   forcedRelativeScale(std::nullopt) {
+   units{units} {
    return;
 }
 
 UiAmountWithUnits::~UiAmountWithUnits() = default;
 
+BtFieldType UiAmountWithUnits::getFieldType() const {
+   // If it's not Measurement::PhysicalQuantity::Mixed, just return what it is
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
+       Measurement::PhysicalQuantity::Mixed != std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+      return this->fieldType;
+   }
+   // If it is Measurement::PhysicalQuantity::Mixed, then should return either Mass or Volume;
+   auto const physicalQuantity = this->units->getPhysicalQuantity();
+   // It's a coding error if we somehow have units other than Mass or Volume
+   Q_ASSERT(Measurement::PhysicalQuantity::Mass == physicalQuantity ||
+            Measurement::PhysicalQuantity::Volume == physicalQuantity);
+   return physicalQuantity;
+}
+
 void UiAmountWithUnits::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
-   this->forcedSystemOfMeasurement = systemOfMeasurement;
+   Measurement::setForcedSystemOfMeasurementForField(this->editField, this->configSection, systemOfMeasurement);
    return;
 }
 
 std::optional<Measurement::SystemOfMeasurement> UiAmountWithUnits::getForcedSystemOfMeasurement() const {
-   return this->forcedSystemOfMeasurement;
+   return Measurement::getForcedSystemOfMeasurementForField(this->editField, this->configSection);
 }
 
 void UiAmountWithUnits::setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString) {
    qDebug() << Q_FUNC_INFO << systemOfMeasurementAsString;
-   this->forcedSystemOfMeasurement = Measurement::getFromUniqueName(systemOfMeasurementAsString);
+   this->setForcedSystemOfMeasurement(Measurement::getFromUniqueName(systemOfMeasurementAsString));
    return;
 }
 
 QString UiAmountWithUnits::getForcedSystemOfMeasurementViaString() const {
-   return this->forcedSystemOfMeasurement ? Measurement::getUniqueName(*this->forcedSystemOfMeasurement) : "";
+   auto forcedSystemOfMeasurement = this->getForcedSystemOfMeasurement();
+   return forcedSystemOfMeasurement ? Measurement::getUniqueName(*forcedSystemOfMeasurement) : "";
 }
 
 void UiAmountWithUnits::setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
-   this->forcedRelativeScale = relativeScale;
+   Measurement::setForcedRelativeScaleForField(this->editField, this->configSection, relativeScale);
    return;
 }
 
 std::optional<Measurement::UnitSystem::RelativeScale> UiAmountWithUnits::getForcedRelativeScale() const {
-   return this->forcedRelativeScale;
+   return Measurement::getForcedRelativeScaleForField(this->editField, this->configSection);
 }
 
 void UiAmountWithUnits::setForcedRelativeScaleViaString(QString relativeScaleAsString) {
    qDebug() << Q_FUNC_INFO << relativeScaleAsString;
-   if (relativeScaleAsString == "") {
-      this->forcedRelativeScale = std::nullopt;
-   } else {
-      this->forcedRelativeScale = Measurement::UnitSystem::getScaleFromUniqueName(relativeScaleAsString);
-   }
+   this->setForcedRelativeScale(Measurement::UnitSystem::getScaleFromUniqueName(relativeScaleAsString));
    return;
 }
 
 QString UiAmountWithUnits::getForcedRelativeScaleViaString() const {
-   return this->forcedRelativeScale ? Measurement::UnitSystem::getUniqueName(*this->forcedRelativeScale) : "";
+   auto forcedRelativeScale = this->getForcedRelativeScale();
+   return forcedRelativeScale ? Measurement::UnitSystem::getUniqueName(*forcedRelativeScale) : "";
 }
 
 void UiAmountWithUnits::setEditField(QString editField) {
@@ -153,48 +163,47 @@ double UiAmountWithUnits::toDoubleRaw(bool * ok) const {
    return Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
 }
 
-double UiAmountWithUnits::toSiRaw() {
+Measurement::Amount UiAmountWithUnits::toSI() {
    // It's a coding error to call this function if we are not dealing with a physical quantity
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType()));
    Q_ASSERT(this->units);
 
-   bool ok = false;
+/*   bool ok = false;
    double amt = this->toDoubleRaw(&ok);
    if (!ok) {
       qWarning() <<
          Q_FUNC_INFO << "Could not convert " << this->getWidgetText() << " (" << this->configSection << ":" <<
          this->editField << ") to double";
    }
-   return this->units->toSI(amt).quantity;
+
+   return this->units->toSI(amt).quantity;*/
+
+   return Measurement::qStringToSI(this->getWidgetText(),
+                                   this->units->getPhysicalQuantity(),
+                                   this->getForcedSystemOfMeasurement(),
+                                   this->getForcedRelativeScale());
 }
 
 
 QString UiAmountWithUnits::displayAmount(double amount, int precision) {
-   // .:TODO:. I think we should just make these the same!
-   // Our overrides, if any, take precedence over others, if any
-   std::optional<Measurement::SystemOfMeasurement> overrideSystemOfMeasurement =
-      this->forcedSystemOfMeasurement ? this->forcedSystemOfMeasurement :
-                                        Measurement::getForcedSystemOfMeasurementForField(this->editField,
-                                                                                          this->configSection);
-   std::optional<Measurement::UnitSystem::RelativeScale> overrideRelativeScale =
-      this->forcedRelativeScale ? this->forcedRelativeScale :
-                                  Measurement::getForcedRelativeScaleForField(this->editField,
-                                                                              this->configSection);
-
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the
    // unit and scale.
-   return Measurement::displayAmount(amount,
-                                     this->units,
-                                     precision,
-                                     overrideSystemOfMeasurement,
-                                     overrideRelativeScale);
+   if (this->units) {
+      return Measurement::displayAmount(Measurement::Amount{amount, *this->units},
+                                        precision,
+                                        this->getForcedSystemOfMeasurement(),
+                                        this->getForcedRelativeScale());
+   }
+   return Measurement::displayQuantity(amount, precision);
 }
 
 void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) {
    // This is where it gets hard
-   double val = -1.0;
-   QString amt;
+   //
+   // We may need to fix the text that the user entered, eg if this field is set to show US Customary volumes and user
+   // enters an amount in litres then we need to convert it to display in pints or quarts etc.
+   QString correctedText;
 
    QString rawValue = this->getWidgetText();
    qDebug() << Q_FUNC_INFO << "rawValue" << rawValue;
@@ -203,48 +212,28 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
       return;
    }
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
-      amt = rawValue;
+   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType())) {
+      correctedText = rawValue;
    } else {
-
-      Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
-
       // The idea here is we need to first translate the field into a known
       // amount (aka to SI) and then into the unit we want.
-      switch(physicalQuantity) {
-         case Measurement::PhysicalQuantity::Mass:
-         case Measurement::PhysicalQuantity::Volume:
-         case Measurement::PhysicalQuantity::Temperature:
-         case Measurement::PhysicalQuantity::Time:
-         case Measurement::PhysicalQuantity::Density:
-         case Measurement::PhysicalQuantity::DiastaticPower:
-            val = this->convertToSI(previousScaleInfo);
-            amt = this->displayAmount(val, 3);
-            break;
-         case Measurement::PhysicalQuantity::Color:
-            val = this->convertToSI(previousScaleInfo);
-            amt = this->displayAmount(val, 0);
-            break;
-         // .:TBD:. Check whether it's even possible to get here...
-         default:
-            {
-               bool ok = false;
-               val = Localization::toDouble(rawValue, &ok);
-               if (!ok) {
-                  qWarning() <<
-                     Q_FUNC_INFO << " failed to convert" << rawValue << "(" << this->configSection << ":" <<
-                     this->editField << ") to double";
-               }
-               amt = displayAmount(val);
-            }
+      Measurement::Amount amountAsCanonical = this->convertToSI(previousScaleInfo);
+
+      Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->getFieldType());
+      int precision = 3;
+      if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
+         precision = 0;
       }
+      correctedText = this->displayAmount(amountAsCanonical.quantity, precision);
+      qDebug() <<
+         Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
+      qDebug() << Q_FUNC_INFO << "this->units=" << this->units;
    }
-   qDebug() << Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amt;
-   this->setWidgetText(amt);
+   this->setWidgetText(correctedText);
    return;
 }
 
-double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
+Measurement::Amount UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
    QString rawValue = this->getWidgetText();
    qDebug() <<
       Q_FUNC_INFO << "rawValue:" << rawValue <<  ", old SystemOfMeasurement:" << previousScaleInfo.oldSystemOfMeasurement <<
@@ -253,8 +242,8 @@ double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
    // It is a coding error if this function is called for a field is not holding a physical quantity.  Eg, it makes no
    // sense to call convertToSI for a date or a string field, not least as there will be no sane value to supply for
    // oldSystemOfMeasurement.
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
-   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType()));
+   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->getFieldType());
 
    Measurement::UnitSystem const & oldUnitSystem =
       Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement, physicalQuantity);
@@ -277,5 +266,5 @@ double UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
    //
    auto amount = oldUnitSystem.qstringToSI(rawValue, defaultUnit, previousScaleInfo.oldForcedScale);
    qDebug() << Q_FUNC_INFO << "Converted to" << amount;
-   return amount.quantity;
+   return amount;
 }

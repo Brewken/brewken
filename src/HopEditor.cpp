@@ -63,18 +63,18 @@ void HopEditor::save() {
    }
 
    this->obsHop->setName(lineEdit_name->text());
-   this->obsHop->setAlpha_pct(lineEdit_alpha->toSiRaw());
+   this->obsHop->setAlpha_pct(lineEdit_alpha->toSI().quantity);
    this->obsHop->setUse(static_cast<Hop::Use>(comboBox_use->currentIndex()));
-   this->obsHop->setTime_min(lineEdit_time->toSiRaw());
+   this->obsHop->setTime_min(lineEdit_time->toSI().quantity);
    this->obsHop->setType(static_cast<Hop::Type>(comboBox_type->currentIndex()));
    this->obsHop->setForm(static_cast<Hop::Form>(comboBox_form->currentIndex()));
-   this->obsHop->setBeta_pct(lineEdit_beta->toSiRaw());
-   this->obsHop->setHsi_pct(lineEdit_HSI->toSiRaw());
+   this->obsHop->setBeta_pct(lineEdit_beta->toSI().quantity);
+   this->obsHop->setHsi_pct(lineEdit_HSI->toSI().quantity);
    this->obsHop->setOrigin(lineEdit_origin->text());
-   this->obsHop->setHumulene_pct(lineEdit_humulene->toSiRaw());
-   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSiRaw());
-   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSiRaw());
-   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSiRaw());
+   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI().quantity);
+   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI().quantity);
+   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI().quantity);
+   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI().quantity);
 
    this->obsHop->setSubstitutes(textEdit_substitutes->toPlainText());
    this->obsHop->setNotes(textEdit_notes->toPlainText());
@@ -84,7 +84,7 @@ void HopEditor::save() {
    }
 
    // do this late to make sure we've the row in the inventory table
-   this->obsHop->setInventoryAmount(lineEdit_inventory->toSiRaw());
+   this->obsHop->setInventoryAmount(lineEdit_inventory->toSI().quantity);
    setVisible(false);
    return;
 }

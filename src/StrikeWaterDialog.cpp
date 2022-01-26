@@ -45,10 +45,10 @@ void StrikeWaterDialog::calculate()
 
 double StrikeWaterDialog::computeInitialInfusion()
 {
-  double grainTemp   = grainTempVal->toSiRaw();
-  double targetMash  = targetMashVal->toSiRaw();
-  double waterVolume = waterVolumeVal->toSiRaw();
-  double grainWeight = grainWeightInitVal->toSiRaw();
+  double grainTemp   = grainTempVal->toSI().quantity;
+  double targetMash  = targetMashVal->toSI().quantity;
+  double waterVolume = waterVolumeVal->toSI().quantity;
+  double grainWeight = grainWeightInitVal->toSI().quantity;
 
   if ( grainWeight == 0.0 )
      return 0.0;
@@ -58,11 +58,11 @@ double StrikeWaterDialog::computeInitialInfusion()
 
 double StrikeWaterDialog::computeMashInfusion()
 {
-  double mashVol       = mashVolVal->toSiRaw();
-  double grainWeight   = grainWeightVal->toSiRaw();
-  double actualMash    = actualMashVal->toSiRaw();
-  double targetMashInf = targetMashInfVal->toSiRaw();
-  double infusionWater = infusionWaterVal->toSiRaw();
+  double mashVol       = mashVolVal->toSI().quantity;
+  double grainWeight   = grainWeightVal->toSI().quantity;
+  double actualMash    = actualMashVal->toSI().quantity;
+  double targetMashInf = targetMashInfVal->toSI().quantity;
+  double infusionWater = infusionWaterVal->toSI().quantity;
 
   return mashInfusionSi(actualMash, targetMashInf, grainWeight, infusionWater, mashVol);
 }

@@ -287,25 +287,23 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          break;
       case HOPALPHACOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(row->alpha_pct(), nullptr));
+            return QVariant(Measurement::displayQuantity(row->alpha_pct(), 3));
          }
          break;
       case HOPINVENTORYCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(row->inventory(),
-                                                      &Measurement::Units::kilograms,
-                                                      3,
-                                                      this->getForcedSystemOfMeasurementForColumn(column),
-                                                      this->getForcedRelativeScaleForColumn(column)));
+            return QVariant(Measurement::displayAmount(Measurement::Amount{row->inventory(), Measurement::Units::kilograms},
+                                                       3,
+                                                       this->getForcedSystemOfMeasurementForColumn(column),
+                                                       this->getForcedRelativeScaleForColumn(column)));
          }
          break;
       case HOPAMOUNTCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(row->amount_kg(),
-                                                      &Measurement::Units::kilograms,
-                                                      3,
-                                                      this->getForcedSystemOfMeasurementForColumn(column),
-                                                      this->getForcedRelativeScaleForColumn(column)));
+            return QVariant(Measurement::displayAmount(Measurement::Amount{row->amount_kg(), Measurement::Units::kilograms},
+                                                       3,
+                                                       this->getForcedSystemOfMeasurementForColumn(column),
+                                                       this->getForcedRelativeScaleForColumn(column)));
          }
          break;
       case HOPUSECOL:
@@ -318,11 +316,10 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          break;
       case HOPTIMECOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(row->time_min(),
-                                                      &Measurement::Units::minutes,
-                                                      3,
-                                                      std::nullopt,
-                                                      this->getForcedRelativeScaleForColumn(column)));
+            return QVariant(Measurement::displayAmount(Measurement::Amount{row->time_min(), Measurement::Units::minutes},
+                                                       3,
+                                                       std::nullopt,
+                                                       this->getForcedRelativeScaleForColumn(column)));
          }
          break;
       case HOPFORMCOL:

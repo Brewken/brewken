@@ -213,19 +213,19 @@ QVariant WaterTableModel::data(const QModelIndex & index, int role) const {
       case WATERNAMECOL:
          return QVariant(row->name());
       case WATERAMOUNTCOL:
-         return QVariant(Measurement::displayAmount(row->amount(), &Measurement::Units::liters));
+         return QVariant(Measurement::displayAmount(Measurement::Amount{row->amount(), Measurement::Units::liters}));
       case WATERCALCIUMCOL:
-         return QVariant(Measurement::displayAmount(row->calcium_ppm(), nullptr));
+         return QVariant(Measurement::displayQuantity(row->calcium_ppm(), 3));
       case WATERBICARBONATECOL:
-         return QVariant(Measurement::displayAmount(row->bicarbonate_ppm(), nullptr));
+         return QVariant(Measurement::displayQuantity(row->bicarbonate_ppm(), 3));
       case WATERSULFATECOL:
-         return QVariant(Measurement::displayAmount(row->sulfate_ppm(), nullptr));
+         return QVariant(Measurement::displayQuantity(row->sulfate_ppm(), 3));
       case WATERCHLORIDECOL:
-         return QVariant(Measurement::displayAmount(row->chloride_ppm(), nullptr));
+         return QVariant(Measurement::displayQuantity(row->chloride_ppm(), 3));
       case WATERSODIUMCOL:
-         return QVariant(Measurement::displayAmount(row->sodium_ppm(), nullptr));
+         return QVariant(Measurement::displayQuantity(row->sodium_ppm(), 3));
       case WATERMAGNESIUMCOL:
-         return QVariant(Measurement::displayAmount(row->magnesium_ppm(), nullptr));
+         return QVariant(Measurement::displayQuantity(row->magnesium_ppm(), 3));
       default :
          qWarning() << tr("Bad column: %1").arg(index.column());
          return QVariant();

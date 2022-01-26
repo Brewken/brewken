@@ -60,18 +60,23 @@ namespace Measurement {
    Unit const & getUnitForInternalStorage(PhysicalQuantity physicalQuantity);
 
    /*!
+    * \brief Converts a quantity without units to a displayable string
+    *
+    * \param quantity the quantity to display
+    * \param precision how many decimal places
+    */
+   QString displayQuantity(double quantity, int precision);
+
+   /*!
     * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.
-    *        If "units" is null, just return the amount.
     *
     * \param amount the amount to display
-    * \param units the units that \c amount is in
     * \param precision how many decimal places
     * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
     *                                  system default
     * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
     */
-   QString displayAmount(double amount,
-                         Measurement::Unit const * units = nullptr,
+   QString displayAmount(Measurement::Amount const & amount,
                          int precision = 3,
                          std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
                          std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
@@ -88,7 +93,7 @@ namespace Measurement {
    QString displayAmount(NamedEntity * namedEntity,
                          QObject * guiObject,
                          BtStringConst const & propertyName,
-                         Measurement::Unit const * units = nullptr,
+                         Measurement::Unit const & units,
                          int precision = 3);
 
    /*!
@@ -97,13 +102,11 @@ namespace Measurement {
     * \param amount the amount to display
     * \param section the name of the object to reference to get unit system & scales from the config file
     * \param propertyName the property name to complete the lookup for units&scales
-    * \param units which unit system it is in
     * \param precision how many decimal places to use, defaulting to 3
     */
-   QString displayAmount(double amount,
+   QString displayAmount(Measurement::Amount const & amount,
                          BtStringConst const & section,
                          BtStringConst const & propertyName,
-                         Measurement::Unit const * units = nullptr,
                          int precision = 3);
 
    /*!
@@ -194,18 +197,27 @@ namespace Measurement {
 
    void setForcedSystemOfMeasurementForField(QString const & field,
                                              QString const & section,
-                                             Measurement::SystemOfMeasurement systemOfMeasurement);
+                                             std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement);
+
    void setForcedRelativeScaleForField(QString const & field,
                                        QString const & section,
-                                       Measurement::UnitSystem::RelativeScale relativeScale);
+                                       std::optional<Measurement::UnitSystem::RelativeScale> forcedScale);
 
-   void unsetForcedSystemOfMeasurementForField(QString const & field, QString const & section);
-   void unsetForcedRelativeScaleForField(QString const & field, QString const & section);
+   /**
+    * \brief Returns the \c SystemOfMeasurement that should be used to display this field, based on the forced
+    *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
+    *        \c UnitSystem for the specified \c PhysicalQuantity.  NB: It \b is valid to call this for
+    *        \c Measurement::PhysicalQuantity::Mixed.
+    */
+   Measurement::SystemOfMeasurement getSystemOfMeasurementForField(QString const & field,
+                                                                   QString const & section,
+                                                                   Measurement::PhysicalQuantity physicalQuantity);
 
    /**
     * \brief Returns the \c UnitSystem that should be used to display this field, based on the forced
     *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-    *        \c UnitSystem for the specified \c PhysicalQuantity
+    *        \c UnitSystem for the specified \c PhysicalQuantity.  NB: It is \b not valid to call this for
+    *        \c Measurement::PhysicalQuantity::Mixed.
     */
    Measurement::UnitSystem const & getUnitSystemForField(QString const & field,
                                                          QString const & section,

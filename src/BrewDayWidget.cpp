@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BrewDayWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -182,21 +182,21 @@ QString BrewDayWidget::buildTitleTable()
 
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Boil Volume"))
-           .arg(Measurement::displayAmount(recObs->boilSize_l(),&Measurement::Units::liters,2))
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilSize_l(), Measurement::Units::liters}, 2))
            .arg(tr("Preboil Gravity"))
-           .arg(Measurement::displayAmount(recObs->boilGrav(), &Measurement::Units::sp_grav, 3));
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav}, 3));
 
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Final Volume"))
-           .arg(Measurement::displayAmount(recObs->batchSize_l(), &Measurement::Units::liters,2))
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->batchSize_l(), Measurement::Units::liters}, 2))
            .arg(tr("Starting Gravity"))
-           .arg(Measurement::displayAmount(recObs->og(), &Measurement::Units::sp_grav, 3));
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav}, 3));
 
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Boil Time"))
-           .arg(Measurement::displayAmount(recObs->boilTime_min(),&Measurement::Units::minutes))
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilTime_min(), Measurement::Units::minutes}))
            .arg(tr("IBU"))
-           .arg(Measurement::displayAmount(recObs->IBU(),0,1));
+           .arg(Measurement::displayQuantity(recObs->IBU(), 1));
 
    bool metricVolume = (
       Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume) ==
@@ -204,9 +204,9 @@ QString BrewDayWidget::buildTitleTable()
    );
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
            .arg(tr("Predicted Efficiency"))
-           .arg(Measurement::displayAmount(recObs->efficiency_pct(),0,0))
+           .arg(Measurement::displayQuantity(recObs->efficiency_pct(), 0))
            .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-           .arg(Measurement::displayAmount(metricVolume ? recObs->calories33cl() : recObs->calories12oz(),0,0));
+           .arg(Measurement::displayQuantity(metricVolume ? recObs->calories33cl() : recObs->calories12oz(), 0));
 
    body += "</table>";
 
@@ -233,10 +233,11 @@ QString BrewDayWidget::buildInstructionTable()
       QString stepTime, tmp;
       QList<QString> reagents;
 
-      if(instructions[i]->interval())
-         stepTime = Measurement::displayAmount(instructions[i]->interval(), &Measurement::Units::minutes, 0);
-      else
+      if (instructions[i]->interval()) {
+         stepTime = Measurement::displayAmount(Measurement::Amount{instructions[i]->interval(), Measurement::Units::minutes}, 0);
+      } else {
          stepTime = "--";
+      }
 
       tmp = "";
       reagents = instructions[i]->reagents();

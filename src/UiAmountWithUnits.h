@@ -70,6 +70,13 @@ public:
     */
    virtual void setWidgetText(QString text) = 0;
 
+   /**
+    * \brief Returns what type of field this is - except that, if it is \c Measurement::PhysicalQuantity::Mixed, will
+    *        return either \c Measurement::PhysicalQuantity::Mass or \c Measurement::PhysicalQuantity::Volume depending
+    *        on the value of \c this->units.
+    */
+   BtFieldType getFieldType() const;
+
    void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
    void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
 
@@ -117,10 +124,9 @@ public:
    double toDoubleRaw(bool * ok) const;
 
    /**
-    * \brief Takes the numeric part of the field, assumes it measures \c this->units, and converts, if necessary, to SI
-    *        units (though usually this will be a no-op).  NB: As with \c toDoubleRaw, this ignores any string suffix.
+    * \brief Returns the field converted to canonical units for the relevant \c Measurement::PhysicalQuantity
     */
-   double toSiRaw();
+   Measurement::Amount toSI();
 
    /**
     * \brief Use this when you want to do something with the returned QString
@@ -139,12 +145,17 @@ protected:
     * \param oldSystemOfMeasurement
     * \param oldScale (optional)
     */
-   double convertToSI(PreviousScaleInfo previousScaleInfo);
+   Measurement::Amount convertToSI(PreviousScaleInfo previousScaleInfo);
 
 private:
    QWidget * parent;
+   /**
+    * \brief Even inside the class (or any subclasses), this should never be accessed directly but always through
+    *        \c this->getFieldType, as there is special case handling for \c Measurement::PhysicalQuantity::Mixed.
+    */
+   BtFieldType const fieldType;
+
 protected:
-   BtFieldType fieldType;
    /**
     * \brief If \c fieldType is a \c Measurement::PhysicalQuantity, this is the \c Measurement::Unit that should be used
     *        to store the amount of this field.  This is normally fixed as our "standard" (normally metric) unit for the
@@ -157,8 +168,8 @@ protected:
     *        If \c fieldType is not a \c Measurement::PhysicalQuantity, this will be \c nullptr
     */
    Measurement::Unit const * units;
-   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement;
-   std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale;
+//   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement;
+//   std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale;
    QString editField;
    QString configSection;
 };

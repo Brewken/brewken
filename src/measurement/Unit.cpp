@@ -209,10 +209,10 @@ QString Measurement::Unit::convert(QString qstr, QString toUnit) {
    // If we couldn't find either unit, or the two units don't match (eg, you
    // cannot convert L to lb)
    if (u == nullptr || f == nullptr || u->getPhysicalQuantity() != f->getPhysicalQuantity()) {
-      return QString("%1 ?").arg(Measurement::displayAmount(si));
+      return QString("%1 ?").arg(Measurement::displayQuantity(si, 3));
    }
 
-   return QString("%1 %2").arg(Measurement::displayAmount(u->fromSI(si))).arg(toUnit);
+   return QString("%1 %2").arg(Measurement::displayQuantity(u->fromSI(si), 3)).arg(toUnit);
 }
 
 Measurement::Unit const * Measurement::Unit::getUnit(QString const & name,

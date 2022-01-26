@@ -271,10 +271,9 @@ QVariant BtTreeItem::dataFermentable(int column) {
          break;
       case FERMENTABLECOLORCOL:
          if (ferm) {
-            return QVariant(Measurement::displayAmount(ferm->color_srm(),
+            return QVariant(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm},
                                                        BtString::EMPTY_STR,
                                                        PropertyNames::Fermentable::color_srm,
-                                                       &Measurement::Units::srm,
                                                        0));
          }
          break;
@@ -305,7 +304,7 @@ QVariant BtTreeItem::dataHop(int column) {
          }
          break;
       default :
-         qWarning() << QString("BtTreeItem::dataHop Bad column: %1").arg(column);
+         qWarning() << Q_FUNC_INFO << "Bad column:" << column;
    }
    return QVariant();
 }

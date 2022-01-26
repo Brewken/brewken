@@ -146,7 +146,7 @@ void BrewNoteWidget::updateSG() {
       return;
    }
 
-   this->bNoteObs->setSg(lineEdit_SG->toSiRaw());
+   this->bNoteObs->setSg(lineEdit_SG->toSI().quantity);
    return;
 }
 
@@ -155,7 +155,7 @@ void BrewNoteWidget::updateVolumeIntoBK_l() {
       return;
    }
 
-   this->bNoteObs->setVolumeIntoBK_l(lineEdit_volIntoBK->toSiRaw());
+   this->bNoteObs->setVolumeIntoBK_l(lineEdit_volIntoBK->toSI().quantity);
    return;
 }
 
@@ -164,7 +164,7 @@ void BrewNoteWidget::updateStrikeTemp_c() {
       return;
    }
 
-   this->bNoteObs->setStrikeTemp_c(lineEdit_strikeTemp->toSiRaw());
+   this->bNoteObs->setStrikeTemp_c(lineEdit_strikeTemp->toSI().quantity);
    return;
 }
 
@@ -173,7 +173,7 @@ void BrewNoteWidget::updateMashFinTemp_c() {
       return;
    }
 
-   this->bNoteObs->setMashFinTemp_c(lineEdit_mashFinTemp->toSiRaw());
+   this->bNoteObs->setMashFinTemp_c(lineEdit_mashFinTemp->toSI().quantity);
    return;
 }
 
@@ -182,7 +182,7 @@ void BrewNoteWidget::updateOG() {
       return;
    }
 
-   this->bNoteObs->setOg(lineEdit_OG->toSiRaw());
+   this->bNoteObs->setOg(lineEdit_OG->toSI().quantity);
    return;
 }
 
@@ -191,7 +191,7 @@ void BrewNoteWidget::updatePostBoilVolume_l() {
       return;
    }
 
-   this->bNoteObs->setPostBoilVolume_l(lineEdit_postBoilVol->toSiRaw());
+   this->bNoteObs->setPostBoilVolume_l(lineEdit_postBoilVol->toSI().quantity);
    this->showChanges();
    return;
 }
@@ -201,7 +201,7 @@ void BrewNoteWidget::updateVolumeIntoFerm_l() {
       return;
    }
 
-   this->bNoteObs->setVolumeIntoFerm_l(lineEdit_volIntoFerm->toSiRaw());
+   this->bNoteObs->setVolumeIntoFerm_l(lineEdit_volIntoFerm->toSI().quantity);
    this->showChanges();
    return;
 }
@@ -211,7 +211,7 @@ void BrewNoteWidget::updatePitchTemp_c() {
       return;
    }
 
-   this->bNoteObs->setPitchTemp_c(lineEdit_pitchTemp->toSiRaw());
+   this->bNoteObs->setPitchTemp_c(lineEdit_pitchTemp->toSI().quantity);
    this->showChanges();
    return;
 }
@@ -221,7 +221,7 @@ void BrewNoteWidget::updateFG() {
       return;
    }
 
-   this->bNoteObs->setFg(lineEdit_FG->toSiRaw());
+   this->bNoteObs->setFg(lineEdit_FG->toSI().quantity);
    this->showChanges();
    return;
 }
@@ -231,7 +231,7 @@ void BrewNoteWidget::updateFinalVolume_l() {
       return;
    }
 
-   this->bNoteObs->setFinalVolume_l(lineEdit_finalVol->toSiRaw());
+   this->bNoteObs->setFinalVolume_l(lineEdit_finalVol->toSI().quantity);
 //   this->showChanges();
    return;
 }

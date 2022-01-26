@@ -216,8 +216,9 @@ void BtDigitWidget::setText(QString amount, int precision) {
    bool ok = false;
 
    this->setConfigSection("");
-   if (std::holds_alternative<NonPhysicalQuantity>(this->fieldType) &&
-       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(this->fieldType)) {
+   auto const myFieldType = this->getFieldType();
+   if (std::holds_alternative<NonPhysicalQuantity>(myFieldType) &&
+       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(myFieldType)) {
       QLabel::setText(amount);
    } else {
       amt = Localization::toDouble(amount, &ok);

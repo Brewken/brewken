@@ -55,13 +55,9 @@ void BtTableModel::setForcedSystemOfMeasurementForColumn(int column,
                                                          std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
    QString attribute = this->columnGetAttribute(column);
    if (!attribute.isEmpty()) {
-      if (systemOfMeasurement) {
-         Measurement::setForcedSystemOfMeasurementForField(attribute, this->objectName(), *systemOfMeasurement);
-      } else {
-         Measurement::unsetForcedSystemOfMeasurementForField(attribute, this->objectName());
-      }
+      Measurement::setForcedSystemOfMeasurementForField(attribute, this->objectName(), systemOfMeasurement);
       // As we're setting/changing the forced SystemOfMeasurement, we want to clear the forced RelativeScale
-      Measurement::unsetForcedRelativeScaleForField(attribute, this->objectName());
+      Measurement::setForcedRelativeScaleForField(attribute, this->objectName(), std::nullopt);
    }
    return;
 }
@@ -70,11 +66,7 @@ void BtTableModel::setForcedRelativeScaleForColumn(int column,
                                                    std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
    QString attribute = this->columnGetAttribute(column);
    if (!attribute.isEmpty()) {
-      if (relativeScale) {
-         Measurement::setForcedRelativeScaleForField(attribute, this->objectName(), *relativeScale);
-      } else {
-         Measurement::unsetForcedRelativeScaleForField(attribute, this->objectName());
-      }
+      Measurement::setForcedRelativeScaleForField(attribute, this->objectName(), relativeScale);
    }
    return;
 }

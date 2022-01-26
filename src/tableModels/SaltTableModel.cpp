@@ -434,8 +434,10 @@ QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
          }
          return QVariant(
             Measurement::displayAmount(
-               row->amount(),
-               row->amountIsWeight() ? &Measurement::Units::kilograms: &Measurement::Units::liters,
+               Measurement::Amount{
+                  row->amount(),
+                  row->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
                3,
                this->getForcedSystemOfMeasurementForColumn(column),
                std::nullopt

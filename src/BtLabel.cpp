@@ -176,12 +176,9 @@ void BtLabel::popContextMenu(const QPoint& point) {
 
    // Save the current settings (which may come from system-wide defaults) for the signal below
    Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType));
-   Measurement::UnitSystem const & oldUnitSystem =
-      Measurement::getUnitSystemForField(this->propertyName,
-                                         this->configSection,
-                                         std::get<Measurement::PhysicalQuantity>(this->fieldType));
+   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
    PreviousScaleInfo previousScaleInfo{
-      oldUnitSystem.systemOfMeasurement,
+      Measurement::getSystemOfMeasurementForField(this->propertyName, this->configSection, physicalQuantity),
       Measurement::getForcedRelativeScaleForField(this->propertyName, this->configSection)
    };
 
@@ -210,7 +207,7 @@ void BtLabel::popContextMenu(const QPoint& point) {
       if (!whatSelected) {
          // Null means "Default", which means don't set a forced SystemOfMeasurement for this field
          for (auto field : fieldsToSet) {
-            Measurement::unsetForcedSystemOfMeasurementForField(field, this->configSection);
+            Measurement::setForcedSystemOfMeasurementForField(field, this->configSection, std::nullopt);
          }
       } else {
          for (auto field : fieldsToSet) {
@@ -219,7 +216,7 @@ void BtLabel::popContextMenu(const QPoint& point) {
       }
       // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale
       for (auto field : fieldsToSet) {
-         Measurement::unsetForcedRelativeScaleForField(field, this->configSection);
+         Measurement::setForcedRelativeScaleForField(field, this->configSection, std::nullopt);
       }
 
       //
@@ -244,7 +241,7 @@ void BtLabel::popContextMenu(const QPoint& point) {
       if (!whatSelected) {
          // Null means "Default", which means don't set a forced RelativeScale for this field
          for (auto field : fieldsToSet) {
-            Measurement::unsetForcedRelativeScaleForField(field, this->configSection);
+            Measurement::setForcedRelativeScaleForField(field, this->configSection, std::nullopt);
          }
       } else {
          for (auto field : fieldsToSet) {
