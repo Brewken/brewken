@@ -17,31 +17,28 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #ifndef TIMERWIDGET_H
 #define TIMERWIDGET_H
-
-class TimerWidget;
+#pragma once
 
 #include <QDialog>
-#include "boiltime.h"
-#include "ui_timerWidget.h"
-#include "TimerMainDialog.h"
 #ifndef NO_QTMULTIMEDIA
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QPalette>
 #endif
 
+#include "ui_timerWidget.h"
+
+#include "boiltime.h"
+#include "TimerMainDialog.h"
+
 /*!
  * \class TimerWidget
  *
- *
  * \brief Individual boil addition timers
  */
-
-class TimerWidget : public QDialog, public Ui::timerWidget
-{
+class TimerWidget : public QDialog, public Ui::timerWidget {
     Q_OBJECT
 
 public:
@@ -93,4 +90,4 @@ private:
 
 };
 
-#endif // TimerWidget_H
+#endif

@@ -16,9 +16,10 @@
  =====================================================================================================================*/
 #ifndef WATERBUTTON_H
 #define WATERBUTTON_H
+#pragma once
 
-#include <QPushButton>
 #include <QMetaProperty>
+#include <QPushButton>
 #include <QVariant>
 #include <QWidget>
 

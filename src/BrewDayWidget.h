@@ -18,6 +18,7 @@
  =====================================================================================================================*/
 #ifndef BREWDAYWIDGET_H
 #define BREWDAYWIDGET_H
+#pragma once
 
 #include <QMetaProperty>
 #include <QPrinter>
@@ -34,11 +35,9 @@ class Recipe;
 /*!
  * \class BrewDayWidget
  *
- *
  * \brief Widget that displays the brewday info. Deprecated I believe.
  */
-class BrewDayWidget : public QWidget, public Ui::brewDayWidget
-{
+class BrewDayWidget : public QWidget, public Ui::brewDayWidget {
    Q_OBJECT
 public:
    BrewDayWidget(QWidget* parent=0);
@@ -75,4 +74,4 @@ private slots:
    bool loadComplete(bool ok);
 };
 
-#endif  /* BREWDAYWIDGET_H */
+#endif

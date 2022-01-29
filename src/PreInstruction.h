@@ -16,19 +16,16 @@
  =====================================================================================================================*/
 #ifndef PREINSTRUCTION_H
 #define PREINSTRUCTION_H
-
-class PreInstruction;
+#pragma once
 
 #include <QString>
 
 /*!
  * \class PreInstruction
  *
- *
  * \brief Simple class to assist the creation of instructions.
  */
-class PreInstruction
-{
+class PreInstruction {
 public:
    PreInstruction();
    PreInstruction(const QString& txt, const QString& title, double t);
@@ -45,4 +42,4 @@ private:
    double time;
 };
 
-#endif   /* PREINSTRUCTION_H */
+#endif

@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * TimerListDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * TimerListDialog.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -16,23 +17,23 @@
  =====================================================================================================================*/
 #ifndef TIMERLISTDIALOG_H
 #define TIMERLISTDIALOG_H
+#pragma once
 
-class TimerListDialog;
-
-#include <QDialog>
-#include <QWidget>
-#include "TimerWidget.h"
 #include <QDebug>
-#include "MainWindow.h"
+#include <QDialog>
+#include <QList>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QWidget>
+
+class TimerWidget;
 
 /*!
  * \class TimerListDialog
  *
- *
  * \brief Dialog to hold addition timers
  */
-class TimerListDialog : public QDialog
-{
+class TimerListDialog : public QDialog {
    Q_OBJECT
 
 public:

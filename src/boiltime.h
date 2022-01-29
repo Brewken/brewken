@@ -13,15 +13,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #ifndef BOILTIME_H
 #define BOILTIME_H
+#pragma once
 
 #include <QObject>
 #include <QTimer>
 /*!
  * \brief Used by TimerMainDialog and TimerWidget
- *
  *
  * Makes it possible to trigger multiple timers using one QTimer
  */
@@ -52,4 +51,4 @@ private:
     bool completed;
 };
 
-#endif // BOILTIME_H
+#endif

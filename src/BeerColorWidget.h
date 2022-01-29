@@ -17,6 +17,7 @@
  =====================================================================================================================*/
 #ifndef BEERCOLORWIDGET_H
 #define BEERCOLORWIDGET_H
+#pragma once
 
 #include <QColor>
 #include <QImage>

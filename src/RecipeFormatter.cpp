@@ -23,8 +23,15 @@
 #include "RecipeFormatter.h"
 
 #include <QClipboard>
+#include <QDebug>
+#include <QHBoxLayout>
+#include <QObject>
+#include <QPrintDialog>
 #include <QPrinter>
+#include <QPushButton>
 #include <QStringList>
+#include <QTextDocument>
+#include <QVBoxLayout>
 
 #include "Html.h"
 #include "Localization.h"
@@ -208,8 +215,8 @@ public:
    }
 
    //! Get an HTML view.
-   QString getHTMLFormat() {
-      QString pDoc = this->buildHTMLHeader();
+   QString getHtmlFormat() {
+      QString pDoc = this->buildHtmlHeader();
       pDoc += this->buildStatTableHtml();
       pDoc += this->buildFermentableTableHtml();
       pDoc += this->buildHopsTableHtml();
@@ -220,7 +227,7 @@ public:
       pDoc += this->buildInstructionTableHtml();
       pDoc += this->buildBrewNotesHtml();
 
-      pDoc += this->buildHTMLFooter();
+      pDoc += this->buildHtmlFooter();
 
       return pDoc;
    }
@@ -239,7 +246,7 @@ public:
       return *this->textSeparator;
    }
 
-   QString buildHTMLHeader() {
+   QString buildHtmlHeader() {
       return Html::createHeader(RecipeFormatter::tr("Recipe"), ":css/recipe.css");
    }
 
@@ -1158,7 +1165,7 @@ public:
       return bnTable;
    }
 
-   QString buildHTMLFooter() {
+   QString buildHtmlFooter() {
       return "</div></body></html>";
    }
 
@@ -1168,18 +1175,8 @@ public:
 };
 
 
-RecipeFormatter::RecipeFormatter(QWidget* parent) : BtPrintPreview{parent},
+RecipeFormatter::RecipeFormatter(QWidget* parent) : QObject{parent},
                                                     pimpl{new impl{}} {
-   this->setWindowTitle(tr("Print Preview"));
-   /*
-   // Add a print button at the bottom.
-   QHBoxLayout* buttonBox = new QHBoxLayout(docDialog);
-   QPushButton* print = new QPushButton(QObject::tr("Print"), docDialog);
-   connect(print, SLOT(clicked()), Brewken::mainWindow, SLOT(printRecipe()));
-   buttonBox->addStretch();
-   buttonBox->addWidget(print);
-   docDialog->layout()->addItem(buttonBox);
-   */
    return;
 }
 
@@ -1195,10 +1192,10 @@ void RecipeFormatter::setRecipe(Recipe* recipe) {
 
 
 
-QString RecipeFormatter::getHTMLFormat( QList<Recipe*> recipes ) {
+QString RecipeFormatter::getHtmlFormat(QList<Recipe*> recipes) {
    Recipe *current = this->pimpl->rec;
 
-   QString hDoc = this->pimpl->buildHTMLHeader();
+   QString hDoc = this->pimpl->buildHtmlHeader();
 
    // build a toc -- why do I do this to myself?
    hDoc += "<ul>";
@@ -1221,10 +1218,33 @@ QString RecipeFormatter::getHTMLFormat( QList<Recipe*> recipes ) {
       hDoc += this->pimpl->buildBrewNotesHtml();
       hDoc += "<p></p>";
    }
-   hDoc += this->pimpl->buildHTMLFooter();
+   hDoc += this->pimpl->buildHtmlFooter();
 
    this->pimpl->rec = current;
    return hDoc;
+}
+
+QString RecipeFormatter::getHtmlFormat() {
+   QString pDoc = this->pimpl->buildHtmlHeader();
+   pDoc += this->pimpl->buildStatTableHtml();
+   pDoc += this->pimpl->buildFermentableTableHtml();
+   pDoc += this->pimpl->buildHopsTableHtml();
+   pDoc += this->pimpl->buildMiscTableHtml();
+   pDoc += this->pimpl->buildYeastTableHtml();
+   pDoc += this->pimpl->buildMashTableHtml();
+   pDoc += this->pimpl->buildNotesHtml();
+   pDoc += this->pimpl->buildBrewNotesHtml();
+   pDoc += this->pimpl->buildHtmlFooter();
+
+   return pDoc;
+}
+
+QString RecipeFormatter::buildHtmlHeader() {
+   return this->pimpl->buildHtmlHeader();
+}
+
+QString RecipeFormatter::buildHtmlFooter() {
+   return this->pimpl->buildHtmlFooter();
 }
 
 QString RecipeFormatter::getBBCodeFormat() {
@@ -1593,22 +1613,4 @@ QString RecipeFormatter::getToolTip(Water* water) {
 
 void RecipeFormatter::toTextClipboard() {
    QApplication::clipboard()->setText(this->pimpl->getTextFormat());
-}
-
-void RecipeFormatter::printPreview() {
-   this->setContent(this->pimpl->getHTMLFormat());
-   this->show();
-   return;
-}
-
-void RecipeFormatter::print(QPrinter* printer) {
-   this->setContent(this->pimpl->getHTMLFormat());
-   this->BtPrintPreview::print(printer);
-   return;
-}
-
-void RecipeFormatter::exportHtml(QFile* file) {
-   this->setContent(this->pimpl->getHTMLFormat());
-   this->BtPrintPreview::exportHtml(file);
-   return;
 }

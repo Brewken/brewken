@@ -18,15 +18,16 @@
  =====================================================================================================================*/
 #ifndef FERMENTABLEDIALOG_H
 #define FERMENTABLEDIALOG_H
+#pragma once
 
-#include <QWidget>
 #include <QDialog>
 #include <QEvent>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QTableView>
-#include <QSpacerItem>
 #include <QPushButton>
+#include <QSpacerItem>
+#include <QTableView>
+#include <QVBoxLayout>
+#include <QWidget>
 
 // Forward declarations.
 class MainWindow;
@@ -37,11 +38,9 @@ class FermentableSortFilterProxyModel;
 /*!
  * \class FermentableDialog
  *
- *
  * \brief View/controller class that shows the list of fermentables in the database.
  */
-class FermentableDialog : public QDialog
-{
+class FermentableDialog : public QDialog {
    Q_OBJECT
 
 public:
@@ -94,4 +93,4 @@ private:
    void retranslateUi();
 };
 
-#endif   /* FERMENTABLEDIALOG_H */
+#endif

@@ -15,11 +15,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
-#ifndef BTTTREEITEM_H_
-#define BTTTREEITEM_H_
-
-class BtTreeItem;
+#ifndef BTTTREEITEM_H
+#define BTTTREEITEM_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QList>
@@ -45,7 +43,6 @@ class Water;
 
 /*!
  * \class BtTreeItem
- *
  *
  * \brief Model for an item in a tree.
  *

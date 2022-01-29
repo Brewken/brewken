@@ -18,6 +18,7 @@
  =====================================================================================================================*/
 #ifndef BTTREEMODEL_H
 #define BTTREEMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -47,7 +48,6 @@ class Yeast;
 
 /*!
  * \class BtTreeModel
- *
  *
  * \brief Model for a tree of Recipes, Equipments, Fermentables, Hops, Miscs and Yeasts
  *

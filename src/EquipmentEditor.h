@@ -20,6 +20,7 @@
  =====================================================================================================================*/
 #ifndef EQUIPMENTEDITOR_H
 #define EQUIPMENTEDITOR_H
+#pragma once
 
 #include "ui_equipmentEditor.h"
 

@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * Html.h is part of Brewken, and is copyright the following authors 2016:
+ * Html.h is part of Brewken, and is copyright the following authors 2016-2022:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,11 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#ifndef HTML_H
+#define HTML_H
+#pragma once
 
 class QString;
 
-namespace Html
-{
+namespace Html {
 
 /*!
  * \return The contents of the CSS resource.
@@ -37,4 +40,5 @@ QString createHeader(const QString& title, const QString& cssResourceName);
  */
 QString createFooter();
 
-} // namespace Html
+}
+#endif

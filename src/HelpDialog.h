@@ -15,6 +15,7 @@
  =====================================================================================================================*/
 #ifndef HELPDIALOG_H
 #define HELPDIALOG_H
+#pragma once
 
 #include <memory> // For PImpl
 

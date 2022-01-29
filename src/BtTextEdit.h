@@ -15,26 +15,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #ifndef BTTEXTEDIT_H
 #define BTTEXTEDIT_H
-
+#pragma once
 
 #include <QPlainTextEdit>
 #include <QFocusEvent>
 
-
 /*!
  * \class BtTextEdit
- *
  *
  * \brief This extend QPlainTextEdit such that it only signals when the widget
  * loses focus and the text has been modified within the widget. This, in
  * turn, reduces the number of needless writes we make to the database.
  *
  */
-class BtTextEdit : public QPlainTextEdit
-{
+class BtTextEdit : public QPlainTextEdit {
    Q_OBJECT
 
 public:
@@ -57,6 +53,5 @@ private:
    bool wasModified;
 
 };
-
 
 #endif

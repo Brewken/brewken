@@ -16,6 +16,7 @@
  =====================================================================================================================*/
 #ifndef STYLESORTFILTERPROXYMODEL_H
 #define STYLESORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
 

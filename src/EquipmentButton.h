@@ -17,6 +17,7 @@
  =====================================================================================================================*/
 #ifndef EQUIPMENTBUTTON_H
 #define EQUIPMENTBUTTON_H
+#pragma once
 
 #include <QPushButton>
 #include <QMetaProperty>
@@ -32,8 +33,7 @@ class QWidget;
  *
  * \brief This is a view class that displays the name of an equipment.
  */
-class EquipmentButton : public QPushButton
-{
+class EquipmentButton : public QPushButton {
    Q_OBJECT
 public:
    EquipmentButton(QWidget* parent = nullptr);
