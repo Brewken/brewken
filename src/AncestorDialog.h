@@ -15,6 +15,7 @@
  =====================================================================================================================*/
 #ifndef ANCESTORDIALOG_H
 #define ANCESTORDIALOG_H
+#pragma once
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>

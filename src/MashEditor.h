@@ -17,8 +17,7 @@
  =====================================================================================================================*/
 #ifndef MASHEDITOR_H
 #define MASHEDITOR_H
-
-class MashEditor;
+#pragma once
 
 #include <QDialog>
 #include <QMetaProperty>

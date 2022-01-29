@@ -18,6 +18,7 @@
  =====================================================================================================================*/
 #ifndef TABLEMODELS_MASHSTEPTABLEMODEL_H
 #define TABLEMODELS_MASHSTEPTABLEMODEL_H
+#pragma once
 
 #include <QItemDelegate>
 #include <QMetaProperty>

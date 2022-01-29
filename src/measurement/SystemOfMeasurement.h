@@ -19,8 +19,7 @@
 
 #include <optional>
 
-class QString;
-class QTextStream;
+#include <QString>
 
 namespace Measurement {
    /**

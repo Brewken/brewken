@@ -16,6 +16,7 @@
  =====================================================================================================================*/
 #ifndef XML_BEERXML_H
 #define XML_BEERXML_H
+#pragma once
 
 #include <memory> // For PImpl
 

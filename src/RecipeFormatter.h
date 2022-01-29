@@ -23,22 +23,26 @@
 
 #include <memory> // For PImpl
 
+#include <QDialog>
 #include <QFile>
+#include <QList>
 #include <QObject>
 #include <QPrintDialog>
-#include <QPrinter>
-#include <QString>
+#include <QStringList>
+#include <QTextBrowser>
 
-#include "BtPrintPreview.h"
 #include "model/Recipe.h"
+#include "PrintAndPreviewDialog.h"
 
 /*!
  * \class RecipeFormatter
  *
  * \brief View class that creates various text versions of a recipe.
  */
-class RecipeFormatter : public BtPrintPreview {
+class RecipeFormatter : public QObject {
    Q_OBJECT
+
+   friend class PrintAndPreviewDialog;
 
 public:
    RecipeFormatter(QWidget * parent = nullptr);
@@ -48,7 +52,11 @@ public:
    void setRecipe(Recipe* recipe);
 
    //! Get a whole mess of html views
-   QString getHTMLFormat( QList<Recipe*> recipes );
+   QString getHtmlFormat(QList<Recipe*> recipes);
+
+   QString getHtmlFormat();
+   QString buildHtmlHeader();
+   QString buildHtmlFooter();
 
    //! Get a BBCode view. Why is this here?
    QString getBBCodeFormat();
@@ -62,23 +70,6 @@ public:
    QString getToolTip(Misc* misc);
    QString getToolTip(Yeast* yeast);
    QString getToolTip(Water* water);
-
-   /*!
-    * \brief Show the print preview
-    */
-   void printPreview();
-
-   /*!
-    * \brief Print the recipe
-    * \param printer The printer to print to, should not be @c NULL
-    */
-   void print(QPrinter* printer);
-
-   /*!
-    * \brief Export the recipe to a HTML document
-    * \param file The output file opened for writing
-    */
-   void exportHtml(QFile* file);
 
 public slots:
    //! Put the plaintext view onto the clipboard.

@@ -18,6 +18,7 @@
  =====================================================================================================================*/
 #ifndef MASHDESIGNER_H
 #define MASHDESIGNER_H
+#pragma once
 
 #include <QDialog>
 #include <QWidget>

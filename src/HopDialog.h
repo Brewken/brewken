@@ -95,4 +95,4 @@ private:
    void retranslateUi();
 };
 
-#endif   /* _HOPDIALOG_H */
+#endif

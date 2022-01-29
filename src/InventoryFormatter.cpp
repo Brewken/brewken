@@ -17,10 +17,10 @@
  =====================================================================================================================*/
 #include "InventoryFormatter.h"
 
-#include <QDate>
-#include <QDialog>
+#include <QList>
+#include <QMap>
+#include <QStringList>
 
-#include "BtPrintPreview.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Html.h"
 #include "Localization.h"
@@ -28,12 +28,16 @@
 #include "measurement/Measurement.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
-#include "model/Inventory.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 
 namespace {
+   /**
+    * @brief Create Inventory HTML Header
+    *
+    * @return QString
+    */
    QString createInventoryHeader() {
       return Html::createHeader(QObject::tr("Inventory"), ":css/inventory.css") +
             QString("<h1>%1 &mdash; %2</h1>")
@@ -42,7 +46,7 @@ namespace {
    }
 
    /**
-    * Fermentables
+    * \brief Create Inventory HTML Table of \c Fermentable
     */
    QString createInventoryTableFermentable() {
       QString result;
@@ -78,7 +82,7 @@ namespace {
    }
 
    /**
-    * Hops
+    * \brief Create Inventory HTML Table of \c Hop
     */
    QString createInventoryTableHop() {
       QString result;
@@ -117,7 +121,7 @@ namespace {
    }
 
    /**
-    * Misc
+    * \brief Create Inventory HTML Table of \c Misc
     */
    QString createInventoryTableMiscellaneous() {
       QString result;
@@ -158,7 +162,7 @@ namespace {
    }
 
    /**
-    * Yeast
+    * \brief Create Inventory HTML Table of \c Yeast
     */
    QString createInventoryTableYeast() {
       QString result;
@@ -197,11 +201,19 @@ namespace {
       return result;
    }
 
-   QString createInventoryBody() {
-      QString result =
-            createInventoryTableFermentable() + createInventoryTableHop() +
-            createInventoryTableMiscellaneous() + createInventoryTableYeast();
 
+   /**
+    * Create Inventory HTML Body
+    */
+   QString createInventoryBody(InventoryFormatter::HtmlGenerationFlags flags) {
+      // Only generate users selection of Ingredient inventory.
+      QString result =
+         ((InventoryFormatter::FERMENTABLES  & flags) ? createInventoryTableFermentable() : "") +
+         ((InventoryFormatter::HOPS          & flags) ? createInventoryTableHop() : "") +
+         ((InventoryFormatter::MISCELLANEOUS & flags) ? createInventoryTableMiscellaneous() : "") +
+         ((InventoryFormatter::YEAST         & flags) ? createInventoryTableYeast() : "");
+
+      // If user selects no printout or if there are no inventory for the selected ingredients
       if (result.size() == 0) {
          result = QObject::tr("No inventory available.");
       }
@@ -209,41 +221,27 @@ namespace {
       return result;
    }
 
+   /**
+    * Create Inventory HTML Footer
+    */
    QString createInventoryFooter() {
       return Html::createFooter();
    }
 
-
-   BtPrintPreview * dialog;
-
-   void createOrUpdateDialog() {
-      if (nullptr == dialog) {
-         dialog = new BtPrintPreview(&MainWindow::instance());
-         dialog->setWindowTitle(QObject::tr("Inventory Print Preview"));
-      }
-      dialog->setContent(createInventoryHeader() +
-                         createInventoryBody() +
-                         createInventoryFooter());
-      return;
-   }
-
 }
 
-
-void InventoryFormatter::printPreview() {
-   createOrUpdateDialog();
-   dialog->show();
-   return;
+InventoryFormatter::HtmlGenerationFlags InventoryFormatter::operator|(InventoryFormatter::HtmlGenerationFlags a,
+                                                                      InventoryFormatter::HtmlGenerationFlags b) {
+   return static_cast<HtmlGenerationFlags>(static_cast<int>(a) | static_cast<int>(b));
 }
 
-void InventoryFormatter::print(QPrinter* printer) {
-   createOrUpdateDialog();
-   dialog->print(printer);
-   return;
+bool InventoryFormatter::operator&(InventoryFormatter::HtmlGenerationFlags a,
+                                   InventoryFormatter::HtmlGenerationFlags b) {
+   return (static_cast<int>(a) & static_cast<int>(b));
 }
 
-void InventoryFormatter::exportHtml(QFile* file) {
-   createOrUpdateDialog();
-   dialog->exportHtml(file);
-   return;
+QString InventoryFormatter::createInventoryHtml(HtmlGenerationFlags flags) {
+   return createInventoryHeader() +
+          createInventoryBody(flags) +
+          createInventoryFooter();
 }

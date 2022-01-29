@@ -26,7 +26,6 @@ class QMouseEvent;
 
 /*!
  * \brief Widget to display a recipe statistic with "in-range" context from the style.
- *
  */
 class StyleRangeWidget : public RangedSlider
 {

@@ -102,6 +102,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/BrewDayScrollWidget.cpp
     ${SRCDIR}/BrewDayWidget.cpp
     ${SRCDIR}/Brewken.cpp
+    ${SRCDIR}/BrewDayFormatter.cpp
     ${SRCDIR}/BrewNoteWidget.cpp
     ${SRCDIR}/BtColor.cpp
     ${SRCDIR}/BtDatePopup.cpp
@@ -110,7 +111,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/BtFolder.cpp
     ${SRCDIR}/BtLabel.cpp
     ${SRCDIR}/BtLineEdit.cpp
-    ${SRCDIR}/BtPrintPreview.cpp
     ${SRCDIR}/BtSplashScreen.cpp
     ${SRCDIR}/BtTabWidget.cpp
     ${SRCDIR}/BtTextEdit.cpp
@@ -193,6 +193,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/PitchDialog.cpp
     ${SRCDIR}/PreInstruction.cpp
     ${SRCDIR}/PrimingDialog.cpp
+    ${SRCDIR}/PrintAndPreviewDialog.cpp
     ${SRCDIR}/RadarChart.cpp
     ${SRCDIR}/RangedSlider.cpp
     ${SRCDIR}/RecipeExtrasWidget.cpp
@@ -258,6 +259,7 @@ SET( Brewken_UIS
     ${UIDIR}/brewDayScrollWidget.ui
     ${UIDIR}/brewDayWidget.ui
     ${UIDIR}/brewNoteWidget.ui
+    ${UIDIR}/BtPrintAndPreview.ui
     ${UIDIR}/equipmentEditor.ui
     ${UIDIR}/fermentableEditor.ui
     ${UIDIR}/hopEditor.ui
@@ -298,6 +300,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/AncestorDialog.h
     ${SRCDIR}/BeerColorWidget.h
     ${SRCDIR}/boiltime.h
+    ${SRCDIR}/BrewDayFormatter.h
     ${SRCDIR}/BrewDayScrollWidget.h
     ${SRCDIR}/BrewDayWidget.h
     ${SRCDIR}/Brewken.h
@@ -307,7 +310,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/BtFolder.h
     ${SRCDIR}/BtLabel.h
     ${SRCDIR}/BtLineEdit.h
-    ${SRCDIR}/BtPrintPreview.h
     ${SRCDIR}/BtSplashScreen.h
     ${SRCDIR}/BtTabWidget.h
     ${SRCDIR}/BtTextEdit.h
@@ -365,6 +367,7 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/OptionDialog.h
     ${SRCDIR}/PitchDialog.h
     ${SRCDIR}/PrimingDialog.h
+    ${SRCDIR}/PrintAndPreviewDialog.h
     ${SRCDIR}/RangedSlider.h
     ${SRCDIR}/RecipeExtrasWidget.h
     ${SRCDIR}/RecipeFormatter.h

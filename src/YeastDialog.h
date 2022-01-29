@@ -18,15 +18,16 @@
  =====================================================================================================================*/
 #ifndef YEASTDIALOG_H
 #define YEASTDIALOG_H
+#pragma once
 
-#include <QWidget>
 #include <QDialog>
 #include <QEvent>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QTableView>
-#include <QSpacerItem>
 #include <QPushButton>
+#include <QSpacerItem>
+#include <QTableView>
+#include <QVBoxLayout>
+#include <QWidget>
 
 // Forward declarations.
 class MainWindow;
@@ -37,7 +38,6 @@ class YeastSortFilterProxyModel;
 
 /*!
  * \class YeastDialog
- *
  *
  * \brief View/controller dialog for displaying all the yeasts in the database.
  */
@@ -90,4 +90,4 @@ private:
    void retranslateUi();
 };
 
-#endif   // YEASTDIALOG_H
+#endif

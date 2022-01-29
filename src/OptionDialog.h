@@ -20,6 +20,7 @@
  =====================================================================================================================*/
 #ifndef OPTIONDIALOG_H
 #define OPTIONDIALOG_H
+#pragma once
 
 #include <memory> // For PImpl
 

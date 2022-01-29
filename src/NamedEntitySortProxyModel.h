@@ -14,21 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #ifndef NAMEDENTITYSORTPROXYMODEL_H
 #define NAMEDENTITYSORTPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
+
 class QAbstractItemModel;
 
 /*!
  * \brief Small wrapper on QSortFilterProxyModel for sorting NamedEntity lists.
  *
- *
  * Sorts models dynamically based on their properties' default sort behavior.
  */
-class NamedEntitySortProxyModel : public QSortFilterProxyModel
-{
+class NamedEntitySortProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
 public:

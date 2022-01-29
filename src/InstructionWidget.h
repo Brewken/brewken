@@ -35,8 +35,7 @@ class Instruction;
  *
  * \brief View/controller widget that views/edits recipe instructions.
  */
-class InstructionWidget : public QWidget, public Ui::instructionWidget
-{
+class InstructionWidget : public QWidget, public Ui::instructionWidget {
    Q_OBJECT
 public:
    InstructionWidget(QWidget* parent=0);
@@ -60,4 +59,4 @@ private:
    TimerWidget* timer;
 };
 
-#endif   /* _INGREDIENTWIDGET_H */
+#endif

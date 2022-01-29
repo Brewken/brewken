@@ -15,20 +15,14 @@
  =====================================================================================================================*/
 #include "WaterTableWidget.h"
 
-#include <QTableView>
-#include <QWidget>
-
 #include "tableModels/WaterTableModel.h"
 
-WaterTableWidget::WaterTableWidget(QWidget* parent)
-        : QTableView(parent)
-{
+WaterTableWidget::WaterTableWidget(QWidget* parent) : QTableView(parent) {
    model = new WaterTableModel(this);
    setModel(model);
    setItemDelegate(new WaterItemDelegate(this));
 }
 
-WaterTableModel* WaterTableWidget::getModel()
-{
+WaterTableModel* WaterTableWidget::getModel() {
    return model;
 }

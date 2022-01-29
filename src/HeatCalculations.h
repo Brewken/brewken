@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HeatCalculations.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * HeatCalculations.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,19 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #ifndef HEATCALCULATIONS_H
 #define HEATCALCULATIONS_H
-
-class HeatCalculations;
+#pragma once
 
 /*!
- *
  * \brief Algorithms and constants related to the thermodynamics of beer.
  */
-class HeatCalculations
-{
-public:
+namespace HeatCalculations {
 
    double equivalentMCProduct(double m1, double c1, double m2, double c2);
    // Water temp when mass 1 is initially at T1 and is to be brought to Tf by
@@ -35,9 +30,9 @@ public:
 
    /***Specific heats***/
    // Water's specific heat.
-   static double const Cw_JKgK;
-   static double const Cw_calGC;
-   static double const Cgrain_calGC;
-};
+   extern double const Cw_JKgK;
+   extern double const Cw_calGC;
+   extern double const Cgrain_calGC;
+}
 
-#endif   /* _HEATCALCULATIONS_H */
+#endif

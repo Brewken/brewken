@@ -1,6 +1,7 @@
 /*======================================================================================================================
  * TimerMainDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Aidan Roberts <aidanr67@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -16,30 +17,30 @@
  =====================================================================================================================*/
 #ifndef TIMERMAINDIALOG_H
 #define TIMERMAINDIALOG_H
-
-class TimerMainDialog;
+#pragma once
 
 #include "ui_timerMainDialog.h"
-#include <QDialog>
-#include <QWidget>
-#include "TimerListDialog.h"
-#include "TimerWidget.h"
-#include "boiltime.h"
-#include "model/Recipe.h"
-#include "model/Hop.h"
-#include <QString>
+
 #include <QDebug>
-#include "MainWindow.h"
+#include <QDialog>
 #include <QStack>
+#include <QString>
+#include <QWidget>
+
+//#include "model/Hop.h"
+//#include "model/Recipe.h"
+
+class BoilTime;
+class MainWindow;
+class TimerWidget;
+class TimerListDialog;
 
 /*!
  * \class TimerMainDialog
  *
- *
  * \brief Main boil timer, create timers individually or generate from recipe
  */
-class TimerMainDialog : public QDialog, public Ui::TimerMainDialog
-{
+class TimerMainDialog : public QDialog, public Ui::TimerMainDialog {
    Q_OBJECT
 
 public:

@@ -15,14 +15,16 @@
  =====================================================================================================================*/
 #ifndef OGADJUSTER_H
 #define OGADJUSTER_H
+#pragma once
 
 #include <QDialog>
+
 #include "ui_ogAdjuster.h"
+
 #include "model/Recipe.h"
 
 /*!
  * \class OgAdjuster
- *
  *
  * \brief View/controller dialog that helps you correct your OG on brew day.
  */

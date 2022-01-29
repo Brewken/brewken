@@ -20,8 +20,12 @@
 #include <QMessageBox>
 #include <QToolTip>
 
+#include "boiltime.h"
+#include "MainWindow.h"
 #include "measurement/Unit.h"
 #include "measurement/Measurement.h"
+#include "TimerListDialog.h"
+#include "TimerWidget.h"
 
 TimerMainDialog::TimerMainDialog(MainWindow* parent) : QDialog(parent),
     mainWindow(parent),

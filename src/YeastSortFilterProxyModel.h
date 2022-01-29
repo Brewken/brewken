@@ -16,6 +16,7 @@
  =====================================================================================================================*/
 #ifndef YEASTSORTFILTERPROXYMODEL_H
 #define YEASTSORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
 
@@ -24,8 +25,7 @@
  *
  * \brief Proxy model for sorting yeasts.
  */
-class YeastSortFilterProxyModel : public QSortFilterProxyModel
-{
+class YeastSortFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
 public:

@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QList>
 #include <QMetaProperty>
 #include <QObject>

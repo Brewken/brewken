@@ -16,9 +16,10 @@
  =====================================================================================================================*/
 #ifndef STYLEBUTTON_H
 #define STYLEBUTTON_H
+#pragma once
 
-#include <QPushButton>
 #include <QMetaProperty>
+#include <QPushButton>
 #include <QVariant>
 
 // Forward declarations.

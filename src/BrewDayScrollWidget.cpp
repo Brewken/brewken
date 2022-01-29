@@ -62,20 +62,23 @@ namespace {
 
 
 BrewDayScrollWidget::BrewDayScrollWidget(QWidget* parent) : QWidget{parent},
-                                                            recObs{nullptr},
-                                                            btPrintPreview{new BtPrintPreview(this)} {
+                                                            recObs{nullptr} {
    this->setupUi(this);
    this->setObjectName("BrewDayScrollWidget");
 
-   connect(listWidget,                      SIGNAL(currentRowChanged(int)), this, SLOT(showInstruction(int)) );
-   connect(btTextEdit,                      SIGNAL(textModified()),         this, SLOT(saveInstruction()));
-   connect(pushButton_insert,               SIGNAL(clicked()),              this, SLOT(insertInstruction()) );
-   connect(pushButton_remove,               SIGNAL(clicked()),              this, SLOT(removeSelectedInstruction()) );
-   connect(pushButton_up,                   SIGNAL(clicked()),              this, SLOT(pushInstructionUp()) );
-   connect(pushButton_down,                 SIGNAL(clicked()),              this, SLOT(pushInstructionDown()) );
-   connect(pushButton_generateInstructions, SIGNAL(clicked()),              this, SLOT(generateInstructions()) );
+   connect(listWidget,                      &QListWidget::currentRowChanged, this, &BrewDayScrollWidget::showInstruction          );
+   connect(btTextEdit,                      SIGNAL(textModified()),          this, SLOT(saveInstruction())                        );
+//   connect(btTextEdit,                      &BtLineEdit::textModified,       this, &BrewDayScrollWidget::saveInstruction          );
+   connect(pushButton_insert,               &QAbstractButton::clicked,       this, &BrewDayScrollWidget::insertInstruction        );
+   connect(pushButton_remove,               &QAbstractButton::clicked,       this, &BrewDayScrollWidget::removeSelectedInstruction);
+   connect(pushButton_up,                   &QAbstractButton::clicked,       this, &BrewDayScrollWidget::pushInstructionUp        );
+   connect(pushButton_down,                 &QAbstractButton::clicked,       this, &BrewDayScrollWidget::pushInstructionDown      );
+   connect(pushButton_generateInstructions, &QAbstractButton::clicked,       this, &BrewDayScrollWidget::generateInstructions     );
+
    return;
 }
+
+BrewDayScrollWidget::~BrewDayScrollWidget() = default;
 
 void BrewDayScrollWidget::saveInstruction() {
   this->recObs->instructions()[ listWidget->currentRow() ]->setDirections( btTextEdit->toPlainText() );
@@ -160,14 +163,24 @@ void BrewDayScrollWidget::pushInstructionDown() {
    return;
 }
 
+bool BrewDayScrollWidget::loadComplete(bool ok) {
+   this->doc->print(this->printer);
+   return ok;
+}
 
-void BrewDayScrollWidget::buildHtml(bool includeImage) {
-   // Caller's responsibility to have checked this first
-   Q_ASSERT(this->recObs != nullptr);
+void BrewDayScrollWidget::print(QPrinter *mainPrinter, int action, QFile* outFile) {
+   if (this->recObs == nullptr) {
+      return;
+   }
+
+   // Connect the webview's signal
+   if (action == PRINT) {
+      this->printer = mainPrinter;
+   }
 
    // Start building the document to be printed.  The HTML doesn't work with
    // the image since it is a compiled resource
-   QString pDoc = buildTitleTable(includeImage);
+   QString pDoc = buildTitleTable(action != HTML);
    pDoc += buildInstructionTable();
    pDoc += buildFooterTable();
 
@@ -177,60 +190,19 @@ void BrewDayScrollWidget::buildHtml(bool includeImage) {
 
    pDoc += "</body></html>";
 
-   this->btPrintPreview->setContent(pDoc);
-   return;
-}
-
-void BrewDayScrollWidget::printPreview() {
-   if (this->recObs == nullptr) {
-      return;
-   }
-   this->buildHtml(true);
-   this->btPrintPreview->show();
-   return;
-}
-
-void BrewDayScrollWidget::print(QPrinter* printer) {
-   if (this->recObs == nullptr) {
-      return;
-   }
-   this->buildHtml(true);
-   this->btPrintPreview->print(printer);
-   return;
-}
-
-void BrewDayScrollWidget::exportHtml(QFile* file) {
-   if (this->recObs == nullptr) {
-      return;
-   }
-   this->buildHtml(false);
-   this->btPrintPreview->exportHtml(file);
-   return;
-}
-
-/*
-void BrewDayScrollWidget::print(QPrinter *printer,
-      int action, QFile* outFile)
-{
-   if(this->recObs == nullptr )
-      return;
-
-
    this->doc->setHtml(pDoc);
-   if ( action == PREVIEW ) {
-      this->doc->adjustSize();
+   if (action == PREVIEW) {
       this->doc->show();
    } else if ( action == HTML ) {
       QTextStream out(outFile);
       out << pDoc;
       outFile->close();
+   } else {
+       this->loadComplete(true);
    }
-   else
-   {
-       this->doc->print(printer);
-   }
+   return;
 }
-*/
+
 void BrewDayScrollWidget::setRecipe(Recipe* rec) {
    // Disconnect old notifier.
    if (recObs) {
@@ -294,6 +266,7 @@ void BrewDayScrollWidget::acceptChanges(QMetaProperty prop, QVariant /*value*/) 
       }
       showChanges();
    }
+   return;
 }
 
 void BrewDayScrollWidget::acceptInsChanges(QMetaProperty prop, QVariant /*value*/) {
@@ -304,8 +277,9 @@ void BrewDayScrollWidget::acceptInsChanges(QMetaProperty prop, QVariant /*value*
       showChanges();
    } else if (propName == PropertyNames::Instruction::directions) {
       // This will make the displayed text directions update.
-      listWidget->setCurrentRow( listWidget->currentRow() );
+      listWidget->setCurrentRow(listWidget->currentRow());
    }
+   return;
 }
 
 void BrewDayScrollWidget::clear() {
@@ -353,7 +327,7 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
    QString header = Html::createHeader(BrewDayScrollWidget::tr("Brewday"), cssName);
 
    QString body = QString("<h1>%1</h1>").arg(recObs->name());
-   if ( includeImage ) {
+   if (includeImage) {
       body += QString("<img src=\"%1\" />").arg("qrc:/images/title.svg");
    }
 

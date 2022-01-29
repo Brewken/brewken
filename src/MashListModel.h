@@ -17,6 +17,7 @@
  =====================================================================================================================*/
 #ifndef MASHLISTMODEL_H
 #define MASHLISTMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -32,7 +33,6 @@ class Recipe;
 
 /*!
  * \class MashListModel
- *
  *
  * \brief Model for a list of named mashes
  */

@@ -1,5 +1,6 @@
 /*======================================================================================================================
  * InventoryFormatter.h is part of Brewken, and is copyright the following authors 2016-2021:
+ *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -16,28 +17,44 @@
  =====================================================================================================================*/
 #ifndef INVENTORY_FORMATTER_H
 #define INVENTORY_FORMATTER_H
+#pragma once
 
-class QFile;
-class QPrinter;
+class QString;
 
 namespace InventoryFormatter {
 
-/*!
- * \brief Shows the print preview dialogue for the inventory.
- */
-void printPreview();
+   enum HtmlGenerationFlags {
+      NO_OPERATION          = 0,
+      FERMENTABLES          = (1 << 0),
+      HOPS                  = (1 << 1),
+      YEAST                 = (1 << 2),
+      MISCELLANEOUS         = (1 << 3)
+   };
 
-/*!
- * \brief Prints the inventory.
- * \param printer The printer to print to, should not be @c NULL.
- */
-void print(QPrinter* printer);
+   /**
+    * @brief ORs the HtmlGenerationFlags implementation.
+    *
+    * @param a
+    * @param b
+    * @return HtmlGenerationFlags
+    */
+   HtmlGenerationFlags operator|(HtmlGenerationFlags a, HtmlGenerationFlags b);
 
-/*!
- * \brief Exports the inventory to a HTML document.
- * \param file The output file opened for writing.
- */
-void exportHtml(QFile* file);
+   /**
+    * @brief ANDs the HtmlGenerationFlags
+    *
+    * @param a
+    * @param b
+    * @return true
+    * @return false
+    */
+   bool operator&(HtmlGenerationFlags a, HtmlGenerationFlags b);
 
+   /**
+    * @brief Create a Inventory HTML for export
+    *
+    * @return QString containing the HTML code for the inventory tables.
+    */
+   QString createInventoryHtml(HtmlGenerationFlags flags);
 }
 #endif

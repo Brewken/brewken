@@ -16,6 +16,7 @@
  =====================================================================================================================*/
 #ifndef WATERSORTFILTERPROXYMODEL_H
 #define WATERSORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QSortFilterProxyModel>
 

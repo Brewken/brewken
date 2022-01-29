@@ -17,6 +17,7 @@
  =====================================================================================================================*/
 #ifndef WATEREDITOR_H
 #define WATEREDITOR_H
+#pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
@@ -31,8 +32,7 @@ class Water;
  *
  * \brief View/controller class for creating and modifying water records.
  */
-class WaterEditor : public QDialog, public Ui::waterEditor
-{
+class WaterEditor : public QDialog, public Ui::waterEditor {
     Q_OBJECT
 public:
     WaterEditor(QWidget *parent = nullptr);
@@ -54,4 +54,4 @@ private:
     Water* obs; // Observed water.
 };
 
-#endif // WATEREDITOR_H
+#endif

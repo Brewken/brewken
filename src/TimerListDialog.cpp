@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * TimerListDialog.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * TimerListDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,12 +15,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #include "TimerListDialog.h"
+
 #include <QScrollBar>
 
-TimerListDialog::TimerListDialog(QWidget* parent, QList<TimerWidget*>* timers) : QDialog(parent)
-{
+#include "TimerWidget.h"
+
+TimerListDialog::TimerListDialog(QWidget* parent, QList<TimerWidget*>* timers) : QDialog(parent) {
     this->setWindowTitle(tr("Addition Timers"));
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);

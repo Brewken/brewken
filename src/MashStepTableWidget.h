@@ -29,8 +29,7 @@ class MashStepTableModel;
  * NOTE: This class seems completely
  * irrelevant to me. We should remove it and replace it with QTableView.
  */
-class MashStepTableWidget : public QTableView
-{
+class MashStepTableWidget : public QTableView {
    Q_OBJECT
    friend class MainWindow;
 public:
@@ -45,4 +44,4 @@ private:
    MashStepTableModel* model;
 };
 
-#endif   /* _MASHSTEPTABLEWIDGET_H */
+#endif
