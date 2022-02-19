@@ -208,6 +208,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/StyleRangeWidget.cpp
     ${SRCDIR}/StyleSortFilterProxyModel.cpp
     ${SRCDIR}/tableModels/BtTableModel.cpp
+    ${SRCDIR}/tableModels/BtTableModelInventory.cpp
     ${SRCDIR}/tableModels/FermentableTableModel.cpp
     ${SRCDIR}/tableModels/HopTableModel.cpp
     ${SRCDIR}/tableModels/MashStepTableModel.cpp
@@ -303,7 +304,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/BrewDayFormatter.h
     ${SRCDIR}/BrewDayScrollWidget.h
     ${SRCDIR}/BrewDayWidget.h
-    ${SRCDIR}/Brewken.h
     ${SRCDIR}/BrewNoteWidget.h
     ${SRCDIR}/BtDatePopup.h
     ${SRCDIR}/BtDigitWidget.h
@@ -341,7 +341,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/MashStepEditor.h
     ${SRCDIR}/MashStepTableWidget.h
     ${SRCDIR}/MashWizard.h
-    ${SRCDIR}/measurement/Unit.h
     ${SRCDIR}/MiscDialog.h
     ${SRCDIR}/MiscEditor.h
     ${SRCDIR}/MiscSortFilterProxyModel.h
@@ -400,7 +399,6 @@ SET( Brewken_MOC_HEADERS
     ${SRCDIR}/widgets/Animator.h
     ${SRCDIR}/widgets/SelectionControl.h
     ${SRCDIR}/widgets/ToggleSwitch.h
-    ${SRCDIR}/widgets/UnitAndScalePopUpMenu.h
     ${SRCDIR}/YeastDialog.h
     ${SRCDIR}/YeastEditor.h
     ${SRCDIR}/YeastSortFilterProxyModel.h

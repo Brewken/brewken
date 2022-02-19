@@ -411,7 +411,7 @@ QString BrewDayScrollWidget::buildInstructionTable() {
          .arg(tr("Step"));
 
    QList<Instruction*> instructions = this->recObs->instructions();
-   QList<MashStep*> mashSteps = this->recObs->mash()->mashSteps();
+   auto mashSteps = this->recObs->mash()->mashSteps();
    int size = instructions.size();
    for (int i = 0; i < size; ++i ) {
 

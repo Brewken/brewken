@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * RecipeFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
@@ -847,16 +847,12 @@ public:
    }
 
    QString buildMashTableHtml() {
-      if (this->rec == nullptr || this->rec->mash() == nullptr) {
+      if (!this->rec || !this->rec->mash()) {
          return "";
       }
 
-      MashStep* ms;
-      Mash* m = rec->mash();
-      QList<MashStep*> mashSteps = m->mashSteps();
-      int size = mashSteps.size();
-
-      if (size <= 0) {
+      auto mashSteps = this->rec->mash()->mashSteps();
+      if (mashSteps.size() == 0) {
          return "";
       }
 
@@ -878,22 +874,21 @@ public:
                .arg(tr("Temp"))
                .arg(tr("Target Temp"))
                .arg(tr("Time"));
-      for (int ii = 0; ii < size; ++ii) {
+      for (auto step : mashSteps) {
          QString tmp = "<tr>";
-         ms = mashSteps[ii];
          tmp += QString("<td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td>")
-               .arg(ms->name())
-               .arg(ms->typeStringTr());
+               .arg(step->name())
+               .arg(step->typeStringTr());
 
-         if (ms->isInfusion()) {
-            tmp = tmp.arg(Measurement::displayAmount(Measurement::Amount{ms->infuseAmount_l(), Measurement::Units::liters},
+         if (step->isInfusion()) {
+            tmp = tmp.arg(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(), Measurement::Units::liters},
                                                      PersistentSettings::Sections::mashStepTableModel,
                                                      PropertyNames::MashStep::infuseAmount_l))
-                     .arg(Measurement::displayAmount(Measurement::Amount{ms->infuseTemp_c(), Measurement::Units::celsius},
+                     .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(), Measurement::Units::celsius},
                                                      PersistentSettings::Sections::mashStepTableModel,
                                                      PropertyNames::MashStep::infuseTemp_c));
-         } else if (ms->isDecoction()) {
-            tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{ms->decoctionAmount_l(), Measurement::Units::liters},
+         } else if (step->isDecoction()) {
+            tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->decoctionAmount_l(), Measurement::Units::liters},
                                                       PersistentSettings::Sections::mashStepTableModel,
                                                       PropertyNames::MashStep::decoctionAmount_l))
                   .arg("---");
@@ -901,10 +896,10 @@ public:
             tmp = tmp.arg( "---" ).arg("---");
          }
 
-         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{ms->stepTemp_c(), Measurement::Units::celsius},
+         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius},
                                                    PersistentSettings::Sections::mashStepTableModel,
                                                    PropertyNames::MashStep::stepTemp_c) );
-         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{ms->stepTime_min(), Measurement::Units::minutes},
+         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTime_min(), Measurement::Units::minutes},
                                                    PersistentSettings::Sections::mashStepTableModel,
                                                    PropertyNames::Misc::time,
                                                    0) );
@@ -918,18 +913,13 @@ public:
    }
 
    QString buildMashTableTxt() {
-      if (this->rec == nullptr) {
+      if (!this->rec || !this->rec->mash()) {
          return "";
       }
 
       QString ret = "";
 
-      Mash* mash = rec->mash();
-
-      QList<MashStep*> mashSteps;
-      if ( mash ) {
-         mashSteps = mash->mashSteps();
-      }
+      auto mashSteps = this->rec->mash()->mashSteps();
 
       int size = mashSteps.size();
       if (size > 0) {
@@ -942,19 +932,18 @@ public:
          targets.append(tr("Target"));
          times.append(tr("Time"));
 
-         for(int ii = 0; ii < size; ++ii) {
-            MashStep* s = mashSteps[ii];
-            names.append(s->name());
-            types.append(s->typeStringTr());
-            if ( s->isInfusion() ) {
-               amounts.append(Measurement::displayAmount(Measurement::Amount{s->infuseAmount_l(), Measurement::Units::liters},
+         for (auto step : mashSteps) {
+            names.append(step->name());
+            types.append(step->typeStringTr());
+            if ( step->isInfusion() ) {
+               amounts.append(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(), Measurement::Units::liters},
                                                          PersistentSettings::Sections::mashStepTableModel,
                                                          PropertyNames::MashStep::infuseAmount_l));
-               temps.append(Measurement::displayAmount(Measurement::Amount{s->infuseTemp_c(), Measurement::Units::celsius},
+               temps.append(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(), Measurement::Units::celsius},
                                                        PersistentSettings::Sections::mashStepTableModel,
                                                        PropertyNames::MashStep::infuseTemp_c));
-            } else if( s->isDecoction() ) {
-               amounts.append(Measurement::displayAmount(Measurement::Amount{s->decoctionAmount_l(), Measurement::Units::liters},
+            } else if( step->isDecoction() ) {
+               amounts.append(Measurement::displayAmount(Measurement::Amount{step->decoctionAmount_l(), Measurement::Units::liters},
                                                          PersistentSettings::Sections::mashStepTableModel,
                                                          PropertyNames::MashStep::decoctionAmount_l));
                temps.append("---");
@@ -962,10 +951,10 @@ public:
                amounts.append( "---" );
                temps.append("---");
             }
-            targets.append(Measurement::displayAmount(Measurement::Amount{s->stepTemp_c(), Measurement::Units::celsius},
+            targets.append(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius},
                                                       PersistentSettings::Sections::mashStepTableModel,
                                                       PropertyNames::MashStep::stepTemp_c));
-            times.append(Measurement::displayAmount(Measurement::Amount{s->stepTime_min(), Measurement::Units::minutes},
+            times.append(Measurement::displayAmount(Measurement::Amount{step->stepTime_min(), Measurement::Units::minutes},
                                                     PersistentSettings::Sections::mashStepTableModel,
                                                     PropertyNames::Misc::time,
                                                     0));

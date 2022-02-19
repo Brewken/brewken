@@ -572,7 +572,7 @@ namespace {
       }
 
       // Set the db version
-      if( oldVersion > 3 )
+      if (oldVersion > 3 )
       {
          QString queryString{"UPDATE settings SET version=:version WHERE id=1"};
          sqlQuery.prepare(queryString);
@@ -641,7 +641,7 @@ bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection) 
 }
 
 bool DatabaseSchemaHelper::migrate(Database & database, int oldVersion, int newVersion, QSqlDatabase connection) {
-   if( oldVersion >= newVersion || newVersion > dbVersion ) {
+   if (oldVersion >= newVersion || newVersion > dbVersion ) {
       qDebug() << Q_FUNC_INFO <<
          QString("Requested backwards migration from %1 to %2: You are an imbecile").arg(oldVersion).arg(newVersion);
       return false;
@@ -673,7 +673,7 @@ int DatabaseSchemaHelper::currentVersion(QSqlDatabase db) {
    // We'll read it into a QVariant and then work out whether it's a string or an integer
    BtSqlQuery q("SELECT version FROM settings WHERE id=1", db);
    QVariant ver;
-   if( q.next() ) {
+   if (q.next() ) {
       ver = q.value("version");
    } else {
       // No settings table in version 2.0.0
@@ -690,15 +690,15 @@ int DatabaseSchemaHelper::currentVersion(QSqlDatabase db) {
       return ver.toInt();
    }
 
-   if( stringVer == "2.0.0" ) {
+   if (stringVer == "2.0.0" ) {
       return 1;
    }
 
-   if( stringVer == "2.0.2" ) {
+   if (stringVer == "2.0.2" ) {
       return 2;
    }
 
-   if( stringVer == "2.1.0" ) {
+   if (stringVer == "2.1.0" ) {
       return 3;
    }
 
