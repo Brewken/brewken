@@ -527,7 +527,7 @@ void BtTreeView::setupContextMenu(QWidget * top, QWidget * editor) {
    m_contextMenu->addSeparator();
    m_exportMenu->setTitle(tr("Export"));
    m_exportMenu->addAction(tr("To XML"), top, SLOT(exportSelected()));
-   m_exportMenu->addAction(tr("To HTML"), top, SLOT(exportSelectedHtml()));
+//   m_exportMenu->addAction(tr("To HTML"), top, SLOT(exportSelectedHtml()));
    m_contextMenu->addMenu(m_exportMenu);
    m_contextMenu->addAction(tr("Import"), top, SLOT(importFiles()));
 

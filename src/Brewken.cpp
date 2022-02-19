@@ -250,7 +250,6 @@ int Brewken::run() {
       cleanup();
       return 1;
    }
-   qInfo() << QString("Starting Brewken v%1 on %2.").arg(VERSIONSTRING).arg(QSysInfo::prettyProductName());
    Database::instance().checkForNewDefaultData();
 
    // .:TBD:. Could maybe move the calls to init and setVisible inside createMainWindowInstance() in MainWindow.cpp

@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * MashDesigner.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * MashDesigner.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonathon Harding <github@jrhardin.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -34,8 +35,7 @@
  *
  * \brief View/controller dialog that gives you more control over mash design than MashWizard does.
  */
-class MashDesigner : public QDialog, public Ui::mashDesigner
-{
+class MashDesigner : public QDialog, public Ui::mashDesigner {
    Q_OBJECT
 public:
    MashDesigner(QWidget* parent = nullptr);
@@ -94,10 +94,10 @@ private:
 
 
    Recipe* recObs;
-   Mash* mash;
+   std::shared_ptr<Mash> mash;
    Equipment* equip;
-   MashStep* mashStep;
-   MashStep* prevStep;
+   std::shared_ptr<MashStep> mashStep;
+   std::shared_ptr<MashStep> prevStep;
    double addedWater_l;
    double grain_kg;
    double MC;

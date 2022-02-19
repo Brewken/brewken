@@ -125,7 +125,7 @@ void BtLineEdit::setText(NamedEntity * element, int precision) {
 
    char const * const propertyName = this->editField.toLatin1().constData();
    QVariant const propertyValue = element->property(propertyName);
-   qDebug() << Q_FUNC_INFO << "Read property" << propertyName << "as" << propertyValue;
+   qDebug() << Q_FUNC_INFO << "Read property" << propertyName << "of" << *element << "as" << propertyValue;
    bool force = false;
    auto const myFieldType = this->getFieldType();
    if (std::holds_alternative<NonPhysicalQuantity>(myFieldType) &&

@@ -118,7 +118,7 @@ public:
     * \brief Converts the numeric part of the input field to a double, ignoring any string suffix.  So "5.5 gal" will
     *        give 5.5, "20L" will return 20.0, and so on.
     */
-   double toDoubleRaw(bool * ok) const;
+   double toDoubleRaw(bool * ok = nullptr) const;
 
    /**
     * \brief Returns the field converted to canonical units for the relevant \c Measurement::PhysicalQuantity
@@ -165,8 +165,6 @@ protected:
     *        If \c fieldType is not a \c Measurement::PhysicalQuantity, this will be \c nullptr
     */
    Measurement::Unit const * units;
-//   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement;
-//   std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale;
    QString editField;
    QString configSection;
 };

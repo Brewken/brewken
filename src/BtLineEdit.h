@@ -107,6 +107,9 @@ private:
 //
 // See comment in BtLabel.h for why we need all these trivial child classes to use in .ui files
 //
+// .:TODO:. We should change the inheritance hierarchy so that BtGenericEdit and BtStringEdit etc do not inherit from
+//          UiAmountWithUnits.
+//
 class BtGenericEdit :        public BtLineEdit { Q_OBJECT public: BtGenericEdit(QWidget* parent); };
 class BtMassEdit :           public BtLineEdit { Q_OBJECT public: BtMassEdit(QWidget* parent); };
 class BtVolumeEdit :         public BtLineEdit { Q_OBJECT public: BtVolumeEdit(QWidget* parent); };

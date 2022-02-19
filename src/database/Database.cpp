@@ -651,7 +651,7 @@ bool Database::load() {
    bool schemaErr = false;
    this->pimpl->schemaUpdated = this->pimpl->updateSchema(*this, &schemaErr);
 
-   if( schemaErr ) {
+   if (schemaErr ) {
       if (Brewken::isInteractive()) {
          QMessageBox::critical(
             nullptr,
@@ -672,7 +672,7 @@ void Database::checkForNewDefaultData() {
    if (this->pimpl->dataDbFile.fileName() != this->pimpl->dbFile.fileName() &&
        !this->pimpl->userDatabaseDidNotExist &&
        QFileInfo(this->pimpl->dataDbFile).lastModified() > Database::lastDbMergeRequest) {
-      if( Brewken::isInteractive() &&
+      if (Brewken::isInteractive() &&
          QMessageBox::question(
             nullptr,
             tr("Merge Database"),
@@ -722,7 +722,7 @@ bool Database::createBlank(QString const& filename)
       QSqlDatabase sqldb = QSqlDatabase::addDatabase("QSQLITE", "blank");
       sqldb.setDatabaseName(filename);
       bool dbIsOpen = sqldb.open();
-      if( ! dbIsOpen )
+      if (! dbIsOpen )
       {
          qWarning() << QString("Database::createBlank(): could not open '%1'").arg(filename);
          return false;

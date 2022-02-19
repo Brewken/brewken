@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * main.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * main.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -37,8 +37,31 @@
 #include "Logging.h"
 #include "PersistentSettings.h"
 
-void importFromXml(const QString & filename);
-void createBlankDb(const QString & filename);
+namespace {
+   /*!
+   * \brief Imports the content of an xml file to the database.
+   *
+   * Use at your own risk.
+   */
+   void importFromXml(const QString & filename) {
+
+      QString errorMessage;
+      QTextStream errorMessageAsStream{&errorMessage};
+      if (!BeerXML::getInstance().importFromXML(filename, errorMessageAsStream)) {
+         qCritical() << "Unable to import" << filename << "Error: " << errorMessage;
+         exit(1);
+      }
+      Database::instance().unload();
+      PersistentSettings::insert(PersistentSettings::Names::converted, QDate().currentDate().toString());
+      exit(0);
+   }
+
+   //! \brief Creates a blank database using the given filename.
+   void createBlankDb(const QString & filename) {
+      Database::instance().createBlank(filename);
+      exit(0);
+   }
+}
 
 int main(int argc, char **argv) {
    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
@@ -153,8 +176,10 @@ int main(int argc, char **argv) {
    if (parser.isSet(importFromXmlOption)) importFromXml(parser.value(importFromXmlOption));
    if (parser.isSet(createBlankDBOption)) createBlankDb(parser.value(createBlankDBOption));
 
-   try
-   {
+   try {
+      qInfo() << "Starting Brewken v" << VERSIONSTRING << " on " << QSysInfo::prettyProductName();
+      qDebug() << Q_FUNC_INFO << "Library Paths:" << qApp->libraryPaths();
+
       auto mainAppReturnValue = Brewken::run();
 
       //
@@ -189,28 +214,4 @@ int main(int argc, char **argv) {
             QApplication::tr("The application encountered a fatal error."));
    }
    return EXIT_FAILURE;
-}
-
-/*!
- * \brief Imports the content of an xml file to the database.
- *
- * Use at your own risk.
- */
-void importFromXml(const QString & filename) {
-
-   QString errorMessage;
-   QTextStream errorMessageAsStream{&errorMessage};
-   if (!BeerXML::getInstance().importFromXML(filename, errorMessageAsStream)) {
-      qCritical() << "Unable to import" << filename << "Error: " << errorMessage;
-      exit(1);
-   }
-   Database::instance().unload();
-   PersistentSettings::insert(PersistentSettings::Names::converted, QDate().currentDate().toString());
-   exit(0);
-}
-
-//! \brief Creates a blank database using the given filename.
-void createBlankDb(const QString & filename) {
-    Database::instance().createBlank(filename);
-    exit(0);
 }
