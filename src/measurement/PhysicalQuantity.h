@@ -17,7 +17,7 @@
 #define MEASUREMENT_PHYSICALQUANTITY_H
 #pragma once
 
-class QString;
+#include <QString>
 
 namespace Measurement {
    /**
