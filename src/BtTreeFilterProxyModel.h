@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTreeFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -29,8 +29,7 @@
  *
  * \brief Proxy model for sorting Brewken trees.
  */
-class BtTreeFilterProxyModel : public QSortFilterProxyModel
-{
+class BtTreeFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
 public:
@@ -42,15 +41,6 @@ protected:
 
 private:
    BtTreeModel::TypeMasks treeMask;
-
-   bool lessThanRecipe(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanEquip(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanFerment(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanMisc(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanHop(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanYeast(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanStyle(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
-   bool lessThanWater(BtTreeModel* model,const QModelIndex &left, const QModelIndex &right) const;
 };
 
 #endif

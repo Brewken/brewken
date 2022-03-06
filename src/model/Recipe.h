@@ -507,7 +507,6 @@ public:
    //! \brief Formats the fermentables for instructions
    QList<QString> getReagents(QList<Fermentable *> ferms);
    //! \brief Formats the mashsteps for instructions
-///   QList<QString> getReagents(QList<MashStep *> msteps);
    QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the hops for instructions
    QList<QString> getReagents(QList<Hop *> hops, bool firstWort = false);

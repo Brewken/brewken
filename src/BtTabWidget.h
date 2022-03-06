@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTabWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTabWidget.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -42,29 +42,28 @@ class Yeast;
  * as a dynamic property on the UI object.
  *
  */
-class BtTabWidget : public QTabWidget
-{
+class BtTabWidget : public QTabWidget {
    Q_OBJECT
 
 public:
-      BtTabWidget(QWidget* parent=0);
+   BtTabWidget(QWidget* parent = nullptr);
 
 signals:
-      void setRecipe(Recipe* rec);
-      void setEquipment(Equipment* kit);
-      void setStyle(Style* kit);
-      void setFermentables(QList<Fermentable*>ferms);
-      void setHops(QList<Hop*>hops);
-      void setMiscs(QList<Misc*>miscs);
-      void setYeasts(QList<Yeast*>yeasts);
+   void setRecipe(Recipe* rec);
+   void setEquipment(Equipment* kit);
+   void setStyle(Style* kit);
+   void setFermentables(QList<Fermentable*>ferms);
+   void setHops(QList<Hop*>hops);
+   void setMiscs(QList<Misc*>miscs);
+   void setYeasts(QList<Yeast*>yeasts);
 
 protected:
-      void dropEvent(QDropEvent *dpEvent);
-      // void dragMoveEvent(QDragMoveEvent *dmEvent);
-      virtual void dragEnterEvent(QDragEnterEvent *deEvent);
+   void dropEvent(QDropEvent *dpEvent);
+   // void dragMoveEvent(QDragMoveEvent *dmEvent);
+   virtual void dragEnterEvent(QDragEnterEvent *deEvent);
 
 protected:
-      QString acceptMime;
+   QString acceptMime;
 
 };
 

@@ -2684,37 +2684,6 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
    return reagents;
 }
 
-/*QList<QString> Recipe::getReagents(QList<MashStep *> msteps) {
-   QString tmp;
-   QList<QString> reagents;
-
-   for (int i = 0; i < msteps.size(); ++i) {
-      if (! msteps[i]->isInfusion()) {
-         continue;
-      }
-
-      if (i + 1 < msteps.size()) {
-         tmp = tr("%1 water to %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseAmount_l))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseTemp_c));
-      } else {
-         tmp = tr("%1 water to %2 ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseAmount_l))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseTemp_c));
-      }
-      reagents.append(tmp);
-   }
-   return reagents;
-}*/
-
 QList<QString> Recipe::getReagents(QList< std::shared_ptr<MashStep> > msteps) {
    QList<QString> reagents;
 
