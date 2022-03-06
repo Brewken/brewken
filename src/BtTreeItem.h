@@ -239,38 +239,12 @@ public:
    //! \brief returns the index of the item in it's parents list
    int childNumber() const;
 
-   //! \brief provides a wrapper to data() so that the caller doesn't need to
-   // know the type of the item
-//   QVariant data(int column);
-
    //! \brief sets the \c t type of the object and the \c d data
    void setData(BtTreeItem::Type t, QObject * d);
 
    //! \brief returns the data as a T
    template<class T> T * getData();
 
-   /*
-   //! \brief returns the data as a Recipe
-   Recipe   *   recipe();
-   //! \brief returns the data as an Equipment
-   Equipment  * equipment();
-   //! \brief returns the data as a fermentable
-   Fermentable * fermentable();
-   //! \brief returns the data as a hop
-   Hop     *    hop();
-   //! \brief returns the data as a misc
-   Misc    *    misc();
-   //! \brief returns the data as a yeast
-   Yeast    *   yeast();
-   //! \brief returns the data as a brewnote
-   BrewNote  *  brewNote();
-   //! \brief returns the data as a style
-   Style    *   style();
-   //! \brief returns data as a folder
-   BtFolder  * folder();
-   //! \brief returns data as a water
-   Water  * water();
-   */
    //! \brief returns the data as a NamedEntity
    NamedEntity * thing();
 
@@ -285,9 +259,6 @@ public:
    void setShowMe(bool val);
    //! \brief does the node want to be shown regardless of display()
    bool showMe() const;
-
-   //! \brief For logging an BtTreeItem::Type
-///   char const * const itemTypeToString(BtTreeItem::Type);
 
 private:
    /*!  Keep a pointer to the parent tree item. */

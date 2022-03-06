@@ -184,10 +184,6 @@ void BtTreeItem::setData(BtTreeItem::Type t, QObject * d) {
    this->itemType = t;
 }
 
-/*QVariant BtTreeItem::data(int column) {
-   return data(type(), column);
-}*/
-
 bool BtTreeItem::insertChildren(int position, int count, BtTreeItem::Type itemType) {
 //   qDebug() <<
 //      Q_FUNC_INFO << "Inserting" << count << "children of type" << itemType << "(" <<
@@ -480,82 +476,6 @@ template Style       * BtTreeItem::getData<Style      >();
 template BtFolder    * BtTreeItem::getData<BtFolder   >();
 template Water       * BtTreeItem::getData<Water      >();
 
-/*
-Recipe * BtTreeItem::recipe() {
-   if (itemType == BtTreeItem::Type::RECIPE && _thing) {
-      return qobject_cast<Recipe *>(_thing);
-   }
-
-   return nullptr;
-}
-
-Equipment * BtTreeItem::equipment() {
-   if (itemType == BtTreeItem::Type::EQUIPMENT) {
-      return qobject_cast<Equipment *>(_thing);
-   }
-   return nullptr;
-}
-
-Fermentable * BtTreeItem::fermentable() {
-   if (itemType == BtTreeItem::Type::FERMENTABLE) {
-      return qobject_cast<Fermentable *>(_thing);
-   }
-   return nullptr;
-}
-
-Hop * BtTreeItem::hop() {
-   if (itemType == BtTreeItem::Type::HOP) {
-      return qobject_cast<Hop *>(_thing);
-   }
-   return nullptr;
-}
-
-Misc * BtTreeItem::misc() {
-   if (itemType == BtTreeItem::Type::MISC) {
-      return qobject_cast<Misc *>(_thing);
-   }
-   return nullptr;
-}
-
-Yeast * BtTreeItem::yeast() {
-   if (itemType == BtTreeItem::Type::YEAST) {
-      return qobject_cast<Yeast *>(_thing);
-   }
-   return nullptr;
-}
-
-BrewNote * BtTreeItem::brewNote() {
-   if (itemType == BtTreeItem::Type::BREWNOTE && _thing) {
-      return qobject_cast<BrewNote *>(_thing);
-   }
-
-   return nullptr;
-}
-
-Style * BtTreeItem::style() {
-   if (itemType == BtTreeItem::Type::STYLE && _thing) {
-      return qobject_cast<Style *>(_thing);
-   }
-
-   return nullptr;
-}
-
-BtFolder * BtTreeItem::folder() {
-   if (itemType == BtTreeItem::Type::FOLDER && _thing) {
-      return qobject_cast<BtFolder *>(_thing);
-   }
-
-   return nullptr;
-}
-
-Water * BtTreeItem::water() {
-   if (itemType == BtTreeItem::Type::WATER && _thing) {
-      return qobject_cast<Water *>(_thing);
-   }
-
-   return nullptr;
-}
-*/
 NamedEntity * BtTreeItem::thing() {
    if (_thing) {
       return qobject_cast<NamedEntity *>(_thing);
@@ -572,13 +492,6 @@ QString BtTreeItem::name() {
    tmp = qobject_cast<NamedEntity *>(_thing);
    return tmp->name();
 }
-
-/*char const * const BtTreeItem::itemTypeToString(BtTreeItem::Type itemType) {
-   if (itemTypeToName.contains(itemType)) {
-      return itemTypeToName.value(itemType);
-   }
-   return "Unknown!";
-}*/
 
 bool BtTreeItem::showMe() const {
    return m_showMe;
