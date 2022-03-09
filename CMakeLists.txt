@@ -253,12 +253,17 @@ SET_PROPERTY(
 # .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so that
 # needs some more investigation.  (It could be that it's a bug in Boost, at least according to
 # https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
+#
+#
+# NB: We need minimum Boost 1.75 for Boost JSON
+#
 IF(WIN32)
-FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Boost 1.75.0 REQUIRED)
 ELSEIF(APPLE)
-FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Boost 1.75.0 REQUIRED)
 ELSE()
-FIND_PACKAGE(Boost REQUIRED COMPONENTS stacktrace_backtrace)
+# Boost JSON is header-only so doesn't have a component
+FIND_PACKAGE(Boost 1.75.0 REQUIRED COMPONENTS stacktrace_backtrace)
 ENDIF()
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Boost headers and DLLs are on your system
@@ -291,6 +296,18 @@ INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
 # its test suite - in which case, uncomment the add_subdirectory line and add ValiJSON::valijson to both lists of
 # target_link_libraries in src/CMakeLists.txt).
 #
+include(ExternalProject)
+find_package(Git REQUIRED)
+ExternalProject_Add(ValiJSON
+  GIT_REPOSITORY    https://github.com/tristanpenman/valijson.git
+  GIT_TAG           master
+  SOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson"
+  BINARY_DIR        "${CMAKE_BINARY_DIR}/third-party/valijson"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)
 set(valijson_BUILD_TESTS OFF)
 add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
 INCLUDE_DIRECTORIES(${ROOTDIR}/third-party/valijson/include)

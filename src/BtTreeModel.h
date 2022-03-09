@@ -271,9 +271,6 @@ private:
    void addBrewNoteSubTree(Recipe * rec, int i, BtTreeItem * parent, bool recurse = true);
    //! \b flip the switch to show descendants
    void setShowChild(QModelIndex child, bool val);
-/*   //! \b link to recipes (this will get reverted later)
-   void makeAncestors(NamedEntity * ancestor, NamedEntity * descendant);
-   */
    void addAncestoralTree(Recipe * rec, int i, BtTreeItem * parent);
 
    BtTreeItem * rootItem;
