@@ -64,8 +64,7 @@ jobs:
           cd boost_1_77_0
           ./bootstrap.sh --prefix=/usr
           sudo ./b2 install
-          cd ../..
-          rm -rf boost-tmp
+          sudo rm -rf ~/boost-tmp
 
 #      - name: Apply Patches
 #        shell: bash
