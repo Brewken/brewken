@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStore.cpp is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStore.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -230,20 +230,15 @@ namespace {
       }
 
       QString stringValue = valueFromDb.toString();
-      auto match = std::find_if(
-         fieldDefn.enumMapping->begin(),
-         fieldDefn.enumMapping->end(),
-         [stringValue](ObjectStore::EnumAndItsDbString const & ii){return stringValue == ii.string;}
-      );
-
+      auto match = fieldDefn.enumMapping->stringToEnum(stringValue);
       // If we didn't find a match, its either a coding error or someone messed with the DB data
-      if (match == fieldDefn.enumMapping->end()) {
+      if (!match) {
          qCritical() <<
             Q_FUNC_INFO << "Could not decode " << stringValue << " to enum when mapping column " <<
             fieldDefn.columnName << " to property " << fieldDefn.propertyName << " so using 0";
          return 0;
       }
-      return match->native;
+      return match.value();
    }
 
    /**
@@ -255,17 +250,11 @@ namespace {
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
 
-      int nativeValue = propertyValue.toInt();
-      auto match = std::find_if(
-         fieldDefn.enumMapping->begin(),
-         fieldDefn.enumMapping->end(),
-         [nativeValue](ObjectStore::EnumAndItsDbString const & ii){return nativeValue == ii.native;}
-      );
-
+      auto match = fieldDefn.enumMapping->enumToString(propertyValue.toInt());
       // It's a coding error if we couldn't find a match
-      Q_ASSERT(match != fieldDefn.enumMapping->end());
+      Q_ASSERT(match);
 
-      return match->string;
+      return match.value();
    }
 
    //
@@ -611,7 +600,6 @@ public:
          BtSqlQuery sqlQuery{connection};
          sqlQuery.prepare(queryString);
          QVariant propertyBindValue{object.property(*propertyName)};
-         // Enums need to be converted to strings first
          auto fieldDefn = std::find_if(
             this->primaryTable.tableFields.begin(),
             this->primaryTable.tableFields.end(),
@@ -620,7 +608,23 @@ public:
          // It's a coding error if we're trying to update a property that's not in the field definitions
          Q_ASSERT(fieldDefn != this->primaryTable.tableFields.end());
          if (fieldDefn->fieldType == ObjectStore::Enum) {
+            // Enums need to be converted to strings first
             propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
+         } else if (fieldDefn->foreignKeyTo) {
+            //
+            // If the columns if a foreign key and the caller is setting it to a non-positive value then we actually
+            // need to store NULL in the DB.  (In the code we store foreign key IDs as ints, and use -1 to mean null.
+            // In the DB we need to store NULL explicitly because, if we try to store -1, we'll get a foreign key
+            // constraint violation as the DB is unable to find a row in the related table with primary key -1.)
+            //
+            // Firstly, we assert it's a coding error if we've created a foreign key column that's not an int.  For the
+            // moment at least, we don't support other types of primary/foreign key.
+            //
+            Q_ASSERT(ObjectStore::FieldType::Int == fieldDefn->fieldType);
+            if (propertyBindValue.toInt() <= 0) {
+               qDebug() << Q_FUNC_INFO << "Treating" << propertyBindValue << "foreign key value as NULL";
+               propertyBindValue = QVariant(QVariant::Int);
+            }
          }
          sqlQuery.bindValue(QString{":%1"}.arg(*columnToUpdateInDb), propertyBindValue);
          sqlQuery.bindValue(QString{":%1"}.arg(*primaryKeyColumn), primaryKey);

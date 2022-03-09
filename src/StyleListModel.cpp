@@ -19,6 +19,9 @@
  =====================================================================================================================*/
 #include "StyleListModel.h"
 
+#include <QAbstractListModel>
+#include <QWidget>
+
 #include "model/Style.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"

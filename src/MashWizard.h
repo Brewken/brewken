@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * MashWizard.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * MashWizard.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Rob Taylor <robtaylor@floopily.org>
@@ -17,22 +18,20 @@
  =====================================================================================================================*/
 #ifndef MASHWIZARD_H
 #define MASHWIZARD_H
+#pragma once
 
-class MashWizard;
+#include <QDialog>
 
 #include "ui_mashWizard.h"
-#include <QDialog>
+#include "measurement/Unit.h"
 #include "model/Recipe.h"
-#include "Unit.h"
 
 /*!
  * \class MashWizard
  *
- *
  * \brief View/controller dialog that helps you design a mash.
  */
-class MashWizard : public QDialog, public Ui::mashWizard
-{
+class MashWizard : public QDialog, public Ui::mashWizard {
    Q_OBJECT
 public:
    MashWizard(QWidget* parent=nullptr);
@@ -46,8 +45,8 @@ public slots:
 
 private:
    Recipe* recObs;
-   Unit const * weightUnit;
-   Unit const * volumeUnit;
+   Measurement::Unit const * weightUnit;
+   Measurement::Unit const * volumeUnit;
 
    //!brief just need a holder for the three buttons
    QButtonGroup* bGroup;
@@ -57,4 +56,4 @@ private:
 
 };
 
-#endif   /* MASHWIZARD_H */
+#endif

@@ -27,7 +27,6 @@
 #include <QDebug>
 #include <QVector>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"
@@ -198,7 +197,7 @@ bool Misc::isValidUse( const QString& var )
    unsigned int i;
 
    for( i = 0; i < size; ++i )
-      if( var == uses[i] )
+      if (var == uses[i] )
          return true;
 
    return false;
@@ -211,7 +210,7 @@ bool Misc::isValidType( const QString& var )
    unsigned int i;
 
    for( i = 0; i < size; ++i )
-      if( var == types[i] )
+      if (var == types[i] )
          return true;
 
    return false;

@@ -28,7 +28,8 @@
 #include <QWidget>
 
 #include "ui_waterDialog.h"
-#include "Unit.h"
+
+#include "measurement/Unit.h"
 #include "model/Water.h"
 #include "model/Salt.h"
 
@@ -43,9 +44,10 @@ class Salt;
  * \class WaterDialog
  *
  * \brief Trying my hand at making water chemistry work
+ *
+ * .:TBD:. This class (and associated UI files etc) might better be called Water Chemistry Dialog
  */
-class WaterDialog : public QDialog, public Ui::waterDialog
-{
+class WaterDialog : public QDialog, public Ui::waterDialog {
    Q_OBJECT
 
 public:

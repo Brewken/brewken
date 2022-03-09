@@ -14,13 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "BtFolder.h"
 
+#include <QDebug>
 #include <QString>
 #include <QRegExp>  // Yeah, you knew that had to happen
-#include <QDebug>
-
-#include "BtFolder.h"
-#include "Brewken.h"
 
 BtFolder::BtFolder() : QObject()
 {

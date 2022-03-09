@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -29,8 +29,8 @@
 #include <QString>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "Localization.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
@@ -150,14 +150,6 @@ BrewNote::BrewNote(QDate dateNow, QString const & name) :
 void BrewNote::populateNote(Recipe* parent)
 {
    this->m_recipeId = parent->key();
-   Equipment* equip = parent->equipment();
-   Mash* mash = parent->mash();
-   QList<MashStep*> steps;
-   MashStep* mStep;
-   QList<Yeast*> yeasts = parent->yeasts();
-   Yeast* yeast;
-   QHash<QString,double> sugars;
-   double atten_pct = -1.0;
 
    // Since we have the recipe, lets set some defaults The order in which
    // these are done is very specific. Please do not modify them without some
@@ -172,9 +164,12 @@ void BrewNote::populateNote(Recipe* parent)
    setVolumeIntoFerm_l(parent->finalVolume_l());
    setFinalVolume_l(parent->finalVolume_l());
 
-   if ( equip )
+   auto equip = parent->equipment();
+   if (equip) {
       setBoilOff_l( equip->evapRate_lHr() * ( parent->boilTime_min()/60));
+   }
 
+   QHash<QString,double> sugars;
    sugars = parent->calcTotalPoints();
    setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
 
@@ -184,15 +179,13 @@ void BrewNote::populateNote(Recipe* parent)
    setSg( parent->boilGrav() );
    setProjBoilGrav(parent->boilGrav() );
 
-   if ( mash )
-   {
-      steps = mash->mashSteps();
-      if ( ! steps.isEmpty() )
-      {
-         mStep = steps.at(0);
+   auto mash = parent->mash();
+   if (mash) {
+      auto steps = mash->mashSteps();
+      if (!steps.isEmpty()) {
+         auto mStep = steps.at(0);
 
-         if ( mStep )
-         {
+         if (mStep) {
             double endTemp = mStep->endTemp_c() > 0.0 ? mStep->endTemp_c() : mStep->stepTemp_c();
 
             setStrikeTemp_c(mStep->infuseTemp_c());
@@ -202,8 +195,7 @@ void BrewNote::populateNote(Recipe* parent)
             setProjMashFinTemp_c(endTemp);
          }
 
-         if ( steps.size() > 2 )
-         {
+         if (steps.size() > 2) {
             // NOTE: Qt will complain that steps.size()-2 is always positive,
             // and therefore the internal assert that the index is positive is
             // bunk. This is OK, as we just checked that we will not underflow.
@@ -225,17 +217,19 @@ void BrewNote::populateNote(Recipe* parent)
    setProjEff_pct(parent->efficiency_pct());
    setProjABV_pct( parent->ABV_pct());
 
-   for (int i = 0; i < yeasts.size(); ++i)
-   {
-      yeast = yeasts.at(i);
-      if ( yeast->attenuation_pct() > atten_pct )
+   double atten_pct = -1.0;
+   auto yeasts = parent->yeasts();
+   for (auto yeast : yeasts) {
+      if ( yeast->attenuation_pct() > atten_pct ) {
          atten_pct = yeast->attenuation_pct();
+      }
    }
 
-   if ( yeasts.size() == 0 || atten_pct < 0.0 )
+   if ( yeasts.size() == 0 || atten_pct < 0.0 ) {
       atten_pct = 75;
+   }
    setProjAtten(atten_pct);
-
+   return;
 }
 
 // the v2 release had some bugs in the efficiency calcs. They have been fixed.
@@ -485,11 +479,11 @@ Recipe * BrewNote::getOwningRecipe() {
 // Getters
 QDate BrewNote::brewDate() const { return m_brewDate; }
 QString BrewNote::brewDate_str() const { return m_brewDate.toString(); }
-QString BrewNote::brewDate_short() const { return Brewken::displayDateUserFormated(m_brewDate); }
+QString BrewNote::brewDate_short() const { return Localization::displayDateUserFormated(m_brewDate); }
 
 QDate BrewNote::fermentDate() const { return m_fermentDate; }
 QString BrewNote::fermentDate_str() const { return m_fermentDate.toString(); }
-QString BrewNote::fermentDate_short() const { return Brewken::displayDateUserFormated(m_fermentDate); }
+QString BrewNote::fermentDate_short() const { return Localization::displayDateUserFormated(m_fermentDate); }
 
 QString BrewNote::notes() const { return m_notes; }
 

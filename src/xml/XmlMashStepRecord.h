@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * XmlMashStepRecord.h is part of Brewken, and is copyright the following authors 2020:
+ * XmlMashStepRecord.h is part of Brewken, and is copyright the following authors 2020-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -34,13 +34,19 @@ protected:
     *        in the DB other in association with its Mash.
     * \param containingEntity The Mash with which the MashStep needs to be associated
     */
-   virtual XmlRecord::ProcessingResult normaliseAndStoreInDb(NamedEntity * containingEntity,
+   virtual XmlRecord::ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                              QTextStream & userMessage,
                                                              XmlRecordCount & stats);
    /**
     * \brief We need this override a MashStep is owned by its Mash
     */
-   virtual void setContainingEntity(NamedEntity * containingEntity);
+   virtual void setContainingEntity(std::shared_ptr<NamedEntity> containingEntity);
+
+   /**
+    * \brief We override the usual version of this function because the \c MashStep gets inserted in the database when
+    *        we call \c Mash::addMashStep(), before this function is called.
+    */
+   virtual int storeNamedEntityInDb();
 
 };
 #endif

@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * HopSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * HopSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Samuel Östling <MrOstling@gmail.com>
@@ -17,13 +18,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
-#include "Brewken.h"
 #include "HopSortFilterProxyModel.h"
-#include "HopTableModel.h"
-#include "model/Hop.h"
-#include "Unit.h"
+
 #include <iostream>
+
+#include "Localization.h"
+#include "measurement/Measurement.h"
+#include "measurement/Unit.h"
+#include "model/Hop.h"
+#include "tableModels/HopTableModel.h"
 
 HopSortFilterProxyModel::HopSortFilterProxyModel(QObject *parent, bool filt)
 : QSortFilterProxyModel(parent)
@@ -31,56 +34,53 @@ HopSortFilterProxyModel::HopSortFilterProxyModel(QObject *parent, bool filt)
    filter = filt;
 }
 
-bool HopSortFilterProxyModel::lessThan(const QModelIndex &left,
-                                         const QModelIndex &right) const
-{
-    QVariant leftHop = sourceModel()->data(left);
-    QVariant rightHop = sourceModel()->data(right);
-    QStringList uses = QStringList() << "Dry Hop" << "Aroma" << "Boil" << "First Wort" << "Mash";
-    QModelIndex lSibling, rSibling;
-    int lUse, rUse;
-    double lAlpha, rAlpha;
-    bool ok = false;
-    Unit const * unit = &Units::kilograms;
+bool HopSortFilterProxyModel::lessThan(QModelIndex const & left,
+                                       QModelIndex const & right) const {
+   QVariant leftHop = sourceModel()->data(left);
+   QVariant rightHop = sourceModel()->data(right);
+   QStringList uses = QStringList() << "Dry Hop" << "Aroma" << "Boil" << "First Wort" << "Mash";
 
-   switch( left.column() )
-   {
+   switch (left.column()) {
       case HOPALPHACOL:
-         lAlpha = Brewken::toDouble(leftHop.toString(), &ok );
-         if ( ! ok )
-            qWarning() << QString("HopSortFilterProxyModel::lessThan() could not convert %1 to double").arg(leftHop.toString());
-
-         rAlpha = Brewken::toDouble(rightHop.toString(), &ok );
-         if ( ! ok )
-            qWarning() << QString("HopSortFilterProxyModel::lessThan() could not convert %1 to double").arg(rightHop.toString());
-
-         return lAlpha < rAlpha;
+         {
+            double lAlpha = Localization::toDouble(leftHop.toString(), Q_FUNC_INFO);
+            double rAlpha = Localization::toDouble(rightHop.toString(), Q_FUNC_INFO);
+            return lAlpha < rAlpha;
+         }
 
       case HOPINVENTORYCOL:
-         if (Brewken::qStringToSI(leftHop.toString(), unit) == 0.0 && this->sortOrder() == Qt::AscendingOrder)
+         if (Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Mass).quantity == 0.0 &&
+            this->sortOrder() == Qt::AscendingOrder) {
             return false;
-         else
-            return Brewken::qStringToSI(leftHop.toString(),unit) < Brewken::qStringToSI(rightHop.toString(),unit);
+         }
+         return Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightHop.toString(), Measurement::PhysicalQuantity::Mass);
+
       case HOPAMOUNTCOL:
-         return Brewken::qStringToSI(leftHop.toString(),unit) < Brewken::qStringToSI(rightHop.toString(),unit);
+         return Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightHop.toString(), Measurement::PhysicalQuantity::Mass);
+
       case HOPTIMECOL:
-        // Get the indexes of the Use column
-        lSibling = left.sibling(left.row(), HOPUSECOL);
-        rSibling = right.sibling(right.row(), HOPUSECOL);
-        // We are talking to the model, so we get the strings associated with
-        // the names, not the Hop::Use enums. We need those translated into
-        // ints to make this work
-        lUse = uses.indexOf( (sourceModel()->data(lSibling)).toString() );
-        rUse = uses.indexOf( (sourceModel()->data(rSibling)).toString() );
+         {
+         // Get the indexes of the Use column
+         QModelIndex lSibling = left.sibling(left.row(), HOPUSECOL);
+         QModelIndex rSibling = right.sibling(right.row(), HOPUSECOL);
+         // We are talking to the model, so we get the strings associated with
+         // the names, not the Hop::Use enums. We need those translated into
+         // ints to make this work
+         int lUse = uses.indexOf( (sourceModel()->data(lSibling)).toString() );
+         int rUse = uses.indexOf( (sourceModel()->data(rSibling)).toString() );
 
-        unit = &Units::minutes; // not &Units::kilogram
-        if ( lUse == rUse )
-            return Brewken::qStringToSI(leftHop.toString(),unit) < Brewken::qStringToSI(rightHop.toString(),unit);
+         if (lUse == rUse) {
+               return Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Time) <
+                      Measurement::qStringToSI(rightHop.toString(), Measurement::PhysicalQuantity::Time);
+         }
 
-        return lUse < rUse;
-    }
+         return lUse < rUse;
+         }
+   }
 
-    return leftHop.toString() < rightHop.toString();
+   return leftHop.toString() < rightHop.toString();
 }
 
 bool HopSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent) const
@@ -91,6 +91,6 @@ bool HopSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelInde
    return !filter
           ||
            ( sourceModel()->data(index).toString().contains(filterRegExp())
-             && model->getHop(source_row)->display()
+             && model->getRow(source_row)->display()
            );
 }

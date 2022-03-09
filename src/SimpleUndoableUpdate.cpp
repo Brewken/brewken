@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ * SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -20,7 +20,9 @@
 //#include <boost/stacktrace.hpp>
 //#include <sstream>      // std::ostringstream
 
-#include "Brewken.h" // For logging
+#include <QDebug>
+
+#include "Logging.h"
 
 SimpleUndoableUpdate::SimpleUndoableUpdate(QObject & updatee,
                                            BtStringConst const & propertyName,

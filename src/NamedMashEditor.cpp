@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * NamedMashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * NamedMashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Moreno <danielm5@users.noreply.github.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -22,12 +22,11 @@
 #include <QDebug>
 #include <QWidget>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
-#include "Unit.h"
 
 
 NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool singleMashEditor) :
@@ -100,12 +99,12 @@ void NamedMashEditor::saveAndClose() {
 
    this->mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
    this->mashObs->setName(lineEdit_name->text());
-   this->mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI());
-   this->mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI());
-   this->mashObs->setPh(lineEdit_spargePh->toSI());
-   this->mashObs->setTunTemp_c(lineEdit_tunTemp->toSI());
-   this->mashObs->setTunWeight_kg(lineEdit_tunMass->toSI());
-   this->mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI());
+   this->mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI().quantity);
+   this->mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI().quantity);
+   this->mashObs->setPh(lineEdit_spargePh->toSI().quantity);
+   this->mashObs->setTunTemp_c(lineEdit_tunTemp->toSI().quantity);
+   this->mashObs->setTunWeight_kg(lineEdit_tunMass->toSI().quantity);
+   this->mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI().quantity);
 
    this->mashObs->setNotes( textEdit_notes->toPlainText() );
    return;
@@ -205,12 +204,12 @@ void NamedMashEditor::clear()
 }
 
 void NamedMashEditor::addMashStep() {
-   if ( ! this->mashObs ) {
+   if (!this->mashObs) {
       return;
    }
 
+   // The call to Mash::addMashStep() will also store the MashStep in the ObjectStore / DB
    auto step = std::make_shared<MashStep>();
-   ObjectStoreWrapper::insert(step);
    this->mashObs->addMashStep(step);
    mashStepEditor->setMashStep(step);
    mashStepEditor->setVisible(true);
@@ -242,8 +241,8 @@ void NamedMashEditor::removeMashStep() {
    if ( !justOne(selected) )
       return;
 
-   MashStep* step = mashStepTableModel->getMashStep(selected[0].row());
-   this->mashObs->removeMashStep(ObjectStoreWrapper::getSharedFromRaw(step));
+   auto step = mashStepTableModel->getRow(selected[0].row());
+   this->mashObs->removeMashStep(step);
    return;
 }
 
@@ -301,22 +300,24 @@ void NamedMashEditor::fromEquipment(const QString& name)
    }
 }
 
-void NamedMashEditor::removeMash()
-{
-   if ( ! mashObs )
+void NamedMashEditor::removeMash() {
+   if (!this->mashObs) {
       return;
+   }
 
-   int newMash = mashComboBox->currentIndex() - 1;
+   int newMash = this->mashComboBox->currentIndex() - 1;
 
    // I *think* we want to disconnect the mash first?
-   disconnect(mashObs, 0, this, 0);
+   disconnect(this->mashObs, 0, this, 0);
    // Delete the mashsteps
-   QList<MashStep*> steps = mashObs->mashSteps();
-   for (auto step : steps) {
+   // .:TBD:. Mash should be responsible for deleting its steps.  This is already correctly handled for hard delete, but
+   // not for soft delete.
+   for (auto step : this->mashObs->mashSteps()) {
       ObjectStoreWrapper::softDelete(*step);
    }
-   // and delete the mash itself
+   // Delete the mash itself
    ObjectStoreWrapper::softDelete(*this->mashObs);
-   setMash(mashListModel->at(newMash));
+
+   this->setMash(this->mashListModel->at(newMash));
    return;
 }

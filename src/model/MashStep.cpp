@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/MashStep.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/MashStep.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QVector>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
 #include "PhysicalConstants.h"
@@ -143,7 +142,11 @@ void MashStep::setStepNumber(int stepNumber) {
    this->setAndNotify(PropertyNames::MashStep::stepNumber, this->m_stepNumber, stepNumber);
 }
 
-void MashStep::setMashId(int mashId) { this->mashId = mashId; }
+void MashStep::setMashId(int mashId) {
+   this->mashId = mashId;
+   this->propagatePropertyChange(PropertyNames::MashStep::mashId, false);
+   return;
+}
 
 //============================="GET" METHODS====================================
 MashStep::Type MashStep::type() const { return m_type; }

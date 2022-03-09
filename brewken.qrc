@@ -93,6 +93,25 @@
       <file alias="images/sound.png">images/sound.png</file>
       <file alias="images/testtube.svg">images/testtube.svg</file>
       <file alias="images/yeastVial.svg">images/yeastVial.svg</file>
-      <file alias="xsd/beerxml/v1/BeerXml.xsd">xsd/beerxml/v1/BeerXml.xsd</file>
+      <file alias="schemas/beerxml/v1/BeerXml.xsd">schemas/beerxml/v1/BeerXml.xsd</file>
+      <file alias="schemas/beerjson/1.0/beer.json">schemas/beerjson/1.0/beer.json</file>
+      <file alias="schemas/beerjson/1.0/boil.json">schemas/beerjson/1.0/boil.json</file>
+      <file alias="schemas/beerjson/1.0/boil_step.json">schemas/beerjson/1.0/boil_step.json</file>
+      <file alias="schemas/beerjson/1.0/culture.json">schemas/beerjson/1.0/culture.json</file>
+      <file alias="schemas/beerjson/1.0/equipment.json">schemas/beerjson/1.0/equipment.json</file>
+      <file alias="schemas/beerjson/1.0/fermentable.json">schemas/beerjson/1.0/fermentable.json</file>
+      <file alias="schemas/beerjson/1.0/fermentation.json">schemas/beerjson/1.0/fermentation.json</file>
+      <file alias="schemas/beerjson/1.0/fermentation_step.json">schemas/beerjson/1.0/fermentation_step.json</file>
+      <file alias="schemas/beerjson/1.0/hop.json">schemas/beerjson/1.0/hop.json</file>
+      <file alias="schemas/beerjson/1.0/mash.json">schemas/beerjson/1.0/mash.json</file>
+      <file alias="schemas/beerjson/1.0/mash_step.json">schemas/beerjson/1.0/mash_step.json</file>
+      <file alias="schemas/beerjson/1.0/measureable_units.json">schemas/beerjson/1.0/measureable_units.json</file>
+      <file alias="schemas/beerjson/1.0/misc.json">schemas/beerjson/1.0/misc.json</file>
+      <file alias="schemas/beerjson/1.0/packaging.json">schemas/beerjson/1.0/packaging.json</file>
+      <file alias="schemas/beerjson/1.0/packaging_vessel.json">schemas/beerjson/1.0/packaging_vessel.json</file>
+      <file alias="schemas/beerjson/1.0/recipe.json">schemas/beerjson/1.0/recipe.json</file>
+      <file alias="schemas/beerjson/1.0/style.json">schemas/beerjson/1.0/style.json</file>
+      <file alias="schemas/beerjson/1.0/timing.json">schemas/beerjson/1.0/timing.json</file>
+      <file alias="schemas/beerjson/1.0/water.json">schemas/beerjson/1.0/water.json</file>
    </qresource>
 </RCC>

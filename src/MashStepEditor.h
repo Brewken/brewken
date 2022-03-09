@@ -18,6 +18,8 @@
  =====================================================================================================================*/
 #ifndef MASHSTEPEDITOR_H
 #define MASHSTEPEDITOR_H
+#pragma once
+
 #include <memory>
 
 #include <QDialog>

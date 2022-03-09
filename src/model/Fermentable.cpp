@@ -27,14 +27,10 @@
 #include <QObject>
 #include <QVariant>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
-
-// .:TBD:. I think (and hope) that we can dispense with the following line!
-//#define SUPER NamedEntity
 
 QStringList Fermentable::types = QStringList() << "Grain" << "Sugar" << "Extract" << "Dry Extract" << "Adjunct";
 
@@ -279,7 +275,7 @@ double Fermentable::equivSucrose_kg() const
    double ret = amount_kg() * yield_pct() * (1.0-moisture_pct()/100.0) / 100.0;
 
    // If this is a steeped grain...
-   if( type() == Grain && !isMashed() )
+   if (type() == Grain && !isMashed() )
       return 0.60 * ret; // Reduce the yield by 60%.
    else
       return ret;

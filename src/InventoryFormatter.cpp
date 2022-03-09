@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2021:
+ * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2022:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,31 +17,36 @@
  =====================================================================================================================*/
 #include "InventoryFormatter.h"
 
-#include <QDate>
-#include <QDialog>
+#include <QList>
+#include <QMap>
+#include <QStringList>
 
-#include "Brewken.h"
-#include "BtPrintPreview.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Html.h"
+#include "Localization.h"
 #include "MainWindow.h"
+#include "measurement/Measurement.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
-#include "model/Inventory.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 
 namespace {
+   /**
+    * @brief Create Inventory HTML Header
+    *
+    * @return QString
+    */
    QString createInventoryHeader() {
       return Html::createHeader(QObject::tr("Inventory"), ":css/inventory.css") +
             QString("<h1>%1 &mdash; %2</h1>")
                   .arg(QObject::tr("Inventory"))
-                  .arg(Brewken::displayDateUserFormated(QDate::currentDate()));
+                  .arg(Localization::displayDateUserFormated(QDate::currentDate()));
    }
 
    /**
-    * Fermentables
+    * \brief Create Inventory HTML Table of \c Fermentable
     */
    QString createInventoryTableFermentable() {
       QString result;
@@ -67,10 +72,9 @@ namespace {
                               "<td>%2</td>"
                               "</tr>")
                            .arg(fermentable->name())
-                           .arg(Brewken::displayAmount(fermentable->inventory(),
-                                                       PersistentSettings::Sections::fermentableTable,
-                                                       PropertyNames::NamedEntityWithInventory::inventory,
-                                                       &Units::kilograms));
+                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(), Measurement::Units::kilograms},
+                                                           PersistentSettings::Sections::fermentableTable,
+                                                           PropertyNames::NamedEntityWithInventory::inventory));
          }
          result += "</table>";
       }
@@ -78,7 +82,7 @@ namespace {
    }
 
    /**
-    * Hops
+    * \brief Create Inventory HTML Table of \c Hop
     */
    QString createInventoryTableHop() {
       QString result;
@@ -107,10 +111,9 @@ namespace {
                               "</tr>")
                            .arg(hop->name())
                            .arg(hop->alpha_pct())
-                           .arg(Brewken::displayAmount(hop->inventory(),
-                                                       PersistentSettings::Sections::hopTable,
-                                                       PropertyNames::NamedEntityWithInventory::inventory,
-                                                       &Units::kilograms));
+                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(), Measurement::Units::kilograms},
+                                                           PersistentSettings::Sections::hopTable,
+                                                           PropertyNames::NamedEntityWithInventory::inventory));
          }
          result += "</table>";
       }
@@ -118,7 +121,7 @@ namespace {
    }
 
    /**
-    * Misc
+    * \brief Create Inventory HTML Table of \c Misc
     */
    QString createInventoryTableMiscellaneous() {
       QString result;
@@ -138,12 +141,14 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto miscellaneous : inventory) {
-            const QString displayAmount =
-                  Brewken::displayAmount(miscellaneous->inventory(),
-                                         PersistentSettings::Sections::miscTable,
-                                         PropertyNames::NamedEntityWithInventory::inventory,
-                        miscellaneous->amountIsWeight() ? (Unit*)&Units::kilograms
-                                                      : (Unit*)&Units::liters);
+            QString const displayAmount = Measurement::displayAmount(
+               Measurement::Amount{
+                  miscellaneous->inventory(),
+                  miscellaneous->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
+               PersistentSettings::Sections::miscTable,
+               PropertyNames::NamedEntityWithInventory::inventory
+            );
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
@@ -157,7 +162,7 @@ namespace {
    }
 
    /**
-    * Yeast
+    * \brief Create Inventory HTML Table of \c Yeast
     */
    QString createInventoryTableYeast() {
       QString result;
@@ -175,12 +180,14 @@ namespace {
                         .arg(QObject::tr("Amount"));
 
          for (auto yeast : inventory) {
-            const QString displayAmount =
-                  Brewken::displayAmount(yeast->inventory(),
-                                         PersistentSettings::Sections::yeastTable,
-                                         PropertyNames::NamedEntityWithInventory::inventory,
-                        yeast->amountIsWeight() ? (Unit*)&Units::kilograms
-                                                : (Unit*)&Units::liters);
+            QString const displayAmount = Measurement::displayAmount(
+               Measurement::Amount{
+                  yeast->inventory(),
+                  yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               },
+               PersistentSettings::Sections::yeastTable,
+               PropertyNames::NamedEntityWithInventory::inventory
+            );
 
             result += QString("<tr>"
                               "<td>%1</td>"
@@ -194,11 +201,19 @@ namespace {
       return result;
    }
 
-   QString createInventoryBody() {
-      QString result =
-            createInventoryTableFermentable() + createInventoryTableHop() +
-            createInventoryTableMiscellaneous() + createInventoryTableYeast();
 
+   /**
+    * Create Inventory HTML Body
+    */
+   QString createInventoryBody(InventoryFormatter::HtmlGenerationFlags flags) {
+      // Only generate users selection of Ingredient inventory.
+      QString result =
+         ((InventoryFormatter::FERMENTABLES  & flags) ? createInventoryTableFermentable() : "") +
+         ((InventoryFormatter::HOPS          & flags) ? createInventoryTableHop() : "") +
+         ((InventoryFormatter::MISCELLANEOUS & flags) ? createInventoryTableMiscellaneous() : "") +
+         ((InventoryFormatter::YEAST         & flags) ? createInventoryTableYeast() : "");
+
+      // If user selects no printout or if there are no inventory for the selected ingredients
       if (result.size() == 0) {
          result = QObject::tr("No inventory available.");
       }
@@ -206,41 +221,27 @@ namespace {
       return result;
    }
 
+   /**
+    * Create Inventory HTML Footer
+    */
    QString createInventoryFooter() {
       return Html::createFooter();
    }
 
-
-   BtPrintPreview * dialog;
-
-   void createOrUpdateDialog() {
-      if (nullptr == dialog) {
-         dialog = new BtPrintPreview(Brewken::mainWindow());
-         dialog->setWindowTitle(QObject::tr("Inventory Print Preview"));
-      }
-      dialog->setContent(createInventoryHeader() +
-                         createInventoryBody() +
-                         createInventoryFooter());
-      return;
-   }
-
 }
 
-
-void InventoryFormatter::printPreview() {
-   createOrUpdateDialog();
-   dialog->show();
-   return;
+InventoryFormatter::HtmlGenerationFlags InventoryFormatter::operator|(InventoryFormatter::HtmlGenerationFlags a,
+                                                                      InventoryFormatter::HtmlGenerationFlags b) {
+   return static_cast<HtmlGenerationFlags>(static_cast<int>(a) | static_cast<int>(b));
 }
 
-void InventoryFormatter::print(QPrinter* printer) {
-   createOrUpdateDialog();
-   dialog->print(printer);
-   return;
+bool InventoryFormatter::operator&(InventoryFormatter::HtmlGenerationFlags a,
+                                   InventoryFormatter::HtmlGenerationFlags b) {
+   return (static_cast<int>(a) & static_cast<int>(b));
 }
 
-void InventoryFormatter::exportHtml(QFile* file) {
-   createOrUpdateDialog();
-   dialog->exportHtml(file);
-   return;
+QString InventoryFormatter::createInventoryHtml(HtmlGenerationFlags flags) {
+   return createInventoryHeader() +
+          createInventoryBody(flags) +
+          createInventoryFooter();
 }

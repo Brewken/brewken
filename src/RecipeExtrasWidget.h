@@ -18,12 +18,12 @@
  =====================================================================================================================*/
 #ifndef RECIPEEXTRASWIDGET_H
 #define RECIPEEXTRASWIDGET_H
+#pragma once
 
-class RecipeExtrasWidget;
-
-#include <QWidget>
 #include <QMetaProperty>
 #include <QVariant>
+#include <QWidget>
+
 #include "ui_recipeExtrasWidget.h"
 
 // Forward declarations

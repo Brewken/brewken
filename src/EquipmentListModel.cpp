@@ -19,6 +19,9 @@
  =====================================================================================================================*/
 #include "EquipmentListModel.h"
 
+#include <QAbstractListModel>
+#include <QWidget>
+
 #include "database/ObjectStoreWrapper.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"

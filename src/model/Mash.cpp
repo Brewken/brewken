@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Mash.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -24,7 +24,6 @@
 
 #include <QObject>
 
-#include "Brewken.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
@@ -156,7 +155,7 @@ Mash::~Mash() = default;
 void Mash::connectSignals() {
    for (auto mash : ObjectStoreTyped<Mash>::getInstance().getAllRaw()) {
       for (auto mashStep : mash->mashSteps()) {
-         connect(mashStep, &NamedEntity::changed, mash, &Mash::acceptMashStepChange);
+         connect(mashStep.get(), &NamedEntity::changed, mash, &Mash::acceptMashStepChange);
       }
    }
    return;
@@ -167,7 +166,13 @@ void Mash::setKey(int key) {
    this->NamedEntity::setKey(key);
    // Now give our ID (key) to our MashSteps
    for (auto mashStepId : this->pimpl->mashStepIds) {
-      ObjectStoreWrapper::getById<MashStep>(mashStepId)->setMashId(key);
+      if (!ObjectStoreWrapper::contains<MashStep>(mashStepId)) {
+         // This is almost certainly a coding error, as each MashStep is owned by one Mash, but we can (probably)
+         // recover by ignoring the missing MashStep.
+         qCritical() << Q_FUNC_INFO << "Unable to retrieve MashStep #" << mashStepId << "for Mash #" << this->key();
+      } else {
+         ObjectStoreWrapper::getById<MashStep>(mashStepId)->setMashId(key);
+      }
    }
    return;
 }
@@ -238,13 +243,15 @@ void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
    // way here.
    std::swap(this->pimpl->mashStepIds[indexOf1], this->pimpl->mashStepIds[indexOf2]);
 
+   emit mashStepsChanged();
    return;
 }
 
-
 void Mash::removeAllMashSteps() {
+   auto steps = this->mashSteps();
+   qDebug() << Q_FUNC_INFO << "Removing" << steps.size() << "steps from" << *this;
    for (auto ms : this->mashSteps()) {
-      ObjectStoreWrapper::softDelete(*ms);
+      ObjectStoreWrapper::hardDelete(*ms);
    }
    this->pimpl->mashStepIds.clear();
    emit mashStepsChanged();
@@ -269,76 +276,60 @@ double Mash::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
 bool Mash::equipAdjust() const { return m_equipAdjust; }
 
 // === other methods ===
-double Mash::totalMashWater_l()
-{
-   int i, size;
+double Mash::totalMashWater_l() {
    double waterAdded_l = 0.0;
-   QList<MashStep*> steps = mashSteps();
-   MashStep* step;
 
-   size = steps.size();
-   for( i = 0; i < size; ++i ) {
-      step = steps[i];
-
-      if( step->isInfusion() )
+   for (auto step : this-> mashSteps()) {
+      if (step->isInfusion()) {
          waterAdded_l += step->infuseAmount_l();
+      }
    }
 
    return waterAdded_l;
 }
 
-double Mash::totalInfusionAmount_l() const
-{
+double Mash::totalInfusionAmount_l() const {
    double waterAdded_l = 0.0;
 
-   foreach( MashStep* i, mashSteps() ) {
-      if( i->isInfusion() && ! i->isSparge() )
-         waterAdded_l += i->infuseAmount_l();
+   for (auto step :  this->mashSteps()) {
+      if (step->isInfusion() && !step->isSparge() ) {
+         waterAdded_l += step->infuseAmount_l();
+      }
    }
 
    return waterAdded_l;
 }
 
-double Mash::totalSpargeAmount_l() const
-{
+double Mash::totalSpargeAmount_l() const {
    double waterAdded_l = 0.0;
 
-   foreach( MashStep* i, mashSteps() ) {
-      if( i->isSparge() )
-         waterAdded_l += i->infuseAmount_l();
+   for (auto step : this-> mashSteps()) {
+      if (step->isSparge()) {
+         waterAdded_l += step->infuseAmount_l();
+      }
    }
 
    return waterAdded_l;
 }
 
-double Mash::totalTime()
-{
-   int i, size;
+double Mash::totalTime() {
    double totalTime = 0.0;
-   QList<MashStep*> steps = mashSteps();
-   MashStep* mstep;
-
-   size = steps.size();
-   for( i = 0; i < size; ++i )
-   {
-      mstep = steps[i];
-      totalTime += mstep->stepTime_min();
+   for (auto step : this-> mashSteps()) {
+      totalTime += step->stepTime_min();
    }
    return totalTime;
 }
 
-bool Mash::hasSparge() const
-{
-   foreach( MashStep* ms, mashSteps() ) {
-      if ( ms->isSparge() ) {
+bool Mash::hasSparge() const {
+   for (auto step : this-> mashSteps()) {
+      if (step->isSparge()) {
          return true;
       }
    }
-
    return false;
 }
 
-QList<MashStep*> Mash::mashSteps() const {
+QList< std::shared_ptr<MashStep> > Mash::mashSteps() const {
    //
    // The Mash owns its MashSteps, but, for the moment at least, it's the MashStep that knows which Mash it's in
    // (and in what order) rather than the Mash which knows which MashSteps it has, so we have to ask.  The only
@@ -350,20 +341,20 @@ QList<MashStep*> Mash::mashSteps() const {
    //
    int const mashId = this->key();
 
-   QList<MashStep*> mashSteps;
+   QList< std::shared_ptr<MashStep> > mashSteps;
    if (mashId < 0) {
       for (int ii : this->pimpl->mashStepIds) {
-         mashSteps.append(ObjectStoreWrapper::getByIdRaw<MashStep>(ii));
+         mashSteps.append(ObjectStoreWrapper::getById<MashStep>(ii));
       }
    } else {
       mashSteps = ObjectStoreWrapper::findAllMatching<MashStep>(
-         [mashId](MashStep const * ms) {return ms->getMashId() == mashId;}
+         [mashId](std::shared_ptr<MashStep> const ms) {return ms->getMashId() == mashId && !ms->deleted();}
       );
 
       // Now we've got the MashSteps, we need to make sure they're in the right order
       std::sort(mashSteps.begin(),
                 mashSteps.end(),
-                [](MashStep const * lhs, MashStep const * rhs) { return lhs->stepNumber() < rhs->stepNumber(); });
+                [](std::shared_ptr<MashStep> const lhs, std::shared_ptr<MashStep> const rhs) { return lhs->stepNumber() < rhs->stepNumber(); });
    }
 
    return mashSteps;
@@ -386,6 +377,7 @@ void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
 
 std::shared_ptr<MashStep> Mash::addMashStep(std::shared_ptr<MashStep> mashStep) {
    if (this->key() > 0) {
+      qDebug() << Q_FUNC_INFO << "Add MashStep #" << mashStep->key() << "to Mash #" << this->key();
       mashStep->setMashId(this->key());
    }
 
@@ -393,7 +385,7 @@ std::shared_ptr<MashStep> Mash::addMashStep(std::shared_ptr<MashStep> mashStep) 
 
    // MashStep needs to be in the DB for us to add it to the Mash
    if (mashStep->key() < 0) {
-      qDebug() << Q_FUNC_INFO << "Inserting MashStep in DB";
+      qDebug() << Q_FUNC_INFO << "Inserting MashStep in DB for Mash #" << this->key();
       ObjectStoreWrapper::insert(mashStep);
    }
 
@@ -410,6 +402,8 @@ std::shared_ptr<MashStep> Mash::addMashStep(std::shared_ptr<MashStep> mashStep) 
       qDebug() << Q_FUNC_INFO << "Adding MashStep #" << mashStep->key() << "to Mash #" << this->key();
       this->pimpl->mashStepIds.append(mashStep->key());
    }
+
+   emit mashStepsChanged();
 
    return mashStep;
 }
@@ -440,6 +434,8 @@ std::shared_ptr<MashStep> Mash::removeMashStep(std::shared_ptr<MashStep> mashSte
    ObjectStoreWrapper::hardDelete(mashStep);
 
    this->pimpl->setCanonicalMashStepNumbers();
+
+   emit mashStepsChanged();
 
    return mashStep;
 }

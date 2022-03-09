@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -23,14 +23,15 @@
 
 #include <cstdint>
 #include <memory>
+#include <type_traits>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QList>
 #include <QMetaProperty>
 #include <QObject>
 #include <QVariant>
 
-#include "Brewken.h"
 #include "utils/BtStringConst.h"
 
 class NamedParameterBundle;
@@ -103,7 +104,7 @@ public:
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
    // virtue of inheriting from QObject, but this declaration does no harm.
-   virtual ~NamedEntity() = default;
+   virtual ~NamedEntity();
 
    /**
     * \brief Turns a straight copy of an object into a "child" copy that can be used in a Recipe.  (A child copy is
@@ -232,6 +233,15 @@ public:
     *        By default this function does nothing.  Subclasses override it if needed.
     */
    virtual void hardDeleteOwnedEntities();
+
+   /**
+    * \brief Similar to \c hardDeleteOwnedEntities but for cases where the related entities need to be deleted
+    *        immediately \b after rather than immediately \b before the entity to which they are related.  (Which is
+    *        required typically depends on the order of the underlying foreign key relationships in the database.)
+    *
+    *        By default this function does nothing.  Subclasses override it if needed.
+    */
+   virtual void hardDeleteOrphanedEntities();
 
 signals:
    /*!
@@ -393,5 +403,45 @@ private:
    NamedEntityModifyingMarker(NamedEntityModifyingMarker &&) = delete;
    NamedEntityModifyingMarker & operator=(NamedEntityModifyingMarker &&) = delete;
 };
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, NamedEntity const & namedEntity) {
+   stream << namedEntity.metaObject()->className() << " #" << namedEntity.key();
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, NamedEntity const * namedEntity) {
+   if (namedEntity) {
+      stream << *namedEntity;
+   } else {
+      stream << "Null";
+   }
+   return stream;
+}
+
+/**
+ * \brief Convenience function for logging, including coping with null pointers
+ *
+ *        std::is_base_of<NamedEntity, NE>::value is \c true if NE is \c NamedEntity or a subclass thereof
+ *        std::enable_if_t<condition> is only defined if condition is true
+ *        Thus std::enable_if_t<std::is_base_of<NamedEntity, NE>::value> is only defined if NE is \c NamedEntity or a
+ *        subclass thereof.  This means this template should not be instantiated for any other classes.
+ *
+ *        .:TODO:. This isn't quite working yet!
+ */
+template<class S, class NE,
+         std::enable_if_t<std::is_base_of<NamedEntity, NE>::value> >
+S & operator<<(S & stream, NE const * namedEntity) {
+   if (namedEntity) {
+      stream << *namedEntity;
+   } else {
+      stream << "Null " << NE::staticMetaObject.metaObject()->className();
+   }
+   return stream;
+}
 
 #endif

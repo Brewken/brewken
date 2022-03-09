@@ -15,21 +15,19 @@
  =====================================================================================================================*/
 #ifndef WATERTABLEWIDGET_H
 #define WATERTABLEWIDGET_H
-
-class WaterTableWidget;
+#pragma once
 
 #include <QTableView>
 #include <QWidget>
+
 class WaterTableModel;
 
 /*!
  * \class WaterTableWidget
  *
- *
  * \brief Completely redundant class. Remove and just use QTableView.
  */
-class WaterTableWidget : public QTableView
-{
+class WaterTableWidget : public QTableView {
    Q_OBJECT
 
 public:
@@ -40,4 +38,4 @@ private:
    WaterTableModel* model;
 };
 
-#endif   //WATERTABLEWIDGET_H
+#endif

@@ -20,17 +20,14 @@
 
 #include <QInputDialog>
 
-#include "Brewken.h"
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
+#include "measurement/Unit.h"
 #include "model/Style.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
-#include "Unit.h"
 
-StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor)
-   : QDialog(parent), obsStyle(0)
-{
+StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog(parent), obsStyle(nullptr) {
    setupUi(this);
    if ( singleStyleEditor )
    {
@@ -104,18 +101,18 @@ void StyleEditor::save() {
    this->obsStyle->setStyleLetter( lineEdit_styleLetter->text() );
    this->obsStyle->setStyleGuide( lineEdit_styleGuide->text() );
    this->obsStyle->setType( static_cast<Style::Type>(comboBox_type->currentIndex()) );
-   this->obsStyle->setOgMin( lineEdit_ogMin->toSI() );
-   this->obsStyle->setOgMax( lineEdit_ogMax->toSI() );
-   this->obsStyle->setFgMin( lineEdit_fgMin->toSI() );
-   this->obsStyle->setFgMax( lineEdit_fgMax->toSI() );
-   this->obsStyle->setIbuMin( lineEdit_ibuMin->toSI() );
-   this->obsStyle->setIbuMax( lineEdit_ibuMax->toSI() );
-   this->obsStyle->setColorMin_srm( lineEdit_colorMin->toSI() );
-   this->obsStyle->setColorMax_srm( lineEdit_colorMax->toSI() );
-   this->obsStyle->setCarbMin_vol( lineEdit_carbMin->toSI() );
-   this->obsStyle->setCarbMax_vol( lineEdit_carbMax->toSI() );
-   this->obsStyle->setAbvMin_pct( lineEdit_abvMin->toSI() );
-   this->obsStyle->setAbvMax_pct( lineEdit_abvMax->toSI() );
+   this->obsStyle->setOgMin( lineEdit_ogMin->toSI().quantity );
+   this->obsStyle->setOgMax( lineEdit_ogMax->toSI().quantity );
+   this->obsStyle->setFgMin( lineEdit_fgMin->toSI().quantity );
+   this->obsStyle->setFgMax( lineEdit_fgMax->toSI().quantity );
+   this->obsStyle->setIbuMin( lineEdit_ibuMin->toSI().quantity );
+   this->obsStyle->setIbuMax( lineEdit_ibuMax->toSI().quantity );
+   this->obsStyle->setColorMin_srm( lineEdit_colorMin->toSI().quantity );
+   this->obsStyle->setColorMax_srm( lineEdit_colorMax->toSI().quantity );
+   this->obsStyle->setCarbMin_vol( lineEdit_carbMin->toSI().quantity );
+   this->obsStyle->setCarbMax_vol( lineEdit_carbMax->toSI().quantity );
+   this->obsStyle->setAbvMin_pct( lineEdit_abvMin->toSI().quantity );
+   this->obsStyle->setAbvMax_pct( lineEdit_abvMax->toSI().quantity );
    this->obsStyle->setProfile( textEdit_profile->toPlainText() );
    this->obsStyle->setIngredients( textEdit_ingredients->toPlainText() );
    this->obsStyle->setExamples( textEdit_examples->toPlainText() );

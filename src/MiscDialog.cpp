@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MiscDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -31,8 +31,8 @@
 #include "MainWindow.h"
 #include "model/Misc.h"
 #include "MiscEditor.h"
-#include "MiscTableModel.h"
 #include "MiscSortFilterProxyModel.h"
+#include "tableModels/MiscTableModel.h"
 
 MiscDialog::MiscDialog(MainWindow* parent) :
    QDialog(parent),
@@ -136,7 +136,7 @@ void MiscDialog::removeMisc()
          return;
    }
 
-   Misc* m = miscTableModel->getMisc(miscTableProxy->mapToSource(selected[0]).row());
+   auto m = miscTableModel->getRow(miscTableProxy->mapToSource(selected[0]).row());
    ObjectStoreWrapper::softDelete(*m);
    return;
 }
@@ -176,7 +176,7 @@ void MiscDialog::addMisc(const QModelIndex& index)
          return;
    }
 
-   Brewken::mainWindow()->addMiscToRecipe(miscTableModel->getMisc(translated.row()));
+   MainWindow::instance().addMiscToRecipe(miscTableModel->getRow(translated.row()));
 
    return;
 }
@@ -198,9 +198,10 @@ void MiscDialog::editSelected()
          return;
    }
 
-   Misc* m = miscTableModel->getMisc(miscTableProxy->mapToSource(selected[0]).row());
-   miscEdit->setMisc(m);
+   auto m = miscTableModel->getRow(miscTableProxy->mapToSource(selected[0]).row());
+   miscEdit->setMisc(m.get());
    miscEdit->show();
+   return;
 }
 
 void MiscDialog::newMisc()

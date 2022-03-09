@@ -240,30 +240,78 @@ SET_PROPERTY(
 )
 
 #======================================================Find Boost=======================================================
-# Boost is a collection of separate libraries, so we need to specify here which ones we are using
-# On Windows, using MSYS2, the mingw-w64-boost packages do not include libboost_stacktrace_backtrace, but
-# https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html suggests it is not required
-# (because on Windows, if you have libbacktrace installed, you can set BOOST_STACKTRACE_USE_BACKTRACE in header-only
-# mode).
+# Boost is a collection of separate libraries, some of which are header-only.  We only specify the Boost libraries that
+# we actually use.
 #
-# .:TODO:. Not sure how to get libboost_stacktrace_backtrace installed on Mac.  It doesn't seem to be findable by CMake
-# after installing Boost via Homebrew (https://brew.sh/).  For the moment, skip trying to use
-# libboost_stacktrace_backtrace on Mac
+# On Linux, there are cases where we need a more recent version of a Boost library than is readily-available in system-
+# supplied packages.  I haven't found a slick way to solve this in CMake, though https://github.com/Orphis/boost-cmake
+# looks promising.  (For header-only Boost libraries, you might think it would be relatively painless to pull them in
+# from where they are hosted on GitHub (see https://github.com/boostorg), but this is not the case.  AFAICT you can't
+# easily pull a specific release, and just pulling master doesn't guarantee that everything compiles.)  So, anyway, on
+# Linux, you need to do the following to install Boost 1.77 (instead of running "sudo apt-get install
+# libboost-all-dev"):
 #
-# .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so that
-# needs some more investigation.  (It could be that it's a bug in Boost, at least according to
-# https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
+#    $ cd ~
+#    $ mkdir boost-tmp
+#    $ cd boost-tmp
+#    $ wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2
+#    $ tar --bzip2 -xf boost_1_77_0.tar.bz2
+#    $ cd boost_1_77_0
+#    $ ./bootstrap.sh --prefix=/usr
+#    $ sudo ./b2 install
+#    $ cd ../..
+#    $ rm -rf boost-tmp
+#
+# We do the same in .github/workflows/linux-ubuntu.yml to make GitHub automated builds work.
+#
+#    ************************
+#    *** Boost Stacktrace ***
+#    ************************
+#
+#    We use this for diagnostics.  In certain error cases it's very helpful to be able to log the call stack.
+#
+#    On Windows, using MSYS2, the mingw-w64-boost packages do not include libboost_stacktrace_backtrace, but
+#    https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html suggests it is not required
+#    (because on Windows, if you have libbacktrace installed, you can set BOOST_STACKTRACE_USE_BACKTRACE in header-only
+#    mode).
+#
+#    .:TODO:. Not sure how to get libboost_stacktrace_backtrace installed on Mac.  It doesn't seem to be findable by
+#    CMake after installing Boost via Homebrew (https://brew.sh/).  For the moment, skip trying to use
+#    libboost_stacktrace_backtrace on Mac
+#
+#    .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so
+#    that needs some more investigation.  (It could be that it's a bug in Boost, at least according to
+#    https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
+#
+#    ******************
+#    *** Boost JSON ***
+#    ******************
+#
+#    Boost JSON is a header-only library that was introduced in Boost 1.75 in December 2020.  As of March 2022, Ubunutu
+#    LTS only has packages for Boost 1.71 from August 2019, hence the need to manually install a newer Boost.
+#
+#    ******************
+#    *** Boost.Core ***
+#    ******************
+#
+#    Boost.Core, part of collection of the Boost C++ Libraries, is a collection of core utilities used by other Boost
+#    libraries.  Boost JSON needs a more recent version than 1.71.
+#
 IF(WIN32)
-FIND_PACKAGE(Boost REQUIRED)
+   FIND_PACKAGE(Boost 1.75.0 REQUIRED)
 ELSEIF(APPLE)
-FIND_PACKAGE(Boost REQUIRED)
+   FIND_PACKAGE(Boost 1.75.0 REQUIRED)
 ELSE()
-FIND_PACKAGE(Boost REQUIRED COMPONENTS stacktrace_backtrace)
+   # Note that header-only libraries don't have a component
+   FIND_PACKAGE(Boost 1.75.0 REQUIRED COMPONENTS stacktrace_backtrace)
 ENDIF()
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Boost headers and DLLs are on your system
 message( "Boost include directories: " ${Boost_INCLUDE_DIRS} )
 message( "Boost libraries: " ${Boost_LIBRARIES} )
+
+# Tell Boost.JSON to use std::string_view (requires C++17) rather than boost::string_view (part of Boost.Utility)
+ADD_COMPILE_DEFINITIONS(BOOST_JSON_STANDALONE)
 
 #===============================Find Xerces-C++================================
 # CMake already knows how to find and configure Xerces-C++, see
@@ -281,6 +329,32 @@ INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Xalan headers and DLLs are on your system
 #message( "Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS} )
 #message( "Xalan-C++ libraries: " ${XalanC_LIBRARIES} )
+
+#=======================================================Valijson========================================================
+# Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
+# (via git clone https://github.com/tristanpenman/valijson third-party/valijson).  Then the following also come from
+# https://github.com/tristanpenman/valijson#readme
+#
+# Valijson is a header-only library, so we don't need to build or link to any libraries etc (unless you want to build
+# its test suite - in which case, uncomment the add_subdirectory line and add ValiJSON::valijson to both lists of
+# target_link_libraries in src/CMakeLists.txt).
+#
+INCLUDE(ExternalProject)
+FIND_PACKAGE(Git REQUIRED)
+ExternalProject_Add(ValiJSON
+  GIT_REPOSITORY    https://github.com/tristanpenman/valijson.git
+  GIT_TAG           master
+  SOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson"
+  BINARY_DIR        "${CMAKE_BINARY_DIR}/third-party/valijson"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)
+set(valijson_BUILD_TESTS OFF)
+add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
+INCLUDE_DIRECTORIES(${ROOTDIR}/third-party/valijson/include)
+
 
 #=========================Configure Brewken.qrc.in==========================
 

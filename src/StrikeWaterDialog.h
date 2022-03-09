@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * StrikeWaterDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * StrikeWaterDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -21,12 +22,13 @@
 #include <QDialog>
 #include <QWidget>
 #include <QButtonGroup>
+
 #include "ui_strikeWaterDialog.h"
-#include "Unit.h"
+
+#include "measurement/Unit.h"
 
 /*!
  * \class StrikeWaterDialog
- *
  *
  * \brief Dialog to calculate the amount and temperature of the strike water.
  */

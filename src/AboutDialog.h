@@ -21,6 +21,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QObject>
 
 class QEvent;
 class QLabel;

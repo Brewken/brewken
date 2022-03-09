@@ -34,6 +34,7 @@
 #include <QSqlRecord>
 #include <QString>
 #include <QVariant>
+#include <QVector>
 
 #include "model/BrewNote.h"
 #include "model/NamedEntity.h"
@@ -134,7 +135,6 @@ class Yeast;
 class Recipe : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "recipes")
-
 
    friend class RecipeFormatter;
    friend class MainWindow;
@@ -438,6 +438,7 @@ public:
    QList<double> IBUs();
 
    // Relational getters
+   template<typename NE> QList< std::shared_ptr<NE> > getAll() const;
    QList<Hop *> hops() const;
    QVector<int> getHopIds() const;
    QList<Instruction *> instructions() const;
@@ -454,6 +455,7 @@ public:
    QVector<int> getSaltIds() const;
    QList<BrewNote *> brewNotes() const;
    QList<Recipe *> ancestors() const;
+   std::shared_ptr<Mash> getMash() const;
    Mash * mash() const;
    int getMashId() const;
    Equipment * equipment() const;
@@ -465,6 +467,7 @@ public:
 
    // Relational setters
    void setEquipment(Equipment * equipment);
+   void setMash(std::shared_ptr<Mash> mash);
    void setMash(Mash * var);
    void setStyle(Style * style);
 
@@ -504,7 +507,7 @@ public:
    //! \brief Formats the fermentables for instructions
    QList<QString> getReagents(QList<Fermentable *> ferms);
    //! \brief Formats the mashsteps for instructions
-   QList<QString> getReagents(QList<MashStep *> msteps);
+   QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the hops for instructions
    QList<QString> getReagents(QList<Hop *> hops, bool firstWort = false);
    //! \brief Formats the salts for instructions
@@ -550,6 +553,13 @@ public:
     * \brief A Recipe owns some of its contained objects, so needs to delete those if it itself is being deleted
     */
    virtual void hardDeleteOwnedEntities();
+
+   /**
+    * \brief Deleting a Recipe usually results in an orphaned Mash record (which cannot be removed by
+    *        \c hardDeleteOwnedEntities because of the direction of foreign key constraints) and needs to be deleted
+    *        immediately after the Recipe record has been removed from the database.
+    */
+   virtual void hardDeleteOrphanedEntities();
 
 signals:
 

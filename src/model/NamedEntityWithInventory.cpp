@@ -15,6 +15,8 @@
  =====================================================================================================================*/
 #include "model/NamedEntityWithInventory.h"
 
+#include <QDebug>
+
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"
 

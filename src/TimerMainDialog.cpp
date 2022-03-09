@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * TimerMainDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * TimerMainDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -20,7 +20,12 @@
 #include <QMessageBox>
 #include <QToolTip>
 
-#include "Unit.h"
+#include "boiltime.h"
+#include "MainWindow.h"
+#include "measurement/Unit.h"
+#include "measurement/Measurement.h"
+#include "TimerListDialog.h"
+#include "TimerWidget.h"
 
 TimerMainDialog::TimerMainDialog(MainWindow* parent) : QDialog(parent),
     mainWindow(parent),
@@ -254,8 +259,9 @@ void TimerMainDialog::on_loadRecipesButton_clicked()
     hops = recipe->hops();
     foreach (Hop* h, hops) {
         if (h->use() == 2) { //2 = Boil addition -- Hop::Use enum
-            note = tr("%1 of %2").arg(Brewken::displayAmount(h->amount_kg(),
-                                                             &Units::kilograms)).arg(h->name());
+            note = tr("%1 of %2").arg(
+               Measurement::displayAmount(Measurement::Amount{h->amount_kg(), Measurement::Units::kilograms})
+            ).arg(h->name());
             int newTime = h->time_min() * 60;
             foreach (TimerWidget* td, *timers) {
                 if (td->getTime() == newTime){

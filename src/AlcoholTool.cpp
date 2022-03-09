@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2021:
+ * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
@@ -28,10 +28,9 @@
 #include <QWidget>
 
 #include "Algorithms.h"
-#include "Brewken.h"
 #include "BtLineEdit.h"
 #include "PersistentSettings.h"
-#include "Unit.h"
+#include "measurement/SystemOfMeasurement.h"
 #include "widgets/ToggleSwitch.h"
 
 // Settings we only use in this file under the PersistentSettings::Sections::alcoholTool section
@@ -48,24 +47,24 @@ public:
     * Constructor
     */
    impl(AlcoholTool & self) :
-      self                    {self},
-      label_reading           {new QLabel           (&self)},
-      label_temperature       {new QLabel           (&self)},
-      label_corrected         {new QLabel           (&self)},
-      enableAdvancedInputs    {new ToggleSwitch     (&self)},
-      label_og                {new QLabel           (&self)},
-      input_og                {new BtDensityEdit    (&self)},
-      input_og_temperature    {new BtTemperatureEdit(&self)},
-      corrected_og{new QLabel           (&self)},
-      label_fg                {new QLabel           (&self)},
-      input_fg                {new BtDensityEdit    (&self)},
-      input_fg_temperature    {new BtTemperatureEdit(&self)},
-      corrected_fg{new QLabel           (&self)},
+      self                         {self},
+      label_reading                {new QLabel           (&self)},
+      label_temperature            {new QLabel           (&self)},
+      label_corrected              {new QLabel           (&self)},
+      enableAdvancedInputs         {new ToggleSwitch     (&self)},
+      label_og                     {new QLabel           (&self)},
+      input_og                     {new BtDensityEdit    (&self)},
+      input_og_temperature         {new BtTemperatureEdit(&self)},
+      corrected_og                 {new QLabel           (&self)},
+      label_fg                     {new QLabel           (&self)},
+      input_fg                     {new BtDensityEdit    (&self)},
+      input_fg_temperature         {new BtTemperatureEdit(&self)},
+      corrected_fg                 {new QLabel           (&self)},
       label_calibration_temperature{new QLabel           (&self)},
       input_calibration_temperature{new BtTemperatureEdit(&self)},
-      label_result            {new QLabel           (&self)},
-      output_result           {new QLabel           (&self)},
-      gridLayout              {new QGridLayout      (&self)} {
+      label_result                 {new QLabel           (&self)},
+      output_result                {new QLabel           (&self)},
+      gridLayout                   {new QGridLayout      (&self)} {
       this->restoreSettings();
       this->enableAdvancedInputs->setFont(QFont("Roboto medium", 13));
       this->output_result->setText("%");
@@ -87,10 +86,10 @@ public:
 
    void doLayout() {
       this->input_og->setMinimumSize(QSize(80, 0));
-      this->input_og->setProperty("forcedUnit", QVariant(QStringLiteral("displaySG")));
+      this->input_og->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
       this->input_fg->setMinimumSize(QSize(80, 0));
-      this->input_fg->setProperty("forcedUnit", QVariant(QStringLiteral("displaySG")));
+      this->input_fg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
       this->label_result->setObjectName(QStringLiteral("label_results"));
       this->label_result->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -143,13 +142,13 @@ public:
    }
 
    void updateCalculatedFields() {
-      double og = this->input_og->toSI();
-      double fg = this->input_fg->toSI();
+      double og = this->input_og->toSI().quantity;
+      double fg = this->input_fg->toSI().quantity;
       if (this->enableAdvancedInputs->isChecked()) {
          // User wants temperature correction
-         double calibrationTempInC = this->input_calibration_temperature->toSI();
-         double ogReadTempInC          = this->input_og_temperature->toSI();
-         double fgReadTempInC          = this->input_fg_temperature->toSI();
+         double calibrationTempInC = this->input_calibration_temperature->toSI().quantity;
+         double ogReadTempInC          = this->input_og_temperature->toSI().quantity;
+         double fgReadTempInC          = this->input_fg_temperature->toSI().quantity;
          if (0.0 == calibrationTempInC || 0.0 == ogReadTempInC) {
             og = 0.0;
             this->corrected_og->setText("? sg");
@@ -239,7 +238,7 @@ public:
       // Hydrometer calibration temperature -- default is 20°C, or 68°F in the old money.
       // Working out which units to use is already solved elsewhere in the code base, but you just have to be careful
       // not to do the conversion twice (ie 20°C -> 68°F ... 68°C -> 154°F) as both BtLineEdit::setText() and
-      // Brewken::amountDisplay() take SI unit and convert them to whatever the user has chosen to display.  So you just
+      // Measurement::amountDisplay() take SI unit and convert them to whatever the user has chosen to display.  So you just
       // need BtLineEdit::setText().
       this->input_calibration_temperature->setText(
          PersistentSettings::value(hydrometerCalibrationTemperatureInC,
@@ -255,7 +254,7 @@ public:
                                  this->enableAdvancedInputs->isChecked(),
                                  PersistentSettings::Sections::alcoholTool);
       PersistentSettings::insert(hydrometerCalibrationTemperatureInC,
-                                 this->input_calibration_temperature->toSI(),
+                                 this->input_calibration_temperature->toSI().quantity,
                                  PersistentSettings::Sections::alcoholTool);
       return;
    }

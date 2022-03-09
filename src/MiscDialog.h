@@ -18,15 +18,16 @@
  =====================================================================================================================*/
 #ifndef MISCDIALOG_H
 #define MISCDIALOG_H
+#pragma once
 
-#include <QWidget>
 #include <QDialog>
 #include <QEvent>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QTableView>
-#include <QSpacerItem>
 #include <QPushButton>
+#include <QSpacerItem>
+#include <QTableView>
+#include <QVBoxLayout>
+#include <QWidget>
 
 // Forward declarations.
 class MainWindow;
@@ -37,11 +38,9 @@ class MiscSortFilterProxyModel;
 /*!
  * \class MiscDialog
  *
- *
  * \brief View/controller dialog for the miscs in the database.
  */
-class MiscDialog : public QDialog
-{
+class MiscDialog : public QDialog {
    Q_OBJECT
 
 public:
@@ -94,4 +93,4 @@ private:
    void retranslateUi();
 };
 
-#endif   /* MISCDIALOG_H */
+#endif
