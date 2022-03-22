@@ -178,6 +178,7 @@ int main(int argc, char **argv) {
 
    try {
       qInfo() << "Starting Brewken v" << VERSIONSTRING << " on " << QSysInfo::prettyProductName();
+      qInfo() << "Using Qt runtime v" << qVersion() << " (compiled against Qt v" << QT_VERSION_STR << ")";
       qDebug() << Q_FUNC_INFO << "Library Paths:" << qApp->libraryPaths();
 
       auto mainAppReturnValue = Brewken::run();
