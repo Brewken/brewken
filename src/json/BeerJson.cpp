@@ -72,10 +72,6 @@ namespace {
       Q_ASSERT(documentRoot["beerjson"].is_object());
       boost::json::object beerJson = documentRoot["beerjson"].as_object();
 
-      for (auto ii : beerJson) {
-         qDebug() << Q_FUNC_INFO << ii.key().data();
-      }
-
       //
       // Per https://www.json.org/json-en.html, in JSON, a value is one of the following:
       //    object
@@ -114,6 +110,7 @@ namespace {
       //    newObject.name = value_to<std::string>(jv.as_object().at("name"));
       //    ...
       //    return newObject;
+      // Note that value_to<std::string> will throw an exception if its parameter is not actually a string, etc.
       // Of course we would like to do all these field mappings in data rather than in code, so we take a slightly more
       // elaborate approach.
       //
@@ -184,6 +181,25 @@ namespace {
       // minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType, BitternessType
       // for the members of BitternessRangeType, etc).
       //
+
+      // Version is a JSON number (in JavaScript’s double-precision floating-point format)
+      boost::json::string * bjVersion = beerJson["version"].if_string();
+      if (bjVersion) {
+         qDebug() << Q_FUNC_INFO << "Version" << bjVersion->c_str();
+      }
+/*      std::string bjv2 = boost::json::value_to<std::string>(beerJson["version"]);
+      qDebug() << Q_FUNC_INFO << "Version" << bjv2.c_str();
+*/
+      for (auto ii : beerJson) {
+         // .:TODO:. This gives keys but not values...
+         boost::json::value const & val = ii.value();
+         qDebug() << Q_FUNC_INFO << "Key" << ii.key().data() << "(" << val.kind() << ")" << val;
+         if (val.is_string()) {
+            qDebug() << Q_FUNC_INFO << "Value" << val.as_string().c_str();
+         } else if (val.is_double()) {
+            qDebug() << Q_FUNC_INFO << "Value" << val.as_double();
+         }
+      }
 
       /////
 
