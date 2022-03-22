@@ -19,7 +19,9 @@
 
 #include <boost/json/value.hpp>
 
+class QDebug;
 class QString;
+class QTextStream;
 
 namespace JsonUtils {
    /**
@@ -36,6 +38,27 @@ namespace JsonUtils {
     * \throw BtException containing text that can be displayed to the user
     */
    boost::json::value loadJsonDocument(QString const & fileName, bool allowComments = false);
+
 }
+
+/**
+ * \brief Convenience function for logging.  (Boost JSON includes output to std::ostream, but we need to be able to
+ *        output to \c QDebug and \c QTextStream
+ */
+template<class S>
+S & operator<<(S & stream, boost::json::standalone::kind const k);
+
+/**
+ * \brief Convenience function for logging & serialisation.  (Boost JSON includes output to std::ostream, but we need to
+ *        be able to output to \c QDebug and \c QTextStream.)
+ *
+ *        Note lots of things can be implicitly converted to boost::json::value, which can give a lot of false matches
+ *        to this function if we're not careful.
+ */
+template<class S,
+         typename = typename std::enable_if< std::is_same<QDebug, S>::value ||
+                                             std::is_same<QTextStream, S>::value>::type>
+S & operator<<(S & stream, boost::json::value const & val);
+
 
 #endif

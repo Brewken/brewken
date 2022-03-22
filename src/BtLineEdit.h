@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLineEdit.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtLineEdit.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -38,9 +38,8 @@ class NamedEntity;
 /*!
  * \class BtLineEdit
  *
- * \brief This extends QLineEdit such that the Object handles all the unit
- *        transformation we do, instead of each dialog. It makes the code much
- *        nicer and prevents more cut'n'paste code.
+ * \brief This extends QLineEdit such that the Object handles all the unit transformation we do, instead of each dialog.
+ *        It makes the code much nicer and prevents more cut'n'paste code.
  *
  *        A \c BtLineEdit (or subclass thereof) will usually have a corresponding \c BtLabel (or subclass thereof).
  *        See comment in BtLabel.h for more details on the relationship between the two classes.
@@ -72,6 +71,7 @@ public:
    BtLineEdit(QWidget* parent = nullptr,
               BtFieldType fieldType = NonPhysicalQuantity::String,
               Measurement::Unit const * units = nullptr,
+              int const defaultPrecision = 3,
               QString const & maximalDisplayString = "100.000 srm");
 
    virtual ~BtLineEdit();
@@ -80,11 +80,17 @@ public:
    virtual void setWidgetText(QString text);
 
    // Use one of these when you just want to set the text
-   void setText(NamedEntity* element, int precision = 3);
-   void setText(double amount, int precision = 3);
-   void setText(QString amount, int precision = 3);
-   void setText(QVariant amount, int precision = 3);
+   void setText(NamedEntity* element);
+   void setText(NamedEntity* element, int precision);
+   void setText(double amount);
+   void setText(double amount, int precision);
+   void setText(QString amount);
+   void setText(QString amount, int precision);
+   void setText(QVariant amount);
+   void setText(QVariant amount, int precision);
 
+   // Use this when you want to get the text as a number
+   template<typename T> T getValueAs() const;
 
 public slots:
    void onLineChanged();
@@ -101,6 +107,7 @@ signals:
 private:
    void calculateDisplaySize(QString const & maximalDisplayString);
    void setDisplaySize(bool recalculate = false);
+   int const defaultPrecision;
    int desiredWidthInPixels;
 };
 
@@ -119,6 +126,7 @@ class BtDensityEdit :        public BtLineEdit { Q_OBJECT public: BtDensityEdit(
 class BtColorEdit :          public BtLineEdit { Q_OBJECT public: BtColorEdit(QWidget* parent); };
 class BtStringEdit :         public BtLineEdit { Q_OBJECT public: BtStringEdit(QWidget* parent); };
 class BtDiastaticPowerEdit : public BtLineEdit { Q_OBJECT public: BtDiastaticPowerEdit(QWidget* parent); };
+class BtPercentageEdit :     public BtLineEdit { Q_OBJECT public: BtPercentageEdit(QWidget* parent); };
 
 // mixed objects are a pain.
 class BtMixedEdit : public BtLineEdit {
