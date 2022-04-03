@@ -150,7 +150,7 @@ template QDebug & operator<<(QDebug & stream, boost::json::kind const knd);
 template QTextStream & operator<<(QTextStream & stream, boost::json::kind const knd);
 
 template<class S,
-         std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> = true>
+         std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> >
 S & operator<<(S & stream, boost::json::value const & val) {
    std::ostringstream output;
    output << val;
