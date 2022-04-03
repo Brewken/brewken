@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtDomErrorHandler.h is part of Brewken, and is copyright the following authors 2020:
+ * xml/BtDomErrorHandler.h is part of Brewken, and is copyright the following authors 2020:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,7 +17,6 @@
 #define XML_BTDOMERRORHANDLER_H
 #pragma once
 
-class QString;
 
 #include <memory> // For std::unique_ptr for PImpl
 #include <utility> // For std:pair
@@ -25,6 +24,8 @@ class QString;
 #include <QVector>
 
 #include <xercesc/dom/DOMErrorHandler.hpp>
+
+class QString;
 
 /**
  * Although some Xerces errors generate exceptions, others are handled through a callback to an object you provide
