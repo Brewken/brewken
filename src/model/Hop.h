@@ -107,7 +107,8 @@ public:
    Q_PROPERTY( QString formString READ formString /* WRITE setForm NOTIFY changed*/ /*changedForm*/ )
    //! \brief The percent of beta acids.
    Q_PROPERTY( double beta_pct READ beta_pct WRITE setBeta_pct /*NOTIFY changed*/ /*changedBeta_pct*/ )
-   //! \brief The hop stability index in percent.
+   //! \brief The hop stability index in percent.  The Hop Stability Index (HSI) is defined as the percentage of hop
+   //         alpha lost in 6 months of storage.  It may be related to the Hop Storage Index...
    Q_PROPERTY( double hsi_pct READ hsi_pct WRITE setHsi_pct /*NOTIFY changed*/ /*changedHsi_pct*/ )
    //! \brief The origin.
    Q_PROPERTY( QString origin READ origin WRITE setOrigin /*NOTIFY changed*/ /*changedOrigin*/ )

@@ -310,8 +310,10 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 message( "Boost include directories: " ${Boost_INCLUDE_DIRS} )
 message( "Boost libraries: " ${Boost_LIBRARIES} )
 
-# Tell Boost.JSON to use std::string_view (requires C++17) rather than boost::string_view (part of Boost.Utility)
-ADD_COMPILE_DEFINITIONS(BOOST_JSON_STANDALONE)
+# Defining BOOST_JSON_STANDALONE tells Boost.JSON to use std::string_view (requires C++17) rather than
+# boost::string_view (part of Boost.Utility).  However, as of recent versions of Boost.JSON, this is "deprecated and
+# will be removed in a future release of Boost.JSON".
+#ADD_COMPILE_DEFINITIONS(BOOST_JSON_STANDALONE)
 
 #===============================Find Xerces-C++================================
 # CMake already knows how to find and configure Xerces-C++, see

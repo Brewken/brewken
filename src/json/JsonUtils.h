@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonUtils.h is part of Brewken, and is copyright the following authors 2021:
+ * json/JsonUtils.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ namespace JsonUtils {
  *        output to \c QDebug and \c QTextStream
  */
 template<class S>
-S & operator<<(S & stream, boost::json::standalone::kind const k);
+S & operator<<(S & stream, boost::json::kind const k);
 
 /**
  * \brief Convenience function for logging & serialisation.  (Boost JSON includes output to std::ostream, but we need to
@@ -56,8 +56,7 @@ S & operator<<(S & stream, boost::json::standalone::kind const k);
  *        to this function if we're not careful.
  */
 template<class S,
-         typename = typename std::enable_if< std::is_same<QDebug, S>::value ||
-                                             std::is_same<QTextStream, S>::value>::type>
+         std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> = true>
 S & operator<<(S & stream, boost::json::value const & val);
 
 

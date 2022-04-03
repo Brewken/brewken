@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/BeerJson.cpp is part of Brewken, and is copyright the following authors 2021:
+ * json/BeerJson.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -30,12 +30,87 @@
 #include <QString>
 #include <QTextStream>
 
+#include "json/JsonRecord.h"
 #include "json/JsonSchema.h"
 #include "json/JsonUtils.h"
 #include "model/Recipe.h"
 
 namespace {
 
+   template<class NE> QString BEER_JSON_RECORD_NAME;
+   template<class NE> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS;
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for hop_varieties BeerJSON records
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> QString const BEER_JSON_RECORD_NAME<Hop>{"hop_varieties"};
+/* This isn't used with BeerJSON
+ * EnumStringMapping const BEER_JSON_HOP_USE_MAPPER {
+      {"Boil",       Hop::Boil},
+      {"Dry Hop",    Hop::Dry_Hop},
+      {"Mash",       Hop::Mash},
+      {"First Wort", Hop::First_Wort},
+      {"Aroma",      Hop::UseAroma}
+   };*/
+   EnumStringMapping const BEER_JSON_HOP_TYPE_MAPPER {
+      // .:TODO.JSON:.  Add missing values here to Hop::Type and/or combine with Hop::Use
+      {"aroma",                  Hop::Type::Aroma},
+      {"bittering",              Hop::Type::Bittering},
+//      {"flavor",                 Hop::Type::},
+      {"aroma/bittering",        Hop::Type::Both},
+//      {"bittering/flavor",       Hop::Type::},
+//      {"aroma/flavor",           Hop::Type::},
+//      {"aroma/bittering/flavor", Hop::Type::},
+
+
+      {"Bittering", Hop::Bittering},
+      {"Aroma",     Hop::Aroma},
+      {"Both",      Hop::Both}
+   };
+   EnumStringMapping const BEER_JSON_HOP_FORM_MAPPER {
+      // .:TODO.JSON:.  Add missing values here to Hop::Form
+//      {"extract",    Hop::Form::},
+      {"leaf",       Hop::Form::Leaf},
+//      {"leaf (wet)", Hop::Form::},
+      {"pellet",     Hop::Form::Pellet},
+//      {"powder",     Hop::Form::},
+      {"plug",       Hop::Form::Plug}
+   };
+   // .:TODO:. Need JsonRecord::Percent.  BeerJSON defines PercentType as an object with unit = "%" and value = number
+   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Hop> {
+      // Type                    XPath                                Q_PROPERTY                             Enum Mapper
+      {JsonRecord::String,       "name",                              PropertyNames::NamedEntity::name,      nullptr},
+      {JsonRecord::String,       "producer",                          BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::String,       "product_id",                        BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::String,       "origin",                            PropertyNames::Hop::origin,            nullptr},
+      {JsonRecord::String,       "year",                              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Enum,         "form",                              PropertyNames::Hop::form,              &BEER_JSON_HOP_FORM_MAPPER},
+      {JsonRecord::Percent,      "alpha_acid",                        PropertyNames::Hop::alpha_pct,         nullptr},
+      {JsonRecord::Percent,      "beta_acid",                         PropertyNames::Hop::beta_pct,          nullptr},
+      {JsonRecord::Enum,         "type",                              PropertyNames::Hop::type,              &BEER_JSON_HOP_TYPE_MAPPER},
+      {JsonRecord::String,       "notes",                             PropertyNames::Hop::notes,             nullptr},
+      {JsonRecord::Percent,      "percent_lost",                      PropertyNames::Hop::hsi_pct,           nullptr},
+      {JsonRecord::String,       "substitutes",                       PropertyNames::Hop::substitutes,       nullptr},
+      {JsonRecord::Double,       "oil_content/total_oil_ml_per_100g", BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/humulene",              PropertyNames::Hop::humulene_pct,      nullptr},
+      {JsonRecord::Percent,      "oil_content/caryophyllene",         PropertyNames::Hop::caryophyllene_pct, nullptr},
+      {JsonRecord::Percent,      "oil_content/cohumulone",            PropertyNames::Hop::cohumulone_pct,    nullptr},
+      {JsonRecord::Percent,      "oil_content/myrcene",               PropertyNames::Hop::myrcene_pct,       nullptr},
+      {JsonRecord::Percent,      "oil_content/farnesene",             BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/geraniol",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/b_pinene",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/linalool",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/limonene",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/nerol",                 BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/pinene",                BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/polyphenols",           BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::Percent,      "oil_content/xanthohumol",           BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecord::MassOrVolume, "inventory/amount",                  BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
+
+      // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
+   };
+
+   //=-=-=-=-=-=-=-=-
 
    // This function first validates the input file against a JSON schema (https://json-schema.org/)
    bool validateAndLoad(QString const & fileName, QTextStream & userMessage) {
@@ -181,6 +256,27 @@ namespace {
       // minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType, BitternessType
       // for the members of BitternessRangeType, etc).
       //
+
+      boost::json::value & bjv = beerJson["version"];
+      qDebug() << Q_FUNC_INFO << "Version" << bjv;
+
+      boost::json::value const * bjVer = beerJson.if_contains("version");
+      if (bjVer) {
+         qDebug() << Q_FUNC_INFO << "Version" << bjVer;
+      }
+
+      boost::json::value const * recs = beerJson.if_contains("recipes");
+      if (recs) {
+         qDebug() << Q_FUNC_INFO << "Recipes" << recs;
+         if (recs->is_array()) {
+            boost::json::array const & recipeList = recs->get_array();
+            qDebug() << Q_FUNC_INFO << recipeList.size() << "recipes";
+            for (auto rr : recipeList) {
+               qDebug() << Q_FUNC_INFO << rr;
+            }
+         }
+      }
+
 
       // Version is a JSON number (in JavaScript’s double-precision floating-point format)
       boost::json::string * bjVersion = beerJson["version"].if_string();

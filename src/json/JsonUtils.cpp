@@ -134,7 +134,7 @@ boost::json::value JsonUtils::loadJsonDocument(QString const & fileName, bool al
 }
 
 template<class S>
-S & operator<<(S & stream, boost::json::standalone::kind const knd) {
+S & operator<<(S & stream, boost::json::kind const knd) {
    std::ostringstream output;
    output << "boost::json::kind::" << knd;
    stream << output.str().c_str();
@@ -146,12 +146,11 @@ S & operator<<(S & stream, boost::json::standalone::kind const knd) {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, so we
 // don't have to pull in std::ostringstream headers in other parts of the code.)
 //
-template QDebug & operator<<(QDebug & stream, boost::json::standalone::kind const knd);
-template QTextStream & operator<<(QTextStream & stream, boost::json::standalone::kind const knd);
+template QDebug & operator<<(QDebug & stream, boost::json::kind const knd);
+template QTextStream & operator<<(QTextStream & stream, boost::json::kind const knd);
 
-template<class S ,
-         typename = typename std::enable_if< std::is_same<QDebug, S>::value ||
-                                             std::is_same<QTextStream, S>::value>::type>
+template<class S,
+         std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> = true>
 S & operator<<(S & stream, boost::json::value const & val) {
    std::ostringstream output;
    output << val;

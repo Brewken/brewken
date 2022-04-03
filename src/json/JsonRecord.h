@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2021:
+ * json/JsonRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef XML_XMLRECORD_H
-#define XML_XMLRECORD_H
+#ifndef JSON_JSONRECORD_H
+#define JSON_JSONRECORD_H
 #pragma once
 
 #include <memory>
@@ -22,27 +22,20 @@
 #include <QTextStream>
 #include <QVector>
 
-#include <xalanc/DOMSupport/DOMSupport.hpp>
-#include <xalanc/XalanDOM/XalanNode.hpp>
-#include <xalanc/XPath/NodeRefList.hpp>
-
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
-#include "xml/XmlRecordCount.h"
-#include "xml/XQString.h"
-
-class XmlCoding;
 
 
 /**
- * \brief This class and its derived classes represent a record in an XML document.  See comment in xml/XmlCoding.h for
- *        more detail.
+ * \brief This class and its derived classes represent a data record in a JSON document.
+ *
+ *        .:TODO:. At some point we should extract common code from XmlRecord and JsonRecord
  */
-class XmlRecord {
+class JsonRecord {
 public:
    /**
-    * At various stages of reading in an XML file, we need to distinguish between three cases:
+    * At various stages of reading in an JSON file, we need to distinguish between three cases:
     *   \c Succeeded - everything went OK and we should continue
     *   \c Failed - there was a problem and we should stop trying to read in the file
     *   \c FoundDuplicate - we realised that the record we are processing is a duplicate of one we already have in the
@@ -65,20 +58,22 @@ public:
       Double,
       String,
       Date,
+      Percent,
+      MassOrVolume,
       Enum,
-      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
+      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
       RecordSimple,       // Single contained record
       RecordComplex,      // Zero, one or more contained records
       INVALID
    };
 
    /**
-    * \brief How to parse every field that we want to be able to read out of the XML file.  See class description for
+    * \brief How to parse every field that we want to be able to read out of the JSON file.  See class description for
     *        more details.
     */
    struct FieldDefinition {
       FieldType           fieldType;
-      XQString            xPath;
+      QString             xPath;
       BtStringConst const & propertyName;  // If fieldType == RecordComplex, then this is used only on export
                                            // If fieldType == RequiredConstant, then this is actually the constant value
       EnumStringMapping const * enumMapping;
@@ -89,18 +84,18 @@ public:
    /**
     * \brief Constructor
     * \param recordName The name of the outer tag around this type of record, eg "RECIPE" for a "<RECIPE>...</RECIPE>"
-    *                   record in BeerXML.
-    * \param xmlCoding An \b XmlCoding object representing the XML Coding we are using (eg BeerXML 1.0).  This is what
-    *                  we'll need to look up how to handle nested records inside this one.
+    *                   record in BeerJSON.
+    * \param jsonCoding An \b JsonCoding object representing the JSON Coding we are using (eg BeerJSON 2.1).  This is what
+    *                   we'll need to look up how to handle nested records inside this one.
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, or empty string if
     *                             there is none
     */
-   XmlRecord(QString const & recordName,
-             XmlCoding const & xmlCoding,
-             FieldDefinitions const & fieldDefinitions,
-             QString const & namedEntityClassName);
+   JsonRecord(QString const & recordName,
+//              JsonCoding const & jsonCoding,
+              FieldDefinitions const & fieldDefinitions,
+              QString const & namedEntityClassName);
 
    /**
     * \brief Get the record name (in this coding)
@@ -110,7 +105,7 @@ public:
    /**
     * \brief Getter for the NamedParameterBundle we read in from this record
     *
-    *        This is needed for the same reasons as \c XmlRecord::getNamedEntity() below
+    *        This is needed for the same reasons as \c JsonRecord::getNamedEntity() below
     *
     * \return Reference to an object that the caller does NOT own
     */
@@ -119,9 +114,9 @@ public:
    /**
     * \brief Getter for the NamedEntity we are reading in from this record
     *
-    *        This is needed to allow one \c XmlRecord (or subclass) object to read the data from another (eg for
-    *        \c XmlRecipeRecord to work with contained \c XmlRecord objects).  (The protected access on
-    *        \c XmlRecord::namedEntity only allows an instance of a derived class to access this field on its own
+    *        This is needed to allow one \c JsonRecord (or subclass) object to read the data from another (eg for
+    *        \c JsonRecipeRecord to work with contained \c JsonRecord objects).  (The protected access on
+    *        \c JsonRecord::namedEntity only allows an instance of a derived class to access this field on its own
     *         instance.)
     *
     * \return Shared pointer, which will contain nullptr for the root record
@@ -129,7 +124,7 @@ public:
    std::shared_ptr<NamedEntity>  getNamedEntity() const;
 
    /**
-    * \brief From the supplied record (ie node) in an XML document, load into memory the data it contains, including
+    * \brief From the supplied record (ie node) in an JSON document, load into memory the data it contains, including
     *        any other records nested inside it.
     *
     * \param domSupport
@@ -138,9 +133,9 @@ public:
     *
     * \return \b true if load succeeded, \b false if there was an error
     */
-   bool load(xalanc::DOMSupport & domSupport,
-             xalanc::XalanNode * rootNodeOfRecord,
-             QTextStream & userMessage);
+///   bool load(xalanc::DOMSupport & domSupport,
+///             xalanc::XalanNode * rootNodeOfRecord,
+///             QTextStream & userMessage);
 
    /**
     * \brief Once the record (including all its sub-records) is loaded into memory, we this function does any final
@@ -160,17 +155,17 @@ public:
     * \return \b Succeeded, if processing succeeded, \b Failed, if there was an unresolvable problem, \b FoundDuplicate
     *         if the current record is a duplicate of one already in the DB and should be skipped.
     */
-   virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
-                                                  QTextStream & userMessage,
-                                                  XmlRecordCount & stats);
+///   virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
+///                                                  QTextStream & userMessage,
+///                                                  JsonRecordCount & stats);
    /**
-    * \brief Export to XML
-    * \param namedEntityToExport The object that we want to export to XML
-    * \param out Where to write the XML
+    * \brief Export to JSON
+    * \param namedEntityToExport The object that we want to export to JSON
+    * \param out Where to write the JSON
     * \param indentLevel Current number of indents to put before each opening tag (default 1)
     * \param indentString String to use for each indent (default two spaces)
     */
-   void toXml(NamedEntity const & namedEntityToExport,
+   void toJson(NamedEntity const & namedEntityToExport,
               QTextStream & out,
               int indentLevel = 1,
               char const * const indentString = "  ") const;
@@ -181,10 +176,10 @@ private:
     *        process (eg Hop records inside a Recipe).  But the algorithm for processing is generic, so we implement it
     *        in this base class.
     */
-   bool loadChildRecords(xalanc::DOMSupport & domSupport,
-                         FieldDefinition const * fieldDefinition,
-                         xalanc::NodeRefList & nodesForCurrentXPath,
-                         QTextStream & userMessage);
+///   bool loadChildRecords(xalanc::DOMSupport & domSupport,
+///                         FieldDefinition const * fieldDefinition,
+///                         xalanc::NodeRefList & nodesForCurrentXPath,
+///                         QTextStream & userMessage);
 
 protected:
    /**
@@ -201,14 +196,14 @@ protected:
 
 public:
    /**
-    * \brief Subclasses  need to implement this to delete this->namedEntityRaiiContainer from the appropriate
+    * \brief Subclasses need to implement this to delete this->namedEntityRaiiContainer from the appropriate
     *        ObjectStore (this is in the event of problems detected after the call to this->storeNamedEntityInDb()
     */
    virtual void deleteNamedEntityFromDb();
 
 protected:
-   bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
-                                          XmlRecordCount & stats);
+///   bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
+///                                          JsonRecordCount & stats);
 
    /**
     * \brief Checks whether the \b NamedEntity for this record is, in all the ways that count, a duplicate of one we
@@ -232,27 +227,27 @@ protected:
    virtual void setContainingEntity(std::shared_ptr<NamedEntity> containingEntity);
 
    /**
-    * \brief Called by \c toXml to write out any fields that are themselves records.
+    * \brief Called by \c toJson to write out any fields that are themselves records.
     *        Subclasses should provide the obvious recursive implementation.
-    * \param fieldDefinition Which of the fields we're trying to export.  It will be of type \c XmlRecord::Record
-    * \param subRecord A suitably constructed subclass of \c XmlRecord that can do the export.  (Note that because
-    *                  exporting to XML is const on \c XmlRecord, we only need one of these even if there are multiple
+    * \param fieldDefinition Which of the fields we're trying to export.  It will be of type \c JsonRecord::Record
+    * \param subRecord A suitably constructed subclass of \c JsonRecord that can do the export.  (Note that because
+    *                  exporting to JSON is const on \c JsonRecord, we only need one of these even if there are multiple
     *                  records to export.)
-    * \param namedEntityToExport The object containing (or referencing) the data we want to export to XML
-    * \param out Where to write the XML
+    * \param namedEntityToExport The object containing (or referencing) the data we want to export to JSON
+    * \param out Where to write the JSON
     */
-   virtual void subRecordToXml(XmlRecord::FieldDefinition const & fieldDefinition,
-                               XmlRecord const & subRecord,
-                               NamedEntity const & namedEntityToExport,
-                               QTextStream & out,
-                               int indentLevel,
-                               char const * const indentString) const;
+   virtual void subRecordToJson(JsonRecord::FieldDefinition const & fieldDefinition,
+                                JsonRecord const & subRecord,
+                                NamedEntity const & namedEntityToExport,
+                                QTextStream & out,
+                                int indentLevel,
+                                char const * const indentString) const;
 
    /**
-    * \brief Writes a comment to the XML output when there is no contained record to output (to make it explicit that
+    * \brief Writes a comment to the JSON output when there is no contained record to output (to make it explicit that
     *        the omission was not by accident.
     */
-   void writeNone(XmlRecord const & subRecord,
+   void writeNone(JsonRecord const & subRecord,
                   NamedEntity const & namedEntityToExport,
                   QTextStream & out,
                   int indentLevel,
@@ -272,25 +267,25 @@ protected:
    static void modifyClashingName(QString & candidateName);
 
    QString const            recordName;
-   XmlCoding const &        xmlCoding;
+///   JsonCoding const &        jsonCoding;
    FieldDefinitions const & fieldDefinitions;
 public:
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).
    QString const namedEntityClassName;
 protected:
-   // Name-value pairs containing all the field data from the XML record that will be used to construct/populate
+   // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
    // this->namedEntity
    NamedParameterBundle namedParameterBundle;
 
    //
-   // If we created a new NamedEntity (ie Hop/Yeast/Recipe/etc) object to populate with data read in from an XML file,
+   // If we created a new NamedEntity (ie Hop/Yeast/Recipe/etc) object to populate with data read in from an JSON file,
    // then we need to ensure it is properly destroyed if we abort that processing.  Putting it in this RAII container
    // handles that automatically for us.
    //
    // Once the object is populated, and we give ownership to the relevant Object Store there will be another instance of
    // this shared pointer (in the object store), which is perfect because, at this point, we don't want the new
-   // Hop/Yeast/Recipe/etc object to be destroyed when the XmlNamedEntityRecord is destroyed (typically at end of
+   // Hop/Yeast/Recipe/etc object to be destroyed when the JsonNamedEntityRecord is destroyed (typically at end of
    // document processing).
    //
    std::shared_ptr<NamedEntity> namedEntity;
@@ -305,8 +300,8 @@ protected:
    // Keep track of any child (ie contained) records
    //
    struct ChildRecord {
-      XmlRecord::FieldDefinition const * fieldDefinition;
-      std::shared_ptr<XmlRecord> xmlRecord;
+      JsonRecord::FieldDefinition const * fieldDefinition;
+      std::shared_ptr<JsonRecord> jsonRecord;
    };
    QVector<ChildRecord> childRecords;
 };
