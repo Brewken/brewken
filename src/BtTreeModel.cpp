@@ -252,12 +252,11 @@ QModelIndex BtTreeModel::parent(QModelIndex const & index) const {
 }
 
 QModelIndex BtTreeModel::first() {
-   BtTreeItem * pItem;
 
    // get the first item in the list, which is the place holder
-   pItem = rootItem->child(0);
+   BtTreeItem * pItem = rootItem->child(0);
    if (pItem->childCount() > 0) {
-      return createIndex(0, 0, pItem->child(0));
+      return this->createIndex(0, 0, pItem->child(0));
    }
 
    return QModelIndex();
@@ -725,7 +724,7 @@ template BtFolder    * BtTreeModel::getItem<BtFolder   >(QModelIndex const & ind
 template Water       * BtTreeModel::getItem<Water      >(QModelIndex const & index) const;
 
 NamedEntity * BtTreeModel::thing(const QModelIndex & index) const {
-   return index.isValid() ? item(index)->thing() : nullptr;
+   return index.isValid() ? this->item(index)->thing() : nullptr;
 }
 
 template<class T>
@@ -1424,21 +1423,27 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
                                int row,
                                int column,
                                QModelIndex const & parent) {
-   qDebug() << Q_FUNC_INFO;
+   // See https://en.wikipedia.org/wiki/Media_type for more on MIME types (now called media types)
+   qDebug() <<
+      Q_FUNC_INFO << "MIME Data:" << (data ? data->text() : "NULL") << ".  "
+      "Parent" << (parent.isValid() ? "valid" : "invalid");
 
    QByteArray encodedData;
 
-   if (data->hasFormat(_mimeType)) {
-      encodedData = data->data(_mimeType);
+   if (data->hasFormat(this->_mimeType)) {
+      encodedData = data->data(this->_mimeType);
    } else if (data->hasFormat("application/x-brewken-folder")) {
       encodedData = data->data("application/x-brewken-folder");
    } else {
+      qDebug() << Q_FUNC_INFO << "Unrecognised MIME type";
       return false;   // Don't know what we got, but we don't want it
    }
 
-   if (! parent.isValid()) {
+   if (!parent.isValid()) {
       return false;
    }
+
+   qDebug() << Q_FUNC_INFO << "Parent row:" << parent.row() << ", column:" << parent.column();
 
    QString target = "";
    if (this->itemIs<BtFolder>(parent)) {
@@ -1450,23 +1455,27 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
       // actually drop things there? If somebody drops something there, don't
       // do anything
       if (! something) {
+         qDebug() << Q_FUNC_INFO << "Invalid drop location";
          return false;
       }
 
       target = something->folder();
    }
 
+   qDebug() << Q_FUNC_INFO << "Target:" << target;
+
    // Pull the stream apart and do that which needs done. Late binding ftw!
    for (QDataStream stream{&encodedData, QIODevice::ReadOnly}; !stream.atEnd(); ) {
       int oTypeRaw;
       int id;
       QString name = "";
-      QString text;
       stream >> oTypeRaw >> id >> name;
       BtTreeItem::Type oType = static_cast<BtTreeItem::Type>(oTypeRaw);
-      NamedEntity * elem = getElement(oType, id);
+      qDebug() << Q_FUNC_INFO << "Name:" << name << ", ID:" << id << ", Type:" << oTypeRaw;
 
+      NamedEntity * elem = getElement(oType, id);
       if (elem == nullptr && oType != BtTreeItem::Type::FOLDER) {
+         qDebug() << Q_FUNC_INFO << "No matching element";
          return false;
       }
 

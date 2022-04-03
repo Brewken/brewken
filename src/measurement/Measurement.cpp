@@ -322,17 +322,22 @@ Measurement::Amount Measurement::qStringToSI(QString qstr,
                                              Measurement::PhysicalQuantity const physicalQuantity,
                                              std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                              std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
+   qDebug() <<
+      Q_FUNC_INFO << "Input" << qstr << "of" << physicalQuantity << "; forcedSystemOfMeasurement=" <<
+      forcedSystemOfMeasurement << "; forcedScale=" << forcedScale;
+
    //
    // If the caller told us that the SystemOfMeasurement and/or RelativeScale on the input (qstr) are "forced" then that
    // information can be used to interpret a case where no (valid) unit is supplied in the input (ie it's just a number
    // rather than number plus units) or where the supplied unit is ambiguous (eg US pints are different than Imperial
    // pints).  Otherwise, just otherwise get whatever UnitSystem we're using generally for related physical property.
    //
-   Measurement::UnitSystem const & displayUnitSystem =
+   Measurement::UnitSystem const & displayUnitSystem {
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
-                                  Measurement::getDisplayUnitSystem(physicalQuantity);
+                                  Measurement::getDisplayUnitSystem(physicalQuantity)
+   };
    Measurement::Unit const * defaultUnit {
-      forcedScale ? displayUnitSystem.scaleUnit(*forcedScale) : &Measurement::getUnitForInternalStorage(physicalQuantity)
+      forcedScale ? displayUnitSystem.scaleUnit(*forcedScale) : displayUnitSystem.unit()
    };
    // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
    // oldUnitSystem.  However, we can recover.

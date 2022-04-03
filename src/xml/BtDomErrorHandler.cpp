@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtDomErrorHandler.cpp is part of Brewken, and is copyright the following authors 2020:
+ * xml/BtDomErrorHandler.cpp is part of Brewken, and is copyright the following authors 2020:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #include "xml/BtDomErrorHandler.h"
 
 #include <QDebug>
