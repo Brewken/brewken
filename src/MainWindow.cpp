@@ -1036,7 +1036,9 @@ void MainWindow::deleteSelected() {
 
    while (start.isValid() && active->type(start) == BtTreeItem::Type::FOLDER) {
       qDebug() << Q_FUNC_INFO << "Skipping over folder at row" << start.row();
-      start = start.siblingAtRow(start.row() + 1);
+      // Once all platforms are on Qt 5.11 or later, we can write:
+      // start = start.siblingAtRow(start.row() + 1);
+      start = start.sibling(start.row() + 1, start.column());
    }
 
    if (start.isValid()) {
