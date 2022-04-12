@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -27,15 +27,14 @@
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
 
-StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog(parent), obsStyle(nullptr) {
+StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog{parent}, obsStyle{nullptr} {
    setupUi(this);
-   if ( singleStyleEditor )
-   {
-      for(int i = 0; i < horizontalLayout_styles->count(); ++i)
-      {
+   if (singleStyleEditor) {
+      for (int i = 0; i < horizontalLayout_styles->count(); ++i) {
          QWidget* w = horizontalLayout_styles->itemAt(i)->widget();
-         if(w)
+         if (w) {
             w->setVisible(false);
+         }
       }
 
       pushButton_new->setVisible(false);
@@ -56,21 +55,22 @@ StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog(pare
    connect( styleComboBox, SIGNAL(activated( const QString& )), this, SLOT( styleSelected(const QString&) ) );
 
    setStyle( styleListModel->at(styleComboBox->currentIndex()));
+   return;
 }
 
-void StyleEditor::setStyle( Style* s )
-{
-   if( obsStyle )
+void StyleEditor::setStyle( Style* s ) {
+   if (obsStyle) {
       disconnect( obsStyle, 0, this, 0 );
+   }
 
    obsStyle = s;
-   if( obsStyle )
-   {
+   if (obsStyle) {
       connect( obsStyle, &NamedEntity::changed, this, &StyleEditor::changed );
       showChanges();
    }
 
    styleComboBox->setCurrentIndex(styleListModel->indexOf(obsStyle));
+   return;
 }
 
 void StyleEditor::removeStyle() {
@@ -82,11 +82,11 @@ void StyleEditor::removeStyle() {
    return;
 }
 
-void StyleEditor::styleSelected( const QString& /*text*/ )
-{
+void StyleEditor::styleSelected( const QString& /*text*/ ) {
    QModelIndex proxyIndex( styleProxyModel->index(styleComboBox->currentIndex(),0) );
    QModelIndex sourceIndex( styleProxyModel->mapToSource(proxyIndex) );
    setStyle( styleListModel->at(sourceIndex.row()) );
+   return;
 }
 
 void StyleEditor::save() {
@@ -182,35 +182,22 @@ void StyleEditor::clear()
    textEdit_notes->setText(QString(""));
 }
 
-void StyleEditor::showChanges(QMetaProperty* metaProp)
-{
-   bool updateAll = false;
-   QString propName;
-   QVariant val;
+void StyleEditor::showChanges(QMetaProperty* metaProp) {
    Style *s = obsStyle;
-   if( s == 0 )
-   {
+   if (s == 0 ) {
       clear();
       return;
    }
 
-   if( metaProp == 0 )
-      updateAll = true;
-   else
-   {
-      propName = metaProp->name();
-      val = metaProp->read(s);
-   }
-
-   if( updateAll )
-   {
+   if (metaProp == 0) {
+      // updateAll = true;
       lineEdit_name->setText(s->name());
       tabWidget_profile->setTabText(0, s->name() );
       lineEdit_category->setText(s->category());
       lineEdit_categoryNumber->setText(s->categoryNumber());
       lineEdit_styleLetter->setText(s->styleLetter());
       lineEdit_styleGuide->setText(s->styleGuide());
-      comboBox_type->setCurrentIndex(s->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(s->type()));
       lineEdit_ogMin->setText(s);
       lineEdit_ogMax->setText(s);
       lineEdit_fgMin->setText(s);
@@ -231,7 +218,10 @@ void StyleEditor::showChanges(QMetaProperty* metaProp)
       return;
    }
 
-   if( propName == PropertyNames::NamedEntity::name ) {
+   QString propName = metaProp->name();
+   QVariant val = metaProp->read(s);
+
+   if (propName == PropertyNames::NamedEntity::name ) {
       lineEdit_name->setText(val.toString());
       tabWidget_profile->setTabText(0, s->name() );
    } else if( propName == PropertyNames::Style::category ) {

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -36,6 +36,13 @@ namespace {
    QStringList uses = QStringList() << "Boil" << "Mash" << "Primary" << "Secondary" << "Bottling";
    QStringList types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
    QStringList amountTypes = QStringList() << "Weight" << "Volume";
+   QStringList typesTr =
+      QStringList() << QT_TR_NOOP("Spice") << QT_TR_NOOP("Fining") << QT_TR_NOOP("Water Agent") << QT_TR_NOOP("Herb") <<
+      QT_TR_NOOP("Flavor") << QT_TR_NOOP("Other");
+   QStringList usesTr =
+      QStringList() << QT_TR_NOOP("Boil") << QT_TR_NOOP("Mash") << QT_TR_NOOP("Primary") << QT_TR_NOOP("Secondary") <<
+      QT_TR_NOOP("Bottling");
+   QStringList amountTypesTr = QStringList() << QT_TR_NOOP("Weight") << QT_TR_NOOP("Volume");
 }
 
 bool Misc::isEqualTo(NamedEntity const & other) const {
@@ -67,8 +74,8 @@ Misc::Misc(Misc const & other) :
 
 Misc::Misc(QString name) :
    NamedEntityWithInventory{name, true},
-   m_type                  {Misc::Spice},
-   m_use                   {Misc::Boil },
+   m_type                  {Misc::Type::Spice},
+   m_use                   {Misc::Use::Boil },
    m_time                  {0.0        },
    m_amount                {0.0        },
    m_amountIsWeight        {false      },
@@ -93,11 +100,11 @@ Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
 //============================"GET" METHODS=====================================
 Misc::Type Misc::type() const { return m_type; }
 
-const QString Misc::typeString() const { return types.at(m_type); }
+const QString Misc::typeString() const { return types.at(static_cast<int>(m_type)); }
 
 Misc::Use Misc::use() const { return m_use; }
 
-const QString Misc::useString() const { return uses.at(m_use); }
+const QString Misc::useString() const { return uses.at(static_cast<int>(m_use)); }
 
 double Misc::amount() const { return m_amount; }
 
@@ -113,41 +120,30 @@ double Misc::inventory() const {
    return InventoryUtils::getAmount(*this);
 }
 
-Misc::AmountType Misc::amountType() const { return m_amountIsWeight ? AmountType_Weight : AmountType_Volume; }
+Misc::AmountType Misc::amountType() const { return m_amountIsWeight ? Misc::AmountType::Weight : Misc::AmountType::Volume; }
 
-const QString Misc::amountTypeString() const { return amountTypes.at(amountType()); }
+const QString Misc::amountTypeString() const { return amountTypes.at(static_cast<int>(this->amountType())); }
 
-const QString Misc::typeStringTr() const
-{
-   QStringList typesTr = QStringList() << tr("Spice") << tr("Fining") << tr("Water Agent") << tr("Herb") << tr("Flavor") << tr("Other");
-   if ( m_type >=  Spice && m_type < typesTr.size()  ) {
-      return typesTr.at(m_type);
+const QString Misc::typeStringTr() const {
+   int myType = static_cast<int>(this->m_type);
+   if (myType >= 0 && myType < typesTr.size()  ) {
+      return typesTr.at(myType);
    }
-   else {
-      return QString("Spice");
-   }
+   // It's most likely a coding error if we get here
+   return "???";
 }
 
-const QString Misc::useStringTr() const
-{
-   QStringList usesTr = QStringList() << tr("Boil") << tr("Mash") << tr("Primary") << tr("Secondary") << tr("Bottling");
-   if ( m_use >= Boil && m_use < usesTr.size() ) {
-      return usesTr.at(use());
+const QString Misc::useStringTr() const {
+   int myUse = static_cast<int>(this->m_use);
+   if (myUse >= 0 && myUse < usesTr.size() ) {
+      return usesTr.at(myUse);
    }
-   else {
-      return QString("Boil");
-   }
+   // It's most likely a coding error if we get here
+   return "???";
 }
 
-const QString Misc::amountTypeStringTr() const
-{
-   QStringList amountTypesTr = QStringList() << tr("Weight") << tr("Volume");
-   if ( amountType() ) {
-      return amountTypesTr.at(amountType());
-   }
-   else {
-      return QString("Weight");
-   }
+const QString Misc::amountTypeStringTr() const {
+   return amountTypesTr.at(static_cast<int>(this->amountType()));
 }
 
 //============================"SET" METHODS=====================================
@@ -167,8 +163,8 @@ void Misc::setNotes(QString const & var) {
    this->setAndNotify( PropertyNames::Misc::notes, this->m_notes, var );
 }
 
-void Misc::setAmountType(AmountType t) {
-   this->setAmountIsWeight(t == AmountType_Weight);
+void Misc::setAmountType(Misc::AmountType t) {
+   this->setAmountIsWeight(t == Misc::AmountType::Weight);
 }
 
 void Misc::setAmountIsWeight(bool var) {

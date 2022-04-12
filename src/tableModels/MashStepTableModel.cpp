@@ -267,7 +267,7 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
          return QVariant(
             Measurement::displayAmount(
                Measurement::Amount{
-                  row->type() == MashStep::Decoction ? row->decoctionAmount_l() : row->infuseAmount_l(),
+                  row->type() == MashStep::Type::Decoction ? row->decoctionAmount_l() : row->infuseAmount_l(),
                   Measurement::Units::liters
                },
                3,
@@ -276,7 +276,7 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
             )
          );
       case MASHSTEPTEMPCOL:
-         if (row->type() == MashStep::Decoction) {
+         if (row->type() == MashStep::Type::Decoction) {
             return QVariant("---");
          }
          return QVariant(
@@ -353,7 +353,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
          if (value.canConvert(QVariant::Int)) {
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::MashStep::type,
-                                                  static_cast<MashStep::Type>(value.toInt()),
+                                                  value.toInt(),
                                                   tr("Change Mash Step Type"));
             return true;
          }
@@ -361,7 +361,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 
       case MASHSTEPAMOUNTCOL:
          if (value.canConvert(QVariant::String)) {
-            if (row->type() == MashStep::Decoction ) {
+            if (row->type() == MashStep::Type::Decoction ) {
                MainWindow::instance().doOrRedoUpdate(
                   *row,
                   PropertyNames::MashStep::decoctionAmount_l,
@@ -387,7 +387,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
          return false;
 
       case MASHSTEPTEMPCOL:
-         if (value.canConvert(QVariant::String) && row->type() != MashStep::Decoction) {
+         if (value.canConvert(QVariant::String) && row->type() != MashStep::Type::Decoction) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
                PropertyNames::MashStep::infuseTemp_c,

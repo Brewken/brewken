@@ -175,6 +175,12 @@ namespace {
    template<> BtStringConst const & propertyToPropertyName<Yeast>()       {
       return PropertyNames::Recipe::yeastIds;
    }
+
+   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
+      {"Extract",      Recipe::Type::Extract},
+      {"Partial Mash", Recipe::Type::PartialMash},
+      {"All Grain",    Recipe::Type::AllGrain}
+   };
 }
 
 
@@ -285,13 +291,6 @@ template<> QVector<int> & Recipe::impl::accessIds<Misc>()        { return this->
 template<> QVector<int> & Recipe::impl::accessIds<Salt>()        { return this->saltIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->yeastIds; }
-
-static const QHash<QString, Recipe::Type> RECIPE_TYPE_STRING_TO_TYPE {
-   {"Extract",      Recipe::Extract},
-   {"Partial Mash", Recipe::PartialMash},
-   {"All Grain",    Recipe::AllGrain}
-};
-
 
 bool Recipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -700,25 +699,23 @@ QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining, double to
 
 QVector<PreInstruction> Recipe::hopSteps(Hop::Use type) {
    QVector<PreInstruction> preins;
-   QString str;
-   unsigned int i;
-   int size;
 
    preins.clear();
    QList<Hop *> hlist = hops();
-   size = hlist.size();
-   for (i = 0; static_cast<int>(i) < size; ++i) {
+   int size = hlist.size();
+   for (int i = 0; static_cast<int>(i) < size; ++i) {
       Hop * hop = hlist[static_cast<int>(i)];
       if (hop->use() == type) {
-         if (type == Hop::Boil) {
+         QString str;
+         if (type == Hop::Use::Boil) {
             str = tr("Put %1 %2 into boil for %3.");
-         } else if (type == Hop::Dry_Hop) {
+         } else if (type == Hop::Use::Dry_Hop) {
             str = tr("Put %1 %2 into fermenter for %3.");
-         } else if (type == Hop::First_Wort) {
+         } else if (type == Hop::Use::First_Wort) {
             str = tr("Put %1 %2 into first wort for %3.");
-         } else if (type == Hop::Mash) {
+         } else if (type == Hop::Use::Mash) {
             str = tr("Put %1 %2 into mash for %3.");
-         } else if (type == Hop::UseAroma) {
+         } else if (type == Hop::Use::UseAroma) {
             str = tr("Steep %1 %2 in wort for %3.");
          } else {
             qWarning() << "Recipe::hopSteps(): Unrecognized hop use.";
@@ -748,15 +745,15 @@ QVector<PreInstruction> Recipe::miscSteps(Misc::Use type) {
       QString str;
       Misc * misc = mlist[static_cast<int>(i)];
       if (misc->use() == type) {
-         if (type == Misc::Boil) {
+         if (type == Misc::Use::Boil) {
             str = tr("Put %1 %2 into boil for %3.");
-         } else if (type == Misc::Bottling) {
+         } else if (type == Misc::Use::Bottling) {
             str = tr("Use %1 %2 at bottling for %3.");
-         } else if (type == Misc::Mash) {
+         } else if (type == Misc::Use::Mash) {
             str = tr("Put %1 %2 into mash for %3.");
-         } else if (type == Misc::Primary) {
+         } else if (type == Misc::Use::Primary) {
             str = tr("Put %1 %2 into primary for %3.");
-         } else if (type == Misc::Secondary) {
+         } else if (type == Misc::Use::Secondary) {
             str = tr("Put %1 %2 into secondary for %3.");
          } else {
             qWarning() << "Recipe::getMiscSteps(): Unrecognized misc use.";
@@ -890,11 +887,11 @@ PreInstruction Recipe::boilFermentablesPre(double timeRemaining) {
 }
 
 bool Recipe::isFermentableSugar(Fermentable * fermy) {
-   if (fermy->type() == Fermentable::Sugar && fermy->name() == "Milk Sugar (Lactose)") {
+   if (fermy->type() == Fermentable::Type::Sugar && fermy->name() == "Milk Sugar (Lactose)") {
       return false;
-   } else {
-      return true;
    }
+
+   return true;
 }
 
 PreInstruction Recipe::addExtracts(double timeRemaining) const {
@@ -1043,10 +1040,10 @@ void Recipe::generateInstructions() {
       preinstructions = mashInstructions(timeRemaining, totalWaterAdded_l, size);
 
       /*** Hops mash additions ***/
-      preinstructions += hopSteps(Hop::Mash);
+      preinstructions += hopSteps(Hop::Use::Mash);
 
       /*** Misc mash additions ***/
-      preinstructions += miscSteps(Misc::Mash);
+      preinstructions += miscSteps(Misc::Use::Mash);
 
       /*** Add the preinstructions into the instructions ***/
       addPreinstructions(preinstructions);
@@ -1096,10 +1093,10 @@ void Recipe::generateInstructions() {
    }
 
    /*** Boiled hops ***/
-   preinstructions += hopSteps(Hop::Boil);
+   preinstructions += hopSteps(Hop::Use::Boil);
 
    /*** Boiled miscs ***/
-   preinstructions += miscSteps(Misc::Boil);
+   preinstructions += miscSteps(Misc::Use::Boil);
 
    // END boil instructions.
 
@@ -1114,7 +1111,7 @@ void Recipe::generateInstructions() {
 
    // Steeped aroma hops
    preinstructions.clear();
-   preinstructions += hopSteps(Hop::UseAroma);
+   preinstructions += hopSteps(Hop::Use::UseAroma);
    addPreinstructions(preinstructions);
 
    // Fermentation instructions
@@ -1144,7 +1141,7 @@ void Recipe::generateInstructions() {
    /*** End primary yeast ***/
 
    /*** Primary misc ***/
-   addPreinstructions(miscSteps(Misc::Primary));
+   addPreinstructions(miscSteps(Misc::Use::Primary));
 
    str = tr("Let ferment until FG is %1.").arg(
       Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::sp_grav},
@@ -1165,10 +1162,10 @@ void Recipe::generateInstructions() {
    this->add(transferIns);
 
    /*** Secondary misc ***/
-   addPreinstructions(miscSteps(Misc::Secondary));
+   addPreinstructions(miscSteps(Misc::Use::Secondary));
 
    /*** Dry hopping ***/
-   addPreinstructions(hopSteps(Hop::Dry_Hop));
+   addPreinstructions(hopSteps(Hop::Use::Dry_Hop));
 
    // END fermentation instructions. Let everybody know that now is the time
    // to update instructions
@@ -1191,7 +1188,7 @@ QString Recipe::nextAddToBoil(double & time) {
    size = hhops.size();
    for (i = 0; i < size; ++i) {
       h = hhops[i];
-      if (h->use() != Hop::Boil) {
+      if (h->use() != Hop::Use::Boil) {
          continue;
       }
       if (h->time_min() < time && h->time_min() > max) {
@@ -1213,7 +1210,7 @@ QString Recipe::nextAddToBoil(double & time) {
    size = mmiscs.size();
    for (i = 0; i < size; ++i) {
       m = mmiscs[i];
-      if (m->use() != Misc::Boil) {
+      if (m->use() != Misc::Use::Boil) {
          continue;
       }
       if (m->time() < time && m->time() > max) {
@@ -2209,11 +2206,11 @@ void Recipe::recalcVolumeEstimates() {
    QList<Fermentable *> ferms = fermentables();
    foreach (Fermentable * f, ferms) {
       Fermentable::Type type = f->type();
-      if (type == Fermentable::Extract) {
+      if (type == Fermentable::Type::Extract) {
          tmp += f->amount_kg() / PhysicalConstants::liquidExtractDensity_kgL;
-      } else if (type == Fermentable::Sugar) {
+      } else if (type == Fermentable::Type::Sugar) {
          tmp += f->amount_kg() / PhysicalConstants::sucroseDensity_kgL;
-      } else if (type == Fermentable::Dry_Extract) {
+      } else if (type == Fermentable::Type::Dry_Extract) {
          tmp += f->amount_kg() / PhysicalConstants::dryExtractDensity_kgL;
       }
    }
@@ -2284,7 +2281,7 @@ void Recipe::recalcGrainsInMash_kg() {
    for (i = 0; i < size; ++i) {
       ferm = ferms[i];
 
-      if (ferm->type() == Fermentable::Grain && ferm->isMashed()) {
+      if (ferm->type() == Fermentable::Type::Grain && ferm->isMashed()) {
          ret += ferm->amount_kg();
       }
    }
@@ -2605,11 +2602,11 @@ double Recipe::ibuFromHop(Hop const * hop) {
       boilTime = static_cast<int>(equip->boilTime_min());
    }
 
-   if (hop->use() == Hop::Boil) {
+   if (hop->use() == Hop::Use::Boil) {
       ibus = IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, minutes);
-   } else if (hop->use() == Hop::First_Wort) {
+   } else if (hop->use() == Hop::Use::First_Wort) {
       ibus = fwhAdjust * IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, boilTime);
-   } else if (hop->use() == Hop::Mash && mashHopAdjust > 0.0) {
+   } else if (hop->use() == Hop::Use::Mash && mashHopAdjust > 0.0) {
       ibus = mashHopAdjust * IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, boilTime);
    }
 
@@ -2621,10 +2618,10 @@ double Recipe::ibuFromHop(Hop const * hop) {
    // - http://www.realbeer.com/hops/FAQ.html
    // - https://groups.google.com/forum/#!topic"Brewken.h"lp/mv2qvWBC4sU
    switch (hop->form()) {
-      case Hop::Plug:
+      case Hop::Form::Plug:
          hopUtilization *= 1.02;
          break;
-      case Hop::Pellet:
+      case Hop::Form::Pellet:
          hopUtilization *= 1.10;
          break;
       default:
@@ -2672,7 +2669,7 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
    QList<QString> reagents;
 
    for (int i = 0; i < hops.size(); ++i) {
-      if (firstWort && (hops[i]->use() == Hop::First_Wort)) {
+      if (firstWort && (hops[i]->use() == Hop::Use::First_Wort)) {
          tmp = QString("%1 %2,")
                .arg(Measurement::displayAmount(Measurement::Amount{hops[i]->amount_kg(), Measurement::Units::kilograms},
                                                PersistentSettings::Sections::hopTable,
@@ -2786,11 +2783,11 @@ double Recipe::targetCollectedWortVol_l() {
    QList<Fermentable *> ferms = fermentables();
    foreach (Fermentable * f, ferms) {
       Fermentable::Type type = f->type();
-      if (type == Fermentable::Extract) {
+      if (type == Fermentable::Type::Extract) {
          postMashAdditionVolume_l  += static_cast<float>(f->amount_kg() / PhysicalConstants::liquidExtractDensity_kgL);
-      } else if (type == Fermentable::Sugar) {
+      } else if (type == Fermentable::Type::Sugar) {
          postMashAdditionVolume_l  += static_cast<float>(f->amount_kg() / PhysicalConstants::sucroseDensity_kgL);
-      } else if (type == Fermentable::Dry_Extract) {
+      } else if (type == Fermentable::Type::Dry_Extract) {
          postMashAdditionVolume_l  += static_cast<float>(f->amount_kg() / PhysicalConstants::dryExtractDensity_kgL);
       }
    }

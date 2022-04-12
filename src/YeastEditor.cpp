@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -124,13 +124,13 @@ void YeastEditor::showChanges(QMetaProperty * metaProp) {
       }
    }
    if (propName == PropertyNames::Yeast::type || updateAll) {
-      comboBox_type->setCurrentIndex(obsYeast->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(obsYeast->type()));
       if (!updateAll) {
          return;
       }
    }
    if (propName == PropertyNames::Yeast::form || updateAll) {
-      comboBox_form->setCurrentIndex(obsYeast->form());
+      comboBox_form->setCurrentIndex(static_cast<int>(obsYeast->form()));
       if (!updateAll) {
          return;
       }
@@ -174,7 +174,7 @@ void YeastEditor::showChanges(QMetaProperty * metaProp) {
       }
    }
    if (propName == PropertyNames::Yeast::flocculation || updateAll) {
-      comboBox_flocculation->setCurrentIndex(obsYeast->flocculation());
+      comboBox_flocculation->setCurrentIndex(static_cast<int>(obsYeast->flocculation()));
       if (!updateAll) {
          return;
       }

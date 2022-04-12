@@ -51,15 +51,21 @@ public:
    /**
     * \brief The types of fields that we know how to process.  Used in \b FieldDefinition records
     */
-   enum FieldType {
+   enum class FieldType {
       Bool,
       Int,
       UInt,
       Double,
       String,
       Date,
-      Percent,
-      MassOrVolume,
+      Percent,        // .:TODO.JSON:. Implement!
+      Color,          // .:TODO.JSON:. Implement!
+      MassOrVolume,   // .:TODO.JSON:. Implement!
+      DiastaticPower, // .:TODO.JSON:. Implement!
+      Acidity,        // .:TODO.JSON:. Implement!
+      Viscosity,      // .:TODO.JSON:. Implement!
+      Concentration,  // .:TODO.JSON:. Implement!
+      Gravity,        // .:TODO.JSON:. Implement!
       Enum,
       RequiredConstant,   // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
       RecordSimple,       // Single contained record

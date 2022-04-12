@@ -154,15 +154,15 @@ void Testing::initTestCase() {
       ObjectStoreWrapper::insert(this->cascade_4pct);
       this->cascade_4pct->setName("Cascade 4pct");
       this->cascade_4pct->setAlpha_pct(4.0);
-      this->cascade_4pct->setUse(Hop::Boil);
+      this->cascade_4pct->setUse(Hop::Use::Boil);
       this->cascade_4pct->setTime_min(60);
-      this->cascade_4pct->setType(Hop::Both);
-      this->cascade_4pct->setForm(Hop::Leaf);
+      this->cascade_4pct->setType(Hop::Type::Both);
+      this->cascade_4pct->setForm(Hop::Form::Leaf);
 
       // 70% yield, no moisture, 2 SRM
       this->twoRow = std::make_shared<Fermentable>();
       this->twoRow->setName("Two Row");
-      this->twoRow->setType(Fermentable::Grain);
+      this->twoRow->setType(Fermentable::Type::Grain);
       this->twoRow->setYield_pct(70.0);
       this->twoRow->setColor_srm(2.0);
       this->twoRow->setMoisture_pct(0);
@@ -197,12 +197,12 @@ void Testing::recipeCalcTest_allGrain()
    singleConversion->setSpargeTemp_c(80.0);
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
-   singleConversion_convert->setType(MashStep::Infusion);
+   singleConversion_convert->setType(MashStep::Type::Infusion);
    singleConversion_convert->setInfuseAmount_l(conversion_l);
    singleConversion->addMashStep(singleConversion_convert);
    auto singleConversion_sparge = std::make_shared<MashStep>();
    singleConversion_sparge->setName("Sparge");
-   singleConversion_sparge->setType(MashStep::Infusion);
+   singleConversion_sparge->setType(MashStep::Type::Infusion);
    singleConversion_sparge->setInfuseAmount_l(
       rec->boilSize_l()
       + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg // Grain absorption
@@ -310,7 +310,7 @@ void Testing::postBoilLossOgTest()
 
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
-   singleConversion_convert->setType(MashStep::Infusion);
+   singleConversion_convert->setType(MashStep::Type::Infusion);
    singleConversion->addMashStep(singleConversion_convert);
 
    // Infusion for recNoLoss

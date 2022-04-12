@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Style.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -77,7 +77,7 @@ public:
    virtual ~Style() = default;
 
    //! \brief The type of beverage.
-   enum Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
+   enum class Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
    Q_ENUMS( Type )
 
    //! \brief The category.

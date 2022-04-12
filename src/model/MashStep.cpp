@@ -57,7 +57,7 @@ ObjectStore & MashStep::getObjectStoreTypedInstance() const {
 
 MashStep::MashStep(QString name) :
    NamedEntity        {name, true},
-   m_type             {MashStep::Infusion},
+   m_type             {MashStep::Type::Infusion},
    m_infuseAmount_l   {0.0},
    m_stepTemp_c       {0.0},
    m_stepTime_min     {0.0},
@@ -150,12 +150,12 @@ void MashStep::setMashId(int mashId) {
 
 //============================="GET" METHODS====================================
 MashStep::Type MashStep::type() const { return m_type; }
-const QString MashStep::typeString() const { return types.at(m_type); }
+const QString MashStep::typeString() const { return types.at(static_cast<int>(this->m_type)); }
 const QString MashStep::typeStringTr() const {
-   if ( m_type < 0 || m_type > typesTr.length() ) {
-      return "";
-   }
-   return typesTr.at(m_type);
+   int myType = static_cast<int>(this->m_type);
+   Q_ASSERT(myType >= 0);
+   Q_ASSERT(myType < typesTr.length());
+   return typesTr.at(myType);
 }
 double MashStep::infuseTemp_c() const { return m_infuseTemp_c; }
 double MashStep::infuseAmount_l() const { return m_infuseAmount_l; }
@@ -168,28 +168,24 @@ int MashStep::stepNumber() const { return m_stepNumber; }
 //Mash * MashStep::mash( ) const { return m_mash; }
 int MashStep::getMashId() const { return this->mashId; }
 
-bool MashStep::isInfusion() const
-{
-   return ( m_type == MashStep::Infusion    ||
-            m_type == MashStep::batchSparge ||
-            m_type == MashStep::flySparge );
+bool MashStep::isInfusion() const {
+   return ( m_type == MashStep::Type::Infusion    ||
+            m_type == MashStep::Type::batchSparge ||
+            m_type == MashStep::Type::flySparge );
 }
 
-bool MashStep::isSparge() const
-{
-   return ( m_type == MashStep::batchSparge ||
-            m_type == MashStep::flySparge   ||
+bool MashStep::isSparge() const {
+   return ( m_type == MashStep::Type::batchSparge ||
+            m_type == MashStep::Type::flySparge   ||
             name() == "Final Batch Sparge" );
 }
 
-bool MashStep::isTemperature() const
-{
-   return ( m_type == MashStep::Temperature );
+bool MashStep::isTemperature() const {
+   return ( m_type == MashStep::Type::Temperature );
 }
 
-bool MashStep::isDecoction() const
-{
-   return ( m_type == MashStep::Decoction );
+bool MashStep::isDecoction() const {
+   return ( m_type == MashStep::Type::Decoction );
 }
 
 Recipe * MashStep::getOwningRecipe() {

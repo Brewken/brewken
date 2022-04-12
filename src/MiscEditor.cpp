@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MiscEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -117,13 +117,13 @@ void MiscEditor::showChanges(QMetaProperty * metaProp) {
       }
    }
    if (propName == PropertyNames::Misc::type || updateAll) {
-      comboBox_type->setCurrentIndex(obsMisc->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(obsMisc->type()));
       if (!updateAll) {
          return;
       }
    }
    if (propName == PropertyNames::Misc::use || updateAll) {
-      comboBox_use->setCurrentIndex(obsMisc->use());
+      comboBox_use->setCurrentIndex(static_cast<int>(obsMisc->use()));
       if (!updateAll) {
          return;
       }
