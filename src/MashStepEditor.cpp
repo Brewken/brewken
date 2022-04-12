@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashStepEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * MashStepEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -52,7 +52,7 @@ void MashStepEditor::showChanges(QMetaProperty* metaProp) {
 
    if (updateAll) {
       lineEdit_name->setText(obs->name());
-      comboBox_type->setCurrentIndex(obs->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(obs->type()));
       lineEdit_infuseAmount->setText(this->obs.get());
       lineEdit_infuseTemp->setText(this->obs.get());
       lineEdit_decoctionAmount->setText(this->obs.get());
@@ -63,7 +63,7 @@ void MashStepEditor::showChanges(QMetaProperty* metaProp) {
    } else if (propName == PropertyNames::NamedEntity::name) {
       lineEdit_name->setText(obs->name());
    } else if (propName == PropertyNames::MashStep::type) {
-      comboBox_type->setCurrentIndex(obs->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(obs->type()));
    } else if (propName == PropertyNames::MashStep::infuseAmount_l) {
       lineEdit_infuseAmount->setText(this->obs.get());
    } else if (propName == PropertyNames::MashStep::infuseTemp_c) {

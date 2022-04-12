@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -119,7 +119,7 @@ void FermentableEditor::showChanges(QMetaProperty* metaProp) {
    }
    if (propName == PropertyNames::Fermentable::type || updateAll) {
       // NOTE: assumes the comboBox entries are in same order as Fermentable::Type
-      comboBox_type->setCurrentIndex(obsFerm->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(obsFerm->type()));
       if (!updateAll) {
          return;
       }

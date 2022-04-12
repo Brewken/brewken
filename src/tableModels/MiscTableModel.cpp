@@ -209,7 +209,7 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(row->typeStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->type());
+            return QVariant(static_cast<int>(row->type()));
          }
          break;
       case MISCUSECOL:
@@ -217,7 +217,7 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(row->useStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->use());
+            return QVariant(static_cast<int>(row->use()));
          }
          return QVariant();
       case MISCTIMECOL:
@@ -261,7 +261,7 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(row->amountTypeStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->amountType());
+            return QVariant(static_cast<int>(row->amountType()));
          }
          break;
       default:
@@ -320,7 +320,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          }
          MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::type,
-                                               static_cast<Misc::Type>(value.toInt()),
+                                               value.toInt(),
                                                tr("Change Misc Type"));
          break;
       case MISCUSECOL:
@@ -329,7 +329,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          }
          MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::use,
-                                               static_cast<Misc::Use>(value.toInt()),
+                                               value.toInt(),
                                                tr("Change Misc Use"));
          break;
       case MISCTIMECOL:
@@ -380,7 +380,7 @@ bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, 
          }
          MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Misc::amountType,
-                                               static_cast<Misc::AmountType>(value.toInt()),
+                                               value.toInt(),
                                                tr("Change Misc Amount Type"));
          break;
       default:

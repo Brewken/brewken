@@ -255,7 +255,7 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(row->typeStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->type());
+            return QVariant(static_cast<int>(row->type()));
          }
          break;
       case YEASTLABCOL:
@@ -273,7 +273,7 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(row->formStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->form());
+            return QVariant(static_cast<int>(row->form()));
          }
          break;
       case YEASTINVENTORYCOL:
@@ -365,7 +365,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          }
          MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::type,
-                                               static_cast<Yeast::Type>(value.toInt()),
+                                               value.toInt(),
                                                tr("Change Yeast Type"));
          break;
       case YEASTFORMCOL:
@@ -374,7 +374,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
          }
          MainWindow::instance().doOrRedoUpdate(*row,
                                                PropertyNames::Yeast::form,
-                                               static_cast<Yeast::Form>(value.toInt()),
+                                               value.toInt(),
                                                tr("Change Yeast Form"));
          break;
       case YEASTINVENTORYCOL:

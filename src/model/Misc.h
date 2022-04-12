@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -61,11 +61,11 @@ class Misc : public NamedEntityWithInventory {
 public:
 
    //! \brief The type of ingredient.
-   enum Type {Spice, Fining, Water_Agent, Herb, Flavor, Other};
+   enum class Type {Spice, Fining, Water_Agent, Herb, Flavor, Other};
    //! \brief Where the ingredient is used.
-   enum Use { Boil, Mash, Primary, Secondary, Bottling };
+   enum class Use { Boil, Mash, Primary, Secondary, Bottling };
    //! \brief What is the type of amount.
-   enum AmountType { AmountType_Weight, AmountType_Volume };
+   enum class AmountType { Weight, Volume };
    Q_ENUMS( Type Use AmountType )
 
    Misc(QString name = "");

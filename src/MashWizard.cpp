@@ -102,7 +102,7 @@ void MashWizard::show()
       radioButton_noSparge->setChecked(true);
       widget_batches->setEnabled(false);
       widget_mashThickness->setEnabled(false);
-   } else if ( lastStep->type() == MashStep::flySparge ) {
+   } else if ( lastStep->type() == MashStep::Type::flySparge ) {
       radioButton_flySparge->setChecked(true);
       widget_batches->setEnabled(false);
       widget_mashThickness->setEnabled(true);
@@ -363,7 +363,7 @@ void MashWizard::wizardry() {
          double volPerBatch = spargeWater_l/numSteps; // its evil, but deal with it
          for(int i=0; i < numSteps; ++i ) {
             auto newMashStep = std::make_shared<MashStep>(tr("Batch Sparge %1").arg(i+1));
-            newMashStep->setType(MashStep::batchSparge);
+            newMashStep->setType(MashStep::Type::batchSparge);
             newMashStep->setInfuseAmount_l(volPerBatch);
             newMashStep->setInfuseTemp_c(tw);
             newMashStep->setEndTemp_c(tw);
@@ -384,7 +384,7 @@ void MashWizard::wizardry() {
       // fly sparge, I think
       else {
          auto newMashStep = std::make_shared<MashStep>(tr("Fly Sparge"));
-         newMashStep->setType(MashStep::flySparge);
+         newMashStep->setType(MashStep::Type::flySparge);
          newMashStep->setInfuseAmount_l(spargeWater_l);
          newMashStep->setInfuseTemp_c(tw);
          newMashStep->setEndTemp_c(tw);

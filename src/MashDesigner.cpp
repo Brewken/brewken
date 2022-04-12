@@ -647,12 +647,12 @@ double MashDesigner::getDecoctionAmount_l() {
 
 bool MashDesigner::isBatchSparge() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::batchSparge);
+   return (stepType == MashStep::Type::batchSparge);
 }
 
 bool MashDesigner::isFlySparge() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::flySparge);
+   return (stepType == MashStep::Type::flySparge);
 }
 
 bool MashDesigner::isSparge() const {
@@ -661,17 +661,17 @@ bool MashDesigner::isSparge() const {
 
 bool MashDesigner::isInfusion() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::Infusion || isSparge());
+   return (stepType == MashStep::Type::Infusion || isSparge());
 }
 
 bool MashDesigner::isDecoction() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::Decoction);
+   return (stepType == MashStep::Type::Decoction);
 }
 
 bool MashDesigner::isTemperature() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::Temperature);
+   return (stepType == MashStep::Type::Temperature);
 }
 
 MashStep::Type MashDesigner::type() const {

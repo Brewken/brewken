@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -60,9 +60,9 @@ ObjectStore & Hop::getObjectStoreTypedInstance() const {
 
 Hop::Hop(QString name) :
    NamedEntityWithInventory{name, true},
-   m_use              {Hop::Mash},
-   m_type             {Hop::Bittering},
-   m_form             {Hop::Leaf},
+   m_use              {Hop::Use::Mash},
+   m_type             {Hop::Type::Bittering},
+   m_form             {Hop::Form::Leaf},
    m_alpha_pct        {0.0},
    m_amount_kg        {0.0},
    m_time_min         {0.0},
@@ -192,12 +192,12 @@ void Hop::setMyrcene_pct(double var) {
 //============================="GET" METHODS====================================
 
 Hop::Use Hop::use() const { return m_use; }
-const QString Hop::useString() const { return uses.at(m_use); }
+const QString Hop::useString() const { return uses.at(static_cast<int>(this->m_use)); }
 const QString Hop::notes() const { return m_notes; }
 Hop::Type Hop::type() const { return m_type; }
-const QString Hop::typeString() const { return types.at(m_type); }
+const QString Hop::typeString() const { return types.at(static_cast<int>(this->m_type)); }
 Hop::Form Hop::form() const { return m_form; }
-const QString Hop::formString() const { return forms.at(m_form); }
+const QString Hop::formString() const { return forms.at(static_cast<int>(this->m_form)); }
 const QString Hop::origin() const { return m_origin; }
 const QString Hop::substitutes() const { return m_substitutes; }
 double Hop::alpha_pct() const { return m_alpha_pct; }
@@ -214,37 +214,34 @@ double Hop::inventory() const {
    return InventoryUtils::getAmount(*this);
 }
 
-const QString Hop::useStringTr() const
-{
+const QString Hop::useStringTr() const {
    static QStringList usesTr = QStringList() << tr("Mash") << tr("First Wort") << tr("Boil") << tr("Aroma") << tr("Dry Hop") ;
-   if ( m_use < usesTr.size() && m_use >= 0 ) {
-      return usesTr.at(m_use);
+   int myUse = static_cast<int>(this->m_use);
+   if (myUse < usesTr.size() && myUse >= 0 ) {
+      return usesTr.at(myUse);
    }
-   else {
-      return "";
-   }
+
+   return "";
 }
 
-const QString Hop::typeStringTr() const
-{
+const QString Hop::typeStringTr() const {
    static QStringList typesTr = QStringList() << tr("Bittering") << tr("Aroma") << tr("Both");
-   if ( m_type < typesTr.size()  && m_type >= 0 ) {
-      return typesTr.at(m_type);
+   int myType = static_cast<int>(this->m_type);
+   if (myType < typesTr.size() && myType >= 0 ) {
+      return typesTr.at(myType);
    }
-   else {
-      return "";
-   }
+
+   return "";
 }
 
-const QString Hop::formStringTr() const
-{
+const QString Hop::formStringTr() const {
    static QStringList formsTr = QStringList() << tr("Leaf") << tr("Pellet") << tr("Plug");
-   if ( m_form < formsTr.size() && m_form >= 0 ) {
-      return formsTr.at(m_form);
+   int myForm = static_cast<int>(this->m_form);
+   if (myForm < formsTr.size() && myForm >= 0) {
+      return formsTr.at(myForm);
    }
-   else {
-      return "";
-   }
+
+   return "";
 }
 
 Recipe * Hop::getOwningRecipe() {

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -68,11 +68,11 @@ class Yeast : public NamedEntityWithInventory {
    friend class YeastDialog;
 public:
    //! \brief What beverage the yeast is for.
-   enum Type {Ale, Lager, Wheat, Wine, Champagne};
+   enum class Type {Ale, Lager, Wheat, Wine, Champagne};
    //! \brief What form the yeast comes in.
-   enum Form {Liquid, Dry, Slant, Culture};
+   enum class Form {Liquid, Dry, Slant, Culture};
    //! \brief How flocculant the strain is.
-   enum Flocculation {Low, Medium, High, Very_High}; // NOTE: BeerXML expects a space in "Very High", but not possible with enum. What to do?
+   enum class Flocculation {Low, Medium, High, Very_High}; // NOTE: BeerXML expects a space in "Very High", but not possible with enum. What to do?
    Q_ENUMS( Type Form Flocculation )
 
    Yeast(QString name = "");

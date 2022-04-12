@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * TimerMainDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * TimerMainDialog.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -27,9 +27,6 @@
 #include <QString>
 #include <QWidget>
 
-//#include "model/Hop.h"
-//#include "model/Recipe.h"
-
 class BoilTime;
 class MainWindow;
 class TimerWidget;
@@ -44,51 +41,51 @@ class TimerMainDialog : public QDialog, public Ui::TimerMainDialog {
    Q_OBJECT
 
 public:
-      TimerMainDialog(MainWindow* parent);
-      ~TimerMainDialog();
-      void removeTimer(TimerWidget* t);
-      unsigned int getAlarmLimit();
-      void hideTimers();
-      void setTimerVisible(TimerWidget* t);
-      void showTimers();
+   TimerMainDialog(MainWindow* parent);
+   ~TimerMainDialog();
+   void removeTimer(TimerWidget* t);
+   unsigned int getAlarmLimit();
+   void hideTimers();
+   void setTimerVisible(TimerWidget* t);
+   void showTimers();
 
 private slots:
-      void on_addTimerButton_clicked();
-      void on_startButton_clicked();
-      void on_stopButton_clicked();
-      void on_setBoilTimeBox_valueChanged(int t);
-      void on_hideButton_clicked();
-      void on_showButton_clicked();
-      void on_resetButton_clicked();
-      void on_loadRecipesButton_clicked();
-      void on_cancelButton_clicked();
-      void on_limitRingTimeCheckBox_clicked();
-      void on_limitRingTimeSpinBox_valueChanged(int l);
+   void on_addTimerButton_clicked();
+   void on_startButton_clicked();
+   void on_stopButton_clicked();
+   void on_setBoilTimeBox_valueChanged(int t);
+   void on_hideButton_clicked();
+   void on_showButton_clicked();
+   void on_resetButton_clicked();
+   void on_loadRecipesButton_clicked();
+   void on_cancelButton_clicked();
+   void on_limitRingTimeCheckBox_clicked();
+   void on_limitRingTimeSpinBox_valueChanged(int l);
 
-      void decrementTimer();
-      void timesUp();
+   void decrementTimer();
+   void timesUp();
 
 private:
-      MainWindow* mainWindow; //To get currently selected recipe
-      QList<TimerWidget*> * timers;
-      TimerListDialog* timerWindow;
-      BoilTime* boilTime;
-      bool stopped;
-      bool limitAlarmRing;
-      unsigned int alarmLimit;
+   void removeAllTimers();
+   void resetTimers();
+   void updateTime();
+   QString timeToString(int t);
+   void setRingLimits(bool l, unsigned int a);
+   void sortTimers();
+   TimerWidget* createNewTimer();
+   void createTimer();
+   void createTimer(QString n);
+   void createTimer(QString n, int t);
+   //Overload QDialog::reject()
+   void reject();
 
-      void removeAllTimers();
-      void resetTimers();
-      void updateTime();
-      QString timeToString(int t);
-      void setRingLimits(bool l, unsigned int a);
-      void sortTimers();
-      TimerWidget* createNewTimer();
-      void createTimer();
-      void createTimer(QString n);
-      void createTimer(QString n, int t);
-      //Overload QDialog::reject()
-      void reject();
+   MainWindow* mainWindow; //To get currently selected recipe
+   QList<TimerWidget*> * timers;
+   TimerListDialog* timerWindow;
+   BoilTime* boilTime;
+   bool stopped;
+   bool limitAlarmRing;
+   unsigned int alarmLimit; // In seconds
 };
 
 #endif
