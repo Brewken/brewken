@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonSchema.h is part of Brewken, and is copyright the following authors 2021:
+ * json/JsonSchema.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,12 +24,19 @@
 class QTextStream;
 
 /**
- * \class JsonSchema holds all the files for a single schema (which we give to Valijson for it to validate a JSON
+ * \class JsonSchema holds all the files for a single JSON schema (which we give to Valijson for it to validate a JSON
  *        document)
+ *
+ *        Note that this class ONLY wraps the JSON schema (see https://json-schema.org/).  It does not hold any of the
+ *        info needed for us to process the file.  For that, see \c JsonCoding.  (Each \c JsonCoding has a corresponding
+ *        \c JsonSchema.)
  */
 class JsonSchema {
-
 public:
+
+   // .:TODO:. Each JsonSchema is a const (after construction) singleton for the schema it represents (eg BeerJSON 2.1),
+   //          so we should have a registry of them.
+
    /**
     * \brief Constructor
     *
@@ -56,15 +63,18 @@ public:
     *
     * \return \c true if parsing suceeded, \c false otherwise
     */
-   bool validate(boost::json::value const & document, QTextStream & userMessage);
+   bool validate(boost::json::value const & document, QTextStream & userMessage) const;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
 
+   /**
+    * \brief This is the callback we give to Valijson, which then forwards it on to whatever the last JsonSchema object
+    *        we were dealing with on this thread was (which should be the one that gave the callback to Valijson).
+    */
    static boost::json::value const * fetchReferencedDocument(std::string const & uri);
-
 };
 
 #endif

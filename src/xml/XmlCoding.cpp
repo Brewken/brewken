@@ -43,7 +43,7 @@
 
 #include "xml/BtDomDocumentOwner.h"
 #include "xml/XercesHelpers.h"
-#include "xml/XmlRecordCount.h"
+#include "utils/ImportRecordCount.h"
 
 //
 //                              ***************************************************
@@ -512,7 +512,7 @@ public:
 
       std::shared_ptr<XmlRecord> rootRecord = xmlCoding->getNewXmlRecord(rootNodeName);
 
-      XmlRecordCount stats;
+      ImportRecordCount stats;
 
       if (!rootRecord->load(domSupport, rootNode, userMessage)) {
          return false;
@@ -520,7 +520,7 @@ public:
 
       // At the root level, Succeeded and FoundDuplicate are both OK return values.  It's only Failed that indicates an
       // error (rather than in info) message for the user in userMessage.
-      if (XmlRecord::Failed == rootRecord->normaliseAndStoreInDb(nullptr, userMessage, stats)) {
+      if (XmlRecord::ProcessingResult::Failed == rootRecord->normaliseAndStoreInDb(nullptr, userMessage, stats)) {
          return false;
       }
 

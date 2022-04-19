@@ -143,6 +143,8 @@ SET( Brewken_SRCS
     ${SRCDIR}/InstructionWidget.cpp
     ${SRCDIR}/InventoryFormatter.cpp
     ${SRCDIR}/json/BeerJson.cpp
+    ${SRCDIR}/json/JsonCoding.cpp
+    ${SRCDIR}/json/JsonRecord.cpp
     ${SRCDIR}/json/JsonSchema.cpp
     ${SRCDIR}/json/JsonUtils.cpp
     ${SRCDIR}/Localization.cpp
@@ -224,6 +226,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/utils/BtStringConst.cpp
     ${SRCDIR}/utils/BtStringStream.cpp
     ${SRCDIR}/utils/EnumStringMapping.cpp
+    ${SRCDIR}/utils/ImportRecordCount.cpp
     ${SRCDIR}/WaterButton.cpp
     ${SRCDIR}/WaterDialog.cpp
     ${SRCDIR}/WaterEditor.cpp
@@ -241,7 +244,6 @@ SET( Brewken_SRCS
     ${SRCDIR}/xml/XmlMashRecord.cpp
     ${SRCDIR}/xml/XmlMashStepRecord.cpp
     ${SRCDIR}/xml/XmlRecipeRecord.cpp
-    ${SRCDIR}/xml/XmlRecordCount.cpp
     ${SRCDIR}/xml/XmlRecord.cpp
     ${SRCDIR}/YeastDialog.cpp
     ${SRCDIR}/YeastEditor.cpp

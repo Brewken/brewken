@@ -18,7 +18,7 @@
 
 XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                                      QTextStream & userMessage,
-                                                                     XmlRecordCount & stats) {
+                                                                     ImportRecordCount & stats) {
    // It's a coding error if either there's no containing entity or it's not a Mash.  Both conditions should have been
    // enforced by XSD parsing.  Thus static_cast should be safe.
    auto mash = std::static_pointer_cast<Mash>(containingEntity);

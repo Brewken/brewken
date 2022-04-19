@@ -72,7 +72,7 @@ public:
    //! \brief What form the yeast comes in.
    enum class Form {Liquid, Dry, Slant, Culture};
    //! \brief How flocculant the strain is.
-   enum class Flocculation {Low, Medium, High, Very_High}; // NOTE: BeerXML expects a space in "Very High", but not possible with enum. What to do?
+   enum class Flocculation {Low, Medium, High, Very_High};
    Q_ENUMS( Type Form Flocculation )
 
    Yeast(QString name = "");

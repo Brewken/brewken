@@ -29,7 +29,7 @@
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
-#include "xml/XmlRecordCount.h"
+#include "utils/ImportRecordCount.h"
 #include "xml/XQString.h"
 
 class XmlCoding;
@@ -49,7 +49,7 @@ public:
     *                       DB, in which case we should skip over this record and carry on processing the rest of the
     *                       file
     */
-   enum ProcessingResult {
+   enum class ProcessingResult {
       Succeeded,
       Failed,
       FoundDuplicate
@@ -58,7 +58,7 @@ public:
    /**
     * \brief The types of fields that we know how to process.  Used in \b FieldDefinition records
     */
-   enum FieldType {
+   enum class FieldType {
       Bool,
       Int,
       UInt,
@@ -162,7 +162,7 @@ public:
     */
    virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                   QTextStream & userMessage,
-                                                  XmlRecordCount & stats);
+                                                  ImportRecordCount & stats);
    /**
     * \brief Export to XML
     * \param namedEntityToExport The object that we want to export to XML
@@ -208,7 +208,7 @@ public:
 
 protected:
    bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
-                                          XmlRecordCount & stats);
+                                          ImportRecordCount & stats);
 
    /**
     * \brief Checks whether the \b NamedEntity for this record is, in all the ways that count, a duplicate of one we
