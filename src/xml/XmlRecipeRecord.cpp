@@ -118,11 +118,11 @@ void XmlRecipeRecord::addChildren() {
 
 XmlRecord::ProcessingResult XmlRecipeRecord::normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                                    QTextStream & userMessage,
-                                                                   XmlRecordCount & stats) {
+                                                                   ImportRecordCount & stats) {
    // This call to the base class function will store the Recipe and all the objects it contains, as well as link the
    // Recipe to its Style and Equipment.
    XmlRecord::ProcessingResult result = XmlRecord::normaliseAndStoreInDb(containingEntity, userMessage, stats);
-   if (result != XmlRecord::Succeeded) {
+   if (result != XmlRecord::ProcessingResult::Succeeded) {
       // The result was either Failed (= abort) or FoundDuplicate (= stop trying to process the current record), so we
       // bail here.
       return result;
@@ -144,7 +144,7 @@ XmlRecord::ProcessingResult XmlRecipeRecord::normaliseAndStoreInDb(std::shared_p
    // Recipe class does not (currently) have an interface for adding BrewNotes.  It suffices to tell each BrewNote what
    // its Recipe is, something we achieve via template specialisation of XmlNamedEntityRecord::setContainingEntity
 
-   return XmlRecord::Succeeded;
+   return XmlRecord::ProcessingResult::Succeeded;
 }
 
 template<typename CNE>

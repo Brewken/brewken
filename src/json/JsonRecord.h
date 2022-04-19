@@ -26,11 +26,16 @@
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
 
+class JsonCoding;
 
 /**
  * \brief This class and its derived classes represent a data record in a JSON document.
  *
- *        .:TODO:. At some point we should extract common code from XmlRecord and JsonRecord
+ *        NB: In theory we should separate out BeerJSON specifics from more generic JSON capabilities, in case there is
+ *        ever some other format of JSON that we want to use, or in case future versions of BeerJSON change radically.
+ *        In practice, these things seem sufficiently unlikely that we can cross that bridge if and when we come to it.
+ *
+ *        .:TBD:. At some point we should see if we can extract common code from XmlRecord and JsonRecord
  */
 class JsonRecord {
 public:
@@ -42,7 +47,7 @@ public:
     *                       DB, in which case we should skip over this record and carry on processing the rest of the
     *                       file
     */
-   enum ProcessingResult {
+   enum class ProcessingResult {
       Succeeded,
       Failed,
       FoundDuplicate
@@ -50,27 +55,132 @@ public:
 
    /**
     * \brief The types of fields that we know how to process.  Used in \b FieldDefinition records
+    *
+    *        JSON
+    *        ----
+    *        Per https://www.json.org/json-en.html, in JSON, a value is one of the following:
+    *           object
+    *           array
+    *           string
+    *           number
+    *           "true"
+    *           "false"
+    *           "null"
+    *
+    *        JSON also offers "integer" as a specialisation of number (integer being a JSON type used in the definition
+    *        of number).
+    *
+    *        Correspondingly (more or less), if you have a boost::json::value (see comment in json/JsonSchema.cpp for
+    *        why we are using Boost.JSON) then its kind() member function will return one of the following values:
+    *           boost::json::kind::object
+    *           boost::json::kind::array
+    *           boost::json::kind::string
+    *           boost::json::kind::uint64
+    *           boost::json::kind::int64
+    *           boost::json::kind::double_
+    *           boost::json::kind::bool_
+    *           boost::json::kind::null
+    *
+    *       JSON Schemas Generally
+    *       ----------------------
+    *       JSON itself doesn't have an enum type, but a JSON schema (see https://json-schema.org/) can achieve the same
+    *       effect by restricting the values a string can take to those in a fixed list.
+    *
+    *       Similarly, a JSON schema can enforce restrictions on string values via regular expressions (see
+    *       https://json-schema.org/understanding-json-schema/reference/regular_expressions.html).  This is used in
+    *       BeerJSON for its DateType -- see below.
+    *
+    *       BeerJSON Specifically
+    *       ---------------------
+    *       In contrast with BeerXML and our database store, where we specify a canonical unit of measure for each field
+    *       (eg temperatures are always stored as degrees celcius), BeerJSON allows lots of different units of measure.
+    *       Thus a lot of the base types in BeerJSON consist of unit & value, where unit is an enum (ie string with
+    *       restricted set of values) and value is a decimal or integer number.  This is a more universal approach in
+    *       allowing multiple units to be used for temperature, time, color, etc, but it also means we have a lot more
+    *       "base" types than for BeerXML or ObjectStore.  (It also means that it's harder for the schema to do bounds
+    *       validation on such values.)
+    *
+    *       In some cases, BeerJSON only allows one unit of measurement, but the same structure of {unit, value} is
+    *       maintained, presumably for extensibility.
+    *
+    *       The main BeerJSON base types are:
+    *          AcidityType:        unit ∈ {"pH"} (NB: one-element set)
+    *                              value : decimal
+    *          BitternessType:     unit ∈ {"IBUs"} (NB: one-element set)
+    *                              value : decimal
+    *          CarbonationType:    unit ∈ {"vols", "g/l"}
+    *                              value : decimal
+    *          ColorType:          unit ∈ {"EBC", "Lovi", "SRM"}
+    *                              value : decimal
+    *          ConcentrationType:  unit ∈ {"ppm", "ppb", "mg/l"}
+    *                              value : decimal
+    *          DiastaticPowerType: unit ∈ {"Lintner", "WK"}
+    *                              value : decimal
+    *          GravityType:        unit ∈ {"sg", "plato", "brix" }
+    *                              value : decimal
+    *          MassType:           unit ∈ {"mg", "g", "kg", "lb", "oz"}
+    *                              value : decimal
+    *          PercentType:        unit ∈ {"%"} (NB: one-element set)
+    *                              value : decimal
+    *          PressureType:       unit ∈ {"kPa", "psi", "bar" }
+    *                              value : decimal
+    *          SpecificHeatType:   unit ∈ {"Cal/(g C)", "J/(kg K)", "BTU/(lb F)" }
+    *                              value : decimal
+    *          SpecificVolumeType: unit ∈ {"qt/lb", "gal/lb", "gal/oz", "l/g", "l/kg", "floz/oz", "m^3/kg", "ft^3/lb"}
+    *                              value : decimal
+    *          TemperatureType:    unit ∈ {"C", "F"}
+    *                              value : decimal
+    *          TimeType:           unit ∈ {"sec", "min", "hr", "day", "week"}
+    *                              value : integer
+    *          UnitType:           unit ∈ {"1", "unit", "each", "dimensionless", "pkg"}
+    *                              value : decimal
+    *          ViscosityType:      unit ∈ {"cP", "mPa-s"}
+    *                              value : decimal
+    *          VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz", "ipt", "iqt", "igal", "ibbl"}
+    *                              value : decimal
+    *
+    *       Furthermore, for many of these types, an additional "range" type is defined - eg GravityRangeType,
+    *       BitternessRangeType, etc are used in beer styles.  The range type is just an object with two required elements,
+    *       minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType, BitternessType
+    *       for the members of BitternessRangeType, etc).
+    *
+    *       BeerJSON also has DateType which is a regexp restriction on a string.  The regexp is a bit cumbersome, but
+    *       it boils down to allowing either of the following formats where 'd' is a digit (ie 0-9):
+    *          dddd-dd-dd
+    *          dddd-dd-ddTdd:dd:dd
+    *       We take this to mean ISO 8601 is used for date fields.  (Hurrah!)
     */
    enum class FieldType {
-      Bool,
-      Int,
-      UInt,
-      Double,
-      String,
-      Date,
-      Percent,        // .:TODO.JSON:. Implement!
-      Color,          // .:TODO.JSON:. Implement!
-      MassOrVolume,   // .:TODO.JSON:. Implement!
-      DiastaticPower, // .:TODO.JSON:. Implement!
-      Acidity,        // .:TODO.JSON:. Implement!
-      Viscosity,      // .:TODO.JSON:. Implement!
-      Concentration,  // .:TODO.JSON:. Implement!
-      Gravity,        // .:TODO.JSON:. Implement!
-      Enum,
-      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
-      RecordSimple,       // Single contained record
-      RecordComplex,      // Zero, one or more contained records
-      INVALID
+      //
+      // These values correspond with base JSON types
+      //
+      Bool,             // boost::json::kind::bool_
+      Int,              // boost::json::kind::int64
+      UInt,             // boost::json::kind::uint64
+      Double,           // boost::json::kind::double_
+      String,           // boost::json::kind::string
+      Enum,             // A string that we need to map to/from our own enum
+      Array,            // Zero, one or more contained records
+      //
+      // These values correspond with BeerJSON types
+      //
+      Date,             // DateType
+      Acidity,          // .:TODO.JSON:. Implement!
+      Bitterness,       // .:TODO.JSON:. Implement!
+      Carbonation,      // .:TODO.JSON:. Implement!
+      Color,            // .:TODO.JSON:. Implement!
+      Concentration,    // .:TODO.JSON:. Implement! Examples for concentration include ppm, ppb, and mg/l
+      DiastaticPower,   // .:TODO.JSON:. Implement!
+      Gravity,          // .:TODO.JSON:. Implement!
+      Percent,          // .:TODO.JSON:. Implement!
+      Temperature,      // .:TODO.JSON:. Implement!
+      Viscosity,        // .:TODO.JSON:. Implement!
+      //
+      // Other
+      //
+      MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
+                        // so it's a useful concept for us .:TODO.JSON:. Implement!
+      RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
    };
 
    /**
@@ -80,8 +190,7 @@ public:
    struct FieldDefinition {
       FieldType           fieldType;
       QString             xPath;
-      BtStringConst const & propertyName;  // If fieldType == RecordComplex, then this is used only on export
-                                           // If fieldType == RequiredConstant, then this is actually the constant value
+      BtStringConst const & propertyName;  // If fieldType == RequiredConstant, then this is actually the constant value
       EnumStringMapping const * enumMapping;
    };
 
@@ -99,7 +208,7 @@ public:
     *                             there is none
     */
    JsonRecord(QString const & recordName,
-//              JsonCoding const & jsonCoding,
+              JsonCoding const & jsonCoding,
               FieldDefinitions const & fieldDefinitions,
               QString const & namedEntityClassName);
 
@@ -133,14 +242,12 @@ public:
     * \brief From the supplied record (ie node) in an JSON document, load into memory the data it contains, including
     *        any other records nested inside it.
     *
-    * \param domSupport
     * \param rootNodeOfRecord
     * \param userMessage Where to append any error messages that we want the user to see on the screen
     *
     * \return \b true if load succeeded, \b false if there was an error
     */
-///   bool load(xalanc::DOMSupport & domSupport,
-///             xalanc::XalanNode * rootNodeOfRecord,
+///   bool load(xalanc::XalanNode * rootNodeOfRecord,
 ///             QTextStream & userMessage);
 
    /**
@@ -168,13 +275,9 @@ public:
     * \brief Export to JSON
     * \param namedEntityToExport The object that we want to export to JSON
     * \param out Where to write the JSON
-    * \param indentLevel Current number of indents to put before each opening tag (default 1)
-    * \param indentString String to use for each indent (default two spaces)
     */
    void toJson(NamedEntity const & namedEntityToExport,
-              QTextStream & out,
-              int indentLevel = 1,
-              char const * const indentString = "  ") const;
+              QTextStream & out) const;
 
 private:
    /**
@@ -250,16 +353,6 @@ protected:
                                 char const * const indentString) const;
 
    /**
-    * \brief Writes a comment to the JSON output when there is no contained record to output (to make it explicit that
-    *        the omission was not by accident.
-    */
-   void writeNone(JsonRecord const & subRecord,
-                  NamedEntity const & namedEntityToExport,
-                  QTextStream & out,
-                  int indentLevel,
-                  char const * const indentString) const;
-
-   /**
     * \brief Given a name that is a duplicate of an existing one, modify it to a potential alternative.
     *        Callers should call this function as many times as necessary to find a non-clashing name.
     *
@@ -273,7 +366,7 @@ protected:
    static void modifyClashingName(QString & candidateName);
 
    QString const            recordName;
-///   JsonCoding const &        jsonCoding;
+   JsonCoding const &        jsonCoding;
    FieldDefinitions const & fieldDefinitions;
 public:
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.

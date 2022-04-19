@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonSchema.cpp is part of Brewken, and is copyright the following authors 2021:
+ * json/JsonSchema.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -231,10 +231,10 @@ JsonSchema::JsonSchema(char const * const baseDir,
 // header file)
 JsonSchema::~JsonSchema() = default;
 
-bool JsonSchema::validate(boost::json::value const & document, QTextStream & userMessage) {
+bool JsonSchema::validate(boost::json::value const & document, QTextStream & userMessage) const {
 
-   // Now pass the input document into Valijson (via a wrapper as with the base schema document) and validate it against the
-   // schema
+   // Now pass the input document into Valijson (via a wrapper as with the base schema document) and validate it against
+   // the schema
    valijson::adapters::BoostJsonAdapter inputAdapter{document};
    valijson::Validator validator;
    valijson::ValidationResults validationResults;
@@ -257,8 +257,6 @@ bool JsonSchema::validate(boost::json::value const & document, QTextStream & use
 }
 
 
-// This is the callback we give to Valijson, which then forwards it on to whatever the last JsonSchema object we were
-// dealing with on this thread was (which should be the one that gave the callback to Valijson).
 boost::json::value const * JsonSchema::fetchReferencedDocument(std::string const & uri) {
    // It's a coding error if we asked Valijson to load a schema without setting currentJsonSchema
    Q_ASSERT(currentJsonSchema);

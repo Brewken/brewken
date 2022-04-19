@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlCoding.h is part of Brewken, and is copyright the following authors 2020:
+ * xml/XmlCoding.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@
  * \brief An instance of this class holds information about a particular XML encoding (eg BeerXML 1.0) including the
  *        parameters needed to construct the various \b XmlRecord objects used to parse a document of this encoding.
  *
- * Broadly speaking we think of an "brewing" XML document (eg a BeerXML document) as a tree of "records" represented by
+ * Broadly speaking we think of a "brewing" XML document (eg a BeerXML document) as a tree of "records" represented by
  * \b XmlRecord and its child classes.  (Note that this is a simpler, and subtly different, way of abstracting things
  * than the traditional BeerXML terminology, which distinguishes between "records" and "record sets".)
  *

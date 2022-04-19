@@ -37,7 +37,7 @@ protected:
     */
    virtual XmlRecord::ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                              QTextStream & userMessage,
-                                                             XmlRecordCount & stats);
+                                                             ImportRecordCount & stats);
 
    /**
     * \brief We need to override \c XmlRecord::propertiesToXml for similar reasons that we override

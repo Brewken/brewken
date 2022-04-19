@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecordCount.cpp is part of Brewken, and is copyright the following authors 2020:
+ * utils/ImportRecordCount.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,13 +13,13 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "xml/XmlRecordCount.h"
+#include "utils/ImportRecordCount.h"
 
-XmlRecordCount::XmlRecordCount() : skips{}, oks{} {
+ImportRecordCount::ImportRecordCount() : skips{}, oks{} {
    return;
 }
 
-void XmlRecordCount::skipped(QString recordName) {
+void ImportRecordCount::skipped(QString recordName) {
    // If we already have a count, get it and add one, otherwise start from 1
    // If QMap holds an item with key recordName then insert() will just replace its existing value
    this->skips.insert(recordName,
@@ -27,7 +27,7 @@ void XmlRecordCount::skipped(QString recordName) {
    return;
 }
 
-void XmlRecordCount::processedOk(QString recordName) {
+void ImportRecordCount::processedOk(QString recordName) {
    // Same implementation as skipped() above, but not (IMHO) enough code duplication to pull out into a common
    // function
    this->oks.insert(recordName,
@@ -35,12 +35,12 @@ void XmlRecordCount::processedOk(QString recordName) {
    return;
 }
 
-bool XmlRecordCount::writeToUserMessage(QTextStream & userMessage) {
+bool ImportRecordCount::writeToUserMessage(QTextStream & userMessage) {
 
    if (this->oks.isEmpty() && this->skips.isEmpty()) {
       //
-      // Haven't managed to get the XSD to enforce that there is at least some recognisable content in the file, so we
-      // need to handle this case ourselves.
+      // For BeerXML imports, we haven't managed to get the XSD to enforce that there is at least some recognisable
+      // content in the file, so we need to handle this case ourselves.
       //
       userMessage << this->tr("Couldn't find any recognisable data in the file!");
       return false;
