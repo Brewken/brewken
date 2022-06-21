@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/EnumStringMapping.h is part of Brewken, and is copyright the following authors 2021:
+ * utils/EnumStringMapping.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -52,6 +52,11 @@ struct EnumAndItsString {
  *        We don't actually bother creating hashmaps or similar between enum values and string representations
  *        because it's usually going to be a short list that we can search through pretty quickly (probably faster
  *        than calculating the hash of a key!)
+ *
+ *        In theory, it would suffice to use an array here rather than a vector, because the data for the mapping is
+ *        always known at compile-time.  This would also allow us to make more things const or constexpr.  In practice,
+ *        it's a bit clunky using arrays (eg length of std::array is a template parameter that cannot always be deduced
+ *        by the compiler when it's an array of structs), and the extra "cost" of a vector here is negligible.
  */
 class EnumStringMapping : public QVector<EnumAndItsString> {
 public:

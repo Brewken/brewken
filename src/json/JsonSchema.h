@@ -30,28 +30,32 @@ class QTextStream;
  *        Note that this class ONLY wraps the JSON schema (see https://json-schema.org/).  It does not hold any of the
  *        info needed for us to process the file.  For that, see \c JsonCoding.  (Each \c JsonCoding has a corresponding
  *        \c JsonSchema.)
+ *
+ *        We could combine \c JsonCoding and \c JsonSchema into a single class, but, for the moment, we'd rather have
+ *        two small classes than one big one, especially as neither class needs to know the inner workings of the other.
  */
 class JsonSchema {
 public:
 
-   // .:TODO:. Each JsonSchema is a const (after construction) singleton for the schema it represents (eg BeerJSON 2.1),
-   //          so we should have a registry of them.
+   // Each JsonSchema is a const (after construction) singleton for the schema it represents (eg BeerJSON 2.1), so this
+   // enum lists all the available ones.
+   enum class Id {
+      BEER_JSON_2_1
+   };
 
-   /**
-    * \brief Constructor
+   /*!
+    * \brief This should be the ONLY way you get an instance.
     *
-    *        The only reason there are two parameters (directory and file name) rather than one (fully qualified file
-    *        name) is because it makes reusing some code inside the class a little easier.
+    *        Note there are two advantages of this over, say, global constant variables of type \c JsonSchema.  Firstly
+    *        we only construct a \c JsonSchema if we are actually going to use it.  Secondly, and more importantly, we
+    *        do not call the constructor until after all Qt start-up has happened, so we can guarantee that, eg, Qt
+    *        resources are accessible.
     *
-    * \param baseDir The directory path in which these schema files live.  Usually a resource path, eg
-    *                ":/schemas/beerjson/1.0"
-    * \param fileName  The file name, inside \c baseDir, of the initial file of the schema, eg "beer.json".  (This may
-    *                  reference other files via $ref tags in the schema JSON, these will be loaded automatically from
-    *                  \c baseDir.)
+    * \param id Which schema you want to get.
     */
-   JsonSchema(char const * const baseDir,
-              char const * const fileName);
+   static JsonSchema const & instance(JsonSchema::Id id);
 
+   //! Destructor needs to be public as, internally, we manage instances of JsonSchema in std::unique_ptr
    ~JsonSchema();
 
    /**
@@ -69,6 +73,33 @@ private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
+
+
+   /**
+    * \brief Hidden Constructor
+    *
+    *        The only reason there are two parameters (directory and file name) rather than one (fully qualified file
+    *        name) is because it makes reusing some code inside the class a little easier.
+    *
+    * \param baseDir The directory path in which these schema files live.  Usually a resource path, eg
+    *                ":/schemas/beerjson/1.0"
+    * \param fileName  The file name, inside \c baseDir, of the initial file of the schema, eg "beer.json".  (This may
+    *                  reference other files via $ref tags in the schema JSON, these will be loaded automatically from
+    *                  \c baseDir.)
+    */
+   JsonSchema(char const * const baseDir,
+              char const * const fileName);
+
+
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
+   JsonSchema(JsonSchema const&) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   JsonSchema & operator=(JsonSchema const&) = delete;
+   //! No move constructor
+   JsonSchema(JsonSchema &&) = delete;
+   //! No move assignment
+   JsonSchema & operator=(JsonSchema &&) = delete;
+
 
    /**
     * \brief This is the callback we give to Valijson, which then forwards it on to whatever the last JsonSchema object

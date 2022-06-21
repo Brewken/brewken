@@ -15,6 +15,9 @@
  =====================================================================================================================*/
 #include "json/JsonSchema.h"
 
+#include <map>
+#include <memory>
+
 #include <QDebug>
 #include <QMap>
 #include <QString>
@@ -52,6 +55,12 @@
 
 // Private implementation details that don't need access to class member variables
 namespace {
+   // All the schemas that have been summoned into existence
+   // We don't use QMap here because it doesn't support storing std::unique_ptr, and we'd like the map to "own" the
+   // schemas.  (As noted elsewhere, we don't want the schemas to be constructed too early in program execution, hence
+   // why we are not using static variables to hold them.)
+   std::map<JsonSchema::Id, std::unique_ptr<JsonSchema const>> jsonSchemas;
+
    //
    // A JSON schema can be spread across several files linked together via "$ref" statements in the JSON.  Valijson uses
    // callbacks to fetch such referenced JSON documents when it is loading in a schema.  We cannot use a non-static
@@ -230,6 +239,41 @@ JsonSchema::JsonSchema(char const * const baseDir,
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
 JsonSchema::~JsonSchema() = default;
+
+JsonSchema const & JsonSchema::instance(JsonSchema::Id id) {
+   // Once we are using C++20, we can write the following:
+   ///if (jsonSchemas.contains(id)) {
+   ///   return *jsonSchemas.value(id);
+   ///}
+   auto result = jsonSchemas.find(id);
+   if (result != jsonSchemas.end()) {
+      return *result->second;
+   }
+   char const * baseDir = nullptr;
+   char const * fileName = nullptr;
+   switch (id) {
+      case JsonSchema::Id::BEER_JSON_2_1:
+         baseDir = ":/schemas/beerjson/1.0";
+         fileName = "beer.json";
+         break;
+   }
+   // We assert that all possibilities were covered in the switch statement above.  (We'd get a compiler warning if not,
+   // as JsonSchema::Id is a strongly-typed enum.)
+   Q_ASSERT(baseDir);
+   Q_ASSERT(fileName);
+
+   // We want the map to own the created object, so we construct it in place, rather than passing a copy
+   // Note that we cannot use std::make_unique here as we have private constructor & destructor.  However,
+   // std::unique_ptr<...>(new ...) is good enough for us.  (If we were ever at the point of new throwing exceptions
+   // because of lack of memory, we'd have bigger problems than exception safety.)
+   auto insertionResult = jsonSchemas.emplace(std::make_pair(id, std::unique_ptr<JsonSchema>{new JsonSchema(baseDir, fileName)}));
+   // We assert that the insertion succeeded (because the map did not already contain an item with the specified key)
+   Q_ASSERT(insertionResult.second);
+
+   //
+   return *insertionResult.first->second;
+}
+
 
 bool JsonSchema::validate(boost::json::value const & document, QTextStream & userMessage) const {
 
