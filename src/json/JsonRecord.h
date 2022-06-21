@@ -22,6 +22,7 @@
 #include <QTextStream>
 #include <QVector>
 
+#include "json/JsonRecordType.h"
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
@@ -29,13 +30,9 @@
 class JsonCoding;
 
 /**
- * \brief This class and its derived classes represent a data record in a JSON document.
- *
- *        NB: In theory we should separate out BeerJSON specifics from more generic JSON capabilities, in case there is
- *        ever some other format of JSON that we want to use, or in case future versions of BeerJSON change radically.
- *        In practice, these things seem sufficiently unlikely that we can cross that bridge if and when we come to it.
- *
- *        .:TBD:. At some point we should see if we can extract common code from XmlRecord and JsonRecord
+ * \brief This class holds data about a specific individual record that we are reading from or writing to a JSON
+ *        document.  It uses data from a corresponding singleton const \c JsonRecordType to map between our internal
+ *        data structures and fields in a JSON document.
  */
 class JsonRecord {
 public:
@@ -54,168 +51,10 @@ public:
    };
 
    /**
-    * \brief The types of fields that we know how to process.  Used in \b FieldDefinition records
-    *
-    *        JSON
-    *        ----
-    *        Per https://www.json.org/json-en.html, in JSON, a value is one of the following:
-    *           object
-    *           array
-    *           string
-    *           number
-    *           "true"
-    *           "false"
-    *           "null"
-    *
-    *        JSON also offers "integer" as a specialisation of number (integer being a JSON type used in the definition
-    *        of number).
-    *
-    *        Correspondingly (more or less), if you have a boost::json::value (see comment in json/JsonSchema.cpp for
-    *        why we are using Boost.JSON) then its kind() member function will return one of the following values:
-    *           boost::json::kind::object
-    *           boost::json::kind::array
-    *           boost::json::kind::string
-    *           boost::json::kind::uint64
-    *           boost::json::kind::int64
-    *           boost::json::kind::double_
-    *           boost::json::kind::bool_
-    *           boost::json::kind::null
-    *
-    *       JSON Schemas Generally
-    *       ----------------------
-    *       JSON itself doesn't have an enum type, but a JSON schema (see https://json-schema.org/) can achieve the same
-    *       effect by restricting the values a string can take to those in a fixed list.
-    *
-    *       Similarly, a JSON schema can enforce restrictions on string values via regular expressions (see
-    *       https://json-schema.org/understanding-json-schema/reference/regular_expressions.html).  This is used in
-    *       BeerJSON for its DateType -- see below.
-    *
-    *       BeerJSON Specifically
-    *       ---------------------
-    *       In contrast with BeerXML and our database store, where we specify a canonical unit of measure for each field
-    *       (eg temperatures are always stored as degrees celcius), BeerJSON allows lots of different units of measure.
-    *       Thus a lot of the base types in BeerJSON consist of unit & value, where unit is an enum (ie string with
-    *       restricted set of values) and value is a decimal or integer number.  This is a more universal approach in
-    *       allowing multiple units to be used for temperature, time, color, etc, but it also means we have a lot more
-    *       "base" types than for BeerXML or ObjectStore.  (It also means that it's harder for the schema to do bounds
-    *       validation on such values.)
-    *
-    *       In some cases, BeerJSON only allows one unit of measurement, but the same structure of {unit, value} is
-    *       maintained, presumably for extensibility.
-    *
-    *       The main BeerJSON base types are:
-    *          AcidityType:        unit ∈ {"pH"} (NB: one-element set)
-    *                              value : decimal
-    *          BitternessType:     unit ∈ {"IBUs"} (NB: one-element set)
-    *                              value : decimal
-    *          CarbonationType:    unit ∈ {"vols", "g/l"}
-    *                              value : decimal
-    *          ColorType:          unit ∈ {"EBC", "Lovi", "SRM"}
-    *                              value : decimal
-    *          ConcentrationType:  unit ∈ {"ppm", "ppb", "mg/l"}
-    *                              value : decimal
-    *          DiastaticPowerType: unit ∈ {"Lintner", "WK"}
-    *                              value : decimal
-    *          GravityType:        unit ∈ {"sg", "plato", "brix" }
-    *                              value : decimal
-    *          MassType:           unit ∈ {"mg", "g", "kg", "lb", "oz"}
-    *                              value : decimal
-    *          PercentType:        unit ∈ {"%"} (NB: one-element set)
-    *                              value : decimal
-    *          PressureType:       unit ∈ {"kPa", "psi", "bar" }
-    *                              value : decimal
-    *          SpecificHeatType:   unit ∈ {"Cal/(g C)", "J/(kg K)", "BTU/(lb F)" }
-    *                              value : decimal
-    *          SpecificVolumeType: unit ∈ {"qt/lb", "gal/lb", "gal/oz", "l/g", "l/kg", "floz/oz", "m^3/kg", "ft^3/lb"}
-    *                              value : decimal
-    *          TemperatureType:    unit ∈ {"C", "F"}
-    *                              value : decimal
-    *          TimeType:           unit ∈ {"sec", "min", "hr", "day", "week"}
-    *                              value : integer
-    *          UnitType:           unit ∈ {"1", "unit", "each", "dimensionless", "pkg"}
-    *                              value : decimal
-    *          ViscosityType:      unit ∈ {"cP", "mPa-s"}
-    *                              value : decimal
-    *          VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz", "ipt", "iqt", "igal", "ibbl"}
-    *                              value : decimal
-    *
-    *       Furthermore, for many of these types, an additional "range" type is defined - eg GravityRangeType,
-    *       BitternessRangeType, etc are used in beer styles.  The range type is just an object with two required elements,
-    *       minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType, BitternessType
-    *       for the members of BitternessRangeType, etc).
-    *
-    *       BeerJSON also has DateType which is a regexp restriction on a string.  The regexp is a bit cumbersome, but
-    *       it boils down to allowing either of the following formats where 'd' is a digit (ie 0-9):
-    *          dddd-dd-dd
-    *          dddd-dd-ddTdd:dd:dd
-    *       We take this to mean ISO 8601 is used for date fields.  (Hurrah!)
-    */
-   enum class FieldType {
-      //
-      // These values correspond with base JSON types
-      //
-      Bool,             // boost::json::kind::bool_
-      Int,              // boost::json::kind::int64
-      UInt,             // boost::json::kind::uint64
-      Double,           // boost::json::kind::double_
-      String,           // boost::json::kind::string
-      Enum,             // A string that we need to map to/from our own enum
-      Array,            // Zero, one or more contained records
-      //
-      // These values correspond with BeerJSON types
-      //
-      Date,             // DateType
-      Acidity,          // .:TODO.JSON:. Implement!
-      Bitterness,       // .:TODO.JSON:. Implement!
-      Carbonation,      // .:TODO.JSON:. Implement!
-      Color,            // .:TODO.JSON:. Implement!
-      Concentration,    // .:TODO.JSON:. Implement! Examples for concentration include ppm, ppb, and mg/l
-      DiastaticPower,   // .:TODO.JSON:. Implement!
-      Gravity,          // .:TODO.JSON:. Implement!
-      Percent,          // .:TODO.JSON:. Implement!
-      Temperature,      // .:TODO.JSON:. Implement!
-      Viscosity,        // .:TODO.JSON:. Implement!
-      //
-      // Other
-      //
-      MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
-                        // so it's a useful concept for us .:TODO.JSON:. Implement!
-      RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
-   };
-
-   /**
-    * \brief How to parse every field that we want to be able to read out of the JSON file.  See class description for
-    *        more details.
-    */
-   struct FieldDefinition {
-      FieldType           fieldType;
-      QString             xPath;
-      BtStringConst const & propertyName;  // If fieldType == RequiredConstant, then this is actually the constant value
-      EnumStringMapping const * enumMapping;
-   };
-
-   typedef QVector<FieldDefinition> FieldDefinitions;
-
-   /**
     * \brief Constructor
-    * \param recordName The name of the outer tag around this type of record, eg "RECIPE" for a "<RECIPE>...</RECIPE>"
-    *                   record in BeerJSON.
-    * \param jsonCoding An \b JsonCoding object representing the JSON Coding we are using (eg BeerJSON 2.1).  This is what
-    *                   we'll need to look up how to handle nested records inside this one.
-    * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
-    *                         to parse them.
-    * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, or empty string if
-    *                             there is none
     */
-   JsonRecord(QString const & recordName,
-              JsonCoding const & jsonCoding,
-              FieldDefinitions const & fieldDefinitions,
-              QString const & namedEntityClassName);
-
-   /**
-    * \brief Get the record name (in this coding)
-    */
-   QString getRecordName() const;
+   JsonRecord(JsonRecordType const & recordType);
+   ~JsonRecord();
 
    /**
     * \brief Getter for the NamedParameterBundle we read in from this record
@@ -345,7 +184,7 @@ protected:
     * \param namedEntityToExport The object containing (or referencing) the data we want to export to JSON
     * \param out Where to write the JSON
     */
-   virtual void subRecordToJson(JsonRecord::FieldDefinition const & fieldDefinition,
+   virtual void subRecordToJson(JsonRecordType::FieldDefinition const & fieldDefinition,
                                 JsonRecord const & subRecord,
                                 NamedEntity const & namedEntityToExport,
                                 QTextStream & out,
@@ -365,14 +204,9 @@ protected:
     */
    static void modifyClashingName(QString & candidateName);
 
-   QString const            recordName;
-   JsonCoding const &        jsonCoding;
-   FieldDefinitions const & fieldDefinitions;
-public:
-   // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
-   // Blank for the root record (which is just a container and doesn't have a NamedEntity).
-   QString const namedEntityClassName;
 protected:
+   JsonRecordType const & recordType;
+
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
    // this->namedEntity
    NamedParameterBundle namedParameterBundle;
@@ -399,7 +233,7 @@ protected:
    // Keep track of any child (ie contained) records
    //
    struct ChildRecord {
-      JsonRecord::FieldDefinition const * fieldDefinition;
+      JsonRecordType::FieldDefinition const * fieldDefinition;
       std::shared_ptr<JsonRecord> jsonRecord;
    };
    QVector<ChildRecord> childRecords;

@@ -28,8 +28,13 @@
 #include "json/JsonSchema.h"
 
 /**
- * \brief An instance of this class holds information about a particular JSON encoding (eg BeerJSON 2.1) including the
- *        parameters needed to construct the various \b JsonRecord objects used to parse a document of this encoding.
+ * \brief An instance of this class holds information about a particular JSON encoding (eg BeerJSON 2.1).  Specifically,
+ *        that information includes:
+ *          • the corresponding \c JsonSchema that we use to validate a JSON document
+ *          • the \b JsonRecordType objects that define how we map BeerJSON objects to our own data structures.
+ *
+ *        As we are parsing or creating a JSON document, we'll create a \b JsonRecord for each record we are reading /
+ *        writing, using the relevant \b JsonRecordType as a template.
  *
  *        Similar to xml/XmlCoding.h
  */
@@ -63,7 +68,7 @@ public:
 /*   template<typename T>
    static JsonRecord * construct(QString const & recordName,
                                 JsonCoding const & xmlCoding,
-                                JsonRecord::FieldDefinitions const & fieldDefinitions) {
+                                JsonRecordType::FieldDefinitions const & fieldDefinitions) {
       return new JsonNamedEntityRecord<T>{recordName, xmlCoding, fieldDefinitions};
    }*/
 
@@ -71,35 +76,51 @@ public:
     * \brief This is just a convenience typedef representing a pointer to a template specialisation of
     *        \b JsonCoding::construct().
     */
-   typedef JsonRecord * (*JsonRecordConstructorWrapper)(QString const & recordName,
+/*   typedef JsonRecord * (*JsonRecordConstructorWrapper)(QString const & recordName,
                                                       JsonCoding const &,
-                                                      JsonRecord::FieldDefinitions const &);
-
+                                                      JsonRecordType::FieldDefinitions const &);
+*/
    /**
-    * Given an JSON element that corresponds to a record, this is the info we need to construct an \b JsonRecord object
+    * Given an JSON element that corresponds to a record, this is the info we need to construct a \b JsonRecord object
     * for this encoding.
     */
-   struct JsonRecordDefinition {
+/*   struct JsonRecordDefinition {
       JsonRecordConstructorWrapper constructorWrapper;
-      JsonRecord::FieldDefinitions const * fieldDefinitions;
-   };
+      JsonRecordType::FieldDefinitions const * fieldDefinitions;
+   };*/
 
    /**
     * \brief Constructor
     * \param name The name of this encoding (eg "BeerJSON 1.0").  Used primarily for logging.
+    * \param version The version to write out to BeerJSON records
     * \param schema The wrapper around the JSON schema that we'll use to validate the input (if we are reading from,
     *               rather than writing to, JSON).
-    * \param entityNameToJsonRecordDefinition Mapping from JSON object name to the information we need to construct a
-    *                                         suitable \b JsonRecord object.
+    * \param jsonRecordDefinitions
+    *
+    *
+    *
+///    * \param entityNameToJsonRecordDefinition Mapping from JSON object name to the information we need to construct a
+///    *                                         suitable \b JsonRecord object.
     */
-   JsonCoding(QString const & name,
-              JsonSchema const & schema,
-              QHash<QString, JsonRecordDefinition> const & entityNameToJsonRecordDefinition);
+   JsonCoding(char const * const name,
+              char const * const version,
+              JsonSchema::Id const schemaId,
+              std::initializer_list<JsonRecordType> jsonRecordDefinitions);
+///              QHash<QString, JsonRecordDefinition> const & entityNameToJsonRecordDefinition);
 
    /**
     * \brief Destructor
     */
    ~JsonCoding();
+
+   /**
+    * \brief Validate a JSON document against the JSON schema used by this JsonCoding
+    * \param inputDocument JSON document to validate
+    * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
+    *                    or, in the event of success, summarising what was read in) should be appended to this string.
+    * \return \c true if validation succeeded, \c false otherwise
+    */
+   bool validateAgainstSchema(boost::json::value & inputDocument, QTextStream & userMessage) const;
 
    /**
     * \brief Check whether we know how to process a record of a given (JSON tag) name
@@ -117,26 +138,19 @@ public:
     * \return A shared pointer to a new \b JsonRecord constructed on the heap.  (The caller will be the sole owner of
     *         this pointer.)
     */
-   std::shared_ptr<JsonRecord> getNewJsonRecord(QString recordName) const;
+///   std::shared_ptr<JsonRecord> getNewJsonRecord(QString recordName) const;
 
    /**
     * \brief Validate JSON file against schema, load its contents into objects, and store then in the DB
     *
-    * \param documentData The contents of the JSON file, which the caller should already have loaded into memory
-    * \param fileName Used only for logging / error message
-    * \param domErrorHandler The rules for handling any errors encountered in the file - in particular which errors
-    *                        should ignored and whether any adjustment needs to be made to the line numbers where
-    *                        errors are found when creating user-readable messages.  (This latter is needed because in
-    *                        some encodings, eg BeerJSON, we need to modify the in-memory copy of the JSON file before
-    *                        parsing it.  See comments in the BeerJSON-specific files for more details.)
+    * \param fileName The JSON file to read
     * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
     *                    or, in the event of success, summarising what was read in) should be appended to this string.
     *
     * \return true if file validated OK (including if there were "errors" that we can safely ignore)
     *         false if there was a problem that means it's not worth trying to read in the data from the file
     */
-   bool validateLoadAndStoreInDb(QByteArray const & documentData,
-                                 QString const & fileName,
+   bool validateLoadAndStoreInDb(QString const & fileName,
                                  QTextStream & userMessage) const;
 
 private:

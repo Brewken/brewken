@@ -15,6 +15,8 @@
  =====================================================================================================================*/
 #include "json/JsonCoding.h"
 
+#include <algorithm>
+
 #include <QDebug>
 #include <QFile>
 
@@ -28,13 +30,15 @@ public:
     * Constructor
     */
    impl(JsonCoding & self,
-        QString const & name,
-        JsonSchema const & schema,
-        QHash<QString, JsonRecordDefinition> const & entityNameToJsonRecordDefinition) :
+        char const * name,
+        char const * const version,
+        JsonSchema::Id const schemaId,
+        std::initializer_list<JsonRecordType> jsonRecordDefinitions) :
       self{self},
       name{name},
-      schema{schema},
-      entityNameToJsonRecordDefinition{entityNameToJsonRecordDefinition} {
+      version{version},
+      schemaId{schemaId},
+      jsonRecordDefinitions{jsonRecordDefinitions} {
       return;
    }
 
@@ -46,39 +50,34 @@ public:
    /**
     * \brief Validate JSON file against schema, then call other functions to load its contents and store them in the DB
     *
-    * \param documentData The contents of the JSON file, which the caller should already have loaded into memory
-    * \param fileName Used only for logging / error message
-    * \param domErrorHandler The rules for handling any errors encountered in the file - in particular which errors
-    *                        should ignored and whether any adjustment needs to be made to the line numbers where
-    *                        errors are found when creating user-readable messages.  (This latter is needed because in
-    *                        some encodings, eg BeerJSON, we need to modify the in-memory copy of the JSON file before
-    *                        parsing it.  See comments in the BeerJSON-specific files for more details.)
+    * \param fileName The JSON file to read
     * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
     *                    or, in the event of success, summarising what was read in) should be appended to this string.
     *
     * \return true if file validated OK (including if there were "errors" that we can safely ignore)
     *         false if there was a problem that means it's not worth trying to read in the data from the file
     */
-   bool validateLoadAndStoreInDb(QByteArray const & documentData,
-                                 QString const & fileName,
+   bool validateLoadAndStoreInDb(QString const & fileName,
                                  QTextStream & userMessage) {
       return false;
    }
 
    // Member variables for impl
    JsonCoding & self;
-   QString name;
-   JsonSchema const & schema;
-   QHash<QString, JsonRecordDefinition> const entityNameToJsonRecordDefinition;
+   QString const name;
+   QString const version;
+   JsonSchema::Id const schemaId;
+   QVector<JsonRecordType> const jsonRecordDefinitions;
 
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-JsonCoding::JsonCoding(QString const & name,
-                       JsonSchema const & schema,
-                       QHash<QString, JsonRecordDefinition> const & entityNameToJsonRecordDefinition) :
-   pimpl{std::make_unique<impl>(*this, name, schema, entityNameToJsonRecordDefinition)} {
+JsonCoding::JsonCoding(char const * name,
+                       char const * const version,
+                       JsonSchema::Id const schemaId,
+                       std::initializer_list<JsonRecordType> jsonRecordDefinitions) :
+   pimpl{std::make_unique<impl>(*this, name, version, schemaId, jsonRecordDefinitions)} {
    qDebug() << Q_FUNC_INFO;
    return;
 }
@@ -86,24 +85,45 @@ JsonCoding::JsonCoding(QString const & name,
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header file)
 JsonCoding::~JsonCoding() = default;
 
-bool JsonCoding::isKnownJsonRecordType(QString recordName) const {
-   return this->pimpl->entityNameToJsonRecordDefinition.contains(recordName);
+bool JsonCoding::validateAgainstSchema(boost::json::value & inputDocument, QTextStream & userMessage) const {
+   try {
+      JsonSchema const & schema = JsonSchema::instance(this->pimpl->schemaId);
+      if (!schema.validate(inputDocument, userMessage)) {
+         qWarning() << Q_FUNC_INFO << "Schema validation failed";
+         return false;
+      }
+
+   } catch (std::exception const & exception) {
+      qWarning() <<
+         Q_FUNC_INFO << "Caught exception while validating JSON file:" << exception.what();
+      userMessage << exception.what();
+      return false;
+   }
+   return true;
 }
 
 
-std::shared_ptr<JsonRecord> JsonCoding::getNewJsonRecord(QString recordName) const {
+bool JsonCoding::isKnownJsonRecordType(QString recordName) const {
+   auto result = std::find_if(
+      this->pimpl->jsonRecordDefinitions.begin(),
+      this->pimpl->jsonRecordDefinitions.end(),
+      [&recordName](JsonRecordType const & recordType){return recordType.recordName == recordName;}
+   );
+   return result != this->pimpl->jsonRecordDefinitions.end();
+}
+
+
+/*std::shared_ptr<JsonRecord> JsonCoding::getNewJsonRecord(QString recordName) const {
    JsonCoding::JsonRecordConstructorWrapper constructorWrapper =
       this->pimpl->entityNameToJsonRecordDefinition.value(recordName).constructorWrapper;
 
-   JsonRecord::FieldDefinitions const * fieldDefinitions =
+   JsonRecordType::FieldDefinitions const * fieldDefinitions =
       this->pimpl->entityNameToJsonRecordDefinition.value(recordName).fieldDefinitions;
 
    return std::shared_ptr<JsonRecord>(constructorWrapper(recordName, *this, *fieldDefinitions));
-}
+}*/
 
-
-bool JsonCoding::validateLoadAndStoreInDb(QByteArray const & documentData,
-                                         QString const & fileName,
-                                         QTextStream & userMessage) const {
-   return this->pimpl->validateLoadAndStoreInDb(documentData, fileName, userMessage);
+bool JsonCoding::validateLoadAndStoreInDb(QString const & fileName,
+                                          QTextStream & userMessage) const {
+   return this->pimpl->validateLoadAndStoreInDb(fileName, userMessage);
 }

@@ -27,14 +27,8 @@
 namespace {
 }
 
-JsonRecord::JsonRecord(QString const & recordName,
-                     JsonCoding const & jsonCoding,
-                     FieldDefinitions const & fieldDefinitions,
-                     QString const & namedEntityClassName) :
-   recordName{recordName},
-   jsonCoding{jsonCoding},
-   fieldDefinitions{fieldDefinitions},
-   namedEntityClassName{namedEntityClassName},
+JsonRecord::JsonRecord(JsonRecordType const & recordType) :
+   recordType{recordType},
    namedParameterBundle{NamedParameterBundle::NotStrict},
    namedEntity{nullptr},
    includeInStats{true},
@@ -42,9 +36,7 @@ JsonRecord::JsonRecord(QString const & recordName,
    return;
 }
 
-QString JsonRecord::getRecordName() const {
-   return this->recordName;
-}
+JsonRecord::~JsonRecord() = default;
 
 NamedParameterBundle const & JsonRecord::getNamedParameterBundle() const {
    return this->namedParameterBundle;
@@ -252,7 +244,7 @@ void JsonRecord::deleteNamedEntityFromDb() {
 
 
 /*bool JsonRecord::loadChildRecords(xalanc::DOMSupport & domSupport,
-                                 JsonRecord::FieldDefinition const * fieldDefinition,
+                                 JsonRecordType::FieldDefinition const * fieldDefinition,
                                  xalanc::NodeRefList & nodesForCurrentXPath,
                                  QTextStream & userMessage) {
    //
@@ -433,7 +425,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
          // write a constant value on output.  At the moment it's only needed for the VERSION tag in BeerJSON.
          //
          // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
-         // write out).  This saves having an extra almost-never-used field on JsonRecord::FieldDefinition.
+         // write out).  This saves having an extra almost-never-used field on JsonRecordType::FieldDefinition.
          //
          valueAsText = *fieldDefinition.propertyName;
       } else {
@@ -507,7 +499,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
    return;
 }
 
-void JsonRecord::subRecordToJson(JsonRecord::FieldDefinition const & fieldDefinition,
+void JsonRecord::subRecordToJson(JsonRecordType::FieldDefinition const & fieldDefinition,
                                JsonRecord const & subRecord,
                                NamedEntity const & namedEntityToExport,
                                QTextStream & out,
@@ -517,7 +509,7 @@ void JsonRecord::subRecordToJson(JsonRecord::FieldDefinition const & fieldDefini
    // It's a coding error if we get here as this virtual member function should be overridden classes that have nested records
    qCritical() << Q_FUNC_INFO <<
       "Coding error: cannot export" << namedEntityToExport.metaObject()->className() << "(" <<
-      this->namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" << fieldDefinition.xPath <<
+      this->recordType.namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" << fieldDefinition.xPath <<
       "> from base class JsonRecord";
    Q_ASSERT(false);
    return;

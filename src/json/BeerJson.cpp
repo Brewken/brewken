@@ -30,6 +30,7 @@
 #include <QString>
 #include <QTextStream>
 
+#include "json/JsonCoding.h"
 #include "json/JsonRecord.h"
 #include "json/JsonSchema.h"
 #include "json/JsonUtils.h"
@@ -43,11 +44,10 @@
 
 namespace {
 
-   template<class NE> QString BEER_JSON_RECORD_NAME;
-   template<class NE> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS;
+   template<class NE> JsonRecordType const BEER_JSON_RECORD_DEFINITION;
 
    // Field mappings below are in the same order as in schemas/beerjson/1.0/beer.json
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Top-level field mappings for BeerJSON files
    //
    // The root of a BeerJSON document is an object named "beerjson".  Inside this are some or all of the following
@@ -69,29 +69,60 @@ namespace {
    //   boil:                      BoilProcedureType[]          optional
    //   packaging:                 PackagingProcedureType[]     optional
    //
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<void>{"beerjson"};
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<void> {
-      // Type                                   XPath                        Q_PROPERTY          Enum Mapper
-      {JsonRecord::FieldType::RequiredConstant, "version",                   BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "fermentables",              BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "miscellaneous_ingredients", BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "hop_varieties",             BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "cultures",                  BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "profiles",                  BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "styles",                    BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "mashes",                    BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "fermentations",             BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "recipes",                   BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "equipments",                BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "boil",                      BtString::NULL_STR, nullptr},
-      {JsonRecord::FieldType::Array,            "packaging",                 BtString::NULL_STR, nullptr}
+   // Note that the way ingredients are included inside recipes is more nuanced than in BeerXML.  In BeerXML, you can
+   // have eg a Hop record both as an element inside a top-level list of Hops (ie hop varieties) and as an ingredient
+   // inside a Recipe.  In BeerJSON, the distinction is made between records in a top-level list of hops, which are
+   // stored in VarietyInformation objects, and hop additions in a recipe, which are stored in HopAdditionType records.
+   // (We might wish that VarietyInformation were named HopVariety, and HopAdditionType simply HopAddition, but such
+   // naming oddities are considerably less egregious than a number of the problems with BeerXML, so it's still
+   // progress.)
+   //
+   // VarietyInformation and HopAdditionType share some common fields, specifically those in HopVarietyBase.  (Although
+   // it's NOT actually what's going on, it's helpful in some respects to think of HopVarietyBase as an abstract base
+   // class from which VarietyInformation and HopAdditionType both inherit, because that's APPROXIMATELY the effect we
+   // get.  Actually, JSON schemas do not actually support inheritance and, strictly speaking, what's happening is
+   // schema combination which is not quite the same thing, but this is more something we would need to worry about if
+   // we were designing our own schema.)  Anyway, we try to avoid duplicating definitions by having a similar structure.
+   //
+   // There are similar distinctions for fermentables, miscellaneous ingredients and so on.
+   //
+   // For historical reasons, we use Hop objects both for "hop variety" (when the object has no parent) and "use of a
+   // hop in a recipe" (when the object has a parent Hop object, which should be its hop variety).  (And, again, the
+   // same applies to Fermentable, Misc, Yeast and so on.)
+   //
+   // One day perhaps we should split Hop up into HopBase, HopVariety and HopAddition, and do likewise for Fermentable,
+   // Misc, Yeast, etc.  But that's quite a big change so, for now, we'll stick with our existing object structure.
+   //
+   // It would be nice to be able to make the JsonRecordType::FieldDefinitions constants constexpr rather than just
+   // const, but this is not yet easy because QVector cannot be constexpr, std::vector cannot yet be constexpr,
+   // std::array (which can be constexpr) cannot deduce its own length when used with non-trivial types, and the
+   // proposed std::make_array is still experimental and not yet actually part of std.  (There are various workarounds
+   // with template metaprogramming but it's all a bit painful compared with the marginal benefit we would get.)
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<void> {
+      "beerjson",
+      "",
+      {
+         // Type                                   XPath                        Q_PROPERTY          Enum Mapper
+         {JsonRecordType::FieldType::RequiredConstant, "version",                   &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "fermentables",              &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "miscellaneous_ingredients", &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "hop_varieties",             &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "cultures",                  &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "profiles",                  &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "styles",                    &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "mashes",                    &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "fermentations",             &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "recipes",                   &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "equipments",                &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "boil",                      &BtString::NULL_STR, nullptr},
+         {JsonRecordType::FieldType::Array,            "packaging",                 &BtString::NULL_STR, nullptr}
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for fermentables BeerJSON records - see schemas/beerjson/1.0/fermentable.json
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<Fermentable>{"fermentables"};
    EnumStringMapping const BEER_JSON_FERMENTABLE_TYPE_MAPPER {
       // .:TODO.JSON:.  Add missing values here to Fermentable::Type
       {"dry extract", Fermentable::Type::Dry_Extract},
@@ -113,52 +144,74 @@ namespace {
 //      {"smoked",     Fermentable::GrainGroup::},
 //      {"adjunct",    Fermentable::GrainGroup::}
    };
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Fermentable> {
+   JsonRecordType::FieldDefinitions const BeerJson_FermentableBase {
       // Type                                 XPath                           Q_PROPERTY                                          Enum Mapper
-      {JsonRecord::FieldType::String,         "name",                         PropertyNames::NamedEntity::name,                   nullptr},
-      {JsonRecord::FieldType::Enum,           "type",                         PropertyNames::Fermentable::type,                   &BEER_JSON_FERMENTABLE_TYPE_MAPPER},
-      {JsonRecord::FieldType::String,         "origin",                       PropertyNames::Fermentable::origin,                 nullptr},
-      {JsonRecord::FieldType::String,         "producer",                     BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable or look at PropertyNames::Fermentable::supplier
-      {JsonRecord::FieldType::String,         "product_id",                   BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Enum,           "grain_group",                  PropertyNames::Fermentable::type,                   &BEER_JSON_FERMENTABLE_GRAIN_GROUP_MAPPER},
-      {JsonRecord::FieldType::Percent,        "yield/fine_grind",             BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "yield/coarse_grind",           BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "yield/fine_coarse_difference", PropertyNames::Fermentable::coarseFineDiff_pct,     nullptr},
-      {JsonRecord::FieldType::Gravity,        "yield/potential",              BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Color,          "color",                        PropertyNames::Fermentable::color_srm,              nullptr},
-      {JsonRecord::FieldType::String,         "notes",                        PropertyNames::Fermentable::notes,                  nullptr},
-      {JsonRecord::FieldType::Percent,        "moisture",                     PropertyNames::Fermentable::moisture_pct,           nullptr},
-      {JsonRecord::FieldType::Double,         "alpha_amylase",                BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::DiastaticPower, "diastatic_power",              PropertyNames::Fermentable::diastaticPower_lintner, nullptr},
-      {JsonRecord::FieldType::Percent,        "protein",                      PropertyNames::Fermentable::protein_pct,            nullptr},
-      {JsonRecord::FieldType::Double,         "kolbach_index",                BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "max_in_batch",                 PropertyNames::Fermentable::maxInBatch_pct,         nullptr},
-      {JsonRecord::FieldType::Bool,           "recommend_mash",               PropertyNames::Fermentable::recommendMash,          nullptr}, // .:TODO.JSON:. What is the difference between PropertyNames::Fermentable::recommendMash and PropertyNames::Fermentable::isMashed
-      {JsonRecord::FieldType::MassOrVolume,   "inventory/amount",             BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Extend Fermentable::amount_kg so we can cope with volumes
-      {JsonRecord::FieldType::Percent,        "glassy",                       BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "plump",                        BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "half",                         BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "mealy",                        BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "thru",                         BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "friability",                   BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Acidity,        "di_ph",                        BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Viscosity,      "viscosity",                    BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Concentration,  "dms_p",                        BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Concentration,  "fan",                          BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Percent,        "fermentability",               BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecord::FieldType::Concentration,  "beta_glucan",                  BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
-
-
-//      {JsonRecord::FieldType::Bool,           "ADD_AFTER_BOIL",               PropertyNames::Fermentable::addAfterBoil,           nullptr},
-//      {JsonRecord::FieldType::String,         "SUPPLIER",                     PropertyNames::Fermentable::supplier,               nullptr},
-//      {JsonRecord::FieldType::Double,         "IBU_GAL_PER_LB",               PropertyNames::Fermentable::ibuGalPerLb,            nullptr},
-//      {JsonRecord::FieldType::Bool,           "IS_MASHED",                    PropertyNames::Fermentable::isMashed,               nullptr}  // Non-standard tag, not part of BeerJSON 1.0 standard
+      {JsonRecordType::FieldType::String,         "name",                         &PropertyNames::NamedEntity::name,                   nullptr},
+      {JsonRecordType::FieldType::Enum,           "type",                         &PropertyNames::Fermentable::type,                   &BEER_JSON_FERMENTABLE_TYPE_MAPPER},
+      {JsonRecordType::FieldType::String,         "origin",                       &PropertyNames::Fermentable::origin,                 nullptr},
+      {JsonRecordType::FieldType::String,         "producer",                     &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable or look at PropertyNames::Fermentable::supplier
+      {JsonRecordType::FieldType::String,         "product_id",                   &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Enum,           "grain_group",                  &PropertyNames::Fermentable::type,                   &BEER_JSON_FERMENTABLE_GRAIN_GROUP_MAPPER},
+      {JsonRecordType::FieldType::Percent,        "yield/fine_grind",             &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "yield/coarse_grind",           &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "yield/fine_coarse_difference", &PropertyNames::Fermentable::coarseFineDiff_pct,     nullptr},
+      {JsonRecordType::FieldType::Gravity,        "yield/potential",              &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Color,          "color",                        &PropertyNames::Fermentable::color_srm,              nullptr},
+   };
+   JsonRecordType::FieldDefinitions const BeerJson_FermentableType_ExclBase {
+      // Type                                 XPath                           Q_PROPERTY                                          Enum Mapper
+      {JsonRecordType::FieldType::String,         "notes",                        &PropertyNames::Fermentable::notes,                  nullptr},
+      {JsonRecordType::FieldType::Percent,        "moisture",                     &PropertyNames::Fermentable::moisture_pct,           nullptr},
+      {JsonRecordType::FieldType::Double,         "alpha_amylase",                &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::DiastaticPower, "diastatic_power",              &PropertyNames::Fermentable::diastaticPower_lintner, nullptr},
+      {JsonRecordType::FieldType::Percent,        "protein",                      &PropertyNames::Fermentable::protein_pct,            nullptr},
+      {JsonRecordType::FieldType::Double,         "kolbach_index",                &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "max_in_batch",                 &PropertyNames::Fermentable::maxInBatch_pct,         nullptr},
+      {JsonRecordType::FieldType::Bool,           "recommend_mash",               &PropertyNames::Fermentable::recommendMash,          nullptr}, // .:TODO.JSON:. What is the difference between PropertyNames::Fermentable::recommendMash and PropertyNames::Fermentable::isMashed
+      {JsonRecordType::FieldType::MassOrVolume,   "inventory/amount",             &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Extend Fermentable::amount_kg so we can cope with volumes
+      {JsonRecordType::FieldType::Percent,        "glassy",                       &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "plump",                        &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "half",                         &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "mealy",                        &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "thru",                         &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "friability",                   &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Acidity,        "di_ph",                        &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Viscosity,      "viscosity",                    &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Concentration,  "dms_p",                        &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Concentration,  "fan",                          &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Percent,        "fermentability",               &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordType::FieldType::Concentration,  "beta_glucan",                  &BtString::NULL_STR,                                 nullptr}, // .:TODO.JSON:. Add this to Fermentable
+   };
+   // .:TODO.JSON:.  Extend Recipe to have an enum for this
+   EnumStringMapping const BEER_JSON_RECIPE_ADDITION_POINT_MAPPER {
+///      {"add_to_mash",         Recipe::},
+///      {"add_to_boil",         Recipe::},
+///      {"add_to_fermentation", Recipe::},
+///      {"add_to_package",      Recipe::},
+    };
+   // This is the same across Fermentable, Hop, Misc
+   JsonRecordType::FieldDefinitions const BeerJson_IngredientAdditionType_ExclBase {
+      // Type                                 XPath                           Q_PROPERTY                            Enum Mapper
+      {JsonRecordType::FieldType::TimeElapsed,    "timing/time",                  &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::TimeElapsed,    "timing/duration",              &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::Bool,           "timing/continuous",            &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::Gravity,        "timing/specific_gravity",      &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::Acidity,        "timing/pH",                    &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::Int,            "timing/step",                  &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::Enum,           "timing/use",                   &BtString::NULL_STR,                  &BEER_JSON_RECIPE_ADDITION_POINT_MAPPER}, // .:TODO.JSON:.
+      {JsonRecordType::FieldType::MassOrVolume,   "amount",                       &BtString::NULL_STR,                  nullptr}, // .:TODO.JSON:.
+   };
+   // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
+///   template<> JsonRecordType::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Fermentable> = BeerJson_FermentableBase + BeerJson_FermentableType_ExclBase;
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<Fermentable> {
+      "fermentables",
+      "Fermentable",
+      BeerJson_FermentableBase + BeerJson_FermentableType_ExclBase
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json TODO
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<Misc>{"miscellaneous_ingredients"};
    EnumStringMapping const BEER_JSON_MISC_TYPE_MAPPER {
       // .:TODO.JSON:.  Add missing values here to Misc::Type
       {"spice",       Misc::Type::Spice},
@@ -177,22 +230,29 @@ namespace {
 //      {"Secondary", Misc::Use::Secondary},
 //      {"Bottling",  Misc::Use::Bottling}
 //   };
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Misc> {
+   JsonRecordType::FieldDefinitions const BeerJson_MiscellaneousBase {
       // Type                               XPath               Q_PROPERTY                        Enum Mapper
-      {JsonRecord::FieldType::String,       "name",             PropertyNames::NamedEntity::name, nullptr},
-      {JsonRecord::FieldType::String,       "producer",         BtString::NULL_STR,               nullptr}, // .:TODO.JSON:. Add this to Misc
-      {JsonRecord::FieldType::String,       "product_id",       BtString::NULL_STR,               nullptr}, // .:TODO.JSON:. Add this to Misc
-      {JsonRecord::FieldType::Enum,         "type",             PropertyNames::Fermentable::type, &BEER_JSON_MISC_TYPE_MAPPER},
-      {JsonRecord::FieldType::String,       "use_for",          PropertyNames::Misc::useFor,      nullptr},
-      {JsonRecord::FieldType::String,       "notes",            PropertyNames::Misc::notes,       nullptr},
-      {JsonRecord::FieldType::MassOrVolume, "inventory/amount", PropertyNames::Misc::amount,      nullptr}, // .:TODO.JSON:. Also need to reference Misc::amountIsWeight PLUS we need to cope with UnitType
-      // .:TODO.JSON:. Note that we'll need to look at MiscellaneousAdditionType when we use Miscs in Recipes
+      {JsonRecordType::FieldType::String,       "name",             &PropertyNames::NamedEntity::name, nullptr},
+      {JsonRecordType::FieldType::String,       "producer",         &BtString::NULL_STR,               nullptr}, // .:TODO.JSON:. Add this to Misc
+      {JsonRecordType::FieldType::String,       "product_id",       &BtString::NULL_STR,               nullptr}, // .:TODO.JSON:. Add this to Misc
+      {JsonRecordType::FieldType::Enum,         "type",             &PropertyNames::Fermentable::type, &BEER_JSON_MISC_TYPE_MAPPER},
+   };
+   JsonRecordType::FieldDefinitions const BeerJson_MiscellaneousType_ExclBase {
+      // Type                               XPath               Q_PROPERTY                        Enum Mapper
+      {JsonRecordType::FieldType::String,       "use_for",          &PropertyNames::Misc::useFor,      nullptr},
+      {JsonRecordType::FieldType::String,       "notes",            &PropertyNames::Misc::notes,       nullptr},
+      {JsonRecordType::FieldType::MassOrVolume, "inventory/amount", &PropertyNames::Misc::amount,      nullptr}, // .:TODO.JSON:. Also need to reference Misc::amountIsWeight PLUS we need to cope with UnitType
+   };
+///   template<> JsonRecordType::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Misc> = BeerJson_MiscellaneousBase + BeerJson_MiscellaneousType_ExclBase;
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<Misc> {
+      "miscellaneous_ingredients",
+      "Misc",
+      BeerJson_MiscellaneousBase + BeerJson_MiscellaneousType_ExclBase
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for hop_varieties BeerJSON records - see schemas/beerjson/1.0/hop.json
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<Hop>{"hop_varieties"};
 /* This isn't used with BeerJSON
  * EnumStringMapping const BEER_JSON_HOP_USE_MAPPER {
       {"Boil",       Hop::Use::Boil},
@@ -226,43 +286,50 @@ namespace {
       {"plug",       Hop::Form::Plug}
    };
    // .:TODO:. Need JsonRecord::Percent.  BeerJSON defines PercentType as an object with unit = "%" and value = number
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Hop> {
+   JsonRecordType::FieldDefinitions const BeerJson_HopBase {
       // Type                    XPath                                Q_PROPERTY                             Enum Mapper
-      {JsonRecord::FieldType::String,       "name",                              PropertyNames::NamedEntity::name,      nullptr},
-      {JsonRecord::FieldType::String,       "producer",                          BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::String,       "product_id",                        BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::String,       "origin",                            PropertyNames::Hop::origin,            nullptr},
-      {JsonRecord::FieldType::String,       "year",                              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Enum,         "form",                              PropertyNames::Hop::form,              &BEER_JSON_HOP_FORM_MAPPER},
-      {JsonRecord::FieldType::Percent,      "alpha_acid",                        PropertyNames::Hop::alpha_pct,         nullptr},
-      {JsonRecord::FieldType::Percent,      "beta_acid",                         PropertyNames::Hop::beta_pct,          nullptr},
-      {JsonRecord::FieldType::Enum,         "type",                              PropertyNames::Hop::type,              &BEER_JSON_HOP_TYPE_MAPPER},
-      {JsonRecord::FieldType::String,       "notes",                             PropertyNames::Hop::notes,             nullptr},
-      {JsonRecord::FieldType::Percent,      "percent_lost",                      PropertyNames::Hop::hsi_pct,           nullptr},
-      {JsonRecord::FieldType::String,       "substitutes",                       PropertyNames::Hop::substitutes,       nullptr},
-      {JsonRecord::FieldType::Double,       "oil_content/total_oil_ml_per_100g", BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/humulene",              PropertyNames::Hop::humulene_pct,      nullptr},
-      {JsonRecord::FieldType::Percent,      "oil_content/caryophyllene",         PropertyNames::Hop::caryophyllene_pct, nullptr},
-      {JsonRecord::FieldType::Percent,      "oil_content/cohumulone",            PropertyNames::Hop::cohumulone_pct,    nullptr},
-      {JsonRecord::FieldType::Percent,      "oil_content/myrcene",               PropertyNames::Hop::myrcene_pct,       nullptr},
-      {JsonRecord::FieldType::Percent,      "oil_content/farnesene",             BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/geraniol",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/b_pinene",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/linalool",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/limonene",              BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/nerol",                 BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/pinene",                BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/polyphenols",           BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::Percent,      "oil_content/xanthohumol",           BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecord::FieldType::MassOrVolume, "inventory/amount",                  BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
+      {JsonRecordType::FieldType::String,       "name",                              &PropertyNames::NamedEntity::name,      nullptr},
+      {JsonRecordType::FieldType::String,       "producer",                          &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::String,       "product_id",                        &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::String,       "origin",                            &PropertyNames::Hop::origin,            nullptr},
+      {JsonRecordType::FieldType::String,       "year",                              &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Enum,         "form",                              &PropertyNames::Hop::form,              &BEER_JSON_HOP_FORM_MAPPER},
+   };
+   JsonRecordType::FieldDefinitions const BeerJson_HopType_ExclBase {
+      // Type                    XPath                                Q_PROPERTY                             Enum Mapper
+      {JsonRecordType::FieldType::Percent,      "alpha_acid",                        &PropertyNames::Hop::alpha_pct,         nullptr},
+      {JsonRecordType::FieldType::Percent,      "beta_acid",                         &PropertyNames::Hop::beta_pct,          nullptr},
+      {JsonRecordType::FieldType::Enum,         "type",                              &PropertyNames::Hop::type,              &BEER_JSON_HOP_TYPE_MAPPER},
+      {JsonRecordType::FieldType::String,       "notes",                             &PropertyNames::Hop::notes,             nullptr},
+      {JsonRecordType::FieldType::Percent,      "percent_lost",                      &PropertyNames::Hop::hsi_pct,           nullptr},
+      {JsonRecordType::FieldType::String,       "substitutes",                       &PropertyNames::Hop::substitutes,       nullptr},
+      {JsonRecordType::FieldType::Double,       "oil_content/total_oil_ml_per_100g", &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/humulene",              &PropertyNames::Hop::humulene_pct,      nullptr},
+      {JsonRecordType::FieldType::Percent,      "oil_content/caryophyllene",         &PropertyNames::Hop::caryophyllene_pct, nullptr},
+      {JsonRecordType::FieldType::Percent,      "oil_content/cohumulone",            &PropertyNames::Hop::cohumulone_pct,    nullptr},
+      {JsonRecordType::FieldType::Percent,      "oil_content/myrcene",               &PropertyNames::Hop::myrcene_pct,       nullptr},
+      {JsonRecordType::FieldType::Percent,      "oil_content/farnesene",             &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/geraniol",              &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/b_pinene",              &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/linalool",              &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/limonene",              &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/nerol",                 &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/pinene",                &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/polyphenols",           &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::Percent,      "oil_content/xanthohumol",           &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordType::FieldType::MassOrVolume, "inventory/amount",                  &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
+   };
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<Hop> {
+      "hop_varieties",
+      "Hop",
+      BeerJson_HopBase + BeerJson_HopType_ExclBase
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for cultures BeerJSON records - see schemas/beerjson/1.0/culture.json
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<Yeast>{"cultures"};
    EnumStringMapping const BEER_JSON_YEAST_TYPE_MAPPER {
       // .:TODO.JSON:.  Add missing values here to Yeast::Type, and decide what to do about Yeast::Type::Wheat - maybe it becomes Other?
 //      {"??",     Yeast::Type::Wheat}, BeerJSON doesn't have a type corresponding to this
@@ -300,68 +367,74 @@ namespace {
       {"high",        Yeast::Flocculation::High},
       {"very high",   Yeast::Flocculation::Very_High},
    };
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Yeast> {
-      // Type                              XPath                        Q_PROPERTY                              Enum Mapper
-      {JsonRecord::FieldType::String,      "name",                      PropertyNames::NamedEntity::name,       nullptr},
-      {JsonRecord::FieldType::Enum,        "type",                      PropertyNames::Yeast::type,             &BEER_JSON_YEAST_TYPE_MAPPER},
-      {JsonRecord::FieldType::Enum,        "form",                      PropertyNames::Yeast::form,             &BEER_JSON_YEAST_FORM_MAPPER},
-      {JsonRecord::FieldType::String,      "producer",                  PropertyNames::Yeast::laboratory,       nullptr},
-      {JsonRecord::FieldType::String,      "product_id",                PropertyNames::Yeast::productID,        nullptr},
-      {JsonRecord::FieldType::Temperature, "temperature_range/minimum", PropertyNames::Yeast::minTemperature_c, nullptr},
-      {JsonRecord::FieldType::Temperature, "temperature_range/maximum", PropertyNames::Yeast::maxTemperature_c, nullptr},
-      {JsonRecord::FieldType::Percent,     "alcohol_tolerance",         BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Add this to Yeast
-      {JsonRecord::FieldType::Enum,        "flocculation",              PropertyNames::Yeast::flocculation,     &BEER_JSON_YEAST_FLOCCULATION_MAPPER},
-      {JsonRecord::FieldType::Percent,     "attenuation_range/minimum", BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Convert/extend PropertyNames::Yeast::attenuation_pct to a range
-      {JsonRecord::FieldType::Percent,     "attenuation_range/maximum", BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Convert/extend PropertyNames::Yeast::attenuation_pct to a range
-      {JsonRecord::FieldType::String,      "notes",                     PropertyNames::Yeast::notes,            nullptr},
-      {JsonRecord::FieldType::String,      "best_for",                  PropertyNames::Yeast::bestFor,          nullptr},
-      {JsonRecord::FieldType::Int,         "max_reuse",                 PropertyNames::Yeast::maxReuse,         nullptr},
-      {JsonRecord::FieldType::Bool,        "pof",                       BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Add isPhenolicOffFlavorPositive (aka POF+) to Yeast
-      {JsonRecord::FieldType::Bool,        "glucoamylase",              BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Add isGlucoamylasePositive to Yeast
-      // .:TODO.JSON:. I think this one is a bit more commplicated as inventory/dry/amount is Mass but
-      // inventory/liquid/amount, inventory/slant/amount, inventory/culture/amount are all volume
-      {JsonRecord::FieldType::MassOrVolume,     "inventory/amount",                  BtString::NULL_STR,                    nullptr},
-      // .:TBD.JSON:. Not sure how important it is for us to support the following fields.
-      // See http://www.milkthefunk.com/wiki/Saccharomyces#Killer_Wine_Yeast for a bit more info
-      {JsonRecord::FieldType::Bool,        "zymocide/no1",              BtString::NULL_STR,                     nullptr},
-      {JsonRecord::FieldType::Bool,        "zymocide/no2",              BtString::NULL_STR,                     nullptr},
-      {JsonRecord::FieldType::Bool,        "zymocide/no28",             BtString::NULL_STR,                     nullptr},
-      {JsonRecord::FieldType::Bool,        "zymocide/klus",             BtString::NULL_STR,                     nullptr},
-      {JsonRecord::FieldType::Bool,        "zymocide/neutral",          BtString::NULL_STR,                     nullptr},
-      // Note that there is, AFAICT, no equivalent in BeerJSON to the following BeerXML properties:
-      //  • Int:  TIMES_CULTURED   / PropertyNames::Yeast::timesCultured
-      //  • Bool: ADD_TO_SECONDARY / PropertyNames::Yeast::addToSecondary
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<Yeast> {
+      "cultures",
+      "Yeast",
+      {
+         // Type                              XPath                        Q_PROPERTY                              Enum Mapper
+         {JsonRecordType::FieldType::String,      "name",                      &PropertyNames::NamedEntity::name,       nullptr},
+         {JsonRecordType::FieldType::Enum,        "type",                      &PropertyNames::Yeast::type,             &BEER_JSON_YEAST_TYPE_MAPPER},
+         {JsonRecordType::FieldType::Enum,        "form",                      &PropertyNames::Yeast::form,             &BEER_JSON_YEAST_FORM_MAPPER},
+         {JsonRecordType::FieldType::String,      "producer",                  &PropertyNames::Yeast::laboratory,       nullptr},
+         {JsonRecordType::FieldType::String,      "product_id",                &PropertyNames::Yeast::productID,        nullptr},
+         {JsonRecordType::FieldType::Temperature, "temperature_range/minimum", &PropertyNames::Yeast::minTemperature_c, nullptr},
+         {JsonRecordType::FieldType::Temperature, "temperature_range/maximum", &PropertyNames::Yeast::maxTemperature_c, nullptr},
+         {JsonRecordType::FieldType::Percent,     "alcohol_tolerance",         &BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Add this to Yeast
+         {JsonRecordType::FieldType::Enum,        "flocculation",              &PropertyNames::Yeast::flocculation,     &BEER_JSON_YEAST_FLOCCULATION_MAPPER},
+         {JsonRecordType::FieldType::Percent,     "attenuation_range/minimum", &BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Convert/extend PropertyNames::Yeast::attenuation_pct to a range
+         {JsonRecordType::FieldType::Percent,     "attenuation_range/maximum", &BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Convert/extend PropertyNames::Yeast::attenuation_pct to a range
+         {JsonRecordType::FieldType::String,      "notes",                     &PropertyNames::Yeast::notes,            nullptr},
+         {JsonRecordType::FieldType::String,      "best_for",                  &PropertyNames::Yeast::bestFor,          nullptr},
+         {JsonRecordType::FieldType::Int,         "max_reuse",                 &PropertyNames::Yeast::maxReuse,         nullptr},
+         {JsonRecordType::FieldType::Bool,        "pof",                       &BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Add isPhenolicOffFlavorPositive (aka POF+) to Yeast
+         {JsonRecordType::FieldType::Bool,        "glucoamylase",              &BtString::NULL_STR,                     nullptr}, // .:TODO.JSON:. Add isGlucoamylasePositive to Yeast
+         // .:TODO.JSON:. I think this one is a bit more commplicated as inventory/dry/amount is Mass but
+         // inventory/liquid/amount, inventory/slant/amount, inventory/culture/amount are all volume
+         {JsonRecordType::FieldType::MassOrVolume,     "inventory/amount",     &BtString::NULL_STR,                    nullptr},
+         // .:TBD.JSON:. Not sure how important it is for us to support the following fields.
+         // See http://www.milkthefunk.com/wiki/Saccharomyces#Killer_Wine_Yeast for a bit more info
+         {JsonRecordType::FieldType::Bool,        "zymocide/no1",              &BtString::NULL_STR,                     nullptr},
+         {JsonRecordType::FieldType::Bool,        "zymocide/no2",              &BtString::NULL_STR,                     nullptr},
+         {JsonRecordType::FieldType::Bool,        "zymocide/no28",             &BtString::NULL_STR,                     nullptr},
+         {JsonRecordType::FieldType::Bool,        "zymocide/klus",             &BtString::NULL_STR,                     nullptr},
+         {JsonRecordType::FieldType::Bool,        "zymocide/neutral",          &BtString::NULL_STR,                     nullptr},
+         // Note that there is, AFAICT, no equivalent in BeerJSON to the following BeerXML properties:
+         //  • Int:  TIMES_CULTURED   / PropertyNames::Yeast::timesCultured
+         //  • Bool: ADD_TO_SECONDARY / PropertyNames::Yeast::addToSecondary
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for profiles BeerJSON records - see schemas/beerjson/1.0/water.json
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<Water>{"profiles"};
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Water> {
-      // Type                                XPath             Q_PROPERTY                             Enum Mapper
-      {JsonRecord::FieldType::String,        "name",           PropertyNames::NamedEntity::name,      nullptr},
-      {JsonRecord::FieldType::String,        "producer",       BtString::NULL_STR,                    nullptr}, // Not sure what this means for water...
-      {JsonRecord::FieldType::Concentration, "calcium",        PropertyNames::Water::calcium_ppm,     nullptr},
-      {JsonRecord::FieldType::Concentration, "bicarbonate",    PropertyNames::Water::bicarbonate_ppm, nullptr},
-      {JsonRecord::FieldType::Concentration, "potassium",      BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
-      {JsonRecord::FieldType::Concentration, "iron",           BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
-      {JsonRecord::FieldType::Concentration, "nitrate",        BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
-      {JsonRecord::FieldType::Concentration, "nitrite",        BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
-      {JsonRecord::FieldType::Concentration, "flouride",       BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
-      {JsonRecord::FieldType::Concentration, "sulfate",        PropertyNames::Water::sulfate_ppm,     nullptr},
-      {JsonRecord::FieldType::Concentration, "chloride",       PropertyNames::Water::chloride_ppm,    nullptr},
-      {JsonRecord::FieldType::Concentration, "sodium",         PropertyNames::Water::sodium_ppm,      nullptr},
-      {JsonRecord::FieldType::Concentration, "magnesium",      PropertyNames::Water::magnesium_ppm,   nullptr},
-      {JsonRecord::FieldType::Double,        "ph",             PropertyNames::Water::ph,              nullptr},
-      {JsonRecord::FieldType::String,        "notes",          PropertyNames::Water::notes,           nullptr},
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<Water> {
+      "profiles",
+      "Water",
+      {
+         // Type                                XPath             Q_PROPERTY                             Enum Mapper
+         {JsonRecordType::FieldType::String,        "name",           &PropertyNames::NamedEntity::name,      nullptr},
+         {JsonRecordType::FieldType::String,        "producer",       &BtString::NULL_STR,                    nullptr}, // Not sure what this means for water...
+         {JsonRecordType::FieldType::Concentration, "calcium",        &PropertyNames::Water::calcium_ppm,     nullptr},
+         {JsonRecordType::FieldType::Concentration, "bicarbonate",    &PropertyNames::Water::bicarbonate_ppm, nullptr},
+         {JsonRecordType::FieldType::Concentration, "potassium",      &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordType::FieldType::Concentration, "iron",           &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordType::FieldType::Concentration, "nitrate",        &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordType::FieldType::Concentration, "nitrite",        &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordType::FieldType::Concentration, "flouride",       &BtString::NULL_STR,                    nullptr}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordType::FieldType::Concentration, "sulfate",        &PropertyNames::Water::sulfate_ppm,     nullptr},
+         {JsonRecordType::FieldType::Concentration, "chloride",       &PropertyNames::Water::chloride_ppm,    nullptr},
+         {JsonRecordType::FieldType::Concentration, "sodium",         &PropertyNames::Water::sodium_ppm,      nullptr},
+         {JsonRecordType::FieldType::Concentration, "magnesium",      &PropertyNames::Water::magnesium_ppm,   nullptr},
+         {JsonRecordType::FieldType::Double,        "ph",             &PropertyNames::Water::ph,              nullptr},
+         {JsonRecordType::FieldType::String,        "notes",          &PropertyNames::Water::notes,           nullptr},
 
-      // .:TODO.JSON:. Note that we'll need to look at WaterAdditionType at some point...
+         // .:TODO.JSON:. Note that we'll need to look at WaterAdditionType at some point...
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for styles BeerJSON records - see schemas/beerjson/1.0/style.json TODO
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> QString const BEER_JSON_RECORD_NAME<Style>{"styles"};
    EnumStringMapping const BEER_JSON_STYLE_TYPE_MAPPER {
       // .:TBD.JSON:. BeerJSON doesn't have style types matching Style::Type::Lager, Style::Type::Ale, Style::Type::Wheat, Style::Type::Mixed
       // .:TODO.JSON:.  Add missing values here to Style::Type
@@ -373,35 +446,39 @@ namespace {
 //      {"soda",     Style::Type::},
 //      {"wine",     Style::Type::}
    };
-   template<> JsonRecord::FieldDefinitions const BEER_JSON_RECORD_FIELDS<Style> {
-      // Type                              XPath                                     Q_PROPERTY                            Enum Mapper
-      {JsonRecord::FieldType::String,      "name",                                   PropertyNames::NamedEntity::name,     nullptr},
-      {JsonRecord::FieldType::String,      "category",                               PropertyNames::Style::category,       nullptr},
-      {JsonRecord::FieldType::Int,         "category_number",                        PropertyNames::Style::categoryNumber, nullptr},
-      {JsonRecord::FieldType::String,      "style_letter",                           PropertyNames::Style::styleLetter,    nullptr},
-      {JsonRecord::FieldType::String,      "style_guide",                            PropertyNames::Style::styleGuide,     nullptr},
-      {JsonRecord::FieldType::Enum,        "type",                                   PropertyNames::Style::type,           &BEER_JSON_STYLE_TYPE_MAPPER},
-      {JsonRecord::FieldType::Gravity,     "original_gravity/minimum",               PropertyNames::Style::ogMin,          nullptr},
-      {JsonRecord::FieldType::Gravity,     "original_gravity/maximum",               PropertyNames::Style::ogMax,          nullptr},
-      {JsonRecord::FieldType::Gravity,     "final_gravity/minimum",                  PropertyNames::Style::fgMin,          nullptr},
-      {JsonRecord::FieldType::Gravity,     "final_gravity/maximum",                  PropertyNames::Style::fgMax,          nullptr},
-      {JsonRecord::FieldType::Double,      "international_bitterness_units/minimum", PropertyNames::Style::ibuMin,         nullptr},
-      {JsonRecord::FieldType::Double,      "international_bitterness_units/maximum", PropertyNames::Style::ibuMax,         nullptr},
-      {JsonRecord::FieldType::Color,       "color/minimum",                          PropertyNames::Style::colorMin_srm,   nullptr},
-      {JsonRecord::FieldType::Color,       "color/maximum",                          PropertyNames::Style::colorMax_srm,   nullptr},
-      {JsonRecord::FieldType::Carbonation, "carbonation/minimum",                    PropertyNames::Style::carbMin_vol,    nullptr},
-      {JsonRecord::FieldType::Carbonation, "carbonation/maximum",                    PropertyNames::Style::carbMax_vol,    nullptr},
-      {JsonRecord::FieldType::Percent,     "alcohol_by_volume/minimum",              PropertyNames::Style::abvMin_pct,     nullptr},
-      {JsonRecord::FieldType::Percent,     "alcohol_by_volume/maximum",              PropertyNames::Style::abvMax_pct,     nullptr},
-      {JsonRecord::FieldType::String,      "notes",                                  PropertyNames::Style::notes,          nullptr},
-      {JsonRecord::FieldType::String,      "aroma",                                  BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
-      {JsonRecord::FieldType::String,      "appearance",                             BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
-      {JsonRecord::FieldType::String,      "flavor",                                 BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
-      {JsonRecord::FieldType::String,      "mouthfeel",                              BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
-      {JsonRecord::FieldType::String,      "overall_impression",                     BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
-      {JsonRecord::FieldType::String,      "ingredients",                            PropertyNames::Style::ingredients,    nullptr},
-      {JsonRecord::FieldType::String,      "examples",                               PropertyNames::Style::examples,       nullptr},
-      // .:TBD.JSON:. Nothing in BeerJSON directly maps to PropertyNames::Style::profile
+   template<> JsonRecordType const BEER_JSON_RECORD_DEFINITION<Style> {
+      "styles",
+      "Style",
+      {
+         // Type                              XPath                                     Q_PROPERTY                            Enum Mapper
+         {JsonRecordType::FieldType::String,      "name",                                   &PropertyNames::NamedEntity::name,     nullptr},
+         {JsonRecordType::FieldType::String,      "category",                               &PropertyNames::Style::category,       nullptr},
+         {JsonRecordType::FieldType::Int,         "category_number",                        &PropertyNames::Style::categoryNumber, nullptr},
+         {JsonRecordType::FieldType::String,      "style_letter",                           &PropertyNames::Style::styleLetter,    nullptr},
+         {JsonRecordType::FieldType::String,      "style_guide",                            &PropertyNames::Style::styleGuide,     nullptr},
+         {JsonRecordType::FieldType::Enum,        "type",                                   &PropertyNames::Style::type,           &BEER_JSON_STYLE_TYPE_MAPPER},
+         {JsonRecordType::FieldType::Gravity,     "original_gravity/minimum",               &PropertyNames::Style::ogMin,          nullptr},
+         {JsonRecordType::FieldType::Gravity,     "original_gravity/maximum",               &PropertyNames::Style::ogMax,          nullptr},
+         {JsonRecordType::FieldType::Gravity,     "final_gravity/minimum",                  &PropertyNames::Style::fgMin,          nullptr},
+         {JsonRecordType::FieldType::Gravity,     "final_gravity/maximum",                  &PropertyNames::Style::fgMax,          nullptr},
+         {JsonRecordType::FieldType::Double,      "international_bitterness_units/minimum", &PropertyNames::Style::ibuMin,         nullptr},
+         {JsonRecordType::FieldType::Double,      "international_bitterness_units/maximum", &PropertyNames::Style::ibuMax,         nullptr},
+         {JsonRecordType::FieldType::Color,       "color/minimum",                          &PropertyNames::Style::colorMin_srm,   nullptr},
+         {JsonRecordType::FieldType::Color,       "color/maximum",                          &PropertyNames::Style::colorMax_srm,   nullptr},
+         {JsonRecordType::FieldType::Carbonation, "carbonation/minimum",                    &PropertyNames::Style::carbMin_vol,    nullptr},
+         {JsonRecordType::FieldType::Carbonation, "carbonation/maximum",                    &PropertyNames::Style::carbMax_vol,    nullptr},
+         {JsonRecordType::FieldType::Percent,     "alcohol_by_volume/minimum",              &PropertyNames::Style::abvMin_pct,     nullptr},
+         {JsonRecordType::FieldType::Percent,     "alcohol_by_volume/maximum",              &PropertyNames::Style::abvMax_pct,     nullptr},
+         {JsonRecordType::FieldType::String,      "notes",                                  &PropertyNames::Style::notes,          nullptr},
+         {JsonRecordType::FieldType::String,      "aroma",                                  &BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
+         {JsonRecordType::FieldType::String,      "appearance",                             &BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
+         {JsonRecordType::FieldType::String,      "flavor",                                 &BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
+         {JsonRecordType::FieldType::String,      "mouthfeel",                              &BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
+         {JsonRecordType::FieldType::String,      "overall_impression",                     &BtString::NULL_STR,                   nullptr}, // .:TODO.JSON:. Add this to Style
+         {JsonRecordType::FieldType::String,      "ingredients",                            &PropertyNames::Style::ingredients,    nullptr},
+         {JsonRecordType::FieldType::String,      "examples",                               &PropertyNames::Style::examples,       nullptr},
+         // .:TBD.JSON:. Nothing in BeerJSON directly maps to PropertyNames::Style::profile
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -428,6 +505,31 @@ namespace {
    // Field mappings for packaging BeerJSON records TODO
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+   //
+   // The mapping we use between BeerJSON structure and our own object structure
+   //
+   JsonCoding const BEER_JSON_1_CODING{
+      // Yes, it is odd that BeerJSON 1.0 uses version number 2.06.  AFAICT this is because BeerJSON 1.0 was took its
+      // starting point as the unfinished BeerXML 2.01 specification.
+      "BeerJSON 1.0",
+      "2.06",
+      JsonSchema::Id::BEER_JSON_2_1,
+      {
+         BEER_JSON_RECORD_DEFINITION<void>       , //Root
+         BEER_JSON_RECORD_DEFINITION<Hop>        ,
+         BEER_JSON_RECORD_DEFINITION<Fermentable>,
+         BEER_JSON_RECORD_DEFINITION<Yeast>      ,
+         BEER_JSON_RECORD_DEFINITION<Misc>       ,
+         BEER_JSON_RECORD_DEFINITION<Water>      ,
+         BEER_JSON_RECORD_DEFINITION<Style>      ,
+//         BEER_JSON_RECORD_DEFINITION<MashStep>   ,
+//         BEER_JSON_RECORD_DEFINITION<Mash>       ,
+//         BEER_JSON_RECORD_DEFINITION<Equipment>  ,
+//         BEER_JSON_RECORD_DEFINITION<Instruction>,
+//         BEER_JSON_RECORD_DEFINITION<BrewNote>   ,
+//         BEER_JSON_RECORD_DEFINITION<Recipe>
+      }
+   };
 
    //=-=-=-=-=-=-=-=-
 
@@ -436,18 +538,70 @@ namespace {
       boost::json::value inputDocument;
       try {
          inputDocument = JsonUtils::loadJsonDocument(fileName);
-
-         static JsonSchema schema{":/schemas/beerjson/1.0", "beer.json"};
-
-         if (!schema.validate(inputDocument, userMessage)) {
-            qWarning() << Q_FUNC_INFO << "Schema validation failed";
-            return false;
-         }
-
       } catch (std::exception const & exception) {
          qWarning() <<
-            Q_FUNC_INFO << "Caught exception while reading and validating " << fileName << ":" << exception.what();
+            Q_FUNC_INFO << "Caught exception while reading" << fileName << ":" << exception.what();
          userMessage << exception.what();
+         return false;
+      }
+
+      //
+      // If there are ever multiple versions of BeerJSON, this is where we'll work out which one to use for reading
+      // this file.  For now, we just log some info.
+      //
+      // Note that, at this point, because we have not yet validated it against a JSON schema, we can't make any
+      // assumptions about the input document - hence all the if statements in the block of code here.
+      //
+      // The root of a JSON document should be an object named "beerjson"
+      //
+      QString beerJsonVersion = "";
+      if (!inputDocument.is_object()) {
+         qWarning() << Q_FUNC_INFO << "Root of" << fileName << "is not a JSON object";
+      } else {
+         boost::json::object const & documentRoot = inputDocument.as_object();
+         if (!documentRoot.contains("beerjson")) {
+            qWarning() << Q_FUNC_INFO << "No beerjson root object found in" << fileName;
+         } else {
+            boost::json::value const & beerJsonValue = documentRoot.at("beerjson");
+            if (!beerJsonValue.is_object()) {
+               qWarning() << Q_FUNC_INFO << "beerjson element in" << fileName << "is not a JSON object";
+            } else {
+               boost::json::object const & beerJson = beerJsonValue.as_object();
+               boost::json::value const * bjVer = beerJson.if_contains("version");
+               if (!bjVer) {
+                  qWarning() << Q_FUNC_INFO << "No version found in" << fileName;
+               } else {
+                  //
+                  // Version is a JSON number (in JavaScript’s double-precision floating-point format).  It would be
+                  // nice if we could get hold of the raw string from the JSON file (because, really, version is
+                  // integer-dot-integer so a string would be easier to parse).  However, AFAICT, there isn't a way to
+                  // do this with Boost.JSON.
+                  //
+                  qDebug() << Q_FUNC_INFO << "Version" << *bjVer << "(" << bjVer->kind() << ")";
+                  double const * bjVersion = bjVer->if_double();
+                  if (!bjVersion) {
+                     qDebug() << Q_FUNC_INFO << "Could not parse version" << bjVer << "in" << fileName;
+                  } else {
+                     qDebug() << Q_FUNC_INFO << "BeerJSON version of" << fileName << "is" << *bjVersion;
+                     beerJsonVersion = QString::number(*bjVersion);
+                  }
+               }
+            }
+         }
+      }
+
+      if (beerJsonVersion.isEmpty()) {
+         qWarning() << Q_FUNC_INFO << "Unable to read BeerJSON version from" << fileName;
+         userMessage << "Invalid BeerJSON file: could not read version number";
+         return false;
+      }
+
+      //
+      // Per above, for the moment, we assume everything is BeerJSON 1.0 (using version number 2.06 per comment above)
+      // and validate against that schema.
+      //
+      if (!BEER_JSON_1_CODING.validateAgainstSchema(inputDocument, userMessage)) {
+         qWarning() << Q_FUNC_INFO << "Schema validation of" << fileName << "failed";
          return false;
       }
 
@@ -490,17 +644,10 @@ namespace {
       // elaborate approach.
       //
 
-      boost::json::value & bjv = beerJson["version"];
-      qDebug() << Q_FUNC_INFO << "Version" << bjv;
-
-      boost::json::value const * bjVer = beerJson.if_contains("version");
-      if (bjVer) {
-         qDebug() << Q_FUNC_INFO << "Version" << bjVer;
-      }
-
+      /// TEMPORARY DIAGNOSTIC
       boost::json::value const * recs = beerJson.if_contains("recipes");
       if (recs) {
-         qDebug() << Q_FUNC_INFO << "Recipes" << recs;
+         qDebug() << Q_FUNC_INFO << "Recipes" << *recs;
          if (recs->is_array()) {
             boost::json::array const & recipeList = recs->get_array();
             qDebug() << Q_FUNC_INFO << recipeList.size() << "recipes";
