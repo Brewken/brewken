@@ -65,7 +65,7 @@ namespace {
    // A JSON schema can be spread across several files linked together via "$ref" statements in the JSON.  Valijson uses
    // callbacks to fetch such referenced JSON documents when it is loading in a schema.  We cannot use a non-static
    // member function for a callback, and the callbacks do not pass in a context (because they were originally designed
-   // to be used only for retrieving documents referenced by absolute URIs).  So, instead, use a static member funciton
+   // to be used only for retrieving documents referenced by absolute URIs).  So, instead, use a static member function
    // for the callback and a thread local variable to remember the last JsonSchema object used on this thread, which
    // will be the one that asked Valijson to load in the schema.
    //

@@ -27,7 +27,7 @@
 namespace {
 }
 
-JsonRecord::JsonRecord(JsonRecordType const & recordType) :
+JsonRecord::JsonRecord(JsonRecordDefinition const & recordType) :
    recordType{recordType},
    namedParameterBundle{NamedParameterBundle::NotStrict},
    namedEntity{nullptr},
@@ -244,7 +244,7 @@ void JsonRecord::deleteNamedEntityFromDb() {
 
 
 /*bool JsonRecord::loadChildRecords(xalanc::DOMSupport & domSupport,
-                                 JsonRecordType::FieldDefinition const * fieldDefinition,
+                                 JsonRecordDefinition::FieldDefinition const * fieldDefinition,
                                  xalanc::NodeRefList & nodesForCurrentXPath,
                                  QTextStream & userMessage) {
    //
@@ -278,7 +278,7 @@ void JsonRecord::deleteNamedEntityFromDb() {
       //
       xalanc::XalanNode * childRecordNode = nodesForCurrentXPath.item(ii);
       XQString childRecordName{childRecordNode->getNodeName()};
-      Q_ASSERT(this->jsonCoding.isKnownJsonRecordType(childRecordName));
+      Q_ASSERT(this->jsonCoding.isKnownJsonRecordDefinition(childRecordName));
 
       std::shared_ptr<JsonRecord> jsonRecord = this->jsonCoding.getNewJsonRecord(childRecordName);
       this->childRecords.append(JsonRecord::ChildRecord{fieldDefinition, jsonRecord});
@@ -425,7 +425,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
          // write a constant value on output.  At the moment it's only needed for the VERSION tag in BeerJSON.
          //
          // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
-         // write out).  This saves having an extra almost-never-used field on JsonRecordType::FieldDefinition.
+         // write out).  This saves having an extra almost-never-used field on JsonRecordDefinition::FieldDefinition.
          //
          valueAsText = *fieldDefinition.propertyName;
       } else {
@@ -499,7 +499,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
    return;
 }
 
-void JsonRecord::subRecordToJson(JsonRecordType::FieldDefinition const & fieldDefinition,
+void JsonRecord::subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
                                JsonRecord const & subRecord,
                                NamedEntity const & namedEntityToExport,
                                QTextStream & out,

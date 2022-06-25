@@ -22,7 +22,7 @@
 #include <QTextStream>
 #include <QVector>
 
-#include "json/JsonRecordType.h"
+#include "json/JsonRecordDefinition.h"
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
@@ -31,7 +31,7 @@ class JsonCoding;
 
 /**
  * \brief This class holds data about a specific individual record that we are reading from or writing to a JSON
- *        document.  It uses data from a corresponding singleton const \c JsonRecordType to map between our internal
+ *        document.  It uses data from a corresponding singleton const \c JsonRecordDefinition to map between our internal
  *        data structures and fields in a JSON document.
  */
 class JsonRecord {
@@ -53,7 +53,7 @@ public:
    /**
     * \brief Constructor
     */
-   JsonRecord(JsonRecordType const & recordType);
+   JsonRecord(JsonRecordDefinition const & recordType);
    ~JsonRecord();
 
    /**
@@ -184,7 +184,7 @@ protected:
     * \param namedEntityToExport The object containing (or referencing) the data we want to export to JSON
     * \param out Where to write the JSON
     */
-   virtual void subRecordToJson(JsonRecordType::FieldDefinition const & fieldDefinition,
+   virtual void subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
                                 JsonRecord const & subRecord,
                                 NamedEntity const & namedEntityToExport,
                                 QTextStream & out,
@@ -205,7 +205,7 @@ protected:
    static void modifyClashingName(QString & candidateName);
 
 protected:
-   JsonRecordType const & recordType;
+   JsonRecordDefinition const & recordType;
 
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
    // this->namedEntity
@@ -233,7 +233,7 @@ protected:
    // Keep track of any child (ie contained) records
    //
    struct ChildRecord {
-      JsonRecordType::FieldDefinition const * fieldDefinition;
+      JsonRecordDefinition::FieldDefinition const * fieldDefinition;
       std::shared_ptr<JsonRecord> jsonRecord;
    };
    QVector<ChildRecord> childRecords;
