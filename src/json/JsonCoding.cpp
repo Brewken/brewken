@@ -20,6 +20,8 @@
 #include <QDebug>
 #include <QFile>
 
+#include "json/JsonUtils.h"
+
 //
 // Private implementation class for JsonCoding
 //
@@ -33,7 +35,7 @@ public:
         char const * name,
         char const * const version,
         JsonSchema::Id const schemaId,
-        std::initializer_list<JsonRecordType> jsonRecordDefinitions) :
+        std::initializer_list<JsonRecordDefinition> jsonRecordDefinitions) :
       self{self},
       name{name},
       version{version},
@@ -47,27 +49,12 @@ public:
     */
    ~impl() = default;
 
-   /**
-    * \brief Validate JSON file against schema, then call other functions to load its contents and store them in the DB
-    *
-    * \param fileName The JSON file to read
-    * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
-    *                    or, in the event of success, summarising what was read in) should be appended to this string.
-    *
-    * \return true if file validated OK (including if there were "errors" that we can safely ignore)
-    *         false if there was a problem that means it's not worth trying to read in the data from the file
-    */
-   bool validateLoadAndStoreInDb(QString const & fileName,
-                                 QTextStream & userMessage) {
-      return false;
-   }
-
    // Member variables for impl
    JsonCoding & self;
    QString const name;
    QString const version;
    JsonSchema::Id const schemaId;
-   QVector<JsonRecordType> const jsonRecordDefinitions;
+   QVector<JsonRecordDefinition> const jsonRecordDefinitions;
 
 };
 
@@ -76,7 +63,7 @@ public:
 JsonCoding::JsonCoding(char const * name,
                        char const * const version,
                        JsonSchema::Id const schemaId,
-                       std::initializer_list<JsonRecordType> jsonRecordDefinitions) :
+                       std::initializer_list<JsonRecordDefinition> jsonRecordDefinitions) :
    pimpl{std::make_unique<impl>(*this, name, version, schemaId, jsonRecordDefinitions)} {
    qDebug() << Q_FUNC_INFO;
    return;
@@ -85,7 +72,40 @@ JsonCoding::JsonCoding(char const * name,
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header file)
 JsonCoding::~JsonCoding() = default;
 
-bool JsonCoding::validateAgainstSchema(boost::json::value & inputDocument, QTextStream & userMessage) const {
+bool JsonCoding::isKnownJsonRecordDefinition(QString recordName) const {
+   auto result = std::find_if(
+      this->pimpl->jsonRecordDefinitions.begin(),
+      this->pimpl->jsonRecordDefinitions.end(),
+      [&recordName](JsonRecordDefinition const & recordDefn){return recordDefn.recordName == recordName;}
+   );
+   return result != this->pimpl->jsonRecordDefinitions.end();
+}
+
+JsonRecordDefinition const & JsonCoding::getRoot() const {
+   // The root element is the one with no corresponding named entity
+   auto root = std::find_if(
+      this->pimpl->jsonRecordDefinitions.cbegin(),
+      this->pimpl->jsonRecordDefinitions.cend(),
+      [](JsonRecordDefinition const & recordDefn){return recordDefn.namedEntityClassName == "";}
+   );
+   // It's a coding error if we didn't find a root element
+   Q_ASSERT(root != this->pimpl->jsonRecordDefinitions.end());
+   return *root;
+}
+
+
+/*std::shared_ptr<JsonRecord> JsonCoding::getNewJsonRecord(QString recordName) const {
+   JsonCoding::JsonRecordConstructorWrapper constructorWrapper =
+      this->pimpl->entityNameToJsonRecordDefinition.value(recordName).constructorWrapper;
+
+   JsonRecordDefinition::FieldDefinitions const * fieldDefinitions =
+      this->pimpl->entityNameToJsonRecordDefinition.value(recordName).fieldDefinitions;
+
+   return std::shared_ptr<JsonRecord>(constructorWrapper(recordName, *this, *fieldDefinitions));
+}*/
+
+bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
+                                          QTextStream & userMessage) const {
    try {
       JsonSchema const & schema = JsonSchema::instance(this->pimpl->schemaId);
       if (!schema.validate(inputDocument, userMessage)) {
@@ -99,31 +119,100 @@ bool JsonCoding::validateAgainstSchema(boost::json::value & inputDocument, QText
       userMessage << exception.what();
       return false;
    }
-   return true;
-}
+
+   qDebug() << Q_FUNC_INFO << "Schema validation succeeded";
 
 
-bool JsonCoding::isKnownJsonRecordType(QString recordName) const {
-   auto result = std::find_if(
-      this->pimpl->jsonRecordDefinitions.begin(),
-      this->pimpl->jsonRecordDefinitions.end(),
-      [&recordName](JsonRecordType const & recordType){return recordType.recordName == recordName;}
-   );
-   return result != this->pimpl->jsonRecordDefinitions.end();
-}
+   // Now we've loaded the JSON document into memory and determined that it's valid against its schema, we need to
+   // extract the data from it
+   //
+   // Per https://www.json.org/json-en.html, a JSON object is an unordered set of name/value pairs, so there's no
+   // constraint about what order we parse things
+   //
+
+   //
+   // Look at the root object first
+   //
+   JsonRecordDefinition const & root = this->getRoot();
+   qDebug() << Q_FUNC_INFO << "Looking at field definitinos of root element (" << root.recordName << ")";
+
+   for (auto & fieldDefinition : root.fieldDefinitions) {
+      qDebug() << Q_FUNC_INFO << "Looking at" << fieldDefinition.xPath;
+      // .:TODO:. IMPLEMENT THIS!
+   }
 
 
-/*std::shared_ptr<JsonRecord> JsonCoding::getNewJsonRecord(QString recordName) const {
-   JsonCoding::JsonRecordConstructorWrapper constructorWrapper =
-      this->pimpl->entityNameToJsonRecordDefinition.value(recordName).constructorWrapper;
+   // TBD the rest of this stuff is old diagnostic and can probably be binned once we have the main implementation done
 
-   JsonRecordType::FieldDefinitions const * fieldDefinitions =
-      this->pimpl->entityNameToJsonRecordDefinition.value(recordName).fieldDefinitions;
+   // We're expecting the root of the JSON document to be an object named "beerjson".  This should have been
+   // established by the validation above.
+   Q_ASSERT(inputDocument.is_object());
+   boost::json::object documentRoot = inputDocument.as_object();
+   Q_ASSERT(documentRoot.contains("beerjson"));
+   Q_ASSERT(documentRoot["beerjson"].is_object());
+   boost::json::object beerJson = documentRoot["beerjson"].as_object();
 
-   return std::shared_ptr<JsonRecord>(constructorWrapper(recordName, *this, *fieldDefinitions));
-}*/
+   //
+   // See comments in JsonRecord.h for more on the structure of a JSON file
+   //
+   // For each type of object T that we want to read from a JSON file (eg T is Recipe, Hop, etc) we need to provide
+   // an implementation of the following function:
+   //    T tag_invoke(value_to_tag<T>, boost::json::value const & jv);
+   // Note:
+   //    (1) The value_to_tag<T> type is empty and has no members.  It is just a trick used by the library to ensure
+   //        the right overload of tag_invoke is called.
+   //    (2) We do not call tag_invoke() ourselves.  Instead, we call
+   //        template<class T> T boost::json::value_to(boost::json::value const & jv).
+   // Inside tag_invoke(), nothing hugely clever is happening.  We just extract each of the fields we care about from
+   // jv into a new object of type T, for each field calling the relevant specialisation of boost::json::value_to(),
+   // eg something along the following lines:
+   //    T newObject;
+   //    newObject.id = value_to<int>(jv.as_object().at("id"));
+   //    newObject.name = value_to<std::string>(jv.as_object().at("name"));
+   //    ...
+   //    return newObject;
+   // Note that value_to<std::string> will throw an exception if its parameter is not actually a string, etc.
+   // Of course we would like to do all these field mappings in data rather than in code, so we take a slightly more
+   // elaborate approach.
+   //
 
-bool JsonCoding::validateLoadAndStoreInDb(QString const & fileName,
-                                          QTextStream & userMessage) const {
-   return this->pimpl->validateLoadAndStoreInDb(fileName, userMessage);
+   /// TEMPORARY DIAGNOSTIC
+   boost::json::value const * recs = beerJson.if_contains("recipes");
+   if (recs) {
+      qDebug() << Q_FUNC_INFO << "Recipes" << *recs;
+      if (recs->is_array()) {
+         boost::json::array const & recipeList = recs->get_array();
+         qDebug() << Q_FUNC_INFO << recipeList.size() << "recipes";
+         for (auto rr : recipeList) {
+            qDebug() << Q_FUNC_INFO << rr;
+         }
+      }
+   }
+
+   // Version is a JSON number (in JavaScript’s double-precision floating-point format)
+   boost::json::string * bjVersion = beerJson["version"].if_string();
+   if (bjVersion) {
+      qDebug() << Q_FUNC_INFO << "Version" << bjVersion->c_str();
+   }
+/*      std::string bjv2 = boost::json::value_to<std::string>(beerJson["version"]);
+   qDebug() << Q_FUNC_INFO << "Version" << bjv2.c_str();
+*/
+   for (auto ii : beerJson) {
+      // .:TODO:. This gives keys but not values...
+      boost::json::value const & val = ii.value();
+      qDebug() << Q_FUNC_INFO << "Key" << ii.key().data() << "(" << val.kind() << ")" << val;
+      if (val.is_string()) {
+         qDebug() << Q_FUNC_INFO << "Value" << val.as_string().c_str();
+      } else if (val.is_double()) {
+         qDebug() << Q_FUNC_INFO << "Value" << val.as_double();
+      }
+   }
+
+   /////
+
+   userMessage << "BeerJSON support is not yet complete!";
+   return false;
+
+   /// TODO THE REST!
+   return false;
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecordType.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -22,8 +22,6 @@
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
 
-// .:TODO:. Change name of this to JsonRecordDefinition
-
 ///class JsonCoding;
 
 /**
@@ -38,9 +36,9 @@
  *        ever some other format of JSON that we want to use, or in case future versions of BeerJSON change radically.
  *        In practice, these things seem sufficiently unlikely that we can cross that bridge if and when we come to it.
  *
- *        NB: For XML processing, \c XmlRecord corresponds to a combination of \c JsonRecord and \c JsonRecordType
+ *        NB: For XML processing, \c XmlRecord corresponds to a combination of \c JsonRecord and \c JsonRecordDefinition
  */
-class JsonRecordType {
+class JsonRecordDefinition {
 public:
    /**
     * \brief The types of fields that we know how to process.  Used in \b FieldDefinition records
@@ -184,8 +182,6 @@ public:
       EnumStringMapping const * enumMapping;
    };
 
-   typedef QVector<FieldDefinition> FieldDefinitions;
-
    /**
     * \brief Constructor
     * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
@@ -194,20 +190,25 @@ public:
     *                             or empty string if there is none
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
-    * \param jsonCoding An \b JsonCoding object representing the JSON Coding we are using (eg BeerJSON 2.1).  This is what
-    *                   we'll need to look up how to handle nested records inside this one.
     */
-   JsonRecordType(char const * const recordName,
-                  char const * const namedEntityClassName,
-///                  JsonCoding const & jsonCoding,
-                  FieldDefinitions const & fieldDefinitions);
+   JsonRecordDefinition(char const * const recordName,
+                        char const * const namedEntityClassName,
+                        std::initializer_list<FieldDefinition> fieldDefinitions);
 
    /**
-    * \brief Get the record name (in this coding)
+    * \brief Alternate Constructor
+    * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
+    *                   fermentables in BeerJSON.
+    * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
+    *                             or empty string if there is none
+    * \param fieldDefinitions A list of lists of fields we expect to find in this record (other fields will be ignored)
+    *                         and how to parse them.  Effectively the constructor just concatenates all the lists.
+    *                         See comments fin BeerJson.cpp for why we want to do this.
     */
-   BtStringConst const & getRecordName() const;
+   JsonRecordDefinition(char const * const recordName,
+                        char const * const namedEntityClassName,
+                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
 
-protected:
 public:
    BtStringConst const       recordName;
 
@@ -215,7 +216,7 @@ public:
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).
    BtStringConst const namedEntityClassName;
 
-   FieldDefinitions const & fieldDefinitions;
+   std::vector<FieldDefinition> const fieldDefinitions;
 };
 
 #endif

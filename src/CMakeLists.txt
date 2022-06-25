@@ -145,7 +145,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/json/BeerJson.cpp
     ${SRCDIR}/json/JsonCoding.cpp
     ${SRCDIR}/json/JsonRecord.cpp
-    ${SRCDIR}/json/JsonRecordType.cpp
+    ${SRCDIR}/json/JsonRecordDefinition.cpp
     ${SRCDIR}/json/JsonSchema.cpp
     ${SRCDIR}/json/JsonUtils.cpp
     ${SRCDIR}/Localization.cpp

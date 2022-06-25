@@ -62,10 +62,11 @@ public:
     * \brief Validate a JSON document
     *
     * \param document JSON document loaded with \c JsonUtils::loadJsonDocument()
-    * \param userMessage Where to write any (brief!) message we want to be shown to the user after the import.
-    *                    Typically this is either the reason the import failed or a summary of what was imported.
+    * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
+    *                    or, in the event of success, summarising what was read in) should be appended to this string.
     *
-    * \return \c true if parsing suceeded, \c false otherwise
+    * \return \c true if file validated OK (including if there were "errors" that we can safely ignore)
+    *         \c false if there was a problem that means it's not worth trying to read in the data from the file
     */
    bool validate(boost::json::value const & document, QTextStream & userMessage) const;
 
