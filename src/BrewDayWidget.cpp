@@ -58,7 +58,9 @@ BrewDayWidget::BrewDayWidget(QWidget* parent) :
 
 
    // Set up the printer stuff
-   printer->setPageSize(QPrinter::Letter);
+   // AnsiA is letter according to https://doc.qt.io/qt-6/qpagesize.html
+   // (Note that passing QPrinter::Letter as a parameter here is deprecated in newer versions of Qt.)
+   printer->setPageSize(QPageSize{QPageSize::AnsiA});
 
    // populate the drop down list
 
