@@ -1,6 +1,7 @@
 /**
- * config.in is part of Brewken, and is copyright the following authors 2009-2014:
+ * config.in is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -17,6 +18,7 @@
  */
 #ifndef CONFIG_IN
 #define CONFIG_IN
+#pragma once
 
 /**
  * This file gets converted to build/src/config.h by CMake (see CMakeLists.txt in top-level directory)
@@ -29,6 +31,6 @@
 #define CONFIGDATADIR "${CONFIGDATADIR}"
 #define CONFIGDOCDIR "${CONFIGDOCDIR}"
 
-#define VERSIONSTRING "${BREWKEN_VERSION_MAJOR}.${BREWKEN_VERSION_MINOR}.${BREWKEN_VERSION_PATCH}"
+#define VERSIONSTRING "${PROJECT_VERSION}"
 
 #endif

@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
-# CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2021:
+# CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2022:
 #   • Chris Pavetto <chrispavetto@gmail.com>
 #   • Dan Cavanagh <dan@dancavanagh.com>
 #   • Daniel Moreno <danielm5@users.noreply.github.com>
@@ -26,9 +26,18 @@
 #
 # See also src/CMakeLists.txt
 #
-PROJECT(brewken)
-CMAKE_MINIMUM_REQUIRED( VERSION 3.16 )
-CMAKE_POLICY( VERSION 3.16 )
+
+#================================================= CMake Configuration =================================================
+cmake_minimum_required(VERSION 3.16)
+cmake_policy(VERSION 3.16)
+# Ensure we are using modern behaviour of the project command (introduced in CMake 3.0) which enables setting version
+# numbers via it (rather than manually setting individual major/minor/patch vars).
+cmake_policy(SET CMP0048 NEW)
+
+#============================================== Project name and Version ===============================================
+project(Brewken VERSION 0.1.0 LANGUAGES CXX)
+message(STATUS "Building " ${PROJECT_NAME} " version " ${PROJECT_VERSION})
+message(STATUS "PROJECT_SOURCE_DIR is " ${PROJECT_SOURCE_DIR})
 
 # Creates a Makefile.
 # NOTE: cmake . -DCMAKE_INSTALL_PREFIX=/tmp/blah && make DESTDIR=/foo
@@ -63,12 +72,6 @@ ADD_CUSTOM_TARGET(
            -DCOMPONENT=${RUNTIME_INSTALL_COMPONENT}
            -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
 )
-
-#=================================Version======================================
-SET( BREWKEN_VERSION_MAJOR 0 )
-SET( BREWKEN_VERSION_MINOR 1 )
-SET( BREWKEN_VERSION_PATCH 0 )
-SET( BREWKEN_VERSION_STRING "${BREWKEN_VERSION_MAJOR}.${BREWKEN_VERSION_MINOR}.${BREWKEN_VERSION_PATCH}" )
 
 #===================================Options====================================
 OPTION( BUILD_DESIGNER_PLUGINS
@@ -225,7 +228,7 @@ IF(Qt5_POSITION_INDEPENDENT_CODE)
 ENDIF()
 
 # Uncomment the following line to show what version of Qt is actually being used
-message(STATUS "Using Qt version " ${QT_VERSION})
+message(STATUS "Using Qt version " ${Qt5Core_VERSION})
 
 MESSAGE( STATUS "CMAKE_SYSTEM_INCLUDE_PATH: ${CMAKE_SYSTEM_INCLUDE_PATH}" )
 
@@ -343,6 +346,8 @@ INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
 #
 INCLUDE(ExternalProject)
 FIND_PACKAGE(Git REQUIRED)
+message(STATUS "Valijson source at " ${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson )
+
 ExternalProject_Add(ValiJSON
   GIT_REPOSITORY    https://github.com/tristanpenman/valijson.git
   GIT_TAG           master
@@ -353,10 +358,14 @@ ExternalProject_Add(ValiJSON
   INSTALL_COMMAND   ""
   TEST_COMMAND      ""
 )
+# Per comment above, leave the next line commented out unless you want to build the ValiJSON test suite
+#add_subdirectory(third-party/valijson)
+# The following line alone won't prevent unnecessary attempts to build bits of Valijson source that we don't use
 set(valijson_BUILD_TESTS OFF)
 add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
 INCLUDE_DIRECTORIES(${ROOTDIR}/third-party/valijson/include)
-
+execute_process(COMMAND git config --global --add safe.directory third-party/valijson
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 #=========================Configure Brewken.qrc.in==========================
 
