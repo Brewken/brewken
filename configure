@@ -79,6 +79,11 @@ fi
 
 echo "CMAKEOPTIONS: $CMAKEOPTIONS"
 
+echo "Adding Valijson as git submodule"
+mkdir -p third-party/valijson
+rm -rf third-party/valijson/*
+git submodule add https://github.com/tristanpenman/valijson third-party/valijson
+
 # Create dir only if needed
 mkdir -p build
 
