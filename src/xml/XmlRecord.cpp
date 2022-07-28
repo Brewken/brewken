@@ -332,15 +332,15 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      {
                         auto match = fieldDefinition->enumMapping->stringToEnum(value);
                         if (!match) {
-                        // This is probably a coding error as the XSD parsing should already have verified that the
-                        // contents of the node are one of the expected values.
-                        qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as value not recognised";
-                     } else {
-                           parsedValue.setValue(match.value());
-                        parsedValueOk = true;
-                     }
+                           // This is probably a coding error as the XSD parsing should already have verified that the
+                           // contents of the node are one of the expected values.
+                           qWarning() <<
+                              Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
+                              value << " as value not recognised";
+                        } else {
+                              parsedValue.setValue(match.value());
+                           parsedValueOk = true;
+                        }
                      }
                      break;
 

@@ -210,6 +210,7 @@ namespace Measurement {
       // == Density ===
       extern Unit const sp_grav;
       extern Unit const plato;
+      extern Unit const brix;
       // == Diastatic power ==
       extern Unit const lintner;
       extern Unit const wk;

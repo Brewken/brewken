@@ -463,6 +463,13 @@ namespace Measurement::UnitSystems {
                                                "density_Plato",
                                                Measurement::SystemOfMeasurement::Plato);
 
+   UnitSystem const density_Brix = UnitSystem(PhysicalQuantity::Density,
+                                               nullptr,
+                                               &Measurement::Units::brix,
+                                               {{UnitSystem::scaleWithout, &Measurement::Units::brix}},
+                                               "density_Brix",
+                                               Measurement::SystemOfMeasurement::Brix);
+
    UnitSystem const diastaticPower_Lintner = UnitSystem(PhysicalQuantity::DiastaticPower,
                                                         nullptr,
                                                         &Measurement::Units::lintner,

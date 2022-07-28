@@ -15,6 +15,8 @@
  =====================================================================================================================*/
 #include "json/JsonRecord.h"
 
+#include <system_error>
+
 #include <QDate>
 #include <QDebug>
 
@@ -27,8 +29,12 @@
 namespace {
 }
 
-JsonRecord::JsonRecord(JsonRecordDefinition const & recordType) :
-   recordType{recordType},
+JsonRecord::JsonRecord(JsonCoding const & jsonCoding,
+                       boost::json::value const & recordData,
+                       JsonRecordDefinition const & recordDefinition) :
+   jsonCoding{jsonCoding},
+   recordData{recordData},
+   recordDefinition{recordDefinition},
    namedParameterBundle{NamedParameterBundle::NotStrict},
    namedEntity{nullptr},
    includeInStats{true},
@@ -46,13 +52,233 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
    return this->namedEntity;
 }
 
-/*
-bool JsonRecord::load(QTextStream & userMessage) {
-   qDebug() << Q_FUNC_INFO;
 
+bool JsonRecord::load(QTextStream & userMessage) {
+   Q_ASSERT(this->recordData.is_object());
+   qDebug() <<
+      Q_FUNC_INFO << "Loading" << this->recordDefinition.recordName << "record containing" <<
+      this->recordData.as_object().size() << "elements";
+
+   //
+   // Loop through all the fields that we know/care about.  Anything else is intentionally ignored.  (We won't know
+   // what to do with it, and, if it weren't allowed to be there, it would have generated an error at XSD parsing.)
+   //
+   for (auto & fieldDefinition : this->recordDefinition.fieldDefinitions) {
+      //
+      // NB: As with XML processing in XmlRecord::load, if we don't find a node, there's nothing for us to do.  The
+      // schema validation should already flagged up an error if there are missing _required_ fields.  Equally,
+      // although we only look for nodes we know about, some of these we won't use for one reason or another.
+      //
+      std::error_code errorCode;
+      boost::json::value const * container = this->recordData.find_pointer(fieldDefinition.xPath, errorCode);
+      if (!container) {
+         // As noted above this is usually not an error, but sometimes useful to log for debugging
+         qDebug() <<
+            Q_FUNC_INFO << fieldDefinition.xPath << " (" << fieldDefinition.type << ") not present (error code " <<
+            errorCode.value() << ":" << errorCode.message().c_str() << ")";
+      } else {
+         qDebug() << Q_FUNC_INFO << "Found" << fieldDefinition.xPath << " (" << fieldDefinition.type << ")";
+         if (JsonRecordDefinition::FieldType::RequiredConstant == fieldDefinition.type) {
+            qDebug() << Q_FUNC_INFO << "Ignoring" << fieldDefinition.xPath << "field";
+            continue;
+         }
+
+         if (JsonRecordDefinition::FieldType::Array == fieldDefinition.type) {
+            //
+            // One difference between XML and JSON when it comes to arrays is that the latter has one less layer of
+            // tags.  In XML (eg BeerXML), we have "<HOPS><HOP>...</HOP><HOP>...</HOP>...</HOPS>".  In JSON (eg
+            // BeerJSON) we have hop_varieties: [{...},{...},...].
+            //
+            // Schema should have already enforced that this field is an array, so we assert that here
+            //
+            Q_ASSERT(container->is_array());
+            boost::json::array const & childRecordsData = container->get_array();
+            if (!this->loadChildRecords(this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath),
+                                        childRecordsData,
+                                        userMessage)) {
+               return false;
+            }
+         } else {
+            //
+            // If it's not an array then it's fields on the object we're currently populating
+            //
+
+            bool parsedValueOk = false;
+            QVariant parsedValue;
+
+            // JSON Schema validation should have ensured this field really is what we're expecting, so it's a coding
+            // error if it's not, which is what most of the asserts below are saying.
+            switch(fieldDefinition.type) {
+
+               case JsonRecordDefinition::FieldType::Bool:
+                  Q_ASSERT(!container->is_bool());
+                  parsedValue.setValue(container->get_bool());
+                  parsedValueOk = true;
+                  break;
+
+               case JsonRecordDefinition::FieldType::Int:
+                  Q_ASSERT(!container->is_int64());
+                  parsedValue.setValue(container->get_int64());
+                  parsedValueOk = true;
+                  break;
+
+               case JsonRecordDefinition::FieldType::UInt:
+                  Q_ASSERT(!container->is_uint64());
+                  parsedValue.setValue(container->get_uint64());
+                  parsedValueOk = true;
+                  break;
+
+               case JsonRecordDefinition::FieldType::Double:
+                  Q_ASSERT(!container->is_double());
+                  parsedValue.setValue(container->get_double());
+                  parsedValueOk = true;
+                  break;
+
+               case JsonRecordDefinition::FieldType::String:
+                  Q_ASSERT(!container->is_string());
+                  {
+                     QString value{container->get_string().c_str()};
+                     parsedValue.setValue(value);
+                     parsedValueOk = true;
+                  }
+                  break;
+
+               case JsonRecordDefinition::FieldType::Enum:
+                  // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
+                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.enumMapping);
+                  {
+                     Q_ASSERT(!container->is_string());
+                     QString value{container->get_string().c_str()};
+                     parsedValue.setValue(value);
+
+                     auto match = fieldDefinition.valueDecoder.enumMapping->stringToEnum(value);
+                     if (!match) {
+                        // This is probably a coding error as the JSON Schema should already have verified that the
+                        // value is one of the expected ones.
+                        qWarning() <<
+                           Q_FUNC_INFO << "Ignoring " << this->recordDefinition.namedEntityClassName << " node " <<
+                           fieldDefinition.xPath << "=" << value << " as value not recognised";
+                     } else {
+                        parsedValue.setValue(match.value());
+                        parsedValueOk = true;
+                     }
+                  }
+                  break;
+
+               case JsonRecordDefinition::FieldType::Array:
+                  // This should be unreachable as we dealt with this case separately above, but having an case
+                  // statement for it eliminates a compiler warning whilst still retaining the useful warning if we
+                  // have ever omitted processing for another field type.
+                  Q_ASSERT(false);
+                  break;
+
+               case JsonRecordDefinition::FieldType::MeasurementWithUnits:
+                  // It's definitely a coding error if there is no unit decoder mapping for a field declared to require
+                  // one
+                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.unitsMapping);
+                  // JSON schema validation should have ensured that the field is actually one with subfields for value
+                  // and unit
+                  Q_ASSERT(container->is_object());
+                  {
+                     //
+                     // Read the value and unit fields.  We assert that they exist and are of the correct type (double
+                     // and string respectively) because this should have been enforced already by JSON schema
+                     // validation.
+                     //
+                     std::error_code errCode;
+                     boost::json::value const * valueRaw =
+                        this->recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->valueField, errCode);
+                     Q_ASSERT(valueRaw);
+                     Q_ASSERT(valueRaw->is_double());
+                     double value = valueRaw->get_double();
+                     boost::json::value const * unitNameRaw =
+                        this->recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->unitField, errCode);
+                     Q_ASSERT(unitNameRaw);
+                     Q_ASSERT(unitNameRaw->is_string());
+                     QString unitName{unitNameRaw->get_string().c_str()};
+
+                     // The schema validation should also have ensured that the unit name is constrained to one of the
+                     // values we are expecting
+                     Q_ASSERT(fieldDefinition.valueDecoder.unitsMapping->nameToUnit.contains(unitName));
+                     Measurement::Unit const * unit =
+                        fieldDefinition.valueDecoder.unitsMapping->nameToUnit.value(unitName);
+                     Measurement::Amount canonicalValue = unit->toSI(value);
+
+                     qDebug() <<
+                        Q_FUNC_INFO << "Read" << fieldDefinition.xPath << " (" << fieldDefinition.type << ") as" <<
+                        value << " " << unitName << "=" << canonicalValue.quantity << " " << canonicalValue.unit;
+
+                     parsedValue.setValue(canonicalValue.quantity);
+                     parsedValueOk = true;
+                  }
+                  break;
+
+               //
+               // From here on, we have BeerJSON-specific types.  If we ever wanted to parse some other type of JSON,
+               // then we might need to make this code more generic, but, for now, we're not going to worry too much as
+               // it seems unlikely there will be other JSON encodings we want to deal with in the foreseeable future.
+               //
+               case JsonRecordDefinition::FieldType::Date:
+                  // In BeerJSON, DateType is a string matching this regexp:
+                  //   "\\d{4}-\\d{2}-\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+                  // This is One True Date Format™ (aka ISO 8601), which makes our life somewhat easier
+                  Q_ASSERT(!container->is_string());
+                  {
+                     QString value{container->get_string().c_str()};
+                     QDate date = QDate::fromString(value, Qt::ISODate);
+                     parsedValueOk = date.isValid();
+                     if (!parsedValueOk) {
+                        // The JSON schema validation doesn't guarantee the date is valid, just that it's the right
+                        // digit groupings.  So, we do need to handle cases such as 2022-13-13 which are the right
+                        // format but not valid dates.
+                        qWarning() <<
+                           Q_FUNC_INFO << "Ignoring " << this->recordDefinition.namedEntityClassName << " node " <<
+                           fieldDefinition.xPath << "=" << value << " as could not be parsed as ISO 8601 date";
+                     }
+                  }
+                  break;
+               case JsonRecordDefinition::FieldType::Acidity:
+                  //
+                  // Acidity will have subvalues of unit and value.  However, unit should always be "pH" (as there isn't
+                  // any other commonly used measure of acidity).
+                  //
+                  // It's a coding error if the acidity field does not have subvalues, ie is not a JSON object
+                  //
+                  Q_ASSERT(container->is_object());
+
+                  break;
+
+            ///*********************TODO FINISH THIS!**************************
+            /*
+      //
+      // These values correspond with BeerJSON types
+      //
+      Acidity,          // .:TODO.JSON:. Implement!
+      Bitterness,       // .:TODO.JSON:. Implement!
+      Carbonation,      // .:TODO.JSON:. Implement!
+      Color,            // .:TODO.JSON:. Implement!
+      Concentration,    // .:TODO.JSON:. Implement! Examples for concentration include ppm, ppb, and mg/l
+      DiastaticPower,   // .:TODO.JSON:. Implement!
+      Gravity,          // .:TODO.JSON:. Implement!
+      Percent,          // .:TODO.JSON:. Implement!
+      Temperature,      // .:TODO.JSON:. Implement!
+      TimeElapsed,      // .:TODO.JSON:. Implement!  We use a slightly different name from BeerJSON to make clear this is not time of day
+      Viscosity,        // .:TODO.JSON:. Implement!
+      //
+      // Other
+      //
+      MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
+                        // so it's a useful concept for us .:TODO.JSON:. Implement!
+      RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
+
+             */
+            }
+         }
+      }
+   }
 
    return true;
-}*/
+}
 
 void JsonRecord::constructNamedEntity() {
    // Base class does not have a NamedEntity or a container, so nothing to do
@@ -214,7 +440,7 @@ void JsonRecord::deleteNamedEntityFromDb() {
       // JSON to work).  Instead we distinguish between two types of records: RecordSimple, which can be set via a
       // property, and RecordComplex, which can't.
       //
-      if (JsonRecord::FieldType::RecordSimple == ii->fieldDefinition->fieldType) {
+      if (JsonRecord::FieldType::RecordSimple == ii->fieldDefinition->type) {
          char const * const propertyName = *ii->fieldDefinition->propertyName;
          Q_ASSERT(nullptr != propertyName);
          // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
@@ -243,58 +469,28 @@ void JsonRecord::deleteNamedEntityFromDb() {
 }*/
 
 
-/*bool JsonRecord::loadChildRecords(xalanc::DOMSupport & domSupport,
-                                 JsonRecordDefinition::FieldDefinition const * fieldDefinition,
-                                 xalanc::NodeRefList & nodesForCurrentXPath,
-                                 QTextStream & userMessage) {
+bool JsonRecord::loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+                                  boost::json::array const & childRecordsData,
+                                  QTextStream & userMessage) {
    //
-   // This is where we have one or more substantive records of a particular type inside the one we are
-   // reading - eg some Hops inside a Recipe.  So we need to loop though these "child" records and read
-   // each one in with an JsonRecord object of the relevant type.
+   // This is where we have a list of one or more substantive records of a particular type, which may be either at top
+   // level (eg hop_varieties) or inside another record that we are in the process of reading (eg hop_additions inside a
+   // recipe).  Either way, we need to loop though these "child" records and read each one in with an JsonRecord object
+   // of the relevant type.
    //
-   // Note an advantage of using XPaths means we can just "see through" any grouping or containing nodes.
-   // For instance, in BeerJSON, inside a <RECIPE>...</RECIPE> record there will be a <HOPS>...</HOPS>
-   // "record set" node containing the <HOP>...</HOP> record(s) for this recipe, but we can just say in our
-   // this->fieldDefinitions that we want the "HOPS/HOP" nodes inside a "RECIPE" and thus skip straight to
-   // having a list of all the <HOP>...</HOP> nodes without having to explicitly parse the <HOPS>...</HOPS>
-   // node.
-   //
-   for (xalanc::NodeRefList::size_type ii = 0; ii < nodesForCurrentXPath.getLength(); ++ii) {
-      //
-      // It's a coding error if we don't recognise the type of node that we've been configured (via
-      // this->fieldDefinitions) to read in.  Again, an advantage of using XPaths is that we just
-      // automatically ignore nodes we're not looking for.  Eg, imagine, in a BeerJSON file, there's the
-      // following:
-      //    <RECIPE>
-      //    ...
-      //       <HOPS>
-      //          <FOO>...</FOO>
-      //          <BAR>...</BAR>
-      //          <HOP>...</HOP>
-      //       </HOPS>...
-      //    ...
-      //    </RECIPE>
-      // Requesting the HOPS/HOP subpath of RECIPE will not return FOO or BAR
-      //
-      xalanc::XalanNode * childRecordNode = nodesForCurrentXPath.item(ii);
-      XQString childRecordName{childRecordNode->getNodeName()};
-      Q_ASSERT(this->jsonCoding.isKnownJsonRecordDefinition(childRecordName));
-
-      std::shared_ptr<JsonRecord> jsonRecord = this->jsonCoding.getNewJsonRecord(childRecordName);
-      this->childRecords.append(JsonRecord::ChildRecord{fieldDefinition, jsonRecord});
-      //
-      // The return value of xalanc::XalanNode::getIndex() doesn't have an instantly obvious direct meaning, but AFAICT
-      // higher values are for nodes that were later in the input file, so useful to log.
-      //
-      qDebug() <<
-         Q_FUNC_INFO << "Loading child record" << childRecordName << "with index" << childRecordNode->getIndex();
-      if (!jsonRecord->load(domSupport, childRecordNode, userMessage)) {
+   for (auto & ii : childRecordsData) {
+      // Iterating through an array gives us boost::json::value objects
+      // We assert that these are boost::json::object key:value containers (because we don't use arrays of other types)
+      Q_ASSERT(ii.is_object());
+      boost::json::object const & recordData = ii.get_object();
+      JsonRecord childRecord{this->jsonCoding, recordData, childRecordDefinition};
+      if (!childRecord.load(userMessage)) {
          return false;
       }
    }
 
    return true;
-}*/
+}
 
 
 bool JsonRecord::isDuplicate() {
@@ -358,15 +554,15 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
       if (fieldDefinition.propertyName.isNull()) {
          // At the moment at least, we support all JsonRecord::RecordSimple and JsonRecord::RecordComplex fields, so it's
          // a coding error if one of them does not have a property name.
-         Q_ASSERT(JsonRecord::FieldType::RecordSimple != fieldDefinition.fieldType);
-         Q_ASSERT(JsonRecord::FieldType::RecordComplex != fieldDefinition.fieldType);
+         Q_ASSERT(JsonRecord::FieldType::RecordSimple != fieldDefinition.type);
+         Q_ASSERT(JsonRecord::FieldType::RecordComplex != fieldDefinition.type);
          continue;
       }
 
       // Nested record fields are of two types.  JsonRecord::RecordSimple can be handled generically.
       // JsonRecord::RecordComplex need to be handled in part by subclasses.
-      if (JsonRecord::FieldType::RecordSimple == fieldDefinition.fieldType ||
-          JsonRecord::FieldType::RecordComplex == fieldDefinition.fieldType) {
+      if (JsonRecord::FieldType::RecordSimple == fieldDefinition.type ||
+          JsonRecord::FieldType::RecordComplex == fieldDefinition.type) {
          //
          // Some of the work is generic, so we do it here.  In particular, we can work out what tags are needed to
          // contain the record (from the XPath, if any, prior to the last slash), but also what type of JsonRecord(s) we
@@ -386,7 +582,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
          qDebug() << Q_FUNC_INFO << xPathElements.last();
          std::shared_ptr<JsonRecord> subRecord = this->jsonCoding.getNewJsonRecord(xPathElements.last());
 
-         if (JsonRecord::FieldType::RecordSimple == fieldDefinition.fieldType) {
+         if (JsonRecord::FieldType::RecordSimple == fieldDefinition.type) {
             NamedEntity * childNamedEntity =
                namedEntityToExport.property(*fieldDefinition.propertyName).value<NamedEntity *>();
             if (childNamedEntity) {
@@ -419,7 +615,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
       }
 
       QString valueAsText;
-      if (fieldDefinition.fieldType == JsonRecord::FieldType::RequiredConstant) {
+      if (fieldDefinition.type == JsonRecord::FieldType::RequiredConstant) {
          //
          // This is a field that is required to be in the JSON, but whose value we don't need, and for which we always
          // write a constant value on output.  At the moment it's only needed for the VERSION tag in BeerJSON.
@@ -440,7 +636,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
             continue;        // Soldier on in a prod build
          }
 
-         switch (fieldDefinition.fieldType) {
+         switch (fieldDefinition.type) {
 
             case JsonRecord::FieldType::Bool:
                // Unlike other JSON documents, boolean fields in BeerJSON are caps, so we have to accommodate that
@@ -509,7 +705,7 @@ void JsonRecord::subRecordToJson(JsonRecordDefinition::FieldDefinition const & f
    // It's a coding error if we get here as this virtual member function should be overridden classes that have nested records
    qCritical() << Q_FUNC_INFO <<
       "Coding error: cannot export" << namedEntityToExport.metaObject()->className() << "(" <<
-      this->recordType.namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" << fieldDefinition.xPath <<
+      this->recordDefinition.namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" << fieldDefinition.xPath <<
       "> from base class JsonRecord";
    Q_ASSERT(false);
    return;

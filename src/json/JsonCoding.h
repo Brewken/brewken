@@ -31,10 +31,10 @@
  * \brief An instance of this class holds information about a particular JSON encoding (eg BeerJSON 2.1).  Specifically,
  *        that information includes:
  *          • the corresponding \c JsonSchema that we use to validate a JSON document
- *          • the \b JsonRecordDefinition objects that define how we map BeerJSON objects to our own data structures.
+ *          • the \c JsonRecordDefinition objects that define how we map BeerJSON objects to our own data structures.
  *
- *        As we are parsing or creating a JSON document, we'll create a \b JsonRecord for each record we are reading /
- *        writing, using the relevant \b JsonRecordDefinition as a template.
+ *        As we are parsing or creating a JSON document, we'll create a \c JsonRecord for each record we are reading /
+ *        writing, using the relevant \c JsonRecordDefinition as a template.
  *
  *        Similar to xml/XmlCoding.h
  */
@@ -48,12 +48,12 @@ public:
     *        a create-on-the-heap constructor for that subclass, (provided it takes the same parameters as this
     *        function).
     *
-    *        To make it easier for callers, we also typedef \b JsonCoding::JsonRecordConstructorWrapperto be a pointer to
+    *        To make it easier for callers, we also typedef \c JsonCoding::JsonRecordConstructorWrapperto be a pointer to
     *        a function of this type.
     *
-    * \param recordName passed into the constructor of T (which should be \b JsonRecord or a subclass thereof)
-    * \param xmlCoding passed into the constructor of T (which should be \b JsonRecord or a subclass thereof)
-    * \param fieldDefinitions passed into the constructor of T (which should be \b JsonRecord or a subclass thereof)
+    * \param recordName passed into the constructor of T (which should be \c JsonRecord or a subclass thereof)
+    * \param xmlCoding passed into the constructor of T (which should be \c JsonRecord or a subclass thereof)
+    * \param fieldDefinitions passed into the constructor of T (which should be \c JsonRecord or a subclass thereof)
     * \return Pointer to a new instance, constructed on the heap, of an JsonRecord (or subclass thereof) suitable for
     *         reading in objects of type T (where T ie expected either to be some subclass of NamedEntity or void to
     *         signify the root element). Eg:
@@ -74,14 +74,14 @@ public:
 
    /**
     * \brief This is just a convenience typedef representing a pointer to a template specialisation of
-    *        \b JsonCoding::construct().
+    *        \c JsonCoding::construct().
     */
 /*   typedef JsonRecord * (*JsonRecordConstructorWrapper)(QString const & recordName,
                                                       JsonCoding const &,
                                                       JsonRecordDefinition::FieldDefinitions const &);
 */
    /**
-    * Given an JSON element that corresponds to a record, this is the info we need to construct a \b JsonRecord object
+    * Given an JSON element that corresponds to a record, this is the info we need to construct a \c JsonRecord object
     * for this encoding.
     */
 /*   struct JsonRecordDefinition {
@@ -100,7 +100,7 @@ public:
     *
     *
 ///    * \param entityNameToJsonRecordDefinition Mapping from JSON object name to the information we need to construct a
-///    *                                         suitable \b JsonRecord object.
+///    *                                         suitable \c JsonRecord object.
     */
    JsonCoding(char const * const name,
               char const * const version,
@@ -116,8 +116,8 @@ public:
    /**
     * \brief Check whether we know how to process a record of a given (JSON tag) name
     * \param recordName
-    * \return \b true if we know how to process (ie we have the address of a function that can create a suitable
-    *         \b JsonRecord object), \b false if not
+    * \return \c true if we know how to process (ie we have the address of a function that can create a suitable
+    *         \c JsonRecord object), \c false if not
     */
    bool isKnownJsonRecordDefinition(QString recordName) const;
 
@@ -127,14 +127,19 @@ public:
    JsonRecordDefinition const & getRoot() const;
 
    /**
-    * \brief For a given record name (eg "HOPS", "HOP", "YEASTS", etc) retrieve a new instance of the corresponding
-    *        subclass of \b JsonRecord.  Caller is responsible for ensuring that such a subclass exists, either by
-    *        having supplied the \b nameToJsonRecordLookup to our constructor or by calling \b isKnownJsonRecordDefinition().
-    * \param recordName
-    * \return A shared pointer to a new \b JsonRecord constructed on the heap.  (The caller will be the sole owner of
-    *         this pointer.)
+    * \brief For a given record name (eg "hops", "yeasts", etc) retrieve the corresponding \c JsonRecordDefinition
+    * \param recordName must be that of one of the list of \c JsonRecordDefinition object supplied when we were
+    *                   constructed
     */
-///   std::shared_ptr<JsonRecord> getNewJsonRecord(QString recordName) const;
+   JsonRecordDefinition const & getJsonRecordDefinitionByName(QString const & recordName) const;
+
+   /**
+    * \brief For a given named entity class name (eg "Hop", "Yeast", etc) retrieve the corresponding
+    *        \c JsonRecordDefinition
+    * \param recordName must be that of one of the list of \c JsonRecordDefinition object supplied when we were
+    *                   constructed
+    */
+   JsonRecordDefinition const & getJsonRecordDefinitionByNamedEntity(QString const & namedEntityClassName) const;
 
    /**
     * \brief Validate JSON file against schema, load its contents into objects, and store then in the DB

@@ -165,6 +165,7 @@ SET( Brewken_SRCS
     ${SRCDIR}/measurement/IbuMethods.cpp
     ${SRCDIR}/measurement/Measurement.cpp
     ${SRCDIR}/measurement/PhysicalQuantity.cpp
+    ${SRCDIR}/measurement/SucroseConversion.cpp
     ${SRCDIR}/measurement/SystemOfMeasurement.cpp
     ${SRCDIR}/measurement/Unit.cpp
     ${SRCDIR}/measurement/UnitSystem.cpp
@@ -662,6 +663,10 @@ ADD_TEST(
 ADD_TEST(
    NAME testUnitConversions
    COMMAND Brewken_tests testUnitConversions
+)
+ADD_TEST(
+   NAME testAlgorithms
+   COMMAND Brewken_tests testAlgorithms
 )
 add_test(
    NAME testLogRotation

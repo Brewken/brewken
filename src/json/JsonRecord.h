@@ -19,6 +19,9 @@
 
 #include <memory>
 
+#include <boost/json/object.hpp>
+#include <boost/json/array.hpp>
+
 #include <QTextStream>
 #include <QVector>
 
@@ -51,9 +54,13 @@ public:
    };
 
    /**
-    * \brief Constructor
+    * \brief Constructor should only be called by \c JsonRecordDefinition
+    *
+    *        To create a new \c JsonRecord call \c JsonRecordDefinition::makeRecord
     */
-   JsonRecord(JsonRecordDefinition const & recordType);
+   JsonRecord(JsonCoding const & jsonCoding,
+              boost::json::value const & recordData,
+              JsonRecordDefinition const & recordDefinition);
    ~JsonRecord();
 
    /**
@@ -81,13 +88,11 @@ public:
     * \brief From the supplied record (ie node) in an JSON document, load into memory the data it contains, including
     *        any other records nested inside it.
     *
-    * \param rootNodeOfRecord
     * \param userMessage Where to append any error messages that we want the user to see on the screen
     *
     * \return \b true if load succeeded, \b false if there was an error
     */
-///   bool load(xalanc::XalanNode * rootNodeOfRecord,
-///             QTextStream & userMessage);
+   bool load(QTextStream & userMessage);
 
    /**
     * \brief Once the record (including all its sub-records) is loaded into memory, we this function does any final
@@ -124,10 +129,9 @@ private:
     *        process (eg Hop records inside a Recipe).  But the algorithm for processing is generic, so we implement it
     *        in this base class.
     */
-///   bool loadChildRecords(xalanc::DOMSupport & domSupport,
-///                         FieldDefinition const * fieldDefinition,
-///                         xalanc::NodeRefList & nodesForCurrentXPath,
-///                         QTextStream & userMessage);
+   bool loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+                         boost::json::array const & childRecordsData,
+                         QTextStream & userMessage);
 
 protected:
    /**
@@ -205,7 +209,16 @@ protected:
    static void modifyClashingName(QString & candidateName);
 
 protected:
-   JsonRecordDefinition const & recordType;
+   JsonCoding const & jsonCoding;
+
+   /**
+    * The underlying type of the contents of \c recordData is \c boost::json::object.  However, we need to store it as
+    * \c boost::json::value to be able to use JSON pointer (aka XPath) functions (because, although you can easily
+    * extract the contained \c boost::json::object from a \c boost::json::value, you cannot go in the other direction
+    * and get the containing \c boost::json::value from a \c boost::json::object).
+    */
+   boost::json::value const & recordData;
+   JsonRecordDefinition const & recordDefinition;
 
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
    // this->namedEntity
