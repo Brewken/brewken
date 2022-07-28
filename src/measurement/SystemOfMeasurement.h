@@ -68,10 +68,17 @@ namespace Measurement {
       // So, for these things we'll just use the names of the various scales as the names of our pseudo systems of
       // measurement.
       //
+
+      // Color
       StandardReferenceMethod,
       EuropeanBreweryConvention,
+
+      // Density
       SpecificGravity,
       Plato,
+      Brix,
+
+      // Diastatic power
       Lintner,
       WindischKolbach
    };

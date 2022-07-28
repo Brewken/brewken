@@ -130,7 +130,7 @@ public:
     *        a create-on-the-heap constructor for that subclass, (provided it takes the same parameters as this
     *        function).
     *
-    *        To make it easier for callers, we also typedef \b XmlCoding::XmlRecordConstructorWrapperto be a pointer to
+    *        To make it easier for callers, we also typedef \b XmlCoding::XmlRecordConstructorWrapper to be a pointer to
     *        a function of this type.
     *
     * \param recordName passed into the constructor of T (which should be \b XmlRecord or a subclass thereof)
@@ -142,7 +142,7 @@ public:
     *           XmlCoding::construct<Hop>() will construct an XmlNamedEntityRecord<Hop> object
     *           XmlCoding::construct<Yeast>() will construct an XmlNamedEntityRecord<Yeast> object
     *           XmlCoding::construct<Recipe>() will construct an XmlRecipeRecord object ‡
-    *           XmlCoding::construct<void>() will construct an XmlRecipe object ‡
+    *           XmlCoding::construct<void>() will construct an XmlRecord object ‡
     *         ‡ courtesy of template specialisation below
     *
     *         NB: The caller owns this object and is responsible for its deletion.

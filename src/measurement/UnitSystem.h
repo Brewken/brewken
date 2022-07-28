@@ -261,6 +261,7 @@ namespace Measurement {
 
       extern UnitSystem const density_SpecificGravity;
       extern UnitSystem const density_Plato;
+      extern UnitSystem const density_Brix;
 
       extern UnitSystem const diastaticPower_Lintner;
       extern UnitSystem const diastaticPower_WindischKolbach;

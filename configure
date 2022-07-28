@@ -79,10 +79,14 @@ fi
 
 echo "CMAKEOPTIONS: $CMAKEOPTIONS"
 
-echo "Adding Valijson as git submodule"
-mkdir -p third-party/valijson
-rm -rf third-party/valijson/*
-git submodule add https://github.com/tristanpenman/valijson third-party/valijson
+# When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
+if [ ! -d third-party ]
+then
+   echo "Pulling in submodules"
+   mkdir -p third-party
+   git submodule init
+   git submodule update
+fi
 
 # Create dir only if needed
 mkdir -p build

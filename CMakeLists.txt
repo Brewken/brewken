@@ -243,27 +243,31 @@ SET_PROPERTY(
 )
 
 #======================================================Find Boost=======================================================
-# Boost is a collection of separate libraries, some of which are header-only.  We only specify the Boost libraries that
-# we actually use.
+# Boost is a collection of separate libraries, some, but not all, of which are header-only.  We only specify the Boost
+# libraries that we actually use.
 #
 # On Linux, there are cases where we need a more recent version of a Boost library than is readily-available in system-
 # supplied packages.  I haven't found a slick way to solve this in CMake, though https://github.com/Orphis/boost-cmake
 # looks promising.  (For header-only Boost libraries, you might think it would be relatively painless to pull them in
 # from where they are hosted on GitHub (see https://github.com/boostorg), but this is not the case.  AFAICT you can't
 # easily pull a specific release, and just pulling master doesn't guarantee that everything compiles.)  So, anyway, on
-# Linux, you need to do the following to install Boost 1.77 (instead of running "sudo apt-get install
-# libboost-all-dev"):
+# Debian-based distros of Linux, such as Ubuntu, you need to do the following to install Boost 1.79 in place of whatever
+# (if anything) is already installed:
 #
+#    $ sudo apt remove boost-all-dev
 #    $ cd ~
 #    $ mkdir boost-tmp
 #    $ cd boost-tmp
-#    $ wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2
-#    $ tar --bzip2 -xf boost_1_77_0.tar.bz2
-#    $ cd boost_1_77_0
+#    $ wget https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2
+#    $ tar --bzip2 -xf boost_1_79_0.tar.bz2
+#    $ cd boost_1_79_0
 #    $ ./bootstrap.sh --prefix=/usr
 #    $ sudo ./b2 install
 #    $ cd ../..
-#    $ rm -rf boost-tmp
+#    $ sudo rm -rf boost-tmp
+#
+# (Obviously if you want to make the necessary change to install an even more recent version than Boost 1.79 then that
+# should be fine.)
 #
 # We do the same in .github/workflows/linux-ubuntu.yml to make GitHub automated builds work.
 #
@@ -290,8 +294,10 @@ SET_PROPERTY(
 #    *** Boost JSON ***
 #    ******************
 #
-#    Boost JSON is a header-only library that was introduced in Boost 1.75 in December 2020.  As of March 2022, Ubunutu
-#    LTS only has packages for Boost 1.71 from August 2019, hence the need to manually install a newer Boost.
+#    Boost JSON is an (optionally) header-only library that was introduced in Boost 1.75 in December 2020.  One of the
+#    features we use, JSON pointers (the equivalent of XML's XPaths) was only introduced in Boost 1.79.  As of March
+#    2022, Ubunutu 20.04 LTS only has packages for Boost 1.71 from August 2019, hence the need to manually install a
+#    newer Boost.
 #
 #    ******************
 #    *** Boost.Core ***
@@ -344,24 +350,13 @@ INCLUDE_DIRECTORIES(${XalanC_INCLUDE_DIRS})
 # its test suite - in which case, uncomment the add_subdirectory line and add ValiJSON::valijson to both lists of
 # target_link_libraries in src/CMakeLists.txt).
 #
-INCLUDE(ExternalProject)
-FIND_PACKAGE(Git REQUIRED)
+# Previously we were using CMake ExternalProject_Add to pull Valijson in, but this is unnecessary (because we don't need
+# to build Valijson) and somewhat harder to debug when it goes wrong.  So, instead, per the readme at
+# https://github.com/tristanpenman/valijson, we just added ValiJSON as a git submodule from the command line.
+#
 message(STATUS "Valijson source at " ${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson )
-
-ExternalProject_Add(ValiJSON
-  GIT_REPOSITORY    https://github.com/tristanpenman/valijson.git
-  GIT_TAG           master
-  SOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson"
-  BINARY_DIR        "${CMAKE_BINARY_DIR}/third-party/valijson"
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  TEST_COMMAND      ""
-)
 # Per comment above, leave the next line commented out unless you want to build the ValiJSON test suite
 #add_subdirectory(third-party/valijson)
-# The following line alone won't prevent unnecessary attempts to build bits of Valijson source that we don't use
-set(valijson_BUILD_TESTS OFF)
 add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
 INCLUDE_DIRECTORIES(${ROOTDIR}/third-party/valijson/include)
 execute_process(COMMAND git config --global --add safe.directory third-party/valijson

@@ -17,20 +17,29 @@
 #define JSON_JSONRECORDTYPE_H
 #pragma once
 
+#include <memory>
+
 #include <QVector>
 
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
+#include "json/JsonMeasureableUnitsMapping.h"
 
-///class JsonCoding;
+// Forward declarations
+namespace boost::json {
+   class object;
+}
+class JsonCoding;
+class JsonRecord;
 
 /**
- * \brief This class and its derived classes represent a type of data record in a JSON document.  Each instance of this
- *        class (including of it sub-classes) is a constant entity that tells us how to map between a particular JSON
- *        record type and our internal data structures.
+ * \brief \c JsonRecordDefinition represents a type of data record in a JSON document.  Each instance of this class is a
+ *        constant entity that tells us how to map between a particular JSON record type and our internal data
+ *        structures.
  *
  *        The related \c JsonRecord class holds data about a specific individual record that we are reading from or
- *        writing to a JSON document.
+ *        writing to a JSON document.  It also does all the reading and writing, and is subclassed where we need special
+ *        processing for different types of \c NamedEntity.
  *
  *        NB: In theory we should separate out BeerJSON specifics from more generic JSON capabilities, in case there is
  *        ever some other format of JSON that we want to use, or in case future versions of BeerJSON change radically.
@@ -151,21 +160,20 @@ public:
       //
       // These values correspond with BeerJSON types
       //
-      Date,             // DateType
+      Date,             // BeerJSON DateType
       Acidity,          // .:TODO.JSON:. Implement!
       Bitterness,       // .:TODO.JSON:. Implement!
       Carbonation,      // .:TODO.JSON:. Implement!
-      Color,            // .:TODO.JSON:. Implement!
       Concentration,    // .:TODO.JSON:. Implement! Examples for concentration include ppm, ppb, and mg/l
-      DiastaticPower,   // .:TODO.JSON:. Implement!
       Gravity,          // .:TODO.JSON:. Implement!
       Percent,          // .:TODO.JSON:. Implement!
-      Temperature,      // .:TODO.JSON:. Implement!
       TimeElapsed,      // .:TODO.JSON:. Implement!  We use a slightly different name from BeerJSON to make clear this is not time of day
       Viscosity,        // .:TODO.JSON:. Implement!
       //
       // Other
       //
+      MeasurementWithUnits, // This covers most cases where we need to convert between a BeerJSON value plus unit and
+                            // our internal canonical (usually SI) units via a Measurement::Unit constant.
       MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
                         // so it's a useful concept for us .:TODO.JSON:. Implement!
       RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
@@ -174,13 +182,91 @@ public:
    /**
     * \brief How to parse every field that we want to be able to read out of the JSON file.  See class description for
     *        more details.
+    *
+    *        In general, \c xPath ‡ is simply the key of a key:value pair to read/write from/to a JSON object and
+    *        \c propertyName tells us which property of the \c NamedEntity we are reading/writing holds this field.  (In
+    *        such cases, if it is \c BtString::NULL_STR then that means we don't support this property and neither read
+    *        nor write it.)
+    *
+    *        ‡ JSON's equivalent of XML's XPath is a JSON Pointer -- see RFC 6901 "JavaScript Object Notation (JSON)
+    *        Pointer" -- which, since Boost version 1.79.0, is supported by Boost.JSON (via its \c at_pointer() and
+    *        \c find_pointer() functions).  However, we've used "xPath" rather than "pointer" or "jsonPointer" as the
+    *        name here because "pointer" already has other meanings in C++ so (IHMO) XPath gets the meaning across
+    *        better.  It's also easier to grep for in the code base!
+    *
+    *        If \c type is \c JsonRecordDefinition::FieldType::Array, then \c propertyName will be \c BtString::NULL_STR
+    *        and \c xPath will, in addition to being the key of the key:value pair containing the array, be used to look
+    *        up the \c JsonRecordDefinition needed for the array elements.
+    *
+    *        If \c type is \c RequiredConstant, then \c propertyName is actually a constant value that we need to write
+    *        but not read (eg BeerJSON version number).
+    *
+    *        If \c type is \c JsonRecordDefinition::FieldType::Enum, then \c valueDecoder.enumMapping tells us how to
+    *        map between string values and our own enums.
+    *
+    *        If \c type is \c JsonRecordDefinition::FieldType::MeasurementWithUnits, then \c valueDecoder.unitsMapping
+    *        tells us how to map between the string values for units (eg "oz") and our own \c Measurement::Unit
+    *        constants.
     */
    struct FieldDefinition {
-      FieldType            fieldType;
-      char const *         xPath;
-      BtStringConst const *     propertyName;  // If fieldType == RequiredConstant, then this is actually the constant value
-      EnumStringMapping const * enumMapping;
+      FieldType                 type;
+      char const *              xPath;
+      BtStringConst const *     propertyName;
+      union ValueDecoder {
+         EnumStringMapping const *           enumMapping;
+         JsonMeasureableUnitsMapping const * unitsMapping;
+         // Explicity Union constructors here make the FieldDefinition constructor implementations slightly less clunky
+         ValueDecoder(EnumStringMapping const * enumMapping);
+         ValueDecoder(JsonMeasureableUnitsMapping const * unitsMapping);
+      } valueDecoder;
+
+      // In C++20, we finally get designated initializers (a feature that has long been present in C!).  This would
+      // permit brace initialisation of union members other than the first one - eg ".unitsMapping = ".  Unfortunately
+      // we are not yet on C++20, so we have to do things the old way with constructors.
+      FieldDefinition(FieldType                 type,
+                      char const *              xPath,
+                      BtStringConst const *     propertyName,
+                      EnumStringMapping const * enumMapping);
+      FieldDefinition(FieldType                           type,
+                      char const *                        xPath,
+                      BtStringConst const *               propertyName,
+                      JsonMeasureableUnitsMapping const * unitsMapping);
+      // We need this one too, otherwise having fourth constructor parameter nullptr leaves the compiler not knowing
+      // which of the above two constructors to use.  (And there's no elegant way to tell the compiler it doesn't matter
+      // in this case!)
+      FieldDefinition(FieldType                 type,
+                      char const *              xPath,
+                      BtStringConst const *     propertyName);
    };
+
+   /**
+    * \brief Part of the data we want to store in a \c JsonRecordDefinition is something that tells it what subclass (if
+    *        any) of \c JsonRecord needs to be created to handle this type of record.  We can't pass a pointer to a
+    *        constructor as that's not permitted in C++.  But we can pass a pointer to a static templated wrapper
+    *        function that just invokes the constructor to create the object on the heap, which is good enough for our
+    *        purposes, eg:
+    *           JsonRecordDefinition::create< JsonRecord >
+    *           JsonRecordDefinition::create< JsonRecipeRecord >
+    *           JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >
+    *           JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >
+    *
+    *        (We maybe could have called this function jsonRecordConstructorWrapper but it makes things rather long-
+    *        winded in the definitions.)
+    */
+   template<typename T>
+   static JsonRecord * create(JsonCoding const & jsonCoding,
+                              boost::json::object const & recordData,
+                              JsonRecordDefinition const & recordDefinition) {
+      return new T(jsonCoding, recordData, recordDefinition);
+   }
+
+   /**
+    * \brief This is just a convenience typedef representing a pointer to a template instantiation of
+    *        \b JsonRecordDefinition::create().
+    */
+   typedef JsonRecord * (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
+                                                        boost::json::object const & recordData,
+                                                        JsonRecordDefinition const & recordDefinition);
 
    /**
     * \brief Constructor
@@ -188,26 +274,31 @@ public:
     *                   fermentables in BeerJSON.
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
+    * \param jsonRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     */
    JsonRecordDefinition(char const * const recordName,
                         char const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
 
    /**
-    * \brief Alternate Constructor
-    * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
-    *                   fermentables in BeerJSON.
-    * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
-    *                             or empty string if there is none
+    * \brief Alternate Constructor allowing a list of lists of fields
     * \param fieldDefinitions A list of lists of fields we expect to find in this record (other fields will be ignored)
     *                         and how to parse them.  Effectively the constructor just concatenates all the lists.
     *                         See comments fin BeerJson.cpp for why we want to do this.
     */
    JsonRecordDefinition(char const * const recordName,
                         char const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
+
+   /**
+    * \brief This is the way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It ensures you
+    *        get the right subclass (if any) of \c JsonRecord.
+    */
+   std::shared_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::object const & recordData) const;
 
 public:
    BtStringConst const       recordName;
@@ -216,7 +307,17 @@ public:
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).
    BtStringConst const namedEntityClassName;
 
+   JsonRecordConstructorWrapper jsonRecordConstructorWrapper;
+
    std::vector<FieldDefinition> const fieldDefinitions;
 };
+
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, JsonRecordDefinition::FieldType const fieldType);
+
 
 #endif

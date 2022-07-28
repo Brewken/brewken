@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Algorithms.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * Algorithms.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Eric Tamme <etamme@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -19,8 +19,6 @@
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 #pragma once
-
-#define ROOT_PRECISION 0.0000001
 
 #include <cmath>
 #include <limits> // For std::numeric_limits
@@ -112,6 +110,13 @@ namespace Algorithms {
    double SG_20C20C_toPlato( double sg );
    //! \returns sg of \b plato
    double PlatoToSG_20C20C( double plato );
+
+   //! \brief Convert Specific Gravity (measured at 20°C) to Brix
+   double SgAt20CToBrix(double sg);
+
+   //! \brief Convert Brix to Specific Gravity (measured at 20°C)
+   double BrixToSgAt20C(double brix);
+
    //! \returns water density in kg/L at temperature \b celsius
    double getWaterDensity_kgL( double celsius );
    //! \returns additive correction to the 15C hydrometer reading if read at \b celsius

@@ -15,13 +15,82 @@
  =====================================================================================================================*/
 #include "json/JsonRecordDefinition.h"
 
+#include <QDebug>
+
+namespace {
+   EnumStringMapping const fieldTypeToName {
+      {QT_TR_NOOP("Bool"                ), JsonRecordDefinition::FieldType::Bool                },
+      {QT_TR_NOOP("Int"                 ), JsonRecordDefinition::FieldType::Int                 },
+      {QT_TR_NOOP("UInt"                ), JsonRecordDefinition::FieldType::UInt                },
+      {QT_TR_NOOP("Double"              ), JsonRecordDefinition::FieldType::Double              },
+      {QT_TR_NOOP("String"              ), JsonRecordDefinition::FieldType::String              },
+      {QT_TR_NOOP("Enum"                ), JsonRecordDefinition::FieldType::Enum                },
+      {QT_TR_NOOP("Array"               ), JsonRecordDefinition::FieldType::Array               },
+      {QT_TR_NOOP("Date"                ), JsonRecordDefinition::FieldType::Date                },
+      {QT_TR_NOOP("Acidity"             ), JsonRecordDefinition::FieldType::Acidity             },
+      {QT_TR_NOOP("Bitterness"          ), JsonRecordDefinition::FieldType::Bitterness          },
+      {QT_TR_NOOP("Carbonation"         ), JsonRecordDefinition::FieldType::Carbonation         },
+      {QT_TR_NOOP("Concentration"       ), JsonRecordDefinition::FieldType::Concentration       },
+      {QT_TR_NOOP("Gravity"             ), JsonRecordDefinition::FieldType::Gravity             },
+      {QT_TR_NOOP("Percent"             ), JsonRecordDefinition::FieldType::Percent             },
+      {QT_TR_NOOP("TimeElapsed"         ), JsonRecordDefinition::FieldType::TimeElapsed         },
+      {QT_TR_NOOP("Viscosity"           ), JsonRecordDefinition::FieldType::Viscosity           },
+      {QT_TR_NOOP("MeasurementWithUnits"), JsonRecordDefinition::FieldType::MeasurementWithUnits},
+      {QT_TR_NOOP("MassOrVolume"        ), JsonRecordDefinition::FieldType::MassOrVolume        },
+      {QT_TR_NOOP("RequiredConstant"    ), JsonRecordDefinition::FieldType::RequiredConstant    }
+   };
+}
+
+JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(
+   EnumStringMapping const * enumMapping
+) : enumMapping{enumMapping} {
+   return;
+}
+JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(
+   JsonMeasureableUnitsMapping const * unitsMapping
+) :unitsMapping{unitsMapping} {
+   return;
+}
+
+JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
+                                                       char const *              xPath,
+                                                       BtStringConst const *     propertyName,
+                                                       EnumStringMapping const * enumMapping) :
+   type{type},
+   xPath{xPath},
+   propertyName{propertyName},
+   valueDecoder{enumMapping} {
+   return;
+}
+
+JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                           type,
+                                                       char const *                        xPath,
+                                                       BtStringConst const *               propertyName,
+                                                       JsonMeasureableUnitsMapping const * unitsMapping) :
+   type{type},
+   xPath{xPath},
+   propertyName{propertyName},
+   valueDecoder{unitsMapping} {
+   return;
+}
+
+JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
+                                                       char const *              xPath,
+                                                       BtStringConst const *     propertyName) :
+   FieldDefinition{type, xPath, propertyName, static_cast<EnumStringMapping const *>(nullptr)} {
+   return;
+}
+
+
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,
    char const * const namedEntityClassName,
+   JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
    std::initializer_list<JsonRecordDefinition::FieldDefinition> fieldDefinitions
 ) :
    recordName{recordName},
    namedEntityClassName{namedEntityClassName},
+   jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{fieldDefinitions} {
    return;
 }
@@ -29,10 +98,12 @@ JsonRecordDefinition::JsonRecordDefinition(
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,
    char const * const namedEntityClassName,
+   JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
    std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
 ) :
    recordName{recordName},
    namedEntityClassName{namedEntityClassName},
+   jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{} {
    // This is a bit clunky, but it works and the inefficiency is a one-off cost at start-up
    for (auto const & list : fieldDefinitionLists) {
@@ -46,3 +117,24 @@ JsonRecordDefinition::JsonRecordDefinition(
    }
    return;
 }
+
+
+template<class S>
+S & operator<<(S & stream, JsonRecordDefinition::FieldType const fieldType) {
+   std::optional<QString> fieldTypeAsString = fieldTypeToName.enumToString(fieldType);
+   if (fieldTypeAsString) {
+      stream << *fieldTypeAsString;
+   } else {
+      // This is a coding error, so stop (after logging) on a debug build
+      stream << "Unrecognised field type: " << static_cast<int>(fieldType);
+      Q_ASSERT(false);
+   }
+   return stream;
+}
+
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+//
+template QDebug & operator<<(QDebug & stream, JsonRecordDefinition::FieldType const fieldType);
+template QTextStream & operator<<(QTextStream & stream, JsonRecordDefinition::FieldType const fieldType);
