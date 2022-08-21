@@ -1363,7 +1363,8 @@ template std::shared_ptr<Salt       > Recipe::remove(std::shared_ptr<Salt       
 template std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var);
 
 int Recipe::instructionNumber(Instruction const & ins) const {
-   return this->pimpl->instructionIds.indexOf(ins.key());
+   // C++ arrays etc are indexed from 0, but for end users we want instruction numbers to start from 1
+   return this->pimpl->instructionIds.indexOf(ins.key()) + 1;
 }
 
 void Recipe::swapInstructions(Instruction * ins1, Instruction * ins2) {
@@ -1396,12 +1397,22 @@ void Recipe::clearInstructions() {
    return;
 }
 
-void Recipe::insertInstruction(Instruction * ins, int pos) {
-   if (ins == nullptr || !(instructions().contains(ins))) {
+void Recipe::insertInstruction(Instruction const & ins, int pos) {
+   if (this->pimpl->instructionIds.contains(ins.key())) {
+      qDebug() <<
+         Q_FUNC_INFO << "Request to insert instruction ID" << ins.key() << "at position" << pos << "for recipe #" <<
+         this->key() << "ignored as this instruction is already in the list at position" <<
+         this->instructionNumber(ins);
       return;
    }
 
-   this->pimpl->instructionIds.insert(pos, ins->key());
+   // The position should be indexed from 1, so it's a coding error if it's less than this
+   Q_ASSERT(pos >= 1);
+
+   qDebug() <<
+      Q_FUNC_INFO << "Inserting instruction #" << ins.key() << "(" << ins.name() << ") at position" << pos <<
+      "in list of" << this->pimpl->instructionIds.size();
+   this->pimpl->instructionIds.insert(pos - 1, ins.key());
    this->propagatePropertyChange(propertyToPropertyName<Instruction>());
    return;
 }
@@ -2616,7 +2627,7 @@ double Recipe::ibuFromHop(Hop const * hop) {
    // up for plugs and pellets.
    //
    // - http://www.realbeer.com/hops/FAQ.html
-   // - https://groups.google.com/forum/#!topic"Brewken.h"lp/mv2qvWBC4sU
+   // - https://groups.google.com/forum/#!topic"brewtarget.h"lp/mv2qvWBC4sU
    switch (hop->form()) {
       case Hop::Form::Plug:
          hopUtilization *= 1.02;

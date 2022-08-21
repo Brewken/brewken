@@ -93,7 +93,8 @@ namespace Measurement {
       Color,
       Density,        // Sometimes referred to in comments as "gravity" as a shorthand for "specific gravity"
       Mixed,          // This is used for quantities where we allow measurement as either Mass or Volume
-      DiastaticPower
+      DiastaticPower,
+      Concentration
    };
 
    /**
