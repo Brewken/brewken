@@ -365,7 +365,7 @@ public:
    //! \brief Remove all instructions.
    void clearInstructions();
    //! \brief Insert instruction ins into slot pos.
-   void insertInstruction(Instruction * ins, int pos);
+   void insertInstruction(Instruction const & ins, int pos);
    //! \brief Automagically generate a list of instructions.
    void generateInstructions();
    /*!

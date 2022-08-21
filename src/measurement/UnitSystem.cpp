@@ -448,6 +448,12 @@ namespace Measurement::UnitSystems {
                                                                {{UnitSystem::scaleWithout, &Measurement::Units::srm}},
                                                                "color_StandardReferenceMethod",
                                                                Measurement::SystemOfMeasurement::StandardReferenceMethod);
+   UnitSystem const color_Lovibond = UnitSystem(PhysicalQuantity::Color,
+                                                nullptr,
+                                                &Measurement::Units::lovibond,
+                                                {{UnitSystem::scaleWithout, &Measurement::Units::lovibond}},
+                                                "color_Lovibond",
+                                                Measurement::SystemOfMeasurement::Lovibond);
 
    UnitSystem const density_SpecificGravity = UnitSystem(PhysicalQuantity::Density,
                                                          nullptr,
@@ -484,4 +490,18 @@ namespace Measurement::UnitSystems {
                                                                 "diastaticPower_WindischKolbach",
                                                                 Measurement::SystemOfMeasurement::WindischKolbach);
 
+   UnitSystem const concentration_PartsPer = UnitSystem(PhysicalQuantity::Concentration,
+                                                        nullptr,
+                                                        &Measurement::Units::partsPerMillion,
+                                                        {{UnitSystem::scaleSmall,  &Measurement::Units::partsPerBillion},
+                                                         {UnitSystem::scaleMedium, &Measurement::Units::partsPerMillion}},
+                                                        "concentration_PartsPer",
+                                                        Measurement::SystemOfMeasurement::PartsPerConcentration);
+
+   UnitSystem const concentration_MassPerVolume = UnitSystem(PhysicalQuantity::Concentration,
+                                                             nullptr,
+                                                             &Measurement::Units::milligramsPerLiter,
+                                                             {{UnitSystem::scaleWithout, &Measurement::Units::milligramsPerLiter}},
+                                                             "concentration_MassPerVolume",
+                                                             Measurement::SystemOfMeasurement::MassPerVolume);
 }

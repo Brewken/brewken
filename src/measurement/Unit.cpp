@@ -303,8 +303,12 @@ namespace Measurement::Units {
    Unit const celsius              = Unit{Measurement::UnitSystems::temperature_MetricIsCelsius,         QT_TR_NOOP("C"),        [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const fahrenheit           = Unit{Measurement::UnitSystems::temperature_UsCustomaryIsFahrenheit, QT_TR_NOOP("F"),        [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0,  &celsius};
    // === Color ===
+   // Not sure how many people use Lovibond scale these days, but BeerJSON supports it, so we need to be able to read
+   // it.  https://en.wikipedia.org/wiki/Beer_measurement#Colour= says "The Standard Reference Method (SRM) ... [gives]
+   // results approximately equal to the °L."
    Unit const srm                  = Unit{Measurement::UnitSystems::color_StandardReferenceMethod,       QT_TR_NOOP("srm"),      [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const ebc                  = Unit{Measurement::UnitSystems::color_EuropeanBreweryConvention,     QT_TR_NOOP("ebc"),      [](double x){return x * 12.7/25.0;},   [](double y){return y * 25.0/12.7;},    1.0,  &srm};
+   Unit const lovibond             = Unit{Measurement::UnitSystems::color_Lovibond,                      QT_TR_NOOP("lovibond"), [](double x){return x;},               [](double y){return y;},                1.0,  &srm};
    // == Density ===
    // Brix isn't much used in beer brewing, but BeerJSON supports it, so we have it here.
    Unit const sp_grav              = Unit{Measurement::UnitSystems::density_SpecificGravity,             QT_TR_NOOP("sg"),       [](double x){return x;},               [](double y){return y;},                1.0};
@@ -323,4 +327,10 @@ namespace Measurement::Units {
    // == Diastatic power ==
    Unit const lintner              = Unit{Measurement::UnitSystems::diastaticPower_Lintner,              QT_TR_NOOP("L"),    [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const wk                   = Unit{Measurement::UnitSystems::diastaticPower_WindischKolbach,      QT_TR_NOOP("WK"),   [](double x){return (x + 16) / 3.5;},  [](double y){return 3.5 * y - 16;},     1.0,  &lintner};
+   // == Concentration ==
+   Unit const milligramsPerLiter   = Unit{Measurement::UnitSystems::concentration_MassPerVolume,         QT_TR_NOOP("mg/l"), [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const partsPerMillion      = Unit{Measurement::UnitSystems::concentration_PartsPer,              QT_TR_NOOP("ppm"),  [](double x){return x;},               [](double y){return y;},                1.0,  &milligramsPerLiter};
+   Unit const partsPerBillion      = Unit{Measurement::UnitSystems::concentration_PartsPer,              QT_TR_NOOP("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &milligramsPerLiter};
+
+
 }

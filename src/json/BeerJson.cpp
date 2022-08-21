@@ -68,10 +68,7 @@ namespace {
       {
          {"EBC", &Measurement::Units::ebc},
          {"SRM", &Measurement::Units::srm},
-         // Not sure how many people use Lovibond scale these days, but BeerJSON supports it, so we need to be able to
-         // read it.  https://en.wikipedia.org/wiki/Beer_measurement#Colour= says "The Standard Reference Method (SRM)
-         // ... [gives] results approximately equal to the °L."  So we just map °L to SRM.
-         {"Lovi", &Measurement::Units::srm}
+         {"Lovi", &Measurement::Units::lovibond}
       }
    };
 

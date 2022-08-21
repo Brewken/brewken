@@ -92,7 +92,6 @@ namespace Measurement {
        * \param thickness
        * \param defaultUnit
        * \param scaleToUnitEntries
-       * \param qstringToUnitEntries
        * \param uniqueName
        * \param systemOfMeasurementName
        */
@@ -258,6 +257,7 @@ namespace Measurement {
 
       extern UnitSystem const color_StandardReferenceMethod;
       extern UnitSystem const color_EuropeanBreweryConvention;
+      extern UnitSystem const color_Lovibond;
 
       extern UnitSystem const density_SpecificGravity;
       extern UnitSystem const density_Plato;
@@ -265,6 +265,9 @@ namespace Measurement {
 
       extern UnitSystem const diastaticPower_Lintner;
       extern UnitSystem const diastaticPower_WindischKolbach;
+
+      extern UnitSystem const concentration_PartsPer;
+      extern UnitSystem const concentration_MassPerVolume;
 
    }
 }
