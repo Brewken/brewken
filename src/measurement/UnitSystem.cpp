@@ -55,13 +55,13 @@ namespace {
    // std::string and QString.  For the moment, this more manual approach seems appropriate to the scale of what we
    // need.
    EnumStringMapping const relativeScaleToName {
-      {"scaleExtraSmall", Measurement::UnitSystem::RelativeScale::scaleExtraSmall},
-      {"scaleSmall"     , Measurement::UnitSystem::RelativeScale::scaleSmall     },
-      {"scaleMedium"    , Measurement::UnitSystem::RelativeScale::scaleMedium    },
-      {"scaleLarge"     , Measurement::UnitSystem::RelativeScale::scaleLarge     },
-      {"scaleExtraLarge", Measurement::UnitSystem::RelativeScale::scaleExtraLarge},
-      {"scaleHuge"      , Measurement::UnitSystem::RelativeScale::scaleHuge      },
-      {"scaleWithout"   , Measurement::UnitSystem::RelativeScale::scaleWithout   }
+      {"scaleExtraSmall", Measurement::UnitSystem::RelativeScale::ExtraSmall},
+      {"scaleSmall"     , Measurement::UnitSystem::RelativeScale::Small     },
+      {"scaleMedium"    , Measurement::UnitSystem::RelativeScale::Medium    },
+      {"scaleLarge"     , Measurement::UnitSystem::RelativeScale::Large     },
+      {"scaleExtraLarge", Measurement::UnitSystem::RelativeScale::ExtraLarge},
+      {"scaleHuge"      , Measurement::UnitSystem::RelativeScale::Huge      },
+      {"scaleWithout"   , Measurement::UnitSystem::RelativeScale::Without   }
    };
 }
 
@@ -342,6 +342,39 @@ std::optional<Measurement::UnitSystem::RelativeScale> Measurement::UnitSystem::g
    return relativeScaleToName.stringToEnum<Measurement::UnitSystem::RelativeScale>(relativeScaleAsString);
 }
 
+template<class S>
+S & operator<<(S & stream, Measurement::UnitSystem const & unitSystem) {
+   stream << unitSystem.uniqueName;
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, Measurement::UnitSystem const * unitSystem) {
+   if (unitSystem) {
+      stream << *unitSystem;
+   } else {
+      stream << "NULL";
+   }
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, Measurement::UnitSystem::RelativeScale const relativeScale) {
+   stream << Measurement::UnitSystem::getUniqueName(relativeScale);
+   return stream;
+}
+
+//
+// Instantiate the above template functions for the types that are going to use them
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+//
+template QDebug &      operator<<(QDebug &      stream, Measurement::UnitSystem const & unitSystem);
+template QTextStream & operator<<(QTextStream & stream, Measurement::UnitSystem const & unitSystem);
+template QDebug &      operator<<(QDebug &      stream, Measurement::UnitSystem const * unitSystem);
+template QTextStream & operator<<(QTextStream & stream, Measurement::UnitSystem const * unitSystem);
+template QDebug &      operator<<(QDebug &      stream, Measurement::UnitSystem::RelativeScale const relativeScale);
+template QTextStream & operator<<(QTextStream & stream, Measurement::UnitSystem::RelativeScale const relativeScale);
+
 
 //---------------------------------------------------------------------------------------------------------------------
 //
@@ -357,151 +390,151 @@ namespace Measurement::UnitSystems {
    UnitSystem const mass_Metric = UnitSystem(PhysicalQuantity::Mass,
                                              &Measurement::Units::kilograms,
                                              &Measurement::Units::kilograms,
-                                             {{UnitSystem::scaleExtraSmall, &Measurement::Units::milligrams},
-                                              {UnitSystem::scaleSmall,      &Measurement::Units::grams     },
-                                              {UnitSystem::scaleMedium,     &Measurement::Units::kilograms }},
+                                             {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::milligrams},
+                                              {UnitSystem::RelativeScale::Small,      &Measurement::Units::grams     },
+                                              {UnitSystem::RelativeScale::Medium,     &Measurement::Units::kilograms }},
                                              "mass_Metric",
                                              Measurement::SystemOfMeasurement::Metric);
 
    UnitSystem const mass_UsCustomary = UnitSystem(PhysicalQuantity::Mass,
                                                   &Measurement::Units::pounds,
                                                   &Measurement::Units::pounds,
-                                                  {{UnitSystem::scaleExtraSmall, &Measurement::Units::ounces},
-                                                   {UnitSystem::scaleSmall,      &Measurement::Units::pounds}},
+                                                  {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::ounces},
+                                                   {UnitSystem::RelativeScale::Small,      &Measurement::Units::pounds}},
                                                   "mass_UsCustomary",
                                                   Measurement::SystemOfMeasurement::UsCustomary);
 
    UnitSystem const mass_Imperial = UnitSystem(PhysicalQuantity::Mass,
                                                &Measurement::Units::imperial_pounds,
                                                &Measurement::Units::imperial_pounds,
-                                               {{UnitSystem::scaleExtraSmall, &Measurement::Units::imperial_ounces},
-                                                {UnitSystem::scaleSmall,      &Measurement::Units::imperial_pounds}},
+                                               {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::imperial_ounces},
+                                                {UnitSystem::RelativeScale::Small,      &Measurement::Units::imperial_pounds}},
                                                "mass_Imperial",
                                                Measurement::SystemOfMeasurement::Imperial);
 
    UnitSystem const volume_Metric = UnitSystem(PhysicalQuantity::Volume,
                                                &Measurement::Units::liters,
                                                &Measurement::Units::liters,
-                                               {{UnitSystem::scaleExtraSmall, &Measurement::Units::milliliters},
-                                                {UnitSystem::scaleSmall,      &Measurement::Units::liters     }},
+                                               {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::milliliters},
+                                                {UnitSystem::RelativeScale::Small,      &Measurement::Units::liters     }},
                                                "volume_Metric",
                                                Measurement::SystemOfMeasurement::Metric);
 
    UnitSystem const volume_UsCustomary = UnitSystem(PhysicalQuantity::Volume,
                                                     &Measurement::Units::us_quarts,
                                                     &Measurement::Units::us_gallons,
-                                                    {{UnitSystem::scaleExtraSmall, &Measurement::Units::us_teaspoons  },
-                                                     {UnitSystem::scaleSmall,      &Measurement::Units::us_tablespoons},
-                                                     {UnitSystem::scaleMedium,     &Measurement::Units::us_cups       },
-                                                     {UnitSystem::scaleLarge,      &Measurement::Units::us_quarts     },
-                                                     {UnitSystem::scaleExtraLarge, &Measurement::Units::us_gallons    },
-                                                     {UnitSystem::scaleHuge,       &Measurement::Units::us_barrels    }},
+                                                    {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::us_teaspoons  },
+                                                     {UnitSystem::RelativeScale::Small,      &Measurement::Units::us_tablespoons},
+                                                     {UnitSystem::RelativeScale::Medium,     &Measurement::Units::us_cups       },
+                                                     {UnitSystem::RelativeScale::Large,      &Measurement::Units::us_quarts     },
+                                                     {UnitSystem::RelativeScale::ExtraLarge, &Measurement::Units::us_gallons    },
+                                                     {UnitSystem::RelativeScale::Huge,       &Measurement::Units::us_barrels    }},
                                                     "volume_UsCustomary",
                                                     Measurement::SystemOfMeasurement::UsCustomary);
 
    UnitSystem const volume_Imperial = UnitSystem(PhysicalQuantity::Volume,
                                                  &Measurement::Units::imperial_quarts,
                                                  &Measurement::Units::imperial_gallons,
-                                                 {{UnitSystem::scaleExtraSmall, &Measurement::Units::imperial_teaspoons  },
-                                                  {UnitSystem::scaleSmall,      &Measurement::Units::imperial_tablespoons},
-                                                  {UnitSystem::scaleMedium,     &Measurement::Units::imperial_cups       },
-                                                  {UnitSystem::scaleLarge,      &Measurement::Units::imperial_quarts     },
-                                                  {UnitSystem::scaleExtraLarge, &Measurement::Units::imperial_gallons    },
-                                                  {UnitSystem::scaleHuge,       &Measurement::Units::imperial_barrels    }},
+                                                 {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::imperial_teaspoons  },
+                                                  {UnitSystem::RelativeScale::Small,      &Measurement::Units::imperial_tablespoons},
+                                                  {UnitSystem::RelativeScale::Medium,     &Measurement::Units::imperial_cups       },
+                                                  {UnitSystem::RelativeScale::Large,      &Measurement::Units::imperial_quarts     },
+                                                  {UnitSystem::RelativeScale::ExtraLarge, &Measurement::Units::imperial_gallons    },
+                                                  {UnitSystem::RelativeScale::Huge,       &Measurement::Units::imperial_barrels    }},
                                                  "volume_Imperial",
                                                  Measurement::SystemOfMeasurement::Imperial);
 
    UnitSystem const temperature_MetricIsCelsius = UnitSystem(PhysicalQuantity::Temperature,
                                                              nullptr,
                                                              &Measurement::Units::celsius,
-                                                             {{UnitSystem::scaleWithout, &Measurement::Units::celsius}},
+                                                             {{UnitSystem::RelativeScale::Without, &Measurement::Units::celsius}},
                                                              "temperature_MetricIsCelsius",
                                                              Measurement::SystemOfMeasurement::Metric);
 
    UnitSystem const temperature_UsCustomaryIsFahrenheit = UnitSystem(PhysicalQuantity::Temperature,
                                                                      nullptr,
                                                                      &Measurement::Units::fahrenheit,
-                                                                     {{UnitSystem::scaleWithout, &Measurement::Units::fahrenheit}},
+                                                                     {{UnitSystem::RelativeScale::Without, &Measurement::Units::fahrenheit}},
                                                                      "temperature_UsCustomaryIsFahrenheit",
                                                                      Measurement::SystemOfMeasurement::UsCustomary);
 
    UnitSystem const time_CoordinatedUniversalTime = UnitSystem(PhysicalQuantity::Time,
                                                                nullptr,
                                                                &Measurement::Units::minutes,
-                                                               {{UnitSystem::scaleExtraSmall, &Measurement::Units::seconds},
-                                                                {UnitSystem::scaleSmall,      &Measurement::Units::minutes},
-                                                                {UnitSystem::scaleMedium,     &Measurement::Units::hours  },
-                                                                {UnitSystem::scaleLarge,      &Measurement::Units::days   }},
+                                                               {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::seconds},
+                                                                {UnitSystem::RelativeScale::Small,      &Measurement::Units::minutes},
+                                                                {UnitSystem::RelativeScale::Medium,     &Measurement::Units::hours  },
+                                                                {UnitSystem::RelativeScale::Large,      &Measurement::Units::days   }},
                                                                "time_CoordinatedUniversalTime",
                                                                Measurement::SystemOfMeasurement::StandardTimeUnits);
 
    UnitSystem const color_EuropeanBreweryConvention = UnitSystem(PhysicalQuantity::Color,
                                                                  nullptr,
                                                                  &Measurement::Units::ebc,
-                                                                 {{UnitSystem::scaleWithout, &Measurement::Units::ebc}},
+                                                                 {{UnitSystem::RelativeScale::Without, &Measurement::Units::ebc}},
                                                                  "color_EuropeanBreweryConvention",
                                                                  Measurement::SystemOfMeasurement::EuropeanBreweryConvention);
 
    UnitSystem const color_StandardReferenceMethod = UnitSystem(PhysicalQuantity::Color,
                                                                nullptr,
                                                                &Measurement::Units::srm,
-                                                               {{UnitSystem::scaleWithout, &Measurement::Units::srm}},
+                                                               {{UnitSystem::RelativeScale::Without, &Measurement::Units::srm}},
                                                                "color_StandardReferenceMethod",
                                                                Measurement::SystemOfMeasurement::StandardReferenceMethod);
    UnitSystem const color_Lovibond = UnitSystem(PhysicalQuantity::Color,
                                                 nullptr,
                                                 &Measurement::Units::lovibond,
-                                                {{UnitSystem::scaleWithout, &Measurement::Units::lovibond}},
+                                                {{UnitSystem::RelativeScale::Without, &Measurement::Units::lovibond}},
                                                 "color_Lovibond",
                                                 Measurement::SystemOfMeasurement::Lovibond);
 
    UnitSystem const density_SpecificGravity = UnitSystem(PhysicalQuantity::Density,
                                                          nullptr,
                                                          &Measurement::Units::sp_grav,
-                                                         {{UnitSystem::scaleWithout, &Measurement::Units::sp_grav}},
+                                                         {{UnitSystem::RelativeScale::Without, &Measurement::Units::sp_grav}},
                                                          "density_SpecificGravity",
                                                          Measurement::SystemOfMeasurement::SpecificGravity);
 
    UnitSystem const density_Plato = UnitSystem(PhysicalQuantity::Density,
                                                nullptr,
                                                &Measurement::Units::plato,
-                                               {{UnitSystem::scaleWithout, &Measurement::Units::plato}},
+                                               {{UnitSystem::RelativeScale::Without, &Measurement::Units::plato}},
                                                "density_Plato",
                                                Measurement::SystemOfMeasurement::Plato);
 
    UnitSystem const density_Brix = UnitSystem(PhysicalQuantity::Density,
                                                nullptr,
                                                &Measurement::Units::brix,
-                                               {{UnitSystem::scaleWithout, &Measurement::Units::brix}},
+                                               {{UnitSystem::RelativeScale::Without, &Measurement::Units::brix}},
                                                "density_Brix",
                                                Measurement::SystemOfMeasurement::Brix);
 
    UnitSystem const diastaticPower_Lintner = UnitSystem(PhysicalQuantity::DiastaticPower,
                                                         nullptr,
                                                         &Measurement::Units::lintner,
-                                                        {{UnitSystem::scaleWithout, &Measurement::Units::lintner}},
+                                                        {{UnitSystem::RelativeScale::Without, &Measurement::Units::lintner}},
                                                         "diastaticPower_Lintner",
                                                         Measurement::SystemOfMeasurement::Lintner);
 
    UnitSystem const diastaticPower_WindischKolbach = UnitSystem(PhysicalQuantity::DiastaticPower,
                                                                 nullptr,
                                                                 &Measurement::Units::wk,
-                                                                {{UnitSystem::scaleWithout, &Measurement::Units::wk}},
+                                                                {{UnitSystem::RelativeScale::Without, &Measurement::Units::wk}},
                                                                 "diastaticPower_WindischKolbach",
                                                                 Measurement::SystemOfMeasurement::WindischKolbach);
 
    UnitSystem const concentration_PartsPer = UnitSystem(PhysicalQuantity::Concentration,
                                                         nullptr,
                                                         &Measurement::Units::partsPerMillion,
-                                                        {{UnitSystem::scaleSmall,  &Measurement::Units::partsPerBillion},
-                                                         {UnitSystem::scaleMedium, &Measurement::Units::partsPerMillion}},
+                                                        {{UnitSystem::RelativeScale::Small,  &Measurement::Units::partsPerBillion},
+                                                         {UnitSystem::RelativeScale::Medium, &Measurement::Units::partsPerMillion}},
                                                         "concentration_PartsPer",
                                                         Measurement::SystemOfMeasurement::PartsPerConcentration);
 
    UnitSystem const concentration_MassPerVolume = UnitSystem(PhysicalQuantity::Concentration,
                                                              nullptr,
                                                              &Measurement::Units::milligramsPerLiter,
-                                                             {{UnitSystem::scaleWithout, &Measurement::Units::milligramsPerLiter}},
+                                                             {{UnitSystem::RelativeScale::Without, &Measurement::Units::milligramsPerLiter}},
                                                              "concentration_MassPerVolume",
                                                              Measurement::SystemOfMeasurement::MassPerVolume);
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -53,7 +53,7 @@ Water::Water(QString name) :
    m_ph                {0.0},
    m_alkalinity        {0.0},
    m_notes             {""},
-   m_type              {NONE},
+   m_type              {Water::Types::NONE},
    m_mash_ro           {0.0},
    m_sparge_ro         {0.0},
    m_alkalinity_as_hco3{true} {
@@ -174,12 +174,12 @@ bool Water::alkalinityAsHCO3() const { return m_alkalinity_as_hco3; }
 double Water::ppm( Water::Ions ion )
 {
    switch(ion) {
-      case Water::Ca:   return m_calcium_ppm;
-      case Water::Cl:   return m_chloride_ppm;
-      case Water::HCO3: return m_bicarbonate_ppm;
-      case Water::Mg:   return m_magnesium_ppm;
-      case Water::Na:   return m_sodium_ppm;
-      case Water::SO4:  return m_sulfate_ppm;
+      case Water::Ions::Ca:   return m_calcium_ppm;
+      case Water::Ions::Cl:   return m_chloride_ppm;
+      case Water::Ions::HCO3: return m_bicarbonate_ppm;
+      case Water::Ions::Mg:   return m_magnesium_ppm;
+      case Water::Ions::Na:   return m_sodium_ppm;
+      case Water::Ions::SO4:  return m_sulfate_ppm;
       default: return 0.0;
    }
 

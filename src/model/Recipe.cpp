@@ -609,7 +609,7 @@ void Recipe::saltWater(Salt::WhenToAdd when) {
    }
 
    auto ins = std::make_shared<Instruction>();
-   QString tmp = when == Salt::MASH ? tr("mash") : tr("sparge");
+   QString tmp = when == Salt::WhenToAdd::MASH ? tr("mash") : tr("sparge");
    ins->setName(tr("Modify %1 water").arg(tmp));
    QString str = tr("Dissolve ");
 
@@ -1028,8 +1028,8 @@ void Recipe::generateInstructions() {
       this->mashFermentableIns();
 
       /*** salt the water ***/
-      saltWater(Salt::MASH);
-      saltWater(Salt::SPARGE);
+      saltWater(Salt::WhenToAdd::MASH);
+      saltWater(Salt::WhenToAdd::SPARGE);
 
       /*** Prepare water additions ***/
       this->mashWaterIns();
@@ -2739,15 +2739,15 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
                                                PersistentSettings::Sections::saltTable,
                                                PropertyNames::Salt::amount))
                .arg(salts[i]->name());
-      } else if (what == Salt::EQUAL) {
+      } else if (what == Salt::WhenToAdd::EQUAL) {
          tmp = tr("%1 %2, ")
                .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit},
                                                PersistentSettings::Sections::saltTable,
                                                PropertyNames::Salt::amount))
                .arg(salts[i]->name());
-      } else if (what == Salt::RATIO) {
+      } else if (what == Salt::WhenToAdd::RATIO) {
          double ratio = 1.0;
-         if (wanted == Salt::SPARGE) {
+         if (wanted == Salt::WhenToAdd::SPARGE) {
             ratio = mash()->totalSpargeAmount_l() / mash()->totalInfusionAmount_l();
          }
          double amt = salts[i]->amount() * ratio;

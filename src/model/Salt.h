@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -50,12 +50,11 @@ class Salt : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "salts")
 
-
-   friend class WaterDialog;
-   friend class SaltTableModel;
+//   friend class WaterDialog;
+//   friend class SaltTableModel;
 public:
 
-   enum WhenToAdd {
+   enum class WhenToAdd {
       NEVER,
       MASH,
       SPARGE,
@@ -63,7 +62,7 @@ public:
       EQUAL
    };
 
-   enum Types {
+   enum class Types {
       NONE,
       CACL2,
       CACO3,
@@ -83,7 +82,7 @@ public:
    Salt(NamedParameterBundle const & namedParameterBundle);
    Salt(Salt const & other);
 
-   virtual ~Salt() = default;
+   virtual ~Salt();
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
    //! \brief The amount of salt to be added (always a weight)
