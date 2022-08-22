@@ -46,8 +46,6 @@ namespace Measurement {
    class Unit {
 
    public:
-      // Did you know you need these various enums to be *INSIDE* the class definition for Qt to see them? TBD DO WE CARE ABOUT THIS ANY MORE?
-
       /**
        * \brief Construct a type of unit.  Note that it is \b not intended that users of this class construct their own
        *        \c Unit objects.  Rather they should use pointers or references to the constants defined in the \c Units
@@ -207,12 +205,18 @@ namespace Measurement {
       // === Color ===
       extern Unit const srm;
       extern Unit const ebc;
+      extern Unit const lovibond;
       // == Density ===
       extern Unit const sp_grav;
       extern Unit const plato;
+      extern Unit const brix;
       // == Diastatic power ==
       extern Unit const lintner;
       extern Unit const wk;
+      // == Concentration ==
+      extern Unit const milligramsPerLiter;
+      extern Unit const partsPerMillion;
+      extern Unit const partsPerBillion;
    }
 }
 

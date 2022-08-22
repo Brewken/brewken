@@ -68,12 +68,38 @@ namespace Measurement {
       // So, for these things we'll just use the names of the various scales as the names of our pseudo systems of
       // measurement.
       //
+      // .:TBD:. Should we have IBUs here too?
+      //
+
+      // Color
       StandardReferenceMethod,
       EuropeanBreweryConvention,
+      Lovibond,
+
+      // Density
       SpecificGravity,
       Plato,
+      Brix,
+
+      // Diastatic power
       Lintner,
-      WindischKolbach
+      WindischKolbach,
+
+      // Concentration is a dimensionless measurement and so does not strictly merit either a unit system or a system of
+      // measurement.  However, in practice, it is useful, not least for BeerJSON processing, to be able to convert
+      // between parts-per-million, parts-per-billion, milligrams-per-litre and so on.
+      //
+      // Of course, strictly speaking, there is NOT a generic conversion between milligrams-per-litre and parts-per-xxx
+      // because converting mass-per-volume to volume-per-volume (or mass-per-mass) involves temperature and the molar
+      // masses of the two substances in question.  Hence why a chemist would use
+      // https://en.wikipedia.org/wiki/Molar_concentration instead.
+      //
+      // However, in practice, in brewing, for small concentrations, it's not hugely wrong to approximate 1
+      // milligram-per-litre with 1 part-per-million.
+      //
+      // See https://en.wikipedia.org/wiki/Parts-per_notation for more info
+      PartsPerConcentration,
+      MassPerVolume
    };
 
 

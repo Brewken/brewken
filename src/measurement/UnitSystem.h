@@ -72,17 +72,17 @@ namespace Measurement {
        *        We only worry about units we actually use/permit, thus we don't, for example, care about where minims,
        *        fluid drams, gills etc fit in on the imperial / US customary volume scales, as we don't support them.
        *
-       *        The \c scaleWithout value is used when a \c UnitSystem only has one \c Unit (eg as is typically the case
+       *        The \c Without value is used when a \c UnitSystem only has one \c Unit (eg as is typically the case
        *        with temperature, color and density).
        */
-      enum RelativeScale {
-         scaleExtraSmall = 0,
-         scaleSmall      = 1,
-         scaleMedium     = 2,
-         scaleLarge      = 3,
-         scaleExtraLarge = 4,
-         scaleHuge       = 5,
-         scaleWithout    = 1000
+      enum class RelativeScale {
+         ExtraSmall = 0,
+         Small      = 1,
+         Medium     = 2,
+         Large      = 3,
+         ExtraLarge = 4,
+         Huge       = 5,
+         Without    = 1000
       };
 
       /*!
@@ -92,7 +92,6 @@ namespace Measurement {
        * \param thickness
        * \param defaultUnit
        * \param scaleToUnitEntries
-       * \param qstringToUnitEntries
        * \param uniqueName
        * \param systemOfMeasurementName
        */
@@ -258,12 +257,17 @@ namespace Measurement {
 
       extern UnitSystem const color_StandardReferenceMethod;
       extern UnitSystem const color_EuropeanBreweryConvention;
+      extern UnitSystem const color_Lovibond;
 
       extern UnitSystem const density_SpecificGravity;
       extern UnitSystem const density_Plato;
+      extern UnitSystem const density_Brix;
 
       extern UnitSystem const diastaticPower_Lintner;
       extern UnitSystem const diastaticPower_WindischKolbach;
+
+      extern UnitSystem const concentration_PartsPer;
+      extern UnitSystem const concentration_MassPerVolume;
 
    }
 }
@@ -272,18 +276,19 @@ namespace Measurement {
  * \brief Convenience function to allow output of \c Measurement::UnitSystem to \c QDebug or \c QTextStream stream etc
  */
 template<class S>
-S & operator<<(S & stream, Measurement::UnitSystem const & unitSystem) {
-   stream << unitSystem.uniqueName;
-   return stream;
-}
+S & operator<<(S & stream, Measurement::UnitSystem const & unitSystem);
+
+/**
+ * \brief Convenience function to allow output of \c Measurement::UnitSystem to \c QDebug or \c QTextStream stream etc
+ */
 template<class S>
-S & operator<<(S & stream, Measurement::UnitSystem const * unitSystem) {
-   if (unitSystem) {
-      stream << *unitSystem;
-   } else {
-      stream << "NULL";
-   }
-   return stream;
-}
+S & operator<<(S & stream, Measurement::UnitSystem const * unitSystem);
+
+/**
+ * \brief Convenience function to allow output of \c Measurement::UnitSystem::RelativeScale to \c QDebug or
+ *        \c QTextStream stream etc
+ */
+template<class S>
+S & operator<<(S & stream, Measurement::UnitSystem::RelativeScale const relativeScale);
 
 #endif

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/ToggleSwitch.cpp is is part of Brewken, and is copyright the following authors 2018-2021:
+ * widgets/ToggleSwitch.cpp is is part of Brewken, and is copyright the following authors 2018-2022:
  *   • Iman Ahmadvand <iman72411@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -124,7 +124,9 @@ QRect ToggleSwitch::textRect() {
 
 QSize ToggleSwitch::sizeHint() const {
    auto h = style.height;
-   auto w = style.indicatorMargin.left() + style.height + style.indicatorMargin.right() + fontMetrics().width(text());
+   // Note that QFontMetrics::width(QString const &) is deprecated in newer versions of Qt, and
+   // QFontMetrics::horizontalAdvance is the recommended replacement (fortunately with the same signature).
+   auto w = style.indicatorMargin.left() + style.height + style.indicatorMargin.right() + fontMetrics().horizontalAdvance(text());
 
    return QSize(w, h);
 }

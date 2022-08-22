@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -39,8 +39,8 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
 Salt::Salt(QString name) :
    NamedEntity       {name, true},
    m_amount          {0.0},
-   m_add_to          {NEVER},
-   m_type            {NONE},
+   m_add_to          {Salt::WhenToAdd::NEVER},
+   m_type            {Salt::Types::NONE},
    m_amount_is_weight{true},
    m_percent_acid    {0.0},
    m_is_acid         {false} {
@@ -69,6 +69,8 @@ Salt::Salt(Salt const & other) :
    return;
 }
 
+Salt::~Salt() = default;
+
 //================================"SET" METHODS=================================
 void Salt::setAmount(double var) {
    this->setAndNotify(PropertyNames::Salt::amount, this->m_amount, var);
@@ -82,8 +84,8 @@ void Salt::setAddTo(Salt::WhenToAdd var) {
 // amount_is_weight flags here.
 void Salt::setType(Salt::Types type) {
    this->setAndNotify(PropertyNames::Salt::type,           this->m_type, type);
-   this->setAndNotify(PropertyNames::Salt::isAcid,         this->m_is_acid, (type > NAHCO3));
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amount_is_weight, !(type == LACTIC || type == H3PO4));
+   this->setAndNotify(PropertyNames::Salt::isAcid,         this->m_is_acid, (type > Salt::Types::NAHCO3));
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amount_is_weight, !(type == Salt::Types::LACTIC || type == Salt::Types::H3PO4));
 }
 
 void Salt::setAmountIsWeight(bool var) {
@@ -121,70 +123,72 @@ double Salt::percentAcid() const { return m_percent_acid; }
 //
 // the magic 1000 is here because masses are stored as kg. We need it in grams
 // for this part
-double Salt::Ca() const
-{
-   if ( m_add_to == Salt::NEVER ) {
+double Salt::Ca() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
    }
 
    switch (m_type) {
-      case Salt::CACL2: return 272.0 * m_amount * 1000.0;
-      case Salt::CACO3: return 200.0 * m_amount * 1000.0;
-      case Salt::CASO4: return 232.0 * m_amount * 1000.0;
+      case Salt::Types::CACL2: return 272.0 * m_amount * 1000.0;
+      case Salt::Types::CACO3: return 200.0 * m_amount * 1000.0;
+      case Salt::Types::CASO4: return 232.0 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
 
-double Salt::Cl() const
-{
-   if ( m_add_to == Salt::NEVER )
+double Salt::Cl() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
+   }
+
    switch (m_type) {
-      case Salt::CACL2: return 483 * m_amount * 1000.0;
-      case Salt::NACL: return 607 * m_amount * 1000.0;
+      case Salt::Types::CACL2: return 483 * m_amount * 1000.0;
+      case Salt::Types::NACL: return 607 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
 
-double Salt::CO3() const
-{
-   if ( m_add_to == Salt::NEVER )
+double Salt::CO3() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
-   return m_type == Salt::CACO3 ? 610.0  * m_amount * 1000.0: 0.0;
+   }
+
+   return m_type == Salt::Types::CACO3 ? 610.0  * m_amount * 1000.0: 0.0;
 }
 
-double Salt::HCO3() const
-{
-   if ( m_add_to == Salt::NEVER )
+double Salt::HCO3() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
-   return m_type == Salt::NAHCO3 ? 726.0 * m_amount * 1000.0: 0.0;
+   }
+
+   return m_type == Salt::Types::NAHCO3 ? 726.0 * m_amount * 1000.0: 0.0;
 }
 
-double Salt::Mg() const
-{
-   if ( m_add_to == Salt::NEVER )
+double Salt::Mg() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
-   return m_type == Salt::MGSO4 ? 99.0 * m_amount * 1000.0: 0.0;
+   }
+   return m_type == Salt::Types::MGSO4 ? 99.0 * m_amount * 1000.0: 0.0;
 }
 
-double Salt::Na() const
-{
-   if ( m_add_to == Salt::NEVER )
+double Salt::Na() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
+   }
    switch (m_type) {
-      case Salt::NACL: return 393.0 * m_amount * 1000.0;
-      case Salt::NAHCO3: return 274.0 * m_amount * 1000.0;
+      case Salt::Types::NACL: return 393.0 * m_amount * 1000.0;
+      case Salt::Types::NAHCO3: return 274.0 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
 
-double Salt::SO4() const
-{
-   if ( m_add_to == Salt::NEVER )
+double Salt::SO4() const {
+   if ( m_add_to == Salt::WhenToAdd::NEVER ) {
       return 0.0;
+   }
    switch (m_type) {
-      case Salt::CASO4: return 558.0 * m_amount * 1000.0;
-      case Salt::MGSO4: return 389.0 * m_amount * 1000.0;
+      case Salt::Types::CASO4: return 558.0 * m_amount * 1000.0;
+      case Salt::Types::MGSO4: return 389.0 * m_amount * 1000.0;
       default: return 0.0;
    }
 }

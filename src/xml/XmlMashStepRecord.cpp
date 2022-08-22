@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlMashStepRecord.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlMashStepRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 
 XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                                      QTextStream & userMessage,
-                                                                     XmlRecordCount & stats) {
+                                                                     ImportRecordCount & stats) {
    // It's a coding error if either there's no containing entity or it's not a Mash.  Both conditions should have been
    // enforced by XSD parsing.  Thus static_cast should be safe.
    auto mash = std::static_pointer_cast<Mash>(containingEntity);
@@ -36,7 +36,7 @@ XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(std::shared
    // INFUSE_AMOUNT is not supposed to be specified if TYPE is "Decoction".  We can check it here in code though.
    //
    auto mashStep = std::static_pointer_cast<MashStep>(this->namedEntity);
-   if (mashStep->type() == MashStep::Decoction && mashStep->infuseAmount_l() != 0) {
+   if (mashStep->type() == MashStep::Type::Decoction && mashStep->infuseAmount_l() != 0) {
       qWarning() <<
         Q_FUNC_INFO << "Read in a decoction Mash Step with a non-zero infusion volume (" <<
         mashStep->infuseAmount_l() << ").  Ignoring supplied infusion volume and using 0.0";
