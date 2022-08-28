@@ -24,6 +24,7 @@
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
 #include "json/JsonMeasureableUnitsMapping.h"
+#include "json/JsonSingleUnitSpecifier.h"
 
 // Forward declarations
 namespace boost::json {
@@ -136,9 +137,10 @@ public:
     *                              value : decimal
     *
     *       Furthermore, for many of these types, an additional "range" type is defined - eg GravityRangeType,
-    *       BitternessRangeType, etc are used in beer styles.  The range type is just an object with two required elements,
-    *       minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType, BitternessType
-    *       for the members of BitternessRangeType, etc).
+    *       BitternessRangeType, etc are used in beer styles.  The range type is just an object with two required
+    *       elements, minimum and maximum, of the underlying type (eg GravityType for the members of GravityRangeType,
+    *       BitternessType for the members of BitternessRangeType, etc).  This means we can treat it as two separate
+    *       entries that differ by XPath (blah/minimum and blah/maximum).
     *
     *       BeerJSON also has DateType which is a regexp restriction on a string.  The regexp is a bit cumbersome, but
     *       it boils down to allowing either of the following formats where 'd' is a digit (ie 0-9):
@@ -158,22 +160,21 @@ public:
       Enum,             // A string that we need to map to/from our own enum
       Array,            // Zero, one or more contained records
       //
-      // These values correspond with BeerJSON types
+      // For now we treat this as synonymous with the BeerJSON date type (DateType in measurable_units.json in the
+      // BeerJSON schema).  We'll wait to worry about doing something more generic until another JSON format comes
+      // along (if ever).
       //
-      Date,             // BeerJSON DateType
-      Acidity,          // .:TODO.JSON:. Implement!
-      Bitterness,       // .:TODO.JSON:. Implement!
-      Carbonation,      // .:TODO.JSON:. Implement!
-      Concentration,    // .:TODO.JSON:. Implement! Examples for concentration include ppm, ppb, and mg/l
-      Gravity,          // .:TODO.JSON:. Implement!
-      Percent,          // .:TODO.JSON:. Implement!
-      TimeElapsed,      // .:TODO.JSON:. Implement!  We use a slightly different name from BeerJSON to make clear this is not time of day
-      Viscosity,        // .:TODO.JSON:. Implement!
+      Date,
       //
       // Other
       //
       MeasurementWithUnits, // This covers most cases where we need to convert between a BeerJSON value plus unit and
                             // our internal canonical (usually SI) units via a Measurement::Unit constant.
+      SingleUnitValue, // This is a special case of MeasurementWithUnits for where we don't want to use a
+                       // Measurement::Unit internally because there is only ever one unit.  Eg BeerJSON stores
+                       // percentages as value plus unit with unit always set to "%".  (We could just XPath to the value
+                       // field, but this gives us a mechanism to assert that the unit field holds the value we think it
+                       // should.)
       MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
                         // so it's a useful concept for us .:TODO.JSON:. Implement!
       RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
@@ -213,11 +214,13 @@ public:
       char const *              xPath;
       BtStringConst const *     propertyName;
       union ValueDecoder {
-         EnumStringMapping const *           enumMapping;
+         EnumStringMapping           const * enumMapping;
          JsonMeasureableUnitsMapping const * unitsMapping;
-         // Explicity Union constructors here make the FieldDefinition constructor implementations slightly less clunky
-         ValueDecoder(EnumStringMapping const * enumMapping);
+         JsonSingleUnitSpecifier     const * singleUnitSpecifier;
+         // Explicit Union constructors here make the FieldDefinition constructor implementations slightly less clunky
+         ValueDecoder(EnumStringMapping           const * enumMapping);
          ValueDecoder(JsonMeasureableUnitsMapping const * unitsMapping);
+         ValueDecoder(JsonSingleUnitSpecifier     const * singleUnitSpecifier);
       } valueDecoder;
 
       // In C++20, we finally get designated initializers (a feature that has long been present in C!).  This would
@@ -231,6 +234,10 @@ public:
                       char const *                        xPath,
                       BtStringConst const *               propertyName,
                       JsonMeasureableUnitsMapping const * unitsMapping);
+      FieldDefinition(FieldType                           type,
+                      char const *                        xPath,
+                      BtStringConst const *               propertyName,
+                      JsonSingleUnitSpecifier     const * singleUnitSpecifier);
       // We need this one too, otherwise having fourth constructor parameter nullptr leaves the compiler not knowing
       // which of the above two constructors to use.  (And there's no elegant way to tell the compiler it doesn't matter
       // in this case!)

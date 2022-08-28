@@ -199,6 +199,7 @@ namespace Measurement {
       extern Unit const minutes;
       extern Unit const hours;
       extern Unit const days;
+      extern Unit const weeks;
       // === Temperature ===
       extern Unit const celsius;
       extern Unit const fahrenheit;
@@ -207,16 +208,43 @@ namespace Measurement {
       extern Unit const ebc;
       extern Unit const lovibond;
       // == Density ===
+      // Strictly speaking, Plato and Brix are not measures of density but of percentage sugar content, and we're
+      // usually interested in density in order to get % sugar content to do calculations about how much sugar turned to
+      // alcohol.  However, since our primary measurement (specific gravity) is of density, that's the physical quantity
+      // under which we'll group all three units.
       extern Unit const sp_grav;
       extern Unit const plato;
       extern Unit const brix;
       // == Diastatic power ==
       extern Unit const lintner;
       extern Unit const wk;
+      // == Acidity ==
+      // Because it's such a universal unit, in most of the code we use a pH number directly without going via this Unit
+      // object, but it's here for completeness and possible future use.
+      extern Unit const pH;
+      // == Bitterness ==
+      extern Unit const ibu;
+      // == Carbonation ==
+      extern Unit const carbonationVolumes;
+      extern Unit const carbonationGramsPerLiter;
       // == Concentration ==
       extern Unit const milligramsPerLiter;
       extern Unit const partsPerMillion;
       extern Unit const partsPerBillion;
+      // == Viscosity ==
+      // Per https://en.wikipedia.org/wiki/Viscosity#Measurement, the SI unit of dynamic viscosity is the newton-second
+      // per square meter (N·s/m2), which is (by definition) equivalent to a pascal-second (Pa·s).  An alternate metric
+      // unit is the poise (P), which is g·cm−1·s−1.  So 1P = 0.1 Pa·s.  More commonly used, including in brewing, is
+      // the centipoise (cP), which is convenient because the viscosity of water at 20 °C is about 1 cP.  One centipoise
+      // is equal to one millipascal second (mPa·s).
+      //
+      // See eg https://www.brewingwithbriess.com/blog/understanding-a-malt-analysis/ for reference to common use of
+      // centipoise as viscosity measurement in the brewing industry.
+      //
+      // (US Customary and Imperial offer us pound-seconds per square foot (lb·s/ft2), but thankfully this does not seem
+      // to be much used in brewing, so we do not implement it.)
+      extern Unit const centipoise;
+      extern Unit const millipascalSecond;
    }
 }
 
