@@ -15,18 +15,143 @@
  =====================================================================================================================*/
 #include "json/JsonRecord.h"
 
+#include <optional>
 #include <system_error>
 
 #include <QDate>
 #include <QDebug>
 
 #include "json/JsonCoding.h"
+#include "utils/ErrorCodeToStream.h"
 #include "utils/ImportRecordCount.h"
 
 //
 // Variables and constant definitions that we need only in this file
 //
 namespace {
+   /**
+    * \brief Read value and unit fields from a JSON record
+    *
+    *        We assume that the requested fields exist and are of the correct type (double and string respectively)
+    *        because this should have been enforced already by JSON schema validation.
+    *
+    * \param fieldDefinition
+    * \param recordData
+    * \param value Variable in which value is returned
+    * \param unitName Variable in which unit is returned
+    * \return \c true if succeeded, \c false otherwise
+    */
+   bool readValueAndUnit(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+                         boost::json::value const & recordData,
+                         double & value,
+                         QString & unitName) {
+      //
+      // Read the value and unit fields.  We assert that they exist and are of the correct type (double and string
+      // respectively) because this should have been enforced already by JSON schema validation.
+      //
+      std::error_code errCode;
+      boost::json::value const * valueRaw =
+         recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->valueField, errCode);
+      if (errCode) {
+         // Not expecting this to happen given that we've already validated the JSON file against its schema.
+         qWarning() <<
+            Q_FUNC_INFO << "Error parsing value from" << fieldDefinition.xPath << " (" << fieldDefinition.type <<
+            "): " << errCode;
+         return false;
+      }
+      Q_ASSERT(valueRaw);
+      Q_ASSERT(valueRaw->is_double());
+      value = valueRaw->get_double();
+
+      boost::json::value const * unitNameRaw =
+         recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->unitField, errCode);
+      if (errCode) {
+         // Not expecting this to happen given that we've already validated the JSON file against its schema.
+         qWarning() <<
+            Q_FUNC_INFO << "Error parsing units from" << fieldDefinition.xPath << " (" << fieldDefinition.type <<
+            "): " << errCode;
+         return false;
+      }
+      Q_ASSERT(unitNameRaw);
+      Q_ASSERT(unitNameRaw->is_string());
+      unitName = unitNameRaw->get_string().c_str();
+
+      qDebug() <<
+         Q_FUNC_INFO << "Read" << fieldDefinition.xPath << " (" << fieldDefinition.type << ") as" <<
+         value << " " << unitName;
+      return true;
+   }
+
+   /**
+    * \brief Read value and unit fields from a JSON record and convert to canonical units
+    *
+    *        We assume that the requested fields exist and are of the correct type (double and string respectively)
+    *        because this should have been enforced already by JSON schema validation.
+    *
+    * \param fieldDefinition
+    * \param recordData
+    * \return The value, converted to canonical scale, or \c std::nullopt if there was an error
+    */
+   std::optional<Measurement::Amount> readMeasurementWithUnits(
+      JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+      boost::json::value const & recordData
+   ) {
+      double value{0};
+      QString unitName{};
+      if (!readValueAndUnit(fieldDefinition, recordData, value, unitName)) {
+         return std::nullopt;
+      }
+
+      // The schema validation should have ensured that the unit name is constrained to one of the values we are
+      // expecting, so it's almost certainly a coding error if it doesn't.
+      if (!fieldDefinition.valueDecoder.unitsMapping->nameToUnit.contains(unitName)) {
+         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << unitName;
+         // Stop here on debug build
+         Q_ASSERT(false);
+         return std::nullopt;
+      }
+
+      Measurement::Unit const * unit = fieldDefinition.valueDecoder.unitsMapping->nameToUnit.value(unitName);
+      Measurement::Amount canonicalValue = unit->toSI(value);
+
+      qDebug() <<
+         Q_FUNC_INFO << "Converted" << value << " " << unitName << "to" << canonicalValue.quantity << " " <<
+         canonicalValue.unit;
+
+      return canonicalValue;
+   }
+
+   /**
+    * \brief Read value and unit fields where the units are expected to always be the same (eg "%")
+    *
+    *        We assume that the requested fields exist and are of the correct type (double and string respectively)
+    *        because this should have been enforced already by JSON schema validation.
+    *
+    * \param fieldDefinition
+    * \param recordData
+    * \return The value, or \c std::nullopt if there was an error
+    */
+   std::optional<double> readSingleUnitValue(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+                                             boost::json::value const & recordData) {
+      double value{0};
+      QString unitName{};
+      if (!readValueAndUnit(fieldDefinition, recordData, value, unitName)) {
+         return std::nullopt;
+      }
+
+      // The schema validation should have ensured that the unit name is what we're expecting, so it's almost certainly
+      // a coding error if it doesn't.
+      if (fieldDefinition.valueDecoder.singleUnitSpecifier->expectedUnit != unitName) {
+         qCritical() <<
+            Q_FUNC_INFO << "Unit name" << unitName << "does not match expected (" <<
+            fieldDefinition.valueDecoder.singleUnitSpecifier->expectedUnit << ")";
+         // Stop here on debug build
+         Q_ASSERT(false);
+         return std::nullopt;
+      }
+      return value;
+   }
+
 }
 
 JsonRecord::JsonRecord(JsonCoding const & jsonCoding,
@@ -180,36 +305,27 @@ bool JsonRecord::load(QTextStream & userMessage) {
                   // and unit
                   Q_ASSERT(container->is_object());
                   {
-                     //
-                     // Read the value and unit fields.  We assert that they exist and are of the correct type (double
-                     // and string respectively) because this should have been enforced already by JSON schema
-                     // validation.
-                     //
-                     std::error_code errCode;
-                     boost::json::value const * valueRaw =
-                        this->recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->valueField, errCode);
-                     Q_ASSERT(valueRaw);
-                     Q_ASSERT(valueRaw->is_double());
-                     double value = valueRaw->get_double();
-                     boost::json::value const * unitNameRaw =
-                        this->recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->unitField, errCode);
-                     Q_ASSERT(unitNameRaw);
-                     Q_ASSERT(unitNameRaw->is_string());
-                     QString unitName{unitNameRaw->get_string().c_str()};
+                     std::optional<Measurement::Amount> canonicalValue = readMeasurementWithUnits(fieldDefinition,
+                                                                                                  this->recordData);
+                     if (canonicalValue) {
+                        parsedValue.setValue(canonicalValue->quantity);
+                        parsedValueOk = true;
+                     }
+                  }
+                  break;
 
-                     // The schema validation should also have ensured that the unit name is constrained to one of the
-                     // values we are expecting
-                     Q_ASSERT(fieldDefinition.valueDecoder.unitsMapping->nameToUnit.contains(unitName));
-                     Measurement::Unit const * unit =
-                        fieldDefinition.valueDecoder.unitsMapping->nameToUnit.value(unitName);
-                     Measurement::Amount canonicalValue = unit->toSI(value);
-
-                     qDebug() <<
-                        Q_FUNC_INFO << "Read" << fieldDefinition.xPath << " (" << fieldDefinition.type << ") as" <<
-                        value << " " << unitName << "=" << canonicalValue.quantity << " " << canonicalValue.unit;
-
-                     parsedValue.setValue(canonicalValue.quantity);
-                     parsedValueOk = true;
+               case JsonRecordDefinition::FieldType::SingleUnitValue:
+                  // It's definitely a coding error if there is no unit specifier for a field declared to require one
+                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.singleUnitSpecifier);
+                  // JSON schema validation should have ensured that the field is actually one with subfields for value
+                  // and unit
+                  Q_ASSERT(container->is_object());
+                  {
+                     std::optional<double> value = readSingleUnitValue(fieldDefinition, this->recordData);
+                     if (value) {
+                        parsedValue.setValue(*value);
+                        parsedValueOk = true;
+                     }
                   }
                   break;
 
@@ -218,6 +334,7 @@ bool JsonRecord::load(QTextStream & userMessage) {
                // then we might need to make this code more generic, but, for now, we're not going to worry too much as
                // it seems unlikely there will be other JSON encodings we want to deal with in the foreseeable future.
                //
+
                case JsonRecordDefinition::FieldType::Date:
                   // In BeerJSON, DateType is a string matching this regexp:
                   //   "\\d{4}-\\d{2}-\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
@@ -237,33 +354,9 @@ bool JsonRecord::load(QTextStream & userMessage) {
                      }
                   }
                   break;
-               case JsonRecordDefinition::FieldType::Acidity:
-                  //
-                  // Acidity will have subvalues of unit and value.  However, unit should always be "pH" (as there isn't
-                  // any other commonly used measure of acidity).
-                  //
-                  // It's a coding error if the acidity field does not have subvalues, ie is not a JSON object
-                  //
-                  Q_ASSERT(container->is_object());
-
-                  break;
 
             ///*********************TODO FINISH THIS!**************************
             /*
-      //
-      // These values correspond with BeerJSON types
-      //
-      Acidity,          // .:TODO.JSON:. Implement!
-      Bitterness,       // .:TODO.JSON:. Implement!
-      Carbonation,      // .:TODO.JSON:. Implement!
-      Color,            // .:TODO.JSON:. Implement!
-      Concentration,    // .:TODO.JSON:. Implement! Examples for concentration include ppm, ppb, and mg/l
-      DiastaticPower,   // .:TODO.JSON:. Implement!
-      Gravity,          // .:TODO.JSON:. Implement!
-      Percent,          // .:TODO.JSON:. Implement!
-      Temperature,      // .:TODO.JSON:. Implement!
-      TimeElapsed,      // .:TODO.JSON:. Implement!  We use a slightly different name from BeerJSON to make clear this is not time of day
-      Viscosity,        // .:TODO.JSON:. Implement!
       //
       // Other
       //

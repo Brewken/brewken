@@ -272,65 +272,85 @@ Measurement::Unit const * Measurement::Unit::getUnit(QString const & name,
 namespace Measurement::Units {
    // === Mass ===
    // See comment in measurement/UnitSystem.cpp for why we have separate entities for US Customary pounds/ounces and Imperials ones, even though they are, in fact, the same
-   Unit const kilograms            = Unit{Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("kg"),       [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const grams                = Unit{Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("g"),        [](double x){return x/1000.0;},        [](double y){return y*1000.0;},         1.0,  &kilograms};
-   Unit const milligrams           = Unit{Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("mg"),       [](double x){return x/1000000.0;},     [](double y){return y*1000000.0;},      1.0,  &kilograms};
-   Unit const pounds               = Unit{Measurement::UnitSystems::mass_UsCustomary,                    QT_TR_NOOP("lb"),       [](double x){return x*0.45359237;},    [](double y){return y/0.45359237;},     1.0,  &kilograms};
-   Unit const ounces               = Unit{Measurement::UnitSystems::mass_UsCustomary,                    QT_TR_NOOP("oz"),       [](double x){return x*0.0283495231;},  [](double y){return y/0.0283495231;},   1.0,  &kilograms};
-   Unit const imperial_pounds      = Unit{Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("lb"),       [](double x){return x*0.45359237;},    [](double y){return y/0.45359237;},     1.0,  &kilograms};
-   Unit const imperial_ounces      = Unit{Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("oz"),       [](double x){return x*0.0283495231;},  [](double y){return y/0.0283495231;},   1.0,  &kilograms};
+   Unit const kilograms           {Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("kg"),       [](double x){return x;},                 [](double y){return y;},                 1.0};
+   Unit const grams               {Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("g"),        [](double x){return x/1000.0;},          [](double y){return y*1000.0;},          1.0,  &kilograms};
+   Unit const milligrams          {Measurement::UnitSystems::mass_Metric,                         QT_TR_NOOP("mg"),       [](double x){return x/1000000.0;},       [](double y){return y*1000000.0;},       1.0,  &kilograms};
+   Unit const pounds              {Measurement::UnitSystems::mass_UsCustomary,                    QT_TR_NOOP("lb"),       [](double x){return x*0.45359237;},      [](double y){return y/0.45359237;},      1.0,  &kilograms};
+   Unit const ounces              {Measurement::UnitSystems::mass_UsCustomary,                    QT_TR_NOOP("oz"),       [](double x){return x*0.0283495231;},    [](double y){return y/0.0283495231;},    1.0,  &kilograms};
+   Unit const imperial_pounds     {Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("lb"),       [](double x){return x*0.45359237;},      [](double y){return y/0.45359237;},      1.0,  &kilograms};
+   Unit const imperial_ounces     {Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("oz"),       [](double x){return x*0.0283495231;},    [](double y){return y/0.0283495231;},    1.0,  &kilograms};
    // === Volume ===
-   Unit const liters               = Unit{Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("L"),        [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const milliliters          = Unit{Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("mL"),       [](double x){return x/1000.0;},        [](double y){return y*1000.0;},         1.0,  &liters};
-   Unit const us_barrels           = Unit{Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("bbl"),      [](double x){return x*117.34777;},     [](double y){return y/117.34777;},      1.0,  &liters};
-   Unit const us_gallons           = Unit{Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("gal"),      [](double x){return x*3.78541178;},    [](double y){return y/3.78541178;},     1.0,  &liters};
-   Unit const us_quarts            = Unit{Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("qt"),       [](double x){return x*0.946352946;},   [](double y){return y/0.946352946;},    1.0,  &liters};
-   Unit const us_cups              = Unit{Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("cup"),      [](double x){return x*0.236588236;},   [](double y){return y/0.236588236;},    0.25, &liters};
-   Unit const us_tablespoons       = Unit{Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tbsp"),     [](double x){return x*0.0147867648;},  [](double y){return y/0.0147867648;},   1.0,  &liters};
-   Unit const us_teaspoons         = Unit{Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tsp"),      [](double x){return x*0.00492892159;}, [](double y){return y/0.00492892159;},  1.0,  &liters};
-   Unit const imperial_barrels     = Unit{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("bbl"),      [](double x){return x*163.659;},       [](double y){return y/163.659;},        1.0,  &liters};
-   Unit const imperial_gallons     = Unit{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("gal"),      [](double x){return x*4.54609;},       [](double y){return y/4.54609;},        1.0,  &liters};
-   Unit const imperial_quarts      = Unit{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("qt"),       [](double x){return x*1.1365225;},     [](double y){return y/1.1365225;},      1.0,  &liters};
-   Unit const imperial_cups        = Unit{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("cup"),      [](double x){return x*0.284130625;},   [](double y){return y/0.284130625;},    0.25, &liters};
-   Unit const imperial_tablespoons = Unit{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tbsp"),     [](double x){return x*0.0177581714;},  [](double y){return y/0.0177581714;},   1.0,  &liters};
-   Unit const imperial_teaspoons   = Unit{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tsp"),      [](double x){return x*0.00591939047;}, [](double y){return y/0.00591939047;},  1.0,  &liters};
+   Unit const liters              {Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("L"),        [](double x){return x;},                 [](double y){return y;},                 1.0};
+   Unit const milliliters         {Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("mL"),       [](double x){return x/1000.0;},          [](double y){return y*1000.0;},          1.0,  &liters};
+   Unit const us_barrels          {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("bbl"),      [](double x){return x*117.34777;},       [](double y){return y/117.34777;},       1.0,  &liters};
+   Unit const us_gallons          {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("gal"),      [](double x){return x*3.78541178;},      [](double y){return y/3.78541178;},      1.0,  &liters};
+   Unit const us_quarts           {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("qt"),       [](double x){return x*0.946352946;},     [](double y){return y/0.946352946;},     1.0,  &liters};
+   Unit const us_cups             {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("cup"),      [](double x){return x*0.236588236;},     [](double y){return y/0.236588236;},     0.25, &liters};
+   Unit const us_tablespoons      {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tbsp"),     [](double x){return x*0.0147867648;},    [](double y){return y/0.0147867648;},    1.0,  &liters};
+   Unit const us_teaspoons        {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tsp"),      [](double x){return x*0.00492892159;},   [](double y){return y/0.00492892159;},   1.0,  &liters};
+   Unit const imperial_barrels    {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("bbl"),      [](double x){return x*163.659;},         [](double y){return y/163.659;},         1.0,  &liters};
+   Unit const imperial_gallons    {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("gal"),      [](double x){return x*4.54609;},         [](double y){return y/4.54609;},         1.0,  &liters};
+   Unit const imperial_quarts     {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("qt"),       [](double x){return x*1.1365225;},       [](double y){return y/1.1365225;},       1.0,  &liters};
+   Unit const imperial_cups       {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("cup"),      [](double x){return x*0.284130625;},     [](double y){return y/0.284130625;},     0.25, &liters};
+   Unit const imperial_tablespoons{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tbsp"),     [](double x){return x*0.0177581714;},    [](double y){return y/0.0177581714;},    1.0,  &liters};
+   Unit const imperial_teaspoons  {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tsp"),      [](double x){return x*0.00591939047;},   [](double y){return y/0.00591939047;},   1.0,  &liters};
    // === Time ===
-   Unit const minutes              = Unit{Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("min"),      [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const seconds              = Unit{Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("s"),        [](double x){return x/60.0;},          [](double y){return y*60.0;},           90.0, &minutes};
-   Unit const hours                = Unit{Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("hr"),       [](double x){return x*60.0;},          [](double y){return y/60.0;},           2.0,  &minutes};
-   Unit const days                 = Unit{Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("day"),      [](double x){return x*1440.0;},        [](double y){return y/1440.0;},         1.0,  &minutes};
+   // Added weeks because BeerJSON has it
+   Unit const minutes             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("min"),      [](double x){return x;},                 [](double y){return y;},                 1.0};
+   Unit const seconds             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("s"),        [](double x){return x/60.0;},            [](double y){return y*60.0;},            90.0, &minutes};
+   Unit const hours               {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("hr"),       [](double x){return x*60.0;},            [](double y){return y/60.0;},            2.0,  &minutes};
+   Unit const days                {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("day"),      [](double x){return x*(24.0*60.0);},     [](double y){return y/(24.0*60.0);},     1.0,  &minutes};
+   Unit const weeks               {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("week"),     [](double x){return x*(7.0*24.0*60.0);}, [](double y){return y/(7.0*24.0*60.0);}, 1.0,  &minutes};
+
    // === Temperature ===
-   Unit const celsius              = Unit{Measurement::UnitSystems::temperature_MetricIsCelsius,         QT_TR_NOOP("C"),        [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const fahrenheit           = Unit{Measurement::UnitSystems::temperature_UsCustomaryIsFahrenheit, QT_TR_NOOP("F"),        [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0,  &celsius};
+   Unit const celsius             {Measurement::UnitSystems::temperature_MetricIsCelsius,         QT_TR_NOOP("C"),        [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const fahrenheit          {Measurement::UnitSystems::temperature_UsCustomaryIsFahrenheit, QT_TR_NOOP("F"),        [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0,  &celsius};
    // === Color ===
    // Not sure how many people use Lovibond scale these days, but BeerJSON supports it, so we need to be able to read
    // it.  https://en.wikipedia.org/wiki/Beer_measurement#Colour= says "The Standard Reference Method (SRM) ... [gives]
    // results approximately equal to the °L."
-   Unit const srm                  = Unit{Measurement::UnitSystems::color_StandardReferenceMethod,       QT_TR_NOOP("srm"),      [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const ebc                  = Unit{Measurement::UnitSystems::color_EuropeanBreweryConvention,     QT_TR_NOOP("ebc"),      [](double x){return x * 12.7/25.0;},   [](double y){return y * 25.0/12.7;},    1.0,  &srm};
-   Unit const lovibond             = Unit{Measurement::UnitSystems::color_Lovibond,                      QT_TR_NOOP("lovibond"), [](double x){return x;},               [](double y){return y;},                1.0,  &srm};
+   Unit const srm                 {Measurement::UnitSystems::color_StandardReferenceMethod,       QT_TR_NOOP("srm"),      [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const ebc                 {Measurement::UnitSystems::color_EuropeanBreweryConvention,     QT_TR_NOOP("ebc"),      [](double x){return x * 12.7/25.0;},   [](double y){return y * 25.0/12.7;},    1.0,  &srm};
+   Unit const lovibond            {Measurement::UnitSystems::color_Lovibond,                      QT_TR_NOOP("lovibond"), [](double x){return x;},               [](double y){return y;},                1.0,  &srm};
    // == Density ===
    // Brix isn't much used in beer brewing, but BeerJSON supports it, so we have it here.
-   Unit const sp_grav              = Unit{Measurement::UnitSystems::density_SpecificGravity,             QT_TR_NOOP("sg"),       [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const plato                = Unit{Measurement::UnitSystems::density_Plato,
-                                          QT_TR_NOOP("P"),
-                                          [](double x){return x == 0.0 ? 0.0 : Algorithms::PlatoToSG_20C20C(x);},
-                                          [](double y){return y == 0.0 ? 0.0 : Algorithms::SG_20C20C_toPlato(y);},
-                                          1.0,
-                                          &sp_grav};
-   Unit const brix                 = Unit{Measurement::UnitSystems::density_Brix,
-                                          QT_TR_NOOP("brix"),
-                                          [](double x){return x == 0.0 ? 0.0 : Algorithms::BrixToSgAt20C(x);},
-                                          [](double y){return y == 0.0 ? 0.0 : Algorithms::SgAt20CToBrix(y);},
-                                          1.0,
-                                          &sp_grav};
+   // Per https://en.wikipedia.org/wiki/Beer_measurement, Plato and Brix are "essentially ... the same ([both based on
+   // mass fraction of sucrose) [and only] differ in their conversion from weight percentage to specific gravity in the
+   // fifth and sixth decimal places"
+   Unit const sp_grav             {Measurement::UnitSystems::density_SpecificGravity,             QT_TR_NOOP("sg"),       [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const plato               {Measurement::UnitSystems::density_Plato,
+                                   QT_TR_NOOP("P"),
+                                   [](double x){return x == 0.0 ? 0.0 : Algorithms::PlatoToSG_20C20C(x);},
+                                   [](double y){return y == 0.0 ? 0.0 : Algorithms::SG_20C20C_toPlato(y);},
+                                   1.0,
+                                   &sp_grav};
+   Unit const brix                {Measurement::UnitSystems::density_Brix,
+                                   QT_TR_NOOP("brix"),
+                                   [](double x){return x == 0.0 ? 0.0 : Algorithms::BrixToSgAt20C(x);},
+                                   [](double y){return y == 0.0 ? 0.0 : Algorithms::SgAt20CToBrix(y);},
+                                   1.0,
+                                   &sp_grav};
    // == Diastatic power ==
-   Unit const lintner              = Unit{Measurement::UnitSystems::diastaticPower_Lintner,              QT_TR_NOOP("L"),    [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const wk                   = Unit{Measurement::UnitSystems::diastaticPower_WindischKolbach,      QT_TR_NOOP("WK"),   [](double x){return (x + 16) / 3.5;},  [](double y){return 3.5 * y - 16;},     1.0,  &lintner};
+   Unit const lintner             {Measurement::UnitSystems::diastaticPower_Lintner,                  QT_TR_NOOP("L"),    [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const wk                  {Measurement::UnitSystems::diastaticPower_WindischKolbach,          QT_TR_NOOP("WK"),   [](double x){return (x + 16) / 3.5;},  [](double y){return 3.5 * y - 16;},     1.0,  &lintner};
+   // == Acidity ==
+   Unit const pH                  {Measurement::UnitSystems::acidity_pH,                              QT_TR_NOOP("pH"),   [](double x){return x;},               [](double y){return y;},                1.0};
+   // == Bitterness ==
+   Unit const ibu                 {Measurement::UnitSystems::bitterness_InternationalBitternessUnits, QT_TR_NOOP("IBU"),  [](double x){return x;},               [](double y){return y;},                1.0};
+   // == Carbonation ==
+   // Per http://www.uigi.com/co2_conv.html, 1 cubic metre (aka 1000 litres) of CO2 at 1 atmosphere pressure and 0°C
+   // temperature weighs 1.9772 kg, so 1 litre weighs 1.9772 g at this pressure and temperature.  Not clear however
+   // whether we should use 0°C or 20°C or some other temperature for the conversion from volumes to grams per litre.
+   // A brewing-specific source, https://byo.com/article/master-the-action-carbonation/, gives the conversion factor as
+   // 1.96, so we use that.
+   Unit const carbonationVolumes      {Measurement::UnitSystems::carbonation_Volumes,                 QT_TR_NOOP("vol"),  [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const carbonationGramsPerLiter{Measurement::UnitSystems::carbonation_MassPerVolume,           QT_TR_NOOP("mg/L"), [](double x){return x / 1.96;},        [](double y){return y * 1.96;},         1.0,  &carbonationVolumes};
    // == Concentration ==
-   Unit const milligramsPerLiter   = Unit{Measurement::UnitSystems::concentration_MassPerVolume,         QT_TR_NOOP("mg/l"), [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const partsPerMillion      = Unit{Measurement::UnitSystems::concentration_PartsPer,              QT_TR_NOOP("ppm"),  [](double x){return x;},               [](double y){return y;},                1.0,  &milligramsPerLiter};
-   Unit const partsPerBillion      = Unit{Measurement::UnitSystems::concentration_PartsPer,              QT_TR_NOOP("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &milligramsPerLiter};
-
-
+   Unit const milligramsPerLiter  {Measurement::UnitSystems::concentration_MassPerVolume,             QT_TR_NOOP("mg/L"), [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const partsPerMillion     {Measurement::UnitSystems::concentration_PartsPer,                  QT_TR_NOOP("ppm"),  [](double x){return x;},               [](double y){return y;},                1.0,  &milligramsPerLiter};
+   Unit const partsPerBillion     {Measurement::UnitSystems::concentration_PartsPer,                  QT_TR_NOOP("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &milligramsPerLiter};
+   // == Viscosity ==
+   // Yes, 1 centipoise = 1 millipascal-second, but a poise and a pascal-second are NOT equal so we have two different units
+   Unit const centipoise          {Measurement::UnitSystems::viscosity_Metric,                        QT_TR_NOOP("cP"),    [](double x){return x;},              [](double y){return y;},                1.0};
+   Unit const millipascalSecond   {Measurement::UnitSystems::viscosity_MetricAlternate,               QT_TR_NOOP("mPa-s"), [](double x){return x;},              [](double y){return y;},                1.0,  &centipoise};
 }

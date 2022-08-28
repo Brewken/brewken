@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonMeasureableUnitsMapping.h is part of Brewken, and is copyright the following authors 2022:
+ * json/JsonSingleUnitSpecifier.h.h is part of Brewken, and is copyright the following authors 2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,29 +13,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef JSON_JSONMEASUREABLEUNITSMAPPING_H
-#define JSON_JSONMEASUREABLEUNITSMAPPING_H
+#ifndef JSON_JSONSINGLEUNITSPECIFIER_H
+#define JSON_JSONSINGLEUNITSPECIFIER_H
 #pragma once
 
 #include <QMap>
 #include <QString>
 
-#include "measurement/Unit.h"
-
 /**
- * \brief Maps a set of BeerJSON "measurable units" to our internal data structures (\c Measurement::Unit in particular)
+ * \brief Defines the expected unit for an JSON value:unit pairs that only ever uses one unit (eg percentages in
+ *        BeerJSON).
  *
- *        In BeerJSON at least, a lot of values are given as value:unit pairs.  (This contrasts with BeerXML and our
- *        internal storage, where everything is STORED in standard, usually SI, units and conversion to other units is
- *        only done for display and entry.)
+ *        The advantage of using this struct is that it allows us to assert that the unit we're reading is what we
+ *        expected, which should catch programming errors (eg if we try to read a percentage field into a pH attribute).
  *
- * \c nameToUnit tells us how to map the string unit value to one of our \c Measurement::Unit constants
+ * \c expectedUnit tells us what we are expecting the unit to be
  * \c unitField is the key used to pull out the string value representing the units of the measurement, usually "unit" in
  *              BeerJSON
  * \c valueField is the key used to pull out the double value representing the measurement itself
  */
-struct JsonMeasureableUnitsMapping {
-   QMap<QString, Measurement::Unit const *> nameToUnit;
+struct JsonSingleUnitSpecifier {
+   QString expectedUnit;
    char const * const unitField = "unit";
    char const * const valueField = "value";
 };
