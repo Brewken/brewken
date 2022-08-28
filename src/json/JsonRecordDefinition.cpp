@@ -27,15 +27,8 @@ namespace {
       {QT_TR_NOOP("Enum"                ), JsonRecordDefinition::FieldType::Enum                },
       {QT_TR_NOOP("Array"               ), JsonRecordDefinition::FieldType::Array               },
       {QT_TR_NOOP("Date"                ), JsonRecordDefinition::FieldType::Date                },
-      {QT_TR_NOOP("Acidity"             ), JsonRecordDefinition::FieldType::Acidity             },
-      {QT_TR_NOOP("Bitterness"          ), JsonRecordDefinition::FieldType::Bitterness          },
-      {QT_TR_NOOP("Carbonation"         ), JsonRecordDefinition::FieldType::Carbonation         },
-      {QT_TR_NOOP("Concentration"       ), JsonRecordDefinition::FieldType::Concentration       },
-      {QT_TR_NOOP("Gravity"             ), JsonRecordDefinition::FieldType::Gravity             },
-      {QT_TR_NOOP("Percent"             ), JsonRecordDefinition::FieldType::Percent             },
-      {QT_TR_NOOP("TimeElapsed"         ), JsonRecordDefinition::FieldType::TimeElapsed         },
-      {QT_TR_NOOP("Viscosity"           ), JsonRecordDefinition::FieldType::Viscosity           },
       {QT_TR_NOOP("MeasurementWithUnits"), JsonRecordDefinition::FieldType::MeasurementWithUnits},
+      {QT_TR_NOOP("SingleUnitValue"     ), JsonRecordDefinition::FieldType::SingleUnitValue     },
       {QT_TR_NOOP("MassOrVolume"        ), JsonRecordDefinition::FieldType::MassOrVolume        },
       {QT_TR_NOOP("RequiredConstant"    ), JsonRecordDefinition::FieldType::RequiredConstant    }
    };
@@ -49,6 +42,11 @@ JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(
 JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(
    JsonMeasureableUnitsMapping const * unitsMapping
 ) :unitsMapping{unitsMapping} {
+   return;
+}
+JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(
+   JsonSingleUnitSpecifier const * singleUnitSpecifier
+) : singleUnitSpecifier{singleUnitSpecifier} {
    return;
 }
 
@@ -73,6 +71,19 @@ JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                
    valueDecoder{unitsMapping} {
    return;
 }
+
+JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                       type,
+                                                       char const *                    xPath,
+                                                       BtStringConst const *           propertyName,
+                                                       JsonSingleUnitSpecifier const * singleUnitSpecifier) :
+   type{type},
+   xPath{xPath},
+   propertyName{propertyName},
+   valueDecoder{singleUnitSpecifier} {
+   return;
+}
+
+
 
 JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
                                                        char const *              xPath,
