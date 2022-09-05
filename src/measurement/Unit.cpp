@@ -280,27 +280,32 @@ namespace Measurement::Units {
    Unit const imperial_pounds     {Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("lb"),       [](double x){return x*0.45359237;},      [](double y){return y/0.45359237;},      1.0,  &kilograms};
    Unit const imperial_ounces     {Measurement::UnitSystems::mass_Imperial,                       QT_TR_NOOP("oz"),       [](double x){return x*0.0283495231;},    [](double y){return y/0.0283495231;},    1.0,  &kilograms};
    // === Volume ===
-   Unit const liters              {Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("L"),        [](double x){return x;},                 [](double y){return y;},                 1.0};
-   Unit const milliliters         {Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("mL"),       [](double x){return x/1000.0;},          [](double y){return y*1000.0;},          1.0,  &liters};
-   Unit const us_barrels          {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("bbl"),      [](double x){return x*117.34777;},       [](double y){return y/117.34777;},       1.0,  &liters};
-   Unit const us_gallons          {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("gal"),      [](double x){return x*3.78541178;},      [](double y){return y/3.78541178;},      1.0,  &liters};
-   Unit const us_quarts           {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("qt"),       [](double x){return x*0.946352946;},     [](double y){return y/0.946352946;},     1.0,  &liters};
-   Unit const us_cups             {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("cup"),      [](double x){return x*0.236588236;},     [](double y){return y/0.236588236;},     0.25, &liters};
-   Unit const us_tablespoons      {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tbsp"),     [](double x){return x*0.0147867648;},    [](double y){return y/0.0147867648;},    1.0,  &liters};
-   Unit const us_teaspoons        {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tsp"),      [](double x){return x*0.00492892159;},   [](double y){return y/0.00492892159;},   1.0,  &liters};
-   Unit const imperial_barrels    {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("bbl"),      [](double x){return x*163.659;},         [](double y){return y/163.659;},         1.0,  &liters};
-   Unit const imperial_gallons    {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("gal"),      [](double x){return x*4.54609;},         [](double y){return y/4.54609;},         1.0,  &liters};
-   Unit const imperial_quarts     {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("qt"),       [](double x){return x*1.1365225;},       [](double y){return y/1.1365225;},       1.0,  &liters};
-   Unit const imperial_cups       {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("cup"),      [](double x){return x*0.284130625;},     [](double y){return y/0.284130625;},     0.25, &liters};
-   Unit const imperial_tablespoons{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tbsp"),     [](double x){return x*0.0177581714;},    [](double y){return y/0.0177581714;},    1.0,  &liters};
-   Unit const imperial_teaspoons  {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tsp"),      [](double x){return x*0.00591939047;},   [](double y){return y/0.00591939047;},   1.0,  &liters};
+   // Where possible, the multipliers for going to and from litres come from www.conversion-metric.org as it seems to offer the most decimal places on its conversion tables
+   Unit const liters              {Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("L"),        [](double x){return x;},                    [](double y){return y;},                    1.0};
+   Unit const milliliters         {Measurement::UnitSystems::volume_Metric,                       QT_TR_NOOP("mL"),       [](double x){return x/1000.0;},             [](double y){return y*1000.0;},             1.0,  &liters};
+   Unit const us_barrels          {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("bbl"),      [](double x){return x*117.34777;},          [](double y){return y/117.34777;},          1.0,  &liters};
+   Unit const us_gallons          {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("gal"),      [](double x){return x*3.7854117840007;},    [](double y){return y/3.7854117840007;},    1.0,  &liters};
+   Unit const us_quarts           {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("qt"),       [](double x){return x*0.94635294599999;},   [](double y){return y/0.94635294599999;},   1.0,  &liters};
+   Unit const us_pints            {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("qt"),       [](double x){return x*0.473176473;},        [](double y){return y/0.473176473;},        1.0,  &liters};
+   Unit const us_cups             {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("cup"),      [](double x){return x*0.23658823648491;},   [](double y){return y/0.23658823648491;},   0.25, &liters};
+   Unit const us_fluidOunces      {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("floz"),     [](double x){return x*0.029573529564112;},  [](double y){return y/0.029573529564112;},  1.0,  &liters};
+   Unit const us_tablespoons      {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tbsp"),     [](double x){return x*0.014786764782056;},  [](double y){return y/0.014786764782056;},  1.0,  &liters};
+   Unit const us_teaspoons        {Measurement::UnitSystems::volume_UsCustomary,                  QT_TR_NOOP("tsp"),      [](double x){return x*0.0049289215940186;}, [](double y){return y/0.0049289215940186;}, 1.0,  &liters};
+   Unit const imperial_barrels    {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("bbl"),      [](double x){return x*163.659;},            [](double y){return y/163.659;},            1.0,  &liters};
+   Unit const imperial_gallons    {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("gal"),      [](double x){return x*4.5460899999997;},    [](double y){return y/4.5460899999997;},    1.0,  &liters};
+   Unit const imperial_quarts     {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("qt"),       [](double x){return x*1.1365225;},          [](double y){return y/1.1365225;},          1.0,  &liters};
+   Unit const imperial_pints      {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("qt"),       [](double x){return x*0.56826125;},         [](double y){return y/0.56826125;},         1.0,  &liters};
+   Unit const imperial_cups       {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("cup"),      [](double x){return x*0.284130625;},        [](double y){return y/0.284130625;},        0.25, &liters};
+   Unit const imperial_fluidOunces{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("floz"),     [](double x){return x*0.028413075003383;},  [](double y){return y/0.028413075003383;},  1.0, &liters};
+   Unit const imperial_tablespoons{Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tbsp"),     [](double x){return x*0.0177581714;},       [](double y){return y/0.0177581714;},       1.0,  &liters};
+   Unit const imperial_teaspoons  {Measurement::UnitSystems::volume_Imperial,                     QT_TR_NOOP("tsp"),      [](double x){return x*0.00591939047;},      [](double y){return y/0.00591939047;},      1.0,  &liters};
    // === Time ===
    // Added weeks because BeerJSON has it
    Unit const minutes             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("min"),      [](double x){return x;},                 [](double y){return y;},                 1.0};
-   Unit const seconds             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("s"),        [](double x){return x/60.0;},            [](double y){return y*60.0;},            90.0, &minutes};
-   Unit const hours               {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("hr"),       [](double x){return x*60.0;},            [](double y){return y/60.0;},            2.0,  &minutes};
-   Unit const days                {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("day"),      [](double x){return x*(24.0*60.0);},     [](double y){return y/(24.0*60.0);},     1.0,  &minutes};
    Unit const weeks               {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("week"),     [](double x){return x*(7.0*24.0*60.0);}, [](double y){return y/(7.0*24.0*60.0);}, 1.0,  &minutes};
+   Unit const days                {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("day"),      [](double x){return x*(24.0*60.0);},     [](double y){return y/(24.0*60.0);},     1.0,  &minutes};
+   Unit const hours               {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("hr"),       [](double x){return x*60.0;},            [](double y){return y/60.0;},            2.0,  &minutes};
+   Unit const seconds             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QT_TR_NOOP("s"),        [](double x){return x/60.0;},            [](double y){return y*60.0;},            90.0, &minutes};
 
    // === Temperature ===
    Unit const celsius             {Measurement::UnitSystems::temperature_MetricIsCelsius,         QT_TR_NOOP("C"),        [](double x){return x;},               [](double y){return y;},                1.0};

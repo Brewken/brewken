@@ -25,13 +25,19 @@
 #include "utils/EnumStringMapping.h"
 #include "json/JsonMeasureableUnitsMapping.h"
 #include "json/JsonSingleUnitSpecifier.h"
+#include "json/JsonXPath.h"
 
 // Forward declarations
 namespace boost::json {
    class object;
+   class value;
 }
 class JsonCoding;
 class JsonRecord;
+
+// See below for more on this.  It's useful to have a type name for a list of pointers to JsonMeasureableUnitsMapping
+// objects, but we don't need to create a whole new class just for that.
+using ListOfJsonMeasureableUnitsMappings = QVector<JsonMeasureableUnitsMapping const *>;
 
 /**
  * \brief \c JsonRecordDefinition represents a type of data record in a JSON document.  Each instance of this class is a
@@ -160,23 +166,47 @@ public:
       Enum,             // A string that we need to map to/from our own enum
       Array,            // Zero, one or more contained records
       //
-      // For now we treat this as synonymous with the BeerJSON date type (DateType in measurable_units.json in the
+      // Other types start here
+      //
+      // For now we treat Date as synonymous with the BeerJSON date type (DateType in measurable_units.json in the
       // BeerJSON schema).  We'll wait to worry about doing something more generic until another JSON format comes
       // along (if ever).
       //
       Date,
       //
-      // Other
+      // MeasurementWithUnits covers most cases where we need to convert between a value plus unit (used a lot in
+      // BeerJSON) and our internal canonical (usually SI) units via a Measurement::Unit constant.
       //
-      MeasurementWithUnits, // This covers most cases where we need to convert between a BeerJSON value plus unit and
-                            // our internal canonical (usually SI) units via a Measurement::Unit constant.
-      SingleUnitValue, // This is a special case of MeasurementWithUnits for where we don't want to use a
-                       // Measurement::Unit internally because there is only ever one unit.  Eg BeerJSON stores
-                       // percentages as value plus unit with unit always set to "%".  (We could just XPath to the value
-                       // field, but this gives us a mechanism to assert that the unit field holds the value we think it
-                       // should.)
-      MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
-                        // so it's a useful concept for us .:TODO.JSON:. Implement!
+      // All the units should correspond to the same Measurement::PhysicalQuantity, otherwise OneOfMeasurementsWithUnits
+      // should be used.
+      //
+      MeasurementWithUnits,
+      //
+      // In a few circumstances, a field is allowed to be measured in two different ways - eg some quantities can be
+      // measured by mass or by volume.  Of course, this only works when there are no shared abbreviations between the
+      // two different types of units, but, eg in the case of BeerJSON, the schema creators have taken care to ensure
+      // this is the case.
+      //
+      // NOTE that we ASSUME that each of the JsonMeasureableUnitsMapping objects in the list has the SAME values for
+      // unitField and valueField.  (We could have done yet another data structure to enforce this, instead of using
+      // a list of JsonMeasureableUnitsMapping objects, but the latter has the benefit of allowing us to use the same
+      // definitions for fields that can only be measured in one way.  (Eg, we might have some fields that are allowed
+      // to be specified by mass or by volume and others that can only be specified by mass or only by volume.)
+      //
+      //
+      OneOfMeasurementsWithUnits,
+      //
+      // SingleUnitValue is a special case of MeasurementWithUnits for where we don't want to use a Measurement::Unit
+      // internally because there is only ever one unit.  Eg BeerJSON stores percentages as value plus unit with unit
+      // always set to "%".  (We could just XPath to the value field, but this (a) gives us a mechanism to assert that
+      // the unit field holds the value we think it should, and (b) tells us how to write these fields out when we are
+      // exporting to JSON.)
+      //
+      // Note that we have to be capable of handling synonyms here.  Eg in BeerJSON, there is a unit type called
+      // UnitUnitType, which can be "1", "unit", "each", "dimensionless" or "pkg" but which in all these cases means
+      // "number without units" (eg number of apples or number of packets of yeast).
+      //
+      SingleUnitValue,
       RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
    };
 
@@ -208,19 +238,30 @@ public:
     *        If \c type is \c JsonRecordDefinition::FieldType::MeasurementWithUnits, then \c valueDecoder.unitsMapping
     *        tells us how to map between the string values for units (eg "oz") and our own \c Measurement::Unit
     *        constants.
+    *
+    *        If \c type is \c JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, then
+    *        \c valueDecoder.listOfUnitsMappings gives us the list of valid mappings (each of which individually would
+    *        be valid in the case of \c JsonRecordDefinition::FieldType::MeasurementWithUnits).  Most commonly this is
+    *        used where there is the choice of measuring something by mass or by volume.
+    *
+    *        If \c type is \c JsonRecordDefinition::FieldType::SingleUnitValue, then this is a field that either only
+    *        has one unit or has no units, and \c valueDecoder.singleUnitSpecifier tells us what name(s) of unit is/are
+    *        valid.
     */
    struct FieldDefinition {
-      FieldType                 type;
-      char const *              xPath;
-      BtStringConst const *     propertyName;
+      FieldType             type;
+      JsonXPath             xPath;
+      BtStringConst const * propertyName;
       union ValueDecoder {
-         EnumStringMapping           const * enumMapping;
-         JsonMeasureableUnitsMapping const * unitsMapping;
-         JsonSingleUnitSpecifier     const * singleUnitSpecifier;
+         EnumStringMapping                  const * enumMapping;         // FieldType::Enum
+         JsonMeasureableUnitsMapping        const * unitsMapping;        // FieldType::MeasurementWithUnits
+         ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings; // FieldType::OneOfMeasurementsWithUnits
+         JsonSingleUnitSpecifier            const * singleUnitSpecifier; // FieldType::SingleUnitValue
          // Explicit Union constructors here make the FieldDefinition constructor implementations slightly less clunky
-         ValueDecoder(EnumStringMapping           const * enumMapping);
-         ValueDecoder(JsonMeasureableUnitsMapping const * unitsMapping);
-         ValueDecoder(JsonSingleUnitSpecifier     const * singleUnitSpecifier);
+         ValueDecoder(EnumStringMapping                  const * enumMapping);
+         ValueDecoder(JsonMeasureableUnitsMapping        const * unitsMapping);
+         ValueDecoder(ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings);
+         ValueDecoder(JsonSingleUnitSpecifier            const * singleUnitSpecifier);
       } valueDecoder;
 
       // In C++20, we finally get designated initializers (a feature that has long been present in C!).  This would
@@ -234,6 +275,10 @@ public:
                       char const *                        xPath,
                       BtStringConst const *               propertyName,
                       JsonMeasureableUnitsMapping const * unitsMapping);
+      FieldDefinition(FieldType                                  type,
+                      char const *                               xPath,
+                      BtStringConst const *                      propertyName,
+                      ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings);
       FieldDefinition(FieldType                           type,
                       char const *                        xPath,
                       BtStringConst const *               propertyName,
@@ -262,7 +307,7 @@ public:
     */
    template<typename T>
    static JsonRecord * create(JsonCoding const & jsonCoding,
-                              boost::json::object const & recordData,
+                              boost::json::value const & recordData,
                               JsonRecordDefinition const & recordDefinition) {
       return new T(jsonCoding, recordData, recordDefinition);
    }
@@ -272,7 +317,7 @@ public:
     *        \b JsonRecordDefinition::create().
     */
    typedef JsonRecord * (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
-                                                        boost::json::object const & recordData,
+                                                        boost::json::value const & recordData,
                                                         JsonRecordDefinition const & recordDefinition);
 
    /**
@@ -305,7 +350,7 @@ public:
     * \brief This is the way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It ensures you
     *        get the right subclass (if any) of \c JsonRecord.
     */
-   std::shared_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::object const & recordData) const;
+   std::shared_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::value const & recordData) const;
 
 public:
    BtStringConst const       recordName;

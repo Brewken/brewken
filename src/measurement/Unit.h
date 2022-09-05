@@ -182,24 +182,28 @@ namespace Measurement {
       // === Volume ===
       extern Unit const liters;
       extern Unit const milliliters;
-      extern Unit const us_barrels;
-      extern Unit const us_gallons;
-      extern Unit const us_quarts;
-      extern Unit const us_cups;
-      extern Unit const us_tablespoons;
-      extern Unit const us_teaspoons;
-      extern Unit const imperial_barrels;
-      extern Unit const imperial_gallons;
-      extern Unit const imperial_quarts;
-      extern Unit const imperial_cups;
+      extern Unit const us_barrels;     // =  31 × us_gallons (for beer; different for other things!)
+      extern Unit const us_gallons;     // =   4 × us_quarts
+      extern Unit const us_quarts;      // =   2 × us_pints
+      extern Unit const us_pints;       // =  16 × us_fluidOunces
+      extern Unit const us_cups;        // =   8 × us_fluidOunces
+      extern Unit const us_fluidOunces;
+      extern Unit const us_tablespoons; // = 1/2 × us_fluidOunces
+      extern Unit const us_teaspoons;   // = 1/6 × us_fluidOunces
+      extern Unit const imperial_barrels;     // = 36 × imperial_gallons
+      extern Unit const imperial_gallons;     // =  4 × imperial_quarts
+      extern Unit const imperial_quarts;      // =  2 × imperial_pints
+      extern Unit const imperial_pints;       // = 20 × imperial_fluidOunces
+      extern Unit const imperial_cups;        // = 10 × imperial_fluidOunces
+      extern Unit const imperial_fluidOunces;
       extern Unit const imperial_tablespoons;
       extern Unit const imperial_teaspoons;
       // === Time ===
-      extern Unit const seconds;
       extern Unit const minutes;
-      extern Unit const hours;
-      extern Unit const days;
       extern Unit const weeks;
+      extern Unit const days;
+      extern Unit const hours;
+      extern Unit const seconds;
       // === Temperature ===
       extern Unit const celsius;
       extern Unit const fahrenheit;
@@ -236,7 +240,7 @@ namespace Measurement {
       // per square meter (N·s/m2), which is (by definition) equivalent to a pascal-second (Pa·s).  An alternate metric
       // unit is the poise (P), which is g·cm−1·s−1.  So 1P = 0.1 Pa·s.  More commonly used, including in brewing, is
       // the centipoise (cP), which is convenient because the viscosity of water at 20 °C is about 1 cP.  One centipoise
-      // is equal to one millipascal second (mPa·s).
+      // is equal to one millipascal-second (mPa·s).
       //
       // See eg https://www.brewingwithbriess.com/blog/understanding-a-malt-analysis/ for reference to common use of
       // centipoise as viscosity measurement in the brewing industry.
@@ -247,6 +251,9 @@ namespace Measurement {
       extern Unit const millipascalSecond;
    }
 }
+
+//.:TODO:.     "SpecificVolumeType": "Specific volume is the inverse of density, with units of volume over mass, ie qt/lb or L/kg. Commonly used for mash thickness.",
+
 
 /**
  * \brief Convenience function to allow output of \c Measurement::Unit to \c QDebug or \c QTextStream stream etc

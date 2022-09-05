@@ -20,7 +20,9 @@
 #include <QMap>
 #include <QString>
 
+#include "json/JsonXPath.h"
 #include "measurement/Unit.h"
+
 
 /**
  * \brief Maps a set of BeerJSON "measurable units" to our internal data structures (\c Measurement::Unit in particular)
@@ -36,8 +38,8 @@
  */
 struct JsonMeasureableUnitsMapping {
    QMap<QString, Measurement::Unit const *> nameToUnit;
-   char const * const unitField = "unit";
-   char const * const valueField = "value";
+   JsonXPath const unitField = JsonXPath{"unit"};
+   JsonXPath const valueField = JsonXPath{"value"};
 };
 
 #endif

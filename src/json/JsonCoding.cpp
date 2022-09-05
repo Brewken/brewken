@@ -145,7 +145,7 @@ JsonRecordDefinition const & JsonCoding::getJsonRecordDefinitionByNamedEntity(QS
    return std::shared_ptr<JsonRecord>(constructorWrapper(recordName, *this, *fieldDefinitions));
 }*/
 
-bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
+bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocument,
                                           QTextStream & userMessage) const {
    try {
       JsonSchema const & schema = JsonSchema::instance(this->pimpl->schemaId);
@@ -172,10 +172,14 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
    // ever).
    //
    Q_ASSERT(inputDocument.is_object());
-   boost::json::object documentRoot = inputDocument.as_object();
+   boost::json::object const & documentRoot = inputDocument.as_object();
    Q_ASSERT(documentRoot.contains("beerjson"));
-   Q_ASSERT(documentRoot["beerjson"].is_object());
-   boost::json::object rootRecordData = documentRoot["beerjson"].as_object();
+
+   boost::json::value const & rootRecordData = *documentRoot.if_contains("beerjson"); //documentRoot["beerjson"];
+   Q_ASSERT(rootRecordData.is_object());
+   boost::json::object const & rootRecordDataObject = rootRecordData.as_object();
+   qDebug() << Q_FUNC_INFO << "Root record contains" << rootRecordData.as_object().size() << "elements";
+
 
    // Now we've loaded the JSON document into memory and determined that it's valid against its schema, we need to
    // extract the data from it
@@ -196,6 +200,7 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
    if (!rootRecord.load(userMessage)) {
       return false;
    }
+   qDebug() << Q_FUNC_INFO << "Root record contains" << rootRecordData.as_object().size() << "elements";
 
 ////////////////////////////
 //      std::shared_ptr<XmlRecord> rootRecord = xmlCoding->getNewXmlRecord(rootNodeName);
@@ -221,7 +226,7 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
 
    for (auto & fieldDefinition : rootDefinition.fieldDefinitions) {
 //      qDebug() << Q_FUNC_INFO << "Looking at" << fieldDefinition.xPath;
-      boost::json::value const * container = rootRecordData.if_contains(fieldDefinition.xPath);
+      boost::json::value const * container = rootRecordDataObject.if_contains(fieldDefinition.xPath.asJsonPtr());
       if (container) {
          if (JsonRecordDefinition::FieldType::RequiredConstant == fieldDefinition.type) {
             qDebug() << Q_FUNC_INFO << "Ignoring" << fieldDefinition.xPath << "field";
@@ -230,7 +235,9 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
 
          if (JsonRecordDefinition::FieldType::Array != fieldDefinition.type) {
             // I think this would be a coding error!
-            qCritical() << Q_FUNC_INFO << "Don't know what to do with " << fieldDefinition.xPath << " (" << fieldDefinition.type << ")";
+            qCritical() <<
+               Q_FUNC_INFO << "Don't know what to do with " << fieldDefinition.xPath << " (" << fieldDefinition.type <<
+               ")";
             Q_ASSERT(false);
          }
 
@@ -292,14 +299,15 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
    }*/
 
    // Version is a JSON number (in JavaScript’s double-precision floating-point format)
-   boost::json::string * bjVersion = rootRecordData["version"].if_string();
+   Q_ASSERT(rootRecordDataObject.contains("version"));
+   boost::json::string const * bjVersion = rootRecordDataObject.if_contains("version")->if_string();
    if (bjVersion) {
       qDebug() << Q_FUNC_INFO << "Version" << bjVersion->c_str();
    }
 /*      std::string bjv2 = boost::json::value_to<std::string>(rootRecordData["version"]);
    qDebug() << Q_FUNC_INFO << "Version" << bjv2.c_str();
 */
-   for (auto ii : rootRecordData) {
+   for (auto ii : rootRecordDataObject) {
       // .:TODO:. This gives keys but not values...
       boost::json::value const & val = ii.value();
       qDebug() << Q_FUNC_INFO << "Key" << ii.key().data() << "(" << val.kind() << ")" << val;
