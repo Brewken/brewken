@@ -42,7 +42,7 @@ public:
     *        Everything else is done in the base class.
     */
    JsonNamedEntityRecord(JsonCoding const & jsonCoding,
-                         boost::json::object const & recordData,
+                         boost::json::value const & recordData,
                          JsonRecordDefinition const & recordDefinition) :
       JsonRecord{jsonCoding, recordData, recordDefinition /*, NE::staticMetaObject.className()*/} {
       this->includeInStats = this->includedInStats();

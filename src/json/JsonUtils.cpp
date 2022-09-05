@@ -154,6 +154,8 @@ template QTextStream & operator<<(QTextStream & stream, boost::json::kind const 
 template<class S,
          std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> >
 S & operator<<(S & stream, boost::json::value const & val) {
+   // Boost.JSON already handles output to standard library output streams, so we are just piggy-backing on this to
+   // provide the same output in the Qt output streams we care about.
    std::ostringstream output;
    output << val;
    stream << output.str().c_str();

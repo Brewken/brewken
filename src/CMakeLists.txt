@@ -92,6 +92,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/json/JsonRecordDefinition.cpp
     ${repoDir}/src/json/JsonSchema.cpp
     ${repoDir}/src/json/JsonUtils.cpp
+    ${repoDir}/src/json/JsonXPath.cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
