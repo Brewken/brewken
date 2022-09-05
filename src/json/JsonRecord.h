@@ -57,10 +57,28 @@ public:
     * \brief Constructor should only be called by \c JsonRecordDefinition
     *
     *        To create a new \c JsonRecord call \c JsonRecordDefinition::makeRecord
+    *
+    * \param jsonCoding
+    * \param recordData  Note that this must be a reference to \c boost::json::value.  (If you pass in a reference to
+    *                    a \c boost::json::object then the compiler will use it as a parameter to construct a temporary
+    *                    \c boost::json::value object, and pass the reference to that into this constructor.  That
+    *                    temporary object will go out of scope immediately this constructor returns, and subsequent
+    *                    calls to \c JsonRecord will then be using an invalid reference to a \c boost::json::value that
+    *                    no longer exists.  Cue garbage data, core dumps etc.
+    *                       Long story short, we never want to implicitly construct a new \c boost::json::value from an
+    *                    \c boost::json::object, so we use the template trick below to prevent that happening for this
+    *                    constructor.
+    *
+    * \param recordDefinition
     */
    JsonRecord(JsonCoding const & jsonCoding,
               boost::json::value const & recordData,
               JsonRecordDefinition const & recordDefinition);
+   /**
+    * \brief See constructor comment above for why we don't want to let the compiler do automatic conversions of the
+    *        constructor arguments (which is what this template trick achieves).
+    */
+   template <typename P, typename Q, typename R> JsonRecord(P, Q, R) = delete;
    ~JsonRecord();
 
    /**

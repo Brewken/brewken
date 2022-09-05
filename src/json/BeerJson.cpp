@@ -46,9 +46,45 @@
 #include "model/Yeast.h"
 
 namespace {
+   BtStringConst const jsonVersionWeSupport{"2.06"};
+
+
    //
    // These are mappings we use in multiple places
    //
+   JsonMeasureableUnitsMapping const BEER_JSON_MASS_UNIT_MAPPER {
+      // MassUnitType in measurable_units.json in BeerJSON schema
+      {{"mg",    &Measurement::Units::milligrams},
+       {"mg",    &Measurement::Units::grams},
+       {"kg",    &Measurement::Units::kilograms},
+       {"lb",    &Measurement::Units::pounds},
+       {"oz",    &Measurement::Units::ounces}}
+   };
+
+   JsonMeasureableUnitsMapping const BEER_JSON_VOLUME_UNIT_MAPPER {
+      // VolumeUnitType in measurable_units.json in BeerJSON schema
+      // Note that BeerJSON does not support imperial cups, imperial tablespoons or imperial teaspoons
+      {{"ml",    &Measurement::Units::milliliters},
+       {"l",     &Measurement::Units::liters},
+       {"tsp",   &Measurement::Units::us_teaspoons},
+       {"tbsp",  &Measurement::Units::us_tablespoons},
+       {"floz",  &Measurement::Units::us_fluidOunces},
+       {"cup",   &Measurement::Units::us_cups},
+       {"pt",    &Measurement::Units::us_pints},
+       {"qt",    &Measurement::Units::us_quarts},
+       {"gal",   &Measurement::Units::us_gallons},
+       {"bbl",   &Measurement::Units::us_barrels},
+       {"ifloz", &Measurement::Units::imperial_fluidOunces},
+       {"ipt",   &Measurement::Units::imperial_pints},
+       {"iqt",   &Measurement::Units::imperial_quarts},
+       {"igal",  &Measurement::Units::imperial_gallons},
+       {"ibbl",  &Measurement::Units::imperial_barrels}}
+   };
+
+   ListOfJsonMeasureableUnitsMappings const BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER {
+      {&BEER_JSON_MASS_UNIT_MAPPER, &BEER_JSON_VOLUME_UNIT_MAPPER}
+   };
+
    JsonMeasureableUnitsMapping const BEER_JSON_TEMPERATURE_UNIT_MAPPER {
       // TemperatureUnitType in measurable_units.json in BeerJSON schema
       {{"C", &Measurement::Units::celsius},
@@ -69,7 +105,7 @@ namespace {
    };
 
    // BitternessUnitType in measurable_units.json in BeerJSON schema
-   JsonSingleUnitSpecifier const BEER_JSON_BITTERNESS_UNIT{"IBUs"};
+   JsonSingleUnitSpecifier const BEER_JSON_BITTERNESS_UNIT{{"IBUs"}};
 
    JsonMeasureableUnitsMapping const BEER_JSON_CARBONATION_UNIT_MAPPER {
       // CarbonationUnitType in measurable_units.json in BeerJSON schema
@@ -94,10 +130,10 @@ namespace {
    };
 
    // PercentUnitType in measurable_units.json in BeerJSON schema
-   JsonSingleUnitSpecifier const BEER_JSON_PERCENT_UNIT{"%"};
+   JsonSingleUnitSpecifier const BEER_JSON_PERCENT_UNIT{{"%"}};
 
    // AcidityUnitType in measurable_units.json in BeerJSON schema
-   JsonSingleUnitSpecifier const BEER_JSON_ACIDITY_UNIT{"pH"};
+   JsonSingleUnitSpecifier const BEER_JSON_ACIDITY_UNIT{{"pH"}};
 
    JsonMeasureableUnitsMapping const BEER_JSON_TIME_UNIT_MAPPER {
       // TimeUnitType in measurable_units.json in BeerJSON schema
@@ -174,8 +210,8 @@ namespace {
       "",
       JsonRecordDefinition::create<JsonRecord>,
       {
-         // Type                                             Name                        Q_PROPERTY
-         {JsonRecordDefinition::FieldType::RequiredConstant, "version",                   &BtString::NULL_STR},
+         // Type                                             Name                         Q_PROPERTY
+         {JsonRecordDefinition::FieldType::RequiredConstant, "version",                   &jsonVersionWeSupport},
          {JsonRecordDefinition::FieldType::Array,            "fermentables",              &BtString::NULL_STR},
          {JsonRecordDefinition::FieldType::Array,            "miscellaneous_ingredients", &BtString::NULL_STR},
          {JsonRecordDefinition::FieldType::Array,            "hop_varieties",             &BtString::NULL_STR},
@@ -239,7 +275,7 @@ namespace {
       {JsonRecordDefinition::FieldType::Double,               "kolbach_index",                &BtString::NULL_STR,                                 }, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "max_in_batch",                 &PropertyNames::Fermentable::maxInBatch_pct,         &BEER_JSON_PERCENT_UNIT},
       {JsonRecordDefinition::FieldType::Bool,                 "recommend_mash",               &PropertyNames::Fermentable::recommendMash,          }, // .:TODO.JSON:. What is the difference between PropertyNames::Fermentable::recommendMash and PropertyNames::Fermentable::isMashed
-      {JsonRecordDefinition::FieldType::MassOrVolume,         "inventory/amount",             &BtString::NULL_STR,                                 }, // .:TODO.JSON:. Extend Fermentable::amount_kg so we can cope with volumes
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",       &BtString::NULL_STR,                                 &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Fermentable::amount_kg so we can cope with volumes
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "glassy",                       &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "plump",                        &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "half",                         &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
@@ -270,7 +306,7 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "timing/pH",                    &BtString::NULL_STR,                  &BEER_JSON_ACIDITY_UNIT}, // .:TODO.JSON:.
       {JsonRecordDefinition::FieldType::Int,                  "timing/step",                  &BtString::NULL_STR,                  }, // .:TODO.JSON:.
       {JsonRecordDefinition::FieldType::Enum,                 "timing/use",                   &BtString::NULL_STR,                  &BEER_JSON_RECIPE_ADDITION_POINT_MAPPER}, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::MassOrVolume,         "amount",                       &BtString::NULL_STR,                  }, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount",                 &BtString::NULL_STR,                  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:.
    };
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
@@ -312,7 +348,7 @@ namespace {
       // Type                                         XPath               Q_PROPERTY                         Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,       "use_for",          &PropertyNames::Misc::useFor,      },
       {JsonRecordDefinition::FieldType::String,       "notes",            &PropertyNames::Misc::notes,       },
-      {JsonRecordDefinition::FieldType::MassOrVolume, "inventory/amount", &PropertyNames::Misc::amount,      }, // .:TODO.JSON:. Also need to reference Misc::amountIsWeight PLUS we need to cope with UnitType
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", &PropertyNames::Misc::amount,      &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Also need to reference Misc::amountIsWeight PLUS we need to cope with UnitType
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       "miscellaneous_ingredients",
@@ -387,7 +423,7 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/pinene",                &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
       {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/polyphenols",           &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
       {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/xanthohumol",           &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::MassOrVolume,    "inventory/amount",                  &BtString::NULL_STR,                    }, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",       &BtString::NULL_STR,                    &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
    };
@@ -462,7 +498,7 @@ namespace {
          {JsonRecordDefinition::FieldType::Bool,                 "glucoamylase",              &BtString::NULL_STR,                     }, // .:TODO.JSON:. Add isGlucoamylasePositive to Yeast
          // .:TODO.JSON:. I think this one is a bit more commplicated as inventory/dry/amount is Mass but
          // inventory/liquid/amount, inventory/slant/amount, inventory/culture/amount are all volume
-         {JsonRecordDefinition::FieldType::MassOrVolume,         "inventory/amount",          &BtString::NULL_STR,                     },
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",    &BtString::NULL_STR,                     &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
          // .:TBD.JSON:. Not sure how important it is for us to support the following fields.
          // See http://www.milkthefunk.com/wiki/Saccharomyces#Killer_Wine_Yeast for a bit more info
          {JsonRecordDefinition::FieldType::Bool,                 "zymocide/no1",              &BtString::NULL_STR,                     },
@@ -682,9 +718,10 @@ namespace {
       //
       // Obviously, in time, if and when BeerJSON evolves, we'll want to do something less hard-coded here!
       //
-      if (beerJsonVersion != "2.06") {
+      if (beerJsonVersion != jsonVersionWeSupport) {
          qWarning() <<
-            Q_FUNC_INFO << "BeerJSON version " << beerJsonVersion << "differs from what we are expecting (2.06)";
+            Q_FUNC_INFO << "BeerJSON version " << beerJsonVersion << "differs from what we are expecting (" <<
+            jsonVersionWeSupport << ")";
       }
       return BEER_JSON_1_CODING.validateLoadAndStoreInDb(inputDocument, userMessage);
    }

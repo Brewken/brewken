@@ -22,6 +22,7 @@
 #include <QDebug>
 
 #include "json/JsonCoding.h"
+#include "json/JsonUtils.h"
 #include "utils/ErrorCodeToStream.h"
 #include "utils/ImportRecordCount.h"
 
@@ -35,55 +36,78 @@ namespace {
     *        We assume that the requested fields exist and are of the correct type (double and string respectively)
     *        because this should have been enforced already by JSON schema validation.
     *
-    * \param fieldDefinition
+    * \param type
+    * \param xPath
+    * \param unitField
+    * \param valueField
     * \param recordData
     * \param value Variable in which value is returned
     * \param unitName Variable in which unit is returned
     * \return \c true if succeeded, \c false otherwise
     */
-   bool readValueAndUnit(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
-                         boost::json::value const & recordData,
+   bool readValueAndUnit(JsonRecordDefinition::FieldType const type,
+                         JsonXPath const & xPath,
+                         JsonXPath const & unitField,
+                         JsonXPath const & valueField,
+                         boost::json::value const * recordData,
                          double & value,
                          QString & unitName) {
+      // It's a coding error to supply a null pointer for recordData
+      Q_ASSERT(recordData);
+
+      // It's a coding error if we're trying to read sub-values from something that is not a JSON object
+      Q_ASSERT(recordData->is_object());
+
       //
       // Read the value and unit fields.  We assert that they exist and are of the correct type (double and string
       // respectively) because this should have been enforced already by JSON schema validation.
       //
+      qDebug() <<
+         Q_FUNC_INFO << "Reading" << valueField << "and" << unitField << "sub-fields from" << xPath << "record:" <<
+         *recordData;
+
       std::error_code errCode;
-      boost::json::value const * valueRaw =
-         recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->valueField, errCode);
+      boost::json::value const * valueRaw = recordData->find_pointer(valueField.asJsonPtr(), errCode);
       if (errCode) {
          // Not expecting this to happen given that we've already validated the JSON file against its schema.
-         qWarning() <<
-            Q_FUNC_INFO << "Error parsing value from" << fieldDefinition.xPath << " (" << fieldDefinition.type <<
-            "): " << errCode;
+         qWarning() << Q_FUNC_INFO << "Error parsing value from" << xPath << " (" << type << "): " << errCode;
          return false;
       }
       Q_ASSERT(valueRaw);
-      Q_ASSERT(valueRaw->is_double());
-      value = valueRaw->get_double();
+      qDebug() << Q_FUNC_INFO << "Raw Value=" << *valueRaw << "(" << valueRaw->kind() << ")";
+      // The JSON type should be number.  Boost.JSON will have chosen either double or int64  (or conceivably uint64) to
+      // store the number, depending eg on whether it has a decimal separator.  So we cannot assert that
+      // valueRaw->is_double().  Fortunately, Boost.JSON helps us with the necessary casting.
+      Q_ASSERT(valueRaw->is_number());
+      value = valueRaw->to_number<double>(errCode);
+      if (errCode) {
+         // Not expecting this to happen as doco says "If T is a floating point type and the stored value is a number,
+         // the conversion is performed without error. The converted number is returned, with a possible loss of
+         // precision. "
+         qWarning() <<
+            Q_FUNC_INFO << "Error extracting double from" << *valueRaw << "(" << valueRaw->kind() << ") for" <<
+            xPath << " (" << type << "): " << errCode;
+         return false;
+      }
+      qDebug() << Q_FUNC_INFO << "Value=" << value;
 
-      boost::json::value const * unitNameRaw =
-         recordData.find_pointer(fieldDefinition.valueDecoder.unitsMapping->unitField, errCode);
+      boost::json::value const * unitNameRaw = recordData->find_pointer(unitField.asJsonPtr(), errCode);
       if (errCode) {
          // Not expecting this to happen given that we've already validated the JSON file against its schema.
-         qWarning() <<
-            Q_FUNC_INFO << "Error parsing units from" << fieldDefinition.xPath << " (" << fieldDefinition.type <<
-            "): " << errCode;
+         qWarning() << Q_FUNC_INFO << "Error parsing units from" << xPath << " (" << type << "): " << errCode;
          return false;
       }
       Q_ASSERT(unitNameRaw);
       Q_ASSERT(unitNameRaw->is_string());
       unitName = unitNameRaw->get_string().c_str();
 
-      qDebug() <<
-         Q_FUNC_INFO << "Read" << fieldDefinition.xPath << " (" << fieldDefinition.type << ") as" <<
-         value << " " << unitName;
+      qDebug() << Q_FUNC_INFO << "Read" << xPath << " (" << type << ") as" << value << " " << unitName;
       return true;
    }
 
    /**
-    * \brief Read value and unit fields from a JSON record and convert to canonical units
+    * \brief Read value and unit fields from a JSON record with a single mapping (ie relating to a single physical
+    *        quantity) and convert to canonical units
     *
     *        We assume that the requested fields exist and are of the correct type (double and string respectively)
     *        because this should have been enforced already by JSON schema validation.
@@ -94,11 +118,20 @@ namespace {
     */
    std::optional<Measurement::Amount> readMeasurementWithUnits(
       JsonRecordDefinition::FieldDefinition const & fieldDefinition,
-      boost::json::value const & recordData
+      boost::json::value const * recordData
    ) {
+      // It's a coding error to supply a null pointer for recordData
+      Q_ASSERT(recordData);
+
       double value{0};
       QString unitName{};
-      if (!readValueAndUnit(fieldDefinition, recordData, value, unitName)) {
+      if (!readValueAndUnit(fieldDefinition.type,
+                            fieldDefinition.xPath,
+                            fieldDefinition.valueDecoder.unitsMapping->unitField,
+                            fieldDefinition.valueDecoder.unitsMapping->valueField,
+                            recordData,
+                            value,
+                            unitName)) {
          return std::nullopt;
       }
 
@@ -122,6 +155,72 @@ namespace {
    }
 
    /**
+    * \brief Read value and unit fields from a JSON record with a multiple mappings (eg one for mass and one for volume)
+    *        and convert to canonical units
+    *
+    *        We assume that the requested fields exist and are of the correct type (double and string respectively)
+    *        because this should have been enforced already by JSON schema validation.
+    *
+    * \param fieldDefinition
+    * \param recordData
+    * \return The value, converted to canonical scale, or \c std::nullopt if there was an error
+    */
+   std::optional<Measurement::Amount> readOneOfMeasurementsWithUnits(
+      JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+      boost::json::value const * recordData
+   ) {
+      // It's a coding error to supply a null pointer for recordData
+      Q_ASSERT(recordData);
+
+      // It's a coding error if the list of JsonMeasureableUnitsMapping objects has less than two elements.  (For
+      // one element you should use JsonRecordDefinition::FieldType::MeasurementWithUnits instead of
+      // JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits.)
+      Q_ASSERT(fieldDefinition.valueDecoder.listOfUnitsMappings->size() > 1);
+
+      // Per the comment in json/JsonRecordDefinition.h, we assume that unitField and valueField are the same for each
+      // JsonMeasureableUnitsMapping in the list, so we just use the first entry here.
+      JsonXPath const & unitField  = fieldDefinition.valueDecoder.listOfUnitsMappings->at(0)->unitField;
+      JsonXPath const & valueField = fieldDefinition.valueDecoder.listOfUnitsMappings->at(0)->valueField;
+
+      double value{0};
+      QString unitName{};
+      if (!readValueAndUnit(fieldDefinition.type,
+                            fieldDefinition.xPath,
+                            unitField,
+                            valueField,
+                            recordData,
+                            value,
+                            unitName)) {
+         return std::nullopt;
+      }
+
+      Measurement::Unit const * unit = nullptr;
+      for (auto const unitsMapping : *fieldDefinition.valueDecoder.listOfUnitsMappings) {
+         if (unitsMapping->nameToUnit.contains(unitName)) {
+            unit = unitsMapping->nameToUnit.value(unitName);
+            break;
+         }
+      }
+
+      // The schema validation should have ensured that the unit name is constrained to one of the values we are
+      // expecting, so it's almost certainly a coding error if it doesn't.
+      if (!unit) {
+         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << unitName;
+         // Stop here on debug build
+         Q_ASSERT(false);
+         return std::nullopt;
+      }
+
+      Measurement::Amount canonicalValue = unit->toSI(value);
+
+      qDebug() <<
+         Q_FUNC_INFO << "Converted" << value << " " << unitName << "to" << canonicalValue.quantity << " " <<
+         canonicalValue.unit;
+
+      return canonicalValue;
+   }
+
+   /**
     * \brief Read value and unit fields where the units are expected to always be the same (eg "%")
     *
     *        We assume that the requested fields exist and are of the correct type (double and string respectively)
@@ -132,19 +231,28 @@ namespace {
     * \return The value, or \c std::nullopt if there was an error
     */
    std::optional<double> readSingleUnitValue(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
-                                             boost::json::value const & recordData) {
+                                             boost::json::value const * recordData) {
+      // It's a coding error to supply a null pointer for recordData
+      Q_ASSERT(recordData);
+
       double value{0};
       QString unitName{};
-      if (!readValueAndUnit(fieldDefinition, recordData, value, unitName)) {
+      if (!readValueAndUnit(fieldDefinition.type,
+                            fieldDefinition.xPath,
+                            fieldDefinition.valueDecoder.singleUnitSpecifier->unitField,
+                            fieldDefinition.valueDecoder.singleUnitSpecifier->valueField,
+                            recordData,
+                            value,
+                            unitName)) {
          return std::nullopt;
       }
 
       // The schema validation should have ensured that the unit name is what we're expecting, so it's almost certainly
       // a coding error if it doesn't.
-      if (fieldDefinition.valueDecoder.singleUnitSpecifier->expectedUnit != unitName) {
+      if (!fieldDefinition.valueDecoder.singleUnitSpecifier->validUnits.contains(unitName)) {
          qCritical() <<
             Q_FUNC_INFO << "Unit name" << unitName << "does not match expected (" <<
-            fieldDefinition.valueDecoder.singleUnitSpecifier->expectedUnit << ")";
+            fieldDefinition.valueDecoder.singleUnitSpecifier->validUnits << ")";
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
@@ -195,18 +303,17 @@ bool JsonRecord::load(QTextStream & userMessage) {
       // although we only look for nodes we know about, some of these we won't use for one reason or another.
       //
       std::error_code errorCode;
-      boost::json::value const * container = this->recordData.find_pointer(fieldDefinition.xPath, errorCode);
+      boost::json::value const * container = this->recordData.find_pointer(fieldDefinition.xPath.asJsonPtr(),
+                                                                           errorCode);
       if (!container) {
          // As noted above this is usually not an error, but sometimes useful to log for debugging
          qDebug() <<
             Q_FUNC_INFO << fieldDefinition.xPath << " (" << fieldDefinition.type << ") not present (error code " <<
             errorCode.value() << ":" << errorCode.message().c_str() << ")";
       } else {
-         qDebug() << Q_FUNC_INFO << "Found" << fieldDefinition.xPath << " (" << fieldDefinition.type << ")";
-         if (JsonRecordDefinition::FieldType::RequiredConstant == fieldDefinition.type) {
-            qDebug() << Q_FUNC_INFO << "Ignoring" << fieldDefinition.xPath << "field";
-            continue;
-         }
+         qDebug() <<
+            Q_FUNC_INFO << "Found" << fieldDefinition.xPath << " (" << fieldDefinition.type << "/" <<
+            container->kind() << ")";
 
          if (JsonRecordDefinition::FieldType::Array == fieldDefinition.type) {
             //
@@ -218,7 +325,7 @@ bool JsonRecord::load(QTextStream & userMessage) {
             //
             Q_ASSERT(container->is_array());
             boost::json::array const & childRecordsData = container->get_array();
-            if (!this->loadChildRecords(this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath),
+            if (!this->loadChildRecords(this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath.asXPath_c_str()),
                                         childRecordsData,
                                         userMessage)) {
                return false;
@@ -236,31 +343,31 @@ bool JsonRecord::load(QTextStream & userMessage) {
             switch(fieldDefinition.type) {
 
                case JsonRecordDefinition::FieldType::Bool:
-                  Q_ASSERT(!container->is_bool());
+                  Q_ASSERT(container->is_bool());
                   parsedValue.setValue(container->get_bool());
                   parsedValueOk = true;
                   break;
 
                case JsonRecordDefinition::FieldType::Int:
-                  Q_ASSERT(!container->is_int64());
+                  Q_ASSERT(container->is_int64());
                   parsedValue.setValue(container->get_int64());
                   parsedValueOk = true;
                   break;
 
                case JsonRecordDefinition::FieldType::UInt:
-                  Q_ASSERT(!container->is_uint64());
+                  Q_ASSERT(container->is_uint64());
                   parsedValue.setValue(container->get_uint64());
                   parsedValueOk = true;
                   break;
 
                case JsonRecordDefinition::FieldType::Double:
-                  Q_ASSERT(!container->is_double());
+                  Q_ASSERT(container->is_double());
                   parsedValue.setValue(container->get_double());
                   parsedValueOk = true;
                   break;
 
                case JsonRecordDefinition::FieldType::String:
-                  Q_ASSERT(!container->is_string());
+                  Q_ASSERT(container->is_string());
                   {
                      QString value{container->get_string().c_str()};
                      parsedValue.setValue(value);
@@ -272,7 +379,7 @@ bool JsonRecord::load(QTextStream & userMessage) {
                   // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
                   Q_ASSERT(nullptr != fieldDefinition.valueDecoder.enumMapping);
                   {
-                     Q_ASSERT(!container->is_string());
+                     Q_ASSERT(container->is_string());
                      QString value{container->get_string().c_str()};
                      parsedValue.setValue(value);
 
@@ -306,7 +413,25 @@ bool JsonRecord::load(QTextStream & userMessage) {
                   Q_ASSERT(container->is_object());
                   {
                      std::optional<Measurement::Amount> canonicalValue = readMeasurementWithUnits(fieldDefinition,
-                                                                                                  this->recordData);
+                                                                                                  container);
+                     if (canonicalValue) {
+                        parsedValue.setValue(canonicalValue->quantity);
+                        parsedValueOk = true;
+                     }
+                  }
+                  break;
+
+               case JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits:
+                  // It's definitely a coding error if there is no list of unit decoder mappings for a field declared to
+                  // require such
+                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.listOfUnitsMappings);
+                  // JSON schema validation should have ensured that the field is actually one with subfields for value
+                  // and unit
+                  Q_ASSERT(container->is_object());
+                  {
+                     // Logic is the same as for MeasurementWithUnits, but just loop through all the mappings
+                     std::optional<Measurement::Amount> canonicalValue = readOneOfMeasurementsWithUnits(fieldDefinition,
+                                                                                                        container);
                      if (canonicalValue) {
                         parsedValue.setValue(canonicalValue->quantity);
                         parsedValueOk = true;
@@ -321,7 +446,7 @@ bool JsonRecord::load(QTextStream & userMessage) {
                   // and unit
                   Q_ASSERT(container->is_object());
                   {
-                     std::optional<double> value = readSingleUnitValue(fieldDefinition, this->recordData);
+                     std::optional<double> value = readSingleUnitValue(fieldDefinition, container);
                      if (value) {
                         parsedValue.setValue(*value);
                         parsedValueOk = true;
@@ -355,17 +480,25 @@ bool JsonRecord::load(QTextStream & userMessage) {
                   }
                   break;
 
+               case JsonRecordDefinition::FieldType::RequiredConstant:
+                  //
+                  // This is a field that is required to be in the JSON, but whose value we don't need (and for which
+                  // we always write a constant value on output).  At the moment it's only needed for the VERSION tag
+                  // in BeerJSON.
+                  //
+                  // Note that, because we abuse the propertyName field to hold the default value (ie what we write
+                  // out), we can't carry on to normal processing below.  So jump straight to processing the next
+                  // node in the loop (via continue).
+                  //
+                  qDebug() <<
+                     Q_FUNC_INFO << "Skipping " << this->recordDefinition.namedEntityClassName << " node " <<
+                     fieldDefinition.xPath << "=" << *container << "(" << *fieldDefinition.propertyName <<
+                     ") as not useful";
+                  continue; // NB: _NOT_break here.  We want to jump straight to the next run through the for loop.
+            }
             ///*********************TODO FINISH THIS!**************************
             /*
-      //
-      // Other
-      //
-      MassOrVolume,     // This isn't an explicit BeerJSON type, but a lot of fields are allowed to be Mass or Volume,
-                        // so it's a useful concept for us .:TODO.JSON:. Implement!
-      RequiredConstant  // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
-
              */
-            }
          }
       }
    }
@@ -571,12 +704,12 @@ bool JsonRecord::loadChildRecords(JsonRecordDefinition const & childRecordDefini
    // recipe).  Either way, we need to loop though these "child" records and read each one in with an JsonRecord object
    // of the relevant type.
    //
-   for (auto & ii : childRecordsData) {
+   for (auto & value : childRecordsData) {
       // Iterating through an array gives us boost::json::value objects
       // We assert that these are boost::json::object key:value containers (because we don't use arrays of other types)
-      Q_ASSERT(ii.is_object());
-      boost::json::object const & recordData = ii.get_object();
-      JsonRecord childRecord{this->jsonCoding, recordData, childRecordDefinition};
+      Q_ASSERT(value.is_object());
+//      boost::json::object const & recordData = value.get_object();
+      JsonRecord childRecord{this->jsonCoding, value, childRecordDefinition};
       if (!childRecord.load(userMessage)) {
          return false;
       }
