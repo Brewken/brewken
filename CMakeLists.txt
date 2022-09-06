@@ -659,6 +659,8 @@ add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
 include_directories(${ROOTDIR}/third-party/valijson/include)
 execute_process(COMMAND git config --global --add safe.directory third-party/valijson
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+execute_process(COMMAND git submodule update --init --recursive
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 #========================================= Find MinGW (only needed on Windows) =========================================
 if(WIN32)
