@@ -89,6 +89,8 @@ jobs:
              cp ./Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi
              cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
 
+        # The pwd and find ../third-party commands below are just diagnostics, but it's generally useful to have too
+        # much rather than not enough diagnostic info on these GitHub action builds
       - name: Build
         shell: msys2 {0}
         run: |
@@ -107,7 +109,7 @@ jobs:
         shell: msys2 {0}
         run: |
              cd /C/_/build
-             cmake --build . --target package
+             cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON --build . --target package
 
       - name: "Upload binaries"
         if: ${{ success()}}
