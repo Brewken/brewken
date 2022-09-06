@@ -150,7 +150,14 @@ namespace {
        {"mPa-s", &Measurement::Units::millipascalSecond}}
    };
 
-   template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION;
+   // We only use specialisations of this template.  GCC doesn't mind not having a definition for the default cases (as
+   // it's not used) but other compilers do.
+   template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION {
+      "not_used",
+      "not_used",
+      JsonRecordDefinition::create<JsonRecord>,
+      {}
+   };
 
    // Field mappings below are in the same order as in schemas/beerjson/1.0/beer.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

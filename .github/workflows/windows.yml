@@ -92,6 +92,8 @@ jobs:
         shell: msys2 {0}
         run: |
              cd /C/_/build
+             pwd
+             find ../third-party
              cmake --build .
 
       - name: Test
