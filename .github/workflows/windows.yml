@@ -82,6 +82,8 @@ jobs:
       - name: CMake config
         shell: msys2 {0}
         run: |
+             cd /C/_
+             git submodule update --init --recursive
              cd /C/_/build
              cp ./Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
              cp ./Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/

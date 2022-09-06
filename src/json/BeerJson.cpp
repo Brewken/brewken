@@ -156,7 +156,7 @@ namespace {
       "not_used",
       "not_used",
       JsonRecordDefinition::create<JsonRecord>,
-      {}
+      std::initializer_list<JsonRecordDefinition::FieldDefinition>{}
    };
 
    // Field mappings below are in the same order as in schemas/beerjson/1.0/beer.json
