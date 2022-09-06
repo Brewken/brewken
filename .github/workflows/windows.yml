@@ -109,7 +109,7 @@ jobs:
         shell: msys2 {0}
         run: |
              cd /C/_/build
-             cmake --log-level=VERBOSE --build . --target package
+             cmake --build . --target package --log-level=VERBOSE
 
       - name: "Upload binaries"
         if: ${{ success()}}
