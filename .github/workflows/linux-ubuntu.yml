@@ -86,6 +86,8 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
+          pwd
+          find ../third-party
           make
 
       - name: Test
