@@ -664,10 +664,20 @@ execute_process(COMMAND git submodule update --init --recursive
 
 #========================================= Find MinGW (only needed on Windows) =========================================
 if(WIN32)
+   # This is to detect whether we're using MSYS2 and/or MinGW
+   if(WIN32)
+      execute_process(COMMAND uname OUTPUT_VARIABLE uname)
+      message(STATUS "Uname is " ${uname})
+      if (uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
+         message(STATUS "Running on MSYS/MinGW")
+         set(MINGW true)
+      endif()
+   endif()
 
    # Find extra MinGW-specific dlls.
    if(MINGW)
       if(NOT MINGW_BIN_DIR)
+         # Yes, it's mingw32-make.exe even on 64-bit systems
          FIND_PATH(MINGW_BIN_DIR "mingw32-make.exe")
       endif()
       if(NOT EXISTS ${MINGW_BIN_DIR})
@@ -675,6 +685,7 @@ if(WIN32)
       ELSE()
          get_filename_component(Mingw_Path ${CMAKE_CXX_COMPILER} PATH)
       endif()
+      message(STATUS "MINGW_BIN_DIR " ${MINGW_BIN_DIR})
    endif()
 endif()
 
@@ -962,29 +973,17 @@ install(TARGETS ${fileName_executable}
         RUNTIME DESTINATION ${installSubDir_bin}
         COMPONENT ${RUNTIME_INSTALL_COMPONENT})
 
-IF( WIN32 )
-      install(CODE
-      "
-         file(GET_RUNTIME_DEPENDENCIES
-            RESOLVED_DEPENDENCIES_VAR deps
-            UNRESOLVED_DEPENDENCIES_VAR confdeps
-            EXECUTABLES src/${fileName_executable}.exe
-            PRE_EXCLUDE_REGEXES \"^api-ms-win.*\$|^ext-ms.*\$\"
-            POST_EXCLUDE_REGEXES \".*system32.*\"
-            DIRECTORIES ${Mingw_Path}
-         )
-         #message(\"Installing: \${deps}\")
-         #message(\"Not found: \${confdeps}\")
-         FOREACH (fdep IN LISTS deps)
-            message( \"\${fdep}\" )
-            file( INSTALL
-               DESTINATION bin
-               TYPE SHARED_LIBRARY
-               FOLLOW_SYMLINK_CHAIN
-               FILES \"\${fdep}\")
-         ENDFOREACH()
-      ")
-   ENDIF()
+if(WIN32)
+   # See https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#genex:TARGET_RUNTIME_DLLS
+   # (This replaces use of GET_RUNTIME_DEPENDENCIES which I just could not get to work correctly, despite following all
+   # sorts of helpful advice at
+   # https://stackoverflow.com/questions/62884439/how-to-use-cmake-file-get-runtime-dependencies-in-an-install-statement
+   # I always hit a "Failed to start objdump" error.)
+   add_custom_command(TARGET ${fileName_executable} POST_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:brewken> $<TARGET_FILE_DIR:brewken>
+     COMMAND_EXPAND_LISTS
+   )
+endif()
 
 # Install the translations.
 install(FILES ${QM_FILES}
@@ -1111,7 +1110,10 @@ message("CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}")
 message("PROJECT_VERSION = ${PROJECT_VERSION}")
 set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Brewken-${PROJECT_VERSION}")
-set(CPACK_PACKAGE_ICON "${repoDir}/images/brewken.svg")
+if(NOT WIN32)
+   # Setting this on Windows breaks the NSIS packager with some confusing message saying it can't find the file
+   set(CPACK_PACKAGE_ICON "${repoDir}/images/brewken.svg")
+endif()
 set(CPACK_PACKAGE_CHECKSUM "SHA256")
 set(CPACK_RESOURCE_FILE_LICENSE "${repoDir}/COPYING.GPLv3")
 set(CPACK_STRIP_FILES true)
@@ -1221,6 +1223,8 @@ elseif(WIN32)
    set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Brewken-${PROJECT_VERSION}")
    # URL to a web site providing more information about your application
    set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Brewken/brewken")
+   # The name of a *.ico file used as the main icon for the generated install program
+   set(CPACK_NSIS_MUI_ICON ${repoDir}/win/BrewkenIcon_96.ico)
 
    # In theory CMake should work out for itself which tool to use for dependency resolution.  In practice, on Windows,
    # it seems there are issues.  In an MSYS2/MinGW environment we want to use objdump rather than the Visual Studio
