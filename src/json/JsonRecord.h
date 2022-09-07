@@ -19,18 +19,23 @@
 
 #include <memory>
 
+#include <boost/json/object.hpp>
+#include <boost/json/array.hpp>
+
 #include <QTextStream>
 #include <QVector>
 
+#include "json/JsonRecordDefinition.h"
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
 
+class JsonCoding;
 
 /**
- * \brief This class and its derived classes represent a data record in a JSON document.
- *
- *        .:TODO:. At some point we should extract common code from XmlRecord and JsonRecord
+ * \brief This class holds data about a specific individual record that we are reading from or writing to a JSON
+ *        document.  It uses data from a corresponding singleton const \c JsonRecordDefinition to map between our internal
+ *        data structures and fields in a JSON document.
  */
 class JsonRecord {
 public:
@@ -42,65 +47,39 @@ public:
     *                       DB, in which case we should skip over this record and carry on processing the rest of the
     *                       file
     */
-   enum ProcessingResult {
+   enum class ProcessingResult {
       Succeeded,
       Failed,
       FoundDuplicate
    };
 
    /**
-    * \brief The types of fields that we know how to process.  Used in \b FieldDefinition records
+    * \brief Constructor should only be called by \c JsonRecordDefinition
+    *
+    *        To create a new \c JsonRecord call \c JsonRecordDefinition::makeRecord
+    *
+    * \param jsonCoding
+    * \param recordData  Note that this must be a reference to \c boost::json::value.  (If you pass in a reference to
+    *                    a \c boost::json::object then the compiler will use it as a parameter to construct a temporary
+    *                    \c boost::json::value object, and pass the reference to that into this constructor.  That
+    *                    temporary object will go out of scope immediately this constructor returns, and subsequent
+    *                    calls to \c JsonRecord will then be using an invalid reference to a \c boost::json::value that
+    *                    no longer exists.  Cue garbage data, core dumps etc.
+    *                       Long story short, we never want to implicitly construct a new \c boost::json::value from an
+    *                    \c boost::json::object, so we use the template trick below to prevent that happening for this
+    *                    constructor.
+    *
+    * \param recordDefinition
     */
-   enum FieldType {
-      Bool,
-      Int,
-      UInt,
-      Double,
-      String,
-      Date,
-      Percent,
-      MassOrVolume,
-      Enum,
-      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerJSON VERSION tag)
-      RecordSimple,       // Single contained record
-      RecordComplex,      // Zero, one or more contained records
-      INVALID
-   };
-
+   JsonRecord(JsonCoding const & jsonCoding,
+              boost::json::value const & recordData,
+              JsonRecordDefinition const & recordDefinition);
    /**
-    * \brief How to parse every field that we want to be able to read out of the JSON file.  See class description for
-    *        more details.
+    * \brief See constructor comment above for why we don't want to let the compiler do automatic conversions of the
+    *        constructor arguments (which is what this template trick achieves).
     */
-   struct FieldDefinition {
-      FieldType           fieldType;
-      QString             xPath;
-      BtStringConst const & propertyName;  // If fieldType == RecordComplex, then this is used only on export
-                                           // If fieldType == RequiredConstant, then this is actually the constant value
-      EnumStringMapping const * enumMapping;
-   };
-
-   typedef QVector<FieldDefinition> FieldDefinitions;
-
-   /**
-    * \brief Constructor
-    * \param recordName The name of the outer tag around this type of record, eg "RECIPE" for a "<RECIPE>...</RECIPE>"
-    *                   record in BeerJSON.
-    * \param jsonCoding An \b JsonCoding object representing the JSON Coding we are using (eg BeerJSON 2.1).  This is what
-    *                   we'll need to look up how to handle nested records inside this one.
-    * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
-    *                         to parse them.
-    * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, or empty string if
-    *                             there is none
-    */
-   JsonRecord(QString const & recordName,
-//              JsonCoding const & jsonCoding,
-              FieldDefinitions const & fieldDefinitions,
-              QString const & namedEntityClassName);
-
-   /**
-    * \brief Get the record name (in this coding)
-    */
-   QString getRecordName() const;
+   template <typename P, typename Q, typename R> JsonRecord(P, Q, R) = delete;
+   ~JsonRecord();
 
    /**
     * \brief Getter for the NamedParameterBundle we read in from this record
@@ -127,15 +106,11 @@ public:
     * \brief From the supplied record (ie node) in an JSON document, load into memory the data it contains, including
     *        any other records nested inside it.
     *
-    * \param domSupport
-    * \param rootNodeOfRecord
     * \param userMessage Where to append any error messages that we want the user to see on the screen
     *
     * \return \b true if load succeeded, \b false if there was an error
     */
-///   bool load(xalanc::DOMSupport & domSupport,
-///             xalanc::XalanNode * rootNodeOfRecord,
-///             QTextStream & userMessage);
+   bool load(QTextStream & userMessage);
 
    /**
     * \brief Once the record (including all its sub-records) is loaded into memory, we this function does any final
@@ -162,13 +137,9 @@ public:
     * \brief Export to JSON
     * \param namedEntityToExport The object that we want to export to JSON
     * \param out Where to write the JSON
-    * \param indentLevel Current number of indents to put before each opening tag (default 1)
-    * \param indentString String to use for each indent (default two spaces)
     */
    void toJson(NamedEntity const & namedEntityToExport,
-              QTextStream & out,
-              int indentLevel = 1,
-              char const * const indentString = "  ") const;
+              QTextStream & out) const;
 
 private:
    /**
@@ -176,10 +147,9 @@ private:
     *        process (eg Hop records inside a Recipe).  But the algorithm for processing is generic, so we implement it
     *        in this base class.
     */
-///   bool loadChildRecords(xalanc::DOMSupport & domSupport,
-///                         FieldDefinition const * fieldDefinition,
-///                         xalanc::NodeRefList & nodesForCurrentXPath,
-///                         QTextStream & userMessage);
+   bool loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+                         boost::json::array const & childRecordsData,
+                         QTextStream & userMessage);
 
 protected:
    /**
@@ -236,22 +206,12 @@ protected:
     * \param namedEntityToExport The object containing (or referencing) the data we want to export to JSON
     * \param out Where to write the JSON
     */
-   virtual void subRecordToJson(JsonRecord::FieldDefinition const & fieldDefinition,
+   virtual void subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
                                 JsonRecord const & subRecord,
                                 NamedEntity const & namedEntityToExport,
                                 QTextStream & out,
                                 int indentLevel,
                                 char const * const indentString) const;
-
-   /**
-    * \brief Writes a comment to the JSON output when there is no contained record to output (to make it explicit that
-    *        the omission was not by accident.
-    */
-   void writeNone(JsonRecord const & subRecord,
-                  NamedEntity const & namedEntityToExport,
-                  QTextStream & out,
-                  int indentLevel,
-                  char const * const indentString) const;
 
    /**
     * \brief Given a name that is a duplicate of an existing one, modify it to a potential alternative.
@@ -266,14 +226,18 @@ protected:
     */
    static void modifyClashingName(QString & candidateName);
 
-   QString const            recordName;
-///   JsonCoding const &        jsonCoding;
-   FieldDefinitions const & fieldDefinitions;
-public:
-   // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
-   // Blank for the root record (which is just a container and doesn't have a NamedEntity).
-   QString const namedEntityClassName;
 protected:
+   JsonCoding const & jsonCoding;
+
+   /**
+    * The underlying type of the contents of \c recordData is \c boost::json::object.  However, we need to store it as
+    * \c boost::json::value to be able to use JSON pointer (aka XPath) functions (because, although you can easily
+    * extract the contained \c boost::json::object from a \c boost::json::value, you cannot go in the other direction
+    * and get the containing \c boost::json::value from a \c boost::json::object).
+    */
+   boost::json::value const & recordData;
+   JsonRecordDefinition const & recordDefinition;
+
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
    // this->namedEntity
    NamedParameterBundle namedParameterBundle;
@@ -300,7 +264,7 @@ protected:
    // Keep track of any child (ie contained) records
    //
    struct ChildRecord {
-      JsonRecord::FieldDefinition const * fieldDefinition;
+      JsonRecordDefinition::FieldDefinition const * fieldDefinition;
       std::shared_ptr<JsonRecord> jsonRecord;
    };
    QVector<ChildRecord> childRecords;

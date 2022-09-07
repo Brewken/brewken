@@ -38,7 +38,9 @@ boost::json::value JsonUtils::loadJsonDocument(QString const & fileName, bool al
    if (!inputFile.open(QIODevice::ReadOnly)) {
       // Some slight duplication here but there's value in having the log messages in English and the on-screen display
       // message in the user's preferred language
-      qWarning() << Q_FUNC_INFO << "Could not open " << fileName << " for reading (error #" << inputFile.error() << ")";
+      qWarning() <<
+         Q_FUNC_INFO << "Could not open " << fileName << " for reading (error #" << inputFile.error() << ":" <<
+         inputFile.errorString() << ")";
       QString errorMessage{
          QObject::tr("Could not open %1 for reading (error # %2)").arg(fileName).arg(inputFile.error())
       };
@@ -152,6 +154,8 @@ template QTextStream & operator<<(QTextStream & stream, boost::json::kind const 
 template<class S,
          std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> >
 S & operator<<(S & stream, boost::json::value const & val) {
+   // Boost.JSON already handles output to standard library output streams, so we are just piggy-backing on this to
+   // provide the same output in the Qt output streams we care about.
    std::ostringstream output;
    output << val;
    stream << output.str().c_str();

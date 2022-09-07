@@ -301,7 +301,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
             return QVariant(row->useStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->use());
+            return QVariant(static_cast<int>(row->use()));
          }
          break;
       case HOPTIMECOL:
@@ -316,7 +316,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          if (role == Qt::DisplayRole) {
             return QVariant(row->formStringTr());
          } else if (role == Qt::UserRole) {
-            return QVariant(row->form());
+            return QVariant(static_cast<int>(row->form()));
          }
          break;
       default :
@@ -421,7 +421,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::use,
-                                                  static_cast<Hop::Use>(value.toInt()),
+                                                  value.toInt(),
                                                   tr("Change Hop Use"));
          }
          break;
@@ -430,7 +430,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Hop::form,
-                                                  static_cast<Hop::Form>(value.toInt()),
+                                                  value.toInt(),
                                                   tr("Change Hop Form"));
          }
          break;

@@ -79,6 +79,15 @@ fi
 
 echo "CMAKEOPTIONS: $CMAKEOPTIONS"
 
+# When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
+if [ ! -d third-party ]
+then
+   echo "Pulling in submodules"
+   mkdir -p third-party
+   git submodule init
+   git submodule update
+fi
+
 # Create dir only if needed
 mkdir -p build
 

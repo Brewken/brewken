@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonSchema.cpp is part of Brewken, and is copyright the following authors 2021:
+ * json/JsonSchema.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,6 +14,9 @@
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
 #include "json/JsonSchema.h"
+
+#include <map>
+#include <memory>
 
 #include <QDebug>
 #include <QMap>
@@ -52,11 +55,17 @@
 
 // Private implementation details that don't need access to class member variables
 namespace {
+   // All the schemas that have been summoned into existence
+   // We don't use QMap here because it doesn't support storing std::unique_ptr, and we'd like the map to "own" the
+   // schemas.  (As noted elsewhere, we don't want the schemas to be constructed too early in program execution, hence
+   // why we are not using static variables to hold them.)
+   std::map<JsonSchema::Id, std::unique_ptr<JsonSchema const>> jsonSchemas;
+
    //
    // A JSON schema can be spread across several files linked together via "$ref" statements in the JSON.  Valijson uses
    // callbacks to fetch such referenced JSON documents when it is loading in a schema.  We cannot use a non-static
    // member function for a callback, and the callbacks do not pass in a context (because they were originally designed
-   // to be used only for retrieving documents referenced by absolute URIs).  So, instead, use a static member funciton
+   // to be used only for retrieving documents referenced by absolute URIs).  So, instead, use a static member function
    // for the callback and a thread local variable to remember the last JsonSchema object used on this thread, which
    // will be the one that asked Valijson to load in the schema.
    //
@@ -231,10 +240,45 @@ JsonSchema::JsonSchema(char const * const baseDir,
 // header file)
 JsonSchema::~JsonSchema() = default;
 
-bool JsonSchema::validate(boost::json::value const & document, QTextStream & userMessage) {
+JsonSchema const & JsonSchema::instance(JsonSchema::Id id) {
+   // Once we are using C++20, we can write the following:
+   ///if (jsonSchemas.contains(id)) {
+   ///   return *jsonSchemas.value(id);
+   ///}
+   auto result = jsonSchemas.find(id);
+   if (result != jsonSchemas.end()) {
+      return *result->second;
+   }
+   char const * baseDir = nullptr;
+   char const * fileName = nullptr;
+   switch (id) {
+      case JsonSchema::Id::BEER_JSON_2_1:
+         baseDir = ":/schemas/beerjson/1.0";
+         fileName = "beer.json";
+         break;
+   }
+   // We assert that all possibilities were covered in the switch statement above.  (We'd get a compiler warning if not,
+   // as JsonSchema::Id is a strongly-typed enum.)
+   Q_ASSERT(baseDir);
+   Q_ASSERT(fileName);
 
-   // Now pass the input document into Valijson (via a wrapper as with the base schema document) and validate it against the
-   // schema
+   // We want the map to own the created object, so we construct it in place, rather than passing a copy
+   // Note that we cannot use std::make_unique here as we have private constructor & destructor.  However,
+   // std::unique_ptr<...>(new ...) is good enough for us.  (If we were ever at the point of new throwing exceptions
+   // because of lack of memory, we'd have bigger problems than exception safety.)
+   auto insertionResult = jsonSchemas.emplace(std::make_pair(id, std::unique_ptr<JsonSchema>{new JsonSchema(baseDir, fileName)}));
+   // We assert that the insertion succeeded (because the map did not already contain an item with the specified key)
+   Q_ASSERT(insertionResult.second);
+
+   //
+   return *insertionResult.first->second;
+}
+
+
+bool JsonSchema::validate(boost::json::value const & document, QTextStream & userMessage) const {
+
+   // Now pass the input document into Valijson (via a wrapper as with the base schema document) and validate it against
+   // the schema
    valijson::adapters::BoostJsonAdapter inputAdapter{document};
    valijson::Validator validator;
    valijson::ValidationResults validationResults;
@@ -257,8 +301,6 @@ bool JsonSchema::validate(boost::json::value const & document, QTextStream & use
 }
 
 
-// This is the callback we give to Valijson, which then forwards it on to whatever the last JsonSchema object we were
-// dealing with on this thread was (which should be the one that gave the callback to Valijson).
 boost::json::value const * JsonSchema::fetchReferencedDocument(std::string const & uri) {
    // It's a coding error if we asked Valijson to load a schema without setting currentJsonSchema
    Q_ASSERT(currentJsonSchema);

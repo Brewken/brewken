@@ -73,18 +73,18 @@ class Fermentable : public NamedEntityWithInventory {
 public:
 
    //! \brief The type of Fermentable.
-   enum Type {Grain, Sugar, Extract, Dry_Extract, Adjunct};
+   enum class Type {Grain, Sugar, Extract, Dry_Extract, Adjunct};
    //! \brief The addition method.
-   enum AdditionMethod {Mashed, Steeped, Not_Mashed};
+   enum class AdditionMethod {Mashed, Steeped, Not_Mashed};
    //! \brief The addition time.
-   enum AdditionTime {Normal, Late};
+   enum class AdditionTime {Normal, Late};
    Q_ENUMS( Type AdditionMethod AdditionTime )
 
    Fermentable(QString name = "");
    Fermentable(NamedParameterBundle const & namedParameterBundle);
    Fermentable(Fermentable const & other);
 
-   virtual ~Fermentable() = default;
+   virtual ~Fermentable();
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type                     READ type                   WRITE setType                   /*NOTIFY changed*/ /*changedType*/ )

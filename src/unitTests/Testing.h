@@ -68,6 +68,14 @@ private slots:
    //! \brief Verify conversion between US Customary & Metric units etc
    void testUnitConversions();
 
+   /**
+    * \brief Verify other conversions that warrant their own algorithms.
+    *
+    *        This is usually things where we have a formula in one direction but do some root-finding for the inverse
+    *        function because there isn't a non-horrible formula in that direction.
+    */
+   void testAlgorithms();
+
    //! \brief Verify Log rotation is working
    void testLogRotation();
 };

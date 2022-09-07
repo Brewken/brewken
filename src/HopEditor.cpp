@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -134,7 +134,7 @@ void HopEditor::showChanges(QMetaProperty * prop) {
       }
    }
    if (propName == PropertyNames::Hop::use || updateAll) {
-      comboBox_use->setCurrentIndex(obsHop->use());
+      comboBox_use->setCurrentIndex(static_cast<int>(obsHop->use()));
       if (!updateAll) {
          return;
       }
@@ -146,13 +146,13 @@ void HopEditor::showChanges(QMetaProperty * prop) {
       }
    }
    if (propName == PropertyNames::Hop::type || updateAll) {
-      comboBox_type->setCurrentIndex(obsHop->type());
+      comboBox_type->setCurrentIndex(static_cast<int>(obsHop->type()));
       if (!updateAll) {
          return;
       }
    }
    if (propName == PropertyNames::Hop::form || updateAll) {
-      comboBox_form->setCurrentIndex(obsHop->form());
+      comboBox_form->setCurrentIndex(static_cast<int>(obsHop->form()));
       if (!updateAll) {
          return;
       }

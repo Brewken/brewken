@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -54,7 +54,7 @@ Style::Style(QString t_name) :
    m_categoryNumber{""},
    m_styleLetter   {""},
    m_styleGuide    {""},
-   m_type          {Style::Lager},
+   m_type          {Style::Type::Lager},
    m_ogMin         {0.0},
    m_ogMax         {0.0},
    m_fgMin         {0.0},
@@ -222,7 +222,7 @@ QString Style::profile() const { return m_profile; }
 QString Style::ingredients() const { return m_ingredients; }
 QString Style::examples() const { return m_examples; }
 Style::Type Style::type() const { return m_type; }
-const QString Style::typeString() const { return types.at(m_type); }
+const QString Style::typeString() const { return types.at(static_cast<int>(this->m_type)); }
 
 double Style::ogMin() const { return m_ogMin; }
 double Style::ogMax() const { return m_ogMax; }

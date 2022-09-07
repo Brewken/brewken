@@ -296,7 +296,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
             return QVariant(row->typeStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->type());
+            return QVariant(static_cast<int>(row->type()));
          }
          break;
       case FERMINVENTORYCOL:
@@ -326,7 +326,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
             return QVariant(row->additionMethodStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->additionMethod());
+            return QVariant(static_cast<int>(row->additionMethod()));
          }
          break;
       case FERMAFTERBOIL:
@@ -334,7 +334,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
             return QVariant(row->additionTimeStringTr());
          }
          if (role == Qt::UserRole) {
-            return QVariant(row->additionTime());
+            return QVariant(static_cast<int>(row->additionTime()));
          }
          break;
       case FERMYIELDCOL:
@@ -565,13 +565,10 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
       int type = index.model()->index(index.row(), FERMTYPECOL).data(Qt::UserRole).toInt();
 
       // Hide the unsuitable item keeping the same enumeration
-      if(type == Fermentable::Grain)
-      {
-         list->item(Fermentable::Not_Mashed)->setHidden(true);
-      }
-      else
-      {
-         list->item(Fermentable::Steeped)->setHidden(true);
+      if (type == static_cast<int>(Fermentable::Type::Grain)) {
+         list->item(static_cast<int>(Fermentable::AdditionMethod::Not_Mashed))->setHidden(true);
+      } else {
+         list->item(static_cast<int>(Fermentable::AdditionMethod::Steeped))->setHidden(true);
       }
 
       return box;

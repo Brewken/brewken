@@ -140,9 +140,9 @@ void BtLabel::initializeMenu() {
    Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
 
    this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent,
-                                                      physicalQuantity,
-                                                      forcedSystemOfMeasurement,
-                                                      forcedRelativeScale);
+                                                     physicalQuantity,
+                                                     forcedSystemOfMeasurement,
+                                                     forcedRelativeScale);
    return;
 }
 
