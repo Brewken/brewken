@@ -258,6 +258,13 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
    endif()
 endif()
 
+# Windows-specific compilation settings
+if(WIN32)
+   # See https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Link-Options.html#Link-Options for more on GCC linker options
+   # In theory, this statically links all the GCC and MinGW libraries, so we don't have to ship DLLs for them.  In
+   # practice, it seems we still need a fair few other DLLs.
+   set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+endif()
 
 # Mac-specific compilation settings
 if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
@@ -457,6 +464,7 @@ if(WIN32)
    get_target_property(QtWidgets_location           Qt5::Widgets                   LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtXml_location               Qt5::Xml                       LOCATION_${CMAKE_BUILD_TYPE})
 
+   # .:TBD:. Not clear whether/where these xxx_DLLs variables get used
    set(Qt_DLLs            ${QtCore_location}
                           ${QtGui_location}
                           ${QtMultimedia_location}
@@ -486,6 +494,7 @@ if(WIN32)
 
    get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
    get_filename_component(QT5_BIN_DIR "${_qmake_executable}" DIRECTORY)
+   message("QT5_BIN_DIR = ${QT5_BIN_DIR}")
 
    find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT5_BIN_DIR}")
    if(EXISTS ${WINDEPLOYQT_EXECUTABLE})
@@ -493,7 +502,8 @@ if(WIN32)
       set_target_properties(Qt5::windeployqt PROPERTIES IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE})
    endif()
 
-   file(GLOB IcuDlls "${QT5_BIN_DIR}/ic*.dll")
+   # International Components for Unicode
+   file(GLOB IcuDlls "${QT5_BIN_DIR}/libicu*.dll")
 
 endif()
 
@@ -628,16 +638,16 @@ message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boo
 find_package(XercesC REQUIRED)
 include_directories(${XercesC_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Xerces headers and DLLs are on your system
-#message("Xerces-C++ include directories: " ${XercesC_INCLUDE_DIRS})
-#message("Xerces-C++ libraries: " ${XercesC_LIBRARIES})
+message("Xerces-C++ include directories: " ${XercesC_INCLUDE_DIRS})
+message("Xerces-C++ libraries: " ${XercesC_LIBRARIES})
 
 #==================================================== Find Xalan-C++ ===================================================
 # Same comments apply here as for Xerces above
 find_package(XalanC REQUIRED)
 include_directories(${XalanC_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Xalan headers and DLLs are on your system
-#message("Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS})
-#message("Xalan-C++ libraries: " ${XalanC_LIBRARIES})
+message("Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS})
+message("Xalan-C++ libraries: " ${XalanC_LIBRARIES})
 
 #=======================================================Valijson========================================================
 # Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
@@ -899,6 +909,7 @@ if(WIN32 AND MINGW)
       LINK_FLAGS "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl,-subsystem,windows"
    )
 
+   # This is from https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building
    if(TARGET Qt5::windeployqt)
       # execute windeployqt in a tmp directory after build
       add_custom_command(TARGET ${fileName_executable}
@@ -934,6 +945,7 @@ set(appAndTestCommonLibraries
    ${Backtrace_LIBRARIES}
 )
 target_link_libraries(${fileName_executable} ${appAndTestCommonLibraries})
+
 
 #=================================Tests========================================
 add_executable(brewken_tests
@@ -974,14 +986,105 @@ install(TARGETS ${fileName_executable}
         COMPONENT ${RUNTIME_INSTALL_COMPONENT})
 
 if(WIN32)
+   #
+   # Shared libraries (DLLs) are a bit complicated on Windows.  Because there is not really a standard package
+   # management system, we can't easily just say "we require libraries X, Y and Z".  Instead, we need to ship said
+   # libraries in the same directory as our application's executable.
+   #
+   # (Of course, if you're just running on the same machine where you built the software, you could simply set the PATH
+   # variable to include all the directories where the DLLs are.  But, in the general case, we're trying to create a
+   # package that does not require people to have pre-installed Qt, Xerces, Xalan, etc.)
+   #
+   # In theory, CMake can work out what DLLs we need and thereby generate a list of files that we need to ensure are
+   # copied as part of the install/packaging.  In practice, everything seems to be a bit more complicated.
+   #
    # See https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#genex:TARGET_RUNTIME_DLLS
    # (This replaces use of GET_RUNTIME_DEPENDENCIES which I just could not get to work correctly, despite following all
    # sorts of helpful advice at
    # https://stackoverflow.com/questions/62884439/how-to-use-cmake-file-get-runtime-dependencies-in-an-install-statement
    # I always hit a "Failed to start objdump" error.)
-   add_custom_command(TARGET ${fileName_executable} POST_BUILD
-     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:brewken> $<TARGET_FILE_DIR:brewken>
-     COMMAND_EXPAND_LISTS
+   #
+   # Note, however that this does not find all the DLLs we need.  Perhaps this is related to the mention in the CMake
+   # doco that "Many Find Modules produce imported targets with the UNKNOWN type and therefore will be ignored."
+   #
+   add_custom_command(
+      TARGET ${fileName_executable} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:brewken> $<TARGET_FILE_DIR:brewken>
+      COMMAND_EXPAND_LISTS
+   )
+
+   #
+   # On MSYS2/MinGW, static libraries (including .dll.a files) live in /mingw64/lib (usually = C:/msys64/mingw64/lib/)
+   # and dynamically linked libraries (aka DLLs) live in /mingw64/bin (usually = C:/msys64/mingw64/bin/).
+   #
+   # First, we do a bit of a hack to get to the bin directory from the lib one, without hard-coding either (in case
+   # your 64-bit instance of MSYS2 is not installed at C:/msys64/).  XercesC_LIBRARIES will be the .dll.a file for
+   # Xerces.  Usually only one library for Xerces, but we take first in the list in case.
+   #
+   list(GET XercesC_LIBRARIES 0 xercesFirstLibrary)
+   get_filename_component(staticLibDir ${xercesFirstLibrary} DIRECTORY)
+   set(dynamicLibDir ${staticLibDir}/../bin)
+   message(STATUS "dynamicLibDir=" ${dynamicLibDir})
+
+   #
+   # Now, for each static library (/mingw64/lib/BlahBlah.dll.a) we know about, we get the corresponding dynamic one
+   # (/mingw64/bin/BlahBlah.dll) and copy it into the same directory as the .exe file.
+   #
+   # Just to make our lives fun, sometimes the static and dynamic versions of the library will have slightly different
+   # naming conventions.  Eg, for Xalan, we have:
+   #    /mingw64/bin/libxalan-c.dll
+   #    /mingw64/lib/libxalan-c.dll.a
+   # But for Xerces, we have:
+   #    /mingw64/lib/libxerces-c.dll.a
+   #    /mingw64/bin/libxerces-c-3-2.dll
+   # Hence the extra '*' in the glob expression below.
+   #
+   # Finally, note that, to make debugging more interesting, the message command below outputs during "make" rather
+   # than during "make install".
+   #
+   foreach(staticLib IN LISTS XercesC_LIBRARIES XalanC_LIBRARIES)
+      get_filename_component(libBaseName ${staticLib} NAME_WE)
+      file(GLOB dynamicallyLinkedLibrary ${dynamicLibDir}/${libBaseName}*.dll)
+      message(STATUS "Install will copy DLL ${dynamicallyLinkedLibrary} to ${installSubDir_bin}")
+      install(FILES ${dynamicallyLinkedLibrary} DESTINATION ${installSubDir_bin})
+   endforeach()
+
+   #
+   # Now, because we're also not assuming that the person running the code will have MSYS2/MinGW installed, we need to
+   # include the DLLs that ship with them and get pulled in by GCC.  I am hoping to find a less manual way of doing this
+   # but have not yet paydirt.
+   #
+   set(msys2Dlls
+      libbrotli
+      libbz2
+      libdouble-conversion
+      libfreetype
+      libglib
+      libgraphite
+      libharfbuzz
+      libiconv
+      libintl
+      libmd4c
+      libpcre
+      libpng16
+      libsqlite3    # You need this IN ADDITION to bin/sqldrivers/qsqlite.dll, which gets installed by windeployqt
+      libxalanMsg
+      libzstd
+      zlib1
+   )
+   foreach(dynamicLib IN LISTS msys2Dlls)
+      file(GLOB dynamicallyLinkedLibrary ${dynamicLibDir}/${dynamicLib}*.dll)
+      message(STATUS "Install will also copy DLL ${dynamicallyLinkedLibrary} to ${installSubDir_bin}")
+      install(FILES ${dynamicallyLinkedLibrary} DESTINATION ${installSubDir_bin})
+   endforeach()
+
+   # These are something to do with International Components for Unicode
+   message(STATUS "Install will copy ${IcuDlls} to ${installSubDir_bin}")
+   install(FILES ${IcuDlls} DESTINATION ${installSubDir_bin})
+
+   add_custom_command(
+      TARGET ${fileName_executable} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:brewken>
    )
 endif()
 

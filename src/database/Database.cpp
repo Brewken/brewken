@@ -623,6 +623,10 @@ bool Database::load() {
    this->pimpl->schemaUpdated = false;
    this->pimpl->loadWasSuccessful = false;
 
+   // We have had problems on Windows with the DB driver not being found in certain circumstances.  This is some extra
+   // diagnostic to help resolve that.
+   qInfo() << Q_FUNC_INFO << "Known DB drivers: " << QSqlDatabase::drivers();
+
    bool dbIsOpen;
    if (this->dbType() == Database::PGSQL ) {
       dbIsOpen = this->pimpl->loadPgSQL(*this);
