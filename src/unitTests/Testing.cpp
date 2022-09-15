@@ -512,30 +512,57 @@ void Testing::postBoilLossOgTest()
 }
 
 void Testing::testUnitConversions() {
-   // This is assuming '.' is the decimal separator and ',' is the digit group separator.  Might need to tweak this test
-   // a bit for systems with locales where ',' is the decimal separator and '.' or ' ' is the digit group separator.
-   // (Both can be got from QLocale::system().decimalPoint(), QLocale::system().groupSeparator().)
-   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500 gal", Measurement::Units::liters).quantity,
+   //
+   // Originally, some of these tests assumed '.' is the decimal separator and ',' is the digit group separator.  This
+   // meant they would fail on locales where this is not the case.  Plan A was just to force the locale to be one that
+   // makes the tests work (because we are testing conversions rather than number parsing, eg via:
+   //    QLocale::setDefault(QLocale::C);
+   // However, this didn't seem to have any effect on a French locale Windows.
+   // So Plan B is to construct test data based on the current locale settings.
+   //
+   QString const decimalSeparator   = QLocale::system().decimalPoint();
+   QString const thousandsSeparator = QLocale::system().groupSeparator();
+   qDebug() <<
+      Q_FUNC_INFO << "Decimal separator is " << decimalSeparator << " | Thousands separator is " << thousandsSeparator;
+   QString testInput{};
+   QTextStream testInputAsStream{&testInput};
+   // "5.500 gal"
+   testInput.clear();
+   testInputAsStream << "5" << decimalSeparator << "500 gal";
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500 gal"
+                                                                               Measurement::Units::liters).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v1)");
-   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI("5.500",
+   // "5.500"
+   testInput.clear();
+   testInputAsStream << "5" << decimalSeparator << "500";
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500"
                                                                                Measurement::Units::us_gallons).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v2)");
-   QVERIFY2(fuzzyComp(Measurement::qStringToSI("5.500 gal",
+   // "5.500 gal"
+   testInput.clear();
+   testInputAsStream << "5" << decimalSeparator << "500 gal";
+   QVERIFY2(fuzzyComp(Measurement::qStringToSI(testInput, // "5.500 gal"
                                                Measurement::PhysicalQuantity::Volume).quantity,
                       20.820,
                       0.001),
                       "Unit conversion error (US gallons to Litres v3)");
-   QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI("9.994 P",
+   // "9.994 P"
+   testInput.clear();
+   testInputAsStream << "9" << decimalSeparator << "994 P";
+   QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI(testInput, // "9.994 P"
                                                                           Measurement::Units::sp_grav).quantity,
                       1.040,
                       0.001),
             "Unit conversion error (Plato to SG)");
+   // "1,083 ebc"
+   testInput.clear();
+   testInputAsStream << "1" << thousandsSeparator << "083 ebc";
    QVERIFY2(
-      fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI("1,083 ebc",
+      fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI(testInput, // "1,083 ebc"
                                                                                     Measurement::Units::srm).quantity,
                 550,
                 1),
