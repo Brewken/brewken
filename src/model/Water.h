@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Water.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -63,13 +63,13 @@ class Water : public NamedEntity {
    friend class WaterEditor;
 public:
 
-   enum Types {
+   enum class Types {
       NONE,
       BASE,
       TARGET
    };
 
-   enum Ions {
+   enum class Ions {
       Ca,
       Cl,
       HCO3,

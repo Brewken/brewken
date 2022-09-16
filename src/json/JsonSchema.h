@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonSchema.h is part of Brewken, and is copyright the following authors 2021:
+ * json/JsonSchema.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,14 +24,60 @@
 class QTextStream;
 
 /**
- * \class JsonSchema holds all the files for a single schema (which we give to Valijson for it to validate a JSON
+ * \class JsonSchema holds all the files for a single JSON schema (which we give to Valijson for it to validate a JSON
  *        document)
+ *
+ *        Note that this class ONLY wraps the JSON schema (see https://json-schema.org/).  It does not hold any of the
+ *        info needed for us to process the file.  For that, see \c JsonCoding.  (Each \c JsonCoding has a corresponding
+ *        \c JsonSchema.)
+ *
+ *        We could combine \c JsonCoding and \c JsonSchema into a single class, but, for the moment, we'd rather have
+ *        two small classes than one big one, especially as neither class needs to know the inner workings of the other.
  */
 class JsonSchema {
-
 public:
+
+   // Each JsonSchema is a const (after construction) singleton for the schema it represents (eg BeerJSON 2.1), so this
+   // enum lists all the available ones.
+   enum class Id {
+      BEER_JSON_2_1
+   };
+
+   /*!
+    * \brief This should be the ONLY way you get an instance.
+    *
+    *        Note there are two advantages of this over, say, global constant variables of type \c JsonSchema.  Firstly
+    *        we only construct a \c JsonSchema if we are actually going to use it.  Secondly, and more importantly, we
+    *        do not call the constructor until after all Qt start-up has happened, so we can guarantee that, eg, Qt
+    *        resources are accessible.
+    *
+    * \param id Which schema you want to get.
+    */
+   static JsonSchema const & instance(JsonSchema::Id id);
+
+   //! Destructor needs to be public as, internally, we manage instances of JsonSchema in std::unique_ptr
+   ~JsonSchema();
+
    /**
-    * \brief Constructor
+    * \brief Validate a JSON document
+    *
+    * \param document JSON document loaded with \c JsonUtils::loadJsonDocument()
+    * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
+    *                    or, in the event of success, summarising what was read in) should be appended to this string.
+    *
+    * \return \c true if file validated OK (including if there were "errors" that we can safely ignore)
+    *         \c false if there was a problem that means it's not worth trying to read in the data from the file
+    */
+   bool validate(boost::json::value const & document, QTextStream & userMessage) const;
+
+private:
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
+
+
+   /**
+    * \brief Hidden Constructor
     *
     *        The only reason there are two parameters (directory and file name) rather than one (fully qualified file
     *        name) is because it makes reusing some code inside the class a little easier.
@@ -45,26 +91,22 @@ public:
    JsonSchema(char const * const baseDir,
               char const * const fileName);
 
-   ~JsonSchema();
+
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
+   JsonSchema(JsonSchema const&) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   JsonSchema & operator=(JsonSchema const&) = delete;
+   //! No move constructor
+   JsonSchema(JsonSchema &&) = delete;
+   //! No move assignment
+   JsonSchema & operator=(JsonSchema &&) = delete;
+
 
    /**
-    * \brief Validate a JSON document
-    *
-    * \param document JSON document loaded with \c JsonUtils::loadJsonDocument()
-    * \param userMessage Where to write any (brief!) message we want to be shown to the user after the import.
-    *                    Typically this is either the reason the import failed or a summary of what was imported.
-    *
-    * \return \c true if parsing suceeded, \c false otherwise
+    * \brief This is the callback we give to Valijson, which then forwards it on to whatever the last JsonSchema object
+    *        we were dealing with on this thread was (which should be the one that gave the callback to Valijson).
     */
-   bool validate(boost::json::value const & document, QTextStream & userMessage);
-
-private:
-   // Private implementation details - see https://herbsutter.com/gotw/_100/
-   class impl;
-   std::unique_ptr<impl> pimpl;
-
    static boost::json::value const * fetchReferencedDocument(std::string const & uri);
-
 };
 
 #endif

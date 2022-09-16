@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Hop.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Hop.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -69,14 +69,14 @@ class Hop : public NamedEntityWithInventory {
 public:
 
    //! \brief The type of hop, meaning for what properties it is used.
-   enum Type {Bittering, Aroma, Both};
+   enum class Type {Bittering, Aroma, Both};
    //! \brief The form of the hop.
-   enum Form {Leaf, Pellet, Plug};
+   enum class Form {Leaf, Pellet, Plug};
 
    //! \brief The way the hop is used.
    // .:TBD:. (MY 2021-01-01) Shall we perhaps change "UseAroma" to "PostBoil", since this is what BeerXML means by
    // Aroma in this context?
-   enum Use {Mash, First_Wort, Boil, UseAroma, Dry_Hop }; // NOTE: way bad. We have a duplicate enum (Aroma)
+   enum class Use {Mash, First_Wort, Boil, UseAroma, Dry_Hop }; // NOTE: way bad. We have a duplicate enum (Aroma)
    Q_ENUMS( Type Form Use )
 
    Hop(QString name = "");

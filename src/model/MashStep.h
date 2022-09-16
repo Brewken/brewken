@@ -57,7 +57,6 @@ class MashStep : public NamedEntity {
    Q_CLASSINFO("signal", "mashsteps")
 
    // this seems to be a class with a lot of friends
-
    friend class MashStepItemDelegate;
    friend class MashWizard;
    friend class MashDesigner;
@@ -65,7 +64,7 @@ class MashStep : public NamedEntity {
 public:
 
    //! \brief The type of step.
-   enum Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
+   enum class Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
    Q_ENUMS( Type )
 
    MashStep(QString name = "");

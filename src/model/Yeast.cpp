@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -32,6 +32,19 @@ namespace {
    QStringList const types{"Ale", "Lager", "Wheat", "Wine", "Champagne"};
    QStringList const forms{"Liquid", "Dry", "Slant", "Culture"};
    QStringList const flocculations{"Low", "Medium", "High", "Very High"};
+   QStringList const typesTr{QT_TR_NOOP("Ale"),
+                             QT_TR_NOOP("Lager"),
+                             QT_TR_NOOP("Wheat"),
+                             QT_TR_NOOP("Wine"),
+                             QT_TR_NOOP("Champagne")};
+   QStringList const formsTr {QT_TR_NOOP("Liquid"),
+                              QT_TR_NOOP("Dry"),
+                              QT_TR_NOOP("Slant"),
+                              QT_TR_NOOP("Culture")};
+   QStringList const flocculationsTr{QT_TR_NOOP("Low"),
+                                     QT_TR_NOOP("Medium"),
+                                     QT_TR_NOOP("High"),
+                                     QT_TR_NOOP("Very High")};
 }
 
 bool Yeast::isEqualTo(NamedEntity const & other) const {
@@ -55,9 +68,9 @@ ObjectStore & Yeast::getObjectStoreTypedInstance() const {
 
 Yeast::Yeast(QString name) :
    NamedEntityWithInventory{name, true},
-   m_type                  {Yeast::Ale},
-   m_form                  {Yeast::Liquid},
-   m_flocculation          {Yeast::Low},
+   m_type                  {Yeast::Type::Ale},
+   m_form                  {Yeast::Form::Liquid},
+   m_flocculation          {Yeast::Flocculation::Low},
    m_amount                {0.0},
    m_amountIsWeight        {false},
    m_laboratory            {""},
@@ -122,11 +135,11 @@ QString Yeast::notes() const { return m_notes; }
 
 QString Yeast::bestFor() const { return m_bestFor; }
 
-const QString Yeast::typeString() const { return types.at(m_type); }
+const QString Yeast::typeString() const { return types.at(static_cast<int>(this->m_type)); }
 
-const QString Yeast::formString() const { return forms.at(m_form); }
+const QString Yeast::formString() const { return forms.at(static_cast<int>(this->m_form)); }
 
-const QString Yeast::flocculationString() const { return flocculations.at(m_flocculation); }
+const QString Yeast::flocculationString() const { return flocculations.at(static_cast<int>(this->m_flocculation)); }
 
 double Yeast::amount() const { return m_amount; }
 
@@ -155,38 +168,24 @@ Yeast::Flocculation Yeast::flocculation() const { return m_flocculation; }
 Yeast::Type Yeast::type() const { return m_type; }
 
 const QString Yeast::typeStringTr() const {
-   static QStringList typesTr = QStringList() << QObject::tr("Ale")
-                                       << QObject::tr("Lager")
-                                       << QObject::tr("Wheat")
-                                       << QObject::tr("Wine")
-                                       << QObject::tr("Champagne");
-
-   if ( m_type < typesTr.size() && m_type >= 0 ) {
-      return typesTr.at(m_type);
-   }
-   return typesTr.at(0);
+   int myType = static_cast<int>(this->m_type);
+   Q_ASSERT(myType >= 0);
+   Q_ASSERT(myType < typesTr.size());
+   return typesTr.at(myType);
 }
 
 const QString Yeast::formStringTr() const {
-   static QStringList formsTr = QStringList() << QObject::tr("Liquid")
-                                       << QObject::tr("Dry")
-                                       << QObject::tr("Slant")
-                                       << QObject::tr("Culture");
-   if ( m_form < formsTr.size() && m_form >= 0  ) {
-      return formsTr.at(m_form);
-   }
-   return formsTr.at(0);
+   int myForm = static_cast<int>(this->m_form);
+   Q_ASSERT(myForm >= 0);
+   Q_ASSERT(myForm < formsTr.size());
+   return formsTr.at(myForm);
 }
 
 const QString Yeast::flocculationStringTr() const {
-   static QStringList flocculationsTr = QStringList() << QObject::tr("Low")
-                                               << QObject::tr("Medium")
-                                               << QObject::tr("High")
-                                               << QObject::tr("Very High");
-   if ( m_flocculation < flocculationsTr.size() && m_flocculation >= 0 ) {
-      return flocculationsTr.at(m_flocculation);
-   }
-   return flocculationsTr.at(0);
+   int myFlocculation = static_cast<int>(this->m_flocculation);
+   Q_ASSERT(myFlocculation >= 0);
+   Q_ASSERT(myFlocculation < flocculationsTr.size());
+   return flocculationsTr.at(myFlocculation);
 }
 
 //============================="SET" METHODS====================================

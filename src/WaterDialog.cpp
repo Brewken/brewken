@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -42,8 +42,8 @@
 #include "tableModels/WaterTableModel.h"
 
 WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
-   m_ppm_digits( QVector<BtDigitWidget*>(Water::numIons) ),
-   m_total_digits( QVector<BtDigitWidget*>(Salt::numTypes) ),
+   m_ppm_digits( QVector<BtDigitWidget*>(static_cast<int>(Water::Ions::numIons)) ),
+   m_total_digits( QVector<BtDigitWidget*>(static_cast<int>(Salt::Types::numTypes)) ),
    m_rec(nullptr),
    m_base(nullptr),
    m_target(nullptr),
@@ -75,22 +75,22 @@ WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
    targetProfileCombo->setModel(m_target_filter);
 
    // not sure if this is better or worse, but we will try it out
-   m_ppm_digits[Water::Ca]   = btDigit_ca;
-   m_ppm_digits[Water::Cl]   = btDigit_cl;
-   m_ppm_digits[Water::HCO3] = btDigit_hco3;
-   m_ppm_digits[Water::Mg]   = btDigit_mg;
-   m_ppm_digits[Water::Na]   = btDigit_na;
-   m_ppm_digits[Water::SO4]  = btDigit_so4;
+   m_ppm_digits[static_cast<int>(Water::Ions::Ca)]   = btDigit_ca;
+   m_ppm_digits[static_cast<int>(Water::Ions::Cl)]   = btDigit_cl;
+   m_ppm_digits[static_cast<int>(Water::Ions::HCO3)] = btDigit_hco3;
+   m_ppm_digits[static_cast<int>(Water::Ions::Mg)]   = btDigit_mg;
+   m_ppm_digits[static_cast<int>(Water::Ions::Na)]   = btDigit_na;
+   m_ppm_digits[static_cast<int>(Water::Ions::SO4)]  = btDigit_so4;
 
-   m_total_digits[Salt::CACL2] = btDigit_totalcacl2;
-   m_total_digits[Salt::CACO3] = btDigit_totalcaco3;
-   m_total_digits[Salt::CASO4] = btDigit_totalcaso4;
-   m_total_digits[Salt::MGSO4] = btDigit_totalmgso4;
-   m_total_digits[Salt::NACL] = btDigit_totalnacl;
-   m_total_digits[Salt::NAHCO3] = btDigit_totalnahco3;
+   m_total_digits[static_cast<int>(Salt::Types::CACL2 )] = btDigit_totalcacl2;
+   m_total_digits[static_cast<int>(Salt::Types::CACO3 )] = btDigit_totalcaco3;
+   m_total_digits[static_cast<int>(Salt::Types::CASO4 )] = btDigit_totalcaso4;
+   m_total_digits[static_cast<int>(Salt::Types::MGSO4 )] = btDigit_totalmgso4;
+   m_total_digits[static_cast<int>(Salt::Types::NACL  )] = btDigit_totalnacl;
+   m_total_digits[static_cast<int>(Salt::Types::NAHCO3)] = btDigit_totalnahco3;
 
    // foreach( BtDigitWidget* i, m_ppm_digits ) {
-   for(int i = 0; i < Water::numIons; ++i ) {
+   for(int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
       m_ppm_digits[i]->setLimits(0.0,1000.0);
       m_ppm_digits[i]->setText(0.0, 1);
       m_ppm_digits[i]->setMessages(msgs);
@@ -101,7 +101,7 @@ WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
    btDigit_ph->display(7.0,1);
 
    // since all the things are now digits, lets get the totals configured
-   for (int i = Salt::CACL2; i < Salt::NAHCO3; ++i ) {
+   for (int i = static_cast<int>(Salt::Types::CACL2); i < static_cast<int>(Salt::Types::NAHCO3); ++i ) {
       m_total_digits[i]->setConstantColor(BtDigitWidget::BLACK);
       m_total_digits[i]->setText(0.0,1);
    }
@@ -155,7 +155,7 @@ void WaterDialog::setDigits() {
       return;
    }
 
-   for(int i = 0; i < Water::numIons; ++i ) {
+   for (int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
       double ppm = this->m_target->ppm(static_cast<Water::Ions>(i));
       double min_ppm = ppm * 0.95;
       double max_ppm = ppm * 1.05;
@@ -171,10 +171,10 @@ void WaterDialog::setDigits() {
    return;
 }
 
-void WaterDialog::setRecipe(Recipe *rec)
-{
-   if ( rec == nullptr )
+void WaterDialog::setRecipe(Recipe *rec) {
+   if ( rec == nullptr ) {
       return;
+   }
 
    m_rec = rec;
    Mash* mash = m_rec->mash();
@@ -190,9 +190,9 @@ void WaterDialog::setRecipe(Recipe *rec)
    targetProfileButton->setRecipe(m_rec);
 
    foreach( Water* w, m_rec->waters()) {
-      if (w->type() == Water::BASE) {
+      if (w->type() == Water::Types::BASE) {
          this->m_base.reset(w);
-      } else if ( w->type() == Water::TARGET ) {
+      } else if ( w->type() == Water::Types::TARGET ) {
          this->m_target.reset(w);
       }
    }
@@ -243,7 +243,7 @@ void WaterDialog::update_baseProfile(int selected) {
       // The copy constructor won't copy the key (aka database ID), so the new object will be in-memory only until we
       // explicitly insert it in the Object Store
       this->m_base = std::make_shared<Water>(*parent);
-      this->m_base->setType(Water::BASE);
+      this->m_base->setType(Water::Types::BASE);
 
       baseProfileButton->setWater(this->m_base.get());
       m_base_editor->setWater(this->m_base.get());
@@ -252,12 +252,11 @@ void WaterDialog::update_baseProfile(int selected) {
    return;
 }
 
-void WaterDialog::update_targetProfile(int selected)
-{
-
+void WaterDialog::update_targetProfile(int selected) {
    Q_UNUSED(selected)
-   if ( m_rec == nullptr )
+   if (m_rec == nullptr) {
       return;
+   }
 
    QModelIndex proxyIdx(m_target_filter->index(targetProfileCombo->currentIndex(),0));
    QModelIndex sourceIdx(m_target_filter->mapToSource(proxyIdx));
@@ -267,16 +266,16 @@ void WaterDialog::update_targetProfile(int selected)
       // The copy constructor won't copy the key (aka database ID), so the new object will be in-memory only until we
       // explicitly insert it in the Object Store
       this->m_target = std::make_shared<Water>(*parent);
-      this->m_target->setType(Water::TARGET);
+      this->m_target->setType(Water::Types::TARGET);
       targetProfileButton->setWater(this->m_target.get());
       m_target_editor->setWater(this->m_target.get());
 
       this->setDigits();
    }
+   return;
 }
 
-void WaterDialog::newTotals()
-{
+void WaterDialog::newTotals() {
    if ( ! m_rec || ! m_rec->mash() )
       return;
 
@@ -291,7 +290,7 @@ void WaterDialog::newTotals()
    //   o the totals need to be updated
    //   o the digits need to be updated
 
-   for (int i = Salt::CACL2; i < Salt::LACTIC; ++i ) {
+   for (int i = static_cast<int>(Salt::Types::CACL2); i < static_cast<int>(Salt::Types::LACTIC); ++i ) {
       Salt::Types type = static_cast<Salt::Types>(i);
       m_total_digits[i]->setText(m_salt_table_model->total(type), 2);
    }
@@ -308,7 +307,7 @@ void WaterDialog::newTotals()
       // I hope this is right. All this 'rithmetic is making me head hurt.
       double modifier = 1.0 - (dInfuse + dSparge) / allTheWaters;
 
-      for (int i = 0; i < Water::numIons; ++i ) {
+      for (int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
          Water::Ions ion = static_cast<Water::Ions>(i);
          double mPPM = modifier * m_base->ppm(ion);
          m_ppm_digits[i]->setText( m_salt_table_model->total(ion) / allTheWaters + mPPM, 0 );
@@ -318,7 +317,7 @@ void WaterDialog::newTotals()
 
    }
    else {
-      for (int i = 0; i < Water::numIons; ++i ) {
+      for (int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
          Water::Ions ion = static_cast<Water::Ions>(i);
          m_ppm_digits[i]->setText( m_salt_table_model->total(ion) / allTheWaters, 0 );
       }
@@ -429,9 +428,9 @@ double WaterDialog::calculateAcidpH()
    const double lactic_gpm = 90;
    double totalDelta = 0.0;
 
-   double lactic_amt   = m_salt_table_model->totalAcidWeight(Salt::LACTIC);
-   double acidmalt_amt = m_salt_table_model->totalAcidWeight(Salt::ACIDMLT);
-   double H3PO4_amt    = m_salt_table_model->totalAcidWeight(Salt::H3PO4);
+   double lactic_amt   = m_salt_table_model->totalAcidWeight(Salt::Types::LACTIC);
+   double acidmalt_amt = m_salt_table_model->totalAcidWeight(Salt::Types::ACIDMLT);
+   double H3PO4_amt    = m_salt_table_model->totalAcidWeight(Salt::Types::H3PO4);
 
    if ( lactic_amt + acidmalt_amt > 0.0 ) {
       totalDelta += 1000 * (lactic_amt + acidmalt_amt) / lactic_gpm;

@@ -1,8 +1,9 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/linux-ubuntu.yml is part of Brewken, and is copyright the following authors 2021:
+# .github/workflows/linux-ubuntu.yml is part of Brewken, and is copyright the following authors 2021-2022:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Chris Speck <cgspeck@gmail.com>
 #   • Mattias Måhl <mattias@kejsarsten.com>
+#   • Matt Young <mfsy@yahoo.com>
 #   • Mik Firestone <mikfire@gmail.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -57,19 +58,15 @@ jobs:
             libxerces-c-dev \
             libxalan-c-dev
           cd ~
-          mkdir boost-tmp
-          cd boost-tmp
-          wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2
-          tar --bzip2 -xf boost_1_77_0.tar.bz2
-          cd boost_1_77_0
+          mkdir ~/boost-tmp
+          cd ~/boost-tmp
+          wget https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2
+          tar --bzip2 -xf boost_1_79_0.tar.bz2
+          cd boost_1_79_0
           ./bootstrap.sh --prefix=/usr
           sudo ./b2 install
+          cd ~
           sudo rm -rf ~/boost-tmp
-
-#      - name: Apply Patches
-#        shell: bash
-#        working-directory: ${{github.workspace}}
-#        run: ./build-scripts/linux/apply-patches.sh $GITHUB_WORKSPACE
 
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
@@ -80,16 +77,17 @@ jobs:
         run: |
           umask 022
           cmake \
+            DESTDIR=/usr \
             -DDO_RELEASE_BUILD=ON \
-            -DNO_QTMULTIMEDIA=ON \
             -DNO_MESSING_WITH_FLAGS=ON \
-            -DEXEC_PREFIX=/usr \
             $GITHUB_WORKSPACE
 
       - name: Build
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
+          pwd
+          find ../third-party
           make
 
       - name: Test
@@ -108,17 +106,11 @@ jobs:
           umask 022
           make package
 
-      - name: Lintian
+      - name: LintianAndRmpLint
         continue-on-error: true
         working-directory: ${{github.workspace}}/build
         shell: bash
-        run: lintian --profile debian --pedantic *.deb | less
-
-      - name: rpmlint
-        continue-on-error: true
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: rpmlint *.rpm | less
+        run: make package_lint
 
       - name: Upload Brewken Installers
         if: ${{ success() }}
