@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/mac.yml is part of Brewken, and is copyright the following authors 2021:
+# .github/workflows/mac.yml is part of Brewken, and is copyright the following authors 2021-2022:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Mattias Måhl <mattias@kejsarsten.com>
 #
@@ -64,6 +64,7 @@ jobs:
         cd build
         cmake ..
         make
+        ls -ltr
 
     - name: Prep for tests
       # If a test fails and we get a core, we'd like to analyse it.  This will be easier if we have access to the
@@ -95,8 +96,9 @@ jobs:
       run: |
         cd build
         make package
+        ls -ltr
 
-    - name: Upload Mac
+    - name: Upload Mac Packages (Installers)
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
