@@ -104,7 +104,8 @@ jobs:
       with:
         name: brewken-dev-mac
         path: |
-          ${{github.workspace}}/build/brewken*.sh
+          ${{github.workspace}}/build/brewken*.dmg
+          ${{github.workspace}}/build/brewken*.dmg.sha256
         retention-days: 7
 
     - name: Post-processing on cores

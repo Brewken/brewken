@@ -110,7 +110,7 @@ public:
     *
     * \return \b true if load succeeded, \b false if there was an error
     */
-   bool load(QTextStream & userMessage);
+   [[nodiscard]] bool load(QTextStream & userMessage);
 
    /**
     * \brief Once the record (including all its sub-records) is loaded into memory, we this function does any final
@@ -147,9 +147,9 @@ private:
     *        process (eg Hop records inside a Recipe).  But the algorithm for processing is generic, so we implement it
     *        in this base class.
     */
-   bool loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
-                         boost::json::array const & childRecordsData,
-                         QTextStream & userMessage);
+   [[nodiscard]] bool loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+                                       boost::json::array const & childRecordsData,
+                                       QTextStream & userMessage);
 
 protected:
    /**
@@ -180,7 +180,7 @@ protected:
     *        already have stored in the DB
     * \return \b true if this is a duplicate and should be skipped rather than stored
     */
-   virtual bool isDuplicate();
+   [[nodiscard]] virtual bool isDuplicate();
 
    /**
     * \brief If the \b NamedEntity for this record is supposed to have globally unique names, then this method will

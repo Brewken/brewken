@@ -127,8 +127,8 @@ namespace {
       QString unitName{};
       if (!readValueAndUnit(fieldDefinition.type,
                             fieldDefinition.xPath,
-                            fieldDefinition.valueDecoder.unitsMapping->unitField,
-                            fieldDefinition.valueDecoder.unitsMapping->valueField,
+                            std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->unitField,
+                            std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->valueField,
                             recordData,
                             value,
                             unitName)) {
@@ -137,14 +137,15 @@ namespace {
 
       // The schema validation should have ensured that the unit name is constrained to one of the values we are
       // expecting, so it's almost certainly a coding error if it doesn't.
-      if (!fieldDefinition.valueDecoder.unitsMapping->nameToUnit.contains(unitName)) {
+      if (!std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.contains(unitName)) {
          qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << unitName;
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
       }
 
-      Measurement::Unit const * unit = fieldDefinition.valueDecoder.unitsMapping->nameToUnit.value(unitName);
+      Measurement::Unit const * unit =
+         std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.value(unitName);
       Measurement::Amount canonicalValue = unit->toSI(value);
 
       qDebug() <<
@@ -175,12 +176,14 @@ namespace {
       // It's a coding error if the list of JsonMeasureableUnitsMapping objects has less than two elements.  (For
       // one element you should use JsonRecordDefinition::FieldType::MeasurementWithUnits instead of
       // JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits.)
-      Q_ASSERT(fieldDefinition.valueDecoder.listOfUnitsMappings->size() > 1);
+      Q_ASSERT(std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)->size() > 1);
 
       // Per the comment in json/JsonRecordDefinition.h, we assume that unitField and valueField are the same for each
       // JsonMeasureableUnitsMapping in the list, so we just use the first entry here.
-      JsonXPath const & unitField  = fieldDefinition.valueDecoder.listOfUnitsMappings->at(0)->unitField;
-      JsonXPath const & valueField = fieldDefinition.valueDecoder.listOfUnitsMappings->at(0)->valueField;
+      JsonXPath const & unitField  =
+         std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)->at(0)->unitField;
+      JsonXPath const & valueField =
+         std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)->at(0)->valueField;
 
       double value{0};
       QString unitName{};
@@ -195,7 +198,8 @@ namespace {
       }
 
       Measurement::Unit const * unit = nullptr;
-      for (auto const unitsMapping : *fieldDefinition.valueDecoder.listOfUnitsMappings) {
+      for (auto const unitsMapping :
+           *std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)) {
          if (unitsMapping->nameToUnit.contains(unitName)) {
             unit = unitsMapping->nameToUnit.value(unitName);
             break;
@@ -239,8 +243,8 @@ namespace {
       QString unitName{};
       if (!readValueAndUnit(fieldDefinition.type,
                             fieldDefinition.xPath,
-                            fieldDefinition.valueDecoder.singleUnitSpecifier->unitField,
-                            fieldDefinition.valueDecoder.singleUnitSpecifier->valueField,
+                            std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->unitField,
+                            std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->valueField,
                             recordData,
                             value,
                             unitName)) {
@@ -249,10 +253,10 @@ namespace {
 
       // The schema validation should have ensured that the unit name is what we're expecting, so it's almost certainly
       // a coding error if it doesn't.
-      if (!fieldDefinition.valueDecoder.singleUnitSpecifier->validUnits.contains(unitName)) {
+      if (!std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->validUnits.contains(unitName)) {
          qCritical() <<
             Q_FUNC_INFO << "Unit name" << unitName << "does not match expected (" <<
-            fieldDefinition.valueDecoder.singleUnitSpecifier->validUnits << ")";
+            std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->validUnits << ")";
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
@@ -285,8 +289,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
    return this->namedEntity;
 }
 
-
-bool JsonRecord::load(QTextStream & userMessage) {
+[[nodiscard]] bool JsonRecord::load(QTextStream & userMessage) {
    Q_ASSERT(this->recordData.is_object());
    qDebug() <<
       Q_FUNC_INFO << "Loading" << this->recordDefinition.recordName << "record containing" <<
@@ -377,13 +380,14 @@ bool JsonRecord::load(QTextStream & userMessage) {
 
                case JsonRecordDefinition::FieldType::Enum:
                   // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
-                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.enumMapping);
+                  Q_ASSERT(nullptr != std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder));
                   {
                      Q_ASSERT(container->is_string());
                      QString value{container->get_string().c_str()};
                      parsedValue.setValue(value);
 
-                     auto match = fieldDefinition.valueDecoder.enumMapping->stringToEnum(value);
+                     auto match =
+                        std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->stringToEnum(value);
                      if (!match) {
                         // This is probably a coding error as the JSON Schema should already have verified that the
                         // value is one of the expected ones.
@@ -407,7 +411,7 @@ bool JsonRecord::load(QTextStream & userMessage) {
                case JsonRecordDefinition::FieldType::MeasurementWithUnits:
                   // It's definitely a coding error if there is no unit decoder mapping for a field declared to require
                   // one
-                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.unitsMapping);
+                  Q_ASSERT(nullptr != std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder));
                   // JSON schema validation should have ensured that the field is actually one with subfields for value
                   // and unit
                   Q_ASSERT(container->is_object());
@@ -424,7 +428,9 @@ bool JsonRecord::load(QTextStream & userMessage) {
                case JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits:
                   // It's definitely a coding error if there is no list of unit decoder mappings for a field declared to
                   // require such
-                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.listOfUnitsMappings);
+                  Q_ASSERT(
+                     nullptr != std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)
+                  );
                   // JSON schema validation should have ensured that the field is actually one with subfields for value
                   // and unit
                   Q_ASSERT(container->is_object());
@@ -441,7 +447,7 @@ bool JsonRecord::load(QTextStream & userMessage) {
 
                case JsonRecordDefinition::FieldType::SingleUnitValue:
                   // It's definitely a coding error if there is no unit specifier for a field declared to require one
-                  Q_ASSERT(nullptr != fieldDefinition.valueDecoder.singleUnitSpecifier);
+                  Q_ASSERT(nullptr != std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder));
                   // JSON schema validation should have ensured that the field is actually one with subfields for value
                   // and unit
                   Q_ASSERT(container->is_object());
@@ -695,9 +701,9 @@ void JsonRecord::deleteNamedEntityFromDb() {
 }*/
 
 
-bool JsonRecord::loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
-                                  boost::json::array const & childRecordsData,
-                                  QTextStream & userMessage) {
+[[nodiscard]] bool JsonRecord::loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+                                                boost::json::array const & childRecordsData,
+                                                QTextStream & userMessage) {
    //
    // This is where we have a list of one or more substantive records of a particular type, which may be either at top
    // level (eg hop_varieties) or inside another record that we are in the process of reading (eg hop_additions inside a
@@ -719,7 +725,7 @@ bool JsonRecord::loadChildRecords(JsonRecordDefinition const & childRecordDefini
 }
 
 
-bool JsonRecord::isDuplicate() {
+[[nodiscard]] bool JsonRecord::isDuplicate() {
    // Base class does not have a NamedEntity so nothing to check
    // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
    // NamedEntity, and subclasses that do have one should override this function.

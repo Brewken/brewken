@@ -118,7 +118,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: brewken-dev-${{ matrix.msystem }}
-          path: C:/_/build/brewken*.exe
+          path: |
+            C:/_/build/brewken*.exe
+            C:/_/build/brewken*.exe.sha256
           retention-days: 7
 
       - name: Upload error info from failed build
