@@ -119,7 +119,7 @@ public:
     * \return \c true if we know how to process (ie we have the address of a function that can create a suitable
     *         \c JsonRecord object), \c false if not
     */
-   bool isKnownJsonRecordDefinition(QString recordName) const;
+   [[nodiscard]] bool isKnownJsonRecordDefinition(QString recordName) const;
 
    /**
     * \brief Get the root definition element, ie what we use to start processing a document

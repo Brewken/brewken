@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/windows.yml is part of Brewken, and is copyright the following authors 2021:
+# .github/workflows/windows.yml is part of Brewken, and is copyright the following authors 2021-2022:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Chris Speck <cgspeck@gmail.com>
 #   • Mattias Måhl <mattias@kejsarsten.com>
@@ -56,16 +56,16 @@ jobs:
         with:
           msystem: ${{ matrix.msystem }}
           install: >-
+            mingw-w64-${{ matrix.arch }}-boost
             mingw-w64-${{ matrix.arch }}-cmake
-            mingw-w64-${{ matrix.arch }}-make
+            mingw-w64-${{ matrix.arch }}-doxygen
             mingw-w64-${{ matrix.arch }}-gcc
+            mingw-w64-${{ matrix.arch }}-libbacktrace
+            mingw-w64-${{ matrix.arch }}-make
+            mingw-w64-${{ matrix.arch }}-nsis
             mingw-w64-${{ matrix.arch }}-qt5
             mingw-w64-${{ matrix.arch }}-xalan-c
             mingw-w64-${{ matrix.arch }}-xerces-c
-            mingw-w64-${{ matrix.arch }}-doxygen
-            mingw-w64-${{ matrix.arch }}-nsis
-            mingw-w64-${{ matrix.arch }}-boost
-            mingw-w64-${{ matrix.arch }}-libbacktrace
           update: true
           release: true
           path-type: strict
@@ -85,43 +85,45 @@ jobs:
       - name: CMake config
         shell: msys2 {0}
         run: |
-             cd /C/_/build
-             cp ./Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
-             cp ./Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/
-             cp ./Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi
-             cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
+          cd /C/_/build
+          cp ./Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
+          cp ./Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/
+          cp ./Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi
+          cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
 
         # The pwd and find ../third-party commands below are just diagnostics, but it's generally useful to have too
         # much rather than not enough diagnostic info on these GitHub action builds
       - name: Build
         shell: msys2 {0}
         run: |
-             cd /C/_/build
-             pwd
-             find ../third-party
-             cmake --build .
+          cd /C/_/build
+          pwd
+          find ../third-party
+          cmake --build .
 
       - name: Test
         shell: msys2 {0}
         run: |
-             cd /C/_/build
-             cmake --build . --target test
+          cd /C/_/build
+          cmake --build . --target test
 
       - name: Package
         shell: msys2 {0}
         run: |
-             cd /C/_/build
-             cmake --build . --target package --verbose
+          cd /C/_/build
+          cmake --build . --target package --verbose
 
-      - name: "Upload binaries"
+      - name: Upload Windows binaries (installers)
         if: ${{ success()}}
         uses: actions/upload-artifact@v2
         with:
           name: brewken-dev-${{ matrix.msystem }}
-          path: C:/_/build/brewken*.exe
+          path: |
+            C:/_/build/brewken*.exe
+            C:/_/build/brewken*.exe.sha256
           retention-days: 7
 
-      - name: "Upload error build"
+      - name: Upload error info from failed build
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:

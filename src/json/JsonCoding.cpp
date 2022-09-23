@@ -77,7 +77,7 @@ JsonCoding::JsonCoding(char const * name,
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header file)
 JsonCoding::~JsonCoding() = default;
 
-bool JsonCoding::isKnownJsonRecordDefinition(QString recordName) const {
+[[nodiscard]] bool JsonCoding::isKnownJsonRecordDefinition(QString recordName) const {
    // We assert that we have some record definitions!
    Q_ASSERT(!this->pimpl->jsonRecordDefinitions.empty());
 

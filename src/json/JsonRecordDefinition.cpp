@@ -34,11 +34,6 @@ namespace {
    };
 }
 
-JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(EnumStringMapping                  const * enumMapping)         : enumMapping{enumMapping} {return;}
-JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(JsonMeasureableUnitsMapping        const * unitsMapping)        : unitsMapping{unitsMapping} {return;}
-JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings) : listOfUnitsMappings{listOfUnitsMappings} {return;}
-JsonRecordDefinition::FieldDefinition::ValueDecoder::ValueDecoder(JsonSingleUnitSpecifier            const * singleUnitSpecifier) : singleUnitSpecifier{singleUnitSpecifier} {return;}
-
 JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
                                                        char const *              xPath,
                                                        BtStringConst const *     propertyName,
@@ -88,7 +83,10 @@ JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                
 JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
                                                        char const *              xPath,
                                                        BtStringConst const *     propertyName) :
-   FieldDefinition{type, xPath, propertyName, static_cast<EnumStringMapping const *>(nullptr)} {
+   type{type},
+   xPath{xPath},
+   propertyName{propertyName},
+   valueDecoder{} {
    return;
 }
 

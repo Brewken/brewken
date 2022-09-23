@@ -18,6 +18,7 @@
 #pragma once
 
 #include <memory>
+#include <variant>
 
 #include <QVector>
 
@@ -252,17 +253,14 @@ public:
       FieldType             type;
       JsonXPath             xPath;
       BtStringConst const * propertyName;
-      union ValueDecoder {
-         EnumStringMapping                  const * enumMapping;         // FieldType::Enum
-         JsonMeasureableUnitsMapping        const * unitsMapping;        // FieldType::MeasurementWithUnits
-         ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings; // FieldType::OneOfMeasurementsWithUnits
-         JsonSingleUnitSpecifier            const * singleUnitSpecifier; // FieldType::SingleUnitValue
-         // Explicit Union constructors here make the FieldDefinition constructor implementations slightly less clunky
-         ValueDecoder(EnumStringMapping                  const * enumMapping);
-         ValueDecoder(JsonMeasureableUnitsMapping        const * unitsMapping);
-         ValueDecoder(ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings);
-         ValueDecoder(JsonSingleUnitSpecifier            const * singleUnitSpecifier);
-      } valueDecoder;
+      // .:TODO:. Probably should use std::variant instead of union here!
+      // The options inside valueDecoder are pointers rather than references because we store FieldDefinitions in a
+      // vector, so everything needs to be copyable.
+      std::variant<std::monostate,
+                   EnumStringMapping                  const *,               // FieldType::Enum
+                   JsonMeasureableUnitsMapping        const *,               // FieldType::MeasurementWithUnits
+                   ListOfJsonMeasureableUnitsMappings const *,               // FieldType::OneOfMeasurementsWithUnits
+                   JsonSingleUnitSpecifier            const *> valueDecoder; // FieldType::SingleUnitValue
 
       // In C++20, we finally get designated initializers (a feature that has long been present in C!).  This would
       // permit brace initialisation of union members other than the first one - eg ".unitsMapping = ".  Unfortunately
@@ -283,9 +281,7 @@ public:
                       char const *                        xPath,
                       BtStringConst const *               propertyName,
                       JsonSingleUnitSpecifier     const * singleUnitSpecifier);
-      // We need this one too, otherwise having fourth constructor parameter nullptr leaves the compiler not knowing
-      // which of the above two constructors to use.  (And there's no elegant way to tell the compiler it doesn't matter
-      // in this case!)
+      // We need this one too for when there is no decoder (which is most of the time!)
       FieldDefinition(FieldType                 type,
                       char const *              xPath,
                       BtStringConst const *     propertyName);
