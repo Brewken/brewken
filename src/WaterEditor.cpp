@@ -19,7 +19,6 @@
  =====================================================================================================================*/
 #include "WaterEditor.h"
 
-#include <QColorConstants>
 #include <QDebug>
 #include <QInputDialog>
 
@@ -130,7 +129,7 @@ void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
       // Make a copy of the Water object we are observing
       this->pimpl->editedWater = std::make_unique<Water>(*this->pimpl->observedWater);
       this->pimpl->editedWater->setAmount(0.0);
-      this->waterEditRadarChart->addSeries(tr("Modified"), QColorConstants::Svg::chartreuse, *this->pimpl->editedWater);
+      this->waterEditRadarChart->addSeries(tr("Modified"), Qt::green, *this->pimpl->editedWater);
 
       this->showChanges();
    } else {
