@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -31,7 +31,6 @@
 
 class Database;
 class NamedParameterBundle;
-
 
 /**
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.
@@ -68,7 +67,7 @@ public:
     *        https://bugreports.qt.io/browse/QTBUG-15640) -- I believe we are now safe to rely on QVariant to do all
     *        the right conversions for us.
     */
-   enum FieldType {
+   enum class FieldType {
       Bool,
       Int,
       UInt,
@@ -183,7 +182,6 @@ public:
 
    };
 
-
    // This isn't strictly necessary, but it makes various declarations more concise
    typedef QVector<JunctionTableDefinition> JunctionTableDefinitions;
 
@@ -197,6 +195,12 @@ public:
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();
+
+   /**
+    * \brief This will log info about every object the store knows about.  Usually only needed for debugging double-free
+    *        problems.
+    */
+   void logDiagnostics() const;
 
    /**
     * \brief Create the table(s) for the objects handled by this store.  It is the caller's responsibility to handle
@@ -232,9 +236,23 @@ public:
    virtual int insert(std::shared_ptr<QObject> object);
 
    /**
+    * \brief We don't want the compiler automatically constructing a shared_ptr for us if we accidentally call insert
+    *        with, say, a raw pointer, so this template trick ensures it can't.
+    */
+   template <typename D> void insert(D) = delete;
+
+   /**
     * \brief Update an existing object in the DB
     */
    virtual void update(std::shared_ptr<QObject> object);
+
+   virtual void update(QObject & object);
+
+   /**
+    * \brief We don't want the compiler automatically constructing a shared_ptr for us if we accidentally call update
+    *        with, say, a raw pointer, so this template trick ensures it can't.
+    */
+   template <typename D> void update(D) = delete;
 
    /**
     * \brief Convenience function that calls either \c insert or \c update, depending on whether the object is already
@@ -252,6 +270,12 @@ public:
     * \return ID of what was inserted or updated
     */
    int insertOrUpdate(QObject & object);
+
+   /**
+    * \brief We don't want the compiler automatically constructing a shared_ptr for us if we accidentally call
+    *        insertOrUpdate with, say, a raw pointer, so this template trick ensures it can't.
+    */
+   template <typename D> void insertOrUpdate(D) = delete;
 
    /**
     * \brief Update a single property of an existing object in the DB
@@ -471,6 +495,5 @@ private:
    ObjectStore & operator=(ObjectStore &&) = delete;
 
 };
-
 
 #endif

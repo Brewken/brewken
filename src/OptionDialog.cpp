@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -274,11 +274,12 @@ public:
     * Determine which set of DB config params to show, based on whether PostgresSQL or SQLite is selected
     */
    void setDbDialog(OptionDialog & optionDialog, Database::DbType db) {
-      qDebug() << Q_FUNC_INFO << "Set " << (db == Database::PGSQL ? "PostgresSQL" : "SQLite") << " config params visible";
+      qDebug() <<
+         Q_FUNC_INFO << "Set " << (db == Database::DbType::PGSQL ? "PostgresSQL" : "SQLite") << " config params visible";
       optionDialog.groupBox_dbConfig->setVisible(false);
 
       this->clearLayout(optionDialog);
-      if (db == Database::PGSQL) {
+      if (db == Database::DbType::PGSQL) {
          this->postgresVisible(true);
          this->sqliteVisible(false);
 
@@ -489,7 +490,8 @@ public:
 
       // Database stuff -- this looks weird, but trust me. We want SQLITE to be
       // the default for this field
-      int tmp = PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt() - 1;
+      int tmp = PersistentSettings::value(PersistentSettings::Names::dbType,
+                                          static_cast<int>(Database::DbType::SQLITE)).toInt() - 1;
       optionDialog.comboBox_engine->setCurrentIndex(tmp);
 
       this->input_pgHostname.setText(PersistentSettings::value(PersistentSettings::Names::dbHostname, "localhost").toString());
@@ -589,11 +591,12 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    configure_logging();
 
    // database panel stuff
-   comboBox_engine->addItem(tr("SQLite (default)"), QVariant(Database::SQLITE));
-   comboBox_engine->addItem(tr("PostgreSQL"), QVariant(Database::PGSQL));
+   comboBox_engine->addItem(tr("SQLite (default)"), QVariant(static_cast<int>(Database::DbType::SQLITE)));
+   comboBox_engine->addItem(tr("PostgreSQL"), QVariant(static_cast<int>(Database::DbType::PGSQL)));
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
+   int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType,
+                                                                 static_cast<int>(Database::DbType::SQLITE)).toInt());
    this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
 
    // connect all the signals
@@ -671,7 +674,8 @@ void OptionDialog::connect_signals() {
    connect(pushButton_testConnection, &QAbstractButton::clicked, this, &OptionDialog::testConnection);
 
    // figure out which database we have
-   int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType, Database::SQLITE).toInt());
+   int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType,
+                                                                 static_cast<int>(Database::DbType::SQLITE)).toInt());
    this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
 
    // Set the signals
@@ -743,7 +747,7 @@ void OptionDialog::setLogDir() {
 
 void OptionDialog::resetToDefault() {
    Database::DbType engine = static_cast<Database::DbType>(comboBox_engine->currentData().toInt());
-   if (engine == Database::PGSQL) {
+   if (engine == Database::DbType::PGSQL) {
       this->pimpl->input_pgHostname.setText(QString("localhost"));
       this->pimpl->input_pgPortNum.setText(QString("5432"));
       this->pimpl->input_pgSchema.setText(QString("public"));
@@ -801,7 +805,7 @@ void OptionDialog::testConnection() {
    }
 
    switch (newType) {
-      case Database::PGSQL:
+      case Database::DbType::PGSQL:
          hostname = this->pimpl->input_pgHostname.text();
          schema   = this->pimpl->input_pgSchema.text();
          database = this->pimpl->input_pgDbName.text();
@@ -955,7 +959,7 @@ bool OptionDialog::saveDatabaseConfig() {
    }
 
    Database::DbType dbEngine = static_cast<Database::DbType>(comboBox_engine->currentData().toInt());
-   if (dbEngine == Database::SQLITE) {
+   if (dbEngine == Database::DbType::SQLITE) {
       saveSqliteConfig();
    }
 
@@ -983,7 +987,7 @@ bool OptionDialog::transferDatabase() {
       int engine = comboBox_engine->currentData().toInt();
       PersistentSettings::insert(PersistentSettings::Names::dbType, engine);
       // only write these changes when switching TO pgsql
-      if (engine == Database::PGSQL) {
+      if (engine == static_cast<int>(Database::DbType::PGSQL)) {
          PersistentSettings::insert(PersistentSettings::Names::dbHostname, this->pimpl->input_pgHostname.text());
          PersistentSettings::insert(PersistentSettings::Names::dbPortnum,  this->pimpl->input_pgPortNum.text());
          PersistentSettings::insert(PersistentSettings::Names::dbSchema,   this->pimpl->input_pgSchema.text());

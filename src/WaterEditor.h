@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -19,9 +20,12 @@
 #define WATEREDITOR_H
 #pragma once
 
+#include <memory> // For PImpl
+
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
+
 #include "ui_waterEditor.h"
 
 // Forward declarations.
@@ -33,25 +37,31 @@ class Water;
  * \brief View/controller class for creating and modifying water records.
  */
 class WaterEditor : public QDialog, public Ui::waterEditor {
-    Q_OBJECT
+   Q_OBJECT
 public:
-    WaterEditor(QWidget *parent = nullptr);
-    virtual ~WaterEditor() {}
+   WaterEditor(QWidget *parent = nullptr, QString const editorName = "Unnamed");
+   virtual ~WaterEditor();
 
-    /*!
-     * Sets the water we want to observe.
-     */
-    void setWater(Water* water);
-    void newWater(QString folder);
+   /*!
+    * Sets the water we want to observe.
+    *
+    * \param water If \c std::nullopt then stop observing
+    */
+   void setWater(std::optional<std::shared_ptr<Water>> water);
+
+   void newWater(QString folder);
 
 public slots:
-    void showChanges(QMetaProperty* prop = nullptr);
-    void saveAndClose();
-    void changed(QMetaProperty, QVariant);
-    void clearAndClose();
+   void showChanges(QMetaProperty const * prop = nullptr);
+   void inputFieldModified();
+   void changed(QMetaProperty, QVariant);
+   void saveAndClose();
+   void clearAndClose();
 
 private:
-    Water* obs; // Observed water.
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
 #endif

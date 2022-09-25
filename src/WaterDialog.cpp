@@ -41,16 +41,42 @@
 #include "tableModels/SaltTableModel.h"
 #include "tableModels/WaterTableModel.h"
 
-WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
-   m_ppm_digits( QVector<BtDigitWidget*>(static_cast<int>(Water::Ions::numIons)) ),
-   m_total_digits( QVector<BtDigitWidget*>(static_cast<int>(Salt::Types::numTypes)) ),
-   m_rec(nullptr),
-   m_base(nullptr),
-   m_target(nullptr),
-   m_mashRO(0.0),
-   m_spargeRO(0.0),
-   m_total_grains(0.0),
-   m_thickness(0.0)
+//
+// All of the pH calculations are taken from the work done by Kai Troester and published at
+// http://braukaiser.com/wiki/index.php/Beer_color_to_mash_pH_(v2.0) with additional information being gleaned from the
+// spreadsheet associated with that link.
+//
+
+namespace {
+   // I've seen some confusion over this constant. 50 mEq/l is what Kai uses.
+   double constexpr mEq = 50.0;
+   // Ca grams per mole
+   double constexpr Cagpm = 40.0;
+   // Mg grams per mole
+   double constexpr Mggpm = 24.30;
+   // HCO3 grams per mole
+   double constexpr HCO3gpm = 61.01;
+   // CO3 grams per mole
+   double constexpr CO3gpm = 60.01;
+
+   // The pH of a beer with no color
+   double constexpr nosrmbeer_ph = 5.6;
+   // Magic constants Kai derives in the document above.
+   double constexpr pHSlopeLight = 0.21;
+   double constexpr pHSlopeDark  = 0.06;
+}
+
+WaterDialog::WaterDialog(QWidget* parent) :
+   QDialog{parent},
+   m_ppm_digits{  QVector<BtDigitWidget*>{static_cast<int>(Water::Ions::numIons)} },
+   m_total_digits{QVector<BtDigitWidget*>{static_cast<int>(Salt::Types::numTypes)} },
+   m_rec{nullptr},
+   m_base{nullptr},
+   m_target{nullptr},
+   m_mashRO{0.0},
+   m_spargeRO{0.0},
+   m_total_grains{0.0},
+   m_thickness{0.0}
 {
    QStringList msgs = QStringList() << tr("Too low for target profile.")
                                     << tr("In range for target profile.")
@@ -111,8 +137,8 @@ WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
    tableView_salts->setItemDelegate(m_salt_delegate);
    tableView_salts->setModel(m_salt_table_model);
 
-   m_base_editor = new WaterEditor(this);
-   m_target_editor = new WaterEditor(this);
+   m_base_editor = new WaterEditor(this, "Base");
+   m_target_editor = new WaterEditor(this, "Target");
 
    // all the signals
    connect(baseProfileCombo,   SIGNAL( activated(int)), this, SLOT(update_baseProfile(int)));
@@ -136,15 +162,13 @@ WaterDialog::WaterDialog(QWidget* parent) : QDialog(parent),
 
 WaterDialog::~WaterDialog() = default;
 
-void WaterDialog::setMashRO(int val)
-{
+void WaterDialog::setMashRO(int val) {
    m_mashRO = val/100.0;
    if ( m_base ) m_base->setMashRO(m_mashRO);
    newTotals();
 }
 
-void WaterDialog::setSpargeRO(int val)
-{
+void WaterDialog::setSpargeRO(int val) {
    m_spargeRO = val/100.0;
    if ( m_base ) m_base->setSpargeRO(m_spargeRO);
    newTotals();
@@ -182,27 +206,30 @@ void WaterDialog::setRecipe(Recipe *rec) {
    m_salt_delegate->observeRecipe(m_rec);
 
    if ( mash == nullptr || mash->mashSteps().size() == 0 ) {
-      qWarning() << QString("Can not set water chemistry without a mash");
+      qWarning() << QString("Cannot set water chemistry without a mash");
       return;
    }
 
    baseProfileButton->setRecipe(m_rec);
    targetProfileButton->setRecipe(m_rec);
 
-   foreach( Water* w, m_rec->waters()) {
-      if (w->type() == Water::Types::BASE) {
-         this->m_base.reset(w);
-      } else if ( w->type() == Water::Types::TARGET ) {
-         this->m_target.reset(w);
+   for (auto waterId : this->m_rec->getWaterIds()) {
+      auto water = ObjectStoreWrapper::getById<Water>(waterId);
+      if (water->type() == Water::Types::BASE) {
+         qDebug() << Q_FUNC_INFO << "Base Water" << *water;
+         this->m_base = water;
+      } else if (water->type() == Water::Types::TARGET) {
+         qDebug() << Q_FUNC_INFO << "Target Water" << *water;
+         this->m_target = water;
       }
    }
 
    // I need these numbers before we set the ranges
-   foreach( Fermentable *i, m_rec->fermentables() ) {
-      m_total_grains   += i->amount_kg();
+   for (Fermentable *i : m_rec->fermentables() ) {
+      m_total_grains += i->amount_kg();
    }
 
-   foreach( Fermentable *i, m_rec->fermentables() ) {
+   for (Fermentable *i : m_rec->fermentables() ) {
       double lovi = ( i->color_srm() +0.6 ) / 1.35;
       m_weighted_colors   += (i->amount_kg()/m_total_grains)*lovi;
    }
@@ -216,12 +243,12 @@ void WaterDialog::setRecipe(Recipe *rec) {
       spinBox_spargeRO->setValue( QVariant(m_spargeRO*100).toInt());
 
       baseProfileButton->setWater(this->m_base.get());
-      m_base_editor->setWater(this->m_base.get());
+      m_base_editor->setWater(this->m_base);
       // all of the magic to set the sliders happens in newTotals(). So don't do it twice
    }
    if (this->m_target && this->m_target != this->m_base) {
       targetProfileButton->setWater(this->m_target.get());
-      m_target_editor->setWater(this->m_target.get());
+      m_target_editor->setWater(this->m_target);
 
       this->setDigits();
    }
@@ -232,7 +259,7 @@ void WaterDialog::setRecipe(Recipe *rec) {
 
 void WaterDialog::update_baseProfile(int selected) {
    Q_UNUSED(selected)
-   if (m_rec == nullptr) {
+   if (!this->m_rec) {
       return;
    }
 
@@ -241,12 +268,15 @@ void WaterDialog::update_baseProfile(int selected) {
    Water const * parent = m_base_combo_list->at(sourceIdx.row());
    if (parent) {
       // The copy constructor won't copy the key (aka database ID), so the new object will be in-memory only until we
-      // explicitly insert it in the Object Store
+      // explicitly insert it in the Object Store (which will be done if/when it is added to the Recipe).  Note
+      // however that we do need to ensure the link to the "parent" water is not lost - hence the call to makeChild().
       this->m_base = std::make_shared<Water>(*parent);
+      this->m_base->makeChild(*parent);
       this->m_base->setType(Water::Types::BASE);
+      qDebug() << Q_FUNC_INFO << "Made base child" << *this->m_base << "from parent" << parent;
 
       baseProfileButton->setWater(this->m_base.get());
-      m_base_editor->setWater(this->m_base.get());
+      m_base_editor->setWater(this->m_base);
       newTotals();
    }
    return;
@@ -254,7 +284,7 @@ void WaterDialog::update_baseProfile(int selected) {
 
 void WaterDialog::update_targetProfile(int selected) {
    Q_UNUSED(selected)
-   if (m_rec == nullptr) {
+   if (!this->m_rec) {
       return;
    }
 
@@ -262,13 +292,15 @@ void WaterDialog::update_targetProfile(int selected) {
    QModelIndex sourceIdx(m_target_filter->mapToSource(proxyIdx));
    Water* parent = m_target_combo_list->at(sourceIdx.row());
 
-   if ( parent ) {
-      // The copy constructor won't copy the key (aka database ID), so the new object will be in-memory only until we
-      // explicitly insert it in the Object Store
+   if (parent) {
+      // Comment above for copy of m_base applies equally here
       this->m_target = std::make_shared<Water>(*parent);
+      this->m_target->makeChild(*parent);
       this->m_target->setType(Water::Types::TARGET);
+      qDebug() << Q_FUNC_INFO << "Made target child" << *this->m_target << "from parent" << parent;
+
       targetProfileButton->setWater(this->m_target.get());
-      m_target_editor->setWater(this->m_target.get());
+      m_target_editor->setWater(this->m_target);
 
       this->setDigits();
    }
@@ -299,7 +331,7 @@ void WaterDialog::newTotals() {
    // include the base water ppm. The confusing math generates an adjustment
    // for the base water that depends the %RO in the mash and sparge water
 
-   if ( m_base != nullptr ) {
+   if (this->m_base) {
       // 'd' means 'diluted'. They make calculating the modifier readable
       double dInfuse = m_mashRO * mash->totalInfusionAmount_l();
       double dSparge = m_spargeRO * mash->totalSpargeAmount_l();
@@ -309,7 +341,7 @@ void WaterDialog::newTotals() {
 
       for (int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
          Water::Ions ion = static_cast<Water::Ions>(i);
-         double mPPM = modifier * m_base->ppm(ion);
+         double mPPM = modifier * this->m_base->ppm(ion);
          m_ppm_digits[i]->setText( m_salt_table_model->total(ion) / allTheWaters + mPPM, 0 );
 
       }
@@ -324,48 +356,23 @@ void WaterDialog::newTotals() {
    }
 }
 
-void WaterDialog::removeSalts()
-{
+void WaterDialog::removeSalts() {
    QModelIndexList selected = tableView_salts->selectionModel()->selectedIndexes();
    QList<int> deadSalts;
 
-   foreach( QModelIndex i, selected) {
+   for (QModelIndex i : selected) {
       deadSalts.append( i.row() );
    }
    m_salt_table_model->removeSalts(deadSalts);
 }
 
-// All of the pH calculations are taken from the work done by Kai Troester and
-// published at
-// http://braukaiser.com/wiki/index.php/Beer_color_to_mash_pH_(v2.0)
-// with additional information being gleaned from the spreadsheet associated
-// with that link.
-
-// I've seen some confusion over this constant. 50 mEq/l is what Kai uses.
-const double mEq = 50.0;
-// Ca grams per mole
-const double Cagpm = 40.0;
-// Mg grams per mole
-const double Mggpm = 24.30;
-// HCO3 grams per mole
-const double HCO3gpm = 61.01;
-// CO3 grams per mole
-const double CO3gpm = 60.01;
-
-// The pH of a beer with no color
-const double nosrmbeer_ph = 5.6;
-// Magic constants Kai derives in the document above.
-const double pHSlopeLight = 0.21;
-const double pHSlopeDark  = 0.06;
-
 //! \brief Calcuates the residual alkalinity of the mash water.
-double WaterDialog::calculateRA() const
-{
+double WaterDialog::calculateRA() const {
    double residual = 0.0;
-   if ( m_base ) {
+   if (this->m_base) {
 
       double base_alk = ( 1.0 - m_base->mashRO() ) * m_base->alkalinity();
-      if ( ! m_base->alkalinityAsHCO3() ) {
+      if (!m_base->alkalinityAsHCO3()) {
          base_alk = 1.22 * base_alk;
       }
       residual = base_alk/61;
@@ -377,10 +384,10 @@ double WaterDialog::calculateRA() const
 
 //! \brief Calculates the pH of the base water caused by any Ca or Mg
 //! including figuring out the residual alkalinity.
-double WaterDialog::calculateSaltpH()
-{
-   if ( ! m_rec || ! m_rec->mash() )
+double WaterDialog::calculateSaltpH() {
+   if (!this->m_rec || !this->m_rec->mash()) {
       return 0.0;
+   }
 
    Mash* mash = m_rec->mash();
    double allTheWaters = mash->totalMashWater_l();
@@ -408,10 +415,10 @@ double WaterDialog::calculateAddedSaltpH()
 
    // We need the value from the salt table model, because we need all the
    // added salts, but not the base.
-   double ca = m_salt_table_model->total_Ca()/Cagpm * 2;
-   double mg = m_salt_table_model->total_Mg()/Mggpm * 2;
-   double hco3 = m_salt_table_model->total_HCO3()/HCO3gpm;
-   double co3 = m_salt_table_model->total_CO3()/CO3gpm;
+   double ca   = this->m_salt_table_model->total_Ca()/Cagpm * 2;
+   double mg   = this->m_salt_table_model->total_Mg()/Mggpm * 2;
+   double hco3 = this->m_salt_table_model->total_HCO3()/HCO3gpm;
+   double co3  = this->m_salt_table_model->total_CO3()/CO3gpm;
 
    // The 61 is another magic number from Kai. Sigh
    // unlike previous calculations, I am getting a mass here so I do not
@@ -422,15 +429,14 @@ double WaterDialog::calculateAddedSaltpH()
 
 //! \brief Calculates the pH adjustment caused by lactic acid, H3PO4 and/or acid
 //! malts
-double WaterDialog::calculateAcidpH()
-{
+double WaterDialog::calculateAcidpH() {
    const double H3PO4_gpm = 98;
    const double lactic_gpm = 90;
    double totalDelta = 0.0;
 
-   double lactic_amt   = m_salt_table_model->totalAcidWeight(Salt::Types::LACTIC);
-   double acidmalt_amt = m_salt_table_model->totalAcidWeight(Salt::Types::ACIDMLT);
-   double H3PO4_amt    = m_salt_table_model->totalAcidWeight(Salt::Types::H3PO4);
+   double lactic_amt   = this->m_salt_table_model->totalAcidWeight(Salt::Types::LACTIC);
+   double acidmalt_amt = this->m_salt_table_model->totalAcidWeight(Salt::Types::ACIDMLT);
+   double H3PO4_amt    = this->m_salt_table_model->totalAcidWeight(Salt::Types::H3PO4);
 
    if ( lactic_amt + acidmalt_amt > 0.0 ) {
       totalDelta += 1000 * (lactic_amt + acidmalt_amt) / lactic_gpm;
@@ -444,8 +450,7 @@ double WaterDialog::calculateAcidpH()
 
 //! \brief Calculates the theoretical distilled water mash pH. I make some
 //! rather rash assumptions about a crystal v roasted malt.
-double WaterDialog::calculateGristpH()
-{
+double WaterDialog::calculateGristpH() {
    double gristPh = nosrmbeer_ph;
    double pHAdjustment = 0.0;
 
@@ -455,7 +460,7 @@ double WaterDialog::calculateGristpH()
       double color = m_rec->color_srm();
       double colorFromGrain = 0.0;
 
-      foreach( Fermentable *i, m_rec->fermentables() ) {
+      for (Fermentable * i : m_rec->fermentables()) {
          // I am counting anything that doesn't have diastatic
          // power as a roasted/crystal malt. I am sure my assumption will
          // haunt me later, but I have no way of knowing what kind of malt
@@ -479,8 +484,7 @@ double WaterDialog::calculateGristpH()
 //! \brief This figures out the expected mash pH. It really just calls
 //! all the other pieces to get those calculations and then sums them
 //! all up.
-double WaterDialog::calculateMashpH()
-{
+double WaterDialog::calculateMashpH() {
    double mashpH = 0.0;
 
    if ( m_rec && m_rec->fermentables().size() ) {
@@ -498,16 +502,14 @@ double WaterDialog::calculateMashpH()
 }
 
 void WaterDialog::saveAndClose() {
-   m_salt_table_model->saveAndClose();
-   if (m_base != nullptr && m_base->key() < 0) {
-      std::shared_ptr<Water> water{this->m_base};
-      ObjectStoreWrapper::insert(water);
-      this->m_rec->add(water);
+   this->m_salt_table_model->saveAndClose();
+   if (this->m_base && this->m_base->key() < 0) {
+      // Recipe will take care of adding to the relevant object store
+      this->m_rec->add(this->m_base);
    }
-   if (m_target != nullptr && m_target->key() < 0) {
-      std::shared_ptr<Water> water{this->m_target};
-      ObjectStoreWrapper::insert(water);
-      this->m_rec->add(water);
+   if (this->m_target && this->m_target->key() < 0) {
+      // Recipe will take care of adding to the relevant object store
+      this->m_rec->add(this->m_target);
    }
 
    setVisible(false);

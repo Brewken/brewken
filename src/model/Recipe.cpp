@@ -1293,7 +1293,7 @@ template<class NE> bool Recipe::uses(NE const & var) const {
       // the ID of the thing from which they were copied).
       //
       qCritical() <<
-                  Q_FUNC_INFO << "Trying to search for use of" << var.metaObject()->className() << "that is not stored!";
+         Q_FUNC_INFO << "Trying to search for use of" << var.metaObject()->className() << "that is not stored!";
       return false;
    }
 

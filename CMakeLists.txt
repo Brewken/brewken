@@ -94,8 +94,8 @@ cmake_policy(SET CMP0048 NEW)
 # It's simplest to keep the project name all lower-case as it means we can use a lot more of the default settings for
 # Linux packaging (where directory names etc are expected to be all lower-case)
 project(brewken VERSION 0.1.0 LANGUAGES CXX)
-message(STATUS "Building " ${PROJECT_NAME} " version " ${PROJECT_VERSION})
-message(STATUS "PROJECT_SOURCE_DIR is " ${PROJECT_SOURCE_DIR})
+message(STATUS "Building ${PROJECT_NAME} version ${PROJECT_VERSION}")
+message(STATUS "PROJECT_SOURCE_DIR is ${PROJECT_SOURCE_DIR}")
 # Sometimes we do need the capitalised version of the project name
 set(capitalisedProjectName Brewken)
 
@@ -1462,6 +1462,15 @@ elseif(WIN32)
    set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Brewken/brewken")
    # The name of a *.ico file used as the main icon for the generated install program
    set(CPACK_NSIS_MUI_ICON ${repoDir}/win/BrewkenIcon_96.ico)
+
+   # Lists each of the executables and associated text label to be used to create Start Menu shortcuts.
+   # For example, setting this to the list ccmake;CMake would create a shortcut named "CMake" that would execute the
+   # installed executable ccmake.
+   set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable};${capitalisedProjectName}")
+
+   # List of desktop links to create. Each desktop link requires a corresponding start menu shortcut as created by
+   # CPACK_PACKAGE_EXECUTABLES.
+   set(CPACK_CREATE_DESKTOP_LINKS ${fileName_executable})
 
    # In theory CMake should work out for itself which tool to use for dependency resolution.  In practice, on Windows,
    # it seems there are issues.  In an MSYS2/MinGW environment we want to use objdump rather than the Visual Studio

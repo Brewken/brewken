@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/Database.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * database/Database.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -52,7 +52,7 @@ public:
 
    //! \brief Supported databases. I am not 100% sure I'm digging this
    //  solution, but this is more extensible than what I was doing previously
-   enum DbType {
+   enum class DbType {
       NODB = 0,  // Popularity was over rated
       SQLITE,    // compact, fast and a little loose
       PGSQL,     // big, powerful, uptight and a little stodgy
@@ -62,10 +62,10 @@ public:
    /*!
     * \brief This should be the ONLY way you get an instance.
     *
-    * \param dbType Which type of database object you want to get.  If not specified (or set to Database::NODB) then
+    * \param dbType Which type of database object you want to get.  If not specified (or set to Database::DbType::NODB) then
     *               the default configured type will be returned
     */
-   static Database& instance(Database::DbType dbType = Database::NODB);
+   static Database& instance(Database::DbType dbType = Database::DbType::NODB);
 
    /**
     * \brief Check for new default ingredients etc
@@ -153,7 +153,7 @@ public:
     * \brief Turn foreign key constraints on or off.  Typically, turning them off is only required during copying the
     *        contents of one DB to another.
     */
-   void setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DbType whichDb = Database::NODB);
+   void setForeignKeysEnabled(bool enabled, QSqlDatabase connection, Database::DbType whichDb = Database::DbType::NODB);
 
    /**
     * \brief For a given base type, return the typename to use for the corresponding columns when creating tables.
@@ -234,6 +234,12 @@ private:
    //! Load database from file.
    bool load();
 };
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, Database::DbType const dbType);
 
 namespace DatabaseHelper {
 
