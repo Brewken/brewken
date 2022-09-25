@@ -19,6 +19,7 @@
  =====================================================================================================================*/
 #include "WaterEditor.h"
 
+#include <QColorConstants>
 #include <QDebug>
 #include <QInputDialog>
 
