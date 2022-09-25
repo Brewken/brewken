@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecord.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -434,7 +434,7 @@ void XmlRecord::deleteNamedEntityFromDb() {
 XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                              QTextStream & userMessage,
                                                              ImportRecordCount & stats) {
-   if (nullptr != this->namedEntity) {
+   if (this->namedEntity) {
       qDebug() <<
          Q_FUNC_INFO << "Normalise and store " << this->namedEntityClassName << "(" <<
          this->namedEntity->metaObject()->className() << "):" << this->namedEntity->name();

@@ -253,7 +253,6 @@ public:
       FieldType             type;
       JsonXPath             xPath;
       BtStringConst const * propertyName;
-      // .:TODO:. Probably should use std::variant instead of union here!
       // The options inside valueDecoder are pointers rather than references because we store FieldDefinitions in a
       // vector, so everything needs to be copyable.
       std::variant<std::monostate,
