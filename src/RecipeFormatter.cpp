@@ -591,17 +591,17 @@ public:
       for(int ii = 0; ii < size; ++ii) {
          Hop *hop = hops[ii];
          hTable += QString("<tr><td>%1</td><td>%2%</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
-               .arg( hop->name())
-               .arg( Measurement::displayQuantity(hop->alpha_pct(), 1) )
-               .arg( Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms},
-                                                PersistentSettings::Sections::hopTable,
-                                                PropertyNames::Hop::amount_kg))
-               .arg( hop->useStringTr())
-               .arg( Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes},
-                                                PersistentSettings::Sections::hopTable,
-                                                PropertyNames::Hop::time_min))
-               .arg( hop->formStringTr())
-               .arg( Measurement::displayQuantity(rec->ibuFromHop(hop), 1) );
+               .arg(hop->name())
+               .arg(Measurement::displayQuantity(hop->alpha_pct(), 1) )
+               .arg(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms},
+                                               PersistentSettings::Sections::hopTable,
+                                               PropertyNames::Hop::amount_kg))
+               .arg(Hop::useDisplayNames[hop->use()])
+               .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes},
+                                               PersistentSettings::Sections::hopTable,
+                                               PropertyNames::Hop::time_min))
+               .arg(Hop::formDisplayNames[hop->form()])
+               .arg(Measurement::displayQuantity(rec->ibuFromHop(hop), 1) );
       }
       hTable += "</table>";
       return hTable;
@@ -634,11 +634,11 @@ public:
             amounts.append(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms},
                                                       PersistentSettings::Sections::hopTable,
                                                       PropertyNames::Hop::amount_kg));
-            uses.append(hop->useStringTr());
+            uses.append(Hop::useDisplayNames[hop->use()]);
             times.append(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes},
                                                     PersistentSettings::Sections::hopTable,
                                                     PropertyNames::Hop::time_min));
-            forms.append(hop->formStringTr());
+            forms.append(Hop::formDisplayNames[hop->form()]);
             ibus.append(QString("%1").arg( Measurement::displayQuantity(rec->ibuFromHop(hop), 1)));
          }
 
@@ -1469,10 +1469,10 @@ QString RecipeFormatter::getToolTip(Hop* hop) {
    // Second row -- form and use
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Form"))
-           .arg( hop->formStringTr() );
+           .arg(Hop::formDisplayNames[hop->form()]);
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Use"))
-           .arg( hop->useStringTr() );
+           .arg(Hop::useDisplayNames[hop->use()]);
 
    body += "</table></body></html>";
 

@@ -136,9 +136,7 @@ class Recipe : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "recipes")
 
-   friend class RecipeFormatter;
    friend class MainWindow;
-   friend class WaterDialog;
 public:
 
    Recipe(QString name);

@@ -298,7 +298,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          break;
       case HOPUSECOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->useStringTr());
+            return QVariant(Hop::useDisplayNames[row->use()]);
          }
          if (role == Qt::UserRole) {
             return QVariant(static_cast<int>(row->use()));
@@ -314,7 +314,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          break;
       case HOPFORMCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->formStringTr());
+            return QVariant(Hop::formDisplayNames[row->form()]);
          } else if (role == Qt::UserRole) {
             return QVariant(static_cast<int>(row->form()));
          }

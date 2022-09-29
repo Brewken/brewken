@@ -59,7 +59,6 @@ AddPropertyName(yield_pct)
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
-
 /*!
  * \class Fermentable
  *
@@ -69,7 +68,6 @@ class Fermentable : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "fermentables")
 
-   friend class FermentableDialog;
 public:
 
    //! \brief The type of Fermentable.

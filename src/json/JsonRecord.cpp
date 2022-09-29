@@ -387,7 +387,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                      parsedValue.setValue(value);
 
                      auto match =
-                        std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->stringToEnum(value);
+                        std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->stringToEnumAsInt(value);
                      if (!match) {
                         // This is probably a coding error as the JSON Schema should already have verified that the
                         // value is one of the expected ones.

@@ -307,12 +307,12 @@ QVariant BtTreeItem::dataHop(int column) {
          }
       case HOPFORMCOL:
          if (hop) {
-            return QVariant(hop->formStringTr());
+            return QVariant(Hop::formDisplayNames[hop->form()]);
          }
          break;
       case HOPUSECOL:
          if (hop) {
-            return QVariant(hop->useStringTr());
+            return QVariant(Hop::useDisplayNames[hop->use()]);
          }
          break;
       default :

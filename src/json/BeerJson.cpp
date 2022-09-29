@@ -373,64 +373,40 @@ namespace {
       {"Dry Hop",    Hop::Use::Dry_Hop},
       {"Mash",       Hop::Use::Mash},
       {"First Wort", Hop::Use::First_Wort},
-      {"Aroma",      Hop::Use::UseAroma}
+      {"Aroma",      Hop::Use::Aroma}
    };*/
-   EnumStringMapping const BEER_JSON_HOP_TYPE_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Hop::Type and/or combine with Hop::Use
-      {"aroma",                  Hop::Type::Aroma},
-      {"bittering",              Hop::Type::Bittering},
-//      {"flavor",                 Hop::Type::},
-      {"aroma/bittering",        Hop::Type::Both},
-//      {"bittering/flavor",       Hop::Type::},
-//      {"aroma/flavor",           Hop::Type::},
-//      {"aroma/bittering/flavor", Hop::Type::},
-
-
-      {"Bittering", Hop::Type::Bittering},
-      {"Aroma",     Hop::Type::Aroma},
-      {"Both",      Hop::Type::Both}
-   };
-   EnumStringMapping const BEER_JSON_HOP_FORM_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Hop::Form
-//      {"extract",    Hop::Form::},
-      {"leaf",       Hop::Form::Leaf},
-//      {"leaf (wet)", Hop::Form::},
-      {"pellet",     Hop::Form::Pellet},
-//      {"powder",     Hop::Form::},
-      {"plug",       Hop::Form::Plug}
-   };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopBase {
       // Type                                         XPath                                Q_PROPERTY                              Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,       "name",                              &PropertyNames::NamedEntity::name,      },
-      {JsonRecordDefinition::FieldType::String,       "producer",                          &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::String,       "product_id",                        &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordDefinition::FieldType::String,       "producer",                          &PropertyNames::Hop::producer,          },
+      {JsonRecordDefinition::FieldType::String,       "product_id",                        &PropertyNames::Hop::product_id,        },
       {JsonRecordDefinition::FieldType::String,       "origin",                            &PropertyNames::Hop::origin,            },
-      {JsonRecordDefinition::FieldType::String,       "year",                              &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::Enum,         "form",                              &PropertyNames::Hop::form,              &BEER_JSON_HOP_FORM_MAPPER},
+      {JsonRecordDefinition::FieldType::String,       "year",                              &PropertyNames::Hop::year,              }, // Yes, year really is a string, not an integer in BeerJSON.  .:TODO.JSON:. Decide int vs string ****
+      {JsonRecordDefinition::FieldType::Enum,         "form",                              &PropertyNames::Hop::form,              &Hop::formStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopType_ExclBase {
-      // Type                                            XPath                                Q_PROPERTY                              Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "alpha_acid",                        &PropertyNames::Hop::alpha_pct,         &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "beta_acid",                         &PropertyNames::Hop::beta_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::Enum,            "type",                              &PropertyNames::Hop::type,              &BEER_JSON_HOP_TYPE_MAPPER},
-      {JsonRecordDefinition::FieldType::String,          "notes",                             &PropertyNames::Hop::notes,             },
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "percent_lost",                      &PropertyNames::Hop::hsi_pct,           &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::String,          "substitutes",                       &PropertyNames::Hop::substitutes,       },
-      {JsonRecordDefinition::FieldType::Double,          "oil_content/total_oil_ml_per_100g", &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/humulene",              &PropertyNames::Hop::humulene_pct,      &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/caryophyllene",         &PropertyNames::Hop::caryophyllene_pct, &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/cohumulone",            &PropertyNames::Hop::cohumulone_pct,    &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/myrcene",               &PropertyNames::Hop::myrcene_pct,       &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/farnesene",             &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/geraniol",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/b_pinene",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/linalool",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/limonene",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/nerol",                 &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/pinene",                &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/polyphenols",           &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/xanthohumol",           &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",       &BtString::NULL_STR,                    &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
+      // Type                                            XPath                                Q_PROPERTY                                  Enum/Unit Mapper
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "alpha_acid",                        &PropertyNames::Hop::alpha_pct,             &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "beta_acid",                         &PropertyNames::Hop::beta_pct,              &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::Enum,            "type",                              &PropertyNames::Hop::type,                  &Hop::typeStringMapping},
+      {JsonRecordDefinition::FieldType::String,          "notes",                             &PropertyNames::Hop::notes,                 },
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "percent_lost",                      &PropertyNames::Hop::hsi_pct,               &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::String,          "substitutes",                       &PropertyNames::Hop::substitutes,           },
+      {JsonRecordDefinition::FieldType::Double,          "oil_content/total_oil_ml_per_100g", &PropertyNames::Hop::total_oil_ml_per_100g, },
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/humulene",              &PropertyNames::Hop::humulene_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/caryophyllene",         &PropertyNames::Hop::caryophyllene_pct,     &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/cohumulone",            &PropertyNames::Hop::cohumulone_pct,        &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/myrcene",               &PropertyNames::Hop::myrcene_pct,           &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/farnesene",             &PropertyNames::Hop::farnesene_pct,         &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/geraniol",              &PropertyNames::Hop::geraniol_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/b_pinene",              &PropertyNames::Hop::b_pinene_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/linalool",              &PropertyNames::Hop::linalool_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/limonene",              &PropertyNames::Hop::limonene_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/nerol",                 &PropertyNames::Hop::nerol_pct,             &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/pinene",                &PropertyNames::Hop::pinene_pct,            &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/polyphenols",           &PropertyNames::Hop::polyphenols_pct,       &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/xanthohumol",           &PropertyNames::Hop::xanthohumol_pct,       &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",       &BtString::NULL_STR,                        &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
    };

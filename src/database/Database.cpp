@@ -393,8 +393,10 @@ public:
    bool updateSchema(Database & database, bool* err = nullptr) {
       int currentVersion = DatabaseSchemaHelper::currentVersion( database.sqlDatabase() );
       int newVersion = DatabaseSchemaHelper::dbVersion;
-      bool doUpdate = currentVersion < newVersion;
+      qInfo() <<
+         Q_FUNC_INFO << "Schema version in DB:" << currentVersion << ", current schema version in code:" << newVersion;
 
+      bool doUpdate = currentVersion < newVersion;
       if (doUpdate) {
          bool success = DatabaseSchemaHelper::migrate(database, currentVersion, newVersion, database.sqlDatabase() );
          if (!success) {

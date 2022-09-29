@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -40,7 +40,7 @@
 #include "model/Water.h"
 #include "xml/BeerXml.h"
 
-int const DatabaseSchemaHelper::dbVersion = 10;
+int constexpr DatabaseSchemaHelper::dbVersion = 11;
 
 namespace {
    char const * const FOLDER_FOR_SUPPLIED_RECIPES = "brewken";
@@ -528,6 +528,41 @@ namespace {
       return executeSqlQueries(q, migrationQueries);
    }
 
+   /**
+    * \brief This is a lot of schema and data changes to support BeerJSON - or rather the new data structures that
+    *        BeerJSON introduces over BeerXML and what else we already had.  We also try to standardise some
+    *        serialisations across BeerJSON, DB and UI.
+    */
+   bool migrate_to_11(Database & db, BtSqlQuery q) {
+      QVector<QueryAndParameters> const migrationQueries{
+         //
+         // Hop: Extended and additional fields for BeerJSON
+         //
+         // We only need to update the old Hop type mappings.  The new ones should "just work".
+         {QString("UPDATE hop SET htype = 'aroma'           WHERE htype = 'Aroma'")},
+         {QString("UPDATE hop SET htype = 'bittering'       WHERE htype = 'Bittering'")},
+         {QString("UPDATE hop SET htype = 'aroma/bittering' WHERE htype = 'Both'")},
+         // Same applies for Hop form mappings
+         {QString("UPDATE hop SET form = 'pellet'           WHERE form = 'Pellet'")},
+         {QString("UPDATE hop SET form = 'plug'             WHERE form = 'Plug'")},
+         {QString("UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'")},
+         {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<int    >())},
+         {QString("ALTER TABLE hop ADD COLUMN total_oil_ml_per_100g %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN farnesene_pct         %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN geraniol_pct          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN b_pinene_pct          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN linalool_pct          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN limonene_pct          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN nerol_pct             %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN pinene_pct            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN polyphenols_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop ADD COLUMN xanthohumol_pct       %1").arg(db.getDbNativeTypeName<double >())},
+      };
+      return executeSqlQueries(q, migrationQueries);
+   }
+
    /*!
     * \brief Migrate from version \c oldVersion to \c oldVersion+1
     */
@@ -537,8 +572,7 @@ namespace {
       bool ret = true;
 
       // NOTE: Add a new case when adding a new schema change
-      switch(oldVersion)
-      {
+      switch(oldVersion) {
          case 1: // == '2.0.0'
             ret &= migrate_to_202(database, sqlQuery);
             break;
@@ -565,6 +599,9 @@ namespace {
             break;
          case 9:
             ret &= migrate_to_10(database, sqlQuery);
+            break;
+         case 10:
+            ret &= migrate_to_11(database, sqlQuery);
             break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);

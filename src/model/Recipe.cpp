@@ -715,7 +715,7 @@ QVector<PreInstruction> Recipe::hopSteps(Hop::Use type) {
             str = tr("Put %1 %2 into first wort for %3.");
          } else if (type == Hop::Use::Mash) {
             str = tr("Put %1 %2 into mash for %3.");
-         } else if (type == Hop::Use::UseAroma) {
+         } else if (type == Hop::Use::Aroma) {
             str = tr("Steep %1 %2 in wort for %3.");
          } else {
             qWarning() << "Recipe::hopSteps(): Unrecognized hop use.";
@@ -1111,7 +1111,7 @@ void Recipe::generateInstructions() {
 
    // Steeped aroma hops
    preinstructions.clear();
-   preinstructions += hopSteps(Hop::Use::UseAroma);
+   preinstructions += hopSteps(Hop::Use::Aroma);
    addPreinstructions(preinstructions);
 
    // Fermentation instructions

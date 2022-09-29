@@ -67,8 +67,6 @@ class Style : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "styles")
 
-
-   friend class StyleEditor;
 public:
    Style(QString t_name = "");
    Style(NamedParameterBundle const & namedParameterBundle);

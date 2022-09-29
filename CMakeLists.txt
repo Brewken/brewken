@@ -67,10 +67,12 @@
 #
 #
 # CMake options
-# If you invoke CMake directly (rather than via make), you can pass the following options with the `-D` flag:
 #   * CMAKE_INSTALL_PREFIX  - /usr/local by default. Set this to /usr on Debian-based systems like Ubuntu.
 #   * DO_RELEASE_BUILD      - OFF by default. If ON, will do a release build. Otherwise, debug build.
 #   * NO_MESSING_WITH_FLAGS - OFF by default. ON means do not add any build flags whatsoever. May override other options.
+# NOTE: You need to run CMake to change the options (you can't change them just by running make, not even by running
+# make clean.  Eg, in the build directory, run the following to switch to debug builds:
+#     cmake -DDO_RELEASE_BUILD=OFF ..
 #
 
 # Uncomment the next line for slightly verbose build output
@@ -102,12 +104,8 @@ set(capitalisedProjectName Brewken)
 #=======================================================================================================================
 #======================================================= Options =======================================================
 #=======================================================================================================================
-option(DO_RELEASE_BUILD
-        "If on, will do a release build. Otherwise, debug build."
-        OFF)
-option(NO_MESSING_WITH_FLAGS
-        "On means do not add any build flags whatsoever. May override other options."
-        OFF)
+option(DO_RELEASE_BUILD "If on, will do a release build. Otherwise, debug build." OFF)
+option(NO_MESSING_WITH_FLAGS "On means do not add any build flags whatsoever. May override other options." OFF)
 
 #=======================================================================================================================
 #===================================================== Directories =====================================================
@@ -252,7 +250,12 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       # packaging/rpmLintFilters.toml).
       #
       set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2 -z noexecstack")
-      set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3")
+      #
+      # -g3 should give even more debugging information thatn -g (which is equivalent to -g2)
+      # -no-pie -fno-pie -rdynamic are needed for Boost stacktrace to work properly - at least according to comments
+      # at https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers
+      #
+      set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie -rdynamic")
    endif()
 
    # Speed up compilation if using gcc.
@@ -358,7 +361,9 @@ if(${DO_RELEASE_BUILD})
    set(CMAKE_BUILD_TYPE "Release")
 else()
    set(CMAKE_BUILD_TYPE "Debug")
+   set(CMAKE_ENABLE_EXPORTS true)
 endif()
+message(STATUS "Doing ${CMAKE_BUILD_TYPE} build (DO_RELEASE_BUILD = ${DO_RELEASE_BUILD})")
 
 #=======================================================================================================================
 #========================================= Find various libraries we depend on =========================================

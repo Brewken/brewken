@@ -82,45 +82,65 @@ namespace {
    // Field mappings for <HOP>...</HOP> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Hop>{"HOP"};
-   EnumStringMapping const BEER_XML_HOP_USE_MAPPER {
-      {"Boil",       Hop::Use::Boil},
-      {"Dry Hop",    Hop::Use::Dry_Hop},
-      {"Mash",       Hop::Use::Mash},
-      {"First Wort", Hop::Use::First_Wort},
-      {"Aroma",      Hop::Use::UseAroma}
-   };
    EnumStringMapping const BEER_XML_HOP_TYPE_MAPPER {
-      {"Bittering", Hop::Type::Bittering},
-      {"Aroma",     Hop::Type::Aroma},
-      {"Both",      Hop::Type::Both}
+      {"Bittering",                          Hop::Type::Bittering},
+      {"Aroma",                              Hop::Type::Aroma},
+      {"Both",                               Hop::Type::AromaAndBittering},
+      // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
+      // mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {"Aroma<!--Flavor-->",                 Hop::Type::Flavor},
+      {"Both<!--BitteringAndFlavor-->",      Hop::Type::BitteringAndFlavor},
+      {"Aroma<!--AromaAndFlavor-->",         Hop::Type::AromaAndFlavor},
+      {"Both<!--AromaBitteringAndFlavor-->", Hop::Type::AromaBitteringAndFlavor}
    };
    EnumStringMapping const BEER_XML_HOP_FORM_MAPPER {
       {"Pellet", Hop::Form::Pellet},
       {"Plug",   Hop::Form::Plug},
-      {"Leaf",   Hop::Form::Leaf}
+      {"Leaf",   Hop::Form::Leaf},
+      // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
+      // mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {"Pellet<!--Extract-->", Hop::Form::Extract},
+      {"Leaf<!--WetLeaf-->",   Hop::Form::WetLeaf},
+      {"Pellet<!--Powder-->",  Hop::Form::Powder}
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
-      // Type                                  XPath             Q_PROPERTY                             Enum Mapper
-      {XmlRecord::FieldType::String,           "NAME",           PropertyNames::NamedEntity::name,      nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION",        VERSION1,                              nullptr},
-      {XmlRecord::FieldType::Double,           "ALPHA",          PropertyNames::Hop::alpha_pct,         nullptr},
-      {XmlRecord::FieldType::Double,           "AMOUNT",         PropertyNames::Hop::amount_kg,         nullptr},
-      {XmlRecord::FieldType::Enum,             "USE",            PropertyNames::Hop::use,               &BEER_XML_HOP_USE_MAPPER},
-      {XmlRecord::FieldType::Double,           "TIME",           PropertyNames::Hop::time_min,          nullptr},
-      {XmlRecord::FieldType::String,           "NOTES",          PropertyNames::Hop::notes,             nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",           PropertyNames::Hop::type,              &BEER_XML_HOP_TYPE_MAPPER},
-      {XmlRecord::FieldType::Enum,             "FORM",           PropertyNames::Hop::form,              &BEER_XML_HOP_FORM_MAPPER},
-      {XmlRecord::FieldType::Double,           "BETA",           PropertyNames::Hop::beta_pct,          nullptr},
-      {XmlRecord::FieldType::Double,           "HSI",            PropertyNames::Hop::hsi_pct,           nullptr},
-      {XmlRecord::FieldType::String,           "ORIGIN",         PropertyNames::Hop::origin,            nullptr},
-      {XmlRecord::FieldType::String,           "SUBSTITUTES",    PropertyNames::Hop::substitutes,       nullptr},
-      {XmlRecord::FieldType::Double,           "HUMULENE",       PropertyNames::Hop::humulene_pct,      nullptr},
-      {XmlRecord::FieldType::Double,           "CARYOPHYLLENE",  PropertyNames::Hop::caryophyllene_pct, nullptr},
-      {XmlRecord::FieldType::Double,           "COHUMULONE",     PropertyNames::Hop::cohumulone_pct,    nullptr},
-      {XmlRecord::FieldType::Double,           "MYRCENE",        PropertyNames::Hop::myrcene_pct,       nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT", BtString::NULL_STR,                    nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "INVENTORY",      BtString::NULL_STR,                    nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_TIME",   BtString::NULL_STR,                    nullptr}  // Extension tag
+      // Type                                  XPath                    Q_PROPERTY                             Enum Mapper
+      {XmlRecord::FieldType::String,           "NAME",                  PropertyNames::NamedEntity::name,      nullptr},
+      {XmlRecord::FieldType::RequiredConstant, "VERSION",               VERSION1,                              nullptr},
+      {XmlRecord::FieldType::Double,           "ALPHA",                 PropertyNames::Hop::alpha_pct,         nullptr},
+      {XmlRecord::FieldType::Double,           "AMOUNT",                PropertyNames::Hop::amount_kg,         nullptr},
+      {XmlRecord::FieldType::Enum,             "USE",                   PropertyNames::Hop::use,               &Hop::useStringMapping},
+      {XmlRecord::FieldType::Double,           "TIME",                  PropertyNames::Hop::time_min,          nullptr},
+      {XmlRecord::FieldType::String,           "NOTES",                 PropertyNames::Hop::notes,             nullptr},
+      {XmlRecord::FieldType::Enum,             "TYPE",                  PropertyNames::Hop::type,              &BEER_XML_HOP_TYPE_MAPPER},
+      {XmlRecord::FieldType::Enum,             "FORM",                  PropertyNames::Hop::form,              &BEER_XML_HOP_FORM_MAPPER},
+      {XmlRecord::FieldType::Double,           "BETA",                  PropertyNames::Hop::beta_pct,          nullptr},
+      {XmlRecord::FieldType::Double,           "HSI",                   PropertyNames::Hop::hsi_pct,           nullptr},
+      {XmlRecord::FieldType::String,           "ORIGIN",                PropertyNames::Hop::origin,            nullptr},
+      {XmlRecord::FieldType::String,           "SUBSTITUTES",           PropertyNames::Hop::substitutes,       nullptr},
+      {XmlRecord::FieldType::Double,           "HUMULENE",              PropertyNames::Hop::humulene_pct,      nullptr},
+      {XmlRecord::FieldType::Double,           "CARYOPHYLLENE",         PropertyNames::Hop::caryophyllene_pct, nullptr},
+      {XmlRecord::FieldType::Double,           "COHUMULONE",            PropertyNames::Hop::cohumulone_pct,    nullptr},
+      {XmlRecord::FieldType::Double,           "MYRCENE",               PropertyNames::Hop::myrcene_pct,       nullptr},
+      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",        BtString::NULL_STR,                    nullptr}, // Extension tag
+      {XmlRecord::FieldType::String,           "INVENTORY",             BtString::NULL_STR,                    nullptr}, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_TIME",          BtString::NULL_STR,                    nullptr}, // Extension tag
+      // Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML
+      {XmlRecord::FieldType::String,           "PRODUCER",              PropertyNames::Hop::producer                  },
+      {XmlRecord::FieldType::String,           "PRODUCT_ID",            PropertyNames::Hop::product_id                },
+      {XmlRecord::FieldType::Int,              "YEAR",                  PropertyNames::Hop::year                      },
+      {XmlRecord::FieldType::Double,           "TOTAL_OIL_ML_PER_100G", PropertyNames::Hop::total_oil_ml_per_100g     },
+      {XmlRecord::FieldType::Double,           "FARNESENE",             PropertyNames::Hop::farnesene_pct             },
+      {XmlRecord::FieldType::Double,           "GERANIOL",              PropertyNames::Hop::geraniol_pct              },
+      {XmlRecord::FieldType::Double,           "B_PINENE",              PropertyNames::Hop::b_pinene_pct              },
+      {XmlRecord::FieldType::Double,           "LINALOOL",              PropertyNames::Hop::linalool_pct              },
+      {XmlRecord::FieldType::Double,           "LIMONENE",              PropertyNames::Hop::limonene_pct              },
+      {XmlRecord::FieldType::Double,           "NEROL",                 PropertyNames::Hop::nerol_pct                 },
+      {XmlRecord::FieldType::Double,           "PINENE",                PropertyNames::Hop::pinene_pct                },
+      {XmlRecord::FieldType::Double,           "POLYPHENOLS",           PropertyNames::Hop::polyphenols_pct           },
+      {XmlRecord::FieldType::Double,           "XANTHOHUMOL",           PropertyNames::Hop::xanthohumol_pct           },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

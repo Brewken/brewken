@@ -331,18 +331,13 @@ QList<Measurement::UnitSystem const *> Measurement::UnitSystem::getUnitSystems(M
 }
 
 QString Measurement::UnitSystem::getUniqueName(Measurement::UnitSystem::RelativeScale relativeScale) {
-   auto result = relativeScaleToName.enumToString(relativeScale);
-   if (!result) {
-      // It's a coding error if we didn't define a name for a RelativeScale
-      qCritical() << Q_FUNC_INFO << "Unable to find a name for RelativeScale #" << relativeScale;
-      Q_ASSERT(false); // Stop here on a debug build
-   }
-
-   return *result;
+   // It's a coding error if we define a name for a RelativeScale (in which case EnumStringMapping::enumToString will
+   // log an error and throw an exception).
+   return relativeScaleToName.enumToString(relativeScale);
 }
 
 std::optional<Measurement::UnitSystem::RelativeScale> Measurement::UnitSystem::getScaleFromUniqueName(QString relativeScaleAsString) {
-   return relativeScaleToName.stringToEnum<Measurement::UnitSystem::RelativeScale>(relativeScaleAsString);
+   return relativeScaleToName.stringToEnumOrNull<Measurement::UnitSystem::RelativeScale>(relativeScaleAsString);
 }
 
 template<class S>

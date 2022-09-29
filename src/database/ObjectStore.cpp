@@ -229,7 +229,7 @@ namespace {
       }
 
       QString stringValue = valueFromDb.toString();
-      auto match = fieldDefn.enumMapping->stringToEnum(stringValue);
+      auto match = fieldDefn.enumMapping->stringToEnumAsInt(stringValue);
       // If we didn't find a match, its either a coding error or someone messed with the DB data
       if (!match) {
          qCritical() <<
@@ -249,11 +249,9 @@ namespace {
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
 
-      auto match = fieldDefn.enumMapping->enumToString(propertyValue.toInt());
-      // It's a coding error if we couldn't find a match
-      Q_ASSERT(match);
-
-      return match.value();
+      // It's a coding error if we couldn't find a match (in which case EnumStringMapping::enumToString will log an
+      // error and throw an exception).
+      return fieldDefn.enumMapping->enumToString(propertyValue.toInt());
    }
 
    //
