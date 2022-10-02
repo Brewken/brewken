@@ -62,8 +62,6 @@ public:
 
 };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 JsonCoding::JsonCoding(char const * name,
                        char const * const version,
                        JsonSchema::Id const schemaId,
@@ -74,7 +72,8 @@ JsonCoding::JsonCoding(char const * name,
    return;
 }
 
-// See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header file)
+// See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header
+// file)
 JsonCoding::~JsonCoding() = default;
 
 [[nodiscard]] bool JsonCoding::isKnownJsonRecordDefinition(QString recordName) const {
@@ -180,7 +179,7 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
    boost::json::object const & rootRecordDataObject = rootRecordData.as_object();
    qDebug() << Q_FUNC_INFO << "Root record contains" << rootRecordData.as_object().size() << "elements";
 
-
+   //
    // Now we've loaded the JSON document into memory and determined that it's valid against its schema, we need to
    // extract the data from it
    //
@@ -310,7 +309,8 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
    for (auto ii : rootRecordDataObject) {
       // .:TODO:. This gives keys but not values...
       boost::json::value const & val = ii.value();
-      qDebug() << Q_FUNC_INFO << "Key" << ii.key().data() << "(" << val.kind() << ")" << val;
+      // Uncomment the next line for targeted debugging, but not generally as, for a large input file, you'll get a massive log statement!
+      //qDebug() << Q_FUNC_INFO << "Key" << ii.key().data() << "(" << val.kind() << ")" << val;
       if (val.is_string()) {
          qDebug() << Q_FUNC_INFO << "Value" << val.as_string().c_str();
       } else if (val.is_double()) {

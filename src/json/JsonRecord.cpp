@@ -341,8 +341,23 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             bool parsedValueOk = false;
             QVariant parsedValue;
 
+            //
             // JSON Schema validation should have ensured this field really is what we're expecting, so it's a coding
             // error if it's not, which is what most of the asserts below are saying.
+            //
+            // HOWEVER, note that we need to take care with numeric types.  JSON only has one base numeric type
+            // (number).  Boost.JSON handles this correctly but also offers access to the underlying type it has used to
+            // store the number (std::int64_t, std::uint64_t or double).  So, eg, you can first call
+            // container->is_double() to check whether the underlying storage is double and then, if that returns true,
+            // call container->get_double() to get the value.  This seems like an attractive short-cut (which it is when
+            // you have full control over the JSON input) but in can catch you out.  Eg if a field that usually has a
+            // decimal point happens to be an integer and was stored (validly) without the decimal point in the JSON
+            // file, then Boost.JSON will put it in eg std::int64_t rather than double, and get_double() will barf an
+            // assertion failure.
+            //
+            // The correct thing to do for general purpose handling is to assert is_number() and use the templated
+            // to_number() function to get back the type WE want rather than Boost.JSON's internal storage type.
+            //
             switch(fieldDefinition.type) {
 
                case JsonRecordDefinition::FieldType::Bool:
@@ -352,20 +367,20 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   break;
 
                case JsonRecordDefinition::FieldType::Int:
-                  Q_ASSERT(container->is_int64());
-                  parsedValue.setValue(container->get_int64());
+                  Q_ASSERT(container->is_number());
+                  parsedValue.setValue(container->to_number<std::int64_t>());
                   parsedValueOk = true;
                   break;
 
                case JsonRecordDefinition::FieldType::UInt:
-                  Q_ASSERT(container->is_uint64());
-                  parsedValue.setValue(container->get_uint64());
+                  Q_ASSERT(container->is_number());
+                  parsedValue.setValue(container->to_number<std::uint64_t>());
                   parsedValueOk = true;
                   break;
 
                case JsonRecordDefinition::FieldType::Double:
-                  Q_ASSERT(container->is_double());
-                  parsedValue.setValue(container->get_double());
+                  Q_ASSERT(container->is_number());
+                  parsedValue.setValue(container->to_number<double>());
                   parsedValueOk = true;
                   break;
 
