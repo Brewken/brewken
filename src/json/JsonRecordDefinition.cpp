@@ -34,63 +34,6 @@ namespace {
    };
 }
 
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
-                                                       char const *              xPath,
-                                                       BtStringConst const *     propertyName,
-                                                       EnumStringMapping const * enumMapping) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{enumMapping} {
-   return;
-}
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                           type,
-                                                       char const *                        xPath,
-                                                       BtStringConst const *               propertyName,
-                                                       JsonMeasureableUnitsMapping const * unitsMapping) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{unitsMapping} {
-   return;
-}
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                                  type,
-                                                       char const *                               xPath,
-                                                       BtStringConst const *                      propertyName,
-                                                       ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{listOfUnitsMappings} {
-   return;
-}
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                       type,
-                                                       char const *                    xPath,
-                                                       BtStringConst const *           propertyName,
-                                                       JsonSingleUnitSpecifier const * singleUnitSpecifier) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{singleUnitSpecifier} {
-   return;
-}
-
-
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
-                                                       char const *              xPath,
-                                                       BtStringConst const *     propertyName) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{} {
-   return;
-}
-
-
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,
    char const * const namedEntityClassName,

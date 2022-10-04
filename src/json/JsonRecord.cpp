@@ -338,6 +338,10 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // If it's not an array then it's fields on the object we're currently populating
             //
 
+            // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
+            // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
+            Q_ASSERT(fieldDefinition.propertyName);
+
             bool parsedValueOk = false;
             QVariant parsedValue;
 
@@ -516,12 +520,42 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                      fieldDefinition.xPath << "=" << *container << "(" << *fieldDefinition.propertyName <<
                      ") as not useful";
                   continue; // NB: _NOT_break here.  We want to jump straight to the next run through the for loop.
+
+               // Don't need a default case.  Compiler should warn us if we didn't have a case for one of the
+               // JsonRecordDefinition::FieldType values.  This is one of the benefits of strongly-typed enums
             }
-            ///*********************TODO FINISH THIS!**************************
-            /*
-             */
+
+            //
+            // What we do if we couldn't parse the value depends.  If it was a value that we didn't need to set on
+            // the supplied Hop/Yeast/Recipe/Etc object, then we can just ignore the problem and carry on processing.
+            // But, if this was a field we were expecting to use, then it's a problem that we couldn't parse it and
+            // we should bail.
+            //
+            if (!parsedValueOk && !fieldDefinition.propertyName->isNull()) {
+               userMessage <<
+                  "Could not parse " << this->recordDefinition.namedEntityClassName << " node " <<
+                  fieldDefinition.xPath << "=" << *container << " into " << *fieldDefinition.propertyName;
+               return false;
+            }
+
+            //
+            // So we've either parsed the value OK or we don't need it (or both)
+            //
+            // If we do need it, we now store the value
+            //
+            if (!fieldDefinition.propertyName->isNull()) {
+               this->namedParameterBundle.insert(*fieldDefinition.propertyName, parsedValue);
+            }
          }
       }
+   }
+
+   //
+   // For everything but the root record, we now construct a suitable object (Hop, Recipe, etc) from the
+   // NamedParameterBundle (which will be empty for the root record).
+   //
+   if (!this->namedParameterBundle.isEmpty()) {
+      this->constructNamedEntity();
    }
 
    return true;

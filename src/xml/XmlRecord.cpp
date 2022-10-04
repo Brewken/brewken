@@ -199,8 +199,8 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         // This is almost certainly a coding error, as we should have already validated that the field
                         // via XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as BOOLEAN";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as BOOLEAN";
                      }
                      break;
 
@@ -208,11 +208,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      // QString's toInt method will report success/failure of parsing straight back into our flag
                      parsedValue.setValue(value.toInt(&parsedValueOk));
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
+                        // This is almost certainly a coding error, as we should have already validated the field via
+                        // XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as integer";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as integer";
                      }
                      break;
 
@@ -220,11 +220,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      // QString's toUInt method will report success/failure of parsing straight back into our flag
                      parsedValue.setValue(value.toUInt(&parsedValueOk));
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
+                        // This is almost certainly a coding error, as we should have already validated the field via
+                        // XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as unsigned integer";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as unsigned integer";
                      }
                      break;
 
@@ -244,8 +244,8 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         // and should be interpreted as NULL, which therefore means we store 0.0.
                         //
                         qInfo() <<
-                           Q_FUNC_INFO << "Treating " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as 0.0";
+                           Q_FUNC_INFO << "Treating " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as 0.0";
                         parsedValue.setValue(0.0);
                         parsedValueOk = true;
                      }
@@ -290,7 +290,8 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                            //
                            // Try USA / Philippines numeric format next, though NB this could mis-parse some
                            // non-USA-format dates per example above.  (Historically we assumed USA format dates before
-                           // non-USA-format ones, so we're retaining existing behaviour by trying things in this order.)
+                           // non-USA-format ones, so we're retaining existing behaviour by trying things in this
+                           // order.)
                            date = QDate::fromString(value, "M/d/yyyy");
                            parsedValueOk = date.isValid();
                         }
@@ -318,11 +319,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         parsedValue.setValue(date);
                      }
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
+                        // This is almost certainly a coding error, as we should have already validated the field via
+                        // XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as ISO 8601 date";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as ISO 8601 date";
                      }
                      break;
 
@@ -377,15 +378,15 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                }
 
                //
-               // What we do if we couldn't parse the value depends.  If it was a value that we didn't need to set on the
-               // supplied Hop/Yeast/Recipe/Etc object, then we can just ignore the problem and carry on processing.  But,
-               // if this was a field we were expecting to use, then it's a problem that we couldn't parse it and we should
-               // bail.
+               // What we do if we couldn't parse the value depends.  If it was a value that we didn't need to set on
+               // the supplied Hop/Yeast/Recipe/Etc object, then we can just ignore the problem and carry on processing.
+               // But, if this was a field we were expecting to use, then it's a problem that we couldn't parse it and
+               // we should bail.
                //
-               if (!parsedValueOk && nullptr != fieldDefinition->propertyName) {
+               if (!parsedValueOk && !fieldDefinition->propertyName.isNull()) {
                   userMessage <<
-                     "Could not parse " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" << value << " into " <<
-                     fieldDefinition->propertyName;
+                     "Could not parse " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
+                     value << " into " << fieldDefinition->propertyName;
                   return false;
                }
 
