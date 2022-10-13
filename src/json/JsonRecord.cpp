@@ -62,9 +62,11 @@ namespace {
       // Read the value and unit fields.  We assert that they exist and are of the correct type (double and string
       // respectively) because this should have been enforced already by JSON schema validation.
       //
-      qDebug() <<
-         Q_FUNC_INFO << "Reading" << valueField << "and" << unitField << "sub-fields from" << xPath << "record:" <<
-         *recordData;
+
+      // Usually leave next line commented as otherwise generates too much logging
+//      qDebug() <<
+//         Q_FUNC_INFO << "Reading" << valueField << "and" << unitField << "sub-fields from" << xPath << "record:" <<
+//         *recordData;
 
       std::error_code errCode;
       boost::json::value const * valueRaw = recordData->find_pointer(valueField.asJsonPtr(), errCode);
@@ -74,7 +76,9 @@ namespace {
          return false;
       }
       Q_ASSERT(valueRaw);
-      qDebug() << Q_FUNC_INFO << "Raw Value=" << *valueRaw << "(" << valueRaw->kind() << ")";
+      // Usually leave next line commented as otherwise generates too much logging
+//      qDebug() << Q_FUNC_INFO << "Raw Value=" << *valueRaw << "(" << valueRaw->kind() << ")";
+
       // The JSON type should be number.  Boost.JSON will have chosen either double or int64  (or conceivably uint64) to
       // store the number, depending eg on whether it has a decimal separator.  So we cannot assert that
       // valueRaw->is_double().  Fortunately, Boost.JSON helps us with the necessary casting.
@@ -89,7 +93,8 @@ namespace {
             xPath << " (" << type << "): " << errCode;
          return false;
       }
-      qDebug() << Q_FUNC_INFO << "Value=" << value;
+      // Usually leave next line commented as otherwise generates too much logging
+//      qDebug() << Q_FUNC_INFO << "Value=" << value;
 
       boost::json::value const * unitNameRaw = recordData->find_pointer(unitField.asJsonPtr(), errCode);
       if (errCode) {
@@ -101,7 +106,8 @@ namespace {
       Q_ASSERT(unitNameRaw->is_string());
       unitName = unitNameRaw->get_string().c_str();
 
-      qDebug() << Q_FUNC_INFO << "Read" << xPath << " (" << type << ") as" << value << " " << unitName;
+      // Usually leave next line commented as otherwise generates too much logging
+//      qDebug() << Q_FUNC_INFO << "Read" << xPath << " (" << type << ") as" << value << " " << unitName;
       return true;
    }
 
@@ -299,6 +305,8 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
    // Loop through all the fields that we know/care about.  Anything else is intentionally ignored.  (We won't know
    // what to do with it, and, if it weren't allowed to be there, it would have generated an error at XSD parsing.)
    //
+   qDebug() <<
+      Q_FUNC_INFO << "Examining" << this->recordDefinition.fieldDefinitions.size() << "field definitions";
    for (auto & fieldDefinition : this->recordDefinition.fieldDefinitions) {
       //
       // NB: As with XML processing in XmlRecord::load, if we don't find a node, there's nothing for us to do.  The
@@ -309,11 +317,14 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
       boost::json::value const * container = this->recordData.find_pointer(fieldDefinition.xPath.asJsonPtr(),
                                                                            errorCode);
       if (!container) {
-         // As noted above this is usually not an error, but sometimes useful to log for debugging
+         // As noted above this is usually not an error, but _sometimes_ useful to log for debugging.  Usually leave
+         // this logging commented out though as otherwise it fills up the log files
          qDebug() <<
             Q_FUNC_INFO << fieldDefinition.xPath << " (" << fieldDefinition.type << ") not present (error code " <<
             errorCode.value() << ":" << errorCode.message().c_str() << ")";
       } else {
+         // Again, it can be useful to uncomment this logging statement for debugging, but usually we don't want it
+         // taking up space in the log files.
          qDebug() <<
             Q_FUNC_INFO << "Found" << fieldDefinition.xPath << " (" << fieldDefinition.type << "/" <<
             container->kind() << ")";
@@ -328,7 +339,8 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             //
             Q_ASSERT(container->is_array());
             boost::json::array const & childRecordsData = container->get_array();
-            if (!this->loadChildRecords(this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath.asXPath_c_str()),
+            if (!this->loadChildRecords(fieldDefinition,
+                                        this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath.asXPath_c_str()),
                                         childRecordsData,
                                         userMessage)) {
                return false;
@@ -565,6 +577,10 @@ void JsonRecord::constructNamedEntity() {
    // Base class does not have a NamedEntity or a container, so nothing to do
    // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
    // NamedEntity, and subclasses that do have one should override this function.
+   qCritical() <<
+      Q_FUNC_INFO << this->recordDefinition.namedEntityClassName << "this->namedParameterBundle:" <<
+      this->namedParameterBundle;
+   qDebug().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
    Q_ASSERT(false && "Trying to construct named entity for base record");
    return;
 }
@@ -579,12 +595,15 @@ void JsonRecord::deleteNamedEntityFromDb() {
    return;
 }
 
-/*JsonRecord::ProcessingResult JsonRecord::normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
-                                                             QTextStream & userMessage,
-                                                             ImportRecordCount & stats) {
+[[nodiscard]] JsonRecord::ProcessingResult JsonRecord::normaliseAndStoreInDb(
+   std::shared_ptr<NamedEntity> containingEntity,
+   QTextStream & userMessage,
+   ImportRecordCount & stats
+) {
+   qDebug() << Q_FUNC_INFO;
    if (nullptr != this->namedEntity) {
       qDebug() <<
-         Q_FUNC_INFO << "Normalise and store " << this->namedEntityClassName << "(" <<
+         Q_FUNC_INFO << "Normalise and store " << this->recordDefinition.namedEntityClassName << "(" <<
          this->namedEntity->metaObject()->className() << "):" << this->namedEntity->name();
 
       //
@@ -598,10 +617,10 @@ void JsonRecord::deleteNamedEntityFromDb() {
       //
       if (this->isDuplicate()) {
          qDebug() <<
-            Q_FUNC_INFO << "(Early found) duplicate" << this->namedEntityClassName <<
+            Q_FUNC_INFO << "(Early found) duplicate" << this->recordDefinition.namedEntityClassName <<
             (this->includeInStats ? " will" : " won't") << " be included in stats";
          if (this->includeInStats) {
-            stats.skipped(this->namedEntityClassName.toLower());
+            stats.skipped(*this->recordDefinition.namedEntityClassName);
          }
          return JsonRecord::ProcessingResult::FoundDuplicate;
       }
@@ -654,13 +673,13 @@ void JsonRecord::deleteNamedEntityFromDb() {
       //
       if (JsonRecord::ProcessingResult::FoundDuplicate == processingResult) {
          qDebug() <<
-            Q_FUNC_INFO << "(Late found) duplicate" << this->namedEntityClassName <<
+            Q_FUNC_INFO << "(Late found) duplicate" << this->recordDefinition.namedEntityClassName <<
             (this->includeInStats ? " will" : " won't") << " be included in stats";
          if (this->includeInStats) {
-            stats.skipped(this->namedEntityClassName.toLower());
+            stats.skipped(*this->recordDefinition.namedEntityClassName);
          }
       } else if (JsonRecord::ProcessingResult::Succeeded == processingResult && this->includeInStats) {
-         stats.processedOk(this->namedEntityClassName.toLower());
+         stats.processedOk(*this->recordDefinition.namedEntityClassName);
       }
 
       //
@@ -678,36 +697,38 @@ void JsonRecord::deleteNamedEntityFromDb() {
          // result in those 2 stored MashSteps getting deleted from the DB.)
          //
          qDebug() <<
-            Q_FUNC_INFO << "Deleting stored" << this->namedEntityClassName << "as" <<
+            Q_FUNC_INFO << "Deleting stored" << this->recordDefinition.namedEntityClassName << "as" <<
             (JsonRecord::ProcessingResult::FoundDuplicate == processingResult ? "duplicate" : "failed to read all child records");
          this->deleteNamedEntityFromDb();
       }
    }
 
    return processingResult;
-}*/
+}
 
 
-/*bool JsonRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
-                                                  ImportRecordCount & stats) {
+[[nodiscard]] bool JsonRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
+                                                                 ImportRecordCount & stats) {
+   qDebug() << Q_FUNC_INFO << this->childRecords.size() << "child records";
    //
    // We are assuming it does not matter which order different children are processed in.
    //
    // Where there are several children of the same type, we need to process them in the same order as they were read in
    // from the JSON document because, in some cases, this order matters.  In particular, in BeerJSON, the Mash Steps
    // inside a Mash (or rather MASH_STEP tags inside a MASH_STEPS tag inside a MASH tag) are stored in order without any
-   // other means of identifying order.
+   // other means of identifying order. *** TODO Not sure this is true for BeerJSON ***
    //
    // So it's simplest just to process all the child records in the order they were read out of the JSON document.  This
-   // is the advantage of storing things in a list such as QVector.  (Alternatives such as QMultiHash iterate through
-   // items that share the same key in the opposite order to which they were inserted and don't offer STL reverse
-   // iterators, so going backwards would be a bit clunky.)
+   // is the advantage of storing things in a list such as std::vector.  (Alternatives such as QMultiHash iterate
+   // through items that share the same key in the opposite order to which they were inserted and don't offer STL
+   // reverse iterators, so going backwards would be a bit clunky.)
    //
-   for (auto ii = this->childRecords.begin(); ii != this->childRecords.end(); ++ii) {
+   for (auto child = this->childRecords.begin(); child != this->childRecords.end(); ++child) {
       qDebug() <<
-         Q_FUNC_INFO << "Storing" << ii->jsonRecord->namedEntityClassName << "child of" << this->namedEntityClassName;
+         Q_FUNC_INFO << "Storing" << child->record->recordDefinition.namedEntityClassName << "child of" <<
+         this->recordDefinition.namedEntityClassName;
       if (JsonRecord::ProcessingResult::Failed ==
-         ii->jsonRecord->normaliseAndStoreInDb(this->namedEntity, userMessage, stats)) {
+         child->record->normaliseAndStoreInDb(this->namedEntity, userMessage, stats)) {
          return false;
       }
       //
@@ -716,58 +737,70 @@ void JsonRecord::deleteNamedEntityFromDb() {
       // the style on a recipe), then we can just do that here.  Otherwise the work needs to be done in the appropriate
       // subclass of JsonNamedEntityRecord.
       //
-      // We can't use the presence or absence of a property name to determine whether the child record can be set via
-      // a property because some properties are read-only (and need to be present in the FieldDefinition for export to
-      // JSON to work).  Instead we distinguish between two types of records: RecordSimple, which can be set via a
-      // property, and RecordComplex, which can't.
+      // We can't just use the presence or absence of a property name to determine whether the child record can be set
+      // via a property.  It's a necessary but not sufficient condition.  This is because some properties are read-only
+      // in the code (eg because they are calculated values) but need to be present in the FieldDefinition for export to
+      // JSON to work.  However, we can tell whether a property is read-only by calling QMetaProperty::isWritable().
       //
-      if (JsonRecord::FieldType::RecordSimple == ii->fieldDefinition->type) {
-         char const * const propertyName = *ii->fieldDefinition->propertyName;
-         Q_ASSERT(nullptr != propertyName);
+      BtStringConst const & propertyName = *child->parentFieldDefinition->propertyName;
+      if (!propertyName.isNull()) {
          // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
          // (ie for the root record).
          Q_ASSERT(nullptr != this->namedEntity.get());
          // It's a coding error if we're trying to set a non-existent property on the NamedEntity subclass for this
          // record.
          QMetaObject const * metaObject = this->namedEntity->metaObject();
-         int propertyIndex = metaObject->indexOfProperty(propertyName);
+         int propertyIndex = metaObject->indexOfProperty(*propertyName);
          Q_ASSERT(propertyIndex >= 0);
          QMetaProperty metaProperty = metaObject->property(propertyIndex);
-         Q_ASSERT(metaProperty.isWritable());
-         // It's a coding error if we can't create a valid QVariant from a pointer to class we are trying to "set"
-         Q_ASSERT(QVariant::fromValue(ii->jsonRecord->namedEntity.get()).isValid());
+         if (metaProperty.isWritable()) {
+            // It's a coding error if we can't create a valid QVariant from a pointer to class we are trying to "set"
+            Q_ASSERT(QVariant::fromValue(child->record->namedEntity.get()).isValid());
 
-         qDebug() <<
-            Q_FUNC_INFO << "Setting" << propertyName << "property (type = " <<
-            this->namedEntity->metaObject()->property(
-               this->namedEntity->metaObject()->indexOfProperty(propertyName)
-            ).typeName() << ") on" << this->namedEntityClassName << "object";
-         this->namedEntity->setProperty(propertyName,
-                                        QVariant::fromValue(ii->jsonRecord->namedEntity.get()));
+            qDebug() <<
+               Q_FUNC_INFO << "Setting" << propertyName << "property (type = " <<
+               this->namedEntity->metaObject()->property(
+                  this->namedEntity->metaObject()->indexOfProperty(*propertyName)
+               ).typeName() << ") on" << this->recordDefinition.namedEntityClassName << "object";
+            this->namedEntity->setProperty(*propertyName, QVariant::fromValue(child->record->namedEntity.get()));
+         } else {
+            qDebug() << Q_FUNC_INFO << "Skipping non-writeable" << propertyName << "property (type = " <<
+               this->namedEntity->metaObject()->property(
+                  this->namedEntity->metaObject()->indexOfProperty(*propertyName)
+               ).typeName() << ") on" << this->recordDefinition.namedEntityClassName << "object";
+         }
       }
    }
    return true;
-}*/
+}
 
 
-[[nodiscard]] bool JsonRecord::loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+[[nodiscard]] bool JsonRecord::loadChildRecords(JsonRecordDefinition::FieldDefinition const & parentFieldDefinition,
+                                                JsonRecordDefinition const & childRecordDefinition,
                                                 boost::json::array const & childRecordsData,
                                                 QTextStream & userMessage) {
+   qDebug() << Q_FUNC_INFO;
    //
    // This is where we have a list of one or more substantive records of a particular type, which may be either at top
    // level (eg hop_varieties) or inside another record that we are in the process of reading (eg hop_additions inside a
    // recipe).  Either way, we need to loop though these "child" records and read each one in with an JsonRecord object
    // of the relevant type.
    //
-   for (auto & value : childRecordsData) {
+   for (auto & recordData : childRecordsData) {
       // Iterating through an array gives us boost::json::value objects
       // We assert that these are boost::json::object key:value containers (because we don't use arrays of other types)
-      Q_ASSERT(value.is_object());
-//      boost::json::object const & recordData = value.get_object();
-      JsonRecord childRecord{this->jsonCoding, value, childRecordDefinition};
-      if (!childRecord.load(userMessage)) {
+      Q_ASSERT(recordData.is_object());
+
+
+      auto constructorWrapper = childRecordDefinition.jsonRecordConstructorWrapper;
+
+      JsonRecord::ChildRecord childRecord{&parentFieldDefinition,
+                                          constructorWrapper(this->jsonCoding, recordData, childRecordDefinition)};
+
+      if (!childRecord.record->load(userMessage)) {
          return false;
       }
+      this->childRecords.push_back(std::move (childRecord));
    }
 
    return true;
@@ -977,17 +1010,18 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
 }
 
 void JsonRecord::subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
-                               JsonRecord const & subRecord,
-                               NamedEntity const & namedEntityToExport,
-                               QTextStream & out,
-                               int indentLevel,
-                               char const * const indentString) const {
+                                 JsonRecord const & subRecord,
+                                 NamedEntity const & namedEntityToExport,
+                                 QTextStream & out,
+                                 int indentLevel,
+                                 char const * const indentString) const {
    // Base class does not know how to handle nested records
-   // It's a coding error if we get here as this virtual member function should be overridden classes that have nested records
+   // It's a coding error if we get here as this virtual member function should be overridden classes that have nested
+   // records
    qCritical() << Q_FUNC_INFO <<
       "Coding error: cannot export" << namedEntityToExport.metaObject()->className() << "(" <<
-      this->recordDefinition.namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" << fieldDefinition.xPath <<
-      "> from base class JsonRecord";
+      this->recordDefinition.namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" <<
+      fieldDefinition.xPath << "> from base class JsonRecord";
    Q_ASSERT(false);
    return;
 }

@@ -54,7 +54,9 @@ bool ImportRecordCount::writeToUserMessage(QTextStream & userMessage) {
          if (0 != typesOfRecordsRead) {
             userMessage << ", ";
          }
-         userMessage << ii.value() << " " << ii.key();
+         // NB key will typically be class name, so force lower case in the output to get "3 hop records" rather than
+         // "3 Hop records" etc.
+         userMessage << ii.value() << " " << ii.key().toLower();
          totalRecordsRead += ii.value();
       }
       userMessage << (1 == totalRecordsRead ? this->tr(" record") : this->tr(" records"));
@@ -74,7 +76,9 @@ bool ImportRecordCount::writeToUserMessage(QTextStream & userMessage) {
          if (0 != typesOfRecordsSkipped) {
             userMessage << ", ";
          }
-         userMessage << ii.value() << " " << ii.key();
+         // NB key will typically be class name, so force lower case in the output to get "3 hop records" rather than
+         // "3 Hop records" etc.
+         userMessage << ii.value() << " " << ii.key().toLower();
          totalRecordsSkipped += ii.value();
       }
       userMessage <<

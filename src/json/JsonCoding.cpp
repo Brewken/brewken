@@ -133,17 +133,6 @@ JsonRecordDefinition const & JsonCoding::getJsonRecordDefinitionByNamedEntity(QS
    return *result;
 }
 
-
-/*std::shared_ptr<JsonRecord> JsonCoding::getNewJsonRecord(QString recordName) const {
-   JsonCoding::JsonRecordConstructorWrapper constructorWrapper =
-      this->pimpl->entityNameToJsonRecordDefinition.value(recordName).constructorWrapper;
-
-   JsonRecordDefinition::FieldDefinitions const * fieldDefinitions =
-      this->pimpl->entityNameToJsonRecordDefinition.value(recordName).fieldDefinitions;
-
-   return std::shared_ptr<JsonRecord>(constructorWrapper(recordName, *this, *fieldDefinitions));
-}*/
-
 bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocument,
                                           QTextStream & userMessage) const {
    try {
@@ -176,7 +165,6 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
 
    boost::json::value const & rootRecordData = *documentRoot.if_contains("beerjson"); //documentRoot["beerjson"];
    Q_ASSERT(rootRecordData.is_object());
-   boost::json::object const & rootRecordDataObject = rootRecordData.as_object();
    qDebug() << Q_FUNC_INFO << "Root record contains" << rootRecordData.as_object().size() << "elements";
 
    //
@@ -199,30 +187,43 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
    if (!rootRecord.load(userMessage)) {
       return false;
    }
-   qDebug() << Q_FUNC_INFO << "Root record contains" << rootRecordData.as_object().size() << "elements";
+   qDebug() << Q_FUNC_INFO;
+
+   // At the root level, Succeeded and FoundDuplicate are both OK return values.  It's only Failed that indicates an
+   // error (rather than in info) message for the user in userMessage.
+   if (JsonRecord::ProcessingResult::Failed == rootRecord.normaliseAndStoreInDb(nullptr, userMessage, stats)) {
+      return false;
+   }
+
+   // Everything went OK - unless we found no content to read.
+   // Summarise what we read in into the message displayed on-screen to the user, and return false if no content,
+   // true otherwise
+   return stats.writeToUserMessage(userMessage);
+
+
+
+
+
+
+
 
 ////////////////////////////
-//      std::shared_ptr<XmlRecord> rootRecord = xmlCoding->getNewXmlRecord(rootNodeName);
 //
-//      ImportRecordCount stats;
+// DELETE ALL THE BELOW I THINK!
 //
-//      if (!rootRecord->load(domSupport, rootNode, userMessage)) {
-//         return false;
-//      }
 //
-//      // At the root level, Succeeded and FoundDuplicate are both OK return values.  It's only Failed that indicates an
-//      // error (rather than in info) message for the user in userMessage.
-//      if (XmlRecord::ProcessingResult::Failed == rootRecord->normaliseAndStoreInDb(nullptr, userMessage, stats)) {
-//         return false;
-//      }
 //
-//      // Everything went OK - unless we found no content to read.
-//      // Summarise what we read in into the message displayed on-screen to the user, and return false if no content,
-//      // true otherwise
-//      return stats.writeToUserMessage(userMessage);
+//
+//
+//
+//
+//
+//
 //
 /////////////////////////////
 
+/*
+   boost::json::object const & rootRecordDataObject = rootRecordData.as_object();
    for (auto & fieldDefinition : rootDefinition.fieldDefinitions) {
 //      qDebug() << Q_FUNC_INFO << "Looking at" << fieldDefinition.xPath;
       boost::json::value const * container = rootRecordDataObject.if_contains(fieldDefinition.xPath.asJsonPtr());
@@ -256,7 +257,7 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
 
       }
    }
-
+*/
 
    // TBD the rest of this stuff is old diagnostic and can probably be binned once we have the main implementation done
 
@@ -296,17 +297,19 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
          }
       }
    }*/
-
+/*
    // Version is a JSON number (in JavaScript’s double-precision floating-point format)
    Q_ASSERT(rootRecordDataObject.contains("version"));
    boost::json::string const * bjVersion = rootRecordDataObject.if_contains("version")->if_string();
    if (bjVersion) {
       qDebug() << Q_FUNC_INFO << "Version" << bjVersion->c_str();
    }
+   */
 /*      std::string bjv2 = boost::json::value_to<std::string>(rootRecordData["version"]);
    qDebug() << Q_FUNC_INFO << "Version" << bjv2.c_str();
 */
-   for (auto ii : rootRecordDataObject) {
+/*
+for (auto ii : rootRecordDataObject) {
       // .:TODO:. This gives keys but not values...
       boost::json::value const & val = ii.value();
       // Uncomment the next line for targeted debugging, but not generally as, for a large input file, you'll get a massive log statement!
@@ -317,7 +320,7 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
          qDebug() << Q_FUNC_INFO << "Value" << val.as_double();
       }
    }
-
+*/
    /////
 
    userMessage << "BeerJSON support is not yet complete!";

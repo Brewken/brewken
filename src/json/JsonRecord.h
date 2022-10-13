@@ -18,17 +18,18 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <boost/json/object.hpp>
 #include <boost/json/array.hpp>
 
 #include <QTextStream>
-#include <QVector>
 
 #include "json/JsonRecordDefinition.h"
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/ImportRecordCount.h"
 
 class JsonCoding;
 
@@ -130,16 +131,15 @@ public:
     * \return \b Succeeded, if processing succeeded, \b Failed, if there was an unresolvable problem, \b FoundDuplicate
     *         if the current record is a duplicate of one already in the DB and should be skipped.
     */
-///   virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
-///                                                  QTextStream & userMessage,
-///                                                  JsonRecordCount & stats);
+   [[nodiscard]] virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
+                                                                QTextStream & userMessage,
+                                                                ImportRecordCount & stats);
    /**
     * \brief Export to JSON
     * \param namedEntityToExport The object that we want to export to JSON
     * \param out Where to write the JSON
     */
-   void toJson(NamedEntity const & namedEntityToExport,
-              QTextStream & out) const;
+   void toJson(NamedEntity const & namedEntityToExport, QTextStream & out) const;
 
 private:
    /**
@@ -147,7 +147,8 @@ private:
     *        process (eg Hop records inside a Recipe).  But the algorithm for processing is generic, so we implement it
     *        in this base class.
     */
-   [[nodiscard]] bool loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
+   [[nodiscard]] bool loadChildRecords(JsonRecordDefinition::FieldDefinition const & parentFieldDefinition,
+                                       JsonRecordDefinition const & childRecordDefinition,
                                        boost::json::array const & childRecordsData,
                                        QTextStream & userMessage);
 
@@ -172,8 +173,7 @@ public:
    virtual void deleteNamedEntityFromDb();
 
 protected:
-///   bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
-///                                          JsonRecordCount & stats);
+   [[nodiscard]] bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage, ImportRecordCount & stats);
 
    /**
     * \brief Checks whether the \b NamedEntity for this record is, in all the ways that count, a duplicate of one we
@@ -264,10 +264,23 @@ protected:
    // Keep track of any child (ie contained) records
    //
    struct ChildRecord {
-      JsonRecordDefinition::FieldDefinition const * fieldDefinition;
-      std::shared_ptr<JsonRecord> jsonRecord;
+      /**
+       * \brief Notes the attribute/field to which this child record relates.  Eg, if a recipe record has hop and
+       *        fermentable child records, then it needs to know which is which and how to store them.
+       *        If it's \c nullptr then that means this is a top-level record (eg just a hop variety rather than a use
+       *        of a hop in a recipe).
+       */
+      JsonRecordDefinition::FieldDefinition const * parentFieldDefinition;
+
+      /**
+       * \brief The actual child record
+       */
+      std::unique_ptr<JsonRecord> record;
    };
-   QVector<ChildRecord> childRecords;
+
+   // Note that we don't use QVector here as it always wants to be able to copy things, which doesn't play nicely with
+   // there being a std::unique_ptr inside the ChildRecord struct.
+   std::vector<ChildRecord> childRecords;
 };
 
 #endif

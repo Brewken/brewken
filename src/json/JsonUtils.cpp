@@ -33,7 +33,7 @@
 #include "utils/BtStringStream.h"
 #include "utils/ErrorCodeToStream.h"
 
-boost::json::value JsonUtils::loadJsonDocument(QString const & fileName, bool allowComments) {
+[[nodiscard]] boost::json::value JsonUtils::loadJsonDocument(QString const & fileName, bool allowComments) {
 
    QFile inputFile(fileName);
 
@@ -142,6 +142,117 @@ boost::json::value JsonUtils::loadJsonDocument(QString const & fileName, bool al
    }
 }
 
+void JsonUtils::serialize(std::ostream & stream,
+                          boost::json::value const & val,
+                          std::string_view const tabString,
+                          std::string* currentIndent) {
+   // If indentation is 0 then we just want Boost.JSON native serialisation, ie without any additional spaces or
+   // newlines
+   if (tabString.length() == 0) {
+      stream << val;
+      return;
+   }
+
+   //
+   // The rest of this function is heavily inspired by
+   // https://www.boost.org/doc/libs/1_80_0/libs/json/doc/html/json/examples.html#json.examples.pretty
+   //
+   std::string initialIndent;
+   if (!currentIndent) {
+      currentIndent = &initialIndent;
+   }
+
+   // We only need special processing for objects and arrays.  We could just call boost::json::serialize or operator<<
+   // for other sorts of values, but mostly it's slightly more efficient to serialise them directly.
+   switch(val.kind()) {
+      case boost::json::kind::object:
+      {
+         stream << "{\n";
+         currentIndent->append(tabString);
+         auto const & obj = val.get_object();
+         if (!obj.empty()) {
+            for (auto ii = obj.begin(); ii != obj.end(); ++ii) {
+               if (ii != obj.begin()) {
+                  stream << ",\n";
+               }
+               stream << *currentIndent;
+               // Per https://www.boost.org/doc/libs/1_80_0/libs/json/doc/html/json/dom/object.html, an object's key is
+               // a boost::json::string_view and its value is a boost::json::value
+               //
+               // Almost all the time, it would be absolutely fine to just write out the key (inside quotes) directly
+               // (because boost::json::string_view type "has API equivalent to ...  std::string_view").  However, it is
+               // technically legal (albeit usually inadvisable) for a JSON key to include special characters (", \, \n,
+               // \t, etc) which need to be escaped, and we don't want to reinvent the wheel for such escaping.
+               stream << boost::json::serialize(ii->key());
+               // Some people like a space before the : and some don't.  Both are valid.  The examples at
+               // http://json-schema.org/understanding-json-schema/reference/object.html omit them, so we go with that.
+               stream << ": ";
+               JsonUtils::serialize(stream, ii->value(), tabString, currentIndent);
+            }
+         }
+         stream << "\n";
+         currentIndent->resize(currentIndent->size() - tabString.length());
+         stream << *currentIndent << "}";
+         break;
+      }
+
+      case boost::json::kind::array:
+      {
+         stream << "[\n";
+         currentIndent->append(tabString);
+         auto const & arr = val.get_array();
+         if (!arr.empty()) {
+            for (auto ii = arr.begin(); ii != arr.end(); ++ii) {
+               if (ii != arr.begin()) {
+                  stream << ",\n";
+               }
+               stream << *currentIndent;
+               JsonUtils::serialize(stream, *ii, tabString, currentIndent);
+            }
+         }
+         stream << "\n";
+         currentIndent->resize(currentIndent->size() - tabString.length());
+         stream << *currentIndent << "]";
+         break;
+      }
+
+      case boost::json::kind::string:
+         // This is a case where we do want to use the Boost.JSON operator<< rather than, say val.get_string().c_str(),
+         // because any newlines or other special characters in the string need to be escaped.
+         stream << val;
+         break;
+
+      case boost::json::kind::uint64:
+         stream << val.get_uint64();
+         break;
+
+      case boost::json::kind::int64:
+         stream << val.get_int64();
+         break;
+
+      case boost::json::kind::double_:
+         stream << val.get_double();
+         break;
+
+      case boost::json::kind::bool_:
+         stream << (val.get_bool() ? "true" : "false");
+         break;
+
+      case boost::json::kind::null:
+         stream << "null";
+         break;
+
+      // NB: Deliberately no default case.  boost::json::kind is a strongly-typed enum, so we'll get a compiler warning
+      // if we haven't explicitly handled every possible value above.
+   }
+
+   if (currentIndent->empty()) {
+      stream << "\n";
+   }
+
+   return;
+}
+
 template<class S>
 S & operator<<(S & stream, boost::json::kind const knd) {
    std::ostringstream output;
@@ -165,7 +276,10 @@ S & operator<<(S & stream, boost::json::value const & val) {
    // provide the same output in the Qt output streams we care about.  However, we also output which value type the
    // value contains as this can sometimes be helpful for debugging.
    std::ostringstream output;
-   output << "(" << val.kind() << "): " << val;
+   // Following line can sometimes be helpful to uncomment for debugging but NB it will break things that are relying on
+   // serialization producing valid JSON
+//   output << "(" << val.kind() << "): ";
+   JsonUtils::serialize(output, val, "  ");
    stream << output.str().c_str();
    return stream;
 }

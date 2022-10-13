@@ -35,6 +35,8 @@ namespace boost::json {
 }
 class JsonCoding;
 class JsonRecord;
+template<class NE>
+class JsonNamedEntityRecord;
 
 // See below for more on this.  It's useful to have a type name for a list of pointers to JsonMeasureableUnitsMapping
 // objects, but we don't need to create a whole new class just for that.
@@ -281,20 +283,20 @@ public:
     *        (We maybe could have called this function jsonRecordConstructorWrapper but it makes things rather long-
     *        winded in the definitions.)
     */
-   template<typename T>
-   static JsonRecord * create(JsonCoding const & jsonCoding,
-                              boost::json::value const & recordData,
-                              JsonRecordDefinition const & recordDefinition) {
-      return new T(jsonCoding, recordData, recordDefinition);
+   template<typename JRT>
+   static std::unique_ptr<JsonRecord> create(JsonCoding const & jsonCoding,
+                                             boost::json::value const & recordData,
+                                             JsonRecordDefinition const & recordDefinition) {
+      return std::make_unique<JRT>(jsonCoding, recordData, recordDefinition);
    }
 
    /**
     * \brief This is just a convenience typedef representing a pointer to a template instantiation of
     *        \b JsonRecordDefinition::create().
     */
-   typedef JsonRecord * (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
-                                                        boost::json::value const & recordData,
-                                                        JsonRecordDefinition const & recordDefinition);
+   typedef std::unique_ptr<JsonRecord> (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
+                                                                       boost::json::value const & recordData,
+                                                                       JsonRecordDefinition const & recordDefinition);
 
    /**
     * \brief Constructor

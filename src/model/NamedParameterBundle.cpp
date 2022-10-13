@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021:
+ * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -80,7 +80,8 @@ QVariant NamedParameterBundle::operator()(BtStringConst const & parameterName) c
       }
       // In non-strict mode we'll just construct an empty QVariant and return that in the hope that its default value
       // (eg 0 for a numeric type, empty string for a QString) is OK.
-      qInfo() << Q_FUNC_INFO << errorMessage << ", so using generic default";
+/// TODO uncomment this
+///      qInfo() << Q_FUNC_INFO << errorMessage << ", so using generic default";
       return QVariant{};
    }
    QVariant returnValue = this->value(*parameterName);
@@ -106,3 +107,39 @@ template QString    NamedParameterBundle::operator()(BtStringConst const & param
 template bool       NamedParameterBundle::operator()(BtStringConst const & parameterName, bool    const & defaultValue) const;
 template int        NamedParameterBundle::operator()(BtStringConst const & parameterName, int     const & defaultValue) const;
 template double     NamedParameterBundle::operator()(BtStringConst const & parameterName, double  const & defaultValue) const;
+
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle);
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle);
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle) {
+   stream << namedParameterBundle.size() << "element NamedParameterBundle {";
+   for (auto ii = namedParameterBundle.keyValueBegin(); ii != namedParameterBundle.keyValueEnd(); ++ii) {
+      stream << ii->first << "->" << ii->second.toString() << " ";
+   }
+   stream << "}";
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle) {
+   if (namedParameterBundle) {
+      stream << *namedParameterBundle;
+   } else {
+      stream << "NULL";
+   }
+   return stream;
+}
+
+//
+// Instantiate the above template functions for the types that are going to use them
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+//
+template QDebug &      operator<<(QDebug &      stream, NamedParameterBundle const & namedParameterBundle);
+template QTextStream & operator<<(QTextStream & stream, NamedParameterBundle const & namedParameterBundle);
+template QDebug &      operator<<(QDebug &      stream, NamedParameterBundle const * namedParameterBundle);
+template QTextStream & operator<<(QTextStream & stream, NamedParameterBundle const * namedParameterBundle);

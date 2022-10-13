@@ -182,6 +182,11 @@ namespace {
    //   boil:                      BoilProcedureType[]          optional
    //   packaging:                 PackagingProcedureType[]     optional
    //
+   // The BeerJSON schema is strict about some things but not about others.  Eg, you can't add in your own top-level
+   // object (which, eg, since JSON doesn't allow comments, would be useful to use to record information about the
+   // program that wrote the file), but you can add extra fields to individual records (eg we could add a "foobar" field
+   // inside each hop record and it would pass validation against the BeerJSON schema.
+   //
    // Note that the way ingredients are included inside recipes is more nuanced than in BeerXML.  In BeerXML, you can
    // have eg a Hop record both as an element inside a top-level list of Hops (ie hop varieties) and as an ingredient
    // inside a Recipe.  In BeerJSON, the distinction is made between records in a top-level list of hops, which are
@@ -706,6 +711,11 @@ namespace {
             Q_FUNC_INFO << "BeerJSON version " << beerJsonVersion << "differs from what we are expecting (" <<
             jsonVersionWeSupport << ")";
       }
+
+      // If you want to check what Boost.JSON read from the file (eg to debug escaping issues etc), uncomment the next
+      // line.
+//      qDebug() << Q_FUNC_INFO << "JSON file read in is:" << inputDocument;
+
       return BEER_JSON_1_CODING.validateLoadAndStoreInDb(inputDocument, userMessage);
    }
 
