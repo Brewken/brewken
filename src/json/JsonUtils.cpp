@@ -71,16 +71,25 @@
    //
    // String encodings
    // ----------------
-   // Whichever way we do the parsing, we can't use QString for the input.  QString and std::string are typically
-   // double-byte unicode strings, whereas JSON files are UTF-8, as required by RFC8259 (see 8.1 of
-   // https://datatracker.ietf.org/doc/html/rfc8259, which says "JSON text exchanged between systems that are not part
-   // of a closed ecosystem MUST be encoded using UTF-8").  Of course it's possible to convert between double-byte
-   // unicode and UTF-8, but there's no need as Boost.JSON has its own string class that natively stores data in UTF-8
-   // encoding.
+   // JSON files are UTF-8 encoded as required by RFC8259 (see 8.1 of https://datatracker.ietf.org/doc/html/rfc8259,
+   // which says "JSON text exchanged between systems that are not part of a closed ecosystem MUST be encoded using
+   // UTF-8").
    //
-   // Similarly, per https://www.boost.org/doc/libs/1_77_0/libs/json/doc/html/json/dom/string.html, when a
-   // boost::json::string is formatted to a std::ostream, the result is a valid JSON. That is, the result will be double
-   // quoted and the contents properly escaped per the JSON specification.
+   // Internally we have a few options for storing strings:
+   //    - QString is UTF-16 encoded but provides mechanisms for converting to and from UTF-8
+   //    - std::string is 8-bit chars so it can be used to store UTF-8 but it doesn't understand that encoding (so, for
+   //      example, std::string::length() will give incorrect answers on UTF-8 strings with multi-byte characters
+   //      because std::string itself doesn't understand multi-byte characters).  Usually reading and writing UTF-8
+   //      from/to std::string "just works" on Linux/Mac because the OS "does the right thing" for you.
+   //    - In C++20 there is std::u8string, which is proper UTF-8 but there is not yet as much supporting infrastructure
+   //      around this (eg for string processing and manipulation) -- see
+   //      https://stackoverflow.com/questions/55556200/convert-between-stdu8string-and-stdstring
+   //    - Boost.JSON has its own boost::json::string class that natively stores data in UTF-8 encoding.  However, it is
+   //      not a fully-fledged UTF-8 string container, rather it has just enough features for the needs of JSON
+   //      processing.
+   //
+   // We use boost::json::string and boost::json::string_view for dealing with actual JSON (reading or writing from a
+   // file) and then convert to/from QString for bits of text that we store internally.
    //
    // The boost::json::string class has a similar interface and functionality to std::basic_string, with a few
    // differences, including that access to characters in the range (size(), capacity()) is permitted, including write
@@ -91,12 +100,44 @@
    // Instead, we use boost::json::string_view (which is an alias either for boost::string_view or std::string_view
    // depending on how the code is compiled) to put a lightweight wrapper around a buffer of char * that Qt can provide.
    //
+   // References:
+   //    - https://doc.qt.io/qt-6/qstring.html says
+   //         "QString stores a string of 16-bit QChars, where each QChar corresponds to one UTF-16 code unit. (Unicode
+   //          characters with code values above 65535 are stored using surrogate pairs, i.e., two consecutive QChars.)
+   //          ...
+   //          Behind the scenes, QString uses implicit sharing (copy-on-write) to reduce memory usage and to avoid the
+   //          needless copying of data. This also helps reduce the inherent overhead of storing 16-bit characters
+   //          instead of 8-bit characters.
+   //          ...
+   //          In addition to QString, Qt also provides the QByteArray class to store raw bytes and traditional 8-bit
+   //          '\0'-terminated strings. For most purposes, QString is the class you want to use. It is used throughout
+   //          the Qt API"
+   //    - https://doc.qt.io/qt-5/qfile.html says
+   //         "TextStream takes care of converting the 8-bit data stored on disk into a 16-bit Unicode QString. By
+   //          default, it assumes that the user system's local 8-bit encoding is used (e.g., UTF-8 on most unix based
+   //          operating systems; see QTextCodec::codecForLocale() for details). This can be changed using
+   //          QTextStream::setCodec()".  HOWEVER, NOTE THAT, in Qt6, QTextCodec and QTextStream::setCodec have been
+   //          removed and are replaced by QTextStream::setEncoding and QStringConverter (which are new in Qt6).
+   //    - https://www.boost.org/doc/libs/1_80_0/libs/json/doc/html/json/ref/boost__json__string.html says
+   //         "Instances of boost::json::string store and manipulate sequences of char using the UTF-8 encoding. The
+   //          elements of a string are stored contiguously. A pointer to any character in a string may be passed to
+   //          functions that expect a pointer to the first element of a null-terminated char array. String iterators
+   //          are regular char pointers.
+   //          ...
+   //          boost::json::string member functions do not validate any UTF-8 byte sequences passed to them."
+   //
    // Exceptions
    // ----------
    // If you give it an error code parameter, then Boost.JSON will report its errors via that rather than by throwing
    // std::system_error exception (or boost::system::system_error if linking with Boost).  However, even when using
    // error codes, std::bad_alloc exceptions thrown from the underlying memory_resource are still possible, so it's
    // good practice to catch and recast these.
+   //
+   // Character escaping
+   // ------------------
+   // Similarly, per https://www.boost.org/doc/libs/1_77_0/libs/json/doc/html/json/dom/string.html, when a
+   // boost::json::string is formatted to a std::ostream, the result is a valid JSON. That is, the result will be double
+   // quoted and the contents properly escaped per the JSON specification.
    //
    try {
       std::error_code errorCode;
@@ -111,6 +152,8 @@
       for (auto [lineNumber, bytesLeftToRead] = std::tuple{1, fileSize};
          bytesLeftToRead > 0;
          ++lineNumber, bytesLeftToRead -= rawInputLine.size()) {
+         // Because of the way UTF-8 is encoded (see eg https://www.johndcook.com/blog/2019/09/09/how-utf-8-works/), it
+         // is entirely valid to treat it as an ASCII file for many purposes, including "give me a line of text".
          rawInputLine = inputFile.readLine();
          boost::json::string_view inputStringView{rawInputLine.data()};
          streamParser.write(inputStringView, errorCode);
@@ -273,12 +316,13 @@ template<class S,
          std::enable_if_t<(std::is_same<QDebug, S>::value || std::is_same<QTextStream, S>::value), bool> >
 S & operator<<(S & stream, boost::json::value const & val) {
    // Boost.JSON already handles output to standard library output streams, so we are just piggy-backing on this to
-   // provide the same output in the Qt output streams we care about.  However, we also output which value type the
-   // value contains as this can sometimes be helpful for debugging.
+   // provide the same output in the Qt output streams we care about.
    std::ostringstream output;
+
    // Following line can sometimes be helpful to uncomment for debugging but NB it will break things that are relying on
    // serialization producing valid JSON
 //   output << "(" << val.kind() << "): ";
+
    JsonUtils::serialize(output, val, "  ");
    stream << output.str().c_str();
    return stream;

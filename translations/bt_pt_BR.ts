@@ -781,7 +781,7 @@
         <translation>Cancelar</translation>
     </message>
     <message>
-        <source>This equipment profile may break Brewken&apos;s maths</source>
+        <source>This equipment profile may break brewtarget&apos;s maths</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1854,11 +1854,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Saving the options without testing the connection can cause Brewken to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.</source>
+        <source>Saving the options without testing the connection can cause brewtarget to not restart. Your changes have been discarded, which is likely really, really crappy UX. Please open a bug explaining exactly how you got to this message.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Would you like Brewken to transfer your data to the new database? NOTE: If you&apos;ve already loaded the data, say No</source>
+        <source>Would you like brewtarget to transfer your data to the new database? NOTE: If you&apos;ve already loaded the data, say No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1866,7 +1866,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please restart Brewken to connect to the new database</source>
+        <source>Please restart brewtarget to connect to the new database</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3944,12 +3944,12 @@ O volume final do fermentador primário é %1.</translation>
         <translation>Barra de Ferramentas</translation>
     </message>
     <message>
-        <source>About &amp;Brewken</source>
-        <translation>Sobre &amp;Brewken</translation>
+        <source>About &amp;BrewTarget</source>
+        <translation>Sobre &amp;BrewTarget</translation>
     </message>
     <message>
         <source>About Brewken</source>
-        <translation>Sobre Brewken</translation>
+        <translation>Sobre BrewTarget</translation>
     </message>
     <message>
         <source>&amp;Export Recipe</source>
@@ -4816,7 +4816,7 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="vanished">Diretório do banco de dados</translation>
     </message>
     <message>
-        <source>Where your Brewken .xml files are.</source>
+        <source>Where your brewtarget .xml files are.</source>
         <translation type="vanished">Localização dos arquivos .xml do Brewken.</translation>
     </message>
     <message>
@@ -4837,7 +4837,7 @@ O volume final do fermentador primário é %1.</translation>
    &lt;br&gt;&lt;br&gt;
    Or, would you like to improve a translation? Help us out and
   &lt;a href=&quot;https://sourceforge.net/sendmessage.php?touser=938941&quot;&gt;
-  provide a translation&lt;/a&gt; so that your friends can use Brewken!
+  provide a translation&lt;/a&gt; so that your friends can use brewtarget!
 &lt;/qt&gt;</source>
         <translation>&lt;qt&gt;
    &lt;b&gt;Conhece outra língua?&lt;/b&gt;

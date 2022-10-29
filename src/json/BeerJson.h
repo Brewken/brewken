@@ -32,6 +32,21 @@ namespace BeerJson {
     */
    bool import(QString const & filename, QTextStream & userMessage);
 
+/*   ¥¥¥ THIS NEEDS A BIT OF A RETHINK FOR JSON
+
+   class Exporter{
+      Exporter();
+   };*/
+   /**
+    * \brief Creates a blank BeerXML document in the supplied file (which the caller should have opened for writing
+    *        already).  This can then be supplied to subsequent calls to add BeerXML for Recipes, Hops, etc.
+    */
+///   void createXmlFile(QFile & outFile) const;
+
+   /**
+    * \brief Write a list of objects to the supplied file
+    */
+///   template<class NE> void toXml(QList<NE *> & nes, QFile & outFile) const;
 
 }
 

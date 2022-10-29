@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/BeerXml.h is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/BeerXml.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -50,7 +50,7 @@ public:
    /**
     * \brief Write a list of objects to the supplied file
     */
-   template<class NE> void toXml(QList<NE *> & nes, QFile & outFile) const;
+   template<class NE> void toXml(QList<NE *> const & nes, QFile & outFile) const;
 
    /*! Import ingredients, recipes, etc from BeerXML documents.
     * \param filename

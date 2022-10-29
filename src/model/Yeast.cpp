@@ -32,19 +32,19 @@ namespace {
    QStringList const types{"Ale", "Lager", "Wheat", "Wine", "Champagne"};
    QStringList const forms{"Liquid", "Dry", "Slant", "Culture"};
    QStringList const flocculations{"Low", "Medium", "High", "Very High"};
-   QStringList const typesTr{QT_TR_NOOP("Ale"),
-                             QT_TR_NOOP("Lager"),
-                             QT_TR_NOOP("Wheat"),
-                             QT_TR_NOOP("Wine"),
-                             QT_TR_NOOP("Champagne")};
-   QStringList const formsTr {QT_TR_NOOP("Liquid"),
-                              QT_TR_NOOP("Dry"),
-                              QT_TR_NOOP("Slant"),
-                              QT_TR_NOOP("Culture")};
-   QStringList const flocculationsTr{QT_TR_NOOP("Low"),
-                                     QT_TR_NOOP("Medium"),
-                                     QT_TR_NOOP("High"),
-                                     QT_TR_NOOP("Very High")};
+   QStringList const typesTr{Yeast::tr("Ale"),
+                             Yeast::tr("Lager"),
+                             Yeast::tr("Wheat"),
+                             Yeast::tr("Wine"),
+                             Yeast::tr("Champagne")};
+   QStringList const formsTr {Yeast::tr("Liquid"),
+                              Yeast::tr("Dry"),
+                              Yeast::tr("Slant"),
+                              Yeast::tr("Culture")};
+   QStringList const flocculationsTr{Yeast::tr("Low"),
+                                     Yeast::tr("Medium"),
+                                     Yeast::tr("High"),
+                                     Yeast::tr("Very High")};
 }
 
 bool Yeast::isEqualTo(NamedEntity const & other) const {

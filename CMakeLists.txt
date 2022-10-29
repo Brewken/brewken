@@ -255,7 +255,13 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       # -no-pie -fno-pie -rdynamic are needed for Boost stacktrace to work properly - at least according to comments
       # at https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers
       #
-      set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie -rdynamic")
+      # But, for some reason, gcc on Windows does not accept -rdynamic
+      #
+      if(NOT WIN32)
+         set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie -rdynamic")
+      else()
+         set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie")
+      endif()
    endif()
 
    # Speed up compilation if using gcc.
@@ -762,28 +768,31 @@ set(filesToInstall_desktop ${repoDir}/brewken.desktop)
 # Icon files to install.
 set(filesToInstall_icons ${repoDir}/images/brewken.svg)
 
-set(filesToInstall_translations ${repoDir}/translations/bt_ca.ts # Catalan
-                                ${repoDir}/translations/bt_cs.ts # Czech
-                                ${repoDir}/translations/bt_de.ts # German
-                                ${repoDir}/translations/bt_en.ts # English
-                                ${repoDir}/translations/bt_el.ts # Greek
-                                ${repoDir}/translations/bt_es.ts # Spanish
-                                ${repoDir}/translations/bt_et.ts # Estonian
-                                ${repoDir}/translations/bt_eu.ts # Basque
-                                ${repoDir}/translations/bt_fr.ts # French
-                                ${repoDir}/translations/bt_gl.ts # Galician
-                                ${repoDir}/translations/bt_nb.ts # Norwegian Bokmal
-                                ${repoDir}/translations/bt_it.ts # Italian
-                                ${repoDir}/translations/bt_lv.ts # Latvian
-                                ${repoDir}/translations/bt_nl.ts # Dutch
-                                ${repoDir}/translations/bt_pl.ts # Polish
-                                ${repoDir}/translations/bt_pt.ts # Portuguese
-                                ${repoDir}/translations/bt_hu.ts # Hungarian
-                                ${repoDir}/translations/bt_ru.ts # Russian
-                                ${repoDir}/translations/bt_sr.ts # Serbian
-                                ${repoDir}/translations/bt_sv.ts # Swedish
-                                ${repoDir}/translations/bt_tr.ts # Turkish
-                                ${repoDir}/translations/bt_zh.ts) # Chinese
+# This is the list of translation files to update (from translatable strings in the source code) and from which the
+# binary .qm files will be generated and shipped.  Note that src/OptionDialog.cpp controls which languages are shown to
+# the user as options for the UI
+set(translationSourceFiles ${repoDir}/translations/bt_ca.ts # Catalan
+                           ${repoDir}/translations/bt_cs.ts # Czech
+                           ${repoDir}/translations/bt_de.ts # German
+                           ${repoDir}/translations/bt_en.ts # English
+                           ${repoDir}/translations/bt_el.ts # Greek
+                           ${repoDir}/translations/bt_es.ts # Spanish
+                           ${repoDir}/translations/bt_et.ts # Estonian
+                           ${repoDir}/translations/bt_eu.ts # Basque
+                           ${repoDir}/translations/bt_fr.ts # French
+                           ${repoDir}/translations/bt_gl.ts # Galician
+                           ${repoDir}/translations/bt_nb.ts # Norwegian Bokmal
+                           ${repoDir}/translations/bt_it.ts # Italian
+                           ${repoDir}/translations/bt_lv.ts # Latvian
+                           ${repoDir}/translations/bt_nl.ts # Dutch
+                           ${repoDir}/translations/bt_pl.ts # Polish
+                           ${repoDir}/translations/bt_pt.ts # Portuguese
+                           ${repoDir}/translations/bt_hu.ts # Hungarian
+                           ${repoDir}/translations/bt_ru.ts # Russian
+                           ${repoDir}/translations/bt_sr.ts # Serbian
+                           ${repoDir}/translations/bt_sv.ts # Swedish
+                           ${repoDir}/translations/bt_tr.ts # Turkish
+                           ${repoDir}/translations/bt_zh.ts) # Chinese
 
 set(filesToInstall_windowsIcon ${repoDir}/win/icon.rc)
 
@@ -818,6 +827,11 @@ set(filesToInstall_sounds ${repoDir}/data/sounds/45minLeft.wav
                           ${repoDir}/data/sounds/startChill.wav
                           ${repoDir}/data/sounds/stirMash.wav)
 
+# We mostly don't need to explicitly specify the .ui files because AUTOUIC will find them all for us.  However, I
+# haven't found a way to connect AUTOUIC with the translation stuff below, so grab a list of all the .ui files here for
+# that.
+file(GLOB_RECURSE filesToCompile_ui "${repoDir}/ui/*.ui")
+
 set(filesToInstall_macPropertyList "${repoDir}/mac/Info.plist")
 
 set(filesToInstall_macIcons "${repoDir}/mac/BrewkenIcon.icns")
@@ -835,23 +849,42 @@ set(filesToInstall_changeLogCompressed "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz
 include(src/CMakeLists.txt)
 
 #=======================================================================================================================
-# Targets
+#==================================================== Translations =====================================================
 #=======================================================================================================================
-set(FILES_TO_TRANSLATE ${filesToCompile_cpp}
-                       ${filesToCompile_ui})
+#
+# We need to do two processes with Translation Source (.ts) XML files:
+#   - Update them from the source code, ie to ensure they have all the tr(), QObject::tr() etc calls from the .cpp files
+#     and all the translatable strings from the .ui files -- which can be done manually from the command line with
+#     lupdate
+#   - Generate the binary .qm files that ship with the application and are used at run time -- which can be done
+#     manually from the command line with lrelease
+#
+# Note that qt5_add_translation() _only_ does the latter and it is only qt5_create_translation() which does both.
+# HOWEVER, there is a longstanding bug in qt5_create_translation() that means it adds all the .ts files to the list of
+# files that get deleted when you invoke "make clean".  (See https://bugreports.qt.io/browse/QTBUG-31860,
+# https://bugreports.qt.io/browse/QTBUG-41736, https://bugreports.qt.io/browse/QTBUG-76410,
+# https://bugreports.qt.io/browse/QTBUG-96549.)
+#
+# There are various workarounds proposed on the internet -- eg setting the CLEAN_NO_CUSTOM property on the
+# ${repoDir}/translations directory (something which itself requires jumping through a few hoops) -- but I have not had
+# success with any of them.  Instead, taking inspiration from
+# https://codereview.qt-project.org/c/qt/qttools/+/261912/1/src/linguist/Qt5LinguistToolsMacros.cmake, we run lupdate
+# manually and then let qt5_add_translation invoke lrelease.
+#
+# Of course we have to do declare everything backwards for the dependencies:
+#   - The executable will depend on translationsTarget
+#   - translationsTarget depends on the binary .qm files, as generated by qt5_add_translation
+#   - But before translationsTarget is built, we always run lupdate
+#
+qt5_add_translation(QM_FILES ${translationSourceFiles})
 
-#==================================Qt Junk=====================================
+# Add a target for the QM_FILES so that we can add the translations as a dependency for the executable later.
+add_custom_target(translationsTarget DEPENDS ${QM_FILES})
 
-# Create the .qm files from the .ts files
-# Per https://doc.qt.io/qt-5/qtlinguist-cmake-qt5-add-translation.html, these get put, by default in the root level of
-# the build directory.  We want them inside a folder, so we set the OUTPUT_LOCATION property for each of the .ts files
-set_property(SOURCE ${filesToInstall_translations} PROPERTY OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/translations)
-qt5_add_translation(QM_FILES ${filesToInstall_translations})
-
-# Add a target for the QM_FILES so that we can add
-# the translations as a dependency for the executable later.
-add_custom_target(translations DEPENDS ${QM_FILES})
-
+add_custom_command(TARGET translationsTarget PRE_BUILD
+                   COMMAND ${Qt5_LUPDATE_EXECUTABLE}
+                   ARGS  ${filesToCompile_cpp} ${filesToCompile_ui} -I ${repoDir}/src -ts ${translationSourceFiles}
+                   VERBATIM)
 #============================Icon for Windows==================================
 
 set(desktopIcon "")
@@ -908,15 +941,18 @@ if(APPLE)
    add_executable(${fileName_executable}
                   MACOSX_BUNDLE
                   ${repoDir}/src/main.cpp
+                  ${translationSourceFiles}
+                  ${QM_FILES}
                   ${filesToInstall_macIcons}
                   ${filesToInstall_data}
                   ${filesToInstall_docs}
                   ${filesToInstall_sounds}
-                  ${QM_FILES}
                   $<TARGET_OBJECTS:btobjlib>)
 else()
    add_executable(${fileName_executable}
                   ${repoDir}/src/main.cpp
+                  ${translationSourceFiles}
+                  ${QM_FILES}
                   ${desktopIcon}
                   $<TARGET_OBJECTS:btobjlib>)
 endif()
@@ -958,7 +994,7 @@ if(WIN32 AND MINGW)
    endif()
 endif()
 
-add_dependencies(${fileName_executable} translations)
+add_dependencies(${fileName_executable} translationsTarget)
 
 # All the libraries (except the Qt ones we add immediately below) that are used by both the main app and the unit
 # testing app
@@ -974,7 +1010,6 @@ foreach(qtComponent IN LISTS qtCommonComponents)
 endforeach()
 message("appAndTestCommonLibraries: ${appAndTestCommonLibraries}")
 target_link_libraries(${fileName_executable} ${appAndTestCommonLibraries})
-
 
 #=================================Tests========================================
 # We build the unit test executable in the bin subdirectory because, on Windows, we're going to copy a lot of other
@@ -1295,7 +1330,6 @@ if(UNIX AND NOT APPLE)
            RENAME "changelog.Debian.gz"
            DESTINATION ${installSubDir_doc}
            COMPONENT ${DATA_INSTALL_COMPONENT})
-
 else()
    #----------- Windows and Mac -----------
    install(FILES "${repoDir}/COPYRIGHT"

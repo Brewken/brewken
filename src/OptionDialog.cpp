@@ -139,30 +139,33 @@ public:
       label_frequency            {optionDialog.groupBox_dbConfig},
       spinBox_frequency          {optionDialog.groupBox_dbConfig},
       languageInfo {
-      {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
-      {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
-      {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
-      {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
-      {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
-      {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
-      {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
-      {"et", QIcon(),                              "Estonian",         tr("Estonian")         },
-      {"eu", QIcon(),                              "Basque",           tr("Basque")           },
-      {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
-      {"gl", QIcon(),                              "Galician",         tr("Galician")         },
-      {"hu", QIcon(),                              "Hungarian",        tr("Hungarian")        },
-      {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
-      {"lv", QIcon(),                              "Latvian",          tr("Latvian")          },
-      {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
-      {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
-      {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
-      {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
-      {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
-      {"sr", QIcon(),                              "Serbian",          tr("Serbian")          },
-      {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
-      {"tr", QIcon(),                              "Turkish",          tr("Turkish")          },
-      {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
-   } {
+         //
+         // See also CmakeLists.txt for list of translation source files (in ../translations directory)
+         //
+         {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
+         {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
+         {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
+         {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
+         {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
+         {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
+         {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
+         {"et", QIcon(),                              "Estonian",         tr("Estonian")         },
+         {"eu", QIcon(),                              "Basque",           tr("Basque")           },
+         {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
+         {"gl", QIcon(),                              "Galician",         tr("Galician")         },
+         {"hu", QIcon(),                              "Hungarian",        tr("Hungarian")        },
+         {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
+         {"lv", QIcon(),                              "Latvian",          tr("Latvian")          },
+         {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
+         {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
+         {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
+         {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
+         {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
+         {"sr", QIcon(),                              "Serbian",          tr("Serbian")          },
+         {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
+         {"tr", QIcon(),                              "Turkish",          tr("Turkish")          },
+         {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
+      } {
       //
       // Optimise the select file dialog to select directories
       //

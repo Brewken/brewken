@@ -37,12 +37,12 @@ namespace {
    QStringList types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
    QStringList amountTypes = QStringList() << "Weight" << "Volume";
    QStringList typesTr =
-      QStringList() << QT_TR_NOOP("Spice") << QT_TR_NOOP("Fining") << QT_TR_NOOP("Water Agent") << QT_TR_NOOP("Herb") <<
-      QT_TR_NOOP("Flavor") << QT_TR_NOOP("Other");
+      QStringList() << Misc::tr("Spice") << Misc::tr("Fining") << Misc::tr("Water Agent") << Misc::tr("Herb") <<
+      Misc::tr("Flavor") << Misc::tr("Other");
    QStringList usesTr =
-      QStringList() << QT_TR_NOOP("Boil") << QT_TR_NOOP("Mash") << QT_TR_NOOP("Primary") << QT_TR_NOOP("Secondary") <<
-      QT_TR_NOOP("Bottling");
-   QStringList amountTypesTr = QStringList() << QT_TR_NOOP("Weight") << QT_TR_NOOP("Volume");
+      QStringList() << Misc::tr("Boil") << Misc::tr("Mash") << Misc::tr("Primary") << Misc::tr("Secondary") <<
+      Misc::tr("Bottling");
+   QStringList amountTypesTr = QStringList() << Misc::tr("Weight") << Misc::tr("Volume");
 }
 
 bool Misc::isEqualTo(NamedEntity const & other) const {

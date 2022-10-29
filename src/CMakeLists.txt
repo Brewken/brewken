@@ -84,6 +84,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
+    ${repoDir}/src/ImportExport.cpp
     ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/json/BeerJson.cpp

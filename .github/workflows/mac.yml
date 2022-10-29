@@ -38,12 +38,12 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
           version: 5.9.5
 
@@ -100,7 +100,7 @@ jobs:
 
     - name: Upload Mac Packages (Installers)
       if: ${{ success() }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: brewken-dev-mac
         path: |
@@ -122,7 +122,7 @@ jobs:
 
     - name: Recover Debris Artifacts (aka build output)
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: build-results
         path: ${{github.workspace}}/build
@@ -130,7 +130,7 @@ jobs:
 
     - name: Recover DiagnosticReports (if any)
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: DiagnosticReports
         path: /Library/Logs/DiagnosticReports
@@ -138,7 +138,7 @@ jobs:
 
     - name: Recover Cores (if any)
       if: ${{ failure() }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: cores
         path: /cores
