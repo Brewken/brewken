@@ -309,8 +309,8 @@ void Testing::initTestCase() {
       PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "tinseth");
 
       // Tell Brewken not to require any "user" input on starting
-      Brewken::setInteractive(false);
-      QVERIFY( Brewken::initialize() );
+      Application::setInteractive(false);
+      QVERIFY( Application::initialize() );
 
       // 5 gallon equipment
       this->equipFiveGalNoLoss = std::make_shared<Equipment>();
@@ -622,7 +622,7 @@ void Testing::testLogRotation() {
 
 void Testing::cleanupTestCase()
 {
-   Brewken::cleanup();
+   Application::cleanup();
    Logging::terminateLogging();
    //Clean up the gibberish logs from disk by removing the
    QFileInfoList fileList = Logging::getLogFileList();
@@ -669,7 +669,7 @@ void Testing::runTest()
 {
    QVERIFY( 1==1 );
    /*
-   MainWindow& mw = Brewken::mainWindow();
+   MainWindow& mw = Application::mainWindow();
    QVERIFY( mw );
    */
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -211,14 +211,18 @@ protected:
                                           ImportRecordCount & stats);
 
    /**
-    * \brief Checks whether the \b NamedEntity for this record is, in all the ways that count, a duplicate of one we
+    * \brief Checks whether the \c NamedEntity for this record is, in all the ways that count, a duplicate of one we
     *        already have stored in the DB
+    *
+    *        Note that this is \b not a \c const function as, in the case that we do find a duplicate, we will update
+    *        some of our internal data to point to the existing stored \c NamedEntity.
+    *
     * \return \b true if this is a duplicate and should be skipped rather than stored
     */
    virtual bool isDuplicate();
 
    /**
-    * \brief If the \b NamedEntity for this record is supposed to have globally unique names, then this method will
+    * \brief If the \c NamedEntity for this record is supposed to have globally unique names, then this method will
     *        check the current name and modify it if necessary.  NB: This function should be called _after_
     *        \b isDuplicate().
     */

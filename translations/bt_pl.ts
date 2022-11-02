@@ -4334,7 +4334,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>Pliki dźwiękowe (*.wav *.ogg *.mp3 *.aiff)</translation>
+        <translation type="vanished">Pliki dźwiękowe (*.wav *.ogg *.mp3 *.aiff)</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -4382,6 +4382,10 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7884,11 +7888,19 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">Stop</translation>
+        <translation type="unfinished">Stop</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Anuluj</translation>
+        <translation type="unfinished">Anuluj</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

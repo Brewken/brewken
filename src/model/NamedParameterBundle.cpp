@@ -27,10 +27,10 @@
 
 namespace {
    template <class T> T valueFromQVariant(QVariant const & qv);
-   template <> QString valueFromQVariant(QVariant const & qv) {return qv.toString();}
-   template <> bool    valueFromQVariant(QVariant const & qv) {return qv.toBool();}
-   template <> int     valueFromQVariant(QVariant const & qv) {return qv.toInt();}
-   template <> double  valueFromQVariant(QVariant const & qv) {return qv.toDouble();}
+   template <>  QString valueFromQVariant(QVariant const & qv) {return qv.toString();}
+   template <>  bool    valueFromQVariant(QVariant const & qv) {return qv.toBool();}
+   template <>  int     valueFromQVariant(QVariant const & qv) {return qv.toInt();}
+   template <>  double  valueFromQVariant(QVariant const & qv) {return qv.toDouble();}
 }
 
 NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :

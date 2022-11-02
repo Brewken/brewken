@@ -126,7 +126,7 @@ public:
    /**
     * \brief This needs to be called immediately after the constructor.  It does the remaining initialisation of the
     *        object.  This function cannot be called from the constructor as, in certain circumstances, it will invoke
-    *        code that calls Brewken::mainWindow() which returns a pointer to the MainWindow and therefore needs the
+    *        code that calls Application::mainWindow() which returns a pointer to the MainWindow and therefore needs the
     *        MainWindow constructor to have returned!
     */
    void init();
@@ -265,9 +265,6 @@ public slots:
    void reduceInventory();
    void changeBrewDate();
    void fixBrewNote();
-
-   //! \brief Catches a QNetworkReply signal and gets info about any new version available.
-   void finishCheckingVersion();
 
    void redisplayLabel();
 

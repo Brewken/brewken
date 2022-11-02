@@ -18,7 +18,6 @@
 #define IMPORTEXPORT_H
 #pragma once
 
-#include <QFile>
 #include <QList>
 
 class Equipment;

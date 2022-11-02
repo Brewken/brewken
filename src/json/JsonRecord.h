@@ -35,8 +35,8 @@ class JsonCoding;
 
 /**
  * \brief This class holds data about a specific individual record that we are reading from or writing to a JSON
- *        document.  It uses data from a corresponding singleton const \c JsonRecordDefinition to map between our internal
- *        data structures and fields in a JSON document.
+ *        document.  It uses data from a corresponding singleton const \c JsonRecordDefinition to map between our
+ *        internal data structures and fields in a JSON document.
  */
 class JsonRecord {
 public:
@@ -101,7 +101,7 @@ public:
     *
     * \return Shared pointer, which will contain nullptr for the root record
     */
-   std::shared_ptr<NamedEntity>  getNamedEntity() const;
+   std::shared_ptr<NamedEntity> getNamedEntity() const;
 
    /**
     * \brief From the supplied record (ie node) in an JSON document, load into memory the data it contains, including

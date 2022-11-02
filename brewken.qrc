@@ -1,6 +1,6 @@
 <!DOCTYPE RCC>
 <!--
- * brewken.qrc is part of Brewken, and is copyright the following authors 2009-2021:
+ * brewken.qrc is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Idar Lund <idarlund@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
@@ -39,7 +39,6 @@
       <file alias="images/convert.svg">images/convert.svg</file>
       <file alias="images/document-export.png">images/document-export.png</file>
       <file alias="images/document-print-preview.png">images/document-print-preview.png</file>
-      <file alias="images/donate.svg">images/donate.svg</file>
       <file alias="images/edit-copy.png">images/edit-copy.png</file>
       <file alias="images/editshred.svg">images/editshred.svg</file>
       <file alias="images/edit.svg">images/edit.svg</file>

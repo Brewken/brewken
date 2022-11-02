@@ -4358,7 +4358,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>Audiodateien (*.wav *.ogg *.mp3 *.aiff)</translation>
+        <translation type="vanished">Audiodateien (*.wav *.ogg *.mp3 *.aiff)</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -4406,6 +4406,10 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7884,11 +7888,19 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">Stopp</translation>
+        <translation type="unfinished">Stopp</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Abbruch</translation>
+        <translation type="unfinished">Abbruch</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

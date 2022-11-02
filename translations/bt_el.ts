@@ -4334,7 +4334,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>Αρχεία ήχου  (*.wav *.ogg *.mp3 *.aiff)</translation>
+        <translation type="vanished">Αρχεία ήχου  (*.wav *.ogg *.mp3 *.aiff)</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -4382,6 +4382,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7884,11 +7888,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">Διακοπή</translation>
+        <translation type="unfinished">Διακοπή</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

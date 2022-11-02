@@ -42,10 +42,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/AlcoholTool.cpp
     ${repoDir}/src/Algorithms.cpp
     ${repoDir}/src/AncestorDialog.cpp
+    ${repoDir}/src/Application.cpp
     ${repoDir}/src/BeerColorWidget.cpp
     ${repoDir}/src/boiltime.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
-    ${repoDir}/src/Brewken.cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
     ${repoDir}/src/BtColor.cpp
@@ -175,6 +175,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
+    ${repoDir}/src/utils/TimerUtils.cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/WaterEditor.cpp

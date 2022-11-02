@@ -4366,7 +4366,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>Arquivos de Áudio (*.wav *.ogg *.mp3 *.aiff)</translation>
+        <translation type="vanished">Arquivos de Áudio (*.wav *.ogg *.mp3 *.aiff)</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -4414,6 +4414,10 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7928,11 +7932,19 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">Parar</translation>
+        <translation type="unfinished">Parar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Cancelar</translation>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

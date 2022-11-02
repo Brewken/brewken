@@ -4326,7 +4326,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>音频文件（*。WAV OGG，MP3音乐，AIFF）</translation>
+        <translation type="vanished">音频文件（*。WAV OGG，MP3音乐，AIFF）</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -4374,6 +4374,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7856,11 +7860,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">停止</translation>
+        <translation type="unfinished">停止</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

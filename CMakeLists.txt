@@ -142,8 +142,13 @@ if(UNIX AND NOT APPLE)
    #   - /usr/local                           on Linux (& Mac)
    #   - c:/Program Files/${PROJECT_NAME}     on Windows
    #
-   # On Debian and derived systems (such as Ubuntu), it's more normal for apps to go in /usr/bin than /usr/local/bin, so
-   # CMAKE_INSTALL_PREFIX can be overridden on the command line via "--prefix usr"
+   # On a lot of Linux distros, including Debian and derived systems (such as Ubuntu), it's more normal for pretty much
+   # all user-installed apps to go in /usr/bin rather than /usr/local/bin, so CMAKE_INSTALL_PREFIX can be overridden on
+   # the command line via "--prefix usr"
+   #
+   # (See http://lists.busybox.net/pipermail/busybox/2010-December/074114.html for a great, albeit slightly depressing,
+   # explanation of why there are so many places for binaries to live on Unix/Linux systems.  FWIW, the current
+   # "standards" for Linux are at https://refspecs.linuxfoundation.org/fhs.shtml but these are open to interpretation.)
    #
    # .:TBD: We also allow -DEXEC_PREFIX=/usr (used in .github/workflows/linux-ubuntu.yml) but I'm not sure if this is
    #        needed or could be replaced by "--prefix usr"

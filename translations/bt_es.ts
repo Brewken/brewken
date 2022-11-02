@@ -4374,7 +4374,7 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>Archivos Audio (*.wav *.ogg *.mp3 *.aiff)</translation>
+        <translation type="vanished">Archivos Audio (*.wav *.ogg *.mp3 *.aiff)</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -4422,6 +4422,10 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7920,11 +7924,19 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">Detener</translation>
+        <translation type="unfinished">Detener</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Cancelar</translation>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

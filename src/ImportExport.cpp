@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ImportExport.cpp is part of Brewken, and is copyright the following authors 2013-2020:
+ * ImportExport.cpp is part of Brewken, and is copyright the following authors 2013-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -16,6 +16,7 @@
  =====================================================================================================================*/
 #include "ImportExport.h"
 
+#include <QFile>
 #include <QMessageBox>
 #include <QObject>
 
@@ -70,7 +71,7 @@ namespace {
          fileChooser.setFileMode(QFileDialog::AnyFile);
          // If the user doesn't specify a suffix
          fileChooser.setDefaultSuffix(QString("xml"));
-         // TODO what's the difference between filter and nameFilter?
+         // TBD what's the difference between filter and nameFilter?
 //         QString filterStr = "BeerXML files (*.xml)";
 //         fileChooser.setNameFilter(filterStr);
       }
@@ -118,8 +119,8 @@ namespace {
          if (ImportOrExport::IMPORT == importOrExport) {
             messageBoxText = QString(
                QObject::tr("Unable to import data from \"%1\"\n\n"
-                          "%2\n\n"
-                          "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
+                           "%2\n\n"
+                           "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
             );
          } else {
             // Some write errors (eg nothing to export) are before the filename was chosen (in which case the name will
@@ -129,8 +130,8 @@ namespace {
             } else {
                messageBoxText = QString(
                   QObject::tr("Unable to write data to \"%1\"\n\n"
-                             "%2\n\n"
-                             "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
+                              "%2\n\n"
+                              "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
                );
             }
          }
@@ -197,7 +198,7 @@ void ImportExport::exportToFile(QList<Recipe *>      const * recipes,
 
    auto selectedFiles = selectFiles(ImportOrExport::EXPORT);
    if (!selectedFiles) {
-      return nullptr;
+      return;
    }
    QString filename = (*selectedFiles)[0];
 

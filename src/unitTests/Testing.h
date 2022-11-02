@@ -30,7 +30,7 @@ class Equipment;
 class Hop;
 class Fermentable;
 
-#include "Brewken.h"
+#include "Application.h"
 #include "Logging.h"
 
 class Testing : public QObject {

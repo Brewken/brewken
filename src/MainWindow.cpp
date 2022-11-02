@@ -43,12 +43,7 @@
 
 #include <QAction>
 #include <QBrush>
-#include <QDesktopServices>
 #include <QDesktopWidget>
-#include <QDomDocument>
-#include <QDomElement>
-#include <QDomNode>
-#include <QDomNodeList>
 #include <QFile>
 #include <QFileDialog>
 #include <QIcon>
@@ -59,7 +54,6 @@
 #include <QList>
 #include <QMainWindow>
 #include <QMessageBox>
-#include <QNetworkReply>
 #include <QPen>
 #include <QPixmap>
 #include <QSize>
@@ -76,7 +70,7 @@
 #include "AlcoholTool.h"
 #include "Algorithms.h"
 #include "AncestorDialog.h"
-#include "Brewken.h"
+#include "Application.h"
 #include "BrewNoteWidget.h"
 #include "BtDatePopup.h"
 #include "BtDigitWidget.h"
@@ -691,7 +685,7 @@ void MainWindow::restoreSavedState() {
       setTreeSelection(rIdx);
    }
 
-   // UI restore state
+   //UI restore state
    if (PersistentSettings::contains(PersistentSettings::Names::splitter_vertical_State,
                                     PersistentSettings::Sections::MainWindow)) {
       splitter_vertical->restoreState(PersistentSettings::value(PersistentSettings::Names::splitter_vertical_State,
@@ -757,43 +751,43 @@ void MainWindow::restoreSavedState() {
 // menu items with a SIGNAL of triggered() should go in here.
 void MainWindow::setupTriggers() {
    // Connect actions defined in *.ui files to methods in code
-   connect(actionExit,                       &QAction::triggered, this,                    &QWidget::close);                   // > File > Exit
+   connect( actionExit, &QAction::triggered, this, &QWidget::close );                                                   // > File > Exit
    connect(actionAbout_Brewken,              &QAction::triggered, dialog_about,            &QWidget::show);                    // > About > About Brewken
    connect(actionHelp,                       &QAction::triggered, this->pimpl->helpDialog, &QWidget::show);                    // > About > Help
 
-   connect(actionNewRecipe,                  &QAction::triggered, this,                    &MainWindow::newRecipe);            // > File > New Recipe
-   connect(actionImportFromXml,              &QAction::triggered, this,                    &MainWindow::importFiles);          // > File > Import Recipes
-   connect(actionExportToXml,                &QAction::triggered, this,                    &MainWindow::exportRecipe);         // > File > Export Recipes
-   connect(actionUndo,                       &QAction::triggered, this,                    &MainWindow::editUndo);             // > Edit > Undo
-   connect(actionRedo,                       &QAction::triggered, this,                    &MainWindow::editRedo);             // > Edit > Redo
+   connect( actionNewRecipe, &QAction::triggered, this, &MainWindow::newRecipe );                                       // > File > New Recipe
+   connect( actionImportFromXml, &QAction::triggered, this, &MainWindow::importFiles );                                // > File > Import Recipes
+   connect( actionExportToXml, &QAction::triggered, this, &MainWindow::exportRecipe );                                 // > File > Export Recipes
+   connect( actionUndo, &QAction::triggered, this, &MainWindow::editUndo );                                             // > Edit > Undo
+   connect( actionRedo, &QAction::triggered, this, &MainWindow::editRedo );                                             // > Edit > Redo
    setUndoRedoEnable();
-   connect(actionEquipments,                 &QAction::triggered, equipEditor,             &QWidget::show);                    // > View > Equipments
-   connect(actionMashs,                      &QAction::triggered, namedMashEditor,         &QWidget::show);                    // > View > Mashs
-   connect(actionStyles,                     &QAction::triggered, styleEditor,             &QWidget::show);                    // > View > Styles
-   connect(actionFermentables,               &QAction::triggered, fermDialog,              &QWidget::show);                    // > View > Fermentables
-   connect(actionHops,                       &QAction::triggered, hopDialog,               &QWidget::show);                    // > View > Hops
-   connect(actionMiscs,                      &QAction::triggered, miscDialog,              &QWidget::show);                    // > View > Miscs
-   connect(actionYeasts,                     &QAction::triggered, yeastDialog,             &QWidget::show);                    // > View > Yeasts
-   connect(actionOptions,                    &QAction::triggered, optionDialog,            &OptionDialog::show);               // > Tools > Options
+   connect( actionEquipments, &QAction::triggered, equipEditor, &QWidget::show );                                       // > View > Equipments
+   connect( actionMashs, &QAction::triggered, namedMashEditor, &QWidget::show );                                        // > View > Mashs
+   connect( actionStyles, &QAction::triggered, styleEditor, &QWidget::show );                                           // > View > Styles
+   connect( actionFermentables, &QAction::triggered, fermDialog, &QWidget::show );                                      // > View > Fermentables
+   connect( actionHops, &QAction::triggered, hopDialog, &QWidget::show );                                               // > View > Hops
+   connect( actionMiscs, &QAction::triggered, miscDialog, &QWidget::show );                                             // > View > Miscs
+   connect( actionYeasts, &QAction::triggered, yeastDialog, &QWidget::show );                                           // > View > Yeasts
+   connect( actionOptions, &QAction::triggered, optionDialog, &OptionDialog::show );                                    // > Tools > Options
 //   connect( actionManual, &QAction::triggered, this, &MainWindow::openManual);                                               // > About > Manual
-   connect(actionScale_Recipe,               &QAction::triggered, recipeScaler,            &QWidget::show);                    // > Tools > Scale Recipe
-   connect(action_recipeToTextClipboard,     &QAction::triggered, recipeFormatter,         &RecipeFormatter::toTextClipboard); // > Tools > Recipe to Clipboard as Text
-   connect(actionConvert_Units,              &QAction::triggered, converterTool,           &QWidget::show);                    // > Tools > Convert Units
-   connect(actionHydrometer_Temp_Adjustment, &QAction::triggered, hydrometerTool,          &QWidget::show);                    // > Tools > Hydrometer Temp Adjustment
-   connect(actionAlcohol_Percentage_Tool,    &QAction::triggered, alcoholTool,             &QWidget::show);                    // > Tools > Alcohol
-   connect(actionOG_Correction_Help,         &QAction::triggered, ogAdjuster,              &QWidget::show);                    // > Tools > OG Correction Help
-   connect(actionCopy_Recipe,                &QAction::triggered, this,                    &MainWindow::copyRecipe);           // > File > Copy Recipe
-   connect(actionPriming_Calculator,         &QAction::triggered, primingDialog,           &QWidget::show);                    // > Tools > Priming Calculator
-   connect(actionStrikeWater_Calculator,     &QAction::triggered, strikeWaterDialog,       &QWidget::show);                    // > Tools > Strike Water Calculator
-   connect(actionRefractometer_Tools,        &QAction::triggered, refractoDialog,          &QWidget::show);                    // > Tools > Refractometer Tools
-   connect(actionPitch_Rate_Calculator,      &QAction::triggered, this,                    &MainWindow::showPitchDialog);      // > Tools > Pitch Rate Calculator
-   connect(actionTimers,                     &QAction::triggered, timerMainDialog,         &QWidget::show);                    // > Tools > Timers
-   connect(actionDeleteSelected,             &QAction::triggered, this,                    &MainWindow::deleteSelected);
-   connect(actionWater_Chemistry,            &QAction::triggered, this,                    &MainWindow::popChemistry);         // > Tools > Water Chemistry
-   connect(actionAncestors,                  &QAction::triggered, this,                    &MainWindow::setAncestor);          // > Tools > Ancestors
-   connect(action_brewit,                    &QAction::triggered, this,                    &MainWindow::brewItHelper);
+   connect( actionScale_Recipe, &QAction::triggered, recipeScaler, &QWidget::show );                                    // > Tools > Scale Recipe
+   connect( action_recipeToTextClipboard, &QAction::triggered, recipeFormatter, &RecipeFormatter::toTextClipboard );    // > Tools > Recipe to Clipboard as Text
+   connect( actionConvert_Units, &QAction::triggered, converterTool, &QWidget::show );                                  // > Tools > Convert Units
+   connect( actionHydrometer_Temp_Adjustment, &QAction::triggered, hydrometerTool, &QWidget::show );                    // > Tools > Hydrometer Temp Adjustment
+   connect( actionAlcohol_Percentage_Tool, &QAction::triggered, alcoholTool, &QWidget::show );                          // > Tools > Alcohol
+   connect( actionOG_Correction_Help, &QAction::triggered, ogAdjuster, &QWidget::show );                                // > Tools > OG Correction Help
+   connect( actionCopy_Recipe, &QAction::triggered, this, &MainWindow::copyRecipe );                                    // > File > Copy Recipe
+   connect( actionPriming_Calculator, &QAction::triggered, primingDialog, &QWidget::show );                             // > Tools > Priming Calculator
+   connect( actionStrikeWater_Calculator, &QAction::triggered, strikeWaterDialog, &QWidget::show );                     // > Tools > Strike Water Calculator
+   connect( actionRefractometer_Tools, &QAction::triggered, refractoDialog, &QWidget::show );                           // > Tools > Refractometer Tools
+   connect( actionPitch_Rate_Calculator, &QAction::triggered, this, &MainWindow::showPitchDialog);                      // > Tools > Pitch Rate Calculator
+   connect( actionTimers, &QAction::triggered, timerMainDialog, &QWidget::show );                                       // > Tools > Timers
+   connect( actionDeleteSelected, &QAction::triggered, this, &MainWindow::deleteSelected );
+   connect( actionWater_Chemistry, &QAction::triggered, this, &MainWindow::popChemistry);                               // > Tools > Water Chemistry
+   connect( actionAncestors, &QAction::triggered, this, &MainWindow::setAncestor);                                      // > Tools > Ancestors
+   connect( action_brewit, &QAction::triggered, this, &MainWindow::brewItHelper );
    //One Dialog to rule them all, at least all printing and export.
-   connect(actionPrint, &QAction::triggered, printAndPreviewDialog, &QWidget::show);                                           // > File > Print and Preview
+   connect( actionPrint, &QAction::triggered, printAndPreviewDialog, &QWidget::show);                                   // > File > Print and Preview
 
    // postgresql cannot backup or restore yet. I would like to find some way
    // around this, but for now just disable
@@ -802,8 +796,8 @@ void MainWindow::setupTriggers() {
       actionRestore_Database->setEnabled(false);                                                                        // > File > Database > Restore
    }
    else {
-      connect(actionBackup_Database,  &QAction::triggered, this, &MainWindow::backup);                                  // > File > Database > Backup
-      connect(actionRestore_Database, &QAction::triggered, this, &MainWindow::restoreFromBackup);                       // > File > Database > Restore
+      connect( actionBackup_Database, &QAction::triggered, this, &MainWindow::backup );                                 // > File > Database > Backup
+      connect( actionRestore_Database, &QAction::triggered, this, &MainWindow::restoreFromBackup );                     // > File > Database > Restore
    }
    return;
 }
@@ -811,30 +805,30 @@ void MainWindow::setupTriggers() {
 // pushbuttons with a SIGNAL of clicked() should go in here.
 void MainWindow::setupClicks() {
    connect(this->equipmentButton,           &QAbstractButton::clicked, this,         &MainWindow::showEquipmentEditor);
-   connect(this->styleButton,               &QAbstractButton::clicked, this,         &MainWindow::showStyleEditor);
-   connect(this->mashButton,                &QAbstractButton::clicked, mashEditor,   &MashEditor::showEditor);
-   connect(this->pushButton_addFerm,        &QAbstractButton::clicked, fermDialog,   &QWidget::show);
-   connect(this->pushButton_addHop,         &QAbstractButton::clicked, hopDialog,    &QWidget::show);
-   connect(this->pushButton_addMisc,        &QAbstractButton::clicked, miscDialog,   &QWidget::show);
-   connect(this->pushButton_addYeast,       &QAbstractButton::clicked, yeastDialog,  &QWidget::show);
-   connect(this->pushButton_removeFerm,     &QAbstractButton::clicked, this,         &MainWindow::removeSelectedFermentable);
-   connect(this->pushButton_removeHop,      &QAbstractButton::clicked, this,         &MainWindow::removeSelectedHop);
-   connect(this->pushButton_removeMisc,     &QAbstractButton::clicked, this,         &MainWindow::removeSelectedMisc);
-   connect(this->pushButton_removeYeast,    &QAbstractButton::clicked, this,         &MainWindow::removeSelectedYeast);
-   connect(this->pushButton_editFerm,       &QAbstractButton::clicked, this,         &MainWindow::editSelectedFermentable);
-   connect(this->pushButton_editMisc,       &QAbstractButton::clicked, this,         &MainWindow::editSelectedMisc);
-   connect(this->pushButton_editHop,        &QAbstractButton::clicked, this,         &MainWindow::editSelectedHop);
-   connect(this->pushButton_editYeast,      &QAbstractButton::clicked, this,         &MainWindow::editSelectedYeast);
-   connect(this->pushButton_editMash,       &QAbstractButton::clicked, mashEditor,   &MashEditor::showEditor);
-   connect(this->pushButton_addMashStep,    &QAbstractButton::clicked, this,         &MainWindow::addMashStep);
-   connect(this->pushButton_removeMashStep, &QAbstractButton::clicked, this,         &MainWindow::removeSelectedMashStep);
-   connect(this->pushButton_editMashStep,   &QAbstractButton::clicked, this,         &MainWindow::editSelectedMashStep);
-   connect(this->pushButton_mashWizard,     &QAbstractButton::clicked, mashWizard,   &MashWizard::show);
-   connect(this->pushButton_saveMash,       &QAbstractButton::clicked, this,         &MainWindow::saveMash);
-   connect(this->pushButton_mashDes,        &QAbstractButton::clicked, mashDesigner, &MashDesigner::show);
-   connect(this->pushButton_mashUp,         &QAbstractButton::clicked, this,         &MainWindow::moveSelectedMashStepUp);
-   connect(this->pushButton_mashDown,       &QAbstractButton::clicked, this,         &MainWindow::moveSelectedMashStepDown);
-   connect(this->pushButton_mashRemove,     &QAbstractButton::clicked, this,         &MainWindow::removeMash);
+   connect(this->styleButton,               &QAbstractButton::clicked, this,         &MainWindow::showStyleEditor );
+   connect(this->mashButton,                &QAbstractButton::clicked, mashEditor,   &MashEditor::showEditor );
+   connect(this->pushButton_addFerm,        &QAbstractButton::clicked, fermDialog,   &QWidget::show );
+   connect(this->pushButton_addHop,         &QAbstractButton::clicked, hopDialog,    &QWidget::show );
+   connect(this->pushButton_addMisc,        &QAbstractButton::clicked, miscDialog,   &QWidget::show );
+   connect(this->pushButton_addYeast,       &QAbstractButton::clicked, yeastDialog,  &QWidget::show );
+   connect(this->pushButton_removeFerm,     &QAbstractButton::clicked, this,         &MainWindow::removeSelectedFermentable );
+   connect(this->pushButton_removeHop,      &QAbstractButton::clicked, this,         &MainWindow::removeSelectedHop );
+   connect(this->pushButton_removeMisc,     &QAbstractButton::clicked, this,         &MainWindow::removeSelectedMisc );
+   connect(this->pushButton_removeYeast,    &QAbstractButton::clicked, this,         &MainWindow::removeSelectedYeast );
+   connect(this->pushButton_editFerm,       &QAbstractButton::clicked, this,         &MainWindow::editSelectedFermentable );
+   connect(this->pushButton_editMisc,       &QAbstractButton::clicked, this,         &MainWindow::editSelectedMisc );
+   connect(this->pushButton_editHop,        &QAbstractButton::clicked, this,         &MainWindow::editSelectedHop );
+   connect(this->pushButton_editYeast,      &QAbstractButton::clicked, this,         &MainWindow::editSelectedYeast );
+   connect(this->pushButton_editMash,       &QAbstractButton::clicked, mashEditor,   &MashEditor::showEditor );
+   connect(this->pushButton_addMashStep,    &QAbstractButton::clicked, this,         &MainWindow::addMashStep );
+   connect(this->pushButton_removeMashStep, &QAbstractButton::clicked, this,         &MainWindow::removeSelectedMashStep );
+   connect(this->pushButton_editMashStep,   &QAbstractButton::clicked, this,         &MainWindow::editSelectedMashStep );
+   connect(this->pushButton_mashWizard,     &QAbstractButton::clicked, mashWizard,   &MashWizard::show );
+   connect(this->pushButton_saveMash,       &QAbstractButton::clicked, this,         &MainWindow::saveMash );
+   connect(this->pushButton_mashDes,        &QAbstractButton::clicked, mashDesigner, &MashDesigner::show );
+   connect(this->pushButton_mashUp,         &QAbstractButton::clicked, this,         &MainWindow::moveSelectedMashStepUp );
+   connect(this->pushButton_mashDown,       &QAbstractButton::clicked, this,         &MainWindow::moveSelectedMashStepDown );
+   connect(this->pushButton_mashRemove,     &QAbstractButton::clicked, this,         &MainWindow::removeMash );
    return;
 }
 
@@ -2682,7 +2676,7 @@ void MainWindow::removeMash() {
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/)
 {
-   Brewken::saveSystemOptions();
+   Application::saveSystemOptions();
    PersistentSettings::insert(PersistentSettings::Names::geometry, saveGeometry());
    PersistentSettings::insert(PersistentSettings::Names::windowState, saveState());
    if ( recipeObs )
@@ -2921,56 +2915,8 @@ void MainWindow::exportSelected() {
                               &styles,
                               &waters,
                               &yeasts);
-   return;
-}
-
-void MainWindow::finishCheckingVersion()
-{
-   QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
-   if( reply == nullptr )
       return;
-
-   QString remoteVersion(reply->readAll());
-
-   // If there is an error, just return.
-   if( reply->error() != QNetworkReply::NoError )
-      return;
-
-   // If the remote version is newer...
-   if( !remoteVersion.startsWith(VERSIONSTRING) )
-   {
-      // ...and the user wants to download the new version...
-      if( QMessageBox::information(this,
-                                   QObject::tr("New Version"),
-                                   QObject::tr("Version %1 is now available. Download it?").arg(remoteVersion),
-                                   QMessageBox::Yes | QMessageBox::No,
-                                   QMessageBox::Yes) == QMessageBox::Yes )
-      {
-         // ...take them to the website.
-         QDesktopServices::openUrl(QUrl("http://www.brewken.org/download.html"));
-      }
-      else // ... and the user does NOT want to download the new version...
-      {
-         // ... and they want us to stop bothering them...
-         if( QMessageBox::question(this,
-                                   QObject::tr("New Version"),
-                                   QObject::tr("Stop bothering you about new versions?"),
-                                   QMessageBox::Yes | QMessageBox::No,
-                                   QMessageBox::Yes) == QMessageBox::Yes)
-         {
-            // ... make a note to stop bothering the user about the new version.
-            Brewken::setCheckVersion(false);
-         }
-      }
    }
-   else // The current version is newest so...
-   {
-      // ...make a note to bother users about future new versions.
-      // This means that when a user downloads the new version, this
-      // variable will always get reset to true.
-      Brewken::setCheckVersion(true);
-   }
-}
 
 void MainWindow::redisplayLabel()
 {

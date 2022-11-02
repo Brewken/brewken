@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -173,15 +173,15 @@ protected:
 
 // Specialisations for cases where duplicates are allowed
 template<> inline bool XmlNamedEntityRecord<Instruction>::isDuplicate() { return false; }
-template<> inline bool XmlNamedEntityRecord<Mash>::isDuplicate() { return false; }
-template<> inline bool XmlNamedEntityRecord<MashStep>::isDuplicate() { return false; }
-template<> inline bool XmlNamedEntityRecord<BrewNote>::isDuplicate() { return false; }
+template<> inline bool XmlNamedEntityRecord<Mash       >::isDuplicate() { return false; }
+template<> inline bool XmlNamedEntityRecord<MashStep   >::isDuplicate() { return false; }
+template<> inline bool XmlNamedEntityRecord<BrewNote   >::isDuplicate() { return false; }
 
 // Specialisations for cases where name is not required to be unique
 template<> inline void XmlNamedEntityRecord<Instruction>::normaliseName() { return; }
-template<> inline void XmlNamedEntityRecord<Mash>::normaliseName() { return; }
-template<> inline void XmlNamedEntityRecord<MashStep>::normaliseName() { return; }
-template<> inline void XmlNamedEntityRecord<BrewNote>::normaliseName() { return; }
+template<> inline void XmlNamedEntityRecord<Mash       >::normaliseName() { return; }
+template<> inline void XmlNamedEntityRecord<MashStep   >::normaliseName() { return; }
+template<> inline void XmlNamedEntityRecord<BrewNote   >::normaliseName() { return; }
 
 // Specialisations for cases where object is owned by its containing entity
 template<> inline void XmlNamedEntityRecord<BrewNote>::setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
@@ -195,8 +195,8 @@ template<> inline void XmlNamedEntityRecord<BrewNote>::setContainingEntity(std::
 
 // Specialisations for cases where we don't want the objects included in the stats
 template<> inline bool XmlNamedEntityRecord<Instruction>::includedInStats() const { return false; }
-template<> inline bool XmlNamedEntityRecord<BrewNote>::includedInStats() const { return false; }
-template<> inline bool XmlNamedEntityRecord<MashStep>::includedInStats() const { return false; }
+template<> inline bool XmlNamedEntityRecord<BrewNote   >::includedInStats() const { return false; }
+template<> inline bool XmlNamedEntityRecord<MashStep   >::includedInStats() const { return false; }
 
 
 #endif

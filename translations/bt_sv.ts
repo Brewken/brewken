@@ -4366,7 +4366,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Audio Files (*.wav *.ogg *.mp3 *.aiff)</source>
-        <translation>Ljudfiler (*.wav *.ogg *.mp3 *.aiff)</translation>
+        <translation type="vanished">Ljudfiler (*.wav *.ogg *.mp3 *.aiff)</translation>
     </message>
     <message>
         <source>Notes...</source>
@@ -4383,6 +4383,10 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Addition time cannot be longer than remaining boil time</source>
         <translation>Tilläggstid kan inte vara längre än kvarstående koktid</translation>
+    </message>
+    <message>
+        <source>Audio Files (*.wav)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7784,11 +7788,19 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="obsolete">Stopp</translation>
+        <translation type="unfinished">Stopp</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Avbryt</translation>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
+    <message>
+        <source>Set Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Alarm Sound</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
