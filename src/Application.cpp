@@ -210,7 +210,7 @@ namespace {
       QJsonObject jsonObject = jsonDocument.object();
 
       QString remoteVersion = jsonObject.value("name").toString();
-      qDebug() << Q_FUNC_INFO << "Latest release is" << remoteVersion << "; this release is" << VERSIONSTRING;
+      qDebug() << Q_FUNC_INFO << "Latest release is" << remoteVersion << "; this release is" << CONFIG_VERSION_STRING;
 
       // Version names are usually "v3.0.2" etc, so we want to strip the 'v' off the front
       if (remoteVersion.startsWith("v", Qt::CaseInsensitive)) {
@@ -218,7 +218,7 @@ namespace {
       }
 
       // If the remote version is newer...
-      if (!remoteVersion.startsWith(VERSIONSTRING)) {
+      if (!remoteVersion.startsWith(CONFIG_VERSION_STRING)) {
          // ...and the user wants to download the new version...
          if( QMessageBox::information(&MainWindow::instance(),
                                     QObject::tr("New Version"),
@@ -321,8 +321,8 @@ namespace {
       } else {
          qWarning() <<
             Q_FUNC_INFO << "Cannot determine application binary location (got" << path << ") so using compile-time "
-            "constant for resource dir:" << CONFIGDATADIR;
-         path = QString(CONFIGDATADIR);
+            "constant for resource dir:" << CONFIG_DATA_DIR;
+         path = QString(CONFIG_DATA_DIR);
       }
 #elif defined(Q_OS_MAC)
       // === Mac ===

@@ -21,7 +21,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "config.h" // For VERSIONSTRING
+#include "config.h" // For CONFIG_VERSION_STRING
 #include "Logging.h"
 #include "PersistentSettings.h"
 
@@ -69,7 +69,7 @@ public:
          "</head>"
          ""
          "<h1>Brewken</h1>"
-         "version " << VERSIONSTRING << " " << HelpDialog::tr("for") << " " << QSysInfo::prettyProductName() <<
+         "version " << CONFIG_VERSION_STRING << " " << HelpDialog::tr("for") << " " << QSysInfo::prettyProductName() <<
          "<h2>" << HelpDialog::tr("Online Help") << "</h2>"
          "<p>" <<
          HelpDialog::tr("<p>The Brewken wiki is at ") << "<a href=\"https://github.com/Brewken/brewken/wiki\">https://github.com/Brewken/brewken/wiki</a>.</p>"

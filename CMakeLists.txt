@@ -22,6 +22,7 @@
 #
 # You should have received a copy of the GNU General Public License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------------------------------------------------
 
 #
 # Creates a Makefile in the build directory, from where you can do builds and installs.
@@ -206,18 +207,6 @@ enable_testing()
 set(DATA_INSTALL_COMPONENT "Data")
 # For architecture-dependent binaries
 set(RUNTIME_INSTALL_COMPONENT "Runtime")
-
-#=======================================================================================================================
-#================================================= Mac Bundle Settings =================================================
-#=======================================================================================================================
-set(MACOSX_BUNDLE_BUNDLE_NAME "${capitalisedProjectName}")
-#set(MACOSX_BUNDLE_GUI_IDENTIFIER)
-#set(MACOSX_BUNDLE_INFO_STRING)
-#set(MACOSX_BUNDLE_BUNDLE_VERSION)
-#set(MACOSX_BUNDLE_SHORT_VERSION_STRING)
-set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
-set(MACOSX_BUNDLE_ICON_FILE "BrewkenIcon.icns")
-set(MACOSX_BUNDLE_COPYRIGHT "GPLv3")
 
 #=======================================================================================================================
 #============================================== Compiler settings & flags ==============================================
@@ -461,8 +450,11 @@ if(Qt5_POSITION_INDEPENDENT_CODE)
    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
-# There's apparently a whole bunch of extra work we need to do to use Qt on Windows
+# There's apparently a whole bunch of extra work we need to do to use Qt on Windows and Mac
 if(WIN32)
+   #====================================================================================================================
+   #================================================= Windows Qt Stuff =================================================
+   #====================================================================================================================
    # .:TBD:.  Not sure whether/why we need these additional Qt components on Windows
    find_package(Qt5MultimediaWidgets REQUIRED)
    find_package(Qt5OpenGL REQUIRED)
@@ -526,12 +518,34 @@ if(WIN32)
    #
    find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT5_BIN_DIR}")
    if(EXISTS ${WINDEPLOYQT_EXECUTABLE})
+      # Per https://cmake.org/cmake/help/latest/command/add_executable.html, "IMPORTED executables are useful for
+      # convenient reference from commands like add_custom_command()".
       add_executable(Qt5::windeployqt IMPORTED)
       set_target_properties(Qt5::windeployqt PROPERTIES IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE})
    endif()
 
    # International Components for Unicode
    file(GLOB IcuDlls "${QT5_BIN_DIR}/libicu*.dll")
+elseif(APPLE)
+   #====================================================================================================================
+   #=================================================== Mac Qt Stuff ===================================================
+   #====================================================================================================================
+
+   # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
+   # https://doc.qt.io/qt-6/macos-deployment.html#the-mac-deployment-tool
+   #
+   # At first glance, you might thanks that, with a few name changes, we might share all the CMake code for macdeployqt
+   # and windeployqt.  However, as you will see below, the two programs share _only_ a top-level goal ("automate the
+   # process of creating a deployable [folder / applicaiton bundle] that contains [the necessary Qt dependencies]" - ie
+   # so that the end user does not have to install Qt to run our software).  They have completely different
+   # implementations and command line options, so it would be unhelpful to try to treat them identically.
+   find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${QT5_BIN_DIR}")
+   if(EXISTS ${MACDEPLOYQT_EXECUTABLE})
+      # Per https://cmake.org/cmake/help/latest/command/add_executable.html, "IMPORTED executables are useful for
+      # convenient reference from commands like add_custom_command()".
+      add_executable(Qt5::macdeployqt IMPORTED)
+      set_target_properties(Qt5::macdeployqt PROPERTIES IMPORTED_LOCATION ${MACDEPLOYQT_EXECUTABLE})
+   endif()
 
 endif()
 
@@ -706,7 +720,7 @@ if(WIN32)
    if(WIN32)
       execute_process(COMMAND uname OUTPUT_VARIABLE uname)
       message(STATUS "Uname is " ${uname})
-      if (uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
+      if(uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
          message(STATUS "Running on MSYS/MinGW")
          set(MINGW true)
       endif()
@@ -719,8 +733,8 @@ if(WIN32)
          FIND_PATH(MINGW_BIN_DIR "mingw32-make.exe")
       endif()
       if(NOT EXISTS ${MINGW_BIN_DIR})
-         MESSAGE(FATAL_ERROR "MinGW bin dir not found. Run cmake again with the option -DMINGW_BIN_DIR=c:/path/to/mingw/bin")
-      ELSE()
+         message(FATAL_ERROR "MinGW bin dir not found. Run cmake again with the option -DMINGW_BIN_DIR=c:/path/to/mingw/bin")
+      else()
          get_filename_component(Mingw_Path ${CMAKE_CXX_COMPILER} PATH)
       endif()
       message(STATUS "MINGW_BIN_DIR " ${MINGW_BIN_DIR})
@@ -740,11 +754,11 @@ include(InstallRequiredSystemLibraries)
 # variables into the code.
 #
 # All variables written as "${VAR}" in config.in  will be replaced by the value of VAR in config.h.
-# Eg "#define CONFIGDATADIR ${CONFIGDATADIR}" in config.in will be replaced by the below corresponding value in
-# ${CONFIGDATADIR} below when configure_file() is called.
+# Eg "#define CONFIG_DATA_DIR ${CONFIG_DATA_DIR}" in config.in will be replaced by the below corresponding value in
+# ${CONFIG_DATA_DIR} below when configure_file() is called.
 #
-set(CONFIGDATADIR "${CMAKE_INSTALL_PREFIX}/${installSubDir_data}/")
-set(CONFIGDOCDIR "${CMAKE_INSTALL_PREFIX}/${installSubDir_doc}/")
+set(CONFIG_DATA_DIR "${CMAKE_INSTALL_PREFIX}/${installSubDir_data}/")
+string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d %H:%M:%S (UTC)" UTC)
 configure_file(src/config.in src/config.h)
 
 #=======================================================================================================================
@@ -927,40 +941,20 @@ add_library(btobjlib
             ${filesToCompile_qrc})
 
 set_source_files_properties(${filesToInstall_macIcons}
-                              PROPERTIES
-                              MACOSX_PACKAGE_LOCATION "Resources")
+                            PROPERTIES
+                            MACOSX_PACKAGE_LOCATION "Resources")
 set_source_files_properties(${filesToInstall_data}
-                              PROPERTIES
-                              MACOSX_PACKAGE_LOCATION "Resources")
+                            PROPERTIES
+                            MACOSX_PACKAGE_LOCATION "Resources")
 set_source_files_properties(${filesToInstall_docs}
-                              PROPERTIES
-                              MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
+                            PROPERTIES
+                            MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
 set_source_files_properties(${filesToInstall_sounds}
-                              PROPERTIES
-                              MACOSX_PACKAGE_LOCATION "Resources/sounds")
+                            PROPERTIES
+                            MACOSX_PACKAGE_LOCATION "Resources/sounds")
 set_source_files_properties(${QM_FILES}
-                              PROPERTIES
-                              MACOSX_PACKAGE_LOCATION "Resources/translations_qm")
-
-if(APPLE)
-   add_executable(${fileName_executable}
-                  MACOSX_BUNDLE
-                  ${repoDir}/src/main.cpp
-                  ${translationSourceFiles}
-                  ${QM_FILES}
-                  ${filesToInstall_macIcons}
-                  ${filesToInstall_data}
-                  ${filesToInstall_docs}
-                  ${filesToInstall_sounds}
-                  $<TARGET_OBJECTS:btobjlib>)
-else()
-   add_executable(${fileName_executable}
-                  ${repoDir}/src/main.cpp
-                  ${translationSourceFiles}
-                  ${QM_FILES}
-                  ${desktopIcon}
-                  $<TARGET_OBJECTS:btobjlib>)
-endif()
+                            PROPERTIES
+                            MACOSX_PACKAGE_LOCATION "Resources/translations_qm")
 
 # Windows-specific library linking
 if(WIN32 AND MINGW)
@@ -970,8 +964,16 @@ if(WIN32 AND MINGW)
    ############################################################################
 
    # MinGW-specific flags.
-   #    '-Wl,-subsystem,windows' supresses the output command window.
-   #    '-Wl,-s' strips the executable of symbols.
+   #    -Wl,-subsystem,windows - suppresses the output command window.
+   #    -Wl,-enable-stdcall-fixup - If the link finds a symbol that it cannot resolve, it will attempt to do “fuzzy
+   #                                linking” by looking for another defined symbol that differs only in the format of
+   #                                the symbol name (cdecl vs stdcall) and will resolve that symbol by linking to the
+   #                                match (and also print a warning).
+   #    -Wl,-enable-auto-import - Do sophisticated linking of _symbol to __imp__symbol for DATA imports from DLLs, and
+   #                              create the necessary thunking symbols when building the import libraries with those
+   #                              DATA exports.
+   #    -Wl,-enable-runtime-pseudo-reloc - Fixes some of the problems that can occur with -enable-auto-import
+   #    -mthreads - specifies that MinGW-specific thread support is to be used
    set_target_properties(
       ${fileName_executable}
       PROPERTIES
@@ -997,6 +999,90 @@ if(WIN32 AND MINGW)
          DEPENDS ${fileName_executable}
       )
    endif()
+endif()
+
+if(APPLE)
+   # The MACOSX_BUNDLE parameter here sets the MACOSX_BUNDLE property on the created target.  This means the executable
+   # is built as an Application Bundle, which makes it a GUI executable that can be launched from the Finder.
+   #
+   # TBD: When we move to Qt6, look at qt_add_executable
+   add_executable(${fileName_executable}
+                  MACOSX_BUNDLE
+                  ${repoDir}/src/main.cpp
+                  ${translationSourceFiles}
+                  ${QM_FILES}
+                  ${filesToInstall_macIcons}
+                  ${filesToInstall_data}
+                  ${filesToInstall_docs}
+                  ${filesToInstall_sounds}
+                  $<TARGET_OBJECTS:btobjlib>)
+
+   #====================================================================================================================
+   #================================================ Mac Bundle Settings ===============================================
+   #====================================================================================================================
+   # See https://cmake.org/cmake/help/latest/prop_tgt/MACOSX_BUNDLE_INFO_PLIST.html for the CMake doco and
+   # https://developer.apple.com/documentation/bundleresources/information_property_list/bundle_configuration for the
+   # Apple documentation
+   #
+
+   # Sets the CFBundleName bundle property.  "This name can contain up to 15 characters. The system may display it to
+   # users if CFBundleDisplayName isn't set."  (I can't see a way in CMake for us to set CFBundleDisplayName.)
+   set(MACOSX_BUNDLE_BUNDLE_NAME "${capitalisedProjectName}")
+
+   # Sets the CFBundleIdentifier bundle property which is a case-insensitive string that "uniquely identifies a single
+   # app throughout the system ... Typically ... a reverse-DNS format".  It is used when "applying specified
+   # preferences" (whatever that means), to "locate an app capable of opening a particular file", and for validating an
+   # app's signature.
+   set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.${PROJECT_NAME}.${fileName_executable}")
+
+   # We do not set MACOSX_BUNDLE_INFO_STRING, which sets the CFBundleGetInfoString bundle property, as AFAICT
+   # CFBundleGetInfoString is obsolete.
+
+   # Sets the CFBundleVersion, which is "a machine-readable string composed of one to three period-separated integers,
+   # such as 10.14.1. The string can only contain numeric characters (0-9) and periods."
+   set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
+
+   #
+   # This sets the bundle property key CFBundleShortVersionString, which is "a user-visible string for the version of
+   # the bundle. The required format is three period-separated integers, such as 10.14.1. The string can only contain
+   # numeric characters (0-9) and periods."
+   #
+   # One might think that CFBundleShortVersionString and CFBundleVersion are so similar as not to merit being separate
+   # keys, but it is not for us to question whether the left hand of Apple knows what the right hand is doing.
+   #
+   # Confusingly there is also a CMake target property called MACOSX_BUNDLE_LONG_VERSION_STRING which claims to set a
+   # CFBundleLongVersionString bundle property key.  However, it seems this bundle property key is long obsolete.
+   #
+   set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
+
+   # Sets the CFBundleIconFile bundle property key
+   set(MACOSX_BUNDLE_ICON_FILE "BrewkenIcon.icns")
+
+   # Sets the NSHumanReadableCopyright bundle property key, which is "a human-readable copyright notice for the bundle".
+   set(MACOSX_BUNDLE_COPYRIGHT
+       "Copyright 2009-2022.  Distributed under the terms of the GNU General Public License (version 3).")
+
+   #
+   # We want to achieve the same goal as with Qt5::windeployqt above, but note that the Qt5::macdeployqt functions
+   # rather differently, with different options, so our CMake code here is correspondingly different
+   #
+   # Note that although macdeployqt can create the disk image file, we do that part with CPack to be consistent with our
+   # approach to packaging on other platforms
+   #
+   if(TARGET Qt5::macdeployqt)
+      add_custom_command(TARGET ${fileName_executable}
+         POST_BUILD
+         COMMAND Qt5::macdeployqt -verbose=3 "$<TARGET_FILE_DIR:${fileName_executable}.app>"
+      )
+   endif()
+
+else()
+   add_executable(${fileName_executable}
+                  ${repoDir}/src/main.cpp
+                  ${translationSourceFiles}
+                  ${QM_FILES}
+                  ${desktopIcon}
+                  $<TARGET_OBJECTS:btobjlib>)
 endif()
 
 add_dependencies(${fileName_executable} translationsTarget)
@@ -1399,7 +1485,7 @@ set(CPACK_PACKAGE_CHECKSUM "SHA256")
 set(CPACK_RESOURCE_FILE_LICENSE "${repoDir}/COPYING.GPLv3")
 set(CPACK_STRIP_FILES true)
 set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable}" "Brewken")
+set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable}" "${capitalisedProjectName}")
 
 #
 # Variables for Source Package Generators
@@ -1497,11 +1583,11 @@ elseif(WIN32)
    set(CPACK_GENERATOR "NSIS")
 
    # The title displayed at the top of the installer.
-   set(CPACK_NSIS_PACKAGE_NAME "Brewken-${PROJECT_VERSION}")
+   set(CPACK_NSIS_PACKAGE_NAME "${capitalisedProjectName}-${PROJECT_VERSION}")
    # The display name string that appears in the Windows Apps & features in Control Panel
-   set(CPACK_NSIS_DISPLAY_NAME "Brewken-${PROJECT_VERSION}")
+   set(CPACK_NSIS_DISPLAY_NAME "${capitalisedProjectName}-${PROJECT_VERSION}")
    # ?
-   set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Brewken-${PROJECT_VERSION}")
+   set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${capitalisedProjectName}-${PROJECT_VERSION}")
    # URL to a web site providing more information about your application
    set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Brewken/brewken")
    # The name of a *.ico file used as the main icon for the generated install program
@@ -1537,31 +1623,48 @@ elseif(WIN32)
    #  )
 elseif(APPLE)
    #================================================== Mac Packaging ===================================================
-   # It seems like there are two CPack generators that could potentially be used for Mac:
+   # Broadly speaking, what we want for Mac is a a DMG disk image which the end user can mount and from s/he can copy
+   # the application bundle to her/his Applications folder.  (On MacOS, a bundle a directory structure that appears as a
+   # single entity when viewed in the Finder.)
+   #
+   # It seems like there are two CPack generators that could potentially be used for this:
    #   - Bundle (https://cmake.org/cmake/help/latest/cpack_gen/bundle.html) which I think is used in conjunction with
    #     the DragNDrop generator
    #   - DragNDrop (https://cmake.org/cmake/help/latest/cpack_gen/dmg.html) which generates a DMG disk image from which
    #     the end user copies the application to her/his Applications folder
-   #   - IFW (https://cmake.org/cmake/help/latest/cpack_gen/ifw.html) which generates a Qt installer
-   # Historically it looks like DMG images were what we released.
    #
-   # See some info at https://doc.qt.io/qt-6/macos-deployment.html for "official" Qt way to do things, but this is using
-   # qmake.  This page https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/PackageGenerators is more helpful.
-   set(CPACK_GENERATOR "Bundle")
+   # According to
+   # https://stackoverflow.com/questions/46011440/cmake-cpack-preferred-package-generators-for-different-platforms, it's
+   # best to "Avoid the Bundle generator, it is older and more limited in what it supports, [compared with] the DMG
+   # [aka DragNDrop] generator."
+   #
+   # There is also the "official" Qt way to do things for Mac at https://doc.qt.io/qt-6/macos-deployment.html.  This
+   # does not use CPack but does offer options for doing things more directly in CMake.  (NB: As of January 2021, Qt is
+   # migrating from qmake to cmake -- see https://www.qt.io/blog/qt-and-cmake-the-past-the-present-and-the-future.)  We
+   # have to be a bit careful about mixing and matching approaches as we don't want to end up eg with a bundle inside a
+   # bundle.
+   #
+   # Another potential option would be the Qt Installation Framework (IFW) -- see
+   # https://doc.qt.io/qtinstallerframework/ --  for which there is a CPack generator
+   # (https://cmake.org/cmake/help/latest/cpack_gen/ifw.html).  This creates a cross-platform GUI installer using Qt.
+   # However, there are downsides to having a custom tool for install and upgrade, and, additionally, there's not a huge
+   # amount of info about how to get the CPack IFW generator working on Mac.
+   #
+   # Since we're using CPack for Windows and Linux, it feels like it makes sense to use it for Mac too, we we go with
+   # the DragNDrop generator.  Creation of the bundle is handled prior in CMake, prior to invocation of CPack, by the
+   # MACOSX_BUNDLE target property etc (per https://cmake.org/cmake/help/latest/prop_tgt/MACOSX_BUNDLE_INFO_PLIST.html).
+   #
+   # NOTE If you are on Linux and you want to check the contents of a Mac disk image file called, say, foo.dmg, you can
+   #      extract it into regular files from the command line with:
+   #         7z x foo.dmg
+   #
+   set(CPACK_GENERATOR "DragNDrop")
 
-   # Bundle name (displayed in the finder underneath the bundle icon).
-   set(CPACK_BUNDLE_NAME            "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
-   # Bundle icon (displayed in the /Applications folder, on the dock, etc).
-   set(CPACK_BUNDLE_ICON            "${filesToInstall_macIcons}")
-   # XML format Information Property List file containing application metadata
-   # Note that CFBundleVersion in this file should be the same as PROJECT_VERSION in this one
-   set(CPACK_BUNDLE_PLIST           "${filesToInstall_macPropertyList}")
-   # Path to a startup script. This is a path to an executable or script that will be run whenever an end-user double-clicks the generated bundle in the OSX Finder. Optional.
-   #set(CPACK_BUNDLE_STARTUP_COMMAND "${fileName_executable}")
+   # The volume name of the generated disk image. Defaults to CPACK_PACKAGE_FILE_NAME, which we set above to be
+   # something very specific for the benefit of Linux packages.  We choose a simpler/nicer name for the Mac disk image.
+   set(CPACK_DMG_VOLUME_NAME "${CMAKE_PROJECT_NAME} ${PROJECT_VERSION}")
 
    message(STATUS "Building Mac package")
-   #set(CPACK_GENERATOR "DragNDrop")
-   #set(CPACK_DMG_FORMAT "UDBZ")
 endif()
 
 # The documentation implies that all the CPACK_* variables need to be set before we include the CPack module, so that's

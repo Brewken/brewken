@@ -228,7 +228,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
       exit(1);
 
    // Set the window title.
-   setWindowTitle( QString("Brewken - %1").arg(VERSIONSTRING) );
+   setWindowTitle( QString("Brewken - %1").arg(CONFIG_VERSION_STRING) );
 
    // Null out the recipe
    recipeObs = nullptr;
