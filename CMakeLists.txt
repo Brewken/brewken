@@ -956,50 +956,6 @@ set_source_files_properties(${QM_FILES}
                             PROPERTIES
                             MACOSX_PACKAGE_LOCATION "Resources/translations_qm")
 
-# Windows-specific library linking
-if(WIN32 AND MINGW)
-   ############################################################################
-   # Need to set some linker flags that I don't know how to get
-   # automatically.
-   ############################################################################
-
-   # MinGW-specific flags.
-   #    -Wl,-subsystem,windows - suppresses the output command window.
-   #    -Wl,-enable-stdcall-fixup - If the link finds a symbol that it cannot resolve, it will attempt to do “fuzzy
-   #                                linking” by looking for another defined symbol that differs only in the format of
-   #                                the symbol name (cdecl vs stdcall) and will resolve that symbol by linking to the
-   #                                match (and also print a warning).
-   #    -Wl,-enable-auto-import - Do sophisticated linking of _symbol to __imp__symbol for DATA imports from DLLs, and
-   #                              create the necessary thunking symbols when building the import libraries with those
-   #                              DATA exports.
-   #    -Wl,-enable-runtime-pseudo-reloc - Fixes some of the problems that can occur with -enable-auto-import
-   #    -mthreads - specifies that MinGW-specific thread support is to be used
-   set_target_properties(
-      ${fileName_executable}
-      PROPERTIES
-      LINK_FLAGS "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl,-subsystem,windows"
-   )
-
-   # This is from https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building
-   if(TARGET Qt5::windeployqt)
-      # First, execute windeployqt in a temporary directory after the build to create the directory structure and files
-      # that Qt needs on Windows...
-      add_custom_command(TARGET ${fileName_executable}
-         POST_BUILD
-         COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-         COMMAND Qt5::windeployqt --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt" --no-translations --compiler-runtime "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>"
-      )
-
-      # ...then we copy that directory tree to (a) the installation directory (when "make install" is run) and (b)
-      # the directory where we run the test executable (straight away)
-      install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/" DESTINATION bin)
-      add_custom_target(
-         copy-runtime-files ALL
-         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_BINARY_DIR}/windeployqt/" "${CMAKE_BINARY_DIR}/bin"
-         DEPENDS ${fileName_executable}
-      )
-   endif()
-endif()
 
 if(APPLE)
    # The MACOSX_BUNDLE parameter here sets the MACOSX_BUNDLE property on the created target.  This means the executable
@@ -1062,6 +1018,59 @@ if(APPLE)
    set(MACOSX_BUNDLE_COPYRIGHT
        "Copyright 2009-2022.  Distributed under the terms of the GNU General Public License (version 3).")
 
+else()
+   add_executable(${fileName_executable}
+                  ${repoDir}/src/main.cpp
+                  ${translationSourceFiles}
+                  ${QM_FILES}
+                  ${desktopIcon}
+                  $<TARGET_OBJECTS:btobjlib>)
+endif()
+
+# Windows-specific library linking
+if(WIN32 AND MINGW)
+   ############################################################################
+   # Need to set some linker flags that I don't know how to get
+   # automatically.
+   ############################################################################
+
+   # MinGW-specific flags.
+   #    -Wl,-subsystem,windows - suppresses the output command window.
+   #    -Wl,-enable-stdcall-fixup - If the link finds a symbol that it cannot resolve, it will attempt to do “fuzzy
+   #                                linking” by looking for another defined symbol that differs only in the format of
+   #                                the symbol name (cdecl vs stdcall) and will resolve that symbol by linking to the
+   #                                match (and also print a warning).
+   #    -Wl,-enable-auto-import - Do sophisticated linking of _symbol to __imp__symbol for DATA imports from DLLs, and
+   #                              create the necessary thunking symbols when building the import libraries with those
+   #                              DATA exports.
+   #    -Wl,-enable-runtime-pseudo-reloc - Fixes some of the problems that can occur with -enable-auto-import
+   #    -mthreads - specifies that MinGW-specific thread support is to be used
+   set_target_properties(
+      ${fileName_executable}
+      PROPERTIES
+      LINK_FLAGS "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl,-subsystem,windows"
+   )
+
+   # This is from https://stackoverflow.com/questions/41193584/deploy-all-qt-dependencies-when-building
+   if(TARGET Qt5::windeployqt)
+      # First, execute windeployqt in a temporary directory after the build to create the directory structure and files
+      # that Qt needs on Windows...
+      add_custom_command(TARGET ${fileName_executable}
+         POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+         COMMAND Qt5::windeployqt --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt" --no-translations --compiler-runtime "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>"
+      )
+
+      # ...then we copy that directory tree to (a) the installation directory (when "make install" is run) and (b)
+      # the directory where we run the test executable (straight away)
+      install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/windeployqt/" DESTINATION bin)
+      add_custom_target(
+         copy-runtime-files ALL
+         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_BINARY_DIR}/windeployqt/" "${CMAKE_BINARY_DIR}/bin"
+         DEPENDS ${fileName_executable}
+      )
+   endif()
+elseif(APPLE)
    #
    # We want to achieve the same goal as with Qt5::windeployqt above, but note that the Qt5::macdeployqt functions
    # rather differently, with different options, so our CMake code here is correspondingly different
@@ -1072,17 +1081,10 @@ if(APPLE)
    if(TARGET Qt5::macdeployqt)
       add_custom_command(TARGET ${fileName_executable}
          POST_BUILD
-         COMMAND Qt5::macdeployqt -verbose=3 "$<TARGET_FILE_DIR:${fileName_executable}.app>"
+         COMMAND Qt5::macdeployqt -verbose=3 "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>.app"
       )
    endif()
 
-else()
-   add_executable(${fileName_executable}
-                  ${repoDir}/src/main.cpp
-                  ${translationSourceFiles}
-                  ${QM_FILES}
-                  ${desktopIcon}
-                  $<TARGET_OBJECTS:btobjlib>)
 endif()
 
 add_dependencies(${fileName_executable} translationsTarget)
