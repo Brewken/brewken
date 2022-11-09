@@ -63,7 +63,7 @@ jobs:
         mkdir build
         cd build
         cmake ..
-        make
+        make VERBOSE=1
         ls -ltr
 
     - name: Prep for tests

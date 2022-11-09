@@ -1082,8 +1082,14 @@ elseif(APPLE)
       add_custom_command(TARGET ${fileName_executable}
          POST_BUILD
          COMMAND Qt5::macdeployqt -verbose=3 "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>.app"
+         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
+
+
+#      COMMAND ${QT_BINARY_DIR}/macdeployqt "Brewken.app" -dmg
+#      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+#      DEPENDS ${fileName_executable}
 
 endif()
 
@@ -1760,6 +1766,7 @@ set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                                              ${packagesTarBz2Files}
                                              ${packagesChecksumFiles})
 
+# .:TBD:. Think we can ditch this
 # make addframeworks should copy the Qt libraries to the app.
 if(APPLE)
    set(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
