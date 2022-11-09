@@ -1079,9 +1079,10 @@ elseif(APPLE)
    # approach to packaging on other platforms
    #
    if(TARGET Qt5::macdeployqt)
+      # Note that macdeployqt needs any options flags to be _after_ the name of the app
       add_custom_command(TARGET ${fileName_executable}
          POST_BUILD
-         COMMAND Qt5::macdeployqt -verbose=3 "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>.app"
+         COMMAND Qt5::macdeployqt "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=3
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
