@@ -1086,7 +1086,7 @@ elseif(APPLE)
          COMMAND pwd
          COMMAND find .
          # This currently gives Error: Could not find app bundle "/Users/runner/work/brewken/brewken/build/Brewken.app/Contents/MacOS/Brewken.app"
-         COMMAND Qt5::macdeployqt "$<TARGET_FILE_DIR:${fileName_executable}>/$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=3
+         COMMAND Qt5::macdeployqt "$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=3
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
