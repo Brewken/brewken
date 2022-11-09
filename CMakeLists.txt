@@ -1096,7 +1096,7 @@ elseif(APPLE)
          COMMAND Qt5::macdeployqt "$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=3
          # See what command above did
          COMMAND pwd
-         COMMAND find ${fileName_executable}>.app
+         COMMAND find ${fileName_executable}.app
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
