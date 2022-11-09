@@ -3105,10 +3105,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Resource directory &quot;%1&quot; is missing.  Some features will be unavailable.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Successfully read &quot;%1&quot;
 
 %2</source>
@@ -3267,6 +3263,10 @@ Log file may contain more details.</source>
     <message>
         <source>Save</source>
         <translation type="unfinished">Сачувај</translation>
+    </message>
+    <message>
+        <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

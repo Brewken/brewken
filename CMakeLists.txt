@@ -1320,7 +1320,7 @@ if(WIN32)
    #
    # Now, because we're also not assuming that the person running the code will have MSYS2/MinGW installed, we need to
    # include the DLLs that ship with them and get pulled in by GCC.  I am hoping to find a less manual way of doing this
-   # but have not yet paydirt.
+   # but have not yet hit paydirt.
    #
    set(msys2Dlls
       libbrotli
@@ -1356,10 +1356,21 @@ if(WIN32)
    )
 endif()
 
+# Mac Bundle needs to have libraries copied into it
+# Let's start with the Xalan libraries
+# .:TODO:. Needs checking and finishing
+if(APPLE)
+   install(CODE
+   "fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app\" \"${XalanC_LIBRARIES}\")"
+   )
+endif()
+
 # Install the translations.
 install(FILES ${QM_FILES}
         DESTINATION "${installSubDir_data}/translations_qm"
         COMPONENT ${DATA_INSTALL_COMPONENT} )
+
+
 
 #=======================================================================================================================
 #======================================= Install (both locally and for packages) =======================================
@@ -1435,6 +1446,30 @@ if(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
            DESTINATION bin
            COMPONENT System)
 endif()
+
+#=======================================================================================================================
+#=============================================== Post-compilation message ==============================================
+#=======================================================================================================================
+#
+# After running `make`, you usually want to run `make install`.  This is an easy step to miss for someone compiling from
+# source for the first time, so it's common practice to give a reminder about it.  This trick of making a special cmake
+# target comes from https://stackoverflow.com/questions/25240105/how-to-print-messages-after-make-done-with-cmake.  It
+# does mean the message also gets printed during `sudo make install` which is, at best, unnecessary.  But I think, on
+# balance, it's better than not having a message.
+#
+# Putting the message in a different color is usually helpful because it makes it stand out from all the other CMake
+# output.  Hard-coding the color here is a small risk in that we don't know how well it will show up on whatever color
+# scheme the terminal is using.  OTOH, AIUI the color of CMake's own messages is hard-coded, so, if we use one of the
+# same colors, we're not making things any worse.
+# (BTW, I cannot find reference to cmake_echo_color in the CMake documentation, but it seems to work!)
+#
+add_custom_target(
+   FinalMessage ALL
+   ${CMAKE_COMMAND} -E cmake_echo_color --bold --green "*** Finished compiling ${capitalisedProjectName}.  Please run  sudo make install  to install. ***"
+   COMMENT "Final Message"
+)
+add_dependencies(FinalMessage ${fileName_executable})
+
 
 #=======================================================================================================================
 #====================================================== Packaging ======================================================

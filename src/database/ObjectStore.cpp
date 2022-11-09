@@ -27,6 +27,7 @@
 #include "database/BtSqlQuery.h"
 #include "database/Database.h"
 #include "database/DbTransaction.h"
+#include "Logging.h"
 #include "model/NamedParameterBundle.h"
 
 // Private implementation details that don't need access to class member variables
@@ -828,6 +829,11 @@ ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
    pimpl{ std::make_unique<impl>(primaryTable, junctionTables) } {
    qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
+   // We have seen a circumstance where primaryTable.tableName is null, which shouldn't be possible.  This is some
+   // diagnostic to try to find out why.
+   if (this->pimpl->primaryTable.tableName.isNull()) {
+      qCritical().noquote() << Q_FUNC_INFO << "Primary table without name.  Call stack is:" << Logging::getStackTrace();
+   }
    return;
 }
 
