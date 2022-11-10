@@ -1410,12 +1410,18 @@ elseif(APPLE)
    #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
-   install(CODE "
+   # Latest error:
+   #    error: /Applications/Xcode_13.2.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool:
+   #    no LC_RPATH load command with path: /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib found in:
+   #    /Users/runner/work/brewken/brewken/build/_CPack_Packages/Darwin/DragNDrop/brewken_0.1.0_x86_64/ALL_IN_ONE/./Brewken.app/Contents/MacOS/Brewken
+   #    (for architecture x86_64), required for specified option "-delete_rpath /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib"
+   install(CODE [[
       include(BundleUtilities)
-      fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app\" \"${XalanC_LIBRARIES}\")
-      verify_app(\"\${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app\")
-   "
-   )
+      execute_process(COMMAND pwd)
+      execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
+      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
+      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
+   ]])
 endif()
 
 # Install the translations.
