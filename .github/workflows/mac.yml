@@ -48,13 +48,18 @@ jobs:
           version: 5.9.5
 
     - name: Install dependencies
+      #
       # Installing Xalan-C will cause Xerces-C to be installed too (as the former depends on the latter)
       # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
       #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
       #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
+      #
+      # Although it isn't needed for the build, we install the tree command as it can be useful for diagnostics
+      #
       run: |
         brew install xalan-c
         brew install boost
+        brew install tree
 
     - name: Build
       env:
@@ -64,7 +69,7 @@ jobs:
         cd build
         cmake ..
         make VERBOSE=1
-        ls -ltr
+        tree -sh
 
     - name: Prep for tests
       # If a test fails and we get a core, we'd like to analyse it.  This will be easier if we have access to the

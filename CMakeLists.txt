@@ -1078,25 +1078,17 @@ elseif(APPLE)
    # Note that although macdeployqt can create the disk image file, we do that part with CPack to be consistent with our
    # approach to packaging on other platforms
    #
+   # Using the MACOSX_BUNDLE paramater on add_executable() above will have created a directory tree:
+   #
    if(TARGET Qt5::macdeployqt)
       # Note that macdeployqt needs any options flags to be _after_ the name of the app
       add_custom_command(TARGET ${fileName_executable}
          POST_BUILD
-         #
-         #  ./Brewken.app
-         #  ./Brewken.app/Contents
-         #  ./Brewken.app/Contents/MacOS
-         #  ./Brewken.app/Contents/MacOS/Brewken
-         #  ./Brewken.app/Contents/Resources
-         #  ./Brewken.app/Contents/Resources/translations_qm
-         #  ./Brewken.app/Contents/Resources/en.lproj
-         #  ./Brewken.app/Contents/Resources/sounds
-         #  ./Brewken.app/Contents/Info.plist
-         #
-         COMMAND Qt5::macdeployqt "$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=3
+         COMMAND tree -sh ${fileName_executable}.app
+         # -verbose=<0-3>	0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
+         COMMAND Qt5::macdeployqt "$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=2
          # See what command above did
-         COMMAND pwd
-         COMMAND find ${fileName_executable}.app
+         COMMAND tree -sh ${fileName_executable}.app
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
