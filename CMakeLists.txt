@@ -940,24 +940,28 @@ add_library(btobjlib
             ${filesToCompile_cpp}
             ${filesToCompile_qrc})
 
-set_source_files_properties(${filesToInstall_macIcons}
-                            PROPERTIES
-                            MACOSX_PACKAGE_LOCATION "Resources")
-set_source_files_properties(${filesToInstall_data}
-                            PROPERTIES
-                            MACOSX_PACKAGE_LOCATION "Resources")
-set_source_files_properties(${filesToInstall_docs}
-                            PROPERTIES
-                            MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
-set_source_files_properties(${filesToInstall_sounds}
-                            PROPERTIES
-                            MACOSX_PACKAGE_LOCATION "Resources/sounds")
-set_source_files_properties(${QM_FILES}
-                            PROPERTIES
-                            MACOSX_PACKAGE_LOCATION "Resources/translations_qm")
 
 
 if(APPLE)
+   #
+   # We have to tell CMake what things other than the executable etc to include in the Mac Applicaiton Bundle
+   #
+   set_source_files_properties(${filesToInstall_macIcons}
+                              PROPERTIES
+                              MACOSX_PACKAGE_LOCATION "Resources")
+   set_source_files_properties(${filesToInstall_data}
+                              PROPERTIES
+                              MACOSX_PACKAGE_LOCATION "Resources")
+   set_source_files_properties(${filesToInstall_docs}
+                              PROPERTIES
+                              MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
+   set_source_files_properties(${filesToInstall_sounds}
+                              PROPERTIES
+                              MACOSX_PACKAGE_LOCATION "Resources/sounds")
+   set_source_files_properties(${QM_FILES}
+                              PROPERTIES
+                              MACOSX_PACKAGE_LOCATION "Resources/translations_qm")
+
    # The MACOSX_BUNDLE parameter here sets the MACOSX_BUNDLE property on the created target.  This means the executable
    # is built as an Application Bundle, which makes it a GUI executable that can be launched from the Finder.
    #
@@ -1027,6 +1031,8 @@ else()
                   $<TARGET_OBJECTS:btobjlib>)
 endif()
 
+#=======================================================================================================================
+#=======================================================================================================================
 # Windows-specific library linking
 if(WIN32 AND MINGW)
    ############################################################################
@@ -1078,26 +1084,45 @@ elseif(APPLE)
    # Note that although macdeployqt can create the disk image file, we do that part with CPack to be consistent with our
    # approach to packaging on other platforms
    #
-   # Using the MACOSX_BUNDLE paramater on add_executable() above will have created a directory tree:
+   # Using the MACOSX_BUNDLE paramater on add_executable() above will have created a directory tree akin to the
+   # following:
+   #
+   #    ${fileName_executable}.app   # Top level folder that the desktop user sees as "the application"
+   #    └── Contents
+   #        ├── Info.plist
+   #        ├── MacOS
+   #        │   └── ${fileName_executable}    # The main executable
+   #        └──  Resources
+   #            ├── en.lproj
+   #            ├── sounds
+   #            └── translations_qm
+   #
+   # Running macdeployqt will add "Frameworks" and "Plugins" directory trees inside the "Contents" directory, and
+   # populate these with the various Qt shared libraries etc (including database drivers) needed for the code to run.
+   #
+   # We still need to:
+   #    - Copy across non-Qt libraries we need (Xerces, Xalan, etc)
+   #    - Copy sound files into Contents/Resources/sounds and translation files into Contents/Resources/translations_qm
+   #    - Copy default DB and default data into Contents/Resources (which is also where the user manual lives for
+   #      Brewtarget)
+   # The last two should happen courtesy of the set_source_files_properties(... MACOSX_PACKAGE_LOCATION ...) commands
+   # above.  (They won't show up in the diagnostic here because that copying happens _after_ building the executable.
    #
    if(TARGET Qt5::macdeployqt)
-      # Note that macdeployqt needs any options flags to be _after_ the name of the app
+      # Note that macdeployqt needs any options flags to be _after_ the name of the app.  The only flag we use is:
+      #   -verbose=<0-3>   0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
       add_custom_command(TARGET ${fileName_executable}
          POST_BUILD
+         # We err on the side of providing more diagnostics for the Mac build because, if you don't own a Mac, you're
+         # rather reliant on GitHub actions to do Mac builds.
+         COMMAND echo "Contents of ${fileName_executable}.app before running macdeployqt"
          COMMAND tree -sh ${fileName_executable}.app
-         # -verbose=<0-3>	0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
          COMMAND Qt5::macdeployqt "$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=2
-         # See what command above did
+         COMMAND echo "Contents of ${fileName_executable}.app after running macdeployqt"
          COMMAND tree -sh ${fileName_executable}.app
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
-
-
-#      COMMAND ${QT_BINARY_DIR}/macdeployqt "Brewken.app" -dmg
-#      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-#      DEPENDS ${fileName_executable}
-
 endif()
 
 add_dependencies(${fileName_executable} translationsTarget)
@@ -1266,6 +1291,9 @@ install(TARGETS ${fileName_executable}
         RUNTIME DESTINATION ${installSubDir_bin}
         COMPONENT ${RUNTIME_INSTALL_COMPONENT})
 
+#=======================================================================================================================
+#==================================== Shipping shared libraries on Windows and Mac =====================================
+#=======================================================================================================================
 if(WIN32)
    #
    # Shared libraries (DLLs) are a bit complicated on Windows.  Because there is not really a standard package
@@ -1367,14 +1395,26 @@ if(WIN32)
       TARGET ${fileName_executable} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:brewken>
    )
-endif()
-
-# Mac Bundle needs to have libraries copied into it
-# Let's start with the Xalan libraries
-# .:TODO:. Needs checking and finishing
-if(APPLE)
-   install(CODE
-   "fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app\" \"${XalanC_LIBRARIES}\")"
+elseif(APPLE)
+   #
+   # For similar reasons to Windows, the Mac Bundle needs to have shared libraries copied into it.  The Qt shared
+   # libraries are done above with macdeployqt.
+   #
+   # Rather than manually copy library files as we do on Windows, on MacOS we use CMake's fixup_bundle (see
+   # https://cmake.org/cmake/help/latest/module/BundleUtilities.html).  Then there is a helpful verify_app command which
+   # checks that everything "appears valid".
+   #
+   # The include(BundleUtilities) line is the bit the CMake documentation doesn't tell you about (or at least, not in as
+   # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake
+   # command.
+   #
+   # Let's start with the Xalan libraries
+   # .:TODO:. Needs checking and finishing
+   install(CODE "
+      include(BundleUtilities)
+      fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app\" \"${XalanC_LIBRARIES}\")
+      verify_app(\"\${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app\")
+   "
    )
 endif()
 
@@ -1775,15 +1815,15 @@ set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 
 # .:TBD:. Think we can ditch this
 # make addframeworks should copy the Qt libraries to the app.
-if(APPLE)
-   set(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
-   add_custom_target(
-      addframeworks ALL
-      COMMAND ${QT_BINARY_DIR}/macdeployqt "Brewken.app" -dmg
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      DEPENDS ${fileName_executable}
-   )
-endif()
+##if(APPLE)
+##   set(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
+##   add_custom_target(
+##      addframeworks ALL
+##      COMMAND ${QT_BINARY_DIR}/macdeployqt "Brewken.app" -dmg
+##      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+##      DEPENDS ${fileName_executable}
+##   )
+##endif()
 
 if(UNIX AND NOT APPLE)
    add_custom_target(
