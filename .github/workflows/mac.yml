@@ -54,9 +54,16 @@ jobs:
       #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
       #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
       #
-      # Although it isn't needed for the build, we install the tree command as it can be useful for diagnostics
+      # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
+      # system is ready to brew".  Having Homebrew installed should imply the Xcode Command Line Tools are also
+      # installed, but `xcode-select -p` confirms this (expected output "/Library/Developer/CommandLineTools").
+      #
+      # We use the tree command for diagnosing certain build problems (specifically to see what changes certain parts of
+      # the build have made to the build directory tree).
       #
       run: |
+        brew doctor
+        xcode-select -p
         brew install xalan-c
         brew install boost
         brew install tree
@@ -64,11 +71,13 @@ jobs:
     - name: Build
       env:
         QT_QPA_PLATFORM: offscreen
+      # Change `make` to `make VERBOSE=1` to get hugely detailed output
       run: |
         mkdir build
         cd build
         cmake ..
-        make VERBOSE=1
+        make
+        pwd
         tree -sh
 
     - name: Prep for tests
@@ -98,9 +107,11 @@ jobs:
         ctest --extra-verbose --output-on-failure 2>&1
 
     - name: Make package
+      # Change `make package` to `make package VERBOSE=1` to get hugely detailed output
       run: |
         cd build
-        make package
+        pwd
+        make package VERBOSE=1
         ls -ltr
 
     - name: Upload Mac Packages (Installers)
