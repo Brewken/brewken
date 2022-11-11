@@ -61,7 +61,8 @@ jobs:
       # treated as a build script failure.
       #
       # We use the tree command for diagnosing certain build problems (specifically to see what changes certain parts of
-      # the build have made to the build directory tree).
+      # the build have made to the build directory tree).  (If need be, you can also download the entire build directory
+      # within a day of a failed build running, but you need a decent internet connection for this as it's quite large.)
       #
       run: |
         echo "Output from brew doctor: $(brew doctor)"
@@ -126,17 +127,22 @@ jobs:
           ${{github.workspace}}/build/brewken*.dmg.sha256
         retention-days: 7
 
-    - name: Post-processing on cores
+    - name: Post-processing on any core dump
       if: ${{ failure() }}
       # It's all very well capturing core files, but if you don't have a Mac to analyse them on they are not a fat lot
       # of use.  So, if we did get a core, let's at least get a stack trace out of it.
+      #
+      # The loop in the last line should run either 0 or 1 times, depending on whether the build failure did or did not
+      # generate a core file.
+      #    ls -1 | while read ii; do echo "bt" | lldb -c $ii; done
       run: |
+        cat CPackConfig.cmake
         sudo chmod -R +rwx /cores
         sudo chmod -R +rwx /Library/Logs/DiagnosticReports
         echo "Contents of /cores directory: $(ls -ltr /cores)"
         echo "Contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports)"
         cd /cores
-        echo "bt" | lldb -c $(ls -1)
+        ls -1 | while read ii; do echo "bt" | lldb -c $ii; done
 
     - name: Recover Debris Artifacts (aka build output)
       if: ${{ failure() }}
