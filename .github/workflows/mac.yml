@@ -56,14 +56,16 @@ jobs:
       #
       # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
       # system is ready to brew".  Having Homebrew installed should imply the Xcode Command Line Tools are also
-      # installed, but `xcode-select -p` confirms this (expected output "/Library/Developer/CommandLineTools").
+      # installed, but `xcode-select -p` confirms this (expected output "/Library/Developer/CommandLineTools").  As
+      # elsewhere we use the echo trick to ensure that a non-zero return value from these diagnostic commands is not
+      # treated as a build script failure.
       #
       # We use the tree command for diagnosing certain build problems (specifically to see what changes certain parts of
       # the build have made to the build directory tree).
       #
       run: |
-        brew doctor
-        xcode-select -p
+        echo "Output from brew doctor: $(brew doctor)"
+        echo "Output from xcode-select -p: $(xcode-select -p)"
         brew install xalan-c
         brew install boost
         brew install tree
