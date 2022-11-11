@@ -136,7 +136,9 @@ jobs:
       # generate a core file.
       #    ls -1 | while read ii; do echo "bt" | lldb -c $ii; done
       run: |
-        cat CPackConfig.cmake
+        pwd
+        tree -sh
+        #cat CPackConfig.cmake
         sudo chmod -R +rwx /cores
         sudo chmod -R +rwx /Library/Logs/DiagnosticReports
         echo "Contents of /cores directory: $(ls -ltr /cores)"
