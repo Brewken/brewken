@@ -1423,6 +1423,12 @@ elseif(APPLE)
 ##      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
 ##      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
 ##   ]])
+   install(CODE [[
+      include(BundleUtilities)
+      execute_process(COMMAND pwd)
+      execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
+      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
+   ]])
 endif()
 
 # Install the translations.
