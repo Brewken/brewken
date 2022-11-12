@@ -1415,6 +1415,7 @@ elseif(APPLE)
    #    no LC_RPATH load command with path: /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib found in:
    #    /Users/runner/work/brewken/brewken/build/_CPack_Packages/Darwin/DragNDrop/brewken_0.1.0_x86_64/ALL_IN_ONE/./Brewken.app/Contents/MacOS/Brewken
    #    (for architecture x86_64), required for specified option "-delete_rpath /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib"
+   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
    install(CODE [[
       include(BundleUtilities)
       execute_process(COMMAND pwd)
@@ -1524,7 +1525,7 @@ endif()
 #
 add_custom_target(
    FinalMessage ALL
-   ${CMAKE_COMMAND} -E cmake_echo_color --bold --green "*** Finished compiling ${capitalisedProjectName}.  Please run  sudo make install  to install. ***"
+   ${CMAKE_COMMAND} -E cmake_echo_color --bold --green "⭐⭐⭐ Finished compiling ${capitalisedProjectName}.  Please run  sudo make install  to install. ⭐⭐⭐"
    COMMENT "Final Message"
 )
 add_dependencies(FinalMessage ${fileName_executable})
