@@ -1416,13 +1416,13 @@ elseif(APPLE)
    #    /Users/runner/work/brewken/brewken/build/_CPack_Packages/Darwin/DragNDrop/brewken_0.1.0_x86_64/ALL_IN_ONE/./Brewken.app/Contents/MacOS/Brewken
    #    (for architecture x86_64), required for specified option "-delete_rpath /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib"
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
-   install(CODE [[
-      include(BundleUtilities)
-      execute_process(COMMAND pwd)
-      execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
-      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
-      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
-   ]])
+##   install(CODE [[
+##      include(BundleUtilities)
+##      execute_process(COMMAND pwd)
+##      execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
+##      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
+##      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
+##   ]])
 endif()
 
 # Install the translations.
