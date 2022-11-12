@@ -1404,9 +1404,14 @@ elseif(APPLE)
    # https://cmake.org/cmake/help/latest/module/BundleUtilities.html).  Then there is a helpful verify_app command which
    # checks that everything "appears valid".
    #
+   # Note that the CMake doco says "DO NOT USE THESE FUNCTIONS AT CONFIGURE TIME (from CMakeLists.txt)! Instead, invoke
+   # them from an install(CODE) or install(SCRIPT) rule."  This means you need to run "make install" before you run
+   # "make package", otherwise, fixup_bundle won't have been run.
+   #
    # The include(BundleUtilities) line is the bit the CMake documentation doesn't tell you about (or at least, not in as
    # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake
    # command.
+   #
    #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
@@ -1425,8 +1430,10 @@ elseif(APPLE)
 ##   ]])
    install(CODE [[
       include(BundleUtilities)
+      execute_process(COMMAND echo "About to run fixup_bundle")
       execute_process(COMMAND pwd)
       execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
+      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
       verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
    ]])
 endif()

@@ -80,8 +80,6 @@ jobs:
         cd build
         cmake ..
         make
-        pwd
-        tree -sh
 
     - name: Prep for tests
       # If a test fails and we get a core, we'd like to analyse it.  This will be easier if we have access to the
@@ -110,10 +108,12 @@ jobs:
         ctest --extra-verbose --output-on-failure 2>&1
 
     - name: Make package
+      # See comments in CMakeLists.txt about fixup_bundle for why we need to run make install before make package on Mac
       # Change `make package` to `make package VERBOSE=1` to get hugely detailed output
       run: |
         cd build
         pwd
+        make install VERBOSE=1
         make package VERBOSE=1
         ls -ltr
 
