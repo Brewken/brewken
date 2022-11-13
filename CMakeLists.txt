@@ -1405,8 +1405,7 @@ elseif(APPLE)
    # checks that everything "appears valid".
    #
    # Note that the CMake doco says "DO NOT USE THESE FUNCTIONS AT CONFIGURE TIME (from CMakeLists.txt)! Instead, invoke
-   # them from an install(CODE) or install(SCRIPT) rule."  This means you need to run "make install" before you run
-   # "make package", otherwise, fixup_bundle won't have been run.
+   # them from an install(CODE) or install(SCRIPT) rule."
    #
    # The include(BundleUtilities) line is the bit the CMake documentation doesn't tell you about (or at least, not in as
    # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake

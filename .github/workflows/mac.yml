@@ -113,7 +113,6 @@ jobs:
       run: |
         cd build
         pwd
-        make install VERBOSE=1
         make package VERBOSE=1
         ls -ltr
 
