@@ -1411,6 +1411,9 @@ elseif(APPLE)
    # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake
    # command.
    #
+   # Another thing you have to find out the hard way is that the first parameter to fixup_bundle ("<app>") cannot be a
+   # relative path.  If you pass in "foo.app", then fixup_bundle will look for "/foo.app".
+   #
    # CMake docs also don't tell you what the third parameter ("<dirs>") to fixup_bundle is for.  ¥¥¥¥ TO DO ¥¥¥ If you look at the
    # source code, you see it's passed to get_bundle_keys() and fixup_bundle_item() and eventually used by
    # gp_resolve_item() "Use <exepath> and <dirs> if necessary to resolve non-absolute <file> values -- but only for non-embedded items."
@@ -1440,7 +1443,8 @@ elseif(APPLE)
       include(BundleUtilities)
       execute_process(COMMAND echo "About to run fixup_bundle")
       execute_process(COMMAND echo "fileName_executable  = ${fileName_executable}")
-      fixup_bundle("${fileName_executable}.app" "${XalanC_LIBRARIES}" .)
+      execute_process(COMMAND echo "fixup_bundle param 1 = ${CMAKE_BINARY_DIR}/${fileName_executable}")
+      fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "${XalanC_LIBRARIES}" .)
       verify_app("${fileName_executable}.app")
    ]] installCode)
    install(CODE "${installCode}")
