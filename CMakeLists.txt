@@ -1443,7 +1443,7 @@ elseif(APPLE)
       fixup_bundle("${fileName_executable}.app" "${XalanC_LIBRARIES}" .)
       verify_app("${fileName_executable}.app")
    ]] installCode)
-   install(CODE ${installCode})
+   install(CODE "${installCode}")
 endif()
 
 # Install the translations.
