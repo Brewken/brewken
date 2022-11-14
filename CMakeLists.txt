@@ -1415,9 +1415,8 @@ elseif(APPLE)
    # source code, you see it's passed to get_bundle_keys() and fixup_bundle_item() and eventually used by
    # gp_resolve_item() "Use <exepath> and <dirs> if necessary to resolve non-absolute <file> values -- but only for non-embedded items."
    #
-   # We also have to be careful about which variables are available to us.  Eg MACOSX_BUNDLE_BUNDLE_NAME is not set here
-   # but CMAKE_INSTALL_PREFIX is
-   #
+   # We also have to be careful about which variables are available to us.  Eg CMAKE_INSTALL_PREFIX is set OK, but
+   # MACOSX_BUNDLE_BUNDLE_NAME and capitalisedProjectName are not.
    #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
@@ -1432,21 +1431,14 @@ elseif(APPLE)
    # given files".  Couldn't get it to work on Windows, but maybe try on Mac?
    #
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
-##   install(CODE [[
-##      include(BundleUtilities)
 ##      execute_process(COMMAND pwd)
-##      execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
-##      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
-##      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
-##   ]])
+##      execute_process(COMMAND tree -sh .)
    install(CODE [[
       include(BundleUtilities)
-      execute_process(COMMAND echo "About to run fixup_bundle. CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
-      execute_process(COMMAND echo "capitalisedProjectName = ${capitalisedProjectName}")
-      execute_process(COMMAND pwd)
-      execute_process(COMMAND tree -sh .)
-      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${capitalisedProjectName}.app" "${XalanC_LIBRARIES}" .)
-      verify_app("${CMAKE_INSTALL_PREFIX}/${capitalisedProjectName}.app")
+      execute_process(COMMAND echo "About to run fixup_bundle")
+      execute_process(COMMAND echo "TARGET_FILE_NAME:fileName_executable  = $<TARGET_FILE_NAME:${fileName_executable}>")
+      fixup_bundle("$<TARGET_FILE_NAME:${fileName_executable}>.app" "${XalanC_LIBRARIES}" .)
+      verify_app("$<TARGET_FILE_NAME:${fileName_executable}>.app")
    ]])
 endif()
 
