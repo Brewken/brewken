@@ -1411,12 +1411,15 @@ elseif(APPLE)
    # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake
    # command.
    #
-   # CMake docs also don't tell you what the third parameter ("<dirs>") to fixup_bundle is for.  If you look at the
+   # CMake docs also don't tell you what the third parameter ("<dirs>") to fixup_bundle is for.  ¥¥¥¥ TO DO ¥¥¥ If you look at the
    # source code, you see it's passed to get_bundle_keys() and fixup_bundle_item() and eventually used by
    # gp_resolve_item() "Use <exepath> and <dirs> if necessary to resolve non-absolute <file> values -- but only for non-embedded items."
    #
-   # We also have to be careful about which variables are available to us.  Eg CMAKE_INSTALL_PREFIX is set OK, but
-   # MACOSX_BUNDLE_BUNDLE_NAME and capitalisedProjectName are not.
+   # We also have to be careful about which variables are available to us.  A lot of things are simply not set inside
+   # install(CODE).  As explained at
+   # https://stackoverflow.com/questions/73815300/how-do-i-get-project-root-dir-in-the-cmake-install-code-section, there
+   # are various techniques to inject variables into install(CODE).  We use the string(CONFIGURE) approach as it avoids
+   # too much escaping.
    #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
@@ -1433,13 +1436,14 @@ elseif(APPLE)
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 ##      execute_process(COMMAND pwd)
 ##      execute_process(COMMAND tree -sh .)
-   install(CODE [[
+   string(CONFIGURE [[
       include(BundleUtilities)
       execute_process(COMMAND echo "About to run fixup_bundle")
-      execute_process(COMMAND echo "TARGET_FILE_NAME:fileName_executable  = $<TARGET_FILE_NAME:${fileName_executable}>")
-      fixup_bundle("$<TARGET_FILE_NAME:${fileName_executable}>.app" "${XalanC_LIBRARIES}" .)
-      verify_app("$<TARGET_FILE_NAME:${fileName_executable}>.app")
-   ]])
+      execute_process(COMMAND echo "fileName_executable  = ${fileName_executable}")
+      fixup_bundle("${fileName_executable}.app" "${XalanC_LIBRARIES}" .)
+      verify_app("${fileName_executable}.app")
+   ]] installCode)
+   install(CODE ${installCode})
 endif()
 
 # Install the translations.
