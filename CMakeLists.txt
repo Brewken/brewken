@@ -1415,6 +1415,10 @@ elseif(APPLE)
    # source code, you see it's passed to get_bundle_keys() and fixup_bundle_item() and eventually used by
    # gp_resolve_item() "Use <exepath> and <dirs> if necessary to resolve non-absolute <file> values -- but only for non-embedded items."
    #
+   # We also have to be careful about which variables are available to us.  Eg MACOSX_BUNDLE_BUNDLE_NAME is not set here
+   # but CMAKE_INSTALL_PREFIX is
+   #
+   #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
    # Latest error:
@@ -1438,11 +1442,11 @@ elseif(APPLE)
    install(CODE [[
       include(BundleUtilities)
       execute_process(COMMAND echo "About to run fixup_bundle. CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
-      execute_process(COMMAND echo "MACOSX_BUNDLE_BUNDLE_NAME = ${MACOSX_BUNDLE_BUNDLE_NAME}")
+      execute_process(COMMAND echo "capitalisedProjectName = ${capitalisedProjectName}")
       execute_process(COMMAND pwd)
       execute_process(COMMAND tree -sh .)
-      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}" .)
-      verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
+      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${capitalisedProjectName}.app" "${XalanC_LIBRARIES}" .)
+      verify_app("${CMAKE_INSTALL_PREFIX}/${capitalisedProjectName}.app")
    ]])
 endif()
 
