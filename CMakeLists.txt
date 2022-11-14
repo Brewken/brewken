@@ -1411,6 +1411,9 @@ elseif(APPLE)
    # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake
    # command.
    #
+   # CMake docs also don't tell you what the third parameter ("<dirs>") to fixup_bundle is for.  If you look at the
+   # source code, you see it's passed to get_bundle_keys() and fixup_bundle_item() and eventually used by
+   # gp_resolve_item() "Use <exepath> and <dirs> if necessary to resolve non-absolute <file> values -- but only for non-embedded items."
    #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
@@ -1419,6 +1422,11 @@ elseif(APPLE)
    #    no LC_RPATH load command with path: /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib found in:
    #    /Users/runner/work/brewken/brewken/build/_CPack_Packages/Darwin/DragNDrop/brewken_0.1.0_x86_64/ALL_IN_ONE/./Brewken.app/Contents/MacOS/Brewken
    #    (for architecture x86_64), required for specified option "-delete_rpath /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib"
+   #
+   #
+   # .:TBD:. file(GET_RUNTIME_DEPENDENCIES) is supposed to "Recursively get the list of libraries depended on by the
+   # given files".  Couldn't get it to work on Windows, but maybe try on Mac?
+   #
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 ##   install(CODE [[
 ##      include(BundleUtilities)
@@ -1432,7 +1440,7 @@ elseif(APPLE)
       execute_process(COMMAND echo "About to run fixup_bundle")
       execute_process(COMMAND pwd)
       execute_process(COMMAND tree -sh ${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app)
-      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}")
+      fixup_bundle("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app" "${XalanC_LIBRARIES}" .)
       verify_app("${CMAKE_INSTALL_PREFIX}/${MACOSX_BUNDLE_BUNDLE_NAME}.app")
    ]])
 endif()
