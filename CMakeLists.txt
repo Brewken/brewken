@@ -629,8 +629,8 @@ else()
 endif()
 include_directories(${Boost_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Boost headers and DLLs are on your system
-message( "Boost include directories: " ${Boost_INCLUDE_DIRS} )
-message( "Boost libraries: " ${Boost_LIBRARIES} )
+message("Boost include directories: ${Boost_INCLUDE_DIRS}")
+message("Boost libraries: ${Boost_LIBRARIES}")
 
 #
 # Extra requirements for Boost Stacktrace
@@ -667,7 +667,7 @@ if(NOT APPLE)
    endif()
 #   add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
 endif()
-message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boost_LIBRARIES})
+message("Backtrace libs  ${DL_LIBRARY}  |  ${Backtrace_LIBRARIES}  |  ${Boost_LIBRARIES}")
 
 # Defining BOOST_JSON_STANDALONE tells Boost.JSON to use std::string_view (requires C++17) rather than
 # boost::string_view (part of Boost.Utility).  However, as of recent versions of Boost.JSON, this is "deprecated and
@@ -680,16 +680,16 @@ message("Backtrace libs " ${DL_LIBRARY} " | " ${Backtrace_LIBRARIES} " | " ${Boo
 find_package(XercesC REQUIRED)
 include_directories(${XercesC_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Xerces headers and DLLs are on your system
-message("Xerces-C++ include directories: " ${XercesC_INCLUDE_DIRS})
-message("Xerces-C++ libraries: " ${XercesC_LIBRARIES})
+message("Xerces-C++ include directories: ${XercesC_INCLUDE_DIRS}")
+message("Xerces-C++ libraries: ${XercesC_LIBRARIES}")
 
 #==================================================== Find Xalan-C++ ===================================================
 # Same comments apply here as for Xerces above
 find_package(XalanC REQUIRED)
 include_directories(${XalanC_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Xalan headers and DLLs are on your system
-message("Xalan-C++ include directories: " ${XalanC_INCLUDE_DIRS})
-message("Xalan-C++ libraries: " ${XalanC_LIBRARIES})
+message("Xalan-C++ include directories: ${XalanC_INCLUDE_DIRS}")
+message("Xalan-C++ libraries: ${XalanC_LIBRARIES}")
 
 #=======================================================Valijson========================================================
 # Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
@@ -704,7 +704,7 @@ message("Xalan-C++ libraries: " ${XalanC_LIBRARIES})
 # to build Valijson) and somewhat harder to debug when it goes wrong.  So, instead, per the readme at
 # https://github.com/tristanpenman/valijson, we just added ValiJSON as a git submodule from the command line.
 #
-message(STATUS "Valijson source at " ${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson )
+message(STATUS "Valijson source at  ${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson")
 # Per comment above, leave the next line commented out unless you want to build the ValiJSON test suite
 #add_subdirectory(third-party/valijson)
 add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
@@ -1424,6 +1424,8 @@ elseif(APPLE)
    # are various techniques to inject variables into install(CODE).  We use the string(CONFIGURE) approach as it avoids
    # too much escaping.
    #
+   # ------
+   #
    # Let's start with the Xalan libraries
    # .:TODO:. Needs checking and finishing
    # Latest error:
@@ -1436,13 +1438,15 @@ elseif(APPLE)
    # .:TBD:. file(GET_RUNTIME_DEPENDENCIES) is supposed to "Recursively get the list of libraries depended on by the
    # given files".  Couldn't get it to work on Windows, but maybe try on Mac?
    #
+   # XalanC_LIBRARIES = /usr/local/lib/libxalan-c.dylib /usr/local/lib/libxerces-c.dylib
+   #
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 ##      execute_process(COMMAND pwd)
 ##      execute_process(COMMAND tree -sh .)
    string(CONFIGURE [[
       include(BundleUtilities)
       execute_process(COMMAND echo "About to run fixup_bundle")
-      execute_process(COMMAND echo "fileName_executable  = ${fileName_executable}")
+      execute_process(COMMAND tree -sh .)
       execute_process(COMMAND echo "fixup_bundle param 1 = ${CMAKE_BINARY_DIR}/${fileName_executable}")
       fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "${XalanC_LIBRARIES}" .)
       verify_app("${fileName_executable}.app")
