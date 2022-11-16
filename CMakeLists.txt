@@ -1400,9 +1400,17 @@ elseif(APPLE)
    # For similar reasons to Windows, the Mac Bundle needs to have shared libraries copied into it.  The Qt shared
    # libraries are done above with macdeployqt.
    #
-   # Rather than manually copy library files as we do on Windows, on MacOS we use CMake's fixup_bundle (see
-   # https://cmake.org/cmake/help/latest/module/BundleUtilities.html).  Then there is a helpful verify_app command which
-   # checks that everything "appears valid".
+   # First, we need to copy the shared libraries (.dylib files) to the Contents/Frameworks folder inside the bundle.
+   #
+   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
+   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
+
+   #
+   # Having copied the shared libraries into the bundle, we now need to use CMake's fixup_bundle
+   # (see https://cmake.org/cmake/help/latest/module/BundleUtilities.html) to make sure the application inside the
+   # bundle looks in the bundle, not the system, for each of these shared libraries.
+   #
+   # Finally, there is a verify_app command which checks that everything "appears valid".
    #
    # Note that the CMake doco says "DO NOT USE THESE FUNCTIONS AT CONFIGURE TIME (from CMakeLists.txt)! Instead, invoke
    # them from an install(CODE) or install(SCRIPT) rule."
