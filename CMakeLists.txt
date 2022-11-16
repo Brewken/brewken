@@ -1406,6 +1406,20 @@ elseif(APPLE)
    install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
 
    #
+   # On MacOS, you can tell the application where to look for dynamic libraries via "Runpath Search Path" aka "@rpath".
+   # I guess it saves the user having to worry about the path, but it makes for more build permutations.  Setting
+   # CMAKE_BUILD_WITH_INSTALL_RPATH to true means "the software is always built with the install path for the RPATH and
+   # does not need to be relinked when installed".  Setting CMAKE_INSTALL_RPATH_USE_LINK_PATH to true "will append to
+   # the runtime search path (rpath) of installed binaries any directories outside the project that are in the linker
+   # search path or contain linked library files".
+   #
+   # set both INSTALL_RPATH and INSTALL_RPATH_USE_LINK_PATH as properties on the respective targets instead of setting CMAKE_INSTALL_RPATH_USE_LINK_PATH and CMAKE_INSTALL_RPATH; this makes future refactoring easier
+   #
+   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH    true)
+   message(STATUS "CMAKE_INSTALL_RPATH = ${CMAKE_INSTALL_RPATH}, right"
+
+   #
    # Having copied the shared libraries into the bundle, we now need to use CMake's fixup_bundle
    # (see https://cmake.org/cmake/help/latest/module/BundleUtilities.html) to make sure the application inside the
    # bundle looks in the bundle, not the system, for each of these shared libraries.
@@ -1431,8 +1445,6 @@ elseif(APPLE)
    # cannot be determined by otool output analysis (i.e. plugins)".  The <dirs> parameter is undocumented (welcome to
    # the joy of CMake) and often appears to be set to empty string in examples on stackoverflow etc.
    #
-   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
-   set(CMAKE_BUILD_WITH_INSTALL_RPATH    true)
 ##      execute_process(COMMAND pwd)
 ##      execute_process(COMMAND tree -sh .)
    string(CONFIGURE [[
