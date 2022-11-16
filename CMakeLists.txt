@@ -1432,6 +1432,7 @@ elseif(APPLE)
    # the joy of CMake) and often appears to be set to empty string in examples on stackoverflow etc.
    #
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH    true)
 ##      execute_process(COMMAND pwd)
 ##      execute_process(COMMAND tree -sh .)
    string(CONFIGURE [[
