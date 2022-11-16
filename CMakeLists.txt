@@ -1410,10 +1410,14 @@ elseif(APPLE)
    # (see https://cmake.org/cmake/help/latest/module/BundleUtilities.html) to make sure the application inside the
    # bundle looks in the bundle, not the system, for each of these shared libraries.
    #
-   # Finally, there is a verify_app command which checks that everything "appears valid".
+   # After this, there is a verify_app command which checks that everything "appears valid".
    #
    # Note that the CMake doco says "DO NOT USE THESE FUNCTIONS AT CONFIGURE TIME (from CMakeLists.txt)! Instead, invoke
-   # them from an install(CODE) or install(SCRIPT) rule."
+   # them from an install(CODE) or install(SCRIPT) rule."  Note that this means we have to be careful about which
+   # variables are available to us.  A lot of things are simply not set inside install(CODE).  As explained at
+   # https://stackoverflow.com/questions/73815300/how-do-i-get-project-root-dir-in-the-cmake-install-code-section, there
+   # are various techniques to inject variables into install(CODE).  We use the string(CONFIGURE) approach as it avoids
+   # too much escaping.
    #
    # The include(BundleUtilities) line is the bit the CMake documentation doesn't tell you about (or at least, not in as
    # obvious a way as one might like).  Without it you'll get an error about fixup_bundle being an unknown CMake
@@ -1422,31 +1426,10 @@ elseif(APPLE)
    # Another thing you have to find out the hard way is that the first parameter to fixup_bundle ("<app>") cannot be a
    # relative path.  If you pass in "foo.app", then fixup_bundle will look for "/foo.app".
    #
-   # CMake docs also don't tell you what the third parameter ("<dirs>") to fixup_bundle is for.  ¥¥¥¥ TO DO ¥¥¥ If you look at the
-   # source code, you see it's passed to get_bundle_keys() and fixup_bundle_item() and eventually used by
-   # gp_resolve_item() "Use <exepath> and <dirs> if necessary to resolve non-absolute <file> values -- but only for non-embedded items."
-   #
-   # We also have to be careful about which variables are available to us.  A lot of things are simply not set inside
-   # install(CODE).  As explained at
-   # https://stackoverflow.com/questions/73815300/how-do-i-get-project-root-dir-in-the-cmake-install-code-section, there
-   # are various techniques to inject variables into install(CODE).  We use the string(CONFIGURE) approach as it avoids
-   # too much escaping.
-   #
-   # ------
-   #
-   # Let's start with the Xalan libraries
-   # .:TODO:. Needs checking and finishing
-   # Latest error:
-   #    error: /Applications/Xcode_13.2.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool:
-   #    no LC_RPATH load command with path: /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib found in:
-   #    /Users/runner/work/brewken/brewken/build/_CPack_Packages/Darwin/DragNDrop/brewken_0.1.0_x86_64/ALL_IN_ONE/./Brewken.app/Contents/MacOS/Brewken
-   #    (for architecture x86_64), required for specified option "-delete_rpath /Users/runner/work/brewken/Qt/5.9.5/clang_64/lib"
-   #
-   #
-   # .:TBD:. file(GET_RUNTIME_DEPENDENCIES) is supposed to "Recursively get the list of libraries depended on by the
-   # given files".  Couldn't get it to work on Windows, but maybe try on Mac?
-   #
-   # XalanC_LIBRARIES = /usr/local/lib/libxalan-c.dylib /usr/local/lib/libxerces-c.dylib
+   # Besides the full path to the bundle to fix, fixup_bundle takes two other parameters --
+   # fixup_bundle(<app> <libs> <dirs>).  The <libs> parameter "is a list of libraries that must be fixed up, but that
+   # cannot be determined by otool output analysis (i.e. plugins)".  The <dirs> parameter is undocumented (welcome to
+   # the joy of CMake) and often appears to be set to empty string in examples on stackoverflow etc.
    #
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 ##      execute_process(COMMAND pwd)
@@ -1456,7 +1439,7 @@ elseif(APPLE)
       execute_process(COMMAND echo "About to run fixup_bundle")
       execute_process(COMMAND tree -sh .)
       execute_process(COMMAND echo "fixup_bundle param 1 = ${CMAKE_BINARY_DIR}/${fileName_executable}")
-      fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "" "")
+      fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "" "${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks")
       verify_app("${fileName_executable}.app")
    ]] installCode)
    install(CODE "${installCode}")
