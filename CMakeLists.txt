@@ -1413,11 +1413,11 @@ elseif(APPLE)
    # the runtime search path (rpath) of installed binaries any directories outside the project that are in the linker
    # search path or contain linked library files".
    #
-   # set both INSTALL_RPATH and INSTALL_RPATH_USE_LINK_PATH as properties on the respective targets instead of setting CMAKE_INSTALL_RPATH_USE_LINK_PATH and CMAKE_INSTALL_RPATH; this makes future refactoring easier
+   # CMAKE_INSTALL_RPATH
    #
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
    set(CMAKE_BUILD_WITH_INSTALL_RPATH    true)
-   message(STATUS "CMAKE_INSTALL_RPATH = ${CMAKE_INSTALL_RPATH}, right"
+   message(STATUS "CMAKE_INSTALL_RPATH = ${CMAKE_INSTALL_RPATH}, right")
 
    #
    # Having copied the shared libraries into the bundle, we now need to use CMake's fixup_bundle
