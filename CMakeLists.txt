@@ -1406,17 +1406,22 @@ elseif(APPLE)
    install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
 
    #
-   # On MacOS, you can tell the application where to look for dynamic libraries via "Runpath Search Path" aka "@rpath".
-   # I guess it saves the user having to worry about the path, but it makes for more build permutations.  Setting
-   # CMAKE_BUILD_WITH_INSTALL_RPATH to true means "the software is always built with the install path for the RPATH and
-   # does not need to be relinked when installed".  Setting CMAKE_INSTALL_RPATH_USE_LINK_PATH to true "will append to
-   # the runtime search path (rpath) of installed binaries any directories outside the project that are in the linker
-   # search path or contain linked library files".
+   # On MacOS, if you are shipping dynamic libraries with your application, you can tell the application where to look
+   # for those dynamic libraries via "Runpath Search Path" aka "@rpath".  See
+   # https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling for more details.
    #
-   # CMAKE_INSTALL_RPATH
    #
-   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
+   # Setting CMAKE_BUILD_WITH_INSTALL_RPATH to true means "the software is always built with the install path for the
+   # RPATH and does not need to be relinked when installed".  This is recommended at
+   # https://discourse.cmake.org/t/osx-frameworks-rpath-and-image-not-found/3094/9
+   #
+   # Setting CMAKE_INSTALL_RPATH_USE_LINK_PATH to true "will append to the runtime search path (rpath) of installed
+   # binaries any directories outside the project that are in the linker search path or contain linked library files".
+   #
+   # CMAKE_INSTALL_RPATH is "a semicolon-separated list specifying the rpath to use in installed targets".
+   #
    set(CMAKE_BUILD_WITH_INSTALL_RPATH    true)
+   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
    message(STATUS "CMAKE_INSTALL_RPATH = ${CMAKE_INSTALL_RPATH}, right")
 
    #
@@ -1449,9 +1454,10 @@ elseif(APPLE)
 ##      execute_process(COMMAND tree -sh .)
    string(CONFIGURE [[
       include(BundleUtilities)
-      execute_process(COMMAND echo "About to run fixup_bundle")
+      execute_process(COMMAND echo "Pre fixup_bundle - /usr/local/lib/")
+      execute_process(COMMAND ls -lh /usr/local/lib/)
+      execute_process(COMMAND echo "Pre fixup_bundle - build tree")
       execute_process(COMMAND tree -sh .)
-      execute_process(COMMAND echo "fixup_bundle param 1 = ${CMAKE_BINARY_DIR}/${fileName_executable}")
       fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "" "${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks")
       verify_app("${fileName_executable}.app")
    ]] installCode)
