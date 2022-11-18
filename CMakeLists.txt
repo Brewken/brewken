@@ -1400,10 +1400,16 @@ elseif(APPLE)
    # For similar reasons to Windows, the Mac Bundle needs to have shared libraries copied into it.  The Qt shared
    # libraries are done above with macdeployqt.
    #
-   # First, we need to copy the shared libraries (.dylib files) to the Contents/Frameworks folder inside the bundle.
+   # First, we need to copy the shared libraries (.dylib files) to the Contents/Frameworks folder inside the bundle.  Of
+   # course, this is not as simple as one might hope.  In addition to libxerces-c.dylib and libxalan-c.dylib, there is
+   # libxalanMsg.dylib which is needed by libxalan-c.dylib but doesn't show up in XalanC_LIBRARIES.  So, we have to do
+   # that one the hard way.
    #
    install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
    install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
+   find_library(XalanCMessage_LIBRARY "libxalanMsg")
+   message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY}")
+   install(FILES ${XalanCMessage_LIBRARY}  DESTINATION lib)
 
    #
    # On MacOS, if you are shipping dynamic libraries with your application, you can tell the application where to look
