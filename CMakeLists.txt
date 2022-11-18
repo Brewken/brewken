@@ -1405,11 +1405,19 @@ elseif(APPLE)
    # libxalan-c.dylib depends on libxalanMsg.dylib.  The latter does not show up in XalanC_LIBRARIES either.  So we
    # have to take a more manual approach.
    #
-   # As noted at https://stackoverflow.com/questions/63310608/find-library-cannot-find-basic-shared-library-macos-clion,
-   # you must remove the "lib" prefix from the library name before asking CMake to find it
+   # Firstly, as https://stackoverflow.com/questions/63310608/find-library-cannot-find-basic-shared-library-macos-clion
+   # explains you must remove the "lib" prefix from the library name before asking CMake to find it.
+   #
+   # Then, once you have the path to the library, you have to deal with the case that it will probably be a symbolic
+   # link, so you need to dereference it rather than let CMake just copy the symlink -- see
+   # https://stackoverflow.com/questions/11487638/cmake-fileinstall-files-destination-dir-with-symbolic-links.
+   #
+   #
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
-   message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY}")
-   install(FILES ${XalanCMessage_LIBRARY}  DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks)
+   get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
+   message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} = ${XalanCMessage_LIBRARY_resolved}")
+   install(FILES ${XalanCMessage_LIBRARY_resolved}
+           DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks)
 
 #   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
 #   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
