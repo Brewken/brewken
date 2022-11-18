@@ -1407,7 +1407,9 @@ elseif(APPLE)
    #
    install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
    install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
-   find_library(XalanCMessage_LIBRARY "libxalanMsg")
+   # As noted at https://stackoverflow.com/questions/63310608/find-library-cannot-find-basic-shared-library-macos-clion,
+   # you must remove the "lib" prefix from the library name before asking CMake to find it
+   find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY}")
    install(FILES ${XalanCMessage_LIBRARY}  DESTINATION lib)
 
