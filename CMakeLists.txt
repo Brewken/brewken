@@ -1405,8 +1405,8 @@ elseif(APPLE)
    # libxalanMsg.dylib which is needed by libxalan-c.dylib but doesn't show up in XalanC_LIBRARIES.  So, we have to do
    # that one the hard way.
    #
-   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
-   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
+#   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
+#   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
    # As noted at https://stackoverflow.com/questions/63310608/find-library-cannot-find-basic-shared-library-macos-clion,
    # you must remove the "lib" prefix from the library name before asking CMake to find it
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)

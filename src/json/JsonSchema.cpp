@@ -188,8 +188,12 @@ public:
     */
    boost::json::value const * getReferencedDocument(std::string const & uri) {
       // We assert that JsonSchema::fetchReferencedDocument is not calling us on a JsonSchema whose pimpl member
-      // variable has not yet been set
+      // variable has not yet been set.  CLang thinks this assert is unnecessary ("warning: 'this' pointer cannot be
+      // null in well-defined C++ code; comparison may be assumed to always evaluate to true
+      // [-Wtautological-undefined-compare"]) so we disable the assert on that compiler (which is currently only MacOS).
+#ifndef __clang__
       Q_ASSERT(this != nullptr);
+#endif
       qDebug() << Q_FUNC_INFO << "Request for" << uri.c_str();
       QString schemaFilePath = QString("%1/%2").arg(this->baseDir, uri.c_str());
       if (!this->schemaFileCache.contains(schemaFilePath)) {
