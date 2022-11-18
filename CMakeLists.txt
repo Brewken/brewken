@@ -1397,21 +1397,22 @@ if(WIN32)
    )
 elseif(APPLE)
    #
-   # For similar reasons to Windows, the Mac Bundle needs to have shared libraries copied into it.  The Qt shared
-   # libraries are done above with macdeployqt.
+   # For similar reasons to Windows, the Mac Bundle needs to have shared libraries copied into it.  Mostly this is done
+   # automatically with macdeployqt, which picks up Qt shared libraries, and other obvious dependencies such as
+   # libxerces-c.dylib and libxalan-c.dylib, and puts them in the Contents/Frameworks folder inside the bundle.
    #
-   # First, we need to copy the shared libraries (.dylib files) to the Contents/Frameworks folder inside the bundle.  Of
-   # course, this is not as simple as one might hope.  In addition to libxerces-c.dylib and libxalan-c.dylib, there is
-   # libxalanMsg.dylib which is needed by libxalan-c.dylib but doesn't show up in XalanC_LIBRARIES.  So, we have to do
-   # that one the hard way.
+   # However, where a library depends on another library, this is not picked up by macdeployqt.  In particular,
+   # libxalan-c.dylib depends on libxalanMsg.dylib.  The latter does not show up in XalanC_LIBRARIES either.  So we
+   # have to take a more manual approach.
    #
-#   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
-#   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
    # As noted at https://stackoverflow.com/questions/63310608/find-library-cannot-find-basic-shared-library-macos-clion,
    # you must remove the "lib" prefix from the library name before asking CMake to find it
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY}")
-   install(FILES ${XalanCMessage_LIBRARY}  DESTINATION lib)
+   install(FILES ${XalanCMessage_LIBRARY}  DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks)
+
+#   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
+#   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
 
    #
    # On MacOS, if you are shipping dynamic libraries with your application, you can tell the application where to look
@@ -1462,8 +1463,6 @@ elseif(APPLE)
 ##      execute_process(COMMAND tree -sh .)
    string(CONFIGURE [[
       include(BundleUtilities)
-      execute_process(COMMAND echo "Pre fixup_bundle - /usr/local/lib/")
-      execute_process(COMMAND ls -lh /usr/local/lib/)
       execute_process(COMMAND echo "Pre fixup_bundle - build tree")
       execute_process(COMMAND tree -sh .)
       fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "" "${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks")
