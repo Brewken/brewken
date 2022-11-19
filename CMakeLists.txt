@@ -1413,7 +1413,9 @@ elseif(APPLE)
    # https://stackoverflow.com/questions/11487638/cmake-fileinstall-files-destination-dir-with-symbolic-links.  (Except
    # you also need to pay attention that the get_filename_component() command is now "superseded by cmake_path()
    # command, except REALPATH now offered by file(REAL_PATH) command and PROGRAM now available in
-   # separate_arguments(PROGRAM) command".)
+   # separate_arguments(PROGRAM) command".  And because it's CMake, you have to pay close attention to which parameters
+   # are values (eg expanded variables) and which are variable names.  It seems each command takes a different
+   # approach.)
    #
    # Subsequently, you discover that you need to rename things because:
    #    /usr/local/lib/libxalanMsg.dylib     is a symbolic link to /usr/local/lib/libxalanMsg.112.dylib
@@ -1427,7 +1429,7 @@ elseif(APPLE)
 ##   get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
    file(REAL_PATH "${XalanCMessage_LIBRARY}" XalanCMessage_LIBRARY_resolved)
 ##   get_filename_component(XalanCMessage_LIBRARY_withoutPath "${XalanCMessage_LIBRARY_resolved}" NAME)
-   cmake_path(GET "${XalanCMessage_LIBRARY_resolved}" FILENAME XalanCMessage_LIBRARY_withoutPath)
+   cmake_path(GET XalanCMessage_LIBRARY_resolved FILENAME XalanCMessage_LIBRARY_withoutPath)
    string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_withoutPath}")
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
    message(STATUS "Tweaked libxalanMsg file name from ${XalanCMessage_LIBRARY_withoutPath} to ${XalanCMessage_LIBRARY_tweaked}")
