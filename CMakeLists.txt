@@ -1412,11 +1412,20 @@ elseif(APPLE)
    # link, so you need to dereference it rather than let CMake just copy the symlink -- see
    # https://stackoverflow.com/questions/11487638/cmake-fileinstall-files-destination-dir-with-symbolic-links.
    #
+   # Subsequently, you discover that you need to rename things because:
+   #    /usr/local/lib/libxalanMsg.dylib     is a symbolic link to /usr/local/lib/libxalanMsg.112.dylib
+   #    /usr/local/lib/libxalanMsg.112.dylib is a symbolic link to /usr/local/lib/libxalanMsg.112.0.dylib
+   # but when otool is run by fixup_bundle, it looks for @rpath/libxalanMsg.112.dylib and will not accept any other
+   # name for the library.   So, we change ".0.dylib" at the end of the library file name to ".dylib".
+   #
+   # One day, I hope we will find a more elegant and less brittle way to do all this!
    #
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
    get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
+   string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_resolved}")
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
-   install(FILES ${XalanCMessage_LIBRARY_resolved}
+   message(STATUS "Tweaked libxalanMsg file name to ${XalanCMessage_LIBRARY_tweaked}")
+   install(FILES ${XalanCMessage_LIBRARY_tweaked}
            DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks)
 
 #   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
