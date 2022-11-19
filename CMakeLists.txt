@@ -1422,7 +1422,8 @@ elseif(APPLE)
    #
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
    get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
-   string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_resolved}")
+   get_filename_component(XalanCMessage_LIBRARY_withoutPath "${XalanCMessage_LIBRARY_resolved}" NAME)
+   string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_withoutPath}")
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
    message(STATUS "Tweaked libxalanMsg file name to ${XalanCMessage_LIBRARY_tweaked}")
    install(FILES ${XalanCMessage_LIBRARY_resolved}
