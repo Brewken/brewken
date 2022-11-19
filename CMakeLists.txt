@@ -1410,7 +1410,10 @@ elseif(APPLE)
    #
    # Then, once you have the path to the library, you have to deal with the case that it will probably be a symbolic
    # link, so you need to dereference it rather than let CMake just copy the symlink -- see
-   # https://stackoverflow.com/questions/11487638/cmake-fileinstall-files-destination-dir-with-symbolic-links.
+   # https://stackoverflow.com/questions/11487638/cmake-fileinstall-files-destination-dir-with-symbolic-links.  (Except
+   # you also need to pay attention that the get_filename_component() command is now "superseded by cmake_path()
+   # command, except REALPATH now offered by file(REAL_PATH) command and PROGRAM now available in
+   # separate_arguments(PROGRAM) command".)
    #
    # Subsequently, you discover that you need to rename things because:
    #    /usr/local/lib/libxalanMsg.dylib     is a symbolic link to /usr/local/lib/libxalanMsg.112.dylib
@@ -1421,11 +1424,13 @@ elseif(APPLE)
    # One day, I hope we will find a more elegant and less brittle way to do all this!
    #
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
-   get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
-   get_filename_component(XalanCMessage_LIBRARY_withoutPath "${XalanCMessage_LIBRARY_resolved}" NAME)
+##   get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
+   file(REAL_PATH "${XalanCMessage_LIBRARY}" XalanCMessage_LIBRARY_resolved)
+##   get_filename_component(XalanCMessage_LIBRARY_withoutPath "${XalanCMessage_LIBRARY_resolved}" NAME)
+   cmake_path(GET "${XalanCMessage_LIBRARY_resolved}" FILENAME XalanCMessage_LIBRARY_withoutPath)
    string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_withoutPath}")
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
-   message(STATUS "Tweaked libxalanMsg file name to ${XalanCMessage_LIBRARY_tweaked}")
+   message(STATUS "Tweaked libxalanMsg file name from ${XalanCMessage_LIBRARY_withoutPath} to ${XalanCMessage_LIBRARY_tweaked}")
    install(FILES ${XalanCMessage_LIBRARY_resolved}
            DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks/
            RENAME ${XalanCMessage_LIBRARY_tweaked})
