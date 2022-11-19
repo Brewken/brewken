@@ -1414,8 +1414,7 @@ elseif(APPLE)
    # you also need to pay attention that the get_filename_component() command is now "superseded by cmake_path()
    # command, except REALPATH now offered by file(REAL_PATH) command and PROGRAM now available in
    # separate_arguments(PROGRAM) command".  And because it's CMake, you have to pay close attention to which parameters
-   # are values (eg expanded variables) and which are variable names.  It seems each command takes a different
-   # approach.)
+   # are values (eg expanded variables) and which are variable names.)
    #
    # Subsequently, you discover that you need to rename things because:
    #    /usr/local/lib/libxalanMsg.dylib     is a symbolic link to /usr/local/lib/libxalanMsg.112.dylib
@@ -1426,9 +1425,7 @@ elseif(APPLE)
    # One day, I hope we will find a more elegant and less brittle way to do all this!
    #
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
-##   get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
    file(REAL_PATH "${XalanCMessage_LIBRARY}" XalanCMessage_LIBRARY_resolved)
-##   get_filename_component(XalanCMessage_LIBRARY_withoutPath "${XalanCMessage_LIBRARY_resolved}" NAME)
    cmake_path(GET XalanCMessage_LIBRARY_resolved FILENAME XalanCMessage_LIBRARY_withoutPath)
    string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_withoutPath}")
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
@@ -1436,9 +1433,6 @@ elseif(APPLE)
    install(FILES ${XalanCMessage_LIBRARY_resolved}
            DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks/
            RENAME ${XalanCMessage_LIBRARY_tweaked})
-
-#   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
-#   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
 
    #
    # On MacOS, if you are shipping dynamic libraries with your application, you can tell the application where to look
@@ -1485,14 +1479,15 @@ elseif(APPLE)
    # cannot be determined by otool output analysis (i.e. plugins)".  The <dirs> parameter is undocumented (welcome to
    # the joy of CMake) and often appears to be set to empty string in examples on stackoverflow etc.
    #
-##      execute_process(COMMAND pwd)
-##      execute_process(COMMAND tree -sh .)
+   # For diagnostics, it's often helpful to add lines such as the following in the code block below:
+   #    execute_process(COMMAND echo "Pre fixup_bundle - build tree")
+   #    execute_process(COMMAND pwd)
+   #    execute_process(COMMAND tree -sh .)
+   #
    string(CONFIGURE [[
       include(BundleUtilities)
-      execute_process(COMMAND echo "Pre fixup_bundle - build tree")
-      execute_process(COMMAND tree -sh .)
       fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "" "${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks")
-      verify_app("${fileName_executable}.app")
+      verify_app("${CMAKE_BINARY_DIR}/${fileName_executable}.app")
    ]] installCode)
    install(CODE "${installCode}")
 endif()
