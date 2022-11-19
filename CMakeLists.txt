@@ -1425,8 +1425,8 @@ elseif(APPLE)
    string(REGEX REPLACE "\.0\.dylib$" ".dylib" XalanCMessage_LIBRARY_tweaked "${XalanCMessage_LIBRARY_resolved}")
    message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
    message(STATUS "Tweaked libxalanMsg file name to ${XalanCMessage_LIBRARY_tweaked}")
-   install(FILES ${XalanCMessage_LIBRARY_tweaked}
-           DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks)
+   install(FILES ${XalanCMessage_LIBRARY_resolved}
+           DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks/${XalanCMessage_LIBRARY_tweaked})
 
 #   install(FILES ${XercesC_LIBRARIES} DESTINATION lib)
 #   install(FILES ${XalanC_LIBRARIES}  DESTINATION lib)
