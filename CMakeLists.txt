@@ -1415,7 +1415,7 @@ elseif(APPLE)
    #
    find_library(XalanCMessage_LIBRARY NAMES xalanMsg)
    get_filename_component(XalanCMessage_LIBRARY_resolved "${XalanCMessage_LIBRARY}" REALPATH)
-   message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} = ${XalanCMessage_LIBRARY_resolved}")
+   message(STATUS "Found libxalanMsg at ${XalanCMessage_LIBRARY} which resolves to ${XalanCMessage_LIBRARY_resolved}")
    install(FILES ${XalanCMessage_LIBRARY_resolved}
            DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks)
 
@@ -1439,7 +1439,7 @@ elseif(APPLE)
    #
    set(CMAKE_BUILD_WITH_INSTALL_RPATH    true)
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
-   message(STATUS "CMAKE_INSTALL_RPATH = ${CMAKE_INSTALL_RPATH}, right")
+   message(STATUS "CMAKE_INSTALL_RPATH = ${CMAKE_INSTALL_RPATH}, End Of Line")
 
    #
    # Having copied the shared libraries into the bundle, we now need to use CMake's fixup_bundle
