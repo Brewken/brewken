@@ -334,16 +334,6 @@ MACRO (ADD_PCH_RULE  _header_filename _src_list)
                       DEPENDS ${_header})
 ENDMACRO(ADD_PCH_RULE _src_list _header_filename)
 
-# See discussion at https://stackoverflow.com/questions/1138301/precompiled-headers-do-we-really-need-them about the
-# pros and cons of using pre-compiles headers.  For now we keep them turned off.
-#if( UNIX AND NOT APPLE )
-#   SET( precompiled_h "equipment.h" "fermentable.h" "hop.h" "instruction.h" "mash.h" "mashstep.h" "misc.h" "recipe.h" "style.h" "unit.h" "water.h" "yeast.h" "database.h" "brewken.h" )
-#   FOREACH( header ${precompiled_h} )
-#      ADD_PCH_RULE( ${header} brewken_SRCS )
-#   ENDFOREACH()
-#endif()
-
-
 #=======================================================================================================================
 #=================================================== Set build type ====================================================
 #=======================================================================================================================
@@ -766,7 +756,7 @@ configure_file(src/config.in src/config.h)
 #=======================================================================================================================
 # We don't need to list the embedded resource files themselves here, just the "Resource Collection File" that lists what
 # they are.
-set(filesToCompile_qrc "${CMAKE_CURRENT_SOURCE_DIR}/brewken.qrc")
+set(filesToCompile_qrc "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.qrc")
 
 #=======================================================================================================================
 #=========================================== Files included with the program ===========================================
@@ -782,10 +772,10 @@ set(filesToInstall_data ${repoDir}/data/default_db.sqlite
                         ${repoDir}/data/DefaultData.xml)
 
 # Desktop files to install.
-set(filesToInstall_desktop ${repoDir}/brewken.desktop)
+set(filesToInstall_desktop ${repoDir}/${PROJECT_NAME}.desktop)
 
 # Icon files to install.
-set(filesToInstall_icons ${repoDir}/images/brewken.svg)
+set(filesToInstall_icons ${repoDir}/images/${PROJECT_NAME}.svg)
 
 # This is the list of translation files to update (from translatable strings in the source code) and from which the
 # binary .qm files will be generated and shipped.  Note that src/OptionDialog.cpp controls which languages are shown to
@@ -1099,9 +1089,10 @@ elseif(APPLE)
    #
    # Running macdeployqt will add "Frameworks" and "Plugins" directory trees inside the "Contents" directory, and
    # populate these with the various Qt shared libraries etc (including database drivers) needed for the code to run.
+   # It will also copy some, but not all, of the other shared libraries we need.
    #
    # We still need to:
-   #    - Copy across non-Qt libraries we need (Xerces, Xalan, etc)
+   #    - Copy across some non-Qt libraries we need (part of Xalan that macdeployqt does not detect)
    #    - Copy sound files into Contents/Resources/sounds and translation files into Contents/Resources/translations_qm
    #    - Copy default DB and default data into Contents/Resources (which is also where the user manual lives for
    #      Brewtarget)
@@ -1113,13 +1104,14 @@ elseif(APPLE)
       #   -verbose=<0-3>   0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
       add_custom_command(TARGET ${fileName_executable}
          POST_BUILD
-         # We err on the side of providing more diagnostics for the Mac build because, if you don't own a Mac, you're
-         # rather reliant on GitHub actions to do Mac builds.
-         COMMAND echo "Contents of ${fileName_executable}.app before running macdeployqt"
-         COMMAND tree -sh ${fileName_executable}.app
+         # Uncomment the  echo  and  tree  lines to provide extra diagnostics.  These are useful eg if you don't own a
+         # Mac, and are relying on GitHub actions to do Mac builds.  (Just make sure  tree  is installed, usually via
+         # brew install tree.
+#         COMMAND echo "Contents of ${fileName_executable}.app before running macdeployqt"
+#         COMMAND tree -sh ${fileName_executable}.app
          COMMAND Qt5::macdeployqt "$<TARGET_FILE_NAME:${fileName_executable}>.app" -verbose=2
-         COMMAND echo "Contents of ${fileName_executable}.app after running macdeployqt"
-         COMMAND tree -sh ${fileName_executable}.app
+#         COMMAND echo "Contents of ${fileName_executable}.app after running macdeployqt"
+#         COMMAND tree -sh ${fileName_executable}.app
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
    endif()
@@ -1497,8 +1489,6 @@ install(FILES ${QM_FILES}
         DESTINATION "${installSubDir_data}/translations_qm"
         COMPONENT ${DATA_INSTALL_COMPONENT} )
 
-
-
 #=======================================================================================================================
 #======================================= Install (both locally and for packages) =======================================
 #=======================================================================================================================
@@ -1597,7 +1587,6 @@ add_custom_target(
 )
 add_dependencies(FinalMessage ${fileName_executable})
 
-
 #=======================================================================================================================
 #====================================================== Packaging ======================================================
 #=======================================================================================================================
@@ -1623,7 +1612,7 @@ add_dependencies(FinalMessage ${fileName_executable})
 #   - CPACK_PACKAGING_INSTALL_PREFIX as the defaults from each generator should usually be fine
 #   - CPACK_PACKAGE_CONTACT as, AFAICT, it's only used to provide a default value for CPACK_DEBIAN_PACKAGE_MAINTAINER
 #
-set(CPACK_PACKAGE_VENDOR "The Brewken Team")
+set(CPACK_PACKAGE_VENDOR "The ${capitalisedProjectName} Team")
 string(
    CONCAT
    CPACK_PACKAGE_DESCRIPTION
@@ -1640,10 +1629,10 @@ set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/Brewken/brewken")
 message("CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}")
 message("PROJECT_VERSION = ${PROJECT_VERSION}")
 set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "Brewken-${PROJECT_VERSION}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "${capitalisedProjectName}-${PROJECT_VERSION}")
 if(NOT WIN32)
    # Setting this on Windows breaks the NSIS packager with some confusing message saying it can't find the file
-   set(CPACK_PACKAGE_ICON "${repoDir}/images/brewken.svg")
+   set(CPACK_PACKAGE_ICON "${repoDir}/images/${PROJECT_NAME}.svg")
 endif()
 set(CPACK_PACKAGE_CHECKSUM "SHA256")
 set(CPACK_RESOURCE_FILE_LICENSE "${repoDir}/COPYING.GPLv3")
@@ -1660,16 +1649,16 @@ set(CPACK_SOURCE_IGNORE_FILES "/.svn/"
                               "~$"
                               "/CMakeFiles/"
                               "/_CPack_Packages/"
-                              "^brewken.*deb$"
-                              "^brewken.*rpm$"
-                              "^brewken.*tar.*$"
+                              "^${PROJECT_NAME}.*deb$"
+                              "^${PROJECT_NAME}.*rpm$"
+                              "^${PROJECT_NAME}.*tar.*$"
                               "CPack.*"
                               "Makefile"
                               "cmake_install.*"
                               "\\\\.o$"
-                              "/brewken.dir/"
+                              "/${PROJECT_NAME}.dir/"
                               "moc_.*"
-                              "qrc_brewken.*"
+                              "qrc_${PROJECT_NAME}.*"
                               "ui_.*h"
                               "install_manifest.*"
                               "config\\\\.h")
@@ -1781,10 +1770,6 @@ elseif(WIN32)
 
    set(CPACK_NSIS_MODIFY_PATH ON)
 
-   # Extra start menu items.
-   #set(CPACK_NSIS_MENU_LINKS
-   #     "bin/${fileName_executable}" "My Brewken"
-   #  )
 elseif(APPLE)
    #================================================== Mac Packaging ===================================================
    # Broadly speaking, what we want for Mac is a a DMG disk image which the end user can mount and from s/he can copy
@@ -1886,18 +1871,6 @@ set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                                              ${packagesRpmFiles}
                                              ${packagesTarBz2Files}
                                              ${packagesChecksumFiles})
-
-# .:TBD:. Think we can ditch this
-# make addframeworks should copy the Qt libraries to the app.
-##if(APPLE)
-##   set(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
-##   add_custom_target(
-##      addframeworks ALL
-##      COMMAND ${QT_BINARY_DIR}/macdeployqt "Brewken.app" -dmg
-##      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-##      DEPENDS ${fileName_executable}
-##   )
-##endif()
 
 if(UNIX AND NOT APPLE)
    add_custom_target(

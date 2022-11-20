@@ -110,12 +110,11 @@ jobs:
         ctest --extra-verbose --output-on-failure 2>&1
 
     - name: Make package
-      # See comments in CMakeLists.txt about fixup_bundle for why we need to run make install before make package on Mac
       # Change `make package` to `make package VERBOSE=1` to get hugely detailed output
       run: |
         cd build
         pwd
-        make package VERBOSE=1
+        make package
         ls -ltr
 
     - name: Upload Mac Packages (Installers)
@@ -139,7 +138,6 @@ jobs:
       run: |
         pwd
         tree -sh
-        cat build/CPackConfig.cmake
         sudo chmod -R +rwx /cores
         sudo chmod -R +rwx /Library/Logs/DiagnosticReports
         echo "Contents of /cores directory: $(ls -ltr /cores)"
