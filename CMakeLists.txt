@@ -1492,6 +1492,9 @@ elseif(APPLE)
    #
    string(CONFIGURE [[
       include(BundleUtilities)
+      execute_process(COMMAND echo "Pre fixup_bundle - build tree")
+      execute_process(COMMAND pwd)
+      execute_process(COMMAND tree -sh .)
       fixup_bundle("${CMAKE_BINARY_DIR}/${fileName_executable}.app" "" "${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks")
       verify_app("${CMAKE_BINARY_DIR}/${fileName_executable}.app")
    ]] installCode)
