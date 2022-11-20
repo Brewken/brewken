@@ -113,7 +113,7 @@ void PersistentSettings::initialise(QString customUserDataDir) {
    // we don't just use static initialisation.
    //
    // Yes, we are knowingly logging before Logging::initializeLogging() has been called (as the latter needs
-   // PersistentSettings::initialise() to be called first.  This is OK as it just means the log message will go to the
+   // PersistentSettings::initialise() to be called first).  This is OK as it just means the log message will go to the
    // default Qt-0determined location (eg stderr on Linux).
    //
    // The value in this logging is that we have seen instances where the software is unable to determine a value for
