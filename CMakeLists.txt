@@ -1424,9 +1424,19 @@ elseif(APPLE)
    # but when otool is run by fixup_bundle, it looks for @rpath/libxalanMsg.112.dylib and will not accept any other
    # name for the library.   So, we change ".0.dylib" at the end of the library file name to ".dylib".
    #
-   # Finally, you have to remember, as commented elsewhere, the DESTINATION option of the install() command must  be a
-   # relative path; otherwise installed files are ignored by CPack.  (Yes, this does contrast with the requirement of
-   # fixup_bundle to have an absolute path.  You have to stay on your toes with CMake.)
+   # Then you have to remember, as commented elsewhere, the DESTINATION option of the install() command must be a
+   # relative path; otherwise installed files are ignored by CPack - ie won't end up in the DMG file.  (Yes, this does
+   # contrast with the requirement of fixup_bundle to have an absolute path.  You have to stay on your toes with CMake.)
+   # This is where it gets a bit confusing(!)  We seem to have two copies of the bundle in the build tree:
+   #    1: ${fileName_executable}.app
+   #    2: _CPack_Packages/Darwin/DragNDrop/${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_x86_64/ALL_IN_ONE/${fileName_executable}.app
+   # They look to be the same, except that installing with an absolute path beginning
+   # ${CMAKE_BINARY_DIR}/${fileName_executable}.app/ puts things in the first of these (but not the second), while
+   # installing with a relative path puts them in the second (but not the first).
+   #
+   # AFAICT it's the second bundle that ends up in the DMG file even though it's the first one that we're running
+   # fixup_bundle on.  For the moment I'm just going to install libxalanMsg.112.dylib into both, on the grounds that it
+   # surely can't hurt.
    #
    # One day, I hope we will find a more elegant and less brittle way to do all this!
    #
@@ -1438,6 +1448,9 @@ elseif(APPLE)
    message(STATUS "Tweaked libxalanMsg file name from ${XalanCMessage_LIBRARY_withoutPath} to ${XalanCMessage_LIBRARY_tweaked}")
    install(FILES ${XalanCMessage_LIBRARY_resolved}
            DESTINATION ${fileName_executable}.app/Contents/Frameworks/
+           RENAME ${XalanCMessage_LIBRARY_tweaked})
+   install(FILES ${XalanCMessage_LIBRARY_resolved}
+           DESTINATION ${CMAKE_BINARY_DIR}/${fileName_executable}.app/Contents/Frameworks/
            RENAME ${XalanCMessage_LIBRARY_tweaked})
 
    #
