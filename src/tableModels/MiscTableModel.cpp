@@ -32,7 +32,6 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/Inventory.h"
-#include "model/Misc.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"

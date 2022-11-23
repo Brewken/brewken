@@ -33,8 +33,8 @@
 #include <QWidget>
 
 #include "measurement/Unit.h"
+#include "model/Misc.h"
 #include "tableModels/BtTableModelInventory.h"
-
 
 // Forward declarations.
 class BtStringConst;

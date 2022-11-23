@@ -36,7 +36,6 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/Recipe.h"
-#include "model/Water.h"
 #include "PersistentSettings.h"
 #include "WaterTableWidget.h"
 

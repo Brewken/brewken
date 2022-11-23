@@ -50,6 +50,9 @@ public:
       return;
    }
 
+   // Need a virtual destructor as we have virtual member functions
+   virtual ~XmlNamedEntityRecord() = default;
+
 protected:
    virtual void constructNamedEntity() {
       // It's a coding error if this function is called when we already have a NamedEntity

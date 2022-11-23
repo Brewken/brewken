@@ -42,7 +42,6 @@
 #include "measurement/Unit.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
-#include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
 

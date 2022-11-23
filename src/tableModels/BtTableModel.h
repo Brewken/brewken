@@ -29,9 +29,9 @@
 
 #include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
+#include "model/NamedEntity.h"
 
 class Recipe;
-class NamedEntity;
 
 /**
  * \class BtTableModelData
@@ -72,8 +72,9 @@ class NamedEntity;
  *
  *        (I did start trying to do something clever with a common base class to try to expose functions from
  *        \c BtTableModelData to the implementation of \c BtTableModel / \c BtTableModelRecipeObserver /
- *        \c BtTableModelInventory, but it quickly starts getting more complicated than it's worth IMHO because (a)
- *        \c BtTableModelData is templated but a common base class cannot be and (b) templated functions cannot be virtual.)
+ *        \c BtTableModelInventory, but it quickly gets more complicated than it's worth IMHO because (a)
+ *        \c BtTableModelData is templated but a common base class cannot be and (b) templated functions cannot be
+ *        virtual.)
  */
 template<class NE>
 class BtTableModelData {
@@ -81,6 +82,8 @@ protected:
    BtTableModelData() : rows{} {
       return;
    }
+   // Need a virtual destructor as we have a virtual member function
+   virtual ~BtTableModelData() = default;
 public:
    /**
     * \brief Return the \c i-th row in the model.

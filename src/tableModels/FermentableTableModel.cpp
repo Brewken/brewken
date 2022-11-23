@@ -45,7 +45,6 @@
 #include "MainWindow.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "model/Fermentable.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"

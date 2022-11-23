@@ -76,6 +76,8 @@ XmlRecord::XmlRecord(QString const & recordName,
    return;
 }
 
+XmlRecord::~XmlRecord() = default;
+
 QString XmlRecord::getRecordName() const {
    return this->recordName;
 }

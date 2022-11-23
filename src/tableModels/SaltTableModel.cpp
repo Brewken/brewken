@@ -40,7 +40,6 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
-#include "model/Salt.h"
 #include "PersistentSettings.h"
 #include "WaterDialog.h"
 

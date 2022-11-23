@@ -80,7 +80,7 @@ public:
     *        constructor arguments (which is what this template trick achieves).
     */
    template <typename P, typename Q, typename R> JsonRecord(P, Q, R) = delete;
-   ~JsonRecord();
+   virtual ~JsonRecord();
 
    /**
     * \brief Getter for the NamedParameterBundle we read in from this record

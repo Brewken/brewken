@@ -102,6 +102,9 @@ public:
              FieldDefinitions const & fieldDefinitions,
              QString const & namedEntityClassName);
 
+   // Need a virtual destructor as we have virtual member functions
+   virtual ~XmlRecord();
+
    /**
     * \brief Get the record name (in this coding)
     */
