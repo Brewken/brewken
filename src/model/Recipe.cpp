@@ -648,7 +648,9 @@ void Recipe::mashWaterIns() {
    return;
 }
 
-QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining, double totalWaterAdded_l, unsigned int size) {
+QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining,
+                                                 double totalWaterAdded_l,
+                                                 [[maybe_unused]] unsigned int size) {
    QVector<PreInstruction> preins;
 
    if (mash() == nullptr) {
@@ -2773,7 +2775,8 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
 
 //==========================Accept changes from ingredients====================
 
-void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
+void Recipe::acceptChangeToContainedObject([[maybe_unused]] QMetaProperty prop,
+                                           [[maybe_unused]] QVariant val) {
    // This tells us which object sent us the signal
    QObject * signalSender = this->sender();
    if (signalSender != nullptr) {

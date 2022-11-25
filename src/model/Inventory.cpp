@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Inventory.cpp is part of Brewken, and is copyright the following authors 2021:
+ * model/Inventory.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -87,7 +87,11 @@ Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
    return;
 }
 
+// Strictly speaking a QObject is not allowed to be copied, which would mean that since we do not use any state in the
+// QObject from which we inherit, we allow Inventory to be copied and just default-initialise the QObject base class in
+// the copy.  Hopefully this will never come back to bite us...
 Inventory::Inventory(Inventory const & other) :
+   QObject{},
    pimpl{ new impl{*other.pimpl} } {
    return;
 }
@@ -120,13 +124,13 @@ void Inventory::setAmount(double amount) {
    return;
 }
 
-void Inventory::setDeleted(bool var) {
+void Inventory::setDeleted([[maybe_unused]] bool var) {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
    Q_ASSERT(false);
    return;
 }
 
-void Inventory::setDisplay(bool var) {
+void Inventory::setDisplay([[maybe_unused]] bool var) {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
    Q_ASSERT(false);
    return;

@@ -159,7 +159,7 @@ protected:
    /**
     * \brief Implementation of the general case where the object is independent of its containing entity
     */
-   virtual void setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
+   virtual void setContainingEntity([[maybe_unused]] std::shared_ptr<NamedEntity> containingEntity) {
       return;
    }
 

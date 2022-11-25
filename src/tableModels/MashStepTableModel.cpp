@@ -200,7 +200,8 @@ void MashStepTableModel::mashChanged() {
    return;
 }
 
-void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val) {
+void MashStepTableModel::mashStepChanged(QMetaProperty prop,
+                                         [[maybe_unused]] QVariant val) {
    qDebug() << Q_FUNC_INFO;
 
    MashStep* stepSenderRaw = qobject_cast<MashStep*>(sender());

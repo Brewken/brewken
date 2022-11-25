@@ -191,7 +191,8 @@ bool HopTableModel::remove(std::shared_ptr<Hop> hop) {
    return false;
 }
 
-void HopTableModel::removeHop(int hopId, std::shared_ptr<QObject> object) {
+void HopTableModel::removeHop([[maybe_unused]] int hopId,
+                              std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Hop>(object));
    return;
 }

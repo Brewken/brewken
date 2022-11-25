@@ -267,6 +267,13 @@ public:
                      ListOfJsonMeasureableUnitsMappings const *,  // FieldType::OneOfMeasurementsWithUnits
                      JsonSingleUnitSpecifier            const *>; // FieldType::SingleUnitValue
       ValueDecoder valueDecoder;
+      /**
+       * \brief Trivial constructor allows us to default \c valueDecoder
+       */
+      FieldDefinition(FieldType type,
+                      JsonXPath xPath,
+                      BtStringConst const * propertyName,
+                      ValueDecoder valueDecoder = ValueDecoder{});
    };
 
    /**

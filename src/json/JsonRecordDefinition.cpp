@@ -34,6 +34,19 @@ namespace {
    };
 }
 
+JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType type,
+                                                       JsonXPath xPath,
+                                                       BtStringConst const * propertyName,
+                                                       ValueDecoder valueDecoder) :
+   type{type},
+   xPath{xPath},
+   propertyName{propertyName},
+   valueDecoder{valueDecoder} {
+   // Per comment in header file, propertyName should never be nullptr; use BtString::NULL_STR instead if it is not set
+   Q_ASSERT(propertyName);
+   return;
+}
+
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,
    char const * const namedEntityClassName,

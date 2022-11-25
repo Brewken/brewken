@@ -371,12 +371,12 @@ QVariant BtTreeItem::dataYeast(int column) {
    return QVariant();
 }
 
-QVariant BtTreeItem::dataBrewNote(int column) {
-   if (! _thing) {
+QVariant BtTreeItem::dataBrewNote([[maybe_unused]] int column) {
+   if (!this->_thing) {
       return QVariant();
    }
 
-   BrewNote * bNote = qobject_cast<BrewNote *>(_thing);
+   BrewNote * bNote = qobject_cast<BrewNote *>(this->_thing);
 
    return bNote->brewDate_short();
 }

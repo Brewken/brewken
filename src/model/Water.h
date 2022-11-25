@@ -76,8 +76,6 @@ public:
       numIons
    };
 
-   Q_ENUM(Types Ions)
-
    Water(QString name = "");
    Water(NamedParameterBundle const & namedParameterBundle);
    Water(Water const & other);

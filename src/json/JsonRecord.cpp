@@ -823,7 +823,7 @@ void JsonRecord::normaliseName() {
    return;
 }
 
-void JsonRecord::setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
+void JsonRecord::setContainingEntity([[maybe_unused]] std::shared_ptr<NamedEntity> containingEntity) {
    // Base class does not have a NamedEntity or a container, so nothing to do
    // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
    // NamedEntity, and subclasses that do have one should override this function.
@@ -850,8 +850,9 @@ void JsonRecord::modifyClashingName(QString & candidateName) {
    return;
 }
 
+// TODO Finish this!
 void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
-                      QTextStream & out) const {
+                        QTextStream & out) const {
    qDebug() <<
       Q_FUNC_INFO << "Exporting JSON for" << namedEntityToExport.metaObject()->className() << "#" << namedEntityToExport.key();
 /*
@@ -1010,11 +1011,11 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
 }
 
 void JsonRecord::subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
-                                 JsonRecord const & subRecord,
+                                 [[maybe_unused]] JsonRecord const & subRecord,
                                  NamedEntity const & namedEntityToExport,
-                                 QTextStream & out,
-                                 int indentLevel,
-                                 char const * const indentString) const {
+                                 [[maybe_unused]] QTextStream & out,
+                                 [[maybe_unused]] int indentLevel,
+                                 [[maybe_unused]] char const * const indentString) const {
    // Base class does not know how to handle nested records
    // It's a coding error if we get here as this virtual member function should be overridden classes that have nested
    // records

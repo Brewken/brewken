@@ -671,7 +671,7 @@ void MainWindow::restoreSavedState() {
    } else {
       auto firstRecipeWeFind = ObjectStoreTyped<Recipe>::getInstance().findFirstMatching(
          // This trivial lambda gives us the first recipe in the list, if there is one
-         [](std::shared_ptr<Recipe> obj) {return true;}
+         []([[maybe_unused]] std::shared_ptr<Recipe> obj) {return true;}
       );
       if (firstRecipeWeFind) {
          key = firstRecipeWeFind.value()->key();
@@ -1842,7 +1842,7 @@ void MainWindow::doOrRedoUpdate(QObject & updatee,
                                 BtStringConst const & propertyName,
                                 QVariant newValue,
                                 QString const & description,
-                                QUndoCommand * parent) {
+                                [[maybe_unused]] QUndoCommand * parent) {
 ///   qDebug() << Q_FUNC_INFO << "Updating" << propertyName << "on" << updatee.metaObject()->className();
 ///   qDebug() << Q_FUNC_INFO << "this=" << static_cast<void *>(this);
    this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyName, newValue, description));
@@ -3028,19 +3028,21 @@ void MainWindow::versionedRecipe(Recipe* descendant)
    treeView_recipe->setCurrentIndex(ndx);
 }
 
-void MainWindow::closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object) {
+// .:TBD:. Seems redundant to pass both the brewnote ID and a pointer to it; we only need one of these
+void MainWindow::closeBrewNote([[maybe_unused]] int brewNoteId, std::shared_ptr<QObject> object) {
    BrewNote* b = std::static_pointer_cast<BrewNote>(object).get();
    Recipe* parent = ObjectStoreWrapper::getByIdRaw<Recipe>(b->getRecipeId());
 
    // If this isn't the focused recipe, do nothing because there are no tabs
    // to close.
-   if ( parent != recipeObs )
+   if (parent != recipeObs) {
       return;
+   }
 
    BrewNoteWidget* ni = findBrewNoteWidget(b);
-
-   if ( ni )
+   if (ni) {
       tabWidget_recipeView->removeTab( tabWidget_recipeView->indexOf(ni));
+   }
 
    return;
 

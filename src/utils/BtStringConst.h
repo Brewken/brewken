@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/BtStringConst.h is part of Brewken, and is copyright the following authors 2021:
+ * utils/BtStringConst.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -68,9 +68,9 @@ public:
    bool isNull() const;
 
    /**
-    * \brief Returns the contained char const * const pointer
+    * \brief Returns a copy of the contained char const * const pointer
     */
-   char const * const operator*() const;
+   char const * operator*() const;
 
    /**
     * \brief Generic output streaming for \c BtStringConst, including sensible output if the contained pointer is null

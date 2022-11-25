@@ -241,8 +241,7 @@ void RangedSlider::mouseMoveEvent(QMouseEvent* event)
    QToolTip::showText( tipPoint, _tooltipText, this );
 }
 
-void RangedSlider::paintEvent(QPaintEvent* event)
-{
+void RangedSlider::paintEvent([[maybe_unused]] QPaintEvent * event) {
    //
    // Simplistically, the high-level layout of the slider is:
    //

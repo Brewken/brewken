@@ -42,12 +42,12 @@ BtLabel::BtLabel(QWidget *parent,
 
 BtLabel::~BtLabel() = default;
 
-void BtLabel::enterEvent(QEvent* event) {
+void BtLabel::enterEvent([[maybe_unused]] QEvent * event) {
    this->textEffect(true);
    return;
 }
 
-void BtLabel::leaveEvent(QEvent* event) {
+void BtLabel::leaveEvent([[maybe_unused]] QEvent * event) {
    this->textEffect(false);
    return;
 }

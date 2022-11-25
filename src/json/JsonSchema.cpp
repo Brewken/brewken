@@ -80,7 +80,7 @@ namespace {
     *
     *        This can be an anonymous namespace function because it has no work to do - see comment below.
     */
-   void freeReferencedDocument(boost::json::value const * document) {
+   void freeReferencedDocument([[maybe_unused]] boost::json::value const * document) {
       // There isn't anything for us to do, because we hang on to all the JSON schema documents until the program
       // terminates.
       qDebug() << Q_FUNC_INFO;

@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * AncestorDialog.cpp is part of Brewken, and is copyright the following authors 2021:
+ * AncestorDialog.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@fastmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -130,7 +131,7 @@ void AncestorDialog::setAncestor(Recipe * anc) {
    activateButton();
 }
 
-void AncestorDialog::ancestorSelected(int ndx) {
+void AncestorDialog::ancestorSelected([[maybe_unused]] int ndx) {
    Recipe * ancestor = ObjectStoreWrapper::getByIdRaw<Recipe>(comboBox_ancestor->currentData().toInt());
    comboBox_descendant->setEnabled(true);
 

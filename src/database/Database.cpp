@@ -894,8 +894,14 @@ bool Database::restoreFromFile(QString newDbFileStr) {
    return success;
 }
 
-bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
-                                  QString const& database, QString const& username, QString const& password) {
+// .:TBD:. What should we be doing, if anything, with schema?
+bool Database::verifyDbConnection(Database::DbType testDb,
+                                  QString const &  hostname,
+                                  int              portnum,
+                                  [[maybe_unused]] QString const &  schema,
+                                  QString const &  database,
+                                  QString const &  username,
+                                  QString const &  password) {
    QString const testConnectionName{"testConnDb"};
 
    QString driverName;

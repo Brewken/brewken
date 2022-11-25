@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeModel.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTreeModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -1315,31 +1315,31 @@ void BtTreeModel::elementAdded(NamedEntity * victim) {
    return;
 }
 
-void BtTreeModel::elementRemovedRecipe(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedRecipe([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedEquipment(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedEquipment([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedFermentable(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedFermentable([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedHop(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedHop([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedMisc(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedMisc([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedStyle(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedStyle([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedYeast(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedYeast([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedBrewNote(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedBrewNote([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
-void BtTreeModel::elementRemovedWater(int victimId, std::shared_ptr<QObject> victim) {
+void BtTreeModel::elementRemovedWater([[maybe_unused]] int victimId, std::shared_ptr<QObject> victim) {
    this->elementRemoved(qobject_cast<NamedEntity *>(victim.get()));
 }
 
@@ -1419,9 +1419,9 @@ void BtTreeModel::observeElement(NamedEntity * d) {
 // ===================== DRAG AND DROP STUFF ===============================
 // =========================================================================
 bool BtTreeModel::dropMimeData(QMimeData const * data,
-                               Qt::DropAction action,
-                               int row,
-                               int column,
+                               [[maybe_unused]] Qt::DropAction action,
+                               [[maybe_unused]] int row,
+                               [[maybe_unused]] int column,
                                QModelIndex const & parent) {
    // See https://en.wikipedia.org/wiki/Media_type for more on MIME types (now called media types)
    qDebug() <<

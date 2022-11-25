@@ -172,7 +172,8 @@ void FermentableTableModel::addFermentables(QList<std::shared_ptr<Fermentable> >
    }
 }
 
-void FermentableTableModel::removeFermentable(int fermId, std::shared_ptr<QObject> object) {
+void FermentableTableModel::removeFermentable([[maybe_unused]] int fermId,
+                                              std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Fermentable>(object));
    return;
 }
@@ -402,7 +403,9 @@ Qt::ItemFlags FermentableTableModel::flags(const QModelIndex& index ) const {
 }
 
 
-bool FermentableTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
+bool FermentableTableModel::setData(QModelIndex const & index,
+                                    QVariant const & value,
+                                    [[maybe_unused]] int role) {
    if (index.row() >= static_cast<int>(this->rows.size())) {
       return false;
    }
@@ -525,7 +528,7 @@ FermentableItemDelegate::FermentableItemDelegate(QObject* parent) : QItemDelegat
 }
 
 QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
-                                               QStyleOptionViewItem const & option,
+                                               [[maybe_unused]] QStyleOptionViewItem const & option,
                                                QModelIndex const & index) const {
    if (index.column() == FERMTYPECOL )
    {
@@ -642,7 +645,8 @@ void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *
    }
 }
 
-void FermentableItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
+void FermentableItemDelegate::updateEditorGeometry(QWidget * editor,
+                                                   QStyleOptionViewItem const & option,
+                                                   [[maybe_unused]] QModelIndex const & index) const {
    editor->setGeometry(option.rect);
 }

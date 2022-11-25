@@ -14,6 +14,7 @@
 # <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
+#----------------------------------------------------------------------------------------------------------------------
 #
 # ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 # ⭐⭐⭐ THIS IS EXPERIMENTAL - CARRY ON USING CMAKE TO BUILD THE PRODUCT UNLESS AND UNTIL WORK ON MESON BUILD COMES TO
@@ -40,17 +41,27 @@
 # We can periodically update to the latest version of meson with:
 #   sudo pip install --upgrade meson
 #
+# We also use vcpkg to manage a fair few of the third-party libraries we use.  Basic install instructions are at
+# https://vcpkg.io/en/getting-started.html, but the following is one potentially useful way to do things on Linux (it
+# assumes you are starting in the same directory as this file):
+#   cd ../..
+#   git clone https://github.com/Microsoft/vcpkg.git
+#   cd -
+#   ../../vcpkg/bootstrap-vcpkg.sh
+#   ln -s $(readlink -f ../../vcpkg/vcpkg) ~/.local/bin/vcpkg
 #
-# Then to set up, say, mbuild, as your build directory:
-#   mkdir mbuild
+# Now, again assuming you are starting in the same directory as this file, you can set up, say, mbuild, as your build
+# directory:
 #   meson setup mbuild
-# First command not strictly necessary, as meson will create the directory if it does not exist.
+#   cd mbuild
+# (Note that meson will create the directory if it does not exist.)
 # Recommend using a separate directory from build for the moment, as want to be able to carry on building with CMake
 # and don't want to get outputs from two different build systems muddled up.
 #
 # To compile:
-#   cd mbuild
 #   meson compile
+# Alternatively, to get more detailed output:
+#   meson compile --verbose
 #
 # Then to install:
 #   meson install
@@ -65,13 +76,56 @@
 #     how to build deb packages
 #   - There is almost no info out there on how to do Windows or Mac packaging
 #
+#----------------------------------------------------------------------------------------------------------------------
+
 #
+# We'll get an error if project isn't the first call in this file
+#
+# NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
+#     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
+#     the entire build directory and run
+#        meson setup <build dir name>
+#     again to recreate the build directory and all its contained config.  Eg, if you are in the mbuild directory, you
+#     need to run:
+#        cd ..
+#        rm -r mbuild
+#        meson setup mbuild
+#        cd mbuild
+#        meson compile
+#     Otherwise, as explained at
+#     https://mesonbuild.com/FAQ.html#why-are-changes-to-default-project-options-ignored, your changes WILL HAVE NO
+#     EFFECT.  TLDR this is because you can change all the settings via the command line and it would be hard to keep
+#     track of where a setting had last been modified, so the default_options are only ever read once.
+#        See also https://github.com/mesonbuild/meson/issues/2193 for further discussion about this.
+#
+# Default options (mostly ultimately controlling compiler settings):
+#
+#   - cpp_std         We need C++17 or later for nested namespaces (and C++11 or later for lambdas)
+#
+#   - warning_level   3 is the highest level ie warns about the most things.  For gcc it translates to
+#                        -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic
+#
+#   - prefer_static   We want to try static linking before shared linking because it makes packaging a lot easier on
+#                     Windows and Mac
+#
+#   - buildtype   For the moment at least, I'm not making a distinction between debug and release builds.  Unless we
+#                 find some compelling performance etc reason to do otherwise, my instinct is to have as much diagnostic
+#                 information in the build in "release" as we would in "development/debug", on the grounds that it can
+#                 only help if an end user hits a core-dumping bug.
+#                    Meson encourages you to use either the buildtype option or the debug and optimization options
+#                 rather than setting compiler options directly.  However, this does not give us as much control as we
+#                 would like over compiler flags.  Eg switching 'debug' to 'true' turns on the '-g' flag (equivalent to
+#                 '-g2') on GCC, but there isn't a way via the meson  options to set '-g3' for GCC.  So, we set
+#                 'buildtype=plain' and manage compiler flags directly.
 #
 
-# We'll get an error if project isn't the first call in this file
 project('brewken', 'cpp',
         version: '0.1.0',
-        license: 'GPL-3.0-or-later')
+        license: 'GPL-3.0-or-later',
+        default_options : ['cpp_std=c++17',
+                           'warning_level=3',
+                           'prefer_static=true',
+                           'buildtype=plain'])
 
 #
 # By design, Meson uses a sub-set of Python -- see
@@ -99,20 +153,141 @@ prefix = get_option('prefix')
 #=======================================================================================================================
 #============================================== Frameworks and Libraries ===============================================
 #=======================================================================================================================
+# It would be neat to automate the _installation_ of libraries and frameworks on which we depend.  However, I have yet
+# to find a universal pain-free solution.
+#
+# I looked at using ConanCenter (https://conan.io/center/) as a source of libraries, so that we could automate
+# installing them, but it does not have all the ones we need.  Eg it has Boost, Qt, Xerces-C and Valijson, but not
+# Xalan-C.  (Someone else has already requested Xalan-C, see https://github.com/conan-io/conan-center-index/issues/5546,
+# but that request has been open a long time, so its fulfilment doesn't seem imminent.)
+#
+# Meson has its own dependency management system, Wrap, but the list of pre-provided projects at
+# https://mesonbuild.com/Wrapdb-projects.html does not include Qt, Boost, Xerces, Xalan or Valijson.
+#
+# More hopeful is vcpkg (https://vcpkg.io/en/index.html) as it does have both Xerces-C and Xalan-C, along with Boost, Qt
+# and Valijson.  There is an example here https://github.com/Neumann-A/meson-vcpkg of how to use vcpkg from Meson.
+# However, it's pretty slow because it builds from source everything it installs (including tools it depends on such as
+# CMake).
+#
+# So, for the moment, we don't try to automate installation of libraries here.
 
-# Import the Qt tools.  See https://mesonbuild.com/Qt5-module.html
-qt = import('qt5')
+#========================================================= Qt ==========================================================
+# We need not just the "core" bit of Qt but various "optional" elements.
+#
+# We try to keep the minimum Qt version we need as low as we can.
+#
+# Note that if you change the minimum Qt version, you need to make corresponding changes to the .github/workflows/*.yml
+# files so that GitHub uses the appropriate version of Qt for the automated builds.
+#
+# For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
 
 # Tell meson which Qt modules we need
-qtDependencies = dependency('qt5', modules: ['Core',
-                                             'Gui',
-                                             'Multimedia',
-                                             'Network',
-                                             'PrintSupport',
-                                             'Sql',
-                                             'Svg',
-                                             'Widgets',
-                                             'Xml'])
+qtDependencies = dependency('qt5',
+                            version : '>=5.9.5',
+                            modules : ['Core',
+                                       'Gui',
+                                       'Multimedia',
+                                       'Network',
+                                       'PrintSupport',
+                                       'Sql',
+                                       'Svg',
+                                       'Widgets',
+                                       'Xml'],
+                           include_type : 'system')
+# This Qt module is only needed for the unit tests
+qtTestDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
+
+# On Windows and Mac there are platform-specific Qt tools for packaging
+if host_machine.system() == 'windows'
+   # Per https://doc.qt.io/qt-6/windows-deployment.html, the windeployqt executable creates all the necessary folder
+   # tree "containing the Qt-related dependencies (libraries, QML imports, plugins, and translations) required to run
+   # the application from that folder".
+   windeployqt = find_program('windeployqt', required : true)
+elif host_machine.system() == 'darwin'
+   # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
+   # https://doc.qt.io/qt-6/macos-deployment.html#the-mac-deployment-tool
+   #
+   # At first glance, you might thanks that, with a few name changes, we might share all the meson code for macdeployqt
+   # and windeployqt.  However, as you will see below, the two programs share _only_ a top-level goal ("automate the
+   # process of creating a deployable [folder / applicaiton bundle] that contains [the necessary Qt dependencies]" - ie
+   # so that the end user does not have to install Qt to run our software).  They have completely different
+   # implementations and command line options, so it would be unhelpful to try to treat them identically.
+   macdeployqt = find_program('macdeployqt', required : true)
+endif
+
+#===================================================== Find Boost ======================================================
+# Boost is a collection of separate libraries, some, but not all, of which are header-only.  We only specify the Boost
+# libraries that we actually use.
+#
+# On Linux, there are cases where we need a more recent version of a Boost library than is readily-available in system-
+# supplied packages.  I haven't found a slick way to solve this in CMake, though https://github.com/Orphis/boost-cmake
+# looks promising.  (For header-only Boost libraries, you might think it would be relatively painless to pull them in
+# from where they are hosted on GitHub (see https://github.com/boostorg), but this is not the case.  AFAICT you can't
+# easily pull a specific release, and just pulling master doesn't guarantee that everything compiles.)  So, anyway, on
+# Debian-based distros of Linux, such as Ubuntu, you need to do the following to install Boost 1.79 in place of whatever
+# (if anything) is already installed:
+#
+#    $ sudo apt remove boost-all-dev
+#    $ cd ~
+#    $ mkdir boost-tmp
+#    $ cd boost-tmp
+#    $ wget https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2
+#    $ tar --bzip2 -xf boost_1_79_0.tar.bz2
+#    $ cd boost_1_79_0
+#    $ ./bootstrap.sh --prefix=/usr
+#    $ sudo ./b2 install
+#    $ cd ../..
+#    $ sudo rm -rf boost-tmp
+#
+# (Obviously if you want to make the necessary change to install an even more recent version than Boost 1.79 then that
+# should be fine.)
+#
+# We do the same in .github/workflows/linux-ubuntu.yml to make GitHub automated builds work.
+#
+# Note that this means we want to _statically_ link Boost rather than force end users to have to do all the palava above
+#
+#    ************************
+#    *** Boost Stacktrace ***
+#    ************************
+#
+#    We use this for diagnostics.  In certain error cases it's very helpful to be able to log the call stack.
+#
+#    On Windows, using MSYS2, the mingw-w64-boost packages do not include libboost_stacktrace_backtrace, but
+#    https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html suggests it is not required
+#    (because on Windows, if you have libbacktrace installed, you can set BOOST_STACKTRACE_USE_BACKTRACE in header-only
+#    mode).
+#
+#    .:TODO:. Not sure how to get libboost_stacktrace_backtrace installed on Mac.  It doesn't seem to be findable by
+#    CMake after installing Boost via Homebrew (https://brew.sh/).  For the moment, skip trying to use
+#    libboost_stacktrace_backtrace on Mac
+#
+#    .:TODO:. So far don't have stacktraces working properly on Windows (everything shows as register_frame_ctor), so
+#    that needs some more investigation.  (It could be that it's a bug in Boost, at least according to
+#    https://stackoverflow.com/questions/54333608/boost-stacktrace-not-demangling-names-when-cross-compiled)
+#
+#    ******************
+#    *** Boost JSON ***
+#    ******************
+#
+#    Boost JSON is an (optionally) header-only library that was introduced in Boost 1.75 in December 2020.  One of the
+#    features we use, JSON pointers (the equivalent of XML's XPaths) was only introduced in Boost 1.79.  As of March
+#    2022, Ubunutu 20.04 LTS only has packages for Boost 1.71 from August 2019, hence the need to manually install a
+#    newer Boost.
+#
+#    ******************
+#    *** Boost.Core ***
+#    ******************
+#
+#    Boost.Core, part of collection of the Boost C++ Libraries, is a collection of core utilities used by other Boost
+#    libraries.  Boost JSON needs a more recent version than 1.71.
+#
+# For Boost, per https://mesonbuild.com/Dependencies.html#boost, we only need to supply module names for libraries we
+# need to link against.  For the header-only Boost libraries, the 'boost' dependency suffices.
+boostDependency = dependency('boost',
+                             version : '>=1.79.0',
+                             modules : ['stacktrace_backtrace'],
+                             static : true)
+message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'version =', boostDependency.version())
 
 # Find the other libraries we depend on
 #
@@ -123,19 +298,10 @@ qtDependencies = dependency('qt5', modules: ['Core',
 # https://cmake.org/cmake/help/latest/module/FindXercesC.html and 'XalanC' per
 # https://cmake.org/cmake/help/latest/module/FindXalanC.html)
 #
-# I looked at using ConanCenter (https://conan.io/center/) as a source of libraries, so that we could automate
-# installing them, but it does not have all the ones we need.  Eg it has Xerces-C but not Xalan-C.  (Others have already
-# requested Xalan-C, eg see https://github.com/conan-io/conan-center-index/issues/5546, but it doesn't seem imminent.)
 #
-# Meson has its own dependency management system, Wrap, but the list of pre-provided projects at
-# https://mesonbuild.com/Wrapdb-projects.html does not include Boost, Xerces or Xalan.
-#
-# More hopeful is vcpkg (https://vcpkg.io/en/index.html) as it does have both Xerces-C and Xalan-C, along with Boost.
-# There is an example here https://github.com/Neumann-A/meson-vcpkg of how to use vcpkg from Meson.
-#
-xercesDependency = dependency('XercesC')
+xercesDependency = dependency('XercesC', version : '>=3.2.3')
 message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(), 'version =', xercesDependency.version())
-xalanDependency = dependency('XalanC')
+xalanDependency = dependency('XalanC', version : '>=1.12.0')
 message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(), 'version =', xalanDependency.version())
 
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
@@ -143,6 +309,15 @@ includeDirs = include_directories('src', 'third-party/valijson/include')
 
 #=======================================================================================================================
 #===================================================== Input Files =====================================================
+#=======================================================================================================================
+# Sub-directories of the one containing this (meson.build) file are
+#    src          = C++ source code
+#    ui           = QML UI layout files
+#    data         = Binary files, including sounds and default database
+#    translations = Translated texts
+#    mac          = Mac-specific files (desktop icon)
+#    win          = Windows-specific files (desktop icon)
+#    packaging    = Packaging-related config
 #=======================================================================================================================
 
 #
@@ -587,24 +762,45 @@ filesToInstall_changeLogCompressed = [
 #=======================================================================================================================
 #============================================ Installation sub-directories =============================================
 #=======================================================================================================================
-installSubDir_data = 'share/' + projectName
-installSubDir_doc  = 'share/doc/' + projectName
-installSubDir_bin  = 'bin'
-# According to https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html#paths, .desktop files need to live
-# in one of the $XDG_DATA_DIRS/applications/.  (Note that $XDG_DATA_DIRS is a colon-separated list of directories, typically
-# defaulting to /usr/local/share/:/usr/share/. but on another system it might be
-# /usr/share/plasma:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/var/lib/snapd/desktop).  When combined with
-# CMAKE_INSTALL_PREFIX, "share/applications" should end up being one of these.
-installSubDir_applications = 'share/applications'
-# It's a similar but slightly more complicated story for where to put icons.  (See
-# https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout for all the
-# details.)
-installSubDir_icons        = 'share/icons'
+if host_machine.system() == 'linux'
+   #============================================= Linux Install Directories ============================================
+   installSubDir_data = 'share/' + projectName
+   installSubDir_doc  = 'share/doc/' + projectName
+   installSubDir_bin  = 'bin'
+   # According to https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html#paths, .desktop files need to live
+   # in one of the $XDG_DATA_DIRS/applications/.  (Note that $XDG_DATA_DIRS is a colon-separated list of directories,
+   # typically defaulting to /usr/local/share/:/usr/share/. but on another system it might be
+   # /usr/share/plasma:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/var/lib/snapd/desktop).  When combined with
+   # CMAKE_INSTALL_PREFIX, "share/applications" should end up being one of these.
+   installSubDir_applications = 'share/applications'
+   # It's a similar but slightly more complicated story for where to put icons.  (See
+   # https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout for all the
+   # details.)
+   installSubDir_icons        = 'share/icons'
+elif host_machine.system() == 'windows'
+   #============================================ Windows Install Directories ===========================================
+   installSubDir_data = 'data'
+   installSubDir_doc  = 'doc'
+   installSubDir_bin  = 'bin'
+elif host_machine.system() == 'darwin'
+   #============================================== Mac Install Directories =============================================
+   installSubDir_data = 'Contents/Resources'
+   installSubDir_doc  = 'Contents/Resources/en.lproj'
+   installSubDir_bin  = 'Contents/MacOS'
+else
+   error('Unrecognised target OS type:', host_machine.system())
+endif
+
+#============================================== Common Install Directories =============================================
 installSubDir_translations = installSubDir_data + '/translations_qm'
+
 
 #=======================================================================================================================
 #=========================================== Qt Meta Object Compilation etc ============================================
 #=======================================================================================================================
+
+# Import the Qt tools.  See https://mesonbuild.com/Qt5-module.html
+qt = import('qt5')
 
 # Compile Qt's resources collection files (.qrc) into C++ files for compilation
 generatedFromQrc = qt.compile_resources(sources : projectName + '.qrc')
@@ -639,7 +835,7 @@ translations = qt.compile_translations(ts_files         : translationSourceFiles
 #### meson.project_version() goes in here somewhere!
 conf_data = configuration_data()
 conf_data.set('PROJECT_VERSION',        meson.project_version())
-conf_data.set('CONFIG_DATA_DIR',        prefix + installSubDir_data) # This is a bit of a hack...
+conf_data.set('CONFIG_DATA_DIR',        prefix + '/' + installSubDir_data) # This is a bit of a hack...
 conf_data.set('capitalisedProjectName', capitalisedProjectName)
 conf_data.set('CMAKE_PROJECT_NAME',     projectName)
 # NB CMAKE_HOST_SYSTEM means something different than meson host_machine
@@ -692,10 +888,54 @@ else
 endif
 
 #=======================================================================================================================
+#========================================= Compiler-specific settings & flags ==========================================
+#=======================================================================================================================
+if meson.get_compiler('cpp').get_id() == 'gcc'
+   #
+   # -g3   should give even more debugging information than -g (which is equivalent to -g2)
+   #
+   # -O2   is hopefully a sensible optimisation level.  It means "GCC performs nearly all supported optimizations that do
+   #       not involve a space-speed tradeoff. As compared to -O, this option increases both compilation time and the
+   #       performance of the generated code."
+   #
+   # -z noexecstack  Is, in theory at least, to ensure/assert we do not have an executable stack.  This is partly as a
+   #                 good thing in itself, and partly because, by default, rpmlint with throw a
+   #                 missing-PT_GNU_STACK-section error if we don't.
+   #                    In theory, the compiler should work out automatically whether we need an executable stack,
+   #                 decide the answer is "No" and pass all the right options to the linker.   In practice, it seems
+   #                 this doesn't happen for reasons I have, as yet, to discover.
+   #                    So, we attempt to assert manually that the stack should not be executable.  The "-z noexecstack"
+   #                 should get passed through by gcc the linker (see
+   #                 https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options) and the GNU linker
+   #                 (https://sourceware.org/binutils/docs/ld/Options.html) should recognise "-z noexecstack" as "Marks
+   #                 the object as not requiring executable stack".
+   #                    However, even this is not sufficient(!).  So, for the moment, we suppress the rpmlint error (see
+   #                 packaging/rpmLintFilters.toml).
+   #
+   # -no-pie    } These are all needed for Boost stacktrace to work properly - at least according to comments at
+   # -fno-pie   } https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers
+   # -rdynamic  } But, for some reason, gcc on Windows does not accept -rdynamic
+   #
+   #
+   #
+   add_global_arguments(['-g3',
+                         '-O2',
+                         '-z', 'noexecstack', # NB Not '-z noexecstack' as otherwise will be passed to gcc in quotes!
+                         '-no-pie',
+                         '-fno-pie'], language : 'cpp')
+##   add_global_arguments(['-Wno-long-long',
+##                         '-no-pie',
+##                         '-fno-pie'], language : 'cpp')
+   if host_machine.system() != 'windows'
+      add_global_arguments('-rdynamic', language : 'cpp')
+   endif
+endif
+
+#=======================================================================================================================
 #====================================================== Main build =====================================================
 #=======================================================================================================================
 executable(executableName,
            'src/main.cpp', commonSourceFiles, generatedFromQrc, generatedFromUi, generatedFromMoc, translations,
            include_directories : includeDirs,
-           dependencies: [qtDependencies, xercesDependency, xalanDependency],
+           dependencies: [qtDependencies, xercesDependency, xalanDependency, boostDependency],
            install : true)

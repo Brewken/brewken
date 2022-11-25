@@ -207,7 +207,7 @@ namespace {
       return executeSqlQueries(q, migrationQueries);
    }
 
-   bool migrate_to_5(Database & db, BtSqlQuery q) {
+   bool migrate_to_5([[maybe_unused]] Database & db, BtSqlQuery q) {
       QVector<QueryAndParameters> const migrationQueries{
          // Drop the previous bugged TRIGGER
          {QString("DROP TRIGGER dec_ins_num")},
@@ -224,13 +224,12 @@ namespace {
    }
 
    //
-   bool migrate_to_6(Database & db, BtSqlQuery q) {
-      bool ret = true;
+   bool migrate_to_6([[maybe_unused]] Database & db, [[maybe_unused]] BtSqlQuery q) {
       // I drop this table in version 8. There is no sense doing anything here, and it breaks other things.
-      return ret;
+      return true;
    }
 
-   bool migrate_to_7(Database & db, BtSqlQuery q) {
+   bool migrate_to_7([[maybe_unused]] Database & db, BtSqlQuery q) {
       QVector<QueryAndParameters> const migrationQueries{
          // Add "attenuation" to brewnote table
          {"ALTER TABLE brewnote ADD COLUMN attenuation real"} // Previously DEFAULT 0.0

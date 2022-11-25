@@ -148,7 +148,8 @@ void MiscTableModel::addMiscs(QList<std::shared_ptr<Misc> > miscs) {
 }
 
 // Returns true when misc is successfully found and removed.
-void MiscTableModel::removeMisc(int miscId, std::shared_ptr<QObject> object) {
+void MiscTableModel::removeMisc([[maybe_unused]] int miscId,
+                                std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Misc>(object));
    return;
 }
@@ -290,7 +291,9 @@ Qt::ItemFlags MiscTableModel::flags(QModelIndex const & index) const {
    }
 }
 
-bool MiscTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
+bool MiscTableModel::setData(QModelIndex const & index,
+                             QVariant const & value,
+                             [[maybe_unused]] int role) {
 
    if (index.row() >= static_cast<int>(this->rows.size())) {
       return false;
@@ -521,6 +524,6 @@ void MiscItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
 
 void MiscItemDelegate::updateEditorGeometry(QWidget * editor,
                                             QStyleOptionViewItem const & option,
-                                            QModelIndex const & index) const {
+                                            [[maybe_unused]] QModelIndex const & index) const {
    editor->setGeometry(option.rect);
 }

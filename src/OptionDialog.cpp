@@ -798,7 +798,7 @@ void OptionDialog::changeEvent(QEvent * e) {
    return;
 }
 
-void OptionDialog::setEngine(int selected) {
+void OptionDialog::setEngine([[maybe_unused]] int selected) {
 
    QVariant data = comboBox_engine->currentData();
    Database::DbType newEngine = static_cast<Database::DbType>(data.toInt());

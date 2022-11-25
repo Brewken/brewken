@@ -159,7 +159,8 @@ void YeastTableModel::addYeasts(QList<std::shared_ptr<Yeast> > yeasts) {
    return;
 }
 
-void YeastTableModel::removeYeast(int yeastId, std::shared_ptr<QObject> object) {
+void YeastTableModel::removeYeast([[maybe_unused]] int yeastId,
+                                  std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Yeast>(object));
    return;
 }

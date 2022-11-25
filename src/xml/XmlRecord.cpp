@@ -61,6 +61,17 @@ namespace {
    }
 }
 
+XmlRecord::FieldDefinition::FieldDefinition(FieldType           fieldType,
+                                            XQString            xPath,
+                                            BtStringConst const & propertyName,
+                                            EnumStringMapping const * enumMapping) :
+   fieldType{fieldType},
+   xPath{xPath},
+   propertyName{propertyName},
+   enumMapping{enumMapping} {
+   return;
+}
+
 XmlRecord::XmlRecord(QString const & recordName,
                      XmlCoding const & xmlCoding,
                      FieldDefinitions const & fieldDefinitions,
@@ -675,7 +686,7 @@ void XmlRecord::normaliseName() {
    return;
 }
 
-void XmlRecord::setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
+void XmlRecord::setContainingEntity([[maybe_unused]] std::shared_ptr<NamedEntity> containingEntity) {
    // Base class does not have a NamedEntity or a container, so nothing to do
    // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
    // NamedEntity, and subclasses that do have one should override this function.
@@ -855,11 +866,11 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
 }
 
 void XmlRecord::subRecordToXml(XmlRecord::FieldDefinition const & fieldDefinition,
-                               XmlRecord const & subRecord,
+                               [[maybe_unused]] XmlRecord const & subRecord,
                                NamedEntity const & namedEntityToExport,
-                               QTextStream & out,
-                               int indentLevel,
-                               char const * const indentString) const {
+                               [[maybe_unused]] QTextStream & out,
+                               [[maybe_unused]] int indentLevel,
+                               [[maybe_unused]] char const * const indentString) const {
    // Base class does not know how to handle nested records
    // It's a coding error if we get here as this virtual member function should be overridden classes that have nested records
    qCritical() << Q_FUNC_INFO <<

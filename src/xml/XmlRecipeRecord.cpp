@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ namespace {
    // functions.
    //
    template<typename CNE>
-   void setAmountsEtc(CNE & ingredient, NamedParameterBundle const & npb) {
+   void setAmountsEtc([[maybe_unused]] CNE & ingredient, [[maybe_unused]] NamedParameterBundle const & npb) {
       return;
    }
    template<> void setAmountsEtc(Hop & hop, NamedParameterBundle const & npb) {

@@ -456,8 +456,8 @@ if(WIN32)
    #================================================= Windows Qt Stuff =================================================
    #====================================================================================================================
    # .:TBD:.  Not sure whether/why we need these additional Qt components on Windows
-   find_package(Qt5MultimediaWidgets REQUIRED)
-   find_package(Qt5OpenGL REQUIRED)
+   #find_package(Qt5MultimediaWidgets REQUIRED)
+   #find_package(Qt5OpenGL REQUIRED)
 
    get_target_property(QtCore_location              Qt5::Core                      LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtGui_location               Qt5::Gui                       LOCATION_${CMAKE_BUILD_TYPE})

@@ -253,7 +253,8 @@ void BrewNoteWidget::updateNotes() {
    return;
 }
 
-void BrewNoteWidget::changed(QMetaProperty /*prop*/, QVariant /*val*/) {
+void BrewNoteWidget::changed([[maybe_unused]] QMetaProperty prop,
+                             [[maybe_unused]] QVariant val) {
    if (this->sender() != this->bNoteObs) {
       return;
    }
@@ -262,7 +263,7 @@ void BrewNoteWidget::changed(QMetaProperty /*prop*/, QVariant /*val*/) {
    return;
 }
 
-void BrewNoteWidget::showChanges(QString field) {
+void BrewNoteWidget::showChanges([[maybe_unused]] QString field) {
    if (this->bNoteObs == nullptr) {
       return;
    }
@@ -295,6 +296,6 @@ void BrewNoteWidget::showChanges(QString field) {
    return;
 }
 
-void BrewNoteWidget::focusOutEvent(QFocusEvent *e) {
+void BrewNoteWidget::focusOutEvent([[maybe_unused]] QFocusEvent * e) {
    return;
 }

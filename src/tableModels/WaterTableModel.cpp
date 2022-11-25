@@ -147,7 +147,8 @@ void WaterTableModel::addWaters(QList<std::shared_ptr<Water> > waters) {
 
 }
 
-void WaterTableModel::removeWater(int waterId, std::shared_ptr<QObject> object) {
+void WaterTableModel::removeWater([[maybe_unused]] int waterId,
+                                  std::shared_ptr<QObject> object) {
    auto water = std::static_pointer_cast<Water>(object);
    int i = rows.indexOf(water);
    if (i >= 0) {

@@ -81,7 +81,11 @@ public:
       XQString            xPath;
       BtStringConst const & propertyName;  // If fieldType == RecordComplex, then this is used only on export
                                            // If fieldType == RequiredConstant, then this is actually the constant value
-      EnumStringMapping const * enumMapping;
+      EnumStringMapping const * enumMapping; // Only used if fieldType == Enum, otherwise should be nullptr
+      FieldDefinition(FieldType           fieldType,
+                      XQString            xPath,
+                      BtStringConst const & propertyName,
+                      EnumStringMapping const * enumMapping = nullptr);
    };
 
    typedef QVector<FieldDefinition> FieldDefinitions;
