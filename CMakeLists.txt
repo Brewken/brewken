@@ -485,7 +485,7 @@ if(WIN32)
                           ${QtMultimedia_location}
 #                          ${QtMultimediaWidgets_location}
                           ${QtNetwork_location}
-                          ${QtOpenGL_location}
+#                          ${QtOpenGL_location}
                           ${QtPrintSupport_location}
                           ${QtSql_location}
                           ${QtSvg_location}
