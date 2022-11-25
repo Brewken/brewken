@@ -462,7 +462,7 @@ if(WIN32)
    get_target_property(QtCore_location              Qt5::Core                      LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtGui_location               Qt5::Gui                       LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtMultimedia_location        Qt5::Multimedia                LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtMultimediaWidgets_location Qt5::MultimediaWidgets         LOCATION_${CMAKE_BUILD_TYPE})
+#   get_target_property(QtMultimediaWidgets_location Qt5::MultimediaWidgets         LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtNetwork_location           Qt5::Network                   LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtOpenGL_location            Qt5::OpenGL                    LOCATION_${CMAKE_BUILD_TYPE})
    get_target_property(QtPrintSupport_location      Qt5::PrintSupport              LOCATION_${CMAKE_BUILD_TYPE})
@@ -483,7 +483,7 @@ if(WIN32)
    set(Qt_DLLs            ${QtCore_location}
                           ${QtGui_location}
                           ${QtMultimedia_location}
-                          ${QtMultimediaWidgets_location}
+#                          ${QtMultimediaWidgets_location}
                           ${QtNetwork_location}
                           ${QtOpenGL_location}
                           ${QtPrintSupport_location}
