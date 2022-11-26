@@ -223,13 +223,12 @@ void HopTableModel::changedInventory(int invKey, BtStringConst const & propertyN
    return;
 }
 
-void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
+void HopTableModel::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {
 
    // Find the notifier in the list
    Hop * hopSender = qobject_cast<Hop *>(sender());
    if (hopSender) {
-      auto spHopSender = ObjectStoreWrapper::getSharedFromRaw(hopSender);
-      int ii = this->rows.indexOf(spHopSender);
+      int ii = this->findIndexOf(hopSender);
       if (ii < 0) {
          return;
       }

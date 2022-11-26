@@ -205,14 +205,11 @@ void YeastTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    // Find the notifier in the list
    Yeast * yeastSender = qobject_cast<Yeast *>(sender());
    if (yeastSender) {
-      auto spYeastSender = ObjectStoreWrapper::getSharedFromRaw(yeastSender);
-      int ii = this->rows.indexOf(spYeastSender);
-      if (ii < 0) {
-         return;
+      int ii = this->findIndexOf(yeastSender);
+      if (ii >= 0) {
+         emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
+                          QAbstractItemModel::createIndex(ii, YEASTNUMCOLS - 1));
       }
-
-      emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
-                       QAbstractItemModel::createIndex(ii, YEASTNUMCOLS - 1));
       return;
    }
 

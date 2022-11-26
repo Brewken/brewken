@@ -236,14 +236,13 @@ void FermentableTableModel::changedInventory(int invKey, BtStringConst const & p
    return;
 }
 
-void FermentableTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
+void FermentableTableModel::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {
    qDebug() << Q_FUNC_INFO << prop.name();
 
    // Is sender one of our fermentables?
    Fermentable* fermSender = qobject_cast<Fermentable*>(sender());
    if (fermSender) {
-      auto spFermSender = ObjectStoreWrapper::getSharedFromRaw(fermSender);
-      int ii = this->rows.indexOf(spFermSender);
+      int ii = this->findIndexOf(fermSender);
       if (ii < 0) {
          return;
       }

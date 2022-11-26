@@ -745,19 +745,19 @@ filesToInstall_macIcons = files([
    'mac/' + capitalisedProjectName + 'Icon.icns'
 ])
 
-filesToInstall_changeLogUncompressed = files([
-   'CHANGES.markdown'
-])
+# This has to be a string because we're going to pass it into a script.
+# AFAICT Meson does not provide a way for you to extract, say, full path from a file object
+filesToInstall_changeLogUncompressed = 'CHANGES.markdown'
 
 filesToInstall_copyright = files([
    'COPYRIGHT'
 ])
 
-# This is not wrapped in files() because it's not yet created!
+# This is not wrapped in files() (a) because it's not yet created and (b) because, as with
+# filesToInstall_changeLogUncompressed, we're going to pass it into a bash script
+#
 # See below for how this one gets created from filesToInstall_changeLogUncompressed
-filesToInstall_changeLogCompressed = [
-   'changelog.gz'
-]
+filesToInstall_changeLogCompressed = 'changelog.gz'
 
 #=======================================================================================================================
 #============================================ Installation sub-directories =============================================
@@ -851,6 +851,21 @@ configure_file(input : 'config.in',
                configuration : conf_data)
 
 #=======================================================================================================================
+#=================================== Generate compressed changelog for Debian package ==================================
+#=======================================================================================================================
+# TODO do this only when we're packaging, not on all builds!
+scriptParams = environment()
+scriptParams.set('build_projectName'          , projectName                         )
+scriptParams.set('build_changeLogUncompressed', join_paths(meson.current_source_dir(), filesToInstall_changeLogUncompressed))
+scriptParams.set('build_changeLogCompressed'  , join_paths(meson.current_build_dir(),  filesToInstall_changeLogCompressed  ))
+scriptParams.set('build_packageMaintainer'    , 'Matt Young <mfsy@yahoo.com>'       )
+scriptResult = run_command('packaging/generateCompressedChangeLog.sh', env : scriptParams, check : true)
+message('Generating compressed changlog output:', scriptResult.stdout().strip())
+if scriptResult.returncode() != 0
+   error('Generating compressed changlog ERRORS:', scriptResult.stderr().strip())
+endif
+
+#=======================================================================================================================
 #======================= Install files that we ship with the software (sounds, default DB, etc) ========================
 #=======================================================================================================================
 install_data(filesToInstall_data,   install_dir : installSubDir_data)
@@ -878,10 +893,11 @@ if host_machine.system() == 'linux'
    # contents).  So the simplest thing is to rename COPYRIGHT to copyright for both.
    install_data(filesToInstall_copyright, rename : 'copyright', install_dir : installSubDir_doc)
 
-   # TODO: Need to generate this file
    # Each Debian package (which provides a /usr/share/doc/pkg directory) must install a Debian changelog file in
    # /usr/share/doc/pkg/changelog.Debian.gz
-   # install_data(filesToInstall_changeLogCompressed, rename : 'changelog.Debian.gz', install_dir : installSubDir_doc)
+   install_data(join_paths(meson.current_build_dir(), filesToInstall_changeLogCompressed),
+                rename : 'changelog.Debian.gz',
+                install_dir : installSubDir_doc)
 else
    #----------- Windows and Mac -----------
    install_data(filesToInstall_copyright, install_dir : installSubDir_doc)
@@ -916,16 +932,11 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
    # -fno-pie   } https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers
    # -rdynamic  } But, for some reason, gcc on Windows does not accept -rdynamic
    #
-   #
-   #
    add_global_arguments(['-g3',
                          '-O2',
                          '-z', 'noexecstack', # NB Not '-z noexecstack' as otherwise will be passed to gcc in quotes!
                          '-no-pie',
                          '-fno-pie'], language : 'cpp')
-##   add_global_arguments(['-Wno-long-long',
-##                         '-no-pie',
-##                         '-fno-pie'], language : 'cpp')
    if host_machine.system() != 'windows'
       add_global_arguments('-rdynamic', language : 'cpp')
    endif

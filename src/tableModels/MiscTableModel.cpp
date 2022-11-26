@@ -405,17 +405,14 @@ void MiscTableModel::changedInventory(int invKey, BtStringConst const & property
    return;
 }
 
-void MiscTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
+void MiscTableModel::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {
    Misc * miscSender = qobject_cast<Misc*>(sender());
    if (miscSender) {
-      auto spMiscSender = ObjectStoreWrapper::getSharedFromRaw(miscSender);
-      int i = this->rows.indexOf(spMiscSender);
-      if (i < 0) {
-         return;
+      int ii = this->findIndexOf(miscSender);
+      if (ii >= 0) {
+         emit dataChanged( QAbstractItemModel::createIndex(ii, 0),
+                           QAbstractItemModel::createIndex(ii, MISCNUMCOLS-1) );
       }
-
-      emit dataChanged( QAbstractItemModel::createIndex(i, 0),
-                        QAbstractItemModel::createIndex(i, MISCNUMCOLS-1) );
       return;
    }
 

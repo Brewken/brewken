@@ -178,11 +178,10 @@ void WaterTableModel::changed(QMetaProperty prop, QVariant val) {
    // Find the notifier in the list
    Water * waterSender = qobject_cast<Water *>(sender());
    if (waterSender) {
-      auto spWaterSender = ObjectStoreWrapper::getSharedFromRaw(waterSender);
-      int i = rows.indexOf(spWaterSender);
-      if (i >= 0) {
-         emit dataChanged(QAbstractItemModel::createIndex(i, 0),
-                          QAbstractItemModel::createIndex(i, WATERNUMCOLS - 1));
+      int ii = findIndexOf(waterSender);
+      if (ii >= 0) {
+         emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
+                          QAbstractItemModel::createIndex(ii, WATERNUMCOLS - 1));
       }
    }
    return;
