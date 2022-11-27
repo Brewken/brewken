@@ -18,18 +18,18 @@
 #----------------------------------------------------------------------------------------------------------------------
 # NB: This script is intended to be invoked from the Meson build (see ../meson.build) with the following environment
 # variables set:
-#    build_projectName           - Same as projectName in meson.build
-#    build_changeLogUncompressed - Same as filesToInstall_changeLogUncompressed in meson.build
-#    build_changeLogCompressed   - Same as filesToInstall_changeLogCompressed in meson.build
-#    build_packageMaintainer     - Name and email of a project maintainer conforming to
-#                                  https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer
+#    CONFIG_APPLICATION_NAME_LC     - Same as projectName in meson.build
+#    CONFIG_CHANGE_LOG_UNCOMPRESSED - Same as filesToInstall_changeLogUncompressed in meson.build
+#    CONFIG_CHANGE_LOG_COMPRESSED   - Same as filesToInstall_changeLogCompressed in meson.build
+#    CONFIG_PACKAGE_MAINTAINER      - Name and email of a project maintainer conforming to
+#                                     https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer
 #
 # We assume that none of these variables contains single or double quotes (so we can save ourselves having to escape
 # the values when we use them below).
 #
 # First thing we do is check that all these variables are set to something.
 #----------------------------------------------------------------------------------------------------------------------
-for var in build_projectName build_changeLogUncompressed build_changeLogCompressed build_packageMaintainer
+for var in CONFIG_APPLICATION_NAME_LC CONFIG_CHANGE_LOG_UNCOMPRESSED CONFIG_CHANGE_LOG_COMPRESSED CONFIG_PACKAGE_MAINTAINER
 do
    if [ -z "${!var}" ]
    then
@@ -38,7 +38,7 @@ do
    fi
 done
 
-echo "Parsing ${build_changeLogUncompressed}"
+echo "Parsing ${CONFIG_CHANGE_LOG_UNCOMPRESSED}"
 
 #
 # The rest of this script creates a compressed changelog in a Debian-friendly format
@@ -82,18 +82,18 @@ echo "Parsing ${build_changeLogUncompressed}"
 # Note that, to keep us on our toes, Debian change log lines are not supposed to be more than 80 characters long.  This
 # is non-trivial, but the ghastly bit of awk below gets us most of the way there.
 #
-cat "${build_changeLogUncompressed}" |
+cat "${CONFIG_CHANGE_LOG_UNCOMPRESSED}" |
    # Skip over the introductory headings and paragraphs of CHANGES.markdown until we get to the first version line
    sed -n '/^## v/,$p' |
    # We want to change the release timestamp to maintainer + timestamp, but we don't want to create too long a line
    # before we do the fold command below, so use "÷÷maintainer÷÷" as a placeholder for
-   # " -- ${build_packageMaintainer}  "
+   # " -- ${CONFIG_PACKAGE_MAINTAINER}  "
    sed -z "s/\\n### Release Timestamp\\n\\([^\\n]*\\)\\n/\\n÷÷maintainer÷÷\\1\\n/g" |
    # Join continued lines in bullet lists
    sed -z "s/\\n  / /g" |
    # Change the version to package (version) etc.  Stick a '÷' on the front of the line to protect it from
    # modification below
-   sed "s/^## v\\(.*\\)$/÷${build_projectName} (\\1-1) unstable\; urgency=low/" |
+   sed "s/^## v\\(.*\\)$/÷${CONFIG_APPLICATION_NAME_LC} (\\1-1) unstable\; urgency=low/" |
    # Change bullets to sub-bullets
    sed "s/^\\* /    - /" |
    # Change headings to bullets
@@ -121,10 +121,10 @@ cat "${build_changeLogUncompressed}" |
       }
    }" |
    # Fix the "÷÷maintainer÷÷" placeholders
-   sed "s/÷÷maintainer÷÷/ -- ${build_packageMaintainer}  /" |
+   sed "s/÷÷maintainer÷÷/ -- ${CONFIG_PACKAGE_MAINTAINER}  /" |
    # Remove the protective "÷" from the start of any other lines
    sed "s/^÷//" |
-   gzip --best -n --to-stdout > "${build_changeLogCompressed}"
+   gzip --best -n --to-stdout > "${CONFIG_CHANGE_LOG_COMPRESSED}"
 
-echo "Wrote to ${build_changeLogCompressed}"
+echo "Wrote to ${CONFIG_CHANGE_LOG_COMPRESSED}"
 exit 0

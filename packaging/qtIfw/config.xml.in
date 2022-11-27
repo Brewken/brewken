@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  packaging/qtIfw/config.xml.in is part of Brewken, and is copyright the following authors 2022:
+    • Matt Young <mfsy@yahoo.com>
+
+  Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+  version.
+
+  Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details.
+
+  You should have received a copy of the GNU General Public License along with this program.  If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+<!--
+   See comments in meson.build for how this file gets processed into mbuild/config.xml and then copied to a subdirectory
+
+   Note that both Qt Install Framework and Meson use the same format for variable substitutions (and Meson won't
+   understand comments in this file), so we need to escape @ symbols when they are for Qt ones.
+
+   Once processed and copied this becomes the installer configuration file (see
+   https://doc.qt.io/qtinstallerframework/ifw-globalconfig.html)
+-->
+<Installer>
+    <Name>@CONFIG_APPLICATION_NAME_UC@ Installer</Name>
+    <Version>@CONFIG_VERSION_STRING@</Version>
+    <Title>@CONFIG_APPLICATION_NAME_UC@ Installer</Title>
+    <Publisher>The @CONFIG_APPLICATION_NAME_UC@ Team</Publisher>
+    <StartMenuDir>@CONFIG_APPLICATION_NAME_UC@</StartMenuDir>
+    <TargetDir>\@HomeDir\@/InstallationDirectory</TargetDir>
+</Installer>

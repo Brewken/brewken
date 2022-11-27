@@ -1,4 +1,4 @@
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 # meson.build is part of Brewken, and is copyright the following authors 2022:
 #   • Matt Young <mfsy@yahoo.com>
 #
@@ -12,16 +12,16 @@
 #
 # You should have received a copy of the GNU General Public License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 #
 # ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 # ⭐⭐⭐ THIS IS EXPERIMENTAL - CARRY ON USING CMAKE TO BUILD THE PRODUCT UNLESS AND UNTIL WORK ON MESON BUILD COMES TO
 # ⭐⭐⭐ FRUITION.
 # ⭐⭐⭐
-# ⭐⭐⭐ AS OF 2022-11-23 COMPILATION AND LOCAL INSTALL SEEMS MOSTLY WORKING ON LINUX, BUT NOT EXTENSIVELY TESTED.  WE
-# ⭐⭐⭐ HAVE NOT YET DONE ANYTHING ON UNIT TESTS, PACKAGING OR WINDOWS/MAC BUILDS
+# ⭐⭐⭐ AS OF 2022-11-23 COMPILATION, LOCAL INSTALL AND UNIT TESTS SEEM MOSTLY WORKING ON LINUX, BUT NOT EXTENSIVELY TESTED.  WE
+# ⭐⭐⭐ HAVE NOT YET DONE ANYTHING ON PACKAGING OR MUCH ON WINDOWS/MAC BUILDS
 # ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 #
 # On Linux, to install as recent a meson as possible:
@@ -69,18 +69,17 @@
 # Then to install:
 #   meson install
 #
-# To build packages [NB NOT YET IMPLEMENTED OTHER THAN THE DEFAULT SOURCE BUNDLING!]:
+# To build source packages:
 #   meson dist
 #
-# Packaging is where Meson is currently weakest IMHO.  It seems to have no equivalent to CPack and there is not a lot of
-# info about how to do things:
-#   - https://stackoverflow.com/questions/60027455/is-there-a-tool-for-meson-similar-equivalent-to-cpack-for-cmake is
-#     essentially unanswered (and the link it offered for how to build RPMs is broken because this module was removed
-#     from Meson per https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was
-#     broken and badly designed etc
-#   - https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some starting info on
-#     how to build deb packages
-#   - There is almost no info out there on how to do Windows or Mac packaging
+# To build binary packages:
+#   meson compile packages
+#
+#
+# Note that if you want to add new build targets or change the names of existing targets, you have to run the following
+# command from the same directory as this file:
+#   meson --reconfigure mbuild
+# See https://stackoverflow.com/questions/63329923/how-to-make-meson-scan-for-new-target for more on this.
 #
 #----------------------------------------------------------------------------------------------------------------------
 
@@ -151,6 +150,14 @@ message('Building', projectName, 'version', meson.project_version(), 'for', host
 
 mainExecutableName = projectName
 testRunnerName = mainExecutableName + '_tests'
+
+#=======================================================================================================================
+#==================================================== Meson modules ====================================================
+#=======================================================================================================================
+# Import the Qt tools.  See https://mesonbuild.com/Qt5-module.html
+qt = import('qt5')
+# File System module - see https://mesonbuild.com/Fs-module.html
+fs = import('fs')
 
 #=======================================================================================================================
 #==================================================== Build options ====================================================
@@ -810,9 +817,6 @@ installSubDir_translations = installSubDir_data + '/translations_qm'
 #=========================================== Qt Meta Object Compilation etc ============================================
 #=======================================================================================================================
 
-# Import the Qt tools.  See https://mesonbuild.com/Qt5-module.html
-qt = import('qt5')
-
 # Compile Qt's resources collection files (.qrc) into C++ files for compilation
 generatedFromQrc = qt.compile_resources(sources : projectName + '.qrc')
 
@@ -832,50 +836,84 @@ translations = qt.compile_translations(ts_files         : translationSourceFiles
                                        install_dir      : installSubDir_translations)
 
 #=======================================================================================================================
-#=========================================== Generate config.h from config.in ==========================================
+#================================================= Exported variables ==================================================
 #=======================================================================================================================
-# Taking src/config.in as input, we generate (in the build subdirectory only) config.h.  This is a way to inject CMake
+#
+# There are a number of places where we want to "export" variables from this file.  In a couple of instances we are
+# generating a file (using configure_file()) and in other places we are running a shell script (with run_command() or
+# run_target()).  Although it's not always the exact same set of variables that we need to export, there is, I think,
+# enough overlap that it's worth defining all the exports once to avoid repeating ourselves.
+#
+# The file generation and script execution take different types of object for their "exported variables": a
+# Configuration Cata (cfg_data) object (see https://mesonbuild.com/Reference-manual_returned_cfg_data.html) in for the
+# former and an Environment (env) object (see https://mesonbuild.com/Reference-manual_returned_env.html) for the latter.
+# Fortunately however, both types of object can be constructed from a Dictionary (see
+# https://mesonbuild.com/Syntax.html#dictionaries), so that is what we define here.
+#
+exportedVariables = {
+   'CONFIG_VERSION_STRING'      : meson.project_version(),
+   'CONFIG_DATA_DIR'            : prefix + '/' + installSubDir_data, # This is a bit of a hack...
+   'CONFIG_APPLICATION_NAME_UC' : capitalisedProjectName,
+   'CONFIG_APPLICATION_NAME_LC' : projectName,
+   # NB CMAKE_HOST_SYSTEM means something different than meson host_machine
+   'CONFIG_BUILD_SYSTEM'        : build_machine.system(),
+   'CONFIG_RUN_SYSTEM'          : host_machine.system(),
+   'CONFIG_CXX_COMPILER_ID'     : meson.get_compiler('cpp').get_id(),
+   # Meson doesn't directly give you a way to obtain the current date and time.  But it does allow you turn an external
+   # command, so this is one way to get it - relying on the fact that MSYS2 on Windows, Linux and Mac all have date
+   # available from the command line.
+   'CONFIG_BUILD_TIMESTAMP'     : run_command('date', check: true).stdout().strip(),
+   #
+   # This block is specifically for generating the compressed changelog for building a Debian package
+   #
+   'CONFIG_CHANGE_LOG_UNCOMPRESSED' : join_paths(meson.current_source_dir(), filesToInstall_changeLogUncompressed),
+   'CONFIG_CHANGE_LOG_COMPRESSED'   : join_paths(meson.current_build_dir(),  filesToInstall_changeLogCompressed  ),
+   'CONFIG_PACKAGE_MAINTAINER'      : 'Matt Young <mfsy@yahoo.com>',
+}
+
+#=======================================================================================================================
+#===================================== Generate config.h etc from config.h.in etc ======================================
+#=======================================================================================================================
+# Taking src/config.h.in as input, we generate (in the build subdirectory only) config.h.  This is a way to inject build
 # variables into the code.
 #
-#### All variables written as "${VAR}" in config.in  will be replaced by the value of VAR in config.h.
-#### Eg "#define CONFIG_DATA_DIR ${CONFIG_DATA_DIR}" in config.in will be replaced by the below corresponding value in
-#### ${CONFIG_DATA_DIR} below when configure_file() is called.
-####
-###set(CONFIG_DATA_DIR "${CMAKE_INSTALL_PREFIX}/${installSubDir_data}/")
-###string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d %H:%M:%S (UTC)" UTC)
-###configure_file(src/config.in src/config.h)
-
-#### meson.project_version() goes in here somewhere!
-conf_data = configuration_data()
-conf_data.set('PROJECT_VERSION',        meson.project_version())
-conf_data.set('CONFIG_DATA_DIR',        prefix + '/' + installSubDir_data) # This is a bit of a hack...
-conf_data.set('capitalisedProjectName', capitalisedProjectName)
-conf_data.set('CMAKE_PROJECT_NAME',     projectName)
-# NB CMAKE_HOST_SYSTEM means something different than meson host_machine
-conf_data.set('CMAKE_HOST_SYSTEM',      build_machine.system())
-conf_data.set('CMAKE_SYSTEM',           host_machine.system())
-conf_data.set('CMAKE_CXX_COMPILER_ID',  meson.get_compiler('cpp').get_id())
-# Meson doesn't directly give you a way to obtain the current date and time.  But it does allow you turn an external
-# command, so this is one way to get it - relying on the fact that MSYS2 on Windows, Linux and Mac all have date
-# available from the command line.
-conf_data.set('BUILD_TIMESTAMP',        run_command('date', check: true).stdout().strip())
-configure_file(input : 'config.in',
+# All variables written as "@VAR@" in src/config.h.in (input file) will be replaced in config.h (output file) by the
+# value of VAR in the configuration_data dictionary we define here.
+#
+configure_file(input  : 'src/config.h.in',
                output : 'config.h',
-               configuration : conf_data)
+               configuration : exportedVariables,
+               install : false)
+#
+# Now do the same for the XML packaging files used by the "packages" target (see below).
+#
+# We ultimately want it in a subdirectory of the the build directory, but that is not permitted by configure_file, so,
+# instead, it gets copied to the right location by packaging/doQtIFWpackaging.sh
+#
+configure_file(input  : 'packaging/qtIfw/config.xml.in',
+               output : 'config.xml',
+               configuration : exportedVariables,
+               install : false)
+configure_file(input  : 'packaging/qtIfw/package.xml.in',
+               output : 'package.xml',
+               configuration : exportedVariables,
+               install : false)
 
 #=======================================================================================================================
 #=================================== Generate compressed changelog for Debian package ==================================
 #=======================================================================================================================
-# TODO do this only when we're packaging, not on all builds!
-scriptParams = environment()
-scriptParams.set('build_projectName'          , projectName                         )
-scriptParams.set('build_changeLogUncompressed', join_paths(meson.current_source_dir(), filesToInstall_changeLogUncompressed))
-scriptParams.set('build_changeLogCompressed'  , join_paths(meson.current_build_dir(),  filesToInstall_changeLogCompressed  ))
-scriptParams.set('build_packageMaintainer'    , 'Matt Young <mfsy@yahoo.com>'       )
-scriptResult = run_command('packaging/generateCompressedChangeLog.sh', env : scriptParams, check : true)
-message('Generating compressed changlog output:', scriptResult.stdout().strip())
-if scriptResult.returncode() != 0
-   error('Generating compressed changlog ERRORS:', scriptResult.stderr().strip())
+if host_machine.system() == 'linux'
+   # .:TBD:. Might be better to do this via custom_target (see https://mesonbuild.com/Custom-build-targets.html), though
+   # the parameter passing is not as nice that way
+   #
+   # For now, if we're using QtIFW (see below), then we might not worry about it too much
+   scriptResult = run_command('packaging/generateCompressedChangeLog.sh',
+                              env : exportedVariables,
+                              check : true)
+   message('Generating compressed changlog output:', scriptResult.stdout().strip())
+   if scriptResult.returncode() != 0
+      error('Generating compressed changlog ERRORS:', scriptResult.stderr().strip())
+   endif
 endif
 
 #=======================================================================================================================
@@ -990,3 +1028,42 @@ test('Test recipe calculations - all grain', testRunner, args : ['recipeCalcTest
 test('Test post boil loss OG',               testRunner, args : ['postBoilLossOgTest'])
 test('Test unit conversions',                testRunner, args : ['testUnitConversions'])
 test('Test log rotation',                    testRunner, args : ['testLogRotation'])
+
+#=======================================================================================================================
+#===================================================== Packaging =======================================================
+#=======================================================================================================================
+# Meson does not offer a huge amount of help on creating installable packages.  It has no equivalent to CMake's CPack
+# and there is generally not a lot of info out there about how to do packaging in Meson.  OTOH, although CPack has lots
+# of features it is also very painful to use.  So maybe taking a completely different approach is a good thing.
+#
+# Have had a bit of a look at Qt-Installer-Framework (QtIFW).  Upsides are:
+#   - in principle we could write one set of install config that would then create install packages for Windows, Mac and
+#     Linux
+#   - it should already know how to package Qt libraries(!)
+#   - it's the same licence as the rest of Qt
+#   - we can use it in GitHub actions (courtesy of https://github.com/jurplel/install-qt-action)
+#   - it can handle in-place upgrades (including the check for whether an upgraded version is available), per
+#     https://doc.qt.io/qtinstallerframework/ifw-updates.html
+# Downsides are:
+#   - outside of packaging Qt itself, I'm not sure that it's hugely widely used
+#   - it's not a great advert for itself -- eg when I installed it locally on Kubuntu by downloading directly from
+#     https://download.qt.io/official_releases/qt-installer-framework/, it didn't put its own tools in the PATH,
+#     so I had to manually add ~/Qt/QtIFW-4.5.0/bin/ to my PATH
+#   - it's a change of installation method for people who have previously downloaded deb packages, RPMs, Mac DMG files,
+#     etc
+#
+# The alternative approach would be to do Windows, Mac and Linux packaging separately:
+#   - For Mac, there is some info at https://mesonbuild.com/Creating-OSX-packages.html on creating app bundles
+#   - For Linux, https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some
+#     starting info on how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used to
+#     be a Meson module for creating RPMs, but it was discontinued per
+#     https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
+#     designed etc.)  Also look at https://openbuildservice.org/.
+#   - For Windows, we could probably use NSIS (Nullsoft Scriptable Install System -- see
+#     https://nsis.sourceforge.io/) to create a Windows installer.
+#
+# For now we'll see if we can get QtIFW working.
+#
+packagesTarget = run_target('packages',
+                            command : 'packaging/qtIfw/doPackaging.sh',
+                            env : exportedVariables)

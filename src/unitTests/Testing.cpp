@@ -42,6 +42,7 @@
 #include <QVector>
 
 #include "Algorithms.h"
+#include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Logging.h"
 #include "measurement/Measurement.h"
@@ -268,15 +269,17 @@ Testing::Testing() :
    cascade_4pct{},
    twoRow{} {
    //
-   // Create a unique temporary directory using the current thread ID as a subdirectory name inside whatever
-   // system-standard temp directory Qt proposes to us.
+   // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
+   // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
+   // that anyone doing a manual clean up of their temp directory doesn't have to guess or wonder what created it.
+   // Mostly our temp subdirectories will be deleted in our destructor, but core dumps happen etc.)
    //
    // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
    // CMake executes them sequentially).  We are guaranteed a separate instance of this class for each run because
    // both CMake and Meson invoke unit tests by running a program.
    //
    QString subDirName;
-   QTextStream{&subDirName} << QThread::currentThreadId();
+   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
    if (!this->tempDir.mkdir(subDirName)) {
       qCritical() <<
          Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->tempDir.absolutePath();

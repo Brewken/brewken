@@ -195,8 +195,8 @@ int main(int argc, char **argv) {
          "Starting" << CONFIG_APPLICATION_NAME_UC << "v" << CONFIG_VERSION_STRING << " (app name" <<
          app.applicationName() << ") on " << QSysInfo::prettyProductName();
       qInfo() <<
-         "Built at" << BUILD_TIMESTAMP << "on" << CMAKE_HOST_SYSTEM << "for" << CMAKE_SYSTEM << "with" <<
-         CMAKE_CXX_COMPILER_ID << "compiler";
+         "Built at" << CONFIG_BUILD_TIMESTAMP << "on" << CONFIG_BUILD_SYSTEM << "for" << CONFIG_RUN_SYSTEM << "with" <<
+         CONFIG_CXX_COMPILER_ID << "compiler";
       qInfo() << "Log directory:" << Logging::getDirectory().absolutePath();
       qInfo() << "Using Qt runtime v" << qVersion() << " (compiled against Qt v" << QT_VERSION_STR << ")";
       qInfo() << "Configuration directory:" << PersistentSettings::getConfigDir().absolutePath();
