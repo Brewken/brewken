@@ -63,8 +63,14 @@
 # Alternatively, to get more detailed output:
 #   meson compile --verbose
 #
+# To run unit tests:
+#   meson test
+#
 # Then to install:
 #   meson install
+#
+# To build packages [NB NOT YET IMPLEMENTED OTHER THAN THE DEFAULT SOURCE BUNDLING!]:
+#   meson dist
 #
 # Packaging is where Meson is currently weakest IMHO.  It seems to have no equivalent to CPack and there is not a lot of
 # info about how to do things:
@@ -143,7 +149,8 @@ capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.su
 
 message('Building', projectName, 'version', meson.project_version(), 'for', host_machine.system(), 'on', build_machine.system() )
 
-executableName = projectName
+mainExecutableName = projectName
+testRunnerName = mainExecutableName + '_tests'
 
 #=======================================================================================================================
 #==================================================== Build options ====================================================
@@ -494,7 +501,7 @@ commonSourceFiles = files([
 
 #
 # These are the headers that need to be processed by the Qt Meta Object Compiler (MOC).  Note that this is _not_ all the
-# headers in the project.
+# headers in the project.  Also, note that there is a separate (trivial) list of MOC headers for the unit test runner.
 #
 # You can recreate the body of this list by running the following from the bash prompt in the build directory:
 #    grep -rl Q_OBJECT ../src | grep -v Testing.h | sort | sed "s+^../src/+   \'src/+; s/$/\',/"
@@ -605,6 +612,10 @@ mocHeaders = files([
    'src/YeastDialog.h',
    'src/YeastEditor.h',
    'src/YeastSortFilterProxyModel.h',
+])
+
+unitTestMocHeaders = files([
+   'src/unitTests/Testing.h'
 ])
 
 #
@@ -811,6 +822,8 @@ generatedFromUi = qt.compile_ui(sources : uiFiles)
 # Compile Qt's moc files (.moc) into header and/or source files
 generatedFromMoc = qt.compile_moc(headers : mocHeaders,
                                   dependencies : qtDependencies)
+generatedFromMocForUnitTests = qt.compile_moc(headers : unitTestMocHeaders,
+                                              dependencies : qtDependencies)
 
 # Generate the necessary targets to build translation files with lrelease
 translations = qt.compile_translations(ts_files         : translationSourceFiles,
@@ -943,10 +956,37 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
 endif
 
 #=======================================================================================================================
-#====================================================== Main build =====================================================
+#===================================================== Main builds =====================================================
 #=======================================================================================================================
-executable(executableName,
-           'src/main.cpp', commonSourceFiles, generatedFromQrc, generatedFromUi, generatedFromMoc, translations,
-           include_directories : includeDirs,
-           dependencies: [qtDependencies, xercesDependency, xalanDependency, boostDependency],
-           install : true)
+#
+# To keep things simple, we share almost all code between the actual executable and the unit test runner.  However, we
+# don't want to compile everything twice.  So, as a trick we compile into a static library everything except the code
+# that differs between actual executable and unit test runner, then this library is linked into both programs.
+#
+commonCodeStaticLib = static_library('common_code',
+                                     commonSourceFiles, generatedFromQrc, generatedFromUi, generatedFromMoc, translations,
+                                     include_directories : includeDirs,
+                                     dependencies: [qtDependencies, xercesDependency, xalanDependency, boostDependency],
+                                     install : false)
+mainExecutable = executable(mainExecutableName,
+                            'src/main.cpp',
+                            include_directories : includeDirs,
+                            dependencies : [qtDependencies, xercesDependency, xalanDependency, boostDependency],
+                            link_with : commonCodeStaticLib,
+                            install : true)
+
+testRunner = executable(testRunnerName,
+                        'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
+                        include_directories : includeDirs,
+                        dependencies : [qtDependencies, qtTestDependencies, xercesDependency, xalanDependency, boostDependency],
+                        link_with : commonCodeStaticLib,
+                        install : false)
+
+#=======================================================================================================================
+#===================================================== Unit Tests ======================================================
+#=======================================================================================================================
+test('Test integer sizes',                   testRunner, args : ['pstdintTest'])
+test('Test recipe calculations - all grain', testRunner, args : ['recipeCalcTest_allGrain'])
+test('Test post boil loss OG',               testRunner, args : ['postBoilLossOgTest'])
+test('Test unit conversions',                testRunner, args : ['testUnitConversions'])
+test('Test log rotation',                    testRunner, args : ['testLogRotation'])

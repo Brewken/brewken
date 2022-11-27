@@ -390,7 +390,7 @@ bool Application::initialize() {
 
    // Check if the database was successfully loaded before
    // loading the main window.
-   qDebug() << Q_FUNC_INFO << "Loading Database...";
+   qInfo() << Q_FUNC_INFO << "Loading Database...";
    return Database::instance().loadSuccessful();
 }
 

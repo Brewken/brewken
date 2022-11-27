@@ -1149,7 +1149,6 @@ target_link_libraries(${fileName_executable} ${appAndTestCommonLibraries})
 # files in there (see below).
 add_executable(${fileName_unitTestRunner}
                ${repoDir}/src/unitTests/Testing.cpp
-               ${testing_MOC_SRCS}
                $<TARGET_OBJECTS:btobjlib>)
 set_target_properties(${fileName_unitTestRunner} PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
 

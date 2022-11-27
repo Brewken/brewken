@@ -32,7 +32,6 @@
 #include <xercesc/util/PlatformUtils.hpp>
 
 #include <QDebug>
-#include <QDir>
 #include <QString>
 #include <QtTest/QtTest>
 #if QT_VERSION < QT_VERSION_CHECK(5,10,0)
@@ -262,13 +261,73 @@ namespace {
 
 }
 
+Testing::Testing() :
+   QObject(),
+   tempDir{QDir::tempPath()},
+   equipFiveGalNoLoss{},
+   cascade_4pct{},
+   twoRow{} {
+   //
+   // Create a unique temporary directory using the current thread ID as a subdirectory name inside whatever
+   // system-standard temp directory Qt proposes to us.
+   //
+   // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
+   // CMake executes them sequentially).  We are guaranteed a separate instance of this class for each run because
+   // both CMake and Meson invoke unit tests by running a program.
+   //
+   QString subDirName;
+   QTextStream{&subDirName} << QThread::currentThreadId();
+   if (!this->tempDir.mkdir(subDirName)) {
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->tempDir.absolutePath();
+      throw std::runtime_error{"Unable to create unique temp directory"};
+   }
+   if (!this->tempDir.cd(subDirName)) {
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to access" << this->tempDir.absolutePath() << "after creating it";
+      throw std::runtime_error{"Unable to access unique temp directory"};
+   }
+
+   qDebug() << Q_FUNC_INFO << "Using" << this->tempDir.absolutePath() << "as temporary directory";
+   return;
+}
+
+Testing::~Testing() {
+   //
+   // We have to be a bit careful in our cleaning up.  We only want to try to remove the unique temporary directory we
+   // created, not the system-wide one.  (It shouldn't be possible for this->tempDir to be the root directory, but it
+   // doesn't hurt to check!)
+   //
+   if (this->tempDir.exists() &&
+       this->tempDir.absolutePath() != QDir::tempPath() &&
+       !this->tempDir.isRoot()) {
+      qInfo() << Q_FUNC_INFO << "Removing temporary directory" << this->tempDir.absolutePath() << "and its contents";
+      if (!this->tempDir.removeRecursively()) {
+         //
+         // It's not the end of the world if we couldn't remove a temporary directory so, if it happens, just log an
+         // error rather than throwing an exception (which might prevent other clean-up from happening).
+         //
+         qInfo() << Q_FUNC_INFO << "Unable to remove temporary directory" << this->tempDir.absolutePath();
+      }
+   }
+   return;
+};
+
 //
-// NB: To have unit tests run via "make test", you also need to add "ADD_TEST" lines to src/CMakeLists.txt
+// If you're building with CMake:
+//   - Ensure each unit test has an "ADD_TEST" line in the main CMakeLists.txt
+//   - Run unit tests with  make test
+//   - Debug log output is in build/Testing/Temporary/LastTest.log (assuming "build" is your CMake build directory)
 //
-// Also, although make test does not dump a lot of output on the screen, if a test fails, you can get the debug log
-// output from build/Testing/Temporary/LastTest.log
+// If you're building with Meson:
+//   - Ensure each unit test has a "test" line in meson.build
+//   - Run unit tests with  meson test
+//   - Debug log output is in mbuild/meson-logs/testlog.txt (assuming "mbuild" is your Meson build directory)
+//
+// QTEST_MAIN generates (via horrible macros) a main() function for the unit test runner
 //
 QTEST_MAIN(Testing)
+
 
 void Testing::initTestCase() {
 
@@ -287,8 +346,9 @@ void Testing::initTestCase() {
       QCoreApplication::setOrganizationDomain("brewken.com/test");
       QCoreApplication::setApplicationName("brewken-test");
 
+
       // Set options so that any data modification does not affect any other data
-      PersistentSettings::initialise(QDir::tempPath());
+      PersistentSettings::initialise(this->tempDir.absolutePath());
 
       // Log test setup
       // Verify that the Logging initializes normally
@@ -298,7 +358,7 @@ void Testing::initTestCase() {
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      Logging::setDirectory(QDir::tempPath(), Logging::NewDirectoryIsTemporary);
+      Logging::setDirectory(this->tempDir.absolutePath(), Logging::NewDirectoryIsTemporary);
       qDebug() << "logging initialized";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
@@ -310,7 +370,13 @@ void Testing::initTestCase() {
 
       // Tell Brewken not to require any "user" input on starting
       Application::setInteractive(false);
-      QVERIFY( Application::initialize() );
+
+      //
+      // Application::initialize() will initialise a bunch of things, including creating a default database in
+      // this->tempDir courtesy of the call to PersistentSettings::initialise() above.  If there is a problem creating the DB,
+      // it will return false.
+      //
+      QVERIFY(Application::initialize());
 
       // 5 gallon equipment
       this->equipFiveGalNoLoss = std::make_shared<Equipment>();
