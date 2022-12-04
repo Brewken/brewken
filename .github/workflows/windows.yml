@@ -62,7 +62,10 @@ jobs:
             mingw-w64-${{ matrix.arch }}-gcc
             mingw-w64-${{ matrix.arch }}-libbacktrace
             mingw-w64-${{ matrix.arch }}-make
+            mingw-w64-${{ matrix.arch }}-meson
+            mingw-w64-${{ matrix.arch }}-ninja
             mingw-w64-${{ matrix.arch }}-nsis
+            mingw-w64-${{ matrix.arch }}-python
             mingw-w64-${{ matrix.arch }}-qt5
             mingw-w64-${{ matrix.arch }}-xalan-c
             mingw-w64-${{ matrix.arch }}-xerces-c

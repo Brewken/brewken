@@ -51,6 +51,7 @@ jobs:
         with:
           fetch-depth: 0
 
+      #
       # See https://github.com/Brewken/brewken/wiki/Development:-Getting-Started for more on what is needed to build
       # the software.  It seems we can assume the following packages are already installed:
       #    cmake
@@ -58,8 +59,10 @@ jobs:
       #    debhelper
       #    rpm
       #
-      # TBD whether we need the following:
-      #    sudo apt install -y python3 ninja meson
+      # Some of the things below could be installed via actions (actions/setup-python@v4, jurplel/install-qt-action@v3)
+      # but there's an advantage, where we can, in doing the exact same steps that give as instructions to developers to
+      # set up their build environment.
+      #
       - name: Install Frameworks and Libraries
         shell: bash
         run: |
@@ -71,6 +74,9 @@ jobs:
             libxalan-c-dev \
             libxerces-c-dev \
             lintian \
+            meson \
+            ninja \
+            python3 \
             qtbase5-dev \
             qtmultimedia5-dev \
             qttools5-dev \
@@ -88,7 +94,7 @@ jobs:
           sudo rm -rf ~/boost-tmp
 
       - name: Setup Build Environment (New)
-        working-directory: ${{github.workspace}}/build
+        working-directory: ${{github.workspace}}
         shell: python
         run: |
           bt setup

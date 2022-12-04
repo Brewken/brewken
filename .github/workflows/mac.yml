@@ -47,11 +47,19 @@ jobs:
       # When we're ready to migrate to Qt 6, we'll need to tweak this
       uses: jurplel/install-qt-action@v3
       with:
-          version: 5.15.2
+        version: 5.15.2
+
+    - name: Install Python
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
     - name: Install dependencies
       #
       # Installing Xalan-C will cause Xerces-C to be installed too (as the former depends on the latter)
+      #
+      # Similarly, installing meson will cause ninja to be installed (and confirm that Python is installed)
+      #
       # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
       #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
       #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
@@ -69,6 +77,7 @@ jobs:
       run: |
         echo "Output from brew doctor: $(brew doctor)"
         echo "Output from xcode-select -p: $(xcode-select -p)"
+        brew install meson
         brew install xalan-c
         brew install boost
         brew install tree
