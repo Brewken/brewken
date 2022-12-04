@@ -57,6 +57,9 @@ jobs:
       #    git
       #    debhelper
       #    rpm
+      #
+      # TBD whether we need the following:
+      #    sudo apt install -y python3 ninja meson
       - name: Install Frameworks and Libraries
         shell: bash
         run: |
@@ -84,6 +87,12 @@ jobs:
           cd ~
           sudo rm -rf ~/boost-tmp
 
+      - name: Setup Build Environment (New)
+        working-directory: ${{github.workspace}}/build
+        shell: python
+        run: |
+          bt setup
+
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
@@ -106,6 +115,13 @@ jobs:
           find ../third-party
           make
 
+      - name: Build (New)
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          pwd
+          meson compile
+
       - name: Test
         working-directory: ${{github.workspace}}/build
         shell: bash
@@ -115,12 +131,25 @@ jobs:
         run: |
           make test
 
+      - name: Test (New)
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          meson test
+
       - name: Package
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
           umask 022
           make package
+
+      - name: Package (New)
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          umask 022
+          ../bt package
 
       - name: LintianAndRpmLint
         continue-on-error: true

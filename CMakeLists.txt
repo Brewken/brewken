@@ -782,7 +782,7 @@ set(filesToInstall_data ${repoDir}/data/default_db.sqlite
                         ${repoDir}/data/DefaultData.xml)
 
 # Desktop files to install.
-set(filesToInstall_desktop ${repoDir}/${PROJECT_NAME}.desktop)
+set(filesToInstall_desktop ${repoDir}/linux/${PROJECT_NAME}.desktop)
 
 # Icon files to install.
 set(filesToInstall_icons ${repoDir}/images/${PROJECT_NAME}.svg)

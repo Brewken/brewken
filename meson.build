@@ -24,22 +24,32 @@
 # ⭐⭐⭐ HAVE NOT YET DONE ANYTHING ON PACKAGING OR MUCH ON WINDOWS/MAC BUILDS
 # ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 #
-# On Linux, to install as recent a meson as possible:
-#   sudo apt install python3 ninja
-#   sudo apt remove meson
-#   sudo pip3 install meson
+# First you need meson etc installed:
+# On Ubuntu and other Debian-based versions of Linux:
+#   sudo apt install python3 ninja meson
 #
-# NB: As explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip this is not ideal.  We have to
-# do the pip install as root, otherwise running meson install (or even sudo meson install) will barf on Linux (because
-# our build needs to be able to install files into system directories).  In the long run, it would be preferable to
-# install meson from distro packages (eg  sudo apt install meson  on Ubuntu etc).  But, for the moment at least, we need
-# features that are too new to be in the distro packages.
 #
-# (At 2022-11-23, on Ubuntu 22.04, sudo apt install meson gives version 0.61.2, whereas sudo pip3 install meson gives
-# version 0.64.1)
+# Then you need to set up the meson build:
+#   ./bt setup
+# to configure the build
 #
-# We can periodically update to the latest version of meson with:
-#   sudo pip install --upgrade meson
+#
+#### On Linux, to install as recent a meson as possible:
+####   sudo apt install python3 ninja
+####   sudo apt remove meson
+####   sudo pip3 install meson
+####
+#### NB: As explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip this is not ideal.  We have to
+#### do the pip install as root, otherwise running meson install (or even sudo meson install) will barf on Linux (because
+#### our build needs to be able to install files into system directories).  In the long run, it would be preferable to
+#### install meson from distro packages (eg  sudo apt install meson  on Ubuntu etc).  But, for the moment at least, we need
+#### features that are too new to be in the distro packages.
+####
+#### (At 2022-11-23, on Ubuntu 22.04, sudo apt install meson gives version 0.61.2, whereas sudo pip3 install meson gives
+#### version 0.64.1)
+####
+#### We can periodically update to the latest version of meson with:
+####   sudo pip install --upgrade meson
 #
 # We also use vcpkg to manage a fair few of the third-party libraries we use.  Basic install instructions are at
 # https://vcpkg.io/en/getting-started.html, but the following is one potentially useful way to do things on Linux (it
@@ -111,7 +121,9 @@
 #                        -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic
 #
 #   - prefer_static   We want to try static linking before shared linking because it makes packaging a lot easier on
-#                     Windows and Mac
+#                     Windows and Mac.   NB: This requires meson 0.63.0 or newer.  Current version of meson in Ubuntu
+#                     22.04 repositories is 0.61.2.  For the moment, we do static setting on a library-by-library basis
+#                     (by setting 'static : true' on all the dependency() calls.
 #
 #   - buildtype   For the moment at least, I'm not making a distinction between debug and release builds.  Unless we
 #                 find some compelling performance etc reason to do otherwise, my instinct is to have as much diagnostic
@@ -129,7 +141,7 @@ project('brewken', 'cpp',
         license: 'GPL-3.0-or-later',
         default_options : ['cpp_std=c++17',
                            'warning_level=3',
-                           'prefer_static=true',
+#                           'prefer_static=true',
                            'buildtype=plain'])
 
 #
@@ -207,7 +219,8 @@ qtDependencies = dependency('qt5',
                                        'Svg',
                                        'Widgets',
                                        'Xml'],
-                           include_type : 'system')
+                           include_type : 'system',
+                           static : true)
 # This Qt module is only needed for the unit tests
 qtTestDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
 
@@ -313,9 +326,9 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 # https://cmake.org/cmake/help/latest/module/FindXalanC.html)
 #
 #
-xercesDependency = dependency('XercesC', version : '>=3.2.3')
+xercesDependency = dependency('XercesC', version : '>=3.2.3', static : true)
 message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(), 'version =', xercesDependency.version())
-xalanDependency = dependency('XalanC', version : '>=1.12.0')
+xalanDependency = dependency('XalanC', version : '>=1.12.0', static : true)
 message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(), 'version =', xalanDependency.version())
 
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
@@ -711,7 +724,7 @@ filesToInstall_data = files([
 ])
 
 filesToInstall_desktop = files([
-   projectName + '.desktop'
+   'linux/' + projectName + '.desktop'
 ])
 
 filesToInstall_icons = files([
@@ -869,7 +882,40 @@ exportedVariables = {
    'CONFIG_CHANGE_LOG_UNCOMPRESSED' : join_paths(meson.current_source_dir(), filesToInstall_changeLogUncompressed),
    'CONFIG_CHANGE_LOG_COMPRESSED'   : join_paths(meson.current_build_dir(),  filesToInstall_changeLogCompressed  ),
    'CONFIG_PACKAGE_MAINTAINER'      : 'Matt Young <mfsy@yahoo.com>',
+
+   # Info for InstallerWindowIcon which is "Filename for a custom window icon in PNG format for the Installer
+   # application.
+   # Used on Windows and Linux, no functionality on macOS."
+   'CONFIG_INSTALLER_WINDOW_ICON'     : capitalisedProjectName + 'Logo.png',
+   'CONFIG_INSTALLER_WINDOW_ICON_DIR' : 'images',
+
 }
+
+# We need to set TargetDir in config.xml for the Qt IFW installer
+if host_machine.system() == 'linux'
+   exportedVariables += {
+      'CONFIG_TARGET_INSTALL_DIR' : '/'
+   }
+endif
+
+# Info for InstallerApplicationIcon which is "Filename for a custom installer icon. The actual file is looked up by
+# attaching a '.icns' (macOS), '.ico' (Windows) suffix. No functionality on Unix."
+if host_machine.system() == 'windows'
+   exportedVariables += {
+      'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon_96.ico',
+      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'win',
+   }
+elif host_machine.system() == 'darwin'
+   exportedVariables += {
+      'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon.icns',
+      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'mac',
+   }
+elif host_machine.system() == 'linux'
+   exportedVariables += {
+      'CONFIG_INSTALLER_APPLICATION_ICON'      : '',
+      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : '',
+   }
+endif
 
 #=======================================================================================================================
 #===================================== Generate config.h etc from config.h.in etc ======================================
@@ -927,7 +973,7 @@ if host_machine.system() == 'linux'
    # Per https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#install_icons, "installing a
    # svg icon in $prefix/share/icons/hicolor/scalable/apps means most desktops will have one icon that works for all
    # sizes".
-   install_data(filesToInstall_icons, install_dir : installSubDir_icons + '/hicolor/scalable/apps/)')
+   install_data(filesToInstall_icons, install_dir : installSubDir_icons + '/hicolor/scalable/apps/')
 
    # Install the .desktop file
    install_data(filesToInstall_desktop, install_dir : installSubDir_applications)
@@ -1032,6 +1078,11 @@ test('Test log rotation',                    testRunner, args : ['testLogRotatio
 #=======================================================================================================================
 #===================================================== Packaging =======================================================
 #=======================================================================================================================
+#
+# Note that it is not intended that this target be invoked directly from the command line.  Rather, the 'bt' script will
+# do some preparation, then call meson with a suitable install target, then call target to extract various build
+# parameters into a final invocation of the bt script to do the main work.
+#
 # Meson does not offer a huge amount of help on creating installable packages.  It has no equivalent to CMake's CPack
 # and there is generally not a lot of info out there about how to do packaging in Meson.  OTOH, although CPack has lots
 # of features it is also very painful to use.  So maybe taking a completely different approach is a good thing.
@@ -1054,9 +1105,11 @@ test('Test log rotation',                    testRunner, args : ['testLogRotatio
 #
 # The alternative approach would be to do Windows, Mac and Linux packaging separately:
 #   - For Mac, there is some info at https://mesonbuild.com/Creating-OSX-packages.html on creating app bundles
-#   - For Linux, https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some
-#     starting info on how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used to
-#     be a Meson module for creating RPMs, but it was discontinued per
+#   - For Linux, there is some mention in the Meson manual of building deb and rpm packages eg
+#     https://mesonbuild.com/Installing.html#destdir-support, but I think you have to do most of the work yourself.
+#     https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some starting info on
+#     how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used to be a Meson
+#     module for creating RPMs, but it was discontinued per
 #     https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
 #     designed etc.)  Also look at https://openbuildservice.org/.
 #   - For Windows, we could probably use NSIS (Nullsoft Scriptable Install System -- see
@@ -1064,6 +1117,8 @@ test('Test log rotation',                    testRunner, args : ['testLogRotatio
 #
 # For now we'll see if we can get QtIFW working.
 #
-packagesTarget = run_target('packages',
-                            command : 'packaging/qtIfw/doPackaging.sh',
+# TODO: I think we need to work out how to get Qt static libraries...
+
+packagesTarget = run_target('part_2_of_packaging',
+                            command : ['bt', 'part_3_of_packaging'],
                             env : exportedVariables)

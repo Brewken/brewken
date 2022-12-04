@@ -33,6 +33,6 @@
     </Licenses>
     <Default>true</Default>
     <UserInterfaces>
-        <UserInterface>page.ui</UserInterface>
+        <UserInterface>installerPage1.ui</UserInterface>
     </UserInterfaces>
 </Package>
