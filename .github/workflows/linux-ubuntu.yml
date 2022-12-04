@@ -43,9 +43,7 @@ jobs:
         # LTS release and the update of ubuntu-latest (eg in October 2022, it was still Ubuntu 20.04 rather than 22.04.
         # So we explicitly specify here which versions we want to build on.
         #
-        # Note that ubuntu-18.04 is deprecated and we need to remove it by April 2023
-        #
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-22.04]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -62,6 +60,8 @@ jobs:
       # Some of the things below could be installed via actions (actions/setup-python@v4, jurplel/install-qt-action@v3)
       # but there's an advantage, where we can, in doing the exact same steps that give as instructions to developers to
       # set up their build environment.
+      #
+      # Note that we need Python 3.10 or newer.  (This eg precludes Ubuntu 18.04, where Python tops out at v3.6.7.)
       #
       - name: Install Frameworks and Libraries
         shell: bash
