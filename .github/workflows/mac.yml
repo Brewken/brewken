@@ -50,7 +50,8 @@ jobs:
         version: 5.15.2
 
     - name: Install Python
-    - uses: actions/setup-python@v4
+      # TBD We could probably also install this with brew below
+      uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 

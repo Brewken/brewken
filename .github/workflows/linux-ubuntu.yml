@@ -75,7 +75,7 @@ jobs:
             libxerces-c-dev \
             lintian \
             meson \
-            ninja \
+            ninja-build \
             python3 \
             qtbase5-dev \
             qtmultimedia5-dev \

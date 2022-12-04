@@ -35,7 +35,7 @@
 #
 #
 #### On Linux, to install as recent a meson as possible:
-####   sudo apt install python3 ninja
+####   sudo apt install python3 ninja-build
 ####   sudo apt remove meson
 ####   sudo pip3 install meson
 ####
