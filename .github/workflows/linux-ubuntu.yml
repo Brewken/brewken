@@ -95,7 +95,7 @@ jobs:
 
       - name: Setup Build Environment (New)
         working-directory: ${{github.workspace}}
-        shell: python
+        shell: bash
         run: |
           ./bt setup
 
