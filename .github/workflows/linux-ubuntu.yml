@@ -95,9 +95,10 @@ jobs:
 
       - name: Setup Build Environment (New)
         working-directory: ${{github.workspace}}
+        # I'm sure there's a better way to invoke this script, but I haven't yet discovered it
         shell: bash
         run: |
-          ./bt setup
+          python3 bt setup
 
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
