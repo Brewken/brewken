@@ -79,8 +79,9 @@
 # Then to install:
 #   meson install
 #
-# To build source packages:
+# To build source packages (in the meson-dist subdirectory of the build directory):
 #   meson dist
+# This will build a .tar.xz file and create a corresponding .tar.xz.sha256sum file for it.
 #
 # To build binary packages:
 #   meson compile packages
@@ -158,7 +159,8 @@ project('brewken', 'cpp',
 projectName = meson.project_name().to_lower()
 capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.substring(1)
 
-message('Building', projectName, 'version', meson.project_version(), 'for', host_machine.system(), 'on', build_machine.system() )
+message('⭐ Building', projectName, 'version', meson.project_version(), 'for', host_machine.system(),
+        'on', build_machine.system(), 'in', meson.project_source_root(), '⭐')
 
 mainExecutableName = projectName
 testRunnerName = mainExecutableName + '_tests'
@@ -316,6 +318,7 @@ boostDependency = dependency('boost',
                              static : true)
 message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'version =', boostDependency.version())
 
+#
 # Find the other libraries we depend on
 #
 # See https://mesonbuild.com/Reference-manual_returned_dep.html for what info we can pull from a dependency object
@@ -327,9 +330,11 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 #
 #
 xercesDependency = dependency('XercesC', version : '>=3.2.3', static : true)
-message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(), 'version =', xercesDependency.version())
+message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(),
+        'version =', xercesDependency.version())
 xalanDependency = dependency('XalanC', version : '>=1.12.0', static : true)
-message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(), 'version =', xalanDependency.version())
+message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(),
+        'version =', xalanDependency.version())
 
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
 includeDirs = include_directories('src', 'third-party/valijson/include')
@@ -842,7 +847,35 @@ generatedFromMoc = qt.compile_moc(headers : mocHeaders,
 generatedFromMocForUnitTests = qt.compile_moc(headers : unitTestMocHeaders,
                                               dependencies : qtDependencies)
 
-# Generate the necessary targets to build translation files with lrelease
+#
+# We need to do two processes with Translation Source (.ts) XML files:
+#   - Update them from the source code, ie to ensure they have all the tr(), QObject::tr() etc calls from the .cpp files
+#     and all the translatable strings from the .ui files -- which can be done manually from the command line with
+#     lupdate
+#   - Generate the binary .qm files that ship with the application and are used at run time -- which can be done
+#     manually from the command line with lrelease
+# Calling qt.compile_translations will do only the latter, so we need to do the former directly
+#
+
+# Call lupdate to ensure the .ts files are synced with the source code.  We need:
+#    lupdate meson.project_source_root()/src meson.project_source_root()/ui -ts [list of .ts files]
+# This tells lupdate to recursively scan the src/ and ui/ subdirectories and update the specified ts files
+# Fortunately, we can pass a list of File objects as a parameter to run_command and Meson does the right thing
+#
+# We make a point here of displaying the output of run_command because we want to show message emitted by lupdate about
+# what it did.
+message('Running lupdate on the following ts files:', run_command('ls', translationSourceFiles, check: true).stdout())
+message(
+   run_command('lupdate',
+               meson.project_source_root() + '/src',
+               meson.project_source_root() + '/ui',
+               '-ts',
+               translationSourceFiles,
+               check: true).stdout()
+)
+
+# Now we can generate the necessary targets to build translation files with lrelease
+# Setting install to true means we want to ship all the .qm files (so users can change language at run time).
 translations = qt.compile_translations(ts_files         : translationSourceFiles,
                                        build_by_default : true,
                                        install          : true,
@@ -1047,22 +1080,35 @@ endif
 # don't want to compile everything twice.  So, as a trick we compile into a static library everything except the code
 # that differs between actual executable and unit test runner, then this library is linked into both programs.
 #
+# Note however that you cannot put generatedFromQrc in the static_library as it doesn't work there.
+#
 commonCodeStaticLib = static_library('common_code',
-                                     commonSourceFiles, generatedFromQrc, generatedFromUi, generatedFromMoc, translations,
+                                     commonSourceFiles, generatedFromUi, generatedFromMoc, translations,
                                      include_directories : includeDirs,
-                                     dependencies: [qtDependencies, xercesDependency, xalanDependency, boostDependency],
+                                     dependencies: [qtDependencies,
+                                                    xercesDependency,
+                                                    xalanDependency,
+                                                    boostDependency],
                                      install : false)
+
 mainExecutable = executable(mainExecutableName,
-                            'src/main.cpp',
+                            'src/main.cpp', generatedFromQrc,
                             include_directories : includeDirs,
-                            dependencies : [qtDependencies, xercesDependency, xalanDependency, boostDependency],
+                            dependencies : [qtDependencies,
+                                            xercesDependency,
+                                            xalanDependency,
+                                            boostDependency],
                             link_with : commonCodeStaticLib,
                             install : true)
 
-testRunner = executable(testRunnerName,
+testRunner = executable(testRunnerName, generatedFromQrc,
                         'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
                         include_directories : includeDirs,
-                        dependencies : [qtDependencies, qtTestDependencies, xercesDependency, xalanDependency, boostDependency],
+                        dependencies : [qtDependencies,
+                                        qtTestDependencies,
+                                        xercesDependency,
+                                        xalanDependency,
+                                        boostDependency],
                         link_with : commonCodeStaticLib,
                         install : false)
 
@@ -1073,6 +1119,8 @@ test('Test integer sizes',                   testRunner, args : ['pstdintTest'])
 test('Test recipe calculations - all grain', testRunner, args : ['recipeCalcTest_allGrain'])
 test('Test post boil loss OG',               testRunner, args : ['postBoilLossOgTest'])
 test('Test unit conversions',                testRunner, args : ['testUnitConversions'])
+test('Test NamedParameterBundle',            testRunner, args : ['testNamedParameterBundle'])
+test('Test algorithms',                      testRunner, args : ['testAlgorithms'])
 test('Test log rotation',                    testRunner, args : ['testLogRotation'])
 
 #=======================================================================================================================
@@ -1100,6 +1148,10 @@ test('Test log rotation',                    testRunner, args : ['testLogRotatio
 #   - it's not a great advert for itself -- eg when I installed it locally on Kubuntu by downloading directly from
 #     https://download.qt.io/official_releases/qt-installer-framework/, it didn't put its own tools in the PATH,
 #     so I had to manually add ~/Qt/QtIFW-4.5.0/bin/ to my PATH
+#   - it usually necessary to link against a static build of Qt, which is a bit of a pain as you have to download the
+#     source files for Qt and compile it locally -- see eg
+#     https://stackoverflow.com/questions/14932315/how-to-compile-qt-5-under-windows-or-linux-32-or-64-bit-static-or-dynamic-on-v
+#     for the whole process
 #   - it's a change of installation method for people who have previously downloaded deb packages, RPMs, Mac DMG files,
 #     etc
 #
@@ -1107,7 +1159,7 @@ test('Test log rotation',                    testRunner, args : ['testLogRotatio
 #   - For Mac, there is some info at https://mesonbuild.com/Creating-OSX-packages.html on creating app bundles
 #   - For Linux, there is some mention in the Meson manual of building deb and rpm packages eg
 #     https://mesonbuild.com/Installing.html#destdir-support, but I think you have to do most of the work yourself.
-#     https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some starting info on
+#     https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some sketchy starting info on
 #     how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used to be a Meson
 #     module for creating RPMs, but it was discontinued per
 #     https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
@@ -1117,7 +1169,24 @@ test('Test log rotation',                    testRunner, args : ['testLogRotatio
 #
 # For now we'll see if we can get QtIFW working.
 #
-# TODO: I think we need to work out how to get Qt static libraries...
+
+#
+# Notes on building debian package -- see https://unix.stackexchange.com/questions/30303/how-to-create-a-deb-file-manually
+#
+# You need to install some extras:
+#    sudo apt-get install debhelper build-essential dh-make
+#
+# Then:
+#    # Create the source tarball
+#    meson dist
+#    # Create the debian/ subtree in the build directory
+#    # I think we only want to do this once, because you end up with a lot of example files that you need to edit etc
+#    # Or we could have a look at that brewtarget debian project...
+#    dh_make --copyright gpl3 --email mfsy@yahoo.com --single --packagename brewken_0.1.0-1 --file meson-dist/*.tar.xz --yes
+#
+#
+#
+#
 
 packagesTarget = run_target('part_2_of_packaging',
                             command : ['bt', 'part_3_of_packaging'],

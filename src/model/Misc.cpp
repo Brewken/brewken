@@ -50,8 +50,7 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
    Misc const & rhs = static_cast<Misc const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_type == rhs.m_type &&
-      this->m_use  == rhs.m_use
+      this->m_type == rhs.m_type
    );
 }
 

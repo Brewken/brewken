@@ -53,6 +53,7 @@
 #include "model/Hop.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 
@@ -331,7 +332,6 @@ Testing::~Testing() {
 //
 QTEST_MAIN(Testing)
 
-
 void Testing::initTestCase() {
 
    // Initialize Xerces XML tools
@@ -426,8 +426,8 @@ void Testing::initTestCase() {
    return;
 }
 
-void Testing::recipeCalcTest_allGrain()
-{
+void Testing::recipeCalcTest_allGrain() {
+   // .:TODO:. Would be good to fix and reinstate this test...
    return;
    double const grain_kg = 5.0;
    double const conversion_l = grain_kg * 2.8; // 2.8 L/kg mash thickness
@@ -511,8 +511,8 @@ void Testing::recipeCalcTest_allGrain()
    QVERIFY2( fuzzyComp(rec->color_srm(),     srm,                srm*0.1), "Wrong color calculation" );
 }
 
-void Testing::postBoilLossOgTest()
-{
+void Testing::postBoilLossOgTest() {
+   // .:TODO:. Would be good to fix and reinstate this test...
    return;
    double const grain_kg = 5.0;
    Recipe* recNoLoss = new Recipe(QString("TestRecipe_noLoss"));
@@ -637,6 +637,35 @@ void Testing::testUnitConversions() {
                 1),
       "Unit conversion error (EBC to SRM)"
    );
+
+   return;
+}
+
+void Testing::testNamedParameterBundle() {
+   NamedParameterBundle npb;
+
+   BtStringConst const myInt{"myInt"};
+   npb.insert(myInt, 42);
+   QVERIFY2(npb(myInt).toInt() == 42, "Error retrieving int");
+
+   BtStringConst const myFalseBool{"myFalseBool"};
+   npb.insert(myFalseBool, false);
+   QVERIFY2(!npb(myFalseBool).toBool(), "Error retrieving false bool");
+
+   BtStringConst const myTrueBool{"myTrueBool"};
+   npb.insert(myTrueBool, true);
+   QVERIFY2(npb(myTrueBool).toBool(), "Error retrieving true bool");
+
+   BtStringConst const myString{"myString"};
+   npb.insert(myString, "Sing a string of sixpence");
+   QVERIFY2(npb(myString).toString() == "Sing a string of sixpence", "Error retrieving string");
+
+   BtStringConst const myDouble{"myDouble"};
+   npb.insert(myDouble, 3.1415926535897932384626433);
+   QVERIFY2(fuzzyComp(npb(myDouble).toDouble(),
+                      3.1415926535897932384626433,
+                      0.0000000001),
+            "Error retrieving double");
 
    return;
 }

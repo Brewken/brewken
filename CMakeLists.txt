@@ -1171,6 +1171,17 @@ add_test(
    NAME testUnitConversions
    COMMAND bin/${fileName_unitTestRunner} testUnitConversions
 )
+
+add_test(
+   NAME testNamedParameterBundle
+   COMMAND bin/${fileName_unitTestRunner} testNamedParameterBundle
+)
+
+add_test(
+   NAME testAlgorithms
+   COMMAND bin/${fileName_unitTestRunner} testAlgorithms
+)
+
 add_test(
    NAME testLogRotation
    COMMAND bin/${fileName_unitTestRunner} testLogRotation

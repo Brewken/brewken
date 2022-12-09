@@ -42,7 +42,9 @@ namespace {
       return;
    }
    template<> void setAmountsEtc(Fermentable & fermentable, NamedParameterBundle const & npb) {
-      fermentable.setAmount_kg(npb(PropertyNames::Fermentable::amount_kg).toDouble());
+      fermentable.setAmount_kg(   npb(PropertyNames::Fermentable::amount_kg).toDouble());
+      fermentable.setAddAfterBoil(npb(PropertyNames::Fermentable::addAfterBoil).toBool());
+      fermentable.setIsMashed(    npb(PropertyNames::Fermentable::isMashed).toBool());
       return;
    }
    template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {
@@ -81,7 +83,8 @@ void XmlRecipeRecord::addChildren() {
    //
    for (auto ii : this->childRecords) {
       if (ii.xmlRecord->namedEntityClassName == childClassName) {
-         qDebug() << Q_FUNC_INFO << "Adding " << childClassName << " to Recipe";
+         qDebug() <<
+            Q_FUNC_INFO << "Adding " << childClassName << "#" << ii.xmlRecord->getNamedEntity()->key() << "to Recipe";
 
          // It would be a (pretty unexpected) coding error if the NamedEntity subclass object isn't of the class it's
          // supposed to be.
@@ -109,7 +112,11 @@ void XmlRecipeRecord::addChildren() {
          // Recipe, we need to set the "how much and when to add" info based on the fields we retained from XML record.
          //
          Q_ASSERT(added);
-         setAmountsEtc(*added, ii.xmlRecord->getNamedParameterBundle());
+         NamedParameterBundle const & npb = ii.xmlRecord->getNamedParameterBundle();
+         qDebug() <<
+            Q_FUNC_INFO << "Setting amounts for" << childClassName << "#" << added->key() <<
+            "to Recipe, using bundle" << npb;
+         setAmountsEtc(*added, npb);
       }
    }
    return;

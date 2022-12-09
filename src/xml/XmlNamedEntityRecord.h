@@ -57,6 +57,8 @@ protected:
    virtual void constructNamedEntity() {
       // It's a coding error if this function is called when we already have a NamedEntity
       Q_ASSERT(nullptr == this->namedEntity.get());
+      qDebug() <<
+         Q_FUNC_INFO << "Constructing" << NE::staticMetaObject.className() << "from" << this->namedParameterBundle;
 
       this->namedEntity = std::make_shared<NE>(this->namedParameterBundle);
    }

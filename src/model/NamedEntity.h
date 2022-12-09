@@ -109,6 +109,8 @@ AddPropertyName(parentKey)
  *        "use of" objects/records.  You just have to be mindful of this when looking at the code and the DB -- eg
  *        the amount field of a Hop can be either inventory or how much to add to a recipe, depending on whether it's a
  *        "variety" or "use of" record.
+ *        .:TODO:. It would be good to make explicit which member variables (and their getters/setters) are valid ONLY
+ *        for "use of".
  *
  *        NOTE: Although we can template individual member functions, we cannot make this a template class (eg to use
  *        https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc)

@@ -34,13 +34,15 @@ namespace {
 }
 
 NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :
-   QHash<QString, QVariant>(), mode{mode} {
+   QHash<QString, QVariant>(),
+   mode{mode} {
    return;
 }
 
 NamedParameterBundle::~NamedParameterBundle() = default;
 
-NamedParameterBundle::iterator NamedParameterBundle::insert(BtStringConst const & parameterName, QVariant const & value) {
+NamedParameterBundle::iterator NamedParameterBundle::insert(BtStringConst const & parameterName,
+                                                            QVariant const & value) {
    return this->QHash<QString, QVariant>::insert(QString{*parameterName}, value);
 }
 
@@ -80,8 +82,7 @@ QVariant NamedParameterBundle::operator()(BtStringConst const & parameterName) c
       }
       // In non-strict mode we'll just construct an empty QVariant and return that in the hope that its default value
       // (eg 0 for a numeric type, empty string for a QString) is OK.
-/// TODO uncomment this
-///      qInfo() << Q_FUNC_INFO << errorMessage << ", so using generic default";
+      qInfo() << Q_FUNC_INFO << errorMessage << ", so using generic default";
       return QVariant{};
    }
    QVariant returnValue = this->value(*parameterName);
@@ -94,7 +95,8 @@ QVariant NamedParameterBundle::operator()(BtStringConst const & parameterName) c
    return returnValue;
 }
 
-template <class T> T NamedParameterBundle::operator()(BtStringConst const & parameterName, T const & defaultValue) const {
+template <class T> T NamedParameterBundle::operator()(BtStringConst const & parameterName,
+                                                      T const & defaultValue) const {
    Q_ASSERT(!parameterName.isNull());
    return this->contains(*parameterName) ? valueFromQVariant<T>(this->value(*parameterName)) : defaultValue;
 }
@@ -103,10 +105,10 @@ template <class T> T NamedParameterBundle::operator()(BtStringConst const & para
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template QString    NamedParameterBundle::operator()(BtStringConst const & parameterName, QString const & defaultValue) const;
-template bool       NamedParameterBundle::operator()(BtStringConst const & parameterName, bool    const & defaultValue) const;
-template int        NamedParameterBundle::operator()(BtStringConst const & parameterName, int     const & defaultValue) const;
-template double     NamedParameterBundle::operator()(BtStringConst const & parameterName, double  const & defaultValue) const;
+template QString NamedParameterBundle::operator()(BtStringConst const & parameterName, QString const & defaultValue) const;
+template bool    NamedParameterBundle::operator()(BtStringConst const & parameterName, bool    const & defaultValue) const;
+template int     NamedParameterBundle::operator()(BtStringConst const & parameterName, int     const & defaultValue) const;
+template double  NamedParameterBundle::operator()(BtStringConst const & parameterName, double  const & defaultValue) const;
 
 
 template<class S>
@@ -117,7 +119,8 @@ S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle);
 
 template<class S>
 S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle) {
-   stream << namedParameterBundle.size() << "element NamedParameterBundle {";
+   stream << namedParameterBundle.size() << "element NamedParameterBundle @" <<
+   static_cast<void const *>(&namedParameterBundle) << " {";
    // QHash::constKeyValueBegin() and similar functions were not introduced until Qt 5.10, and
    // QKeyValueIterator::operator->() was not introduced until Qt 5.15.  For the moment, we are still supporting
    // Qt 5.9.5, so we need to do things differently for that.

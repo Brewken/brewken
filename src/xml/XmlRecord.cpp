@@ -206,7 +206,7 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         parsedValue.setValue(true);
                         parsedValueOk = true;
                      } else if (value.toLower() == "false") {
-                        parsedValue.setValue(true);
+                        parsedValue.setValue(false);
                         parsedValueOk = true;
                      } else {
                         // This is almost certainly a coding error, as we should have already validated that the field

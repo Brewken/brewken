@@ -147,7 +147,7 @@ protected:
 
 private:
    Type m_type;
-   Use m_use;
+   Use  m_use;  // Primarily valid in "Use Of" instance
    double m_time;
    double m_amount;
    bool m_amountIsWeight;
