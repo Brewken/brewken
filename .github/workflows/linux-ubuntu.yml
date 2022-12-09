@@ -59,12 +59,18 @@ jobs:
       #
       # Note that we need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
       #
-      # Some of the things below could be installed via actions (actions/setup-python@v4, jurplel/install-qt-action@v3)
-      # but there's an advantage, where we can, in doing the exact same steps that give as instructions to developers to
-      # set up their build environment.
+      # Some of the things below could be installed via actions (jurplel/install-qt-action@v3) but there's an advantage,
+      # where we can, in doing the exact same steps that give as instructions to developers to set up their build
+      # environment.
       #
-      # Note that we need Python 3.10 or newer.  (This eg precludes Ubuntu 18.04, where Python tops out at v3.6.7.)
+      # Note that we need Python 3.10 or newer, which means you can't just use `sudo apt install` on older Ubuntus.  (Eg
+      # Ubuntu 18.04 packages have only Python 3.6.7 and Ubuntu 20.04 only have Python 3.8.2.  However Ubuntu 22.04 has
+      # Python 3.10.6.)  There are ways to get around this, but, in this context, it's simplest to use a canned GitHub
+      # action.
       #
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
       - name: Install Frameworks and Libraries
         shell: bash
         run: |
