@@ -280,7 +280,7 @@ void MainWindow::init() {
    this->setupDrops();
 
    // Moved from Database class
-   Recipe::connectSignals();
+   Recipe::connectSignalsForAllRecipes();
    qDebug() << Q_FUNC_INFO << "Recipe signals connected";
    Mash::connectSignals();
    qDebug() << Q_FUNC_INFO << "Mash signals connected";
@@ -1698,10 +1698,9 @@ void MainWindow::updateRecipeBoilTime() {
    Equipment* kit = recipeObs->equipment();
    double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity;
 
-   // Here, we rely on a signal/slot connection to propagate the equipment
-   // changes to recipeObs->boilTime_min and maybe recipeObs->boilSize_l
-   // NOTE: This works because kit is the recipe's equipment, not the generic
-   // equipment in the recipe drop down.
+   // Here, we rely on a signal/slot connection to propagate the equipment changes to recipeObs->boilTime_min and maybe
+   // recipeObs->boilSize_l
+   // NOTE: This works because kit is the recipe's equipment, not the generic equipment in the recipe drop down.
    if (kit) {
       this->doOrRedoUpdate(*kit, PropertyNames::Equipment::boilTime_min, boilTime, tr("Change Boil Time"));
    } else {
@@ -2701,10 +2700,8 @@ void MainWindow::closeEvent(QCloseEvent* /*event*/)
 
 }
 
-void MainWindow::copyRecipe()
-{
+void MainWindow::copyRecipe() {
    QString name = QInputDialog::getText( this, tr("Copy Recipe"), tr("Enter a unique name for the copy.") );
-
    if (name.isEmpty()) {
       return;
    }

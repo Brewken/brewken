@@ -309,7 +309,7 @@ public:
     *
     *        Needs to be called \b after all the calls to ObjectStoreTyped<FooBar>::getInstance().loadAll()
     */
-   static void connectSignals();
+   static void connectSignalsForAllRecipes();
 
    /*!
     * \brief Add (a copy if necessary of) a Hop/Fermentable/Instruction etc (that may or may not already be in an
