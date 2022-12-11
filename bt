@@ -190,6 +190,7 @@ def doSetup():
                      dir_gitInfo.joinpath('hooks/pre-commit'))
 
       # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
+      subprocess.run(['tree', dir_gitSubmodules.as_posix()])
       if (not dir_gitSubmodules.is_dir() or len(os.listdir(dir_gitSubmodules)) == 0):
          log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
          os.mkdir(dir_gitSubmodules)
