@@ -68,6 +68,9 @@ jobs:
       # Python 3.10.6.)  There are ways to get around this, but, in this context, it's simplest to use a canned GitHub
       # action.
       #
+      # Similarly, Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.56.0 or later.  In this case it means we
+      # have to install Meson via pip, which is not ideal on Linux (per comments in meson.build).
+      #
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -90,6 +93,11 @@ jobs:
             qttools5-dev \
             qttools5-dev-tools \
             rpmlint
+          if [[ $(lsb_release -r | awk '{print $2}' | awk -F. '{print $1}') -lt 22 ]]
+          then
+            sudo apt remove -y meson
+            sudo pip3 -y install meson
+          fi
           cd ~
           mkdir ~/boost-tmp
           cd ~/boost-tmp

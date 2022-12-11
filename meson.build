@@ -24,78 +24,77 @@
 # ⭐⭐⭐ HAVE NOT YET DONE ANYTHING ON PACKAGING OR MUCH ON WINDOWS/MAC BUILDS
 # ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 #
-# First you need meson etc installed:
-# On Ubuntu and other Debian-based versions of Linux:
-#   sudo apt install python3 ninja meson
+# STEP 1: Ensure Meson etc is installed:
+# --------------------------------------
+# On recent (ie >= 22.04) Ubuntu and other Debian-based versions of Linux:
+#    sudo apt install python3 ninja meson cmake
+#
+# On older Ubuntu, you instead need:
+#    sudo apt install python3 ninja meson cmake
+#    sudo apt remove Meson
+#    sudo pip3 install Meson
+#
+# This is because we need Meson 0.56 or newer, and Ubuntu 20.04 packages only provide 0.53.2.  Using the pip3 install
+# gets a newer version BUT, as explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip it is
+# not an ideal way to do the install on Linux.  We have to do the pip install as root (which is normally not
+# recommended), otherwise running `meson install` (or even `sudo meson install`) will barf on Linux (because we need to
+# be able to install files into system directories).  So, where a sufficiently recent version of Meson is available in
+# the distro packages (eg `sudo apt install meson` on Ubuntu etc) it is much better to install this.
+#
+# Also, although it might seem odd that we need CMake installed to do a Meson build, this is because Meson uses CMake
+# as a library locator tool.
 #
 #
-# Then you need to set up the meson build:
-#   ./bt setup
-# to configure the build
+# STEP 2: Set up the Meson build:
+# -------------------------------
+# All you have to do is run:
+#    ./bt setup
+#
+# Amongst other things, this creates the 'mbuild' directory tree for the Meson build (so no clashes with a CMake build
+# in the 'build' directory tree).
 #
 #
-#### On Linux, to install as recent a meson as possible:
-####   sudo apt install python3 ninja-build
-####   sudo apt remove meson
-####   sudo pip3 install meson
-####
-#### NB: As explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip this is not ideal.  We have to
-#### do the pip install as root, otherwise running meson install (or even sudo meson install) will barf on Linux (because
-#### our build needs to be able to install files into system directories).  In the long run, it would be preferable to
-#### install meson from distro packages (eg  sudo apt install meson  on Ubuntu etc).  But, for the moment at least, we need
-#### features that are too new to be in the distro packages.
-####
-#### (At 2022-11-23, on Ubuntu 22.04, sudo apt install meson gives version 0.61.2, whereas sudo pip3 install meson gives
-#### version 0.64.1)
-####
-#### We can periodically update to the latest version of meson with:
-####   sudo pip install --upgrade meson
-#
-# We also use vcpkg to manage a fair few of the third-party libraries we use.  Basic install instructions are at
-# https://vcpkg.io/en/getting-started.html, but the following is one potentially useful way to do things on Linux (it
-# assumes you are starting in the same directory as this file):
-#   cd ../..
-#   git clone https://github.com/Microsoft/vcpkg.git
-#   cd -
-#   ../../vcpkg/bootstrap-vcpkg.sh
-#   ln -s $(readlink -f ../../vcpkg/vcpkg) ~/.local/bin/vcpkg
-#
-# Now, again assuming you are starting in the same directory as this file, you can set up, say, mbuild, as your build
-# directory:
-#   meson setup mbuild
-#   cd mbuild
-# (Note that meson will create the directory if it does not exist.)
-# Recommend using a separate directory from build for the moment, as want to be able to carry on building with CMake
-# and don't want to get outputs from two different build systems muddled up.
+# STEP 3: Compile, test, install:
+# -------------------------------
+# Everything else is done from the 'mbuild' directory, so start with:
+#    cd mbuild
 #
 # To compile:
-#   meson compile
+#    meson compile
 # Alternatively, to get more detailed output:
-#   meson compile --verbose
+#    meson compile --verbose
 #
 # To run unit tests:
-#   meson test
+#    meson test
 #
 # Then to install:
-#   meson install
+#    meson install
+# Or, on Linux, you can do:
+#    sudo meson install
+# which avoids the pop-up window
 #
 # To build source packages (in the meson-dist subdirectory of the build directory):
-#   meson dist
+#    meson dist
 # This will build a .tar.xz file and create a corresponding .tar.xz.sha256sum file for it.
 #
 # To build binary packages:
-#   meson compile packages
+#    ../bt package             ⭐⭐⭐ This is the bit that is not yet working ⭐⭐⭐
 #
 #
-# Note that if you want to add new build targets or change the names of existing targets, you have to run the following
-# command from the same directory as this file:
+# Finally, note that if you want to add new build targets or change the names of existing targets, you have to run the
+# following command from the same directory as this file:
 #   meson --reconfigure mbuild
 # See https://stackoverflow.com/questions/63329923/how-to-make-meson-scan-for-new-target for more on this.
+# Alternatively, you can run 'bt setup' again.
 #
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 
+
+#=======================================================================================================================
+#================================================== Project Settings ===================================================
+#=======================================================================================================================
 #
-# We'll get an error if project isn't the first call in this file
+# We'll get an error if 'project' isn't the first call in this file
 #
 # NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
 #     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
@@ -136,10 +135,10 @@
 #                 '-g2') on GCC, but there isn't a way via the meson  options to set '-g3' for GCC.  So, we set
 #                 'buildtype=plain' and manage compiler flags directly.
 #
-
 project('brewken', 'cpp',
         version: '0.1.0',
         license: 'GPL-3.0-or-later',
+        meson_version: '>=0.56.0',
         default_options : ['cpp_std=c++17',
                            'warning_level=3',
 #                           'prefer_static=true',
@@ -150,11 +149,13 @@ project('brewken', 'cpp',
 # https://mesonbuild.com/FAQ.html#why-is-meson-not-just-a-python-module-so-i-could-code-my-build-setup-in-python and
 # links therefrom for the rationale for this.
 #
-# One thing this means is that you sometimes have to do things in a slightly more cumbersome way than you would in a
-# full-fat Python script.  Eg here, in regular Python, we would write:
+# Besides some variations in syntax, this also means that you sometimes have to do things in a slightly more cumbersome
+# way than you would in a full-fat Python script.  Eg here, in regular Python, we would write:
 #    capitalisedProjectName = projectName.capitalize()
 # But meson.project_name() returns a Meson String, not a Python String, so there's a bit more work to do to get the same
 # result.
+#
+# Note that we need Meson 0.56.0 or newer to use Meson's 'substring' call.
 #
 projectName = meson.project_name().to_lower()
 capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.substring(1)
