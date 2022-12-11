@@ -96,7 +96,7 @@ jobs:
           if [[ $(lsb_release -r | awk '{print $2}' | awk -F. '{print $1}') -lt 22 ]]
           then
             sudo apt remove -y meson
-            sudo pip3 install meson -y
+            sudo pip3 install -y meson
           fi
           cd ~
           mkdir ~/boost-tmp

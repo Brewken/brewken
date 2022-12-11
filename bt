@@ -31,6 +31,15 @@
 #
 # The rationale for bt invoking meson invoking bt is to minimise the number of places we essentially create the same
 # settings -- including keeping all the "what files need installing" config in the meson.build file.
+#
+#
+#
+# .:TODO:. At some point we should be able to retire:
+#    configure
+#    setupgit.sh
+#    CMakeLists.txt
+#    src/CMakeLists.txt
+#    packaging/qtIfw -- if we end up not going with Qt Install Framework
 #-----------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------
