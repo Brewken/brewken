@@ -108,13 +108,15 @@ jobs:
           sudo ./b2 install
           cd ~
           sudo rm -rf ~/boost-tmp
+          ls -l /usr/lib/libboost_*
 
       - name: Setup Build Environment (New)
         working-directory: ${{github.workspace}}
         # I'm sure there's a better way to invoke this script, but I haven't yet discovered it
         shell: bash
         run: |
-          ls -l /usr/lib/libboost_*
+          export BOOST_ROOT=/usr
+          ls -l /usr/lib
           python3 bt setup
 
       - name: Create Build Environment
