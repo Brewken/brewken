@@ -210,7 +210,7 @@ def doSetup():
       # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
       if (not dir_gitSubmodules.is_dir() or numFilesInTree(dir_gitSubmodules) == 0):
          log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
-         os.mkdir(dir_gitSubmodules)
+         os.makedirs(dir_gitSubmodules, exist_ok=True)
          abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
          abortOnRunFail(subprocess.run([exe_git, "submodule", "update"], capture_output=False))
 
