@@ -146,6 +146,15 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Helper function for counting files in a directory tree
+#-----------------------------------------------------------------------------------------------------------------------
+def numFilesInTree(path):
+   numFiles = 0
+   for root, dirs, files in os.walk(path):
+      numFiles += len(files)
+   return numFiles
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Check Meson is installed
 #-----------------------------------------------------------------------------------------------------------------------
 if (exe_meson is None or exe_meson == ""):
@@ -199,8 +208,7 @@ def doSetup():
                      dir_gitInfo.joinpath('hooks/pre-commit'))
 
       # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
-      subprocess.run(['tree', dir_gitSubmodules.as_posix()])
-      if (not dir_gitSubmodules.is_dir() or len(os.listdir(dir_gitSubmodules)) == 0):
+      if (not dir_gitSubmodules.is_dir() or numFilesInTree(dir_gitSubmodules) == 0):
          log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
          os.mkdir(dir_gitSubmodules)
          abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
@@ -250,13 +258,13 @@ def doSetup():
    log.debug('Setup done')
    print()
    print('You can now build, test, install and run ' + capitalisedProjectName + ' with the following commands:')
-   if (warnAboutCurrentDirectory):
-      print('   cd ../mbuild     [or cd ' + dir_build.as_posix() + ']')
-   else:
-      print('   cd mbuild     [or cd ' + dir_build.as_posix() + ']')
+   print('   cd ' + os.path.relpath(dir_build))
    print('   meson compile')
    print('   meson test')
-   print('   meson install')
+   if (platform.system() == 'Linux'):
+      print('   sudo meson install')
+   else:
+      print('   meson install')
    print('   ' + projectName)
 
 
@@ -438,6 +446,12 @@ def doMesonPackageHelper():
       )
    )
 
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# .:TBD:.  Let's see if we can do a .deb package
+#-----------------------------------------------------------------------------------------------------------------------
+def doDebianPackage():
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
