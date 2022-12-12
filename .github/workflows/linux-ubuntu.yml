@@ -114,6 +114,7 @@ jobs:
         # I'm sure there's a better way to invoke this script, but I haven't yet discovered it
         shell: bash
         run: |
+          ls -l /usr/lib/libboost_*
           python3 bt setup
 
       - name: Create Build Environment
