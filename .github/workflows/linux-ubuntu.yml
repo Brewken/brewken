@@ -101,8 +101,10 @@ jobs:
         with:
           python-version: '3.10'
       - name: Install Frameworks and Libraries
+        working-directory: ${{github.workspace}}
         shell: bash
         run: |
+          pwd
           ./bt -v setup all
           if [[ $(lsb_release -r | awk '{print $2}' | awk -F. '{print $1}') -lt 22 ]]
           then
