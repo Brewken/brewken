@@ -71,6 +71,30 @@ jobs:
       # Similarly, Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.56.0 or later.  In this case it means we
       # have to install Meson via pip, which is not ideal on Linux (per comments in meson.build).
       #
+      # TODO: The manual installation of Boost below somehow is undetectable by meson (or I'm doing something wrong)
+      # UNLESS you have another version of Boost installed via 'sudo apt install'.
+      #
+      # In theory with Conan:
+      # pip3 install conan
+      #
+      # sudo apt-get install libboost-all-dev
+      # export BOOST_INCLUDEDIR=/usr/include
+      # export    BOOST_LIBRARYDIR=/usr/lib
+      #
+      # The manual install of Boost pretty much verbatim follows the instructions at
+      # https://www.boost.org/doc/libs/1_80_0/more/getting_started/unix-variants.html.  Note that, we no longer specify
+      # the /usr prefix (./bootstrap.sh --prefix=/usr) because it results in Meson being unable to find Boost.
+      #    cd ~
+      #    mkdir ~/boost-tmp
+      #    cd ~/boost-tmp
+      #    wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
+      #    tar --bzip2 -xf boost_1_80_0.tar.bz2
+      #    cd boost_1_80_0
+      #    ./bootstrap.sh
+      #    sudo ./b2 install
+      #    cd ~
+      #    sudo rm -rf ~/boost-tmp
+      #
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -101,14 +125,14 @@ jobs:
           cd ~
           mkdir ~/boost-tmp
           cd ~/boost-tmp
-          wget https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2
-          tar --bzip2 -xf boost_1_79_0.tar.bz2
-          cd boost_1_79_0
-          ./bootstrap.sh --prefix=/usr
+          wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
+          tar --bzip2 -xf boost_1_80_0.tar.bz2
+          cd boost_1_80_0
+          ./bootstrap.sh
           sudo ./b2 install
           cd ~
           sudo rm -rf ~/boost-tmp
-          ls -l /usr/lib/libboost_*
+          ls -l /usr/local/lib/libboost_*
 
       - name: Setup Build Environment (New)
         working-directory: ${{github.workspace}}

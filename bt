@@ -40,11 +40,17 @@
 #    CMakeLists.txt
 #    src/CMakeLists.txt
 #    packaging/qtIfw -- if we end up not going with Qt Install Framework
+#
+#
+# Note that Python allows both single and double quotes for delimiting strings.  In Meson, we need single quotes, in
+# C++, we need double quotes.  We mostly try to use single quotes below for consistency with Meson, except where using
+# double quotes avoids having to escape a single quote.
 #-----------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Python modules we need to import
 #-----------------------------------------------------------------------------------------------------------------------
+import argparse
 import datetime
 import logging
 import os
@@ -59,11 +65,12 @@ import sys
 #-----------------------------------------------------------------------------------------------------------------------
 projectName = 'brewken'
 capitalisedProjectName = projectName.capitalize()
+projectUrl = 'https://github.com/' + capitalisedProjectName + '/' + projectName + '/'
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Welcome banner and environment info
 #-----------------------------------------------------------------------------------------------------------------------
-# %c argument to strftime means "Locale’s appropriate date and time representation"
+# The '%c' argument to strftime means "Locale’s appropriate date and time representation"
 print(
    '⭐ ' + capitalisedProjectName + ' build tool running on ' + platform.system() + ' (' + platform.release() +
    ') at ' + datetime.datetime.now().strftime('%c') + ' ⭐'
@@ -74,18 +81,87 @@ print(
 #-----------------------------------------------------------------------------------------------------------------------
 logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
-# Normally we set INFO logging, but DEBUG is useful if you're actually working on this script
-#log.setLevel(logging.INFO)
-log.setLevel(logging.DEBUG)
+# This is our default log level, but it can be overridden via the -v and -q command line options -- see below
+log.setLevel(logging.INFO)
 # Include the log level in the message
 handler = logging.StreamHandler()
 handler.setFormatter(
-#   logging.Formatter('{asctime} {name} {levelname:8s} {message}', style='{')
-   logging.Formatter('{levelname:8s} {message}', style='{')
+   # You can add timestamps etc to logs, but that's overkill for this script
+   logging.Formatter('{levelname:s}:  {message}', style='{')
 )
 log.addHandler(handler)
 # If we don't do this, everything gets printed twice
 log.propagate = False
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Parse command line arguments
+#-----------------------------------------------------------------------------------------------------------------------
+# We do this (nearly) first as we want the program to exit straight away if incorrect arguments are specified
+# Choosing which action to call is done a the end of the script, after all functions are defined
+#
+# Using Python argparse saves us writing a lot of boilerplate, although the help text it generates on the command line
+# is perhaps a bit more than we want (eg having to separate 'bt --help' and 'bt setup --help' is overkill for us).
+# There are ways around this -- eg see
+# https://stackoverflow.com/questions/20094215/argparse-subparser-monolithic-help-output -- but they are probably more
+# complexity than is merited here.
+#
+parser = argparse.ArgumentParser(
+   prog = 'bt',
+   description = capitalisedProjectName + ' build tool.  A utility to help with installing dependencies, Git ' +
+                 'setup, Meson build configuration and packaging.',
+   epilog = 'See ' + projectUrl + ' for info and latest releases'
+)
+
+# Log level
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-v', '--verbose', action = 'store_true', help = 'Enable debug logging of this script')
+group.add_argument('-q', '--quiet',   action = 'store_true', help = 'Suppress info logging of this script')
+
+# Per https://docs.python.org/3/library/argparse.html#sub-commands, you use sub-parsers for sub-commands.
+subparsers = parser.add_subparsers(
+   dest = 'subCommand',
+   required = True,
+   title = 'action',
+   description = "Exactly one of the following actions must be specified.  (For actions marked ✴, specify -h or "
+                 "--help AFTER the action for info about options -- eg '%(prog)s setup --help'.)"
+)
+
+# Parser for 'setup'
+parser_setup = subparsers.add_parser('setup', help = '✴ Set up meson build directory (mbuild) and git options')
+subparsers_setup = parser_setup.add_subparsers(dest = 'setupOption', required = False)
+parser_setup_all = subparsers_setup.add_parser(
+   'all',
+   help = 'Specifying this will also automatically install libraries and frameworks we depend on'
+)
+
+# Parser for 'package'
+parser_package = subparsers.add_parser('package', help='Build a distributable installer')
+
+#
+# Process the arguments for use below
+#
+# This try/expect ensures that help is printed if the script is invoked without arguments.  It's not perfect as you get
+# the usage line twice (because parser.parse_args() outputs it to stderr before throwing SystemExit) but it's good
+# enough for now at least.
+#
+try:
+   args = parser.parse_args()
+except SystemExit as se:
+   if (se.code != None and se.code != 0):
+      parser.print_help()
+   sys.exit(0)
+
+#
+# The one thing we do set straight away is log level
+# Possible levels are 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'.  We choose 'INFO' for default, 'DEBUG'
+# for verbose and 'WARNING' for quiet.  You wouldn't want to suppress warnings, would you? :-)
+#
+if (args.verbose):
+   log.setLevel(logging.DEBUG)
+elif (args.quiet):
+   log.setLevel(logging.WARNING)
+
+log.debug('Parsed command line arguments as ' + str(args))
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Note the working directory from which we were invoked -- though it shouldn't matter as we try to be independent of
@@ -171,23 +247,9 @@ if (dir_gitInfo.is_dir()):
       exit(1)
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Show command line help
-#-----------------------------------------------------------------------------------------------------------------------
-def printUsage():
-   # We deliberately don't list the part_3_of_packaging command here because it's only supposed to be invoked from
-   # meson as part of 'meson package' (which in turn is invoked from './bt package').
-   print("Usage: bt <command>")
-   print()
-   print("Commands:")
-   print("  help              Shows this message")
-   print("  setup             Set up meson build directory (mbuild) and git options")
-   print("  package           Build a distributable installer")
-   return
-
-#-----------------------------------------------------------------------------------------------------------------------
 # ./bt setup
 #-----------------------------------------------------------------------------------------------------------------------
-def doSetup():
+def doSetup(setupOption):
    # If this is a git checkout then let's set up git with the project standards
    if (dir_gitInfo.is_dir()):
       log.info('Setting up ' + capitalisedProjectName + ' git preferences')
@@ -214,6 +276,47 @@ def doSetup():
          abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
          abortOnRunFail(subprocess.run([exe_git, "submodule", "update"], capture_output=False))
 
+   if (setupOption == 'all'):
+      log.info('Checking which depencencies need to be installed')
+      #
+      # We need a recent version of Boost, ie Boost 1.79 or newer, to use Boost.JSON.  For Windows and Mac this is fine
+      # is you are installing from MSYS2 (https://packages.msys2.org/package/mingw-w64-x86_64-boost) or Homebrew
+      # (https://formulae.brew.sh/formula/boost) respectively.  Unfortunately, as of late-2022, many Linux distros
+      # provide only older versions of Boost.  (Eg, on Ubuntu, you can see this by running
+      # 'apt-cache policy libboost-dev'.)
+      #
+      # To manually install the latest version of Boost from source, first uninstall any old version installed via your
+      # distro (eg, on Ubuntu, this means `sudo apt remove libboost-all-dev`), then follow the instructions at
+      # [boost.org](https://www.boost.org/more/getting_started/index.html).  It's best to leave the default
+      # install location: headers in the `boost` subdirectory `/usr/local/include` and libraries in `/usr/local/lib`.   (It
+      # might initially seem a good idea to put things in the same place as the distro packages, ie running
+      # `./bootstrap.sh --prefix=/usr` to put headers in /usr/include and libraries in /usr/lib.  However, this will mean
+      # that Meson cannot find the manually-installed Boost, even though it can find distro-installed Boost in this
+      # location.)  So, eg, for Boost 1.80 on Linux, this means the following:
+      #
+      #    cd ~
+      #    mkdir ~/boost-tmp
+      #    cd ~/boost-tmp
+      #    wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
+      #    tar --bzip2 -xf boost_1_80_0.tar.bz2
+      #    cd boost_1_80_0
+      #    ./bootstrap.sh
+      #    sudo ./b2 install
+      #    cd ~
+      #    sudo rm -rf ~/boost-tmp
+      #
+   #
+#   if (platform.system() == 'Linux'):
+      #
+      # Check whether Boost is installed
+      #
+      # We'll look in two places:
+      #    /usr/include/boost/version.hpp        <-- Distro-installed Boost
+      #    /usr/local/include/boost/version.hpp  <-- Manually-installed Boost
+      #
+      #
+      #
+
    # Check whether Meson build directory is already set up.  (Although nothing bad happens, if you run setup twice,
    # it complains and tells you to run configure.)
    # Best clue that set-up has been run (rather than, say, user just created empty mbuild directory by hand) is the
@@ -238,7 +341,8 @@ def doSetup():
          if (pathlib.Path.cwd().as_posix() == dir_build.as_posix()):
             # We write a warning out here for completeness, but we really need to show it further down as it will have
             # scrolled off the top of the terminal with all the output from 'meson setup'
-            log.warning('You are currently in the directory we are about to delete.  You will need to change directory!')
+            log.warning('You are currently in the directory we are about to delete.  ' +
+                        'You will need to change directory!')
             warnAboutCurrentDirectory = True
             os.chdir(dir_base)
          shutil.rmtree(dir_build)
@@ -400,7 +504,8 @@ def doMesonPackageHelper():
    #
    # In order of preference we want:
    #   - Whatever is already first in the PATH
-   #   - If nothing is in the path, whatever the most recent version of Qt IFW is installed under the user's home directory
+   #   - If nothing is in the path, whatever the most recent version of Qt IFW is installed under the user's home
+   #     directory
    # But if we can't find anything we want to capture that error and bail out
    #
    bcExtn = ""
@@ -455,21 +560,13 @@ def doDebianPackage():
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Process command line options
+# Act on command line arguments
 #-----------------------------------------------------------------------------------------------------------------------
-numArgs = len(sys.argv) - 1
-if (numArgs != 1):
-   log.error('Wrong number of arguments')
-   printUsage()
-   exit(1)
-
-command = sys.argv[1]
-match command:
-   case 'help':
-      printUsage()
+# See above for parsing
+match args.subCommand:
 
    case 'setup':
-      doSetup()
+      doSetup(setupOption = args.setupOption)
 
    case 'package':
       doPackage()
@@ -477,7 +574,7 @@ match command:
    case 'part_3_of_packaging':
       doMesonPackageHelper()
 
+   # If we get here, it's a coding error as argparse should have already validated the command line arguments
    case _:
       log.error('Unrecognised command "' + command + '"')
-      printUsage()
       exit(1)

@@ -135,10 +135,12 @@
 #                 '-g2') on GCC, but there isn't a way via the meson  options to set '-g3' for GCC.  So, we set
 #                 'buildtype=plain' and manage compiler flags directly.
 #
+# NOTE that we need Meson version 0.59.0 or later to use qt.compile_resources, qt.compile_ui and qt.compile_moc
+#
 project('brewken', 'cpp',
         version: '0.1.0',
         license: 'GPL-3.0-or-later',
-        meson_version: '>=0.56.0',
+        meson_version: '>=0.59.0',
         default_options : ['cpp_std=c++17',
                            'warning_level=3',
 #                           'prefer_static=true',
