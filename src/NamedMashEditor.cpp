@@ -280,15 +280,13 @@ void NamedMashEditor::moveMashStepDown()
    return;
 }
 
-void NamedMashEditor::mashSelected(const QString& name)
-{
+void NamedMashEditor::mashSelected([[maybe_unused]] QString const & name) {
    Mash* selected = mashListModel->at(mashComboBox->currentIndex());
    if (selected && selected != mashObs)
       setMash(selected);
 }
 
-void NamedMashEditor::fromEquipment(const QString& name)
-{
+void NamedMashEditor::fromEquipment([[maybe_unused]] QString const & name) {
    if( mashObs == 0 )
       return;
    Equipment* selected = equipListModel->at(equipmentComboBox->currentIndex());

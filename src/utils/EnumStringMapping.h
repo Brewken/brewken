@@ -18,9 +18,13 @@
 #pragma once
 
 #include <optional>
+#include <stdexcept>
 
+#include <QDebug>
 #include <QString>
 #include <QVector>
+
+#include "Logging.h"
 
 /**
  * \brief Associates an enum value with a string representation (eg in the DB or BeerXML or BeerJSON).  Storing a
@@ -63,16 +67,54 @@ public:
    // We're not adding data members so we can just use the base class constructors
    using QVector::QVector;
 
-   std::optional<int>     stringToEnum(QString const & stringValue) const;
-   std::optional<QString> enumToString(int     const   enumValue) const;
+   /**
+    * \brief Convert data that \b might not be a valid string representation of an enum to the \c int value of that
+    *        enum.  This is useful when we are deserialising a file for instance
+    */
+   std::optional<int>     stringToEnumAsInt(QString const & stringValue) const;
+
+   /**
+    * \brief Convert data that \b might not be a valid \c int value of an enum to the string representation of that
+    *        enum.  This is possibly useful in some circumstances when we are reading a Qt property of an object and we
+    *        can't be 100% certain that the object is of the class we expect
+    */
+   std::optional<QString> enumAsIntToString(int     const   enumValue) const;
 
    /**
     * \brief Convenience function for using \c enumToString with strongly typed enums (ie those declared as
     *        "enum class")
+    *
+    * \throw std::out_of_range if no string is found for the supplied enum (because this is a coding error)
+    *        NOTE however that, because \c EnumAndItsString is not a templated class, the compiler cannot detect if you
+    *        are using the wrong object (eg if you use \c Hop::formStringMapping instead of \c Hop::useStringMapping)
     */
    template<typename E>
-   std::optional<QString> enumToString(E const enumValue) const {
-      return this->enumToString(static_cast<int>(enumValue));
+   QString enumToString(E const enumValue) const {
+      std::optional<QString> result = this->enumAsIntToString(static_cast<int>(enumValue));
+      if (!result) {
+         qCritical().noquote() <<
+            Q_FUNC_INFO << "Coding error: no string mapping found for" << static_cast<int>(enumValue) <<
+            Logging::getStackTrace();
+         throw std::out_of_range("Missing string value in EnumStringMapping");
+      }
+      return *result;
+   }
+
+   /**
+    * \brief Convenience function for using \c stringToEnum with strongly typed enums (ie those declared as
+    *        "enum class")
+    *
+    * \throw std::out_of_range if no enum is found for the supplied string (because this is a coding error)
+    */
+   template<typename E>
+   E stringToEnum(QString const & stringValue) const {
+      std::optional<int> result = this->stringToEnumAsInt(stringValue);
+      if (!result) {
+         qCritical().noquote() <<
+            Q_FUNC_INFO << "Coding error: no enum mapping found for" << stringValue << Logging::getStackTrace();
+         throw std::out_of_range("Missing enum value in EnumStringMapping");
+      }
+      return static_cast<E>(*result);
    }
 
    /**
@@ -80,8 +122,8 @@ public:
     *        "enum class")
     */
    template<typename E>
-   std::optional<E> stringToEnum(QString const & stringValue) const {
-      std::optional<int> result = this->stringToEnum(stringValue);
+   std::optional<E> stringToEnumOrNull(QString const & stringValue) const {
+      std::optional<int> result = this->stringToEnumAsInt(stringValue);
       return result ? std::optional<E>{static_cast<E>(*result)} : std::optional<E>{std::nullopt};
    }
 

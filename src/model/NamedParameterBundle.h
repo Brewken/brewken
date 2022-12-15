@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedParameterBundle.h is part of Brewken, and is copyright the following authors 2021:
+ * model/NamedParameterBundle.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -62,5 +62,17 @@ public:
 private:
    OperationMode mode;
 };
+
+/**
+ * \brief Convenience function to allow output of \c NamedParameterBundle to \c QDebug or \c QTextStream stream etc
+ */
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle);
+
+/**
+ * \brief Convenience function to allow output of \c NamedParameterBundle to \c QDebug or \c QTextStream stream etc
+ */
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle);
 
 #endif

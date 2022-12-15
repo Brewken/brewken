@@ -182,6 +182,11 @@ namespace {
    //   boil:                      BoilProcedureType[]          optional
    //   packaging:                 PackagingProcedureType[]     optional
    //
+   // The BeerJSON schema is strict about some things but not about others.  Eg, you can't add in your own top-level
+   // object (which, eg, since JSON doesn't allow comments, would be useful to use to record information about the
+   // program that wrote the file), but you can add extra fields to individual records (eg we could add a "foobar" field
+   // inside each hop record and it would pass validation against the BeerJSON schema.
+   //
    // Note that the way ingredients are included inside recipes is more nuanced than in BeerXML.  In BeerXML, you can
    // have eg a Hop record both as an element inside a top-level list of Hops (ie hop varieties) and as an ingredient
    // inside a Recipe.  In BeerJSON, the distinction is made between records in a top-level list of hops, which are
@@ -373,64 +378,40 @@ namespace {
       {"Dry Hop",    Hop::Use::Dry_Hop},
       {"Mash",       Hop::Use::Mash},
       {"First Wort", Hop::Use::First_Wort},
-      {"Aroma",      Hop::Use::UseAroma}
+      {"Aroma",      Hop::Use::Aroma}
    };*/
-   EnumStringMapping const BEER_JSON_HOP_TYPE_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Hop::Type and/or combine with Hop::Use
-      {"aroma",                  Hop::Type::Aroma},
-      {"bittering",              Hop::Type::Bittering},
-//      {"flavor",                 Hop::Type::},
-      {"aroma/bittering",        Hop::Type::Both},
-//      {"bittering/flavor",       Hop::Type::},
-//      {"aroma/flavor",           Hop::Type::},
-//      {"aroma/bittering/flavor", Hop::Type::},
-
-
-      {"Bittering", Hop::Type::Bittering},
-      {"Aroma",     Hop::Type::Aroma},
-      {"Both",      Hop::Type::Both}
-   };
-   EnumStringMapping const BEER_JSON_HOP_FORM_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Hop::Form
-//      {"extract",    Hop::Form::},
-      {"leaf",       Hop::Form::Leaf},
-//      {"leaf (wet)", Hop::Form::},
-      {"pellet",     Hop::Form::Pellet},
-//      {"powder",     Hop::Form::},
-      {"plug",       Hop::Form::Plug}
-   };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopBase {
       // Type                                         XPath                                Q_PROPERTY                              Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,       "name",                              &PropertyNames::NamedEntity::name,      },
-      {JsonRecordDefinition::FieldType::String,       "producer",                          &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::String,       "product_id",                        &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
+      {JsonRecordDefinition::FieldType::String,       "producer",                          &PropertyNames::Hop::producer,          },
+      {JsonRecordDefinition::FieldType::String,       "product_id",                        &PropertyNames::Hop::product_id,        },
       {JsonRecordDefinition::FieldType::String,       "origin",                            &PropertyNames::Hop::origin,            },
-      {JsonRecordDefinition::FieldType::String,       "year",                              &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::Enum,         "form",                              &PropertyNames::Hop::form,              &BEER_JSON_HOP_FORM_MAPPER},
+      {JsonRecordDefinition::FieldType::String,       "year",                              &PropertyNames::Hop::year,              }, // Yes, year really is a string, not an integer in BeerJSON.  .:TODO.JSON:. Decide int vs string ****
+      {JsonRecordDefinition::FieldType::Enum,         "form",                              &PropertyNames::Hop::form,              &Hop::formStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopType_ExclBase {
-      // Type                                            XPath                                Q_PROPERTY                              Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "alpha_acid",                        &PropertyNames::Hop::alpha_pct,         &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "beta_acid",                         &PropertyNames::Hop::beta_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::Enum,            "type",                              &PropertyNames::Hop::type,              &BEER_JSON_HOP_TYPE_MAPPER},
-      {JsonRecordDefinition::FieldType::String,          "notes",                             &PropertyNames::Hop::notes,             },
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "percent_lost",                      &PropertyNames::Hop::hsi_pct,           &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::String,          "substitutes",                       &PropertyNames::Hop::substitutes,       },
-      {JsonRecordDefinition::FieldType::Double,          "oil_content/total_oil_ml_per_100g", &BtString::NULL_STR,                    }, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/humulene",              &PropertyNames::Hop::humulene_pct,      &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/caryophyllene",         &PropertyNames::Hop::caryophyllene_pct, &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/cohumulone",            &PropertyNames::Hop::cohumulone_pct,    &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/myrcene",               &PropertyNames::Hop::myrcene_pct,       &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/farnesene",             &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/geraniol",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/b_pinene",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/linalool",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/limonene",              &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/nerol",                 &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/pinene",                &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/polyphenols",           &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/xanthohumol",           &BtString::NULL_STR,                    &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Hop
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",       &BtString::NULL_STR,                    &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
+      // Type                                            XPath                                Q_PROPERTY                                  Enum/Unit Mapper
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "alpha_acid",                        &PropertyNames::Hop::alpha_pct,             &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "beta_acid",                         &PropertyNames::Hop::beta_pct,              &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::Enum,            "type",                              &PropertyNames::Hop::type,                  &Hop::typeStringMapping},
+      {JsonRecordDefinition::FieldType::String,          "notes",                             &PropertyNames::Hop::notes,                 },
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "percent_lost",                      &PropertyNames::Hop::hsi_pct,               &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::String,          "substitutes",                       &PropertyNames::Hop::substitutes,           },
+      {JsonRecordDefinition::FieldType::Double,          "oil_content/total_oil_ml_per_100g", &PropertyNames::Hop::total_oil_ml_per_100g, },
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/humulene",              &PropertyNames::Hop::humulene_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/caryophyllene",         &PropertyNames::Hop::caryophyllene_pct,     &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/cohumulone",            &PropertyNames::Hop::cohumulone_pct,        &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/myrcene",               &PropertyNames::Hop::myrcene_pct,           &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/farnesene",             &PropertyNames::Hop::farnesene_pct,         &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/geraniol",              &PropertyNames::Hop::geraniol_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/b_pinene",              &PropertyNames::Hop::b_pinene_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/linalool",              &PropertyNames::Hop::linalool_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/limonene",              &PropertyNames::Hop::limonene_pct,          &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/nerol",                 &PropertyNames::Hop::nerol_pct,             &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/pinene",                &PropertyNames::Hop::pinene_pct,            &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/polyphenols",           &PropertyNames::Hop::polyphenols_pct,       &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "oil_content/xanthohumol",           &PropertyNames::Hop::xanthohumol_pct,       &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount",       &BtString::NULL_STR,                        &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
    };
@@ -730,10 +711,78 @@ namespace {
             Q_FUNC_INFO << "BeerJSON version " << beerJsonVersion << "differs from what we are expecting (" <<
             jsonVersionWeSupport << ")";
       }
+
+      // If you want to check what Boost.JSON read from the file (eg to debug escaping issues etc), uncomment the next
+      // line.
+//      qDebug() << Q_FUNC_INFO << "JSON file read in is:" << inputDocument;
+
       return BEER_JSON_1_CODING.validateLoadAndStoreInDb(inputDocument, userMessage);
    }
 
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///template<class NE> void BeerJson::export(QList<NE *> & nes, QFile & outFile) const {
+///   // std::codecvt_utf8 is deprecated since c++17
+///   return;
+///}
+
+/*
+ *
+void BeerXML::createXmlFile(QFile & outFile) const {
+   QTextStream out(&outFile);
+   // BeerXML specifies the ISO-8859-1 encoding
+   out.setCodec(QTextCodec::codecForMib(CharacterSets::ISO_8859_1_1987));
+
+   out <<
+      "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
+      "<!-- BeerXML Format generated by Brewken " << CONFIG_VERSION_STRING << " on " <<
+      QDateTime::currentDateTime().date().toString(Qt::ISODate) << " -->\n";
+
+   return;
+}
+
+template<class NE> void BeerXML::toXml(QList<NE *> & nes, QFile & outFile) const {
+   // We don't want to output empty container records
+   if (nes.empty()) {
+      return;
+   }
+
+   // It is a feature of BeerXML that the tag name for a list of elements is just the tag name for an individual
+   // element with an S on the end, even when this is not grammatically correct.  Thus a list of <HOP>...</HOP> records
+   // is contained inside <HOPS>...</HOPS> tags, a list of <MISC>...</MISC> records is contained inside
+   // <MISCS>...</MISCS> tags and so on.
+   QTextStream out(&outFile);
+   // BeerXML specifies the ISO-8859-1 encoding
+   // .:TODO:. In Qt6, QTextCodec and QTextStream::setCodec have been removed and are replaced by QStringConverter
+   // (which is new in Qt6).
+   out.setCodec(QTextCodec::codecForMib(CharacterSets::ISO_8859_1_1987));
+   out << "<" << BEER_XML_RECORD_NAME<NE> << "S>\n";
+   for (auto ne : nes) {
+      this->pimpl->toXml(*ne, out);
+   }
+   out << "</" << BEER_XML_RECORD_NAME<NE> << "S>\n";
+   return;
+}
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
+// means, amongst other things, that we can reference the pimpl.)
+//
+template void BeerXML::toXml(QList<Hop *> &        nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Fermentable *> &nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Yeast *> &      nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Misc *> &       nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Water *> &      nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Style *> &      nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<MashStep *> &   nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Mash *> &       nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Equipment *> &  nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Instruction *> &nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<BrewNote *> &   nes, QFile & outFile) const;
+template void BeerXML::toXml(QList<Recipe *> &     nes, QFile & outFile) const;
+*/
+
 
 bool BeerJson::import(QString const & filename, QTextStream & userMessage) {
    // .:TODO:. This wrapper code is about the same as in BeerXML::importFromXML(), so let's try to pull out the common

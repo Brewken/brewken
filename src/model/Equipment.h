@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -59,11 +59,7 @@ AddPropertyName(tunVolume_l)
  */
 class Equipment : public NamedEntity {
    Q_OBJECT
-
    Q_CLASSINFO("signal", "equipments")
-
-
-   friend class EquipmentEditor;
 
 public:
    Equipment(QString t_name = "");

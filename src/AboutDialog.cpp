@@ -184,7 +184,7 @@ AboutDialog::AboutDialog(QWidget * parent) :
          " </p>"
          "</html>"
       )
-      .arg(VERSIONSTRING)
+      .arg(CONFIG_VERSION_STRING)
    );
    return;
 }

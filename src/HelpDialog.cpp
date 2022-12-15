@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HelpDialog.cpp is part of Brewken, and is copyright the following authors 2021:
+ * HelpDialog.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,17 +15,19 @@
  =====================================================================================================================*/
 #include "HelpDialog.h"
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QTextStream>
+#include <QEvent>
 #include <QLabel>
+#include <QTextStream>
+#include <QVBoxLayout>
+#include <QWidget>
 
-#include "config.h" // For VERSIONSTRING
+#include "config.h" // For CONFIG_VERSION_STRING
 #include "Logging.h"
 #include "PersistentSettings.h"
 
 // This private implementation class holds all private non-virtual members of HelpDialog
 class HelpDialog::impl {
+
 public:
 
    /**
@@ -67,37 +69,37 @@ public:
          "</head>"
          ""
          "<h1>Brewken</h1>"
-         "version " << VERSIONSTRING << " " << tr("for") << " " << QSysInfo::prettyProductName() <<
-         "<h2>" << tr("Online Help") << "</h2>"
+         "version " << CONFIG_VERSION_STRING << " " << HelpDialog::tr("for") << " " << QSysInfo::prettyProductName() <<
+         "<h2>" << HelpDialog::tr("Online Help") << "</h2>"
          "<p>" <<
-         tr("<p>The Brewken wiki is at ") << "<a href=\"https://github.com/Brewken/brewken/wiki\">https://github.com/Brewken/brewken/wiki</a>.</p>"
+         HelpDialog::tr("<p>The Brewken wiki is at ") << "<a href=\"https://github.com/Brewken/brewken/wiki\">https://github.com/Brewken/brewken/wiki</a>.</p>"
          "<p>" <<
-         tr("If you find a bug, or have an idea for an enhancement, please raise an issue at ") << "<br/>"
+         HelpDialog::tr("If you find a bug, or have an idea for an enhancement, please raise an issue at ") << "<br/>"
          "<a href=\"https://github.com/Brewken/brewken/issues\">https://github.com/Brewken/brewken/issues</a>.<br/>"
          "<br/>" <<
-         tr("<em>If it's Brewken, we can fix it...</em>") <<
+         HelpDialog::tr("<em>If it's Brewken, we can fix it...</em>") <<
          "</p>"
-         "<h2>" << tr("Your Data") << "</h2>"
+         "<h2>" << HelpDialog::tr("Your Data") << "</h2>"
          "<p>" <<
-         tr("Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the 'Tools > Options' menu):") <<
+         HelpDialog::tr("Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the 'Tools > Options' menu):") <<
          "</p>"
          "<ul>"
          "<li><pre>" << this->makeClickableDirLink(PersistentSettings::getUserDataDir().canonicalPath()) << "</pre></li>"
          "</ul>"
-         "<p>" << tr("It is a good idea to take regular backups of this folder.") << "</p>"
-         "<h2>" << tr("Settings and Log files") << "</h2>"
+         "<p>" << HelpDialog::tr("It is a good idea to take regular backups of this folder.") << "</p>"
+         "<h2>" << HelpDialog::tr("Settings and Log files") << "</h2>"
          "<p>" <<
-         tr("The contents of the following folder(s) can be helpful for diagnosing problems:") <<
+         HelpDialog::tr("The contents of the following folder(s) can be helpful for diagnosing problems:") <<
          "<ul>"
-         "<li>" << tr("Configuration:") << "<pre>" << this->makeClickableDirLink(PersistentSettings::getConfigDir().canonicalPath()) << "</pre></li>"
-         "<li>" << tr("Logs:") << "<pre>" << this->makeClickableDirLink(Logging::getDirectory().absolutePath()) << "</pre></li>"
+         "<li>" << HelpDialog::tr("Configuration:") << "<pre>" << this->makeClickableDirLink(PersistentSettings::getConfigDir().canonicalPath()) << "</pre></li>"
+         "<li>" << HelpDialog::tr("Logs:") << "<pre>" << this->makeClickableDirLink(Logging::getDirectory().absolutePath()) << "</pre></li>"
          "</ul>" <<
-         tr("The location of the log files can be configured via the 'Tools > Options' menu.") <<
+         HelpDialog::tr("The location of the log files can be configured via the 'Tools > Options' menu.") <<
          "</p>"
          "</html>";
       this->label->setText(mainText);
 
-      helpDialog.setWindowTitle(tr("Help"));
+      helpDialog.setWindowTitle(HelpDialog::tr("Help"));
       return;
    }
 

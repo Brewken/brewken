@@ -56,8 +56,6 @@ class Misc : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "miscs")
 
-
-   friend class MiscDialog;
 public:
 
    //! \brief The type of ingredient.
@@ -149,7 +147,7 @@ protected:
 
 private:
    Type m_type;
-   Use m_use;
+   Use  m_use;  // Primarily valid in "Use Of" instance
    double m_time;
    double m_amount;
    bool m_amountIsWeight;

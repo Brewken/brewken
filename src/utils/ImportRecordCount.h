@@ -41,14 +41,16 @@ public:
 
    /**
     * \brief Call this to mark that we skipped over a record
-    * \param recordName The name of the record in lower case.
+    * \param recordName The name of the record (typically the class name of the object being read in).  This will be
+    *                   rendered in lower case in \c writeToUserMessage.
     *                   TBD could we enhance to do this in the user's language (eg "hop" "houblon", "hopfen"?
     */
    void skipped(QString recordName);
 
    /**
     * \brief Call this to mark that we successfully saved a record
-    * \param recordName The name of the record in lower case.
+    * \param recordName The name of the record (typically the class name of the object being read in).  This will be
+    *                   rendered in lower case in \c writeToUserMessage.
     *                   TBD could we enhance to do this in the user's language (eg "hop" "houblon", "hopfen"?
     */
    void processedOk(QString recordName);

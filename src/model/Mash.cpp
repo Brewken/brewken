@@ -360,7 +360,8 @@ QList< std::shared_ptr<MashStep> > Mash::mashSteps() const {
    return mashSteps;
 }
 
-void Mash::acceptMashStepChange(QMetaProperty prop, QVariant /*val*/) {
+void Mash::acceptMashStepChange([[maybe_unused]] QMetaProperty prop,
+                                [[maybe_unused]] QVariant      val) {
    MashStep* stepSender = qobject_cast<MashStep*>(sender());
    if (stepSender == nullptr) {
       return;

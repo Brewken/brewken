@@ -35,6 +35,8 @@ namespace boost::json {
 }
 class JsonCoding;
 class JsonRecord;
+template<class NE>
+class JsonNamedEntityRecord;
 
 // See below for more on this.  It's useful to have a type name for a list of pointers to JsonMeasureableUnitsMapping
 // objects, but we don't need to create a whole new class just for that.
@@ -140,7 +142,8 @@ public:
     *                              value : decimal
     *          ViscosityType:      unit ∈ {"cP", "mPa-s"}
     *                              value : decimal
-    *          VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz", "ipt", "iqt", "igal", "ibbl"}
+    *          VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz",
+    *                                      "ipt", "iqt", "igal", "ibbl"}
     *                              value : decimal
     *
     *       Furthermore, for many of these types, an additional "range" type is defined - eg GravityRangeType,
@@ -252,38 +255,25 @@ public:
    struct FieldDefinition {
       FieldType             type;
       JsonXPath             xPath;
+      // Both propertyName and the options inside valueDecoder are pointers rather than references because we store
+      // FieldDefinitions in a vector, so everything needs to be copyable.
+      // NOTE that propertyName should never be null (use BtString::NULL_STR instead).  This requirement makes logging
+      // simpler elsewhere.
       BtStringConst const * propertyName;
-      // The options inside valueDecoder are pointers rather than references because we store FieldDefinitions in a
-      // vector, so everything needs to be copyable.
-      std::variant<std::monostate,
-                   EnumStringMapping                  const *,               // FieldType::Enum
-                   JsonMeasureableUnitsMapping        const *,               // FieldType::MeasurementWithUnits
-                   ListOfJsonMeasureableUnitsMappings const *,               // FieldType::OneOfMeasurementsWithUnits
-                   JsonSingleUnitSpecifier            const *> valueDecoder; // FieldType::SingleUnitValue
-
-      // In C++20, we finally get designated initializers (a feature that has long been present in C!).  This would
-      // permit brace initialisation of union members other than the first one - eg ".unitsMapping = ".  Unfortunately
-      // we are not yet on C++20, so we have to do things the old way with constructors.
-      FieldDefinition(FieldType                 type,
-                      char const *              xPath,
-                      BtStringConst const *     propertyName,
-                      EnumStringMapping const * enumMapping);
-      FieldDefinition(FieldType                           type,
-                      char const *                        xPath,
-                      BtStringConst const *               propertyName,
-                      JsonMeasureableUnitsMapping const * unitsMapping);
-      FieldDefinition(FieldType                                  type,
-                      char const *                               xPath,
-                      BtStringConst const *                      propertyName,
-                      ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings);
-      FieldDefinition(FieldType                           type,
-                      char const *                        xPath,
-                      BtStringConst const *               propertyName,
-                      JsonSingleUnitSpecifier     const * singleUnitSpecifier);
-      // We need this one too for when there is no decoder (which is most of the time!)
-      FieldDefinition(FieldType                 type,
-                      char const *              xPath,
-                      BtStringConst const *     propertyName);
+      using ValueDecoder =
+         std::variant<std::monostate,
+                     EnumStringMapping                  const *,  // FieldType::Enum
+                     JsonMeasureableUnitsMapping        const *,  // FieldType::MeasurementWithUnits
+                     ListOfJsonMeasureableUnitsMappings const *,  // FieldType::OneOfMeasurementsWithUnits
+                     JsonSingleUnitSpecifier            const *>; // FieldType::SingleUnitValue
+      ValueDecoder valueDecoder;
+      /**
+       * \brief Trivial constructor allows us to default \c valueDecoder
+       */
+      FieldDefinition(FieldType type,
+                      JsonXPath xPath,
+                      BtStringConst const * propertyName,
+                      ValueDecoder valueDecoder = ValueDecoder{});
    };
 
    /**
@@ -300,20 +290,20 @@ public:
     *        (We maybe could have called this function jsonRecordConstructorWrapper but it makes things rather long-
     *        winded in the definitions.)
     */
-   template<typename T>
-   static JsonRecord * create(JsonCoding const & jsonCoding,
-                              boost::json::value const & recordData,
-                              JsonRecordDefinition const & recordDefinition) {
-      return new T(jsonCoding, recordData, recordDefinition);
+   template<typename JRT>
+   static std::unique_ptr<JsonRecord> create(JsonCoding const & jsonCoding,
+                                             boost::json::value const & recordData,
+                                             JsonRecordDefinition const & recordDefinition) {
+      return std::make_unique<JRT>(jsonCoding, recordData, recordDefinition);
    }
 
    /**
     * \brief This is just a convenience typedef representing a pointer to a template instantiation of
     *        \b JsonRecordDefinition::create().
     */
-   typedef JsonRecord * (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
-                                                        boost::json::value const & recordData,
-                                                        JsonRecordDefinition const & recordDefinition);
+   typedef std::unique_ptr<JsonRecord> (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
+                                                                       boost::json::value const & recordData,
+                                                                       JsonRecordDefinition const & recordDefinition);
 
    /**
     * \brief Constructor

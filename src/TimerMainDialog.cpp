@@ -358,13 +358,15 @@ void TimerMainDialog::on_limitRingTimeCheckBox_clicked() {
    return;
 }
 
-void TimerMainDialog::on_limitRingTimeSpinBox_valueChanged(int l) {
-   alarmLimit = l;
-   setRingLimits(limitAlarmRing, alarmLimit);
+void TimerMainDialog::on_limitRingTimeSpinBox_valueChanged(int limit) {
+   this->alarmLimit = limit;
+   this->setRingLimits(this->limitAlarmRing, alarmLimit);
    return;
 }
 
-void TimerMainDialog::setRingLimits(bool l, unsigned int a) {
+// .:TODO:. I think this function needs refactoring given that it doesn't do anything with either of its parameters!
+void TimerMainDialog::setRingLimits([[maybe_unused]] bool limit,
+                                    [[maybe_unused]] unsigned int a) {
    for (TimerWidget* t : *this->timers) {
       t->setAlarmLimits(limitAlarmRing, alarmLimit);
    }

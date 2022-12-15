@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -170,7 +170,7 @@ void BtTreeView::renameFolder(BtFolder * victim, QString newName) {
    m_model->renameFolder(victim, newName);
 }
 
-std::optional<BtTreeItem::Type> BtTreeView::type(const QModelIndex & index) {
+std::optional<BtTreeItem::Type> BtTreeView::type(const QModelIndex & index) const {
    return this->m_model->type(this->m_filter->mapToSource(index));
 }
 

@@ -32,19 +32,19 @@
 namespace {
    // See https://apache.github.io/xalan-c/api/XalanNode_8hpp_source.html for possible indexes into this array
    char const * const XALAN_NODE_TYPES[] {
-      "UNKNOWN_NODE",                 //= 0,
-      "ELEMENT_NODE",                 //= 1,
-      "ATTRIBUTE_NODE",               //= 2,
-      "TEXT_NODE",                    //= 3,
-      "CDATA_SECTION_NODE",           //= 4,
-      "ENTITY_REFERENCE_NODE",        //= 5,
-      "ENTITY_NODE",                  //= 6,
-      "PROCESSING_INSTRUCTION_NODE",  //= 7,
-      "COMMENT_NODE",                 //= 8,
-      "DOCUMENT_NODE",                //= 9,
-      "DOCUMENT_TYPE_NODE",           //= 10,
-      "DOCUMENT_FRAGMENT_NODE",       //= 11,
-      "NOTATION_NODE",                //= 12
+      "UNKNOWN_NODE",                 // = 0,
+      "ELEMENT_NODE",                 // = 1,
+      "ATTRIBUTE_NODE",               // = 2,
+      "TEXT_NODE",                    // = 3,
+      "CDATA_SECTION_NODE",           // = 4,
+      "ENTITY_REFERENCE_NODE",        // = 5,
+      "ENTITY_NODE",                  // = 6,
+      "PROCESSING_INSTRUCTION_NODE",  // = 7,
+      "COMMENT_NODE",                 // = 8,
+      "DOCUMENT_NODE",                // = 9,
+      "DOCUMENT_TYPE_NODE",           // = 10,
+      "DOCUMENT_FRAGMENT_NODE",       // = 11,
+      "NOTATION_NODE",                // = 12
       "UNRECOGNISED!"
    };
 
@@ -61,6 +61,17 @@ namespace {
    }
 }
 
+XmlRecord::FieldDefinition::FieldDefinition(FieldType           fieldType,
+                                            XQString            xPath,
+                                            BtStringConst const & propertyName,
+                                            EnumStringMapping const * enumMapping) :
+   fieldType{fieldType},
+   xPath{xPath},
+   propertyName{propertyName},
+   enumMapping{enumMapping} {
+   return;
+}
+
 XmlRecord::XmlRecord(QString const & recordName,
                      XmlCoding const & xmlCoding,
                      FieldDefinitions const & fieldDefinitions,
@@ -75,6 +86,8 @@ XmlRecord::XmlRecord(QString const & recordName,
    childRecords{} {
    return;
 }
+
+XmlRecord::~XmlRecord() = default;
 
 QString XmlRecord::getRecordName() const {
    return this->recordName;
@@ -193,14 +206,14 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         parsedValue.setValue(true);
                         parsedValueOk = true;
                      } else if (value.toLower() == "false") {
-                        parsedValue.setValue(true);
+                        parsedValue.setValue(false);
                         parsedValueOk = true;
                      } else {
                         // This is almost certainly a coding error, as we should have already validated that the field
                         // via XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as BOOLEAN";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as BOOLEAN";
                      }
                      break;
 
@@ -208,11 +221,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      // QString's toInt method will report success/failure of parsing straight back into our flag
                      parsedValue.setValue(value.toInt(&parsedValueOk));
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
+                        // This is almost certainly a coding error, as we should have already validated the field via
+                        // XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as integer";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as integer";
                      }
                      break;
 
@@ -220,11 +233,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      // QString's toUInt method will report success/failure of parsing straight back into our flag
                      parsedValue.setValue(value.toUInt(&parsedValueOk));
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
+                        // This is almost certainly a coding error, as we should have already validated the field via
+                        // XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as unsigned integer";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as unsigned integer";
                      }
                      break;
 
@@ -244,8 +257,8 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         // and should be interpreted as NULL, which therefore means we store 0.0.
                         //
                         qInfo() <<
-                           Q_FUNC_INFO << "Treating " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as 0.0";
+                           Q_FUNC_INFO << "Treating " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as 0.0";
                         parsedValue.setValue(0.0);
                         parsedValueOk = true;
                      }
@@ -290,7 +303,8 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                            //
                            // Try USA / Philippines numeric format next, though NB this could mis-parse some
                            // non-USA-format dates per example above.  (Historically we assumed USA format dates before
-                           // non-USA-format ones, so we're retaining existing behaviour by trying things in this order.)
+                           // non-USA-format ones, so we're retaining existing behaviour by trying things in this
+                           // order.)
                            date = QDate::fromString(value, "M/d/yyyy");
                            parsedValueOk = date.isValid();
                         }
@@ -318,11 +332,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         parsedValue.setValue(date);
                      }
                      if (!parsedValueOk) {
-                        // This is almost certainly a coding error, as we should have already validated the field via XSD
-                        // parsing.
+                        // This is almost certainly a coding error, as we should have already validated the field via
+                        // XSD parsing.
                         qWarning() <<
-                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                           value << " as could not be parsed as ISO 8601 date";
+                           Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                           fieldDefinition->xPath << "=" << value << " as could not be parsed as ISO 8601 date";
                      }
                      break;
 
@@ -330,13 +344,13 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
                      Q_ASSERT(nullptr != fieldDefinition->enumMapping);
                      {
-                        auto match = fieldDefinition->enumMapping->stringToEnum(value);
+                        auto match = fieldDefinition->enumMapping->stringToEnumAsInt(value);
                         if (!match) {
                            // This is probably a coding error as the XSD parsing should already have verified that the
                            // contents of the node are one of the expected values.
                            qWarning() <<
-                              Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
-                              value << " as value not recognised";
+                              Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                              fieldDefinition->xPath << "=" << value << " as value not recognised";
                         } else {
                               parsedValue.setValue(match.value());
                            parsedValueOk = true;
@@ -377,15 +391,15 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                }
 
                //
-               // What we do if we couldn't parse the value depends.  If it was a value that we didn't need to set on the
-               // supplied Hop/Yeast/Recipe/Etc object, then we can just ignore the problem and carry on processing.  But,
-               // if this was a field we were expecting to use, then it's a problem that we couldn't parse it and we should
-               // bail.
+               // What we do if we couldn't parse the value depends.  If it was a value that we didn't need to set on
+               // the supplied Hop/Yeast/Recipe/Etc object, then we can just ignore the problem and carry on processing.
+               // But, if this was a field we were expecting to use, then it's a problem that we couldn't parse it and
+               // we should bail.
                //
-               if (!parsedValueOk && nullptr != fieldDefinition->propertyName) {
+               if (!parsedValueOk && !fieldDefinition->propertyName.isNull()) {
                   userMessage <<
-                     "Could not parse " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" << value << " into " <<
-                     fieldDefinition->propertyName;
+                     "Could not parse " << this->namedEntityClassName << " node " << fieldDefinition->xPath << "=" <<
+                     value << " into " << fieldDefinition->propertyName;
                   return false;
                }
 
@@ -672,7 +686,7 @@ void XmlRecord::normaliseName() {
    return;
 }
 
-void XmlRecord::setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
+void XmlRecord::setContainingEntity([[maybe_unused]] std::shared_ptr<NamedEntity> containingEntity) {
    // Base class does not have a NamedEntity or a container, so nothing to do
    // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
    // NamedEntity, and subclasses that do have one should override this function.
@@ -825,19 +839,9 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
             case XmlRecord::FieldType::Enum:
                // It's definitely a coding error if there is no enumMapping for a field declared as Enum!
                Q_ASSERT(nullptr != fieldDefinition.enumMapping);
-               {
-                  auto match = fieldDefinition.enumMapping->enumToString(value.toInt());
-                  if (!match) {
-                  // It's a coding error if we couldn't find the enum value the enum mapping
-                  qCritical() << Q_FUNC_INFO <<
-                     "Could not find string representation of enum property" << fieldDefinition.propertyName <<
-                     "value " << value.toString() << "when writing <" << fieldDefinition.xPath << "> field of" <<
-                     namedEntityToExport.metaObject()->className();
-                  Q_ASSERT(false); // Stop here on a debug build
-                  continue;        // Soldier on in a prod build
-               }
-                  valueAsText = match.value();
-               }
+               // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log
+               // an error and throw an exception).
+               valueAsText = fieldDefinition.enumMapping->enumToString(value.toInt());
                break;
 
             // By default we assume it's a string
@@ -862,11 +866,11 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
 }
 
 void XmlRecord::subRecordToXml(XmlRecord::FieldDefinition const & fieldDefinition,
-                               XmlRecord const & subRecord,
+                               [[maybe_unused]] XmlRecord const & subRecord,
                                NamedEntity const & namedEntityToExport,
-                               QTextStream & out,
-                               int indentLevel,
-                               char const * const indentString) const {
+                               [[maybe_unused]] QTextStream & out,
+                               [[maybe_unused]] int indentLevel,
+                               [[maybe_unused]] char const * const indentString) const {
    // Base class does not know how to handle nested records
    // It's a coding error if we get here as this virtual member function should be overridden classes that have nested records
    qCritical() << Q_FUNC_INFO <<

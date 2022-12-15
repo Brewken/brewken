@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/BtStringStream.h is part of Brewken, and is copyright the following authors 2021:
+ * utils/BtStringStream.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -34,6 +34,16 @@ public:
     * \brief Returns the string representation of this object object.
     */
    QString const & asString() const;
+
+   /**
+    * \brief We delete the QTextStream::string() member function because it returns a pointer to a QString and if you
+    *        write this out via logging, you'll get the address of the QString instead of its contents, which 99.99% of
+    *        the time is (a) not what you want and (b) something you discover too late (when you're trying to debug
+    *        something).
+    *
+    *        Use \c asString() instead.
+    */
+   QString * string() const = delete;
 
 private:
    QString theString;

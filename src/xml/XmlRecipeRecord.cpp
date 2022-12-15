@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ namespace {
    // functions.
    //
    template<typename CNE>
-   void setAmountsEtc(CNE & ingredient, NamedParameterBundle const & npb) {
+   void setAmountsEtc([[maybe_unused]] CNE & ingredient, [[maybe_unused]] NamedParameterBundle const & npb) {
       return;
    }
    template<> void setAmountsEtc(Hop & hop, NamedParameterBundle const & npb) {
@@ -42,7 +42,9 @@ namespace {
       return;
    }
    template<> void setAmountsEtc(Fermentable & fermentable, NamedParameterBundle const & npb) {
-      fermentable.setAmount_kg(npb(PropertyNames::Fermentable::amount_kg).toDouble());
+      fermentable.setAmount_kg(   npb(PropertyNames::Fermentable::amount_kg).toDouble());
+      fermentable.setAddAfterBoil(npb(PropertyNames::Fermentable::addAfterBoil).toBool());
+      fermentable.setIsMashed(    npb(PropertyNames::Fermentable::isMashed).toBool());
       return;
    }
    template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {
@@ -81,7 +83,8 @@ void XmlRecipeRecord::addChildren() {
    //
    for (auto ii : this->childRecords) {
       if (ii.xmlRecord->namedEntityClassName == childClassName) {
-         qDebug() << Q_FUNC_INFO << "Adding " << childClassName << " to Recipe";
+         qDebug() <<
+            Q_FUNC_INFO << "Adding " << childClassName << "#" << ii.xmlRecord->getNamedEntity()->key() << "to Recipe";
 
          // It would be a (pretty unexpected) coding error if the NamedEntity subclass object isn't of the class it's
          // supposed to be.
@@ -109,7 +112,11 @@ void XmlRecipeRecord::addChildren() {
          // Recipe, we need to set the "how much and when to add" info based on the fields we retained from XML record.
          //
          Q_ASSERT(added);
-         setAmountsEtc(*added, ii.xmlRecord->getNamedParameterBundle());
+         NamedParameterBundle const & npb = ii.xmlRecord->getNamedParameterBundle();
+         qDebug() <<
+            Q_FUNC_INFO << "Setting amounts for" << childClassName << "#" << added->key() <<
+            "to Recipe, using bundle" << npb;
+         setAmountsEtc(*added, npb);
       }
    }
    return;

@@ -21,23 +21,19 @@
 
 namespace {
    EnumStringMapping const physicalQuantityToName {
-      {QT_TR_NOOP("Mass")          , Measurement::PhysicalQuantity::Mass          },
-      {QT_TR_NOOP("Volume")        , Measurement::PhysicalQuantity::Volume        },
-      {QT_TR_NOOP("Time")          , Measurement::PhysicalQuantity::Time          },
-      {QT_TR_NOOP("Temperature")   , Measurement::PhysicalQuantity::Temperature   },
-      {QT_TR_NOOP("Color")         , Measurement::PhysicalQuantity::Color         },
-      {QT_TR_NOOP("Density")       , Measurement::PhysicalQuantity::Density       },
-      {QT_TR_NOOP("Mixed")         , Measurement::PhysicalQuantity::Mixed         },
-      {QT_TR_NOOP("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower}
+      {QObject::tr("Mass")          , Measurement::PhysicalQuantity::Mass          },
+      {QObject::tr("Volume")        , Measurement::PhysicalQuantity::Volume        },
+      {QObject::tr("Time")          , Measurement::PhysicalQuantity::Time          },
+      {QObject::tr("Temperature")   , Measurement::PhysicalQuantity::Temperature   },
+      {QObject::tr("Color")         , Measurement::PhysicalQuantity::Color         },
+      {QObject::tr("Density")       , Measurement::PhysicalQuantity::Density       },
+      {QObject::tr("Mixed")         , Measurement::PhysicalQuantity::Mixed         },
+      {QObject::tr("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower}
    };
 }
 
 QString Measurement::getDisplayName(Measurement::PhysicalQuantity physicalQuantity) {
-   auto returnValue = physicalQuantityToName.enumToString(physicalQuantity);
-   // It's a coding error if we don't find a result!
-   if (!returnValue) {
-      qCritical() << Q_FUNC_INFO << "No mapping defined for PhysicalQuantity #" << static_cast<int>(physicalQuantity);
-      Q_ASSERT(false); // Stop here on debug builds
-   }
-   return *returnValue;
+   // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log an error and
+   // throw an exception).
+   return physicalQuantityToName.enumToString(physicalQuantity);
 }

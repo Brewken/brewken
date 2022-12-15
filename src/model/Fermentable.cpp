@@ -194,24 +194,21 @@ const QString Fermentable::additionMethodStringTr() const {
 }
 
 const QString Fermentable::additionTimeStringTr() const {
-    if (this->addAfterBoil()) {
-       return tr("Late");
-    }
-    return tr("Normal");
+   if (this->addAfterBoil()) {
+      return tr("Late");
+   }
+   return tr("Normal");
 }
 
-bool Fermentable::isExtract() const
-{
+bool Fermentable::isExtract() const {
    return ((type() == Fermentable::Type::Extract) || (type() == Fermentable::Type::Dry_Extract));
 }
 
-bool Fermentable::isSugar() const
-{
+bool Fermentable::isSugar() const {
    return (type() == Fermentable::Type::Sugar);
 }
 
-bool Fermentable::isValidType( const QString& str )
-{
+bool Fermentable::isValidType( const QString& str ) {
    return (types.indexOf(str) >= 0);
 }
 
@@ -257,8 +254,7 @@ void Fermentable::setIbuGalPerLb( double num ) {
    this->setAndNotify( PropertyNames::Fermentable::ibuGalPerLb, this->m_ibuGalPerLb, num);
 }
 
-double Fermentable::equivSucrose_kg() const
-{
+double Fermentable::equivSucrose_kg() const {
    double ret = amount_kg() * yield_pct() * (1.0-moisture_pct()/100.0) / 100.0;
 
    // If this is a steeped grain...

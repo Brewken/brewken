@@ -33,10 +33,10 @@
 
 #include "measurement/Unit.h"
 #include "tableModels/BtTableModelInventory.h"
+#include "model/Yeast.h"
 
 // Forward declarations.
 class BtStringConst;
-class Yeast;
 class YeastTableWidget;
 class YeastItemDelegate;
 class Recipe;

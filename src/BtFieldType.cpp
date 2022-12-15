@@ -21,20 +21,15 @@
 
 namespace {
    EnumStringMapping const nonPhysicalQuantityToName {
-      {QT_TR_NOOP("Date")       , NonPhysicalQuantity::Date  },
-      {QT_TR_NOOP("String")     , NonPhysicalQuantity::String},
-      {QT_TR_NOOP("Count")      , NonPhysicalQuantity::Count },
-      {QT_TR_NOOP("Percentage") , NonPhysicalQuantity::Percentage }
+      {"Date"      , NonPhysicalQuantity::Date      },
+      {"String"    , NonPhysicalQuantity::String    },
+      {"Count"     , NonPhysicalQuantity::Count     },
+      {"Percentage", NonPhysicalQuantity::Percentage}
    };
 }
 
 QString GetDisplayName(NonPhysicalQuantity nonPhysicalQuantity) {
-   auto returnValue = nonPhysicalQuantityToName.enumToString(nonPhysicalQuantity);
-   // It's a coding error if we don't find a result!
-   if (!returnValue) {
-      qCritical() <<
-         Q_FUNC_INFO << "No mapping defined for NonPhysicalQuantity #" << static_cast<int>(nonPhysicalQuantity);
-      Q_ASSERT(false); // Stop here on debug builds
-   }
-   return *returnValue;
+   // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log an error and
+   // throw an exception).
+   return nonPhysicalQuantityToName.enumToString(nonPhysicalQuantity);
 }

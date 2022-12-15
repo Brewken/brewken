@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * InstructionWidget.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * InstructionWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,9 +17,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "InstructionWidget.h"
 
 #include "model/Instruction.h"
-#include "InstructionWidget.h"
 #include "TimerWidget.h"
 
 InstructionWidget::InstructionWidget(QWidget* parent) :
@@ -63,10 +64,11 @@ void InstructionWidget::showChanges()
    checkBox_completed->setCheckState( insObs->completed() ? Qt::Checked : Qt::Unchecked );
 }
 
-void InstructionWidget::changed(QMetaProperty prop, QVariant /*val*/)
-{
-   if( sender() != insObs )
+void InstructionWidget::changed([[maybe_unused]] QMetaProperty prop,
+                                [[maybe_unused]] QVariant      val) {
+   if (sender() != insObs) {
       return;
+   }
 
    showChanges();
 }

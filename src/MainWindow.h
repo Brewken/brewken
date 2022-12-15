@@ -126,15 +126,13 @@ public:
    /**
     * \brief This needs to be called immediately after the constructor.  It does the remaining initialisation of the
     *        object.  This function cannot be called from the constructor as, in certain circumstances, it will invoke
-    *        code that calls Brewken::mainWindow() which returns a pointer to the MainWindow and therefore needs the
+    *        code that calls Application::mainWindow() which returns a pointer to the MainWindow and therefore needs the
     *        MainWindow constructor to have returned!
     */
    void init();
 
    //! \brief Get the currently observed recipe.
    Recipe* currentRecipe();
-   //! \brief Display a file dialog for writing xml files.
-   QFile* openForWrite(QString filterStr = "BeerXML files (*.xml)", QString defaultSuff = "xml");
 
    bool verifyImport(QString tag, QString name);
    bool verifyDelete(QString tab, QString name);
@@ -268,9 +266,6 @@ public slots:
    void changeBrewDate();
    void fixBrewNote();
 
-   //! \brief Catches a QNetworkReply signal and gets info about any new version available.
-   void finishCheckingVersion();
-
    void redisplayLabel();
 
    void showEquipmentEditor();
@@ -297,6 +292,16 @@ public slots:
    //! \brief prepopulate the ancestorDialog when the menu is selected
    void setAncestor();
 
+   /*!
+    * \brief Make the widgets in the window update changes.
+    *
+    * Updates all the widgets with info about the currently
+    * selected Recipe, except for the tables.
+    *
+    * \param prop Not yet used. Will indicate which Recipe property has changed.
+    */
+   void showChanges(QMetaProperty* prop = nullptr);
+
 public:
    //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
    //         which suffices for modifications to most individual non-relational attributes.
@@ -310,16 +315,6 @@ protected:
    virtual void closeEvent(QCloseEvent* event);
 
 private slots:
-   /*!
-    * \brief Make the widgets in the window update changes.
-    *
-    * Updates all the widgets with info about the currently
-    * selected Recipe, except for the tables.
-    *
-    * \param prop Not yet used. Will indicate which Recipe property has changed.
-    */
-   void showChanges(QMetaProperty* prop = nullptr);
-
    //! \brief Set whether undo / redo commands are enabled
    void setUndoRedoEnable();
 
@@ -352,7 +347,6 @@ private:
    QString highSS, lowSS, goodSS, boldSS; // Palette replacements
 
    AboutDialog* dialog_about;
-   QFileDialog* fileSaver;
    QList<QMenu*> contextMenus;
    EquipmentEditor* equipEditor;
    EquipmentEditor* singleEquipEditor;

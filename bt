@@ -1,0 +1,710 @@
+#!/usr/bin/env python3
+#-----------------------------------------------------------------------------------------------------------------------
+# bt is part of Brewken, and is copyright the following authors 2022:
+#   • Matt Young <mfsy@yahoo.com>
+#
+# Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# This build tool (bt) script helps with Git setup, meson build configuration and packaging.  It takes one argument, and
+# does different things depending on what that argument is:
+#
+#    ./bt setup                  Sets up Git options and configures the 'mbuild' meson build directory
+#
+#    ./bt package                Does the packaging by running 'meson install' (with extra options to "install"
+#                                binaries, data etc to a subdirectory of the build directory rather than to where they
+#                                need to be for a local install) and 'meson compile part_2_of_packaging'.  The latter
+#                                command ends up invoking this script again with part_3_of_packaging parameter.
+#
+#    ./bt part_3_of_packaging   Intended to be invoked from meson, this creates a distributable package, making use
+#                                of various environment variables set in the meson.build file.
+#
+# The rationale for bt invoking meson invoking bt is to minimise the number of places we essentially create the same
+# settings -- including keeping all the "what files need installing" config in the meson.build file.
+#
+#
+#
+# .:TODO:. At some point we should be able to retire:
+#    configure
+#    setupgit.sh
+#    CMakeLists.txt
+#    src/CMakeLists.txt
+#    packaging/qtIfw -- if we end up not going with Qt Install Framework
+#
+#
+# Note that Python allows both single and double quotes for delimiting strings.  In Meson, we need single quotes, in
+# C++, we need double quotes.  We mostly try to use single quotes below for consistency with Meson, except where using
+# double quotes avoids having to escape a single quote.
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Python modules we need to import
+#-----------------------------------------------------------------------------------------------------------------------
+import argparse
+import datetime
+import logging
+import os
+import pathlib
+import platform
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Global constants
+#-----------------------------------------------------------------------------------------------------------------------
+projectName = 'brewken'
+capitalisedProjectName = projectName.capitalize()
+projectUrl = 'https://github.com/' + capitalisedProjectName + '/' + projectName + '/'
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Welcome banner and environment info
+#-----------------------------------------------------------------------------------------------------------------------
+# The '%c' argument to strftime means "Locale’s appropriate date and time representation"
+print(
+   '⭐ ' + capitalisedProjectName + ' build tool running on ' + platform.system() + ' (' + platform.release() +
+   ') at ' + datetime.datetime.now().strftime('%c') + ' ⭐'
+)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Set up logging to stderr
+#-----------------------------------------------------------------------------------------------------------------------
+logging.basicConfig(format='%(message)s')
+log = logging.getLogger(__name__)
+# This is our default log level, but it can be overridden via the -v and -q command line options -- see below
+log.setLevel(logging.INFO)
+# Include the log level in the message
+handler = logging.StreamHandler()
+handler.setFormatter(
+   # You can add timestamps etc to logs, but that's overkill for this script.  Source file location of log message is
+   # however pretty useful for debugging.
+   logging.Formatter('{levelname:s}:  {message}  [{filename:s}:{lineno:d}]', style='{')
+)
+log.addHandler(handler)
+# If we don't do this, everything gets printed twice
+log.propagate = False
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Parse command line arguments
+#-----------------------------------------------------------------------------------------------------------------------
+# We do this (nearly) first as we want the program to exit straight away if incorrect arguments are specified
+# Choosing which action to call is done a the end of the script, after all functions are defined
+#
+# Using Python argparse saves us writing a lot of boilerplate, although the help text it generates on the command line
+# is perhaps a bit more than we want (eg having to separate 'bt --help' and 'bt setup --help' is overkill for us).
+# There are ways around this -- eg see
+# https://stackoverflow.com/questions/20094215/argparse-subparser-monolithic-help-output -- but they are probably more
+# complexity than is merited here.
+#
+parser = argparse.ArgumentParser(
+   prog = 'bt',
+   description = capitalisedProjectName + ' build tool.  A utility to help with installing dependencies, Git ' +
+                 'setup, Meson build configuration and packaging.',
+   epilog = 'See ' + projectUrl + ' for info and latest releases'
+)
+
+# Log level
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-v', '--verbose', action = 'store_true', help = 'Enable debug logging of this script')
+group.add_argument('-q', '--quiet',   action = 'store_true', help = 'Suppress info logging of this script')
+
+# Per https://docs.python.org/3/library/argparse.html#sub-commands, you use sub-parsers for sub-commands.
+subparsers = parser.add_subparsers(
+   dest = 'subCommand',
+   required = True,
+   title = 'action',
+   description = "Exactly one of the following actions must be specified.  (For actions marked ✴, specify -h or "
+                 "--help AFTER the action for info about options -- eg '%(prog)s setup --help'.)"
+)
+
+# Parser for 'setup'
+parser_setup = subparsers.add_parser('setup', help = '✴ Set up meson build directory (mbuild) and git options')
+subparsers_setup = parser_setup.add_subparsers(dest = 'setupOption', required = False)
+parser_setup_all = subparsers_setup.add_parser(
+   'all',
+   help = 'Specifying this will also automatically install libraries and frameworks we depend on'
+)
+
+# Parser for 'package'
+parser_package = subparsers.add_parser('package', help='Build a distributable installer')
+
+#
+# Process the arguments for use below
+#
+# This try/expect ensures that help is printed if the script is invoked without arguments.  It's not perfect as you get
+# the usage line twice (because parser.parse_args() outputs it to stderr before throwing SystemExit) but it's good
+# enough for now at least.
+#
+try:
+   args = parser.parse_args()
+except SystemExit as se:
+   if (se.code != None and se.code != 0):
+      parser.print_help()
+   sys.exit(0)
+
+#
+# The one thing we do set straight away is log level
+# Possible levels are 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'.  We choose 'INFO' for default, 'DEBUG'
+# for verbose and 'WARNING' for quiet.  You wouldn't want to suppress warnings, would you? :-)
+#
+if (args.verbose):
+   log.setLevel(logging.DEBUG)
+elif (args.quiet):
+   log.setLevel(logging.WARNING)
+
+log.debug('Parsed command line arguments as ' + str(args))
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Note the working directory from which we were invoked -- though it shouldn't matter as we try to be independent of
+# this
+#-----------------------------------------------------------------------------------------------------------------------
+log.debug('Working directory when invoked: ' + pathlib.Path.cwd().as_posix())
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Directories
+#-----------------------------------------------------------------------------------------------------------------------
+dir_base          = pathlib.Path(__file__).parent.resolve()
+dir_gitInfo       = dir_base.joinpath('.git')
+dir_build         = dir_base.joinpath('mbuild')
+dir_gitSubmodules = dir_base.joinpath('third-party')
+# See comment in doPackage() for explanation of qtIfw directory tree
+dir_qtIfw           = dir_build.joinpath('qtIfw')
+dir_qtIfw_config    = dir_qtIfw.joinpath('config')
+dir_qtIfw_packages  = dir_qtIfw.joinpath('packages')
+dir_qtIfw_component = dir_qtIfw_packages.joinpath('com.' + projectName + '.root')
+dir_qtIfw_data      = dir_qtIfw_component.joinpath('data')
+dir_qtIfw_meta      = dir_qtIfw_component.joinpath('meta')
+dirList_qtIfw = [
+   dir_qtIfw          ,
+   dir_qtIfw_config   ,
+   dir_qtIfw_packages ,
+   dir_qtIfw_component,
+   dir_qtIfw_data     ,
+   dir_qtIfw_meta     ,
+]
+
+#-----------------------------------------------------------------------------------------------------------------------
+# External commands
+#-----------------------------------------------------------------------------------------------------------------------
+# Advice at https://docs.python.org/3/library/subprocess.html is "For maximum reliability, use a fully qualified path
+# for the executable. To search for an unqualified name on PATH, use shutil.which()"
+exe_git   = shutil.which("git")
+exe_meson = shutil.which("meson")
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Helper function for checking result of running external commands
+#
+# Given a CompletedProcess object returned from subprocess.run(), this checks the return code and, if it is non-zero
+# stops this script with an error message and the same return code.  Otherwise control is returned to the caller.
+#-----------------------------------------------------------------------------------------------------------------------
+def abortOnRunFail(runResult: subprocess.CompletedProcess):
+   if (runResult.returncode != 0):
+      # According to https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess,
+      # CompletedProcess.args (the arguments used to launch the process) "may be a list or a string", but its not clear
+      # when it would be one or the other.
+      if (isinstance(runResult.args, str)):
+         log.critical('Error running ' + runResult.args)
+      else:
+         commandName = os.path.basename(runResult.args[0])
+         log.critical('Error running ' + commandName + ' (' + ' '.join(str(ii) for ii in runResult.args) + ')')
+
+      exit(runResult.returncode)
+
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Helper function for counting files in a directory tree
+#-----------------------------------------------------------------------------------------------------------------------
+def numFilesInTree(path):
+   numFiles = 0
+   for root, dirs, files in os.walk(path):
+      numFiles += len(files)
+   return numFiles
+
+#-----------------------------------------------------------------------------------------------------------------------
+# We want to give helpful error messages if Meson or Git is not installed.  For other missing dependencies we can rely
+# on Meson itself to give explanatory error messages.
+#-----------------------------------------------------------------------------------------------------------------------
+def checkForMesonAndGit():
+   # Check Meson is installed
+   if (exe_meson is None or exe_meson == ""):
+      log.critical('Cannot find meson - please see https://mesonbuild.com/Getting-meson.html for how to install')
+      exit(1)
+
+   # Check Git is installed if its magic directory is present
+   if (dir_gitInfo.is_dir()):
+      log.debug('Found git information directory:' + dir_gitInfo.as_posix())
+      if (exe_git is None or exe_git == ""):
+         log.critical('Cannot find git - please see https://git-scm.com/downloads for how to install')
+         exit(1)
+
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Function to install dependencies -- called if the user runs 'bt setup all'
+#-----------------------------------------------------------------------------------------------------------------------
+def installDependencies():
+   log.info('Checking which dependencies need to be installed')
+   # One day perhaps we'll be able to do this generically using Conan or vcpkg, but we're not there yet
+   #
+   # For now, it's mostly different code for each of the 3 platforms (Linux, Windows, Mac)
+   match platform.system():
+
+      case 'Linux':
+         #
+         # NOTE: For the moment at least, we are assuming you are on Ubuntu or another Debian-based Linux.  For other
+         # flavours of the OS you need to install libraries and frameworks manually.
+         #
+
+         #
+         # We need a recent version of Boost, ie Boost 1.79 or newer, to use Boost.JSON.  For Windows and Mac this is
+         # fine if you are installing from MSYS2 (https://packages.msys2.org/package/mingw-w64-x86_64-boost) or
+         # Homebrew (https://formulae.brew.sh/formula/boost) respectively.  Unfortunately, as of late-2022, many
+         # Linux distros provide only older versions of Boost.  (Eg, on Ubuntu, you can see this by running
+         # 'apt-cache policy libboost-dev'.)
+         #
+         # First, check whether Boost is installed and if so, what version
+         #
+         # We'll look in the following places:
+         #    /usr/include/boost/version.hpp        <-- Distro-installed Boost
+         #    /usr/local/include/boost/version.hpp  <-- Manually-installed Boost
+         #    ${BOOST_ROOT}/boost/version.hpp       <-- If the BOOST_ROOT environment variable is set it gives an
+         #                                              alternative place to look
+         #
+         maxBoostVersionFound = 0
+         possibleBoostVersionHeaders = [pathlib.Path('/usr/include/boost/version.hpp'),
+                                          pathlib.Path('/usr/local/include/boost/version.hpp')]
+         if ('BOOST_ROOT' in os.environ):
+            possibleBoostVersionHeaders.append(pathlib.Path(os.environ['BOOST_ROOT']).joinpath('boost/version.hpp'))
+         for boostVersionHeader in possibleBoostVersionHeaders:
+            if (boostVersionHeader.is_file()):
+               runResult = subprocess.run(['grep', '#define BOOST_VERSION ', boostVersionHeader.as_posix()],
+                                          capture_output=True)
+               if (runResult.returncode == 0 ):
+                  log.debug('In ' + boostVersionHeader.as_posix() + ' found ' + str(runResult.stdout))
+                  version = int(re.sub(r'^.*BOOST_VERSION ([0-9]*).*$', r'\1', str(runResult.stdout)))
+                  if (version > maxBoostVersionFound):
+                     maxBoostVersionFound = version
+                  log.debug('Parsed as ' + str(version) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
+
+         # Per the comment in boost/version.hpp:
+         #    BOOST_VERSION % 100 is the patch level
+         #    BOOST_VERSION / 100 % 1000 is the minor version
+         #    BOOST_VERSION / 100000 is the major version
+         # So, eg, for Boost 1.79.0 (= 1.079.00), BOOST_VERSION = 107900
+         stringMaxVersion = 'None'
+         if (maxBoostVersionFound > 0):
+            stringMaxVersion = str(int(maxBoostVersionFound / 100000)) + '.' + str(int(maxBoostVersionFound / 100 % 1000)) + '.' + str(maxBoostVersionFound % 100)
+         log.debug('Max version of Boost found: ' + stringMaxVersion)
+         if (maxBoostVersionFound < 107900):
+            # If we're going to all the bother of installing Boost, let's install the most recent one
+            boostVersionToInstall = '1.80.0'
+            log.info(
+               'Installing Boost ' + boostVersionToInstall + ' as newest version found was ' + stringMaxVersion
+            )
+            #
+            # To manually install the latest version of Boost from source, first we uninstall any old version
+            # installed via the distro (eg, on Ubuntu, this means 'sudo apt remove libboost-all-dev'), then we follow
+            # the instructions at https://www.boost.org/more/getting_started/index.html.
+            #
+            # It's best to leave the default install location: headers in the 'boost' subdirectory of
+            # /usr/local/include and libraries in /usr/local/lib.
+            #
+            # (It might initially _seem_ a good idea to put things in the same place as the distro packages, ie
+            # running './bootstrap.sh --prefix=/usr' to put headers in /usr/include and libraries in /usr/lib.
+            # However, this will mean that Meson cannot find the manually-installed Boost, even though it can find
+            # distro-installed Boost in this location.)  So, eg, for Boost 1.80 on Linux, this means the following
+            # in the shell:
+            #
+            #    cd ~
+            #    mkdir ~/boost-tmp
+            #    cd ~/boost-tmp
+            #    wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
+            #    tar --bzip2 -xf boost_1_80_0.tar.bz2
+            #    cd boost_1_80_0
+            #    ./bootstrap.sh
+            #    sudo ./b2 install
+            #    cd ~
+            #    sudo rm -rf ~/boost-tmp
+            #
+            # We can handle the temporary directory stuff more elegantly (ie RAII style) in Python however
+            #
+            with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
+               previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+               os.chdir(tmpDirName)
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+               boostUnderscoreName = 'boost_' + boostVersionToInstall.replace('.', '_')
+               abortOnRunFail(
+                  subprocess.run(
+                     ['wget',
+                        'https://boostorg.jfrog.io/artifactory/main/release/' + boostVersionToInstall + '/source/' + boostUnderscoreName + '.tar.bz2']
+                  )
+               )
+               log.debug('Boost download completed')
+               abortOnRunFail(subprocess.run(['tar', '--bzip2', '-xf', boostUnderscoreName + '.tar.bz2']))
+               log.debug('Boost archive extracted')
+               os.chdir(boostUnderscoreName)
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+               abortOnRunFail(subprocess.run(['./bootstrap.sh']))
+               log.debug('Boost bootstrap finished')
+               abortOnRunFail(subprocess.run(['sudo', './b2', 'install']))
+               log.debug('Boost install finished')
+               os.chdir(previousWorkingDirectory)
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix() + '.  Removing ' + tmpDirName)
+               abortOnRunFail(
+                  subprocess.run(
+                     ['sudo', 'chmod', 'a+rw', tmpDirName]
+                  )
+               )
+
+         # Almost everything else we can rely on the distro packages
+         log.info('Ensuring other libraries and frameworks are installed')
+         abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
+         abortOnRunFail(
+            subprocess.run(
+               ['sudo', 'apt-get', 'install', '-y', 'cmake',
+                                                      'debhelper',
+                                                      'git',
+                                                      'libqt5multimedia5-plugins',
+                                                      'libqt5sql5-psql',
+                                                      'libqt5sql5-sqlite',
+                                                      'libqt5svg5-dev',
+                                                      'libxalan-c-dev',
+                                                      'libxerces-c-dev',
+                                                      'lintian',
+                                                      'meson',
+                                                      'ninja-build',
+                                                      'python3',
+                                                      'qtbase5-dev',
+                                                      'qtmultimedia5-dev',
+                                                      'qttools5-dev',
+                                                      'qttools5-dev-tools',
+                                                      'rpm',
+                                                      'rpmlint']
+            )
+         )
+
+      case 'Windows':
+         log.debug('Windows')
+
+      case 'Darwin':
+         log.debug('Mac')
+
+      case _:
+         log.critical('Unrecognised platform: ' + platform.system())
+         exit(1)
+
+   log.info('*** Finished checking / installing dependencies ***')
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# ./bt setup
+#-----------------------------------------------------------------------------------------------------------------------
+def doSetup(setupOption):
+   if (setupOption == 'all'):
+      installDependencies()
+
+   # Before we start invoking git and meson, let's check that, one way or another, they got installed
+   checkForMesonAndGit()
+
+   # If this is a git checkout then let's set up git with the project standards
+   if (dir_gitInfo.is_dir()):
+      log.info('Setting up ' + capitalisedProjectName + ' git preferences')
+      # Enforce indentation with spaces, not tabs.
+      abortOnRunFail(
+         subprocess.run(
+            [exe_git,
+               "config",
+               "--file", dir_gitInfo.joinpath('config').as_posix(),
+               "core.whitespace",
+               "tabwidth=3,tab-in-indent"],
+            capture_output=False
+         )
+      )
+
+      # Enable the standard pre-commit hook that warns you about whitespace errors
+      shutil.copy2(dir_gitInfo.joinpath('hooks/pre-commit.sample'),
+                     dir_gitInfo.joinpath('hooks/pre-commit'))
+
+      # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
+      if (not dir_gitSubmodules.is_dir() or numFilesInTree(dir_gitSubmodules) == 0):
+         log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
+         os.makedirs(dir_gitSubmodules, exist_ok=True)
+         abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
+         abortOnRunFail(subprocess.run([exe_git, "submodule", "update"], capture_output=False))
+
+
+
+   # Check whether Meson build directory is already set up.  (Although nothing bad happens, if you run setup twice,
+   # it complains and tells you to run configure.)
+   # Best clue that set-up has been run (rather than, say, user just created empty mbuild directory by hand) is the
+   # presence of meson-info/meson-info.json (which is created by setup for IDE integration -- see
+   # https://mesonbuild.com/IDE-integration.html#ide-integration)
+   runMesonSetup = True
+   warnAboutCurrentDirectory = False
+   if (dir_build.joinpath('meson-info/meson-info.json').is_file()):
+      log.info('Meson build directory ' + dir_build.as_posix() + ' appears to be already set up')
+      # You usually only need to reset things after you've done certain edits to defaults etc in meson.build.  There
+      # are a whole bunch of things you can control with the 'meson configure' command, but it's simplest in some ways
+      # just to reset the build directory and rely on meson setup picking up defaults from meson.build.
+      response = ""
+      while (response != 'y' and response != 'n'):
+         response = input('Do you want to completely reset the build directory? [y or n] ').lower()
+      if (response == 'n'):
+         runMesonSetup = False
+      else:
+         # It's very possible that the user's current working directory is mbuild.  If so, we need to warn them and move
+         # up a directory (as 'meson setup' gets upset if current working directory does not exist).
+         log.info('Removing existing Meson build directory ' + dir_build.as_posix())
+         if (pathlib.Path.cwd().as_posix() == dir_build.as_posix()):
+            # We write a warning out here for completeness, but we really need to show it further down as it will have
+            # scrolled off the top of the terminal with all the output from 'meson setup'
+            log.warning('You are currently in the directory we are about to delete.  ' +
+                        'You will need to change directory!')
+            warnAboutCurrentDirectory = True
+            os.chdir(dir_base)
+         shutil.rmtree(dir_build)
+
+   if (runMesonSetup):
+      log.info('Setting up ' + dir_build.as_posix() + ' meson build directory')
+      # See https://mesonbuild.com/Commands.html#setup for all the optional parameters to meson setup
+      # Note that meson setup will create the build directory (along with various subdirectories)
+      abortOnRunFail(subprocess.run([exe_meson, "setup", dir_build.as_posix(), dir_base.as_posix()],
+                                    capture_output=False))
+
+      log.info('Finished setting up Meson build.  Note that the warnings above about path separator and optimization ' +
+               'level are expected!')
+
+   if (warnAboutCurrentDirectory):
+      print("❗❗❗ Your current directory has been deleted!  You need to run 'cd ../mbuild' ❗❗❗")
+   log.debug('Setup done')
+   print()
+   print('You can now build, test, install and run ' + capitalisedProjectName + ' with the following commands:')
+   print('   cd ' + os.path.relpath(dir_build))
+   print('   meson compile')
+   print('   meson test')
+   if (platform.system() == 'Linux'):
+      print('   sudo meson install')
+   else:
+      print('   meson install')
+   print('   ' + projectName)
+
+
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# ./bt package
+#-----------------------------------------------------------------------------------------------------------------------
+def doPackage():
+   #
+   # The directory structure we create inside the build directory (mbuild) for packaging is:
+   #
+   #    qtIfw/             <-- Groups all the Qt-IFW stuff together and keeps it separate from what's in the top-level
+   #    │                      build directory.  The binary installer we generate ends up in this directory.
+   #    │
+   #    ├── config/        <-- Global configuration for the installer lives here.  (If needed, a single installer can
+   #    │                      offer the end user choices about which packages (aka components) to install.  We don't
+   #    │                      need that complexity, so we just have one package.)
+   #    └── packages/
+   #        │
+   #        └── com.<appname>.root/  <-- Each subdirectory of packages is supposed to "act as domain-like identifier"
+   #            │                        for a component or subcomponent of the software.  We use the application name
+   #            │                        (ie brewtarget or brewken) for the "domain-like" bit.  We only have one
+   #            │                        subdirectory as we're not offering the end user a choice about which bits of
+   #            │                        functionality to install (otherwise each component and sub-component would also
+   #            │                        have its own packages subdirectory, with names like
+   #            │                        com.<appname>.root.component_foo.subcomponent_bar).
+   #            │
+   #            ├── data/            <-- Contains everything the installer is going to install, all packaged into
+   #            │                        archive files.  Archive files can be 7z (the default), zip, tar.gz, tar.bz2 or
+   #            │                        tar.xz.  Creation of the archive files can be done automatically by the Qt
+   #            │                        tools (eg binarycreator) or beforehand (eg using the archivegen tool that is
+   #            │                        delivered with the Qt Installer Framework) for more control.
+   #            │
+   #            └── meta/            <-- Files in here are not installed; they specify settings for deployment and the
+   #                                     installation process.  "The directory must contain at least a package
+   #                                     information file and all files that you refer to in the package information
+   #                                     file, such as scripts, user interface files, and translations.
+   #                                     TODO: think about localising the installer
+   #
+   # The six steps for creating a QtIFW installer are listed at
+   # https://doc.qt.io/qtinstallerframework/ifw-creating-installers.html.  We actually do them in a different order than
+   # listed because we don't want to duplicate things that meson can do automatically.  (Nor do we want to jump through
+   # hoops trying to bend meson to do things it is not designed for.)
+   #
+
+   # Step 1 : Create a package directory for the installable components
+   #          We'll make all the directories mentioned above and ensure they start out empty
+   if (dir_qtIfw.is_dir()):
+      log.info('Removing existing ' + dir_qtIfw.as_posix() + ' directory tree')
+      shutil.rmtree(dir_qtIfw)
+   for dirToCreate in dirList_qtIfw:
+      log.info('Creating directory ' + dirToCreate.as_posix())
+      os.makedirs(dirToCreate)
+
+   # We change into the build directory.  This doesn't affect the caller (of this script) because we're a separate
+   # sub-process from the (typically) shell that invoked us and we cannot change the parent process's working
+   # directory.
+   os.chdir(dir_build)
+   log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+   #
+   # Running 'meson install' with the --destdir option will put all the installable files (program executable,
+   # translation files, data files, etc) in the packaging directory
+   #
+   # It also generates config.xml and package.xml, but does not put them in the right directory
+   #
+   log.info('Running meson install with --destdir option')
+   # See https://mesonbuild.com/Commands.html#install for the optional parameters to meson install
+   abortOnRunFail(subprocess.run([exe_meson, "install", "--destdir", dir_qtIfw_data.as_posix()],
+                                 capture_output=False))
+
+   #
+   # If meson install worked, we can do the actual packaging via 'meson compile package'.  This will end up invoking
+   # another instance of this script, but with the part_3_of_packaging parameter (and a whole bunch of useful
+   # environment variables set by meson).
+   #
+   # Why is it 'meson compile package' rather than, say, 'meson package'?  It's because meson doesn't really know about
+   # packaging and we're just running it to get build info.  So we have a custom meson target called 'package', and when
+   # we ask meson to "compile" a custom target, we can actually have it run the executable of our choice - in this case
+   # this script.
+   #
+   log.info('Running meson compile part_2_of_packaging')
+   abortOnRunFail(subprocess.run([exe_meson, 'compile', 'part_2_of_packaging'], capture_output=False))
+
+   print()
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# ./bt part_3_of_packaging
+#-----------------------------------------------------------------------------------------------------------------------
+# NB: This part of the script is intended to be invoked from the Meson build (see ../meson.build).  Meson will
+# automatically set the following environment variables for us (though we don't need them as we assume these are the
+# directories we knew about when we invoked 'meson package').:
+#    MESON_SOURCE_ROOT
+#    MESON_BUILD_ROOT
+# Additionally, we use meson.build to set a whole bunch of CONFIG_ environment variables
+#-----------------------------------------------------------------------------------------------------------------------
+def doMesonPackageHelper():
+   # Copy the generated installer and package configuration/information files from the build directory to where they
+   # belong in the qtIfw subtree
+   shutil.copy2(dir_build.joinpath('config.xml'),  dir_qtIfw_config)
+   shutil.copy2(dir_build.joinpath('package.xml'), dir_qtIfw_meta)
+
+   # Copy other files
+   shutil.copy2(dir_base.joinpath('packaging').joinpath('qtIfw').joinpath('installerPage1.ui'), dir_qtIfw_meta)
+   shutil.copy2(dir_base.joinpath('LICENSE'), dir_qtIfw_meta.joinpath('license.txt'))
+
+   CONFIG_INSTALLER_APPLICATION_ICON = os.environ.get('CONFIG_INSTALLER_APPLICATION_ICON')
+   if (CONFIG_INSTALLER_APPLICATION_ICON is not None and CONFIG_INSTALLER_APPLICATION_ICON != ""):
+      log.debug("Copying " + CONFIG_INSTALLER_APPLICATION_ICON)
+      shutil.copy2(
+         dir_base.joinpath(
+            os.environ['CONFIG_INSTALLER_APPLICATION_ICON_DIR']
+         ).joinpath(
+            CONFIG_INSTALLER_APPLICATION_ICON
+         ),
+         dir_qtIfw_meta
+      )
+
+   CONFIG_INSTALLER_WINDOW_ICON = os.environ.get('CONFIG_INSTALLER_WINDOW_ICON')
+   if (CONFIG_INSTALLER_WINDOW_ICON is not None and CONFIG_INSTALLER_WINDOW_ICON != ""):
+      shutil.copy2(
+         dir_base.joinpath(
+            os.environ['CONFIG_INSTALLER_WINDOW_ICON_DIR']
+         ).joinpath(
+            CONFIG_INSTALLER_WINDOW_ICON
+         ),
+         dir_qtIfw_meta
+      )
+
+   #
+   # Find the binarycreator (Mac and Linux) / binarycreator.exe (Windows) file
+   #
+   # In order of preference we want:
+   #   - Whatever is already first in the PATH
+   #   - If nothing is in the path, whatever the most recent version of Qt IFW is installed under the user's home
+   #     directory
+   # But if we can't find anything we want to capture that error and bail out
+   #
+   bcExtn = ""
+   if (platform.system() == 'Windows'):
+      bcExtn = ".exe"
+
+   log.debug('Looking for binarycreator' + bcExtn)
+   exe_binarycreator = shutil.which("binarycreator" + bcExtn)
+   if (exe_binarycreator is None or exe_binarycreator == ""):
+      localBcs = sorted(pathlib.Path.home().joinpath('Qt').glob('QtIFW-*/bin/binarycreator' + bcExtn))
+      if (len(localBcs) > 0):
+         exe_binarycreator = shutil.which(localBcs[len(localBcs) - 1])
+
+   if (exe_binarycreator is None or exe_binarycreator == ""):
+      log.critical('Could not locate Qt IFW binarycreator')
+      exit(1)
+
+   #
+   # On Windows we need the binary we're creating to have a ".exe" extension
+   #
+   # On Mac we want to specify a ".app" extension, which will also tell binarycreator to create a macOS application
+   # bundle
+   #
+   appExtn = ""
+   if (platform.system() == 'Windows'):
+      appExtn = ".exe"
+   elif (platform.system() == 'Darwin'):
+      appExtn = ".app"
+
+   log.debug("Running " + exe_binarycreator.as_posix())
+   os.chdir(dir_qtIfw)
+
+   abortOnRunFail(
+      subprocess.run(
+         [
+            exe_binarycreator,
+            '-v',
+            '-c', dir_qtIfw_config.joinpath('config.xml').as_posix(),
+            '-p', dir_qtIfw_packages.as_posix(),
+            os.environ['CONFIG_APPLICATION_NAME_UC'] + appExtn
+         ],
+         capture_output=False
+      )
+   )
+
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# .:TBD:.  Let's see if we can do a .deb package
+#-----------------------------------------------------------------------------------------------------------------------
+def doDebianPackage():
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Act on command line arguments
+#-----------------------------------------------------------------------------------------------------------------------
+# See above for parsing
+match args.subCommand:
+
+   case 'setup':
+      doSetup(setupOption = args.setupOption)
+
+   case 'package':
+      doPackage()
+
+   case 'part_3_of_packaging':
+      doMesonPackageHelper()
+
+   # If we get here, it's a coding error as argparse should have already validated the command line arguments
+   case _:
+      log.error('Unrecognised command "' + command + '"')
+      exit(1)

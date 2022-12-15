@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/EnumStringMapping.cpp is part of Brewken, and is copyright the following authors 2021:
+ * utils/EnumStringMapping.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ EnumAndItsString::EnumAndItsString(QString string, int native) :
    return;
 }
 
-std::optional<int> EnumStringMapping::stringToEnum(QString const & stringValue) const {
+std::optional<int> EnumStringMapping::stringToEnumAsInt(QString const & stringValue) const {
    auto match = std::find_if(this->begin(),
                              this->end(),
                              [stringValue](EnumAndItsString const & ii){return stringValue == ii.string;});
@@ -34,7 +34,7 @@ std::optional<int> EnumStringMapping::stringToEnum(QString const & stringValue) 
    return std::optional<int>{match->native};
 }
 
-std::optional<QString> EnumStringMapping::enumToString(int const enumValue) const {
+std::optional<QString> EnumStringMapping::enumAsIntToString(int const enumValue) const {
    auto match = std::find_if(this->begin(),
                              this->end(),
                              [enumValue](EnumAndItsString const & ii){return enumValue == ii.native;});

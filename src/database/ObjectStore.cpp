@@ -27,6 +27,7 @@
 #include "database/BtSqlQuery.h"
 #include "database/Database.h"
 #include "database/DbTransaction.h"
+#include "Logging.h"
 #include "model/NamedParameterBundle.h"
 
 // Private implementation details that don't need access to class member variables
@@ -216,7 +217,9 @@ namespace {
     * \brief Given a (QVariant-wrapped) string value pulled out of the DB for an enum, look up and return its internal
     *        numerical enum equivalent
     */
-   int stringToEnum(ObjectStore::TableField const & fieldDefn, QVariant const & valueFromDb) {
+   int stringToEnum(ObjectStore::TableDefinition const & primaryTable,
+                    ObjectStore::TableField const &      fieldDefn,
+                    QVariant const &                     valueFromDb) {
       // It's a coding error if we called this function for a non-enum field
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
@@ -229,12 +232,13 @@ namespace {
       }
 
       QString stringValue = valueFromDb.toString();
-      auto match = fieldDefn.enumMapping->stringToEnum(stringValue);
+      auto match = fieldDefn.enumMapping->stringToEnumAsInt(stringValue);
       // If we didn't find a match, its either a coding error or someone messed with the DB data
       if (!match) {
          qCritical() <<
-            Q_FUNC_INFO << "Could not decode " << stringValue << " to enum when mapping column " <<
-            fieldDefn.columnName << " to property " << fieldDefn.propertyName << " so using 0";
+            Q_FUNC_INFO << "Could not decode" << stringValue << "to enum when mapping column" <<
+            fieldDefn.columnName << "to property" << fieldDefn.propertyName << "for" << primaryTable.tableName <<
+            "so using 0";
          return 0;
       }
       return match.value();
@@ -249,11 +253,9 @@ namespace {
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
 
-      auto match = fieldDefn.enumMapping->enumToString(propertyValue.toInt());
-      // It's a coding error if we couldn't find a match
-      Q_ASSERT(match);
-
-      return match.value();
+      // It's a coding error if we couldn't find a match (in which case EnumStringMapping::enumToString will log an
+      // error and throw an exception).
+      return fieldDefn.enumMapping->enumToString(propertyValue.toInt());
    }
 
    //
@@ -830,6 +832,11 @@ ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
    pimpl{ std::make_unique<impl>(primaryTable, junctionTables) } {
    qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
+   // We have seen a circumstance where primaryTable.tableName is null, which shouldn't be possible.  This is some
+   // diagnostic to try to find out why.
+   if (this->pimpl->primaryTable.tableName.isNull()) {
+      qCritical().noquote() << Q_FUNC_INFO << "Primary table without name.  Call stack is:" << Logging::getStackTrace();
+   }
    return;
 }
 
@@ -998,7 +1005,7 @@ void ObjectStore::loadAll(Database * database) {
 
          // Enums need to be converted from their string representation in the DB to a numeric value
          if (fieldDefn.fieldType == ObjectStore::FieldType::Enum) {
-            fieldValue = QVariant(stringToEnum(fieldDefn, fieldValue));
+            fieldValue = QVariant(stringToEnum(this->pimpl->primaryTable, fieldDefn, fieldValue));
             //qDebug() <<
             //   Q_FUNC_INFO << "Value for property" << fieldDefn.propertyName << "after enum conversion: " <<
             //   fieldValue;

@@ -64,8 +64,6 @@ class Yeast : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "yeasts")
 
-
-   friend class YeastDialog;
 public:
    //! \brief What beverage the yeast is for.
    enum class Type {Ale, Lager, Wheat, Wine, Champagne};

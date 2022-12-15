@@ -59,7 +59,6 @@ AddPropertyName(yield_pct)
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
-
 /*!
  * \class Fermentable
  *
@@ -69,7 +68,6 @@ class Fermentable : public NamedEntityWithInventory {
    Q_OBJECT
    Q_CLASSINFO("signal", "fermentables")
 
-   friend class FermentableDialog;
 public:
 
    //! \brief The type of Fermentable.
@@ -206,10 +204,10 @@ private:
 
    QString m_typeStr;
    Type m_type;
-   double m_amountKg;
+   double m_amountKg; // Primarily valid in "Use Of" instance
    double m_yieldPct;
    double m_colorSrm;
-   bool m_isAfterBoil;
+   bool m_isAfterBoil; // Primarily valid in "Use Of" instance
    QString m_origin;
    QString m_supplier;
    QString m_notes;
@@ -220,7 +218,7 @@ private:
    double m_maxInBatchPct;
    bool m_recommendMash;
    double m_ibuGalPerLb;
-   bool m_isMashed;
+   bool m_isMashed; // Primarily valid in "Use Of" instance
 };
 
 Q_DECLARE_METATYPE( QList<Fermentable*> )

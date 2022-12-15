@@ -19,77 +19,33 @@
 
 namespace {
    EnumStringMapping const fieldTypeToName {
-      {QT_TR_NOOP("Bool"                      ), JsonRecordDefinition::FieldType::Bool                      },
-      {QT_TR_NOOP("Int"                       ), JsonRecordDefinition::FieldType::Int                       },
-      {QT_TR_NOOP("UInt"                      ), JsonRecordDefinition::FieldType::UInt                      },
-      {QT_TR_NOOP("Double"                    ), JsonRecordDefinition::FieldType::Double                    },
-      {QT_TR_NOOP("String"                    ), JsonRecordDefinition::FieldType::String                    },
-      {QT_TR_NOOP("Enum"                      ), JsonRecordDefinition::FieldType::Enum                      },
-      {QT_TR_NOOP("Array"                     ), JsonRecordDefinition::FieldType::Array                     },
-      {QT_TR_NOOP("Date"                      ), JsonRecordDefinition::FieldType::Date                      },
-      {QT_TR_NOOP("MeasurementWithUnits"      ), JsonRecordDefinition::FieldType::MeasurementWithUnits      },
-      {QT_TR_NOOP("OneOfMeasurementsWithUnits"), JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits},
-      {QT_TR_NOOP("SingleUnitValue"           ), JsonRecordDefinition::FieldType::SingleUnitValue           },
-      {QT_TR_NOOP("RequiredConstant"          ), JsonRecordDefinition::FieldType::RequiredConstant          }
+      {QObject::tr("Bool"                      ), JsonRecordDefinition::FieldType::Bool                      },
+      {QObject::tr("Int"                       ), JsonRecordDefinition::FieldType::Int                       },
+      {QObject::tr("UInt"                      ), JsonRecordDefinition::FieldType::UInt                      },
+      {QObject::tr("Double"                    ), JsonRecordDefinition::FieldType::Double                    },
+      {QObject::tr("String"                    ), JsonRecordDefinition::FieldType::String                    },
+      {QObject::tr("Enum"                      ), JsonRecordDefinition::FieldType::Enum                      },
+      {QObject::tr("Array"                     ), JsonRecordDefinition::FieldType::Array                     },
+      {QObject::tr("Date"                      ), JsonRecordDefinition::FieldType::Date                      },
+      {QObject::tr("MeasurementWithUnits"      ), JsonRecordDefinition::FieldType::MeasurementWithUnits      },
+      {QObject::tr("OneOfMeasurementsWithUnits"), JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits},
+      {QObject::tr("SingleUnitValue"           ), JsonRecordDefinition::FieldType::SingleUnitValue           },
+      {QObject::tr("RequiredConstant"          ), JsonRecordDefinition::FieldType::RequiredConstant          }
    };
 }
 
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
-                                                       char const *              xPath,
-                                                       BtStringConst const *     propertyName,
-                                                       EnumStringMapping const * enumMapping) :
+JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType type,
+                                                       JsonXPath xPath,
+                                                       BtStringConst const * propertyName,
+                                                       ValueDecoder valueDecoder) :
    type{type},
    xPath{xPath},
    propertyName{propertyName},
-   valueDecoder{enumMapping} {
+   valueDecoder{valueDecoder} {
+   // Per comment in header file, propertyName should never be nullptr; use BtString::NULL_STR instead if it is not set
+   Q_ASSERT(propertyName);
    return;
 }
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                           type,
-                                                       char const *                        xPath,
-                                                       BtStringConst const *               propertyName,
-                                                       JsonMeasureableUnitsMapping const * unitsMapping) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{unitsMapping} {
-   return;
-}
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                                  type,
-                                                       char const *                               xPath,
-                                                       BtStringConst const *                      propertyName,
-                                                       ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{listOfUnitsMappings} {
-   return;
-}
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                       type,
-                                                       char const *                    xPath,
-                                                       BtStringConst const *           propertyName,
-                                                       JsonSingleUnitSpecifier const * singleUnitSpecifier) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{singleUnitSpecifier} {
-   return;
-}
-
-
-
-JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType                 type,
-                                                       char const *              xPath,
-                                                       BtStringConst const *     propertyName) :
-   type{type},
-   xPath{xPath},
-   propertyName{propertyName},
-   valueDecoder{} {
-   return;
-}
-
 
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,

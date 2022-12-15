@@ -24,16 +24,16 @@ namespace {
    // One day we should probably combine these two mapping tables
    //
    EnumStringMapping const systemOfMeasurementToDisplayName {
-      {QT_TR_NOOP("British Imperial")                 , Measurement::SystemOfMeasurement::Imperial                 },
-      {QT_TR_NOOP("US Customary")                     , Measurement::SystemOfMeasurement::UsCustomary              },
-      {QT_TR_NOOP("Metric")                           , Measurement::SystemOfMeasurement::Metric                   },
-      {QT_TR_NOOP("Universal Standard")               , Measurement::SystemOfMeasurement::UniversalStandard        },
-      {QT_TR_NOOP("SRM (Standard Reference Method)")  , Measurement::SystemOfMeasurement::StandardReferenceMethod  },
-      {QT_TR_NOOP("EBC (European Brewery Convention)"), Measurement::SystemOfMeasurement::EuropeanBreweryConvention},
-      {QT_TR_NOOP("SG (Specific Gravity)")            , Measurement::SystemOfMeasurement::SpecificGravity          },
-      {QT_TR_NOOP("Plato")                            , Measurement::SystemOfMeasurement::Plato                    },
-      {QT_TR_NOOP("Lintner")                          , Measurement::SystemOfMeasurement::Lintner                  },
-      {QT_TR_NOOP("WindischKolbach")                  , Measurement::SystemOfMeasurement::WindischKolbach          }
+      {QObject::tr("British Imperial")                 , Measurement::SystemOfMeasurement::Imperial                 },
+      {QObject::tr("US Customary")                     , Measurement::SystemOfMeasurement::UsCustomary              },
+      {QObject::tr("Metric")                           , Measurement::SystemOfMeasurement::Metric                   },
+      {QObject::tr("Universal Standard")               , Measurement::SystemOfMeasurement::UniversalStandard        },
+      {QObject::tr("SRM (Standard Reference Method)")  , Measurement::SystemOfMeasurement::StandardReferenceMethod  },
+      {QObject::tr("EBC (European Brewery Convention)"), Measurement::SystemOfMeasurement::EuropeanBreweryConvention},
+      {QObject::tr("SG (Specific Gravity)")            , Measurement::SystemOfMeasurement::SpecificGravity          },
+      {QObject::tr("Plato")                            , Measurement::SystemOfMeasurement::Plato                    },
+      {QObject::tr("Lintner")                          , Measurement::SystemOfMeasurement::Lintner                  },
+      {QObject::tr("WindischKolbach")                  , Measurement::SystemOfMeasurement::WindischKolbach          }
    };
    EnumStringMapping const systemOfMeasurementToUniqueName {
       {"Imperial"                 , Measurement::SystemOfMeasurement::Imperial                 },
@@ -50,27 +50,17 @@ namespace {
 }
 
 QString Measurement::getDisplayName(Measurement::SystemOfMeasurement systemOfMeasurement) {
-   auto returnValue = systemOfMeasurementToDisplayName.enumToString(systemOfMeasurement);
-   // It's a coding error if we don't find a result!
-   if (!returnValue) {
-      qCritical() <<
-         Q_FUNC_INFO << "No mapping defined for SystemOfMeasurement #" << static_cast<int>(systemOfMeasurement);
-      Q_ASSERT(false); // Stop here on debug builds
-   }
-   return *returnValue;
+   // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log an error and
+   // throw an exception).
+   return systemOfMeasurementToDisplayName.enumToString(systemOfMeasurement);
 }
 
 QString Measurement::getUniqueName(SystemOfMeasurement systemOfMeasurement) {
-   auto returnValue = systemOfMeasurementToUniqueName.enumToString(systemOfMeasurement);
-   // It's a coding error if we don't find a result!
-   if (!returnValue) {
-      qCritical() <<
-         Q_FUNC_INFO << "No mapping defined for SystemOfMeasurement #" << static_cast<int>(systemOfMeasurement);
-      Q_ASSERT(false); // Stop here on debug builds
-   }
-   return *returnValue;
+   // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log an error and
+   // throw an exception).
+   return systemOfMeasurementToUniqueName.enumToString(systemOfMeasurement);
 }
 
 std::optional<Measurement::SystemOfMeasurement> Measurement::getFromUniqueName(QString const & uniqueName) {
-   return systemOfMeasurementToUniqueName.stringToEnum<Measurement::SystemOfMeasurement>(uniqueName);
+   return systemOfMeasurementToUniqueName.stringToEnumOrNull<Measurement::SystemOfMeasurement>(uniqueName);
 }

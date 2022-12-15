@@ -139,30 +139,33 @@ public:
       label_frequency            {optionDialog.groupBox_dbConfig},
       spinBox_frequency          {optionDialog.groupBox_dbConfig},
       languageInfo {
-      {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
-      {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
-      {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
-      {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
-      {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
-      {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
-      {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
-      {"et", QIcon(),                              "Estonian",         tr("Estonian")         },
-      {"eu", QIcon(),                              "Basque",           tr("Basque")           },
-      {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
-      {"gl", QIcon(),                              "Galician",         tr("Galician")         },
-      {"hu", QIcon(),                              "Hungarian",        tr("Hungarian")        },
-      {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
-      {"lv", QIcon(),                              "Latvian",          tr("Latvian")          },
-      {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
-      {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
-      {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
-      {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
-      {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
-      {"sr", QIcon(),                              "Serbian",          tr("Serbian")          },
-      {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
-      {"tr", QIcon(),                              "Turkish",          tr("Turkish")          },
-      {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
-   } {
+         //
+         // See also CmakeLists.txt for list of translation source files (in ../translations directory)
+         //
+         {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
+         {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
+         {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
+         {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
+         {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
+         {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
+         {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
+         {"et", QIcon(":images/flagEstonia.svg"),     "Estonian",         tr("Estonian")         },
+         {"eu", QIcon(":images/flagBasque.svg"),      "Basque",           tr("Basque")           },
+         {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
+         {"gl", QIcon(":images/flagGalicia.svg"),     "Galician",         tr("Galician")         },
+         {"hu", QIcon(":images/flagHungary.svg"),     "Hungarian",        tr("Hungarian")        },
+         {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
+         {"lv", QIcon(":images/flagLatvia.svg"),      "Latvian",          tr("Latvian")          },
+         {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
+         {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
+         {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
+         {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
+         {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
+         {"sr", QIcon(":images/flagSerbia.svg"),      "Serbian",          tr("Serbian")          },
+         {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
+         {"tr", QIcon(":images/flagTurkey.svg"),      "Turkish",          tr("Turkish")          },
+         {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
+      } {
       //
       // Optimise the select file dialog to select directories
       //
@@ -217,6 +220,18 @@ public:
       for (auto langInfo : this->languageInfo) {
          optionDialog.comboBox_lang->addItem(langInfo.countryFlag, langInfo.nameInCurrentLang, langInfo.iso639_1Code);
       }
+
+      //
+      // Default icon size is 16 × 16, which, besides being the wrong shape for flags, is really too small on HDPI
+      // screens.  (Most country flags are 3:2 width:height, or thereabouts.  And even those that are 2:1 width:height
+      // will usually still be pretty recognisable in 3:2 format.
+      //
+      // We probably should adapt the icon size to the display resolution by creating a font in a given (display
+      // independent) point size and then querying its actual display size in pixels etc etc, as is done in
+      // RangedSlider.cpp.  But in the meantime, hopefully 36 wide × 24 high is an OK compromise for the various
+      // different screen resolutions commonly in use.
+      //
+      optionDialog.comboBox_lang->setIconSize(QSize(36, 24));
 
       return;
    }
@@ -783,7 +798,7 @@ void OptionDialog::changeEvent(QEvent * e) {
    return;
 }
 
-void OptionDialog::setEngine(int selected) {
+void OptionDialog::setEngine([[maybe_unused]] int selected) {
 
    QVariant data = comboBox_engine->currentData();
    Database::DbType newEngine = static_cast<Database::DbType>(data.toInt());

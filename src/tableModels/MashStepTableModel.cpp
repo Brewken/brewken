@@ -200,12 +200,12 @@ void MashStepTableModel::mashChanged() {
    return;
 }
 
-void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val) {
+void MashStepTableModel::mashStepChanged(QMetaProperty prop,
+                                         [[maybe_unused]] QVariant val) {
    qDebug() << Q_FUNC_INFO;
 
-   MashStep* stepSenderRaw = qobject_cast<MashStep*>(sender());
-   if (stepSenderRaw) {
-      auto stepSender = ObjectStoreWrapper::getSharedFromRaw(stepSenderRaw);
+   MashStep* stepSender = qobject_cast<MashStep*>(sender());
+   if (stepSender) {
       if (stepSender->getMashId() != this->mashObs->key()) {
          // It really shouldn't happen that we get a notification for a MashStep that's not in the Mash we're watching,
          // but, if we do, then stop trying to process the update.
@@ -216,10 +216,10 @@ void MashStepTableModel::mashStepChanged(QMetaProperty prop, QVariant val) {
          return;
       }
 
-      int ii = this->rows.indexOf(stepSender);
+      int ii = this->findIndexOf(stepSender);
       if (ii >= 0) {
          if (prop.name() == PropertyNames::MashStep::stepNumber) {
-            this->reorderMashStep(stepSender, ii);
+            this->reorderMashStep(this->rows.at(ii), ii);
          }
 
          emit dataChanged( QAbstractItemModel::createIndex(ii, 0),

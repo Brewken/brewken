@@ -43,12 +43,7 @@
 
 #include <QAction>
 #include <QBrush>
-#include <QDesktopServices>
 #include <QDesktopWidget>
-#include <QDomDocument>
-#include <QDomElement>
-#include <QDomNode>
-#include <QDomNodeList>
 #include <QFile>
 #include <QFileDialog>
 #include <QIcon>
@@ -59,7 +54,6 @@
 #include <QList>
 #include <QMainWindow>
 #include <QMessageBox>
-#include <QNetworkReply>
 #include <QPen>
 #include <QPixmap>
 #include <QSize>
@@ -76,7 +70,7 @@
 #include "AlcoholTool.h"
 #include "Algorithms.h"
 #include "AncestorDialog.h"
-#include "Brewken.h"
+#include "Application.h"
 #include "BrewNoteWidget.h"
 #include "BtDatePopup.h"
 #include "BtDigitWidget.h"
@@ -98,8 +92,8 @@
 #include "HopSortFilterProxyModel.h"
 #include "Html.h"
 #include "HydrometerTool.h"
+#include "ImportExport.h"
 #include "InventoryFormatter.h"
-#include "json/BeerJson.h"
 #include "MashDesigner.h"
 #include "MashEditor.h"
 #include "MashListModel.h"
@@ -146,7 +140,6 @@
 #include "WaterDialog.h"
 #include "WaterEditor.h"
 #include "WaterListModel.h"
-#include "xml/BeerXml.h"
 #include "YeastDialog.h"
 #include "YeastEditor.h"
 #include "YeastSortFilterProxyModel.h"
@@ -191,127 +184,12 @@ public:
 
    impl(MainWindow & self) :
       self{self},
-      fileOpener{},
-      fileOpenDirectory{QDir::homePath()} {
+      fileOpener{} {
       return;
    }
 
    ~impl() = default;
 
-   /**
-    * @brief Import recipes, hops, equipment, etc from files specified by the user.  (Currently this is just BeerXML,
-    *        but in future could well be other formats too.
-    */
-   void importFromFiles() {
-      //
-      // Set up the fileOpener dialog.  In previous versions of the code, this was created once and reused every time
-      // we want to open a file.  The advantage of that is that, on subsequent uses, the file dialog is going to open
-      // wherever you navigated to when you last opened a file.  However, as at 2020-12-30, there is a known bug in Qt
-      // (https://bugreports.qt.io/browse/QTBUG-88971) which means you cannot make a QFileDialog "forget" previous
-      // files you have selected with it.  So each time you you show it, the subsequent list returned from
-      // selectedFiles() is actually all files _ever_ selected with this dialog object.  (The bug report is a bit bare
-      // bones, but https://forum.qt.io/topic/121235/qfiledialog-has-memory has more detail.)
-      //
-      // Our workaround is to use a new QFileDialog each time, and manually keep track of the current directory
-      //
-      QFileDialog fileOpener{&self,
-                             tr("Open"),
-                             this->fileOpenDirectory,
-                             tr("BeerJSON files (*.json);;BeerXML files (*.xml)")};
-      fileOpener.setAcceptMode(QFileDialog::AcceptOpen);
-      fileOpener.setFileMode(QFileDialog::ExistingFiles);
-      fileOpener.setViewMode(QFileDialog::List);
-
-      if ( ! fileOpener.exec() ) {
-         // User clicked cancel, so nothing more to do
-         return;
-      }
-
-      qDebug() << Q_FUNC_INFO << "Importing " << fileOpener.selectedFiles().length() << " files";
-      qDebug() << Q_FUNC_INFO << "Directory " << fileOpener.directory();
-      this->fileOpenDirectory = fileOpener.directory().canonicalPath();
-
-      for (QString filename : fileOpener.selectedFiles()) {
-         //
-         // I guess if the user were importing a lot of files in one go, it might be annoying to have a separate result
-         // message for each one, but TBD whether that's much of a use case.  For now, we keep things simple.
-         //
-         qDebug() << Q_FUNC_INFO << "Importing " << filename;
-         QString userMessage;
-         QTextStream userMessageAsStream{&userMessage};
-         bool succeeded = false;
-         if (filename.endsWith("json", Qt::CaseInsensitive)) {
-            succeeded = BeerJson::import(filename, userMessageAsStream);
-         } else if (filename.endsWith("xml", Qt::CaseInsensitive)) {
-            succeeded = BeerXML::getInstance().importFromXML(filename, userMessageAsStream);
-         }
-         qDebug() << Q_FUNC_INFO << "Import " << (succeeded ? "succeeded" : "failed");
-         this->importExportMsg(IMPORT, filename, succeeded, userMessage);
-      }
-
-      self.showChanges();
-
-      return;
-   }
-
-   enum ImportOrExport {
-      EXPORT,
-      IMPORT
-   };
-
-   /**
-    * \brief Show a success/failure message to the user after we attempted to import one or more BeerXML files
-    */
-   void importExportMsg(ImportOrExport const importOrExport,
-                        QString const & fileName,
-                        bool succeeded,
-                        QString const & userMessage) {
-      // This will allow us to drop the directory path to the file, as it is often long and makes the message box a
-      // "wall of text" that will put a lot of users off.
-      QFileInfo fileInfo(fileName);
-
-      QString messageBoxTitle{succeeded ? tr("Success!") : tr("ERROR")};
-      QString messageBoxText;
-      if (succeeded) {
-         // The userMessage parameter will tell how many files were imported/exported and/or skipped (as duplicates)
-         // Do separate messages for import and export as it makes translations easier
-         if (IMPORT == importOrExport) {
-            messageBoxText = QString(
-               tr("Successfully read \"%1\"\n\n%2").arg(fileInfo.fileName()).arg(userMessage)
-            );
-         } else {
-            messageBoxText = QString(
-               tr("Successfully wrote \"%1\"\n\n%2").arg(fileInfo.fileName()).arg(userMessage)
-            );
-         }
-      } else {
-         if (IMPORT == importOrExport) {
-            messageBoxText = QString(
-               tr("Unable to import data from \"%1\"\n\n"
-                  "%2\n\n"
-                  "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
-            );
-         } else {
-            // Some write errors (eg nothing to export) are before the filename was chosen (in which case the name will
-            // be blank).
-            if (fileName == "") {
-               messageBoxText = QString("%2").arg(userMessage);
-            } else {
-               messageBoxText = QString(
-                  tr("Unable to write data to \"%1\"\n\n"
-                     "%2\n\n"
-                     "Log file may contain more details.").arg(fileInfo.fileName()).arg(userMessage)
-               );
-            }
-         }
-      }
-      qDebug() << Q_FUNC_INFO << "Message box text : " << messageBoxText;
-      QMessageBox msgBox{succeeded ? QMessageBox::Information : QMessageBox::Critical,
-                         messageBoxTitle,
-                         messageBoxText};
-      msgBox.exec();
-      return;
-   }
 
    // TODO Try making this a smart pointer
    HelpDialog * helpDialog;
@@ -319,7 +197,6 @@ public:
 private:
    MainWindow & self;
    QFileDialog* fileOpener;
-   QString fileOpenDirectory;
 };
 
 
@@ -351,7 +228,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
       exit(1);
 
    // Set the window title.
-   setWindowTitle( QString("Brewken - %1").arg(VERSIONSTRING) );
+   setWindowTitle( QString("Brewken - %1").arg(CONFIG_VERSION_STRING) );
 
    // Null out the recipe
    recipeObs = nullptr;
@@ -403,7 +280,7 @@ void MainWindow::init() {
    this->setupDrops();
 
    // Moved from Database class
-   Recipe::connectSignals();
+   Recipe::connectSignalsForAllRecipes();
    qDebug() << Q_FUNC_INFO << "Recipe signals connected";
    Mash::connectSignals();
    qDebug() << Q_FUNC_INFO << "Mash signals connected";
@@ -593,12 +470,6 @@ void MainWindow::setupDialogs()
 
    ancestorDialog = new AncestorDialog(this);
 
-   // Set up the fileSaver dialog.
-   fileSaver = new QFileDialog(this, tr("Save"), QDir::homePath(), tr("BeerXML files (*.xml)") );
-   fileSaver->setAcceptMode(QFileDialog::AcceptSave);
-   fileSaver->setFileMode(QFileDialog::AnyFile);
-   fileSaver->setViewMode(QFileDialog::List);
-   fileSaver->setDefaultSuffix(QString("xml"));
 
 }
 
@@ -800,7 +671,7 @@ void MainWindow::restoreSavedState() {
    } else {
       auto firstRecipeWeFind = ObjectStoreTyped<Recipe>::getInstance().findFirstMatching(
          // This trivial lambda gives us the first recipe in the list, if there is one
-         [](std::shared_ptr<Recipe> obj) {return true;}
+         []([[maybe_unused]] std::shared_ptr<Recipe> obj) {return true;}
       );
       if (firstRecipeWeFind) {
          key = firstRecipeWeFind.value()->key();
@@ -881,8 +752,8 @@ void MainWindow::restoreSavedState() {
 void MainWindow::setupTriggers() {
    // Connect actions defined in *.ui files to methods in code
    connect( actionExit, &QAction::triggered, this, &QWidget::close );                                                   // > File > Exit
-   connect( actionAbout_Brewken, &QAction::triggered, dialog_about, &QWidget::show );                                // > About > About Brewken
-   connect( actionHelp, &QAction::triggered, this->pimpl->helpDialog, &QWidget::show );                                // > About > Help
+   connect(actionAbout_Brewken,              &QAction::triggered, dialog_about,            &QWidget::show);                    // > About > About Brewken
+   connect(actionHelp,                       &QAction::triggered, this->pimpl->helpDialog, &QWidget::show);                    // > About > Help
 
    connect( actionNewRecipe, &QAction::triggered, this, &MainWindow::newRecipe );                                       // > File > New Recipe
    connect( actionImportFromXml, &QAction::triggered, this, &MainWindow::importFiles );                                // > File > Import Recipes
@@ -898,7 +769,7 @@ void MainWindow::setupTriggers() {
    connect( actionMiscs, &QAction::triggered, miscDialog, &QWidget::show );                                             // > View > Miscs
    connect( actionYeasts, &QAction::triggered, yeastDialog, &QWidget::show );                                           // > View > Yeasts
    connect( actionOptions, &QAction::triggered, optionDialog, &OptionDialog::show );                                    // > Tools > Options
-//   connect( actionManual, &QAction::triggered, this, &MainWindow::openManual );                                         // > About > Manual
+//   connect( actionManual, &QAction::triggered, this, &MainWindow::openManual);                                               // > About > Manual
    connect( actionScale_Recipe, &QAction::triggered, recipeScaler, &QWidget::show );                                    // > Tools > Scale Recipe
    connect( action_recipeToTextClipboard, &QAction::triggered, recipeFormatter, &RecipeFormatter::toTextClipboard );    // > Tools > Recipe to Clipboard as Text
    connect( actionConvert_Units, &QAction::triggered, converterTool, &QWidget::show );                                  // > Tools > Convert Units
@@ -1827,10 +1698,9 @@ void MainWindow::updateRecipeBoilTime() {
    Equipment* kit = recipeObs->equipment();
    double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity;
 
-   // Here, we rely on a signal/slot connection to propagate the equipment
-   // changes to recipeObs->boilTime_min and maybe recipeObs->boilSize_l
-   // NOTE: This works because kit is the recipe's equipment, not the generic
-   // equipment in the recipe drop down.
+   // Here, we rely on a signal/slot connection to propagate the equipment changes to recipeObs->boilTime_min and maybe
+   // recipeObs->boilSize_l
+   // NOTE: This works because kit is the recipe's equipment, not the generic equipment in the recipe drop down.
    if (kit) {
       this->doOrRedoUpdate(*kit, PropertyNames::Equipment::boilTime_min, boilTime, tr("Change Boil Time"));
    } else {
@@ -1930,26 +1800,17 @@ void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
 }
 
 /**
- * .:TODO:. (MY 2020-12-30) See also MainWindow::exportSelected().  I wonder if we could share more code between that
- *                          function and this one.
+ * This is akin to a special case of MainWindow::exportSelected()
  */
 void MainWindow::exportRecipe() {
    if (!this->recipeObs) {
       return;
    }
 
-   std::unique_ptr<QFile> outFile{this->openForWrite()};
-   if (!outFile.get()) {
-      return;
-   }
+   QList<Recipe *> recipes;
+   recipes.append(this->recipeObs);
 
-   BeerXML & bxml = BeerXML::getInstance();
-   bxml.createXmlFile(*outFile);
-
-   QList<Recipe *> recipes{recipeObs};
-   bxml.toXml(recipes, *outFile);
-
-   outFile->close();
+   ImportExport::exportToFile(&recipes);
    return;
 }
 
@@ -1980,7 +1841,7 @@ void MainWindow::doOrRedoUpdate(QObject & updatee,
                                 BtStringConst const & propertyName,
                                 QVariant newValue,
                                 QString const & description,
-                                QUndoCommand * parent) {
+                                [[maybe_unused]] QUndoCommand * parent) {
 ///   qDebug() << Q_FUNC_INFO << "Updating" << propertyName << "on" << updatee.metaObject()->className();
 ///   qDebug() << Q_FUNC_INFO << "this=" << static_cast<void *>(this);
    this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyName, newValue, description));
@@ -2647,7 +2508,7 @@ void MainWindow::restoreFromBackup()
 
 // Imports all the recipes, hops, equipment or whatever from a BeerXML file into the database.
 void MainWindow::importFiles() {
-   this->pimpl->importFromFiles();
+   ImportExport::importFromFiles();
    return;
 }
 
@@ -2814,7 +2675,7 @@ void MainWindow::removeMash() {
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/)
 {
-   Brewken::saveSystemOptions();
+   Application::saveSystemOptions();
    PersistentSettings::insert(PersistentSettings::Names::geometry, saveGeometry());
    PersistentSettings::insert(PersistentSettings::Names::windowState, saveState());
    if ( recipeObs )
@@ -2839,10 +2700,8 @@ void MainWindow::closeEvent(QCloseEvent* /*event*/)
 
 }
 
-void MainWindow::copyRecipe()
-{
+void MainWindow::copyRecipe() {
    QString name = QInputDialog::getText( this, tr("Copy Recipe"), tr("Enter a unique name for the copy.") );
-
    if (name.isEmpty()) {
       return;
    }
@@ -2953,46 +2812,16 @@ void MainWindow::copySelected()
    active->copySelected(active->selectionModel()->selectedRows());
 }
 
-QFile* MainWindow::openForWrite( QString filterStr, QString defaultSuff)
-{
-   QFile* outFile = new QFile();
-
-   fileSaver->setNameFilter( filterStr );
-   fileSaver->setDefaultSuffix( defaultSuff );
-
-   if( fileSaver->exec() )
-   {
-      QString filename = fileSaver->selectedFiles()[0];
-      outFile->setFileName(filename);
-
-      if( ! outFile->open(QIODevice::WriteOnly | QIODevice::Truncate) )
-      {
-         qWarning() << QString("MainWindow::openForWrite Could not open %1 for writing.").arg(filename);
-         outFile = nullptr;
-      }
-   }
-   else
-     outFile = nullptr;
-
-   return outFile;
-}
-
 void MainWindow::exportSelected() {
-   // .:TODO:. Add a parameter to this function so we can export XML, JSON, etc.  See call site in BtTreeView
-   BtTreeView* active = qobject_cast<BtTreeView*>(this->tabWidget_Trees->currentWidget()->focusWidget());
+   BtTreeView const * active = qobject_cast<BtTreeView*>(this->tabWidget_Trees->currentWidget()->focusWidget());
    if (active == nullptr) {
       qDebug() << Q_FUNC_INFO << "No active tree so can't get a selection";
       return;
    }
 
-   QString userMessage;
-   QString filename;
-   bool succeeded = false;
    QModelIndexList selected = active->selectionModel()->selectedRows();
    if (selected.count() == 0) {
       qDebug() << Q_FUNC_INFO << "Nothing selected, so nothing to export";
-      userMessage = "Nothing selected";
-      this->pimpl->importExportMsg(impl::EXPORT, filename, succeeded, userMessage);
       return;
    }
 
@@ -3068,92 +2897,23 @@ void MainWindow::exportSelected() {
 
    if (0 == count) {
       qDebug() << Q_FUNC_INFO << "Nothing selected was exportable to XML";
-      userMessage = "Nothing exportable selected";
-      this->pimpl->importExportMsg(impl::EXPORT, filename, succeeded, userMessage);
+      QMessageBox msgBox{QMessageBox::Critical,
+                         tr("Nothing to export"),
+                         tr("None of the selected items is exportable")};
+      msgBox.exec();
       return;
    }
 
-   std::unique_ptr<QFile> outFile{this->openForWrite()};
-   if (!outFile.get()) {
+   ImportExport::exportToFile(&recipes,
+                              &equipments,
+                              &fermentables,
+                              &hops,
+                              &miscs,
+                              &styles,
+                              &waters,
+                              &yeasts);
       return;
    }
-
-   BeerXML & bxml = BeerXML::getInstance();
-   bxml.createXmlFile(*outFile);
-
-   //
-   // Not that it matters, but the order things are listed in the BeerXML 1.0 spec is:
-   //    HOPS
-   //    FERMENTABLES
-   //    YEASTS
-   //    MISCS
-   //    WATERS
-   //    STYLES
-   //    MASH_STEPS
-   //    MASHS
-   //    RECIPES
-   //    EQUIPMENTS
-   //
-   bxml.toXml(hops,         *outFile);
-   bxml.toXml(fermentables, *outFile);
-   bxml.toXml(yeasts,       *outFile);
-   bxml.toXml(miscs,        *outFile);
-   bxml.toXml(waters,       *outFile);
-   bxml.toXml(styles,       *outFile);
-   bxml.toXml(recipes,      *outFile);
-   bxml.toXml(equipments,   *outFile);
-
-   outFile->close();
-   return;
-}
-
-void MainWindow::finishCheckingVersion()
-{
-   QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
-   if( reply == nullptr )
-      return;
-
-   QString remoteVersion(reply->readAll());
-
-   // If there is an error, just return.
-   if( reply->error() != QNetworkReply::NoError )
-      return;
-
-   // If the remote version is newer...
-   if( !remoteVersion.startsWith(VERSIONSTRING) )
-   {
-      // ...and the user wants to download the new version...
-      if( QMessageBox::information(this,
-                                   QObject::tr("New Version"),
-                                   QObject::tr("Version %1 is now available. Download it?").arg(remoteVersion),
-                                   QMessageBox::Yes | QMessageBox::No,
-                                   QMessageBox::Yes) == QMessageBox::Yes )
-      {
-         // ...take them to the website.
-         QDesktopServices::openUrl(QUrl("http://www.brewken.org/download.html"));
-      }
-      else // ... and the user does NOT want to download the new version...
-      {
-         // ... and they want us to stop bothering them...
-         if( QMessageBox::question(this,
-                                   QObject::tr("New Version"),
-                                   QObject::tr("Stop bothering you about new versions?"),
-                                   QMessageBox::Yes | QMessageBox::No,
-                                   QMessageBox::Yes) == QMessageBox::Yes)
-         {
-            // ... make a note to stop bothering the user about the new version.
-            Brewken::setCheckVersion(false);
-         }
-      }
-   }
-   else // The current version is newest so...
-   {
-      // ...make a note to bother users about future new versions.
-      // This means that when a user downloads the new version, this
-      // variable will always get reset to true.
-      Brewken::setCheckVersion(true);
-   }
-}
 
 void MainWindow::redisplayLabel()
 {
@@ -3265,19 +3025,21 @@ void MainWindow::versionedRecipe(Recipe* descendant)
    treeView_recipe->setCurrentIndex(ndx);
 }
 
-void MainWindow::closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object) {
+// .:TBD:. Seems redundant to pass both the brewnote ID and a pointer to it; we only need one of these
+void MainWindow::closeBrewNote([[maybe_unused]] int brewNoteId, std::shared_ptr<QObject> object) {
    BrewNote* b = std::static_pointer_cast<BrewNote>(object).get();
    Recipe* parent = ObjectStoreWrapper::getByIdRaw<Recipe>(b->getRecipeId());
 
    // If this isn't the focused recipe, do nothing because there are no tabs
    // to close.
-   if ( parent != recipeObs )
+   if (parent != recipeObs) {
       return;
+   }
 
    BrewNoteWidget* ni = findBrewNoteWidget(b);
-
-   if ( ni )
+   if (ni) {
       tabWidget_recipeView->removeTab( tabWidget_recipeView->indexOf(ni));
+   }
 
    return;
 

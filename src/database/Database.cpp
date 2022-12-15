@@ -55,7 +55,7 @@
 #include <QString>
 #include <QThread>
 
-#include "Brewken.h"
+#include "Application.h"
 #include "config.h"
 #include "database/BtSqlQuery.h"
 #include "database/DatabaseSchemaHelper.h"
@@ -65,10 +65,10 @@
 
 namespace {
    EnumStringMapping const dbTypeToName {
-      {QT_TR_NOOP("NODB"  ), Database::DbType::NODB  },
-      {QT_TR_NOOP("SQLITE"), Database::DbType::SQLITE},
-      {QT_TR_NOOP("PGSQL" ), Database::DbType::PGSQL },
-      {QT_TR_NOOP("ALLDB" ), Database::DbType::ALLDB },
+      {Database::tr("NODB"  ), Database::DbType::NODB  },
+      {Database::tr("SQLITE"), Database::DbType::SQLITE},
+      {Database::tr("PGSQL" ), Database::DbType::PGSQL },
+      {Database::tr("ALLDB" ), Database::DbType::ALLDB },
    };
 
    //
@@ -244,7 +244,7 @@ public:
 
       // Set file names.
       this->dbFileName = PersistentSettings::getUserDataDir().filePath("database.sqlite");
-      this->dataDbFileName = Brewken::getResourceDir().filePath("default_db.sqlite");
+      this->dataDbFileName = Application::getResourceDir().filePath("default_db.sqlite");
       qDebug().noquote() <<
          Q_FUNC_INFO << "dbFileName = \"" << this->dbFileName << "\"\ndataDbFileName=\"" << this->dataDbFileName << "\"";
       // Set the files.
@@ -393,8 +393,10 @@ public:
    bool updateSchema(Database & database, bool* err = nullptr) {
       int currentVersion = DatabaseSchemaHelper::currentVersion( database.sqlDatabase() );
       int newVersion = DatabaseSchemaHelper::dbVersion;
-      bool doUpdate = currentVersion < newVersion;
+      qInfo() <<
+         Q_FUNC_INFO << "Schema version in DB:" << currentVersion << ", current schema version in code:" << newVersion;
 
+      bool doUpdate = currentVersion < newVersion;
       if (doUpdate) {
          bool success = DatabaseSchemaHelper::migrate(database, currentVersion, newVersion, database.sqlDatabase() );
          if (!success) {
@@ -610,7 +612,7 @@ QSqlDatabase Database::sqlDatabase() const {
       }
       qCritical() << Q_FUNC_INFO << errorMessage;
 
-      if (Brewken::isInteractive()) {
+      if (Application::isInteractive()) {
          QMessageBox::critical(nullptr,
                                QObject::tr("Database Failure"),
                                errorMessage);
@@ -661,7 +663,7 @@ bool Database::load() {
    this->pimpl->schemaUpdated = this->pimpl->updateSchema(*this, &schemaErr);
 
    if (schemaErr ) {
-      if (Brewken::isInteractive()) {
+      if (Application::isInteractive()) {
          QMessageBox::critical(
             nullptr,
             QObject::tr("Database Failure"),
@@ -681,7 +683,7 @@ void Database::checkForNewDefaultData() {
    if (this->pimpl->dataDbFile.fileName() != this->pimpl->dbFile.fileName() &&
        !this->pimpl->userDatabaseDidNotExist &&
        QFileInfo(this->pimpl->dataDbFile).lastModified() > Database::lastDbMergeRequest) {
-      if (Brewken::isInteractive() &&
+      if (Application::isInteractive() &&
          QMessageBox::question(
             nullptr,
             tr("Merge Database"),
@@ -892,8 +894,14 @@ bool Database::restoreFromFile(QString newDbFileStr) {
    return success;
 }
 
-bool Database::verifyDbConnection(Database::DbType testDb, QString const& hostname, int portnum, QString const& schema,
-                                  QString const& database, QString const& username, QString const& password) {
+// .:TBD:. What should we be doing, if anything, with schema?
+bool Database::verifyDbConnection(Database::DbType testDb,
+                                  QString const &  hostname,
+                                  int              portnum,
+                                  [[maybe_unused]] QString const &  schema,
+                                  QString const &  database,
+                                  QString const &  username,
+                                  QString const &  password) {
    QString const testConnectionName{"testConnDb"};
 
    QString driverName;

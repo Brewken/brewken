@@ -32,7 +32,6 @@
 #include <xercesc/util/PlatformUtils.hpp>
 
 #include <QDebug>
-#include <QDir>
 #include <QString>
 #include <QtTest/QtTest>
 #if QT_VERSION < QT_VERSION_CHECK(5,10,0)
@@ -43,6 +42,7 @@
 #include <QVector>
 
 #include "Algorithms.h"
+#include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Logging.h"
 #include "measurement/Measurement.h"
@@ -53,6 +53,7 @@
 #include "model/Hop.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
+#include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 
@@ -262,11 +263,72 @@ namespace {
 
 }
 
+Testing::Testing() :
+   QObject(),
+   tempDir{QDir::tempPath()},
+   equipFiveGalNoLoss{},
+   cascade_4pct{},
+   twoRow{} {
+   //
+   // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
+   // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
+   // that anyone doing a manual clean up of their temp directory doesn't have to guess or wonder what created it.
+   // Mostly our temp subdirectories will be deleted in our destructor, but core dumps happen etc.)
+   //
+   // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
+   // CMake executes them sequentially).  We are guaranteed a separate instance of this class for each run because
+   // both CMake and Meson invoke unit tests by running a program.
+   //
+   QString subDirName;
+   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
+   if (!this->tempDir.mkdir(subDirName)) {
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->tempDir.absolutePath();
+      throw std::runtime_error{"Unable to create unique temp directory"};
+   }
+   if (!this->tempDir.cd(subDirName)) {
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to access" << this->tempDir.absolutePath() << "after creating it";
+      throw std::runtime_error{"Unable to access unique temp directory"};
+   }
+
+   qDebug() << Q_FUNC_INFO << "Using" << this->tempDir.absolutePath() << "as temporary directory";
+   return;
+}
+
+Testing::~Testing() {
+   //
+   // We have to be a bit careful in our cleaning up.  We only want to try to remove the unique temporary directory we
+   // created, not the system-wide one.  (It shouldn't be possible for this->tempDir to be the root directory, but it
+   // doesn't hurt to check!)
+   //
+   if (this->tempDir.exists() &&
+       this->tempDir.absolutePath() != QDir::tempPath() &&
+       !this->tempDir.isRoot()) {
+      qInfo() << Q_FUNC_INFO << "Removing temporary directory" << this->tempDir.absolutePath() << "and its contents";
+      if (!this->tempDir.removeRecursively()) {
+         //
+         // It's not the end of the world if we couldn't remove a temporary directory so, if it happens, just log an
+         // error rather than throwing an exception (which might prevent other clean-up from happening).
+         //
+         qInfo() << Q_FUNC_INFO << "Unable to remove temporary directory" << this->tempDir.absolutePath();
+      }
+   }
+   return;
+};
+
 //
-// NB: To have unit tests run via "make test", you also need to add "ADD_TEST" lines to src/CMakeLists.txt
+// If you're building with CMake:
+//   - Ensure each unit test has an "ADD_TEST" line in the main CMakeLists.txt
+//   - Run unit tests with  make test
+//   - Debug log output is in build/Testing/Temporary/LastTest.log (assuming "build" is your CMake build directory)
 //
-// Also, although make test does not dump a lot of output on the screen, if a test fails, you can get the debug log
-// output from build/Testing/Temporary/LastTest.log
+// If you're building with Meson:
+//   - Ensure each unit test has a "test" line in meson.build
+//   - Run unit tests with  meson test
+//   - Debug log output is in mbuild/meson-logs/testlog.txt (assuming "mbuild" is your Meson build directory)
+//
+// QTEST_MAIN generates (via horrible macros) a main() function for the unit test runner
 //
 QTEST_MAIN(Testing)
 
@@ -287,8 +349,9 @@ void Testing::initTestCase() {
       QCoreApplication::setOrganizationDomain("brewken.com/test");
       QCoreApplication::setApplicationName("brewken-test");
 
+
       // Set options so that any data modification does not affect any other data
-      PersistentSettings::initialise(QDir::tempPath());
+      PersistentSettings::initialise(this->tempDir.absolutePath());
 
       // Log test setup
       // Verify that the Logging initializes normally
@@ -298,7 +361,7 @@ void Testing::initTestCase() {
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      Logging::setDirectory(QDir::tempPath(), Logging::NewDirectoryIsTemporary);
+      Logging::setDirectory(this->tempDir.absolutePath(), Logging::NewDirectoryIsTemporary);
       qDebug() << "logging initialized";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
@@ -309,8 +372,14 @@ void Testing::initTestCase() {
       PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "tinseth");
 
       // Tell Brewken not to require any "user" input on starting
-      Brewken::setInteractive(false);
-      QVERIFY( Brewken::initialize() );
+      Application::setInteractive(false);
+
+      //
+      // Application::initialize() will initialise a bunch of things, including creating a default database in
+      // this->tempDir courtesy of the call to PersistentSettings::initialise() above.  If there is a problem creating the DB,
+      // it will return false.
+      //
+      QVERIFY(Application::initialize());
 
       // 5 gallon equipment
       this->equipFiveGalNoLoss = std::make_shared<Equipment>();
@@ -335,7 +404,7 @@ void Testing::initTestCase() {
       this->cascade_4pct->setAlpha_pct(4.0);
       this->cascade_4pct->setUse(Hop::Use::Boil);
       this->cascade_4pct->setTime_min(60);
-      this->cascade_4pct->setType(Hop::Type::Both);
+      this->cascade_4pct->setType(Hop::Type::AromaAndBittering);
       this->cascade_4pct->setForm(Hop::Form::Leaf);
 
       // 70% yield, no moisture, 2 SRM
@@ -357,8 +426,8 @@ void Testing::initTestCase() {
    return;
 }
 
-void Testing::recipeCalcTest_allGrain()
-{
+void Testing::recipeCalcTest_allGrain() {
+   // .:TODO:. Would be good to fix and reinstate this test...
    return;
    double const grain_kg = 5.0;
    double const conversion_l = grain_kg * 2.8; // 2.8 L/kg mash thickness
@@ -442,8 +511,8 @@ void Testing::recipeCalcTest_allGrain()
    QVERIFY2( fuzzyComp(rec->color_srm(),     srm,                srm*0.1), "Wrong color calculation" );
 }
 
-void Testing::postBoilLossOgTest()
-{
+void Testing::postBoilLossOgTest() {
+   // .:TODO:. Would be good to fix and reinstate this test...
    return;
    double const grain_kg = 5.0;
    Recipe* recNoLoss = new Recipe(QString("TestRecipe_noLoss"));
@@ -572,6 +641,35 @@ void Testing::testUnitConversions() {
    return;
 }
 
+void Testing::testNamedParameterBundle() {
+   NamedParameterBundle npb;
+
+   BtStringConst const myInt{"myInt"};
+   npb.insert(myInt, 42);
+   QVERIFY2(npb(myInt).toInt() == 42, "Error retrieving int");
+
+   BtStringConst const myFalseBool{"myFalseBool"};
+   npb.insert(myFalseBool, false);
+   QVERIFY2(!npb(myFalseBool).toBool(), "Error retrieving false bool");
+
+   BtStringConst const myTrueBool{"myTrueBool"};
+   npb.insert(myTrueBool, true);
+   QVERIFY2(npb(myTrueBool).toBool(), "Error retrieving true bool");
+
+   BtStringConst const myString{"myString"};
+   npb.insert(myString, "Sing a string of sixpence");
+   QVERIFY2(npb(myString).toString() == "Sing a string of sixpence", "Error retrieving string");
+
+   BtStringConst const myDouble{"myDouble"};
+   npb.insert(myDouble, 3.1415926535897932384626433);
+   QVERIFY2(fuzzyComp(npb(myDouble).toDouble(),
+                      3.1415926535897932384626433,
+                      0.0000000001),
+            "Error retrieving double");
+
+   return;
+}
+
 void Testing::testAlgorithms() {
    for (auto const & ii : sgBrixEquivalances) {
       qDebug() <<
@@ -622,7 +720,7 @@ void Testing::testLogRotation() {
 
 void Testing::cleanupTestCase()
 {
-   Brewken::cleanup();
+   Application::cleanup();
    Logging::terminateLogging();
    //Clean up the gibberish logs from disk by removing the
    QFileInfoList fileList = Logging::getLogFileList();
@@ -669,7 +767,7 @@ void Testing::runTest()
 {
    QVERIFY( 1==1 );
    /*
-   MainWindow& mw = Brewken::mainWindow();
+   MainWindow& mw = Application::mainWindow();
    QVERIFY( mw );
    */
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeExtrasWidget.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * RecipeExtrasWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -88,7 +88,7 @@ void RecipeExtrasWidget::updateBrewerAsst()
    return;
 }
 
-void RecipeExtrasWidget::changeRatings(int rating) { ratingChanged = true; }
+void RecipeExtrasWidget::changeRatings([[maybe_unused]] int rating) { ratingChanged = true; }
 
 void RecipeExtrasWidget::updateTasteRating()
 {

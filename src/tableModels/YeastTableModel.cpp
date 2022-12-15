@@ -42,7 +42,6 @@
 #include "measurement/Unit.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
-#include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
 
@@ -160,7 +159,8 @@ void YeastTableModel::addYeasts(QList<std::shared_ptr<Yeast> > yeasts) {
    return;
 }
 
-void YeastTableModel::removeYeast(int yeastId, std::shared_ptr<QObject> object) {
+void YeastTableModel::removeYeast([[maybe_unused]] int yeastId,
+                                  std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Yeast>(object));
    return;
 }
@@ -205,14 +205,11 @@ void YeastTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
    // Find the notifier in the list
    Yeast * yeastSender = qobject_cast<Yeast *>(sender());
    if (yeastSender) {
-      auto spYeastSender = ObjectStoreWrapper::getSharedFromRaw(yeastSender);
-      int ii = this->rows.indexOf(spYeastSender);
-      if (ii < 0) {
-         return;
+      int ii = this->findIndexOf(yeastSender);
+      if (ii >= 0) {
+         emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
+                          QAbstractItemModel::createIndex(ii, YEASTNUMCOLS - 1));
       }
-
-      emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
-                       QAbstractItemModel::createIndex(ii, YEASTNUMCOLS - 1));
       return;
    }
 

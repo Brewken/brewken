@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <memory>
 
+#include <QDir>
 #include <QObject>
 #include <QtTest/QtTest>
 
@@ -30,18 +31,22 @@ class Equipment;
 class Hop;
 class Fermentable;
 
-#include "Brewken.h"
+#include "Application.h"
 #include "Logging.h"
 
 class Testing : public QObject {
    Q_OBJECT
 
 public:
+   Testing();
+   virtual ~Testing();
 
 private:
+   //! \brief Where we write database and log files etc
+   QDir tempDir;
 
    std::shared_ptr<Equipment> equipFiveGalNoLoss;
-   std::shared_ptr<Hop> cascade_4pct;
+   std::shared_ptr<Hop>       cascade_4pct;
    //! \brief 70% yield, no moisture, 2 SRM
    std::shared_ptr<Fermentable> twoRow;
 
@@ -68,6 +73,9 @@ private slots:
    //! \brief Verify conversion between US Customary & Metric units etc
    void testUnitConversions();
 
+   //! \brief Test that NamedParameterBundle is behaving as we expect
+   void testNamedParameterBundle();
+
    /**
     * \brief Verify other conversions that warrant their own algorithms.
     *
@@ -78,6 +86,7 @@ private slots:
 
    //! \brief Verify Log rotation is working
    void testLogRotation();
+
 };
 
 #endif
