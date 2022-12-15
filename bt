@@ -362,7 +362,7 @@ def installDependencies():
                abortOnRunFail(subprocess.run(['sudo', './b2', 'install']))
                log.debug('Boost install finished')
                os.chdir(previousWorkingDirectory)
-               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix()) + '.  Removing ' + tmpDirName)
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix() + '.  Removing ' + tmpDirName)
                abortOnRunFail(
                   subprocess.run(
                      ['sudo', 'chmod', 'a+rw', tmpDirName]
