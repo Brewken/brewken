@@ -352,7 +352,9 @@ def installDependencies():
                         'https://boostorg.jfrog.io/artifactory/main/release/' + boostVersionToInstall + '/source/' + boostUnderscoreName + '.tar.bz2']
                   )
                )
+               log.debug('Boost download completed')
                abortOnRunFail(subprocess.run(['tar', '--bzip2', '-xf', boostUnderscoreName + '.tar.bz2']))
+               log.debug('Boost archive extracted')
                os.chdir(boostUnderscoreName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
                abortOnRunFail(subprocess.run(['./bootstrap.sh']))
@@ -360,7 +362,12 @@ def installDependencies():
                abortOnRunFail(subprocess.run(['sudo', './b2', 'install']))
                log.debug('Boost install finished')
                os.chdir(previousWorkingDirectory)
-               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix()) + '.  Removing ' + tmpDirName)
+               abortOnRunFail(
+                  subprocess.run(
+                     ['sudo', 'chmod', 'a+rw', tmpDirName]
+                  )
+               )
 
          # Almost everything else we can rely on the distro packages
          log.info('Ensuring other libraries and frameworks are installed')
