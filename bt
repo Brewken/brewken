@@ -88,8 +88,9 @@ log.setLevel(logging.INFO)
 # Include the log level in the message
 handler = logging.StreamHandler()
 handler.setFormatter(
-   # You can add timestamps etc to logs, but that's overkill for this script
-   logging.Formatter('{levelname:s}:  {message}', style='{')
+   # You can add timestamps etc to logs, but that's overkill for this script.  Source file location of log message is
+   # however pretty useful for debugging.
+   logging.Formatter('{levelname:s}:  {message}  [{filename:s}:{lineno:d}]', style='{')
 )
 log.addHandler(handler)
 # If we don't do this, everything gets printed twice
@@ -353,9 +354,13 @@ def installDependencies():
                )
                abortOnRunFail(subprocess.run(['tar', '--bzip2', '-xf', boostUnderscoreName + '.tar.bz2']))
                os.chdir(boostUnderscoreName)
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
                abortOnRunFail(subprocess.run(['./bootstrap.sh']))
+               log.debug('Boost bootstrap finished')
                abortOnRunFail(subprocess.run(['sudo', './b2', 'install']))
+               log.debug('Boost install finished')
                os.chdir(previousWorkingDirectory)
+               log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
 
          # Almost everything else we can rely on the distro packages
          log.info('Ensuring other libraries and frameworks are installed')
