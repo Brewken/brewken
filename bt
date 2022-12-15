@@ -338,9 +338,9 @@ def installDependencies():
             #    cd ~
             #    sudo rm -rf ~/boost-tmp
             #
-            # We can handle the temporary directory stuff more elegantly in Python however
+            # We can handle the temporary directory stuff more elegantly (ie RAII style) in Python however
             #
-            with tempfile.TemporaryDirectory() as tmpDirName:
+            with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
                previousWorkingDirectory = pathlib.Path.cwd().as_posix()
                os.chdir(tmpDirName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
