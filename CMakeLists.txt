@@ -92,6 +92,19 @@ cmake_policy(VERSION 3.16)
 cmake_policy(SET CMP0048 NEW)
 
 #=======================================================================================================================
+#================================================ Other preliminaries =================================================
+#=======================================================================================================================
+# Set the target binary architecture for targets on macOS
+if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
+   # Per https://cmake.org/cmake/help/latest/variable/CMAKE_OSX_ARCHITECTURES.html, "the value of this variable should
+   # be set prior to the first project() or enable_language() command invocation because it may influence configuration
+   # of the toolchain and flags".
+   set(CMAKE_OSX_ARCHITECTURES x86_64) # Build intel 64-bit binary.
+   #set(CMAKE_OSX_ARCHITECTURES i386 x86_64) # Build intel binary.
+   #set(CMAKE_OSX_ARCHITECTURES ppc i386 ppc64 x86_64) # Build universal binary.
+endif()
+
+#=======================================================================================================================
 #============================================== Project name and Version ===============================================
 #=======================================================================================================================
 # It's simplest to keep the project name all lower-case as it means we can use a lot more of the default settings for
@@ -209,8 +222,11 @@ set(fileName_unitTestRunner "${PROJECT_NAME}_tests")
 #=======================================================================================================================
 # This is needed to enable the add_test() command
 enable_testing()
-# Try to find static libraries when available -- at least on Unix-like systems (aka Linux and Mac)
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+if (APPLE)
+   # On Mac we ask CMake to try to find static libraries when available -- because it's so painful shipping dynamic
+   # libraries in a Bundle.
+   set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+endif
 
 #=======================================================================================================================
 #=============================================== Installation Components ===============================================
@@ -283,13 +299,6 @@ if(WIN32)
    # In theory, this statically links all the GCC and MinGW libraries, so we don't have to ship DLLs for them.  In
    # practice, it seems we still need a fair few other DLLs.
    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
-endif()
-
-# Mac-specific compilation settings
-if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
-   set(CMAKE_OSX_ARCHITECTURES x86_64) # Build intel 64-bit binary.
-   #set(CMAKE_OSX_ARCHITECTURES i386 x86_64) # Build intel binary.
-   #set(CMAKE_OSX_ARCHITECTURES ppc i386 ppc64 x86_64) # Build universal binary.
 endif()
 
 if(APPLE)
