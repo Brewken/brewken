@@ -226,7 +226,7 @@ if (APPLE)
    # On Mac we ask CMake to try to find static libraries when available -- because it's so painful shipping dynamic
    # libraries in a Bundle.
    set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
-endif
+endif()
 
 #=======================================================================================================================
 #=============================================== Installation Components ===============================================

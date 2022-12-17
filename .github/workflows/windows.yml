@@ -53,12 +53,15 @@ jobs:
           submodules: recursive
 
       # We need Python 3.10 or later to run the bt script
-      - uses: actions/setup-python@v4
+      - Name: Install Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install Frameworks and Libraries, and set up Meson build environment
+      - name: Install MSYS2
         uses: msys2/setup-msys2@v2
+
+      - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
         run: |
           cd /C/_/build
