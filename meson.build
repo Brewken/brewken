@@ -213,10 +213,9 @@ prefix = get_option('prefix')
 # For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
 
 # Tell meson which Qt modules we need
-qtDependencies = dependency('qt5',
+qtCommonDependencies = dependency('qt5',
                             version : '>=5.9.5',
                             modules : ['Core',
-                                       'Gui',
                                        'Multimedia',
                                        'Network',
                                        'PrintSupport',
@@ -226,7 +225,10 @@ qtDependencies = dependency('qt5',
                                        'Xml'],
                            include_type : 'system',
                            static : true)
-# This Qt module is only needed for the unit tests
+# The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it will barf
+# in a GitHub action which does not have a display running
+qtAppDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
+# The Qt Test module is only needed for the unit tests
 qtTestDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
 
 # On Windows and Mac there are platform-specific Qt tools for packaging
@@ -887,9 +889,9 @@ generatedFromUi = qt.compile_ui(sources : uiFiles)
 
 # Compile Qt's moc files (.moc) into header and/or source files
 generatedFromMoc = qt.compile_moc(headers : mocHeaders,
-                                  dependencies : qtDependencies)
+                                  dependencies : qtCommonDependencies)
 generatedFromMocForUnitTests = qt.compile_moc(headers : unitTestMocHeaders,
-                                              dependencies : qtDependencies)
+                                              dependencies : qtCommonDependencies)
 
 #
 # We need to do two processes with Translation Source (.ts) XML files:
@@ -1129,7 +1131,7 @@ endif
 commonCodeStaticLib = static_library('common_code',
                                      commonSourceFiles, generatedFromUi, generatedFromMoc, translations,
                                      include_directories : includeDirs,
-                                     dependencies: [qtDependencies,
+                                     dependencies: [qtCommonDependencies,
                                                     xercesDependency,
                                                     xalanDependency,
                                                     boostDependency,
@@ -1139,7 +1141,8 @@ commonCodeStaticLib = static_library('common_code',
 mainExecutable = executable(mainExecutableName,
                             'src/main.cpp', generatedFromQrc,
                             include_directories : includeDirs,
-                            dependencies : [qtDependencies,
+                            dependencies : [qtCommonDependencies,
+                                            qtAppDependencies,
                                             xercesDependency,
                                             xalanDependency,
                                             boostDependency],
@@ -1149,7 +1152,7 @@ mainExecutable = executable(mainExecutableName,
 testRunner = executable(testRunnerName, generatedFromQrc,
                         'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
                         include_directories : includeDirs,
-                        dependencies : [qtDependencies,
+                        dependencies : [qtCommonDependencies,
                                         qtTestDependencies,
                                         xercesDependency,
                                         xalanDependency,

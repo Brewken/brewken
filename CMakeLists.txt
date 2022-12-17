@@ -702,6 +702,11 @@ include_directories(${XalanC_INCLUDE_DIRS})
 message("Xalan-C++ include directories: ${XalanC_INCLUDE_DIRS}")
 message("Xalan-C++ libraries: ${XalanC_LIBRARIES}")
 
+if(APPLE)
+# TBD: Is this also needed when static linking Xerces on MacOS?
+find_package(CURL REQUIRED)
+endif()
+
 #=======================================================Valijson========================================================
 # Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
 # (via git clone https://github.com/tristanpenman/valijson third-party/valijson).  Then the following also come from
@@ -1149,6 +1154,9 @@ set(appAndTestCommonLibraries
    ${XalanC_LIBRARIES}
    ${XercesC_LIBRARIES}
 )
+if(APPLE)
+   list(APPEND appAndTestCommonLibraries CURL::libcurl)
+endif()
 foreach(qtComponent IN LISTS qtCommonComponents)
    list(APPEND appAndTestCommonLibraries "Qt5::${qtComponent}")
 endforeach()
