@@ -365,7 +365,7 @@ def installDependencies():
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix() + '.  Removing ' + tmpDirName)
                abortOnRunFail(
                   subprocess.run(
-                     ['sudo', 'chmod', 'a+rw', tmpDirName]
+                     ['sudo', 'chmod', '--recursive', 'a+rw', tmpDirName]
                   )
                )
 
