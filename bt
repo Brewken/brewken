@@ -62,6 +62,7 @@ import subprocess
 import sys
 import tempfile
 from decimal import Decimal
+from packaging import version
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Global constants
@@ -286,7 +287,11 @@ def installDependencies():
          #    ${BOOST_ROOT}/boost/version.hpp       <-- If the BOOST_ROOT environment variable is set it gives an
          #                                              alternative place to look
          #
-         maxBoostVersionFound = 0
+         # Although things should compile with 1.79.0, if we're going to all the bother of installing Boost, we'll
+         # install a more recent one
+         minBoostVersion = version.parse('1.79.0')
+         boostVersionToInstall = version.parse('1.80.0') # NB: This _must_ have the patch version
+         maxBoostVersionFound = version.parse('0')
          possibleBoostVersionHeaders = [pathlib.Path('/usr/include/boost/version.hpp'),
                                           pathlib.Path('/usr/local/include/boost/version.hpp')]
          if ('BOOST_ROOT' in os.environ):
@@ -295,31 +300,42 @@ def installDependencies():
             if (boostVersionHeader.is_file()):
                runResult = abortOnRunFail(
                   subprocess.run(
-                     ['grep', '#define BOOST_VERSION ', boostVersionHeader.as_posix()],
+                     ['grep', '#define BOOST_LIB_VERSION ', boostVersionHeader.as_posix()],
                      encoding = "utf-8",
                      capture_output = True
                   )
                )
                log.debug('In ' + boostVersionHeader.as_posix() + ' found ' + str(runResult.stdout))
-               version = int(re.sub(r'^.*BOOST_VERSION ([0-9]*).*$', r'\1', str(runResult.stdout)))
-               if (version > maxBoostVersionFound):
-                  maxBoostVersionFound = version
-               log.debug('Parsed as ' + str(version) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
+               versionFoundRaw = re.sub(
+                  r'^.*BOOST_LIB_VERSION "([0-9_]*)".*$', r'\1', str(runResult.stdout).replace('\n', '')
+               ).replace('_', '.')
+               versionFound = version.parse(versionFoundRaw)
+               if (versionFound > maxBoostVersionFound):
+                  maxBoostVersionFound = versionFound
+               log.debug('Parsed as ' + str(versionFound) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
 
-         # Per the comment in boost/version.hpp:
+         #
+         # The Boost version.hpp configuration header file gives two constants for defining the version of Boost installed:
+         #
+         # BOOST_VERSION is a pure numeric value:
          #    BOOST_VERSION % 100 is the patch level
          #    BOOST_VERSION / 100 % 1000 is the minor version
          #    BOOST_VERSION / 100000 is the major version
          # So, eg, for Boost 1.79.0 (= 1.079.00), BOOST_VERSION = 107900
-         stringMaxVersion = 'None'
-         if (maxBoostVersionFound > 0):
-            stringMaxVersion = str(int(maxBoostVersionFound / 100000)) + '.' + str(int(maxBoostVersionFound / 100 % 1000)) + '.' + str(maxBoostVersionFound % 100)
-         log.debug('Max version of Boost found: ' + stringMaxVersion)
-         if (maxBoostVersionFound < 107900):
-            # If we're going to all the bother of installing Boost, let's install the most recent one
-            boostVersionToInstall = '1.80.0'
+         #
+         # BOOST_LIB_VERSION is a string value with underscores instead of dots (and without the patch level if that's 0)
+         # So, eg for Boost 1.79.0, BOOST_LIB_VERSION = "1_79" (and for 1.23.45 it would be "1_23_45")
+         #
+         # We use BOOST_LIB_VERSION as it's easy to convert it to a version number that Python can understand
+         #
+         log.debug(
+            'Max version of Boost found: ' + str(maxBoostVersionFound) + '.  Need >= ' + str(minBoostVersion) +
+            ', otherwise will try to install ' + str(boostVersionToInstall)
+         )
+         if (maxBoostVersionFound < minBoostVersion):
             log.info(
-               'Installing Boost ' + boostVersionToInstall + ' as newest version found was ' + stringMaxVersion
+               'Installing Boost ' + str(boostVersionToInstall) + ' as newest version found was ' +
+               str(maxBoostVersionFound)
             )
             #
             # To manually install the latest version of Boost from source, first we uninstall any old version
@@ -352,11 +368,11 @@ def installDependencies():
                previousWorkingDirectory = pathlib.Path.cwd().as_posix()
                os.chdir(tmpDirName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
-               boostUnderscoreName = 'boost_' + boostVersionToInstall.replace('.', '_')
+               boostUnderscoreName = 'boost_' + str(boostVersionToInstall).replace('.', '_')
                abortOnRunFail(
                   subprocess.run(
                      ['wget',
-                        'https://boostorg.jfrog.io/artifactory/main/release/' + boostVersionToInstall + '/source/' + boostUnderscoreName + '.tar.bz2']
+                      'https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2']
                   )
                )
                log.debug('Boost download completed')
@@ -382,6 +398,7 @@ def installDependencies():
                )
 
          # Almost everything else we can rely on the distro packages
+         # Note that we need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
          log.info('Ensuring other libraries and frameworks are installed')
          abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
          abortOnRunFail(

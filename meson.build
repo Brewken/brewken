@@ -332,7 +332,7 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 # https://cmake.org/cmake/help/latest/module/FindXalanC.html)
 #
 #
-xercesDependency = dependency('XercesC', version : '>=3.2.3', static : true)
+xercesDependency = dependency('XercesC', version : '>=3.2.2', static : true)
 message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(),
         'version =', xercesDependency.version())
 xalanDependency = dependency('XalanC', version : '>=1.12.0', static : true)
