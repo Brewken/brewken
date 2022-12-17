@@ -322,12 +322,48 @@ boostDependency = dependency('boost',
 message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'version =', boostDependency.version())
 
 #
-# Find the other libraries we depend on
+# Extra requirements for Boost Stacktrace
+#
+# Per https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html, by default
+# Boost.Stacktrace is a header-only library.  However, you get better results by linking (either statically or
+# dynamically) with a helper library.  Of the various options, it seems like boost_stacktrace_backtrace gives the most
+# functionality over the most platforms.  This has dependencies on:
+#   - libdl on POSIX platforms -- but see note below
+#   - libbacktrace
+# The latter is an external library on Windows.  On POSIX plaforms it's typically already either installed on the system
+# (eg see https://man7.org/linux/man-pages/man3/backtrace.3.html) or built in to the compiler.  Fortunately, CMake knows
+# how to do the right thing in either case, thanks to https://cmake.org/cmake/help/latest/module/FindBacktrace.html.
+#
+# Just to make things extra fun, in 2021, the GNU compilers did away with libdl and incorporated its functionality into
+# libc, per section 2.3 of release info at https://sourceware.org/glibc/wiki/Release/2.34.  This means, if we're using
+# the GNU tool chain and libc is v2.34 or newer, then we should NOT look for libdl, as we won't find it!  To find the
+# version of libc, you execute 'ldd --version', which gives multi-line output, of which the first line will be something
+# such as:
+#    ldd (Ubuntu GLIBC 2.35-0ubuntu3.1) 2.35
+# In this case, that means libc is version 2.35
+#
+# If we _don't_ need libdl, we just create an "unrequired" dependency.  This saves having to repeat a bunch of logic
+# later on when we get to the main build.
+#
+needLibdl = false
+if meson.get_compiler('cpp').get_id() == 'gcc'
+   lddOutput = run_command('ldd', '--version', check: true).stdout().strip()
+   lddOutputLine1 = lddOutput.split('\n')[0]
+   message('ldd --version gives:', lddOutputLine1)
+   libcVersion = lddOutputLine1.split(' ')[-1]
+   message('libc version is:', libcVersion)
+   if libcVersion.version_compare('<2.34')
+      needLibdl = true
+   endif
+endif
+dlDependency = dependency('dl', required : needLibdl, static : true)
+
+#======================================== Find the other libraries we depend on ========================================
 #
 # See https://mesonbuild.com/Reference-manual_returned_dep.html for what info we can pull from a dependency object
 #
 # For BeerXML processing we need Xerces-C++ and Xalan-C++.  Meson can find both of these automatically using CMake's
-# find_package(), as long as CMake is installed(!) and we provide the right library names ('XercesC' per
+# find_package(), as long as (a) CMake is installed(!) and (b) we provide the right library names ('XercesC' per
 # https://cmake.org/cmake/help/latest/module/FindXercesC.html and 'XalanC' per
 # https://cmake.org/cmake/help/latest/module/FindXalanC.html)
 #
@@ -339,6 +375,11 @@ xalanDependency = dependency('XalanC', version : '>=1.11.0', static : true)
 message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(),
         'version =', xalanDependency.version())
 
+#====================================================== Valijson =======================================================
+# Don't need to do anything special, other than set include directories below, as it's header-only and we pull it in as
+# a Git submodule.
+
+#==================================================== Other headers ====================================================
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
 includeDirs = include_directories('src', 'third-party/valijson/include')
 
@@ -1091,7 +1132,8 @@ commonCodeStaticLib = static_library('common_code',
                                      dependencies: [qtDependencies,
                                                     xercesDependency,
                                                     xalanDependency,
-                                                    boostDependency],
+                                                    boostDependency,
+                                                    dlDependency],
                                      install : false)
 
 mainExecutable = executable(mainExecutableName,
