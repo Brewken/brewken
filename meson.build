@@ -335,7 +335,7 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 xercesDependency = dependency('XercesC', version : '>=3.2.2', static : true)
 message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(),
         'version =', xercesDependency.version())
-xalanDependency = dependency('XalanC', version : '>=1.12.0', static : true)
+xalanDependency = dependency('XalanC', version : '>=1.11.0', static : true)
 message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(),
         'version =', xalanDependency.version())
 
