@@ -151,10 +151,18 @@ jobs:
             build/brewken*.tar.bz2.sha256
           retention-days: 7
 
-      - name: Recover Debris Artifacts
+      - name: Recover Debris Artifacts (CMake)
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
         with:
           name: build-results-${{matrix.os}}
           path: build
+          retention-days: 1
+
+      - name: Recover Debris Artifacts (Meson)
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: mbuild-results-${{matrix.os}}
+          path: mbuild
           retention-days: 1

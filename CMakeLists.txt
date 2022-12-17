@@ -209,6 +209,8 @@ set(fileName_unitTestRunner "${PROJECT_NAME}_tests")
 #=======================================================================================================================
 # This is needed to enable the add_test() command
 enable_testing()
+# Try to find static libraries when available -- at least on Unix-like systems (aka Linux and Mac)
+set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
 
 #=======================================================================================================================
 #=============================================== Installation Components ===============================================
