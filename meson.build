@@ -214,19 +214,19 @@ prefix = get_option('prefix')
 
 # Tell meson which Qt modules we need
 qtCommonDependencies = dependency('qt5',
-                            version : '>=5.9.5',
-                            modules : ['Core',
-                                       'Multimedia',
-                                       'Network',
-                                       'PrintSupport',
-                                       'Sql',
-                                       'Svg',
-                                       'Widgets',
-                                       'Xml'],
-                           include_type : 'system',
-                           static : true)
-# The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it will barf
-# in a GitHub action which does not have a display running
+                                  version : '>=5.9.5',
+                                  modules : ['Core',
+                                              'Multimedia',
+                                              'Network',
+                                              'PrintSupport',
+                                              'Sql',
+                                              'Svg',
+                                              'Widgets',
+                                              'Xml'],
+                                  include_type : 'system',
+                                  static : true)
+# The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
+# in a GitHub action that does not have a display running.)
 qtAppDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
 # The Qt Test module is only needed for the unit tests
 qtTestDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])

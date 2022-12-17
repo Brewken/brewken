@@ -63,6 +63,10 @@ jobs:
           release: true
           path-type: strict
 
+      - name: Move Checkout
+        run: |
+          Copy-Item -Path ".\temp" -Destination "C:\_" -Recurse
+
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
         run: |
@@ -99,9 +103,6 @@ jobs:
           Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip -OutFile .\temp\build\Nsislog.zip
           Expand-Archive -Path .\temp\build\Nsislog.zip -DestinationPath .\temp\build\Nsislog
 
-      - name: Move Checkout
-        run: |
-          Copy-Item -Path ".\temp" -Destination "C:\_" -Recurse
 
       - name: CMake config
         shell: msys2 {0}

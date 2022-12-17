@@ -111,10 +111,12 @@ jobs:
         run: |
           make test
 
+      # The 'export QT_DEBUG_PLUGINS=1' should give us more diagnostics about why xcb module is not loading
       - name: Test (via Meson)
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
+          export QT_DEBUG_PLUGINS=1
           meson test
 
       - name: Package (via CMake/CPack)
