@@ -48,7 +48,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Python modules we need to import
+# Python built-in modules we use
 #-----------------------------------------------------------------------------------------------------------------------
 import argparse
 import datetime
@@ -62,7 +62,14 @@ import subprocess
 import sys
 import tempfile
 from decimal import Decimal
-from packaging import version
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Python 3rd-party modules we use
+#-----------------------------------------------------------------------------------------------------------------------
+# We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
+# https://packaging.pypa.io/en/stable/version.html).
+subprocess.run(['pip', 'install', 'packaging'])
+import packaging.version
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Global constants
@@ -289,9 +296,9 @@ def installDependencies():
          #
          # Although things should compile with 1.79.0, if we're going to all the bother of installing Boost, we'll
          # install a more recent one
-         minBoostVersion = version.parse('1.79.0')
-         boostVersionToInstall = version.parse('1.80.0') # NB: This _must_ have the patch version
-         maxBoostVersionFound = version.parse('0')
+         minBoostVersion = packaging.version.parse('1.79.0')
+         boostVersionToInstall = packaging.version.parse('1.80.0') # NB: This _must_ have the patch version
+         maxBoostVersionFound = packaging.version.parse('0')
          possibleBoostVersionHeaders = [pathlib.Path('/usr/include/boost/version.hpp'),
                                           pathlib.Path('/usr/local/include/boost/version.hpp')]
          if ('BOOST_ROOT' in os.environ):
@@ -309,7 +316,7 @@ def installDependencies():
                versionFoundRaw = re.sub(
                   r'^.*BOOST_LIB_VERSION "([0-9_]*)".*$', r'\1', str(runResult.stdout).replace('\n', '')
                ).replace('_', '.')
-               versionFound = version.parse(versionFoundRaw)
+               versionFound = packaging.version.parse(versionFoundRaw)
                if (versionFound > maxBoostVersionFound):
                   maxBoostVersionFound = versionFound
                log.debug('Parsed as ' + str(versionFound) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
