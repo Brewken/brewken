@@ -61,6 +61,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from decimal import Decimal
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Global constants
@@ -196,18 +197,11 @@ dirList_qtIfw = [
 ]
 
 #-----------------------------------------------------------------------------------------------------------------------
-# External commands
-#-----------------------------------------------------------------------------------------------------------------------
-# Advice at https://docs.python.org/3/library/subprocess.html is "For maximum reliability, use a fully qualified path
-# for the executable. To search for an unqualified name on PATH, use shutil.which()"
-exe_git   = shutil.which("git")
-exe_meson = shutil.which("meson")
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Helper function for checking result of running external commands
 #
 # Given a CompletedProcess object returned from subprocess.run(), this checks the return code and, if it is non-zero
-# stops this script with an error message and the same return code.  Otherwise control is returned to the caller.
+# stops this script with an error message and the same return code.  Otherwise the CompletedProcess object is returned
+# to the caller (to make it easier to chain things together).
 #-----------------------------------------------------------------------------------------------------------------------
 def abortOnRunFail(runResult: subprocess.CompletedProcess):
    if (runResult.returncode != 0):
@@ -222,7 +216,7 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
 
       exit(runResult.returncode)
 
-   return
+   return runResult
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function for counting files in a directory tree
@@ -234,16 +228,25 @@ def numFilesInTree(path):
    return numFiles
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Set global variables exe_git and exe_meson with the locations of the git and meson executables
+#
 # We want to give helpful error messages if Meson or Git is not installed.  For other missing dependencies we can rely
 # on Meson itself to give explanatory error messages.
 #-----------------------------------------------------------------------------------------------------------------------
-def checkForMesonAndGit():
+def findMesonAndGit():
+   # Advice at https://docs.python.org/3/library/subprocess.html is "For maximum reliability, use a fully qualified path
+   # for the executable. To search for an unqualified name on PATH, use shutil.which()"
+
    # Check Meson is installed
+   global exe_meson
+   exe_meson = shutil.which("meson")
    if (exe_meson is None or exe_meson == ""):
       log.critical('Cannot find meson - please see https://mesonbuild.com/Getting-meson.html for how to install')
       exit(1)
 
    # Check Git is installed if its magic directory is present
+   global exe_git
+   exe_git   = shutil.which("git")
    if (dir_gitInfo.is_dir()):
       log.debug('Found git information directory:' + dir_gitInfo.as_posix())
       if (exe_git is None or exe_git == ""):
@@ -290,14 +293,18 @@ def installDependencies():
             possibleBoostVersionHeaders.append(pathlib.Path(os.environ['BOOST_ROOT']).joinpath('boost/version.hpp'))
          for boostVersionHeader in possibleBoostVersionHeaders:
             if (boostVersionHeader.is_file()):
-               runResult = subprocess.run(['grep', '#define BOOST_VERSION ', boostVersionHeader.as_posix()],
-                                          capture_output=True)
-               if (runResult.returncode == 0 ):
-                  log.debug('In ' + boostVersionHeader.as_posix() + ' found ' + str(runResult.stdout))
-                  version = int(re.sub(r'^.*BOOST_VERSION ([0-9]*).*$', r'\1', str(runResult.stdout)))
-                  if (version > maxBoostVersionFound):
-                     maxBoostVersionFound = version
-                  log.debug('Parsed as ' + str(version) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
+               runResult = abortOnRunFail(
+                  subprocess.run(
+                     ['grep', '#define BOOST_VERSION ', boostVersionHeader.as_posix()],
+                     encoding = "utf-8",
+                     capture_output = True
+                  )
+               )
+               log.debug('In ' + boostVersionHeader.as_posix() + ' found ' + str(runResult.stdout))
+               version = int(re.sub(r'^.*BOOST_VERSION ([0-9]*).*$', r'\1', str(runResult.stdout)))
+               if (version > maxBoostVersionFound):
+                  maxBoostVersionFound = version
+               log.debug('Parsed as ' + str(version) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
 
          # Per the comment in boost/version.hpp:
          #    BOOST_VERSION % 100 is the patch level
@@ -363,6 +370,11 @@ def installDependencies():
                log.debug('Boost install finished')
                os.chdir(previousWorkingDirectory)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix() + '.  Removing ' + tmpDirName)
+               #
+               # The only issue with the RAII approach to removing the temporary directory is that some of the files
+               # inside it will be owned by root, so there will be a permissions error when Python attempts to delete
+               # the directory tree.  Fixing the permissions beforehand is a slightly clunky way around this.
+               #
                abortOnRunFail(
                   subprocess.run(
                      ['sudo', 'chmod', '--recursive', 'a+rw', tmpDirName]
@@ -374,27 +386,48 @@ def installDependencies():
          abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
          abortOnRunFail(
             subprocess.run(
-               ['sudo', 'apt-get', 'install', '-y', 'cmake',
-                                                      'debhelper',
-                                                      'git',
-                                                      'libqt5multimedia5-plugins',
-                                                      'libqt5sql5-psql',
-                                                      'libqt5sql5-sqlite',
-                                                      'libqt5svg5-dev',
-                                                      'libxalan-c-dev',
-                                                      'libxerces-c-dev',
-                                                      'lintian',
-                                                      'meson',
-                                                      'ninja-build',
-                                                      'python3',
-                                                      'qtbase5-dev',
-                                                      'qtmultimedia5-dev',
-                                                      'qttools5-dev',
-                                                      'qttools5-dev-tools',
-                                                      'rpm',
-                                                      'rpmlint']
+               ['sudo', 'apt', 'install', '-y', 'cmake',
+                                                'debhelper',
+                                                'git',
+                                                'libqt5multimedia5-plugins',
+                                                'libqt5sql5-psql',
+                                                'libqt5sql5-sqlite',
+                                                'libqt5svg5-dev',
+                                                'libxalan-c-dev',
+                                                'libxerces-c-dev',
+                                                'lintian',
+                                                'meson',
+                                                'ninja-build',
+                                                'python3',
+                                                'qtbase5-dev',
+                                                'qtmultimedia5-dev',
+                                                'qttools5-dev',
+                                                'qttools5-dev-tools',
+                                                'rpm',
+                                                'rpmlint']
             )
          )
+
+         #
+         # Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.56.0 or later.  In this case it means we
+         # have to install Meson via pip, which is not ideal on Linux (per comments in meson.build).
+         #
+         # The distro ID we get from 'lsb_release -is' will be 'Ubuntu' for all the variants of Ubuntu (eg including
+         # Kubuntu).  Not sure what happens on derivatives such as Linux Mint though.
+         #
+         distroName = str(
+            abortOnRunFail(subprocess.run(['lsb_release', '-is'], encoding = "utf-8", capture_output = True)).stdout
+         ).replace('\n', '')
+         log.debug('Linux distro: ' + distroName)
+         if ('Ubuntu' == distroName):
+            ubuntuRelease = str(
+               abortOnRunFail(subprocess.run(['lsb_release', '-rs'], encoding = "utf-8", capture_output = True)).stdout
+            ).replace('\n', '')
+            log.debug('Ubuntu release: ' + ubuntuRelease)
+            if (Decimal(ubuntuRelease) < Decimal('22.04')):
+               log.info('Installing newer version of Meson the hard way')
+               abortOnRunFail(subprocess.run(['sudo', 'apt', 'remove', '-y', 'meson']))
+               abortOnRunFail(subprocess.run(['sudo', 'pip3', 'install', 'meson']))
 
       case 'Windows':
          log.debug('Windows')
@@ -417,7 +450,7 @@ def doSetup(setupOption):
       installDependencies()
 
    # Before we start invoking git and meson, let's check that, one way or another, they got installed
-   checkForMesonAndGit()
+   findMesonAndGit()
 
    # If this is a git checkout then let's set up git with the project standards
    if (dir_gitInfo.is_dir()):
