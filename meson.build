@@ -227,9 +227,9 @@ qtCommonDependencies = dependency('qt5',
                                   static : true)
 # The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
 # in a GitHub action that does not have a display running.)
-qtAppDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
+qtMainExeDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
 # The Qt Test module is only needed for the unit tests
-qtTestDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
+qtTestRunnerDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
 
 # On Windows and Mac there are platform-specific Qt tools for packaging
 if host_machine.system() == 'windows'
@@ -384,6 +384,16 @@ message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.fou
 #==================================================== Other headers ====================================================
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
 includeDirs = include_directories('src', 'third-party/valijson/include')
+
+#=======================================================================================================================
+#================================================== Extra Apple stuff ==================================================
+#=======================================================================================================================
+# Statically linking Xalan, Xerces etc requires CFStringLowercase, CFStringUppercase, etc on Mac
+corefoundationDependency = dependency(
+   'appleframeworks',
+   modules: ['CoreFoundation'],
+   required: false,
+)
 
 #=======================================================================================================================
 #===================================================== Input Files =====================================================
@@ -928,6 +938,17 @@ translations = qt.compile_translations(ts_files         : translationSourceFiles
                                        install_dir      : installSubDir_translations)
 
 #=======================================================================================================================
+#=============================================== Lists of Dependencies =================================================
+#=======================================================================================================================
+commonDependencies = [qtCommonDependencies,
+                      xercesDependency,
+                      xalanDependency,
+                      boostDependency,
+                      dlDependency]
+mainExeDependencies = commonDependencies + qtMainExeDependencies
+testRunnerDependencies = commonDependencies + qtTestRunnerDependencies
+
+#=======================================================================================================================
 #================================================= Exported variables ==================================================
 #=======================================================================================================================
 #
@@ -1131,32 +1152,20 @@ endif
 commonCodeStaticLib = static_library('common_code',
                                      commonSourceFiles, generatedFromUi, generatedFromMoc, translations,
                                      include_directories : includeDirs,
-                                     dependencies: [qtCommonDependencies,
-                                                    xercesDependency,
-                                                    xalanDependency,
-                                                    boostDependency,
-                                                    dlDependency],
+                                     dependencies: commonDependencies,
                                      install : false)
 
 mainExecutable = executable(mainExecutableName,
                             'src/main.cpp', generatedFromQrc,
                             include_directories : includeDirs,
-                            dependencies : [qtCommonDependencies,
-                                            qtAppDependencies,
-                                            xercesDependency,
-                                            xalanDependency,
-                                            boostDependency],
+                            dependencies : mainExeDependencies,
                             link_with : commonCodeStaticLib,
                             install : true)
 
 testRunner = executable(testRunnerName, generatedFromQrc,
                         'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
                         include_directories : includeDirs,
-                        dependencies : [qtCommonDependencies,
-                                        qtTestDependencies,
-                                        xercesDependency,
-                                        xalanDependency,
-                                        boostDependency],
+                        dependencies : testRunnerDependencies,
                         link_with : commonCodeStaticLib,
                         install : false)
 

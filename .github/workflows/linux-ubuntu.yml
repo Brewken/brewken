@@ -168,3 +168,13 @@ jobs:
           name: mbuild-results-${{matrix.os}}
           path: mbuild
           retention-days: 1
+
+      # Meson test doesn't show log output on the terminal, but puts it straight to a log file.  We don't want to have
+      # to download the whole compressed mbuild tree just to see the log in event of a test failure, so we show it here
+      # (provided it exists).
+      - name: Show Meson test logs
+        if: ${{ failure() }}
+        working-directory: ${{github.workspace}}
+        shell: bash
+        run: |
+          if [[ -f mbuild/meson-logs/testlog.txt ]]; then cat mbuild/meson-logs/testlog.txt; fi

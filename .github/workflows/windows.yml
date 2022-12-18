@@ -70,7 +70,7 @@ jobs:
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
         run: |
-          cd /C/_/build
+          cd /C/_/
           pwd
           ./bt -v setup all
 
