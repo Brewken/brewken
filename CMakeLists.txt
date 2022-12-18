@@ -1156,7 +1156,7 @@ set(appAndTestCommonLibraries
 )
 if(APPLE)
    list(APPEND appAndTestCommonLibraries CURL::libcurl)
-   target_link_libraries(program "-framework CoreFoundation")
+   target_link_libraries(${fileName_executable} "-framework CoreFoundation")
 endif()
 foreach(qtComponent IN LISTS qtCommonComponents)
    list(APPEND appAndTestCommonLibraries "Qt5::${qtComponent}")

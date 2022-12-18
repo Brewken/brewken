@@ -67,11 +67,16 @@ jobs:
         run: |
           Copy-Item -Path ".\temp" -Destination "C:\_" -Recurse
 
+      # For historical reasons, Linux and other platforms need to run both Python v2 (still used by some bits of system)
+      # and Python v3 (eg that you installed yourself) so there are usually two corresponding Python executables,
+      # python2 and python3.  On Windows there is only whatever Python you installed and it's called python.exe.  To
+      # keep the shebang in the bt script working, we just make a softlink to python called python3.
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
         run: |
           cd /C/_/
           pwd
+          sudo ln -s $(which python) $(dirname $(which python))/python3
           ./bt -v setup all
 
 #      - uses: msys2/setup-msys2@v2
