@@ -112,11 +112,13 @@ jobs:
           make test
 
       # The 'export QT_DEBUG_PLUGINS=1' should give us more diagnostics about why xcb module is not loading
+      # In theory 'export QT_QPA_PLATFORM=offscreen' stops the xcb module trying to connect to a non-existent display
       - name: Test (via Meson)
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
           export QT_DEBUG_PLUGINS=1
+          export QT_QPA_PLATFORM=offscreen
           meson test
 
       - name: Package (via CMake/CPack)
