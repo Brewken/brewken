@@ -52,13 +52,18 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      # Install MSYS2 and then Python
+      #
       # We need Python 3.10 or later to run the bt script
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
+      #
+      # I tried using the separate actions/setup-python@v4 action, but it doesn't seem to result in the Python
+      # executable being visible in the MSYS2 environment.  So, instead, we install from inside MSYS2.  (According to
+      # https://packages.msys2.org/package/mingw-w64-x86_64-python, this is Python 3.10.9 as of 2022-12-10.)
       - uses: msys2/setup-msys2@v2
         with:
+          msystem: ${{ matrix.msystem }}
+          install: >-
+            mingw-w64-python
           update: true
           release: true
           path-type: strict
@@ -78,27 +83,6 @@ jobs:
           pwd
           sudo ln -s $(which python) $(dirname $(which python))/python3
           ./bt -v setup all
-
-#      - uses: msys2/setup-msys2@v2
-#        with:
-#          msystem: ${{ matrix.msystem }}
-#          install: >-
-#            mingw-w64-${{ matrix.arch }}-boost
-#            mingw-w64-${{ matrix.arch }}-cmake
-#            mingw-w64-${{ matrix.arch }}-doxygen
-#            mingw-w64-${{ matrix.arch }}-gcc
-#            mingw-w64-${{ matrix.arch }}-libbacktrace
-#            mingw-w64-${{ matrix.arch }}-make
-#            mingw-w64-${{ matrix.arch }}-meson
-#            mingw-w64-${{ matrix.arch }}-ninja
-#            mingw-w64-${{ matrix.arch }}-nsis
-#            mingw-w64-${{ matrix.arch }}-python
-#            mingw-w64-${{ matrix.arch }}-qt5
-#            mingw-w64-${{ matrix.arch }}-xalan-c
-#            mingw-w64-${{ matrix.arch }}-xerces-c
-#          update: true
-#          release: true
-#          path-type: strict
 
       - name: Download nsis plugins
         run: |

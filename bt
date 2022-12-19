@@ -497,7 +497,6 @@ def doSetup(setupOption):
    if (setupOption == 'all'):
       installDependencies()
 
-   # Before we start invoking git and meson, let's check that, one way or another, they got installed
    findMesonAndGit()
 
    # If this is a git checkout then let's set up git with the project standards
@@ -589,6 +588,8 @@ def doSetup(setupOption):
 # ./bt package
 #-----------------------------------------------------------------------------------------------------------------------
 def doPackage():
+   findMesonAndGit()
+
    #
    # The directory structure we create inside the build directory (mbuild) for packaging is:
    #
@@ -678,6 +679,8 @@ def doPackage():
 # Additionally, we use meson.build to set a whole bunch of CONFIG_ environment variables
 #-----------------------------------------------------------------------------------------------------------------------
 def doMesonPackageHelper():
+   findMesonAndGit()
+
    # Copy the generated installer and package configuration/information files from the build directory to where they
    # belong in the qtIfw subtree
    shutil.copy2(dir_build.joinpath('config.xml'),  dir_qtIfw_config)
