@@ -81,7 +81,10 @@ jobs:
         run: |
           cd /C/_/
           pwd
-          sudo ln -s $(which python) $(dirname $(which python))/python3
+          if [[ ! -f $(dirname $(which python))/python3 ]] \
+          then \
+          ln -s $(which python) $(dirname $(which python))/python3 \
+          fi
           ./bt -v setup all
 
       - name: Download nsis plugins
