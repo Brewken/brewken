@@ -1158,7 +1158,8 @@ if(APPLE)
    # Static linking Xerces and Xalan on MacOS means we have to explicitly say what libraries and frameworks they in turn
    # depend on.  It would be neat to find some automated tool that does this for us.
    list(APPEND appAndTestCommonLibraries CURL::libcurl)
-   target_link_libraries(${fileName_executable} "-framework CoreFoundation CoreServices")
+   target_link_libraries(${fileName_executable} "-framework CoreFoundation")
+   target_link_libraries(${fileName_executable} "-framework CoreServices")
 endif()
 foreach(qtComponent IN LISTS qtCommonComponents)
    list(APPEND appAndTestCommonLibraries "Qt5::${qtComponent}")
