@@ -52,18 +52,23 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      # Install MSYS2 and then Python
+      # Install MSYS2, then Python, then Pip
       #
       # We need Python 3.10 or later to run the bt script
       #
       # I tried using the separate actions/setup-python@v4 action, but it doesn't seem to result in the Python
       # executable being visible in the MSYS2 environment.  So, instead, we install from inside MSYS2.  (According to
       # https://packages.msys2.org/package/mingw-w64-x86_64-python, this is Python 3.10.9 as of 2022-12-10.)
+      #
+      # On MSYS2, Pip (https://pypi.org/project/pip/) is not installed by default with Python, so we have to explicitly
+      # add it.  (An alternative approach would be to run 'python -m ensurepip --upgrade' which, per
+      # https://docs.python.org/3/library/ensurepip.html, is the official Python way to bootstrap Pip.)
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
           install: >-
             mingw-w64-${{ matrix.arch }}-python
+            python-pip
           update: true
           release: true
           path-type: strict
