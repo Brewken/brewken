@@ -78,10 +78,17 @@ jobs:
         run: |
           Copy-Item -Path ".\temp" -Destination "C:\_" -Recurse
 
-      # For historical reasons, Linux and other platforms need to run both Python v2 (still used by some bits of system)
-      # and Python v3 (eg that you installed yourself) so there are usually two corresponding Python executables,
-      # python2 and python3.  On Windows there is only whatever Python you installed and it's called python.exe.  To
-      # keep the shebang in the bt script working, we just make a softlink to python called python3.
+      #
+      # On Windows, there are a couple of extra things we need to do before running the bt script:
+      #
+      #  - In order for Python to be able to print Unicode characters, it needs a Unicode locale.  This is the default
+      #    on most desktop systems, but we need to explicitly set it in the GitHub action runner environment.
+      #
+      #  - For historical reasons, Linux and other platforms need to run both Python v2 (still used by some bits of
+      #    system) and Python v3 (eg that you installed yourself) so there are usually two corresponding Python
+      #    executables, python2 and python3.  On Windows there is only whatever Python you installed and it's called
+      #    python.exe.  To keep the shebang in the bt script working, we just make a softlink to python called python3.
+      #
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
         run: |
@@ -94,7 +101,12 @@ jobs:
           echo "Installed pip is:"
           which pip
           pip --version
+          echo "Locale before changing to en_US.utf8 was"
+          locale
+          export LANG=en_US.utf8
+          echo "Ensuring that python3 symlink / executable exists"
           if [[ ! -f $(dirname $(which python))/python3 ]]; then ln -s $(which python) $(dirname $(which python))/python3; fi
+          echo "Running ./bt -v setup all"
           ./bt -v setup all
 
       - name: Download nsis plugins
