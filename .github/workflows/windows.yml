@@ -61,8 +61,9 @@ jobs:
       # https://packages.msys2.org/package/mingw-w64-x86_64-python, this is Python 3.10.9 as of 2022-12-10.)
       #
       # On MSYS2, Pip (https://pypi.org/project/pip/) is not installed by default with Python, so we have to explicitly
-      # add it.  (An alternative approach would be to run 'python -m ensurepip --upgrade' which, per
-      # https://docs.python.org/3/library/ensurepip.html, is the official Python way to bootstrap Pip.)
+      # add it.  (In theory, an alternative approach would be to run 'python -m ensurepip --upgrade' which, per
+      # https://docs.python.org/3/library/ensurepip.html, is the official Python way to bootstrap Pip.  However, this
+      # did not seem to work properly in MSYS2 when I tried it.)
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
@@ -86,6 +87,7 @@ jobs:
         run: |
           cd /C/_/
           pwd
+          pacman -S python3-pip
           if [[ ! -f $(dirname $(which python))/python3 ]]; then ln -s $(which python) $(dirname $(which python))/python3; fi
           ./bt -v setup all
 
