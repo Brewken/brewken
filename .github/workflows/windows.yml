@@ -70,7 +70,6 @@ jobs:
           install: >-
             mingw-w64-${{ matrix.arch }}-python
             python-pip
-            python3-pip
           update: true
           release: true
           path-type: strict

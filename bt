@@ -68,7 +68,11 @@ from decimal import Decimal
 #-----------------------------------------------------------------------------------------------------------------------
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
 # https://packaging.pypa.io/en/stable/version.html).
-subprocess.run(['pip', 'install', 'packaging'])
+exe_pip = shutil.which("pip")
+if (exe_pip is None or exe_pip == ""):
+   log.critical('Cannot find pip - please see https://pip.pypa.io/en/stable/installation/ for how to install')
+   exit(1)
+subprocess.run([exe_pip, 'install', 'packaging'])
 import packaging.version
 
 #-----------------------------------------------------------------------------------------------------------------------
