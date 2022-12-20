@@ -70,6 +70,7 @@ jobs:
           install: >-
             mingw-w64-${{ matrix.arch }}-python
             python-pip
+            python3-pip
           update: true
           release: true
           path-type: strict
@@ -87,7 +88,7 @@ jobs:
         run: |
           cd /C/_/
           pwd
-          pacman -S python3-pip
+          pip --version
           if [[ ! -f $(dirname $(which python))/python3 ]]; then ln -s $(which python) $(dirname $(which python))/python3; fi
           ./bt -v setup all
 
