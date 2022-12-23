@@ -490,10 +490,11 @@ def installDependencies():
                         'mingw-w64-' + arch + '-toolchain',
                         'mingw-w64-' + arch + '-xalan-c',
                         'mingw-w64-' + arch + '-xerces-c']
+         log.debug('Installing ' + packageToInstall)
          for packageToInstall in installList:
             abortOnRunFail(
                subprocess.run(
-                  ['pacman', '-S', '--needed', packageToInstall]
+                  ['pacman', '-S', '--needed', '--noconfirm', packageToInstall]
                )
             )
 
