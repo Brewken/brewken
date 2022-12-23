@@ -90,6 +90,13 @@ jobs:
       #    need to set PYTHONIOENCODING (see https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING, even
       #    though it seems to imply you don't need to set it on recent versions of Python).
       #
+      #  - The version of Pip we install above does not put it in the "right" place.  Specifically it will not be in the
+      #    PATH when we run bt.  The following seems to be the least hacky way around this:
+      #       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+      #       python get-pip.py
+      #       python -m pip install -U --force-reinstall pip
+      #    See https://stackoverflow.com/questions/48087004/installing-pip-on-msys for more discussion on this.
+      #
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
         run: |
@@ -105,6 +112,7 @@ jobs:
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python get-pip.py
           python -m pip install -U --force-reinstall pip
+          pip --version
           echo "Locale:"
           locale
           export PYTHONIOENCODING=utf8
