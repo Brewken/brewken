@@ -86,10 +86,9 @@ jobs:
       #    executables, python2 and python3.  On Windows there is only whatever Python you installed and it's called
       #    python.exe.  To keep the shebang in the bt script working, we just make a softlink to python called python3.
       #
-      #  - Getting Unicode input/output to work is fun.  We should already have a Unicode locale, but it seems this is
-      #    not enough.  Next try setting PYTHONIOENCODING, even though
-      #    https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING says it's not needed on recent versions
-      #    of Python.
+      #  - Getting Unicode input/output to work is fun.  We should already have a Unicode locale, but it seems we also
+      #    need to set PYTHONIOENCODING (see https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING, even
+      #    though it seems to imply you don't need to set it on recent versions of Python).
       #
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
@@ -103,6 +102,9 @@ jobs:
           echo "Installed pip is:"
           which pip
           pip --version
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python get-pip.py
+          python -m pip install -U --force-reinstall pip
           echo "Locale:"
           locale
           export PYTHONIOENCODING=utf8
