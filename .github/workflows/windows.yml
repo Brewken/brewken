@@ -139,7 +139,9 @@ jobs:
       - name: CMake config
         shell: msys2 {0}
         run: |
-          cd /C/_/build
+          cd /C/_
+          ./configure
+          cd build
           cp ./Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
           cp ./Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/
           cp ./Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi

@@ -96,6 +96,11 @@
 #
 # We'll get an error if 'project' isn't the first call in this file
 #
+# Note that we need:
+#   - Meson 0.56.0 or newer to use Meson's 'substring' call.
+#   - Meson 0.60.0 or newer to use + to append items to lists (aka 'list.<plus>' feature -- at least that's what the
+#     warning message says if you've specified a lower minimum version of Meson)
+#
 # NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
 #     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
 #     the entire build directory and run
@@ -140,7 +145,7 @@
 project('brewken', 'cpp',
         version: '0.1.0',
         license: 'GPL-3.0-or-later',
-        meson_version: '>=0.59.0',
+        meson_version: '>=0.60.0',
         default_options : ['cpp_std=c++17',
                            'warning_level=3',
 #                           'prefer_static=true',
@@ -156,8 +161,6 @@ project('brewken', 'cpp',
 #    capitalisedProjectName = projectName.capitalize()
 # But meson.project_name() returns a Meson String, not a Python String, so there's a bit more work to do to get the same
 # result.
-#
-# Note that we need Meson 0.56.0 or newer to use Meson's 'substring' call.
 #
 projectName = meson.project_name().to_lower()
 capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.substring(1)
