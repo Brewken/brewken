@@ -142,6 +142,8 @@ jobs:
           cd /C/_
           ./configure
           cd build
+          find /C/_/temp/build/Locate -type f
+          find /C/_/temp/build/Nsislog/ -type f
           cp /C/_/temp/build/Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
           cp /C/_/temp/build/Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/
           cp /C/_/temp/build/Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi
