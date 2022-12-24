@@ -129,11 +129,11 @@ jobs:
 
       - name: Download nsis plugins
         run: |
-          New-Item -ItemType Directory -Force -Path .\temp\build
-          Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip -OutFile .\temp\build\Locate.zip
-          Expand-Archive -Path .\temp\build\Locate.zip -DestinationPath .\temp\build\Locate
-          Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip -OutFile .\temp\build\Nsislog.zip
-          Expand-Archive -Path .\temp\build\Nsislog.zip -DestinationPath .\temp\build\Nsislog
+          New-Item -ItemType Directory -Force -Path /C/_/temp/build
+          Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip -OutFile /C/_/temp/build/Locate.zip
+          Expand-Archive -Path /C/_/temp/build/Locate.zip -DestinationPath /C/_/temp/build/Locate
+          Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip -OutFile /C/_/temp/build/Nsislog.zip
+          Expand-Archive -Path /C/_/temp/build/Nsislog.zip -DestinationPath /C/_/temp/build/Nsislog
 
 
       - name: CMake config
@@ -142,9 +142,9 @@ jobs:
           cd /C/_
           ./configure
           cd build
-          cp ./Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
-          cp ./Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/
-          cp ./Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi
+          cp /C/_/temp/build/Locate/Include/Locate.nsh /mingw32/share/nsis/Include/
+          cp /C/_/temp/build/Locate/Plugin/locate.dll /mingw32/share/nsis/Plugins/ansi/
+          cp /C/_/temp/build/Nsislog/plugin/nsislog.dll /mingw32/share/nsis/Plugins/ansi
           cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
 
       # The pwd and find ../third-party commands below are just diagnostics, but it's generally useful to have too
