@@ -283,6 +283,9 @@ def installDependencies():
    # For now, it's mostly different code for each of the 3 platforms (Linux, Windows, Mac)
    match platform.system():
 
+      #-----------------------------------------------------------------------------------------------------------------
+      #---------------------------------------------- Linux Dependencies -----------------------------------------------
+      #-----------------------------------------------------------------------------------------------------------------
       case 'Linux':
          #
          # NOTE: For the moment at least, we are assuming you are on Ubuntu or another Debian-based Linux.  For other
@@ -463,10 +466,23 @@ def installDependencies():
                abortOnRunFail(subprocess.run(['sudo', 'apt', 'remove', '-y', 'meson']))
                abortOnRunFail(subprocess.run(['sudo', 'pip3', 'install', 'meson']))
 
+      #-----------------------------------------------------------------------------------------------------------------
+      #--------------------------------------------- Windows Dependencies ----------------------------------------------
+      #-----------------------------------------------------------------------------------------------------------------
       case 'Windows':
          log.debug('Windows')
          # Ideally here, we would detect if we're in the MSYS2 environment and bail out if not
          log.info('Ensuring required libraries and frameworks are installed')
+         #
+         # Before we install packages, we want to make sure the MSYS2 installation itself is up-to-date, otherwise you
+         # can hit problems
+         #
+         #   pacman -S -y should download a fresh copy of the master package database
+         #   pacman -S -u should upgrades all currently-installed packages that are out-of-date
+         #
+         abortOnRunFail(subprocess.run(['pacman', '-S', '-y', '--noconfirm']))
+         abortOnRunFail(subprocess.run(['pacman', '-S', '-u', '--noconfirm']))
+
          #
          # We'd normally want to go with the 64-bit versions of things (x86_64) but AIUI it's a bit hard to handle this
          # in the NSIS installer, so we the 32-bit versions (i686).
@@ -498,6 +514,9 @@ def installDependencies():
                )
             )
 
+      #-----------------------------------------------------------------------------------------------------------------
+      #---------------------------------------------- Mac OS Dependencies ----------------------------------------------
+      #-----------------------------------------------------------------------------------------------------------------
       case 'Darwin':
          log.debug('Mac')
 

@@ -317,9 +317,13 @@ endif
 #
 # For Boost, per https://mesonbuild.com/Dependencies.html#boost, we only need to supply module names for libraries we
 # need to link against.  For the header-only Boost libraries, the 'boost' dependency suffices.
+boostModules = []
+if host_machine.system() == 'linux'
+   boostModules += 'stacktrace_backtrace'
+endif
 boostDependency = dependency('boost',
                              version : '>=1.79.0',
-                             modules : ['stacktrace_backtrace'],
+                             modules : boostModules,
                              static : true)
 message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'version =', boostDependency.version())
 

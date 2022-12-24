@@ -52,6 +52,7 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      #
       # Install MSYS2, then Python, then Pip
       #
       # We need Python 3.10 or later to run the bt script
@@ -60,16 +61,21 @@ jobs:
       # executable being visible in the MSYS2 environment.  So, instead, we install from inside MSYS2.  (According to
       # https://packages.msys2.org/package/mingw-w64-x86_64-python, this is Python 3.10.9 as of 2022-12-10.)
       #
-      # On MSYS2, Pip (https://pypi.org/project/pip/) is not installed by default with Python, so we have to explicitly
-      # add it.  (In theory, an alternative approach would be to run 'python -m ensurepip --upgrade' which, per
-      # https://docs.python.org/3/library/ensurepip.html, is the official Python way to bootstrap Pip.  However, this
-      # did not seem to work properly in MSYS2 when I tried it.)
+      # (In theory, an alternative approach would be to install Python, then run 'python -m ensurepip --upgrade' which,
+      # per https://docs.python.org/3/library/ensurepip.html, is the official Python way to bootstrap Pip.  However,
+      # this did not seem to work properly in MSYS2 when I tried it.)
+      #
+      # Note that you _don't_ want to install the 'python' package here as it has some subtle differences from
+      # installing 'mingw-w64-i686-python'.  (Same applies for 'python-pip' vs 'mingw-w64-i686-python-pip'.)  Some of
+      # these differences are about where things are installed, but some are about how Python behaves, eg what
+      # platform.system() returns.  See comments at https://github.com/conan-io/conan/issues/2638 for more.)
+      #
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
           install: >-
             mingw-w64-${{ matrix.arch }}-python
-            python-pip
+            mingw-w64-${{ matrix.arch }}-python-pip
           update: true
           release: true
           path-type: strict
