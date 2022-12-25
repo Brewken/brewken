@@ -1197,7 +1197,8 @@ test('Test post boil loss OG',               testRunner, args : ['postBoilLossOg
 test('Test unit conversions',                testRunner, args : ['testUnitConversions'])
 test('Test NamedParameterBundle',            testRunner, args : ['testNamedParameterBundle'])
 test('Test algorithms',                      testRunner, args : ['testAlgorithms'])
-test('Test log rotation',                    testRunner, args : ['testLogRotation'])
+# Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
+test('Test log rotation',                    testRunner, args : ['testLogRotation'], timeout : 60)
 
 #=======================================================================================================================
 #===================================================== Packaging =======================================================
