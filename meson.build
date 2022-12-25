@@ -367,6 +367,8 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
 endif
 dlDependency = dependency('dl', required : needLibdl, static : true)
 
+backtraceDependency = dependency('backtrace', required : false, static : true)
+
 #======================================== Find the other libraries we depend on ========================================
 #
 # See https://mesonbuild.com/Reference-manual_returned_dep.html for what info we can pull from a dependency object
@@ -951,7 +953,8 @@ commonDependencies = [qtCommonDependencies,
                       xercesDependency,
                       xalanDependency,
                       boostDependency,
-                      dlDependency]
+                      dlDependency,
+                      backtraceDependency]
 mainExeDependencies = commonDependencies + qtMainExeDependencies
 testRunnerDependencies = commonDependencies + qtTestRunnerDependencies
 
@@ -1144,6 +1147,15 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
    if host_machine.system() != 'windows'
       add_global_arguments('-rdynamic', language : 'cpp')
    endif
+endif
+
+if host_machine.system() == 'darwin'
+   # As explained at https://stackoverflow.com/questions/5582211/what-does-define-gnu-source-imply, defining _GNU_SOURCE
+   # gives access to various non-standard GNU/Linux extension functions and changes the behaviour of some POSIX
+   # functions.
+   #
+   # This is needed for Boost stacktrace on Mac
+   add_project_arguments('-D_GNU_SOURCE', language : 'cpp')
 endif
 
 #=======================================================================================================================

@@ -642,6 +642,7 @@ def installDependencies():
          #    ln -s /usr/local/Cellar/qt5/5.15.7/plugins /usr/local/plugins
          # or:
          #    export PATH=/usr/local/opt/qt5/bin:$PATH
+         # The former gives permission errors, so we do the latter in mac.yml
          #
          abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt5']))
          #abortOnRunFail(subprocess.run(['ln', '-s', '/usr/local/Cellar/qt5/5.15.7/mkspecs', '/usr/local/mkspecs']))

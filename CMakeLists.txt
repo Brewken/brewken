@@ -306,7 +306,7 @@ if(APPLE)
    # gives access to various non-standard GNU/Linux extension functions and changes the behaviour of some POSIX
    # functions.
    #
-   # .:TBD:. Not sure exactly why we need this set on Mac builds
+   # This is needed for Boost stacktrace on Mac
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE")
 endif()
 
