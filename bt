@@ -572,6 +572,34 @@ def installDependencies():
       #-----------------------------------------------------------------------------------------------------------------
       case 'Darwin':
          log.debug('Mac')
+         #
+         # We could make this list shorter if we wanted as, eg, installing Xalan-C will cause Xerces-C to be installed
+         # too (as the former depends on the latter).  However, I think it's clearer to explicitly list all the direct
+         # dependencies (eg we do make calls directly into Xerces).
+         #
+         # For the moment, we install Qt 5 (= 5.15.7), as there are code changes required to use Qt 6
+         #
+         # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
+         #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
+         #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
+         #
+         installList = ['boost',
+                        'cmake',
+                        'doxygen',
+                        'gcc',
+                        'git',
+                        'meson',
+                        'ninja',
+                        'qt@5',
+                        'xalan-c',
+                        'xerces-c']
+         for packageToInstall in installList:
+            log.debug('Installing ' + packageToInstall)
+            abortOnRunFail(
+               subprocess.run(
+                  ['brew', 'install', packageToInstall]
+               )
+            )
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
@@ -615,8 +643,6 @@ def doSetup(setupOption):
          abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
          abortOnRunFail(subprocess.run([exe_git, "submodule", "update"], capture_output=False))
 
-
-
    # Check whether Meson build directory is already set up.  (Although nothing bad happens, if you run setup twice,
    # it complains and tells you to run configure.)
    # Best clue that set-up has been run (rather than, say, user just created empty mbuild directory by hand) is the
@@ -626,9 +652,15 @@ def doSetup(setupOption):
    warnAboutCurrentDirectory = False
    if (dir_build.joinpath('meson-info/meson-info.json').is_file()):
       log.info('Meson build directory ' + dir_build.as_posix() + ' appears to be already set up')
+      #
       # You usually only need to reset things after you've done certain edits to defaults etc in meson.build.  There
       # are a whole bunch of things you can control with the 'meson configure' command, but it's simplest in some ways
       # just to reset the build directory and rely on meson setup picking up defaults from meson.build.
+      #
+      # Note that we don't have to worry about this prompt appearing in a GitHub action, because we are always creating
+      # the mbuild directory for the first time when this script is run in such actions -- ie we should never reach this
+      # part of the code.
+      #
       response = ""
       while (response != 'y' and response != 'n'):
          response = input('Do you want to completely reset the build directory? [y or n] ').lower()
