@@ -100,7 +100,9 @@ log.propagate = False
 #-----------------------------------------------------------------------------------------------------------------------
 # Python 3rd-party modules we use
 #-----------------------------------------------------------------------------------------------------------------------
-# If Pip isn't installed we need to bail here
+# If Pip isn't installed we need to bail here because AFAICT it's not straightforward to install it from within the
+# Python script that needs to use it.  However, we should have another look at this as it would be nice to have one less
+# prerequisite for running this script.
 exe_pip = shutil.which("pip")
 if (exe_pip is None or exe_pip == ""):
    pathEnvVar = ''
@@ -111,9 +113,14 @@ if (exe_pip is None or exe_pip == ""):
       'install'
    )
    exit(1)
+#
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
 # https://packaging.pypa.io/en/stable/version.html).
+#
+# On MacOS at least, we also need to install setuptools to be able to access packaging.version.
+#
 subprocess.run([exe_pip, 'install', 'packaging'])
+subprocess.run([exe_pip, 'install', 'setuptools'])
 import packaging.version
 
 # The requests library (see https://pypi.org/project/requests/) is used for downloading files in a more Pythonic way
