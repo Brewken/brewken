@@ -73,6 +73,8 @@ jobs:
          brew install tree
          brew install python@3.11
          brew install pipenv
+         echo "Python3 ($(which python3)) version"
+         /usr/bin/env python3 --version
          echo "Running ./bt -v setup all"
          ./bt -v setup all
 

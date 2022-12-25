@@ -363,7 +363,8 @@ def installDependencies():
                log.debug('Parsed as ' + str(versionFound) + '.  (Highest found = ' + str(maxBoostVersionFound) + ')')
 
          #
-         # The Boost version.hpp configuration header file gives two constants for defining the version of Boost installed:
+         # The Boost version.hpp configuration header file gives two constants for defining the version of Boost
+         # installed:
          #
          # BOOST_VERSION is a pure numeric value:
          #    BOOST_VERSION % 100 is the patch level
@@ -371,8 +372,8 @@ def installDependencies():
          #    BOOST_VERSION / 100000 is the major version
          # So, eg, for Boost 1.79.0 (= 1.079.00), BOOST_VERSION = 107900
          #
-         # BOOST_LIB_VERSION is a string value with underscores instead of dots (and without the patch level if that's 0)
-         # So, eg for Boost 1.79.0, BOOST_LIB_VERSION = "1_79" (and for 1.23.45 it would be "1_23_45")
+         # BOOST_LIB_VERSION is a string value with underscores instead of dots (and without the patch level if that's
+         # 0).  So, eg for Boost 1.79.0, BOOST_LIB_VERSION = "1_79" (and for 1.23.45 it would be "1_23_45")
          #
          # We use BOOST_LIB_VERSION as it's easy to convert it to a version number that Python can understand
          #
@@ -417,13 +418,10 @@ def installDependencies():
                os.chdir(tmpDirName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
                boostUnderscoreName = 'boost_' + str(boostVersionToInstall).replace('.', '_')
-               #abortOnRunFail(
-               #   subprocess.run(
-               #      ['wget',
-               #       'https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2']
-               #   )
-               #)
-               downloadFile('https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2')
+               downloadFile(
+                  'https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' +
+                  boostUnderscoreName + '.tar.bz2'
+               )
                log.debug('Boost download completed')
                shutil.unpack_archive(boostUnderscoreName + '.tar.bz2')
                log.debug('Boost archive extracted')
@@ -588,7 +586,8 @@ def installDependencies():
          #
          # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
          #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
-         #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
+         #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be
+         #         OK.
          #
          installList = ['boost',
                         'cmake',
