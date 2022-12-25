@@ -76,7 +76,7 @@ projectUrl = 'https://github.com/' + capitalisedProjectName + '/' + projectName 
 # The '%c' argument to strftime means "Locale’s appropriate date and time representation"
 print(
    '⭐ ' + capitalisedProjectName + ' build tool running on ' + platform.system() + ' (' + platform.release() +
-   ') at ' + datetime.datetime.now().strftime('%c') + ' ⭐'
+   '), using Python ' + platform.python_version() + ', at ' + datetime.datetime.now().strftime('%c') + ' ⭐'
 )
 
 #-----------------------------------------------------------------------------------------------------------------------
