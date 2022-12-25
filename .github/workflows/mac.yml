@@ -67,20 +67,15 @@ jobs:
       # the build have made to the build directory tree).  (If need be, you can also download the entire build directory
       # within a day of a failed build running, but you need a decent internet connection for this as it's quite large.)
       #
-      # For reasons that I have not got to the bottom of, just running './bt -v setup all' will invoke Python 2.7 rather
-      # then Python 3 - despite the bt script having the correct "portable" shebang.  Running 'python3 bt -v setup all'
-      # is the brute-force way to fix this.
-      #
       run: |
          echo "Output from brew doctor: $(brew doctor)"
          echo "Output from xcode-select -p: $(xcode-select -p)"
          brew install tree
          brew install python@3.11
-         brew install pipenv
          echo "Python3 ($(which python3)) version"
          /usr/bin/env python3 --version
          echo "Running ./bt -v setup all"
-         python3 bt -v setup all
+         ./bt -v setup all
 
     - name: Build (with CMake)
       env:
