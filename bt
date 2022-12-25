@@ -100,8 +100,7 @@ log.propagate = False
 #-----------------------------------------------------------------------------------------------------------------------
 # Python 3rd-party modules we use
 #-----------------------------------------------------------------------------------------------------------------------
-# We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
-# https://packaging.pypa.io/en/stable/version.html).
+# If Pip isn't installed we need to bail here
 exe_pip = shutil.which("pip")
 if (exe_pip is None or exe_pip == ""):
    pathEnvVar = ''
@@ -112,8 +111,15 @@ if (exe_pip is None or exe_pip == ""):
       'install'
    )
    exit(1)
+# We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
+# https://packaging.pypa.io/en/stable/version.html).
 subprocess.run([exe_pip, 'install', 'packaging'])
 import packaging.version
+
+# The requests library (see https://pypi.org/project/requests/) is used for downloading files in a more Pythonic way
+# than invoking wget through the shell.
+subprocess.run([exe_pip, 'install', 'requests'])
+import requests
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Parse command line arguments
@@ -244,6 +250,21 @@ def numFilesInTree(path):
    for root, dirs, files in os.walk(path):
       numFiles += len(files)
    return numFiles
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Helper function for downloading a file
+#-----------------------------------------------------------------------------------------------------------------------
+def downloadFile(url):
+   filename = url.split('/')[-1]
+   log.info('Downloading ' + url + ' to ' + filename + ' in directory ' + pathlib.Path.cwd().as_posix())
+   response = requests.get(url)
+   if (response.status_code != 200):
+      log.critical('Error code ' + response.status_code + ' while downloading ' + url)
+      exit(1)
+   with open(filename, 'wb') as fd:
+      for chunk in response.iter_content(chunk_size = 128):
+         fd.write(chunk)
+   return
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Set global variables exe_git and exe_meson with the locations of the git and meson executables
@@ -389,14 +410,16 @@ def installDependencies():
                os.chdir(tmpDirName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
                boostUnderscoreName = 'boost_' + str(boostVersionToInstall).replace('.', '_')
-               abortOnRunFail(
-                  subprocess.run(
-                     ['wget',
-                      'https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2']
-                  )
-               )
+               #abortOnRunFail(
+               #   subprocess.run(
+               #      ['wget',
+               #       'https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2']
+               #   )
+               #)
+               downloadFile('https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2')
                log.debug('Boost download completed')
-               abortOnRunFail(subprocess.run(['tar', '--bzip2', '-xf', boostUnderscoreName + '.tar.bz2']))
+               #abortOnRunFail(subprocess.run(['tar', '--bzip2', '-xf', boostUnderscoreName + '.tar.bz2']))
+               shutil.unpack_archive(boostUnderscoreName + '.tar.bz2')
                log.debug('Boost archive extracted')
                os.chdir(boostUnderscoreName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
@@ -513,6 +536,20 @@ def installDependencies():
                   ['pacman', '-S', '--needed', '--noconfirm', packageToInstall]
                )
             )
+
+         # Download NSIS plugins
+         with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
+            previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+            os.chdir(tmpDirName)
+            downloadFile('https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip')
+            shutil.unpack_archive('Locate.zip')
+            downloadFile('https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip')
+            shutil.unpack_archive('Nsislog.zip')
+            shutil.copy2('Locate/Include/Locate.nsh',  '/mingw32/share/nsis/Include/')
+            shutil.copy2('Locate/Plugin/locate.dll',   '/mingw32/share/nsis/Plugins/ansi/')
+            shutil.copy2('Nsislog/plugin/nsislog.dll', '/mingw32/share/nsis/Plugins/ansi/')
+            os.chdir(previousWorkingDirectory)
+
 
       #-----------------------------------------------------------------------------------------------------------------
       #---------------------------------------------- Mac OS Dependencies ----------------------------------------------
