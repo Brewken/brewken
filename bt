@@ -635,7 +635,7 @@ def installDependencies():
          # the following to "symlink the various Qt5 binaries and libraries into your /usr/local/bin and /usr/local/lib
          # directories".
          #
-         abortOnRunFail(subprocess.run(['brew', 'link', 'qt5', '--force'))
+         abortOnRunFail(subprocess.run(['brew', 'link', 'qt5', '--force']))
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
