@@ -82,6 +82,7 @@ jobs:
          QT_QPA_PLATFORM: offscreen
       # Change `make` to `make VERBOSE=1` to get hugely detailed output
       run: |
+         export PATH=/usr/local/opt/qt5/bin:$PATH
          mkdir build
          cd build
          cmake ..

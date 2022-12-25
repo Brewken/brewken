@@ -637,13 +637,15 @@ def installDependencies():
          # directories".
          #
          # Additionally, per lengthy discussion at https://github.com/Homebrew/legacy-homebrew/issues/29938, it seems
-         # we also need
-         # ln -s /usr/local/Cellar/qt5/5.15.7/mkspecs /usr/local/mkspecs
-         # ln -s /usr/local/Cellar/qt5/5.15.7/plugins /usr/local/plugins
+         # we might also need either:
+         #    ln -s /usr/local/Cellar/qt5/5.15.7/mkspecs /usr/local/mkspecs
+         #    ln -s /usr/local/Cellar/qt5/5.15.7/plugins /usr/local/plugins
+         # or:
+         #    export PATH=/usr/local/opt/qt5/bin:$PATH
          #
          abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt5']))
-         abortOnRunFail(subprocess.run(['ln', '-s', '/usr/local/Cellar/qt5/5.15.7/mkspecs', '/usr/local/mkspecs']))
-         abortOnRunFail(subprocess.run(['ln', '-s', '/usr/local/Cellar/qt5/5.15.7/plugins', '/usr/local/plugins']))
+         #abortOnRunFail(subprocess.run(['ln', '-s', '/usr/local/Cellar/qt5/5.15.7/mkspecs', '/usr/local/mkspecs']))
+         #abortOnRunFail(subprocess.run(['ln', '-s', '/usr/local/Cellar/qt5/5.15.7/plugins', '/usr/local/plugins']))
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
