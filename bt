@@ -418,7 +418,6 @@ def installDependencies():
                #)
                downloadFile('https://boostorg.jfrog.io/artifactory/main/release/' + str(boostVersionToInstall) + '/source/' + boostUnderscoreName + '.tar.bz2')
                log.debug('Boost download completed')
-               #abortOnRunFail(subprocess.run(['tar', '--bzip2', '-xf', boostUnderscoreName + '.tar.bz2']))
                shutil.unpack_archive(boostUnderscoreName + '.tar.bz2')
                log.debug('Boost archive extracted')
                os.chdir(boostUnderscoreName)
@@ -537,19 +536,36 @@ def installDependencies():
                )
             )
 
+         #
          # Download NSIS plugins
-         with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
-            previousWorkingDirectory = pathlib.Path.cwd().as_posix()
-            os.chdir(tmpDirName)
-            downloadFile('https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip')
-            shutil.unpack_archive('Locate.zip')
-            downloadFile('https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip')
-            shutil.unpack_archive('Nsislog.zip')
-            shutil.copy2('Locate/Include/Locate.nsh',  '/mingw32/share/nsis/Include/')
-            shutil.copy2('Locate/Plugin/locate.dll',   '/mingw32/share/nsis/Plugins/ansi/')
-            shutil.copy2('Nsislog/plugin/nsislog.dll', '/mingw32/share/nsis/Plugins/ansi/')
-            os.chdir(previousWorkingDirectory)
-
+         #
+         # In theory we can use RAII here, eg:
+         #
+         #   with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
+         #      previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+         #      os.chdir(tmpDirName)
+         #      ...
+         #      os.chdir(previousWorkingDirectory)
+         #
+         # However, in practice, this gets messy when there is an error (eg download fails) because Windows doesn't like
+         # deleting files or directories that are in use.  So, in the event of the script needing to terminate early,
+         # you get loads of errors, up to and including "maximum recursion depth exceeded" which rather mask whatever
+         # the original problem was.
+         #
+         tmpDirName = tempfile.mkdtemp()
+         previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+         os.chdir(tmpDirName)
+         downloadFile('https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip')
+         shutil.unpack_archive('Locate.zip', 'Locate')
+         downloadFile('https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip')
+         shutil.unpack_archive('Nsislog.zip', 'Nsislog')
+         os.makedirs('/mingw32/share/nsis/Include/')
+         shutil.copy2('Locate/Include/Locate.nsh',  '/mingw32/share/nsis/Include/')
+         os.makedirs('/mingw32/share/nsis/Plugins/ansi/')
+         shutil.copy2('Locate/Plugin/locate.dll',   '/mingw32/share/nsis/Plugins/ansi/')
+         shutil.copy2('Nsislog/plugin/nsislog.dll', '/mingw32/share/nsis/Plugins/ansi/')
+         os.chdir(previousWorkingDirectory)
+         shutil.rmtree(tmpDirName, ignore_errors=False)
 
       #-----------------------------------------------------------------------------------------------------------------
       #---------------------------------------------- Mac OS Dependencies ----------------------------------------------
