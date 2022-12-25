@@ -269,6 +269,15 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
    return runResult
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Helper function for copying one or more files to a directory that might not yet exist
+#-----------------------------------------------------------------------------------------------------------------------
+def copyFilesToDir(files, directory):
+   od.makedirs(directory, exist_ok=True)
+   for (currentFile in files):
+      shutil.copy2(currentFile, directory)
+   return;
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Helper function for counting files in a directory tree
 #-----------------------------------------------------------------------------------------------------------------------
 def numFilesInTree(path):
@@ -583,11 +592,9 @@ def installDependencies():
          shutil.unpack_archive('Locate.zip', 'Locate')
          downloadFile('https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip')
          shutil.unpack_archive('Nsislog.zip', 'Nsislog')
-         os.makedirs('/mingw32/share/nsis/Include/')
-         shutil.copy2('Locate/Include/Locate.nsh',  '/mingw32/share/nsis/Include/')
-         os.makedirs('/mingw32/share/nsis/Plugins/ansi/')
-         shutil.copy2('Locate/Plugin/locate.dll',   '/mingw32/share/nsis/Plugins/ansi/')
-         shutil.copy2('Nsislog/plugin/nsislog.dll', '/mingw32/share/nsis/Plugins/ansi/')
+         copyFilesToDir(['Locate/Include/Locate.nsh'], '/mingw32/share/nsis/Include/')
+         copyFilesToDir(['Locate/Plugin/locate.dll',
+                         'Nsislog/plugin/nsislog.dll'],'/mingw32/share/nsis/Plugins/ansi/')
          os.chdir(previousWorkingDirectory)
          shutil.rmtree(tmpDirName, ignore_errors=False)
 
@@ -620,11 +627,15 @@ def installDependencies():
                         'xerces-c']
          for packageToInstall in installList:
             log.debug('Installing ' + packageToInstall)
-            abortOnRunFail(
-               subprocess.run(
-                  ['brew', 'install', packageToInstall]
-               )
-            )
+            abortOnRunFail(subprocess.run(['brew', 'install', packageToInstall]))
+         #
+         # By default, even once Qt5 is installed, Meson will not find it
+         #
+         # See https://stackoverflow.com/questions/29431882/get-qt5-up-and-running-on-a-new-mac for suggestion to do
+         # the following to "symlink the various Qt5 binaries and libraries into your /usr/local/bin and /usr/local/lib
+         # directories".
+         #
+         abortOnRunFail(subprocess.run(['brew', 'link', 'qt5', '--force'))
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
