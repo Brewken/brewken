@@ -272,7 +272,7 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
 # Helper function for copying one or more files to a directory that might not yet exist
 #-----------------------------------------------------------------------------------------------------------------------
 def copyFilesToDir(files, directory):
-   od.makedirs(directory, exist_ok=True)
+   os.makedirs(directory, exist_ok=True)
    for currentFile in files:
       shutil.copy2(currentFile, directory)
    return;
@@ -620,6 +620,7 @@ def installDependencies():
                         'doxygen',
                         'gcc',
                         'git',
+                        'llvm',
                         'meson',
                         'ninja',
                         'qt@5',
