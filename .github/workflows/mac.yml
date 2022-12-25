@@ -42,19 +42,6 @@ jobs:
       with:
         fetch-depth: 0
 
-##    - name: Install Qt
-##      # Version 5.15.2 is, according to https://github.com/jurplel/install-qt-action, the last Qt 5 LTS
-##      # When we're ready to migrate to Qt 6, we'll need to tweak this
-##      uses: jurplel/install-qt-action@v3
-##      with:
-##        version: 5.15.2
-
-##    - name: Install Python
-##      # TBD We could probably also install this with brew below
-##      uses: actions/setup-python@v4
-##      with:
-##        python-version: '3.10'
-
     - name: Install Frameworks and Libraries, and set up Meson build environment
       #
       # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
@@ -172,12 +159,20 @@ jobs:
         cd /cores
         ls -1 | while read ii; do echo "bt" | lldb -c $ii; done
 
-    - name: Recover Debris Artifacts (aka build output)
+    - name: Recover Debris Artifacts (aka build output) - CMake
       if: ${{ failure() }}
       uses: actions/upload-artifact@v3
       with:
         name: build-results
         path: ${{github.workspace}}/build
+        retention-days: 1
+
+    - name: Recover Debris Artifacts (aka build output) - Meson
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: mbuild-results
+        path: ${{github.workspace}}/mbuild
         retention-days: 1
 
     - name: Recover DiagnosticReports (if any)
@@ -195,3 +190,13 @@ jobs:
         name: cores
         path: /cores
         retention-days: 1
+
+    # Meson test doesn't show log output on the terminal, but puts it straight to a log file.  We don't want to have
+    # to download the whole compressed mbuild tree just to see the log in event of a test failure, so we show it here
+    # (provided it exists).
+    - name: Show Meson test logs
+       if: ${{ failure() }}
+       working-directory: ${{github.workspace}}
+       shell: bash
+       run: |
+         if [[ -f mbuild/meson-logs/testlog.txt ]]; then cat mbuild/meson-logs/testlog.txt; fi
