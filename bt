@@ -273,7 +273,7 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
 #-----------------------------------------------------------------------------------------------------------------------
 def copyFilesToDir(files, directory):
    od.makedirs(directory, exist_ok=True)
-   for (currentFile in files):
+   for currentFile in files:
       shutil.copy2(currentFile, directory)
    return;
 
