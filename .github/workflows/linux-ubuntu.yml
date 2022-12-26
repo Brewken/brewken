@@ -51,78 +51,29 @@ jobs:
 
       #
       # See https://github.com/Brewken/brewken/wiki/Development:-Getting-Started for more on what is needed to build
-      # the software.  It seems we can assume the following packages are already installed:
-      #    cmake
-      #    git
-      #    debhelper
-      #    rpm
+      # the software.  Most of this is now automated in 'bt setup all'.
       #
-      # Note that we need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
+      # Some of the things that the bt script installs could be installed via actions (eg jurplel/install-qt-action@v3)
+      # and some are already installed by default for GitHub actions (eg cmake, git, debhelper, rpm) but there's an
+      # advantage, where we can, in doing the exact same steps that give as instructions to developers to set up their
+      # build environment.
       #
-      # Some of the things below could be installed via actions (jurplel/install-qt-action@v3) but there's an advantage,
-      # where we can, in doing the exact same steps that give as instructions to developers to set up their build
-      # environment.
-      #
-      # Note that we need Python 3.10 or newer, which means you can't just use `sudo apt install` on older Ubuntus.  (Eg
-      # Ubuntu 18.04 packages have only Python 3.6.7 and Ubuntu 20.04 only have Python 3.8.2.  However Ubuntu 22.04 has
-      # Python 3.10.6.)  There are ways to get around this, but, in this context, it's simplest to use a canned GitHub
-      # action.
-      #
-      # Similarly, Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.56.0 or later.  In this case it means we
-      # have to install Meson via pip, which is not ideal on Linux (per comments in meson.build).
-      #    sudo apt-get update && sudo apt-get install -y \
-      #      libqt5multimedia5-plugins \
-      #      libqt5sql5-psql \
-      #      libqt5sql5-sqlite \
-      #      libqt5svg5-dev \
-      #      libxalan-c-dev \
-      #      libxerces-c-dev \
-      #      lintian \
-      #      meson \
-      #      ninja-build \
-      #      python3 \
-      #      qtbase5-dev \
-      #      qtmultimedia5-dev \
-      #      qttools5-dev \
-      #      qttools5-dev-tools \
-      #      rpmlint
-      #    cd ~
-      #    mkdir ~/boost-tmp
-      #    cd ~/boost-tmp
-      #    wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
-      #    tar --bzip2 -xf boost_1_80_0.tar.bz2
-      #    cd boost_1_80_0
-      #    ./bootstrap.sh
-      #    sudo ./b2 install
-      #    cd ~
-      #    sudo rm -rf ~/boost-tmp
+      # Of course, since 'bt' is a Python script, it can't install Python, so we need to do that first.  We need Python
+      # 3.10 or newer, which means you can't just use `sudo apt install` on older Ubuntus.  (Eg Ubuntu 18.04 packages
+      # have only Python 3.6.7 and Ubuntu 20.04 only have Python 3.8.2.  However Ubuntu 22.04 has Python 3.10.6.)  There
+      # are ways to get around this, but, in this context, it's simplest to use a canned GitHub action.
       #
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install Frameworks and Libraries
+      - name: Install Frameworks and Libraries, and set up Meson build environment
         working-directory: ${{github.workspace}}
         shell: bash
         run: |
           pwd
           ./bt -v setup all
-          if [[ $(lsb_release -r | awk '{print $2}' | awk -F. '{print $1}') -lt 22 ]]
-          then
-            sudo apt remove -y meson
-            sudo pip3 install meson
-          fi
-          ls -l /usr/local/lib/libboost_*
 
-      - name: Setup Build Environment (New)
-        working-directory: ${{github.workspace}}
-        # I'm sure there's a better way to invoke this script, but I haven't yet discovered it
-        shell: bash
-        run: |
-          export BOOST_ROOT=/usr
-          ls -l /usr/lib
-          python3 bt setup
-
-      - name: Create Build Environment
+      - name: Create CMake build environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
       - name: Configure CMake
@@ -136,7 +87,7 @@ jobs:
             -DNO_MESSING_WITH_FLAGS=ON \
             $GITHUB_WORKSPACE
 
-      - name: Build
+      - name: Build (with CMake)
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
@@ -144,14 +95,14 @@ jobs:
           find ../third-party
           make
 
-      - name: Build (New)
+      - name: Build (with Meson)
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
           pwd
           meson compile
 
-      - name: Test
+      - name: Test (via CMake)
         working-directory: ${{github.workspace}}/build
         shell: bash
         env:
@@ -160,13 +111,18 @@ jobs:
         run: |
           make test
 
-      - name: Test (New)
+      # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
+      # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
+      # (which would cause the test runner to abort before running any tests).
+      - name: Test (via Meson)
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
+          export QT_DEBUG_PLUGINS=1
+          export QT_QPA_PLATFORM=offscreen
           meson test
 
-      - name: Package
+      - name: Package (via CMake/CPack)
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
@@ -200,10 +156,28 @@ jobs:
             build/brewken*.tar.bz2.sha256
           retention-days: 7
 
-      - name: Recover Debris Artifacts
+      - name: Recover Debris Artifacts (CMake)
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
         with:
           name: build-results-${{matrix.os}}
           path: build
           retention-days: 1
+
+      - name: Recover Debris Artifacts (Meson)
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: mbuild-results-${{matrix.os}}
+          path: mbuild
+          retention-days: 1
+
+      # Meson test doesn't show log output on the terminal, but puts it straight to a log file.  We don't want to have
+      # to download the whole compressed mbuild tree just to see the log in event of a test failure, so we show it here
+      # (provided it exists).
+      - name: Show Meson test logs
+        if: ${{ failure() }}
+        working-directory: ${{github.workspace}}
+        shell: bash
+        run: |
+          if [[ -f mbuild/meson-logs/testlog.txt ]]; then cat mbuild/meson-logs/testlog.txt; fi

@@ -96,6 +96,11 @@
 #
 # We'll get an error if 'project' isn't the first call in this file
 #
+# Note that we need:
+#   - Meson 0.56.0 or newer to use Meson's 'substring' call.
+#   - Meson 0.60.0 or newer to use + to append items to lists (aka 'list.<plus>' feature -- at least that's what the
+#     warning message says if you've specified a lower minimum version of Meson)
+#
 # NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
 #     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
 #     the entire build directory and run
@@ -140,7 +145,7 @@
 project('brewken', 'cpp',
         version: '0.1.0',
         license: 'GPL-3.0-or-later',
-        meson_version: '>=0.59.0',
+        meson_version: '>=0.60.0',
         default_options : ['cpp_std=c++17',
                            'warning_level=3',
 #                           'prefer_static=true',
@@ -156,8 +161,6 @@ project('brewken', 'cpp',
 #    capitalisedProjectName = projectName.capitalize()
 # But meson.project_name() returns a Meson String, not a Python String, so there's a bit more work to do to get the same
 # result.
-#
-# Note that we need Meson 0.56.0 or newer to use Meson's 'substring' call.
 #
 projectName = meson.project_name().to_lower()
 capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.substring(1)
@@ -213,21 +216,23 @@ prefix = get_option('prefix')
 # For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
 
 # Tell meson which Qt modules we need
-qtDependencies = dependency('qt5',
-                            version : '>=5.9.5',
-                            modules : ['Core',
-                                       'Gui',
-                                       'Multimedia',
-                                       'Network',
-                                       'PrintSupport',
-                                       'Sql',
-                                       'Svg',
-                                       'Widgets',
-                                       'Xml'],
-                           include_type : 'system',
-                           static : true)
-# This Qt module is only needed for the unit tests
-qtTestDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
+qtCommonDependencies = dependency('qt5',
+                                  version : '>=5.9.5',
+                                  modules : ['Core',
+                                              'Multimedia',
+                                              'Network',
+                                              'PrintSupport',
+                                              'Sql',
+                                              'Svg',
+                                              'Widgets',
+                                              'Xml'],
+                                  include_type : 'system',
+                                  static : true)
+# The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
+# in a GitHub action that does not have a display running.)
+qtMainExeDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
+# The Qt Test module is only needed for the unit tests
+qtTestRunnerDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
 
 # On Windows and Mac there are platform-specific Qt tools for packaging
 if host_machine.system() == 'windows'
@@ -315,32 +320,89 @@ endif
 #
 # For Boost, per https://mesonbuild.com/Dependencies.html#boost, we only need to supply module names for libraries we
 # need to link against.  For the header-only Boost libraries, the 'boost' dependency suffices.
+boostModules = []
+if host_machine.system() == 'linux'
+   boostModules += 'stacktrace_backtrace'
+endif
 boostDependency = dependency('boost',
                              version : '>=1.79.0',
-                             modules : ['stacktrace_backtrace'],
+                             modules : boostModules,
                              static : true)
 message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'version =', boostDependency.version())
 
 #
-# Find the other libraries we depend on
+# Extra requirements for Boost Stacktrace
+#
+# Per https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace/configuration_and_build.html, by default
+# Boost.Stacktrace is a header-only library.  However, you get better results by linking (either statically or
+# dynamically) with a helper library.  Of the various options, it seems like boost_stacktrace_backtrace gives the most
+# functionality over the most platforms.  This has dependencies on:
+#   - libdl on POSIX platforms -- but see note below
+#   - libbacktrace
+# The latter is an external library on Windows.  On POSIX plaforms it's typically already either installed on the system
+# (eg see https://man7.org/linux/man-pages/man3/backtrace.3.html) or built in to the compiler.  Fortunately, CMake knows
+# how to do the right thing in either case, thanks to https://cmake.org/cmake/help/latest/module/FindBacktrace.html.
+#
+# Just to make things extra fun, in 2021, the GNU compilers did away with libdl and incorporated its functionality into
+# libc, per section 2.3 of release info at https://sourceware.org/glibc/wiki/Release/2.34.  This means, if we're using
+# the GNU tool chain and libc is v2.34 or newer, then we should NOT look for libdl, as we won't find it!  To find the
+# version of libc, you execute 'ldd --version', which gives multi-line output, of which the first line will be something
+# such as:
+#    ldd (Ubuntu GLIBC 2.35-0ubuntu3.1) 2.35
+# In this case, that means libc is version 2.35
+#
+# If we _don't_ need libdl, we just create an "unrequired" dependency.  This saves having to repeat a bunch of logic
+# later on when we get to the main build.
+#
+needLibdl = false
+if meson.get_compiler('cpp').get_id() == 'gcc'
+   lddOutput = run_command('ldd', '--version', check: true).stdout().strip()
+   lddOutputLine1 = lddOutput.split('\n')[0]
+   message('ldd --version gives:', lddOutputLine1)
+   libcVersion = lddOutputLine1.split(' ')[-1]
+   message('libc version is:', libcVersion)
+   if libcVersion.version_compare('<2.34')
+      needLibdl = true
+   endif
+endif
+dlDependency = dependency('dl', required : needLibdl, static : true)
+
+backtraceDependency = dependency('backtrace', required : false, static : true)
+
+#======================================== Find the other libraries we depend on ========================================
 #
 # See https://mesonbuild.com/Reference-manual_returned_dep.html for what info we can pull from a dependency object
 #
 # For BeerXML processing we need Xerces-C++ and Xalan-C++.  Meson can find both of these automatically using CMake's
-# find_package(), as long as CMake is installed(!) and we provide the right library names ('XercesC' per
+# find_package(), as long as (a) CMake is installed(!) and (b) we provide the right library names ('XercesC' per
 # https://cmake.org/cmake/help/latest/module/FindXercesC.html and 'XalanC' per
 # https://cmake.org/cmake/help/latest/module/FindXalanC.html)
 #
 #
-xercesDependency = dependency('XercesC', version : '>=3.2.3', static : true)
+xercesDependency = dependency('XercesC', version : '>=3.2.2', static : true)
 message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(),
         'version =', xercesDependency.version())
-xalanDependency = dependency('XalanC', version : '>=1.12.0', static : true)
+xalanDependency = dependency('XalanC', version : '>=1.11.0', static : true)
 message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(),
         'version =', xalanDependency.version())
 
+#====================================================== Valijson =======================================================
+# Don't need to do anything special, other than set include directories below, as it's header-only and we pull it in as
+# a Git submodule.
+
+#==================================================== Other headers ====================================================
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
 includeDirs = include_directories('src', 'third-party/valijson/include')
+
+#=======================================================================================================================
+#================================================== Extra Apple stuff ==================================================
+#=======================================================================================================================
+# Statically linking Xalan, Xerces etc requires CFStringLowercase, CFStringUppercase, etc on Mac
+corefoundationDependency = dependency(
+   'appleframeworks',
+   modules: ['CoreFoundation'],
+   required: false,
+)
 
 #=======================================================================================================================
 #===================================================== Input Files =====================================================
@@ -846,9 +908,9 @@ generatedFromUi = qt.compile_ui(sources : uiFiles)
 
 # Compile Qt's moc files (.moc) into header and/or source files
 generatedFromMoc = qt.compile_moc(headers : mocHeaders,
-                                  dependencies : qtDependencies)
+                                  dependencies : qtCommonDependencies)
 generatedFromMocForUnitTests = qt.compile_moc(headers : unitTestMocHeaders,
-                                              dependencies : qtDependencies)
+                                              dependencies : qtCommonDependencies)
 
 #
 # We need to do two processes with Translation Source (.ts) XML files:
@@ -883,6 +945,18 @@ translations = qt.compile_translations(ts_files         : translationSourceFiles
                                        build_by_default : true,
                                        install          : true,
                                        install_dir      : installSubDir_translations)
+
+#=======================================================================================================================
+#=============================================== Lists of Dependencies =================================================
+#=======================================================================================================================
+commonDependencies = [qtCommonDependencies,
+                      xercesDependency,
+                      xalanDependency,
+                      boostDependency,
+                      dlDependency,
+                      backtraceDependency]
+mainExeDependencies = commonDependencies + qtMainExeDependencies
+testRunnerDependencies = commonDependencies + qtTestRunnerDependencies
 
 #=======================================================================================================================
 #================================================= Exported variables ==================================================
@@ -1075,6 +1149,15 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
    endif
 endif
 
+if host_machine.system() == 'darwin'
+   # As explained at https://stackoverflow.com/questions/5582211/what-does-define-gnu-source-imply, defining _GNU_SOURCE
+   # gives access to various non-standard GNU/Linux extension functions and changes the behaviour of some POSIX
+   # functions.
+   #
+   # This is needed for Boost stacktrace on Mac
+   add_project_arguments('-D_GNU_SOURCE', language : 'cpp')
+endif
+
 #=======================================================================================================================
 #===================================================== Main builds =====================================================
 #=======================================================================================================================
@@ -1088,30 +1171,20 @@ endif
 commonCodeStaticLib = static_library('common_code',
                                      commonSourceFiles, generatedFromUi, generatedFromMoc, translations,
                                      include_directories : includeDirs,
-                                     dependencies: [qtDependencies,
-                                                    xercesDependency,
-                                                    xalanDependency,
-                                                    boostDependency],
+                                     dependencies: commonDependencies,
                                      install : false)
 
 mainExecutable = executable(mainExecutableName,
                             'src/main.cpp', generatedFromQrc,
                             include_directories : includeDirs,
-                            dependencies : [qtDependencies,
-                                            xercesDependency,
-                                            xalanDependency,
-                                            boostDependency],
+                            dependencies : mainExeDependencies,
                             link_with : commonCodeStaticLib,
                             install : true)
 
 testRunner = executable(testRunnerName, generatedFromQrc,
                         'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
                         include_directories : includeDirs,
-                        dependencies : [qtDependencies,
-                                        qtTestDependencies,
-                                        xercesDependency,
-                                        xalanDependency,
-                                        boostDependency],
+                        dependencies : testRunnerDependencies,
                         link_with : commonCodeStaticLib,
                         install : false)
 
@@ -1124,7 +1197,8 @@ test('Test post boil loss OG',               testRunner, args : ['postBoilLossOg
 test('Test unit conversions',                testRunner, args : ['testUnitConversions'])
 test('Test NamedParameterBundle',            testRunner, args : ['testNamedParameterBundle'])
 test('Test algorithms',                      testRunner, args : ['testAlgorithms'])
-test('Test log rotation',                    testRunner, args : ['testLogRotation'])
+# Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
+test('Test log rotation',                    testRunner, args : ['testLogRotation'], timeout : 60)
 
 #=======================================================================================================================
 #===================================================== Packaging =======================================================

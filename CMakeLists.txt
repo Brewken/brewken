@@ -92,6 +92,19 @@ cmake_policy(VERSION 3.16)
 cmake_policy(SET CMP0048 NEW)
 
 #=======================================================================================================================
+#================================================ Other preliminaries =================================================
+#=======================================================================================================================
+# Set the target binary architecture for targets on macOS
+if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
+   # Per https://cmake.org/cmake/help/latest/variable/CMAKE_OSX_ARCHITECTURES.html, "the value of this variable should
+   # be set prior to the first project() or enable_language() command invocation because it may influence configuration
+   # of the toolchain and flags".
+   set(CMAKE_OSX_ARCHITECTURES x86_64) # Build intel 64-bit binary.
+   #set(CMAKE_OSX_ARCHITECTURES i386 x86_64) # Build intel binary.
+   #set(CMAKE_OSX_ARCHITECTURES ppc i386 ppc64 x86_64) # Build universal binary.
+endif()
+
+#=======================================================================================================================
 #============================================== Project name and Version ===============================================
 #=======================================================================================================================
 # It's simplest to keep the project name all lower-case as it means we can use a lot more of the default settings for
@@ -209,6 +222,11 @@ set(fileName_unitTestRunner "${PROJECT_NAME}_tests")
 #=======================================================================================================================
 # This is needed to enable the add_test() command
 enable_testing()
+if (APPLE)
+   # On Mac we ask CMake to try to find static libraries when available -- because it's so painful shipping dynamic
+   # libraries in a Bundle.
+   set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+endif()
 
 #=======================================================================================================================
 #=============================================== Installation Components ===============================================
@@ -283,19 +301,12 @@ if(WIN32)
    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 endif()
 
-# Mac-specific compilation settings
-if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
-   set(CMAKE_OSX_ARCHITECTURES x86_64) # Build intel 64-bit binary.
-   #set(CMAKE_OSX_ARCHITECTURES i386 x86_64) # Build intel binary.
-   #set(CMAKE_OSX_ARCHITECTURES ppc i386 ppc64 x86_64) # Build universal binary.
-endif()
-
 if(APPLE)
    # As explained at https://stackoverflow.com/questions/5582211/what-does-define-gnu-source-imply, defining _GNU_SOURCE
    # gives access to various non-standard GNU/Linux extension functions and changes the behaviour of some POSIX
    # functions.
    #
-   # .:TBD:. Not sure exactly why we need this set on Mac builds
+   # This is needed for Boost stacktrace on Mac
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE")
 endif()
 
@@ -690,6 +701,11 @@ include_directories(${XalanC_INCLUDE_DIRS})
 # Uncomment the next two lines if you want to find where Xalan headers and DLLs are on your system
 message("Xalan-C++ include directories: ${XalanC_INCLUDE_DIRS}")
 message("Xalan-C++ libraries: ${XalanC_LIBRARIES}")
+
+if(APPLE)
+# TBD: Is this also needed when static linking Xerces on MacOS?
+find_package(CURL REQUIRED)
+endif()
 
 #=======================================================Valijson========================================================
 # Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
@@ -1138,6 +1154,17 @@ set(appAndTestCommonLibraries
    ${XalanC_LIBRARIES}
    ${XercesC_LIBRARIES}
 )
+if(APPLE)
+   # Static linking Xerces and Xalan on MacOS means we have to explicitly say what libraries and frameworks they in turn
+   # depend on.  It would be neat to find some automated tool that does this for us.
+   list(APPEND appAndTestCommonLibraries CURL::libcurl
+                                         "-framework CoreFoundation"
+                                         "-framework CoreServices"
+                                         "-framework Carbon"
+                                         "-framework Foundation"
+                                         "-framework Cocoa"
+                                         "-framework ApplicationServices")
+endif()
 foreach(qtComponent IN LISTS qtCommonComponents)
    list(APPEND appAndTestCommonLibraries "Qt5::${qtComponent}")
 endforeach()

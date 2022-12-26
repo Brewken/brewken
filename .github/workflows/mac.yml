@@ -42,28 +42,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install Qt
-      # Version 5.15.2 is, according to https://github.com/jurplel/install-qt-action, the last Qt 5 LTS
-      # When we're ready to migrate to Qt 6, we'll need to tweak this
-      uses: jurplel/install-qt-action@v3
-      with:
-        version: 5.15.2
-
-    - name: Install Python
-      # TBD We could probably also install this with brew below
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      #
-      # Installing Xalan-C will cause Xerces-C to be installed too (as the former depends on the latter)
-      #
-      # Similarly, installing meson will cause ninja to be installed (and confirm that Python is installed)
-      #
-      # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
-      #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
-      #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be OK.
+    - name: Install Frameworks and Libraries, and set up Meson build environment
       #
       # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
       # system is ready to brew".  Having Homebrew installed should imply the Xcode Command Line Tools are also
@@ -76,22 +55,31 @@ jobs:
       # within a day of a failed build running, but you need a decent internet connection for this as it's quite large.)
       #
       run: |
-        echo "Output from brew doctor: $(brew doctor)"
-        echo "Output from xcode-select -p: $(xcode-select -p)"
-        brew install meson
-        brew install xalan-c
-        brew install boost
-        brew install tree
+         echo "Output from brew doctor: $(brew doctor)"
+         echo "Output from xcode-select -p: $(xcode-select -p)"
+         brew install tree
+         brew install python@3.11
+         echo "Python3 ($(which python3)) version"
+         /usr/bin/env python3 --version
+         echo "Running ./bt -v setup all"
+         ./bt -v setup all
 
-    - name: Build
+    - name: Build (with CMake)
       env:
-        QT_QPA_PLATFORM: offscreen
+         QT_QPA_PLATFORM: offscreen
       # Change `make` to `make VERBOSE=1` to get hugely detailed output
       run: |
-        mkdir build
-        cd build
-        cmake ..
-        make
+         export PATH=/usr/local/opt/qt5/bin:$PATH
+         mkdir build
+         cd build
+         cmake ..
+         make
+
+    - name: Build (with Meson)
+      run: |
+         cd mbuild
+         pwd
+         meson compile
 
     - name: Prep for tests
       # If a test fails and we get a core, we'd like to analyse it.  This will be easier if we have access to the
@@ -101,12 +89,12 @@ jobs:
       # because there are no files to delete) does not count as a build script failure (because the echo command will
       # return 0 = success).
       run: |
-        sudo chmod -R +rwx /cores
-        sudo chmod -R +rwx /Library/Logs/DiagnosticReports
-        echo "Clearing contents of /cores directory: $(ls -ltr /cores) $(rm -rf /cores/*)"
-        echo "Clearing contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports) $(rm -rf /Library/Logs/DiagnosticReports/*)"
+         sudo chmod -R +rwx /cores
+         sudo chmod -R +rwx /Library/Logs/DiagnosticReports
+         echo "Clearing contents of /cores directory: $(ls -ltr /cores) $(rm -rf /cores/*)"
+         echo "Clearing contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports) $(rm -rf /Library/Logs/DiagnosticReports/*)"
 
-    - name: Automated tests
+    - name: Automated tests (via CMake)
       # If something does crash we'd like to capture the core, so we need to enable core dumps - hence the call to
       # ulimit.
       #
@@ -114,19 +102,34 @@ jobs:
       # have done all the necessary prep.  Running ctest directly allows us to pass in extra parameters to try to get as
       # much diagnostics as possible out of a remote build such as this.
       run: |
-        ulimit -c unlimited
-        echo "Core size limit is $(ulimit -c)"
-        cd build
-        ctest --extra-verbose --output-on-failure 2>&1
+         ulimit -c unlimited
+         echo "Core size limit is $(ulimit -c)"
+         cd build
+         ctest --extra-verbose --output-on-failure 2>&1
+
+    - name: Automated tests (via Meson)
+      # If something does crash we'd like to capture the core, so we need to enable core dumps - hence the call to
+      # ulimit.
+      #
+      # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
+      # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
+      # (which would cause the test runner to abort before running any tests).
+      run: |
+         ulimit -c unlimited
+         echo "Core size limit is $(ulimit -c)"
+         cd mbuild
+         export QT_DEBUG_PLUGINS=1
+         export QT_QPA_PLATFORM=offscreen
+         meson test
 
     - name: Make package
       # Change `make package` to `make package VERBOSE=1` to get hugely detailed output
       run: |
-        cd build
-        pwd
-        make package
-        pwd
-        tree -sh
+         cd build
+         pwd
+         make package
+         pwd
+         tree -sh
 
     - name: Upload Mac Packages (Installers)
       if: ${{ success() }}
@@ -156,12 +159,20 @@ jobs:
         cd /cores
         ls -1 | while read ii; do echo "bt" | lldb -c $ii; done
 
-    - name: Recover Debris Artifacts (aka build output)
+    - name: Recover Debris Artifacts (aka build output) - CMake
       if: ${{ failure() }}
       uses: actions/upload-artifact@v3
       with:
         name: build-results
         path: ${{github.workspace}}/build
+        retention-days: 1
+
+    - name: Recover Debris Artifacts (aka build output) - Meson
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: mbuild-results
+        path: ${{github.workspace}}/mbuild
         retention-days: 1
 
     - name: Recover DiagnosticReports (if any)
@@ -179,3 +190,13 @@ jobs:
         name: cores
         path: /cores
         retention-days: 1
+
+    # Meson test doesn't show log output on the terminal, but puts it straight to a log file.  We don't want to have
+    # to download the whole compressed mbuild tree just to see the log in event of a test failure, so we show it here
+    # (provided it exists).
+    - name: Show Meson test logs
+      if: ${{ failure() }}
+      working-directory: ${{github.workspace}}
+      shell: bash
+      run: |
+        if [[ -f mbuild/meson-logs/testlog.txt ]]; then cat mbuild/meson-logs/testlog.txt; fi

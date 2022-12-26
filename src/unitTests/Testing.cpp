@@ -315,7 +315,7 @@ Testing::~Testing() {
       }
    }
    return;
-};
+}
 
 //
 // If you're building with CMake:
