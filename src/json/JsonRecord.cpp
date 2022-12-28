@@ -1149,11 +1149,11 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
             qDebug() << Q_FUNC_INFO <<
                "Splitting non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
                *fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
-            std::vector<std::string_view> keyList = fieldDefinition.xPath.getElements();
+            auto keyList = fieldDefinition.xPath.getElements();
             // Ensure sub-objects exist.
             boost::json::object * currentObject = &recordDataAsObject;
-            std::string_view const * currentKey = &keyList[0]; // Strictly we don't need this initialisation, but it
-                                                               // prevents a compiler warning.
+            auto const * currentKey = &keyList[0]; // Strictly we don't need this initialisation, but it
+                                                   // prevents a compiler warning.
             for (auto const & subKey : keyList) {
                qDebug() << Q_FUNC_INFO << "Sub-key" << std::string(subKey).c_str();
                // We want to loop over all but the last items in the vector, as the last subKey is what gets passed to

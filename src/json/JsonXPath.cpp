@@ -38,9 +38,9 @@ std::string_view JsonXPath::asKey() const {
    return key;
 }
 
-std::vector<std::string_view> JsonXPath::getElements() const {
-   auto const key = this->asKey();
-   std::vector<std::string_view> elements;
+std::vector<std::string> JsonXPath::getElements() const {
+   std::string const key{this->asKey()};
+   std::vector<std::string> elements{};
 
    //
    // If we were using QString then QString::split would help us here, but we need std::string_view for Boost.JSON

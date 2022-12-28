@@ -75,7 +75,7 @@ public:
    /**
     * \return All the elements of the path as a list (without the '/' separators
     */
-   std::vector<std::string_view> getElements() const;
+   std::vector<std::string> getElements() const;
 
    /**
     * \brief This returns a C-style string as that's most universally usable for logging
