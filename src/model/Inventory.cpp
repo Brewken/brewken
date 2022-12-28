@@ -78,12 +78,12 @@ public:
 };
 
 
-Inventory::Inventory() : pimpl{ new impl{} } {
+Inventory::Inventory() : pimpl{std::make_unique<impl>()} {
    return;
 }
 
 Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
-   pimpl{ new impl{namedParameterBundle} } {
+   pimpl{std::make_unique<impl>(namedParameterBundle)} {
    return;
 }
 
@@ -92,13 +92,11 @@ Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
 // the copy.  Hopefully this will never come back to bite us...
 Inventory::Inventory(Inventory const & other) :
    QObject{},
-   pimpl{ new impl{*other.pimpl} } {
+   pimpl{std::make_unique<impl>(*other.pimpl)} {
    return;
 }
 
-
 Inventory::~Inventory() = default;
-
 
 int    Inventory::getId() const      { return this->pimpl->id; }
 double Inventory::getAmount() const  { return this->pimpl->amount; }

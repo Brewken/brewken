@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -83,7 +83,7 @@ ObjectStore & Instruction::getObjectStoreTypedInstance() const {
 
 Instruction::Instruction(Instruction const & other) :
    NamedEntity {other},
-   pimpl       {new impl{*this}},
+   pimpl       {std::make_unique<impl>(*this)},
    m_directions{other.m_directions},
    m_hasTimer  {other.m_hasTimer  },
    m_timerValue{other.m_timerValue},
@@ -94,7 +94,7 @@ Instruction::Instruction(Instruction const & other) :
 
 Instruction::Instruction(QString name) :
    NamedEntity (name, true),
-   pimpl       {new impl{*this}},
+   pimpl       {std::make_unique<impl>(*this)},
    m_directions(""),
    m_hasTimer  (false),
    m_timerValue(""),
@@ -105,7 +105,7 @@ Instruction::Instruction(QString name) :
 
 Instruction::Instruction(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity {namedParameterBundle},
-   pimpl       {new impl{*this}},
+   pimpl       {std::make_unique<impl>(*this)},
    m_directions{namedParameterBundle(PropertyNames::Instruction::directions).toString()},
    m_hasTimer  {namedParameterBundle(PropertyNames::Instruction::hasTimer  ).toBool()},
    m_timerValue{namedParameterBundle(PropertyNames::Instruction::timerValue).toString()},

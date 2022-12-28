@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonSingleUnitSpecifier.h.h is part of Brewken, and is copyright the following authors 2022:
+ * json/JsonSingleUnitSpecifier.h is part of Brewken, and is copyright the following authors 2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@
 #define JSON_JSONSINGLEUNITSPECIFIER_H
 #pragma once
 
-#include <QString>
+#include <string_view>
 #include <QVector>
 
 #include "json/JsonXPath.h"
@@ -42,7 +42,7 @@
  * \c valueField is the key used to pull out the double value representing the measurement itself
  */
 struct JsonSingleUnitSpecifier {
-   QVector<QString> const validUnits;
+   QVector<std::string_view> const validUnits;
    JsonXPath const unitField = JsonXPath{"unit"};
    JsonXPath const valueField = JsonXPath{"value"};
 };

@@ -16,6 +16,7 @@
 #include "json/JsonRecord.h"
 
 #include <optional>
+#include <string_view>
 #include <system_error>
 
 #include <QDate>
@@ -51,7 +52,7 @@ namespace {
                          JsonXPath const & valueField,
                          boost::json::value const * recordData,
                          double & value,
-                         QString & unitName) {
+                         std::string_view & unitName) {
       // It's a coding error to supply a null pointer for recordData
       Q_ASSERT(recordData);
 
@@ -104,10 +105,11 @@ namespace {
       }
       Q_ASSERT(unitNameRaw);
       Q_ASSERT(unitNameRaw->is_string());
-      unitName = unitNameRaw->get_string().c_str();
+      unitName = unitNameRaw->get_string();
 
       // Usually leave next line commented as otherwise generates too much logging
-//      qDebug() << Q_FUNC_INFO << "Read" << xPath << " (" << type << ") as" << value << " " << unitName;
+//      qDebug() << Q_FUNC_INFO << "Read" << xPath << " (" << type << ") as" << value << " " <<
+//         std::string(unitName).c_str();
       return true;
    }
 
@@ -130,7 +132,7 @@ namespace {
       Q_ASSERT(recordData);
 
       double value{0};
-      QString unitName{};
+      std::string_view unitName{""};
       if (!readValueAndUnit(fieldDefinition.type,
                             fieldDefinition.xPath,
                             std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->unitField,
@@ -144,19 +146,19 @@ namespace {
       // The schema validation should have ensured that the unit name is constrained to one of the values we are
       // expecting, so it's almost certainly a coding error if it doesn't.
       if (!std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.contains(unitName)) {
-         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << unitName;
+         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << std::string(unitName).c_str();
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
       }
 
       Measurement::Unit const * unit =
-         std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.value(unitName);
+         std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.find(unitName)->second;
       Measurement::Amount canonicalValue = unit->toSI(value);
 
       qDebug() <<
-         Q_FUNC_INFO << "Converted" << value << " " << unitName << "to" << canonicalValue.quantity << " " <<
-         canonicalValue.unit;
+         Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" <<
+         canonicalValue.quantity << " " << canonicalValue.unit;
 
       return canonicalValue;
    }
@@ -192,7 +194,7 @@ namespace {
          std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)->at(0)->valueField;
 
       double value{0};
-      QString unitName{};
+      std::string_view unitName{""};
       if (!readValueAndUnit(fieldDefinition.type,
                             fieldDefinition.xPath,
                             unitField,
@@ -207,7 +209,7 @@ namespace {
       for (auto const unitsMapping :
            *std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)) {
          if (unitsMapping->nameToUnit.contains(unitName)) {
-            unit = unitsMapping->nameToUnit.value(unitName);
+            unit = unitsMapping->nameToUnit.find(unitName)->second;
             break;
          }
       }
@@ -215,7 +217,7 @@ namespace {
       // The schema validation should have ensured that the unit name is constrained to one of the values we are
       // expecting, so it's almost certainly a coding error if it doesn't.
       if (!unit) {
-         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << unitName;
+         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << std::string(unitName).c_str();
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
@@ -224,8 +226,8 @@ namespace {
       Measurement::Amount canonicalValue = unit->toSI(value);
 
       qDebug() <<
-         Q_FUNC_INFO << "Converted" << value << " " << unitName << "to" << canonicalValue.quantity << " " <<
-         canonicalValue.unit;
+         Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" <<
+         canonicalValue.quantity << " " << canonicalValue.unit;
 
       return canonicalValue;
    }
@@ -246,7 +248,7 @@ namespace {
       Q_ASSERT(recordData);
 
       double value{0};
-      QString unitName{};
+      std::string_view unitName{""};
       if (!readValueAndUnit(fieldDefinition.type,
                             fieldDefinition.xPath,
                             std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->unitField,
@@ -261,8 +263,9 @@ namespace {
       // a coding error if it doesn't.
       if (!std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->validUnits.contains(unitName)) {
          qCritical() <<
-            Q_FUNC_INFO << "Unit name" << unitName << "does not match expected (" <<
-            std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->validUnits << ")";
+            Q_FUNC_INFO << "Unit name" << std::string(unitName).c_str() << "does not match expected (" <<
+            std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder)->validUnits.first().data() <<
+            "etc)";
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
@@ -270,10 +273,205 @@ namespace {
       return value;
    }
 
+   /**
+    * \brief Add a value to a JSON object
+    *
+    * \param fieldDefinition
+    * \param recordDataAsObject
+    * \param key
+    * \param value
+    */
+   void insertValue(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+                    boost::json::object & recordDataAsObject,
+                    std::string_view const & key,
+                    QVariant const & value) {
+      qDebug() <<
+         Q_FUNC_INFO << "Writing" << std::string(key).c_str() << "=" << value << "(type" << fieldDefinition.type << ")";
+      switch(fieldDefinition.type) {
+         case JsonRecordDefinition::FieldType::Bool:
+            Q_ASSERT(value.canConvert<bool>());
+            recordDataAsObject.emplace(key, value.toBool());
+            break;
+
+         case JsonRecordDefinition::FieldType::Int:
+            Q_ASSERT(value.canConvert<int>());
+            recordDataAsObject.emplace(key, value.toInt());
+            break;
+
+         case JsonRecordDefinition::FieldType::UInt:
+            Q_ASSERT(value.canConvert<uint>());
+            recordDataAsObject.emplace(key, value.toUInt());
+            break;
+
+         case JsonRecordDefinition::FieldType::Double:
+            Q_ASSERT(value.canConvert<double>());
+            recordDataAsObject.emplace(key, value.toDouble());
+            break;
+
+         case JsonRecordDefinition::FieldType::String:
+            Q_ASSERT(value.canConvert<QString>());
+            {
+               // We have a special case where WE store Hop Year internally as an int and BeerJSON stores it as a
+               // string.  If our int is negative, that means we don't have a value.
+               if (value.type() == QVariant::Int && value.toInt() < 0) {
+                  break;
+               }
+
+               std::string valueAsString = value.toString().toStdString();
+               // On the whole, there's no benefit in writing out a field for which we don't have a value
+               if (!valueAsString.empty()) {
+                  recordDataAsObject.emplace(key, valueAsString);
+               }
+            }
+            break;
+
+         case JsonRecordDefinition::FieldType::Enum:
+            // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
+            Q_ASSERT(nullptr != std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder));
+            // An enum should always be convertible to an int
+            Q_ASSERT(value.canConvert<int>());
+            {
+               auto match =
+                  std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->enumAsIntToString(value.toInt());
+               // It's a coding error if we couldn't find a string representation for the enum
+               Q_ASSERT(match);
+               recordDataAsObject.emplace(key, match->toStdString());
+            }
+            break;
+
+         case JsonRecordDefinition::FieldType::Array:
+            // This should be unreachable as we dealt with this case separately above, but having an case
+            // statement for it eliminates a compiler warning whilst still retaining the useful warning if we
+            // have ever omitted processing for another field type.
+            Q_ASSERT(false);
+            break;
+
+         case JsonRecordDefinition::FieldType::MeasurementWithUnits:
+            Q_ASSERT(value.canConvert<double>());
+
+            //
+            // Ideally, value would be something we could convert to Measurement::Amount, which would give us units.
+            //
+            // In practice, it's usually the case that the NamedEntity property will just be a double and the rest of
+            // the code "knows" the corresponding Measurement::PhysicalQuantity and therefore the canonical
+            // Measurement::Unit that the measurement is in.  Eg if something is a Measurement::PhysicalQuantity::Mass,
+            // we always store it in Measurement::Units::kilograms.
+            //
+            // One day, maybe, we might perhaps change all "measurement" double properties to Measurement::Amount, but,
+            // in the meantime, we can get what we need here another way.  We have a list of possible units that could
+            // be used in BeerJSON to measure the amount we're looking at.  So we grab the first Measurement::Unit in
+            // the list, and, from that, we can trivially get the corresponding canonical Measurement::Unit which will,
+            // by the above-mentioned convention, be the right one for the NamedEntity property.
+            //
+            {
+               // It's definitely a coding error if there is no unit decoder mapping for a field declared to require
+               // one
+               JsonMeasureableUnitsMapping const * const jsonMeasureableUnitsMapping =
+                  std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder);
+               Q_ASSERT(jsonMeasureableUnitsMapping);
+               Measurement::Unit const * const aUnit = jsonMeasureableUnitsMapping->nameToUnit.cbegin()->second;
+               Measurement::Unit const & canonicalUnit = aUnit->getCanonical();
+               qDebug() << Q_FUNC_INFO << canonicalUnit;
+               // Now we found canonical units, we need to find the right string to represent them
+               for (auto const [unitName, unit] : jsonMeasureableUnitsMapping->nameToUnit) {
+                  if (unit == &canonicalUnit) {
+                     qDebug() << Q_FUNC_INFO << std::string(unitName).c_str();
+                     recordDataAsObject[key].emplace_object();
+                     auto & measurementWithUnits = recordDataAsObject[key].as_object();
+                     measurementWithUnits.emplace(jsonMeasureableUnitsMapping->unitField.asKey(),  unitName);
+                     measurementWithUnits.emplace(jsonMeasureableUnitsMapping->valueField.asKey(), value.toDouble());
+                     break;;
+                  }
+               }
+            }
+            break;
+
+         case JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits:
+            Q_ASSERT(value.canConvert<double>());
+            // It's definitely a coding error if there is no list of unit decoder mappings for a field declared to
+            // require such
+            Q_ASSERT(
+               nullptr != std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)
+            );
+            {
+               //
+               // This is a bit clunky!
+               //
+               // As mentioned elsewhere, most measurement properties on NamedEntity subclasses (Hop, Recipe, etc) are
+               // just a number (a double) and we "know" whether the particular property is a mass, volume, temperature,
+               // diastatic power, etc.  In some cases -- specifically for amounts of a Yeast, Salt or a Misc -- there
+               // is a choice of measuring by mass or by volume, in which instance there will be another property
+               // "amountIsWeight".
+               //
+               // TODO FIX THIS IN BOTH DIRECTIONS! *******************************************************************************
+               Q_ASSERT(false);
+/*
+               // Logic is the same as for MeasurementWithUnits, but just loop through all the mappings
+               ¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥
+               std::optional<Measurement::Amount> canonicalValue = readOneOfMeasurementsWithUnits(fieldDefinition,
+                                                                                                   container);
+               if (canonicalValue) {
+                  parsedValue.setValue(canonicalValue->quantity);
+                  parsedValueOk = true;
+               }
+*/
+            }
+            break;
+
+         case JsonRecordDefinition::FieldType::SingleUnitValue:
+            Q_ASSERT(value.canConvert<double>());
+            {
+               // It's definitely a coding error if there is no unit specifier for a field declared to require one
+               JsonSingleUnitSpecifier const * const jsonSingleUnitSpecifier =
+                  std::get<JsonSingleUnitSpecifier const *>(fieldDefinition.valueDecoder);
+               Q_ASSERT(jsonSingleUnitSpecifier);
+               // There can be multiple valid (and equivalent) unit names, but we always use the first one for
+               // writing.  See json/JsonSingleUnitSpecifier.h for more detail.
+               recordDataAsObject[key].emplace_object();
+               auto & measurementWithUnits = recordDataAsObject[key].as_object();
+               measurementWithUnits.emplace(jsonSingleUnitSpecifier->unitField.asKey(),  jsonSingleUnitSpecifier->validUnits[0]);
+               measurementWithUnits.emplace(jsonSingleUnitSpecifier->valueField.asKey(), value.toDouble());
+            }
+            break;
+
+         //
+         // From here on, we have BeerJSON-specific types.  If we ever wanted to parse some other type of JSON,
+         // then we might need to make this code more generic, but, for now, we're not going to worry too much as
+         // it seems unlikely there will be other JSON encodings we want to deal with in the foreseeable future.
+         //
+         case JsonRecordDefinition::FieldType::Date:
+            Q_ASSERT(value.canConvert<QDate>());
+            {
+               // In BeerJSON, DateType is a string matching this regexp:
+               //   "\\d{4}-\\d{2}-\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+               // This is One True Date Format™ (aka ISO 8601), which makes our life somewhat easier
+               std::string formattedDate = value.toDate().toString(Qt::ISODate).toStdString();
+               recordDataAsObject.emplace(key, formattedDate);
+            }
+            break;
+
+         case JsonRecordDefinition::FieldType::RequiredConstant:
+            //
+            // This is a field that is required to be in the JSON, but whose value we don't need, and for which we
+            // always write a constant value on output.  At the moment it's only needed for the VERSION tag in
+            // BeerJSON.
+            //
+            // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
+            // write out).  This saves having an extra almost-never-used field on
+            // JsonRecordDefinition::FieldDefinition.
+            //
+            recordDataAsObject.emplace(fieldDefinition.xPath.asKey(), **fieldDefinition.propertyName);
+            break;
+
+         // Don't need a default case as we want the compiler to warn us if we didn't cover everything explicitly above
+      }
+
+      return;
+   }
 }
 
 JsonRecord::JsonRecord(JsonCoding const & jsonCoding,
-                       boost::json::value const & recordData,
+                       boost::json::value & recordData,
                        JsonRecordDefinition const & recordDefinition) :
    jsonCoding{jsonCoding},
    recordData{recordData},
@@ -303,7 +501,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
 
    //
    // Loop through all the fields that we know/care about.  Anything else is intentionally ignored.  (We won't know
-   // what to do with it, and, if it weren't allowed to be there, it would have generated an error at XSD parsing.)
+   // what to do with it, and, if it weren't allowed to be there, it would have generated an error at schema parsing.)
    //
    qDebug() <<
       Q_FUNC_INFO << "Examining" << this->recordDefinition.fieldDefinitions.size() << "field definitions";
@@ -314,8 +512,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
       // although we only look for nodes we know about, some of these we won't use for one reason or another.
       //
       std::error_code errorCode;
-      boost::json::value const * container = this->recordData.find_pointer(fieldDefinition.xPath.asJsonPtr(),
-                                                                           errorCode);
+      boost::json::value * container = this->recordData.find_pointer(fieldDefinition.xPath.asJsonPtr(), errorCode);
       if (!container) {
          // As noted above this is usually not an error, but _sometimes_ useful to log for debugging.  Usually leave
          // this logging commented out though as otherwise it fills up the log files
@@ -338,7 +535,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // Schema should have already enforced that this field is an array, so we assert that here
             //
             Q_ASSERT(container->is_array());
-            boost::json::array const & childRecordsData = container->get_array();
+            boost::json::array & childRecordsData = container->get_array();
             if (!this->loadChildRecords(fieldDefinition,
                                         this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath.asXPath_c_str()),
                                         childRecordsData,
@@ -467,6 +664,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   Q_ASSERT(container->is_object());
                   {
                      // Logic is the same as for MeasurementWithUnits, but just loop through all the mappings
+                     // TODO No, there's a bit more to it!!! *******************************************************************************
                      std::optional<Measurement::Amount> canonicalValue = readOneOfMeasurementsWithUnits(fieldDefinition,
                                                                                                         container);
                      if (canonicalValue) {
@@ -777,7 +975,7 @@ void JsonRecord::deleteNamedEntityFromDb() {
 
 [[nodiscard]] bool JsonRecord::loadChildRecords(JsonRecordDefinition::FieldDefinition const & parentFieldDefinition,
                                                 JsonRecordDefinition const & childRecordDefinition,
-                                                boost::json::array const & childRecordsData,
+                                                boost::json::array & childRecordsData,
                                                 QTextStream & userMessage) {
    qDebug() << Q_FUNC_INFO;
    //
@@ -851,84 +1049,136 @@ void JsonRecord::modifyClashingName(QString & candidateName) {
 }
 
 // TODO Finish this!
-void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
-                        QTextStream & out) const {
+void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
+   Q_ASSERT(this->recordData.is_object());
    qDebug() <<
-      Q_FUNC_INFO << "Exporting JSON for" << namedEntityToExport.metaObject()->className() << "#" << namedEntityToExport.key();
-/*
-      out << "<" << this->recordName << ">\n";
+      Q_FUNC_INFO << "Exporting JSON for" << namedEntityToExport.metaObject()->className() << "#" <<
+      namedEntityToExport.key();
 
-   // For the moment, we are constructing JSON output without using Xerces (or similar), on the grounds that, in this
-   // direction (ie to JSON rather than from JSON), it's a pretty simple algorithm and we don't need to validate anything
-   // (because we assume that our own data is valid).
+   boost::json::object & recordDataAsObject = this->recordData.get_object();
 
    // BeerJSON doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
-   for (auto & fieldDefinition : this->fieldDefinitions) {
+   for (auto & fieldDefinition : this->recordDefinition.fieldDefinitions) {
       // If there isn't a property name that means this is not a field we support so there's nothing to write out.
-      if (fieldDefinition.propertyName.isNull()) {
-         // At the moment at least, we support all JsonRecord::RecordSimple and JsonRecord::RecordComplex fields, so it's
-         // a coding error if one of them does not have a property name.
-         Q_ASSERT(JsonRecord::FieldType::RecordSimple != fieldDefinition.type);
-         Q_ASSERT(JsonRecord::FieldType::RecordComplex != fieldDefinition.type);
+      Q_ASSERT(fieldDefinition.propertyName);
+      if (fieldDefinition.propertyName->isNull()) {
+         // At the moment at least, we support all sub-record fields, so it's a coding error if one of them does not
+         // have a property name.
+         Q_ASSERT(JsonRecordDefinition::FieldType::Array != fieldDefinition.type);
          continue;
       }
 
-      // Nested record fields are of two types.  JsonRecord::RecordSimple can be handled generically.
-      // JsonRecord::RecordComplex need to be handled in part by subclasses.
-      if (JsonRecord::FieldType::RecordSimple == fieldDefinition.type ||
-          JsonRecord::FieldType::RecordComplex == fieldDefinition.type) {
-         //
-         // Some of the work is generic, so we do it here.  In particular, we can work out what tags are needed to
-         // contain the record (from the XPath, if any, prior to the last slash), but also what type of JsonRecord(s) we
-         // will need by looking at the end of the XPath for this field.
-         //
-         // (In BeerJSON, these contained XPaths are only 1-2 elements, so numContainingTags is always 0 or 1.  If and
-         // when we support a different JSON coding, we might need to look at this code more closely.)
-         //
-         QStringList xPathElements = fieldDefinition.xPath.split("/");
-         Q_ASSERT(xPathElements.size() >= 1);
-         int numContainingTags = xPathElements.size() - 1;
-         for (int ii = 0; ii < numContainingTags; ++ii) {
-            writeIndents(out, indentLevel + 1 + ii, indentString);
-            out << "<" << xPathElements.at(ii) << ">\n";
-         }
-         qDebug() << Q_FUNC_INFO << xPathElements;
-         qDebug() << Q_FUNC_INFO << xPathElements.last();
-         std::shared_ptr<JsonRecord> subRecord = this->jsonCoding.getNewJsonRecord(xPathElements.last());
-
-         if (JsonRecord::FieldType::RecordSimple == fieldDefinition.type) {
-            NamedEntity * childNamedEntity =
-               namedEntityToExport.property(*fieldDefinition.propertyName).value<NamedEntity *>();
-            if (childNamedEntity) {
-               subRecord->toJson(*childNamedEntity, out, indentLevel + numContainingTags + 1, indentString);
-            } else {
-               this->writeNone(*subRecord, namedEntityToExport, out, indentLevel + numContainingTags + 1, indentString);
+      if (JsonRecordDefinition::FieldType::Array == fieldDefinition.type) {
+         // .:TODO:.
+         qCritical() << Q_FUNC_INFO << "NOT YET IMPLEMENTED";
+         /*
+         // Nested record fields are of two types.  JsonRecord::RecordSimple can be handled generically.
+         // JsonRecord::RecordComplex need to be handled in part by subclasses.
+         if (JsonRecord::FieldType::RecordSimple == fieldDefinition.type ||
+            JsonRecord::FieldType::RecordComplex == fieldDefinition.type) {
+            //
+            // Some of the work is generic, so we do it here.  In particular, we can work out what tags are needed to
+            // contain the record (from the XPath, if any, prior to the last slash), but also what type of JsonRecord(s) we
+            // will need by looking at the end of the XPath for this field.
+            //
+            // (In BeerJSON, these contained XPaths are only 1-2 elements, so numContainingTags is always 0 or 1.  If and
+            // when we support a different JSON coding, we might need to look at this code more closely.)
+            //
+            QStringList xPathElements = fieldDefinition.xPath.split("/");
+            Q_ASSERT(xPathElements.size() >= 1);
+            int numContainingTags = xPathElements.size() - 1;
+            for (int ii = 0; ii < numContainingTags; ++ii) {
+               writeIndents(out, indentLevel + 1 + ii, indentString);
+               out << "<" << xPathElements.at(ii) << ">\n";
             }
-         } else {
-            //
-            // In theory we could get a list of the contained records via the Qt Property system.  However, the
-            // different things we would get back inside the QVariant (QList<BrewNote *>, QList<Hop *> etc) have no
-            // common base class, so we can't safely treat them as, or upcast them to, QList<NamedEntity *>.
-            //
-            // Instead, we get the subclass of this class (eg JsonRecipeRecord) to do the work
-            //
-            this->subRecordToJson(fieldDefinition,
-                                 *subRecord,
-                                 namedEntityToExport,
-                                 out,
-                                 indentLevel + numContainingTags + 1,
-                                 indentString);
+            qDebug() << Q_FUNC_INFO << xPathElements;
+            qDebug() << Q_FUNC_INFO << xPathElements.last();
+            std::shared_ptr<JsonRecord> subRecord = this->jsonCoding.getNewJsonRecord(xPathElements.last());
+
+            if (JsonRecord::FieldType::RecordSimple == fieldDefinition.type) {
+               NamedEntity * childNamedEntity =
+                  namedEntityToExport.property(*fieldDefinition.propertyName).value<NamedEntity *>();
+               if (childNamedEntity) {
+                  subRecord->toJson(*childNamedEntity, out, indentLevel + numContainingTags + 1, indentString);
+               } else {
+                  this->writeNone(*subRecord, namedEntityToExport, out, indentLevel + numContainingTags + 1, indentString);
+               }
+            } else {
+               //
+               // In theory we could get a list of the contained records via the Qt Property system.  However, the
+               // different things we would get back inside the QVariant (QList<BrewNote *>, QList<Hop *> etc) have no
+               // common base class, so we can't safely treat them as, or upcast them to, QList<NamedEntity *>.
+               //
+               // Instead, we get the subclass of this class (eg JsonRecipeRecord) to do the work
+               //
+               this->subRecordToJson(fieldDefinition,
+                                    *subRecord,
+                                    namedEntityToExport,
+                                    out,
+                                    indentLevel + numContainingTags + 1,
+                                    indentString);
+            }
+
+            // Obviously closing tags need to be written out in reverse order
+            for (int ii = numContainingTags - 1; ii >= 0 ; --ii) {
+               writeIndents(out, indentLevel + 1 + ii, indentString);
+               out << "</" << xPathElements.at(ii) << ">\n";
+            }
+            continue;
          }
 
-         // Obviously closing tags need to be written out in reverse order
-         for (int ii = numContainingTags - 1; ii >= 0 ; --ii) {
-            writeIndents(out, indentLevel + 1 + ii, indentString);
-            out << "</" << xPathElements.at(ii) << ">\n";
+          */
+      } else {
+         //
+         // If it's not an array then it's fields on the object we're currently exporting to JSON
+         //
+
+         // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
+         // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
+         Q_ASSERT(fieldDefinition.propertyName);
+
+         QVariant value = namedEntityToExport.property(**fieldDefinition.propertyName);
+         Q_ASSERT(value.isValid());
+         // If we have a non-trivial XPath then we'll need to create a sub-object
+         //
+         // In C++23, we'll be able to write key.contains('/"), but until then the alternative
+         // is only slightly longer.
+         auto key = fieldDefinition.xPath.asKey();
+         if (key.find('/') != key.npos) {
+            qDebug() << Q_FUNC_INFO <<
+               "Splitting non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
+               *fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
+            std::vector<std::string_view> keyList = fieldDefinition.xPath.getElements();
+            // Ensure sub-objects exist.
+            boost::json::object * currentObject = &recordDataAsObject;
+            std::string_view const * currentKey = &keyList[0]; // Strictly we don't need this initialisation, but it
+                                                               // prevents a compiler warning.
+            for (auto const & subKey : keyList) {
+               qDebug() << Q_FUNC_INFO << "Sub-key" << std::string(subKey).c_str();
+               // We want to loop over all but the last items in the vector, as the last subKey is what gets passed to
+               // insertValue.  Easiest way to do this is loop over everything and bail out when we reach the last
+               // element.
+               if (&subKey != &keyList.back()) {
+                  if (!currentObject->if_contains(subKey)) {
+                     qDebug() << Q_FUNC_INFO << "Making sub-object for" << std::string(subKey).c_str();
+                     (*currentObject)[subKey].emplace_object();
+                  }
+                  currentObject = (*currentObject)[subKey].if_object();
+                  Q_ASSERT(currentObject);
+               }
+
+               currentKey = &subKey;
+            }
+            insertValue(fieldDefinition, *currentObject, *currentKey, value);
+            continue;
          }
-         continue;
+
+         insertValue(fieldDefinition, recordDataAsObject, key, value);
       }
+////
 
+/*
       QString valueAsText;
       if (fieldDefinition.type == JsonRecord::FieldType::RequiredConstant) {
          //
@@ -1006,7 +1256,8 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport,
 
    writeIndents(out, indentLevel, indentString);
    out << "</" << this->recordName << ">\n";
-   */
+*/
+   }
    return;
 }
 

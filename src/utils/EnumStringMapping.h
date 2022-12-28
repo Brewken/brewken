@@ -61,6 +61,8 @@ struct EnumAndItsString {
  *        always known at compile-time.  This would also allow us to make more things const or constexpr.  In practice,
  *        it's a bit clunky using arrays (eg length of std::array is a template parameter that cannot always be deduced
  *        by the compiler when it's an array of structs), and the extra "cost" of a vector here is negligible.
+ *
+ *        TBD: Could look at Boost Bimap
  */
 class EnumStringMapping : public QVector<EnumAndItsString> {
 public:

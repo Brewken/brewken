@@ -118,7 +118,7 @@ public:
 
 
 HelpDialog::HelpDialog(QWidget * parent) : QDialog(parent),
-                                           pimpl{ new impl{*this} } {
+                                           pimpl{std::make_unique<impl>(*this)} {
    this->setObjectName("helpDialog");
    this->pimpl->setText(*this);
    return;

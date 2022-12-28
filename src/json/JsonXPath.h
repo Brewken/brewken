@@ -19,6 +19,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 /**
  * \brief \c JsonXPath is, essentially, almost the same as a JSON Pointer (see
@@ -61,9 +62,20 @@ public:
    ~JsonXPath();
 
    /**
-    * \brief This returns a \c string_view because that's what you're going to pass to Boost.JSON
+    * \brief This returns a \c string_view because that's what we're going to pass to Boost.JSON
     */
    std::string_view asJsonPtr() const;
+
+   /**
+    * \brief For a trivial path, return it without the leading slash (as a \c string_view because that's what we're
+    *        going to pass to Boost.JSON).  Caller's responsibility to ensure this is indeed a trivial path.
+    */
+   std::string_view asKey() const;
+
+   /**
+    * \return All the elements of the path as a list (without the '/' separators
+    */
+   std::vector<std::string_view> getElements() const;
 
    /**
     * \brief This returns a C-style string as that's most universally usable for logging

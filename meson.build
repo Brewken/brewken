@@ -120,7 +120,8 @@
 #
 # Default options (mostly ultimately controlling compiler settings):
 #
-#   - cpp_std         We need C++17 or later for nested namespaces (and C++11 or later for lambdas)
+#   - cpp_std         We need C++17 or later for nested namespaces and structured bindings, and C++11 or later for
+#                     lambdas.
 #
 #   - warning_level   3 is the highest level ie warns about the most things.  For gcc it translates to
 #                        -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic
@@ -146,7 +147,7 @@ project('brewken', 'cpp',
         version: '0.1.0',
         license: 'GPL-3.0-or-later',
         meson_version: '>=0.60.0',
-        default_options : ['cpp_std=c++17',
+        default_options : ['cpp_std=c++20',
                            'warning_level=3',
 #                           'prefer_static=true',
                            'buildtype=plain'])
@@ -424,6 +425,9 @@ corefoundationDependency = dependency(
 # See https://mesonbuild.com/FAQ.html#why-cant-i-specify-target-files-with-a-wildcard for why it is strongly recommended
 # not to use wildcard specification.  (This is common to many build systems.)
 #
+# You can recreate the body of this list by running the following from the bash prompt in the mbuild directory:
+#    find ../src -name '*.cpp' | grep -v 'src/unitTests/' | grep -v '/main.cpp$' | sed "s+^../+   \'+; s+$+\',+" | sort
+#
 # The files() wrapper around the array ensures that all the files exist and means you don't have to worry as much about
 # subdirectories as you might otherwise -- see https://mesonbuild.com/Reference-manual_functions.html#files
 #
@@ -565,6 +569,7 @@ commonSourceFiles = files([
    'src/utils/BtStringStream.cpp',
    'src/utils/EnumStringMapping.cpp',
    'src/utils/ImportRecordCount.cpp',
+   'src/utils/OStreamWriterForQFile.cpp',
    'src/utils/TimerUtils.cpp',
    'src/WaterButton.cpp',
    'src/WaterDialog.cpp',
@@ -593,7 +598,7 @@ commonSourceFiles = files([
 # These are the headers that need to be processed by the Qt Meta Object Compiler (MOC).  Note that this is _not_ all the
 # headers in the project.  Also, note that there is a separate (trivial) list of MOC headers for the unit test runner.
 #
-# You can recreate the body of this list by running the following from the bash prompt in the build directory:
+# You can recreate the body of this list by running the following from the bash prompt in the mbuild directory:
 #    grep -rl Q_OBJECT ../src | grep -v Testing.h | sort | sed "s+^../src/+   \'src/+; s/$/\',/"
 #
 mocHeaders = files([
@@ -711,7 +716,7 @@ unitTestMocHeaders = files([
 #
 # List of UI files
 #
-# You can recreate the body of this list by running the following from the bash prompt in the build directory:
+# You can recreate the body of this list by running the following from the bash prompt in the mbuild directory:
 #    find ../ui -name '*.ui' | sort | sed "s+^../ui/+   \'ui/+; s/$/\',/"
 #
 uiFiles = files([

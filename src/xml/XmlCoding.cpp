@@ -552,7 +552,7 @@ XmlCoding::XmlCoding(QString const name,
                      QHash<QString, XmlRecordDefinition> const & entityNameToXmlRecordDefinition) :
    name{name},
    entityNameToXmlRecordDefinition{entityNameToXmlRecordDefinition},
-   pimpl{ new impl{schemaResource} } {
+   pimpl{std::make_unique<impl>(schemaResource)} {
    qDebug() << Q_FUNC_INFO;
    return;
 }

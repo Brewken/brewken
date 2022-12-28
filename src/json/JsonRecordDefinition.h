@@ -38,8 +38,8 @@ class JsonRecord;
 template<class NE>
 class JsonNamedEntityRecord;
 
-// See below for more on this.  It's useful to have a type name for a list of pointers to JsonMeasureableUnitsMapping
-// objects, but we don't need to create a whole new class just for that.
+// See comment below about OneOfMeasurementsWithUnits for more on this.  It's useful to have a type name for a list of
+// pointers to JsonMeasureableUnitsMapping objects, but we don't need to create a whole new class just for that.
 using ListOfJsonMeasureableUnitsMappings = QVector<JsonMeasureableUnitsMapping const *>;
 
 /**
@@ -194,9 +194,8 @@ public:
       // NOTE that we ASSUME that each of the JsonMeasureableUnitsMapping objects in the list has the SAME values for
       // unitField and valueField.  (We could have done yet another data structure to enforce this, instead of using
       // a list of JsonMeasureableUnitsMapping objects, but the latter has the benefit of allowing us to use the same
-      // definitions for fields that can only be measured in one way.  (Eg, we might have some fields that are allowed
+      // definitions for fields that can only be measured in one way.  Eg, we might have some fields that are allowed
       // to be specified by mass or by volume and others that can only be specified by mass or only by volume.)
-      //
       //
       OneOfMeasurementsWithUnits,
       //
@@ -292,7 +291,7 @@ public:
     */
    template<typename JRT>
    static std::unique_ptr<JsonRecord> create(JsonCoding const & jsonCoding,
-                                             boost::json::value const & recordData,
+                                             boost::json::value & recordData,
                                              JsonRecordDefinition const & recordDefinition) {
       return std::make_unique<JRT>(jsonCoding, recordData, recordDefinition);
    }
@@ -302,7 +301,7 @@ public:
     *        \b JsonRecordDefinition::create().
     */
    typedef std::unique_ptr<JsonRecord> (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
-                                                                       boost::json::value const & recordData,
+                                                                       boost::json::value & recordData,
                                                                        JsonRecordDefinition const & recordDefinition);
 
    /**
@@ -332,10 +331,10 @@ public:
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
 
    /**
-    * \brief This is the way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It ensures you
-    *        get the right subclass (if any) of \c JsonRecord.
+    * \brief This is the simplest way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It
+    *        ensures you get the right subclass (if any) of \c JsonRecord.
     */
-   std::shared_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::value const & recordData) const;
+   std::unique_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::value & recordData) const;
 
 public:
    BtStringConst const       recordName;

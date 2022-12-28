@@ -527,7 +527,7 @@ public:
 };
 
 
-Database::Database(Database::DbType dbType) : pimpl{ new impl{dbType} } {
+Database::Database(Database::DbType dbType) : pimpl{std::make_unique<impl>(dbType)} {
    return;
 }
 

@@ -52,14 +52,14 @@ namespace ImportExport {
     * \param waters
     * \param yeasts
     */
-   void exportToFile(QList<Recipe *>      const * recipes,
-                     QList<Equipment *>   const * equipments   = nullptr,
-                     QList<Fermentable *> const * fermentables = nullptr,
-                     QList<Hop *>         const * hops         = nullptr,
-                     QList<Misc *>        const * miscs        = nullptr,
-                     QList<Style *>       const * styles       = nullptr,
-                     QList<Water *>       const * waters       = nullptr,
-                     QList<Yeast *>       const * yeasts       = nullptr);
+   void exportToFile(QList<Recipe      const *> const * recipes,
+                     QList<Equipment   const *> const * equipments   = nullptr,
+                     QList<Fermentable const *> const * fermentables = nullptr,
+                     QList<Hop         const *> const * hops         = nullptr,
+                     QList<Misc        const *> const * miscs        = nullptr,
+                     QList<Style       const *> const * styles       = nullptr,
+                     QList<Water       const *> const * waters       = nullptr,
+                     QList<Yeast       const *> const * yeasts       = nullptr);
 }
 
 #endif
