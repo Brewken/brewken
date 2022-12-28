@@ -120,8 +120,8 @@
 #
 # Default options (mostly ultimately controlling compiler settings):
 #
-#   - cpp_std         We need C++17 or later for nested namespaces and structured bindings, and C++11 or later for
-#                     lambdas.
+#   - cpp_std         We need C++20 for std::map::contains(), C++17 or later for nested namespaces and structured
+#                     bindings, and C++11 or later for lambdas.
 #
 #   - warning_level   3 is the highest level ie warns about the most things.  For gcc it translates to
 #                        -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic
