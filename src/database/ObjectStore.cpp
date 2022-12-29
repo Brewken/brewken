@@ -1009,6 +1009,13 @@ void ObjectStore::loadAll(Database * database) {
             //qDebug() <<
             //   Q_FUNC_INFO << "Value for property" << fieldDefn.propertyName << "after enum conversion: " <<
             //   fieldValue;
+         } else if (fieldDefn.fieldType == ObjectStore::FieldType::Int) {
+            // If an int is NULL then we'll hold it as -1
+            // I _think_ this is always a valid & sensible thing to do.  If we decide later we need to have exceptions
+            // then we could move this logic into the constructors and NamedParameterBundle.
+            if (fieldValue.isNull()) {
+               fieldValue = -1;
+            }
          }
 
          // It's a coding error if we got the same parameter twice

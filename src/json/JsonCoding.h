@@ -97,7 +97,7 @@ public:
     * \return true if file validated OK (including if there were "errors" that we can safely ignore)
     *         false if there was a problem that means it's not worth trying to read in the data from the file
     */
-   bool validateLoadAndStoreInDb(boost::json::value const & inputDocument,
+   bool validateLoadAndStoreInDb(boost::json::value & inputDocument,
                                  QTextStream & userMessage) const;
 
 private:

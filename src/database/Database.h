@@ -220,13 +220,13 @@ private:
 
    //! Hidden constructor.
    Database(DbType dbType);
-   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton.
    Database(Database const&) = delete;
-   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   //! No assignment operator, as never want anyone, not even our friends, to make copies of a singleton.
    Database& operator=(Database const&) = delete;
-   //! No move constructor
+   //! No move constructor.
    Database(Database &&) = delete;
-   //! No move assignment
+   //! No move assignment.
    Database& operator=(Database &&) = delete;
    //! Destructor hidden.
    ~Database();

@@ -1165,7 +1165,7 @@ public:
 
 
 RecipeFormatter::RecipeFormatter(QWidget* parent) : QObject{parent},
-                                                    pimpl{new impl{}} {
+                                                    pimpl{std::make_unique<impl>()} {
    return;
 }
 

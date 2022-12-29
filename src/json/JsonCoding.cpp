@@ -133,7 +133,7 @@ JsonRecordDefinition const & JsonCoding::getJsonRecordDefinitionByNamedEntity(QS
    return *result;
 }
 
-bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocument,
+bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
                                           QTextStream & userMessage) const {
    try {
       JsonSchema const & schema = JsonSchema::instance(this->pimpl->schemaId);
@@ -159,11 +159,15 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value const & inputDocume
    // construction parameter of JsonCoding.  But, we do not foresee this being necessary any time soon (or possibly
    // ever).
    //
+   // It would be nice to make documentRoot and rootRecordData references to const objects, but we need the
+   // boost::json::value references stored in JsonRecord _not_ to be const when we're exporting to JSON, and it feels
+   // clunky eg to have different references for reading and writing.
+   //
    Q_ASSERT(inputDocument.is_object());
-   boost::json::object const & documentRoot = inputDocument.as_object();
+   boost::json::object & documentRoot = inputDocument.as_object();
    Q_ASSERT(documentRoot.contains("beerjson"));
 
-   boost::json::value const & rootRecordData = *documentRoot.if_contains("beerjson"); //documentRoot["beerjson"];
+   boost::json::value & rootRecordData = *documentRoot.if_contains("beerjson"); //documentRoot["beerjson"];
    Q_ASSERT(rootRecordData.is_object());
    qDebug() << Q_FUNC_INFO << "Root record contains" << rootRecordData.as_object().size() << "elements";
 

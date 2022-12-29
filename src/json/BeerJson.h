@@ -17,6 +17,11 @@
 #define JSON_BEERJSON_H
 #pragma once
 
+#include <memory> // For PImpl
+
+#include <QList>
+
+class QFile;
 class QString;
 class QTextStream;
 
@@ -32,21 +37,44 @@ namespace BeerJson {
     */
    bool import(QString const & filename, QTextStream & userMessage);
 
-/*   ¥¥¥ THIS NEEDS A BIT OF A RETHINK FOR JSON
-
-   class Exporter{
-      Exporter();
-   };*/
    /**
-    * \brief Creates a blank BeerXML document in the supplied file (which the caller should have opened for writing
-    *        already).  This can then be supplied to subsequent calls to add BeerXML for Recipes, Hops, etc.
+    * \brief Objects of this class are intended to be relatively short-lived, existing only for the time it takes to
+    *        construct the serialized representation and write it to a file.
     */
-///   void createXmlFile(QFile & outFile) const;
+   class Exporter {
+   public:
+      /**
+      * \param outFile Should be open already.  Caller is responsible for closing it after \c close() or our destructor
+      *                is called
+      * \param userMessage
+      */
+      Exporter(QFile & outFile, QTextStream & userMessage);
+      ~Exporter();
 
-   /**
-    * \brief Write a list of objects to the supplied file
-    */
-///   template<class NE> void toXml(QList<NE *> & nes, QFile & outFile) const;
+      /**
+      * \brief Add a list of \c NamedEntity objects to the serializer
+      */
+      template<class NE> void add(QList<NE const *> const & nes);
+
+      /**
+      * \brief Write the serialized data to the file.  Will be called in destructor if not already invoked directly.
+      */
+      void close();
+
+   private:
+      // Private implementation details - see https://herbsutter.com/gotw/_100/
+      class impl;
+      std::unique_ptr<impl> pimpl;
+
+      //! No copy constructor, as we don't want two objects trying to write to the same file
+      Exporter(Exporter const&) = delete;
+      //! No assignment operator, as never want anyone, not even our friends, to make copies of a singleton.
+      Exporter& operator=(Exporter const&) = delete;
+      //! No move constructor
+      Exporter(Exporter &&) = delete;
+      //! No move assignment
+      Exporter& operator=(Exporter &&) = delete;
+   };
 
 }
 

@@ -17,6 +17,8 @@
 
 #include <QDebug>
 
+#include "json/JsonRecord.h"
+
 namespace {
    EnumStringMapping const fieldTypeToName {
       {QObject::tr("Bool"                      ), JsonRecordDefinition::FieldType::Bool                      },
@@ -81,6 +83,11 @@ JsonRecordDefinition::JsonRecordDefinition(
       myFieldDefinitions.insert(myFieldDefinitions.end(), list.begin(), list.end());
    }
    return;
+}
+
+std::unique_ptr<JsonRecord> JsonRecordDefinition::makeRecord(JsonCoding const & jsonCoding,
+                                                             boost::json::value & recordData) const {
+   return this->jsonRecordConstructorWrapper(jsonCoding, recordData, *this);
 }
 
 

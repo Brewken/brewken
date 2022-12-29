@@ -73,7 +73,7 @@ public:
     * \param recordDefinition
     */
    JsonRecord(JsonCoding const & jsonCoding,
-              boost::json::value const & recordData,
+              boost::json::value & recordData,
               JsonRecordDefinition const & recordDefinition);
    /**
     * \brief See constructor comment above for why we don't want to let the compiler do automatic conversions of the
@@ -135,11 +135,10 @@ public:
                                                                 QTextStream & userMessage,
                                                                 ImportRecordCount & stats);
    /**
-    * \brief Export to JSON
-    * \param namedEntityToExport The object that we want to export to JSON
-    * \param out Where to write the JSON
+    * \brief Convert a \c NamedEntity to JSON
+    * \param namedEntityToExport The object that we want to convert to JSON
     */
-   void toJson(NamedEntity const & namedEntityToExport, QTextStream & out) const;
+   void toJson(NamedEntity const & namedEntityToExport);
 
 private:
    /**
@@ -149,7 +148,7 @@ private:
     */
    [[nodiscard]] bool loadChildRecords(JsonRecordDefinition::FieldDefinition const & parentFieldDefinition,
                                        JsonRecordDefinition const & childRecordDefinition,
-                                       boost::json::array const & childRecordsData,
+                                       boost::json::array & childRecordsData,
                                        QTextStream & userMessage);
 
 protected:
@@ -235,7 +234,7 @@ protected:
     * extract the contained \c boost::json::object from a \c boost::json::value, you cannot go in the other direction
     * and get the containing \c boost::json::value from a \c boost::json::object).
     */
-   boost::json::value const & recordData;
+   boost::json::value & recordData;
    JsonRecordDefinition const & recordDefinition;
 
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate

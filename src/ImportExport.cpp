@@ -177,14 +177,14 @@ void ImportExport::importFromFiles() {
 }
 
 
-void ImportExport::exportToFile(QList<Recipe *>      const * recipes,
-                                QList<Equipment *>   const * equipments,
-                                QList<Fermentable *> const * fermentables,
-                                QList<Hop *>         const * hops,
-                                QList<Misc *>        const * miscs,
-                                QList<Style *>       const * styles,
-                                QList<Water *>       const * waters,
-                                QList<Yeast *>       const * yeasts) {
+void ImportExport::exportToFile(QList<Recipe      const *> const * recipes,
+                                QList<Equipment   const *> const * equipments,
+                                QList<Fermentable const *> const * fermentables,
+                                QList<Hop         const *> const * hops,
+                                QList<Misc        const *> const * miscs,
+                                QList<Style       const *> const * styles,
+                                QList<Water       const *> const * waters,
+                                QList<Yeast       const *> const * yeasts) {
    // It's the caller's responsibility to ensure that at least one list is supplied and that at least one of the
    // supplied lists is non-empty
    Q_ASSERT((recipes      && recipes     ->size() > 0) ||
@@ -202,6 +202,9 @@ void ImportExport::exportToFile(QList<Recipe *>      const * recipes,
    }
    QString filename = (*selectedFiles)[0];
 
+   QString userMessage;
+   QTextStream userMessageAsStream{&userMessage};
+
    // Destructor will close the file if nec when we exit the function
    QFile outFile;
    outFile.setFileName(filename);
@@ -212,7 +215,17 @@ void ImportExport::exportToFile(QList<Recipe *>      const * recipes,
    }
 
    if (filename.endsWith("json", Qt::CaseInsensitive)) {
-      // TODO This is the bit we need to write!
+      BeerJson::Exporter exporter(outFile, userMessageAsStream);
+      if (hops         && hops        ->size() > 0) { exporter.add(*hops        ); }
+      if (fermentables && fermentables->size() > 0) { exporter.add(*fermentables); }
+      if (yeasts       && yeasts      ->size() > 0) { exporter.add(*yeasts      ); }
+      if (miscs        && miscs       ->size() > 0) { exporter.add(*miscs       ); }
+      if (waters       && waters      ->size() > 0) { exporter.add(*waters      ); }
+      if (styles       && styles      ->size() > 0) { exporter.add(*styles      ); }
+      if (recipes      && recipes     ->size() > 0) { exporter.add(*recipes     ); }
+      if (equipments   && equipments  ->size() > 0) { exporter.add(*equipments  ); }
+
+      exporter.close();
       return;
    }
 

@@ -17,8 +17,8 @@
 #define JSON_JSONMEASUREABLEUNITSMAPPING_H
 #pragma once
 
-#include <QMap>
-#include <QString>
+#include <map>
+#include <string_view>
 
 #include "json/JsonXPath.h"
 #include "measurement/Unit.h"
@@ -37,7 +37,14 @@
  * \c valueField is the key used to pull out the double value representing the measurement itself
  */
 struct JsonMeasureableUnitsMapping {
-   QMap<QString, Measurement::Unit const *> nameToUnit;
+   // We could use boost::bimap here, but it doesn't support brace initializer lists, which is a bit tiresome.  Given
+   // that the size of this mapping is always small (<20 entries), even doing linear search is not going to be that
+   // complicated.
+   //
+   // We use std::string_view here rather than QString because there's less conversion to do when working with
+   // Boost.JSON.  We use std::map rather than QMap because it's easier to search both sides of the map (ie search by
+   // value as well as search by key.
+   std::map<std::string_view, Measurement::Unit const *> nameToUnit;
    JsonXPath const unitField = JsonXPath{"unit"};
    JsonXPath const valueField = JsonXPath{"value"};
 };
