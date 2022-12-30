@@ -29,8 +29,8 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-// Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and for
-// the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+// Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
+// for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Hop::typeStringMapping {
    {"aroma",                  Hop::Type::Aroma},
    {"bittering",              Hop::Type::Bittering},
@@ -222,7 +222,7 @@ Hop::Hop(Hop const & other) :
 
 Hop::~Hop() = default;
 
-//============================="GET" METHODS====================================
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 Hop::Use  Hop::use()                   const { return this->m_use;                   }
 QString   Hop::notes()                 const { return this->m_notes;                 }
 Hop::Type Hop::type()                  const { return this->m_type;                  }
@@ -238,6 +238,7 @@ double    Hop::humulene_pct()          const { return this->m_humulene_pct;     
 double    Hop::caryophyllene_pct()     const { return this->m_caryophyllene_pct;     }
 double    Hop::cohumulone_pct()        const { return this->m_cohumulone_pct;        }
 double    Hop::myrcene_pct()           const { return this->m_myrcene_pct;           }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 QString   Hop::producer()              const { return this->m_producer;              }
 QString   Hop::product_id()            const { return this->m_product_id;            }
 int       Hop::year()                  const { return this->m_year;                  }
@@ -256,7 +257,7 @@ double Hop::inventory() const {
    return InventoryUtils::getAmount(*this);
 }
 
-//============================="SET" METHODS====================================
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Hop::setAlpha_pct            (double    const   val) { this->setAndNotify(PropertyNames::Hop::alpha_pct,             this->m_alpha_pct,             this->enforceMinAndMax(val, "alpha",                 0.0, 100.0)); }
 void Hop::setAmount_kg            (double    const   val) { this->setAndNotify(PropertyNames::Hop::amount_kg,             this->m_amount_kg,             this->enforceMin      (val, "amount")                           ); }
 void Hop::setUse                  (Hop::Use  const   val) { this->setAndNotify(PropertyNames::Hop::use,                   this->m_use,                   val                                                             ); }
@@ -272,6 +273,7 @@ void Hop::setHumulene_pct         (double    const   val) { this->setAndNotify(P
 void Hop::setCaryophyllene_pct    (double    const   val) { this->setAndNotify(PropertyNames::Hop::caryophyllene_pct,     this->m_caryophyllene_pct,     this->enforceMinAndMax(val, "caryophyllene",         0.0, 100.0)); }
 void Hop::setCohumulone_pct       (double    const   val) { this->setAndNotify(PropertyNames::Hop::cohumulone_pct,        this->m_cohumulone_pct,        this->enforceMinAndMax(val, "cohumulone",            0.0, 100.0)); }
 void Hop::setMyrcene_pct          (double    const   val) { this->setAndNotify(PropertyNames::Hop::myrcene_pct,           this->m_myrcene_pct,           this->enforceMinAndMax(val, "myrcene",               0.0, 100.0)); }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Hop::setProducer             (QString   const & val) { this->setAndNotify(PropertyNames::Hop::producer,              this->m_producer,              val                                                             ); }
 void Hop::setProduct_id           (QString   const & val) { this->setAndNotify(PropertyNames::Hop::product_id,            this->m_product_id,            val                                                             ); }
 void Hop::setYear                 (int       const   val) { this->setAndNotify(PropertyNames::Hop::year,                  this->m_year,                  val                                                             ); }
@@ -293,7 +295,7 @@ Recipe * Hop::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
 
-bool hopLessThanByTime(Hop const * lhs, Hop const * rhs) {
+bool hopLessThanByTime(Hop const * const lhs, Hop const * const rhs) {
    if (lhs->use() == rhs->use())    {
       if (lhs->time_min() == rhs->time_min()) {
          return lhs->name() < rhs->name();

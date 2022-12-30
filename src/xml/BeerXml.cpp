@@ -148,11 +148,17 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Fermentable>{"FERMENTABLE"};
    EnumStringMapping const BEER_XML_FERMENTABLE_TYPE_MAPPER {
-      {"Grain",       Fermentable::Type::Grain},
-      {"Sugar",       Fermentable::Type::Sugar},
-      {"Extract",     Fermentable::Type::Extract},
-      {"Dry Extract", Fermentable::Type::Dry_Extract},
-      {"Adjunct",     Fermentable::Type::Adjunct}
+      {"Grain",               Fermentable::Type::Grain},
+      {"Sugar",               Fermentable::Type::Sugar},
+      {"Extract",             Fermentable::Type::Extract},
+      {"Dry Extract",         Fermentable::Type::Dry_Extract},
+      {"Adjunct",             Fermentable::Type::Other_Adjunct},
+      // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
+      // mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {"Adjunct<!--Fruit-->", Fermentable::Type::Fruit},
+      {"Adjunct<!--Juice-->", Fermentable::Type::Juice},
+      {"Adjunct<!--Honey-->", Fermentable::Type::Honey},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
       // Type                                  XPath               Q_PROPERTY                                          Enum Mapper

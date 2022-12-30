@@ -105,7 +105,6 @@ void PrintAndPreviewDialog::showEvent([[maybe_unused]] QShowEvent *e) {
 
 /**
  * @brief Gets the Recipe from MainWindow and sets it to the respective formatters.
- *
  */
 void PrintAndPreviewDialog::collectRecipe() {
    selectedRecipe = mainWindow->currentRecipe();
@@ -117,7 +116,6 @@ void PrintAndPreviewDialog::collectRecipe() {
 
 /**
  * @brief Collects the available printers on the computer and saves the list to the comboBox.
- *
  */
 void PrintAndPreviewDialog::collectPrinterInfo() {
    //Getting the list of available printers on the system and adding them to the combobox for user selection.
@@ -136,7 +134,6 @@ void PrintAndPreviewDialog::collectPrinterInfo() {
 
 /**
  * @brief Collect the supported Paper sizes from the selected printer.
- *
  */
 void PrintAndPreviewDialog::collectSupportedPageSizes() {
    PageSizeMap.clear();
@@ -165,7 +162,7 @@ void PrintAndPreviewDialog::collectSupportedPageSizes() {
 QList<QPageSize> PrintAndPreviewDialog::generatePageSizeList() {
    QList<QPageSize> result;
 
-   for(int itor = 0; itor < QPageSize::LastPageSize; itor++) {
+   for (int itor = 0; itor < QPageSize::LastPageSize; itor++) {
       QPageSize key((QPageSize::PageSizeId)itor);
       result.append(key);
    }
@@ -178,45 +175,39 @@ QList<QPageSize> PrintAndPreviewDialog::generatePageSizeList() {
  *
  */
 void PrintAndPreviewDialog::setupConnections() {
-   //Preview windows connections for drawing the previewed document. connects to the printer.
+   // Preview windows connections for drawing the previewed document. connects to the printer.
    connect(previewWidget, &QPrintPreviewWidget::paintRequested, this, &PrintAndPreviewDialog::printDocument);
 
-   //Radiobuttons connections to update settings for output.
-   connect(buttonGroup, QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), [=]([[maybe_unused]] QAbstractButton *button, [[maybe_unused]] bool checked) { outputRadioButtonsClicked (); });
+   // Radiobuttons connections to update settings for output.
+   connect(buttonGroup,   QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), this, &PrintAndPreviewDialog::outputRadioButtonsClicked);
 
-   //Radiobuttons connections to update the orientation on the document.
-   connect(buttonGroup_2, QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), [=]([[maybe_unused]] QAbstractButton *button, [[maybe_unused]] bool checked) { orientationRadioButtonsClicked(); });
+   // Radiobuttons connections to update the orientation on the document.
+   connect(buttonGroup_2, QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), this, &PrintAndPreviewDialog::orientationRadioButtonsClicked);
 
-   //updates the selelected printer.
-   connect(comboBox_PrinterSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index){
-      selectedPrinterChanged(index);
-   });
+   // Updates the selected printer.
+   connect(comboBox_PrinterSelector,     QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PrintAndPreviewDialog::selectedPrinterChanged);
 
-   //updates the selected Paper size
-   connect(comboBox_PaperFormatSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
-      selectedPaperChanged(index);
-   });
+   // Updates the selected Paper size
+   connect(comboBox_PaperFormatSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PrintAndPreviewDialog::selectedPaperChanged);
 
    connect(Button_Cancel, &QPushButton::clicked, [this]() {
       setVisible(false);
    });
 
-   //This will Printout the document and close the dialog
-   connect(Button_Print, &QPushButton::clicked, [this]() {
-      handlePrinting();
-   });
+   // This will print out the document and close the dialog
+   connect(Button_Print,                   &QPushButton::clicked,       this, &PrintAndPreviewDialog::handlePrinting);
 
-   //Connect the Recipe and BrewInstructions checkboxes to update the preview when toggled
-   connect(checkBox_Recipe,                 &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxRecipe_toggle);
-   connect(checkBox_BrewdayInstructions,    &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxBrewday_toggle);
+   // Connect the Recipe and BrewInstructions checkboxes to update the preview when toggled
+   connect(checkBox_Recipe,                &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxRecipe_toggle);
+   connect(checkBox_BrewdayInstructions,   &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxBrewday_toggle);
 
-   connect(checkBox_inventoryAll,           &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryAll_toggle);
-   connect(checkBox_inventoryFermentables,  &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
-   connect(checkBox_inventoryHops,          &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
-   connect(checkBox_inventoryMicellaneous,  &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
-   connect(checkBox_inventoryYeast,         &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
+   connect(checkBox_inventoryAll,          &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryAll_toggle);
+   connect(checkBox_inventoryFermentables, &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
+   connect(checkBox_inventoryHops,         &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
+   connect(checkBox_inventoryMicellaneous, &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
+   connect(checkBox_inventoryYeast,        &QCheckBox::toggled,         this, &PrintAndPreviewDialog::checkBoxInventoryIngredient_toggle);
 
-   connect(verticalTabWidget,               &QTabWidget::currentChanged, this, &PrintAndPreviewDialog::verticalTabWidget_currentChanged);
+   connect(verticalTabWidget,              &QTabWidget::currentChanged, this, &PrintAndPreviewDialog::verticalTabWidget_currentChanged);
    return;
 }
 
@@ -231,18 +222,19 @@ void PrintAndPreviewDialog::checkBoxRecipe_toggle([[maybe_unused]] bool checked)
 }
 
 /**
- * @brief handles the breDay checkbox toggle action
+ * @brief handles the brew day checkbox toggle action
  *
  * @param checked
  */
 void PrintAndPreviewDialog::checkBoxBrewday_toggle([[maybe_unused]] bool checked) {
-   //first off, we always need to have something to export/print, so if brewday instructions is unchecked the recipe will automatically be selected.
+   // First off, we always need to have something to export/print, so if brewday instructions is unchecked the recipe
+   // will automatically be selected.
    checkBox_Recipe->setChecked( (checkBox_BrewdayInstructions->isChecked()) ? checkBox_Recipe->isChecked() : true );
 
    // We enable the Recipe checkbox only if the brewday checkbox is checked.
    checkBox_Recipe->setEnabled( checkBox_BrewdayInstructions->isChecked() );
 
-   //update the view accordingly
+   // Update the view accordingly
    updatePreview();
    return;
 }
@@ -290,7 +282,7 @@ void PrintAndPreviewDialog::verticalTabWidget_currentChanged([[maybe_unused]] in
  *
  */
 void PrintAndPreviewDialog::handlePrinting() {
-   //make it short if we are printing to paper.
+   // Make it short if we are printing to paper.
    if (radioButton_OutputPaper->isChecked()) {
       previewWidget->print();
    } else {
@@ -322,7 +314,7 @@ void PrintAndPreviewDialog::handlePrinting() {
          file.close();
       }
    }
-   //Closing down the dialog.
+   // Closing down the dialog.
    setVisible(false);
    return;
 }
@@ -333,7 +325,7 @@ void PrintAndPreviewDialog::handlePrinting() {
  * @param checked
  */
 void PrintAndPreviewDialog::updatePreview() {
-   if ( ! radioButton_OutputHTML->isChecked()) {
+   if (!radioButton_OutputHTML->isChecked()) {
       previewWidget->updatePreview();
    } else {
       QString pDoc = "";
@@ -415,7 +407,6 @@ void PrintAndPreviewDialog::selectedPrinterChanged(int index) {
 
 /**
  * @brief handles the output radio buttons signal.
- *
  */
 void PrintAndPreviewDialog::outputRadioButtonsClicked() {
    setPrintingControls();
@@ -435,34 +426,33 @@ void PrintAndPreviewDialog::orientationRadioButtonsClicked() {
  * @brief Sets the Printing settings and enables/disables controls accordingly.
  */
 void PrintAndPreviewDialog::setPrintingControls() {
-   // First off, The Printer selector either needs to be disabled when you output to PDF or HTML, or you set the output
+   // First off, the printer selector either needs to be disabled when you output to PDF or HTML, or you set the output
    // selector to say like "QT PDF exporter" or something.
    // For now, let's disable it.
    comboBox_PrinterSelector->setEnabled    ( radioButton_OutputPaper->isChecked() );
 
-   //Lets set the Papersize selector to be the inverse of radiobutton_OutputHTML.
+   // Let's set the Papersize selector to be the inverse of radiobutton_OutputHTML.
    comboBox_PaperFormatSelector->setEnabled( ! radioButton_OutputHTML->isChecked() );
 
 
-   //if HTML is selected the orientation and papersize is not relavant so lets set them to the inverse of radiobutton_OutputHTML.
+   // If HTML is selected the orientation and papersize is not relavant so lets set them to the inverse of
+   // radiobutton_OutputHTML.
    groupBox_Orientation->setEnabled        ( ! radioButton_OutputHTML->isChecked() );
    groupBox_PrinterSettings->setEnabled    ( ! radioButton_OutputHTML->isChecked() );
 
-   //Only set this as "print" if we are printing to paper, else it is set to "save as"
+   // Only set this as "print" if we are printing to paper, else it is set to "save as"
    Button_Print->setText((radioButton_OutputPaper->isChecked()) ? "Print" : "Save as");
 
-   //setting up printer accordingly
-   if (radioButton_OutputPaper->isChecked())
-   {
+   // Setting up printer accordingly
+   if (radioButton_OutputPaper->isChecked()) {
       printer->setOutputFormat(QPrinter::OutputFormat::NativeFormat);
       printer->setPrinterName(comboBox_PrinterSelector->currentText());
-   }
-   else if (radioButton_OutputPDF->isChecked())
-   {
+   } else if (radioButton_OutputPDF->isChecked()) {
       printer->setOutputFormat(QPrinter::OutputFormat::PdfFormat);
    }
    collectSupportedPageSizes();
-   //setting up views correctly.
+
+   // Setting up views correctly.
    updatePreview();
 
    return;
@@ -473,14 +463,14 @@ void PrintAndPreviewDialog::setPrintingControls() {
  *        This is changed according to when output is changed.
  */
 void PrintAndPreviewDialog::setupPreviewWidgets() {
-   //Setting up the Document preview for Paper and PDF
+   // Setting up the Document preview for Paper and PDF
    PrintAndPreviewDialog::verticalLayout_PrintPreviewWidget->addWidget ( previewWidget );
    previewWidget->setMinimumWidth(300);
    previewWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
    previewWidget->setZoomMode(QPrintPreviewWidget::FitInView);
    previewWidget->show();
 
-   //setting up the Document preview for HTML, we're hiding this to begin with.
+   // Setting up the Document preview for HTML, we're hiding this to begin with.
    verticalLayout_PrintPreviewWidget->addWidget( htmlDocument );
    htmlDocument->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
    htmlDocument->hide();
@@ -496,33 +486,31 @@ void PrintAndPreviewDialog::setupPreviewWidgets() {
  * @param printer PagedPaintingDevice (QT) Printer to use for printout.
  */
 void PrintAndPreviewDialog::printDocument(QPrinter * printer) {
-   if ( mainWindow->currentRecipe() == nullptr)
+   if ( mainWindow->currentRecipe() == nullptr) {
       return;
+   }
    recipeFormatter->setRecipe(mainWindow->currentRecipe());
-   //Setting up a blank page for drawing.
+   // Setting up a blank page for drawing.
    QTextBrowser textBrowser;
    QString hDoc = "";
-   //if we are watching the Recipe tab we should print recipe stuff.
-   if (Ui_BtPrintAndPreview::verticalTabWidget->currentIndex() == 0)
-   {
-      /*
-      all of the below code to generate the printout will be subject to change and refactoring when I get around to
-      making the template editor for printouts where you can save your templates and use them or share them
-      with other BT users.
-      */
+   // If we are watching the Recipe tab we should print recipe stuff.
+   if (Ui_BtPrintAndPreview::verticalTabWidget->currentIndex() == 0) {
+      //
+      // TODO: All of the below code to generate the printout will be subject to change and refactoring when I get
+      //       around to making the template editor for printouts where you can save your templates and use them or
+      //       share them with other BT users.
+      //
       hDoc += recipeFormatter->buildHtmlHeader();
-      if ( checkBox_Recipe->isChecked())
-      {
+      if (checkBox_Recipe->isChecked()) {
          hDoc += recipeFormatter->getHtmlFormat();
       }
-      if (checkBox_BrewdayInstructions->isChecked())
-      {
+
+      if (checkBox_BrewdayInstructions->isChecked()) {
          hDoc += brewDayFormatter->buildInstructionHtml();
       }
+
       hDoc += recipeFormatter->buildHtmlFooter();
-   }
-   else if (verticalTabWidget->currentIndex() == 1)
-   {
+   } else if (verticalTabWidget->currentIndex() == 1) {
       InventoryFormatter::HtmlGenerationFlags flags = static_cast<InventoryFormatter::HtmlGenerationFlags>(
          checkBox_inventoryFermentables->isChecked() * InventoryFormatter::FERMENTABLES   +
          checkBox_inventoryHops->isChecked()         * InventoryFormatter::HOPS           +
@@ -532,7 +520,7 @@ void PrintAndPreviewDialog::printDocument(QPrinter * printer) {
       hDoc += InventoryFormatter::createInventoryHtml(flags);
    }
 
-   //Render the Page onto the painter/printer for preview/printing.
+   // Render the page onto the painter/printer for preview/printing.
    textBrowser.setHtml(hDoc);
    textBrowser.print(printer);
 

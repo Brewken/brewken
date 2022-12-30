@@ -86,6 +86,7 @@ public:
    enum class Type {Bittering,
                     Aroma,
                     AromaAndBittering, // was Both
+                    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
                     Flavor,
                     BitteringAndFlavor,
                     AromaAndFlavor,
@@ -150,37 +151,38 @@ public:
 
    virtual ~Hop();
 
+   //=================================================== PROPERTIES ====================================================
    //! \brief The percent alpha acid
-   Q_PROPERTY(double alpha_pct READ alpha_pct WRITE setAlpha_pct /*NOTIFY changed*/ /*changedAlpha_pct*/ )
+   Q_PROPERTY(double  alpha_pct             READ alpha_pct             WRITE setAlpha_pct            )
    //! \brief The amount in kg.
-   Q_PROPERTY(double amount_kg READ amount_kg WRITE setAmount_kg /*NOTIFY changed*/ /*changedAmount_kg*/ )
+   Q_PROPERTY(double  amount_kg             READ amount_kg             WRITE setAmount_kg            )
    //! \brief The \c Use.
-   Q_PROPERTY(Use use READ use WRITE setUse /*NOTIFY changed*/ /*changedUse*/ )
+   Q_PROPERTY(Use     use                   READ use                   WRITE setUse                  )
    //! \brief The time in minutes that the hop is used.
-   Q_PROPERTY(double time_min READ time_min WRITE setTime_min /*NOTIFY changed*/ /*changedTime_min*/ )
+   Q_PROPERTY(double  time_min              READ time_min              WRITE setTime_min             )
    //! \brief The notes.
-   Q_PROPERTY(QString notes READ notes WRITE setNotes /*NOTIFY changed*/ /*changedNotes*/ )
+   Q_PROPERTY(QString notes                 READ notes                 WRITE setNotes                )
    //! \brief The \c Type.
-   Q_PROPERTY(Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
+   Q_PROPERTY(Type    type                  READ type                  WRITE setType                 )
    //! \brief The \c Form.
-   Q_PROPERTY(Form form READ form WRITE setForm /*NOTIFY changed*/ /*changedForm*/ )
+   Q_PROPERTY(Form    form                  READ form                  WRITE setForm                 )
    //! \brief The percent of beta acids.
-   Q_PROPERTY(double beta_pct READ beta_pct WRITE setBeta_pct /*NOTIFY changed*/ /*changedBeta_pct*/ )
+   Q_PROPERTY(double  beta_pct              READ beta_pct              WRITE setBeta_pct             )
    //! \brief The hop stability index in percent.  The Hop Stability Index (HSI) is defined as the percentage of hop
    //         alpha lost in 6 months of storage.  It may be related to the Hop Storage Index...
-   Q_PROPERTY(double hsi_pct READ hsi_pct WRITE setHsi_pct /*NOTIFY changed*/ /*changedHsi_pct*/ )
+   Q_PROPERTY(double  hsi_pct               READ hsi_pct               WRITE setHsi_pct              )
    //! \brief The origin.
-   Q_PROPERTY(QString origin READ origin WRITE setOrigin /*NOTIFY changed*/ /*changedOrigin*/ )
+   Q_PROPERTY(QString origin                READ origin                WRITE setOrigin               )
    //! \brief The list of substitutes.
-   Q_PROPERTY(QString substitutes READ substitutes WRITE setSubstitutes /*NOTIFY changed*/ /*changedSubstitutes*/ )
+   Q_PROPERTY(QString substitutes           READ substitutes           WRITE setSubstitutes          )
    //! \brief Humulene as a percentage of total hop oil.
-   Q_PROPERTY(double humulene_pct READ humulene_pct WRITE setHumulene_pct /*NOTIFY changed*/ /*changedHumulene_pct*/ )
+   Q_PROPERTY(double  humulene_pct          READ humulene_pct          WRITE setHumulene_pct         )
    //! \brief Caryophyllene as a percentage of total hop oil.
-   Q_PROPERTY(double caryophyllene_pct READ caryophyllene_pct WRITE setCaryophyllene_pct /*NOTIFY changed*/ /*changedCaryophyllene_pct*/ )
+   Q_PROPERTY(double  caryophyllene_pct     READ caryophyllene_pct     WRITE setCaryophyllene_pct    )
    //! \brief Cohumulone as a percentage of total hop oil.
-   Q_PROPERTY(double cohumulone_pct READ cohumulone_pct WRITE setCohumulone_pct /*NOTIFY changed*/ /*changedCohumulone_pct*/ )
+   Q_PROPERTY(double  cohumulone_pct        READ cohumulone_pct        WRITE setCohumulone_pct       )
    //! \brief Myrcene as a percentage of total hop oil.
-   Q_PROPERTY(double myrcene_pct READ myrcene_pct WRITE setMyrcene_pct /*NOTIFY changed*/ /*changedMyrcene_pct*/ )
+   Q_PROPERTY(double  myrcene_pct           READ myrcene_pct           WRITE setMyrcene_pct          )
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    Q_PROPERTY(QString producer              READ producer              WRITE setProducer             )
@@ -197,42 +199,40 @@ public:
    Q_PROPERTY(double  polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
    Q_PROPERTY(double  xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
 
-
-   //============================="GET" METHODS====================================
-   double  alpha_pct()             const;
-   double  amount_kg()             const;
-   Use     use()                   const;
-   double  time_min()              const;
-   QString notes()                 const;
-   Type    type()                  const;
-   Form    form()                  const;
-   double  beta_pct()              const;
-   double  hsi_pct()               const;
-   QString origin()                const;
-   QString substitutes()           const;
-   double  humulene_pct()          const;
-   double  caryophyllene_pct()     const;
-   double  cohumulone_pct()        const;
-   double  myrcene_pct()           const;
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   double  alpha_pct            () const;
+   double  amount_kg            () const;
+   Use     use                  () const;
+   double  time_min             () const;
+   QString notes                () const;
+   Type    type                 () const;
+   Form    form                 () const;
+   double  beta_pct             () const;
+   double  hsi_pct              () const;
+   QString origin               () const;
+   QString substitutes          () const;
+   double  humulene_pct         () const;
+   double  caryophyllene_pct    () const;
+   double  cohumulone_pct       () const;
+   double  myrcene_pct          () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   QString producer()              const;
-   QString product_id()            const;
-   int     year()                  const;
+   QString producer             () const;
+   QString product_id           () const;
+   int     year                 () const;
    double  total_oil_ml_per_100g() const;
-   double  farnesene_pct()         const;
-   double  geraniol_pct()          const;
-   double  b_pinene_pct()          const;
-   double  linalool_pct()          const;
-   double  limonene_pct()          const;
-   double  nerol_pct()             const;
-   double  pinene_pct()            const;
-   double  polyphenols_pct()       const;
-   double  xanthohumol_pct()       const;
+   double  farnesene_pct        () const;
+   double  geraniol_pct         () const;
+   double  b_pinene_pct         () const;
+   double  linalool_pct         () const;
+   double  limonene_pct         () const;
+   double  nerol_pct            () const;
+   double  pinene_pct           () const;
+   double  polyphenols_pct      () const;
+   double  xanthohumol_pct      () const;
 
+   virtual double inventory() const;
 
-   virtual double inventory()  const;
-
-   //============================="SET" METHODS====================================
+   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setAlpha_pct            (double  const   val);
    void setAmount_kg            (double  const   val);
    void setUse                  (Use     const   val);
@@ -266,8 +266,6 @@ public:
    virtual void setInventoryAmount(double const val);
 
    virtual Recipe * getOwningRecipe();
-
-signals:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
@@ -309,5 +307,9 @@ private:
 
 Q_DECLARE_METATYPE( QList<Hop*> )
 
-bool hopLessThanByTime(const Hop* lhs, const Hop* rhs);
+/**
+ * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
+ */
+bool hopLessThanByTime(Hop const * const lhs, Hop const * const rhs);
+
 #endif

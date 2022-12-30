@@ -278,7 +278,7 @@ QVariant BtTreeItem::dataFermentable(int column) {
          }
       case FERMENTABLETYPECOL:
          if (ferm) {
-            return QVariant(ferm->typeStringTr());
+            return QVariant(Fermentable::typeDisplayNames[ferm->type()]);
          }
          break;
       case FERMENTABLECOLORCOL:

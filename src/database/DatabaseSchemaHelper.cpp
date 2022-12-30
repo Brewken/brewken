@@ -558,6 +558,15 @@ namespace {
          {QString("ALTER TABLE hop ADD COLUMN pinene_pct            %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN polyphenols_pct       %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN xanthohumol_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         //
+         // Fermentable: Extended and additional fields for BeerJSON
+         //
+         // We only need to update the old Fermentable type mappings.  The new ones should "just work".
+         {QString("UPDATE fermentable SET ftype = 'grain'           WHERE ftype = 'Grain'")},
+         {QString("UPDATE fermentable SET ftype = 'sugar'           WHERE ftype = 'Sugar'")},
+         {QString("UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'")},
+         {QString("UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
+         {QString("UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'")},
       };
       return executeSqlQueries(q, migrationQueries);
    }

@@ -472,18 +472,18 @@ public:
       for(int ii = 0; ii < size; ++ii) {
          Fermentable* ferm = ferms[ii];
          ftable += QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6%</td><td>%7</td></tr>")
-               .arg( ferm->name())
-               .arg( ferm->typeStringTr())
-               .arg( Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
-                                                PersistentSettings::Sections::fermentableTable,
-                                                PropertyNames::Fermentable::amount_kg))
-               .arg( ferm->isMashed() ? tr("Yes") : tr("No") )
-               .arg( ferm->addAfterBoil() ? tr("Yes") : tr("No"))
-               .arg( Measurement::displayQuantity(ferm->yield_pct(), 0) )
-               .arg( Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm},
-                                                PersistentSettings::Sections::fermentableTable,
-                                                PropertyNames::Fermentable::color_srm,
-                                                1));
+               .arg(ferm->name())
+               .arg(Fermentable::typeDisplayNames[ferm->type()])
+               .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+                                               PersistentSettings::Sections::fermentableTable,
+                                               PropertyNames::Fermentable::amount_kg))
+               .arg(ferm->isMashed() ? tr("Yes") : tr("No") )
+               .arg(ferm->addAfterBoil() ? tr("Yes") : tr("No"))
+               .arg(Measurement::displayQuantity(ferm->yield_pct(), 0) )
+               .arg(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm},
+                                               PersistentSettings::Sections::fermentableTable,
+                                               PropertyNames::Fermentable::color_srm,
+                                               1));
       }
       // One row for the total grain (QTextBrowser does not know the caption tag)
       ftable += QString("<tr><td><b>%1</b></td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
@@ -521,8 +521,8 @@ public:
 
          for (int ii = 0; ii < size; ++ii) {
             Fermentable* ferm =  ferms[ii];
-            names.append( ferm->name() );
-            types.append( ferm->typeStringTr() );
+            names.append(ferm->name());
+            types.append(Fermentable::typeDisplayNames[ferm->type()]);
             amounts.append(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
                                                       PersistentSettings::Sections::fermentableTable,
                                                       PropertyNames::Fermentable::amount_kg));
@@ -1424,7 +1424,7 @@ QString RecipeFormatter::getToolTip(Fermentable* ferm) {
    // First row -- type and color
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Type"))
-           .arg(ferm->typeStringTr());
+           .arg(Fermentable::typeDisplayNames[ferm->type()]);
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Color"))
            .arg(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm}, 1));

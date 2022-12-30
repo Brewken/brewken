@@ -106,13 +106,6 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Fermentable
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const DB_FERMENTABLE_TYPE_ENUM {
-      {"Grain",       Fermentable::Type::Grain},
-      {"Sugar",       Fermentable::Type::Sugar},
-      {"Extract",     Fermentable::Type::Extract},
-      {"Dry Extract", Fermentable::Type::Dry_Extract},
-      {"Adjunct",     Fermentable::Type::Adjunct}
-   };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Fermentable> {
       "fermentable",
       {
@@ -127,7 +120,7 @@ namespace {
          {ObjectStore::FieldType::Double, "coarse_fine_diff", PropertyNames::Fermentable::coarseFineDiff_pct},
          {ObjectStore::FieldType::Double, "color",            PropertyNames::Fermentable::color_srm},
          {ObjectStore::FieldType::Double, "diastatic_power",  PropertyNames::Fermentable::diastaticPower_lintner},
-         {ObjectStore::FieldType::Enum,   "ftype",            PropertyNames::Fermentable::type,                     &DB_FERMENTABLE_TYPE_ENUM},
+         {ObjectStore::FieldType::Enum,   "ftype",            PropertyNames::Fermentable::type,                     &Fermentable::typeStringMapping},
          {ObjectStore::FieldType::Bool,   "is_mashed",        PropertyNames::Fermentable::isMashed},
          {ObjectStore::FieldType::Double, "ibu_gal_per_lb",   PropertyNames::Fermentable::ibuGalPerLb},
          {ObjectStore::FieldType::Double, "max_in_batch",     PropertyNames::Fermentable::maxInBatch_pct},

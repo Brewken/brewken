@@ -50,6 +50,11 @@
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
 
+namespace {
+   QString const descAddWithMashOrBoil{QObject::tr("Normal")};
+   QString const descAddAfterBoil     {QObject::tr("Late")};
+}
+
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
    BtTableModelInventory{
@@ -292,7 +297,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          break;
       case FERMTYPECOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->typeStringTr());
+            return QVariant(Fermentable::typeDisplayNames[row->type()]);
          }
          if (role == Qt::UserRole) {
             return QVariant(static_cast<int>(row->type()));
@@ -330,10 +335,10 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          break;
       case FERMAFTERBOIL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->additionTimeStringTr());
+            QVariant(row->addAfterBoil() ? descAddAfterBoil : descAddWithMashOrBoil);
          }
          if (role == Qt::UserRole) {
-            return QVariant(static_cast<int>(row->additionTime()));
+            return QVariant(static_cast<bool>(row->addAfterBoil()));
          }
          break;
       case FERMYIELDCOL:
@@ -480,14 +485,14 @@ bool FermentableTableModel::setData(QModelIndex const & index,
          }
          break;
       case FERMAFTERBOIL:
-         retVal = value.canConvert(QVariant::Int);
+         retVal = value.canConvert(QVariant::Bool);
          if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionTime>() here
             // (as the Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::additionTime,
-                                                  value.toInt(),
-                                                  tr("Change Addition Time"));
+                                                  PropertyNames::Fermentable::addAfterBoil,
+                                                  value.toBool(),
+                                                  tr("Change Add After Boil"));
          }
          break;
       case FERMYIELDCOL:
@@ -575,12 +580,11 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
       return box;
    }
 
-   if (index.column() == FERMAFTERBOIL )
-   {
+   if (index.column() == FERMAFTERBOIL) {
       QComboBox* box = new QComboBox(parent);
 
-      box->addItem(tr("Normal"));
-      box->addItem(tr("Late"));
+      box->addItem(descAddWithMashOrBoil);
+      box->addItem(descAddAfterBoil);
 
       box->setMinimumWidth(box->minimumSizeHint().width());
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -611,37 +615,36 @@ void FermentableItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
    }
 }
 
-void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
+void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
    int col = index.column();
 
-   if (col == FERMTYPECOL || col == FERMISMASHEDCOL || col == FERMAFTERBOIL )
-   {
+
+   if (col == FERMTYPECOL || col == FERMISMASHEDCOL) {
       QComboBox* box = qobject_cast<QComboBox*>(editor);
       int value = box->currentIndex();
       int ndx = model->data(index, Qt::UserRole).toInt();
 
-     // Only do something when something needs to be done
-      if ( value != ndx )
+      // Only do something when something needs to be done
+      if (value != ndx) {
          model->setData(index, value, Qt::EditRole);
-   }
-   else if (col == FERMISMASHEDCOL || col == FERMAFTERBOIL )
-   {
+      }
+   } else if (col == FERMAFTERBOIL ) {
       QComboBox* box = qobject_cast<QComboBox*>(editor);
-      int value = box->currentIndex();
-      int ndx = model->data(index, Qt::UserRole).toInt();
+      bool value = box->currentIndex() > 0;
+      bool ndx = model->data(index, Qt::UserRole).toBool();
 
-     // Only do something when something needs to be done
-      if ( value != ndx )
+      // Only do something when something needs to be done
+      if (value != ndx) {
          model->setData(index, value, Qt::EditRole);
-   }
-   else
-   {
+      }
+   } else {
       QLineEdit* line = qobject_cast<QLineEdit*>(editor);
 
-      if ( line->isModified() )
+      if (line->isModified()) {
           model->setData(index, line->text(), Qt::EditRole);
+      }
    }
+   return;
 }
 
 void FermentableItemDelegate::updateEditorGeometry(QWidget * editor,

@@ -15,7 +15,7 @@
  =====================================================================================================================*/
 #include "json/JsonXPath.h"
 
-#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/classification.hpp> // For boost::algorithm::is_any_of
 #include <boost/algorithm/string/split.hpp>
 
 #include <QDebug>
@@ -48,7 +48,9 @@ std::vector<std::string> JsonXPath::getElements() const {
    // In C++20, it should also be possible to do this with std::ranges::split_view, but I haven't yet managed to get gcc
    // to compile even example code.  So, for now at least, we use Boost.
    //
-//   boost::algorithm::split(elements, key, boost::algorithm::is_any_of("/"), boost::algorithm::token_compress_on );
+   // Don't think we need the optional boost::algorithm::token_compress_on final parameter as we never have "//" in the
+   // paths.
+   //
    boost::algorithm::split(elements, key, boost::algorithm::is_any_of("/"));
 
    return elements;

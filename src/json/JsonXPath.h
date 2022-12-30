@@ -73,7 +73,10 @@ public:
    std::string_view asKey() const;
 
    /**
-    * \return All the elements of the path as a list (without the '/' separators
+    * \return All the elements of the path as a list (without the '/' separators)
+    *
+    *         (It's std::string rather than std::string_view in the vector because I couldn't get the splitting code to
+    *         compile on all platforms with std::string_view.)
     */
    std::vector<std::string> getElements() const;
 

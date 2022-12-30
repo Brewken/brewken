@@ -32,7 +32,29 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-QStringList Fermentable::types = QStringList() << "Grain" << "Sugar" << "Extract" << "Dry Extract" << "Adjunct";
+// Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
+// for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+EnumStringMapping const Fermentable::typeStringMapping {
+   {"dry extract", Fermentable::Type::Dry_Extract},
+   {"extract",     Fermentable::Type::Extract},
+   {"grain",       Fermentable::Type::Grain},
+   {"sugar",       Fermentable::Type::Sugar},
+   {"fruit",       Fermentable::Type::Fruit},
+   {"juice",       Fermentable::Type::Juice},
+   {"honey",       Fermentable::Type::Honey},
+   {"other",       Fermentable::Type::Other_Adjunct}
+};
+
+QMap<Fermentable::Type, QString> const Fermentable::typeDisplayNames {
+   {Fermentable::Type::Dry_Extract,   tr("Dry Extract"  )},
+   {Fermentable::Type::Extract,       tr("Extract"      )},
+   {Fermentable::Type::Grain,         tr("Grain"        )},
+   {Fermentable::Type::Sugar,         tr("Sugar"        )},
+   {Fermentable::Type::Fruit,         tr("Fruit"        )},
+   {Fermentable::Type::Juice,         tr("Juice"        )},
+   {Fermentable::Type::Honey,         tr("Honey"        )},
+   {Fermentable::Type::Other_Adjunct, tr("Other Adjunct")},
+};
 
 bool Fermentable::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -124,24 +146,23 @@ Fermentable::Fermentable(Fermentable const & other) :
 
 Fermentable::~Fermentable() = default;
 
-// Gets
-
-Fermentable::Type Fermentable::type() const { return m_type; }
-double Fermentable::amount_kg() const { return m_amountKg; }
-double Fermentable::yield_pct() const { return m_yieldPct; }
-double Fermentable::color_srm() const { return m_colorSrm; }
-bool Fermentable::addAfterBoil() const { return m_isAfterBoil; }
-const QString Fermentable::origin() const { return m_origin; }
-const QString Fermentable::supplier() const { return m_supplier; }
-const QString Fermentable::notes() const { return m_notes; }
-double Fermentable::coarseFineDiff_pct() const { return m_coarseFineDiff; }
-double Fermentable::moisture_pct() const { return m_moisturePct; }
-double Fermentable::diastaticPower_lintner() const { return m_diastaticPower; }
-double Fermentable::protein_pct() const { return m_proteinPct; }
-double Fermentable::maxInBatch_pct() const { return m_maxInBatchPct; }
-bool Fermentable::recommendMash() const { return m_recommendMash; }
-double Fermentable::ibuGalPerLb() const { return m_ibuGalPerLb; }
-bool Fermentable::isMashed() const { return m_isMashed; }
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+Fermentable::Type Fermentable::type()                   const { return m_type;           }
+double            Fermentable::amount_kg()              const { return m_amountKg;       }
+double            Fermentable::yield_pct()              const { return m_yieldPct;       }
+double            Fermentable::color_srm()              const { return m_colorSrm;       }
+bool              Fermentable::addAfterBoil()           const { return m_isAfterBoil;    }
+QString           Fermentable::origin()                 const { return m_origin;         }
+QString           Fermentable::supplier()               const { return m_supplier;       }
+QString           Fermentable::notes()                  const { return m_notes;          }
+double            Fermentable::coarseFineDiff_pct()     const { return m_coarseFineDiff; }
+double            Fermentable::moisture_pct()           const { return m_moisturePct;    }
+double            Fermentable::diastaticPower_lintner() const { return m_diastaticPower; }
+double            Fermentable::protein_pct()            const { return m_proteinPct;     }
+double            Fermentable::maxInBatch_pct()         const { return m_maxInBatchPct;  }
+bool              Fermentable::recommendMash()          const { return m_recommendMash;  }
+double            Fermentable::ibuGalPerLb()            const { return m_ibuGalPerLb;    }
+bool              Fermentable::isMashed()               const { return m_isMashed;       }
 
 Fermentable::AdditionMethod Fermentable::additionMethod() const {
    if (this->isMashed()) {
@@ -155,33 +176,8 @@ Fermentable::AdditionMethod Fermentable::additionMethod() const {
    return Fermentable::AdditionMethod::Not_Mashed;
 }
 
-Fermentable::AdditionTime Fermentable::additionTime() const {
-   if (this->addAfterBoil()) {
-      return Fermentable::AdditionTime::Late;
-   }
-
-   return Fermentable::AdditionTime::Normal;
-}
-
-const QString Fermentable::typeString() const {
-   int myType = static_cast<int>(this->type());
-   if (myType > types.length()) {
-      return "";
-   }
-   return types.at(myType);
-}
-
-const QString Fermentable::typeStringTr() const {
-   int myType = static_cast<int>(this->type());
-   static QStringList typesTr = QStringList () << QObject::tr("Grain") << QObject::tr("Sugar") << QObject::tr("Extract") << QObject::tr("Dry Extract") << QObject::tr("Adjunct");
-   if (myType > typesTr.length() || myType < 0) {
-      return "";
-   }
-
-   return typesTr.at(myType);
-}
-
-const QString Fermentable::additionMethodStringTr() const {
+// TODO: DELETE **********************************************************************************************************************
+QString Fermentable::additionMethodStringTr() const {
    if (this->isMashed()) {
       return tr("Mashed");
    }
@@ -193,12 +189,6 @@ const QString Fermentable::additionMethodStringTr() const {
    return tr("Not mashed");
 }
 
-const QString Fermentable::additionTimeStringTr() const {
-   if (this->addAfterBoil()) {
-      return tr("Late");
-   }
-   return tr("Normal");
-}
 
 bool Fermentable::isExtract() const {
    return ((type() == Fermentable::Type::Extract) || (type() == Fermentable::Type::Dry_Extract));
@@ -208,66 +198,36 @@ bool Fermentable::isSugar() const {
    return (type() == Fermentable::Type::Sugar);
 }
 
-bool Fermentable::isValidType( const QString& str ) {
-   return (types.indexOf(str) >= 0);
-}
 
-
-// Sets
-void Fermentable::setType( Type t ) {
-   this->setAndNotify(PropertyNames::Fermentable::type, this->m_type, t);
-}
-
-void Fermentable::setAdditionMethod( Fermentable::AdditionMethod m ) {
-   this->setIsMashed(m == Fermentable::AdditionMethod::Mashed);
-}
-
-void Fermentable::setAdditionTime( Fermentable::AdditionTime t ) {
-   this->setAddAfterBoil(t == Fermentable::AdditionTime::Late);
-}
-
-void Fermentable::setAddAfterBoil( bool b ) {
-   this->setAndNotify(PropertyNames::Fermentable::addAfterBoil, this->m_isAfterBoil, b);
-}
-
-void Fermentable::setOrigin( const QString& str ) {
-   this->setAndNotify( PropertyNames::Fermentable::origin, this->m_origin, str);
-}
-
-void Fermentable::setSupplier( const QString& str) {
-   this->setAndNotify( PropertyNames::Fermentable::supplier, this->m_supplier, str);
-}
-
-void Fermentable::setNotes( const QString& str ) {
-   this->setAndNotify( PropertyNames::Fermentable::notes, this->m_notes, str);
-}
-
-void Fermentable::setRecommendMash( bool b ) {
-   this->setAndNotify( PropertyNames::Fermentable::recommendMash, this->m_recommendMash, b);
-}
-
-void Fermentable::setIsMashed(bool var) {
-   this->setAndNotify( PropertyNames::Fermentable::isMashed, this->m_isMashed, var);
-}
-
-void Fermentable::setIbuGalPerLb( double num ) {
-   this->setAndNotify( PropertyNames::Fermentable::ibuGalPerLb, this->m_ibuGalPerLb, num);
-}
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
+void Fermentable::setType                  (Type val)            { this->setAndNotify(PropertyNames::Fermentable::type,          this->m_type, val); }
+void Fermentable::setAdditionMethod        (Fermentable::AdditionMethod m) { this->setIsMashed(m == Fermentable::AdditionMethod::Mashed); }
+void Fermentable::setAddAfterBoil          (bool val)            { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil,  this->m_isAfterBoil, val);}
+void Fermentable::setOrigin                (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::origin,        this->m_origin, val); }
+void Fermentable::setSupplier              (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::supplier,      this->m_supplier, val); }
+void Fermentable::setNotes                 (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::notes,         this->m_notes, val); }
+void Fermentable::setRecommendMash         (bool val)            { this->setAndNotify(PropertyNames::Fermentable::recommendMash, this->m_recommendMash, val); }
+void Fermentable::setIsMashed              (bool val)            { this->setAndNotify(PropertyNames::Fermentable::isMashed,      this->m_isMashed, val); }
+void Fermentable::setIbuGalPerLb           (double val)          { this->setAndNotify(PropertyNames::Fermentable::ibuGalPerLb,   this->m_ibuGalPerLb, val); }
 
 double Fermentable::equivSucrose_kg() const {
-   double ret = amount_kg() * yield_pct() * (1.0-moisture_pct()/100.0) / 100.0;
+   double const ret = this->amount_kg() * this->yield_pct() * (1.0 - this->moisture_pct() / 100.0) / 100.0;
 
    // If this is a steeped grain...
-   if (type() == Fermentable::Type::Grain && !isMashed() )
+   if (this->type() == Fermentable::Type::Grain && !this->isMashed()) {
       return 0.60 * ret; // Reduce the yield by 60%.
-   else
-      return ret;
+   }
+   return ret;
 }
 
-void Fermentable::setAmount_kg( double var ) {
-   this->setAndNotify( PropertyNames::Fermentable::amount_kg, this->m_amountKg, this->enforceMin(var, "amount"));
-   return;
-}
+void Fermentable::setAmount_kg             (double val) { this->setAndNotify(PropertyNames::Fermentable::amount_kg,              this->m_amountKg,       this->enforceMin      (val, "amount")); }
+void Fermentable::setYield_pct             (double val) { this->setAndNotify(PropertyNames::Fermentable::yield_pct,              this->m_yieldPct,       this->enforceMinAndMax(val, "amount",         0.0, 100.0)); }
+void Fermentable::setColor_srm             (double val) { this->setAndNotify(PropertyNames::Fermentable::color_srm,              this->m_colorSrm,       this->enforceMin      (val, "color")); }
+void Fermentable::setCoarseFineDiff_pct    (double val) { this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct,     this->m_coarseFineDiff, this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0));}
+void Fermentable::setMoisture_pct          (double val) { this->setAndNotify(PropertyNames::Fermentable::moisture_pct,           this->m_moisturePct,    this->enforceMinAndMax(val, "moisture",       0.0, 100.0));}
+void Fermentable::setDiastaticPower_lintner(double val) { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner, this->m_diastaticPower, this->enforceMin      (val, "diastatic power")); }
+void Fermentable::setProtein_pct           (double val) { this->setAndNotify(PropertyNames::Fermentable::protein_pct,            this->m_proteinPct,     this->enforceMinAndMax(val, "protein",        0.0, 100.0)); }
+void Fermentable::setMaxInBatch_pct        (double val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct,         this->m_maxInBatchPct,  this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
 
 void Fermentable::setInventoryAmount(double num) {
    InventoryUtils::setAmount(*this, num);
@@ -278,34 +238,16 @@ double Fermentable::inventory() const {
    return InventoryUtils::getAmount(*this);
 }
 
-void Fermentable::setYield_pct(double var) {
-   this->setAndNotify(PropertyNames::Fermentable::yield_pct, this->m_yieldPct, this->enforceMinAndMax(var, "amount", 0.0, 100.0));
-}
-
-void Fermentable::setColor_srm(double var) {
-   this->setAndNotify(PropertyNames::Fermentable::color_srm, this->m_colorSrm, this->enforceMin(var, "color"));
-}
-
-void Fermentable::setCoarseFineDiff_pct(double var) {
-   this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct, this->m_coarseFineDiff, this->enforceMinAndMax(var, "coarseFineDiff", 0.0, 100.0));
-}
-
-void Fermentable::setMoisture_pct(double var) {
-   this->setAndNotify(PropertyNames::Fermentable::moisture_pct, this->m_moisturePct, this->enforceMinAndMax(var, "moisture", 0.0, 100.0));
-}
-
-void Fermentable::setDiastaticPower_lintner(double var) {
-   this->setAndNotify( PropertyNames::Fermentable::diastaticPower_lintner, this->m_diastaticPower, this->enforceMin(var, "diastatic power"));
-}
-
-void Fermentable::setProtein_pct(double var) {
-   this->setAndNotify( PropertyNames::Fermentable::protein_pct, this->m_proteinPct, this->enforceMinAndMax(var, "protein", 0.0, 100.0));
-}
-
-void Fermentable::setMaxInBatch_pct(double var) {
-   this->setAndNotify( PropertyNames::Fermentable::maxInBatch_pct, this->m_maxInBatchPct, this->enforceMinAndMax(var, "max in batch", 0.0, 100.0));
-}
-
 Recipe * Fermentable::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+}
+
+bool fermentablesLessThanByWeight(Fermentable const * const lhs, Fermentable const * const rhs) {
+   // Sort by name if the two fermentables are of equal weight
+   if (qFuzzyCompare(lhs->amount_kg(), rhs->amount_kg())) {
+      return lhs->name() < rhs->name();
+   }
+
+   // Yes. I know. This seems silly, but I want the returned list in descending not ascending order.
+   return lhs->amount_kg() > rhs->amount_kg();
 }
