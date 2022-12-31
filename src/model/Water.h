@@ -65,6 +65,8 @@ public:
       BASE,
       TARGET
    };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Types)
 
    enum class Ions {
       Ca,
@@ -75,6 +77,9 @@ public:
       SO4,
       numIons
    };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Ions)
+
 
    Water(QString name = "");
    Water(NamedParameterBundle const & namedParameterBundle);

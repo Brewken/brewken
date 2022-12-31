@@ -61,7 +61,7 @@ public:
    /**
     * \brief The different field types that can be stored directly in an object's DB table.
     *
-    *        Note that older versions of the code do a lot of special handling for boolean because SQLite has no native
+    *        Note that older versions of the code did a lot of special handling for boolean because SQLite has no native
     *        boolean type and therefore stores bools as integers (0 or 1).  However, since bugs in this area of Qt were
     *        fixed back in 2012 -- see https://bugreports.qt.io/browse/QTBUG-23895 (and
     *        https://bugreports.qt.io/browse/QTBUG-15640) -- I believe we are now safe to rely on QVariant to do all

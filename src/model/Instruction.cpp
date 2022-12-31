@@ -81,17 +81,6 @@ ObjectStore & Instruction::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Instruction>::getInstance();
 }
 
-Instruction::Instruction(Instruction const & other) :
-   NamedEntity {other},
-   pimpl       {std::make_unique<impl>(*this)},
-   m_directions{other.m_directions},
-   m_hasTimer  {other.m_hasTimer  },
-   m_timerValue{other.m_timerValue},
-   m_completed {other.m_completed },
-   m_interval  {other.m_interval  } {
-   return;
-}
-
 Instruction::Instruction(QString name) :
    NamedEntity (name, true),
    pimpl       {std::make_unique<impl>(*this)},
@@ -106,11 +95,22 @@ Instruction::Instruction(QString name) :
 Instruction::Instruction(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity {namedParameterBundle},
    pimpl       {std::make_unique<impl>(*this)},
-   m_directions{namedParameterBundle(PropertyNames::Instruction::directions).toString()},
-   m_hasTimer  {namedParameterBundle(PropertyNames::Instruction::hasTimer  ).toBool()},
-   m_timerValue{namedParameterBundle(PropertyNames::Instruction::timerValue).toString()},
-   m_completed {namedParameterBundle(PropertyNames::Instruction::completed ).toBool()},
-   m_interval  {namedParameterBundle(PropertyNames::Instruction::interval  ).toDouble()} {
+   m_directions{namedParameterBundle.val<QString>(PropertyNames::Instruction::directions)},
+   m_hasTimer  {namedParameterBundle.val<bool   >(PropertyNames::Instruction::hasTimer  )},
+   m_timerValue{namedParameterBundle.val<QString>(PropertyNames::Instruction::timerValue)},
+   m_completed {namedParameterBundle.val<bool   >(PropertyNames::Instruction::completed )},
+   m_interval  {namedParameterBundle.val<double >(PropertyNames::Instruction::interval  )} {
+   return;
+}
+
+Instruction::Instruction(Instruction const & other) :
+   NamedEntity {other},
+   pimpl       {std::make_unique<impl>(*this)},
+   m_directions{other.m_directions},
+   m_hasTimer  {other.m_hasTimer  },
+   m_timerValue{other.m_timerValue},
+   m_completed {other.m_completed },
+   m_interval  {other.m_interval  } {
    return;
 }
 

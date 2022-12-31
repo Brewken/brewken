@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <type_traits>
 
 #include <QDateTime>
@@ -455,6 +456,27 @@ private:
   bool m_beingModified;
 };
 
+//
+// It is useful in various places to be able to store member variables in QVariant objects.
+//
+// Where we define a strongly-typed enum, we usually just need a corresponding Q_ENUM declaration in the same header.
+// This works with generic  serialisation code (eg to and from database or BeerJSON) because you can safely static_cast
+// between the strongly typed enum and an integer, so the generic code can use integers (via EnumStringMapping) and the
+// class-specific code can use the strongly-typed enums and everything just work.
+//
+// HOWEVER, when the enum is optional (ie stored in memory inside std::optional, stored in the DB as a nullable field,
+// only an optional field in BeerJSON, etc) then we cannot rely on casting.  You cannot, eg, static_cast between
+// std::optional<int> and std::optional<Fermentable::GrainGroup>.  So inside NamedParameterBundle, we always store
+// std::optional<int> for optional enum fields inside QVariant.  We need this Q_DECLARE_METATYPE here to allow this to
+// happen.  (Can't go in model/NamedParameterBundle.h as that's not procesed by the Qt MetaObject Compiler (MOC).)
+//
+// We then put template wrappers in NamedParameterBundle so things aren't too clunky in the class-specific code.
+//
+Q_DECLARE_METATYPE(std::optional<int>)
+
+// However, in the case where
+// the enum is for an optional field, we wan
+//
 
 /**
  * \class NamedEntityModifyingMarker

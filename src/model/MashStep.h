@@ -65,7 +65,8 @@ public:
 
    //! \brief The type of step.
    enum class Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
-   Q_ENUMS( Type )
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
 
    MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
@@ -140,7 +141,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Type m_type;
+   Type   m_type;
    double m_infuseAmount_l;
    double m_stepTemp_c;
    double m_stepTime_min;
@@ -148,8 +149,8 @@ private:
    double m_endTemp_c;
    double m_infuseTemp_c;
    double m_decoctionAmount_l;
-   int m_stepNumber;
-   int mashId;
+   int    m_stepNumber;
+   int    m_mashId;
 };
 
 #endif

@@ -76,7 +76,7 @@ public:
 
    //! \brief The type of beverage.
    enum class Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
-   Q_ENUMS( Type )
+   Q_ENUM(Type)
 
    //! \brief The category.
    Q_PROPERTY( QString category READ category WRITE setCategory /*NOTIFY changed*/ /*changedCategory*/ )

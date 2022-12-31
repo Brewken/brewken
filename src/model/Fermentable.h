@@ -27,6 +27,7 @@
 #pragma once
 
 #include <array>
+#include <optional>
 
 #include <QStringList>
 #include <QString>
@@ -40,12 +41,11 @@
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Fermentable { BtStringConst const property{#property}; }
 AddPropertyName(addAfterBoil)
-//AddPropertyName(additionMethod)
-//AddPropertyName(additionTime)
 AddPropertyName(amount_kg)
 AddPropertyName(coarseFineDiff_pct)
 AddPropertyName(color_srm)
 AddPropertyName(diastaticPower_lintner)
+AddPropertyName(grainGroup)
 AddPropertyName(ibuGalPerLb)
 AddPropertyName(isMashed)
 AddPropertyName(maxInBatch_pct)
@@ -84,11 +84,12 @@ public:
                     Fruit,
                     Juice,
                     Honey};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
 
    /**
-    * \brief Array of all possible values of \c Fermentable::Type.  NB: This is \b not guaranteed to be in numerical
-    *        order of the values of Type - ie in general
-    *        `static_cast<int>(Fermentable::allTypes[ii]) != Fermentable::allTypes[ii]`.
+    * \brief Array of all possible values of \c Fermentable::Type.  NB: This is \b not guaranteed to be in the same
+    *        order as the values of the enum.
     *
     *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
     *        of enum class \c Type.   Hopefully, if Reflection makes it into C++23, then this will ultimately be
@@ -103,16 +104,37 @@ public:
    static EnumStringMapping const typeStringMapping;
 
    /**
-    * \brief The addition method.
+    * \brief An additional classification of \c Fermentable introduced in BeerJSON
     *
-    *        This approximately corresponds to BeerXML boolean attribute RECOMMEND_MASH which is 'TRUE if it is
-    *        recommended the grain be mashed, FALSE if it can be steeped.  A value of TRUE is only appropriate for a
-    *        "Grain" or "Adjunct" types.  The default value is FALSE.  Note that this does NOT indicate whether the
-    *        grain is mashed or not – it is only a recommendation used in recipe formulation.'
-    *
-    *        In BeerJSON, recommend_mash is defined as "True if the fermentable must be mashed, false if it can be steeped."
+    *        The schema doesn't elaborate, but it only makes sense for this to take a value when \c type == \c Grain
+    *        Note that, for optional or not-always-valid values such as this, we don't have an enum value for NULL;
+    *        instead we include the "nullability" via std::optional in whatever variables hold the enum values.  The
+    *        rationale for this is that it means the compiler knows something is nullable, and can therefore help
+    *        enforce that we handle the null case.
     */
-   enum class AdditionMethod {Mashed, Steeped, Not_Mashed};
+   enum class GrainGroup {Base,
+                          Caramel,
+                          Flaked,
+                          Roasted,
+                          Specialty,
+                          Smoked,
+                          Adjunct};
+   // This allows us to store the above enum class in a QVariant.  Note, however, that for serialisation we will
+   // actually store std::optional<int> in QVariant for the reasons explained in the comment above Q_DECLARE_METATYPE in
+   // model/NamedEntity.h
+   Q_ENUM(GrainGroup)
+
+   /**
+    * \brief Array of all possible values of \c Fermentable::GrainGroup.  NB: This is \b not guaranteed to be in the
+    *        same order as the values of the enum.
+    */
+   static std::array<GrainGroup, 7> const allGrainGroups;
+
+   /*!
+    * \brief Mapping between \c Fermentable::GrainGroup and string values suitable for serialisation in DB, BeerJSON,
+    *        BeerXML, etc.
+    */
+   static EnumStringMapping const grainGroupStringMapping;
 
    /*!
     * \brief Localised names of \c Fermentable::Type values suitable for displaying to the end user
@@ -128,8 +150,6 @@ public:
    //=================================================== PROPERTIES ====================================================
    //! \brief The \c Type.
    Q_PROPERTY(Type           type                   READ type                   WRITE setType                               )
-   //! \brief The \c addition method.
-//   Q_PROPERTY(AdditionMethod additionMethod         READ additionMethod         WRITE setAdditionMethod         STORED false)
    //! \brief The amount in kg.
    Q_PROPERTY(double         amount_kg              READ amount_kg              WRITE setAmount_kg                          )
    //! \brief The yield (when finely milled) as a percentage of equivalent glucose.
@@ -176,6 +196,9 @@ public:
    //! \brief Whether this fermentable is a sugar. Somewhat redundant, but it makes for nice symmetry elsewhere
    Q_PROPERTY(bool           isSugar                READ isSugar                                                STORED false)
 
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   Q_PROPERTY(std::optional<GrainGroup> grainGroup  READ grainGroup             WRITE setGrainGroup)
+
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                  () const;
    double  amount_kg             () const;
@@ -193,8 +216,9 @@ public:
    bool    recommendMash         () const;
    double  ibuGalPerLb           () const;
    bool    isMashed              () const;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   std::optional<GrainGroup> grainGroup() const;
 
-   AdditionMethod additionMethod () const;
    // Calculated getters.
    double  equivSucrose_kg       () const;
    bool    isExtract             () const;
@@ -203,22 +227,25 @@ public:
    virtual double inventory() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setType                  (Type    const   val);
-   void setAmount_kg             (double  const   val);
-   void setYield_pct             (double  const   val);
-   void setColor_srm             (double  const   val);
-   void setAddAfterBoil          (bool    const   val);
-   void setOrigin                (QString const & val);
-   void setSupplier              (QString const & val);
-   void setNotes                 (QString const & val);
-   void setCoarseFineDiff_pct    (double  const   val);
-   void setMoisture_pct          (double  const   val);
-   void setDiastaticPower_lintner(double  const   val);
-   void setProtein_pct           (double  const   val);
-   void setMaxInBatch_pct        (double  const   val);
-   void setRecommendMash         (bool    const   val);
-   void setIbuGalPerLb           (double  const   val);
-   void setIsMashed              (bool    const   val);
+   void setType                  (Type                      const   val);
+   void setAmount_kg             (double                    const   val);
+   void setYield_pct             (double                    const   val);
+   void setColor_srm             (double                    const   val);
+   void setAddAfterBoil          (bool                      const   val);
+   void setOrigin                (QString                   const & val);
+   void setSupplier              (QString                   const & val);
+   void setNotes                 (QString                   const & val);
+   void setCoarseFineDiff_pct    (double                    const   val);
+   void setMoisture_pct          (double                    const   val);
+   void setDiastaticPower_lintner(double                    const   val);
+   void setProtein_pct           (double                    const   val);
+   void setMaxInBatch_pct        (double                    const   val);
+   void setRecommendMash         (bool                      const   val);
+   void setIbuGalPerLb           (double                    const   val);
+   void setIsMashed              (bool                      const   val);
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   void setGrainGroup            (std::optional<GrainGroup> const   val);
+
 
    virtual void setInventoryAmount(double amount);
 
@@ -248,9 +275,11 @@ private:
    bool    m_recommendMash;
    double  m_ibuGalPerLb;
    bool    m_isMashed;       // Primarily valid in "Use Of" instance
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   std::optional<GrainGroup> m_grainGroup;
 };
 
-Q_DECLARE_METATYPE( QList<Fermentable*> )
+Q_DECLARE_METATYPE(QList<Fermentable*>)
 
 /**
  * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter

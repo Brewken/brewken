@@ -88,21 +88,21 @@ Yeast::Yeast(QString name) :
 
 Yeast::Yeast(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_type                  {static_cast<Yeast::Type>(namedParameterBundle(PropertyNames::Yeast::type).toInt())},
-   m_form                  {static_cast<Yeast::Form>(namedParameterBundle(PropertyNames::Yeast::form).toInt())},
-   m_flocculation          {static_cast<Yeast::Flocculation>(namedParameterBundle(PropertyNames::Yeast::flocculation).toInt())},
-   m_amount                {namedParameterBundle(PropertyNames::Yeast::amount).toDouble()},
-   m_amountIsWeight        {namedParameterBundle(PropertyNames::Yeast::amountIsWeight).toBool()},
-   m_laboratory            {namedParameterBundle(PropertyNames::Yeast::laboratory).toString()},
-   m_productID             {namedParameterBundle(PropertyNames::Yeast::productID).toString()},
-   m_minTemperature_c      {namedParameterBundle(PropertyNames::Yeast::minTemperature_c).toDouble()},
-   m_maxTemperature_c      {namedParameterBundle(PropertyNames::Yeast::maxTemperature_c).toDouble()},
-   m_attenuation_pct       {namedParameterBundle(PropertyNames::Yeast::attenuation_pct).toDouble()},
-   m_notes                 {namedParameterBundle(PropertyNames::Yeast::notes).toString()},
-   m_bestFor               {namedParameterBundle(PropertyNames::Yeast::bestFor).toString()},
-   m_timesCultured         {namedParameterBundle(PropertyNames::Yeast::timesCultured).toInt()},
-   m_maxReuse              {namedParameterBundle(PropertyNames::Yeast::maxReuse).toInt()},
-   m_addToSecondary        {namedParameterBundle(PropertyNames::Yeast::addToSecondary).toBool()} {
+   m_type                  {namedParameterBundle.val<Yeast::Type        >(PropertyNames::Yeast::type            )},
+   m_form                  {namedParameterBundle.val<Yeast::Form        >(PropertyNames::Yeast::form            )},
+   m_flocculation          {namedParameterBundle.val<Yeast::Flocculation>(PropertyNames::Yeast::flocculation    )},
+   m_amount                {namedParameterBundle.val<double             >(PropertyNames::Yeast::amount          )},
+   m_amountIsWeight        {namedParameterBundle.val<bool               >(PropertyNames::Yeast::amountIsWeight  )},
+   m_laboratory            {namedParameterBundle.val<QString            >(PropertyNames::Yeast::laboratory      )},
+   m_productID             {namedParameterBundle.val<QString            >(PropertyNames::Yeast::productID       )},
+   m_minTemperature_c      {namedParameterBundle.val<double             >(PropertyNames::Yeast::minTemperature_c)},
+   m_maxTemperature_c      {namedParameterBundle.val<double             >(PropertyNames::Yeast::maxTemperature_c)},
+   m_attenuation_pct       {namedParameterBundle.val<double             >(PropertyNames::Yeast::attenuation_pct )},
+   m_notes                 {namedParameterBundle.val<QString            >(PropertyNames::Yeast::notes           )},
+   m_bestFor               {namedParameterBundle.val<QString            >(PropertyNames::Yeast::bestFor         )},
+   m_timesCultured         {namedParameterBundle.val<int                >(PropertyNames::Yeast::timesCultured   )},
+   m_maxReuse              {namedParameterBundle.val<int                >(PropertyNames::Yeast::maxReuse        )},
+   m_addToSecondary        {namedParameterBundle.val<bool               >(PropertyNames::Yeast::addToSecondary  )} {
    return;
 }
 

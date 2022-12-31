@@ -35,7 +35,7 @@ AddPropertyName(amountIsWeight)
 AddPropertyName(type)
 AddPropertyName(isAcid)
 AddPropertyName(percentAcid)
-AddPropertyName(addTo)
+AddPropertyName(whenToAdd)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -59,6 +59,8 @@ public:
       RATIO,
       EQUAL
    };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(WhenToAdd)
 
    enum class Types {
       NONE,
@@ -73,8 +75,8 @@ public:
       ACIDMLT,
       numTypes
    };
-
-   Q_ENUMS(WhenToAdd Types)
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Types)
 
    Salt(QString name = "");
    Salt(NamedParameterBundle const & namedParameterBundle);
@@ -84,40 +86,40 @@ public:
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
    //! \brief The amount of salt to be added (always a weight)
-   Q_PROPERTY( double amount READ amount WRITE setAmount /*NOTIFY changed*/ /*changedAmount_l*/ )
+   Q_PROPERTY(double    amount         READ amount         WRITE setAmount          )
    //! \brief When to add the salt (mash or sparge)
-   Q_PROPERTY( Salt::WhenToAdd addTo READ addTo WRITE setAddTo /*NOTIFY changed*/ /*changedCalcium_ppm*/ )
+   Q_PROPERTY(WhenToAdd whenToAdd      READ whenToAdd      WRITE setWhenToAdd       )
    //! \brief What kind of salt this is
-   Q_PROPERTY( Salt::Types type READ type WRITE setType /*NOTIFY changed*/ /*changedBicarbonate_ppm*/ )
+   Q_PROPERTY(Types     type           READ type           WRITE setType            )
    //! \brief Is this a weight (like CaCO3) or a volume (like H3PO3)
-   Q_PROPERTY( bool amountIsWeight READ amountIsWeight WRITE setAmountIsWeight /*NOTIFY changed*/ /*changedAmountIsWeight*/ )
+   Q_PROPERTY(bool      amountIsWeight READ amountIsWeight WRITE setAmountIsWeight  )
    //! \brief What percent is acid (used for lactic acid, H3PO4 and acid malts)
-   Q_PROPERTY( double percentAcid READ percentAcid WRITE setPercentAcid /*NOTIFY changed*/ /*changedPercentAcid*/ )
+   Q_PROPERTY(double    percentAcid    READ percentAcid    WRITE setPercentAcid     )
    //! \brief Is this an acid or salt?
-   Q_PROPERTY( bool isAcid READ isAcid WRITE setIsAcid /*NOTIFY changed*/ /*changedIsAcid*/ )
+   Q_PROPERTY(bool      isAcid         READ isAcid         WRITE setIsAcid          )
 
-   double amount() const;
-   Salt::WhenToAdd addTo() const;
-   Salt::Types type() const;
-   bool amountIsWeight() const;
-   double percentAcid() const;
-   bool isAcid() const;
-   int miscId() const;
+   double          amount()         const;
+   Salt::WhenToAdd whenToAdd()      const;
+   Salt::Types     type()           const;
+   bool            amountIsWeight() const;
+   double          percentAcid()    const;
+   bool            isAcid()         const;
+   int             miscId()         const;
 
-   void setAmount( double var );
-   void setAddTo( Salt::WhenToAdd var );
-   void setType( Salt::Types var );
-   void setAmountIsWeight( bool var );
-   void setPercentAcid(double var);
-   void setIsAcid( bool var );
+   void setAmount        (double          val);
+   void setWhenToAdd     (Salt::WhenToAdd val);
+   void setType          (Salt::Types     val);
+   void setAmountIsWeight(bool            val);
+   void setPercentAcid   (double          val);
+   void setIsAcid        (bool            val);
 
-   double Ca() const;
-   double Cl() const;
-   double CO3() const;
+   double Ca  () const;
+   double Cl  () const;
+   double CO3 () const;
    double HCO3() const;
-   double Mg() const;
-   double Na() const;
-   double SO4() const;
+   double Mg  () const;
+   double Na  () const;
+   double SO4 () const;
 
    virtual Recipe * getOwningRecipe();
 
@@ -129,7 +131,7 @@ protected:
 
 private:
    double m_amount;
-   Salt::WhenToAdd m_add_to;
+   Salt::WhenToAdd m_whenToAdd;
    Salt::Types m_type;
    bool m_amount_is_weight;
    double m_percent_acid;

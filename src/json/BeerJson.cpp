@@ -250,16 +250,6 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for fermentables BeerJSON records - see schemas/beerjson/1.0/fermentable.json
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // .:TODO.JSON:.  Create Fermentable::GrainGroup enum class
-   EnumStringMapping const BEER_JSON_FERMENTABLE_GRAIN_GROUP_MAPPER {
-//      {"base",       Fermentable::GrainGroup::},
-//      {"caramel",    Fermentable::GrainGroup::},
-//      {"flaked",     Fermentable::GrainGroup::},
-//      {"roasted",    Fermentable::GrainGroup::},
-//      {"specialty",  Fermentable::GrainGroup::},
-//      {"smoked",     Fermentable::GrainGroup::},
-//      {"adjunct",    Fermentable::GrainGroup::}
-   };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_FermentableBase {
       // Type                                                 XPath                           Q_PROPERTY                                           Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,               "name",                         &PropertyNames::NamedEntity::name,                   },
@@ -267,7 +257,7 @@ namespace {
       {JsonRecordDefinition::FieldType::String,               "origin",                       &PropertyNames::Fermentable::origin,                 },
       {JsonRecordDefinition::FieldType::String,               "producer",                     &BtString::NULL_STR,                                 }, // .:TODO.JSON:. Add this to Fermentable or look at PropertyNames::Fermentable::supplier
       {JsonRecordDefinition::FieldType::String,               "product_id",                   &BtString::NULL_STR,                                 }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::Enum,                 "grain_group",                  &PropertyNames::Fermentable::type,                   &BEER_JSON_FERMENTABLE_GRAIN_GROUP_MAPPER},
+      {JsonRecordDefinition::FieldType::Enum,                 "grain_group",                  &PropertyNames::Fermentable::type,                   &Fermentable::grainGroupStringMapping}, //<<<<<<<<<<<<<<<<<MAKE OPTIONAL
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "yield/fine_grind",             &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "yield/coarse_grind",           &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "yield/fine_coarse_difference", &PropertyNames::Fermentable::coarseFineDiff_pct,     &BEER_JSON_PERCENT_UNIT},
@@ -307,15 +297,15 @@ namespace {
     };
    // This is the same across Fermentable, Hop, Misc
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_ExclBase {
-      // Type                                                 XPath                           Q_PROPERTY                            Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "timing/time",                  &BtString::NULL_STR,                  &BEER_JSON_TIME_UNIT_MAPPER}, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "timing/duration",              &BtString::NULL_STR,                  &BEER_JSON_TIME_UNIT_MAPPER}, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::Bool,                 "timing/continuous",            &BtString::NULL_STR,                  }, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "timing/specific_gravity",      &BtString::NULL_STR,                  &BEER_JSON_DENSITY_UNIT_MAPPER}, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::SingleUnitValue,      "timing/pH",                    &BtString::NULL_STR,                  &BEER_JSON_ACIDITY_UNIT}, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::Int,                  "timing/step",                  &BtString::NULL_STR,                  }, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::Enum,                 "timing/use",                   &BtString::NULL_STR,                  &BEER_JSON_RECIPE_ADDITION_POINT_MAPPER}, // .:TODO.JSON:.
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount",                 &BtString::NULL_STR,                  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:.
+      // Type                                                       XPath                       Q_PROPERTY            Enum/Unit Mapper
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits,       "timing/time",              &BtString::NULL_STR,  &BEER_JSON_TIME_UNIT_MAPPER}, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits,       "timing/duration",          &BtString::NULL_STR,  &BEER_JSON_TIME_UNIT_MAPPER}, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::Bool,                       "timing/continuous",        &BtString::NULL_STR,  }, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits,       "timing/specific_gravity",  &BtString::NULL_STR,  &BEER_JSON_DENSITY_UNIT_MAPPER}, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::SingleUnitValue,            "timing/pH",                &BtString::NULL_STR,  &BEER_JSON_ACIDITY_UNIT}, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::Int,                        "timing/step",              &BtString::NULL_STR,  }, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::Enum,                       "timing/use",               &BtString::NULL_STR,  &BEER_JSON_RECIPE_ADDITION_POINT_MAPPER}, // .:TODO.JSON:.
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount",                   &BtString::NULL_STR,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:.
    };
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
@@ -812,8 +802,8 @@ namespace BeerJson {
 
    //
    // Instantiate the above template function for the types that are going to use it
-   // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
-   // means, amongst other things, that we can reference the pimpl.)
+   // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header,
+   // which means, amongst other things, that we can reference the pimpl.)
    //
    template void Exporter::add(QList<Hop         const *> const & nes);
    template void Exporter::add(QList<Fermentable const *> const & nes);
@@ -827,7 +817,6 @@ namespace BeerJson {
    template void Exporter::add(QList<Instruction const *> const & nes);
    template void Exporter::add(QList<BrewNote    const *> const & nes);
    template void Exporter::add(QList<Recipe      const *> const & nes);
-
 
    void Exporter::close() {
       if (this->pimpl->writtenToFile) {

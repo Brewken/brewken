@@ -365,7 +365,7 @@ ObjectStore & Recipe::getObjectStoreTypedInstance() const {
 Recipe::Recipe(QString name) :
    NamedEntity         {name, true                   },
    pimpl               {std::make_unique<impl>(*this)},
-   m_type              {"All Grain"                  },
+   m_type              {Recipe::Type::AllGrain       },
    m_brewer            {""                           },
    m_asstBrewer        {"Brewken: free beer software"},
    m_batchSize_l       {0.0                          },
@@ -404,46 +404,43 @@ Recipe::Recipe(QString name) :
 }
 
 Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle},
-   pimpl{std::make_unique<impl>(*this)},
-   m_type              {
-      // .:TODO:. Change so we store enum not string!
-      RECIPE_TYPE_STRING_TO_TYPE.key(static_cast<Recipe::Type>(namedParameterBundle(PropertyNames::Recipe::recipeType).toInt()))
-   },
-   m_brewer            {namedParameterBundle(PropertyNames::Recipe::brewer).toString()           },
-   m_asstBrewer        {namedParameterBundle(PropertyNames::Recipe::asstBrewer).toString()       },
-   m_batchSize_l       {namedParameterBundle(PropertyNames::Recipe::batchSize_l).toDouble()      },
-   m_boilSize_l        {namedParameterBundle(PropertyNames::Recipe::boilSize_l).toDouble()       },
-   m_boilTime_min      {namedParameterBundle(PropertyNames::Recipe::boilTime_min).toDouble()     },
-   m_efficiency_pct    {namedParameterBundle(PropertyNames::Recipe::efficiency_pct).toDouble()   },
-   m_fermentationStages{namedParameterBundle(PropertyNames::Recipe::fermentationStages).toInt()  },
-   m_primaryAge_days   {namedParameterBundle(PropertyNames::Recipe::primaryAge_days).toDouble()  },
-   m_primaryTemp_c     {namedParameterBundle(PropertyNames::Recipe::primaryTemp_c).toDouble()    },
-   m_secondaryAge_days {namedParameterBundle(PropertyNames::Recipe::secondaryAge_days).toDouble()},
-   m_secondaryTemp_c   {namedParameterBundle(PropertyNames::Recipe::secondaryTemp_c).toDouble()  },
-   m_tertiaryAge_days  {namedParameterBundle(PropertyNames::Recipe::tertiaryAge_days).toDouble() },
-   m_tertiaryTemp_c    {namedParameterBundle(PropertyNames::Recipe::tertiaryTemp_c).toDouble()   },
-   m_age               {namedParameterBundle(PropertyNames::Recipe::age).toDouble()              },
-   m_ageTemp_c         {namedParameterBundle(PropertyNames::Recipe::ageTemp_c).toDouble()        },
-   m_date              {namedParameterBundle(PropertyNames::Recipe::date).toDate()               },
-   m_carbonation_vols  {namedParameterBundle(PropertyNames::Recipe::carbonation_vols).toDouble() },
-   m_forcedCarbonation {namedParameterBundle(PropertyNames::Recipe::forcedCarbonation).toBool()  },
-   m_primingSugarName  {namedParameterBundle(PropertyNames::Recipe::primingSugarName).toString() },
-   m_carbonationTemp_c {namedParameterBundle(PropertyNames::Recipe::carbonationTemp_c).toDouble()},
-   m_primingSugarEquiv {namedParameterBundle(PropertyNames::Recipe::primingSugarEquiv).toDouble()},
-   m_kegPrimingFactor  {namedParameterBundle(PropertyNames::Recipe::kegPrimingFactor).toDouble() },
-   m_notes             {namedParameterBundle(PropertyNames::Recipe::notes).toString()            },
-   m_tasteNotes        {namedParameterBundle(PropertyNames::Recipe::tasteNotes).toString()       },
-   m_tasteRating       {namedParameterBundle(PropertyNames::Recipe::tasteRating).toDouble()      },
-   styleId             {namedParameterBundle(PropertyNames::Recipe::styleId).toInt()             },
-   mashId              {namedParameterBundle(PropertyNames::Recipe::mashId).toInt()              },
-   equipmentId         {namedParameterBundle(PropertyNames::Recipe::equipmentId).toInt()         },
-   m_og                {namedParameterBundle(PropertyNames::Recipe::og).toDouble()               },
-   m_fg                {namedParameterBundle(PropertyNames::Recipe::fg).toDouble()               },
-   m_locked            {namedParameterBundle(PropertyNames::Recipe::locked).toBool()             },
-   m_ancestor_id       {namedParameterBundle(PropertyNames::Recipe::ancestorId).toInt()          },
+   NamedEntity         {namedParameterBundle         },
+   pimpl               {std::make_unique<impl>(*this)},
+   m_type              {namedParameterBundle.val<Recipe::Type>(PropertyNames::Recipe::type              )},
+   m_brewer            {namedParameterBundle.val<QString     >(PropertyNames::Recipe::brewer            )},
+   m_asstBrewer        {namedParameterBundle.val<QString     >(PropertyNames::Recipe::asstBrewer        )},
+   m_batchSize_l       {namedParameterBundle.val<double      >(PropertyNames::Recipe::batchSize_l       )},
+   m_boilSize_l        {namedParameterBundle.val<double      >(PropertyNames::Recipe::boilSize_l        )},
+   m_boilTime_min      {namedParameterBundle.val<double      >(PropertyNames::Recipe::boilTime_min      )},
+   m_efficiency_pct    {namedParameterBundle.val<double      >(PropertyNames::Recipe::efficiency_pct    )},
+   m_fermentationStages{namedParameterBundle.val<int         >(PropertyNames::Recipe::fermentationStages)},
+   m_primaryAge_days   {namedParameterBundle.val<double      >(PropertyNames::Recipe::primaryAge_days   )},
+   m_primaryTemp_c     {namedParameterBundle.val<double      >(PropertyNames::Recipe::primaryTemp_c     )},
+   m_secondaryAge_days {namedParameterBundle.val<double      >(PropertyNames::Recipe::secondaryAge_days )},
+   m_secondaryTemp_c   {namedParameterBundle.val<double      >(PropertyNames::Recipe::secondaryTemp_c   )},
+   m_tertiaryAge_days  {namedParameterBundle.val<double      >(PropertyNames::Recipe::tertiaryAge_days  )},
+   m_tertiaryTemp_c    {namedParameterBundle.val<double      >(PropertyNames::Recipe::tertiaryTemp_c    )},
+   m_age               {namedParameterBundle.val<double      >(PropertyNames::Recipe::age               )},
+   m_ageTemp_c         {namedParameterBundle.val<double      >(PropertyNames::Recipe::ageTemp_c         )},
+   m_date              {namedParameterBundle.val<QDate       >(PropertyNames::Recipe::date              )},
+   m_carbonation_vols  {namedParameterBundle.val<double      >(PropertyNames::Recipe::carbonation_vols  )},
+   m_forcedCarbonation {namedParameterBundle.val<bool        >(PropertyNames::Recipe::forcedCarbonation )},
+   m_primingSugarName  {namedParameterBundle.val<QString     >(PropertyNames::Recipe::primingSugarName  )},
+   m_carbonationTemp_c {namedParameterBundle.val<double      >(PropertyNames::Recipe::carbonationTemp_c )},
+   m_primingSugarEquiv {namedParameterBundle.val<double      >(PropertyNames::Recipe::primingSugarEquiv )},
+   m_kegPrimingFactor  {namedParameterBundle.val<double      >(PropertyNames::Recipe::kegPrimingFactor  )},
+   m_notes             {namedParameterBundle.val<QString     >(PropertyNames::Recipe::notes             )},
+   m_tasteNotes        {namedParameterBundle.val<QString     >(PropertyNames::Recipe::tasteNotes        )},
+   m_tasteRating       {namedParameterBundle.val<double      >(PropertyNames::Recipe::tasteRating       )},
+   styleId             {namedParameterBundle.val<int         >(PropertyNames::Recipe::styleId           )},
+   mashId              {namedParameterBundle.val<int         >(PropertyNames::Recipe::mashId            )},
+   equipmentId         {namedParameterBundle.val<int         >(PropertyNames::Recipe::equipmentId       )},
+   m_og                {namedParameterBundle.val<double      >(PropertyNames::Recipe::og                )},
+   m_fg                {namedParameterBundle.val<double      >(PropertyNames::Recipe::fg                )},
+   m_locked            {namedParameterBundle.val<bool        >(PropertyNames::Recipe::locked            )},
+   m_ancestor_id       {namedParameterBundle.val<int         >(PropertyNames::Recipe::ancestorId        )},
    m_ancestors         {},
-   m_hasDescendants    {false                                                                    } {
+   m_hasDescendants    {false} {
    // At this stage, we haven't set any Hops, Fermentables, etc.  This is deliberate because the caller typically needs
    // to access subsidiary records to obtain this info.   Callers will usually use setters (setHopIds, etc but via
    // setProperty) to finish constructing the object.
@@ -1516,20 +1513,8 @@ void Recipe::setYeastIds(QVector<int> yeastIds) {
 
 
 //==============================="SET" METHODS=================================
-void Recipe::setRecipeType(Recipe::Type var) {
-   this->setType(RECIPE_TYPE_STRING_TO_TYPE.key(var));
-   return;
-}
-
-void Recipe::setType(const QString & var) {
-   QString tmp;
-   if (! isValidType(var)) {
-      qWarning() << QString("Recipe: invalid type: %1").arg(var);
-      tmp = "All Grain";
-   } else {
-      tmp = QString(var);
-   }
-   this->setAndNotify(PropertyNames::Recipe::type, this->m_type, tmp);
+void Recipe::setType(Recipe::Type const val) {
+   this->setAndNotify(PropertyNames::Recipe::type, this->m_type, val);
    return;
 }
 
@@ -1996,51 +1981,48 @@ template QList< std::shared_ptr<Salt> > Recipe::getAll<Salt>() const;
 template QList< std::shared_ptr<Yeast> > Recipe::getAll<Yeast>() const;
 template QList< std::shared_ptr<Water> > Recipe::getAll<Water>() const;
 
-QList<Hop *> Recipe::hops() const {   return this->pimpl->getAllMyRaw<Hop>();                       }
-QVector<int> Recipe::getHopIds() const {   return this->pimpl->hopIds;                              }
-QList<Fermentable *> Recipe::fermentables() const { return this->pimpl->getAllMyRaw<Fermentable>(); }
-QVector<int> Recipe::getFermentableIds() const    { return this->pimpl->fermentableIds;             }
-QList<Misc *> Recipe::miscs() const               { return this->pimpl->getAllMyRaw<Misc>();        }
-QVector<int> Recipe::getMiscIds() const           { return this->pimpl->miscIds;                    }
-QList<Yeast *> Recipe::yeasts() const             { return this->pimpl->getAllMyRaw<Yeast>();       }
-QVector<int> Recipe::getYeastIds() const          { return this->pimpl->yeastIds;                   }
-QList<Water *> Recipe::waters() const             { return this->pimpl->getAllMyRaw<Water>();       }
-QVector<int> Recipe::getWaterIds() const          { return this->pimpl->waterIds;                   }
-QList<Salt *> Recipe::salts() const               { return this->pimpl->getAllMyRaw<Salt>();        }
-QVector<int> Recipe::getSaltIds() const           { return this->pimpl->saltIds;                    }
-int Recipe::getAncestorId() const                 { return this->m_ancestor_id;                     }
+QList<Hop *>         Recipe::hops()              const { return this->pimpl->getAllMyRaw<Hop>();         }
+QVector<int>         Recipe::getHopIds()         const { return this->pimpl->hopIds;                     }
+QList<Fermentable *> Recipe::fermentables()      const { return this->pimpl->getAllMyRaw<Fermentable>(); }
+QVector<int>         Recipe::getFermentableIds() const { return this->pimpl->fermentableIds;             }
+QList<Misc *>        Recipe::miscs()             const { return this->pimpl->getAllMyRaw<Misc>();        }
+QVector<int>         Recipe::getMiscIds()        const { return this->pimpl->miscIds;                    }
+QList<Yeast *>       Recipe::yeasts()            const { return this->pimpl->getAllMyRaw<Yeast>();       }
+QVector<int>         Recipe::getYeastIds()       const { return this->pimpl->yeastIds;                   }
+QList<Water *>       Recipe::waters()            const { return this->pimpl->getAllMyRaw<Water>();       }
+QVector<int>         Recipe::getWaterIds()       const { return this->pimpl->waterIds;                   }
+QList<Salt *>        Recipe::salts()             const { return this->pimpl->getAllMyRaw<Salt>();        }
+QVector<int>         Recipe::getSaltIds()        const { return this->pimpl->saltIds;                    }
+int                  Recipe::getAncestorId()     const { return this->m_ancestor_id;                     }
 
 //==============================Getters===================================
-Recipe::Type Recipe::recipeType() const {
-   return RECIPE_TYPE_STRING_TO_TYPE.value(this->type());
-}
-QString Recipe::type() const               { return m_type;               }
-QString Recipe::brewer() const             { return m_brewer;             }
-QString Recipe::asstBrewer() const         { return m_asstBrewer;         }
-QString Recipe::notes() const              { return m_notes;              }
-QString Recipe::tasteNotes() const         { return m_tasteNotes;         }
-QString Recipe::primingSugarName() const   { return m_primingSugarName;   }
-bool    Recipe::forcedCarbonation() const  { return m_forcedCarbonation;  }
-double  Recipe::batchSize_l() const        { return m_batchSize_l;        }
-double  Recipe::boilSize_l() const         { return m_boilSize_l;         }
-double  Recipe::boilTime_min() const       { return m_boilTime_min;       }
-double  Recipe::efficiency_pct() const     { return m_efficiency_pct;     }
-double  Recipe::tasteRating() const        { return m_tasteRating;        }
-double  Recipe::primaryAge_days() const    { return m_primaryAge_days;    }
-double  Recipe::primaryTemp_c() const      { return m_primaryTemp_c;      }
-double  Recipe::secondaryAge_days() const  { return m_secondaryAge_days;  }
-double  Recipe::secondaryTemp_c() const    { return m_secondaryTemp_c;    }
-double  Recipe::tertiaryAge_days() const   { return m_tertiaryAge_days;   }
-double  Recipe::tertiaryTemp_c() const     { return m_tertiaryTemp_c;     }
-double  Recipe::age_days() const           { return m_age;                }
-double  Recipe::ageTemp_c() const          { return m_ageTemp_c;          }
-double  Recipe::carbonation_vols() const   { return m_carbonation_vols;   }
-double  Recipe::carbonationTemp_c() const  { return m_carbonationTemp_c;  }
-double  Recipe::primingSugarEquiv() const  { return m_primingSugarEquiv;  }
-double  Recipe::kegPrimingFactor() const   { return m_kegPrimingFactor;   }
+Recipe::Type Recipe::type()          const { return m_type;               }
+QString Recipe::brewer()             const { return m_brewer;             }
+QString Recipe::asstBrewer()         const { return m_asstBrewer;         }
+QString Recipe::notes()              const { return m_notes;              }
+QString Recipe::tasteNotes()         const { return m_tasteNotes;         }
+QString Recipe::primingSugarName()   const { return m_primingSugarName;   }
+bool    Recipe::forcedCarbonation()  const { return m_forcedCarbonation;  }
+double  Recipe::batchSize_l()        const { return m_batchSize_l;        }
+double  Recipe::boilSize_l()         const { return m_boilSize_l;         }
+double  Recipe::boilTime_min()       const { return m_boilTime_min;       }
+double  Recipe::efficiency_pct()     const { return m_efficiency_pct;     }
+double  Recipe::tasteRating()        const { return m_tasteRating;        }
+double  Recipe::primaryAge_days()    const { return m_primaryAge_days;    }
+double  Recipe::primaryTemp_c()      const { return m_primaryTemp_c;      }
+double  Recipe::secondaryAge_days()  const { return m_secondaryAge_days;  }
+double  Recipe::secondaryTemp_c()    const { return m_secondaryTemp_c;    }
+double  Recipe::tertiaryAge_days()   const { return m_tertiaryAge_days;   }
+double  Recipe::tertiaryTemp_c()     const { return m_tertiaryTemp_c;     }
+double  Recipe::age_days()           const { return m_age;                }
+double  Recipe::ageTemp_c()          const { return m_ageTemp_c;          }
+double  Recipe::carbonation_vols()   const { return m_carbonation_vols;   }
+double  Recipe::carbonationTemp_c()  const { return m_carbonationTemp_c;  }
+double  Recipe::primingSugarEquiv()  const { return m_primingSugarEquiv;  }
+double  Recipe::kegPrimingFactor()   const { return m_kegPrimingFactor;   }
 int     Recipe::fermentationStages() const { return m_fermentationStages; }
-QDate   Recipe::date() const               { return m_date;               }
-bool    Recipe::locked() const             { return m_locked;             }
+QDate   Recipe::date()               const { return m_date;               }
+bool    Recipe::locked()             const { return m_locked;             }
 
 //=============================Adders and Removers========================================
 
@@ -2732,7 +2714,7 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
    QStringList reagents = QStringList();
 
    for (int i = 0; i < salts.size(); ++i) {
-      Salt::WhenToAdd what = salts[i]->addTo();
+      Salt::WhenToAdd what = salts[i]->whenToAdd();
       Measurement::Unit const & rightUnit = salts[i]->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters;
       if (what == wanted) {
          tmp = tr("%1 %2, ")

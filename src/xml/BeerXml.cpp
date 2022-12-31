@@ -504,7 +504,7 @@ namespace {
       // Type                                  XPath                       Q_PROPERTY                                 Enum Mapper
       {XmlRecord::FieldType::String,           "NAME",                     PropertyNames::NamedEntity::name,          nullptr},
       {XmlRecord::FieldType::RequiredConstant, "VERSION",                  VERSION1,                                  nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",                     PropertyNames::Recipe::recipeType,         &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
+      {XmlRecord::FieldType::Enum,             "TYPE",                     PropertyNames::Recipe::type,               &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
       {XmlRecord::FieldType::RecordSimple,     "STYLE",                    PropertyNames::Recipe::style,              nullptr},
       {XmlRecord::FieldType::RecordSimple,     "EQUIPMENT",                PropertyNames::Recipe::equipment,          nullptr},
       {XmlRecord::FieldType::String,           "BREWER",                   PropertyNames::Recipe::brewer,             nullptr},

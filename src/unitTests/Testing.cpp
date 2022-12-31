@@ -642,30 +642,68 @@ void Testing::testUnitConversions() {
 }
 
 void Testing::testNamedParameterBundle() {
+
+   //
+   // First some basic tests
+   //
    NamedParameterBundle npb;
 
    BtStringConst const myInt{"myInt"};
    npb.insert(myInt, 42);
-   QVERIFY2(npb(myInt).toInt() == 42, "Error retrieving int");
+   QVERIFY2(npb.get(myInt).toInt() == 42, "Error retrieving int");
 
    BtStringConst const myFalseBool{"myFalseBool"};
    npb.insert(myFalseBool, false);
-   QVERIFY2(!npb(myFalseBool).toBool(), "Error retrieving false bool");
+   QVERIFY2(!npb.get(myFalseBool).toBool(), "Error retrieving false bool");
 
    BtStringConst const myTrueBool{"myTrueBool"};
    npb.insert(myTrueBool, true);
-   QVERIFY2(npb(myTrueBool).toBool(), "Error retrieving true bool");
+   QVERIFY2(npb.get(myTrueBool).toBool(), "Error retrieving true bool");
 
    BtStringConst const myString{"myString"};
    npb.insert(myString, "Sing a string of sixpence");
-   QVERIFY2(npb(myString).toString() == "Sing a string of sixpence", "Error retrieving string");
+   QVERIFY2(npb.get(myString).toString() == "Sing a string of sixpence", "Error retrieving string");
 
    BtStringConst const myDouble{"myDouble"};
    npb.insert(myDouble, 3.1415926535897932384626433);
-   QVERIFY2(fuzzyComp(npb(myDouble).toDouble(),
+   QVERIFY2(fuzzyComp(npb.get(myDouble).toDouble(),
                       3.1415926535897932384626433,
                       0.0000000001),
             "Error retrieving double");
+
+   //
+   // Test that we can store an int and get it back as a strongly-typed enum
+   //
+   npb.insert(PropertyNames::Hop::type, static_cast<int>(Hop::Type::AromaAndFlavor));
+   Hop::Type retrievedHopType = npb.val<Hop::Type>(PropertyNames::Hop::type);
+   QVERIFY2(retrievedHopType == Hop::Type::AromaAndFlavor, "Int -> Strongly-typed enum failed");
+
+   //
+   // Now test explicitly nullable fields
+   //
+   QVERIFY2(
+      npb.optEnumVal<Fermentable::GrainGroup>(PropertyNames::Fermentable::grainGroup) == std::nullopt,
+      "Error getting default value for optional enum"
+   );
+   std::optional<int> myOptional{static_cast<int>(Fermentable::GrainGroup::Smoked)};
+   QVariant myVariant = QVariant::fromValue(myOptional);
+   npb.insert(PropertyNames::Fermentable::grainGroup, myVariant);
+
+   QVariant retrievedValueA = npb.get(PropertyNames::Fermentable::grainGroup);
+   std::optional<int> castValueA = retrievedValueA.value< std::optional<int> >();
+   QVERIFY2(castValueA.has_value(), "Error retrieving optional enum");
+   QVERIFY2(castValueA.value() == static_cast<int>(Fermentable::GrainGroup::Smoked),
+            "Error retrieving optional enum as int");
+
+   auto retrievedValueB = npb.optEnumVal<Fermentable::GrainGroup>(PropertyNames::Fermentable::grainGroup);
+   qDebug() <<
+      Q_FUNC_INFO << "retrievedValueB=" << (retrievedValueB.has_value() ? static_cast<int>(*retrievedValueB) : -999) <<
+      "; Fermentable::GrainGroup::Smoked = " << static_cast<int>(Fermentable::GrainGroup::Smoked);
+   QVERIFY2(retrievedValueB.has_value(), "Expected value, got none");
+   QVERIFY2(
+      retrievedValueB.value() == Fermentable::GrainGroup::Smoked,
+      "Error retrieving optional enum"
+   );
 
    return;
 }
@@ -746,6 +784,10 @@ void Testing::cleanupTestCase()
 
 
 void Testing::pstdintTest() {
+   //
+   // .:TBD:. I'm not sure this is the most useful of unit tests.  We're effectively checking that one tiny part of the
+   // C++11 standard is correctly implemented by the compiler.
+   //
    QVERIFY( sizeof(int8_t) == 1 );
    QVERIFY( sizeof(int16_t) == 2 );
    QVERIFY( sizeof(int32_t) == 4 );

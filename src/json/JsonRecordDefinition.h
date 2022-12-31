@@ -168,6 +168,7 @@ public:
       Double,           // boost::json::kind::double_
       String,           // boost::json::kind::string
       Enum,             // A string that we need to map to/from our own enum
+      EnumOptional,     // As Enum, but is an optional field
       Array,            // Zero, one or more contained records
       //
       // Other types start here

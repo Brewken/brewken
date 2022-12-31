@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>

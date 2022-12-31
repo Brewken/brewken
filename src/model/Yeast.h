@@ -67,11 +67,18 @@ class Yeast : public NamedEntityWithInventory {
 public:
    //! \brief What beverage the yeast is for.
    enum class Type {Ale, Lager, Wheat, Wine, Champagne};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
    //! \brief What form the yeast comes in.
    enum class Form {Liquid, Dry, Slant, Culture};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Form)
+
    //! \brief How flocculant the strain is.
    enum class Flocculation {Low, Medium, High, Very_High};
-   Q_ENUMS( Type Form Flocculation )
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Flocculation)
 
    Yeast(QString name = "");
    Yeast(NamedParameterBundle const & namedParameterBundle);

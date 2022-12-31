@@ -57,8 +57,8 @@ public:
    }
 
    impl(NamedParameterBundle const & namedParameterBundle) :
-      id    {namedParameterBundle(PropertyNames::Inventory::id).toInt()       },
-      amount{namedParameterBundle(PropertyNames::Inventory::amount).toDouble()} {
+      id    {namedParameterBundle.val<int   >(PropertyNames::Inventory::id    )},
+      amount{namedParameterBundle.val<double>(PropertyNames::Inventory::amount)} {
       return;
    }
 
@@ -141,14 +141,14 @@ void Inventory::hardDeleteOwnedEntities() {
 
 
 char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
-char const * InventoryHop::getIngredientClass() const         { return "Hop"; }
-char const * InventoryMisc::getIngredientClass() const        { return "Misc"; }
-char const * InventoryYeast::getIngredientClass() const       { return "Yeast"; }
+char const * InventoryHop::getIngredientClass()         const { return "Hop";         }
+char const * InventoryMisc::getIngredientClass()        const { return "Misc";        }
+char const * InventoryYeast::getIngredientClass()       const { return "Yeast";       }
 
 ObjectStore & InventoryFermentable::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
-ObjectStore & InventoryHop::getObjectStoreTypedInstance() const         { return ObjectStoreTyped<InventoryHop>::getInstance(); }
-ObjectStore & InventoryMisc::getObjectStoreTypedInstance() const        { return ObjectStoreTyped<InventoryMisc>::getInstance(); }
-ObjectStore & InventoryYeast::getObjectStoreTypedInstance() const       { return ObjectStoreTyped<InventoryYeast>::getInstance(); }
+ObjectStore & InventoryHop::getObjectStoreTypedInstance()         const { return ObjectStoreTyped<InventoryHop        >::getInstance(); }
+ObjectStore & InventoryMisc::getObjectStoreTypedInstance()        const { return ObjectStoreTyped<InventoryMisc       >::getInstance(); }
+ObjectStore & InventoryYeast::getObjectStoreTypedInstance()       const { return ObjectStoreTyped<InventoryYeast      >::getInstance(); }
 
 template<class Ing>
 void InventoryUtils::setAmount(Ing & ing, double amount) {

@@ -17,6 +17,8 @@
 #define MODEL_NAMEDPARAMETERBUNDLE_H
 #pragma once
 
+#include <optional>
+
 #include <QHash>
 #include <QString>
 #include <QVariant>
@@ -47,18 +49,51 @@ public:
     *        exception if it is not present.  Otherwise, return whatever default value QVariant gives us.
     *        This is a convenience function to make the call to extract parameters concise.  (We don't want to use the
     *        operator[] of QHash because we want "parameter not found" to be an error.)
+    *
+    * \throw std::invalid_argument if the parameter is not present or does not have a valid \c QVariant value
     */
-   QVariant operator()(BtStringConst const & parameterName) const;
+   QVariant get(BtStringConst const & parameterName) const;
+
+   /**
+    * \brief Templated version of above
+    *
+    * \throw std::invalid_argument if the parameter is not present or does not have a valid \c QVariant value
+    */
+   template <class T> T val(BtStringConst const & parameterName) const {
+      return this->get(parameterName).value<T>();
+   }
+
+   /**
+    * \brief Special case for optional enums which are always stored as std::optional<int> inside the QVariant.
+    *        Obviously by definition there's always a default value and it's always std::nullopt
+    *
+    * \throw std::invalid_argument if the parameter is not present or does not have a valid \c QVariant value
+    */
+   template <class T> std::optional<T> optEnumVal(BtStringConst const & parameterName) const {
+      // Of course it's a coding error to request a parameter without a name!
+      Q_ASSERT(!parameterName.isNull());
+      if (!this->contains(*parameterName)) {
+         return std::nullopt;
+      }
+      auto value = this->value(*parameterName).value< std::optional<int> >();
+      if (value.has_value()) {
+         return std::optional<T>(static_cast<T>(value.value()));
+      }
+      return std::nullopt;
+   }
 
    /**
     * \brief Get the value of a parameter that is not required to be present
     *
-    *        (NB: There is no general implementation of this templated function, just specific specialisations)
-    *
     * \param parameterName
     * \param defaultValue  What to return if the parameter is not present in the bundle
     */
-   template <class T> T operator()(BtStringConst const & parameterName, T const & defaultValue) const;
+   template <class T> T val(BtStringConst const & parameterName, T const & defaultValue) const {
+      // Of course it's a coding error to request a parameter without a name!
+      Q_ASSERT(!parameterName.isNull());
+      // In expression below, first value() is QHash::value(), second is templated QVariant::value()
+      return this->contains(*parameterName) ? this->value(*parameterName).value<T>() : defaultValue;
+   }
 private:
    OperationMode mode;
 };

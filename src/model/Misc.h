@@ -60,11 +60,18 @@ public:
 
    //! \brief The type of ingredient.
    enum class Type {Spice, Fining, Water_Agent, Herb, Flavor, Other};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
    //! \brief Where the ingredient is used.
    enum class Use { Boil, Mash, Primary, Secondary, Bottling };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Use)
+
    //! \brief What is the type of amount.
    enum class AmountType { Weight, Volume };
-   Q_ENUMS( Type Use AmountType )
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(AmountType)
 
    Misc(QString name = "");
    Misc(NamedParameterBundle const & namedParameterBundle);

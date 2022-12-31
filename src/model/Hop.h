@@ -93,10 +93,12 @@ public:
                     BitteringAndFlavor,
                     AromaAndFlavor,
                     AromaBitteringAndFlavor};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
    /**
-    * \brief Array of all possible values of \c Hop::Type.  NB: This is \b not guaranteed to be in numerical
-    *        order of the values of Type - ie in general
-    *        `static_cast<int>(Hop::allTypes[ii]) != Hop::allTypes[ii]`.
+    * \brief Array of all possible values of \c Hop::Type.  NB: This is \b not guaranteed to be in the same order as the
+    *        values of the enum.
     *
     *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
     *        of enum class \c Type.   Hopefully, if Reflection makes it into C++23, then this will ultimately be
@@ -119,10 +121,12 @@ public:
                     Extract,
                     WetLeaf,
                     Powder};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Form)
+
    /**
-    * \brief Array of all possible values of \c Hop::Form.  NB: This is \b not guaranteed to be in numerical
-    *        order of the values of Form - ie in general
-    *        `static_cast<int>(Hop::allForms[ii]) != Hop::allForms[ii]`.
+    * \brief Array of all possible values of \c Hop::Form.  NB: This is \b not guaranteed to be in the same order as the
+    *        values of the enum.
     */
    static std::array<Form, 6> const allForms;
 
@@ -141,10 +145,12 @@ public:
                    Boil,
                    Aroma,
                    Dry_Hop};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Use)
+
    /**
-    * \brief Array of all possible values of \c Hop::Use.  NB: This is \b not guaranteed to be in numerical
-    *        order of the values of Use - ie in general
-    *        `static_cast<int>(Hop::allUses[ii]) != Hop::allUses[ii]`.
+    * \brief Array of all possible values of \c Hop::Use.  NB: This is \b not guaranteed to be in the same order as the
+    *        values of the enum.
     */
    static std::array<Use, 5> const allUses;
 
@@ -169,7 +175,6 @@ public:
     */
    static QMap<Hop::Use, QString> const useDisplayNames;
 
-   Q_ENUMS(Type Form Use)
 
    Hop(QString name = "");
    Hop(NamedParameterBundle const & namedParameterBundle);

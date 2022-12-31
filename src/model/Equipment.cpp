@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -55,21 +55,21 @@ Equipment::Equipment(QString t_name) :
    NamedEntity            {t_name, true},
    m_boilSize_l           {22.927},
    m_batchSize_l          {18.927},
-   m_tunVolume_l          {0.0},
-   m_tunWeight_kg         {0.0},
-   m_tunSpecificHeat_calGC{0.0},
-   m_topUpWater_l         {0.0},
-   m_trubChillerLoss_l    {1.0},
-   m_evapRate_pctHr       {0.0},
-   m_evapRate_lHr         {4.0},
-   m_boilTime_min         {60.0},
-   m_calcBoilVolume       {true},
-   m_lauterDeadspace_l    {0.0},
-   m_topUpKettle_l        {0.0},
-   m_hopUtilization_pct   {100.0},
-   m_notes                {""},
-   m_grainAbsorption_LKg  {1.086},
-   m_boilingPoint_c       {100.0} {
+   m_tunVolume_l          {0.0   },
+   m_tunWeight_kg         {0.0   },
+   m_tunSpecificHeat_calGC{0.0   },
+   m_topUpWater_l         {0.0   },
+   m_trubChillerLoss_l    {1.0   },
+   m_evapRate_pctHr       {0.0   },
+   m_evapRate_lHr         {4.0   },
+   m_boilTime_min         {60.0  },
+   m_calcBoilVolume       {true  },
+   m_lauterDeadspace_l    {0.0   },
+   m_topUpKettle_l        {0.0   },
+   m_hopUtilization_pct   {100.0 },
+   m_notes                {""    },
+   m_grainAbsorption_LKg  {1.086 },
+   m_boilingPoint_c       {100.0 } {
    return;
 }
 
@@ -83,23 +83,23 @@ Equipment::Equipment(QString t_name) :
 //
 Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle},
-   m_boilSize_l           {namedParameterBundle(PropertyNames::Equipment::boilSize_l           ).toDouble()},
-   m_batchSize_l          {namedParameterBundle(PropertyNames::Equipment::batchSize_l          ).toDouble()},
-   m_tunVolume_l          {namedParameterBundle(PropertyNames::Equipment::tunVolume_l          ).toDouble()},
-   m_tunWeight_kg         {namedParameterBundle(PropertyNames::Equipment::tunWeight_kg         ).toDouble()},
-   m_tunSpecificHeat_calGC{namedParameterBundle(PropertyNames::Equipment::tunSpecificHeat_calGC).toDouble()},
-   m_topUpWater_l         {namedParameterBundle(PropertyNames::Equipment::topUpWater_l         ).toDouble()},
-   m_trubChillerLoss_l    {namedParameterBundle(PropertyNames::Equipment::trubChillerLoss_l    ).toDouble()},
-   m_evapRate_pctHr       {namedParameterBundle(PropertyNames::Equipment::evapRate_pctHr       ).toDouble()},
-   m_evapRate_lHr         {namedParameterBundle(PropertyNames::Equipment::evapRate_lHr, 4.0)               },
-   m_boilTime_min         {namedParameterBundle(PropertyNames::Equipment::boilTime_min         ).toDouble()},
-   m_calcBoilVolume       {namedParameterBundle(PropertyNames::Equipment::calcBoilVolume       ).toBool()  },
-   m_lauterDeadspace_l    {namedParameterBundle(PropertyNames::Equipment::lauterDeadspace_l    ).toDouble()},
-   m_topUpKettle_l        {namedParameterBundle(PropertyNames::Equipment::topUpKettle_l        ).toDouble()},
-   m_hopUtilization_pct   {namedParameterBundle(PropertyNames::Equipment::hopUtilization_pct   ).toDouble()},
-   m_notes                {namedParameterBundle(PropertyNames::Equipment::notes                ).toString()},
-   m_grainAbsorption_LKg  {namedParameterBundle(PropertyNames::Equipment::grainAbsorption_LKg, 1.086)      },
-   m_boilingPoint_c       {namedParameterBundle(PropertyNames::Equipment::boilingPoint_c,      100.0)      } {
+   m_boilSize_l           {namedParameterBundle.val<double >(PropertyNames::Equipment::boilSize_l                )},
+   m_batchSize_l          {namedParameterBundle.val<double >(PropertyNames::Equipment::batchSize_l               )},
+   m_tunVolume_l          {namedParameterBundle.val<double >(PropertyNames::Equipment::tunVolume_l               )},
+   m_tunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Equipment::tunWeight_kg              )},
+   m_tunSpecificHeat_calGC{namedParameterBundle.val<double >(PropertyNames::Equipment::tunSpecificHeat_calGC     )},
+   m_topUpWater_l         {namedParameterBundle.val<double >(PropertyNames::Equipment::topUpWater_l              )},
+   m_trubChillerLoss_l    {namedParameterBundle.val<double >(PropertyNames::Equipment::trubChillerLoss_l         )},
+   m_evapRate_pctHr       {namedParameterBundle.val<double >(PropertyNames::Equipment::evapRate_pctHr            )},
+   m_evapRate_lHr         {namedParameterBundle.val<double >(PropertyNames::Equipment::evapRate_lHr,        4.0  )},
+   m_boilTime_min         {namedParameterBundle.val<double >(PropertyNames::Equipment::boilTime_min              )},
+   m_calcBoilVolume       {namedParameterBundle.val<bool   >(PropertyNames::Equipment::calcBoilVolume            )},
+   m_lauterDeadspace_l    {namedParameterBundle.val<double >(PropertyNames::Equipment::lauterDeadspace_l         )},
+   m_topUpKettle_l        {namedParameterBundle.val<double >(PropertyNames::Equipment::topUpKettle_l             )},
+   m_hopUtilization_pct   {namedParameterBundle.val<double >(PropertyNames::Equipment::hopUtilization_pct        )},
+   m_notes                {namedParameterBundle.val<QString>(PropertyNames::Equipment::notes                     )},
+   m_grainAbsorption_LKg  {namedParameterBundle.val<double >(PropertyNames::Equipment::grainAbsorption_LKg, 1.086)},
+   m_boilingPoint_c       {namedParameterBundle.val<double >(PropertyNames::Equipment::boilingPoint_c,      100.0)} {
    return;
 }
 
