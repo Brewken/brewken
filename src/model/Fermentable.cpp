@@ -32,6 +32,17 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
+std::array<Fermentable::Type, 8> const Fermentable::allTypes {
+   Fermentable::Type::Dry_Extract,
+   Fermentable::Type::Extract,
+   Fermentable::Type::Grain,
+   Fermentable::Type::Sugar,
+   Fermentable::Type::Fruit,
+   Fermentable::Type::Juice,
+   Fermentable::Type::Honey,
+   Fermentable::Type::Other_Adjunct
+};
+
 // Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
 // for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Fermentable::typeStringMapping {
@@ -176,19 +187,6 @@ Fermentable::AdditionMethod Fermentable::additionMethod() const {
    return Fermentable::AdditionMethod::Not_Mashed;
 }
 
-// TODO: DELETE **********************************************************************************************************************
-QString Fermentable::additionMethodStringTr() const {
-   if (this->isMashed()) {
-      return tr("Mashed");
-   }
-
-   if (this->type() == Fermentable::Type::Grain) {
-      return tr("Steeped");
-   }
-
-   return tr("Not mashed");
-}
-
 
 bool Fermentable::isExtract() const {
    return ((type() == Fermentable::Type::Extract) || (type() == Fermentable::Type::Dry_Extract));
@@ -197,18 +195,6 @@ bool Fermentable::isExtract() const {
 bool Fermentable::isSugar() const {
    return (type() == Fermentable::Type::Sugar);
 }
-
-
-//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Fermentable::setType                  (Type val)            { this->setAndNotify(PropertyNames::Fermentable::type,          this->m_type, val); }
-void Fermentable::setAdditionMethod        (Fermentable::AdditionMethod m) { this->setIsMashed(m == Fermentable::AdditionMethod::Mashed); }
-void Fermentable::setAddAfterBoil          (bool val)            { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil,  this->m_isAfterBoil, val);}
-void Fermentable::setOrigin                (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::origin,        this->m_origin, val); }
-void Fermentable::setSupplier              (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::supplier,      this->m_supplier, val); }
-void Fermentable::setNotes                 (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::notes,         this->m_notes, val); }
-void Fermentable::setRecommendMash         (bool val)            { this->setAndNotify(PropertyNames::Fermentable::recommendMash, this->m_recommendMash, val); }
-void Fermentable::setIsMashed              (bool val)            { this->setAndNotify(PropertyNames::Fermentable::isMashed,      this->m_isMashed, val); }
-void Fermentable::setIbuGalPerLb           (double val)          { this->setAndNotify(PropertyNames::Fermentable::ibuGalPerLb,   this->m_ibuGalPerLb, val); }
 
 double Fermentable::equivSucrose_kg() const {
    double const ret = this->amount_kg() * this->yield_pct() * (1.0 - this->moisture_pct() / 100.0) / 100.0;
@@ -220,14 +206,23 @@ double Fermentable::equivSucrose_kg() const {
    return ret;
 }
 
-void Fermentable::setAmount_kg             (double val) { this->setAndNotify(PropertyNames::Fermentable::amount_kg,              this->m_amountKg,       this->enforceMin      (val, "amount")); }
-void Fermentable::setYield_pct             (double val) { this->setAndNotify(PropertyNames::Fermentable::yield_pct,              this->m_yieldPct,       this->enforceMinAndMax(val, "amount",         0.0, 100.0)); }
-void Fermentable::setColor_srm             (double val) { this->setAndNotify(PropertyNames::Fermentable::color_srm,              this->m_colorSrm,       this->enforceMin      (val, "color")); }
-void Fermentable::setCoarseFineDiff_pct    (double val) { this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct,     this->m_coarseFineDiff, this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0));}
-void Fermentable::setMoisture_pct          (double val) { this->setAndNotify(PropertyNames::Fermentable::moisture_pct,           this->m_moisturePct,    this->enforceMinAndMax(val, "moisture",       0.0, 100.0));}
-void Fermentable::setDiastaticPower_lintner(double val) { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner, this->m_diastaticPower, this->enforceMin      (val, "diastatic power")); }
-void Fermentable::setProtein_pct           (double val) { this->setAndNotify(PropertyNames::Fermentable::protein_pct,            this->m_proteinPct,     this->enforceMinAndMax(val, "protein",        0.0, 100.0)); }
-void Fermentable::setMaxInBatch_pct        (double val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct,         this->m_maxInBatchPct,  this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
+void Fermentable::setType                  (Type val)            { this->setAndNotify(PropertyNames::Fermentable::type,                   this->m_type,           val); }
+void Fermentable::setAddAfterBoil          (bool val)            { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil,           this->m_isAfterBoil,    val); }
+void Fermentable::setOrigin                (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::origin,                 this->m_origin,         val); }
+void Fermentable::setSupplier              (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::supplier,               this->m_supplier,       val); }
+void Fermentable::setNotes                 (QString const & val) { this->setAndNotify(PropertyNames::Fermentable::notes,                  this->m_notes,          val); }
+void Fermentable::setRecommendMash         (bool val)            { this->setAndNotify(PropertyNames::Fermentable::recommendMash,          this->m_recommendMash,  val); }
+void Fermentable::setIsMashed              (bool val)            { this->setAndNotify(PropertyNames::Fermentable::isMashed,               this->m_isMashed,       val); }
+void Fermentable::setIbuGalPerLb           (double val)          { this->setAndNotify(PropertyNames::Fermentable::ibuGalPerLb,            this->m_ibuGalPerLb,    val); }
+void Fermentable::setAmount_kg             (double val)          { this->setAndNotify(PropertyNames::Fermentable::amount_kg,              this->m_amountKg,       this->enforceMin      (val, "amount"));                     }
+void Fermentable::setYield_pct             (double val)          { this->setAndNotify(PropertyNames::Fermentable::yield_pct,              this->m_yieldPct,       this->enforceMinAndMax(val, "amount",         0.0, 100.0)); }
+void Fermentable::setColor_srm             (double val)          { this->setAndNotify(PropertyNames::Fermentable::color_srm,              this->m_colorSrm,       this->enforceMin      (val, "color"));                      }
+void Fermentable::setCoarseFineDiff_pct    (double val)          { this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct,     this->m_coarseFineDiff, this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); }
+void Fermentable::setMoisture_pct          (double val)          { this->setAndNotify(PropertyNames::Fermentable::moisture_pct,           this->m_moisturePct,    this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); }
+void Fermentable::setDiastaticPower_lintner(double val)          { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner, this->m_diastaticPower, this->enforceMin      (val, "diastatic power"));            }
+void Fermentable::setProtein_pct           (double val)          { this->setAndNotify(PropertyNames::Fermentable::protein_pct,            this->m_proteinPct,     this->enforceMinAndMax(val, "protein",        0.0, 100.0)); }
+void Fermentable::setMaxInBatch_pct        (double val)          { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct,         this->m_maxInBatchPct,  this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
 
 void Fermentable::setInventoryAmount(double num) {
    InventoryUtils::setAmount(*this, num);

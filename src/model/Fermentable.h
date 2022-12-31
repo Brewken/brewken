@@ -26,6 +26,8 @@
 #define MODEL_FERMENTABLE_H
 #pragma once
 
+#include <array>
+
 #include <QStringList>
 #include <QString>
 #include <QSqlRecord>
@@ -38,8 +40,8 @@
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Fermentable { BtStringConst const property{#property}; }
 AddPropertyName(addAfterBoil)
-AddPropertyName(additionMethod)
-AddPropertyName(additionTime)
+//AddPropertyName(additionMethod)
+//AddPropertyName(additionTime)
 AddPropertyName(amount_kg)
 AddPropertyName(coarseFineDiff_pct)
 AddPropertyName(color_srm)
@@ -82,13 +84,23 @@ public:
                     Fruit,
                     Juice,
                     Honey};
+
+   /**
+    * \brief Array of all possible values of \c Fermentable::Type.  NB: This is \b not guaranteed to be in numerical
+    *        order of the values of Type - ie in general
+    *        `static_cast<int>(Fermentable::allTypes[ii]) != Fermentable::allTypes[ii]`.
+    *
+    *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
+    *        of enum class \c Type.   Hopefully, if Reflection makes it into C++23, then this will ultimately be
+    *        unnecessary.
+    */
+   static std::array<Type, 8> const allTypes;
+
    /*!
     * \brief Mapping between \c Fermentable::Type and string values suitable for serialisation in DB, BeerJSON, etc (but
     *        \b not BeerXML)
     */
    static EnumStringMapping const typeStringMapping;
-
-
 
    /**
     * \brief The addition method.
@@ -117,9 +129,7 @@ public:
    //! \brief The \c Type.
    Q_PROPERTY(Type           type                   READ type                   WRITE setType                               )
    //! \brief The \c addition method.
-   Q_PROPERTY(AdditionMethod additionMethod         READ additionMethod         WRITE setAdditionMethod         STORED false)
-   //! \brief The translated \c Method string.
-   Q_PROPERTY(QString        additionMethodStringTr READ additionMethodStringTr /*WRITE*/                       STORED false)
+//   Q_PROPERTY(AdditionMethod additionMethod         READ additionMethod         WRITE setAdditionMethod         STORED false)
    //! \brief The amount in kg.
    Q_PROPERTY(double         amount_kg              READ amount_kg              WRITE setAmount_kg                          )
    //! \brief The yield (when finely milled) as a percentage of equivalent glucose.
@@ -185,8 +195,6 @@ public:
    bool    isMashed              () const;
 
    AdditionMethod additionMethod () const;
-   //! Returns a translated addition method string.
-   QString additionMethodStringTr() const;
    // Calculated getters.
    double  equivSucrose_kg       () const;
    bool    isExtract             () const;
@@ -195,23 +203,22 @@ public:
    virtual double inventory() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setType                  (Type           const   val);
-   void setAdditionMethod        (AdditionMethod const   val);
-   void setAmount_kg             (double         const   val);
-   void setYield_pct             (double         const   val);
-   void setColor_srm             (double         const   val);
-   void setAddAfterBoil          (bool           const   val);
-   void setOrigin                (QString        const & val);
-   void setSupplier              (QString        const & val);
-   void setNotes                 (QString        const & val);
-   void setCoarseFineDiff_pct    (double         const   val);
-   void setMoisture_pct          (double         const   val);
-   void setDiastaticPower_lintner(double         const   val);
-   void setProtein_pct           (double         const   val);
-   void setMaxInBatch_pct        (double         const   val);
-   void setRecommendMash         (bool           const   val);
-   void setIbuGalPerLb           (double         const   val);
-   void setIsMashed              (bool           const   val);
+   void setType                  (Type    const   val);
+   void setAmount_kg             (double  const   val);
+   void setYield_pct             (double  const   val);
+   void setColor_srm             (double  const   val);
+   void setAddAfterBoil          (bool    const   val);
+   void setOrigin                (QString const & val);
+   void setSupplier              (QString const & val);
+   void setNotes                 (QString const & val);
+   void setCoarseFineDiff_pct    (double  const   val);
+   void setMoisture_pct          (double  const   val);
+   void setDiastaticPower_lintner(double  const   val);
+   void setProtein_pct           (double  const   val);
+   void setMaxInBatch_pct        (double  const   val);
+   void setRecommendMash         (bool    const   val);
+   void setIbuGalPerLb           (double  const   val);
+   void setIsMashed              (bool    const   val);
 
    virtual void setInventoryAmount(double amount);
 

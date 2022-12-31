@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -34,20 +34,19 @@ class Fermentable;
  *
  * \brief Fermentable view/controller dialog that allows you to edit Fermentables.
  */
-class FermentableEditor : public QDialog, private Ui::fermentableEditor
-{
+class FermentableEditor : public QDialog, private Ui::fermentableEditor {
    Q_OBJECT
 
 public:
-   FermentableEditor( QWidget *parent=nullptr );
-   virtual ~FermentableEditor() {}
-   void setFermentable( Fermentable* f );
-   void newFermentable( QString folder );
+   FermentableEditor(QWidget *parent=nullptr);
+   virtual ~FermentableEditor();
+   void setFermentable(Fermentable* f);
+   void newFermentable(QString folder);
 
 public slots:
    void save();
    void clearAndClose();
-   void newFermentable();
+   void clickedNewFermentable();
 
 private:
    Fermentable* obsFerm;

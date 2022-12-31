@@ -23,6 +23,8 @@
 #define MODEL_HOP_H
 #pragma once
 
+#include <array>
+
 #include <QString>
 #include <QStringList>
 #include <QSqlRecord>
@@ -91,6 +93,17 @@ public:
                     BitteringAndFlavor,
                     AromaAndFlavor,
                     AromaBitteringAndFlavor};
+   /**
+    * \brief Array of all possible values of \c Hop::Type.  NB: This is \b not guaranteed to be in numerical
+    *        order of the values of Type - ie in general
+    *        `static_cast<int>(Hop::allTypes[ii]) != Hop::allTypes[ii]`.
+    *
+    *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
+    *        of enum class \c Type.   Hopefully, if Reflection makes it into C++23, then this will ultimately be
+    *        unnecessary.
+    */
+   static std::array<Type, 7> const allTypes;
+
    /*!
     * \brief Mapping between \c Hop::Type and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
     *        BeerXML)
@@ -106,6 +119,13 @@ public:
                     Extract,
                     WetLeaf,
                     Powder};
+   /**
+    * \brief Array of all possible values of \c Hop::Form.  NB: This is \b not guaranteed to be in numerical
+    *        order of the values of Form - ie in general
+    *        `static_cast<int>(Hop::allForms[ii]) != Hop::allForms[ii]`.
+    */
+   static std::array<Form, 6> const allForms;
+
    /*!
     * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
     *        BeerXML)
@@ -121,6 +141,12 @@ public:
                    Boil,
                    Aroma,
                    Dry_Hop};
+   /**
+    * \brief Array of all possible values of \c Hop::Use.  NB: This is \b not guaranteed to be in numerical
+    *        order of the values of Use - ie in general
+    *        `static_cast<int>(Hop::allUses[ii]) != Hop::allUses[ii]`.
+    */
+   static std::array<Use, 5> const allUses;
 
    /*!
     * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerXML, etc (but \b not

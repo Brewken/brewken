@@ -23,6 +23,8 @@
  =====================================================================================================================*/
 #include "tableModels/FermentableTableModel.h"
 
+#include <array>
+
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
 #include <QAbstractTableModel>
@@ -51,8 +53,25 @@
 #include "utils/BtStringConst.h"
 
 namespace {
-   QString const descAddWithMashOrBoil{QObject::tr("Normal")};
-   QString const descAddAfterBoil     {QObject::tr("Late")};
+   //
+   // We have a bunch of logic for interpreting Fermentable::isMashed() and Fermentable::addAfterBoil() which used to
+   // live in the Fermentable class itself but is only used in this table model, so I moved it here to simplify
+   // Fermentable.
+   //
+   // Additionally, we used to assume that a thing that is a grain and not mashed must be steeped.  This is not
+   // necessarily true.  I have simplified things so we now just show two options - Mashed and Not Mashed.
+   //
+   // Note that these two arrays rely on the fact that static_cast<int>(false) == 0 and static_cast<int>(true) == 1
+   //
+   std::array<QString const, 2> descAddAfterBoil {
+      QObject::tr("Normal"), // addAfterBoil() == false
+      QObject::tr("Late")    // addAfterBoil() == true
+   };
+   std::array<QString const, 2> descIsMashed {
+      QObject::tr("Not mashed"), // isMashed() == false
+      QObject::tr("Mashed")      // isMashed() == true
+   };
+
 }
 
 //=====================CLASS FermentableTableModel==============================
@@ -327,18 +346,18 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          break;
       case FERMISMASHEDCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->additionMethodStringTr());
+            return QVariant(descIsMashed[static_cast<int>(row->isMashed())]);
          }
          if (role == Qt::UserRole) {
-            return QVariant(static_cast<int>(row->additionMethod()));
+            return QVariant(row->isMashed());
          }
          break;
       case FERMAFTERBOIL:
          if (role == Qt::DisplayRole) {
-            QVariant(row->addAfterBoil() ? descAddAfterBoil : descAddWithMashOrBoil);
+            return QVariant(descAddAfterBoil[static_cast<int>(row->addAfterBoil())]);
          }
          if (role == Qt::UserRole) {
-            return QVariant(static_cast<bool>(row->addAfterBoil()));
+            return QVariant(row->addAfterBoil());
          }
          break;
       case FERMYIELDCOL:
@@ -474,14 +493,14 @@ bool FermentableTableModel::setData(QModelIndex const & index,
          }
          break;
       case FERMISMASHEDCOL:
-         retVal = value.canConvert(QVariant::Int);
+         retVal = value.canConvert(QVariant::Bool);
          if (retVal) {
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionMethod>() here
             // (as the Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::additionMethod,
-                                                  value.toInt(),
-                                                  tr("Change Addition Method"));
+                                                  PropertyNames::Fermentable::isMashed,
+                                                  value.toBool(),
+                                                  tr("Change Is Mashed"));
          }
          break;
       case FERMAFTERBOIL:
@@ -534,15 +553,11 @@ FermentableItemDelegate::FermentableItemDelegate(QObject* parent) : QItemDelegat
 QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
                                                [[maybe_unused]] QStyleOptionViewItem const & option,
                                                QModelIndex const & index) const {
-   if (index.column() == FERMTYPECOL )
-   {
+   if (index.column() == FERMTYPECOL) {
       QComboBox *box = new QComboBox(parent);
-
-      box->addItem(tr("Grain"));
-      box->addItem(tr("Sugar"));
-      box->addItem(tr("Extract"));
-      box->addItem(tr("Dry Extract"));
-      box->addItem(tr("Adjunct"));
+      for (auto ii : Fermentable::allTypes) {
+         box->addItem(Fermentable::typeDisplayNames[ii]);
+      }
 
       box->setMinimumWidth(box->minimumSizeHint().width());
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -551,15 +566,13 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
       return box;
    }
 
-   if (index.column() == FERMISMASHEDCOL )
-   {
+   if (index.column() == FERMISMASHEDCOL) {
       QComboBox* box = new QComboBox(parent);
       QListWidget* list = new QListWidget(parent);
       list->setResizeMode(QListWidget::Adjust);
 
-      list->addItem(tr("Mashed"));
-      list->addItem(tr("Steeped"));
-      list->addItem(tr("Not mashed"));
+      list->addItem(descIsMashed[0]);
+      list->addItem(descIsMashed[1]);
       box->setModel(list->model());
       box->setView(list);
 
@@ -567,24 +580,14 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
       box->setFocusPolicy(Qt::StrongFocus);
 
-      // Can we access to the data model into FermentableItemDelegate ? Yes we can !
-      int type = index.model()->index(index.row(), FERMTYPECOL).data(Qt::UserRole).toInt();
-
-      // Hide the unsuitable item keeping the same enumeration
-      if (type == static_cast<int>(Fermentable::Type::Grain)) {
-         list->item(static_cast<int>(Fermentable::AdditionMethod::Not_Mashed))->setHidden(true);
-      } else {
-         list->item(static_cast<int>(Fermentable::AdditionMethod::Steeped))->setHidden(true);
-      }
-
       return box;
    }
 
    if (index.column() == FERMAFTERBOIL) {
       QComboBox* box = new QComboBox(parent);
 
-      box->addItem(descAddWithMashOrBoil);
-      box->addItem(descAddAfterBoil);
+      box->addItem(descAddAfterBoil[0]);
+      box->addItem(descAddAfterBoil[1]);
 
       box->setMinimumWidth(box->minimumSizeHint().width());
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -600,15 +603,16 @@ void FermentableItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
 {
    int col = index.column();
 
-   if (col == FERMTYPECOL || col == FERMISMASHEDCOL || col == FERMAFTERBOIL)
-   {
+   if (col == FERMTYPECOL) {
       QComboBox* box = static_cast<QComboBox*>(editor);
       int ndx = index.model()->data(index, Qt::UserRole).toInt();
 
       box->setCurrentIndex(ndx);
-   }
-   else
-   {
+   } else if (col == FERMISMASHEDCOL || col == FERMAFTERBOIL) {
+      QComboBox* box = static_cast<QComboBox*>(editor);
+      int ndx = static_cast<int>(index.model()->data(index, Qt::UserRole).toBool());
+      box->setCurrentIndex(ndx);
+   } else {
       QLineEdit* line = static_cast<QLineEdit*>(editor);
 
       line->setText(index.model()->data(index, Qt::DisplayRole).toString());
@@ -619,7 +623,7 @@ void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *
    int col = index.column();
 
 
-   if (col == FERMTYPECOL || col == FERMISMASHEDCOL) {
+   if (col == FERMTYPECOL) {
       QComboBox* box = qobject_cast<QComboBox*>(editor);
       int value = box->currentIndex();
       int ndx = model->data(index, Qt::UserRole).toInt();
@@ -628,7 +632,7 @@ void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *
       if (value != ndx) {
          model->setData(index, value, Qt::EditRole);
       }
-   } else if (col == FERMAFTERBOIL ) {
+   } else if (col == FERMISMASHEDCOL || col == FERMAFTERBOIL) {
       QComboBox* box = qobject_cast<QComboBox*>(editor);
       bool value = box->currentIndex() > 0;
       bool ndx = model->data(index, Qt::UserRole).toBool();

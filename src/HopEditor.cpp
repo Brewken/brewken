@@ -43,34 +43,24 @@ HopEditor::HopEditor(QWidget * parent) :
    // We could use the raw enum values as the data, but it would be a bit painful to debug if we ever had to, so for
    // small extra effort we use the same serialisation strings that we use for BeerJSON and the DB.
    //
-   this->comboBox_hopType->addItem(tr("Bittering"                ), Hop::typeStringMapping.enumToString(Hop::Type::Bittering              ));
-   this->comboBox_hopType->addItem(tr("Aroma"                    ), Hop::typeStringMapping.enumToString(Hop::Type::Aroma                  ));
-   this->comboBox_hopType->addItem(tr("Aroma & Bittering"        ), Hop::typeStringMapping.enumToString(Hop::Type::AromaAndBittering      ));
-   this->comboBox_hopType->addItem(tr("Flavor"                   ), Hop::typeStringMapping.enumToString(Hop::Type::Flavor                 ));
-   this->comboBox_hopType->addItem(tr("Bittering & Flavor"       ), Hop::typeStringMapping.enumToString(Hop::Type::BitteringAndFlavor     ));
-   this->comboBox_hopType->addItem(tr("Aroma & Flavor"           ), Hop::typeStringMapping.enumToString(Hop::Type::AromaAndFlavor         ));
-   this->comboBox_hopType->addItem(tr("Aroma, Bittering & Flavor"), Hop::typeStringMapping.enumToString(Hop::Type::AromaBitteringAndFlavor));
+   for (auto ii : Hop::allTypes) {
+      this->comboBox_hopType->addItem(Hop::typeDisplayNames[ii], Hop::typeStringMapping.enumToString(ii));
+   }
+   for (auto ii : Hop::allForms) {
+      this->comboBox_hopForm->addItem(Hop::formDisplayNames[ii], Hop::formStringMapping.enumToString(ii));
+   }
+   for (auto ii : Hop::allUses) {
+      this->comboBox_hopUse->addItem (Hop::useDisplayNames[ii],  Hop::useStringMapping.enumToString(ii));
+   }
 
-   this->comboBox_hopForm->addItem(tr("Extract"   ), Hop::formStringMapping.enumToString(Hop::Form::Extract));
-   this->comboBox_hopForm->addItem(tr("Leaf"      ), Hop::formStringMapping.enumToString(Hop::Form::Leaf   ));
-   this->comboBox_hopForm->addItem(tr("Leaf (wet)"), Hop::formStringMapping.enumToString(Hop::Form::WetLeaf));
-   this->comboBox_hopForm->addItem(tr("Pellet"    ), Hop::formStringMapping.enumToString(Hop::Form::Pellet ));
-   this->comboBox_hopForm->addItem(tr("Powder"    ), Hop::formStringMapping.enumToString(Hop::Form::Powder ));
-   this->comboBox_hopForm->addItem(tr("Plug"      ), Hop::formStringMapping.enumToString(Hop::Form::Plug   ));
-
-   // Same comment for hop use, even thought it's not stored in BeerJSON
-   this->comboBox_hopUse->addItem(tr("Mash"      ), Hop::useStringMapping.enumToString(Hop::Use::Mash      ));
-   this->comboBox_hopUse->addItem(tr("First Wort"), Hop::useStringMapping.enumToString(Hop::Use::First_Wort));
-   this->comboBox_hopUse->addItem(tr("Boil"      ), Hop::useStringMapping.enumToString(Hop::Use::Boil      ));
-   this->comboBox_hopUse->addItem(tr("Post-Boil" ), Hop::useStringMapping.enumToString(Hop::Use::Aroma     ));
-   this->comboBox_hopUse->addItem(tr("Dry Hop"   ), Hop::useStringMapping.enumToString(Hop::Use::Dry_Hop   ));
-
-   connect(pushButton_new, SIGNAL(clicked()), this, SLOT(newHop()));
+   connect(pushButton_new,    &QAbstractButton::clicked, this, &HopEditor::clickedNewHop);
    connect(pushButton_save,   &QAbstractButton::clicked, this, &HopEditor::save);
    connect(pushButton_cancel, &QAbstractButton::clicked, this, &HopEditor::clearAndClose);
 
    return;
 }
+
+HopEditor::~HopEditor() = default;
 
 void HopEditor::setHop(Hop * h) {
    if (obsHop) {
@@ -82,6 +72,7 @@ void HopEditor::setHop(Hop * h) {
       connect(obsHop, &NamedEntity::changed, this, &HopEditor::changed);
       showChanges();
    }
+   return;
 }
 
 void HopEditor::save() {
@@ -98,9 +89,9 @@ void HopEditor::save() {
    // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
    // std::bad_optional_access exception in such a case
    //
-   this->obsHop->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
    this->obsHop->setType(Hop::typeStringMapping.stringToEnum<Hop::Type>(comboBox_hopType->currentData().toString()));
    this->obsHop->setForm(Hop::formStringMapping.stringToEnum<Hop::Form>(comboBox_hopForm->currentData().toString()));
+   this->obsHop->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
 
    this->obsHop->setBeta_pct(lineEdit_beta->toSI().quantity);
    this->obsHop->setHsi_pct(lineEdit_HSI->toSI().quantity);
@@ -208,8 +199,7 @@ void HopEditor::showChanges(QMetaProperty * prop) {
 
 
 void HopEditor::newHop(QString folder) {
-   QString name = QInputDialog::getText(this, tr("Hop name"),
-                                        tr("Hop name:"));
+   QString name = QInputDialog::getText(this, tr("Hop name"), tr("Hop name:"));
    if (name.isEmpty()) {
       return;
    }
@@ -226,7 +216,7 @@ void HopEditor::newHop(QString folder) {
    return;
 }
 
-void HopEditor::newHop() {
+void HopEditor::clickedNewHop() {
    newHop(QString());
    return;
 }
