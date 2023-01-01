@@ -1407,10 +1407,10 @@ void BtTreeModel::observeElement(NamedEntity * d) {
    }
 
    if (qobject_cast<BrewNote *>(d)) {
-      connect(d, SIGNAL(brewDateChanged(QDateTime)), this, SLOT(elementChanged()));
+      connect(qobject_cast<BrewNote *>(d), &BrewNote::brewDateChanged, this, &BtTreeModel::elementChanged);
    } else {
-      connect(d, SIGNAL(changedName(QString)), this, SLOT(elementChanged()));
-      connect(d, SIGNAL(changedFolder(QString)), this, SLOT(folderChanged(QString)));
+      connect(d, &NamedEntity::changedName,   this, &BtTreeModel::elementChanged);
+      connect(d, &NamedEntity::changedFolder, this, static_cast<void (BtTreeModel::*)(QString)>(&BtTreeModel::folderChanged));
    }
 }
 
