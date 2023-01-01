@@ -358,6 +358,29 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      }
                      break;
 
+                  case XmlRecord::FieldType::EnumOpt:
+                     // It's definitely a coding error if there is no stringToEnum mapping for a field declared as Enum!
+                     Q_ASSERT(nullptr != fieldDefinition->enumMapping);
+                     {
+                        // If the field is present then it should ideally have a valid value, however we cannot assume
+                        // this as the EnumOpt field type was added for BeerJSON so does not appear in the BeerXML XSD.
+                        auto match = fieldDefinition->enumMapping->stringToEnumAsInt(value);
+                        if (!match) {
+                           // This is probably a coding error as the XSD parsing should already have verified that the
+                           // contents of the node are one of the expected values.
+                           qWarning() <<
+                              Q_FUNC_INFO << "Ignoring " << this->namedEntityClassName << " node " <<
+                              fieldDefinition->xPath << "=" << value << " as value not recognised";
+                           // We could set `parsedValue = QVariant::fromValue< std::optional<int> >(std::nullopt)` but
+                           // it's not necessary as the value will get defaulted to that in the (eg Fermentable)
+                           // constructor by dint of there being no entry in the NamedParameterBundle.
+                        } else {
+                           parsedValue = QVariant::fromValue< std::optional<int> >(match.value());
+                           parsedValueOk = true;
+                        }
+                     }
+                     break;
+
                   case XmlRecord::FieldType::RequiredConstant:
                      //
                      // This is a field that is required to be in the XML, but whose value we don't need (and for which
@@ -795,6 +818,7 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          continue;
       }
 
+      bool writeField = true;
       QString valueAsText;
       if (fieldDefinition.fieldType == XmlRecord::FieldType::RequiredConstant) {
          //
@@ -844,6 +868,21 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                valueAsText = fieldDefinition.enumMapping->enumToString(value.toInt());
                break;
 
+            case XmlRecord::FieldType::EnumOpt:
+               // It's also definitely a coding error if there is no enumMapping for a field declared as EnumOpt
+               Q_ASSERT(nullptr != fieldDefinition.enumMapping);
+               {
+                  // However, it's not an error if there is no value for this field
+                  auto nativeValue = value.value<std::optional<int>>();
+                  if (nativeValue.has_value()) {
+                     valueAsText = fieldDefinition.enumMapping->enumToString(nativeValue.value());
+                  } else {
+                     // If there is no value then we want to skip writing this field altogether
+                     writeField = false;
+                  }
+               }
+               break;
+
             // By default we assume it's a string
             case XmlRecord::FieldType::String:
             default:
@@ -856,8 +895,10 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                break;
          }
       }
-      writeIndents(out, indentLevel + 1, indentString);
-      out << "<" << fieldDefinition.xPath << ">" << valueAsText << "</" << fieldDefinition.xPath << ">\n";
+      if (writeField) {
+         writeIndents(out, indentLevel + 1, indentString);
+         out << "<" << fieldDefinition.xPath << ">" << valueAsText << "</" << fieldDefinition.xPath << ">\n";
+      }
    }
 
    writeIndents(out, indentLevel, indentString);

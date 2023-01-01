@@ -197,7 +197,14 @@ public:
    Q_PROPERTY(bool           isSugar                READ isSugar                                                STORED false)
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   Q_PROPERTY(std::optional<GrainGroup> grainGroup  READ grainGroup             WRITE setGrainGroup)
+   /**
+    * \brief If \c type is \c Grain then this gives more detail, otherwise it's \c std::nullopt
+    *
+    *        Note that type has to be std::optional<int> in the interface rather than std::optional<GrainGroup>,
+    *        otherwise generic code (for serialisation to/from DB, BeerJSON, BeerXML) will not be able to access the
+    *        value.
+    */
+   Q_PROPERTY(std::optional<int> grainGroup  READ grainGroupAsInt             WRITE setGrainGroupAsInt)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                  () const;
@@ -217,7 +224,8 @@ public:
    double  ibuGalPerLb           () const;
    bool    isMashed              () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<GrainGroup> grainGroup() const;
+   std::optional<GrainGroup> grainGroup()      const;
+   std::optional<int>        grainGroupAsInt() const;
 
    // Calculated getters.
    double  equivSucrose_kg       () const;
@@ -245,6 +253,7 @@ public:
    void setIsMashed              (bool                      const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setGrainGroup            (std::optional<GrainGroup> const   val);
+   void setGrainGroupAsInt       (std::optional<int>        const   val);
 
 
    virtual void setInventoryAmount(double amount);

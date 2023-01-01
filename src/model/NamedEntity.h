@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <type_traits>
 
 #include <QDateTime>
@@ -513,6 +514,28 @@ S & operator<<(S & stream, NE const * namedEntity) {
       stream << "Null " << NE::staticMetaObject.metaObject()->className();
    }
    return stream;
+}
+
+/**
+ * \brief Convenience function for, in effect, casting std::optional<int> to std::optional<T> where T is an enum class
+ */
+template <class T>
+std::optional<T> castFromOptInt(std::optional<int> const & val) {
+   if (val.has_value()) {
+      return static_cast<T>(val.value());
+   }
+   return std::nullopt;
+}
+
+/**
+ * \brief Convenience function for, in effect, casting std::optional<T> to std::optional<int> where T is an enum class
+ */
+template <class T>
+std::optional<int> castToOptInt(std::optional<T> const & val) {
+   if (val.has_value()) {
+      return static_cast<int>(val.value());
+   }
+   return std::nullopt;
 }
 
 #endif

@@ -65,10 +65,11 @@ public:
       Double,
       String,
       Date,
-      Enum,
-      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
-      RecordSimple,       // Single contained record
-      RecordComplex,      // Zero, one or more contained records
+      Enum,              // A string that we need to map to/from our own enum
+      EnumOpt,           // As Enum, but is an optional field
+      RequiredConstant,  // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
+      RecordSimple,      // Single contained record
+      RecordComplex,     // Zero, one or more contained records
       INVALID
    };
 

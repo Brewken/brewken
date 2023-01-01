@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -339,6 +339,24 @@ namespace {
             }
             break;
 
+         case JsonRecordDefinition::FieldType::EnumOpt:
+            // It's also a coding error if there is no stringToEnum mapping for a field declared as EnumOpt
+            Q_ASSERT(nullptr != std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder));
+            // An optional enum retrieved via Qt properties should always be convertible to an std::optional<int>
+            Q_ASSERT(value.canConvert< std::optional<int> >());
+            {
+               auto rawValue = value.value< std::optional<int> >();
+               // We only add the value to the Json if it is set
+               if (rawValue.has_value()) {
+                  auto mapping = std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder);
+                  auto match = mapping->enumAsIntToString(rawValue.value());
+                  // It's a coding error if we couldn't find a string representation for the enum
+                  Q_ASSERT(match);
+                  recordDataAsObject.emplace(key, match->toStdString());
+               }
+            }
+            break;
+
          case JsonRecordDefinition::FieldType::Array:
             // This should be unreachable as we dealt with this case separately above, but having an case
             // statement for it eliminates a compiler warning whilst still retaining the useful warning if we
@@ -612,7 +630,6 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   {
                      Q_ASSERT(container->is_string());
                      QString value{container->get_string().c_str()};
-                     parsedValue.setValue(value);
 
                      auto match =
                         std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->stringToEnumAsInt(value);
@@ -624,6 +641,32 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                            fieldDefinition.xPath << "=" << value << " as value not recognised";
                      } else {
                         parsedValue.setValue(match.value());
+                        parsedValueOk = true;
+                     }
+                  }
+                  break;
+
+               case JsonRecordDefinition::FieldType::EnumOpt:
+                  // It's also a coding error if there is no stringToEnum mapping for a field declared as EnumOpt
+                  Q_ASSERT(nullptr != std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder));
+                  {
+                     Q_ASSERT(container->is_string());
+                     QString value{container->get_string().c_str()};
+
+                     // Normally we would expect the value to be valid if it's present, as the JSON Schema should have
+                     // enforced this.  We shouldn't have to handle the std::nullopt case as it's implied by the field
+                     // not being present at all (and handled by the default value in the relevant constructor (eg of
+                     // Fermentable).
+                     auto match =
+                        std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->stringToEnumAsInt(value);
+                     if (!match) {
+                        // This is probably a coding error as the JSON Schema should already have verified that the
+                        // value is one of the expected ones.
+                        qWarning() <<
+                           Q_FUNC_INFO << "Ignoring " << this->recordDefinition.namedEntityClassName << " node " <<
+                           fieldDefinition.xPath << "=" << value << " as value not recognised";
+                     } else {
+                        parsedValue.setValue(std::optional<int>(match.value()));
                         parsedValueOk = true;
                      }
                   }

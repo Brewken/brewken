@@ -199,7 +199,8 @@ bool                                   Fermentable::recommendMash()          con
 double                                 Fermentable::ibuGalPerLb()            const { return this->m_ibuGalPerLb;    }
 bool                                   Fermentable::isMashed()               const { return this->m_isMashed;       }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-std::optional<Fermentable::GrainGroup> Fermentable::grainGroup()             const { return this->m_grainGroup;     }
+std::optional<Fermentable::GrainGroup> Fermentable::grainGroup()             const { return this->m_grainGroup              ; }
+std::optional<int>                     Fermentable::grainGroupAsInt()        const { return castToOptInt(this->m_grainGroup); }
 
 
 bool Fermentable::isExtract() const {
@@ -239,6 +240,7 @@ void Fermentable::setProtein_pct           (double                    const   va
 void Fermentable::setMaxInBatch_pct        (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct,         this->m_maxInBatchPct,  this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Fermentable::setGrainGroup            (std::optional<GrainGroup> const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup,             this->m_grainGroup,     val); }
+void Fermentable::setGrainGroupAsInt       (std::optional<int>        const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup,             this->m_grainGroup,     castFromOptInt<GrainGroup>(val)); }
 
 
 void Fermentable::setInventoryAmount(double num) {

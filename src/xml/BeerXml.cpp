@@ -183,7 +183,9 @@ namespace {
       {XmlRecord::FieldType::String,           "POTENTIAL",        BtString::NULL_STR,                                 nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR,                                 nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_COLOR",    BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::Bool,             "IS_MASHED",        PropertyNames::Fermentable::isMashed,               nullptr}  // Non-standard tag, not part of BeerXML 1.0 standard
+      {XmlRecord::FieldType::Bool,             "IS_MASHED",        PropertyNames::Fermentable::isMashed,               nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
+      // Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML
+      {XmlRecord::FieldType::EnumOpt,          "GRAIN_GROUP",      PropertyNames::Fermentable::grainGroup,             &Fermentable::grainGroupStringMapping},
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

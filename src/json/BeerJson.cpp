@@ -257,7 +257,7 @@ namespace {
       {JsonRecordDefinition::FieldType::String,               "origin",                       &PropertyNames::Fermentable::origin,                 },
       {JsonRecordDefinition::FieldType::String,               "producer",                     &BtString::NULL_STR,                                 }, // .:TODO.JSON:. Add this to Fermentable or look at PropertyNames::Fermentable::supplier
       {JsonRecordDefinition::FieldType::String,               "product_id",                   &BtString::NULL_STR,                                 }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::Enum,                 "grain_group",                  &PropertyNames::Fermentable::type,                   &Fermentable::grainGroupStringMapping}, //<<<<<<<<<<<<<<<<<MAKE OPTIONAL
+      {JsonRecordDefinition::FieldType::EnumOpt,              "grain_group",                  &PropertyNames::Fermentable::grainGroup,             &Fermentable::grainGroupStringMapping},
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "yield/fine_grind",             &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "yield/coarse_grind",           &BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue,      "yield/fine_coarse_difference", &PropertyNames::Fermentable::coarseFineDiff_pct,     &BEER_JSON_PERCENT_UNIT},
