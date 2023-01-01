@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedParameterBundle.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * model/NamedParameterBundle.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,6 +24,24 @@
 #include <QVariant>
 
 #include "utils/BtStringConst.h"
+
+//
+// It is useful in various places to be able to store member variables in QVariant objects.
+//
+// Where we define a strongly-typed enum, we usually just need a corresponding Q_ENUM declaration in the same header.
+// This works with generic  serialisation code (eg to and from database or BeerJSON) because you can safely static_cast
+// between the strongly typed enum and an integer, so the generic code can use integers (via EnumStringMapping) and the
+// class-specific code can use the strongly-typed enums and everything just work.
+//
+// HOWEVER, when the enum is optional (ie stored in memory inside std::optional, stored in the DB as a nullable field,
+// only an optional field in BeerJSON, etc) then we cannot rely on casting.  You cannot, eg, static_cast between
+// std::optional<int> and std::optional<Fermentable::GrainGroup>.  So inside NamedParameterBundle, we always store
+// std::optional<int> for optional enum fields inside QVariant.  We need this Q_DECLARE_METATYPE macro here to allow
+// this to  happen.
+//
+// We then put template wrappers in NamedParameterBundle so things aren't too clunky in the class-specific code.
+//
+Q_DECLARE_METATYPE(std::optional<int>)
 
 /**
  * \brief This allows constructors to be called without a long list of positional parameters and, more importantly, for

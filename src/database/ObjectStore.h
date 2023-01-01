@@ -74,7 +74,9 @@ public:
       Double,
       String,
       Date,
-      Enum   // Stored as a string in the DB
+      Enum,          // Stored as a string in the DB
+      EnumOptional,  // As Enum, but is an optional field, can be NULL in DB and is stored as std::optional<int> in
+                     // memory (inside QVariant).
    };
 
    //

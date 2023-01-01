@@ -805,8 +805,8 @@ void Testing::pstdintTest() {
 }
 
 
-void Testing::runTest()
-{
+void Testing::runTest() {
+   // .:TBD:. We should probably retire this function... :o)
    QVERIFY( 1==1 );
    /*
    MainWindow& mw = Application::mainWindow();
