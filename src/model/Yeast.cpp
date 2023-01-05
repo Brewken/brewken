@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -125,6 +125,12 @@ Yeast::Yeast(Yeast const & other) :
    m_addToSecondary        {other.m_addToSecondary    } {
    return;
 }
+
+bool Yeast::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
+Yeast::~Yeast() = default;
 
 //============================="GET" METHODS====================================
 QString Yeast::laboratory() const { return m_laboratory; }

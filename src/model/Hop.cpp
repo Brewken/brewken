@@ -247,6 +247,10 @@ Hop::Hop(Hop const & other) :
    return;
 }
 
+bool Hop::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
 Hop::~Hop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================

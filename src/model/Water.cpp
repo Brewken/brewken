@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -115,6 +115,10 @@ void Water::swap(Water & other) noexcept {
    std::swap(this->m_sparge_ro         , other.m_sparge_ro         );
    std::swap(this->m_alkalinity_as_hco3, other.m_alkalinity_as_hco3);
    return;
+}
+
+bool Water::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
 }
 
 Water::~Water() = default;

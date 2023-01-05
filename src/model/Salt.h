@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -81,6 +81,8 @@ public:
    Salt(QString name = "");
    Salt(NamedParameterBundle const & namedParameterBundle);
    Salt(Salt const & other);
+
+   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Salt();
 

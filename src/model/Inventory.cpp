@@ -96,6 +96,14 @@ Inventory::Inventory(Inventory const & other) :
    return;
 }
 
+bool Inventory::isOptional([[maybe_unused]] BtStringConst const & propertyName) {
+   // Note that Inventory does _not_ inherit from NamedEntity, so we don't need to call
+   // NamedEntity::isOptional(propertyName) here.
+   //
+   // For the moment, at least, no Inventory properties are optional
+   return false;
+}
+
 Inventory::~Inventory() = default;
 
 int    Inventory::getId() const      { return this->pimpl->id; }

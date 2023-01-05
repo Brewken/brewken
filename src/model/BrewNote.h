@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -87,7 +87,9 @@ public:
    BrewNote(NamedParameterBundle const & namedParameterBundle);
    BrewNote(BrewNote const & other);
 
-   virtual ~BrewNote() = default;
+   static bool isOptional(BtStringConst const & propertyName);
+
+   virtual ~BrewNote();
 
    bool operator<(BrewNote const & other) const;
    bool operator>(BrewNote const & other) const;

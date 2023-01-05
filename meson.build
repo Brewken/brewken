@@ -483,6 +483,7 @@ commonSourceFiles = files([
    'src/InventoryFormatter.cpp',
    'src/json/BeerJson.cpp',
    'src/json/JsonCoding.cpp',
+   'src/json/JsonMeasureableUnitsMapping.cpp',
    'src/json/JsonRecord.cpp',
    'src/json/JsonRecordDefinition.cpp',
    'src/json/JsonSchema.cpp',

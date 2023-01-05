@@ -268,11 +268,12 @@ public:
                      JsonSingleUnitSpecifier            const *>; // FieldType::SingleUnitValue
       ValueDecoder valueDecoder;
       /**
-       * \brief Trivial constructor allows us to default \c valueDecoder
+       * \brief Trivial constructor allows us to default \c valueDecoder and saves us having to put & before every
+       *        property name!
        */
       FieldDefinition(FieldType type,
                       JsonXPath xPath,
-                      BtStringConst const * propertyName,
+                      BtStringConst const & propertyName,
                       ValueDecoder valueDecoder = ValueDecoder{});
    };
 

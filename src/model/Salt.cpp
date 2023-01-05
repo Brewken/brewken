@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -67,6 +67,10 @@ Salt::Salt(Salt const & other) :
    m_percent_acid    {other.m_percent_acid    },
    m_is_acid         {other.m_is_acid         } {
    return;
+}
+
+bool Salt::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
 }
 
 Salt::~Salt() = default;

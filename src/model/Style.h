@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Style.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -72,7 +72,9 @@ public:
    Style(NamedParameterBundle const & namedParameterBundle);
    Style(Style const & other);
 
-   virtual ~Style() = default;
+   static bool isOptional(BtStringConst const & propertyName);
+
+   virtual ~Style();
 
    //! \brief The type of beverage.
    enum class Type {Lager, Ale, Mead, Wheat, Mixed, Cider};

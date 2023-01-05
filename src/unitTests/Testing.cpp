@@ -599,7 +599,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500 gal";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500 gal"
-                                                                               Measurement::Units::liters).quantity,
+                                                                               Measurement::Units::liters).quantity(),
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v1)");
@@ -607,7 +607,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500"
-                                                                               Measurement::Units::us_gallons).quantity,
+                                                                               Measurement::Units::us_gallons).quantity(),
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v2)");
@@ -615,7 +615,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500 gal";
    QVERIFY2(fuzzyComp(Measurement::qStringToSI(testInput, // "5.500 gal"
-                                               Measurement::PhysicalQuantity::Volume).quantity,
+                                               Measurement::PhysicalQuantity::Volume).quantity(),
                       20.820,
                       0.001),
                       "Unit conversion error (US gallons to Litres v3)");
@@ -623,7 +623,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "9" << decimalSeparator << "994 P";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI(testInput, // "9.994 P"
-                                                                          Measurement::Units::sp_grav).quantity,
+                                                                          Measurement::Units::sp_grav).quantity(),
                       1.040,
                       0.001),
             "Unit conversion error (Plato to SG)");
@@ -632,7 +632,7 @@ void Testing::testUnitConversions() {
    testInputAsStream << "1" << thousandsSeparator << "083 ebc";
    QVERIFY2(
       fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI(testInput, // "1,083 ebc"
-                                                                                    Measurement::Units::srm).quantity,
+                                                                                    Measurement::Units::srm).quantity(),
                 550,
                 1),
       "Unit conversion error (EBC to SRM)"

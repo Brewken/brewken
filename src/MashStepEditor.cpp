@@ -126,13 +126,13 @@ void MashStepEditor::setMashStep(std::shared_ptr<MashStep> step) {
 void MashStepEditor::saveAndClose() {
    obs->setName(lineEdit_name->text());
    obs->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
-   obs->setInfuseAmount_l(lineEdit_infuseAmount->toSI().quantity);
-   obs->setInfuseTemp_c(lineEdit_infuseTemp->toSI().quantity);
-   obs->setDecoctionAmount_l(lineEdit_decoctionAmount->toSI().quantity);
-   obs->setStepTemp_c(lineEdit_stepTemp->toSI().quantity);
-   obs->setStepTime_min(lineEdit_stepTime->toSI().quantity);
-   obs->setRampTime_min(lineEdit_rampTime->toSI().quantity);
-   obs->setEndTemp_c(lineEdit_endTemp->toSI().quantity);
+   obs->setInfuseAmount_l(lineEdit_infuseAmount->toSI().quantity());
+   obs->setInfuseTemp_c(lineEdit_infuseTemp->toSI().quantity());
+   obs->setDecoctionAmount_l(lineEdit_decoctionAmount->toSI().quantity());
+   obs->setStepTemp_c(lineEdit_stepTemp->toSI().quantity());
+   obs->setStepTime_min(lineEdit_stepTime->toSI().quantity());
+   obs->setRampTime_min(lineEdit_rampTime->toSI().quantity());
+   obs->setEndTemp_c(lineEdit_endTemp->toSI().quantity());
 
    if (this->obs->key() < 0) {
       // This is a new MashStep, so we need to store it.

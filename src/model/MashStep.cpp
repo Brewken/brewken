@@ -100,6 +100,9 @@ MashStep::MashStep(MashStep const & other) :
    return;
 }
 
+bool MashStep::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
 
 MashStep::~MashStep() = default;
 

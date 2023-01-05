@@ -19,6 +19,7 @@
 
 #include <optional>
 
+#include <QDate>
 #include <QHash>
 #include <QString>
 #include <QVariant>
@@ -41,7 +42,16 @@
 //
 // We then put template wrappers in NamedParameterBundle so things aren't too clunky in the class-specific code.
 //
-Q_DECLARE_METATYPE(std::optional<int>)
+// Similarly, for other nullable fields, we need to declare that we want to store std::optional<fieldType> inside
+// QVariant.  This is a convenient place to do it because this header gets included not only by all the model classes
+// but also by all the different serialisation code (Database, XML, JSON).
+//
+Q_DECLARE_METATYPE(std::optional<bool        >)
+Q_DECLARE_METATYPE(std::optional<double      >)
+Q_DECLARE_METATYPE(std::optional<int         >)
+Q_DECLARE_METATYPE(std::optional<QDate       >)
+Q_DECLARE_METATYPE(std::optional<QString     >)
+Q_DECLARE_METATYPE(std::optional<unsigned int>)
 
 /**
  * \brief This allows constructors to be called without a long list of positional parameters and, more importantly, for

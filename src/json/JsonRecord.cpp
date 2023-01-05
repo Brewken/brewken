@@ -21,11 +21,15 @@
 
 #include <QDate>
 #include <QDebug>
+#include <QMetaType>
 
 #include "json/JsonCoding.h"
 #include "json/JsonUtils.h"
 #include "utils/ErrorCodeToStream.h"
 #include "utils/ImportRecordCount.h"
+
+// Need this to be able to use MassOrVolumeAmt in Qt Properties system
+Q_DECLARE_METATYPE(MassOrVolumeAmt);
 
 //
 // Variables and constant definitions that we need only in this file
@@ -157,8 +161,7 @@ namespace {
       Measurement::Amount canonicalValue = unit->toSI(value);
 
       qDebug() <<
-         Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" <<
-         canonicalValue.quantity << " " << canonicalValue.unit;
+         Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" << canonicalValue;
 
       return canonicalValue;
    }
@@ -226,8 +229,7 @@ namespace {
       Measurement::Amount canonicalValue = unit->toSI(value);
 
       qDebug() <<
-         Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" <<
-         canonicalValue.quantity << " " << canonicalValue.unit;
+         Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" << canonicalValue;
 
       return canonicalValue;
    }
@@ -384,28 +386,28 @@ namespace {
             {
                // It's definitely a coding error if there is no unit decoder mapping for a field declared to require
                // one
-               JsonMeasureableUnitsMapping const * const jsonMeasureableUnitsMapping =
+               JsonMeasureableUnitsMapping const * const unitsMapping =
                   std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder);
-               Q_ASSERT(jsonMeasureableUnitsMapping);
-               Measurement::Unit const * const aUnit = jsonMeasureableUnitsMapping->nameToUnit.cbegin()->second;
+               Q_ASSERT(unitsMapping);
+               Measurement::Unit const * const aUnit = unitsMapping->nameToUnit.cbegin()->second;
                Measurement::Unit const & canonicalUnit = aUnit->getCanonical();
                qDebug() << Q_FUNC_INFO << canonicalUnit;
+
                // Now we found canonical units, we need to find the right string to represent them
-               for (auto const [unitName, unit] : jsonMeasureableUnitsMapping->nameToUnit) {
-                  if (unit == &canonicalUnit) {
-                     qDebug() << Q_FUNC_INFO << std::string(unitName).c_str();
-                     recordDataAsObject[key].emplace_object();
-                     auto & measurementWithUnits = recordDataAsObject[key].as_object();
-                     measurementWithUnits.emplace(jsonMeasureableUnitsMapping->unitField.asKey(),  unitName);
-                     measurementWithUnits.emplace(jsonMeasureableUnitsMapping->valueField.asKey(), value.toDouble());
-                     break;;
-                  }
-               }
+               auto unitName = unitsMapping->getNameForUnit(canonicalUnit);
+               qDebug() << Q_FUNC_INFO << std::string(unitName).c_str();
+               recordDataAsObject[key].emplace_object();
+               auto & measurementWithUnits = recordDataAsObject[key].as_object();
+               measurementWithUnits.emplace(unitsMapping->unitField.asKey(),  unitName);
+               measurementWithUnits.emplace(unitsMapping->valueField.asKey(), value.toDouble());
             }
             break;
 
          case JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits:
-            Q_ASSERT(value.canConvert<double>());
+            // .:TODO:. For the moment, I'm assuming we only use this for mass or volume.  IF that's correct then we
+            // should rename JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits.  If not, we need to tweak a
+            // couple of things here.
+            Q_ASSERT(value.canConvert<MassOrVolumeAmt>());
             // It's definitely a coding error if there is no list of unit decoder mappings for a field declared to
             // require such
             Q_ASSERT(
@@ -413,26 +415,33 @@ namespace {
             );
             {
                //
-               // This is a bit clunky!
+               // This is mostly (TBD exclusively?) used to handle amounts of things that can be measured by mass or
+               // volume - Yeast, Misc, Fermentable, etc
                //
-               // As mentioned elsewhere, most measurement properties on NamedEntity subclasses (Hop, Recipe, etc) are
-               // just a number (a double) and we "know" whether the particular property is a mass, volume, temperature,
-               // diastatic power, etc.  In some cases -- specifically for amounts of a Yeast, Salt or a Misc -- there
-               // is a choice of measuring by mass or by volume, in which instance there will be another property
-               // "amountIsWeight".
+               MassOrVolumeAmt amount = value.value<MassOrVolumeAmt>();
+
                //
-               // TODO FIX THIS IN BOTH DIRECTIONS! *******************************************************************************
-               Q_ASSERT(false);
-/*
-               // Logic is the same as for MeasurementWithUnits, but just loop through all the mappings
-               ¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥
-               std::optional<Measurement::Amount> canonicalValue = readOneOfMeasurementsWithUnits(fieldDefinition,
-                                                                                                   container);
-               if (canonicalValue) {
-                  parsedValue.setValue(canonicalValue->quantity);
-                  parsedValueOk = true;
+               // Logic is similar to MeasurementWithUnits above, except we already have the canonical units
+               //
+               for (auto const unitsMapping :
+                    *std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)) {
+                  //
+                  // Each JsonMeasureableUnitsMapping in the ListOfJsonMeasureableUnitsMappings holds units for a single
+                  // PhysicalQuantity -- ie we have a list of units for mass and another list of units for volume.
+                  //
+                  // So the first thing to do is to find the right JsonMeasureableUnitsMapping
+                  //
+                  if (unitsMapping->getPhysicalQuantity() == amount.unit()->getPhysicalQuantity()) {
+                     // Now we have the right PhysicalQuantity, we just need the entry for our Units
+                     auto unitName = unitsMapping->getNameForUnit(*amount.unit());
+                     qDebug() << Q_FUNC_INFO << std::string(unitName).c_str();
+                     recordDataAsObject[key].emplace_object();
+                     auto & measurementWithUnits = recordDataAsObject[key].as_object();
+                     measurementWithUnits.emplace(unitsMapping->unitField.asKey(),  unitName);
+                     measurementWithUnits.emplace(unitsMapping->valueField.asKey(), amount.quantity());
+                     break;
+                  }
                }
-*/
             }
             break;
 
@@ -690,7 +699,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                      std::optional<Measurement::Amount> canonicalValue = readMeasurementWithUnits(fieldDefinition,
                                                                                                   container);
                      if (canonicalValue) {
-                        parsedValue.setValue(canonicalValue->quantity);
+                        parsedValue.setValue(canonicalValue->quantity());
                         parsedValueOk = true;
                      }
                   }
@@ -706,12 +715,12 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   // and unit
                   Q_ASSERT(container->is_object());
                   {
-                     // Logic is the same as for MeasurementWithUnits, but just loop through all the mappings
-                     // TODO No, there's a bit more to it!!! *******************************************************************************
+                     // Logic similar to that for MeasurementWithUnits.  We rely on the NamedEntity subclass
+                     // (Fermentable, Yeast, Misc, etc) to know what to do with the MassOrVolumeAmt
                      std::optional<Measurement::Amount> canonicalValue = readOneOfMeasurementsWithUnits(fieldDefinition,
                                                                                                         container);
                      if (canonicalValue) {
-                        parsedValue.setValue(canonicalValue->quantity);
+                        parsedValue.setValue(static_cast<MassOrVolumeAmt>(canonicalValue.value()));
                         parsedValueOk = true;
                      }
                   }

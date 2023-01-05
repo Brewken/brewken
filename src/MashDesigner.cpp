@@ -155,8 +155,8 @@ void MashDesigner::saveStep() {
    this->mashStep->setName(this->lineEdit_name->text());
    this->mashStep->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
    // Bound the target temperature to what can be achieved
-   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toSI().quantity));
-   this->mashStep->setStepTime_min(lineEdit_time->toSI().quantity);
+   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toSI().quantity()));
+   this->mashStep->setStepTime_min(lineEdit_time->toSI().quantity());
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
@@ -170,7 +170,7 @@ void MashDesigner::saveStep() {
 }
 
 double MashDesigner::stepTemp_c() {
-   return lineEdit_temp->toSI().quantity;
+   return lineEdit_temp->toSI().quantity();
 }
 
 bool MashDesigner::heating() {
@@ -352,7 +352,7 @@ bool MashDesigner::initializeMash() {
    // Order matters. Don't do this until every that could return false has
    this->mash->setTunSpecificHeat_calGC(this->equip->tunSpecificHeat_calGC());
    this->mash->setTunWeight_kg(this->equip->tunWeight_kg());
-   this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity);
+   this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity());
 
    this->curStep = 0;
    this->addedWater_l = 0;

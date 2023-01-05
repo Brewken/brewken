@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Measurement.cpp is part of Brewken, and is copyright the following authors 2010-2022:
+ * measurement/Measurement.cpp is part of Brewken, and is copyright the following authors 2010-2023:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -29,7 +29,7 @@
 #include "model/Style.h" // For PropertyNames::Style::colorMin_srm, PropertyNames::Style::colorMax_srm
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
-#include "utils/OptionalToStream.h"
+#include "utils/OptionalHelpers.h"
 
 namespace {
 
@@ -160,13 +160,13 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
                                    std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                    std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
    // Check for insane values.
-   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
+   if (Algorithms::isNan(amount.quantity()) || Algorithms::isInf(amount.quantity())) {
       return "-";
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = amount.unit.getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit()->getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
@@ -217,13 +217,13 @@ double Measurement::amountDisplay(Measurement::Amount const & amount,
                                   std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
 
    // Check for insane values.
-   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
+   if (Algorithms::isNan(amount.quantity()) || Algorithms::isInf(amount.quantity())) {
       return -1.0;
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = amount.unit.getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit()->getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);

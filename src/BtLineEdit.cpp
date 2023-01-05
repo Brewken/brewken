@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -35,7 +35,7 @@
 #include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
 #include "PersistentSettings.h"
-#include "utils/OptionalToStream.h"
+#include "utils/OptionalHelpers.h"
 
 namespace {
    int const min_text_size = 8;

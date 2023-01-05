@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -126,6 +126,11 @@ Style::Style(Style const & other) :
    return;
 }
 
+bool Style::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
+Style::~Style() = default;
 
 //==============================="SET" METHODS==================================
 void Style::setCategory(QString const & var) {

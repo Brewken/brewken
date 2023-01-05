@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -66,7 +66,6 @@ public:
       String,
       Date,
       Enum,              // A string that we need to map to/from our own enum
-      EnumOpt,           // As Enum, but is an optional field
       RequiredConstant,  // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
       RecordSimple,      // Single contained record
       RecordComplex,     // Zero, one or more contained records
@@ -99,13 +98,16 @@ public:
     *                  we'll need to look up how to handle nested records inside this one.
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
+    * \param isOptionalFunction Pointer to function that tells us whether Qt properties on this object type are
+    *                           "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, or empty string if
     *                             there is none
     */
-   XmlRecord(QString const & recordName,
-             XmlCoding const & xmlCoding,
+   XmlRecord(QString          const & recordName,
+             XmlCoding        const & xmlCoding,
              FieldDefinitions const & fieldDefinitions,
-             QString const & namedEntityClassName);
+             IsOptionalFnPtr  const   isOptionalFunction,
+             QString          const & namedEntityClassName);
 
    // Need a virtual destructor as we have virtual member functions
    virtual ~XmlRecord();
@@ -287,6 +289,9 @@ protected:
    XmlCoding const &        xmlCoding;
    FieldDefinitions const & fieldDefinitions;
 public:
+
+   IsOptionalFnPtr const isOptionalFunction;
+
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).
    QString const namedEntityClassName;

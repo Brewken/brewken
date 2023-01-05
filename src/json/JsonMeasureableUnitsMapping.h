@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonMeasureableUnitsMapping.h is part of Brewken, and is copyright the following authors 2022:
+ * json/JsonMeasureableUnitsMapping.h is part of Brewken, and is copyright the following authors 2022-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -31,9 +31,10 @@
  *        internal storage, where everything is STORED in standard, usually SI, units and conversion to other units is
  *        only done for display and entry.)
  *
- * \c nameToUnit tells us how to map the string unit value to one of our \c Measurement::Unit constants
- * \c unitField is the key used to pull out the string value representing the units of the measurement, usually "unit" in
- *              BeerJSON
+ * \c nameToUnit tells us how to map the string unit value to one of our \c Measurement::Unit constants, all of which
+ *               should be for the same \c Measurement::PhysicalQuantity
+ * \c unitField is the key used to pull out the string value representing the units of the measurement, usually "unit"
+ *              in BeerJSON
  * \c valueField is the key used to pull out the double value representing the measurement itself
  */
 struct JsonMeasureableUnitsMapping {
@@ -43,10 +44,19 @@ struct JsonMeasureableUnitsMapping {
    //
    // We use std::string_view here rather than QString because there's less conversion to do when working with
    // Boost.JSON.  We use std::map rather than QMap because it's easier to search both sides of the map (ie search by
-   // value as well as search by key.
+   // value as well as search by key).
    std::map<std::string_view, Measurement::Unit const *> nameToUnit;
+
    JsonXPath const unitField = JsonXPath{"unit"};
    JsonXPath const valueField = JsonXPath{"value"};
+
+   Measurement::PhysicalQuantity getPhysicalQuantity() const;
+
+   /**
+    * \brief For a given \c Measurement::Unit, return the name.  Caller's responsibility to ensure this mapping holds
+    *        units of the corresponding \c Measurement::PhysicalQuantity
+    */
+   std::string_view getNameForUnit(Measurement::Unit const & unitToMatch) const;
 };
 
 #endif

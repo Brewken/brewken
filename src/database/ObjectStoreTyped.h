@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -36,9 +36,10 @@ public:
     *
     * \param primaryTable First in the list of fields in this table defn should be the primary key
     */
-   ObjectStoreTyped(TableDefinition const & primaryTable,
+   ObjectStoreTyped(IsOptionalFnPtr                  isOptionalFunction,
+                    TableDefinition          const & primaryTable,
                     JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{}) :
-      ObjectStore(primaryTable, junctionTables) {
+      ObjectStore(isOptionalFunction, primaryTable, junctionTables) {
       return;
    }
 

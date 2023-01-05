@@ -114,6 +114,10 @@ Instruction::Instruction(Instruction const & other) :
    return;
 }
 
+bool Instruction::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
 Instruction::~Instruction() = default;

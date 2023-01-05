@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -152,6 +152,34 @@ public:
     *        \c makeChild() on the copy, which will do the right things about parentage and inventory.
     */
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
+
+   /**
+    * \brief Returns whether the given object property is optional (aka nullable).
+    *
+    *        With the advent of BeerJSON, we have a lot more "optional" fields on objects.  We don't want to extend
+    *        three different serialisation models (database, BeerXML and BeerJSON) with an extra flag, especially as
+    *        the (subclass of) \c NamedEntity ought to know itself whether a field is optional/nullable.  This is
+    *        enough for serialisation (where we just need to know eg whether we're reading/writing `double` or
+    *        `std::optional<double>`).
+    *
+    *        In principle we might be able to avoid the need for this function, or at least have a single implementation
+    *        of it, by making a bunch of calls to \c qRegisterMetaType(std::optional<T>) at the start-up for all types
+    *        \c T and storing the resulting IDs in a set or list that we then consult to discover whether a property is
+    *        of type \c T or \c std::optional<T>.  But, for now at least, we're going with the simpler approach.
+    *
+    *        Note that this is a static member function and is \b not intended to do run-time validation (eg to say
+    *        whether the object is in a state where the property is allowed to be null).  It just tells us whether, in
+    *        principle, the field can ever be null.
+    *
+    *        Why is the function static and not virtual?  It's because we need to be able to call it \b before we have
+    *        created the object.  Eg, if we are reading a \c Fermentable from the DB, we first read all the fields and
+    *        construct a \c NamedParameterBundle, and then use that \c NamedParameterBundle to construct the
+    *        \c Fermentable.
+    *
+    *        IMPORTANT: When you are implementing this for a subclass, your implementation should manually call the
+    *        parent class implementation.
+    */
+   static bool isOptional(BtStringConst const & propertyName);
 
 protected:
    /**
@@ -455,6 +483,11 @@ private:
   bool m_deleted;
   bool m_beingModified;
 };
+
+/**
+ * \brief Convenience typedef for pointer to \c isOptional();
+ */
+using IsOptionalFnPtr = bool (*)(BtStringConst const &);
 
 /**
  * \class NamedEntityModifyingMarker

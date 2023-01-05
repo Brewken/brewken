@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -24,7 +24,7 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
-#include "utils/OptionalToStream.h"
+#include "utils/OptionalHelpers.h"
 #include "widgets/UnitAndScalePopUpMenu.h"
 
 BtTableModelRecipeObserver::BtTableModelRecipeObserver(QTableView * parent,

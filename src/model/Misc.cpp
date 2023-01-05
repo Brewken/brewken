@@ -96,6 +96,12 @@ Misc::Misc(Misc const & other) :
    return;
 }
 
+bool Misc::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
+Misc::~Misc() = default;
+
 //============================"GET" METHODS=====================================
 Misc::Type Misc::type() const { return m_type; }
 

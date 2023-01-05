@@ -96,6 +96,11 @@ void NamedEntity::swap(NamedEntity & other) noexcept {
    return;
 }
 
+bool NamedEntity::isOptional([[maybe_unused]] BtStringConst const & propertyName) {
+   // By default, nothing is optional
+   return false;
+}
+
 NamedEntity::~NamedEntity() = default;
 
 void NamedEntity::makeChild(NamedEntity const & copiedFrom) {

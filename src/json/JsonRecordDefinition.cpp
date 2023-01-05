@@ -38,14 +38,14 @@ namespace {
 
 JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType type,
                                                        JsonXPath xPath,
-                                                       BtStringConst const * propertyName,
+                                                       BtStringConst const & propertyName,
                                                        ValueDecoder valueDecoder) :
    type{type},
    xPath{xPath},
-   propertyName{propertyName},
+   propertyName{&propertyName},
    valueDecoder{valueDecoder} {
    // Per comment in header file, propertyName should never be nullptr; use BtString::NULL_STR instead if it is not set
-   Q_ASSERT(propertyName);
+   Q_ASSERT(this->propertyName);
    return;
 }
 

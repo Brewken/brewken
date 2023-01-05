@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Inventory.h is part of Brewken, and is copyright the following authors 2021:
+ * model/Inventory.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -63,6 +63,8 @@ public:
    Inventory();
    Inventory(NamedParameterBundle const & namedParameterBundle);
    Inventory(Inventory const & other);
+
+   static bool isOptional(BtStringConst const & propertyName);
 
    ~Inventory();
 

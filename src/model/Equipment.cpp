@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -73,8 +73,6 @@ Equipment::Equipment(QString t_name) :
    return;
 }
 
-
-
 // The default values below are set for the following fields that are not part of BeerXML 1.0 standard and so will
 // not be present in BeerXML files (unless we wrote them) but will be present in the database:
 //    - evapRate_lHr
@@ -124,6 +122,12 @@ Equipment::Equipment(Equipment const & other) :
    m_boilingPoint_c       {other.m_boilingPoint_c       } {
    return;
 }
+
+bool Equipment::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
+Equipment::~Equipment() = default;
 
 //============================"SET" METHODS=====================================
 

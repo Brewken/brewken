@@ -468,7 +468,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Mass,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)).quantity,
+                                        this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Inventory Amount")
             );
          }
@@ -484,7 +484,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Mass,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)).quantity,
+                                        this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Fermentable Amount")
             );
             if (rowCount() > 0) {
@@ -532,7 +532,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Color,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)).quantity,
+                                        this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Color")
             );
          }

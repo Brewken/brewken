@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -136,7 +136,7 @@
 #include "UndoableAddOrRemove.h"
 #include "UndoableAddOrRemoveList.h"
 #include "utils/BtStringConst.h"
-#include "utils/OptionalToStream.h"
+#include "utils/OptionalHelpers.h"
 #include "WaterDialog.h"
 #include "WaterEditor.h"
 #include "WaterListModel.h"
@@ -1675,7 +1675,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::batchSize_l,
-                        lineEdit_batchSize->toSI().quantity,
+                        lineEdit_batchSize->toSI().quantity(),
                         tr("Change Batch Size"));
 }
 
@@ -1686,7 +1686,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::boilSize_l,
-                        lineEdit_boilSize->toSI().quantity,
+                        lineEdit_boilSize->toSI().quantity(),
                         tr("Change Boil Size"));
 }
 
@@ -1696,7 +1696,7 @@ void MainWindow::updateRecipeBoilTime() {
    }
 
    Equipment* kit = recipeObs->equipment();
-   double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity;
+   double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity();
 
    // Here, we rely on a signal/slot connection to propagate the equipment changes to recipeObs->boilTime_min and maybe
    // recipeObs->boilSize_l

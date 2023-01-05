@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -146,6 +146,12 @@ BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
    m_recipeId         {namedParameterBundle.val<int    >(PropertyNames::BrewNote::recipeId         )} {
    return;
 }
+
+bool BrewNote::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
+BrewNote::~BrewNote() = default;
 
 void BrewNote::populateNote(Recipe* parent)
 {

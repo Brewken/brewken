@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -82,8 +82,8 @@ void HopEditor::save() {
    }
 
    this->obsHop->setName(lineEdit_name->text());
-   this->obsHop->setAlpha_pct(lineEdit_alpha->toSI().quantity);
-   this->obsHop->setTime_min(lineEdit_time->toSI().quantity);
+   this->obsHop->setAlpha_pct(lineEdit_alpha->toSI().quantity());
+   this->obsHop->setTime_min(lineEdit_time->toSI().quantity());
 
    //
    // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
@@ -93,13 +93,13 @@ void HopEditor::save() {
    this->obsHop->setForm(Hop::formStringMapping.stringToEnum<Hop::Form>(comboBox_hopForm->currentData().toString()));
    this->obsHop->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
 
-   this->obsHop->setBeta_pct(lineEdit_beta->toSI().quantity);
-   this->obsHop->setHsi_pct(lineEdit_HSI->toSI().quantity);
+   this->obsHop->setBeta_pct(lineEdit_beta->toSI().quantity());
+   this->obsHop->setHsi_pct(lineEdit_HSI->toSI().quantity());
    this->obsHop->setOrigin(lineEdit_origin->text());
-   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI().quantity);
-   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI().quantity);
-   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI().quantity);
-   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI().quantity);
+   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI().quantity());
+   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI().quantity());
+   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI().quantity());
+   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI().quantity());
 
    this->obsHop->setSubstitutes(textEdit_substitutes->toPlainText());
    this->obsHop->setNotes(textEdit_notes->toPlainText());
@@ -109,7 +109,7 @@ void HopEditor::save() {
    }
 
    // do this late to make sure we've the row in the inventory table
-   this->obsHop->setInventoryAmount(lineEdit_inventory->toSI().quantity);
+   this->obsHop->setInventoryAmount(lineEdit_inventory->toSI().quantity());
    setVisible(false);
    return;
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntityWithInventory.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * model/NamedEntityWithInventory.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -40,6 +40,8 @@ public:
    NamedEntityWithInventory(QString t_name, bool t_display = false, QString folder = QString());
    NamedEntityWithInventory(NamedEntityWithInventory const & other);
    NamedEntityWithInventory(NamedParameterBundle const & namedParameterBundle);
+
+   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~NamedEntityWithInventory() = default;
 

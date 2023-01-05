@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -539,6 +539,10 @@ Recipe::Recipe(Recipe const & other) :
    return;
 }
 
+bool Recipe::isOptional(BtStringConst const & propertyName) {
+   return NamedEntity::isOptional(propertyName);
+}
+
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
 Recipe::~Recipe() = default;
@@ -1066,7 +1070,7 @@ void Recipe::generateInstructions() {
          Measurement::qStringToSI(QInputDialog::getText(nullptr,
                                                         tr("Boil time"),
                                                         tr("You did not configure an equipment (which you really should), so tell me the boil time.")),
-                                  Measurement::PhysicalQuantity::Time).quantity;
+                                  Measurement::PhysicalQuantity::Time).quantity();
    }
 
    QString str = tr("Bring the wort to a boil and hold for %1.").arg(

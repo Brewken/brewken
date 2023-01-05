@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Water.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -85,6 +85,13 @@ public:
    Water(NamedParameterBundle const & namedParameterBundle);
    Water(Water const & other);
 
+   static bool isOptional(BtStringConst const & propertyName);
+
+   virtual ~Water();
+
+   // It is useful to be able to assign one Water to another - see eg WaterEditor.cpp
+   Water & operator=(Water other);
+
 protected:
    /**
     * \brief Swap the contents of two Water objects - which provides an exception-safe way of implementing operator=
@@ -92,11 +99,6 @@ protected:
    void swap(Water & other) noexcept;
 
 public:
-   virtual ~Water();
-
-   // It is useful to be able to assign one Water to another - see eg WaterEditor.cpp
-   Water & operator=(Water other);
-
    // .:TODO:. On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
 
    //! \brief The amount in liters.

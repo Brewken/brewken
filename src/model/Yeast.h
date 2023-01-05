@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -84,7 +84,9 @@ public:
    Yeast(NamedParameterBundle const & namedParameterBundle);
    Yeast(Yeast const & other);
 
-   virtual ~Yeast() = default;
+   static bool isOptional(BtStringConst const & propertyName);
+
+   virtual ~Yeast();
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )

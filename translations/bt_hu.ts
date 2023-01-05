@@ -1160,23 +1160,47 @@ Log file may contain more details.</source>
     <name>Fermentable</name>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Cefrézve</translation>
-    </message>
-    <message>
-        <source>Steeped</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cefrézve</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Később hozzáadott</translation>
+        <translation type="obsolete">Később hozzáadott</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Normál</translation>
+        <translation type="vanished">Normál</translation>
+    </message>
+    <message>
+        <source>Dry Extract</source>
+        <translation type="unfinished">Szárított malátasűrítmény (DME)</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Folyékony malátasűrítmény (LME)</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sugar</source>
+        <translation type="unfinished">Cukor</translation>
+    </message>
+    <message>
+        <source>Fruit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Juice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Honey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Adjunct</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1233,43 +1257,35 @@ Log file may contain more details.</source>
     <name>FermentableItemDelegate</name>
     <message>
         <source>Grain</source>
-        <translation>Gabona</translation>
+        <translation type="vanished">Gabona</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Cukor</translation>
+        <translation type="vanished">Cukor</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Folyékony malátasűrítmény (LME)</translation>
+        <translation type="vanished">Folyékony malátasűrítmény (LME)</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Szárított malátasűrítmény (DME)</translation>
+        <translation type="vanished">Szárított malátasűrítmény (DME)</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adalék</translation>
+        <translation type="vanished">Adalék</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Cefrézve</translation>
-    </message>
-    <message>
-        <source>Steeped</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cefrézve</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Normál</translation>
+        <translation type="vanished">Normál</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Később hozzáadott</translation>
+        <translation type="obsolete">Később hozzáadott</translation>
     </message>
 </context>
 <context>
@@ -1331,19 +1347,19 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Addition Method</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Addition Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Yield</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Change Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Is Mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Add After Boil</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1536,75 +1552,43 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Bittering</source>
-        <translation type="unfinished">Keserűkomló</translation>
+        <translation type="obsolete">Keserűkomló</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation type="unfinished">Aroma</translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Bittering</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Aroma</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Ízanyag</translation>
-    </message>
-    <message>
-        <source>Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma, Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Ízanyag</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Folyékony malátasűrítmény (LME)</translation>
+        <translation type="obsolete">Folyékony malátasűrítmény (LME)</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation type="unfinished">leveles</translation>
-    </message>
-    <message>
-        <source>Leaf (wet)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">leveles</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation type="unfinished">Pellet</translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Pellet</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation type="unfinished">Nagy pellet (komlódugó)</translation>
+        <translation type="obsolete">Nagy pellet (komlódugó)</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Cefre</translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cefre</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Forralás</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Forralás</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation type="unfinished">Hidegkomló</translation>
+        <translation type="obsolete">Hidegkomló</translation>
     </message>
 </context>
 <context>
@@ -2856,23 +2840,23 @@ Error message:
     </message>
     <message>
         <source>Grain</source>
-        <translation>Gabona</translation>
+        <translation type="vanished">Gabona</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Cukor</translation>
+        <translation type="vanished">Cukor</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Folyékony malátasűrítmény (LME)</translation>
+        <translation type="vanished">Folyékony malátasűrítmény (LME)</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Szárított malátasűrítmény (DME)</translation>
+        <translation type="vanished">Szárított malátasűrítmény (DME)</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adalék</translation>
+        <translation type="vanished">Adalék</translation>
     </message>
     <message>
         <source>Infusion</source>
@@ -3192,10 +3176,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>WindischKolbach</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mass</source>
         <translation type="unfinished">Tömeg</translation>
     </message>
@@ -3456,6 +3436,70 @@ Log file may contain more details.</source>
     <message>
         <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bitterness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metric Alternate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lovibond</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Windisch Kolbach</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation Volumes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Parts Per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">Később hozzáadott</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">Cefrézve</translation>
     </message>
 </context>
 <context>
@@ -5294,23 +5338,23 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Grain</source>
-        <translation>Maláta/gabona</translation>
+        <translation type="vanished">Maláta/gabona</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Cukor</translation>
+        <translation type="vanished">Cukor</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Folyékony malátasűrítmény (LME)</translation>
+        <translation type="vanished">Folyékony malátasűrítmény (LME)</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Szárított malátasűrítmény (DME)</translation>
+        <translation type="vanished">Szárított malátasűrítmény (DME)</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adalék</translation>
+        <translation type="vanished">Adalék</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -5474,6 +5518,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -66,7 +66,9 @@ public:
    Equipment(NamedParameterBundle const & namedParameterBundle);
    Equipment(Equipment const & other);
 
-   virtual ~Equipment() = default;
+   static bool isOptional(BtStringConst const & propertyName);
+
+   virtual ~Equipment();
 
    //! \brief The boil size in liters.
    Q_PROPERTY( double boilSize_l            READ boilSize_l            WRITE setBoilSize_l            NOTIFY changedBoilSize_l )

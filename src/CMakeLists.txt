@@ -89,6 +89,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/json/BeerJson.cpp
     ${repoDir}/src/json/JsonCoding.cpp
+    ${repoDir}/src/json/JsonMeasureableUnitsMapping.cpp
     ${repoDir}/src/json/JsonRecord.cpp
     ${repoDir}/src/json/JsonRecordDefinition.cpp
     ${repoDir}/src/json/JsonSchema.cpp

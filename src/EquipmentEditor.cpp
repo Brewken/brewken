@@ -172,7 +172,7 @@ void EquipmentEditor::save() {
 
    double grainAbs = Localization::toDouble(lineEdit_grainAbsorption->text(), Q_FUNC_INFO);
 
-   double ga_LKg = grainAbs * volumeUnit->toSI(1.0).quantity * weightUnit->fromSI(1.0);
+   double ga_LKg = grainAbs * volumeUnit->toSI(1.0).quantity() * weightUnit->fromSI(1.0);
 
    QString message,inform,describe;
    bool problems=false;
@@ -183,12 +183,12 @@ void EquipmentEditor::save() {
    inform = QString("%1%2")
             .arg(tr("The following values are not set:"))
             .arg(QString("<ul>"));
-   if ( qFuzzyCompare(lineEdit_tunVolume->toSI().quantity,0.0) ) {
+   if ( qFuzzyCompare(lineEdit_tunVolume->toSI().quantity(), 0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("mash tun volume (all-grain and BIAB only)"));
    }
 
-   if ( qFuzzyCompare(lineEdit_batchSize->toSI().quantity, 0.0) ) {
+   if ( qFuzzyCompare(lineEdit_batchSize->toSI().quantity(), 0.0) ) {
       problems = true;
       inform = inform + QString("<li>%1</li>").arg(tr("batch size"));
    }
@@ -216,21 +216,21 @@ void EquipmentEditor::save() {
    }
 
    this->obsEquip->setName( lineEdit_name->text() );
-   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSI().quantity );
-   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSI().quantity );
-   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI().quantity );
+   this->obsEquip->setBoilSize_l( lineEdit_boilSize->toSI().quantity() );
+   this->obsEquip->setBatchSize_l( lineEdit_batchSize->toSI().quantity() );
+   this->obsEquip->setTunVolume_l( lineEdit_tunVolume->toSI().quantity() );
 
-   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI().quantity );
+   this->obsEquip->setTunWeight_kg( lineEdit_tunWeight->toSI().quantity() );
 
    this->obsEquip->setTunSpecificHeat_calGC( lineEdit_tunSpecificHeat->toDoubleRaw() );
-   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSI().quantity);
-   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI().quantity );
-   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI().quantity );
-   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI().quantity );
-   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI().quantity );
-   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI().quantity );
+   this->obsEquip->setBoilTime_min( lineEdit_boilTime->toSI().quantity());
+   this->obsEquip->setEvapRate_lHr(  lineEdit_evaporationRate->toSI().quantity() );
+   this->obsEquip->setTopUpKettle_l( lineEdit_topUpKettle->toSI().quantity() );
+   this->obsEquip->setTopUpWater_l(  lineEdit_topUpWater->toSI().quantity() );
+   this->obsEquip->setTrubChillerLoss_l( lineEdit_trubChillerLoss->toSI().quantity() );
+   this->obsEquip->setLauterDeadspace_l( lineEdit_lauterDeadspace->toSI().quantity() );
    this->obsEquip->setGrainAbsorption_LKg( ga_LKg );
-   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI().quantity );
+   this->obsEquip->setBoilingPoint_c( lineEdit_boilingPoint->toSI().quantity() );
    this->obsEquip->setHopUtilization_pct( lineEdit_hopUtilization->toDoubleRaw() );
 
    this->obsEquip->setNotes(textEdit_notes->toPlainText());
@@ -279,7 +279,7 @@ void EquipmentEditor::resetAbsorption() {
    Measurement::Unit const * weightUnit = nullptr;
    Measurement::Unit const * volumeUnit = nullptr;
    Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
-   double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity;
+   double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity();
 
    lineEdit_grainAbsorption->setText(gaCustomUnits);
    return;
@@ -330,7 +330,7 @@ void EquipmentEditor::showChanges() {
 
    textEdit_notes->setText( e->notes() );
 
-   double gaCustomUnits = e->grainAbsorption_LKg() * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity;
+   double gaCustomUnits = e->grainAbsorption_LKg() * volumeUnit->fromSI(1.0) * weightUnit->toSI(1.0).quantity();
    lineEdit_grainAbsorption->setText(gaCustomUnits);
 
    lineEdit_boilingPoint->setText(e);
@@ -354,18 +354,18 @@ void EquipmentEditor::updateCheckboxRecord() {
       lineEdit_boilSize->setText(bar);
       lineEdit_boilSize->setEnabled(false);
    } else {
-      lineEdit_boilSize->setText(lineEdit_batchSize->toSI().quantity);
+      lineEdit_boilSize->setText(lineEdit_batchSize->toSI().quantity());
       lineEdit_boilSize->setEnabled(true);
    }
    return;
 }
 
 double EquipmentEditor::calcBatchSize() {
-   double size     = lineEdit_batchSize->toSI().quantity;
-   double topUp    = lineEdit_topUpWater->toSI().quantity;
-   double trubLoss = lineEdit_trubChillerLoss->toSI().quantity;
-   double evapRate = lineEdit_evaporationRate->toSI().quantity;
-   double time     = lineEdit_boilTime->toSI().quantity;
+   double size     = lineEdit_batchSize->toSI().quantity();
+   double topUp    = lineEdit_topUpWater->toSI().quantity();
+   double trubLoss = lineEdit_trubChillerLoss->toSI().quantity();
+   double evapRate = lineEdit_evaporationRate->toSI().quantity();
+   double time     = lineEdit_boilTime->toSI().quantity();
 
    return size - topUp + trubLoss + (time/60.0)*evapRate;
 }

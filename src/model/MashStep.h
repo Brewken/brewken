@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -71,6 +71,8 @@ public:
    MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
    MashStep( MashStep const& other );
+
+   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~MashStep();
 

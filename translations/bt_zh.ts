@@ -1128,22 +1128,42 @@ Log file may contain more details.</source>
     <name>Fermentable</name>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">捣碎Mashed</translation>
-    </message>
-    <message>
-        <source>Steeped</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">捣碎Mashed</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">晚Late</translation>
+        <translation type="obsolete">晚Late</translation>
     </message>
     <message>
-        <source>Normal</source>
+        <source>Dry Extract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">提取</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation type="unfinished">粮食</translation>
+    </message>
+    <message>
+        <source>Sugar</source>
+        <translation type="unfinished">糖</translation>
+    </message>
+    <message>
+        <source>Fruit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Juice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Honey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Adjunct</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1201,43 +1221,31 @@ Log file may contain more details.</source>
     <name>FermentableItemDelegate</name>
     <message>
         <source>Grain</source>
-        <translation>粮食</translation>
+        <translation type="vanished">粮食</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>糖</translation>
+        <translation type="vanished">糖</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>提取</translation>
+        <translation type="vanished">提取</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>干浸膏</translation>
+        <translation type="vanished">干浸膏</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>附属物</translation>
+        <translation type="vanished">附属物</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">捣碎Mashed</translation>
-    </message>
-    <message>
-        <source>Steeped</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">捣碎Mashed</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">晚Late</translation>
+        <translation type="obsolete">晚Late</translation>
     </message>
 </context>
 <context>
@@ -1299,19 +1307,19 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Addition Method</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Addition Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Yield</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Change Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Is Mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Add After Boil</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1503,76 +1511,12 @@ Log file may contain more details.</source>
         <translation type="unfinished">合名称合名</translation>
     </message>
     <message>
-        <source>Bittering</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Bittering</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Flavor</source>
-        <translation type="unfinished">味Flavor</translation>
-    </message>
-    <message>
-        <source>Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma, Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">味Flavor</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">提取</translation>
-    </message>
-    <message>
-        <source>Leaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Leaf (wet)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pellet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Hop</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">提取</translation>
     </message>
 </context>
 <context>
@@ -2820,23 +2764,23 @@ Error message:
     </message>
     <message>
         <source>Grain</source>
-        <translation>粮食</translation>
+        <translation type="vanished">粮食</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>糖</translation>
+        <translation type="vanished">糖</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>提取</translation>
+        <translation type="vanished">提取</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>干浸膏Dry Extract</translation>
+        <translation type="vanished">干浸膏Dry Extract</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>附属物</translation>
+        <translation type="vanished">附属物</translation>
     </message>
     <message>
         <source>Infusion</source>
@@ -3156,10 +3100,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>WindischKolbach</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mass</source>
         <translation type="unfinished">块Mass</translation>
     </message>
@@ -3420,6 +3360,70 @@ Log file may contain more details.</source>
     <message>
         <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bitterness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metric Alternate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lovibond</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Windisch Kolbach</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation Volumes</source>
+        <translation type="unfinished">碳化卷Carbonation Volumes</translation>
+    </message>
+    <message>
+        <source>Carbonation Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Parts Per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">晚Late</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">捣碎Mashed</translation>
     </message>
 </context>
 <context>
@@ -5278,23 +5282,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Grain</source>
-        <translation>粮食</translation>
+        <translation type="vanished">粮食</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>糖</translation>
+        <translation type="vanished">糖</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>提取</translation>
+        <translation type="vanished">提取</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>干浸膏Dry Extract</translation>
+        <translation type="vanished">干浸膏Dry Extract</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>附属物</translation>
+        <translation type="vanished">附属物</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -5454,6 +5458,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

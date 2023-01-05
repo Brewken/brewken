@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -141,6 +141,8 @@ public:
    Recipe(QString name);
    Recipe(NamedParameterBundle const & namedParameterBundle);
    Recipe(Recipe const & other);
+
+   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Recipe();
 

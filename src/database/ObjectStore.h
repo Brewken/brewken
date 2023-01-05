@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include <QString>
 #include <QVector>
 
+#include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
 
@@ -37,7 +38,7 @@ class NamedParameterBundle;
  *
  *        This class does all the generic work and, by virtue of being a non-template class, can have most of its
  *        implementation private.  The template class \c ObjectStoreTyped then does the class-specific work (eg
- *        call constructor for the right type of object) and provides a class- specific interface (so that callers
+ *        call constructor for the right type of object) and provides a class-specific interface (so that callers
  *        don't have to downcast return values etc).
  *
  *        A further namespace \c ObjectStoreWrapper slightly simplifies the syntax of calls into \c ObjectStoreTyped
@@ -75,8 +76,6 @@ public:
       String,
       Date,
       Enum,          // Stored as a string in the DB
-      EnumOpt,  // As Enum, but is an optional field, can be NULL in DB and is stored as std::optional<int> in
-                     // memory (inside QVariant).
    };
 
    //
@@ -190,10 +189,13 @@ public:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
+    * \param isOptionalFunction Pointer to function that tells us whether Qt parameters on this object type are
+    *                           "optional" (ie wrapped in \c std::optional)
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
     */
-   ObjectStore(TableDefinition const &          primaryTable,
+   ObjectStore(IsOptionalFnPtr          const   isOptionalFunction,
+               TableDefinition          const & primaryTable,
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();

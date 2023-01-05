@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreTyped.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * database/ObjectStoreTyped.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -132,7 +132,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "recommend_mash",   PropertyNames::Fermentable::recommendMash                 },
          {ObjectStore::FieldType::Double, "yield",            PropertyNames::Fermentable::yield_pct                     },
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-         {ObjectStore::FieldType::EnumOpt, "grain_group",     PropertyNames::Fermentable::grainGroup,               &Fermentable::grainGroupStringMapping},
+         {ObjectStore::FieldType::Enum,   "grain_group",      PropertyNames::Fermentable::grainGroup,               &Fermentable::grainGroupStringMapping},
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {
@@ -707,7 +707,7 @@ namespace {
    //
    // This should give us all the singleton instances
    //
-   template<class NE> ObjectStoreTyped<NE> ostSingleton{PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
+   template<class NE> ObjectStoreTyped<NE> ostSingleton{&NE::isOptional, PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
 
 }
 
