@@ -51,11 +51,13 @@ JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType type,
 
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,
+   IsOptionalFnPtr const isOptionalFunction,
    char const * const namedEntityClassName,
    JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
    std::initializer_list<JsonRecordDefinition::FieldDefinition> fieldDefinitions
 ) :
    recordName{recordName},
+   isOptionalFunction{isOptionalFunction},
    namedEntityClassName{namedEntityClassName},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{fieldDefinitions} {
@@ -64,11 +66,13 @@ JsonRecordDefinition::JsonRecordDefinition(
 
 JsonRecordDefinition::JsonRecordDefinition(
    char const * const recordName,
+   IsOptionalFnPtr const isOptionalFunction,
    char const * const namedEntityClassName,
    JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
    std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
 ) :
    recordName{recordName},
+   isOptionalFunction{isOptionalFunction},
    namedEntityClassName{namedEntityClassName},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{} {

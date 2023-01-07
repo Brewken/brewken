@@ -113,23 +113,23 @@ ObjectStore & Fermentable::getObjectStoreTypedInstance() const {
 
 Fermentable::Fermentable(QString name) :
    NamedEntityWithInventory{name, true},
-   m_typeStr       {""                      },
-   m_type          {Fermentable::Type::Grain},
-   m_amountKg      {0.0                     },
-   m_yieldPct      {0.0                     },
-   m_colorSrm      {0.0                     },
-   m_isAfterBoil   {false                   },
-   m_origin        {""                      },
-   m_supplier      {""                      },
-   m_notes         {""                      },
-   m_coarseFineDiff{0.0                     },
-   m_moisturePct   {0.0                     },
-   m_diastaticPower{0.0                     },
-   m_proteinPct    {0.0                     },
-   m_maxInBatchPct {100.0                   },
-   m_recommendMash {false                   },
-   m_ibuGalPerLb   {0.0                     },
-   m_isMashed      {false                   },
+   m_typeStr               {""                              },
+   m_type                  {Fermentable::Type::Grain        },
+   m_amountKg              {0.0                             },
+   m_yieldPct              {0.0                             },
+   m_colorSrm              {0.0                             },
+   m_isAfterBoil           {false                           },
+   m_origin                {""                              },
+   m_supplier              {""                              },
+   m_notes                 {""                              },
+   m_coarseFineDiff        {0.0                             },
+   m_moisturePct           {0.0                             },
+   m_diastaticPower        {0.0                             },
+   m_proteinPct            {0.0                             },
+   m_maxInBatchPct         {100.0                           },
+   m_recommendMash         {false                           },
+   m_ibuGalPerLb           {0.0                             },
+   m_isMashed              {false                           },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup            {std::nullopt                    },
    m_producer              {""                              },
@@ -150,60 +150,60 @@ Fermentable::Fermentable(QString name) :
 
 Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_typeStr       {""},
-   m_type          {namedParameterBundle.val<Fermentable::Type             >(PropertyNames::Fermentable::type)},
-   m_amountKg      {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::amount_kg                        )},
-   m_yieldPct      {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::yield_pct                        )},
-   m_colorSrm      {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::color_srm                        )},
-   m_isAfterBoil   {namedParameterBundle.val<bool                          >(PropertyNames::Fermentable::addAfterBoil                     )},
-   m_origin        {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::origin                , QString())},
-   m_supplier      {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::supplier              , QString())},
-   m_notes         {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::notes                 , QString())},
-   m_coarseFineDiff{namedParameterBundle.val<double                        >(PropertyNames::Fermentable::coarseFineDiff_pct               )},
-   m_moisturePct   {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::moisture_pct                     )},
-   m_diastaticPower{namedParameterBundle.val<double                        >(PropertyNames::Fermentable::diastaticPower_lintner           )},
-   m_proteinPct    {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::protein_pct                      )},
-   m_maxInBatchPct {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::maxInBatch_pct                   )},
-   m_recommendMash {namedParameterBundle.val<bool                          >(PropertyNames::Fermentable::recommendMash                    )},
-   m_ibuGalPerLb   {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::ibuGalPerLb                      )},
-   m_isMashed      {namedParameterBundle.val<bool                          >(PropertyNames::Fermentable::isMashed              , false    )},
+   m_typeStr               {""},
+   m_type                  {namedParameterBundle.val<Fermentable::Type             >(PropertyNames::Fermentable::type)},
+   m_amountKg              {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::amount_kg                        )},
+   m_yieldPct              {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::yield_pct                        )},
+   m_colorSrm              {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::color_srm                        )},
+   m_isAfterBoil           {namedParameterBundle.val<bool                          >(PropertyNames::Fermentable::addAfterBoil                     )},
+   m_origin                {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::origin                , QString())},
+   m_supplier              {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::supplier              , QString())},
+   m_notes                 {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::notes                 , QString())},
+   m_coarseFineDiff        {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::coarseFineDiff_pct               )},
+   m_moisturePct           {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::moisture_pct                     )},
+   m_diastaticPower        {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::diastaticPower_lintner           )},
+   m_proteinPct            {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::protein_pct                      )},
+   m_maxInBatchPct         {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::maxInBatch_pct                   )},
+   m_recommendMash         {namedParameterBundle.val<bool                          >(PropertyNames::Fermentable::recommendMash                    )},
+   m_ibuGalPerLb           {namedParameterBundle.val<double                        >(PropertyNames::Fermentable::ibuGalPerLb                      )},
+   m_isMashed              {namedParameterBundle.val<bool                          >(PropertyNames::Fermentable::isMashed              , false    )},
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_grainGroup            {namedParameterBundle.optEnumVal<Fermentable::GrainGroup>(PropertyNames::Fermentable::grainGroup            )},
-   m_producer              {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::producer              )},
-   m_productId             {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::productId             )},
-   m_fineGrindYield_pct    {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::fineGrindYield_pct    )},
-   m_coarseGrindYield_pct  {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::coarseGrindYield_pct  )},
-   m_potentialYield_sg     {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::potentialYield_sg     )},
-   m_alphaAmylase_dextUnits{namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::alphaAmylase_dextUnits)},
-   m_kolbachIndex_pct      {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::kolbachIndex_pct      )},
-   m_amount                {namedParameterBundle.val<MassOrVolumeAmt               >(PropertyNames::Fermentable::amount                )},
-   m_hardnessPrpGlassy_pct {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::hardnessPrpGlassy_pct )},
-   m_hardnessPrpHalf_pct   {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::hardnessPrpHalf_pct   )},
-   m_hardnessPrpMealy_pct  {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::hardnessPrpMealy_pct  )},
-   m_kernelSizePrpPlump    {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::kernelSizePrpPlump    )},
-   m_kernelSizePrpThin     {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::kernelSizePrpThin     )} {
+   m_grainGroup            {namedParameterBundle.optEnumVal<Fermentable::GrainGroup>(PropertyNames::Fermentable::grainGroup                       )},
+   m_producer              {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::producer                         )},
+   m_productId             {namedParameterBundle.val<QString                       >(PropertyNames::Fermentable::productId                        )},
+   m_fineGrindYield_pct    {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::fineGrindYield_pct               )},
+   m_coarseGrindYield_pct  {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::coarseGrindYield_pct             )},
+   m_potentialYield_sg     {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::potentialYield_sg                )},
+   m_alphaAmylase_dextUnits{namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::alphaAmylase_dextUnits           )},
+   m_kolbachIndex_pct      {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::kolbachIndex_pct                 )},
+   m_amount                {namedParameterBundle.val<MassOrVolumeAmt               >(PropertyNames::Fermentable::amount                           )},
+   m_hardnessPrpGlassy_pct {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::hardnessPrpGlassy_pct            )},
+   m_hardnessPrpHalf_pct   {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::hardnessPrpHalf_pct              )},
+   m_hardnessPrpMealy_pct  {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::hardnessPrpMealy_pct             )},
+   m_kernelSizePrpPlump    {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::kernelSizePrpPlump               )},
+   m_kernelSizePrpThin     {namedParameterBundle.val<std::optional<double>         >(PropertyNames::Fermentable::kernelSizePrpThin                )} {
    return;
 }
 
 Fermentable::Fermentable(Fermentable const & other) :
-   NamedEntityWithInventory{other                 },
-   m_typeStr       {other.m_typeStr       },
-   m_type          {other.m_type          },
-   m_amountKg      {other.m_amountKg      },
-   m_yieldPct      {other.m_yieldPct      },
-   m_colorSrm      {other.m_colorSrm      },
-   m_isAfterBoil   {other.m_isAfterBoil   },
-   m_origin        {other.m_origin        },
-   m_supplier      {other.m_supplier      },
-   m_notes         {other.m_notes         },
-   m_coarseFineDiff{other.m_coarseFineDiff},
-   m_moisturePct   {other.m_moisturePct   },
-   m_diastaticPower{other.m_diastaticPower},
-   m_proteinPct    {other.m_proteinPct    },
-   m_maxInBatchPct {other.m_maxInBatchPct },
-   m_recommendMash {other.m_recommendMash },
-   m_ibuGalPerLb   {other.m_ibuGalPerLb   },
-   m_isMashed      {other.m_isMashed      },
+   NamedEntityWithInventory{other                         },
+   m_typeStr               {other.m_typeStr               },
+   m_type                  {other.m_type                  },
+   m_amountKg              {other.m_amountKg              },
+   m_yieldPct              {other.m_yieldPct              },
+   m_colorSrm              {other.m_colorSrm              },
+   m_isAfterBoil           {other.m_isAfterBoil           },
+   m_origin                {other.m_origin                },
+   m_supplier              {other.m_supplier              },
+   m_notes                 {other.m_notes                 },
+   m_coarseFineDiff        {other.m_coarseFineDiff        },
+   m_moisturePct           {other.m_moisturePct           },
+   m_diastaticPower        {other.m_diastaticPower        },
+   m_proteinPct            {other.m_proteinPct            },
+   m_maxInBatchPct         {other.m_maxInBatchPct         },
+   m_recommendMash         {other.m_recommendMash         },
+   m_ibuGalPerLb           {other.m_ibuGalPerLb           },
+   m_isMashed              {other.m_isMashed              },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup            {other.m_grainGroup            },
    m_producer              {other.m_producer              },
@@ -242,25 +242,25 @@ bool Fermentable::isOptional(BtStringConst const & propertyName) {
 Fermentable::~Fermentable() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-Fermentable::Type                      Fermentable::type()                   const { return this->m_type;           }
-double                                 Fermentable::amount_kg()              const { return this->m_amountKg;       }
-double                                 Fermentable::yield_pct()              const { return this->m_yieldPct;       }
-double                                 Fermentable::color_srm()              const { return this->m_colorSrm;       }
-bool                                   Fermentable::addAfterBoil()           const { return this->m_isAfterBoil;    }
-QString                                Fermentable::origin()                 const { return this->m_origin;         }
-QString                                Fermentable::supplier()               const { return this->m_supplier;       }
-QString                                Fermentable::notes()                  const { return this->m_notes;          }
-double                                 Fermentable::coarseFineDiff_pct()     const { return this->m_coarseFineDiff; }
-double                                 Fermentable::moisture_pct()           const { return this->m_moisturePct;    }
-double                                 Fermentable::diastaticPower_lintner() const { return this->m_diastaticPower; }
-double                                 Fermentable::protein_pct()            const { return this->m_proteinPct;     }
-double                                 Fermentable::maxInBatch_pct()         const { return this->m_maxInBatchPct;  }
-bool                                   Fermentable::recommendMash()          const { return this->m_recommendMash;  }
-double                                 Fermentable::ibuGalPerLb()            const { return this->m_ibuGalPerLb;    }
-bool                                   Fermentable::isMashed()               const { return this->m_isMashed;       }
+Fermentable::Type                      Fermentable::type()                   const { return              this->m_type                   ; }
+double                                 Fermentable::amount_kg()              const { return              this->m_amountKg               ; }
+double                                 Fermentable::yield_pct()              const { return              this->m_yieldPct               ; }
+double                                 Fermentable::color_srm()              const { return              this->m_colorSrm               ; }
+bool                                   Fermentable::addAfterBoil()           const { return              this->m_isAfterBoil            ; }
+QString                                Fermentable::origin()                 const { return              this->m_origin                 ; }
+QString                                Fermentable::supplier()               const { return              this->m_supplier               ; }
+QString                                Fermentable::notes()                  const { return              this->m_notes                  ; }
+double                                 Fermentable::coarseFineDiff_pct()     const { return              this->m_coarseFineDiff         ; }
+double                                 Fermentable::moisture_pct()           const { return              this->m_moisturePct            ; }
+double                                 Fermentable::diastaticPower_lintner() const { return              this->m_diastaticPower         ; }
+double                                 Fermentable::protein_pct()            const { return              this->m_proteinPct             ; }
+double                                 Fermentable::maxInBatch_pct()         const { return              this->m_maxInBatchPct          ; }
+bool                                   Fermentable::recommendMash()          const { return              this->m_recommendMash          ; }
+double                                 Fermentable::ibuGalPerLb()            const { return              this->m_ibuGalPerLb            ; }
+bool                                   Fermentable::isMashed()               const { return              this->m_isMashed               ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<Fermentable::GrainGroup> Fermentable::grainGroup            () const { return              this->m_grainGroup             ; }
-std::optional<int>                     Fermentable::grainGroupAsInt       () const { return castToOptInt(this->m_grainGroup            ); }
+std::optional<int>                     Fermentable::grainGroupAsInt       () const { return castToOptInt(this->m_grainGroup)            ; }
 QString                                Fermentable::producer              () const { return              this->m_producer               ; }
 QString                                Fermentable::productId             () const { return              this->m_productId              ; }
 std::optional<double>                  Fermentable::fineGrindYield_pct    () const { return              this->m_fineGrindYield_pct     ; }
@@ -294,22 +294,22 @@ double Fermentable::equivSucrose_kg() const {
 }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Fermentable::setType                  (Type                      const   val) { this->setAndNotify(PropertyNames::Fermentable::type,                   this->m_type,           val); }
-void Fermentable::setAddAfterBoil          (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil,           this->m_isAfterBoil,    val); }
-void Fermentable::setOrigin                (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::origin,                 this->m_origin,         val); }
-void Fermentable::setSupplier              (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::supplier,               this->m_supplier,       val); }
-void Fermentable::setNotes                 (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::notes,                  this->m_notes,          val); }
-void Fermentable::setRecommendMash         (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::recommendMash,          this->m_recommendMash,  val); }
-void Fermentable::setIsMashed              (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::isMashed,               this->m_isMashed,       val); }
-void Fermentable::setIbuGalPerLb           (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::ibuGalPerLb,            this->m_ibuGalPerLb,    val); }
-void Fermentable::setAmount_kg             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::amount_kg,              this->m_amountKg,       this->enforceMin      (val, "amount"));                     }
-void Fermentable::setYield_pct             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::yield_pct,              this->m_yieldPct,       this->enforceMinAndMax(val, "amount",         0.0, 100.0)); }
-void Fermentable::setColor_srm             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::color_srm,              this->m_colorSrm,       this->enforceMin      (val, "color"));                      }
-void Fermentable::setCoarseFineDiff_pct    (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct,     this->m_coarseFineDiff, this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); }
-void Fermentable::setMoisture_pct          (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::moisture_pct,           this->m_moisturePct,    this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); }
-void Fermentable::setDiastaticPower_lintner(double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner, this->m_diastaticPower, this->enforceMin      (val, "diastatic power"));            }
-void Fermentable::setProtein_pct           (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::protein_pct,            this->m_proteinPct,     this->enforceMinAndMax(val, "protein",        0.0, 100.0)); }
-void Fermentable::setMaxInBatch_pct        (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct,         this->m_maxInBatchPct,  this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
+void Fermentable::setType                  (Type                      const   val) { this->setAndNotify(PropertyNames::Fermentable::type,                   this->m_type                  , val); }
+void Fermentable::setAddAfterBoil          (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil,           this->m_isAfterBoil           , val); }
+void Fermentable::setOrigin                (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::origin,                 this->m_origin                , val); }
+void Fermentable::setSupplier              (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::supplier,               this->m_supplier              , val); }
+void Fermentable::setNotes                 (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::notes,                  this->m_notes                 , val); }
+void Fermentable::setRecommendMash         (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::recommendMash,          this->m_recommendMash         , val); }
+void Fermentable::setIsMashed              (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::isMashed,               this->m_isMashed              , val); }
+void Fermentable::setIbuGalPerLb           (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::ibuGalPerLb,            this->m_ibuGalPerLb           , val); }
+void Fermentable::setAmount_kg             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::amount_kg,              this->m_amountKg              , this->enforceMin      (val, "amount"));                     }
+void Fermentable::setYield_pct             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::yield_pct,              this->m_yieldPct              , this->enforceMinAndMax(val, "amount",         0.0, 100.0)); }
+void Fermentable::setColor_srm             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::color_srm,              this->m_colorSrm              , this->enforceMin      (val, "color"));                      }
+void Fermentable::setCoarseFineDiff_pct    (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct,     this->m_coarseFineDiff        , this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); }
+void Fermentable::setMoisture_pct          (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::moisture_pct,           this->m_moisturePct           , this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); }
+void Fermentable::setDiastaticPower_lintner(double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner, this->m_diastaticPower        , this->enforceMin      (val, "diastatic power"));            }
+void Fermentable::setProtein_pct           (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::protein_pct,            this->m_proteinPct            , this->enforceMinAndMax(val, "protein",        0.0, 100.0)); }
+void Fermentable::setMaxInBatch_pct        (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct,         this->m_maxInBatchPct         , this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Fermentable::setGrainGroup            (std::optional<GrainGroup> const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup,             this->m_grainGroup            , val                            ); }
 void Fermentable::setGrainGroupAsInt       (std::optional<int>        const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup,             this->m_grainGroup            , castFromOptInt<GrainGroup>(val)); }

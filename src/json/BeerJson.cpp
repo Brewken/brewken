@@ -162,6 +162,7 @@ namespace {
    // it's not used) but other compilers do.
    template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION {
       "not_used",
+      nullptr,
       "not_used",
       JsonRecordDefinition::create<JsonRecord>,
       std::initializer_list<JsonRecordDefinition::FieldDefinition>{}
@@ -227,6 +228,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<void> {
       "beerjson",
+      nullptr,
       "",
       JsonRecordDefinition::create<JsonRecord>,
       {
@@ -257,7 +259,7 @@ namespace {
       {JsonRecordDefinition::FieldType::String              , "origin"                      , PropertyNames::Fermentable::origin              ,                                      },
       {JsonRecordDefinition::FieldType::String              , "producer"                    , PropertyNames::Fermentable::producer            ,                                      },
       {JsonRecordDefinition::FieldType::String              , "product_id"                  , PropertyNames::Fermentable::productId           ,                                      },
-      {JsonRecordDefinition::FieldType::EnumOpt             , "grain_group"                 , PropertyNames::Fermentable::grainGroup          , &Fermentable::grainGroupStringMapping},
+      {JsonRecordDefinition::FieldType::Enum                , "grain_group"                 , PropertyNames::Fermentable::grainGroup          , &Fermentable::grainGroupStringMapping},
       {JsonRecordDefinition::FieldType::SingleUnitValue     , "yield/fine_grind"            , PropertyNames::Fermentable::fineGrindYield_pct  , &BEER_JSON_PERCENT_UNIT              },
       {JsonRecordDefinition::FieldType::SingleUnitValue     , "yield/coarse_grind"          , PropertyNames::Fermentable::coarseGrindYield_pct, &BEER_JSON_PERCENT_UNIT              },
       {JsonRecordDefinition::FieldType::SingleUnitValue     , "yield/fine_coarse_difference", PropertyNames::Fermentable::coarseFineDiff_pct  , &BEER_JSON_PERCENT_UNIT              },
@@ -310,6 +312,7 @@ namespace {
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
       "fermentables",
+      Fermentable::isOptional,
       "Fermentable",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentable > >,
       {BeerJson_FermentableBase, BeerJson_FermentableType_ExclBase}
@@ -351,6 +354,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       "miscellaneous_ingredients",
+      Misc::isOptional,
       "Misc",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
       {BeerJson_MiscellaneousBase, BeerJson_MiscellaneousType_ExclBase}
@@ -404,6 +408,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Hop> {
       "hop_varieties",
+      Hop::isOptional,
       "Hop",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase, BeerJson_HopType_ExclBase}
@@ -451,6 +456,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
       "cultures",
+      Yeast::isOptional,
       "Yeast",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
       {
@@ -492,6 +498,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Water> {
       "profiles",
+      Water::isOptional,
       "Water",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
       {
@@ -532,6 +539,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
       "styles",
+      Style::isOptional,
       "Style",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
       {

@@ -218,8 +218,6 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                   case XmlRecord::FieldType::Bool:
                      // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
                      if (value.toLower() == "true") {
-                        parsedValue.setValue(true);
-                        if (propertyIsOptional)
                         parsedValue = Optional::variantFromRaw(true, propertyIsOptional);
                         parsedValueOk = true;
                      } else if (value.toLower() == "false") {
@@ -749,7 +747,8 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
    // Callers are not allowed to supply null indent string
    Q_ASSERT(nullptr != indentString);
    qDebug() <<
-      Q_FUNC_INFO << "Exporting XML for" << namedEntityToExport.metaObject()->className() << "#" << namedEntityToExport.key();
+      Q_FUNC_INFO << "Exporting XML for" << namedEntityToExport.metaObject()->className() << "#" <<
+      namedEntityToExport.key();
    writeIndents(out, indentLevel, indentString);
    out << "<" << this->recordName << ">\n";
 
@@ -764,14 +763,14 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
       if (fieldDefinition.propertyName.isNull()) {
          // At the moment at least, we support all XmlRecord::RecordSimple and XmlRecord::RecordComplex fields, so it's
          // a coding error if one of them does not have a property name.
-         Q_ASSERT(XmlRecord::FieldType::RecordSimple != fieldDefinition.fieldType);
+         Q_ASSERT(XmlRecord::FieldType::RecordSimple  != fieldDefinition.fieldType);
          Q_ASSERT(XmlRecord::FieldType::RecordComplex != fieldDefinition.fieldType);
          continue;
       }
 
       // Nested record fields are of two types.  XmlRecord::RecordSimple can be handled generically.
       // XmlRecord::RecordComplex need to be handled in part by subclasses.
-      if (XmlRecord::FieldType::RecordSimple == fieldDefinition.fieldType ||
+      if (XmlRecord::FieldType::RecordSimple  == fieldDefinition.fieldType ||
           XmlRecord::FieldType::RecordComplex == fieldDefinition.fieldType) {
          //
          // Some of the work is generic, so we do it here.  In particular, we can work out what tags are needed to
@@ -894,8 +893,8 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                // It's definitely a coding error if there is no enumMapping for a field declared as Enum!
                Q_ASSERT(nullptr != fieldDefinition.enumMapping);
                if (Optional::removeOptionalWrapperIfPresent<int>(value, propertyIsOptional)) {
-                  // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log
-                  // an error and throw an exception).
+                  // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will
+                  // log an error and throw an exception).
                   valueAsText = fieldDefinition.enumMapping->enumToString(value.toInt());
                }
                break;

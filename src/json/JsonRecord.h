@@ -225,6 +225,22 @@ protected:
     */
    static void modifyClashingName(QString & candidateName);
 
+private:
+   /**
+    * \brief Add a value to a JSON object
+    *
+    * \param fieldDefinition
+    * \param recordDataAsObject
+    * \param key
+    * \param value  The value to add.  NB this can be modified by this function (specifically to change the contents
+    *               from \c std::optional<T> to \c T).  Caller is not expected to need the value after this function
+    *               returns.
+    */
+   void insertValue(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+                    boost::json::object & recordDataAsObject,
+                    std::string_view const & key,
+                    QVariant & value);
+
 protected:
    JsonCoding const & jsonCoding;
 

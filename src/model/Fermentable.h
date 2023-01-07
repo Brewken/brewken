@@ -75,9 +75,6 @@ AddPropertyName(yield_pct             )
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
-// Need this to be able to use MassOrVolumeAmt in Qt Properties system
-Q_DECLARE_METATYPE(MassOrVolumeAmt);
-
 /*!
  * \class Fermentable
  *
@@ -266,7 +263,13 @@ public:
     */
    Q_PROPERTY(std::optional<double> kolbachIndex_pct        READ kolbachIndex_pct        WRITE setKolbachIndex_pct      )
 
-   Q_PROPERTY(MassOrVolumeAmt    amount                  READ amount                  WRITE setAmount                )
+   /**
+    * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
+    *
+    * .:TBD JSON:. Check what else we need to do to tie in to PhysicalQuantity::Mixed, plus look at how we force weight
+    * for BeerXML.
+    */
+   Q_PROPERTY(MassOrVolumeAmt    amount                  READ amount                  WRITE setAmount                   )
 
    /**
     * \brief Percentage of malt that is "glassy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
@@ -333,6 +336,7 @@ public:
    Q_PROPERTY(std::optional<double> kernelSizePrpThin       READ kernelSizePrpThin       WRITE setKernelSizePrpThin     )
 
    /**
+    * .:TODO JSON:. Finish adding the other BeerJSON fields to \c Fermentable
     *           ...
     *           The opposite of mealiness is “vitreosity,” which is sometimes used as an alternative measurement.
     *           A value of 1 is assigned to glassy (vitreous) kernels, 0.5 to half-glassy and 0 to mealy kernels. The
@@ -344,22 +348,22 @@ public:
     */
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   Type    type                  () const;
-   double  amount_kg             () const;
-   double  yield_pct             () const;
-   double  color_srm             () const;
-   bool    addAfterBoil          () const;
-   QString origin                () const;
-   QString supplier              () const;
-   QString notes                 () const;
-   double  coarseFineDiff_pct    () const;
-   double  moisture_pct          () const;
-   double  diastaticPower_lintner() const;
-   double  protein_pct           () const;
-   double  maxInBatch_pct        () const;
-   bool    recommendMash         () const;
-   double  ibuGalPerLb           () const;
-   bool    isMashed              () const;
+   Type    type                                    () const;
+   double  amount_kg                               () const;
+   double  yield_pct                               () const;
+   double  color_srm                               () const;
+   bool    addAfterBoil                            () const;
+   QString origin                                  () const;
+   QString supplier                                () const;
+   QString notes                                   () const;
+   double  coarseFineDiff_pct                      () const;
+   double  moisture_pct                            () const;
+   double  diastaticPower_lintner                  () const;
+   double  protein_pct                             () const;
+   double  maxInBatch_pct                          () const;
+   bool    recommendMash                           () const;
+   double  ibuGalPerLb                             () const;
+   bool    isMashed                                () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> grainGroup            () const;
    std::optional<int>        grainGroupAsInt       () const;

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/BtStringConst.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * utils/BtStringConst.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -54,7 +54,9 @@ public:
    ~BtStringConst();
 
    /**
-    * \brief Compare two \c BtStringConst for equality using \c std::strcmp internally after checking for null pointers
+    * \brief Compare two \c BtStringConst for equality using \c std::strcmp internally after doing short-cut checks (eg
+    *        are lhs and rhs references to the same object, does either/both sides contain null pointer to its C
+    *        string).
     */
    bool operator==(BtStringConst const & rhs) const;
    template<class T>

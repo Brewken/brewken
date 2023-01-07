@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/BtStringConst.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * utils/BtStringConst.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -34,7 +34,12 @@ BtStringConst::BtStringConst(BtStringConst &&) = default;
 BtStringConst::~BtStringConst() = default;
 
 bool BtStringConst::operator==(BtStringConst const & rhs) const {
-   if (this->cString == nullptr && rhs.cString == nullptr) { return true; }
+   // A very common case of equality should be that two strings are in fact the same constant, so checking whether the
+   // addresses match is the first thing we do
+   if (this == &rhs) {
+      return true;
+   }
+   if (this->cString == nullptr && rhs.cString == nullptr) { return true;  }
    if (this->cString == nullptr || rhs.cString == nullptr) { return false; }
    return 0 == std::strcmp(this->cString, rhs.cString);
 }

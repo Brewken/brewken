@@ -66,12 +66,26 @@ namespace Optional {
    }
 
    /**
+    * \brief Convenience wrapper function that calls \c QVariant::canConvert() for either \c T or \c std::optional<T>
+    *        as appropriate.
+    */
+   template<typename T>
+   bool canConvert(QVariant const & propertyValue, bool const propertyIsOptional) {
+      if (propertyIsOptional) {
+         return propertyValue.canConvert< std::optional<T> >();
+      }
+      return propertyValue.canConvert<T>();
+   }
+
+   /**
     * \brief Remove the \c std::optional wrapper, if it is present, from inside a \c QVariant
     *
     * \return \c false if the contained value is optional and not present, \c true otherwise
     */
    template<typename T>
    bool removeOptionalWrapperIfPresent(QVariant & propertyValue, bool const propertyIsOptional) {
+      // It is a coding error to pass a QVariant that can't be converted to (optional) T
+      Q_ASSERT(canConvert<T>(propertyValue, propertyIsOptional));
       if (propertyIsOptional) {
          removeOptionalWrapper<T>(propertyValue);
          return !propertyValue.isNull();

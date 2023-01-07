@@ -24,6 +24,7 @@
 #include <QString>
 #include <QVariant>
 
+#include "measurement/Amount.h"
 #include "utils/BtStringConst.h"
 
 //
@@ -46,12 +47,19 @@
 // QVariant.  This is a convenient place to do it because this header gets included not only by all the model classes
 // but also by all the different serialisation code (Database, XML, JSON).
 //
+// Note that Qt MOC will error if you repeat a Q_DECLARE_METATYPE() declaration for the same type, which is another
+// reason to put them all in one central place rather than try to declare as needed individually.
+//
 Q_DECLARE_METATYPE(std::optional<bool        >)
 Q_DECLARE_METATYPE(std::optional<double      >)
 Q_DECLARE_METATYPE(std::optional<int         >)
 Q_DECLARE_METATYPE(std::optional<QDate       >)
 Q_DECLARE_METATYPE(std::optional<QString     >)
 Q_DECLARE_METATYPE(std::optional<unsigned int>)
+
+// Need these to be able to use MassOrVolumeAmt in Qt Properties system
+Q_DECLARE_METATYPE(MassOrVolumeAmt);
+Q_DECLARE_METATYPE(std::optional<MassOrVolumeAmt>);
 
 /**
  * \brief This allows constructors to be called without a long list of positional parameters and, more importantly, for

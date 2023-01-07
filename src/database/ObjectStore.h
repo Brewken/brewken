@@ -89,17 +89,17 @@ public:
 
    struct TableDefinition;
    struct TableField {
-      FieldType const                 fieldType;
-      BtStringConst const             columnName;   // Shouldn't ever be empty in practice
-      BtStringConst const             propertyName; // Can be empty in a junction table (see below)
+      FieldType                 const fieldType;
+      BtStringConst             const columnName;   // Shouldn't ever be empty in practice
+      BtStringConst             const propertyName; // Can be empty in a junction table (see below)
       EnumStringMapping const * const enumMapping;  // Only needed if fieldType is Enum
-      TableDefinition const * const   foreignKeyTo;
+      TableDefinition   const * const foreignKeyTo;
       //! Constructor
-      TableField(FieldType const                 fieldType,
-                 char const * const              columnName = nullptr,
-                 BtStringConst const &           propertyName = BtString::NULL_STR,
-                 EnumStringMapping const * const enumMapping = nullptr,
-                 TableDefinition const * const   foreignKeyTo = nullptr) :
+      TableField(FieldType                 const   fieldType,
+                 char              const * const   columnName   = nullptr,
+                 BtStringConst             const & propertyName = BtString::NULL_STR,
+                 EnumStringMapping const * const   enumMapping  = nullptr,
+                 TableDefinition   const * const   foreignKeyTo = nullptr) :
          fieldType{fieldType},
          columnName{columnName},
          propertyName{propertyName},
@@ -189,7 +189,7 @@ public:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
-    * \param isOptionalFunction Pointer to function that tells us whether Qt parameters on this object type are
+    * \param isOptionalFunction Pointer to function that tells us whether Qt properties on this object type are
     *                           "optional" (ie wrapped in \c std::optional)
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
