@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -148,6 +148,42 @@ ObjectStore & Hop::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Hop>::getInstance();
 }
 
+TypeLookup const Hop::typeLookup {
+   "Hop",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::alpha_pct            , Hop::m_alpha_pct            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount_kg            , Hop::m_amount_kg            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::beta_pct             , Hop::m_beta_pct             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::b_pinene_pct         , Hop::m_b_pinene_pct         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::caryophyllene_pct    , Hop::m_caryophyllene_pct    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::cohumulone_pct       , Hop::m_cohumulone_pct       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::farnesene_pct        , Hop::m_farnesene_pct        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::form                 , Hop::m_form                 ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::geraniol_pct         , Hop::m_geraniol_pct         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::hsi_pct              , Hop::m_hsi_pct              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::humulene_pct         , Hop::m_humulene_pct         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::limonene_pct         , Hop::m_limonene_pct         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::linalool_pct         , Hop::m_linalool_pct         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::myrcene_pct          , Hop::m_myrcene_pct          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::nerol_pct            , Hop::m_nerol_pct            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::notes                , Hop::m_notes                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::origin               , Hop::m_origin               ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::pinene_pct           , Hop::m_pinene_pct           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::polyphenols_pct      , Hop::m_polyphenols_pct      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::producer             , Hop::m_producer             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::product_id           , Hop::m_product_id           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::substitutes          , Hop::m_substitutes          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::time_min             , Hop::m_time_min             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::total_oil_ml_per_100g, Hop::m_total_oil_ml_per_100g),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::xanthohumol_pct      , Hop::m_xanthohumol_pct      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ),
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+
 Hop::Hop(QString name) :
    NamedEntityWithInventory{name, true},
    m_use                  {Hop::Use::Mash},
@@ -167,7 +203,7 @@ Hop::Hop(QString name) :
    m_myrcene_pct          {0.0},
    m_producer             {"" },
    m_product_id           {"" },
-   m_year                 {-1 }, // -1 means no year
+   m_year                 {std::nullopt},
    m_total_oil_ml_per_100g{0.0},
    m_farnesene_pct        {0.0},
    m_geraniol_pct         {0.0},
@@ -247,10 +283,6 @@ Hop::Hop(Hop const & other) :
    return;
 }
 
-bool Hop::isOptional(BtStringConst const & propertyName) {
-   return NamedEntity::isOptional(propertyName);
-}
-
 Hop::~Hop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
@@ -272,7 +304,7 @@ double    Hop::myrcene_pct()           const { return this->m_myrcene_pct;      
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 QString   Hop::producer()              const { return this->m_producer;              }
 QString   Hop::product_id()            const { return this->m_product_id;            }
-int       Hop::year()                  const { return this->m_year;                  }
+std::optional<int>       Hop::year()                  const { return this->m_year;                  }
 double    Hop::total_oil_ml_per_100g() const { return this->m_total_oil_ml_per_100g; }
 double    Hop::farnesene_pct()         const { return this->m_farnesene_pct;         }
 double    Hop::geraniol_pct()          const { return this->m_geraniol_pct;          }
@@ -307,7 +339,7 @@ void Hop::setMyrcene_pct          (double    const   val) { this->setAndNotify(P
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Hop::setProducer             (QString   const & val) { this->setAndNotify(PropertyNames::Hop::producer,              this->m_producer,              val                                                             ); }
 void Hop::setProduct_id           (QString   const & val) { this->setAndNotify(PropertyNames::Hop::product_id,            this->m_product_id,            val                                                             ); }
-void Hop::setYear                 (int       const   val) { this->setAndNotify(PropertyNames::Hop::year,                  this->m_year,                  val                                                             ); }
+void Hop::setYear                 (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::year,                  this->m_year,                  val                                                             ); }
 void Hop::setTotal_oil_ml_per_100g(double    const   val) { this->setAndNotify(PropertyNames::Hop::total_oil_ml_per_100g, this->m_total_oil_ml_per_100g, this->enforceMinAndMax(val, "total_oil_ml_per_100g", 0.0, 100.0)); }
 void Hop::setFarnesene_pct        (double    const   val) { this->setAndNotify(PropertyNames::Hop::farnesene_pct,         this->m_farnesene_pct,         this->enforceMinAndMax(val, "farnesene_pct",         0.0, 100.0)); }
 void Hop::setGeraniol_pct         (double    const   val) { this->setAndNotify(PropertyNames::Hop::geraniol_pct,          this->m_geraniol_pct,          this->enforceMinAndMax(val, "geraniol_pct",          0.0, 100.0)); }

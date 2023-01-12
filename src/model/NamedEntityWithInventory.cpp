@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntityWithInventory.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * model/NamedEntityWithInventory.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -42,6 +42,8 @@ NamedEntityWithInventory::NamedEntityWithInventory(NamedEntityWithInventory cons
    m_inventory_id {-1} {
    return;
 }
+
+NamedEntityWithInventory::~NamedEntityWithInventory() = default;
 
 void NamedEntityWithInventory::makeChild(NamedEntity const & copiedFrom) {
    // First do the base class work

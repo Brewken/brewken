@@ -111,6 +111,44 @@ ObjectStore & Fermentable::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Fermentable>::getInstance();
 }
 
+TypeLookup const Fermentable::typeLookup {
+   "Fermentable",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::addAfterBoil          , Fermentable::m_isAfterBoil          ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::alphaAmylase_dextUnits, Fermentable::m_alphaAmylase_dextUnits),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount                , Fermentable::m_amount                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount_kg             , Fermentable::m_amountKg             ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::coarseFineDiff_pct    , Fermentable::m_coarseFineDiff        ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::coarseGrindYield_pct  , Fermentable::m_coarseGrindYield_pct  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::color_srm             , Fermentable::m_colorSrm             ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::diastaticPower_lintner, Fermentable::m_diastaticPower      ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fineGrindYield_pct    , Fermentable::m_fineGrindYield_pct    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::grainGroup            , Fermentable::m_grainGroup            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::hardnessPrpGlassy_pct , Fermentable::m_hardnessPrpGlassy_pct ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::hardnessPrpHalf_pct   , Fermentable::m_hardnessPrpHalf_pct   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::hardnessPrpMealy_pct  , Fermentable::m_hardnessPrpMealy_pct  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::ibuGalPerLb           , Fermentable::m_ibuGalPerLb           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::isMashed              , Fermentable::m_isMashed              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::kernelSizePrpPlump    , Fermentable::m_kernelSizePrpPlump    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::kernelSizePrpThin     , Fermentable::m_kernelSizePrpThin     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::kolbachIndex_pct      , Fermentable::m_kolbachIndex_pct      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::maxInBatch_pct        , Fermentable::m_maxInBatchPct        ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::moisture_pct          , Fermentable::m_moisturePct          ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::notes                 , Fermentable::m_notes                 ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::origin                , Fermentable::m_origin                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::potentialYield_sg     , Fermentable::m_potentialYield_sg     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::producer              , Fermentable::m_producer              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::productId             , Fermentable::m_productId             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::protein_pct           , Fermentable::m_proteinPct           ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::recommendMash         , Fermentable::m_recommendMash         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::supplier              , Fermentable::m_supplier              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                  , Fermentable::m_type                  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::yield_pct             , Fermentable::m_yieldPct             ), //<<
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+
 Fermentable::Fermentable(QString name) :
    NamedEntityWithInventory{name, true},
    m_typeStr               {""                              },
@@ -220,23 +258,6 @@ Fermentable::Fermentable(Fermentable const & other) :
    m_kernelSizePrpPlump    {other.m_kernelSizePrpPlump    },
    m_kernelSizePrpThin     {other.m_kernelSizePrpThin     } {
    return;
-}
-
-bool Fermentable::isOptional(BtStringConst const & propertyName) {
-   // Tip: to check we have the right entries here, run the following from the bash prompt in the build directory:
-   //    grep 'Q_PROPERTY(std::optional' ../src/model/Fermentable.h | awk '{print $2}' | sort
-   if (&propertyName == &PropertyNames::Fermentable::alphaAmylase_dextUnits) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::coarseGrindYield_pct  ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::fineGrindYield_pct    ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::grainGroup            ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::hardnessPrpGlassy_pct ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::hardnessPrpHalf_pct   ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::hardnessPrpMealy_pct  ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::kernelSizePrpPlump    ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::kernelSizePrpThin     ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::kolbachIndex_pct      ) { return true; }
-   if (&propertyName == &PropertyNames::Fermentable::potentialYield_sg     ) { return true; }
-   return NamedEntity::isOptional(propertyName);
 }
 
 Fermentable::~Fermentable() = default;

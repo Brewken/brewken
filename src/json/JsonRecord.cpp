@@ -366,7 +366,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // our internal data model.  If it is, then, for whatever underlying type T it is, we need the parsedValue
             // QVariant to hold std::optional<T> instead of just T.
             //
-            bool const propertyIsOptional = this->recordDefinition.isOptionalFunction(*fieldDefinition.propertyName);
+            bool const propertyIsOptional = this->recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName);
 
             //
             // JSON Schema validation should have ensured this field really is what we're expecting, so it's a coding
@@ -901,7 +901,7 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
    // skip writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in
    // other ways elsewhere).
    //
-   bool const propertyIsOptional = this->recordDefinition.isOptionalFunction(*fieldDefinition.propertyName);
+   bool const propertyIsOptional = this->recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName);
 
    switch(fieldDefinition.type) {
       case JsonRecordDefinition::FieldType::Bool:
@@ -935,7 +935,7 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          // stores it as a string.
          //
          // .:TODO JSON:. Need to make PropertyNames::Hop::year optional and update UI to support this
-         if (fieldDefinition.propertyName == &PropertyNames::Hop::year) {
+         if (*fieldDefinition.propertyName == PropertyNames::Hop::year) {
             if (Optional::removeOptionalWrapperIfPresent<int>(value, propertyIsOptional)) {
                // QVariant knows how to convert an int to a QString so calling `value.toString()` is OK here
                std::string yearAsString = value.toString().toStdString();

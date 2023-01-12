@@ -32,16 +32,16 @@
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::MashStep { BtStringConst const property{#property}; }
 AddPropertyName(decoctionAmount_l)
-AddPropertyName(endTemp_c)
-AddPropertyName(infuseAmount_l)
-AddPropertyName(infuseTemp_c)
-AddPropertyName(mashId)
-AddPropertyName(rampTime_min)
-AddPropertyName(stepNumber)
-AddPropertyName(stepTemp_c)
-AddPropertyName(stepTime_min)
-AddPropertyName(typeString)
-AddPropertyName(type)
+AddPropertyName(endTemp_c        )
+AddPropertyName(infuseAmount_l   )
+AddPropertyName(infuseTemp_c     )
+AddPropertyName(mashId           )
+AddPropertyName(rampTime_min     )
+AddPropertyName(stepNumber       )
+AddPropertyName(stepTemp_c       )
+AddPropertyName(stepTime_min     )
+AddPropertyName(type             )
+AddPropertyName(typeString       )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -68,11 +68,15 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Type)
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
    MashStep( MashStep const& other );
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~MashStep();
 
@@ -135,6 +139,7 @@ public:
 
    virtual Recipe * getOwningRecipe();
 
+   // .:TODO:.  Rework this
    static QStringList const types;
 signals:
 

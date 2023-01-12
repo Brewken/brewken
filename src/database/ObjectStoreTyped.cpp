@@ -707,7 +707,7 @@ namespace {
    //
    // This should give us all the singleton instances
    //
-   template<class NE> ObjectStoreTyped<NE> ostSingleton{&NE::isOptional, PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
+   template<class NE> ObjectStoreTyped<NE> ostSingleton{NE::typeLookup, PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
 
 }
 

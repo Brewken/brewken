@@ -467,9 +467,9 @@ public:
    /**
     * Constructor
     */
-   impl(IsOptionalFnPtr          const   isOptionalFunction,
+   impl(TypeLookup               const & typeLookup,
         TableDefinition          const & primaryTable,
-        JunctionTableDefinitions const & junctionTables) : isOptionalFunction{isOptionalFunction},
+        JunctionTableDefinitions const & junctionTables) : typeLookup{typeLookup},
                                                            primaryTable{primaryTable},
                                                            junctionTables{junctionTables},
                                                            allObjects{},
@@ -503,7 +503,7 @@ public:
     */
    void unwrapAndMapAsNeeded(ObjectStore::TableField const & fieldDefn, QVariant & propertyValue) {
 
-      if (this->isOptionalFunction(fieldDefn.propertyName)) {
+      if (this->typeLookup.isOptional(fieldDefn.propertyName)) {
          //
          // This is an optional field, so we are converting a QVariant holding std::optional<T> to a QVariant holding
          // either T or null, with relevant special case handling for when T is actually an enum (where we need to
@@ -554,7 +554,7 @@ public:
    void wrapAndUnmapAsNeeded(ObjectStore::TableDefinition const & primaryTable,
                              ObjectStore::TableField const & fieldDefn,
                              QVariant & propertyValue) {
-      if (this->isOptionalFunction(fieldDefn.propertyName)) {
+      if (this->typeLookup.isOptional(fieldDefn.propertyName)) {
          //
          // This is an optional field, so we are converting from a QVariant holding either T or null to a QVariant
          // holding std::optional<T>, with relevant special case handling for when T is actually an enum (where we need
@@ -942,17 +942,17 @@ public:
       return primaryKeyInDb;
    }
 
-   IsOptionalFnPtr const isOptionalFunction;
+   TypeLookup const & typeLookup;
    TableDefinition const & primaryTable;
    JunctionTableDefinitions const & junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
    Database * database;
 };
 
-ObjectStore::ObjectStore(IsOptionalFnPtr          const   isOptionalFunction,
+ObjectStore::ObjectStore(TypeLookup               const & typeLookup,
                          TableDefinition          const & primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
-   pimpl{ std::make_unique<impl>(isOptionalFunction, primaryTable, junctionTables) } {
+   pimpl{ std::make_unique<impl>(typeLookup, primaryTable, junctionTables) } {
    qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
    // We have seen a circumstance where primaryTable.tableName is null, which shouldn't be possible.  This is some
    // diagnostic to try to find out why.

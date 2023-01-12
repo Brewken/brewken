@@ -31,28 +31,28 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Style { BtStringConst const property{#property}; }
-AddPropertyName(abvMax_pct)
-AddPropertyName(abvMin_pct)
-AddPropertyName(carbMax_vol)
-AddPropertyName(carbMin_vol)
-AddPropertyName(category)
+AddPropertyName(abvMax_pct    )
+AddPropertyName(abvMin_pct    )
+AddPropertyName(carbMax_vol   )
+AddPropertyName(carbMin_vol   )
+AddPropertyName(category      )
 AddPropertyName(categoryNumber)
-AddPropertyName(colorMax_srm)
-AddPropertyName(colorMin_srm)
-AddPropertyName(examples)
-AddPropertyName(fgMax)
-AddPropertyName(fgMin)
-AddPropertyName(ibuMax)
-AddPropertyName(ibuMin)
-AddPropertyName(ingredients)
-AddPropertyName(notes)
-AddPropertyName(ogMax)
-AddPropertyName(ogMin)
-AddPropertyName(profile)
-AddPropertyName(styleGuide)
-AddPropertyName(styleLetter)
-AddPropertyName(type)
-AddPropertyName(typeString)
+AddPropertyName(colorMax_srm  )
+AddPropertyName(colorMin_srm  )
+AddPropertyName(examples      )
+AddPropertyName(fgMax         )
+AddPropertyName(fgMin         )
+AddPropertyName(ibuMax        )
+AddPropertyName(ibuMin        )
+AddPropertyName(ingredients   )
+AddPropertyName(notes         )
+AddPropertyName(ogMax         )
+AddPropertyName(ogMin         )
+AddPropertyName(profile       )
+AddPropertyName(styleGuide    )
+AddPropertyName(styleLetter   )
+AddPropertyName(type          )
+AddPropertyName(typeString    )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -68,11 +68,15 @@ class Style : public NamedEntity {
    Q_CLASSINFO("signal", "styles")
 
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Style(QString t_name = "");
    Style(NamedParameterBundle const & namedParameterBundle);
    Style(Style const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Style();
 

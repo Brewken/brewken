@@ -43,7 +43,6 @@ AddPropertyName(caryophyllene_pct    )
 AddPropertyName(cohumulone_pct       )
 AddPropertyName(farnesene_pct        )
 AddPropertyName(form                 )
-AddPropertyName(formString           )
 AddPropertyName(geraniol_pct         )
 AddPropertyName(hsi_pct              )
 AddPropertyName(humulene_pct         )
@@ -175,12 +174,15 @@ public:
     */
    static QMap<Hop::Use, QString> const useDisplayNames;
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
 
    Hop(QString name = "");
    Hop(NamedParameterBundle const & namedParameterBundle);
    Hop(Hop const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Hop();
 
@@ -221,7 +223,7 @@ public:
    // .:TODO JSON:. Some of these should be optional
    Q_PROPERTY(QString producer              READ producer              WRITE setProducer             )
    Q_PROPERTY(QString product_id            READ product_id            WRITE setProduct_id           )
-   Q_PROPERTY(int     year                  READ year                  WRITE setYear                 )
+   Q_PROPERTY(std::optional<int>     year                  READ year                  WRITE setYear                 )
    Q_PROPERTY(double  total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
    Q_PROPERTY(double  farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
    Q_PROPERTY(double  geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
@@ -252,7 +254,7 @@ public:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString producer             () const;
    QString product_id           () const;
-   int     year                 () const;
+   std::optional<int>     year                 () const;
    double  total_oil_ml_per_100g() const;
    double  farnesene_pct        () const;
    double  geraniol_pct         () const;
@@ -285,7 +287,7 @@ public:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setProducer             (QString const & val);
    void setProduct_id           (QString const & val);
-   void setYear                 (int     const   val);
+   void setYear                 (std::optional<int>     const   val);
    void setTotal_oil_ml_per_100g(double  const   val);
    void setFarnesene_pct        (double  const   val);
    void setGeraniol_pct         (double  const   val);
@@ -324,7 +326,7 @@ private:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString m_producer;
    QString m_product_id;
-   int     m_year;
+   std::optional<int>     m_year;
    double  m_total_oil_ml_per_100g;
    double  m_farnesene_pct;
    double  m_geraniol_pct;

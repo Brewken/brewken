@@ -19,6 +19,7 @@
  =====================================================================================================================*/
 #include "model/NamedEntity.h"
 
+#include <map>
 #include <typeinfo>
 
 #include <QDebug>
@@ -96,10 +97,23 @@ void NamedEntity::swap(NamedEntity & other) noexcept {
    return;
 }
 
-bool NamedEntity::isOptional([[maybe_unused]] BtStringConst const & propertyName) {
-   // By default, nothing is optional
-   return false;
-}
+TypeLookup const NamedEntity::typeLookup {
+   "NamedEntity",
+   {
+      // As long as we map each property name to its corresponding member variable, the compiler should be able to work
+      // everything else out.  The only exception is that, for enums, we have to pretend they are stored as int, because
+      // that's what's going to come out of the Qt property system (and it would significantly complicate other bits of
+      // the code to separately register every different enum that we use.)
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_display),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::display  , NamedEntity::m_display),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::folder   , NamedEntity::m_folder ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::key      , NamedEntity::m_key    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::name     , NamedEntity::m_name   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::parentKey, NamedEntity::parentKey),
+   },
+   // Parent class lookup - none as we're top of the tree
+   nullptr
+};
 
 NamedEntity::~NamedEntity() = default;
 

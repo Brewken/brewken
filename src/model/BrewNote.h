@@ -34,37 +34,37 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::BrewNote { BtStringConst const property{#property}; }
-AddPropertyName(abv)
-AddPropertyName(attenuation)
-AddPropertyName(boilOff_l)
-AddPropertyName(brewDate)
-AddPropertyName(brewhouseEff_pct)
-AddPropertyName(effIntoBK_pct)
-AddPropertyName(fermentDate)
-AddPropertyName(fg)
-AddPropertyName(finalVolume_l)
-AddPropertyName(mashFinTemp_c)
-AddPropertyName(notes)
-AddPropertyName(og)
-AddPropertyName(pitchTemp_c)
-AddPropertyName(postBoilVolume_l)
-AddPropertyName(projABV_pct)
-AddPropertyName(projAtten)
-AddPropertyName(projBoilGrav)
-AddPropertyName(projEff_pct)
-AddPropertyName(projFermPoints)
-AddPropertyName(projFg)
+AddPropertyName(abv              )
+AddPropertyName(attenuation      )
+AddPropertyName(boilOff_l        )
+AddPropertyName(brewDate         )
+AddPropertyName(brewhouseEff_pct )
+AddPropertyName(effIntoBK_pct    )
+AddPropertyName(fermentDate      )
+AddPropertyName(fg               )
+AddPropertyName(finalVolume_l    )
+AddPropertyName(mashFinTemp_c    )
+AddPropertyName(notes            )
+AddPropertyName(og               )
+AddPropertyName(pitchTemp_c      )
+AddPropertyName(postBoilVolume_l )
+AddPropertyName(projABV_pct      )
+AddPropertyName(projAtten        )
+AddPropertyName(projBoilGrav     )
+AddPropertyName(projEff_pct      )
+AddPropertyName(projFermPoints   )
+AddPropertyName(projFg           )
 AddPropertyName(projMashFinTemp_c)
-AddPropertyName(projOg)
-AddPropertyName(projPoints)
-AddPropertyName(projStrikeTemp_c)
-AddPropertyName(projVolIntoBK_l)
+AddPropertyName(projOg           )
+AddPropertyName(projPoints       )
+AddPropertyName(projStrikeTemp_c )
+AddPropertyName(projVolIntoBK_l  )
 AddPropertyName(projVolIntoFerm_l)
-AddPropertyName(recipeId)
-AddPropertyName(sg)
-AddPropertyName(strikeTemp_c)
-AddPropertyName(volumeIntoBK_l)
-AddPropertyName(volumeIntoFerm_l)
+AddPropertyName(recipeId         )
+AddPropertyName(sg               )
+AddPropertyName(strikeTemp_c     )
+AddPropertyName(volumeIntoBK_l   )
+AddPropertyName(volumeIntoFerm_l )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -81,13 +81,17 @@ class BrewNote : public NamedEntity {
    Q_OBJECT
 
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    BrewNote(QString name = "");
    BrewNote(Recipe const & recipe);
    BrewNote(QDate dateNow, QString const & name = "");
    BrewNote(NamedParameterBundle const & namedParameterBundle);
    BrewNote(BrewNote const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~BrewNote();
 

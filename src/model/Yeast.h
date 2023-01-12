@@ -32,24 +32,24 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Yeast { BtStringConst const property{#property}; }
-AddPropertyName(addToSecondary)
-AddPropertyName(amount)
-AddPropertyName(amountIsWeight)
-AddPropertyName(attenuation_pct)
-AddPropertyName(bestFor)
-AddPropertyName(flocculation)
+AddPropertyName(addToSecondary    )
+AddPropertyName(amount            )
+AddPropertyName(amountIsWeight    )
+AddPropertyName(attenuation_pct   )
+AddPropertyName(bestFor           )
+AddPropertyName(flocculation      )
 AddPropertyName(flocculationString)
-AddPropertyName(form)
-AddPropertyName(formString)
-AddPropertyName(laboratory)
-AddPropertyName(maxReuse)
-AddPropertyName(maxTemperature_c)
-AddPropertyName(minTemperature_c)
-AddPropertyName(notes)
-AddPropertyName(productID)
-AddPropertyName(timesCultured)
-AddPropertyName(typeString)
-AddPropertyName(type)
+AddPropertyName(form              )
+AddPropertyName(formString        )
+AddPropertyName(laboratory        )
+AddPropertyName(maxReuse          )
+AddPropertyName(maxTemperature_c  )
+AddPropertyName(minTemperature_c  )
+AddPropertyName(notes             )
+AddPropertyName(productID         )
+AddPropertyName(timesCultured     )
+AddPropertyName(typeString        )
+AddPropertyName(type              )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -80,11 +80,15 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Flocculation)
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Yeast(QString name = "");
    Yeast(NamedParameterBundle const & namedParameterBundle);
    Yeast(Yeast const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Yeast();
 

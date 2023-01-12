@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# meson.build is part of Brewken, and is copyright the following authors 2022:
+# meson.build is part of Brewken, and is copyright the following authors 2022-2023:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -572,6 +572,7 @@ commonSourceFiles = files([
    'src/utils/ImportRecordCount.cpp',
    'src/utils/OStreamWriterForQFile.cpp',
    'src/utils/TimerUtils.cpp',
+   'src/utils/TypeLookup.cpp',
    'src/WaterButton.cpp',
    'src/WaterDialog.cpp',
    'src/WaterEditor.cpp',

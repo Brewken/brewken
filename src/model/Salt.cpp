@@ -36,6 +36,20 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Salt>::getInstance();
 }
 
+TypeLookup const Salt::typeLookup {
+   "Salt",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amount_is_weight),  //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::isAcid        , Salt::m_is_acid        ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::percentAcid   , Salt::m_percent_acid   ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd     ),
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+
 Salt::Salt(QString name) :
    NamedEntity       {name, true},
    m_amount          {0.0},
@@ -67,10 +81,6 @@ Salt::Salt(Salt const & other) :
    m_percent_acid    {other.m_percent_acid    },
    m_is_acid         {other.m_is_acid         } {
    return;
-}
-
-bool Salt::isOptional(BtStringConst const & propertyName) {
-   return NamedEntity::isOptional(propertyName);
 }
 
 Salt::~Salt() = default;

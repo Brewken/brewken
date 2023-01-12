@@ -93,16 +93,18 @@ void HopEditor::save() {
    this->obsHop->setForm(Hop::formStringMapping.stringToEnum<Hop::Form>(comboBox_hopForm->currentData().toString()));
    this->obsHop->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
 
-   this->obsHop->setBeta_pct(lineEdit_beta->toSI().quantity());
-   this->obsHop->setHsi_pct(lineEdit_HSI->toSI().quantity());
-   this->obsHop->setOrigin(lineEdit_origin->text());
-   this->obsHop->setHumulene_pct(lineEdit_humulene->toSI().quantity());
+   this->obsHop->setBeta_pct         (lineEdit_beta         ->toSI().quantity());
+   this->obsHop->setHsi_pct          (lineEdit_HSI          ->toSI().quantity());
+   this->obsHop->setOrigin           (lineEdit_origin       ->text()           );
+   this->obsHop->setHumulene_pct     (lineEdit_humulene     ->toSI().quantity());
    this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toSI().quantity());
-   this->obsHop->setCohumulone_pct(lineEdit_cohumulone->toSI().quantity());
-   this->obsHop->setMyrcene_pct(lineEdit_myrcene->toSI().quantity());
+   this->obsHop->setCohumulone_pct   (lineEdit_cohumulone   ->toSI().quantity());
+   this->obsHop->setMyrcene_pct      (lineEdit_myrcene      ->toSI().quantity());
+   this->obsHop->setSubstitutes      (textEdit_substitutes  ->toPlainText()    );
+   this->obsHop->setNotes            (textEdit_notes        ->toPlainText()    );
 
-   this->obsHop->setSubstitutes(textEdit_substitutes->toPlainText());
-   this->obsHop->setNotes(textEdit_notes->toPlainText());
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+
 
    if (this->obsHop->key() < 0) {
       ObjectStoreWrapper::insert(*this->obsHop);
@@ -179,7 +181,7 @@ void HopEditor::showChanges(QMetaProperty * prop) {
    if (updateAll || propName == PropertyNames::Hop::substitutes      ) { textEdit_substitutes  ->setPlainText(obsHop->substitutes()); if (!updateAll) { return; }}
    if (updateAll || propName == PropertyNames::Hop::notes            ) { textEdit_notes        ->setPlainText(obsHop->notes());       if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { lineEdit_inventory->setText(obsHop); if (!updateAll) { return; } }
-
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    if (updateAll || propName == PropertyNames::Hop::producer             ) {lineEdit_producer             ->setText(obsHop); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Hop::product_id           ) {lineEdit_product_id           ->setText(obsHop); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Hop::year                 ) {lineEdit_year                 ->setText(obsHop); if (!updateAll) { return; } }

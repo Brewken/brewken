@@ -30,20 +30,20 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Water { BtStringConst const property{#property}; }
-AddPropertyName(ph)
-AddPropertyName(amount)
-AddPropertyName(type)
-AddPropertyName(notes)
+AddPropertyName(alkalinity      )
 AddPropertyName(alkalinityAsHCO3)
-AddPropertyName(spargeRO)
-AddPropertyName(mashRO)
-AddPropertyName(alkalinity)
-AddPropertyName(magnesium_ppm)
-AddPropertyName(sodium_ppm)
-AddPropertyName(chloride_ppm)
-AddPropertyName(sulfate_ppm)
-AddPropertyName(bicarbonate_ppm)
-AddPropertyName(calcium_ppm)
+AddPropertyName(amount          )
+AddPropertyName(bicarbonate_ppm )
+AddPropertyName(calcium_ppm     )
+AddPropertyName(chloride_ppm    )
+AddPropertyName(magnesium_ppm   )
+AddPropertyName(mashRO          )
+AddPropertyName(notes           )
+AddPropertyName(ph              )
+AddPropertyName(sodium_ppm      )
+AddPropertyName(spargeRO        )
+AddPropertyName(sulfate_ppm     )
+AddPropertyName(type            )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -80,12 +80,15 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Ions)
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
 
    Water(QString name = "");
    Water(NamedParameterBundle const & namedParameterBundle);
    Water(Water const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Water();
 

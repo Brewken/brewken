@@ -37,13 +37,17 @@ AddPropertyName(inventoryId)
 class NamedEntityWithInventory : public NamedEntity {
    Q_OBJECT
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    NamedEntityWithInventory(QString t_name, bool t_display = false, QString folder = QString());
    NamedEntityWithInventory(NamedEntityWithInventory const & other);
    NamedEntityWithInventory(NamedParameterBundle const & namedParameterBundle);
 
-   static bool isOptional(BtStringConst const & propertyName);
-
-   virtual ~NamedEntityWithInventory() = default;
+   virtual ~NamedEntityWithInventory();
 
    //! \brief The amount in inventory (usually in kg)
    Q_PROPERTY( double inventory              READ inventory              WRITE setInventoryAmount        /*NOTIFY changed*/ /*changedInventory*/ )

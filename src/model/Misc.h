@@ -32,16 +32,16 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Misc { BtStringConst const property{#property}; }
-AddPropertyName(amount)
+AddPropertyName(amount        )
 AddPropertyName(amountIsWeight)
-AddPropertyName(amountType)
-AddPropertyName(notes)
-AddPropertyName(time)
-AddPropertyName(typeString)
-AddPropertyName(type)
-AddPropertyName(useFor)
-AddPropertyName(useString)
-AddPropertyName(use)
+AddPropertyName(amountType    )
+AddPropertyName(notes         )
+AddPropertyName(time          )
+AddPropertyName(typeString    )
+AddPropertyName(type          )
+AddPropertyName(useFor        )
+AddPropertyName(useString     )
+AddPropertyName(use           )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -73,11 +73,15 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(AmountType)
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Misc(QString name = "");
    Misc(NamedParameterBundle const & namedParameterBundle);
    Misc(Misc const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Misc();
 

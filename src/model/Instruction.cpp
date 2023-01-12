@@ -81,6 +81,19 @@ ObjectStore & Instruction::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Instruction>::getInstance();
 }
 
+TypeLookup const Instruction::typeLookup {
+   "Instruction",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Instruction::completed , Instruction::m_completed ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Instruction::directions, Instruction::m_directions),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Instruction::hasTimer  , Instruction::m_hasTimer  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Instruction::interval  , Instruction::m_interval  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Instruction::timerValue, Instruction::m_timerValue),
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+
 Instruction::Instruction(QString name) :
    NamedEntity (name, true),
    pimpl       {std::make_unique<impl>(*this)},
@@ -112,10 +125,6 @@ Instruction::Instruction(Instruction const & other) :
    m_completed {other.m_completed },
    m_interval  {other.m_interval  } {
    return;
-}
-
-bool Instruction::isOptional(BtStringConst const & propertyName) {
-   return NamedEntity::isOptional(propertyName);
 }
 
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the

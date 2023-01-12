@@ -28,6 +28,7 @@
 #include "model/MashStep.h"
 #include "model/NamedEntity.h"
 #include "model/Recipe.h"
+#include "utils/TypeLookup.h"
 #include "xml/XmlRecord.h"
 #include "xml/XQString.h"
 
@@ -45,7 +46,7 @@ public:
    XmlNamedEntityRecord(QString const & recordName,
                         XmlCoding const & xmlCoding,
                         XmlRecord::FieldDefinitions const & fieldDefinitions) :
-      XmlRecord{recordName, xmlCoding, fieldDefinitions, &NE::isOptional, NE::staticMetaObject.className()} {
+      XmlRecord{recordName, xmlCoding, fieldDefinitions, &NE::typeLookup, NE::staticMetaObject.className()} {
       this->includeInStats = this->includedInStats();
       return;
    }

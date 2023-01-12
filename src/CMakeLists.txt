@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
-# src/CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2022:
+# src/CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2023:
 #   • Aidan Roberts <aidanr67@gmail.com>
 #   • Daniel Moreno <danielm5@users.noreply.github.com>
 #   • Mark de Wever <koraq@xs4all.nl>
@@ -178,6 +178,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
     ${repoDir}/src/utils/OStreamWriterForQFile.cpp
     ${repoDir}/src/utils/TimerUtils.cpp
+    ${repoDir}/src/utils/TypeLookup.cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/WaterEditor.cpp

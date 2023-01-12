@@ -30,23 +30,23 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Equipment { BtStringConst const property{#property}; }
-AddPropertyName(boilTime_min)
-AddPropertyName(boilSize_l)
-AddPropertyName(batchSize_l)
+AddPropertyName(batchSize_l          )
+AddPropertyName(boilingPoint_c       )
+AddPropertyName(boilSize_l           )
+AddPropertyName(boilTime_min         )
+AddPropertyName(calcBoilVolume       )
+AddPropertyName(evapRate_lHr         )
+AddPropertyName(evapRate_pctHr       )
+AddPropertyName(grainAbsorption_LKg  )
+AddPropertyName(hopUtilization_pct   )
+AddPropertyName(lauterDeadspace_l    )
+AddPropertyName(notes                )
+AddPropertyName(topUpKettle_l        )
+AddPropertyName(topUpWater_l         )
+AddPropertyName(trubChillerLoss_l    )
 AddPropertyName(tunSpecificHeat_calGC)
-AddPropertyName(tunWeight_kg)
-AddPropertyName(notes)
-AddPropertyName(boilingPoint_c)
-AddPropertyName(grainAbsorption_LKg)
-AddPropertyName(hopUtilization_pct)
-AddPropertyName(topUpKettle_l)
-AddPropertyName(lauterDeadspace_l)
-AddPropertyName(calcBoilVolume)
-AddPropertyName(evapRate_lHr)
-AddPropertyName(evapRate_pctHr)
-AddPropertyName(trubChillerLoss_l)
-AddPropertyName(topUpWater_l)
-AddPropertyName(tunVolume_l)
+AddPropertyName(tunVolume_l          )
+AddPropertyName(tunWeight_kg         )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -62,11 +62,15 @@ class Equipment : public NamedEntity {
    Q_CLASSINFO("signal", "equipments")
 
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Equipment(QString t_name = "");
    Equipment(NamedParameterBundle const & namedParameterBundle);
    Equipment(Equipment const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Equipment();
 

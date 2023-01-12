@@ -76,12 +76,12 @@ XmlRecord::FieldDefinition::FieldDefinition(FieldType           fieldType,
 XmlRecord::XmlRecord(QString const & recordName,
                      XmlCoding const & xmlCoding,
                      FieldDefinitions const & fieldDefinitions,
-                     IsOptionalFnPtr  const   isOptionalFunction,
+                     TypeLookup       const * const typeLookup,
                      QString          const & namedEntityClassName) :
    recordName{recordName},
    xmlCoding{xmlCoding},
    fieldDefinitions{fieldDefinitions},
-   isOptionalFunction{isOptionalFunction},
+   typeLookup{typeLookup},
    namedEntityClassName{namedEntityClassName},
    namedParameterBundle{NamedParameterBundle::NotStrict},
    namedEntity{nullptr},
@@ -211,7 +211,7 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                // I think it gets messy to have different types there than on the QProperty setters.  It's not much
                // overhead to do things here IMHO.)
                //
-               bool propertyIsOptional = this->isOptionalFunction(fieldDefinition->propertyName);
+               bool propertyIsOptional = this->typeLookup->isOptional(fieldDefinition->propertyName);
 
                switch(fieldDefinition->fieldType) {
 
@@ -851,7 +851,7 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          // skip writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in
          // other ways elsewhere).
          //
-         bool const propertyIsOptional = this->isOptionalFunction(fieldDefinition.propertyName);
+         bool const propertyIsOptional = this->typeLookup->isOptional(fieldDefinition.propertyName);
          switch (fieldDefinition.fieldType) {
 
             case XmlRecord::FieldType::Bool:

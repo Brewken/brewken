@@ -155,16 +155,15 @@ public:
     */
    static QMap<Fermentable::Type, QString> const typeDisplayNames;
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Fermentable(QString name = "");
    Fermentable(NamedParameterBundle const & namedParameterBundle);
    Fermentable(Fermentable const & other);
-
-   /**
-    * \brief We have some optional fields, so we need to override the base class method
-    *
-    * .:TODO:. Besides implementing this, we need to make it used in Database, BeerXML and BeerJSON
-    */
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Fermentable();
 

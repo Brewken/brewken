@@ -312,7 +312,7 @@ namespace {
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
       "fermentables",
-      Fermentable::isOptional,
+      &Fermentable::typeLookup,
       "Fermentable",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentable > >,
       {BeerJson_FermentableBase, BeerJson_FermentableType_ExclBase}
@@ -354,7 +354,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       "miscellaneous_ingredients",
-      Misc::isOptional,
+      &Misc::typeLookup,
       "Misc",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
       {BeerJson_MiscellaneousBase, BeerJson_MiscellaneousType_ExclBase}
@@ -408,7 +408,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Hop> {
       "hop_varieties",
-      Hop::isOptional,
+      &Hop::typeLookup,
       "Hop",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase, BeerJson_HopType_ExclBase}
@@ -456,7 +456,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
       "cultures",
-      Yeast::isOptional,
+      &Yeast::typeLookup,
       "Yeast",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
       {
@@ -498,7 +498,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Water> {
       "profiles",
-      Water::isOptional,
+      &Water::typeLookup,
       "Water",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
       {
@@ -539,7 +539,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
       "styles",
-      Style::isOptional,
+      &Style::typeLookup,
       "Style",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
       {

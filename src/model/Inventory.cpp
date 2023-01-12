@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Inventory.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * model/Inventory.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 #include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Yeast.h"
+#include "utils/TypeLookup.h"
 
 namespace {
 
@@ -87,6 +88,18 @@ Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
    return;
 }
 
+TypeLookup const Inventory::typeLookup {
+   "Inventory",
+   {
+      // Note that we need Enums to be treated as ints for the purposes of type lookup
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::amount               , Inventory::impl::amount),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::id                   , Inventory::impl::id    ),
+   },
+   // Parent class lookup
+   // Note that Inventory does _not_ inherit from NamedEntity, so this is intentionally null
+   nullptr
+};
+
 // Strictly speaking a QObject is not allowed to be copied, which would mean that since we do not use any state in the
 // QObject from which we inherit, we allow Inventory to be copied and just default-initialise the QObject base class in
 // the copy.  Hopefully this will never come back to bite us...
@@ -94,14 +107,6 @@ Inventory::Inventory(Inventory const & other) :
    QObject{},
    pimpl{std::make_unique<impl>(*other.pimpl)} {
    return;
-}
-
-bool Inventory::isOptional([[maybe_unused]] BtStringConst const & propertyName) {
-   // Note that Inventory does _not_ inherit from NamedEntity, so we don't need to call
-   // NamedEntity::isOptional(propertyName) here.
-   //
-   // For the moment, at least, no Inventory properties are optional
-   return false;
 }
 
 Inventory::~Inventory() = default;

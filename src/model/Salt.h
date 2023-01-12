@@ -30,12 +30,12 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Salt { BtStringConst const property{#property}; }
-AddPropertyName(amount)
+AddPropertyName(amount        )
 AddPropertyName(amountIsWeight)
-AddPropertyName(type)
-AddPropertyName(isAcid)
-AddPropertyName(percentAcid)
-AddPropertyName(whenToAdd)
+AddPropertyName(isAcid        )
+AddPropertyName(percentAcid   )
+AddPropertyName(type          )
+AddPropertyName(whenToAdd     )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -78,11 +78,15 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Types)
 
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Salt(QString name = "");
    Salt(NamedParameterBundle const & namedParameterBundle);
    Salt(Salt const & other);
-
-   static bool isOptional(BtStringConst const & propertyName);
 
    virtual ~Salt();
 

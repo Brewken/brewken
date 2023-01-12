@@ -36,10 +36,10 @@ public:
     *
     * \param primaryTable First in the list of fields in this table defn should be the primary key
     */
-   ObjectStoreTyped(IsOptionalFnPtr                  isOptionalFunction,
+   ObjectStoreTyped(TypeLookup               const & typeLookup,
                     TableDefinition          const & primaryTable,
                     JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{}) :
-      ObjectStore(isOptionalFunction, primaryTable, junctionTables) {
+      ObjectStore(typeLookup, primaryTable, junctionTables) {
       return;
    }
 

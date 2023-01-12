@@ -34,6 +34,7 @@
 #include <QVariant>
 
 #include "utils/BtStringConst.h"
+#include "utils/TypeLookup.h"
 
 class NamedParameterBundle;
 class ObjectStore;
@@ -43,6 +44,11 @@ class Recipe;
 //========================================== Start of property name constants ==========================================
 // Make this class's property names available via constants in sub-namespace of PropertyNames
 // One advantage of using these constants is you get compile-time checking for typos etc
+//
+// Note that, because we are both declaring and defining these in the header file, I don't think we can guarantee on
+// every platform there is always exactly one instance of each property name.  So, whilst it's always valid to compare
+// the values of two property names, we cannot _guarantee_ that two identical property names always have the same
+// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::Folder) ...`.
 #define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)
@@ -144,6 +150,22 @@ class NamedEntity : public QObject {
    Q_CLASSINFO("version","1")
 
 public:
+
+   /**
+    * \brief Type lookup info for this class.  Note this is intentionally static, public and const.  Subclasses need to
+    *        override this member with one that chains to it.  (See \c TypeLookup constructor for more info.)
+    *
+    *        Note that this is a static member variable and is \b not intended to do run-time validation (eg to say
+    *        whether the object is in a state where the property is allowed to be null).  It just allows us to tell
+    *        (amongst other things) whether, in principle, a given field can ever be null.
+    *
+    *        Why is this a static member variable and not a virtual function?  It's because we need to be able to access
+    *        it \b before we have created the object.  Eg, if we are reading a \c Fermentable from the DB, we first read
+    *        all the fields and construct a \c NamedParameterBundle, and then use that \c NamedParameterBundle to
+    *        construct the \c Fermentable.
+    */
+   static TypeLookup const typeLookup;
+
    NamedEntity(QString t_name, bool t_display = false, QString folder = QString());
    NamedEntity(NamedEntity const & other);
 
@@ -152,34 +174,6 @@ public:
     *        \c makeChild() on the copy, which will do the right things about parentage and inventory.
     */
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
-
-   /**
-    * \brief Returns whether the given object property is optional (aka nullable).
-    *
-    *        With the advent of BeerJSON, we have a lot more "optional" fields on objects.  We don't want to extend
-    *        three different serialisation models (database, BeerXML and BeerJSON) with an extra flag, especially as
-    *        the (subclass of) \c NamedEntity ought to know itself whether a field is optional/nullable.  This is
-    *        enough for serialisation (where we just need to know eg whether we're reading/writing `double` or
-    *        `std::optional<double>`).
-    *
-    *        In principle we might be able to avoid the need for this function, or at least have a single implementation
-    *        of it, by making a bunch of calls to \c qRegisterMetaType(std::optional<T>) at the start-up for all types
-    *        \c T and storing the resulting IDs in a set or list that we then consult to discover whether a property is
-    *        of type \c T or \c std::optional<T>.  But, for now at least, we're going with the simpler approach.
-    *
-    *        Note that this is a static member function and is \b not intended to do run-time validation (eg to say
-    *        whether the object is in a state where the property is allowed to be null).  It just tells us whether, in
-    *        principle, the field can ever be null.
-    *
-    *        Why is the function static and not virtual?  It's because we need to be able to call it \b before we have
-    *        created the object.  Eg, if we are reading a \c Fermentable from the DB, we first read all the fields and
-    *        construct a \c NamedParameterBundle, and then use that \c NamedParameterBundle to construct the
-    *        \c Fermentable.
-    *
-    *        IMPORTANT: When you are implementing this for a subclass, your implementation should manually call the
-    *        parent class implementation.
-    */
-   static bool isOptional(BtStringConst const & propertyName);
 
 protected:
    /**

@@ -29,6 +29,7 @@
 #include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/TypeLookup.h"
 
 class Database;
 class NamedParameterBundle;
@@ -189,12 +190,12 @@ public:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
-    * \param isOptionalFunction Pointer to function that tells us whether Qt properties on this object type are
-    *                           "optional" (ie wrapped in \c std::optional)
+    * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
+    *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
     */
-   ObjectStore(IsOptionalFnPtr          const   isOptionalFunction,
+   ObjectStore(TypeLookup               const & typeLookup,
                TableDefinition          const & primaryTable,
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 

@@ -22,12 +22,13 @@
 
 #include <QVector>
 
-#include "utils/BtStringConst.h"
-#include "utils/EnumStringMapping.h"
 #include "json/JsonMeasureableUnitsMapping.h"
 #include "json/JsonSingleUnitSpecifier.h"
 #include "json/JsonXPath.h"
 #include "model/NamedEntity.h"
+#include "utils/BtStringConst.h"
+#include "utils/EnumStringMapping.h"
+#include "utils/TypeLookup.h"
 
 // Forward declarations
 namespace boost::json {
@@ -310,8 +311,8 @@ public:
     * \brief Constructor
     * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
     *                   fermentables in BeerJSON.
-    * \param isOptionalFunction Pointer to function that tells us whether Qt properties on this object type are
-    *                           "optional" (ie wrapped in \c std::optional)
+    * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
+    *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
     * \param jsonRecordConstructorWrapper
@@ -319,7 +320,7 @@ public:
     *                         to parse them.
     */
    JsonRecordDefinition(char                     const * const recordName,
-                        IsOptionalFnPtr                  const isOptionalFunction,
+                        TypeLookup               const * const typeLookup,
                         char                     const * const namedEntityClassName,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
@@ -331,7 +332,7 @@ public:
     *                         See comments fin BeerJson.cpp for why we want to do this.
     */
    JsonRecordDefinition(char                                              const * const recordName,
-                        IsOptionalFnPtr                                           const isOptionalFunction,
+                        TypeLookup                                        const * const typeLookup,
                         char                                              const * const namedEntityClassName,
                         JsonRecordConstructorWrapper                                    jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
@@ -345,7 +346,7 @@ public:
 public:
    BtStringConst const       recordName;
 
-   IsOptionalFnPtr const isOptionalFunction;
+   TypeLookup const * const typeLookup;
 
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).

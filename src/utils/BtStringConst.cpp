@@ -35,7 +35,11 @@ BtStringConst::~BtStringConst() = default;
 
 bool BtStringConst::operator==(BtStringConst const & rhs) const {
    // A very common case of equality should be that two strings are in fact the same constant, so checking whether the
-   // addresses match is the first thing we do
+   // addresses match is the first thing we do.
+   //
+   // Note, however, that we cannot guarantee the reverse of this.  Two strings at different memory addresses might be
+   // the same eg if they are defined in headers that are included in multiple translation units and the compiler does
+   // not optimise that away.
    if (this == &rhs) {
       return true;
    }
