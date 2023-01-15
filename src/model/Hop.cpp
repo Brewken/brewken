@@ -180,9 +180,10 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::xanthohumol_pct      , Hop::m_xanthohumol_pct      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ),
    },
-   // Parent class lookup
-   &NamedEntity::typeLookup
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
 };
+static_assert(std::is_base_of<NamedEntityWithInventory, Hop>::value);
 
 Hop::Hop(QString name) :
    NamedEntityWithInventory{name, true},

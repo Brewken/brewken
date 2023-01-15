@@ -149,7 +149,7 @@ project('brewken', 'cpp',
         meson_version: '>=0.60.0',
         default_options : ['cpp_std=c++20',
                            'warning_level=3',
-#                           'prefer_static=true',
+#                           'prefer_static=true',  See comment above for why this is commented-out for now
                            'buildtype=plain'])
 
 #
@@ -188,23 +188,17 @@ prefix = get_option('prefix')
 #=======================================================================================================================
 #============================================== Frameworks and Libraries ===============================================
 #=======================================================================================================================
-# It would be neat to automate the _installation_ of libraries and frameworks on which we depend.  However, I have yet
-# to find a universal pain-free solution.
 #
-# I looked at using ConanCenter (https://conan.io/center/) as a source of libraries, so that we could automate
-# installing them, but it does not have all the ones we need.  Eg it has Boost, Qt, Xerces-C and Valijson, but not
-# Xalan-C.  (Someone else has already requested Xalan-C, see https://github.com/conan-io/conan-center-index/issues/5546,
-# but that request has been open a long time, so its fulfilment doesn't seem imminent.)
+# It would be neat within the build system to automate the _installation_ and upgrade of libraries and frameworks on
+# which we depend.  However, I have yet to find a universal pain-free solution.
 #
 # Meson has its own dependency management system, Wrap, but the list of pre-provided projects at
 # https://mesonbuild.com/Wrapdb-projects.html does not include Qt, Boost, Xerces, Xalan or Valijson.
 #
-# More hopeful is vcpkg (https://vcpkg.io/en/index.html) as it does have both Xerces-C and Xalan-C, along with Boost, Qt
-# and Valijson.  There is an example here https://github.com/Neumann-A/meson-vcpkg of how to use vcpkg from Meson.
-# However, it's pretty slow because it builds from source everything it installs (including tools it depends on such as
-# CMake).
+# You can bridge out to other systems such as Conan or vcpkg, but it's a bit clunky.
 #
-# So, for the moment, we don't try to automate installation of libraries here.
+# So, for now at least, we manage dependency installation in the `bt` Python script.
+#
 
 #========================================================= Qt ==========================================================
 # We need not just the "core" bit of Qt but various "optional" elements.
@@ -220,13 +214,13 @@ prefix = get_option('prefix')
 qtCommonDependencies = dependency('qt5',
                                   version : '>=5.9.5',
                                   modules : ['Core',
-                                              'Multimedia',
-                                              'Network',
-                                              'PrintSupport',
-                                              'Sql',
-                                              'Svg',
-                                              'Widgets',
-                                              'Xml'],
+                                             'Multimedia',
+                                             'Network',
+                                             'PrintSupport',
+                                             'Sql',
+                                             'Svg',
+                                             'Widgets',
+                                             'Xml'],
                                   include_type : 'system',
                                   static : true)
 # The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
@@ -324,6 +318,8 @@ endif
 boostModules = []
 if host_machine.system() == 'linux'
    boostModules += 'stacktrace_backtrace'
+   add_global_arguments('-DBOOST_STACKTRACE_LINK', language : 'cpp')
+   add_global_arguments('-DBOOST_STACKTRACE_USE_BACKTRACE', language : 'cpp')
 endif
 boostDependency = dependency('boost',
                              version : '>=1.79.0',
@@ -340,9 +336,11 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 # functionality over the most platforms.  This has dependencies on:
 #   - libdl on POSIX platforms -- but see note below
 #   - libbacktrace
-# The latter is an external library on Windows.  On POSIX plaforms it's typically already either installed on the system
-# (eg see https://man7.org/linux/man-pages/man3/backtrace.3.html) or built in to the compiler.  Fortunately, CMake knows
-# how to do the right thing in either case, thanks to https://cmake.org/cmake/help/latest/module/FindBacktrace.html.
+# The latter is a widely-used cross-platfor open source library available at
+# https://github.com/ianlancetaylor/libbacktrace.  On some POSIX plaforms it's already either installed on the system
+# (eg see https://man7.org/linux/man-pages/man3/backtrace.3.html) or available as an optional component of the GCC
+# compiler.  However, it seems this is something that can change over time.  It's a small and stable library, so we
+# just build it from sources -- which is done in the `bt` script when you run `bt setup all`.
 #
 # Just to make things extra fun, in 2021, the GNU compilers did away with libdl and incorporated its functionality into
 # libc, per section 2.3 of release info at https://sourceware.org/glibc/wiki/Release/2.34.  This means, if we're using
@@ -368,7 +366,13 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
 endif
 dlDependency = dependency('dl', required : needLibdl, static : true)
 
-backtraceDependency = dependency('backtrace', required : false, static : true)
+# Note that, unlike, say, the parameters to include_directories(), the dirs argument to find_library() must be absolute
+# paths
+libbacktraceDir = join_paths(meson.project_source_root(), 'third-party/libbacktrace/.libs')
+backtraceDependency = meson.get_compiler('cpp').find_library('backtrace',
+                                                             required : true,
+                                                             static : true,
+                                                             dirs : [libbacktraceDir])
 
 #======================================== Find the other libraries we depend on ========================================
 #
@@ -393,7 +397,7 @@ message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.fou
 
 #==================================================== Other headers ====================================================
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
-includeDirs = include_directories('src', 'third-party/valijson/include')
+includeDirs = include_directories('src', 'third-party/valijson/include', 'third-party/libbacktrace')
 
 #=======================================================================================================================
 #================================================== Extra Apple stuff ==================================================

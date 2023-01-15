@@ -311,7 +311,8 @@ def findMesonAndGit():
    # Advice at https://docs.python.org/3/library/subprocess.html is "For maximum reliability, use a fully qualified path
    # for the executable. To search for an unqualified name on PATH, use shutil.which()"
 
-   # Check Meson is installed
+   # Check Meson is installed.  (See installDependencies() below for what we do to attempt to install it from this
+   # script.)
    global exe_meson
    exe_meson = shutil.which("meson")
    if (exe_meson is None or exe_meson == ""):
@@ -334,9 +335,27 @@ def findMesonAndGit():
 #-----------------------------------------------------------------------------------------------------------------------
 def installDependencies():
    log.info('Checking which dependencies need to be installed')
-   # One day perhaps we'll be able to do this generically using Conan or vcpkg, but we're not there yet
    #
-   # For now, it's mostly different code for each of the 3 platforms (Linux, Windows, Mac)
+   # I looked at using ConanCenter (https://conan.io/center/) as a source of libraries, so that we could automate
+   # installing dependencies, but it does not have all the ones we need.  Eg it has Boost, Qt, Xerces-C and Valijson,
+   # but not Xalan-C.  (Someone else has already requested Xalan-C, see
+   # https://github.com/conan-io/conan-center-index/issues/5546, but that request has been open a long time, so its
+   # fulfilment doesn't seem imminent.)  It also doesn't yet integrate quite as well with meson as we might like (eg
+   # as at 2023-01-15, https://docs.conan.io/en/latest/reference/conanfile/tools/meson.html is listed as "experimental
+   # and subject to breaking changes".
+   #
+   # Another option is vcpkg (https://vcpkg.io/en/index.html), which does have both Xerces-C and Xalan-C, along with
+   # Boost, Qt and Valijson.  There is an example here https://github.com/Neumann-A/meson-vcpkg of how to use vcpkg from
+   # Meson.  However, it's pretty slow to get started with because it builds from source everything it installs
+   # (including tools it depends on such as CMake) -- even if they are already installed on your system from another
+   # source.  This is laudably correct but I'm too impatient to do things that way.
+   #
+   # Will probably take another look at Conan in future, subject to working out how to have it use already-installed
+   # versions of libraries/frameworks if they are present.  The recommended way to install Conan is via a Python
+   # package, which makes that part easy.  However, there is a fair bit of other ramp-up to do, and some breaking
+   # changes between "current" Conan 1.X and "soon-to-be-released" Conan 2.0.  So, will leave it for now and stick
+   # mostly to native installs for each of the 3 platforms (Linux, Windows, Mac).
+   #
    match platform.system():
 
       #-----------------------------------------------------------------------------------------------------------------
@@ -526,7 +545,33 @@ def installDependencies():
       #-----------------------------------------------------------------------------------------------------------------
       case 'Windows':
          log.debug('Windows')
-         # Ideally here, we would detect if we're in the MSYS2 environment and bail out if not
+         #
+         # First thing is to detect whether we're in the MSYS2 environment, and, if so, whether we're in the right
+         # version of it.
+         #
+         # We take the existence of an executable `uname` in the path as a pretty good indicator that we're in MSYS2
+         # or similar environment).  Then the result of running that should tell us if we're in the 32-bit version of
+         # MSYS2.  (See comment below on why we don't yet support the 64-bit version, though I'm sure we'll fix this one
+         # day.)
+         #
+         exe_uname = shutil.which('uname')
+         if (exe_uname is None or exe_uname == ''):
+            log.critical('Cannot find uname.  This script needs to be run under MSYS2 - see https://www.msys2.org/')
+            exit(1)
+         # We could just run uname without the -a option, but the latter gives some useful diagnostics to log
+         unameResult = str(
+            abortOnRunFail(subprocess.run([exe_uname, '-a'], encoding = "utf-8", capture_output = True)).stdout
+         )
+         log.debug('Running uname -a gives ' + unameResult)
+         # Output from `uname -a` will be of the form
+         #    MINGW64_NT-10.0-19044 Matt-Virt-Win 3.4.3.x86_64 2023-01-11 20:20 UTC x86_64 Msys
+         # We just need the bit before the first underscore, eg
+         #    MINGW64
+         terminalVersion = unameResult.split(sep='_', maxsplit=1)[0]
+         if (terminalVersion != 'MINGW32'):
+            log.critical('Running in ' + terminalVersion + ' but need to run in MINGW32 (ie 32-bit build environment)')
+            exit(1)
+
          log.info('Ensuring required libraries and frameworks are installed')
          #
          # Before we install packages, we want to make sure the MSYS2 installation itself is up-to-date, otherwise you
@@ -650,6 +695,29 @@ def installDependencies():
          log.critical('Unrecognised platform: ' + platform.system())
          exit(1)
 
+   #--------------------------------------------------------------------------------------------------------------------
+   #------------------------------------------- Cross-platform Dependencies --------------------------------------------
+   #--------------------------------------------------------------------------------------------------------------------
+   #
+   # We use libbacktrace from https://github.com/ianlancetaylor/libbacktrace.  It's not available as a Debian package
+   # and not any more included with GCC by default.  It's not a large library so, unless and until we start using Conan,
+   # the easiest approach seems to be to bring it in as a Git submodule and compile from source.
+   #
+   # (Adding submodules is done via Git itself.  Eg:
+   #    cd ../third-party
+   #    git submodule add https://github.com/ianlancetaylor/libbacktrace
+   # But this only needs to be done once, by one person, and committed to our repository, where the connection is
+   # stored in the .gitmodules file.)
+   #
+   log.info('Checking libbacktrace is built')
+   previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+   backtraceDir = dir_gitSubmodules.joinpath('libbacktrace')
+   os.chdir(backtraceDir)
+   # Libbacktrace uses autoconf/automake so it's relatively simple to build
+   abortOnRunFail(subprocess.run(['./configure']))
+   abortOnRunFail(subprocess.run(['make']))
+   os.chdir(previousWorkingDirectory)
+
    log.info('*** Finished checking / installing dependencies ***')
    return
 
@@ -681,7 +749,8 @@ def doSetup(setupOption):
       shutil.copy2(dir_gitInfo.joinpath('hooks/pre-commit.sample'),
                      dir_gitInfo.joinpath('hooks/pre-commit'))
 
-      # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it
+      # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it via the
+      # --recurse-submodules flag.
       if (not dir_gitSubmodules.is_dir() or numFilesInTree(dir_gitSubmodules) == 0):
          log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
          os.makedirs(dir_gitSubmodules, exist_ok=True)

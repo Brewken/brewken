@@ -86,9 +86,10 @@ TypeLookup const Yeast::typeLookup {
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::typeString        , Yeast::m_typeString        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ),
    },
-   // Parent class lookup
-   &NamedEntity::typeLookup
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
 };
+static_assert(std::is_base_of<NamedEntityWithInventory, Yeast>::value);
 
 
 //============================CONSTRUCTORS======================================

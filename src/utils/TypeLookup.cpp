@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QString>
 
+#include "Logging.h"
 #include "measurement/Amount.h"
 
 namespace {
@@ -71,6 +72,7 @@ TypeLookup::LookupMapEntry TypeLookup::getType(BtStringConst const & propertyNam
 
    // It's a coding error if we tried to look up a property that we don't know about
    qCritical() << Q_FUNC_INFO << "Can't find type info for property" << *propertyName << "of class" << this->className;
+   qDebug().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
    Q_ASSERT(false);
    throw std::bad_typeid();
 
@@ -78,7 +80,11 @@ TypeLookup::LookupMapEntry TypeLookup::getType(BtStringConst const & propertyNam
 
 
 bool TypeLookup::isOptional(BtStringConst const & propertyName) const {
-   TypeLookup::LookupMapEntry lookupMapEntry = this->getType(propertyName);
+   TypeLookup::LookupMapEntry const lookupMapEntry = this->getType(propertyName);
+   // If the type is an enum (second part of the returned pair is true) then we need to pretend it is an int (ie
+   // override what's in the first part of the returned pair).  Otherwise this file would need to know about all the
+   // strongly-typed enums in the code, which would be cumbersome to say the least.
+   std::type_index const propertyType = lookupMapEntry.second ? std::type_index(typeid(int)) : lookupMapEntry.first;
 
    //
    // Even though type_index is, essentially, a pointer to a std::type_info object (and normally you can't rely on two
@@ -88,15 +94,16 @@ bool TypeLookup::isOptional(BtStringConst const & propertyName) const {
    //
    // TLDR, we can use find() here where we had to use find_if when searching for BtStringConst above.
    //
-   auto match = typeIsOptional.find(lookupMapEntry.first);
+   auto match = typeIsOptional.find(propertyType);
    if (match != typeIsOptional.end()) {
       return match->second;
    }
 
    // It's a coding error if any property has a type we don't know about
    qCritical() <<
-      Q_FUNC_INFO << "Don't know about type" << lookupMapEntry.first.name() << "of" << *propertyName << "of class" <<
+      Q_FUNC_INFO << "Don't know about type" << propertyType.name() << "of property" << *propertyName << "of class" <<
       this->className;
+   qDebug().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
    Q_ASSERT(false);
    throw std::bad_typeid();
 }

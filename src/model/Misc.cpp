@@ -72,9 +72,10 @@ TypeLookup const Misc::typeLookup {
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useString     , Misc::m_useString     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ),
    },
-   // Parent class lookup
-   &NamedEntity::typeLookup
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
 };
+static_assert(std::is_base_of<NamedEntityWithInventory, Misc>::value);
 
 //============================CONSTRUCTORS======================================
 

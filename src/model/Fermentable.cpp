@@ -145,9 +145,10 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                  , Fermentable::m_type                  ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::yield_pct             , Fermentable::m_yieldPct             ), //<<
    },
-   // Parent class lookup
-   &NamedEntity::typeLookup
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
 };
+static_assert(std::is_base_of<NamedEntityWithInventory, Fermentable>::value);
 
 Fermentable::Fermentable(QString name) :
    NamedEntityWithInventory{name, true},

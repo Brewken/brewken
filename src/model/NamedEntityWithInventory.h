@@ -22,7 +22,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::NamedEntityWithInventory { BtStringConst const property{#property}; }
-AddPropertyName(inventory)
+AddPropertyName(inventory  )
 AddPropertyName(inventoryId)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================

@@ -21,7 +21,7 @@
 
 std::string_view JsonMeasureableUnitsMapping::getNameForUnit(Measurement::Unit const & unitToMatch) const {
    // We could use std::find_if here with a lambda, but a loop with structured bindings is more concise in this instance
-   for (auto const [unitName, unit] : this->nameToUnit) {
+   for (auto const & [unitName, unit] : this->nameToUnit) {
       if (unit == &unitToMatch) {
          return unitName;
       }
