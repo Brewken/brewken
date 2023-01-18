@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -727,6 +727,16 @@ void Testing::testAlgorithms() {
    return;
 }
 
+void Testing::testTypeLookups() {
+   QVERIFY2(Hop::typeLookup.getType(PropertyNames::Hop::alpha_pct).typeIndex == typeid(double),
+            "PropertyNames::Hop::alpha_pct not a double");
+   auto const & grainGroupTypeInfo = Fermentable::typeLookup.getType(PropertyNames::Fermentable::grainGroup);
+   QVERIFY2(grainGroupTypeInfo.isOptional(),
+            "PropertyNames::Fermentable::grainGroup not optional");
+   QVERIFY2(grainGroupTypeInfo.classification == TypeInfo::Classification::OptionalEnum,
+            "PropertyNames::Fermentable::grainGroup not optional enum");
+   return;
+}
 void Testing::testLogRotation() {
    // Turning off logging to stderr console, this is so you won't have to watch 100k rows generate in the console.
    Logging::setLoggingToStderr(false);

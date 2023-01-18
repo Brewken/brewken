@@ -245,7 +245,7 @@ public:
       // Set file names.
       this->dbFileName = PersistentSettings::getUserDataDir().filePath("database.sqlite");
       this->dataDbFileName = Application::getResourceDir().filePath("default_db.sqlite");
-      qDebug().noquote() <<
+      qInfo().noquote() <<
          Q_FUNC_INFO << "dbFileName = \"" << this->dbFileName << "\"\ndataDbFileName=\"" << this->dataDbFileName << "\"";
       // Set the files.
       this->dbFile.setFileName(this->dbFileName);

@@ -713,8 +713,11 @@ def installDependencies():
    previousWorkingDirectory = pathlib.Path.cwd().as_posix()
    backtraceDir = dir_gitSubmodules.joinpath('libbacktrace')
    os.chdir(backtraceDir)
+   log.debug('Run configure and make in ' + backtraceDir.as_posix())
    # Libbacktrace uses autoconf/automake so it's relatively simple to build
-   abortOnRunFail(subprocess.run(['./configure']))
+   # Note that, although on Linux you can just invoke `./configure`, this doesn't work in the MSYS2 environment, so,
+   # knowing that 'configure' is a shell script, we invoke it as such.
+   abortOnRunFail(subprocess.run(['bash', './configure']))
    abortOnRunFail(subprocess.run(['make']))
    os.chdir(previousWorkingDirectory)
 

@@ -1211,6 +1211,11 @@ add_test(
 )
 
 add_test(
+   NAME testTypeLookups
+   COMMAND bin/${fileName_unitTestRunner} testTypeLookups
+)
+
+add_test(
    NAME testLogRotation
    COMMAND bin/${fileName_unitTestRunner} testLogRotation
 )

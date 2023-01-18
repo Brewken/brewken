@@ -18,34 +18,105 @@
 #pragma once
 
 #include <map>
+#include <optional>
 #include <typeindex>
 
 #include "utils/BtStringConst.h"
 
 /**
- * This implementation of \c is_instance is from
- * https://stackoverflow.com/questions/44012938/how-to-tell-if-template-type-is-an-instance-of-a-template-class
+ * \brief Together with \c std::is_enum from \c <type_traits>, the \c is_optional and \c is_optional_enum templates
+ *        defined here give us a generic way at compile time to determine whether a type T is:
+ *           1. an enum
+ *           2. an instance of std::optional< U > for some enum U
+ *           3. an instance of std::optional< U > for some other type U
+ *           4. neither an instance of std::optional nor an enum
+ *        The four cases:
+ *
+ *           --------------------------------------------------------------------------------
+ *           |     T               | std::is_enum<T> | is_optional<T> | is_optional_enum<T> |
+ *           --------------------------------------------------------------------------------
+ *           |                     |                 |                |                     |
+ *           | an enum             |      true       |     false      |        false        |
+ *           |                     |                 |                |                     |
+ *           | other non optional  |      false      |     false      |        false        |
+ *           |                     |                 |                |                     |
+ *           | std::optional enum  |      false      |     true       |        true         |
+ *           |                     |                 |                |                     |
+ *           | other std::optional |      false      |     true       |        false        |
+ *           |                     |                 |                |                     |
+ *           --------------------------------------------------------------------------------
+ *
+ *        Template metaprogramming is sometimes very useful but can be a bit painful to follow.  What we've done here
+ *        (at the simple end of things!) is somewhat inspired by the examples at:
+ *        https://www.boost.org/doc/libs/1_81_0/libs/type_traits/doc/html/boost_typetraits/background.html
+ *
+ *        Normally we shouldn't need to use these templates directly outside of the \c TypeLookup class because the
+ *        \c PROPERTY_TYPE_LOOKUP_ENTRY macro below takes care of everything for constructor calls where you would
+ *        otherwise need them.
  */
-namespace {
-    template <typename, template <typename...> typename>
-    struct is_instance_impl : public std::false_type {};
+template <typename T>
+struct is_optional : public std::false_type{};
+template <typename T>
+struct is_optional< std::optional<T> > : public std::true_type{};
 
-    template <template <typename...> typename U, typename...Ts>
-    struct is_instance_impl<U<Ts...>, U> : public std::true_type {};
-}
-
-template <typename T, template <typename ...> typename U>
-using is_instance = is_instance_impl<std::remove_cvref_t<T>, U>;
-
-//¥¥¥¥ To do : this allows us to know if something is an instance of std::optional, but it does not give us the type inside
-//that...
+template <typename T>
+struct is_optional_enum : public std::false_type{};
+template <typename T>
+struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};
 
 /**
- * \class TypeLookup allows us to get the typeId of a property that is guaranteed unique for each different type and
- *        guaranteed identical for two properties of the same type.
- *
- *        Note that we cannot use \c std::type_info::name() for this purpose as "the returned string can be identical
- *        for several types".
+ * \brief Extends \c std::type_index with some other info we need about a type for serialisation, specifically whether
+ *        it is an enum and/or whether it is \c std::optional.
+ */
+struct TypeInfo {
+   /**
+    * \brief \c std::type_index is essentially a wrapper around pointer to \c std::type_info.  It is guaranteed unique
+    *        for each different type and guaranteed to compare equal for two properties of the same type.  (This is
+    *        better than using raw pointers as they are not guaranteed to be identical for two properties of the same
+    *        type.)
+    *
+    *        Note that we cannot use \c std::type_info::name() for this purpose as "the returned string can be identical
+    *        for several types".
+    */
+   std::type_index typeIndex;
+
+   /**
+    * \brief This classification covers the main special cases we need to deal with, viz whether a property is optional
+    *        (so we have to deal with std::optional wrapper around the underlying type) and whether it is an enum (where
+    *        we treat it as an int for generic handling because it makes the serialisation code a lot simpler).
+    */
+   enum class Classification {
+      RequiredEnum,
+      RequiredOther,
+      OptionalEnum,
+      OptionalOther
+   };
+   Classification classification;
+
+   bool isOptional() const;
+
+   /**
+    * \brief Factory function to construct a \c TypeInfo for a given type.
+    *
+    *        TODO: We could probably do this via a bunch of template specialisations...
+    */
+   template <typename T>
+   constexpr static TypeInfo construct() {
+      if (std::is_enum<T>::value) {
+         return TypeInfo{typeid(T), Classification::RequiredEnum};
+      }
+      if (!is_optional<T>::value) {
+         return TypeInfo{typeid(T), Classification::RequiredOther};
+      }
+      if (is_optional_enum<T>::value) {
+         return TypeInfo{typeid(T), Classification::OptionalEnum};
+      }
+      return TypeInfo{typeid(T), Classification::OptionalOther};
+   }
+};
+
+/**
+ * \class TypeLookup allows us to get \c TypeInfo for a property.
  *
  *        With the advent of BeerJSON, we have a lot more "optional" fields on objects.  We don't want to extend three
  *        different serialisation models (database, BeerXML and BeerJSON) with an extra flag, especially as the
@@ -61,17 +132,11 @@ using is_instance = is_instance_impl<std::remove_cvref_t<T>, U>;
 class TypeLookup {
 public:
 
-   /**
-    *\brief The data we want to store for each property name: its type ID and whether it is an enum.  We need the latter
-    *       because, for the purposes of the property system, we want to treat enums as ints.  (It makes the generic
-    *       handling of enums in serialisation code a lot simpler.)
-    */
-   using LookupMapEntry = std::pair<std::type_index, bool>;
 
    /**
     * \brief If we want to change from using std::map in future, it's easier if we have a typedef alias for it
     */
-   using LookupMap = std::map<BtStringConst const *, LookupMapEntry>;
+   using LookupMap = std::map<BtStringConst const *, TypeInfo>;
 
    /**
     * \brief Construct a \c TypeLookup that optinoally extends an existing one (typically from the parent class)
@@ -93,7 +158,7 @@ public:
    /**
     * \brief Get the type ID (and whether it's an enum) for a given property name
     */
-   LookupMapEntry getType(BtStringConst const & propertyName) const;
+   TypeInfo const & getType(BtStringConst const & propertyName) const;
 
    /**
     * \brief Returns whether the attribute for a given property name is optional (ie std::optional<T> rather than T)
@@ -106,14 +171,17 @@ private:
    TypeLookup const * const parentClassLookup;
 };
 
-
-
 /**
  * \brief This macro simplifies the entries in the \c initializerList parameter of a \c TypeLookup constructor call.  It
  *        also makes it easier for us to modify the structure of \c LookupMapEntry or \c LookupMap in future if we need
  *        to.
+ *
+ *        For the purposes of calling the \c TypeLookup constructor, the caller doesn't have to worry about what we
+ *        are storing or how.  For each property, you just provide the name of the property and the member variable in
+ *        which it is stored, eg:
+ *           PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::alpha_pct, Hop::m_alpha_pct)
+ *        The macro and the templates above etc then do the necessary.
  */
-#define PROPERTY_TYPE_LOOKUP_ENTRY(propNameConstVar, memberVar) {&propNameConstVar, {std::type_index(typeid(decltype(memberVar))), std::is_enum<decltype(memberVar)>()}}
-
+#define PROPERTY_TYPE_LOOKUP_ENTRY(propNameConstVar, memberVar) {&propNameConstVar, TypeInfo::construct<decltype(memberVar)>()}
 
 #endif

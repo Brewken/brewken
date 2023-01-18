@@ -538,13 +538,13 @@ namespace {
          // Hop: Extended and additional fields for BeerJSON
          //
          // We only need to update the old Hop type mappings.  The new ones should "just work".
-         {QString("UPDATE hop SET htype = 'aroma'           WHERE htype = 'Aroma'"    )},
-         {QString("UPDATE hop SET htype = 'bittering'       WHERE htype = 'Bittering'")},
-         {QString("UPDATE hop SET htype = 'aroma/bittering' WHERE htype = 'Both'"     )},
+         {QString(     "UPDATE hop SET htype = 'aroma'           WHERE htype = 'Aroma'"    )},
+         {QString(     "UPDATE hop SET htype = 'bittering'       WHERE htype = 'Bittering'")},
+         {QString(     "UPDATE hop SET htype = 'aroma/bittering' WHERE htype = 'Both'"     )},
          // Same applies for Hop form mappings
-         {QString("UPDATE hop SET form = 'pellet'           WHERE form = 'Pellet'")},
-         {QString("UPDATE hop SET form = 'plug'             WHERE form = 'Plug'"  )},
-         {QString("UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'"  )},
+         {QString(     "UPDATE hop SET form = 'pellet'           WHERE form = 'Pellet'")},
+         {QString(     "UPDATE hop SET form = 'plug'             WHERE form = 'Plug'"  )},
+         {QString(     "UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'"  )},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<int    >())},
@@ -562,12 +562,12 @@ namespace {
          // Fermentable: Extended and additional fields for BeerJSON
          //
          // We only need to update the old Fermentable type mappings.  The new ones should "just work".
-         {QString("UPDATE fermentable SET ftype = 'grain'           WHERE ftype = 'Grain'"      )},
-         {QString("UPDATE fermentable SET ftype = 'sugar'           WHERE ftype = 'Sugar'"      )},
-         {QString("UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'"    )},
-         {QString("UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
-         {QString("UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'"    )},
-         {QString("ALTER TABLE hop ADD COLUMN grain_group           %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("     UPDATE fermentable SET ftype = 'grain'           WHERE ftype = 'Grain'"      )},
+         {QString("     UPDATE fermentable SET ftype = 'sugar'           WHERE ftype = 'Sugar'"      )},
+         {QString("     UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'"    )},
+         {QString("     UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
+         {QString("     UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'"    )},
+         {QString("ALTER TABLE fermentable ADD COLUMN grain_group           %1").arg(db.getDbNativeTypeName<QString>())},
       };
       return executeSqlQueries(q, migrationQueries);
    }
