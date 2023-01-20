@@ -44,7 +44,8 @@
 AddPropertyName(addAfterBoil          )
 AddPropertyName(alphaAmylase_dextUnits)
 AddPropertyName(amount                )
-AddPropertyName(amount_kg             )
+AddPropertyName(amountIsWeight        )
+AddPropertyName(amountWithUnits       )
 AddPropertyName(coarseFineDiff_pct    )
 AddPropertyName(coarseGrindYield_pct  )
 AddPropertyName(color_srm             )
@@ -170,8 +171,9 @@ public:
    //=================================================== PROPERTIES ====================================================
    //! \brief The \c Type.
    Q_PROPERTY(Type           type                   READ type                   WRITE setType                               )
-   //! \brief The amount in kg.
-   Q_PROPERTY(double         amount_kg              READ amount_kg              WRITE setAmount_kg                          )
+   //! \brief The amount in kg or litres
+   Q_PROPERTY(double         amount                 READ amount                 WRITE setAmount                             )
+   Q_PROPERTY(bool           amountIsWeight         READ amountIsWeight         WRITE setAmountIsWeight                     )
    //! \brief The yield (when finely milled) as a percentage of equivalent glucose.
    Q_PROPERTY(double         yield_pct              READ yield_pct              WRITE setYield_pct                          )
    //! \brief The color in SRM.
@@ -268,7 +270,7 @@ public:
     * .:TBD JSON:. Check what else we need to do to tie in to PhysicalQuantity::Mixed, plus look at how we force weight
     * for BeerXML.
     */
-   Q_PROPERTY(MassOrVolumeAmt    amount                  READ amount                  WRITE setAmount                   )
+   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits                  READ amountWithUnits                  WRITE setAmountWithUnits                   )
 
    /**
     * \brief Percentage of malt that is "glassy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
@@ -348,7 +350,8 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                    () const;
-   double  amount_kg                               () const;
+   double  amount                                  () const;
+   bool    amountIsWeight                          () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    double  yield_pct                               () const;
    double  color_srm                               () const;
    bool    addAfterBoil                            () const;
@@ -373,7 +376,7 @@ public:
    std::optional<double>     potentialYield_sg     () const;
    std::optional<double>     alphaAmylase_dextUnits() const;
    std::optional<double>     kolbachIndex_pct      () const;
-   MassOrVolumeAmt           amount                () const;
+   MassOrVolumeAmt           amountWithUnits       () const;
    std::optional<double>     hardnessPrpGlassy_pct () const;
    std::optional<double>     hardnessPrpHalf_pct   () const;
    std::optional<double>     hardnessPrpMealy_pct  () const;
@@ -389,7 +392,8 @@ public:
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                  (Type                      const   val);
-   void setAmount_kg             (double                    const   val);
+   void setAmount                (double                    const   val);
+   void setAmountIsWeight        (bool                      const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    void setYield_pct             (double                    const   val);
    void setColor_srm             (double                    const   val);
    void setAddAfterBoil          (bool                      const   val);
@@ -414,7 +418,7 @@ public:
    void setPotentialYield_sg     (std::optional<double>     const   val);
    void setAlphaAmylase_dextUnits(std::optional<double>     const   val);
    void setKolbachIndex_pct      (std::optional<double>     const   val);
-   void setAmount                (MassOrVolumeAmt           const   val);
+   void setAmountWithUnits       (MassOrVolumeAmt           const   val);
    void setHardnessPrpGlassy_pct (std::optional<double>     const   val);
    void setHardnessPrpHalf_pct   (std::optional<double>     const   val);
    void setHardnessPrpMealy_pct  (std::optional<double>     const   val);
@@ -432,23 +436,23 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString m_typeStr;
-   Type    m_type;
-   double  m_amountKg;       // Primarily valid in "Use Of" instance
-   double  m_yieldPct;
-   double  m_colorSrm;
-   bool    m_isAfterBoil;    // Primarily valid in "Use Of" instance
-   QString m_origin;
-   QString m_supplier;
-   QString m_notes;
+   Type    m_type          ;
+   double  m_amount        ; // Primarily valid in "Use Of" instance
+   bool    m_amountIsWeight; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   double  m_yieldPct      ;
+   double  m_colorSrm      ;
+   bool    m_isAfterBoil   ; // Primarily valid in "Use Of" instance
+   QString m_origin        ;
+   QString m_supplier      ;
+   QString m_notes         ;
    double  m_coarseFineDiff;
-   double  m_moisturePct;
+   double  m_moisturePct   ;
    double  m_diastaticPower;
-   double  m_proteinPct;
-   double  m_maxInBatchPct;
-   bool    m_recommendMash;
-   double  m_ibuGalPerLb;
-   bool    m_isMashed;       // Primarily valid in "Use Of" instance
+   double  m_proteinPct    ;
+   double  m_maxInBatchPct ;
+   bool    m_recommendMash ;
+   double  m_ibuGalPerLb   ;
+   bool    m_isMashed      ; // Primarily valid in "Use Of" instance
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> m_grainGroup            ;
    QString                   m_producer              ;
@@ -458,7 +462,6 @@ private:
    std::optional<double>     m_potentialYield_sg     ;
    std::optional<double>     m_alphaAmylase_dextUnits;
    std::optional<double>     m_kolbachIndex_pct      ;
-   MassOrVolumeAmt           m_amount                ;
    std::optional<double>     m_hardnessPrpGlassy_pct ;
    std::optional<double>     m_hardnessPrpHalf_pct   ;
    std::optional<double>     m_hardnessPrpMealy_pct  ;

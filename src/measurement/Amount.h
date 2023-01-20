@@ -86,6 +86,8 @@ public:
 
    //! Move assignment.
    MassOrVolumeAmt & operator=(Measurement::Amount && other);
+
+   bool isMass() const;
 private:
    bool wasConstructAssignOrMoveOK();
 };

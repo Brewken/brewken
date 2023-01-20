@@ -466,7 +466,8 @@ void Testing::recipeCalcTest_allGrain() {
    rec->add(this->cascade_4pct);
 
    // Add grain
-   twoRow->setAmount_kg(grain_kg);
+   twoRow->setAmount(grain_kg);
+   twoRow->setAmountIsWeight(true);
    rec->add<Fermentable>(this->twoRow);
 
    // Add mash
@@ -546,7 +547,8 @@ void Testing::postBoilLossOgTest() {
    recLoss->setEquipment(eLoss);
 
    // Add grain
-   twoRow->setAmount_kg(grain_kg);
+   twoRow->setAmount(grain_kg);
+   twoRow->setAmountIsWeight(true);
    recNoLoss->add<Fermentable>(twoRow);
    recLoss->add<Fermentable>(twoRow);
 

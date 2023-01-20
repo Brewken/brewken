@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -225,14 +225,50 @@ void WaterDialog::setRecipe(Recipe *rec) {
    }
 
    // I need these numbers before we set the ranges
-   for (Fermentable *i : m_rec->fermentables() ) {
-      m_total_grains += i->amount_kg();
+   for (Fermentable *ii : m_rec->fermentables() ) {
+      // .:TBD:. This almost certainly needs some refinement
+      switch (ii->type()) {
+         case Fermentable::Type::Grain:
+         case Fermentable::Type::Extract:
+         case Fermentable::Type::Dry_Extract:
+            if (ii->amountIsWeight()) {
+               m_total_grains += ii->amount();
+            }
+            break;
+         case Fermentable::Type::Sugar:
+         case Fermentable::Type::Other_Adjunct:
+         case Fermentable::Type::Fruit:
+         case Fermentable::Type::Juice:
+         case Fermentable::Type::Honey:
+            // For the moment, at least, assume these types of fermentables do not affect color.  .:TBD:. This is
+            // probably wrong!
+            break;
+      }
    }
 
-   for (Fermentable *i : m_rec->fermentables() ) {
-      double lovi = ( i->color_srm() +0.6 ) / 1.35;
-      m_weighted_colors   += (i->amount_kg()/m_total_grains)*lovi;
+   // Now we've got m_total_grains, we need to loop over fermentable again
+   for (Fermentable *ii : m_rec->fermentables() ) {
+      // .:TBD:. This almost certainly needs some refinement
+      switch (ii->type()) {
+         case Fermentable::Type::Grain:
+         case Fermentable::Type::Extract:
+         case Fermentable::Type::Dry_Extract:
+            if (ii->amountIsWeight()) {
+               double lovi = ( ii->color_srm() +0.6 ) / 1.35;
+               m_weighted_colors   += (ii->amount()/m_total_grains)*lovi;
+            }
+            break;
+         case Fermentable::Type::Sugar:
+         case Fermentable::Type::Other_Adjunct:
+         case Fermentable::Type::Fruit:
+         case Fermentable::Type::Juice:
+         case Fermentable::Type::Honey:
+            // For the moment, at least, assume these types of fermentables do not affect color.  .:TBD:. This is
+            // probably wrong!
+            break;
+      }
    }
+
    m_thickness = m_rec->mash()->totalInfusionAmount_l()/m_total_grains;
 
    if (this->m_base) {
@@ -459,18 +495,32 @@ double WaterDialog::calculateGristpH() {
       double color = m_rec->color_srm();
       double colorFromGrain = 0.0;
 
-      for (Fermentable * i : m_rec->fermentables()) {
-         // I am counting anything that doesn't have diastatic
-         // power as a roasted/crystal malt. I am sure my assumption will
-         // haunt me later, but I have no way of knowing what kind of malt
-         // (base, crystal, roasted) this is.
-         if ( i->diastaticPower_lintner() < 1 ) {
-            double lovi = 19.0;
-            if ( i->color_srm() <= 120 ) {
-               lovi = ( i->color_srm() + 0.6)/1.35;
-            }
-            colorFromGrain = ( i->amount_kg() / m_total_grains ) * lovi;
-          }
+      for (Fermentable * ii : m_rec->fermentables()) {
+         switch (ii->type()) {
+            case Fermentable::Type::Grain:
+            case Fermentable::Type::Extract:
+            case Fermentable::Type::Dry_Extract:
+               // I am counting anything that doesn't have diastatic
+               // power as a roasted/crystal malt. I am sure my assumption will
+               // haunt me later, but I have no way of knowing what kind of malt
+               // (base, crystal, roasted) this is.
+               if ( ii->diastaticPower_lintner() < 1 ) {
+                  double lovi = 19.0;
+                  if ( ii->color_srm() <= 120 ) {
+                     lovi = ( ii->color_srm() + 0.6)/1.35;
+                  }
+                  colorFromGrain = ( ii->amount() / m_total_grains ) * lovi;
+               }
+               break;
+            case Fermentable::Type::Sugar:
+            case Fermentable::Type::Other_Adjunct:
+            case Fermentable::Type::Fruit:
+            case Fermentable::Type::Juice:
+            case Fermentable::Type::Honey:
+               // For the moment, at least, assume these types of fermentables do not affect color.  .:TBD:. This is
+               // probably wrong!
+               break;
+         }
       }
       double colorRatio = colorFromGrain/m_weighted_colors;
       pHAdjustment = platoRatio * ( pHSlopeLight * (1-colorRatio) + pHSlopeDark * colorRatio) *color;

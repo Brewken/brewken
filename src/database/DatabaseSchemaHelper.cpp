@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -567,7 +567,21 @@ namespace {
          {QString("     UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'"    )},
          {QString("     UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
          {QString("     UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'"    )},
-         {QString("ALTER TABLE fermentable ADD COLUMN grain_group           %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN grain_group            %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN producer               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN productId              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fineGrindYield_pct     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN coarseGrindYield_pct   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN potentialYield_sg      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN alphaAmylase_dextUnits %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kolbachIndex_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN amountIsWeight         %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpGlassy_pct  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpHalf_pct    %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpMealy_pct   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpPlump     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpThin      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("     UPDATE fermentable SET amountIsWeight = ?"), {QVariant{true}}}, // All existing amounts will be weights
       };
       return executeSqlQueries(q, migrationQueries);
    }

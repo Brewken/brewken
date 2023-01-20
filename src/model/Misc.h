@@ -163,7 +163,7 @@ private:
    Use  m_use;  // Primarily valid in "Use Of" instance
    double m_time;
    double m_amount;
-   bool m_amountIsWeight;
+   bool   m_amountIsWeight;
    QString m_useFor;
    QString m_notes;
 

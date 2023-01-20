@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
+ * xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -42,9 +42,13 @@ namespace {
       return;
    }
    template<> void setAmountsEtc(Fermentable & fermentable, NamedParameterBundle const & npb) {
-      fermentable.setAmount_kg   (npb.val<double>(PropertyNames::Fermentable::amount_kg   ));
-      fermentable.setAddAfterBoil(npb.val<bool  >(PropertyNames::Fermentable::addAfterBoil));
-      fermentable.setIsMashed    (npb.val<bool  >(PropertyNames::Fermentable::isMashed    ));
+      // For Fermentable, assume amount is weight unless otherwise specified because base BeerXML does not include the
+      // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
+      // implementing support for BeerJSON.)
+      fermentable.setAmount         (npb.val<double>(PropertyNames::Fermentable::amount        ));
+      fermentable.setAmountIsWeight (npb.val<bool  >(PropertyNames::Fermentable::amountIsWeight, true));
+      fermentable.setAddAfterBoil   (npb.val<bool  >(PropertyNames::Fermentable::addAfterBoil  ));
+      fermentable.setIsMashed       (npb.val<bool  >(PropertyNames::Fermentable::isMashed      ));
       return;
    }
    template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {

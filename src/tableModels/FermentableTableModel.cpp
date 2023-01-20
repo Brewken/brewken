@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -71,22 +71,30 @@ namespace {
       QObject::tr("Not mashed"), // isMashed() == false
       QObject::tr("Mashed")      // isMashed() == true
    };
+   std::array<QString const, 2> descAmountIsWeight {
+      QObject::tr("Volume"), // amountIsWeight() == false
+      QObject::tr("Weight")      // amountIsWeight() == true
+   };
 
 }
+
+// .:TODO:. We need to unify some of the logic from Misc into common code with Fermentable so we can write the handling
+// for weight/volume once.  What's here for the moment is showing weight/volume but not allowing it to be edited.
 
 //=====================CLASS FermentableTableModel==============================
 FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) :
    BtTableModelInventory{
       parent,
       editable,
-      {{FERMNAMECOL,      {tr("Name"),      NonPhysicalQuantity::String,          ""            }},
-       {FERMTYPECOL,      {tr("Type"),      NonPhysicalQuantity::String,          ""            }},
-       {FERMAMOUNTCOL,    {tr("Amount"),    Measurement::PhysicalQuantity::Mass,  "amount_kg"   }},
-       {FERMINVENTORYCOL, {tr("Inventory"), Measurement::PhysicalQuantity::Mass,  "inventory_kg"}},
-       {FERMISMASHEDCOL,  {tr("Method"),    NonPhysicalQuantity::String,          ""            }},
-       {FERMAFTERBOIL,    {tr("Addition"),  NonPhysicalQuantity::String,          ""            }},
-       {FERMYIELDCOL,     {tr("Yield %"),   NonPhysicalQuantity::Percentage,      ""            }},
-       {FERMCOLORCOL,     {tr("Color"),     Measurement::PhysicalQuantity::Color, "color_srm"   }}}
+      {{FERMNAMECOL,      {tr("Name"),        NonPhysicalQuantity::String,          ""                                                 }},
+       {FERMTYPECOL,      {tr("Type"),        NonPhysicalQuantity::String,          ""                                                 }},
+       {FERMAMOUNTCOL,    {tr("Amount"),      Measurement::PhysicalQuantity::Mass,  *PropertyNames::Fermentable::amount                }},
+       {FERMISWEIGHT,     {tr("Amount Type"), NonPhysicalQuantity::Bool,            ""                                                 }},
+       {FERMINVENTORYCOL, {tr("Inventory"),   Measurement::PhysicalQuantity::Mass,  *PropertyNames::NamedEntityWithInventory::inventory}},
+       {FERMISMASHEDCOL,  {tr("Method"),      NonPhysicalQuantity::String,          ""                                                 }},
+       {FERMAFTERBOIL,    {tr("Addition"),    NonPhysicalQuantity::String,          ""                                                 }},
+       {FERMYIELDCOL,     {tr("Yield %"),     NonPhysicalQuantity::Percentage,      ""                                                 }},
+       {FERMCOLORCOL,     {tr("Color"),       Measurement::PhysicalQuantity::Color, *PropertyNames::Fermentable::color_srm             }}}
    },
    BtTableModelData<Fermentable>{},
    displayPercentages(false),
@@ -169,7 +177,9 @@ void FermentableTableModel::addFermentable(int fermId) {
    beginInsertRows(QModelIndex(), size, size);
    this->rows.append(ferm);
    connect(ferm.get(), &NamedEntity::changed, this, &FermentableTableModel::changed);
-   this->totalFermMass_kg += ferm->amount_kg();
+   if (ferm->amountIsWeight()) {
+      this->totalFermMass_kg += ferm->amount();
+   }
    //reset(); // Tell everybody that the table has changed.
    endInsertRows();
    return;
@@ -189,7 +199,9 @@ void FermentableTableModel::addFermentables(QList<std::shared_ptr<Fermentable> >
 
       for (auto ferm : tmp) {
          connect(ferm.get(), &NamedEntity::changed, this, &FermentableTableModel::changed);
-         totalFermMass_kg += ferm->amount_kg();
+         if (ferm->amountIsWeight()) {
+            totalFermMass_kg += ferm->amount();
+         }
       }
 
       endInsertRows();
@@ -209,7 +221,9 @@ bool FermentableTableModel::remove(std::shared_ptr<Fermentable> ferm) {
       disconnect(ferm.get(), nullptr, this, nullptr);
       this->rows.removeAt(rowNum);
 
-      this->totalFermMass_kg -= ferm->amount_kg();
+      if (ferm->amountIsWeight()) {
+         this->totalFermMass_kg -= ferm->amount();
+      }
       //reset(); // Tell everybody the table has changed.
       endRemoveRows();
 
@@ -236,8 +250,10 @@ void FermentableTableModel::removeAll() {
 
 void FermentableTableModel::updateTotalGrains() {
    this->totalFermMass_kg = 0;
-   for (auto ferm : this->rows) {
-      totalFermMass_kg += ferm->amount_kg();
+   for (auto const & ferm : this->rows) {
+      if (ferm->amountIsWeight()) {
+         totalFermMass_kg += ferm->amount();
+      }
    }
    return;
 }
@@ -324,24 +340,38 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          break;
       case FERMINVENTORYCOL:
          if (role == Qt::DisplayRole) {
-            // So just query the columns
             return QVariant(
-               Measurement::displayAmount(Measurement::Amount{row->inventory(), Measurement::Units::kilograms},
+               Measurement::displayAmount(Measurement::Amount{
+                                             row->inventory(),
+                                             row->amountIsWeight() ? Measurement::Units::kilograms :
+                                                                     Measurement::Units::liters
+                                          },
                                           3,
                                           this->getForcedSystemOfMeasurementForColumn(column),
-                                          this->getForcedRelativeScaleForColumn(column))
+                                          std::nullopt)
             );
          }
          break;
       case FERMAMOUNTCOL:
          if (role == Qt::DisplayRole) {
-            // So just query the columns
             return QVariant(
-               Measurement::displayAmount(Measurement::Amount{row->amount_kg(), Measurement::Units::kilograms},
+               Measurement::displayAmount(Measurement::Amount{
+                                             row->amount(),
+                                             row->amountIsWeight() ? Measurement::Units::kilograms :
+                                                                     Measurement::Units::liters
+                                          },
                                           3,
                                           this->getForcedSystemOfMeasurementForColumn(column),
-                                          this->getForcedRelativeScaleForColumn(column))
+                                          std::nullopt)
             );
+         }
+         break;
+      case FERMISWEIGHT:
+         if (role == Qt::DisplayRole) {
+            return QVariant(descAmountIsWeight[static_cast<int>(row->amountIsWeight())]);
+         }
+         if (role == Qt::UserRole) {
+            return QVariant(row->amountIsWeight());
          }
          break;
       case FERMISMASHEDCOL:
@@ -390,7 +420,12 @@ QVariant FermentableTableModel::headerData( int section, Qt::Orientation orienta
    if (displayPercentages && orientation == Qt::Vertical && role == Qt::DisplayRole) {
       double perMass = 0.0;
       if (totalFermMass_kg > 0.0 ) {
-         perMass = this->rows[section]->amount_kg()/totalFermMass_kg;
+         // .:TODO:. Work out what to do for amounts that are volumes
+         if (this->rows[section]->amountIsWeight()) {
+            perMass = this->rows[section]->amount()/totalFermMass_kg;
+         } else {
+            qWarning() << Q_FUNC_INFO << "Unhandled branch for liquid fermentables";
+         }
       }
       return QVariant( QString("%1%").arg( static_cast<double>(100.0) * perMass, 0, 'f', 0 ) );
    }
@@ -436,6 +471,9 @@ bool FermentableTableModel::setData(QModelIndex const & index,
    bool retVal = false;
    auto row = this->rows[index.row()];
 
+   Measurement::PhysicalQuantity physicalQuantity =
+      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass: Measurement::PhysicalQuantity::Volume;
+
    int const column = index.column();
    switch (column) {
       case FERMNAMECOL:
@@ -461,15 +499,14 @@ bool FermentableTableModel::setData(QModelIndex const & index,
       case FERMINVENTORYCOL:
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
-            // Inventory amount is in kg, but is just called "inventory" rather than "inventory_kg" in the Q_PROPERTY declaration in the Fermentable class
             MainWindow::instance().doOrRedoUpdate(
                *row,
                PropertyNames::NamedEntityWithInventory::inventory,
                Measurement::qStringToSI(value.toString(),
-                                        Measurement::PhysicalQuantity::Mass,
+                                        physicalQuantity,
                                         this->getForcedSystemOfMeasurementForColumn(column),
                                         this->getForcedRelativeScaleForColumn(column)).quantity(),
-               tr("Change Inventory Amount")
+               tr("Change Fermentable Inventory Amount")
             );
          }
          break;
@@ -480,9 +517,9 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             // We need to refer back to the MainWindow to make this an undoable operation
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::Fermentable::amount_kg,
+               PropertyNames::Fermentable::amount,
                Measurement::qStringToSI(value.toString(),
-                                        Measurement::PhysicalQuantity::Mass,
+                                        physicalQuantity,
                                         this->getForcedSystemOfMeasurementForColumn(column),
                                         this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Fermentable Amount")
@@ -492,6 +529,15 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             }
          }
          break;
+      case FERMISWEIGHT:
+         if (!value.canConvert(QVariant::Bool)) {
+            return false;
+         }
+         MainWindow::instance().doOrRedoUpdate(*row,
+                                               PropertyNames::Fermentable::amountIsWeight,
+                                               value.toBool(),
+                                               tr("Change Fermentable Amount Type"));
+         break;
       case FERMISMASHEDCOL:
          retVal = value.canConvert(QVariant::Bool);
          if (retVal) {
@@ -500,7 +546,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             MainWindow::instance().doOrRedoUpdate(*row,
                                                   PropertyNames::Fermentable::isMashed,
                                                   value.toBool(),
-                                                  tr("Change Is Mashed"));
+                                                  tr("Change Fermentable Is Mashed"));
          }
          break;
       case FERMAFTERBOIL:

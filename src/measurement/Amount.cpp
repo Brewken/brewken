@@ -100,6 +100,11 @@ MassOrVolumeAmt & MassOrVolumeAmt::operator=(Measurement::Amount && other) {
    return *this;
 }
 
+bool MassOrVolumeAmt::isMass() const {
+   return this->Measurement::Amount::m_unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass;
+}
+
+
 bool MassOrVolumeAmt::wasConstructAssignOrMoveOK() {
    return (this->Measurement::Amount::m_unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass ||
            this->Measurement::Amount::m_unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Volume);

@@ -933,23 +933,19 @@ bool Recipe::hasBoilExtract() {
 }
 
 PreInstruction Recipe::boilFermentablesPre(double timeRemaining) {
-   QString str;
-   int i;
-   int size;
-
-   str = tr("Boil or steep ");
+   QString str = tr("Boil or steep ");
    QList<Fermentable *> flist = fermentables();
-   size = flist.size();
-   for (i = 0; static_cast<int>(i) < size; ++i) {
+   int size = flist.size();
+   for (int i = 0; static_cast<int>(i) < size; ++i) {
       Fermentable * ferm = flist[i];
       if (ferm->isMashed() || ferm->addAfterBoil() || ferm->isExtract()) {
          continue;
       }
 
       str += QString("%1 %2, ")
-             .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+             .arg(Measurement::displayAmount(ferm->amountWithUnits(),
                                              PersistentSettings::Sections::fermentableTable,
-                                             PropertyNames::Fermentable::amount_kg))
+                                             PropertyNames::Fermentable::amountWithUnits))
              .arg(ferm->name());
    }
    str += ".";
@@ -966,20 +962,16 @@ bool Recipe::isFermentableSugar(Fermentable * fermy) {
 }
 
 PreInstruction Recipe::addExtracts(double timeRemaining) const {
-   QString str;
-   int i;
-   int size;
-
-   str = tr("Raise water to boil and then remove from heat. Stir in  ");
+   QString str = tr("Raise water to boil and then remove from heat. Stir in  ");
    const QList<Fermentable *> flist = fermentables();
-   size = flist.size();
-   for (i = 0; static_cast<int>(i) < size; ++i) {
+   int size = flist.size();
+   for (int i = 0; static_cast<int>(i) < size; ++i) {
       const Fermentable * ferm = flist[i];
       if (ferm->isExtract()) {
          str += QString("%1 %2, ")
-                .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+                .arg(Measurement::displayAmount(ferm->amountWithUnits(),
                                                 PersistentSettings::Sections::fermentableTable,
-                                                PropertyNames::Fermentable::amount_kg))
+                                                PropertyNames::Fermentable::amountWithUnits))
                 .arg(ferm->name());
       }
    }
@@ -1003,9 +995,9 @@ void Recipe::postboilFermentablesIns() {
 
       hasFerms = true;
       tmp = QString("%1 %2, ")
-            .arg(Measurement::displayAmount(Measurement::Amount{ferm->amount_kg(), Measurement::Units::kilograms},
+            .arg(Measurement::displayAmount(ferm->amountWithUnits(),
                                             PersistentSettings::Sections::fermentableTable,
-                                            PropertyNames::Fermentable::amount_kg))
+                                            PropertyNames::Fermentable::amountWithUnits))
             .arg(ferm->name());
       str += tmp;
    }
@@ -2183,19 +2175,21 @@ void Recipe::recalcABV_pct() {
 }
 
 void Recipe::recalcColor_srm() {
-   Fermentable * ferm;
    double mcu = 0.0;
-   double ret;
-   int i;
 
-   QList<Fermentable *> ferms = fermentables();
-   for (i = 0; static_cast<int>(i) < ferms.size(); ++i) {
-      ferm = ferms[i];
-      // Conversion factor for lb/gal to kg/l = 8.34538.
-      mcu += ferm->color_srm() * 8.34538 * ferm->amount_kg() / m_finalVolumeNoLosses_l;
+   for (auto const * ii : this->fermentables()) {
+      if (ii->amountIsWeight()) {
+         // Conversion factor for lb/gal to kg/l = 8.34538.
+         mcu += ii->color_srm() * 8.34538 * ii->amount() / m_finalVolumeNoLosses_l;
+      } else {
+         // .:TBD:. What do do about liquids
+         qWarning() <<
+            Q_FUNC_INFO << "Unimplemented branch for handling color of liquid fermentables - #" << ii->key() << ":" <<
+            ii->name();
+      }
    }
 
-   ret = ColorMethods::mcuToSrm(mcu);
+   double ret = ColorMethods::mcuToSrm(mcu);
 
    if (! qFuzzyCompare(m_color_srm, ret)) {
       m_color_srm = ret;
@@ -2204,29 +2198,32 @@ void Recipe::recalcColor_srm() {
       }
    }
 
+   return;
 }
 
 void Recipe::recalcIBU() {
-   int i;
    double ibus = 0.0;
-   double tmp = 0.0;
 
    // Bitterness due to hops...
    m_ibus.clear();
    QList<Hop *> hhops = hops();
-   for (i = 0; i < hhops.size(); ++i) {
-      tmp = ibuFromHop(hhops[i]);
+   for (int i = 0; i < hhops.size(); ++i) {
+      double tmp = ibuFromHop(hhops[i]);
       m_ibus.append(tmp);
       ibus += tmp;
    }
 
    // Bitterness due to hopped extracts...
-   QList<Fermentable *> ferms = fermentables();
-   for (i = 0; static_cast<int>(i) < ferms.size(); ++i) {
-      // Conversion factor for lb/gal to kg/l = 8.34538.
-      ibus +=
-         ferms[i]->ibuGalPerLb() *
-         (ferms[i]->amount_kg() / batchSize_l()) / 8.34538;
+   for (auto const * ii : this->fermentables()) {
+      if (ii->amountIsWeight()) {
+         // Conversion factor for lb/gal to kg/l = 8.34538.
+         ibus += ii->ibuGalPerLb() * (ii->amount() / batchSize_l()) / 8.34538;
+      } else {
+         // .:TBD:. What do do about liquids
+         qWarning() <<
+            Q_FUNC_INFO << "Unimplemented branch for handling IBU of liquid fermentables - #" << ii->key() << ":" <<
+            ii->name();
+      }
    }
 
    if (! qFuzzyCompare(ibus, m_IBU)) {
@@ -2235,6 +2232,8 @@ void Recipe::recalcIBU() {
          emit changed(metaProperty(*PropertyNames::Recipe::IBU), m_IBU);
       }
    }
+
+   return;
 }
 
 void Recipe::recalcVolumeEstimates() {
@@ -2268,16 +2267,31 @@ void Recipe::recalcVolumeEstimates() {
       tmp = tmp_wfm;
    }
 
+   // .:TODO:. Assumptions below about liquids are almost certainly wrong, also TBD what other cases we have to cover
    // Need to account for extract/sugar volume also.
-   QList<Fermentable *> ferms = fermentables();
-   foreach (Fermentable * f, ferms) {
-      Fermentable::Type type = f->type();
-      if (type == Fermentable::Type::Extract) {
-         tmp += f->amount_kg() / PhysicalConstants::liquidExtractDensity_kgL;
-      } else if (type == Fermentable::Type::Sugar) {
-         tmp += f->amount_kg() / PhysicalConstants::sucroseDensity_kgL;
-      } else if (type == Fermentable::Type::Dry_Extract) {
-         tmp += f->amount_kg() / PhysicalConstants::dryExtractDensity_kgL;
+   for (auto const * ii : this->fermentables()) {
+      switch (ii->type()) {
+         case Fermentable::Type::Extract:
+            if (ii->amountIsWeight()) {
+               tmp += ii->amount() / PhysicalConstants::liquidExtractDensity_kgL;
+            } else {
+               tmp += ii->amount();
+            }
+            break;
+         case Fermentable::Type::Sugar:
+            if (ii->amountIsWeight()) {
+               tmp += ii->amount() / PhysicalConstants::sucroseDensity_kgL;
+            } else {
+               tmp += ii->amount();
+            }
+            break;
+         case Fermentable::Type::Dry_Extract:
+            if (ii->amountIsWeight()) {
+               tmp += ii->amount() / PhysicalConstants::dryExtractDensity_kgL;
+            } else {
+               tmp += ii->amount();
+            }
+            break;
       }
    }
 
@@ -2335,20 +2349,21 @@ void Recipe::recalcVolumeEstimates() {
          emit changed(metaProperty(*PropertyNames::Recipe::postBoilVolume_l), m_postBoilVolume_l);
       }
    }
+   return;
 }
 
 void Recipe::recalcGrainsInMash_kg() {
-   int i, size;
    double ret = 0.0;
-   Fermentable * ferm;
 
-   QList<Fermentable *> ferms = fermentables();
-   size = ferms.size();
-   for (i = 0; i < size; ++i) {
-      ferm = ferms[i];
-
-      if (ferm->type() == Fermentable::Type::Grain && ferm->isMashed()) {
-         ret += ferm->amount_kg();
+   for (auto const * ii : this->fermentables()) {
+      if (ii->type() == Fermentable::Type::Grain && ii->isMashed()) {
+         if (ii->amountIsWeight()) {
+            ret += ii->amount();
+         } else {
+            qWarning() <<
+               Q_FUNC_INFO << "Ignoring fermentable #" << ii->key() << "(" << ii->name() << ") as measured by "
+               "volume";
+         }
       }
    }
 
@@ -2358,16 +2373,24 @@ void Recipe::recalcGrainsInMash_kg() {
          emit changed(metaProperty(*PropertyNames::Recipe::grainsInMash_kg), m_grainsInMash_kg);
       }
    }
+   return;
 }
 
 void Recipe::recalcGrains_kg() {
-   int i, size;
    double ret = 0.0;
 
-   QList<Fermentable *> ferms = fermentables();
-   size = ferms.size();
-   for (i = 0; i < size; ++i) {
-      ret += ferms[i]->amount_kg();
+   for (auto const * ii : this->fermentables()) {
+      // .:TODO:. Need to think about what, if anything, we need to do for other Fermantable types here
+      if (ii->type() == Fermentable::Type::Grain) {
+         // I wouldn't have thought you would want to measure grain by volume, but best to check
+         if (ii->amountIsWeight()) {
+            ret += ii->amount();
+         } else {
+            qWarning() <<
+               Q_FUNC_INFO << "Ignoring fermentable #" << ii->key() << "(" << ii->name() << ") as measured by "
+               "volume";
+         }
+      }
    }
 
    if (! qFuzzyCompare(ret, m_grains_kg)) {
@@ -2707,24 +2730,22 @@ bool Recipe::isValidType(const QString & str) {
 
 QList<QString> Recipe::getReagents(QList<Fermentable *> ferms) {
    QList<QString> reagents;
-   QString format, tmp;
-
-   for (int i = 0; i < ferms.size(); ++i) {
-      if (ferms[i]->isMashed()) {
-         if (i + 1 < ferms.size()) {
-            tmp = QString("%1 %2, ")
-                  .arg(Measurement::displayAmount(Measurement::Amount{ferms[i]->amount_kg(), Measurement::Units::kilograms},
-                                                  PersistentSettings::Sections::fermentableTable,
-                                                  PropertyNames::Fermentable::amount_kg))
-                  .arg(ferms[i]->name());
+   for (int ii = 0; ii < ferms.size(); ++ii) {
+      if (ferms[ii]->isMashed()) {
+         // .:TBD:.  This isn't the most elegant or accurate way of handling commas.  If we're returning a list, we
+         // should probably leave it to the caller to put commas in for display.
+         QString format;
+         if (ii + 1 < ferms.size()) {
+            format = "%1 %2, ";
          } else {
-            tmp = QString("%1 %2 ")
-                  .arg(Measurement::displayAmount(Measurement::Amount{ferms[i]->amount_kg(), Measurement::Units::kilograms},
-                                                  PersistentSettings::Sections::fermentableTable,
-                                                  PropertyNames::Fermentable::amount_kg))
-                  .arg(ferms[i]->name());
+            format = "%1 %2 ";
          }
-         reagents.append(tmp);
+         reagents.append(
+            format.arg(Measurement::displayAmount(ferms[ii]->amountWithUnits(),
+                                                  PersistentSettings::Sections::fermentableTable,
+                                                  PropertyNames::Fermentable::amountWithUnits))
+                  .arg(ferms[ii]->name())
+         );
       }
    }
    return reagents;
@@ -2845,24 +2866,43 @@ void Recipe::acceptChangeToContainedObject([[maybe_unused]] QMetaProperty prop,
 double Recipe::targetCollectedWortVol_l() {
 
    // Need to account for extract/sugar volume also.
-   float postMashAdditionVolume_l = 0;
+   double postMashAdditionVolume_l = 0;
 
-   QList<Fermentable *> ferms = fermentables();
-   foreach (Fermentable * f, ferms) {
-      Fermentable::Type type = f->type();
-      if (type == Fermentable::Type::Extract) {
-         postMashAdditionVolume_l  += static_cast<float>(f->amount_kg() / PhysicalConstants::liquidExtractDensity_kgL);
-      } else if (type == Fermentable::Type::Sugar) {
-         postMashAdditionVolume_l  += static_cast<float>(f->amount_kg() / PhysicalConstants::sucroseDensity_kgL);
-      } else if (type == Fermentable::Type::Dry_Extract) {
-         postMashAdditionVolume_l  += static_cast<float>(f->amount_kg() / PhysicalConstants::dryExtractDensity_kgL);
+   for (Fermentable const * f : this->fermentables()) {
+      switch (f->type()) {
+         case Fermentable::Type::Extract:
+            if (f->amountIsWeight()) {
+               postMashAdditionVolume_l += f->amount() / PhysicalConstants::liquidExtractDensity_kgL;
+            } else {
+               // .:TBD:. This is probably incorrect!
+               postMashAdditionVolume_l += f->amount();
+            }
+            break;
+         case Fermentable::Type::Sugar:
+            if (f->amountIsWeight()) {
+               postMashAdditionVolume_l += f->amount() / PhysicalConstants::sucroseDensity_kgL;
+            } else {
+               // .:TBD:. This is probably incorrect!
+               postMashAdditionVolume_l += f->amount();
+            }
+            break;
+         case Fermentable::Type::Dry_Extract:
+            if (f->amountIsWeight()) {
+               postMashAdditionVolume_l += f->amount() / PhysicalConstants::dryExtractDensity_kgL;
+            } else {
+               // .:TBD:. This is probably incorrect!
+               postMashAdditionVolume_l += f->amount();
+            }
+            break;
+         // .:TODO:. Need to handle other types of Fermentable here, even if it's just to add a NO-OP to show the
+         // compiler we didn't forget about them.  For now the compiler warning will help us remember this to-do!
       }
    }
 
    if (equipment()) {
-      return boilSize_l() - equipment()->topUpKettle_l() - static_cast<double>(postMashAdditionVolume_l);
+      return boilSize_l() - equipment()->topUpKettle_l() - postMashAdditionVolume_l;
    } else {
-      return boilSize_l() - static_cast<double>(postMashAdditionVolume_l);
+      return boilSize_l() - postMashAdditionVolume_l;
    }
 }
 
@@ -2875,7 +2915,6 @@ double Recipe::targetTotalMashVol_l() {
    } else {
       absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
    }
-
 
    return targetCollectedWortVol_l() + absorption_lKg * grainsInMash_kg();
 }
