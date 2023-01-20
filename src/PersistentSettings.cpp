@@ -143,9 +143,8 @@ void PersistentSettings::initialise(QString customUserDataDir) {
    }
 
    // Now we can set the full path of the persistent settings file
-   qSettings = std::make_unique<QSettings>(configDir.absoluteFilePath("brewkenPersistentSettings.conf"),
-                                           QSettings::IniFormat);
-
+   qSettings = std::make_unique<QSettings>(configDir.absoluteFilePath(newConfigFileName), QSettings::IniFormat);
+   qInfo() << Q_FUNC_INFO << "Persistent settings file:" << qSettings->fileName();
 
    // We've done enough now for calls to contains()/insert()/value() etc to work.  Mark that we're initialised so we
    // can (potentially) use one of those calls to initialise the user data directory.
