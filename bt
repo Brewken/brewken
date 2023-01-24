@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #-----------------------------------------------------------------------------------------------------------------------
-# bt is part of Brewken, and is copyright the following authors 2022:
+# bt is part of Brewken, and is copyright the following authors 2022-2023:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,16 +21,12 @@
 #
 #    ./bt setup                  Sets up Git options and configures the 'mbuild' meson build directory
 #
-#    ./bt package                Does the packaging by running 'meson install' (with extra options to "install"
+#    ./bt setup all              As above but also tries to install all tools and dependencies we need
+#
+#    ./bt package                Does the packaging.  First runs 'meson install' (with extra options to "install"
 #                                binaries, data etc to a subdirectory of the build directory rather than to where they
-#                                need to be for a local install) and 'meson compile part_2_of_packaging'.  The latter
-#                                command ends up invoking this script again with part_3_of_packaging parameter.
-#
-#    ./bt part_3_of_packaging   Intended to be invoked from meson, this creates a distributable package, making use
-#                                of various environment variables set in the meson.build file.
-#
-# The rationale for bt invoking meson invoking bt is to minimise the number of places we essentially create the same
-# settings -- including keeping all the "what files need installing" config in the meson.build file.
+#                                need to be for a local install).  Then creates a distributable package, making use
+#                                of various build variables passed back from Meson.
 #
 #
 #
@@ -52,6 +48,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 import argparse
 import datetime
+import glob
 import logging
 import os
 import pathlib
@@ -147,6 +144,14 @@ import packaging.version
 subprocess.run([exe_pip, 'install', 'requests'])
 import requests
 
+#
+# Once all platforms we're running on have Python version 3.11 or above, we will be able to use the built-in tomllib
+# library (see https://docs.python.org/3/library/tomllib.html) for parsing TOML.  Until then, it's easier to import the
+# tomlkit library (see https://pypi.org/project/tomlkit/) which actually has rather more functionality than we need
+#
+subprocess.run([exe_pip, 'install', 'tomlkit'])
+import tomlkit
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Parse command line arguments
 #-----------------------------------------------------------------------------------------------------------------------
@@ -230,6 +235,9 @@ dir_base          = pathlib.Path(__file__).parent.resolve()
 dir_gitInfo       = dir_base.joinpath('.git')
 dir_build         = dir_base.joinpath('mbuild')
 dir_gitSubmodules = dir_base.joinpath('third-party')
+dir_packaging          = dir_build.joinpath('packaging')             # Top-level packaging directory
+dir_packaging_platform = dir_packaging.joinpath(platform.system().lower())   # Platform-specific packaging directory
+
 # See comment in doPackage() for explanation of qtIfw directory tree
 dir_qtIfw           = dir_build.joinpath('qtIfw')
 dir_qtIfw_config    = dir_qtIfw.joinpath('config')
@@ -520,8 +528,17 @@ def installDependencies():
          )
 
          #
-         # Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.56.0 or later.  In this case it means we
-         # have to install Meson via pip, which is not ideal on Linux (per comments in meson.build).
+         # Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.60.0 or later.  In this case it means we have to
+         # install Meson via pip, which is not ideal on Linux.
+         #
+         # Specifically, as explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip, although
+         # using the pip3 install gets a newer version, we have to do the pip install as root (which is normally not
+         # recommended).  If we don't do this, then running `meson install` (or even `sudo meson install`) will barf on
+         # Linux (because we need to be able to install files into system directories).
+         #
+         # So, where a sufficiently recent version of Meson is available in the distro packages (eg
+         # `sudo apt install meson` on Ubuntu etc) it is much better to install this.   Installing via pip is a last
+         # resort.
          #
          # The distro ID we get from 'lsb_release -is' will be 'Ubuntu' for all the variants of Ubuntu (eg including
          # Kubuntu).  Not sure what happens on derivatives such as Linux Mint though.
@@ -569,6 +586,10 @@ def installDependencies():
          #    MINGW64
          terminalVersion = unameResult.split(sep='_', maxsplit=1)[0]
          if (terminalVersion != 'MINGW32'):
+            # One day we'll try to get the 64-bit build working on Windows.  I think it's just the packaging step that's
+            # the problem.  For now, it's easier to insist on 32-bit at set-up.  (Obviously 32-bit apps run just fine on
+            # 64-bit Windows.  I don't think there would be any noticeable difference to the end user in having a 64-bit
+            # version of the app.)
             log.critical('Running in ' + terminalVersion + ' but need to run in MINGW32 (ie 32-bit build environment)')
             exit(1)
 
@@ -827,182 +848,483 @@ def doSetup(setupOption):
 # ./bt package
 #-----------------------------------------------------------------------------------------------------------------------
 def doPackage():
+   #
+   # Meson does not offer a huge amount of help on creating installable packages.  It has no equivalent to CMake's CPack
+   # and there is generally not a lot of info out there about how to do packaging in Meson.  OTOH, although CPack has
+   # lots of features it is also very painful to use.  Some of the things you can do are undocumented; some of the
+   # things you want to be able to do seem nigh on impossible.  So maybe taking a completely different approach is a
+   # good thing.
+   #
+   # I spent some time looking at and trying to use the Qt-Installer-Framework (QtIFW).  Upsides are:
+   #   - In principle we could write one set of install config that would then create install packages for Windows, Mac
+   #     and Linux.
+   #   - It should already know how to package Qt libraries(!)
+   #   - It's the same licence as the rest of Qt.
+   #   - We could use it in GitHub actions (courtesy of https://github.com/jurplel/install-qt-action).
+   #   - It can handle in-place upgrades (including the check for whether an upgraded version is available), per
+   #     https://doc.qt.io/qtinstallerframework/ifw-updates.html.
+   # Downsides are:
+   #   - Outside of packaging Qt itself, I'm not sure that it's hugely widely used.  It can be hard to find "how tos" or
+   #     other assistance.
+   #   - It's not a great advert for itself -- eg when I installed it locally on Kubuntu by downloading directly from
+   #     https://download.qt.io/official_releases/qt-installer-framework/, it didn't put its own tools in the PATH,
+   #     so I had to manually add ~/Qt/QtIFW-4.5.0/bin/ to my PATH.
+   #   - It usually necessary to link against a static build of Qt, which is a bit of a pain as you have to download the
+   #     source files for Qt and compile it locally -- see eg
+   #     https://stackoverflow.com/questions/14932315/how-to-compile-qt-5-under-windows-or-linux-32-or-64-bit-static-or-dynamic-on-v
+   #     for the whole process.
+   #   - It's a change of installation method for people who have previously downloaded deb packages, RPMs, Mac DMG
+   #     files, etc.
+   #   - It puts things in different places than 'native' installers.  Eg, on Linux, everything gets installed to
+   #     subdirectories of the user's home directory rather than the "usual" system directories).  Amongst other things,
+   #     this makes it harder for distros etc that want to ship our software.
+   #
+   # The alternative approach, which I resisted for a fair while, but have ultimately become persuaded is right, is to
+   # do Windows, Mac and Linux packaging separately:
+   #   - For Mac, there is some info at https://mesonbuild.com/Creating-OSX-packages.html on creating app bundles
+   #   - For Linux, there is some mention in the Meson manual of building deb and rpm packages eg
+   #     https://mesonbuild.com/Installing.html#destdir-support, but I think you have to do most of the work yourself.
+   #     https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some sketchy
+   #     starting info on how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used
+   #     to be a Meson module for creating RPMs, but it was discontinued per
+   #     https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
+   #     designed etc.)  Also look at https://openbuildservice.org/.
+   #   - For Windows, we could probably use NSIS (Nullsoft Scriptable Install System -- see
+   #     https://nsis.sourceforge.io/) -- or similar to create a Windows installer.
+   #
+   # Although a lot of packaging is platform-specific, the initial set-up is generic.
+   #
+   #    1. This script (as invoked directly) creates some packaging sub-directories of the build directory and then
+   #       invokes Meson
+   #    2. Meson installs all the binaries, data files and so on that we need to ship into the packaging directory tree
+   #    3. Meson also exports a bunch of build information into a TOML file that we read in.  This saves us duplicating
+   #       too many meseon.build settings in this file.
+   #
+
    findMesonAndGit()
 
    #
-   # The directory structure we create inside the build directory (mbuild) for packaging is:
+   # The top-level directory structure we create inside the build directory (mbuild) for packaging is:
    #
-   #    qtIfw/             <-- Groups all the Qt-IFW stuff together and keeps it separate from what's in the top-level
-   #    │                      build directory.  The binary installer we generate ends up in this directory.
+   #    packaging/
    #    │
-   #    ├── config/        <-- Global configuration for the installer lives here.  (If needed, a single installer can
-   #    │                      offer the end user choices about which packages (aka components) to install.  We don't
-   #    │                      need that complexity, so we just have one package.)
-   #    └── packages/
-   #        │
-   #        └── com.<appname>.root/  <-- Each subdirectory of packages is supposed to "act as domain-like identifier"
-   #            │                        for a component or subcomponent of the software.  We use the application name
-   #            │                        (ie brewtarget or brewken) for the "domain-like" bit.  We only have one
-   #            │                        subdirectory as we're not offering the end user a choice about which bits of
-   #            │                        functionality to install (otherwise each component and sub-component would also
-   #            │                        have its own packages subdirectory, with names like
-   #            │                        com.<appname>.root.component_foo.subcomponent_bar).
-   #            │
-   #            ├── data/            <-- Contains everything the installer is going to install, all packaged into
-   #            │                        archive files.  Archive files can be 7z (the default), zip, tar.gz, tar.bz2 or
-   #            │                        tar.xz.  Creation of the archive files can be done automatically by the Qt
-   #            │                        tools (eg binarycreator) or beforehand (eg using the archivegen tool that is
-   #            │                        delivered with the Qt Installer Framework) for more control.
-   #            │
-   #            └── meta/            <-- Files in here are not installed; they specify settings for deployment and the
-   #                                     installation process.  "The directory must contain at least a package
-   #                                     information file and all files that you refer to in the package information
-   #                                     file, such as scripts, user interface files, and translations.
-   #                                     TODO: think about localising the installer
+   #    ├── windows/ For Windows
+   #    │
+   #    ├── darwin/  For Mac
+   #    │
+   #    └── linux/   For Linux
    #
-   # The six steps for creating a QtIFW installer are listed at
-   # https://doc.qt.io/qtinstallerframework/ifw-creating-installers.html.  We actually do them in a different order than
-   # listed because we don't want to duplicate things that meson can do automatically.  (Nor do we want to jump through
-   # hoops trying to bend meson to do things it is not designed for.)
+   # NB: If you wanted to change this, you would need to make corresponding changes in meson.build
    #
 
-   # Step 1 : Create a package directory for the installable components
-   #          We'll make all the directories mentioned above and ensure they start out empty
-   if (dir_qtIfw.is_dir()):
-      log.info('Removing existing ' + dir_qtIfw.as_posix() + ' directory tree')
-      shutil.rmtree(dir_qtIfw)
-   for dirToCreate in dirList_qtIfw:
-      log.info('Creating directory ' + dirToCreate.as_posix())
-      os.makedirs(dirToCreate)
+   # Step 1 : Create a top-level package directory structure
+   #          We'll make the relevant top-level directory and ensure it starts out empty
+   #          (We don't have to make dir_packaging as it will automatically get created by os.makedirs when we ask it to
+   #          create dir_packaging_platform.)
+   if (dir_packaging_platform.is_dir()):
+      log.info('Removing existing ' + dir_packaging_platform.as_posix() + ' directory tree')
+      shutil.rmtree(dir_packaging_platform)
+   log.info('Creating directory ' + dir_packaging_platform.as_posix())
+   os.makedirs(dir_packaging_platform)
 
    # We change into the build directory.  This doesn't affect the caller (of this script) because we're a separate
    # sub-process from the (typically) shell that invoked us and we cannot change the parent process's working
    # directory.
    os.chdir(dir_build)
    log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+
    #
    # Running 'meson install' with the --destdir option will put all the installable files (program executable,
-   # translation files, data files, etc) in the packaging directory
-   #
-   # It also generates config.xml and package.xml, but does not put them in the right directory
+   # translation files, data files, etc) in subdirectories of the platform-specific packaging directory.  However, it
+   # will not bundle up any shared libraries that we need to ship with the application on Windows and Mac.  We handle
+   # this in the platform-specific code below.
    #
    log.info('Running meson install with --destdir option')
    # See https://mesonbuild.com/Commands.html#install for the optional parameters to meson install
-   abortOnRunFail(subprocess.run([exe_meson, "install", "--destdir", dir_qtIfw_data.as_posix()],
+   abortOnRunFail(subprocess.run([exe_meson, 'install', '--destdir', dir_packaging_platform.as_posix()],
                                  capture_output=False))
 
    #
-   # If meson install worked, we can do the actual packaging via 'meson compile package'.  This will end up invoking
-   # another instance of this script, but with the part_3_of_packaging parameter (and a whole bunch of useful
-   # environment variables set by meson).
+   # At the direction of meson.build, Meson should have generated a config.toml file in the build directory that we can
+   # read in to get useful settings exported from the build system.
    #
-   # Why is it 'meson compile package' rather than, say, 'meson package'?  It's because meson doesn't really know about
-   # packaging and we're just running it to get build info.  So we have a custom meson target called 'package', and when
-   # we ask meson to "compile" a custom target, we can actually have it run the executable of our choice - in this case
-   # this script.
+   global buildConfig
+   with open(dir_build.joinpath('config.toml').as_posix()) as buildConfigFile:
+      buildConfig = tomlkit.parse(buildConfigFile.read())
    #
-   log.info('Running meson compile part_2_of_packaging')
-   abortOnRunFail(subprocess.run([exe_meson, 'compile', 'part_2_of_packaging'], capture_output=False))
-
-   print()
-   return
-
-#-----------------------------------------------------------------------------------------------------------------------
-# ./bt part_3_of_packaging
-#-----------------------------------------------------------------------------------------------------------------------
-# NB: This part of the script is intended to be invoked from the Meson build (see ../meson.build).  Meson will
-# automatically set the following environment variables for us (though we don't need them as we assume these are the
-# directories we knew about when we invoked 'meson package').:
-#    MESON_SOURCE_ROOT
-#    MESON_BUILD_ROOT
-# Additionally, we use meson.build to set a whole bunch of CONFIG_ environment variables
-#-----------------------------------------------------------------------------------------------------------------------
-def doMesonPackageHelper():
-   findMesonAndGit()
-
-   # Copy the generated installer and package configuration/information files from the build directory to where they
-   # belong in the qtIfw subtree
-   shutil.copy2(dir_build.joinpath('config.xml'),  dir_qtIfw_config)
-   shutil.copy2(dir_build.joinpath('package.xml'), dir_qtIfw_meta)
-
-   # Copy other files
-   shutil.copy2(dir_base.joinpath('packaging').joinpath('qtIfw').joinpath('installerPage1.ui'), dir_qtIfw_meta)
-   shutil.copy2(dir_base.joinpath('LICENSE'), dir_qtIfw_meta.joinpath('license.txt'))
-
-   CONFIG_INSTALLER_APPLICATION_ICON = os.environ.get('CONFIG_INSTALLER_APPLICATION_ICON')
-   if (CONFIG_INSTALLER_APPLICATION_ICON is not None and CONFIG_INSTALLER_APPLICATION_ICON != ""):
-      log.debug("Copying " + CONFIG_INSTALLER_APPLICATION_ICON)
-      shutil.copy2(
-         dir_base.joinpath(
-            os.environ['CONFIG_INSTALLER_APPLICATION_ICON_DIR']
-         ).joinpath(
-            CONFIG_INSTALLER_APPLICATION_ICON
-         ),
-         dir_qtIfw_meta
-      )
-
-   CONFIG_INSTALLER_WINDOW_ICON = os.environ.get('CONFIG_INSTALLER_WINDOW_ICON')
-   if (CONFIG_INSTALLER_WINDOW_ICON is not None and CONFIG_INSTALLER_WINDOW_ICON != ""):
-      shutil.copy2(
-         dir_base.joinpath(
-            os.environ['CONFIG_INSTALLER_WINDOW_ICON_DIR']
-         ).joinpath(
-            CONFIG_INSTALLER_WINDOW_ICON
-         ),
-         dir_qtIfw_meta
-      )
+   # Note however that there are some things that are (often intentionally) difficult or impossible to import to or
+   # export from Meson.  (See
+   # https://mesonbuild.com/FAQ.html#why-is-meson-not-just-a-python-module-so-i-could-code-my-build-setup-in-python for
+   # why it an explicitly design goal not to have the Meson configuration language be Turing-complete.)
+   #
+   # We deal with some of these in platform-specific code below
+   #
 
    #
-   # Find the binarycreator (Mac and Linux) / binarycreator.exe (Windows) file
+   # If meson install worked, we can now do the actual packaging.
    #
-   # In order of preference we want:
-   #   - Whatever is already first in the PATH
-   #   - If nothing is in the path, whatever the most recent version of Qt IFW is installed under the user's home
-   #     directory
-   # But if we can't find anything we want to capture that error and bail out
-   #
-   bcExtn = ""
-   if (platform.system() == 'Windows'):
-      bcExtn = ".exe"
 
-   log.debug('Looking for binarycreator' + bcExtn)
-   exe_binarycreator = shutil.which("binarycreator" + bcExtn)
-   if (exe_binarycreator is None or exe_binarycreator == ""):
-      localBcs = sorted(pathlib.Path.home().joinpath('Qt').glob('QtIFW-*/bin/binarycreator' + bcExtn))
-      if (len(localBcs) > 0):
-         exe_binarycreator = shutil.which(localBcs[len(localBcs) - 1])
+###   #======================================================================================================================================
+###   # EVERYTHING BELOW HERE IS OUR FIRST STAB AT THE QT INSTALLER.  CURRENT THINKING IS THAT WE'LL DELETE ALL THIS.
+###   #
+###   # The directory structure we create inside the build directory (mbuild) for packaging is:
+###   #
+###   #    qtIfw/             <-- Groups all the Qt-IFW stuff together and keeps it separate from what's in the top-level
+###   #    │                      build directory.  The binary installer we generate ends up in this directory.
+###   #    │
+###   #    ├── config/        <-- Global configuration for the installer lives here.  (If needed, a single installer can
+###   #    │                      offer the end user choices about which packages (aka components) to install.  We don't
+###   #    │                      need that complexity, so we just have one package.)
+###   #    └── packages/
+###   #        │
+###   #        └── com.<appname>.root/  <-- Each subdirectory of packages is supposed to "act as domain-like identifier"
+###   #            │                        for a component or subcomponent of the software.  We use the application name
+###   #            │                        (ie brewtarget or brewken) for the "domain-like" bit.  We only have one
+###   #            │                        subdirectory as we're not offering the end user a choice about which bits of
+###   #            │                        functionality to install (otherwise each component and sub-component would also
+###   #            │                        have its own packages subdirectory, with names like
+###   #            │                        com.<appname>.root.component_foo.subcomponent_bar).
+###   #            │
+###   #            ├── data/            <-- Contains everything the installer is going to install, all packaged into
+###   #            │                        archive files.  Archive files can be 7z (the default), zip, tar.gz, tar.bz2 or
+###   #            │                        tar.xz.  Creation of the archive files can be done automatically by the Qt
+###   #            │                        tools (eg binarycreator) or beforehand (eg using the archivegen tool that is
+###   #            │                        delivered with the Qt Installer Framework) for more control.
+###   #            │
+###   #            └── meta/            <-- Files in here are not installed; they specify settings for deployment and the
+###   #                                     installation process.  "The directory must contain at least a package
+###   #                                     information file and all files that you refer to in the package information
+###   #                                     file, such as scripts, user interface files, and translations.
+###   #                                     TODO: think about localising the installer
+###   #
+###   # The six steps for creating a QtIFW installer are listed at
+###   # https://doc.qt.io/qtinstallerframework/ifw-creating-installers.html.  We actually do them in a different order than
+###   # listed because we don't want to duplicate things that meson can do automatically.  (Nor do we want to jump through
+###   # hoops trying to bend meson to do things it is not designed for.)
+###   #
+###
+###   # Step 1 : Create a package directory for the installable components
+###   #          We'll make all the directories mentioned above and ensure they start out empty
+###   if (dir_qtIfw.is_dir()):
+###      log.info('Removing existing ' + dir_qtIfw.as_posix() + ' directory tree')
+###      shutil.rmtree(dir_qtIfw)
+###   for dirToCreate in dirList_qtIfw:
+###      log.info('Creating directory ' + dirToCreate.as_posix())
+###      os.makedirs(dirToCreate)
+###
+###   # We change into the build directory.  This doesn't affect the caller (of this script) because we're a separate
+###   # sub-process from the (typically) shell that invoked us and we cannot change the parent process's working
+###   # directory.
+###   os.chdir(dir_build)
+###   log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+###   #
+###   # Running 'meson install' with the --destdir option will put all the installable files (program executable,
+###   # translation files, data files, etc) in the packaging directory
+###   #
+###   # It also generates config.xml and package.xml, but does not put them in the right directory
+###   #
+###   log.info('Running meson install with --destdir option')
+###   # See https://mesonbuild.com/Commands.html#install for the optional parameters to meson install
+###   abortOnRunFail(subprocess.run([exe_meson, "install", "--destdir", dir_qtIfw_data.as_posix()],
+###                                 capture_output=False))
+###
+###   #
+###   # If meson install worked, we can do the actual packaging via 'meson compile package'.  This will end up invoking
+###   # another instance of this script, but with the part_3_of_packaging parameter (and a whole bunch of useful
+###   # environment variables set by meson).
+###   #
+###   # Why is it 'meson compile package' rather than, say, 'meson package'?  It's because meson doesn't really know about
+###   # packaging and we're just running it to get build info.  So we have a custom meson target called 'package', and when
+###   # we ask meson to "compile" a custom target, we can actually have it run the executable of our choice - in this case
+###   # this script.
+###   #
+###   log.info('Running meson compile part_2_of_packaging')
+###   abortOnRunFail(subprocess.run([exe_meson, 'compile', 'part_2_of_packaging'], capture_output=False))
+###   #======================================================================================================================================
 
-   if (exe_binarycreator is None or exe_binarycreator == ""):
-      log.critical('Could not locate Qt IFW binarycreator')
-      exit(1)
+   match platform.system():
 
-   #
-   # On Windows we need the binary we're creating to have a ".exe" extension
-   #
-   # On Mac we want to specify a ".app" extension, which will also tell binarycreator to create a macOS application
-   # bundle
-   #
-   appExtn = ""
-   if (platform.system() == 'Windows'):
-      appExtn = ".exe"
-   elif (platform.system() == 'Darwin'):
-      appExtn = ".app"
+      #-----------------------------------------------------------------------------------------------------------------
+      #------------------------------------------------ Linux Packaging ------------------------------------------------
+      #-----------------------------------------------------------------------------------------------------------------
+      case 'Linux':
+         log.debug('Linux Packaging - TODO!')
+         #
+         # Notes on building debian package -- see
+         # https://unix.stackexchange.com/questions/30303/how-to-create-a-deb-file-manually
+         #
+         # You need to install some extras:
+         #    sudo apt-get install debhelper build-essential dh-make
+         #
+         # Then:
+         #    # Create the source tarball
+         #    meson dist
+         #    # Create the debian/ subtree in the build directory
+         #    # I think we only want to do this once, because you end up with a lot of example files that you need to
+         #    # edit etc.  Or we could have a look at that brewtarget debian project...
+         #    dh_make --copyright gpl3 --email mfsy@yahoo.com --single --packagename brewken_0.1.0-1 --file meson-dist/*.tar.xz --yes
+         #
+         # To create a deb package, we create the following directory structure (where items marked ✅ are installed by meson
+         # install with --destdir option, and items marked ✴ are things we need to generate):
+         # TODO Mark things with ❌ that are generated by dh_make and not needed...
+         #    [projectName]-[versionNumber]_x86_64/
+         #    ├── control          ✴  # Contains info about dependencies, maintainer, etc
+         #    ├── control.tar.gz   ✴  # Hopefully just a compressed version of the above
+         #    ├── data.tar.gz      ✴  # Compressed archive of the usr tree below
+         #    ├── debian-binary    ✴  # A text file containing just "2.0"
+         #    ├── md5sums          ✴  # = checksums of all the files in the usr tree below
+         #    └── usr
+         #        ├── bin
+         #        │   └── [projectName] ✅   <-- the executable
+         #        └── share
+         #            ├── [projectName]
+         #            │   ├── applications
+         #            │   │   └── [projectName].desktop ✅  <-- [filesToInstall_desktop]
+         #            │   ├── DefaultData.xml           ✅  <----- [filesToInstall_data]
+         #            │   ├── default_db.sqlite         ✅  <--┘
+         #            │   ├── icons
+         #            │   │   └── hicolor
+         #            │   │       └── scalable
+         #            │   │           └── apps
+         #            │   │               └── [projectName].svg ✅  <-- [filesToInstall_icons]
+         #            │   ├── sounds
+         #            │   │   └── [All the filesToInstall_sounds .wav files] ✅
+         #            │   └── translations_qm
+         #            │       └── [All the .qm files generated by qt.compile_translations] ✅
+         #            └── doc
+         #                └── [projectName]
+         #                    ├── changelog.Debian.gz  ✅
+         #                    ├── copyright            ✅
+         #                    ├── README.md            ✅
+         #                    └── RelaseNotes.markdown ✅
+         #
 
-   log.debug("Running " + exe_binarycreator.as_posix())
-   os.chdir(dir_qtIfw)
 
-   abortOnRunFail(
-      subprocess.run(
-         [
-            exe_binarycreator,
-            '-v',
-            '-c', dir_qtIfw_config.joinpath('config.xml').as_posix(),
-            '-p', dir_qtIfw_packages.as_posix(),
-            os.environ['CONFIG_APPLICATION_NAME_UC'] + appExtn
-         ],
-         capture_output=False
-      )
-   )
+      #-----------------------------------------------------------------------------------------------------------------
+      #----------------------------------------------- Windows Packaging -----------------------------------------------
+      #-----------------------------------------------------------------------------------------------------------------
+      case 'Windows':
+         log.debug('Windows Packaging - WIP!')
+         #
+         # There are three main open-source packaging tools available for Windows:
+         #
+         #    - NSIS (Nullsoft Scriptable Install System) -- see https://nsis.sourceforge.io/
+         #      This is widely used and reputedly simple to learn.  Actually the documentation, although OK overall, is
+         #      not brilliant for beginners.  When you are trying to write your first installer script, you will find a
+         #      frustrating number of errors, omissions and broken links in the documentation.  If you give up on this
+         #      and take an existing working script as a starting point, the reference documentation to explain each
+         #      command is not too bad.  Plus there are lots of useful titbits on Stack Overflow etc.
+         #         What's less good is that the scripting language is rather primitive.  Once you start looking at
+         #      variable scope and how to pass arguments to functions, you'll have a good feel for what it was like to
+         #      write mainframe assembly language in the 1970s.
+         #         There is one other advantage that NSIS has over Wix and Inno Setup, specifically that it is available
+         #      as an MSYS2 package (mingw-w64-x86_64-nsis for 64-bit and mingw-w64-i686-nsis for 32-bit), whereas the
+         #      others are not.  This makes it easier to script installations, including for the automated builds on
+         #      GitHub.
+         #
+         #    - WiX -- see https://wixtoolset.org/ and https://github.com/wixtoolset/
+         #      This is apparently used by a lot of Microsoft's own products and is supposedly pretty robust.  Looks
+         #      like you configure/script it with XML and PowerShell.  Most discussion of it says you really first need
+         #      to have a good understanding of Windows Installer (https://en.wikipedia.org/wiki/Windows_Installer) and
+         #      its MSI package format.  There is a 260 page book called "The Definitive Guide to Windows Installer"
+         #      which either is or isn't beginner-friendly depending on who you ask but, either way is about 250 pages
+         #      more than I want to have to know about Windows package installation.  If we decided we _needed_ to
+         #      produce MSI installers though, this would be the only choice.
+         #
+         #    - Inno Setup -- see https://jrsoftware.org/isinfo.php and https://github.com/jrsoftware/issrc
+         #      Has been around for ages, but is less widely used than NSIS.  Basic configuration is supposedly simpler
+         #      than NSIS, as it's based on an INI file (https://en.wikipedia.org/wiki/INI_file), but you also, by
+         #      default, have a bit less control over how the installer works.  If you do need to script something you
+         #      have to do it in Pascal, so a trip back to the 1980s rather than the 1970s.
+         #
+         # For the moment, we're sticking with NSIS, which is the devil we know, aka what we've historically used.
+         #
+
+         #
+         # As mentioned above, not all information about what Meson does is readily exportable.   In particular, I can
+         # find no simple way to get the actual directory that a file was installed to.  Eg, on Windows, in an MSYS2
+         # environment, the main executable will be in mbuild/packaging/windows/msys64/mingw32/bin/ or similar.  The
+         # beginning (mbuild/packaging/windows) and the end (bin) are parts we specify, but the middle bit
+         # (msys64/mingw32) is magicked up by Meson and not explicitly exposed to build script commands.
+         #
+         # Fortunately, we can just search for a directory called bin inside the platform-specific packaging directory
+         # and we'll have the right thing.
+         #
+         packageBinDirList = glob.glob('./**/bin/', root_dir=dir_packaging_platform.as_posix(), recursive=True)
+         if (len(packageBinDirList) == 0):
+            log.critical(
+               'Cannot find bin subdirectory of ' + dir_packaging_platform.as_posix() + ' packaging directory'
+            )
+            exit(1)
+         if (len(packageBinDirList) > 1):
+            log.warning(
+               'Found more than one bin subdirectory of ' + dir_packaging_platform.as_posix() + ' packaging directory: ' +
+               '; '.join(packageBinDirList) + '.  Assuming first is the one we need'
+            )
+
+         packageBinDir = dir_packaging_platform.joinpath(packageBinDirList[0])
+         log.debug('Package bin dir: ' + packageBinDir.as_posix())
+
+         #
+         # We could do the same search for data and doc directories, but we happen to know that they should just be
+         # sibling directories of the bin directory we just found.
+         #
+         packageDataDir = packageBinDir.parent.joinpath('data')
+         packageDocDir  = packageBinDir.parent.joinpath('doc')
+
+         #
+         # Now we have to deal with shared libraries.  Windows does not have a built-in package manager and it's not
+         # realistic for us to require end users to install and use one.  So, any shared library that we cannot
+         # statically link into the application needs to be included in the installer.  This mainly applies to Qt.
+         # (Although you can, in principle, statically link against Qt, it requires downloading the entire Qt source
+         # code and doing a custom build.)  Fortunately, Qt provides a handy utility called windeployqt that should do
+         # most of the work for us.
+         #
+         # Per https://doc.qt.io/qt-6/windows-deployment.html, the windeployqt executable creates all the necessary
+         # folder tree "containing the Qt-related dependencies (libraries, QML imports, plugins, and translations)
+         # required to run the application from that folder".
+         #
+         log.debug('Running windeployqt')
+         previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+         os.chdir(packageBinDir)
+         abortOnRunFail(
+            subprocess.run(['windeployqt',
+                            '--verbose', '2',        # 2 is the maximum
+                            projectName + '.exe'],
+                           capture_output=False)
+         )
+         os.chdir(previousWorkingDirectory)
+
+         # Copy the NSIS installer script to where it belongs
+         shutil.copy2(dir_build.joinpath('NsisInstallerScript.nsi'), dir_packaging_platform)
+
+         # We change into the packaging directory and invoke the NSIS Compiler (aka MakeNSIS.exe)
+         os.chdir(dir_packaging_platform)
+         log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
+         abortOnRunFail(
+            # FYI, we don't need it here, but if you run makensis from the MSYS2 command line (Mintty), you need double
+            # slashes on the options (//V4 instead of /V4 etc).
+            subprocess.run(
+               [
+                  'MakeNSIS.exe', # 'makensis' would also work on MSYS2
+                  '/V4',          # Max verbosity/logging
+                  # Variables coming from this script are passed in as command-line defines.  Fortunately there aren't
+                  # too many of them.
+                  '/DBT_PACKAGING_BIN_DIR="'  + packageBinDir.as_posix()  + '"',
+                  '/DBT_PACKAGING_DATA_DIR="' + packageDataDir.as_posix() + '"',
+                  '/DBT_PACKAGING_DOC_DIR="'  + packageDocDir.as_posix()  + '"',
+                  'NsisInstallerScript.nsi',
+               ],
+               capture_output=False
+            )
+         )
+
+      #-----------------------------------------------------------------------------------------------------------------
+      #------------------------------------------------- Mac Packaging -------------------------------------------------
+      #-----------------------------------------------------------------------------------------------------------------
+      case 'Darwin':
+         log.debug('Mac Packaging - TODO!')
+         #
+         # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
+         # https://doc.qt.io/qt-6/macos-deployment.html#the-mac-deployment-tool
+         #
+         # At first glance, you might thanks that, with a few name changes, we might share all the bt code for
+         # macdeployqt and windeployqt.  However, as you will see below, the two programs share _only_ a top-level goal
+         # ("automate the process of creating a deployable [folder / application bundle] that contains [the necessary Qt
+         # dependencies]" - ie so that the end user does not have to install Qt to run our software).  They have
+         # completely different implementations and command line options, so it would be unhelpful to try to treat them
+         # identically.
+         #
+
+      case _:
+         log.critical('Unrecognised platform: ' + platform.system())
+         exit(1)
+
+###   #======================================================================================================================================
+###   # EVERYTHING BELOW HERE IS OUR FIRST STAB AT THE QT INSTALLER.  CURRENT THINKING IS THAT WE'LL DELETE ALL THIS.
+###   # Copy the generated installer and package configuration/information files from the build directory to where they
+###   # belong in the qtIfw subtree
+###   shutil.copy2(dir_build.joinpath('config.xml'),  dir_qtIfw_config)
+###   shutil.copy2(dir_build.joinpath('package.xml'), dir_qtIfw_meta)
+###
+###   # Copy other files
+###   shutil.copy2(dir_base.joinpath('packaging').joinpath('qtIfw').joinpath('installerPage1.ui'), dir_qtIfw_meta)
+###   shutil.copy2(dir_base.joinpath('LICENSE'), dir_qtIfw_meta.joinpath('license.txt'))
+###
+###   CONFIG_INSTALLER_APPLICATION_ICON = os.environ.get('CONFIG_INSTALLER_APPLICATION_ICON')
+###   if (CONFIG_INSTALLER_APPLICATION_ICON is not None and CONFIG_INSTALLER_APPLICATION_ICON != ""):
+###      log.debug("Copying " + CONFIG_INSTALLER_APPLICATION_ICON)
+###      shutil.copy2(
+###         dir_base.joinpath(
+###            os.environ['CONFIG_INSTALLER_APPLICATION_ICON_DIR']
+###         ).joinpath(
+###            CONFIG_INSTALLER_APPLICATION_ICON
+###         ),
+###         dir_qtIfw_meta
+###      )
+###
+###   CONFIG_INSTALLER_WINDOW_ICON = os.environ.get('CONFIG_INSTALLER_WINDOW_ICON')
+###   if (CONFIG_INSTALLER_WINDOW_ICON is not None and CONFIG_INSTALLER_WINDOW_ICON != ""):
+###      shutil.copy2(
+###         dir_base.joinpath(
+###            os.environ['CONFIG_INSTALLER_WINDOW_ICON_DIR']
+###         ).joinpath(
+###            CONFIG_INSTALLER_WINDOW_ICON
+###         ),
+###         dir_qtIfw_meta
+###      )
+###
+###   #
+###   # Find the binarycreator (Mac and Linux) / binarycreator.exe (Windows) file
+###   #
+###   # In order of preference we want:
+###   #   - Whatever is already first in the PATH
+###   #   - If nothing is in the path, whatever the most recent version of Qt IFW is installed under the user's home
+###   #     directory
+###   # But if we can't find anything we want to capture that error and bail out
+###   #
+###   bcExtn = ""
+###   if (platform.system() == 'Windows'):
+###      bcExtn = ".exe"
+###
+###   log.debug('Looking for binarycreator' + bcExtn)
+###   exe_binarycreator = shutil.which("binarycreator" + bcExtn)
+###   if (exe_binarycreator is None or exe_binarycreator == ""):
+###      localBcs = sorted(pathlib.Path.home().joinpath('Qt').glob('QtIFW-*/bin/binarycreator' + bcExtn))
+###      if (len(localBcs) > 0):
+###         exe_binarycreator = shutil.which(localBcs[len(localBcs) - 1])
+###
+###   if (exe_binarycreator is None or exe_binarycreator == ""):
+###      log.critical('Could not locate Qt IFW binarycreator')
+###      exit(1)
+###
+###   #
+###   # On Windows we need the binary we're creating to have a ".exe" extension
+###   #
+###   # On Mac we want to specify a ".app" extension, which will also tell binarycreator to create a macOS application
+###   # bundle
+###   #
+###   appExtn = ""
+###   if (platform.system() == 'Windows'):
+###      appExtn = ".exe"
+###   elif (platform.system() == 'Darwin'):
+###      appExtn = ".app"
+###
+###   log.debug("Running " + exe_binarycreator.as_posix())
+###   os.chdir(dir_qtIfw)
+###
+###   abortOnRunFail(
+###      subprocess.run(
+###         [
+###            exe_binarycreator,
+###            '-v',
+###            '-c', dir_qtIfw_config.joinpath('config.xml').as_posix(),
+###            '-p', dir_qtIfw_packages.as_posix(),
+###            os.environ['CONFIG_APPLICATION_NAME_UC'] + appExtn
+###         ],
+###         capture_output=False
+###      )
+###   )
 
    return
 
@@ -1023,9 +1345,6 @@ match args.subCommand:
 
    case 'package':
       doPackage()
-
-   case 'part_3_of_packaging':
-      doMesonPackageHelper()
 
    # If we get here, it's a coding error as argparse should have already validated the command line arguments
    case _:

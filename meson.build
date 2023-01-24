@@ -24,37 +24,65 @@
 # ⭐⭐⭐ HAVE NOT YET DONE ANYTHING ON PACKAGING OR MUCH ON WINDOWS/MAC BUILDS
 # ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 #
-# STEP 1: Ensure Meson etc is installed:
-# --------------------------------------
-# On recent (ie >= 22.04) Ubuntu and other Debian-based versions of Linux:
-#    sudo apt install python3 ninja meson cmake
+# STEP 1: Ensure Python is installed:
+# -----------------------------------
+# On Ubuntu and other Debian-based versions of Linux:
+#    sudo apt install python3
 #
-# On older Ubuntu, you instead need:
-#    sudo apt install python3 ninja meson cmake
-#    sudo apt remove meson
-#    sudo pip3 install meson
+# On Windows, in the 32-bit MSYS2 (https://www.msys2.org/) environment:
+#    pacman -S --needed mingw-w64-i686-python
+#    pacman -S --needed mingw-w64-i686-python-pip
+# On Windows, in the 64-bit MSYS2 environment you would do the following HOWEVER NB WE HAVE NOT GOT PACKAGING WORKING
+# FOR 64-BIT BUILDS YET SO THIS IS NOT SUPPORTED AND MAY REQUIRE CHANGES TO THE bt SCRIPT:
+#    pacman -S --needed mingw-w64-x86_64-python
+#    pacman -S --needed mingw-w64-x86_64-python-pip
 #
-# This is because we need Meson 0.56 or newer, and Ubuntu 20.04 packages only provide 0.53.2.  Using the pip3 install
-# gets a newer version BUT, as explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip it is
-# not an ideal way to do the install on Linux.  We have to do the pip install as root (which is normally not
-# recommended), otherwise running `meson install` (or even `sudo meson install`) will barf on Linux (because we need to
-# be able to install files into system directories).  So, where a sufficiently recent version of Meson is available in
-# the distro packages (eg `sudo apt install meson` on Ubuntu etc) it is much better to install this.
-#
-# Also, although it might seem odd that we need CMake installed to do a Meson build, this is because Meson uses CMake
-# as a library locator tool.
+# On a Mac with homebrew (https://brew.sh/) installed
+#    brew install python@3.11
 #
 #
-# STEP 2: Set up the Meson build:
-# -------------------------------
-# All you have to do is run:
+# STEP 2 (WINDOWS ONLY): Extra set-up
+# -----------------------------------
+# On Windows, there are a couple of extra things we need to do before running the bt script:
+#
+#  - For historical reasons, Linux and other platforms need to run both Python v2 (still used by some bits of
+#    system) and Python v3 (eg that you installed yourself) so there are usually two corresponding Python
+#    executables, python2 and python3.  On Windows there is only whatever Python you installed and it's called
+#    python.exe.  To keep the shebang in the bt script working, we just make a softlink to python called python3.
+#
+#  - Getting Unicode input/output to work is fun.  We should already have a Unicode locale, but it seems we also
+#    need to set PYTHONIOENCODING (see https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING, even
+#    though it seems to imply you don't need to set it on recent versions of Python).
+#
+#  - The version of Pip we install above does not put it in the "right" place.  Specifically it will not be in the
+#    PATH when we run bt.  The following seems to be the least hacky way around this:
+#       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+#       python get-pip.py
+#       python -m pip install -U --force-reinstall pip
+#    See https://stackoverflow.com/questions/48087004/installing-pip-on-msys for more discussion on this.
+#
+# TLDR: Here's what you need to run in the MSYS2 Mintty terminal:
+#    if [[ ! -f $(dirname $(which python))/python3 ]]; then ln -s $(which python) $(dirname $(which python))/python3; fi
+#    export PYTHONIOENCODING=utf8
+#    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+#    python get-pip.py
+#    python -m pip install -U --force-reinstall pip
+#
+#
+# STEP 3: Automatically install other dependencies and set up the Meson build:
+# ----------------------------------------------------------------------------
+# Then everything else can be installed by running:
+#    ./bt setup all
+#
+# This will also set up the Meson build.  Amongst other things, this creates the 'mbuild' directory tree for the Meson
+# build (so no clashes with a CMake build in the 'build' directory tree).
+#
+# Alternatively, if you decided to install all the dependencies manually, or if you need to reset the build directory
+# after it got in a bad state, you can run:
 #    ./bt setup
 #
-# Amongst other things, this creates the 'mbuild' directory tree for the Meson build (so no clashes with a CMake build
-# in the 'build' directory tree).
 #
-#
-# STEP 3: Compile, test, install:
+# STEP 4: Compile, test, install:
 # -------------------------------
 # Everything else is done from the 'mbuild' directory, so start with:
 #    cd mbuild
@@ -77,6 +105,9 @@
 #    meson dist
 # This will build a .tar.xz file and create a corresponding .tar.xz.sha256sum file for it.
 #
+#
+# STEP 5 (OPTIONAL): Build distributable packages
+# -----------------------------------------------
 # To build binary packages:
 #    ../bt package             ⭐⭐⭐ This is the bit that is not yet working ⭐⭐⭐
 #
@@ -98,6 +129,7 @@
 #
 # Note that we need:
 #   - Meson 0.56.0 or newer to use Meson's 'substring' call.
+#   - Meson 0.59.0 or newer to use qt.compile_resources, qt.compile_ui and qt.compile_moc
 #   - Meson 0.60.0 or newer to use + to append items to lists (aka 'list.<plus>' feature -- at least that's what the
 #     warning message says if you've specified a lower minimum version of Meson)
 #
@@ -141,7 +173,6 @@
 #                 '-g2') on GCC, but there isn't a way via the meson  options to set '-g3' for GCC.  So, we set
 #                 'buildtype=plain' and manage compiler flags directly.
 #
-# NOTE that we need Meson version 0.59.0 or later to use qt.compile_resources, qt.compile_ui and qt.compile_moc
 #
 project('brewken', 'cpp',
         version: '0.1.0',
@@ -169,8 +200,26 @@ capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.su
 message('⭐ Building', projectName, 'version', meson.project_version(), 'for', host_machine.system(),
         'on', build_machine.system(), 'in', meson.project_source_root(), '⭐')
 
-mainExecutableName = projectName
-testRunnerName = mainExecutableName + '_tests'
+#
+# We need two versions of the main executable name because they are different on Windows:
+#    - We need a "target" name _without_ the '.exe' suffix for the executable() command because, on Windows, Meson will
+#      always add its own '.exe' suffix and we don't want to end up with '.exe.exe' as the suffix!
+#    - Everywhere else, we want the actual name of the file, including the '.exe' suffix.
+#
+# The default (on Windows and Linux) is to use Unix-style executable names, ie all lower case
+#
+mainExecutableTargetName = projectName
+if host_machine.system() == 'darwin'
+   # On Mac we don't need a suffix but have always capitalised the executable name because "Don't question the APPLE".
+   mainExecutableTargetName = capitalisedProjectName
+endif
+if host_machine.system() == 'windows'
+   mainExecutableFileName = mainExecutableTargetName + '.exe'
+else
+   mainExecutableFileName = mainExecutableTargetName
+endif
+
+testRunnerTargetName = mainExecutableTargetName + '_tests'
 
 #=======================================================================================================================
 #==================================================== Meson modules ====================================================
@@ -228,24 +277,6 @@ qtCommonDependencies = dependency('qt5',
 qtMainExeDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
 # The Qt Test module is only needed for the unit tests
 qtTestRunnerDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
-
-# On Windows and Mac there are platform-specific Qt tools for packaging
-if host_machine.system() == 'windows'
-   # Per https://doc.qt.io/qt-6/windows-deployment.html, the windeployqt executable creates all the necessary folder
-   # tree "containing the Qt-related dependencies (libraries, QML imports, plugins, and translations) required to run
-   # the application from that folder".
-   windeployqt = find_program('windeployqt', required : true)
-elif host_machine.system() == 'darwin'
-   # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
-   # https://doc.qt.io/qt-6/macos-deployment.html#the-mac-deployment-tool
-   #
-   # At first glance, you might thanks that, with a few name changes, we might share all the meson code for macdeployqt
-   # and windeployqt.  However, as you will see below, the two programs share _only_ a top-level goal ("automate the
-   # process of creating a deployable [folder / applicaiton bundle] that contains [the necessary Qt dependencies]" - ie
-   # so that the end user does not have to install Qt to run our software).  They have completely different
-   # implementations and command line options, so it would be unhelpful to try to treat them identically.
-   macdeployqt = find_program('macdeployqt', required : true)
-endif
 
 #===================================================== Find Boost ======================================================
 # Boost is a collection of separate libraries, some, but not all, of which are header-only.  We only specify the Boost
@@ -861,9 +892,21 @@ filesToInstall_macIcons = files([
 # AFAICT Meson does not provide a way for you to extract, say, full path from a file object
 filesToInstall_changeLogUncompressed = 'CHANGES.markdown'
 
+# Summary copyright file, with names of all authors
 filesToInstall_copyright = files([
    'COPYRIGHT'
 ])
+
+#
+# GPL v3 Licence
+#
+# See https://www.gnu.org/licenses/translations.html for why this is only in English
+#
+# TBD: We have two files "COPYING.GPLv3" and "LICENSE" with identical content.  I wonder if we can do away with one of
+# them
+# We cannot wrap this in a files() call because we need to be able to pass the name into join_paths below
+#
+filesToInstall_license = 'LICENSE'
 
 # This is not wrapped in files() (a) because it's not yet created and (b) because, as with
 # filesToInstall_changeLogUncompressed, we're going to pass it into a bash script
@@ -979,16 +1022,21 @@ testRunnerDependencies = commonDependencies + qtTestRunnerDependencies
 # enough overlap that it's worth defining all the exports once to avoid repeating ourselves.
 #
 # The file generation and script execution take different types of object for their "exported variables": a
-# Configuration Cata (cfg_data) object (see https://mesonbuild.com/Reference-manual_returned_cfg_data.html) in for the
+# Configuration Data (cfg_data) object (see https://mesonbuild.com/Reference-manual_returned_cfg_data.html) in for the
 # former and an Environment (env) object (see https://mesonbuild.com/Reference-manual_returned_env.html) for the latter.
 # Fortunately however, both types of object can be constructed from a Dictionary (see
 # https://mesonbuild.com/Syntax.html#dictionaries), so that is what we define here.
+#
+# Also, note that the export is done during build, not install, so, eg the value of prefix below will typically _not_ be
+# affected by any `--destdir` option passed in to `meson install` because the generation was done previously when
+# `meson compile` was called.
 #
 exportedVariables = {
    'CONFIG_VERSION_STRING'      : meson.project_version(),
    'CONFIG_DATA_DIR'            : prefix + '/' + installSubDir_data, # This is a bit of a hack...
    'CONFIG_APPLICATION_NAME_UC' : capitalisedProjectName,
    'CONFIG_APPLICATION_NAME_LC' : projectName,
+   'CONFIG_EXECUTABLE_NAME'     : mainExecutableFileName,
    # NB CMAKE_HOST_SYSTEM means something different than meson host_machine
    'CONFIG_BUILD_SYSTEM'        : build_machine.system(),
    'CONFIG_RUN_SYSTEM'          : host_machine.system(),
@@ -1010,6 +1058,21 @@ exportedVariables = {
    'CONFIG_INSTALLER_WINDOW_ICON'     : capitalisedProjectName + 'Logo.png',
    'CONFIG_INSTALLER_WINDOW_ICON_DIR' : 'images',
 
+   # Full path of file containing full GPL v3 license text
+   'CONFIG_LICENSE_TEXT_PATH' : join_paths(meson.current_source_dir(), filesToInstall_license),
+
+   # Some installers/package formats want a one-line description
+   'CONFIG_DESCRIPTION_STRING' : 'Open source brewing software',
+
+   # Some installers, eg NSIS on Windows, want a brief copyright string
+   'CONFIG_COPYRIGHT_STRING' : 'Copyright © various authors 2009-2023 -- see accompanying documentation',
+
+   # Installers often want the name of the organisation supplying the product, so we need something to put there
+   'CONFIG_ORGANIZATION_NAME' : 'The ' + capitalisedProjectName + ' Team',
+
+   # Similarly, installers often want a URL link
+   'CONFIG_HOMEPAGE_URL' : 'https://github.com/' + capitalisedProjectName + '/' + projectName,
+
 }
 
 # We need to set TargetDir in config.xml for the Qt IFW installer
@@ -1019,12 +1082,13 @@ if host_machine.system() == 'linux'
    }
 endif
 
-# Info for InstallerApplicationIcon which is "Filename for a custom installer icon. The actual file is looked up by
-# attaching a '.icns' (macOS), '.ico' (Windows) suffix. No functionality on Unix."
+### Info for InstallerApplicationIcon which is "Filename for a custom installer icon. The actual file is looked up by
+### attaching a '.icns' (macOS), '.ico' (Windows) suffix. No functionality on Unix."
 if host_machine.system() == 'windows'
    exportedVariables += {
-      'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon_96.ico',
-      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'win',
+#      'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon_96.ico',
+#      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'win',
+      'CONFIG_INSTALLER_APPLICATION_ICON_PATH' : join_paths(meson.current_source_dir(), 'win', capitalisedProjectName + 'Icon_96.ico'),
    }
 elif host_machine.system() == 'darwin'
    exportedVariables += {
@@ -1041,8 +1105,13 @@ endif
 #=======================================================================================================================
 #===================================== Generate config.h etc from config.h.in etc ======================================
 #=======================================================================================================================
-# Taking src/config.h.in as input, we generate (in the build subdirectory only) config.h.  This is a way to inject build
-# variables into the code.
+
+#
+# First we inject build-system variables into the source code.  This saves defining certain things twice - in this file
+# and in a C++ source code file.  It also makes it easier for Brewken and Brewtarget to share code, because there are
+# fewer places where the application name is hard-coded.
+#
+# Taking src/config.h.in as input, we generate (in the build subdirectory only) config.h.
 #
 # All variables written as "@VAR@" in src/config.h.in (input file) will be replaced in config.h (output file) by the
 # value of VAR in the configuration_data dictionary we define here.
@@ -1051,6 +1120,32 @@ configure_file(input  : 'src/config.h.in',
                output : 'config.h',
                configuration : exportedVariables,
                install : false)
+
+#
+# Next we make build-system variables available to the `bt` build helper Python script by injecting them into a TOML
+# file.
+#
+configure_file(input  : 'packaging/config.toml.in',
+               output : 'config.toml',
+               configuration : exportedVariables,
+               install : false)
+
+#
+# On Windows, we want to do the same for the NSIS installer script
+# We ultimately want it in a subdirectory of the the build directory, but that is not permitted by configure_file, so,
+# that gets done by the bt script/
+#
+if host_machine.system() == 'windows'
+   configure_file(input  : 'packaging/windows/NsisInstallerScript.nsi.in',
+                  output : 'NsisInstallerScript.nsi',
+                  configuration : exportedVariables,
+                  install : false)
+   configure_file(input  : 'packaging/windows/NsisCustomPage_InstallOptions.ini.in',
+                  output : 'NsisCustomPage_InstallOptions.ini',
+                  configuration : exportedVariables,
+                  install : false)
+endif
+
 #
 # Now do the same for the XML packaging files used by the "packages" target (see below).
 #
@@ -1185,14 +1280,14 @@ commonCodeStaticLib = static_library('common_code',
                                      dependencies: commonDependencies,
                                      install : false)
 
-mainExecutable = executable(mainExecutableName,
+mainExecutable = executable(mainExecutableTargetName,
                             'src/main.cpp', generatedFromQrc,
                             include_directories : includeDirs,
                             dependencies : mainExeDependencies,
                             link_with : commonCodeStaticLib,
                             install : true)
 
-testRunner = executable(testRunnerName, generatedFromQrc,
+testRunner = executable(testRunnerTargetName, generatedFromQrc,
                         'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
                         include_directories : includeDirs,
                         dependencies : testRunnerDependencies,
@@ -1211,104 +1306,3 @@ test('Test algorithms',                      testRunner, args : ['testAlgorithms
 test('Test type lookups',                    testRunner, args : ['testTypeLookups'])
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
 test('Test log rotation',                    testRunner, args : ['testLogRotation'], timeout : 60)
-
-#=======================================================================================================================
-#===================================================== Packaging =======================================================
-#=======================================================================================================================
-#
-# Note that it is not intended that this target be invoked directly from the command line.  Rather, the 'bt' script will
-# do some preparation, then call meson with a suitable install target, then call target to extract various build
-# parameters into a final invocation of the bt script to do the main work.
-#
-# Meson does not offer a huge amount of help on creating installable packages.  It has no equivalent to CMake's CPack
-# and there is generally not a lot of info out there about how to do packaging in Meson.  OTOH, although CPack has lots
-# of features it is also very painful to use.  So maybe taking a completely different approach is a good thing.
-#
-# Have had a bit of a look at Qt-Installer-Framework (QtIFW).  Upsides are:
-#   - in principle we could write one set of install config that would then create install packages for Windows, Mac and
-#     Linux
-#   - it should already know how to package Qt libraries(!)
-#   - it's the same licence as the rest of Qt
-#   - we can use it in GitHub actions (courtesy of https://github.com/jurplel/install-qt-action)
-#   - it can handle in-place upgrades (including the check for whether an upgraded version is available), per
-#     https://doc.qt.io/qtinstallerframework/ifw-updates.html
-# Downsides are:
-#   - outside of packaging Qt itself, I'm not sure that it's hugely widely used
-#   - it's not a great advert for itself -- eg when I installed it locally on Kubuntu by downloading directly from
-#     https://download.qt.io/official_releases/qt-installer-framework/, it didn't put its own tools in the PATH,
-#     so I had to manually add ~/Qt/QtIFW-4.5.0/bin/ to my PATH
-#   - it usually necessary to link against a static build of Qt, which is a bit of a pain as you have to download the
-#     source files for Qt and compile it locally -- see eg
-#     https://stackoverflow.com/questions/14932315/how-to-compile-qt-5-under-windows-or-linux-32-or-64-bit-static-or-dynamic-on-v
-#     for the whole process
-#   - it's a change of installation method for people who have previously downloaded deb packages, RPMs, Mac DMG files,
-#     etc
-#
-# The alternative approach would be to do Windows, Mac and Linux packaging separately:
-#   - For Mac, there is some info at https://mesonbuild.com/Creating-OSX-packages.html on creating app bundles
-#   - For Linux, there is some mention in the Meson manual of building deb and rpm packages eg
-#     https://mesonbuild.com/Installing.html#destdir-support, but I think you have to do most of the work yourself.
-#     https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some sketchy starting info on
-#     how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used to be a Meson
-#     module for creating RPMs, but it was discontinued per
-#     https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
-#     designed etc.)  Also look at https://openbuildservice.org/.
-#   - For Windows, we could probably use NSIS (Nullsoft Scriptable Install System -- see
-#     https://nsis.sourceforge.io/) to create a Windows installer.
-#
-# For now we'll see if we can get QtIFW working.
-#
-
-#
-# Notes on building debian package -- see https://unix.stackexchange.com/questions/30303/how-to-create-a-deb-file-manually
-#
-# You need to install some extras:
-#    sudo apt-get install debhelper build-essential dh-make
-#
-# Then:
-#    # Create the source tarball
-#    meson dist
-#    # Create the debian/ subtree in the build directory
-#    # I think we only want to do this once, because you end up with a lot of example files that you need to edit etc
-#    # Or we could have a look at that brewtarget debian project...
-#    dh_make --copyright gpl3 --email mfsy@yahoo.com --single --packagename brewken_0.1.0-1 --file meson-dist/*.tar.xz --yes
-#
-# To create a deb package, we create the following directory structure (where items marked ✅ are installed by meson
-# install with --destdir option, and items marked ✴ are things we need to generate):
-# TODO Mark things with ❌ that are generated by dh_make and not needed...
-#    [projectName]-[versionNumber]_x86_64/
-#    ├── control          ✴  # Contains info about dependencies, maintainer, etc
-#    ├── control.tar.gz   ✴  # Hopefully just a compressed version of the above
-#    ├── data.tar.gz      ✴  # Compressed archive of the usr tree below
-#    ├── debian-binary    ✴  # A text file containing just "2.0"
-#    ├── md5sums          ✴  # = checksums of all the files in the usr tree below
-#    └── usr
-#        ├── bin
-#        │   └── [projectName] ✅   <-- the executable
-#        └── share
-#            ├── [projectName]
-#            │   ├── applications
-#            │   │   └── [projectName].desktop ✅  <-- [filesToInstall_desktop]
-#            │   ├── DefaultData.xml           ✅  <----- [filesToInstall_data]
-#            │   ├── default_db.sqlite         ✅  <--┘
-#            │   ├── icons
-#            │   │   └── hicolor
-#            │   │       └── scalable
-#            │   │           └── apps
-#            │   │               └── [projectName].svg ✅  <-- [filesToInstall_icons]
-#            │   ├── sounds
-#            │   │   └── [All the filesToInstall_sounds .wav files] ✅
-#            │   └── translations_qm
-#            │       └── [All the .qm files generated by qt.compile_translations] ✅
-#            └── doc
-#                └── [projectName]
-#                    ├── changelog.Debian.gz  ✅
-#                    ├── copyright            ✅
-#                    ├── README.md            ✅
-#                    └── RelaseNotes.markdown ✅
-#
-#
-
-packagesTarget = run_target('part_2_of_packaging',
-                            command : ['bt', 'part_3_of_packaging'],
-                            env : exportedVariables)

@@ -969,10 +969,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Fermentable Amount</source>
         <translation type="unfinished"></translation>
     </message>
@@ -985,11 +981,23 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Is Mashed</source>
+        <source>Change Add After Boil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Add After Boil</source>
+        <source>Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Inventory Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Is Mashed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2906,6 +2914,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
