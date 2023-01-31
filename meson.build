@@ -184,7 +184,7 @@ project('brewken', 'cpp',
                            'buildtype=plain'])
 
 #
-# By design, Meson uses a sub-set of Python -- see
+# By design, Meson uses a pseudo sub-set of Python -- see
 # https://mesonbuild.com/FAQ.html#why-is-meson-not-just-a-python-module-so-i-could-code-my-build-setup-in-python and
 # links therefrom for the rationale for this.
 #
@@ -199,6 +199,8 @@ capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.su
 
 message('⭐ Building', projectName, 'version', meson.project_version(), 'for', host_machine.system(),
         'on', build_machine.system(), 'in', meson.project_source_root(), '⭐')
+compiler = meson.get_compiler('cpp')
+message('Using', compiler.get_id(), 'compiler and', compiler.get_linker_id(), 'linker')
 
 #
 # We need two versions of the main executable name because they are different on Windows:
@@ -248,6 +250,23 @@ prefix = get_option('prefix')
 #
 # So, for now at least, we manage dependency installation in the `bt` Python script.
 #
+# Although we request static libraries in a lot of places, we don't always get them, so we assume we need to deal with
+# shared libraries (aka DLLs on Windows).
+#
+# Aside from ensuring all dependencies are present on the build machine, we also have to worry about run-time
+# dependencies for packaging.  In particular, on Windows and Mac, because there is not built-in default package manager,
+# we typically need to include in our package all the non-system shared libraries on which it depends.  For the Qt
+# libraries, there are handy tools `windeployqt` and `macdeployqt` that do most of the necessary work.  However, these
+# tools do not (reliably) detect other shared libraries on which we depend.  The paths of these shared libraries should
+# be knowable during compilation (or more specifically linking).  We want to get the paths during the build so that we
+# can export them for use in the packaging step (which is done outside of Meson by the "build tool" bt Python script.
+#
+# Finding out how to get shared library paths information was, err, fun because it's not very well documented.
+# Eventually, I realised that you can look in meson-private/cmake_XercesC/cmake_trace.txt,
+# meson-private/cmake_XercesC/cmake_trace.txt and so on to see what information Meson got back from CMake and thus know
+# which CMake variables are exposed via the get_variable() call.
+#
+sharedLibraryPaths = []
 
 #========================================================= Qt ==========================================================
 # We need not just the "core" bit of Qt but various "optional" elements.
@@ -385,7 +404,7 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 # later on when we get to the main build.
 #
 needLibdl = false
-if meson.get_compiler('cpp').get_id() == 'gcc'
+if compiler.get_id() == 'gcc'
    lddOutput = run_command('ldd', '--version', check: true).stdout().strip()
    lddOutputLine1 = lddOutput.split('\n')[0]
    message('ldd --version gives:', lddOutputLine1)
@@ -396,14 +415,17 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
    endif
 endif
 dlDependency = dependency('dl', required : needLibdl, static : true)
+if dlDependency.found()
+   sharedLibraryPaths += dlDependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
+endif
 
 # Note that, unlike, say, the parameters to include_directories(), the dirs argument to find_library() must be absolute
 # paths
 libbacktraceDir = join_paths(meson.project_source_root(), 'third-party/libbacktrace/.libs')
-backtraceDependency = meson.get_compiler('cpp').find_library('backtrace',
-                                                             required : true,
-                                                             static : true,
-                                                             dirs : [libbacktraceDir])
+backtraceDependency = compiler.find_library('backtrace',
+                                            required : true,
+                                            static : true,
+                                            dirs : [libbacktraceDir])
 
 #======================================== Find the other libraries we depend on ========================================
 #
@@ -414,13 +436,22 @@ backtraceDependency = meson.get_compiler('cpp').find_library('backtrace',
 # https://cmake.org/cmake/help/latest/module/FindXercesC.html and 'XalanC' per
 # https://cmake.org/cmake/help/latest/module/FindXalanC.html)
 #
-#
-xercesDependency = dependency('XercesC', version : '>=3.2.2', static : true)
+xercesDependency = dependency('XercesC',
+                              version : '>=3.2.2',
+                              required : true,
+                              static : true)
+xercesLibPaths = xercesDependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
 message('Xerces Library:', xercesDependency.name(), 'found =', xercesDependency.found(),
-        'version =', xercesDependency.version())
-xalanDependency = dependency('XalanC', version : '>=1.11.0', static : true)
+        'version =', xercesDependency.version(), 'path(s)=', xercesLibPaths)
+sharedLibraryPaths += xercesLibPaths
+xalanDependency = dependency('XalanC',
+                             version : '>=1.11.0',
+                             required : true,
+                             static : true)
+xalanLibPaths = xalanDependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
 message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.found(),
-        'version =', xalanDependency.version())
+        'version =', xalanDependency.version(), 'path(s)=', xalanLibPaths)
+sharedLibraryPaths += xalanLibPaths
 
 #====================================================== Valijson =======================================================
 # Don't need to do anything special, other than set include directories below, as it's header-only and we pull it in as
@@ -430,15 +461,43 @@ message('Xalan Library:', xalanDependency.name(), 'found =', xalanDependency.fou
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
 includeDirs = include_directories('src', 'third-party/valijson/include', 'third-party/libbacktrace')
 
+
 #=======================================================================================================================
-#================================================== Extra Apple stuff ==================================================
+#============================================= Extra Windows dependencies ==============================================
 #=======================================================================================================================
-# Statically linking Xalan, Xerces etc requires CFStringLowercase, CFStringUppercase, etc on Mac
-corefoundationDependency = dependency(
-   'appleframeworks',
-   modules: ['CoreFoundation'],
-   required: false,
-)
+if host_machine.system() == 'windows'
+   #
+   # We can't assume that the person running the code will have MSYS2/MinGW installed, so we need to include the DLLs
+   # that ship with them and get pulled in by the packaging process.  There is a bit of trial-and-error in compiling
+   # this list, but, mostly, if you miss a needed DLL from the package, Windows will give you an error message at
+   # start-up telling you which DLL(s) it needed but could not find.
+   #
+   foreach extraLib : ['gcc',
+                       'winpthread',
+                       'stdc++',
+                       'xalanMsg']
+      extraLibDependency = compiler.find_library(extraLib, required : true)
+      if extraLibDependency.found()
+#         extraLibPath = extraLibDependency.get_variable(cmake : 'LIB_ARCH_LIST')
+#         message(extraLib, ' found at', extraLibPath)
+#         sharedLibraryPaths += extraLibPath
+      else
+#         message(extraLib, ' not found')
+      endif
+   endforeach
+endif
+
+#=======================================================================================================================
+#============================================== Extra Apple dependencies ===============================================
+#=======================================================================================================================
+if host_machine.system() == 'darwin'
+   # Statically linking Xalan, Xerces etc requires CFStringLowercase, CFStringUppercase, etc on Mac
+   corefoundationDependency = dependency(
+      'appleframeworks',
+      modules: ['CoreFoundation'],
+      required: false,
+   )
+endif
 
 #=======================================================================================================================
 #===================================================== Input Files =====================================================
@@ -1040,7 +1099,7 @@ exportedVariables = {
    # NB CMAKE_HOST_SYSTEM means something different than meson host_machine
    'CONFIG_BUILD_SYSTEM'        : build_machine.system(),
    'CONFIG_RUN_SYSTEM'          : host_machine.system(),
-   'CONFIG_CXX_COMPILER_ID'     : meson.get_compiler('cpp').get_id(),
+   'CONFIG_CXX_COMPILER_ID'     : compiler.get_id(),
    # Meson doesn't directly give you a way to obtain the current date and time.  But it does allow you turn an external
    # command, so this is one way to get it - relying on the fact that MSYS2 on Windows, Linux and Mac all have date
    # available from the command line.
@@ -1072,6 +1131,16 @@ exportedVariables = {
 
    # Similarly, installers often want a URL link
    'CONFIG_HOMEPAGE_URL' : 'https://github.com/' + capitalisedProjectName + '/' + projectName,
+
+   #
+   # On Windows and Mac, the external packaging step (managed by the `bt` build tool script) needs to know about all the
+   # non-Qt shared libraries on which we depend.
+   #
+   # Meson only allows you to directly export strings and ints, not lists.  So, we do a bit of a hack to convert the
+   # list to a string that will, in the TOML format file that we care about, be interpreted as a list.  This isn't
+   # strictly correct when the list is empty, but we hereby assert that it never will be, so it doesn't matter.
+   #
+   'CONFIG_SHARED_LIBRARY_PATHS' : '["' + '", "'.join(sharedLibraryPaths) + '"]',
 
 }
 
@@ -1146,29 +1215,12 @@ if host_machine.system() == 'windows'
                   install : false)
 endif
 
-#
-# Now do the same for the XML packaging files used by the "packages" target (see below).
-#
-# We ultimately want it in a subdirectory of the the build directory, but that is not permitted by configure_file, so,
-# instead, it gets copied to the right location by packaging/doQtIFWpackaging.sh
-#
-configure_file(input  : 'packaging/qtIfw/config.xml.in',
-               output : 'config.xml',
-               configuration : exportedVariables,
-               install : false)
-configure_file(input  : 'packaging/qtIfw/package.xml.in',
-               output : 'package.xml',
-               configuration : exportedVariables,
-               install : false)
-
 #=======================================================================================================================
 #=================================== Generate compressed changelog for Debian package ==================================
 #=======================================================================================================================
 if host_machine.system() == 'linux'
    # .:TBD:. Might be better to do this via custom_target (see https://mesonbuild.com/Custom-build-targets.html), though
-   # the parameter passing is not as nice that way
-   #
-   # For now, if we're using QtIFW (see below), then we might not worry about it too much
+   # the parameter passing is not as nice that way.  OR, we could just do it in the bt script
    scriptResult = run_command('packaging/generateCompressedChangeLog.sh',
                               env : exportedVariables,
                               check : true)
@@ -1181,6 +1233,8 @@ endif
 #=======================================================================================================================
 #======================= Install files that we ship with the software (sounds, default DB, etc) ========================
 #=======================================================================================================================
+# Note that we'll get a bunch of stuff in the meson logs about 'Failed to guess install tag' but this is entirely
+# harmless as we are not using tags.
 install_data(filesToInstall_data,   install_dir : installSubDir_data)
 install_data(filesToInstall_docs,   install_dir : installSubDir_doc)
 install_data(filesToInstall_sounds, install_dir : installSubDir_data + '/sounds')
@@ -1219,7 +1273,7 @@ endif
 #=======================================================================================================================
 #========================================= Compiler-specific settings & flags ==========================================
 #=======================================================================================================================
-if meson.get_compiler('cpp').get_id() == 'gcc'
+if compiler.get_id() == 'gcc'
    #
    # -g3   should give even more debugging information than -g (which is equivalent to -g2)
    #
@@ -1251,7 +1305,17 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
                          '-no-pie',
                          '-fno-pie'], language : 'cpp')
    if host_machine.system() != 'windows'
-      add_global_arguments('-rdynamic', language : 'cpp')
+      add_global_arguments     ('-rdynamic', language : 'cpp')
+      add_global_link_arguments('-rdynamic', language : 'cpp')
+   endif
+   if compiler.get_linker_id() == 'ld.bfd'
+      #
+      # GNU Linker
+      #
+      # See https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html for options
+      #
+      add_global_link_arguments(['-no-pie',
+                                 '-fno-pie'], language : 'cpp')
    endif
 endif
 
@@ -1263,6 +1327,10 @@ if host_machine.system() == 'darwin'
    # This is needed for Boost stacktrace on Mac
    add_project_arguments('-D_GNU_SOURCE', language : 'cpp')
 endif
+
+#=======================================================================================================================
+#========================================== Linker-specific settings & flags ===========================================
+#=======================================================================================================================
 
 #=======================================================================================================================
 #===================================================== Main builds =====================================================

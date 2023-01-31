@@ -366,7 +366,12 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // our internal data model.  If it is, then, for whatever underlying type T it is, we need the parsedValue
             // QVariant to hold std::optional<T> instead of just T.
             //
-            bool const propertyIsOptional = this->recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName);
+            // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+            //
+            bool const propertyIsOptional {
+               (fieldDefinition.type == JsonRecordDefinition::FieldType::RequiredConstant) ?
+                  false : this->recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName)
+            };
 
             //
             // JSON Schema validation should have ensured this field really is what we're expecting, so it's a coding
@@ -901,7 +906,12 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
    // skip writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in
    // other ways elsewhere).
    //
-   bool const propertyIsOptional = this->recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName);
+   // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+   //
+   bool const propertyIsOptional {
+      (fieldDefinition.type == JsonRecordDefinition::FieldType::RequiredConstant) ?
+         false : this->recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName)
+   };
 
    switch(fieldDefinition.type) {
       case JsonRecordDefinition::FieldType::Bool:

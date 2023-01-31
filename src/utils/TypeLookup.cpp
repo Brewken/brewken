@@ -59,7 +59,7 @@ TypeInfo const & TypeLookup::getType(BtStringConst const & propertyName) const {
 
    // It's a coding error if we tried to look up a property that we don't know about
    qCritical() << Q_FUNC_INFO << "Can't find type info for property" << *propertyName << "of class" << this->className;
-   qDebug().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
+   qCritical().noquote() << Q_FUNC_INFO << "Stack trace:" << Logging::getStackTrace();
    Q_ASSERT(false);
    throw std::bad_typeid();
 }

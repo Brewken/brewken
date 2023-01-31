@@ -35,7 +35,6 @@
 #    setupgit.sh
 #    CMakeLists.txt
 #    src/CMakeLists.txt
-#    packaging/qtIfw -- if we end up not going with Qt Install Framework
 #
 #
 # Note that Python allows both single and double quotes for delimiting strings.  In Meson, we need single quotes, in
@@ -72,7 +71,7 @@ projectUrl = 'https://github.com/' + capitalisedProjectName + '/' + projectName 
 #-----------------------------------------------------------------------------------------------------------------------
 # The '%c' argument to strftime means "Locale’s appropriate date and time representation"
 print(
-   '⭐ ' + capitalisedProjectName + ' build tool running on ' + platform.system() + ' (' + platform.release() +
+   '⭐ ' + capitalisedProjectName + ' Build Tool (bt) running on ' + platform.system() + ' (' + platform.release() +
    '), using Python ' + platform.python_version() + ', at ' + datetime.datetime.now().strftime('%c') + ' ⭐'
 )
 
@@ -237,22 +236,6 @@ dir_build         = dir_base.joinpath('mbuild')
 dir_gitSubmodules = dir_base.joinpath('third-party')
 dir_packaging          = dir_build.joinpath('packaging')             # Top-level packaging directory
 dir_packaging_platform = dir_packaging.joinpath(platform.system().lower())   # Platform-specific packaging directory
-
-# See comment in doPackage() for explanation of qtIfw directory tree
-dir_qtIfw           = dir_build.joinpath('qtIfw')
-dir_qtIfw_config    = dir_qtIfw.joinpath('config')
-dir_qtIfw_packages  = dir_qtIfw.joinpath('packages')
-dir_qtIfw_component = dir_qtIfw_packages.joinpath('com.' + projectName + '.root')
-dir_qtIfw_data      = dir_qtIfw_component.joinpath('data')
-dir_qtIfw_meta      = dir_qtIfw_component.joinpath('meta')
-dirList_qtIfw = [
-   dir_qtIfw          ,
-   dir_qtIfw_config   ,
-   dir_qtIfw_packages ,
-   dir_qtIfw_component,
-   dir_qtIfw_data     ,
-   dir_qtIfw_meta     ,
-]
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function for checking result of running external commands
@@ -914,7 +897,7 @@ def doPackage():
    #    │
    #    └── linux/   For Linux
    #
-   # NB: If you wanted to change this, you would need to make corresponding changes in meson.build
+   # NB: If we wanted to change this, we would need to make corresponding changes in meson.build
    #
 
    # Step 1 : Create a top-level package directory structure
@@ -951,6 +934,8 @@ def doPackage():
    global buildConfig
    with open(dir_build.joinpath('config.toml').as_posix()) as buildConfigFile:
       buildConfig = tomlkit.parse(buildConfigFile.read())
+   log.debug('Shared libraries: ' + ', '.join(buildConfig["CONFIG_SHARED_LIBRARY_PATHS"]))
+
    #
    # Note however that there are some things that are (often intentionally) difficult or impossible to import to or
    # export from Meson.  (See
@@ -964,83 +949,6 @@ def doPackage():
    # If meson install worked, we can now do the actual packaging.
    #
 
-###   #======================================================================================================================================
-###   # EVERYTHING BELOW HERE IS OUR FIRST STAB AT THE QT INSTALLER.  CURRENT THINKING IS THAT WE'LL DELETE ALL THIS.
-###   #
-###   # The directory structure we create inside the build directory (mbuild) for packaging is:
-###   #
-###   #    qtIfw/             <-- Groups all the Qt-IFW stuff together and keeps it separate from what's in the top-level
-###   #    │                      build directory.  The binary installer we generate ends up in this directory.
-###   #    │
-###   #    ├── config/        <-- Global configuration for the installer lives here.  (If needed, a single installer can
-###   #    │                      offer the end user choices about which packages (aka components) to install.  We don't
-###   #    │                      need that complexity, so we just have one package.)
-###   #    └── packages/
-###   #        │
-###   #        └── com.<appname>.root/  <-- Each subdirectory of packages is supposed to "act as domain-like identifier"
-###   #            │                        for a component or subcomponent of the software.  We use the application name
-###   #            │                        (ie brewtarget or brewken) for the "domain-like" bit.  We only have one
-###   #            │                        subdirectory as we're not offering the end user a choice about which bits of
-###   #            │                        functionality to install (otherwise each component and sub-component would also
-###   #            │                        have its own packages subdirectory, with names like
-###   #            │                        com.<appname>.root.component_foo.subcomponent_bar).
-###   #            │
-###   #            ├── data/            <-- Contains everything the installer is going to install, all packaged into
-###   #            │                        archive files.  Archive files can be 7z (the default), zip, tar.gz, tar.bz2 or
-###   #            │                        tar.xz.  Creation of the archive files can be done automatically by the Qt
-###   #            │                        tools (eg binarycreator) or beforehand (eg using the archivegen tool that is
-###   #            │                        delivered with the Qt Installer Framework) for more control.
-###   #            │
-###   #            └── meta/            <-- Files in here are not installed; they specify settings for deployment and the
-###   #                                     installation process.  "The directory must contain at least a package
-###   #                                     information file and all files that you refer to in the package information
-###   #                                     file, such as scripts, user interface files, and translations.
-###   #                                     TODO: think about localising the installer
-###   #
-###   # The six steps for creating a QtIFW installer are listed at
-###   # https://doc.qt.io/qtinstallerframework/ifw-creating-installers.html.  We actually do them in a different order than
-###   # listed because we don't want to duplicate things that meson can do automatically.  (Nor do we want to jump through
-###   # hoops trying to bend meson to do things it is not designed for.)
-###   #
-###
-###   # Step 1 : Create a package directory for the installable components
-###   #          We'll make all the directories mentioned above and ensure they start out empty
-###   if (dir_qtIfw.is_dir()):
-###      log.info('Removing existing ' + dir_qtIfw.as_posix() + ' directory tree')
-###      shutil.rmtree(dir_qtIfw)
-###   for dirToCreate in dirList_qtIfw:
-###      log.info('Creating directory ' + dirToCreate.as_posix())
-###      os.makedirs(dirToCreate)
-###
-###   # We change into the build directory.  This doesn't affect the caller (of this script) because we're a separate
-###   # sub-process from the (typically) shell that invoked us and we cannot change the parent process's working
-###   # directory.
-###   os.chdir(dir_build)
-###   log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
-###   #
-###   # Running 'meson install' with the --destdir option will put all the installable files (program executable,
-###   # translation files, data files, etc) in the packaging directory
-###   #
-###   # It also generates config.xml and package.xml, but does not put them in the right directory
-###   #
-###   log.info('Running meson install with --destdir option')
-###   # See https://mesonbuild.com/Commands.html#install for the optional parameters to meson install
-###   abortOnRunFail(subprocess.run([exe_meson, "install", "--destdir", dir_qtIfw_data.as_posix()],
-###                                 capture_output=False))
-###
-###   #
-###   # If meson install worked, we can do the actual packaging via 'meson compile package'.  This will end up invoking
-###   # another instance of this script, but with the part_3_of_packaging parameter (and a whole bunch of useful
-###   # environment variables set by meson).
-###   #
-###   # Why is it 'meson compile package' rather than, say, 'meson package'?  It's because meson doesn't really know about
-###   # packaging and we're just running it to get build info.  So we have a custom meson target called 'package', and when
-###   # we ask meson to "compile" a custom target, we can actually have it run the executable of our choice - in this case
-###   # this script.
-###   #
-###   log.info('Running meson compile part_2_of_packaging')
-###   abortOnRunFail(subprocess.run([exe_meson, 'compile', 'part_2_of_packaging'], capture_output=False))
-###   #======================================================================================================================================
 
    match platform.system():
 
@@ -1195,6 +1103,96 @@ def doPackage():
          )
          os.chdir(previousWorkingDirectory)
 
+         #
+         # We're not finished with shared libraries.  Although windeployqt is theoretically capable of detecting all the
+         # shared libraries we need, including non-Qt ones, it doesn't, in practice, seem to be that good on the non-Qt
+         # bit.  And although, somewhere in the heart of the Meson implementation, you would think it would or could
+         # know the full paths to the shared libraries on which we depend, this is not AFAICT extractable in the
+         # meson.build script.  So, here, we have a list of libraries that we know we depend on and we search for them
+         # in the paths listed in the PATH environment variable.  It's a bit less painful than you might think to
+         # construct and maintain this list of libraries, because, for the most part, if you miss a needed DLL from the
+         # package, Windows will give you an error message at start-up telling you which DLL(s) it needed but could not
+         # find.  (There are also various platform-specific free-standing tools that claim to examine an executable and
+         # tell you what shared libraries it depends on.  None that I know of is easy to install in an automated way in
+         # MSYS2 however.)
+         #
+         # We assume that the library 'foo' has a dll called 'libfoo.dll' or 'libfoo-X.dll' or 'libfooX.dll' where X is
+         # a (possibly multi-digit) version number present on some, but not all, libraries.  If we find more matches
+         # than we were expecting, we log a warning and just include everything we found.  (Sometimes we include the
+         # version number in the library name because we really are looking for a specific version or there are always
+         # multiple versions)  It's not super pretty, but it should work.
+         #
+         # Just to keep us on our toes, the Python os module has two similarly-named but different things:
+         #    - os.pathsep is the separator between paths (usually ';' or ':') eg in the PATH environment variable
+         #    - os.sep is the separator between directories (usually '/' or '\\') in a path
+         #
+         # The comments below about the source of libraries are just FYI.  In almost all cases, we are actually
+         # installing these things on the build machine via pacman, so we don't have to go directly to the upstream
+         # project.
+         #
+         pathsToSearch = os.environ['PATH'].split(os.pathsep)
+         for extraLib in [
+            'libbrotlicommon',      # Brotli compression -- see https://en.wikipedia.org/wiki/Brotli
+            'libbrotlidec',         # Brotli compression
+            'libbrotlienc',         # Brotli compression
+            'libbz2',               # BZip2 compression -- see https://en.wikipedia.org/wiki/Bzip2
+            'libdouble-conversion', # See https://github.com/google/double-conversion
+            'libfreetype',          # See https://freetype.org/
+            'libgcc_s_dw2',
+            'libglib-2.0',
+            'libgraphite',
+            'libharfbuzz',   # HarfBuzz text shaping engine -- see https://github.com/harfbuzz/harfbuzz
+            'libiconv',      # See https://www.gnu.org/software/libiconv/
+            'libicudt',      # Part of International Components for Unicode
+            'libicuin',      # Part of International Components for Unicode
+            'libicuuc',      # Part of International Components for Unicode
+            'libintl',       # See https://www.gnu.org/software/gettext/
+            'libmd4c',       # Markdown for C -- see https://github.com/mity/md4c
+            'libpcre2-8',    # Perl Compatible Regular Expressions
+            'libpcre2-16',   # Perl Compatible Regular Expressions
+            'libpcre2-32',   # Perl Compatible Regular Expressions
+            'libpng16',      # Official PNG reference library -- see http://www.libpng.org/pub/png/libpng.html
+            'libsqlite3',    # Need this IN ADDITION to bin/sqldrivers/qsqlite.dll, which gets installed by windeployqt
+            'libstdc++',
+            'libwinpthread',
+            'libxalan-c',
+            'libxalanMsg',
+            'libxerces-c-3',
+            'libzstd',       # ZStandard (aka zstd) = fast lossless compression algorithm
+            'zlib',          # ZLib compression library
+         ]:
+            found = False
+            for searchDir in pathsToSearch:
+               # We do a glob match to get approximate matches and then filter it with a regular expression for exact
+               # ones
+               matches = []
+               globMatches = glob.glob(extraLib + '*.dll', root_dir=searchDir, recursive=False)
+               for globMatch in globMatches:
+                  # We need to remove the first part of the glob match before doing a regexp match because we don't want
+                  # the first part of the filename to be treated as a regular expression.  In particular, this would be
+                  # a problem for 'libstdc++'!
+                  suffixOfGlobMatch = globMatch.removeprefix(extraLib)
+                  # On Python 3.11 or later, we would write flags=re.NOFLAG instead of flags=0
+                  if re.fullmatch(re.compile('-?[0-9]*.dll'), suffixOfGlobMatch, flags=0):
+                     matches.append(globMatch)
+               numMatches = len(matches)
+               if (numMatches > 0):
+                  log.debug('Found ' + str(numMatches) + ' match(es) for ' + extraLib + ' in ' + searchDir)
+                  if (numMatches > 1):
+                     log.warning('Found more matches than expected (' + str(numMatches) + ' ' +
+                                 'instead of 1) when searching for library "' + extraLib + '".  This is not an ' +
+                                 'error, but means we are possibly shipping additional shared libraries that we '+
+                                 'don\'t need to.')
+                  for match in matches:
+                     fullPathOfMatch = pathlib.Path(searchDir).joinpath(match)
+                     log.debug('Copying ' + fullPathOfMatch.as_posix() + ' to ' + packageBinDir.as_posix())
+                     shutil.copy2(fullPathOfMatch, packageBinDir)
+                  found = True
+                  break;
+            if (not found):
+               log.critical('Could not find '+ extraLib + ' library in PATH ' + os.environ['PATH'])
+               exit(1)
+
          # Copy the NSIS installer script to where it belongs
          shutil.copy2(dir_build.joinpath('NsisInstallerScript.nsi'), dir_packaging_platform)
 
@@ -1239,92 +1237,6 @@ def doPackage():
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
          exit(1)
-
-###   #======================================================================================================================================
-###   # EVERYTHING BELOW HERE IS OUR FIRST STAB AT THE QT INSTALLER.  CURRENT THINKING IS THAT WE'LL DELETE ALL THIS.
-###   # Copy the generated installer and package configuration/information files from the build directory to where they
-###   # belong in the qtIfw subtree
-###   shutil.copy2(dir_build.joinpath('config.xml'),  dir_qtIfw_config)
-###   shutil.copy2(dir_build.joinpath('package.xml'), dir_qtIfw_meta)
-###
-###   # Copy other files
-###   shutil.copy2(dir_base.joinpath('packaging').joinpath('qtIfw').joinpath('installerPage1.ui'), dir_qtIfw_meta)
-###   shutil.copy2(dir_base.joinpath('LICENSE'), dir_qtIfw_meta.joinpath('license.txt'))
-###
-###   CONFIG_INSTALLER_APPLICATION_ICON = os.environ.get('CONFIG_INSTALLER_APPLICATION_ICON')
-###   if (CONFIG_INSTALLER_APPLICATION_ICON is not None and CONFIG_INSTALLER_APPLICATION_ICON != ""):
-###      log.debug("Copying " + CONFIG_INSTALLER_APPLICATION_ICON)
-###      shutil.copy2(
-###         dir_base.joinpath(
-###            os.environ['CONFIG_INSTALLER_APPLICATION_ICON_DIR']
-###         ).joinpath(
-###            CONFIG_INSTALLER_APPLICATION_ICON
-###         ),
-###         dir_qtIfw_meta
-###      )
-###
-###   CONFIG_INSTALLER_WINDOW_ICON = os.environ.get('CONFIG_INSTALLER_WINDOW_ICON')
-###   if (CONFIG_INSTALLER_WINDOW_ICON is not None and CONFIG_INSTALLER_WINDOW_ICON != ""):
-###      shutil.copy2(
-###         dir_base.joinpath(
-###            os.environ['CONFIG_INSTALLER_WINDOW_ICON_DIR']
-###         ).joinpath(
-###            CONFIG_INSTALLER_WINDOW_ICON
-###         ),
-###         dir_qtIfw_meta
-###      )
-###
-###   #
-###   # Find the binarycreator (Mac and Linux) / binarycreator.exe (Windows) file
-###   #
-###   # In order of preference we want:
-###   #   - Whatever is already first in the PATH
-###   #   - If nothing is in the path, whatever the most recent version of Qt IFW is installed under the user's home
-###   #     directory
-###   # But if we can't find anything we want to capture that error and bail out
-###   #
-###   bcExtn = ""
-###   if (platform.system() == 'Windows'):
-###      bcExtn = ".exe"
-###
-###   log.debug('Looking for binarycreator' + bcExtn)
-###   exe_binarycreator = shutil.which("binarycreator" + bcExtn)
-###   if (exe_binarycreator is None or exe_binarycreator == ""):
-###      localBcs = sorted(pathlib.Path.home().joinpath('Qt').glob('QtIFW-*/bin/binarycreator' + bcExtn))
-###      if (len(localBcs) > 0):
-###         exe_binarycreator = shutil.which(localBcs[len(localBcs) - 1])
-###
-###   if (exe_binarycreator is None or exe_binarycreator == ""):
-###      log.critical('Could not locate Qt IFW binarycreator')
-###      exit(1)
-###
-###   #
-###   # On Windows we need the binary we're creating to have a ".exe" extension
-###   #
-###   # On Mac we want to specify a ".app" extension, which will also tell binarycreator to create a macOS application
-###   # bundle
-###   #
-###   appExtn = ""
-###   if (platform.system() == 'Windows'):
-###      appExtn = ".exe"
-###   elif (platform.system() == 'Darwin'):
-###      appExtn = ".app"
-###
-###   log.debug("Running " + exe_binarycreator.as_posix())
-###   os.chdir(dir_qtIfw)
-###
-###   abortOnRunFail(
-###      subprocess.run(
-###         [
-###            exe_binarycreator,
-###            '-v',
-###            '-c', dir_qtIfw_config.joinpath('config.xml').as_posix(),
-###            '-p', dir_qtIfw_packages.as_posix(),
-###            os.environ['CONFIG_APPLICATION_NAME_UC'] + appExtn
-###         ],
-###         capture_output=False
-###      )
-###   )
 
    return
 

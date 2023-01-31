@@ -211,9 +211,14 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                // I think it gets messy to have different types there than on the QProperty setters.  It's not much
                // overhead to do things here IMHO.)
                //
-               bool propertyIsOptional = this->typeLookup->isOptional(fieldDefinition->propertyName);
+               // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+               //
+               bool const propertyIsOptional {
+                  (fieldDefinition->fieldType == XmlRecord::FieldType::RequiredConstant) ?
+                     false : this->typeLookup->isOptional(fieldDefinition->propertyName)
+               };
 
-               switch(fieldDefinition->fieldType) {
+               switch (fieldDefinition->fieldType) {
 
                   case XmlRecord::FieldType::Bool:
                      // Unlike other XML documents, boolean fields in BeerXML are caps, so we have to accommodate that
@@ -851,7 +856,12 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          // skip writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in
          // other ways elsewhere).
          //
-         bool const propertyIsOptional = this->typeLookup->isOptional(fieldDefinition.propertyName);
+         // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+         //
+         bool const propertyIsOptional {
+            (fieldDefinition.fieldType == XmlRecord::FieldType::RequiredConstant) ?
+               false : this->typeLookup->isOptional(fieldDefinition.propertyName)
+         };
          switch (fieldDefinition.fieldType) {
 
             case XmlRecord::FieldType::Bool:

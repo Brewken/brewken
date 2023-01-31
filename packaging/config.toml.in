@@ -18,6 +18,8 @@
 # This file is used by meson.build to export build system config into a TOML (https://toml.io/en/) file in the build
 # directory that the bt Python script can use during packaging
 #
-CONFIG_VERSION_STRING      = "@CONFIG_VERSION_STRING@"
-CONFIG_APPLICATION_NAME_UC = "@CONFIG_APPLICATION_NAME_UC@"
-CONFIG_APPLICATION_NAME_LC = "@CONFIG_APPLICATION_NAME_LC@"
+CONFIG_VERSION_STRING       = "@CONFIG_VERSION_STRING@"
+CONFIG_APPLICATION_NAME_UC  = "@CONFIG_APPLICATION_NAME_UC@"
+CONFIG_APPLICATION_NAME_LC  = "@CONFIG_APPLICATION_NAME_LC@"
+# NB: This is an array so we don't want it in quotes!
+CONFIG_SHARED_LIBRARY_PATHS = @CONFIG_SHARED_LIBRARY_PATHS@

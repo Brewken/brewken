@@ -1409,22 +1409,37 @@ if(WIN32)
    # but have not yet hit paydirt.
    #
    set(msys2Dlls
-      libbrotli
-      libbz2
-      libdouble-conversion
-      libfreetype
-      libglib
+      libbrotli                ###
+      libbrotlicommon        # Brotli compression -- see https://en.wikipedia.org/wiki/Brotli
+      libbrotlidec           # Brotli compression
+      libbrotlienc           # Brotli compression
+      libbz2                 # BZip2 compression -- see https://en.wikipedia.org/wiki/Bzip2
+      libdouble-conversion   # See https://github.com/google/double-conversion
+      libfreetype            # See https://freetype.org/
+      libgcc_s_dw2
+      libglib                  ###
+      libglib-2.0
       libgraphite
-      libharfbuzz
-      libiconv
-      libintl
-      libmd4c
-      libpcre
-      libpng16
-      libsqlite3    # You need this IN ADDITION to bin/sqldrivers/qsqlite.dll, which gets installed by windeployqt
+      libharfbuzz            # HarfBuzz text shaping engine -- see https://github.com/harfbuzz/harfbuzz
+      libiconv               # See https://www.gnu.org/software/libiconv/
+      libicudt               # Part of International Components for Unicode
+      libicuin               # Part of International Components for Unicode
+      libicuuc               # Part of International Components for Unicode
+      libintl                # See https://www.gnu.org/software/gettext/
+      libmd4c                # Markdown for C -- see https://github.com/mity/md4c
+      libpcre2-16            # Perl Compatible Regular Expressions
+      libpcre2-32            # Perl Compatible Regular Expressions
+      libpcre2-8             # Perl Compatible Regular Expressions
+      libpng16               # Official PNG reference library -- see http://www.libpng.org/pub/png/libpng.html
+      libsqlite3             # Need this IN ADDITION to bin/sqldrivers/qsqlite.dll, which gets installed by windeployqt
+      libstdc++
+      libwinpthread
+      libxalan-c
       libxalanMsg
-      libzstd
-      zlib1
+      libxerces-c-3
+      libzstd                # ZStandard (aka zstd) = fast lossless compression algorithm
+      zlib1                    ###
+      zlib                   # ZLib compression library
    )
    foreach(dynamicLib IN LISTS msys2Dlls)
       file(GLOB dynamicallyLinkedLibrary ${dynamicLibDir}/${dynamicLib}*.dll)
