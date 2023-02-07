@@ -184,12 +184,13 @@ project('brewken', 'cpp',
                            'buildtype=plain'])
 
 #
-# By design, Meson uses a pseudo sub-set of Python -- see
+# Although Meson itself is written in Python, Meson build files uses a slihgtly different syntax and have less
+# functionality than Python.  See
 # https://mesonbuild.com/FAQ.html#why-is-meson-not-just-a-python-module-so-i-could-code-my-build-setup-in-python and
-# links therefrom for the rationale for this.
+# links therefrom for the rationale for avoiding being a full programming language.
 #
-# Besides some variations in syntax, this also means that you sometimes have to do things in a slightly more cumbersome
-# way than you would in a full-fat Python script.  Eg here, in regular Python, we would write:
+# Besides some (sometimes annoying) variations in syntax, this also means that you sometimes have to do things in a
+# slightly more cumbersome way than you would in a Python script.  Eg here, in regular Python, we would write:
 #    capitalisedProjectName = projectName.capitalize()
 # But meson.project_name() returns a Meson String, not a Python String, so there's a bit more work to do to get the same
 # result.
@@ -1091,24 +1092,35 @@ testRunnerDependencies = commonDependencies + qtTestRunnerDependencies
 # `meson compile` was called.
 #
 exportedVariables = {
-   'CONFIG_VERSION_STRING'      : meson.project_version(),
-   'CONFIG_DATA_DIR'            : prefix + '/' + installSubDir_data, # This is a bit of a hack...
-   'CONFIG_APPLICATION_NAME_UC' : capitalisedProjectName,
-   'CONFIG_APPLICATION_NAME_LC' : projectName,
-   'CONFIG_EXECUTABLE_NAME'     : mainExecutableFileName,
+   'CONFIG_VERSION_STRING'       : meson.project_version(),
+   'CONFIG_DATA_DIR'             : prefix + '/' + installSubDir_data, # This is a bit of a hack...
+   'CONFIG_APPLICATION_NAME_UC'  : capitalisedProjectName,
+   'CONFIG_APPLICATION_NAME_LC'  : projectName,
+   'CONFIG_APPLICATION_NAME_AC'  : projectName.to_upper(),
+   'CONFIG_EXECUTABLE_NAME'      : mainExecutableFileName,
    # NB CMAKE_HOST_SYSTEM means something different than meson host_machine
-   'CONFIG_BUILD_SYSTEM'        : build_machine.system(),
-   'CONFIG_RUN_SYSTEM'          : host_machine.system(),
-   'CONFIG_CXX_COMPILER_ID'     : compiler.get_id(),
+   'CONFIG_BUILD_SYSTEM'         : build_machine.system(),
+   'CONFIG_RUN_SYSTEM'           : host_machine.system(),
+   'CONFIG_CXX_COMPILER_ID'      : compiler.get_id(),
    # Meson doesn't directly give you a way to obtain the current date and time.  But it does allow you turn an external
    # command, so this is one way to get it - relying on the fact that MSYS2 on Windows, Linux and Mac all have date
    # available from the command line.
-   'CONFIG_BUILD_TIMESTAMP'     : run_command('date', check: true).stdout().strip(),
+   'CONFIG_BUILD_TIMESTAMP'      : run_command('date', check: true).stdout().strip(),
+   # Similarly, an approximate date (eg February 2023) is generated for use on man pages
+   'CONFIG_BUILD_MONTH_AND_YEAR' : run_command('date', '+"%B %Y"', check: true).stdout().strip(),
    #
    # This block is specifically for generating the compressed changelog for building a Debian package
    #
    'CONFIG_CHANGE_LOG_UNCOMPRESSED' : join_paths(meson.current_source_dir(), filesToInstall_changeLogUncompressed),
    'CONFIG_CHANGE_LOG_COMPRESSED'   : join_paths(meson.current_build_dir(),  filesToInstall_changeLogCompressed  ),
+
+   # See https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer for more on the "maintainer", but
+   # essentially it's a required package property that needs to be either one person or a group mailing list.  In the
+   # latter case, the individual maintainers need be listed in a separate property called "uploaders".  Right now, we
+   # don't have a mailing list, so this is a moot point.
+   #
+   # Also note, per https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-maintainer, that it's simplest
+   # to avoid having full stops in the maintainer's name.
    'CONFIG_PACKAGE_MAINTAINER'      : 'Matt Young <mfsy@yahoo.com>',
 
    # Info for InstallerWindowIcon which is "Filename for a custom window icon in PNG format for the Installer
@@ -1199,20 +1211,75 @@ configure_file(input  : 'packaging/config.toml.in',
                configuration : exportedVariables,
                install : false)
 
+# On Linux (and TBD Mac) we inject build system variables into the markdown text that will be used to generate the man
+# page for the application.  The bt build tool script will then turn this markdown into a man page and include it in
+# the package.  (.:TBD:. This means man pages don't get installed locally, but that could be fixed by extending bt to
+# wrap around all meson operations.)
+configure_file(input  : 'doc/manpage.1.md.in',
+               output : 'manpage.1.md',
+               configuration : exportedVariables,
+               install : false)
+
 #
-# On Windows, we want to do the same for the NSIS installer script
-# We ultimately want it in a subdirectory of the the build directory, but that is not permitted by configure_file, so,
-# that gets done by the bt script/
+# We also want to inject build-system variables into various platform-specific packaging scripts, control files and so
+# on.
 #
-if host_machine.system() == 'windows'
+# We ultimately want the generated files inside the 'packaging' subtree of the the build directory, but that is not
+# permitted by configure_file, so, that gets done by the bt script.
+#
+if host_machine.system() == 'linux'
+   #
+   # Linux: Debian Binary package control file
+   #
+   configure_file(input  : 'packaging/linux/control.in',
+                  output : 'control',
+                  configuration : exportedVariables,
+                  install : false)
+elif host_machine.system() == 'windows'
+   #
+   # Windows: NSIS installer script
+   #
    configure_file(input  : 'packaging/windows/NsisInstallerScript.nsi.in',
                   output : 'NsisInstallerScript.nsi',
                   configuration : exportedVariables,
                   install : false)
-   configure_file(input  : 'packaging/windows/NsisCustomPage_InstallOptions.ini.in',
-                  output : 'NsisCustomPage_InstallOptions.ini',
-                  configuration : exportedVariables,
-                  install : false)
+endif
+
+#=======================================================================================================================
+#============================================= Generate manpage for Linux ==============================================
+#=======================================================================================================================
+if host_machine.system() == 'linux'
+   #
+   # Generate man page from markdown (which already had build system variables injected into it via meson.build)
+   # using the pandoc utility:
+   #    --verbose      = give verbose debugging output (though currently this does not have much effect)
+   #    -t man         = generate output in man format
+   #    -s             = generate a complete man page (rather than just some text in man format)
+   #    -o <filename>  = specifies the output file
+   #
+   # Note that, although man pages are frequently compressed, the exact compression mechanism is distro-specific, so
+   # Meson now considers such compression outside the scope of the build system.  (We therefore do it in the bt build
+   # tool script.)
+   #
+   # TODO: For the moment we are only producing an English man page.  It would not be huge effort to produce them for
+   # non-English locales, so we should do that at some point.
+   #
+   pandocResult = run_command(
+      'pandoc',
+      join_paths(meson.current_build_dir(), 'manpage.1.md'),
+      '--verbose',
+      '-t', 'man',
+      '-s',
+      '-o', join_paths(meson.current_build_dir(), projectName + '.1'),
+      capture : true,
+      check : true
+   )
+   message('Generating man page output:', pandocResult.stdout().strip())
+   if pandocResult.returncode() != 0
+      error('Generating man page ERRORS:', pandocResult.stderr().strip())
+   else
+      install_man(join_paths(meson.current_build_dir(), projectName + '.1'))
+   endif
 endif
 
 #=======================================================================================================================
@@ -1295,27 +1362,38 @@ if compiler.get_id() == 'gcc'
    #                    However, even this is not sufficient(!).  So, for the moment, we suppress the rpmlint error (see
    #                 packaging/rpmLintFilters.toml).
    #
-   # -no-pie    } These are all needed for Boost stacktrace to work properly - at least according to comments at
-   # -fno-pie   } https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers
-   # -rdynamic  } But, for some reason, gcc on Windows does not accept -rdynamic
+   # The following are, according to some comments at
+   # https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers, needed
+   # for Boost stacktrace to work properly:
+   #    -no-pie
+   #    -fno-pie
+   #    -rdynamic
+   #
+   # HOWEVER, there are a couple of gotchas:
+   #    - For some reason, gcc on Windows does not accept -rdynamic -- so we only set this on Linux
+   #    - On Linux, executables in Debian packages are supposed to be compiled as position-independent code, otherwise
+   #      we'll get a 'hardening-no-pie' Lintian warning -- so we only set no-pie options on Windows
    #
    add_global_arguments(['-g3',
                          '-O2',
                          '-z', 'noexecstack', # NB Not '-z noexecstack' as otherwise will be passed to gcc in quotes!
-                         '-no-pie',
-                         '-fno-pie'], language : 'cpp')
-   if host_machine.system() != 'windows'
+                         ], language : 'cpp')
+   if host_machine.system() == 'windows'
+      add_global_arguments     (['-no-pie', '-fno-pie'], language : 'cpp')
+      if compiler.get_linker_id() == 'ld.bfd'
+         #
+         # GNU Linker
+         #
+         # See https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html for options
+         #
+         add_global_link_arguments(['-no-pie',
+                                    '-fno-pie'], language : 'cpp')
+      endif
+   else
+      add_global_arguments     (['-pie', '-fpie'], language : 'cpp')
+      add_global_link_arguments(['-pie', '-fpie'], language : 'cpp')
       add_global_arguments     ('-rdynamic', language : 'cpp')
       add_global_link_arguments('-rdynamic', language : 'cpp')
-   endif
-   if compiler.get_linker_id() == 'ld.bfd'
-      #
-      # GNU Linker
-      #
-      # See https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html for options
-      #
-      add_global_link_arguments(['-no-pie',
-                                 '-fno-pie'], language : 'cpp')
    endif
 endif
 

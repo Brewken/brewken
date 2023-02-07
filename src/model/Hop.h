@@ -117,6 +117,7 @@ public:
    enum class Form {Leaf,
                     Pellet,
                     Plug,
+                    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
                     Extract,
                     WetLeaf,
                     Powder};

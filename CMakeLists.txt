@@ -297,9 +297,18 @@ endif()
 # Windows-specific compilation settings
 if(WIN32)
    # See https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Link-Options.html#Link-Options for more on GCC linker options
-   # In theory, this statically links all the GCC and MinGW libraries, so we don't have to ship DLLs for them.  In
-   # practice, it seems we still need a fair few other DLLs.
-   set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+   # In theory, we could specify "-static-libgcc -static-libstdc++ -static" to statically link all the GCC and MinGW
+   # libraries, so we don't have to ship DLLs for them.  In practice, this (a) does not prevent us needing a fair few
+   # other DLLs and (b) per https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Link-Options.html#Link-Options it's advised
+   # not to because:
+   #    "There are several situations in which an application should use the shared libgcc instead of the static
+   #    version. The most common of these is when the application wishes to throw and catch exceptions across different
+   #    shared libraries. In that case, each of the libraries as well as the application itself should use the shared
+   #    libgcc.
+   #       "Therefore, the G++ driver automatically adds -shared-libgcc whenever you build a shared library or a main
+   #    executable, because C++ programs typically use exceptions, so this is the right thing to do."
+   #
+#   set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 endif()
 
 if(APPLE)
