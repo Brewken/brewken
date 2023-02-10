@@ -236,7 +236,9 @@ log.debug('Working directory when invoked: ' + pathlib.Path.cwd().as_posix())
 dir_base          = pathlib.Path(__file__).parent.resolve()
 dir_gitInfo       = dir_base.joinpath('.git')
 dir_build         = dir_base.joinpath('mbuild')
+# Where submodules live and how many there are.  Currently there are 2: libbacktrace and valijson
 dir_gitSubmodules = dir_base.joinpath('third-party')
+num_gitSubmodules = 2
 # Top-level packaging directory - NB deliberately different name from 'packaging' (= dir_base.joinpath('packaging'))
 dir_packages          = dir_build.joinpath('packages')
 dir_packages_platform = dir_packages.joinpath(platform.system().lower())   # Platform-specific packaging directory
@@ -377,6 +379,29 @@ def writeSha256sum(directory, fileToDistribute):
                         stdout=sha256File)
       )
    os.chdir(previousWorkingDirectory)
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Ensure git submodules are present
+#
+# When a git repository is cloned, the submodules don't get cloned until you specifically ask for it via the
+# --recurse-submodules flag.
+#
+# (Adding submodules is done via Git itself.  Eg:
+#    cd ../third-party
+#    git submodule add https://github.com/ianlancetaylor/libbacktrace
+# But this only needs to be done once, by one person, and committed to our repository, where the connection is
+# stored in the .gitmodules file.)
+#-----------------------------------------------------------------------------------------------------------------------
+def ensureSubmodulesPresent():
+   findMesonAndGit()
+   if (not dir_gitSubmodules.is_dir()):
+      log.info('Creating submodules directory: ' + dir_gitSubmodules.as_posix())
+      os.makedirs(dir_gitSubmodules, exist_ok=True)
+   if (numFilesInTree(dir_gitSubmodules) < num_gitSubmodules):
+      log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
+      abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
+      abortOnRunFail(subprocess.run([exe_git, "submodule", "update"], capture_output=False))
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -551,7 +576,7 @@ def installDependencies():
          abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
          abortOnRunFail(
             subprocess.run(
-               ['sudo', 'apt', 'install', '-y', 'build-essential'
+               ['sudo', 'apt', 'install', '-y', 'build-essential',
                                                 'cmake',
                                                 'debhelper',
                                                 'git',
@@ -772,12 +797,7 @@ def installDependencies():
    # and not any more included with GCC by default.  It's not a large library so, unless and until we start using Conan,
    # the easiest approach seems to be to bring it in as a Git submodule and compile from source.
    #
-   # (Adding submodules is done via Git itself.  Eg:
-   #    cd ../third-party
-   #    git submodule add https://github.com/ianlancetaylor/libbacktrace
-   # But this only needs to be done once, by one person, and committed to our repository, where the connection is
-   # stored in the .gitmodules file.)
-   #
+   ensureSubmodulesPresent()
    log.info('Checking libbacktrace is built')
    previousWorkingDirectory = pathlib.Path.cwd().as_posix()
    backtraceDir = dir_gitSubmodules.joinpath('libbacktrace')
@@ -819,15 +839,9 @@ def doSetup(setupOption):
 
       # Enable the standard pre-commit hook that warns you about whitespace errors
       shutil.copy2(dir_gitInfo.joinpath('hooks/pre-commit.sample'),
-                     dir_gitInfo.joinpath('hooks/pre-commit'))
+                   dir_gitInfo.joinpath('hooks/pre-commit'))
 
-      # When a git repository is cloned, the submodules don't get cloned until you specifically ask for it via the
-      # --recurse-submodules flag.
-      if (not dir_gitSubmodules.is_dir() or numFilesInTree(dir_gitSubmodules) == 0):
-         log.info('Pulling in submodules in ' + dir_gitSubmodules.as_posix())
-         os.makedirs(dir_gitSubmodules, exist_ok=True)
-         abortOnRunFail(subprocess.run([exe_git, "submodule", "init"], capture_output=False))
-         abortOnRunFail(subprocess.run([exe_git, "submodule", "update"], capture_output=False))
+      ensureSubmodulesPresent()
 
    # Check whether Meson build directory is already set up.  (Although nothing bad happens, if you run setup twice,
    # it complains and tells you to run configure.)
