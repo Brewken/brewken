@@ -102,7 +102,7 @@ struct TypeInfo {
     *        TODO: We could probably do this via a bunch of template specialisations...
     */
    template <typename T>
-   constexpr static TypeInfo construct() {
+   const static TypeInfo construct() {
       if (std::is_enum<T>::value) {
          return TypeInfo{typeid(T), Classification::RequiredEnum};
       }
