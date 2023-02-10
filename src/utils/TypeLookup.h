@@ -20,6 +20,7 @@
 #include <map>
 #include <optional>
 #include <typeindex>
+#include <typeinfo>
 
 #include "utils/BtStringConst.h"
 
