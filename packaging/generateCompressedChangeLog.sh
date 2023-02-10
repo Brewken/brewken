@@ -1,5 +1,5 @@
 #!/bin/bash
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 # packaging/generateCompressedChangeLog.sh is part of Brewken, and is copyright the following authors 2022:
 #   • Matt Young <mfsy@yahoo.com>
 #
@@ -13,14 +13,14 @@
 #
 # You should have received a copy of the GNU General Public License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------------------------------------------------
-# NB: This script is intended to be invoked from the Meson build (see ../meson.build) with the following environment
-# variables set:
+#-----------------------------------------------------------------------------------------------------------------------
+# NB: This script is intended to be invoked from the bt build tool (see ../bt) with the following environment variables
+# set:
 #    CONFIG_APPLICATION_NAME_LC     - Same as projectName in meson.build
-#    CONFIG_CHANGE_LOG_UNCOMPRESSED - Same as filesToInstall_changeLogUncompressed in meson.build
-#    CONFIG_CHANGE_LOG_COMPRESSED   - Same as filesToInstall_changeLogCompressed in meson.build
+#    CONFIG_CHANGE_LOG_UNCOMPRESSED - Input file - same as filesToInstall_changeLogUncompressed in meson.build
+#    CONFIG_CHANGE_LOG_COMPRESSED   - Output file
 #    CONFIG_PACKAGE_MAINTAINER      - Name and email of a project maintainer conforming to
 #                                     https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer
 #
@@ -28,7 +28,7 @@
 # the values when we use them below).
 #
 # First thing we do is check that all these variables are set to something.
-#----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 for var in CONFIG_APPLICATION_NAME_LC CONFIG_CHANGE_LOG_UNCOMPRESSED CONFIG_CHANGE_LOG_COMPRESSED CONFIG_PACKAGE_MAINTAINER
 do
    if [ -z "${!var}" ]

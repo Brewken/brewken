@@ -270,7 +270,7 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       # "Marks the object as not requiring executable stack".
       #
       # However, this is not sufficient.  So, for the moment, we suppress the rpmlint error (see
-      # packaging/rpmLintFilters.toml).
+      # packaging/linux/rpmLintFilters.toml).
       #
       set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2 -z noexecstack")
       #
@@ -1811,7 +1811,7 @@ if(UNIX AND NOT APPLE)
    # so we have to set it explicitly here
    set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 
-   # This has to match one of the ValidLicenses values in packaging/rpmLintFilters.toml.  (See comment in that file for
+   # This has to match one of the ValidLicenses values in packaging/linux/rpmLintFilters.toml.  (See comment in that file for
    # more info.)
    set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
 
@@ -1984,7 +1984,7 @@ if(UNIX AND NOT APPLE)
       COMMAND lintian --no-tag-display-limit *.deb
       # Running rpmlint is the equivalent exercise for RPMs.  Most common error and warning codes are listed at
       # https://fedoraproject.org/wiki/Common_Rpmlint_issues
-      COMMAND rpmlint --config ${repoDir}/packaging *.rpm
+      COMMAND rpmlint --config ${repoDir}/packaging/linux *.rpm
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Running lintian and on deb package and rpmlint on rpm package.  Warnings about man pages are expected!"
    )

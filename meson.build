@@ -691,6 +691,14 @@ commonSourceFiles = files([
    'src/YeastSortFilterProxyModel.cpp'
 ])
 
+applicationMainSourceFile = files([
+   'src/main.cpp'
+])
+
+unitTestMainSourceFile = files([
+   'src/unitTests/Testing.cpp'
+])
+
 #
 # These are the headers that need to be processed by the Qt Meta Object Compiler (MOC).  Note that this is _not_ all the
 # headers in the project.  Also, note that there is a separate (trivial) list of MOC headers for the unit test runner.
@@ -968,12 +976,6 @@ filesToInstall_copyright = files([
 #
 filesToInstall_license = 'LICENSE'
 
-# This is not wrapped in files() (a) because it's not yet created and (b) because, as with
-# filesToInstall_changeLogUncompressed, we're going to pass it into a bash script
-#
-# See below for how this one gets created from filesToInstall_changeLogUncompressed
-filesToInstall_changeLogCompressed = 'changelog.gz'
-
 #=======================================================================================================================
 #============================================ Installation sub-directories =============================================
 #=======================================================================================================================
@@ -1109,10 +1111,9 @@ exportedVariables = {
    # Similarly, an approximate date (eg February 2023) is generated for use on man pages
    'CONFIG_BUILD_MONTH_AND_YEAR' : run_command('date', '+"%B %Y"', check: true).stdout().strip(),
    #
-   # This block is specifically for generating the compressed changelog for building a Debian package
+   # This is exported for generating the compressed changelog for building a Debian package
    #
    'CONFIG_CHANGE_LOG_UNCOMPRESSED' : join_paths(meson.current_source_dir(), filesToInstall_changeLogUncompressed),
-   'CONFIG_CHANGE_LOG_COMPRESSED'   : join_paths(meson.current_build_dir(),  filesToInstall_changeLogCompressed  ),
 
    # See https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer for more on the "maintainer", but
    # essentially it's a required package property that needs to be either one person or a group mailing list.  In the
@@ -1235,6 +1236,13 @@ if host_machine.system() == 'linux'
                   output : 'control',
                   configuration : exportedVariables,
                   install : false)
+   #
+   # Linux: RPM binary package spec file
+   #
+   configure_file(input  : 'packaging/linux/rpm.spec.in',
+                  output : 'rpm.spec',
+                  configuration : exportedVariables,
+                  install : false)
 elif host_machine.system() == 'windows'
    #
    # Windows: NSIS installer script
@@ -1283,21 +1291,6 @@ if host_machine.system() == 'linux'
 endif
 
 #=======================================================================================================================
-#=================================== Generate compressed changelog for Debian package ==================================
-#=======================================================================================================================
-if host_machine.system() == 'linux'
-   # .:TBD:. Might be better to do this via custom_target (see https://mesonbuild.com/Custom-build-targets.html), though
-   # the parameter passing is not as nice that way.  OR, we could just do it in the bt script
-   scriptResult = run_command('packaging/generateCompressedChangeLog.sh',
-                              env : exportedVariables,
-                              check : true)
-   message('Generating compressed changlog output:', scriptResult.stdout().strip())
-   if scriptResult.returncode() != 0
-      error('Generating compressed changlog ERRORS:', scriptResult.stderr().strip())
-   endif
-endif
-
-#=======================================================================================================================
 #======================= Install files that we ship with the software (sounds, default DB, etc) ========================
 #=======================================================================================================================
 # Note that we'll get a bunch of stuff in the meson logs about 'Failed to guess install tag' but this is entirely
@@ -1327,11 +1320,6 @@ if host_machine.system() == 'linux'
    # contents).  So the simplest thing is to rename COPYRIGHT to copyright for both.
    install_data(filesToInstall_copyright, rename : 'copyright', install_dir : installSubDir_doc)
 
-   # Each Debian package (which provides a /usr/share/doc/pkg directory) must install a Debian changelog file in
-   # /usr/share/doc/pkg/changelog.Debian.gz
-   install_data(join_paths(meson.current_build_dir(), filesToInstall_changeLogCompressed),
-                rename : 'changelog.Debian.gz',
-                install_dir : installSubDir_doc)
 else
    #----------- Windows and Mac -----------
    install_data(filesToInstall_copyright, install_dir : installSubDir_doc)
@@ -1427,14 +1415,17 @@ commonCodeStaticLib = static_library('common_code',
                                      install : false)
 
 mainExecutable = executable(mainExecutableTargetName,
-                            'src/main.cpp', generatedFromQrc,
+                            applicationMainSourceFile,
+                            generatedFromQrc,
                             include_directories : includeDirs,
                             dependencies : mainExeDependencies,
                             link_with : commonCodeStaticLib,
                             install : true)
 
-testRunner = executable(testRunnerTargetName, generatedFromQrc,
-                        'src/unitTests/Testing.cpp', generatedFromMocForUnitTests,
+testRunner = executable(testRunnerTargetName,
+                        unitTestMainSourceFile,
+                        generatedFromQrc,
+                        generatedFromMocForUnitTests,
                         include_directories : includeDirs,
                         dependencies : testRunnerDependencies,
                         link_with : commonCodeStaticLib,

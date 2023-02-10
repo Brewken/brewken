@@ -36,6 +36,7 @@
 #    CMakeLists.txt
 #    src/CMakeLists.txt
 #
+# .:TODO:. We should probably also break this file up into several smaller ones!
 #
 # Note that Python allows both single and double quotes for delimiting strings.  In Meson, we need single quotes, in
 # C++, we need double quotes.  We mostly try to use single quotes below for consistency with Meson, except where using
@@ -54,6 +55,7 @@ import pathlib
 import platform
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -235,8 +237,10 @@ dir_base          = pathlib.Path(__file__).parent.resolve()
 dir_gitInfo       = dir_base.joinpath('.git')
 dir_build         = dir_base.joinpath('mbuild')
 dir_gitSubmodules = dir_base.joinpath('third-party')
-dir_packaging          = dir_build.joinpath('packaging')                     # Top-level packaging directory
-dir_packaging_platform = dir_packaging.joinpath(platform.system().lower())   # Platform-specific packaging directory
+# Top-level packaging directory - NB deliberately different name from 'packaging' (= dir_base.joinpath('packaging'))
+dir_packages          = dir_build.joinpath('packages')
+dir_packages_platform = dir_packages.joinpath(platform.system().lower())   # Platform-specific packaging directory
+dir_packages_source   = dir_packages.joinpath('source')
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function for checking result of running external commands
@@ -267,7 +271,7 @@ def copyFilesToDir(files, directory):
    os.makedirs(directory, exist_ok=True)
    for currentFile in files:
       shutil.copy2(currentFile, directory)
-   return;
+   return
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function for counting files in a directory tree
@@ -320,6 +324,59 @@ def findMesonAndGit():
          log.critical('Cannot find git - please see https://git-scm.com/downloads for how to install')
          exit(1)
 
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Copy a file, removing comments and folded lines
+#
+# Have had various problems with comments in debian package control file, even though they are theoretically allowed, so
+# we strip them out here, hence slightly more involved code than just
+#    shutil.copy2(dir_build.joinpath('control'), dir_packages_deb_control)
+#
+# Similarly, some of the fields in the debian control file that we want to split across multiple lines are not actually
+# allowed to be so "folded" by the Debian package generator.  So, we do our own folding here.  (At the same time, we
+# remove extra spaces that make sense on the unfolded line but not once everything is joined onto single line.)
+#-----------------------------------------------------------------------------------------------------------------------
+def copyWithoutCommentsOrFolds(inputPath, outputPath):
+   with open(inputPath, 'r') as inputFile, open(outputPath, 'w') as outputFile:
+      for line in inputFile:
+         if (not line.startswith('#')):
+            if (not line.endswith('\\\n')):
+               outputFile.write(line)
+            else:
+               foldedLine = ""
+               while (line.endswith('\\\n')):
+                  foldedLine += line.removesuffix('\\\n')
+                  line = next(inputFile)
+               foldedLine += line
+               # The split and join here is a handy trick for removing repeated spaces from the line without
+               # fumbling around with regular expressions.  Note that this takes the newline off the end, hence
+               # why we have to add it back manually.
+               outputFile.write(' '.join(foldedLine.split()))
+               outputFile.write('\n')
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Create fileToDistribute.sha256sum for a given fileToDistribute in a given directory
+#-----------------------------------------------------------------------------------------------------------------------
+def writeSha256sum(directory, fileToDistribute):
+   #
+   # In Python 3.11 we could use the file_digest() function from the hashlib module to do this.  But it's rather
+   # more work to do in Python 3.10, so we just use the `sha256sum` command instead.
+   #
+   # Note however, that `sha256sum` includes the supplied directory path of a file in its output.  We want just the
+   # filename, not its full or partial path on the build machine.  So we change into the directory of the file before
+   # running the `sha256sum` command.
+   #
+   previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+   os.chdir(directory)
+   with open(directory.joinpath(fileToDistribute + '.sha256sum').as_posix(),'w') as sha256File:
+      abortOnRunFail(
+         subprocess.run(['sha256sum', fileToDistribute],
+                        capture_output=False,
+                        stdout=sha256File)
+      )
+   os.chdir(previousWorkingDirectory)
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -483,13 +540,12 @@ def installDependencies():
                   )
                )
 
-         # Almost everything else we can rely on the distro packages
-         # Note that we need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
          #
-         # The pandoc package helps us create man pages from markdown input
-         #
-         # The build-essential and debhelper packages here are for creating Debian packages
-         #
+         # Almost everything else we can rely on the distro packages.  A few notes:
+         #  - We need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
+         #  - The pandoc package helps us create man pages from markdown input
+         #  - The build-essential and debhelper packages are for creating Debian packages
+         #  - The rpm and rpmlint packages are for creating RPM packages
          #
          log.info('Ensuring other libraries and frameworks are installed')
          abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
@@ -898,26 +954,28 @@ def doPackage():
    #
    # The top-level directory structure we create inside the build directory (mbuild) for packaging is:
    #
-   #    packaging/   Holds the subdirectories below, plus the source tarball and its checksum
+   #    packages/   Holds the subdirectories below, plus the source tarball and its checksum
    #    │
    #    ├── windows/ For Windows
    #    │
    #    ├── darwin/  For Mac
    #    │
-   #    └── linux/   For Linux
+   #    ├── linux/   For Linux
+   #    │
+   #    └── source/   For source code tarball
    #
    # NB: If we wanted to change this, we would need to make corresponding changes in meson.build
    #
 
    # Step 1 : Create a top-level package directory structure
    #          We'll make the relevant top-level directory and ensure it starts out empty
-   #          (We don't have to make dir_packaging as it will automatically get created by os.makedirs when we ask it to
-   #          create dir_packaging_platform.)
-   if (dir_packaging_platform.is_dir()):
-      log.info('Removing existing ' + dir_packaging_platform.as_posix() + ' directory tree')
-      shutil.rmtree(dir_packaging_platform)
-   log.info('Creating directory ' + dir_packaging_platform.as_posix())
-   os.makedirs(dir_packaging_platform)
+   #          (We don't have to make dir_packages as it will automatically get created by os.makedirs when we ask it to
+   #          create dir_packages_platform.)
+   if (dir_packages_platform.is_dir()):
+      log.info('Removing existing ' + dir_packages_platform.as_posix() + ' directory tree')
+      shutil.rmtree(dir_packages_platform)
+   log.info('Creating directory ' + dir_packages_platform.as_posix())
+   os.makedirs(dir_packages_platform)
 
    # We change into the build directory.  This doesn't affect the caller (of this script) because we're a separate
    # sub-process from the (typically) shell that invoked us and we cannot change the parent process's working
@@ -940,16 +998,26 @@ def doPackage():
    )
    #
    # The source tarball and its checksum end up in the meson-dist subdirectory of mbuild, so we just move them into the
-   # packaging directory.
+   # packages/source directory (first making sure the latter exists and is empty!).
    #
+   # We are only talking about 2 files, so some of this is overkill, but it's easier to be consistent with what we do
+   # for the other subdirectories of mbuild/packages
+   #
+   if (dir_packages_source.is_dir()):
+      log.info('Removing existing ' + dir_packages_source.as_posix() + ' directory tree')
+      shutil.rmtree(dir_packages_source)
+   log.info('Creating directory ' + dir_packages_source.as_posix())
+   os.makedirs(dir_packages_source)
    meson_dist_dir = dir_build.joinpath('meson-dist')
    for fileName in os.listdir(meson_dist_dir.as_posix()):
-      log.debug('Moving ' + fileName + ' from ' + meson_dist_dir.as_posix() + ' to ' + dir_packaging.as_posix())
-      # shutil.move will error rather than overwrite an existing file, so we have to handle that case manually
-      targetFile = dir_packaging.joinpath(fileName)
+      log.debug('Moving ' + fileName + ' from ' + meson_dist_dir.as_posix() + ' to ' + dir_packages_source.as_posix())
+      # shutil.move will error rather than overwrite an existing file, so we handle that case manually (although in
+      # theory it should never arise)
+      targetFile = dir_packages_source.joinpath(fileName)
       if os.path.exists(targetFile):
+         log.debug('Removing old ' + targetFile)
          os.remove(targetFile)
-      shutil.move(meson_dist_dir.joinpath(fileName), dir_packaging)
+      shutil.move(meson_dist_dir.joinpath(fileName), dir_packages_source)
 
    #
    # Running 'meson install' with the --destdir option will put all the installable files (program executable,
@@ -959,7 +1027,7 @@ def doPackage():
    #
    log.info('Running meson install with --destdir option')
    # See https://mesonbuild.com/Commands.html#install for the optional parameters to meson install
-   abortOnRunFail(subprocess.run([exe_meson, 'install', '--destdir', dir_packaging_platform.as_posix()],
+   abortOnRunFail(subprocess.run([exe_meson, 'install', '--destdir', dir_packages_platform.as_posix()],
                                  capture_output=False))
 
    #
@@ -991,21 +1059,52 @@ def doPackage():
       #------------------------------------------------ Linux Packaging ------------------------------------------------
       #-----------------------------------------------------------------------------------------------------------------
       case 'Linux':
+         #
+         # There are, of course, multiple package managers in the Linux world.  We cater for two of the main ones,
+         # Debian and RPM.
+         #
+         # Note, per https://en.wikipedia.org/wiki/X86-64, that x86_64 and amd64 are the same thing; the latter is just
+         # a rebranding of the former by AMD.  Debian packages use 'amd64' in the filename, while RPM ones use 'x86_64',
+         # but it's the same code being packaged and pretty much the same directory structure being installed into.
+         #
+         # Some of the processing we need to do is the same for Debian and RPM, so do that first before we copy things
+         # into separate trees for actually building the packages
+         #
          log.debug('Linux Packaging')
 
          #
          # First, note that Meson is geared up for building and installing locally.  (It doesn't really know about
          # packaging.)  This means it installs locally to /usr/local/bin, /usr/local/share, etc.  This is "correct" for
          # locally-built software but not for packaged software, which needs to go in /usr/bin, /usr/share, etc.  So,
-         # inside the packaging directory tree, we just need to move everything out of linux/usr/local up one level into
-         # linux/usr and then remove the empty linux/usr/local directory
+         # inside the mbuild/packages directory tree, we just need to move everything out of linux/usr/local up one
+         # level into linux/usr and then remove the empty linux/usr/local directory
          #
-         log.debug('Moving usr/local files to usr inside ' + dir_packaging_platform.as_posix())
-         targetDir = dir_packaging_platform.joinpath('usr')
+         log.debug('Moving usr/local files to usr inside ' + dir_packages_platform.as_posix())
+         targetDir = dir_packages_platform.joinpath('usr')
          sourceDir = targetDir.joinpath('local')
          for fileName in os.listdir(sourceDir.as_posix()):
             shutil.move(sourceDir.joinpath(fileName), targetDir)
          os.rmdir(sourceDir.as_posix())
+
+         #
+         # Debian and RPM both want the debugging information stripped from the executable.
+         #
+         # .:TBD:. One day perhaps we could be friendlyi and still ship the debugging info, just in a separate .dbg
+         # file.  The procedure to do this is described in the 'only-keep-debug' section of `man objcopy`.  However, we
+         # need to work out where to put the .dbg file so that it remains usable but lintian does not complain about it.
+         #
+         dir_packages_bin = dir_packages_platform.joinpath('usr').joinpath('bin')
+         log.debug('Stripping debug symbols')
+         abortOnRunFail(
+            subprocess.run(
+               ['strip',
+                '--strip-unneeded',
+                '--remove-section=.comment',
+                '--remove-section=.note binaries',
+                dir_packages_bin.joinpath(projectName)],
+               capture_output=False
+            )
+         )
 
          #--------------------------------------------------------------------------------------------------------------
          #-------------------------------------------- Debian .deb Package ---------------------------------------------
@@ -1025,96 +1124,88 @@ def doPackage():
          # the process itself is simple once you've worked out what you need to do (which was slightly more painful than
          # you might have hoped).
          #
-         # Then:
-         #    # Create the source tarball
-         #    meson dist
-         #    # Create the debian/ subtree in the build directory
-         #    # I think we only want to do this once, because you end up with a lot of example files that you need to
-         #    # edit etc.  Or we could have a look at that brewtarget debian project...
-         #    dh_make --copyright gpl3 --email mfsy@yahoo.com --single --packagename brewken_0.1.0-1 --file meson-dist/*.tar.xz --yes
+         # To create a deb package, we create the following directory structure, where items marked ✅ are copied as is
+         # from the tree generated by meson install with --destdir option, and those marked ❇ are ones we either
+         # generate or modify.
          #
-         # To create a deb package, we create the following directory structure (where items marked ✅ are installed by
-         # meson install with --destdir option, those marked ❇ are ones we generate, and things marked ❌ are generated
-         # by `dh_make` and not actually needed AFAICT.  (When working on this bit, use ✴ for things we still need to
-         # add, but currently not aware of any.)
-         #    [projectName]-[versionNumber]_amd64
-         #    ├── DEBIAN
-         #    │   ├── control          ❇  # Contains info about dependencies, maintainer, etc
-         #    │   ├── control.tar.gz   ❌  # Hopefully just a compressed version of the above
-         #    │   ├── data.tar.gz      ❌  # Compressed archive of the usr tree below
-         #    │   ├── debian-binary    ❌  # A text file containing just "2.0"
-         #    │   └── md5sums          ❌  # = checksums of all the files in the usr tree below
-         #    │
-         #    └── usr
-         #        ├── bin
-         #        │   └── [projectName] ✅   <-- the executable
-         #        └── share
-         #            ├── [projectName]
-         #            │   ├── applications
-         #            │   │   └── [projectName].desktop ✅  <── [filesToInstall_desktop]
-         #            │   ├── DefaultData.xml           ✅  <──┬── [filesToInstall_data]
-         #            │   ├── default_db.sqlite         ✅  <──┘
-         #            │   ├── sounds
-         #            │   │   └── [All the filesToInstall_sounds .wav files] ✅
-         #            │   └── translations_qm
-         #            │       └── [All the .qm files generated by qt.compile_translations] ✅
-         #            ├── doc
-         #            │    └── [projectName]
-         #            │        ├── changelog.Debian.gz  ✅
-         #            │        ├── copyright            ✅
-         #            │        ├── README.md            ✅
-         #            │        └── RelaseNotes.markdown ✅
-         #            ├── icons
-         #            │   └── hicolor
-         #            │       └── scalable
-         #            │           └── apps
-         #            │               └── [projectName].svg ✅  <── [filesToInstall_icons]
-         #            └── man
-         #                └── man1
-         #                    └── [projectName].1.gz ❇ <── English version of man page (compressed)
+         # (When working on this bit, use ❌ for things that are generated automatically but not actually needed, and ✴
+         # for things we still need to add.  Not currently not aware of any of either.)
+         #    debbuild
+         #    └── [projectName]-[versionNumber]-1_amd64
+         #        ├── DEBIAN
+         #        │   └── control          ❇  # Contains info about dependencies, maintainer, etc
+         #        │
+         #        └── usr
+         #            ├── bin
+         #            │   └── [projectName] ✅   <-- the executable
+         #            └── share
+         #                ├── applications
+         #                │   └── [projectName].desktop     ✅  <── [filesToInstall_desktop]
+         #                ├── [projectName]
+         #                │   ├── DefaultData.xml           ✅  <──┬── [filesToInstall_data]
+         #                │   ├── default_db.sqlite         ✅  <──┘
+         #                │   ├── sounds
+         #                │   │   └── [All the filesToInstall_sounds .wav files] ✅
+         #                │   └── translations_qm
+         #                │       └── [All the .qm files generated by qt.compile_translations] ✅
+         #                ├── doc
+         #                │    └── [projectName]
+         #                │        ├── changelog.Debian.gz            ✅
+         #                │        ├── copyright                      ✅
+         #                │        ├── README.md (or README.markdown) ✅
+         #                │        └── RelaseNotes.markdown           ✅
+         #                ├── icons
+         #                │   └── hicolor
+         #                │       └── scalable
+         #                │           └── apps
+         #                │               └── [projectName].svg ✅  <── [filesToInstall_icons]
+         #                └── man
+         #                    └── man1
+         #                        └── [projectName].1.gz ❇ <── English version of man page (compressed)
          #
 
          # Make the top-level directory for the deb package and the DEBIAN subdirectory for the package control files
          # etc
          log.debug('Creating debian package top-level directories')
          debPackageDirName = projectName + '-' + buildConfig['CONFIG_VERSION_STRING'] + '-1_amd64'
-         dir_packaging_deb = dir_packaging_platform.joinpath(debPackageDirName)
-         dir_packaging_deb_control = dir_packaging_deb.joinpath('DEBIAN')
-         os.makedirs(dir_packaging_deb_control) # This will also automatically create dir_packaging_deb
+         dir_packages_deb = dir_packages_platform.joinpath('debbuild').joinpath(debPackageDirName)
+         dir_packages_deb_control = dir_packages_deb.joinpath('DEBIAN')
+         os.makedirs(dir_packages_deb_control) # This will also automatically create parent directories
+         dir_packages_deb_doc = dir_packages_deb.joinpath('usr/share/doc').joinpath(projectName)
 
          # Copy the linux/usr tree inside the top-level directory for the deb package
          log.debug('Copying deb package contents')
-         shutil.copytree(dir_packaging_platform.joinpath('usr'), dir_packaging_deb.joinpath('usr'))
+         shutil.copytree(dir_packages_platform.joinpath('usr'), dir_packages_deb.joinpath('usr'))
 
          #
          # Copy the Debian Binary package control file to where it belongs
          #
-         # Have had various problems with comments in the control file, even though they are theoretically allowed, so
-         # we strip them out here, hence slightly more involved code than just
-         #    shutil.copy2(dir_build.joinpath('control'), dir_packaging_deb_control)
+         log.debug('Copying deb package control file')
+         copyWithoutCommentsOrFolds(dir_build.joinpath('control').as_posix(),
+                                    dir_packages_deb_control.joinpath('control').as_posix())
+
+
          #
-         # Similarly, some of the fields in the control file that we want to split across multiple lines are not
-         # actually allowed to be so "folded" by the Debian package generator.  So, we do our own folding here.  (At the
-         # same time, we remove extra spaces that make sense on the unfolded line but not once everything is joined onto
-         # single line.)
+         # Generate compressed changelog for Debian package from markdown
          #
-         log.debug('Copying deb package control files')
-         with open(dir_build.joinpath('control').as_posix(),'r') as inputFile, open(dir_packaging_deb_control.joinpath('control').as_posix(),'w') as outputFile:
-            for line in inputFile:
-               if (not line.startswith('#')):
-                  if (not line.endswith('\\\n')):
-                     outputFile.write(line)
-                  else:
-                     foldedLine = ""
-                     while (line.endswith('\\\n')):
-                        foldedLine += line.removesuffix('\\\n')
-                        line = next(inputFile)
-                     foldedLine += line
-                     # The split and join here is a handy trick for removing repeated spaces from the line without
-                     # fumbling around with regular expressions.  Note that this takes the newline off the end, hence
-                     # why we have to add it back manually.
-                     outputFile.write(' '.join(foldedLine.split()))
-                     outputFile.write('\n')
+         # Each Debian package (which provides a /usr/share/doc/pkg directory) must install a Debian changelog file in
+         # /usr/share/doc/pkg/changelog.Debian.gz
+         #
+         # This is done by a shell script because we already wrote that
+         #
+         log.debug('Generating compressed changelog')
+         os.environ['CONFIG_APPLICATION_NAME_LC'    ] = buildConfig['CONFIG_APPLICATION_NAME_LC'    ]
+         os.environ['CONFIG_CHANGE_LOG_UNCOMPRESSED'] = buildConfig['CONFIG_CHANGE_LOG_UNCOMPRESSED']
+         os.environ['CONFIG_CHANGE_LOG_COMPRESSED'  ] = dir_packages_deb_doc.joinpath('changelog.Debian.gz').as_posix()
+         os.environ['CONFIG_PACKAGE_MAINTAINER'     ] = buildConfig['CONFIG_PACKAGE_MAINTAINER'     ]
+         abortOnRunFail(
+            subprocess.run([dir_base.joinpath('packaging').joinpath('generateCompressedChangeLog.sh')],
+                           capture_output=False)
+         )
+         # Shell script gives wrong permissions on output (which lintian would complain about), so fix them here (from
+         # rw-rw-r-- to rw-r--r--).
+         os.chmod(dir_packages_deb_doc.joinpath('changelog.Debian.gz'),
+                  stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
          #
          # Debian packages want man pages to be compressed with gzip with the highest compression available (-9n).
@@ -1124,42 +1215,26 @@ def doPackage():
          # We _could_ do this all in Python with the gzip module, but it's somewhat less coding just to invoke the gzip
          # program directly
          #
-         dir_packaging_deb_man = dir_packaging_deb.joinpath('usr').joinpath('share').joinpath('man')
-         dir_packaging_deb_man1 = dir_packaging_deb_man.joinpath('man1')
+         dir_packages_deb_man = dir_packages_deb.joinpath('usr').joinpath('share').joinpath('man')
+         dir_packages_deb_man1 = dir_packages_deb_man.joinpath('man1')
          log.debug('Compressing man page')
          abortOnRunFail(
-            subprocess.run(['gzip', '-9n', dir_packaging_deb_man1.joinpath(projectName + '.1')], capture_output=False)
-         )
-
-         #
-         # Debian also wants the debugging information stripped from the executable.
-         #
-         # .:TBD:. One day perhaps we could be friendlyi and still ship the debugging info, just in a separate .dbg
-         # file.  The procedure to do this is described in the 'only-keep-debug' section of `man objcopy`.  However, we
-         # need to work out where to put the .dbg file so that it remains usable but lintian does not complain about it.
-         #
-         dir_packaging_deb_bin = dir_packaging_deb.joinpath('usr').joinpath('bin')
-         log.debug('Stripping debug symbols')
-         abortOnRunFail(
-            subprocess.run(
-               ['strip',
-                '--strip-unneeded',
-                '--remove-section=.comment',
-                '--remove-section=.note binaries',
-                dir_packaging_deb_bin.joinpath(projectName)],
-               capture_output=False
-            )
+            subprocess.run(['gzip', '-9n', dir_packages_deb_man1.joinpath(projectName + '.1')], capture_output=False)
          )
 
          #
          # Now we actually generate the package
          #
-         previousWorkingDirectory = pathlib.Path.cwd().as_posix()
-         os.chdir(dir_packaging_platform)
          # Generates the package with the same name as the package directory plus '.deb' on the end
+         log.debug('Generating deb package')
+         previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+         os.chdir(dir_packages_platform.joinpath('debbuild'))
          abortOnRunFail(
             subprocess.run(['dpkg-deb', '--build', '--root-owner-group', debPackageDirName], capture_output=False)
          )
+
+         # The debian package name is (I think) derived from the name of the directory we supplied as build parameter
+         debPackageName = debPackageDirName + '.deb'
 
          # Running lintian does a very strict check on the Debian package.  You can find a list of all the error and
          # warning codes at https://lintian.debian.org/tags.
@@ -1172,34 +1247,252 @@ def doPackage():
          # not ship a man page.  We should get to this at some point.
          log.info('Running lintian to check the created deb package for errors and warnings')
          abortOnRunFail(
-            subprocess.run(['lintian', '--no-tag-display-limit', debPackageDirName + '.deb'], capture_output=False)
+            subprocess.run(['lintian', '--no-tag-display-limit', debPackageName], capture_output=False)
          )
+
+         # Move the .deb file to the top-level directory
+         shutil.move(debPackageName, dir_packages_platform)
+
+         # We don't particularly need to change back to the previous working directory, but it's tidy to do so.
+         os.chdir(previousWorkingDirectory)
 
          #
          # Make the checksum file
          #
-         # In Python 3.11 we could use the file_digest() function from the hashlib module to do this.  But it's rather
-         # more work to do in Python 3.10, so we just use the `sha256sum` command instead.
-         #
-         log.info('Generating checksum file')
-         with open(dir_packaging_platform.joinpath(debPackageDirName + '.deb.sha256sum').as_posix(),'w') as sha256File:
-            abortOnRunFail(
-               subprocess.run(['sha256sum', debPackageDirName + '.deb'], capture_output=False, stdout=sha256File)
-            )
+         log.info('Generating checksum file for ' + debPackageName)
+         writeSha256sum(dir_packages_platform, debPackageName)
 
          #--------------------------------------------------------------------------------------------------------------
          #---------------------------------------------- RPM .rpm Package ----------------------------------------------
          #--------------------------------------------------------------------------------------------------------------
-         # rpmbuild
+         # This script is written assuming you are on a Debian-based Linux.
+         #
+         # In theory we can use `alien` to convert a .deb to a .rpm, but I worry that this would not handle dependencies
+         # very well.  So we prefer to build a bit more manually.
+         #
+         # To create a rpm package, we create the following directory structure, where items marked ✅ are copied as is
+         # from the tree generated by meson install with --destdir option, and those marked ❇ are ones we either
+         # generate or modify.
+         #
+         # (When working on this bit, use ❌ for things that are generated automatically but not actually needed, and ✴
+         # for things we still need to add.  Not currently not aware of any of either.)
+         #    rpmbuild
+         #    ├── SPECS
+         #    │   └── rpm.spec ❇
+         #    └── BUILDROOT
+         #        └── usr
+         #            ├── bin
+         #            │   └── [projectName] ✅   <-- the executable
+         #            ├── lib
+         #            │   └── .build-id
+         #            └── share
+         #                ├── applications
+         #                │   └── [projectName].desktop     ✅  <── [filesToInstall_desktop]
+         #                ├── [projectName]
+         #                │   ├── DefaultData.xml           ✅  <──┬── [filesToInstall_data]
+         #                │   ├── default_db.sqlite         ✅  <──┘
+         #                │   ├── sounds
+         #                │   │   └── [All the filesToInstall_sounds .wav files] ✅
+         #                │   └── translations_qm
+         #                │       └── [All the .qm files generated by qt.compile_translations] ✅
+         #                ├── doc
+         #                │    └── [projectName]
+         #                │        ├── copyright                      ✅
+         #                │        ├── README.md (or README.markdown) ✅
+         #                │        └── RelaseNotes.markdown           ✅
+         #                ├── icons
+         #                │   └── hicolor
+         #                │       └── scalable
+         #                │           └── apps
+         #                │               └── [projectName].svg ✅  <── [filesToInstall_icons]
+         #                └── man
+         #                    └── man1
+         #                        └── [projectName].1.bz2 ❇ <── English version of man page (compressed)
+         #
+         #
 
-         # We don't particularly need to change back to the previous working directory, but it's tidy to do so.
-         os.chdir(previousWorkingDirectory)
+         # Make the top-level directory for the rpm package and the SPECS subdirectory etc
+         log.debug('Creating rpm package top-level directories')
+         rpmPackageDirName = 'rpmbuild'
+         dir_packages_rpm = dir_packages_platform.joinpath(rpmPackageDirName)
+         dir_packages_rpm_specs = dir_packages_rpm.joinpath('SPECS')
+         os.makedirs(dir_packages_rpm_specs) # This will also automatically create dir_packages_rpm
+         dir_packages_rpm_buildroot = dir_packages_rpm.joinpath('BUILDROOT')
+         os.makedirs(dir_packages_rpm_buildroot)
+
+         # Copy the linux/usr tree inside the top-level directory for the rpm package
+         log.debug('Copying rpm package contents')
+         shutil.copytree(dir_packages_platform.joinpath('usr'), dir_packages_rpm_buildroot.joinpath('usr'))
+
+         # Copy the RPM spec file, doing the same unfolding etc as for the Debian control file above
+         log.debug('Copying rpm spec file')
+         copyWithoutCommentsOrFolds(dir_build.joinpath('rpm.spec').as_posix(),
+                                    dir_packages_rpm_specs.joinpath('rpm.spec').as_posix())
+
+         #
+         # In Debian packaging, the change log is a separate file.  However, for RPM packaging, the change log needs to
+         # be, included in the spec file.  The simplest way to do that is for us to append it to the file we've just
+         # copied.  (NB: This relies on the last line of that file being `%changelog` -- ie the macro that introduces
+         # the change log.)
+         #
+         # Since we store our change log internally in markdown, we also convert it to the RPM format at the same time
+         # as appending it.  (This is different from the Debian changelog format, so we can't just reuse what we've done
+         # above.)  Per https://docs.fedoraproject.org/en-US/packaging-guidelines/#changelogs, the format we need is:
+         #    %changelog
+         #    * Wed Jun 14 2003 Joe Packager <joe at gmail.com> - 1.0-2
+         #    - Added README file (#42).
+         # (Note that we don't have to write '%changelog' as it's already in the spec file.)
+         # The format we have is:
+         #    ## v3.0.2
+         #    Minor bug fixes for the 3.0.1 release (ie bugs in 3.0.1 are fixed in this 3.0.2 release).
+         #
+         #    ### New Features
+         #
+         #    * None
+         #
+         #    ### Bug Fixes
+         #    * LGPL-2.1-only and LGPL-3.0-only license text not shipped [#664](https://github.com/Brewtarget/brewtarget/issues/664)
+         #    * Release 3.0.1 is uninstallable on Ubuntu 22.04.1 [#665](https://github.com/Brewtarget/brewtarget/issues/665)
+         #    * Turkish Language selection in settings not working [#670])https://github.com/Brewtarget/brewtarget/issues/670)
+         #
+         #    ### Release Timestamp
+         #    Wed, 26 Oct 2022 10:10:10 +0100
+         #
+         #    ## v3.0.1
+         #    etc
+         #
+         with open(os.environ['CONFIG_CHANGE_LOG_UNCOMPRESSED'], 'r') as markdownChangeLog, open(dir_packages_rpm_specs.joinpath('rpm.spec'), 'a') as specFile:
+            inIntro = True
+            releaseDate = ''
+            versionNumber = ''
+            changes = []
+            for line in markdownChangeLog:
+               if (inIntro):
+                  # Skip over the introductory headings and paragraphs of CHANGES.markdown until we get to the first
+                  # version line, which begins with '## v'.
+                  if (not line.startswith('## v')):
+                     # Skip straight to processing the next line
+                     continue
+                  # We've reached the end of the introductory stuff, so the current line is the first one that we
+                  # process "as normal" below.
+                  inIntro = False
+               # If this is a version line, it's the start of a change block (and the end of the previous one if there
+               # was one).  Grab the version number (and write out the previous block if there was one).  Note that we
+               # have to add the '-1' "package release" number on the end of the version number (but before the
+               # newline!), otherwise rpmlint will complain about "incoherent-version-in-changelog".
+               if (line.startswith('## v')):
+                  versionNumber = line.removeprefix('## v').replace('\n', '-1\n')
+                  if (len(changes) > 0):
+                     specFile.write('* ' + releaseDate + ' ' + buildConfig['CONFIG_PACKAGE_MAINTAINER'] + ' - ' +
+                                    versionNumber)
+                     for change in changes:
+                        specFile.write('- ' + change)
+                     changes = []
+                  continue
+               # If this is a line starting with '* ' then it's either a new feature or a bug fix.  RPM doesn't
+               # distinguish, so we just add it to the list, stripping the '* ' off the front.
+               if (line.startswith('* ')):
+                  changes.append(line.removeprefix('* '))
+                  continue
+               # If this line is '### Release Timestamp' then we want to grab the next line as the release timestamp
+               if (line.startswith('### Release Timestamp')):
+                  #
+                  # We need to:
+                  #   - take the comma out after the day of the week
+                  #   - change date format from "day month year" to "month day year"
+                  #   - strip the time off the end of the line
+                  #   - strip the newline off the end of the line
+                  # We can do all of it all in one regexp with relatively little pain(!).  Note the use of raw string
+                  # notation (r prefix on string literal) to avoid the backslash plague (see
+                  # https://docs.python.org/3/howto/regex.html#the-backslash-plague).
+                  #
+                  line = next(markdownChangeLog)
+                  releaseDate      = re.compile(r', (\d\d) ([A-Z][a-z][a-z]) (\d\d\d\d).*\n$').sub(r' \2 \1 \3', line)
+                  continue
+            # Once we got to the end of the input, we need to write the last change block
+            if (len(changes) > 0):
+               specFile.write('* ' + releaseDate + ' ' + buildConfig['CONFIG_PACKAGE_MAINTAINER'] + ' - ' +
+                              versionNumber)
+               for change in changes:
+                  specFile.write('- ' + change)
+
+         #
+         # RPM packages want man pages to be compressed with bzip2.  Other than that, the same comments above for
+         # compressing man pages for deb packages apply here.
+         #
+         dir_packages_rpm_man = dir_packages_rpm_buildroot.joinpath('usr').joinpath('share').joinpath('man')
+         dir_packages_rpm_man1 = dir_packages_rpm_man.joinpath('man1')
+         log.debug('Compressing man page')
+         abortOnRunFail(
+            subprocess.run(
+               ['bzip2', '--compress', dir_packages_rpm_man1.joinpath(projectName + '.1')],
+               capture_output=False
+            )
+         )
+
+         #
+         # Run rpmbuild to build the package
+         #
+         # Again, as with the .deb packaging, we are just trying to build a binary package and not use all the built-in
+         # magical makefiles of the full RPM build system.
+         #
+         # Note, per comments at
+         # https://unix.stackexchange.com/questions/553169/rpmbuild-isnt-using-the-current-working-directory-instead-using-users-home
+         # that you have to set the _topdir macro to stop rpmbuild wanting to put all its output under the current
+         # user's home directory.  Also, we do not put quotes around this define because the subprocess module will do
+         # this already (I think) because it works out there's a space in the string.  (If we do put quotes, we get an
+         # error "Macro % has illegal name".)
+         #
+         abortOnRunFail(
+            subprocess.run(
+               ['rpmbuild',
+                '--define=_topdir ' + dir_packages_rpm.as_posix(),
+                '--noclean', # Do not remove the build tree after the packages are made
+                '--buildroot',
+                dir_packages_rpm_buildroot.as_posix(),
+                '--bb',
+                dir_packages_rpm_specs.joinpath('rpm.spec').as_posix()],
+               capture_output=False
+            )
+         )
+
+         # rpmbuild will have put its output in RPMS/x86_64/[projectName]-[versionNumber]-1.x86_64.rpm
+         dir_packages_rpm_output = dir_packages_rpm.joinpath('RPMS').joinpath('x86_64')
+         rpmPackageName = projectName + '-' + buildConfig['CONFIG_VERSION_STRING'] + '-1.x86_64.rpm'
+
+         #
+         # Running rpmlint is the lintian equivalent exercise for RPMs.  Many, but by no means all, of the error and
+         # warning codes are listed at https://fedoraproject.org/wiki/Common_Rpmlint_issues, though there are some
+         # mistakes on that page (eg suggestion for dealing with unstripped-binary-or-object warning is "Make sure
+         # binaries are executable"!)
+         #
+         # See packaging/linux/rpmLintfilters.toml for suppression of various rpmlint warnings (with explanations of
+         # why).
+         #
+         abortOnRunFail(
+            subprocess.run(
+               ['rpmlint',
+                '--config',
+                dir_base.joinpath('packaging/linux'),
+                dir_packages_rpm_output.joinpath(rpmPackageName).as_posix()],
+               capture_output=False
+            )
+         )
+
+         # Move the .rpm file to the top-level directory
+         shutil.move(dir_packages_rpm_output.joinpath(rpmPackageName), dir_packages_platform)
+
+         #
+         # Make the checksum file
+         #
+         log.info('Generating checksum file for ' + rpmPackageName)
+         writeSha256sum(dir_packages_platform, rpmPackageName)
 
       #-----------------------------------------------------------------------------------------------------------------
       #----------------------------------------------- Windows Packaging -----------------------------------------------
       #-----------------------------------------------------------------------------------------------------------------
       case 'Windows':
-         log.debug('Windows Packaging - WIP!')
+         log.debug('Windows Packaging')
          #
          # There are three main open-source packaging tools available for Windows:
          #
@@ -1238,26 +1531,26 @@ def doPackage():
          #
          # As mentioned above, not all information about what Meson does is readily exportable.   In particular, I can
          # find no simple way to get the actual directory that a file was installed to.  Eg, on Windows, in an MSYS2
-         # environment, the main executable will be in mbuild/packaging/windows/msys64/mingw32/bin/ or similar.  The
-         # beginning (mbuild/packaging/windows) and the end (bin) are parts we specify, but the middle bit
+         # environment, the main executable will be in mbuild/packages/windows/msys64/mingw32/bin/ or similar.  The
+         # beginning (mbuild/packages/windows) and the end (bin) are parts we specify, but the middle bit
          # (msys64/mingw32) is magicked up by Meson and not explicitly exposed to build script commands.
          #
          # Fortunately, we can just search for a directory called bin inside the platform-specific packaging directory
          # and we'll have the right thing.
          #
-         packageBinDirList = glob.glob('./**/bin/', root_dir=dir_packaging_platform.as_posix(), recursive=True)
+         packageBinDirList = glob.glob('./**/bin/', root_dir=dir_packages_platform.as_posix(), recursive=True)
          if (len(packageBinDirList) == 0):
             log.critical(
-               'Cannot find bin subdirectory of ' + dir_packaging_platform.as_posix() + ' packaging directory'
+               'Cannot find bin subdirectory of ' + dir_packages_platform.as_posix() + ' packaging directory'
             )
             exit(1)
          if (len(packageBinDirList) > 1):
             log.warning(
-               'Found more than one bin subdirectory of ' + dir_packaging_platform.as_posix() +
+               'Found more than one bin subdirectory of ' + dir_packages_platform.as_posix() +
                ' packaging directory: ' + '; '.join(packageBinDirList) + '.  Assuming first is the one we need'
             )
 
-         packageBinDir = dir_packaging_platform.joinpath(packageBinDirList[0])
+         packageBinDir = dir_packages_platform.joinpath(packageBinDirList[0])
          log.debug('Package bin dir: ' + packageBinDir.as_posix())
 
          #
@@ -1381,10 +1674,10 @@ def doPackage():
                exit(1)
 
          # Copy the NSIS installer script to where it belongs
-         shutil.copy2(dir_build.joinpath('NsisInstallerScript.nsi'), dir_packaging_platform)
+         shutil.copy2(dir_build.joinpath('NsisInstallerScript.nsi'), dir_packages_platform)
 
          # We change into the packaging directory and invoke the NSIS Compiler (aka MakeNSIS.exe)
-         os.chdir(dir_packaging_platform)
+         os.chdir(dir_packages_platform)
          log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
          abortOnRunFail(
             # FYI, we don't need it here, but if you run makensis from the MSYS2 command line (Mintty), you need double
@@ -1425,6 +1718,10 @@ def doPackage():
          log.critical('Unrecognised platform: ' + platform.system())
          exit(1)
 
+   # If we got this far, everything must have worked
+   print()
+   print('Packaging complete.  See  ' + dir_packages_platform.as_posix() + ' for binaries and ' +
+         dir_packages_source.as_posix() + ' for source')
    return
 
 #-----------------------------------------------------------------------------------------------------------------------

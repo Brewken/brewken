@@ -202,6 +202,11 @@ int main(int argc, char **argv) {
       qInfo() << "Configuration directory:" << PersistentSettings::getConfigDir().absolutePath();
       qInfo() << "Data directory:" << PersistentSettings::getUserDataDir().absolutePath();
       qInfo() << "Resource directory:" << Application::getResourceDir().absolutePath();
+      QLocale const systemLocale = QLocale::system();
+      qInfo() <<
+         "Locale:" << systemLocale.name() << "(Decimal point:" << systemLocale.decimalPoint() <<
+         "/ Thousands separator:" << systemLocale.groupSeparator() << ")";
+
       qDebug() << Q_FUNC_INFO << "Library Paths:" << qApp->libraryPaths();
 
       auto mainAppReturnValue = Application::run();
