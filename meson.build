@@ -109,7 +109,7 @@
 # STEP 5 (OPTIONAL): Build distributable packages
 # -----------------------------------------------
 # To build binary packages:
-#    ../bt package             ⭐⭐⭐ This is the bit that is not yet working ⭐⭐⭐
+#    ../bt package             ⭐⭐⭐ This is the bit that is not yet working on all platforms ⭐⭐⭐
 #
 #
 # Finally, note that if you want to add new build targets or change the names of existing targets, you have to run the
@@ -132,6 +132,8 @@
 #   - Meson 0.59.0 or newer to use qt.compile_resources, qt.compile_ui and qt.compile_moc
 #   - Meson 0.60.0 or newer to use + to append items to lists (aka 'list.<plus>' feature -- at least that's what the
 #     warning message says if you've specified a lower minimum version of Meson)
+# We would/will need:
+#   - Meson 0.62.0 or newer for dep 'dl' custom lookup
 #
 # NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
 #     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
@@ -201,7 +203,7 @@ capitalisedProjectName = projectName.substring(0, 1).to_upper() + projectName.su
 message('⭐ Building', projectName, 'version', meson.project_version(), 'for', host_machine.system(),
         'on', build_machine.system(), 'in', meson.project_source_root(), '⭐')
 compiler = meson.get_compiler('cpp')
-message('Using', compiler.get_id(), 'compiler and', compiler.get_linker_id(), 'linker')
+message('Using Meson', meson.version(), ', ', compiler.get_id(), 'compiler and', compiler.get_linker_id(), 'linker')
 
 #
 # We need two versions of the main executable name because they are different on Windows:
@@ -387,7 +389,7 @@ message('Boost:', boostDependency.name(), 'found =', boostDependency.found(), 'v
 # functionality over the most platforms.  This has dependencies on:
 #   - libdl on POSIX platforms -- but see note below
 #   - libbacktrace
-# The latter is a widely-used cross-platfor open source library available at
+# The latter is a widely-used cross-platform open source library available at
 # https://github.com/ianlancetaylor/libbacktrace.  On some POSIX plaforms it's already either installed on the system
 # (eg see https://man7.org/linux/man-pages/man3/backtrace.3.html) or available as an optional component of the GCC
 # compiler.  However, it seems this is something that can change over time.  It's a small and stable library, so we
@@ -416,8 +418,18 @@ if compiler.get_id() == 'gcc'
    endif
 endif
 dlDependency = dependency('dl', required : needLibdl, static : true)
-if dlDependency.found()
-   sharedLibraryPaths += dlDependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
+#
+# On newer versions of Meson (0.62.0 and newer), the dependency has special-case code for dealing with libdl being built
+# into the compiler.  This means on Mac, for instance, we can have dlDependency.found() is true without there being any
+# cmake variable such as PACKAGE_LIBRARIES (because the library was found by Meson special case code, not by cmake).
+#
+# We either need to give a default value in the get_variable() call below (which wouldn't really be meaningful) or not
+# call it when we don't need to.
+#
+if needLibdl
+   if dlDependency.found()
+      sharedLibraryPaths += dlDependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
+   endif
 endif
 
 # Note that, unlike, say, the parameters to include_directories(), the dirs argument to find_library() must be absolute
