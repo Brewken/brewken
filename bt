@@ -1520,13 +1520,19 @@ def doPackage():
          # version 1.X of the tool and there were a lot of big changes in the 2.0 release in May 2021, including in the
          # call syntax -- see https://github.com/rpm-software-management/rpmlint/releases/tag/2.0.0 for details.
          # (Interestingly, as of that 2.0 release, rpmlint is entirely written in Python and can even be installed via
-         # `pip install rpmlint` and imported as a Python module -- see https://pypi.org/project/rpmlint/.)
+         # `pip install rpmlint` and imported as a Python module -- see https://pypi.org/project/rpmlint/.  We should
+         # have a look at this, provided we can use it without messing up anything the user has already installed from
+         # distro packages.)
          #
          rawVersion = abortOnRunFail(
             subprocess.run(['rpmlint', '--version'], capture_output=True)).stdout.decode('UTF-8'
          ).rstrip()
          log.debug('rpmlint version raw: ' + rawVersion)
-         rpmlintVersion = packaging.version.parse(rawVersion)
+         # Older versions of rpmlint output eg "rpmlint version 1.11", whereas newer ones output eg "2.2.0".  With the
+         # magic of regular expressions we can fix this.
+         trimmedVersion = re.sub(r'^[^0-9]*', '', rawVersion).replace('_', '.')
+         log.debug('rpmlint version trimmed: ' + trimmedVersion)
+         rpmlintVersion = packaging.version.parse(trimmedVersion)
          log.debug('rpmlint version parsed: ' + str(rpmlintVersion))
          if (rpmlintVersion < packaging.version.parse('2.0.0')):
             log.info('Skipping invocation of rpmlint as installed version (' + str(rpmlintVersion) +
