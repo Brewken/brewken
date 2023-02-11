@@ -1028,6 +1028,10 @@ def doPackage():
    #                     builds done when a commit is pushed up to github).  HOWEVER, note this option is only available
    #                     in Meson 0.62 and later.
    #
+   # Of course, we could create a compressed tarball directly in this script, but the advantage of having Meson do it is
+   # that it will (I believe) include only source & data files actually in the git repository in meson.build, so you
+   # won't pick up other things that happen to be hanging around in the source etc directory trees.
+   #
    log.info('Creating source tarball')
    if (mesonVersion >= packaging.version.parse('0.62.0')):
       abortOnRunFail(
@@ -1268,7 +1272,7 @@ def doPackage():
          # Now we actually generate the package
          #
          # Generates the package with the same name as the package directory plus '.deb' on the end
-         log.debug('Generating deb package')
+         log.info('Generating deb package')
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
          os.chdir(dir_packages_platform.joinpath('debbuild'))
          abortOnRunFail(
@@ -1485,6 +1489,7 @@ def doPackage():
          # this already (I think) because it works out there's a space in the string.  (If we do put quotes, we get an
          # error "Macro % has illegal name".)
          #
+         log.info('Generating rpm package')
          abortOnRunFail(
             subprocess.run(
                ['rpmbuild',
@@ -1511,15 +1516,33 @@ def doPackage():
          # See packaging/linux/rpmLintfilters.toml for suppression of various rpmlint warnings (with explanations of
          # why).
          #
-         abortOnRunFail(
-            subprocess.run(
-               ['rpmlint',
-                '--config',
-                dir_base.joinpath('packaging/linux'),
-                dir_packages_rpm_output.joinpath(rpmPackageName).as_posix()],
-               capture_output=False
+         # We don't however run rpmlint on old versions of Ubuntu (ie 20.04 or earlier) because they are still on
+         # version 1.X of the tool and there were a lot of big changes in the 2.0 release in May 2021, including in the
+         # call syntax -- see https://github.com/rpm-software-management/rpmlint/releases/tag/2.0.0 for details.
+         # (Interestingly, as of that 2.0 release, rpmlint is entirely written in Python and can even be installed via
+         # `pip install rpmlint` and imported as a Python module -- see https://pypi.org/project/rpmlint/.)
+         #
+         rawVersion = abortOnRunFail(
+            subprocess.run(['rpmlint', '--version'], capture_output=True)).stdout.decode('UTF-8'
+         ).rstrip()
+         log.debug('rpmlint version raw: ' + rawVersion)
+         rpmlintVersion = packaging.version.parse(rawVersion)
+         log.debug('rpmlint version parsed: ' + str(rpmlintVersion))
+         if (rpmlintVersion < packaging.version.parse('2.0.0')):
+            log.info('Skipping invocation of rpmlint as installed version (' + str(rpmlintVersion) +
+                     ') is too old (< 2.0)')
+         else:
+            log.info('Running rpmlint (v' + str(rpmlintVersion) +
+                     ') to check the created rpm package for errors and warnings')
+            abortOnRunFail(
+               subprocess.run(
+                  ['rpmlint',
+                   '--config',
+                   dir_base.joinpath('packaging/linux'),
+                   dir_packages_rpm_output.joinpath(rpmPackageName).as_posix()],
+                  capture_output=False
+               )
             )
-         )
 
          # Move the .rpm file to the top-level directory
          shutil.move(dir_packages_rpm_output.joinpath(rpmPackageName), dir_packages_platform)
