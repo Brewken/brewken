@@ -300,7 +300,8 @@ def downloadFile(url):
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Set global variables exe_git and exe_meson with the locations of the git and meson executables
+# Set global variables exe_git and exe_meson with the locations of the git and meson executables plus mesonVersion with
+# the version of meson installed
 #
 # We want to give helpful error messages if Meson or Git is not installed.  For other missing dependencies we can rely
 # on Meson itself to give explanatory error messages.
@@ -316,6 +317,12 @@ def findMesonAndGit():
    if (exe_meson is None or exe_meson == ""):
       log.critical('Cannot find meson - please see https://mesonbuild.com/Getting-meson.html for how to install')
       exit(1)
+
+   global mesonVersion
+   rawVersion = str(abortOnRunFail(subprocess.run([exe_meson, '--version'], capture_output=True)).stdout)
+   log.debug('Meson version raw: ' + rawVersion)
+   mesonVersion = packaging.version.parse(rawVersion)
+   log.debug('Meson version parsed: ' + str(mesonVersion))
 
    # Check Git is installed if its magic directory is present
    global exe_git
@@ -462,7 +469,7 @@ def installDependencies():
          boostVersionToInstall = packaging.version.parse('1.80.0') # NB: This _must_ have the patch version
          maxBoostVersionFound = packaging.version.parse('0')
          possibleBoostVersionHeaders = [pathlib.Path('/usr/include/boost/version.hpp'),
-                                          pathlib.Path('/usr/local/include/boost/version.hpp')]
+                                        pathlib.Path('/usr/local/include/boost/version.hpp')]
          if ('BOOST_ROOT' in os.environ):
             possibleBoostVersionHeaders.append(pathlib.Path(os.environ['BOOST_ROOT']).joinpath('boost/version.hpp'))
          for boostVersionHeader in possibleBoostVersionHeaders:
@@ -1017,14 +1024,20 @@ def doPackage():
    # options:
    #    --no-tests  = stops Meson doing a full build and test, on the assumption that we've already done this by the
    #                  time we come to packaging
-   #    --allow-dirty  = allow uncommitted changes, which is useful when we're working on the build itself, but
-   #                     obviously normally shouldn't be needed.  HOWEVER, note this option is only available in Meson
-   #                     0.62 and later, so we are not yet using it.
+   #    --allow-dirty  = allow uncommitted changes, which is needed more often than you think (eg for the automatic
+   #                     builds done when a commit is pushed up to github).  HOWEVER, note this option is only available
+   #                     in Meson 0.62 and later.
    #
    log.info('Creating source tarball')
-   abortOnRunFail(
-      subprocess.run([exe_meson, 'dist', '--no-tests'], capture_output=False)
-   )
+   if (mesonVersion >= packaging.version.parse('0.62.0')):
+      abortOnRunFail(
+         subprocess.run([exe_meson, 'dist', '--no-tests', '--allow-dirty'], capture_output=False)
+      )
+   else:
+      abortOnRunFail(
+         subprocess.run([exe_meson, 'dist', '--no-tests'], capture_output=False)
+      )
+
    #
    # The source tarball and its checksum end up in the meson-dist subdirectory of mbuild, so we just move them into the
    # packages/source directory (first making sure the latter exists and is empty!).
@@ -1752,8 +1765,10 @@ def doPackage():
 
    # If we got this far, everything must have worked
    print()
-   print('Packaging complete.  See  ' + dir_packages_platform.as_posix() + ' for binaries and ' +
-         dir_packages_source.as_posix() + ' for source')
+   print('⭐ Packaging complete ⭐')
+   print('See:')
+   print('   ' + dir_packages_platform.as_posix() + ' for binaries')
+   print('   ' + dir_packages_source.as_posix() + ' for source')
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
