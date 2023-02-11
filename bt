@@ -803,10 +803,21 @@ def installDependencies():
    backtraceDir = dir_gitSubmodules.joinpath('libbacktrace')
    os.chdir(backtraceDir)
    log.debug('Run configure and make in ' + backtraceDir.as_posix())
-   # Libbacktrace uses autoconf/automake so it's relatively simple to build
+   #
+   # We only want to configure and compile libbacktrace once, so we do it here rather than in Meson.build
+   #
+   # Libbacktrace uses autoconf/automake so it's relatively simple to build, but for a couple of gotchas
+   #
    # Note that, although on Linux you can just invoke `./configure`, this doesn't work in the MSYS2 environment, so,
-   # knowing that 'configure' is a shell script, we invoke it as such.
-   abortOnRunFail(subprocess.run(['bash', './configure']))
+   # knowing that 'configure' is a shell script, we invoke it as such.  However, we must be careful to run it with the
+   # correct shell, specifically `sh` (aka dash on Linux) rather than `bash`.  Otherwise, the Makefile it generates will
+   # not work properly, and we'll end up building a library with missing symbols that gives link errors on our own
+   # executables.
+   #
+   # (I haven't delved deeply into this but, confusingly, if you run `sh ./configure` it puts 'SHELL = /bin/bash' in the
+   # Makefile, whereas, if you run `bash ./configure`, it puts the line 'SHELL = /bin/sh' in the Makefile.)
+   #
+   abortOnRunFail(subprocess.run(['sh', './configure']))
    abortOnRunFail(subprocess.run(['make']))
    os.chdir(previousWorkingDirectory)
 
@@ -912,10 +923,16 @@ def doSetup(setupOption):
 def doPackage():
    #
    # Meson does not offer a huge amount of help on creating installable packages.  It has no equivalent to CMake's CPack
-   # and there is generally not a lot of info out there about how to do packaging in Meson.  OTOH, although CPack has
-   # lots of features it is also very painful to use.  Some of the things you can do are undocumented; some of the
-   # things you want to be able to do seem nigh on impossible.  So maybe taking a completely different approach is a
-   # good thing.
+   # and there is generally not a lot of info out there about how to do packaging in Meson.  In fact, it seems unlikely
+   # that packaging will ever come within it scope.  (Movement is rather in the other direction - eg there _used_ to be
+   # a Meson module for creating RPMs, but it was discontinued per
+   # https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
+   # designed etc.)
+   #
+   # At first, this seemed disappointing, but I've rather come around to thinking a different way about it.  Although
+   # CPack has lots of features it is also very painful to use.  Some of the things you can do are undocumented; some of
+   # the things you want to be able to do seem nigh on impossible.  So perhaps taking a completely different approach,
+   # eg using a scripting language rather than a build tool to do packaging, is ultimately a good thing.
    #
    # I spent some time looking at and trying to use the Qt-Installer-Framework (QtIFW).  Upsides are:
    #   - In principle we could write one set of install config that would then create install packages for Windows, Mac
@@ -947,10 +964,8 @@ def doPackage():
    #   - For Linux, there is some mention in the Meson manual of building deb and rpm packages eg
    #     https://mesonbuild.com/Installing.html#destdir-support, but I think you have to do most of the work yourself.
    #     https://blog.devgenius.io/how-to-build-debian-packages-from-meson-ninja-d1c28b60e709 gives some sketchy
-   #     starting info on how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  (There used
-   #     to be a Meson module for creating RPMs, but it was discontinued per
-   #     https://mesonbuild.com/Release-notes-for-0-62-0.html#removal-of-the-rpm-module because it was broken and badly
-   #     designed etc.)  Also look at https://openbuildservice.org/.
+   #     starting info on how to build deb packages.  Maybe we could find the equivalent for creating RPMs.  Also look
+   #     at https://openbuildservice.org/.
    #   - For Windows, we could probably use NSIS (Nullsoft Scriptable Install System -- see
    #     https://nsis.sourceforge.io/) -- or similar to create a Windows installer.
    #
@@ -1716,6 +1731,9 @@ def doPackage():
       #-----------------------------------------------------------------------------------------------------------------
       case 'Darwin':
          log.debug('Mac Packaging - TODO!')
+         #
+         # See https://mesonbuild.com/Creating-OSX-packages.html for some info on building Mac packages with Meson.  I
+         # don't actually think we want to try to do everything in Meson, but what's there is a good starting point.
          #
          # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
          # https://doc.qt.io/qt-6/macos-deployment.html#the-mac-deployment-tool

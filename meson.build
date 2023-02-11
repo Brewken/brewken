@@ -423,12 +423,13 @@ dlDependency = dependency('dl', required : needLibdl, static : true)
 # into the compiler.  This means on Mac, for instance, we can have dlDependency.found() is true without there being any
 # cmake variable such as PACKAGE_LIBRARIES (because the library was found by Meson special case code, not by cmake).
 #
-# We either need to give a default value in the get_variable() call below (which wouldn't really be meaningful) or not
-# call it when we don't need to.
+# This is why we have to supply a default dummy value, which we then check for.
 #
-if needLibdl
-   if dlDependency.found()
-      sharedLibraryPaths += dlDependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
+if dlDependency.found()
+   dlLibraryPath = dlDependency.get_variable(default_value : '', cmake : 'PACKAGE_LIBRARIES')
+   message('dlLibraryPath is:', dlLibraryPath)
+   if dlLibraryPath != ''
+      sharedLibraryPaths += dlLibraryPath
    endif
 endif
 
