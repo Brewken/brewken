@@ -319,7 +319,7 @@ def findMesonAndGit():
       exit(1)
 
    global mesonVersion
-   rawVersion = str(abortOnRunFail(subprocess.run([exe_meson, '--version'], capture_output=True)).stdout)
+   rawVersion = abortOnRunFail(subprocess.run([exe_meson, '--version'], capture_output=True)).stdout.decode('UTF-8').rstrip()
    log.debug('Meson version raw: ' + rawVersion)
    mesonVersion = packaging.version.parse(rawVersion)
    log.debug('Meson version parsed: ' + str(mesonVersion))
@@ -483,7 +483,7 @@ def installDependencies():
                )
                log.debug('In ' + boostVersionHeader.as_posix() + ' found ' + str(runResult.stdout))
                versionFoundRaw = re.sub(
-                  r'^.*BOOST_LIB_VERSION "([0-9_]*)".*$', r'\1', str(runResult.stdout).replace('\n', '')
+                  r'^.*BOOST_LIB_VERSION "([0-9_]*)".*$', r'\1', str(runResult.stdout).rstrip()
                ).replace('_', '.')
                versionFound = packaging.version.parse(versionFoundRaw)
                if (versionFound > maxBoostVersionFound):
@@ -625,12 +625,12 @@ def installDependencies():
          #
          distroName = str(
             abortOnRunFail(subprocess.run(['lsb_release', '-is'], encoding = "utf-8", capture_output = True)).stdout
-         ).replace('\n', '')
+         ).rstrip()
          log.debug('Linux distro: ' + distroName)
          if ('Ubuntu' == distroName):
             ubuntuRelease = str(
                abortOnRunFail(subprocess.run(['lsb_release', '-rs'], encoding = "utf-8", capture_output = True)).stdout
-            ).replace('\n', '')
+            ).rstrip()
             log.debug('Ubuntu release: ' + ubuntuRelease)
             if (Decimal(ubuntuRelease) < Decimal('22.04')):
                log.info('Installing newer version of Meson the hard way')
@@ -658,7 +658,7 @@ def installDependencies():
          # We could just run uname without the -a option, but the latter gives some useful diagnostics to log
          unameResult = str(
             abortOnRunFail(subprocess.run([exe_uname, '-a'], encoding = "utf-8", capture_output = True)).stdout
-         )
+         ).rstrip()
          log.debug('Running uname -a gives ' + unameResult)
          # Output from `uname -a` will be of the form
          #    MINGW64_NT-10.0-19044 Matt-Virt-Win 3.4.3.x86_64 2023-01-11 20:20 UTC x86_64 Msys
