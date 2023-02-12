@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * PersistentSettings.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -38,6 +38,8 @@
 #include <QDebug>
 #include <QSettings>
 #include <QStandardPaths>
+
+#include "config.h"
 
 //
 // Anonymous namespace for constants, global variables and functions used only in this file
@@ -78,9 +80,9 @@ namespace {
 
    //
    // By default, QSettings stores things differently on different platforms (registry on Windows, CFPreferences API on
-   // Mac, a text .conf file on Linux).  We prefer to force use of a text file on all platforms as potentially aids
-   // debugging (eg it's relatively then easy for an end user raising a bug report to upload a text config file, but it
-   // might be somewhat harder for them to dig around in the Windows registry).
+   // Mac, a text .conf file on Linux).  HOWEVER, we prefer to force use of a text file on all platforms as potentially
+   // aids debugging (eg it's relatively then easy for an end user raising a bug report to upload a text config file,
+   // but it might be somewhat harder for them to dig around in the Windows registry).
    //
    // For similar reasons, we would like to control the location and name of the file.
    //
@@ -127,9 +129,22 @@ void PersistentSettings::initialise(QString customUserDataDir) {
       Q_FUNC_INFO << "Preferred writeable directory for user-specific configuration files is:" <<
       configDir.absolutePath();
 
+   // Older versions of the software had a different, less descriptive, name for the .conf file.  If the old file is
+   // present but the new one is not, we rename it.
+   QString const oldConfigFileName = QString("%1.conf").arg(CONFIG_APPLICATION_NAME_LC);
+   QString const newConfigFileName = QString("%1PersistentSettings.conf").arg(CONFIG_APPLICATION_NAME_LC);
+   if (configDir.exists(oldConfigFileName) && !configDir.exists(newConfigFileName)) {
+      qInfo() << Q_FUNC_INFO << "Renaming" << oldConfigFileName << "to" << newConfigFileName << "in" << configDir;
+      if (!configDir.rename(oldConfigFileName, newConfigFileName)) {
+         // QDir::rename will tell you if it failed, but not why, so we just log the failure
+         qWarning() <<
+            Q_FUNC_INFO << "Error renaming" << oldConfigFileName << "to" << newConfigFileName << "in" << configDir;
+      }
+   }
+
    // Now we can set the full path of the persistent settings file
-   qSettings = std::make_unique<QSettings>(configDir.absoluteFilePath("brewkenPersistentSettings.conf"),
-                                           QSettings::IniFormat);
+   qSettings = std::make_unique<QSettings>(configDir.absoluteFilePath(newConfigFileName), QSettings::IniFormat);
+   qInfo() << Q_FUNC_INFO << "Persistent settings file:" << qSettings->fileName();
 
    // We've done enough now for calls to contains()/insert()/value() etc to work.  Mark that we're initialised so we
    // can (potentially) use one of those calls to initialise the user data directory.

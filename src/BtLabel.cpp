@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -27,7 +27,7 @@
 #include "model/Style.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
-#include "utils/OptionalToStream.h"
+#include "utils/OptionalHelpers.h"
 #include "widgets/UnitAndScalePopUpMenu.h"
 
 BtLabel::BtLabel(QWidget *parent,

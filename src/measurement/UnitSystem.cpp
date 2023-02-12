@@ -125,16 +125,16 @@ public:
    std::pair<double, QString> displayableAmount(Measurement::Amount const & amount,
                                                 std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
       // Special cases
-      if (amount.unit.getPhysicalQuantity() != this->physicalQuantity) {
-         return std::pair(amount.quantity, "");
+      if (amount.unit()->getPhysicalQuantity() != this->physicalQuantity) {
+         return std::pair(amount.quantity(), "");
       }
 
-      auto siAmount = amount.unit.toSI(amount.quantity);
+      auto siAmount = amount.unit()->toSI(amount.quantity());
 
       // If there is only one unit in this unit system, then the scale to unit mapping will be empty as there's nothing
       // to choose from
       if (this->scaleToUnit.size() == 0) {
-         return std::pair(this->defaultUnit->fromSI(siAmount.quantity), this->defaultUnit->name);
+         return std::pair(this->defaultUnit->fromSI(siAmount.quantity()), this->defaultUnit->name);
       }
 
       // Conversely, if we have a non-empty mapping then it's a coding error if it only has one entry!
@@ -145,7 +145,7 @@ public:
          // It's a coding error to specify a forced scale that is not in the UnitSystem
          Q_ASSERT(this->scaleToUnit.contains(*forcedScale));
          Measurement::Unit const * bb = this->scaleToUnit.value(*forcedScale);
-         return std::pair(bb->fromSI(siAmount.quantity), bb->name);
+         return std::pair(bb->fromSI(siAmount.quantity()), bb->name);
       }
 
       // Search for the smallest measure in this system that's not too big to show the supplied value
@@ -153,7 +153,7 @@ public:
       // (e.g., mg, g, kg).
       Measurement::Unit const * last  = nullptr;
       for (auto it : this->scaleToUnit) {
-         if (last != nullptr && qAbs(siAmount.quantity) < it->toSI(it->boundary()).quantity) {
+         if (last != nullptr && qAbs(siAmount.quantity()) < it->toSI(it->boundary()).quantity()) {
             // Stop looping as we've found a unit that's too big to use (so we'll return the last one, ie the one smaller,
             // below)
             break;
@@ -163,7 +163,7 @@ public:
 
       // It is a programming error if the map was empty (ie we didn't go through the loop at all)
       Q_ASSERT(last != nullptr);
-      return std::pair(last->fromSI(siAmount.quantity), last->name);
+      return std::pair(last->fromSI(siAmount.quantity()), last->name);
    }
 
    // Member variables for impl
@@ -247,8 +247,8 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
 
    Measurement::Amount siAmount = unitToUse->toSI(amt);
    qDebug() <<
-      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" << siAmount.quantity <<
-      "in" << siAmount.unit.name;
+      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" << siAmount.quantity() <<
+      "in" << siAmount.unit()->name;
 
    return siAmount;
 }
@@ -264,7 +264,7 @@ QString Measurement::UnitSystem::displayAmount(Measurement::Amount const & amoun
    auto result = this->pimpl->displayableAmount(amount, forcedScale);
 
    if (result.second.isEmpty()) {
-      return QString("%L1").arg(this->amountDisplay(Measurement::Amount{result.first, amount.unit}, forcedScale),
+      return QString("%L1").arg(this->amountDisplay(Measurement::Amount{result.first, *amount.unit()}, forcedScale),
                                 fieldWidth,
                                 format,
                                 precision);

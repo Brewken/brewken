@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -224,6 +224,22 @@ protected:
     * \param candidateName The name that we should attempt to modify.  (Modification is done in place.)
     */
    static void modifyClashingName(QString & candidateName);
+
+private:
+   /**
+    * \brief Add a value to a JSON object
+    *
+    * \param fieldDefinition
+    * \param recordDataAsObject
+    * \param key
+    * \param value  The value to add.  NB this can be modified by this function (specifically to change the contents
+    *               from \c std::optional<T> to \c T).  Caller is not expected to need the value after this function
+    *               returns.
+    */
+   void insertValue(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+                    boost::json::object & recordDataAsObject,
+                    std::string_view const & key,
+                    QVariant & value);
 
 protected:
    JsonCoding const & jsonCoding;

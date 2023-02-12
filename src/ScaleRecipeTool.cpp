@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -40,6 +40,7 @@ ScaleRecipeTool::ScaleRecipeTool(QWidget* parent) :
 {
    addPage(new ScaleRecipeIntroPage);
    addPage(new ScaleRecipeEquipmentPage(equipSortProxyModel));
+   return;
 }
 
 void ScaleRecipeTool::accept() {
@@ -52,11 +53,12 @@ void ScaleRecipeTool::accept() {
    scale(selectedEquip, newEff);
 
    QWizard::accept();
+   return;
 }
 
-void ScaleRecipeTool::setRecipe(Recipe* rec)
-{
+void ScaleRecipeTool::setRecipe(Recipe* rec) {
    recObs = rec;
+   return;
 }
 
 void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
@@ -80,10 +82,11 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
    this->recObs->setBoilTime_min(equip->boilTime_min());
 
    for (auto ferm : this->recObs->fermentables()) {
+      // We assume volumes and masses get scaled the same way
       if (!ferm->isSugar() && !ferm->isExtract()) {
-         ferm->setAmount_kg(ferm->amount_kg() * effRatio * volRatio);
+         ferm->setAmount(ferm->amount() * effRatio * volRatio);
       } else {
-         ferm->setAmount_kg(ferm->amount_kg() * volRatio);
+         ferm->setAmount(ferm->amount() * volRatio);
       }
    }
 
@@ -112,8 +115,11 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
    // I don't think I should scale the yeasts.
 
    // Let the user know what happened.
-   QMessageBox::information(this, tr("Recipe Scaled"),
-             tr("The equipment and mash have been reset due to the fact that mash temperatures do not scale easily. Please re-run the mash wizard."));
+   QMessageBox::information(this,
+                            tr("Recipe Scaled"),
+                            tr("The equipment and mash have been reset due to the fact that mash temperatures do not "
+                               "scale easily. Please re-run the mash wizard."));
+   return;
 }
 
 // ScaleRecipeIntroPage =======================================================
@@ -125,6 +131,7 @@ ScaleRecipeIntroPage::ScaleRecipeIntroPage(QWidget* parent) :
 
    doLayout();
    retranslateUi();
+   return;
 }
 
 void ScaleRecipeIntroPage::doLayout() {
@@ -133,15 +140,15 @@ void ScaleRecipeIntroPage::doLayout() {
    layout->addWidget(label);
       label->setWordWrap(true);
    setLayout(layout);
+   return;
 }
 
 void ScaleRecipeIntroPage::retranslateUi() {
    setTitle(tr("Scale Recipe"));
-   label->setText(tr(
-      "This wizard will help you scale a recipe to another size or efficiency."
-      "Select another equipment with the new batch size and/or efficiency and"
-      "the wizard will scale the recipe ingredients automatically."
-  ));
+   label->setText(tr("This wizard will help you scale a recipe to another size or efficiency."
+                     "Select another equipment with the new batch size and/or efficiency and"
+                     "the wizard will scale the recipe ingredients automatically."));
+   return;
 }
 
 // ScaleRecipeEquipmentPage ===================================================
@@ -160,6 +167,7 @@ ScaleRecipeEquipmentPage::ScaleRecipeEquipmentPage(QAbstractItemModel* listModel
 
    registerField("equipComboBox", equipComboBox);
    registerField("effLineEdit", effLineEdit);
+   return;
 }
 
 void ScaleRecipeEquipmentPage::doLayout() {
@@ -169,14 +177,14 @@ void ScaleRecipeEquipmentPage::doLayout() {
    layout->addRow(effLabel, effLineEdit);
       effLineEdit->setText("70.0");
    setLayout(layout);
+   return;
 }
 
 void ScaleRecipeEquipmentPage::retranslateUi() {
    setTitle(tr("Select Equipment"));
-   setSubTitle(tr("The recipe will be scaled to match the batch size and "
-                  "efficiency of the selected equipment"
-  ));
+   setSubTitle(tr("The recipe will be scaled to match the batch size and efficiency of the selected equipment"));
 
    equipLabel->setText(tr("New Equipment"));
    effLabel->setText(tr("New Efficiency (%)"));
+   return;
 }

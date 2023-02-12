@@ -1,4 +1,4 @@
-#
+#-----------------------------------------------------------------------------------------------------------------------
 # packaging/rpmLintFilters.toml is part of Brewtarget, and is Copyright the following
 # authors 2022
 #  - Matt Young <mfsy@yahoo.com>
@@ -15,9 +15,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------------------------------------------------------
 
-# See CMakeLists.txt for where this file is used.  Note that if you have other rpmlint config files on your system, my
-# understanding is that this will _add_ to those settings rather than replace them.
+# See the bt build tool script (and/or CMakeLists.txt) for where this file is used.  Note that if you have other rpmlint
+# config files on your system, my understanding is that this will _add_ to those settings rather than replace them.
 
 #
 # Filter out the following errors and warnings:

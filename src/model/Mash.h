@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -37,17 +37,17 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Mash { BtStringConst const property{#property}; }
-AddPropertyName(equipAdjust)
-AddPropertyName(grainTemp_c)
-AddPropertyName(mashSteps)
-AddPropertyName(notes)
-AddPropertyName(ph)
-AddPropertyName(spargeTemp_c)
-AddPropertyName(totalMashWater_l)
-AddPropertyName(totalTime)
+AddPropertyName(equipAdjust          )
+AddPropertyName(grainTemp_c          )
+AddPropertyName(mashSteps            )
+AddPropertyName(notes                )
+AddPropertyName(ph                   )
+AddPropertyName(spargeTemp_c         )
+AddPropertyName(totalMashWater_l     )
+AddPropertyName(totalTime            )
 AddPropertyName(tunSpecificHeat_calGC)
-AddPropertyName(tunTemp_c)
-AddPropertyName(tunWeight_kg)
+AddPropertyName(tunTemp_c            )
+AddPropertyName(tunWeight_kg         )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -69,6 +69,12 @@ class Mash : public NamedEntity {
    Q_CLASSINFO("signal", "mashs")
 
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Mash(QString name = "");
    Mash(NamedParameterBundle const & namedParameterBundle);
    Mash(Mash const & other);

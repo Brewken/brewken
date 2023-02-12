@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -41,22 +41,64 @@ ObjectStore & Water::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Water>::getInstance();
 }
 
+TypeLookup const Water::typeLookup {
+   "Water",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinity      , Water::m_alkalinity      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinityAsHCO3, Water::m_alkalinity_as_hco3), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::amount          , Water::m_amount          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::bicarbonate_ppm , Water::m_bicarbonate_ppm ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::calcium_ppm     , Water::m_calcium_ppm     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::chloride_ppm    , Water::m_chloride_ppm    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::magnesium_ppm   , Water::m_magnesium_ppm   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::mashRO          , Water::m_mash_ro          ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::notes           , Water::m_notes           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::ph              , Water::m_ph              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sodium_ppm      , Water::m_sodium_ppm      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::spargeRO        , Water::m_sparge_ro        ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sulfate_ppm     , Water::m_sulfate_ppm     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::type            , Water::m_type            ),
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+
+
 Water::Water(QString name) :
    NamedEntity         {name, true},
-   m_amount            {0.0},
-   m_calcium_ppm       {0.0},
-   m_bicarbonate_ppm   {0.0},
-   m_sulfate_ppm       {0.0},
-   m_chloride_ppm      {0.0},
-   m_sodium_ppm        {0.0},
-   m_magnesium_ppm     {0.0},
-   m_ph                {0.0},
-   m_alkalinity        {0.0},
-   m_notes             {""},
+   m_amount            {0.0               },
+   m_calcium_ppm       {0.0               },
+   m_bicarbonate_ppm   {0.0               },
+   m_sulfate_ppm       {0.0               },
+   m_chloride_ppm      {0.0               },
+   m_sodium_ppm        {0.0               },
+   m_magnesium_ppm     {0.0               },
+   m_ph                {0.0               },
+   m_alkalinity        {0.0               },
+   m_notes             {""                },
    m_type              {Water::Types::NONE},
-   m_mash_ro           {0.0},
-   m_sparge_ro         {0.0},
-   m_alkalinity_as_hco3{true} {
+   m_mash_ro           {0.0               },
+   m_sparge_ro         {0.0               },
+   m_alkalinity_as_hco3{true              } {
+   return;
+}
+
+Water::Water(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity         {namedParameterBundle},
+   m_amount            {namedParameterBundle.val<double      >(PropertyNames::Water::amount          )},
+   m_calcium_ppm       {namedParameterBundle.val<double      >(PropertyNames::Water::calcium_ppm     )},
+   m_bicarbonate_ppm   {namedParameterBundle.val<double      >(PropertyNames::Water::bicarbonate_ppm )},
+   m_sulfate_ppm       {namedParameterBundle.val<double      >(PropertyNames::Water::sulfate_ppm     )},
+   m_chloride_ppm      {namedParameterBundle.val<double      >(PropertyNames::Water::chloride_ppm    )},
+   m_sodium_ppm        {namedParameterBundle.val<double      >(PropertyNames::Water::sodium_ppm      )},
+   m_magnesium_ppm     {namedParameterBundle.val<double      >(PropertyNames::Water::magnesium_ppm   )},
+   m_ph                {namedParameterBundle.val<double      >(PropertyNames::Water::ph              )},
+   m_alkalinity        {namedParameterBundle.val<double      >(PropertyNames::Water::alkalinity      )},
+   m_notes             {namedParameterBundle.val<QString     >(PropertyNames::Water::notes           )},
+   m_type              {namedParameterBundle.val<Water::Types>(PropertyNames::Water::type            )},
+   m_mash_ro           {namedParameterBundle.val<double      >(PropertyNames::Water::mashRO          )},
+   m_sparge_ro         {namedParameterBundle.val<double      >(PropertyNames::Water::spargeRO        )},
+   m_alkalinity_as_hco3{namedParameterBundle.val<bool        >(PropertyNames::Water::alkalinityAsHCO3)} {
    return;
 }
 
@@ -76,25 +118,6 @@ Water::Water(Water const& other) :
    m_mash_ro           {other.m_mash_ro           },
    m_sparge_ro         {other.m_sparge_ro         },
    m_alkalinity_as_hco3{other.m_alkalinity_as_hco3} {
-   return;
-}
-
-Water::Water(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity         {namedParameterBundle},
-   m_amount            {namedParameterBundle(PropertyNames::Water::amount).toDouble()                      },
-   m_calcium_ppm       {namedParameterBundle(PropertyNames::Water::calcium_ppm).toDouble()                 },
-   m_bicarbonate_ppm   {namedParameterBundle(PropertyNames::Water::bicarbonate_ppm).toDouble()             },
-   m_sulfate_ppm       {namedParameterBundle(PropertyNames::Water::sulfate_ppm).toDouble()                 },
-   m_chloride_ppm      {namedParameterBundle(PropertyNames::Water::chloride_ppm).toDouble()                },
-   m_sodium_ppm        {namedParameterBundle(PropertyNames::Water::sodium_ppm).toDouble()                  },
-   m_magnesium_ppm     {namedParameterBundle(PropertyNames::Water::magnesium_ppm).toDouble()               },
-   m_ph                {namedParameterBundle(PropertyNames::Water::ph).toDouble()                          },
-   m_alkalinity        {namedParameterBundle(PropertyNames::Water::alkalinity).toDouble()                  },
-   m_notes             {namedParameterBundle(PropertyNames::Water::notes).toString()                       },
-   m_type              {static_cast<Water::Types>(namedParameterBundle(PropertyNames::Water::type).toInt())},
-   m_mash_ro           {namedParameterBundle(PropertyNames::Water::mashRO).toDouble()                      },
-   m_sparge_ro         {namedParameterBundle(PropertyNames::Water::spargeRO).toDouble()                    },
-   m_alkalinity_as_hco3{namedParameterBundle(PropertyNames::Water::alkalinityAsHCO3).toBool()              } {
    return;
 }
 

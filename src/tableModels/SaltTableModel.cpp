@@ -121,7 +121,7 @@ void SaltTableModel::addSalt(std::shared_ptr<Salt> salt) {
 }
 
 void SaltTableModel::addSalts(QList<std::shared_ptr<Salt> > salts) {
-   auto tmp = this->removeDuplicates(salts);
+   auto tmp = this->removeDuplicatesIgnoreDisplay(salts);
 
    int size = this->rows.size();
    if (size+tmp.size()) {
@@ -155,12 +155,12 @@ double SaltTableModel::multiplier(Salt & salt) const {
       return ret;
    }
 
-   if (salt.addTo() == Salt::WhenToAdd::EQUAL ) {
+   if (salt.whenToAdd() == Salt::WhenToAdd::EQUAL ) {
       ret = 2.0;
    }
    // If we are adding a proportional amount to both,
    // this should handle that math.
-   else if (salt.addTo() == Salt::WhenToAdd::RATIO ) {
+   else if (salt.whenToAdd() == Salt::WhenToAdd::RATIO ) {
       ret = 1.0 + spargePct;
    }
 
@@ -248,7 +248,7 @@ double SaltTableModel::total(Salt::Types type) const {
    double ret = 0.0;
    if (type != Salt::Types::NONE) {
       for (auto salt : this->rows) {
-         if (salt->type() == type && salt->addTo() != Salt::WhenToAdd::NEVER) {
+         if (salt->type() == type && salt->whenToAdd() != Salt::WhenToAdd::NEVER) {
             double mult  = multiplier(*salt);
             ret += mult * salt->amount();
          }
@@ -265,7 +265,7 @@ double SaltTableModel::totalAcidWeight(Salt::Types type) const
    double ret = 0.0;
    if (type != Salt::Types::NONE) {
       for (auto salt : this->rows) {
-         if ( salt->type() == type && salt->addTo() != Salt::WhenToAdd::NEVER) {
+         if ( salt->type() == type && salt->whenToAdd() != Salt::WhenToAdd::NEVER) {
             double mult  = multiplier(*salt);
             // Acid malts are easy
             if ( type == Salt::Types::ACIDMLT ) {
@@ -411,10 +411,10 @@ QVariant SaltTableModel::data(QModelIndex const & index, int role) const {
          );
       case SALTADDTOCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant( addToName.at(static_cast<int>(row->addTo())));
+            return QVariant( addToName.at(static_cast<int>(row->whenToAdd())));
          }
          if (role == Qt::UserRole) {
-            return QVariant(static_cast<int>(row->addTo()));
+            return QVariant(static_cast<int>(row->whenToAdd()));
          }
          return QVariant();
       case SALTPCTACIDCOL:
@@ -486,14 +486,14 @@ bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, 
                   row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume,
                   this->getForcedSystemOfMeasurementForColumn(column),
                   this->getForcedRelativeScaleForColumn(column)
-               ).quantity
+               ).quantity()
             );
          }
          break;
       case SALTADDTOCOL:
          retval = value.canConvert(QVariant::Int);
          if (retval) {
-            row->setAddTo( static_cast<Salt::WhenToAdd>(value.toInt()) );
+            row->setWhenToAdd( static_cast<Salt::WhenToAdd>(value.toInt()) );
          }
          break;
       case SALTPCTACIDCOL:
@@ -507,7 +507,7 @@ bool SaltTableModel::setData(QModelIndex const & index, QVariant const & value, 
          qWarning() << tr("Bad column: %1").arg(index.column());
    }
 
-   if ( retval && row->addTo() != Salt::WhenToAdd::NEVER ) {
+   if ( retval && row->whenToAdd() != Salt::WhenToAdd::NEVER ) {
       emit newTotals();
    }
    emit dataChanged(index,index);
@@ -521,7 +521,7 @@ void SaltTableModel::saveAndClose() {
    // all of the writes should have been instantaneous unless
    // we've added a new salt. Wonder if this will work?
    for (auto salt : this->rows) {
-      if (salt->key() < 0 && salt->type() != Salt::Types::NONE && salt->addTo() != Salt::WhenToAdd::NEVER) {
+      if (salt->key() < 0 && salt->type() != Salt::Types::NONE && salt->whenToAdd() != Salt::WhenToAdd::NEVER) {
          ObjectStoreWrapper::insert(salt);
          this->recObs->add(salt);
       }

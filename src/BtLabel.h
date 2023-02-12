@@ -147,13 +147,13 @@ protected:
 // templates, so we can't do that for classes that need to use the Q_OBJECT macro (required for classes that declare
 // their own signals and slots or that use other services provided by Qt's meta-object system).
 //
-class BtColorLabel :          public BtLabel { Q_OBJECT public: BtColorLabel(QWidget* parent = nullptr); };
-class BtDensityLabel :        public BtLabel { Q_OBJECT public: BtDensityLabel(QWidget* parent = nullptr); };
-class BtMassLabel :           public BtLabel { Q_OBJECT public: BtMassLabel(QWidget* parent = nullptr); };
-class BtTemperatureLabel :    public BtLabel { Q_OBJECT public: BtTemperatureLabel(QWidget* parent = nullptr); };
-class BtVolumeLabel :         public BtLabel { Q_OBJECT public: BtVolumeLabel(QWidget* parent = nullptr); };
-class BtTimeLabel :           public BtLabel { Q_OBJECT public: BtTimeLabel(QWidget* parent = nullptr); };
-class BtMixedLabel :          public BtLabel { Q_OBJECT public: BtMixedLabel(QWidget* parent = nullptr); };
-class BtDateLabel :           public BtLabel { Q_OBJECT public: BtDateLabel(QWidget* parent = nullptr); };
+class BtColorLabel :          public BtLabel { Q_OBJECT public: BtColorLabel(QWidget* parent = nullptr);          };
+class BtDensityLabel :        public BtLabel { Q_OBJECT public: BtDensityLabel(QWidget* parent = nullptr);        };
+class BtMassLabel :           public BtLabel { Q_OBJECT public: BtMassLabel(QWidget* parent = nullptr);           };
+class BtTemperatureLabel :    public BtLabel { Q_OBJECT public: BtTemperatureLabel(QWidget* parent = nullptr);    };
+class BtVolumeLabel :         public BtLabel { Q_OBJECT public: BtVolumeLabel(QWidget* parent = nullptr);         };
+class BtTimeLabel :           public BtLabel { Q_OBJECT public: BtTimeLabel(QWidget* parent = nullptr);           };
+class BtMixedLabel :          public BtLabel { Q_OBJECT public: BtMixedLabel(QWidget* parent = nullptr);          };
+class BtDateLabel :           public BtLabel { Q_OBJECT public: BtDateLabel(QWidget* parent = nullptr);           };
 class BtDiastaticPowerLabel : public BtLabel { Q_OBJECT public: BtDiastaticPowerLabel(QWidget* parent = nullptr); };
 #endif

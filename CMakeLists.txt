@@ -270,7 +270,7 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       # "Marks the object as not requiring executable stack".
       #
       # However, this is not sufficient.  So, for the moment, we suppress the rpmlint error (see
-      # packaging/rpmLintFilters.toml).
+      # packaging/linux/rpmLintFilters.toml).
       #
       set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2 -z noexecstack")
       #
@@ -297,9 +297,18 @@ endif()
 # Windows-specific compilation settings
 if(WIN32)
    # See https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Link-Options.html#Link-Options for more on GCC linker options
-   # In theory, this statically links all the GCC and MinGW libraries, so we don't have to ship DLLs for them.  In
-   # practice, it seems we still need a fair few other DLLs.
-   set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+   # In theory, we could specify "-static-libgcc -static-libstdc++ -static" to statically link all the GCC and MinGW
+   # libraries, so we don't have to ship DLLs for them.  In practice, this (a) does not prevent us needing a fair few
+   # other DLLs and (b) per https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Link-Options.html#Link-Options it's advised
+   # not to because:
+   #    "There are several situations in which an application should use the shared libgcc instead of the static
+   #    version. The most common of these is when the application wishes to throw and catch exceptions across different
+   #    shared libraries. In that case, each of the libraries as well as the application itself should use the shared
+   #    libgcc.
+   #       "Therefore, the G++ driver automatically adds -shared-libgcc whenever you build a shared library or a main
+   #    executable, because C++ programs typically use exceptions, so this is the right thing to do."
+   #
+#   set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 endif()
 
 if(APPLE)
@@ -1211,6 +1220,11 @@ add_test(
 )
 
 add_test(
+   NAME testTypeLookups
+   COMMAND bin/${fileName_unitTestRunner} testTypeLookups
+)
+
+add_test(
    NAME testLogRotation
    COMMAND bin/${fileName_unitTestRunner} testLogRotation
 )
@@ -1404,22 +1418,37 @@ if(WIN32)
    # but have not yet hit paydirt.
    #
    set(msys2Dlls
-      libbrotli
-      libbz2
-      libdouble-conversion
-      libfreetype
-      libglib
+      libbrotli                ###
+      libbrotlicommon        # Brotli compression -- see https://en.wikipedia.org/wiki/Brotli
+      libbrotlidec           # Brotli compression
+      libbrotlienc           # Brotli compression
+      libbz2                 # BZip2 compression -- see https://en.wikipedia.org/wiki/Bzip2
+      libdouble-conversion   # See https://github.com/google/double-conversion
+      libfreetype            # See https://freetype.org/
+      libgcc_s_dw2
+      libglib                  ###
+      libglib-2.0
       libgraphite
-      libharfbuzz
-      libiconv
-      libintl
-      libmd4c
-      libpcre
-      libpng16
-      libsqlite3    # You need this IN ADDITION to bin/sqldrivers/qsqlite.dll, which gets installed by windeployqt
+      libharfbuzz            # HarfBuzz text shaping engine -- see https://github.com/harfbuzz/harfbuzz
+      libiconv               # See https://www.gnu.org/software/libiconv/
+      libicudt               # Part of International Components for Unicode
+      libicuin               # Part of International Components for Unicode
+      libicuuc               # Part of International Components for Unicode
+      libintl                # See https://www.gnu.org/software/gettext/
+      libmd4c                # Markdown for C -- see https://github.com/mity/md4c
+      libpcre2-16            # Perl Compatible Regular Expressions
+      libpcre2-32            # Perl Compatible Regular Expressions
+      libpcre2-8             # Perl Compatible Regular Expressions
+      libpng16               # Official PNG reference library -- see http://www.libpng.org/pub/png/libpng.html
+      libsqlite3             # Need this IN ADDITION to bin/sqldrivers/qsqlite.dll, which gets installed by windeployqt
+      libstdc++
+      libwinpthread
+      libxalan-c
       libxalanMsg
-      libzstd
-      zlib1
+      libxerces-c-3
+      libzstd                # ZStandard (aka zstd) = fast lossless compression algorithm
+      zlib1                    ###
+      zlib                   # ZLib compression library
    )
    foreach(dynamicLib IN LISTS msys2Dlls)
       file(GLOB dynamicallyLinkedLibrary ${dynamicLibDir}/${dynamicLib}*.dll)
@@ -1782,7 +1811,7 @@ if(UNIX AND NOT APPLE)
    # so we have to set it explicitly here
    set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
 
-   # This has to match one of the ValidLicenses values in packaging/rpmLintFilters.toml.  (See comment in that file for
+   # This has to match one of the ValidLicenses values in packaging/linux/rpmLintFilters.toml.  (See comment in that file for
    # more info.)
    set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
 
@@ -1955,7 +1984,7 @@ if(UNIX AND NOT APPLE)
       COMMAND lintian --no-tag-display-limit *.deb
       # Running rpmlint is the equivalent exercise for RPMs.  Most common error and warning codes are listed at
       # https://fedoraproject.org/wiki/Common_Rpmlint_issues
-      COMMAND rpmlint --config ${repoDir}/packaging *.rpm
+      COMMAND rpmlint --config ${repoDir}/packaging/linux *.rpm
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Running lintian and on deb package and rpmlint on rpm package.  Warnings about man pages are expected!"
    )

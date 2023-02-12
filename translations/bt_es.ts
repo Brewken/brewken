@@ -1172,23 +1172,51 @@ Log file may contain more details.</source>
     <name>Fermentable</name>
     <message>
         <source>Mashed</source>
-        <translation>Macerado</translation>
-    </message>
-    <message>
-        <source>Steeped</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Macerado</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation>No maceerado</translation>
+        <translation type="vanished">No maceerado</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation>Retrasado</translation>
+        <translation type="vanished">Retrasado</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Normal</translation>
+        <translation type="vanished">Normal</translation>
+    </message>
+    <message>
+        <source>Dry Extract</source>
+        <translation type="unfinished">Extracto Seco</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Extracto</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation type="unfinished">Grano</translation>
+    </message>
+    <message>
+        <source>Sugar</source>
+        <translation type="unfinished">Azúcar</translation>
+    </message>
+    <message>
+        <source>Fruit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Juice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Honey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Adjunct</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1245,43 +1273,39 @@ Log file may contain more details.</source>
     <name>FermentableItemDelegate</name>
     <message>
         <source>Grain</source>
-        <translation>Grano</translation>
+        <translation type="vanished">Grano</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Azúcar</translation>
+        <translation type="vanished">Azúcar</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Extracto</translation>
+        <translation type="vanished">Extracto</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Extracto Seco</translation>
+        <translation type="vanished">Extracto Seco</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adjunto</translation>
+        <translation type="vanished">Adjunto</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation>Macerado</translation>
-    </message>
-    <message>
-        <source>Steeped</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Macerado</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation>No macerado</translation>
+        <translation type="vanished">No macerado</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Normal</translation>
+        <translation type="vanished">Normal</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation>Retrasado</translation>
+        <translation type="vanished">Retrasado</translation>
     </message>
 </context>
 <context>
@@ -1335,19 +1359,7 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Addition Method</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Addition Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1356,6 +1368,26 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Change Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Add After Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipo de Cantidad</translation>
+    </message>
+    <message>
+        <source>Change Fermentable Inventory Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Is Mashed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1548,75 +1580,35 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Bittering</source>
-        <translation type="unfinished">Amargor</translation>
+        <translation type="obsolete">Amargor</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation type="unfinished">Aroma</translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Bittering</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Aroma</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Sabor</translation>
-    </message>
-    <message>
-        <source>Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma, Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Sabor</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Extracto</translation>
+        <translation type="obsolete">Extracto</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation type="unfinished">Flor</translation>
-    </message>
-    <message>
-        <source>Leaf (wet)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Flor</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation type="unfinished">Pellet</translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plug</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Pellet</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Maceración</translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Maceración</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation type="unfinished">Dry Hop</translation>
+        <translation type="obsolete">Dry Hop</translation>
     </message>
 </context>
 <context>
@@ -2868,23 +2860,23 @@ Error message:
     </message>
     <message>
         <source>Grain</source>
-        <translation>Grano</translation>
+        <translation type="vanished">Grano</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Azúcar</translation>
+        <translation type="vanished">Azúcar</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Extracto</translation>
+        <translation type="vanished">Extracto</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Extracto Seco</translation>
+        <translation type="vanished">Extracto Seco</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adjunto</translation>
+        <translation type="vanished">Adjunto</translation>
     </message>
     <message>
         <source>Infusion</source>
@@ -3204,10 +3196,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>WindischKolbach</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mass</source>
         <translation type="unfinished">Masa</translation>
     </message>
@@ -3467,6 +3455,74 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bitterness</source>
+        <translation type="unfinished">Amargura</translation>
+    </message>
+    <message>
+        <source>Carbonation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metric Alternate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lovibond</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Windisch Kolbach</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation Volumes</source>
+        <translation type="unfinished">Volúmenes de CO2</translation>
+    </message>
+    <message>
+        <source>Carbonation Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Parts Per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">Macerado</translation>
+    </message>
+    <message>
+        <source>Weight</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5330,23 +5386,23 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Grain</source>
-        <translation>Grano</translation>
+        <translation type="vanished">Grano</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Azúcar</translation>
+        <translation type="vanished">Azúcar</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Extracto</translation>
+        <translation type="vanished">Extracto</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Extracto Seco</translation>
+        <translation type="vanished">Extracto Seco</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adjunto</translation>
+        <translation type="vanished">Adjunto</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -5510,6 +5566,10 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

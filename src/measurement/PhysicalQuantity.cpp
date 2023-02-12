@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/PhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * measurement/PhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,14 +21,19 @@
 
 namespace {
    EnumStringMapping const physicalQuantityToName {
-      {QObject::tr("Mass")          , Measurement::PhysicalQuantity::Mass          },
-      {QObject::tr("Volume")        , Measurement::PhysicalQuantity::Volume        },
-      {QObject::tr("Time")          , Measurement::PhysicalQuantity::Time          },
-      {QObject::tr("Temperature")   , Measurement::PhysicalQuantity::Temperature   },
-      {QObject::tr("Color")         , Measurement::PhysicalQuantity::Color         },
-      {QObject::tr("Density")       , Measurement::PhysicalQuantity::Density       },
-      {QObject::tr("Mixed")         , Measurement::PhysicalQuantity::Mixed         },
-      {QObject::tr("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower}
+      {QObject::tr("Mass"          ), Measurement::PhysicalQuantity::Mass          },
+      {QObject::tr("Volume"        ), Measurement::PhysicalQuantity::Volume        },
+      {QObject::tr("Time"          ), Measurement::PhysicalQuantity::Time          },
+      {QObject::tr("Temperature"   ), Measurement::PhysicalQuantity::Temperature   },
+      {QObject::tr("Color"         ), Measurement::PhysicalQuantity::Color         },
+      {QObject::tr("Density"       ), Measurement::PhysicalQuantity::Density       },
+      {QObject::tr("Mixed"         ), Measurement::PhysicalQuantity::Mixed         },
+      {QObject::tr("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower},
+      {QObject::tr("Acidity"       ), Measurement::PhysicalQuantity::Acidity       },
+      {QObject::tr("Bitterness"    ), Measurement::PhysicalQuantity::Bitterness    },
+      {QObject::tr("Carbonation"   ), Measurement::PhysicalQuantity::Carbonation   },
+      {QObject::tr("Concentration" ), Measurement::PhysicalQuantity::Concentration },
+      {QObject::tr("Viscosity"     ), Measurement::PhysicalQuantity::Viscosity     },
    };
 }
 

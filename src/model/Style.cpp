@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -45,6 +45,36 @@ ObjectStore & Style::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Style>::getInstance();
 }
 
+TypeLookup const Style::typeLookup {
+   "Style",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::abvMax_pct    , Style::m_abvMax_pct    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::abvMin_pct    , Style::m_abvMin_pct    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::carbMax_vol   , Style::m_carbMax_vol   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::carbMin_vol   , Style::m_carbMin_vol   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::category      , Style::m_category      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::categoryNumber, Style::m_categoryNumber),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::colorMax_srm  , Style::m_colorMax_srm  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::colorMin_srm  , Style::m_colorMin_srm  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::examples      , Style::m_examples      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::fgMax         , Style::m_fgMax         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::fgMin         , Style::m_fgMin         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::ibuMax        , Style::m_ibuMax        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::ibuMin        , Style::m_ibuMin        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::ingredients   , Style::m_ingredients   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::notes         , Style::m_notes         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::ogMax         , Style::m_ogMax         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::ogMin         , Style::m_ogMin         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::profile       , Style::m_profile       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::styleGuide    , Style::m_styleGuide    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::styleLetter   , Style::m_styleLetter   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::type          , Style::m_type          ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::typeString    , Style::m_typeString    ),
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
@@ -74,6 +104,32 @@ Style::Style(QString t_name) :
    return;
 }
 
+Style::Style(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity     {namedParameterBundle},
+   m_category      {namedParameterBundle.val<QString    >(PropertyNames::Style::category      )},
+   m_categoryNumber{namedParameterBundle.val<QString    >(PropertyNames::Style::categoryNumber)},
+   m_styleLetter   {namedParameterBundle.val<QString    >(PropertyNames::Style::styleLetter   )},
+   m_styleGuide    {namedParameterBundle.val<QString    >(PropertyNames::Style::styleGuide    )},
+   m_type          {namedParameterBundle.val<Style::Type>(PropertyNames::Style::type          )},
+   m_ogMin         {namedParameterBundle.val<double     >(PropertyNames::Style::ogMin         )},
+   m_ogMax         {namedParameterBundle.val<double     >(PropertyNames::Style::ogMax         )},
+   m_fgMin         {namedParameterBundle.val<double     >(PropertyNames::Style::fgMin         )},
+   m_fgMax         {namedParameterBundle.val<double     >(PropertyNames::Style::fgMax         )},
+   m_ibuMin        {namedParameterBundle.val<double     >(PropertyNames::Style::ibuMin        )},
+   m_ibuMax        {namedParameterBundle.val<double     >(PropertyNames::Style::ibuMax        )},
+   m_colorMin_srm  {namedParameterBundle.val<double     >(PropertyNames::Style::colorMin_srm  )},
+   m_colorMax_srm  {namedParameterBundle.val<double     >(PropertyNames::Style::colorMax_srm  )},
+   m_carbMin_vol   {namedParameterBundle.val<double     >(PropertyNames::Style::carbMin_vol   )},
+   m_carbMax_vol   {namedParameterBundle.val<double     >(PropertyNames::Style::carbMax_vol   )},
+   m_abvMin_pct    {namedParameterBundle.val<double     >(PropertyNames::Style::abvMin_pct    )},
+   m_abvMax_pct    {namedParameterBundle.val<double     >(PropertyNames::Style::abvMax_pct    )},
+   m_notes         {namedParameterBundle.val<QString    >(PropertyNames::Style::notes         )},
+   m_profile       {namedParameterBundle.val<QString    >(PropertyNames::Style::profile       )},
+   m_ingredients   {namedParameterBundle.val<QString    >(PropertyNames::Style::ingredients   )},
+   m_examples      {namedParameterBundle.val<QString    >(PropertyNames::Style::examples      )} {
+   return;
+}
+
 Style::Style(Style const & other) :
    NamedEntity{other},
    m_category      {other.m_category      },
@@ -100,32 +156,7 @@ Style::Style(Style const & other) :
    return;
 }
 
-Style::Style(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity     {namedParameterBundle},
-   m_category      {namedParameterBundle(PropertyNames::Style::category      ).toString()},
-   m_categoryNumber{namedParameterBundle(PropertyNames::Style::categoryNumber).toString()},
-   m_styleLetter   {namedParameterBundle(PropertyNames::Style::styleLetter   ).toString()},
-   m_styleGuide    {namedParameterBundle(PropertyNames::Style::styleGuide    ).toString()},
-   m_type          {static_cast<Style::Type>(namedParameterBundle(PropertyNames::Style::type).toInt())},
-   m_ogMin         {namedParameterBundle(PropertyNames::Style::ogMin         ).toDouble()},
-   m_ogMax         {namedParameterBundle(PropertyNames::Style::ogMax         ).toDouble()},
-   m_fgMin         {namedParameterBundle(PropertyNames::Style::fgMin         ).toDouble()},
-   m_fgMax         {namedParameterBundle(PropertyNames::Style::fgMax         ).toDouble()},
-   m_ibuMin        {namedParameterBundle(PropertyNames::Style::ibuMin        ).toDouble()},
-   m_ibuMax        {namedParameterBundle(PropertyNames::Style::ibuMax        ).toDouble()},
-   m_colorMin_srm  {namedParameterBundle(PropertyNames::Style::colorMin_srm  ).toDouble()},
-   m_colorMax_srm  {namedParameterBundle(PropertyNames::Style::colorMax_srm  ).toDouble()},
-   m_carbMin_vol   {namedParameterBundle(PropertyNames::Style::carbMin_vol   ).toDouble()},
-   m_carbMax_vol   {namedParameterBundle(PropertyNames::Style::carbMax_vol   ).toDouble()},
-   m_abvMin_pct    {namedParameterBundle(PropertyNames::Style::abvMin_pct    ).toDouble()},
-   m_abvMax_pct    {namedParameterBundle(PropertyNames::Style::abvMax_pct    ).toDouble()},
-   m_notes         {namedParameterBundle(PropertyNames::Style::notes         ).toString()},
-   m_profile       {namedParameterBundle(PropertyNames::Style::profile       ).toString()},
-   m_ingredients   {namedParameterBundle(PropertyNames::Style::ingredients   ).toString()},
-   m_examples      {namedParameterBundle(PropertyNames::Style::examples      ).toString()} {
-   return;
-}
-
+Style::~Style() = default;
 
 //==============================="SET" METHODS==================================
 void Style::setCategory(QString const & var) {

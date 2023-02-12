@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Misc.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -32,16 +32,16 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Misc { BtStringConst const property{#property}; }
-AddPropertyName(amount)
+AddPropertyName(amount        )
 AddPropertyName(amountIsWeight)
-AddPropertyName(amountType)
-AddPropertyName(notes)
-AddPropertyName(time)
-AddPropertyName(typeString)
-AddPropertyName(type)
-AddPropertyName(useFor)
-AddPropertyName(useString)
-AddPropertyName(use)
+AddPropertyName(amountType    )
+AddPropertyName(notes         )
+AddPropertyName(time          )
+AddPropertyName(typeString    )
+AddPropertyName(type          )
+AddPropertyName(useFor        )
+AddPropertyName(useString     )
+AddPropertyName(use           )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -60,17 +60,30 @@ public:
 
    //! \brief The type of ingredient.
    enum class Type {Spice, Fining, Water_Agent, Herb, Flavor, Other};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
    //! \brief Where the ingredient is used.
    enum class Use { Boil, Mash, Primary, Secondary, Bottling };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Use)
+
    //! \brief What is the type of amount.
    enum class AmountType { Weight, Volume };
-   Q_ENUMS( Type Use AmountType )
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(AmountType)
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
 
    Misc(QString name = "");
    Misc(NamedParameterBundle const & namedParameterBundle);
    Misc(Misc const & other);
 
-   virtual ~Misc() = default;
+   virtual ~Misc();
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
@@ -150,7 +163,7 @@ private:
    Use  m_use;  // Primarily valid in "Use Of" instance
    double m_time;
    double m_amount;
-   bool m_amountIsWeight;
+   bool   m_amountIsWeight;
    QString m_useFor;
    QString m_notes;
 

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Yeast.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -32,24 +32,24 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Yeast { BtStringConst const property{#property}; }
-AddPropertyName(addToSecondary)
-AddPropertyName(amount)
-AddPropertyName(amountIsWeight)
-AddPropertyName(attenuation_pct)
-AddPropertyName(bestFor)
-AddPropertyName(flocculation)
+AddPropertyName(addToSecondary    )
+AddPropertyName(amount            )
+AddPropertyName(amountIsWeight    )
+AddPropertyName(attenuation_pct   )
+AddPropertyName(bestFor           )
+AddPropertyName(flocculation      )
 AddPropertyName(flocculationString)
-AddPropertyName(form)
-AddPropertyName(formString)
-AddPropertyName(laboratory)
-AddPropertyName(maxReuse)
-AddPropertyName(maxTemperature_c)
-AddPropertyName(minTemperature_c)
-AddPropertyName(notes)
-AddPropertyName(productID)
-AddPropertyName(timesCultured)
-AddPropertyName(typeString)
-AddPropertyName(type)
+AddPropertyName(form              )
+AddPropertyName(formString        )
+AddPropertyName(laboratory        )
+AddPropertyName(maxReuse          )
+AddPropertyName(maxTemperature_c  )
+AddPropertyName(minTemperature_c  )
+AddPropertyName(notes             )
+AddPropertyName(productID         )
+AddPropertyName(timesCultured     )
+AddPropertyName(typeString        )
+AddPropertyName(type              )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -67,17 +67,30 @@ class Yeast : public NamedEntityWithInventory {
 public:
    //! \brief What beverage the yeast is for.
    enum class Type {Ale, Lager, Wheat, Wine, Champagne};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
    //! \brief What form the yeast comes in.
    enum class Form {Liquid, Dry, Slant, Culture};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Form)
+
    //! \brief How flocculant the strain is.
    enum class Flocculation {Low, Medium, High, Very_High};
-   Q_ENUMS( Type Form Flocculation )
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Flocculation)
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
 
    Yeast(QString name = "");
    Yeast(NamedParameterBundle const & namedParameterBundle);
    Yeast(Yeast const & other);
 
-   virtual ~Yeast() = default;
+   virtual ~Yeast();
 
    //! \brief The \c Type.
    Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )

@@ -28,7 +28,7 @@
 
 #include "Localization.h"
 #include "measurement/Measurement.h"
-#include "utils/OptionalToStream.h"
+#include "utils/OptionalHelpers.h"
 
 UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
                                      BtFieldType fieldType,
@@ -159,7 +159,7 @@ Measurement::Amount UiAmountWithUnits::toSI() {
    // It's a coding error to call this function if we are not dealing with a physical quantity
    // However, we can often recover by returning just the numeric part of the field and pretending it is seconds.
    // If caller ignores the units and just used the quantity, then it will probably be OK.  Of course, we log an error
-   // and hope this prompts caller to call toDoubleRaw() instead of toSI().quantity!
+   // and hope this prompts caller to call toDoubleRaw() instead of toSI().quantity()!
    if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType())) {
       qCritical() <<
          Q_FUNC_INFO << "Coding error - call to toSI() for" << this->getFieldType() << "for field with contents:" <<
@@ -214,7 +214,7 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
       if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
          precision = 0;
       }
-      correctedText = this->displayAmount(amountAsCanonical.quantity, precision);
+      correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
       qDebug() <<
          Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
       qDebug() << Q_FUNC_INFO << "this->units=" << this->units;

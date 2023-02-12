@@ -1172,23 +1172,55 @@ Log file may contain more details.</source>
     <name>Fermentable</name>
     <message>
         <source>Mashed</source>
-        <translation>Empâté</translation>
+        <translation type="vanished">Empâté</translation>
     </message>
     <message>
         <source>Steeped</source>
-        <translation>Infusé</translation>
+        <translation type="vanished">Infusé</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation>Non empâté</translation>
+        <translation type="vanished">Non empâté</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation>Tardif</translation>
+        <translation type="vanished">Tardif</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Standard</translation>
+        <translation type="vanished">Standard</translation>
+    </message>
+    <message>
+        <source>Dry Extract</source>
+        <translation type="unfinished">Extrait sec</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Extrait</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation type="unfinished">Grain</translation>
+    </message>
+    <message>
+        <source>Sugar</source>
+        <translation type="unfinished">Sucre</translation>
+    </message>
+    <message>
+        <source>Fruit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Juice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Honey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Adjunct</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1245,43 +1277,43 @@ Log file may contain more details.</source>
     <name>FermentableItemDelegate</name>
     <message>
         <source>Grain</source>
-        <translation>Grain</translation>
+        <translation type="vanished">Grain</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Sucre</translation>
+        <translation type="vanished">Sucre</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Extrait</translation>
+        <translation type="vanished">Extrait</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Extrait sec</translation>
+        <translation type="vanished">Extrait sec</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adjuvant</translation>
+        <translation type="vanished">Adjuvant</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation>Empâté</translation>
+        <translation type="vanished">Empâté</translation>
     </message>
     <message>
         <source>Steeped</source>
-        <translation>Infusé</translation>
+        <translation type="vanished">Infusé</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation>Non empâté</translation>
+        <translation type="vanished">Non empâté</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Standard</translation>
+        <translation type="vanished">Standard</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation>Tardif</translation>
+        <translation type="vanished">Tardif</translation>
     </message>
 </context>
 <context>
@@ -1335,19 +1367,7 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Addition Method</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Addition Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1356,6 +1376,26 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Change Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Add After Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Type de quantité</translation>
+    </message>
+    <message>
+        <source>Change Fermentable Inventory Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Fermentable Is Mashed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1548,75 +1588,43 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Bittering</source>
-        <translation type="unfinished">Amérisant</translation>
+        <translation type="obsolete">Amérisant</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation type="unfinished">Arômatique</translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Bittering</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Arômatique</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Saveur</translation>
-    </message>
-    <message>
-        <source>Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma &amp; Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aroma, Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Saveur</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Extrait</translation>
+        <translation type="obsolete">Extrait</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation type="unfinished">Cône</translation>
-    </message>
-    <message>
-        <source>Leaf (wet)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cône</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation type="unfinished">Pellet</translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Pellet</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation type="unfinished">Plug</translation>
+        <translation type="obsolete">Plug</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Empâtage</translation>
+        <translation type="obsolete">Empâtage</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation type="unfinished">Pré-ébullition</translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Pré-ébullition</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation type="unfinished">Houblonnage à cru</translation>
+        <translation type="obsolete">Houblonnage à cru</translation>
     </message>
 </context>
 <context>
@@ -2868,23 +2876,23 @@ Error message:
     </message>
     <message>
         <source>Grain</source>
-        <translation>Grain</translation>
+        <translation type="vanished">Grain</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Sucre</translation>
+        <translation type="vanished">Sucre</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Extrait</translation>
+        <translation type="vanished">Extrait</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Extrait sec</translation>
+        <translation type="vanished">Extrait sec</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adjuvant</translation>
+        <translation type="vanished">Adjuvant</translation>
     </message>
     <message>
         <source>Infusion</source>
@@ -3204,10 +3212,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>WindischKolbach</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mass</source>
         <translation type="unfinished">Poids</translation>
     </message>
@@ -3468,6 +3472,74 @@ Log file may contain more details.</source>
     <message>
         <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bitterness</source>
+        <translation type="unfinished">Amertume</translation>
+    </message>
+    <message>
+        <source>Carbonation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metric Alternate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lovibond</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Windisch Kolbach</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonation Volumes</source>
+        <translation type="unfinished">Volumes de carbonatation</translation>
+    </message>
+    <message>
+        <source>Carbonation Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Parts Per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Concentration Mass Per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">Tardif</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished">Non empâté</translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">Empâté</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Poids</translation>
     </message>
 </context>
 <context>
@@ -5332,23 +5404,23 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Grain</source>
-        <translation>Grain</translation>
+        <translation type="vanished">Grain</translation>
     </message>
     <message>
         <source>Sugar</source>
-        <translation>Sucre</translation>
+        <translation type="vanished">Sucre</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation>Extrait</translation>
+        <translation type="vanished">Extrait</translation>
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation>Extrait sec</translation>
+        <translation type="vanished">Extrait sec</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation>Adjuvant</translation>
+        <translation type="vanished">Adjuvant</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -5512,6 +5584,10 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

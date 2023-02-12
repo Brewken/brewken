@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -22,11 +22,13 @@
 
 #include <QVector>
 
-#include "utils/BtStringConst.h"
-#include "utils/EnumStringMapping.h"
 #include "json/JsonMeasureableUnitsMapping.h"
 #include "json/JsonSingleUnitSpecifier.h"
 #include "json/JsonXPath.h"
+#include "model/NamedEntity.h"
+#include "utils/BtStringConst.h"
+#include "utils/EnumStringMapping.h"
+#include "utils/TypeLookup.h"
 
 // Forward declarations
 namespace boost::json {
@@ -162,13 +164,13 @@ public:
       //
       // These values correspond with base JSON types
       //
-      Bool,             // boost::json::kind::bool_
-      Int,              // boost::json::kind::int64
-      UInt,             // boost::json::kind::uint64
-      Double,           // boost::json::kind::double_
-      String,           // boost::json::kind::string
-      Enum,             // A string that we need to map to/from our own enum
-      Array,            // Zero, one or more contained records
+      Bool,     // boost::json::kind::bool_
+      Int,      // boost::json::kind::int64
+      UInt,     // boost::json::kind::uint64
+      Double,   // boost::json::kind::double_
+      String,   // boost::json::kind::string
+      Enum,     // A string that we need to map to/from our own enum
+      Array,    // Zero, one or more contained records
       //
       // Other types start here
       //
@@ -267,11 +269,12 @@ public:
                      JsonSingleUnitSpecifier            const *>; // FieldType::SingleUnitValue
       ValueDecoder valueDecoder;
       /**
-       * \brief Trivial constructor allows us to default \c valueDecoder
+       * \brief Trivial constructor allows us to default \c valueDecoder and saves us having to put & before every
+       *        property name!
        */
       FieldDefinition(FieldType type,
                       JsonXPath xPath,
-                      BtStringConst const * propertyName,
+                      BtStringConst const & propertyName,
                       ValueDecoder valueDecoder = ValueDecoder{});
    };
 
@@ -290,8 +293,8 @@ public:
     *        winded in the definitions.)
     */
    template<typename JRT>
-   static std::unique_ptr<JsonRecord> create(JsonCoding const & jsonCoding,
-                                             boost::json::value & recordData,
+   static std::unique_ptr<JsonRecord> create(JsonCoding           const & jsonCoding,
+                                             boost::json::value         & recordData,
                                              JsonRecordDefinition const & recordDefinition) {
       return std::make_unique<JRT>(jsonCoding, recordData, recordDefinition);
    }
@@ -308,15 +311,18 @@ public:
     * \brief Constructor
     * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
     *                   fermentables in BeerJSON.
+    * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
+    *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
     * \param jsonRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     */
-   JsonRecordDefinition(char const * const recordName,
-                        char const * const namedEntityClassName,
-                        JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
+   JsonRecordDefinition(char                     const * const recordName,
+                        TypeLookup               const * const typeLookup,
+                        char                     const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
 
    /**
@@ -325,9 +331,10 @@ public:
     *                         and how to parse them.  Effectively the constructor just concatenates all the lists.
     *                         See comments fin BeerJson.cpp for why we want to do this.
     */
-   JsonRecordDefinition(char const * const recordName,
-                        char const * const namedEntityClassName,
-                        JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
+   JsonRecordDefinition(char                                              const * const recordName,
+                        TypeLookup                                        const * const typeLookup,
+                        char                                              const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper                                    jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
 
    /**
@@ -338,6 +345,8 @@ public:
 
 public:
    BtStringConst const       recordName;
+
+   TypeLookup const * const typeLookup;
 
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).

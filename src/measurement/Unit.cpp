@@ -193,7 +193,7 @@ QString Measurement::Unit::convert(QString qstr, QString toUnit) {
    double si;
    if (f) {
       double amt = valueFromString(qstr);
-      si = f->toSI(amt).quantity;
+      si = f->toSI(amt).quantity();
    } else {
       si = 0.0;
    }

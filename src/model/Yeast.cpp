@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Yeast.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -64,6 +64,34 @@ ObjectStore & Yeast::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Yeast>::getInstance();
 }
 
+TypeLookup const Yeast::typeLookup {
+   "Yeast",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary    , Yeast::m_addToSecondary    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount            , Yeast::m_amount            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight    , Yeast::m_amountIsWeight    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct   , Yeast::m_attenuation_pct   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor           , Yeast::m_bestFor           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculationString, Yeast::m_flocculationString),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::formString        , Yeast::m_formString        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory        , Yeast::m_laboratory        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse          , Yeast::m_maxReuse          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c  , Yeast::m_maxTemperature_c  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c  , Yeast::m_minTemperature_c  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes             , Yeast::m_notes             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID         , Yeast::m_productID         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured     , Yeast::m_timesCultured     ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::typeString        , Yeast::m_typeString        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ),
+   },
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
+};
+static_assert(std::is_base_of<NamedEntityWithInventory, Yeast>::value);
+
+
 //============================CONSTRUCTORS======================================
 
 Yeast::Yeast(QString name) :
@@ -88,21 +116,21 @@ Yeast::Yeast(QString name) :
 
 Yeast::Yeast(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_type                  {static_cast<Yeast::Type>(namedParameterBundle(PropertyNames::Yeast::type).toInt())},
-   m_form                  {static_cast<Yeast::Form>(namedParameterBundle(PropertyNames::Yeast::form).toInt())},
-   m_flocculation          {static_cast<Yeast::Flocculation>(namedParameterBundle(PropertyNames::Yeast::flocculation).toInt())},
-   m_amount                {namedParameterBundle(PropertyNames::Yeast::amount).toDouble()},
-   m_amountIsWeight        {namedParameterBundle(PropertyNames::Yeast::amountIsWeight).toBool()},
-   m_laboratory            {namedParameterBundle(PropertyNames::Yeast::laboratory).toString()},
-   m_productID             {namedParameterBundle(PropertyNames::Yeast::productID).toString()},
-   m_minTemperature_c      {namedParameterBundle(PropertyNames::Yeast::minTemperature_c).toDouble()},
-   m_maxTemperature_c      {namedParameterBundle(PropertyNames::Yeast::maxTemperature_c).toDouble()},
-   m_attenuation_pct       {namedParameterBundle(PropertyNames::Yeast::attenuation_pct).toDouble()},
-   m_notes                 {namedParameterBundle(PropertyNames::Yeast::notes).toString()},
-   m_bestFor               {namedParameterBundle(PropertyNames::Yeast::bestFor).toString()},
-   m_timesCultured         {namedParameterBundle(PropertyNames::Yeast::timesCultured).toInt()},
-   m_maxReuse              {namedParameterBundle(PropertyNames::Yeast::maxReuse).toInt()},
-   m_addToSecondary        {namedParameterBundle(PropertyNames::Yeast::addToSecondary).toBool()} {
+   m_type                  {namedParameterBundle.val<Yeast::Type        >(PropertyNames::Yeast::type            )},
+   m_form                  {namedParameterBundle.val<Yeast::Form        >(PropertyNames::Yeast::form            )},
+   m_flocculation          {namedParameterBundle.val<Yeast::Flocculation>(PropertyNames::Yeast::flocculation    )},
+   m_amount                {namedParameterBundle.val<double             >(PropertyNames::Yeast::amount          )},
+   m_amountIsWeight        {namedParameterBundle.val<bool               >(PropertyNames::Yeast::amountIsWeight  )},
+   m_laboratory            {namedParameterBundle.val<QString            >(PropertyNames::Yeast::laboratory      )},
+   m_productID             {namedParameterBundle.val<QString            >(PropertyNames::Yeast::productID       )},
+   m_minTemperature_c      {namedParameterBundle.val<double             >(PropertyNames::Yeast::minTemperature_c)},
+   m_maxTemperature_c      {namedParameterBundle.val<double             >(PropertyNames::Yeast::maxTemperature_c)},
+   m_attenuation_pct       {namedParameterBundle.val<double             >(PropertyNames::Yeast::attenuation_pct )},
+   m_notes                 {namedParameterBundle.val<QString            >(PropertyNames::Yeast::notes           )},
+   m_bestFor               {namedParameterBundle.val<QString            >(PropertyNames::Yeast::bestFor         )},
+   m_timesCultured         {namedParameterBundle.val<int                >(PropertyNames::Yeast::timesCultured   )},
+   m_maxReuse              {namedParameterBundle.val<int                >(PropertyNames::Yeast::maxReuse        )},
+   m_addToSecondary        {namedParameterBundle.val<bool               >(PropertyNames::Yeast::addToSecondary  )} {
    return;
 }
 
@@ -125,6 +153,8 @@ Yeast::Yeast(Yeast const & other) :
    m_addToSecondary        {other.m_addToSecondary    } {
    return;
 }
+
+Yeast::~Yeast() = default;
 
 //============================="GET" METHODS====================================
 QString Yeast::laboratory() const { return m_laboratory; }

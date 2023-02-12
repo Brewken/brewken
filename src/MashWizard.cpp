@@ -94,7 +94,7 @@ void MashWizard::show()
 
    // Recalculate the mash thickness
    double thickNum = firstStep->infuseAmount_l()/recObs->grainsInMash_kg();
-   double thickness = thickNum * weightUnit->toSI(1).quantity / volumeUnit->toSI(1).quantity ;
+   double thickness = thickNum * weightUnit->toSI(1).quantity() / volumeUnit->toSI(1).quantity() ;
    doubleSpinBox_thickness->setValue(thickness);
 
    // Is this a batch, fly or no sparge?
@@ -203,7 +203,7 @@ void MashWizard::wizardry() {
    grainMass = recObs->grainsInMash_kg();
    if ( bGroup->checkedButton() != radioButton_noSparge ) {
       thickNum = doubleSpinBox_thickness->value();
-      thickness_LKg = thickNum * volumeUnit->toSI(1).quantity / weightUnit->toSI(1).quantity;
+      thickness_LKg = thickNum * volumeUnit->toSI(1).quantity() / weightUnit->toSI(1).quantity();
    } else {
       // not sure I like this. Why is this here and not somewhere later?
       if (steps.size() == 1 ) {

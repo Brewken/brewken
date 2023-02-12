@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Water.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -30,20 +30,20 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Water { BtStringConst const property{#property}; }
-AddPropertyName(ph)
-AddPropertyName(amount)
-AddPropertyName(type)
-AddPropertyName(notes)
+AddPropertyName(alkalinity      )
 AddPropertyName(alkalinityAsHCO3)
-AddPropertyName(spargeRO)
-AddPropertyName(mashRO)
-AddPropertyName(alkalinity)
-AddPropertyName(magnesium_ppm)
-AddPropertyName(sodium_ppm)
-AddPropertyName(chloride_ppm)
-AddPropertyName(sulfate_ppm)
-AddPropertyName(bicarbonate_ppm)
-AddPropertyName(calcium_ppm)
+AddPropertyName(amount          )
+AddPropertyName(bicarbonate_ppm )
+AddPropertyName(calcium_ppm     )
+AddPropertyName(chloride_ppm    )
+AddPropertyName(magnesium_ppm   )
+AddPropertyName(mashRO          )
+AddPropertyName(notes           )
+AddPropertyName(ph              )
+AddPropertyName(sodium_ppm      )
+AddPropertyName(spargeRO        )
+AddPropertyName(sulfate_ppm     )
+AddPropertyName(type            )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -65,6 +65,8 @@ public:
       BASE,
       TARGET
    };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Types)
 
    enum class Ions {
       Ca,
@@ -75,10 +77,23 @@ public:
       SO4,
       numIons
    };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Ions)
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
 
    Water(QString name = "");
    Water(NamedParameterBundle const & namedParameterBundle);
    Water(Water const & other);
+
+   virtual ~Water();
+
+   // It is useful to be able to assign one Water to another - see eg WaterEditor.cpp
+   Water & operator=(Water other);
 
 protected:
    /**
@@ -87,11 +102,6 @@ protected:
    void swap(Water & other) noexcept;
 
 public:
-   virtual ~Water();
-
-   // It is useful to be able to assign one Water to another - see eg WaterEditor.cpp
-   Water & operator=(Water other);
-
    // .:TODO:. On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
 
    //! \brief The amount in liters.

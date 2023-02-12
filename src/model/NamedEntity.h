@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <type_traits>
 
 #include <QDateTime>
@@ -33,6 +34,7 @@
 #include <QVariant>
 
 #include "utils/BtStringConst.h"
+#include "utils/TypeLookup.h"
 
 class NamedParameterBundle;
 class ObjectStore;
@@ -42,6 +44,11 @@ class Recipe;
 //========================================== Start of property name constants ==========================================
 // Make this class's property names available via constants in sub-namespace of PropertyNames
 // One advantage of using these constants is you get compile-time checking for typos etc
+//
+// Note that, because we are both declaring and defining these in the header file, I don't think we can guarantee on
+// every platform there is always exactly one instance of each property name.  So, whilst it's always valid to compare
+// the values of two property names, we cannot _guarantee_ that two identical property names always have the same
+// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::Folder) ...`.
 #define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)
@@ -143,6 +150,22 @@ class NamedEntity : public QObject {
    Q_CLASSINFO("version","1")
 
 public:
+
+   /**
+    * \brief Type lookup info for this class.  Note this is intentionally static, public and const.  Subclasses need to
+    *        override this member with one that chains to it.  (See \c TypeLookup constructor for more info.)
+    *
+    *        Note that this is a static member variable and is \b not intended to do run-time validation (eg to say
+    *        whether the object is in a state where the property is allowed to be null).  It just allows us to tell
+    *        (amongst other things) whether, in principle, a given field can ever be null.
+    *
+    *        Why is this a static member variable and not a virtual function?  It's because we need to be able to access
+    *        it \b before we have created the object.  Eg, if we are reading a \c Fermentable from the DB, we first read
+    *        all the fields and construct a \c NamedParameterBundle, and then use that \c NamedParameterBundle to
+    *        construct the \c Fermentable.
+    */
+   static TypeLookup const typeLookup;
+
    NamedEntity(QString t_name, bool t_display = false, QString folder = QString());
    NamedEntity(NamedEntity const & other);
 
@@ -455,6 +478,10 @@ private:
   bool m_beingModified;
 };
 
+/**
+ * \brief Convenience typedef for pointer to \c isOptional();
+ */
+using IsOptionalFnPtr = bool (*)(BtStringConst const &);
 
 /**
  * \class NamedEntityModifyingMarker
@@ -514,6 +541,28 @@ S & operator<<(S & stream, NE const * namedEntity) {
       stream << "Null " << NE::staticMetaObject.metaObject()->className();
    }
    return stream;
+}
+
+/**
+ * \brief Convenience function for, in effect, casting std::optional<int> to std::optional<T> where T is an enum class
+ */
+template <class T>
+std::optional<T> castFromOptInt(std::optional<int> const & val) {
+   if (val.has_value()) {
+      return static_cast<T>(val.value());
+   }
+   return std::nullopt;
+}
+
+/**
+ * \brief Convenience function for, in effect, casting std::optional<T> to std::optional<int> where T is an enum class
+ */
+template <class T>
+std::optional<int> castToOptInt(std::optional<T> const & val) {
+   if (val.has_value()) {
+      return static_cast<int>(val.value());
+   }
+   return std::nullopt;
 }
 
 #endif

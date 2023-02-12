@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntityWithInventory.cpp is part of Brewken, and is copyright the following authors 2021:
+ * model/NamedEntityWithInventory.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,6 +20,18 @@
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"
 
+
+TypeLookup const NamedEntityWithInventory::typeLookup {
+   "NamedEntityWithInventory",
+   {
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventory            , NamedEntityWithInventory::m_inventory            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventoryId            , NamedEntityWithInventory::m_inventory_id            ),
+   },
+   // Parent class lookup
+   &NamedEntity::typeLookup
+};
+static_assert(std::is_base_of<NamedEntity, NamedEntityWithInventory>::value);
+
 NamedEntityWithInventory::NamedEntityWithInventory(QString t_name,
                                                    bool t_display,
                                                    QString folder) :
@@ -31,7 +43,7 @@ NamedEntityWithInventory::NamedEntityWithInventory(QString t_name,
 NamedEntityWithInventory::NamedEntityWithInventory(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity   {namedParameterBundle},
    // If we're reading in from a BeerXML file, there won't be an inventory ID
-   m_inventory_id{namedParameterBundle(PropertyNames::NamedEntityWithInventory::inventoryId, -1)} {
+   m_inventory_id{namedParameterBundle.val(PropertyNames::NamedEntityWithInventory::inventoryId, -1)} {
    return;
 }
 
@@ -42,6 +54,8 @@ NamedEntityWithInventory::NamedEntityWithInventory(NamedEntityWithInventory cons
    m_inventory_id {-1} {
    return;
 }
+
+NamedEntityWithInventory::~NamedEntityWithInventory() = default;
 
 void NamedEntityWithInventory::makeChild(NamedEntity const & copiedFrom) {
    // First do the base class work

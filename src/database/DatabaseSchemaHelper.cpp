@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * database/DatabaseSchemaHelper.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -538,13 +538,13 @@ namespace {
          // Hop: Extended and additional fields for BeerJSON
          //
          // We only need to update the old Hop type mappings.  The new ones should "just work".
-         {QString("UPDATE hop SET htype = 'aroma'           WHERE htype = 'Aroma'")},
-         {QString("UPDATE hop SET htype = 'bittering'       WHERE htype = 'Bittering'")},
-         {QString("UPDATE hop SET htype = 'aroma/bittering' WHERE htype = 'Both'")},
+         {QString(     "UPDATE hop SET htype = 'aroma'           WHERE htype = 'Aroma'"    )},
+         {QString(     "UPDATE hop SET htype = 'bittering'       WHERE htype = 'Bittering'")},
+         {QString(     "UPDATE hop SET htype = 'aroma/bittering' WHERE htype = 'Both'"     )},
          // Same applies for Hop form mappings
-         {QString("UPDATE hop SET form = 'pellet'           WHERE form = 'Pellet'")},
-         {QString("UPDATE hop SET form = 'plug'             WHERE form = 'Plug'")},
-         {QString("UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'")},
+         {QString(     "UPDATE hop SET form = 'pellet'           WHERE form = 'Pellet'")},
+         {QString(     "UPDATE hop SET form = 'plug'             WHERE form = 'Plug'"  )},
+         {QString(     "UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'"  )},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<int    >())},
@@ -558,6 +558,30 @@ namespace {
          {QString("ALTER TABLE hop ADD COLUMN pinene_pct            %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN polyphenols_pct       %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN xanthohumol_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         //
+         // Fermentable: Extended and additional fields for BeerJSON
+         //
+         // We only need to update the old Fermentable type mappings.  The new ones should "just work".
+         {QString("     UPDATE fermentable SET ftype = 'grain'           WHERE ftype = 'Grain'"      )},
+         {QString("     UPDATE fermentable SET ftype = 'sugar'           WHERE ftype = 'Sugar'"      )},
+         {QString("     UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'"    )},
+         {QString("     UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
+         {QString("     UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'"    )},
+         {QString("ALTER TABLE fermentable ADD COLUMN grain_group            %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN producer               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN productId              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fineGrindYield_pct     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN coarseGrindYield_pct   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN potentialYield_sg      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN alphaAmylase_dextUnits %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kolbachIndex_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN amountIsWeight         %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpGlassy_pct  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpHalf_pct    %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpMealy_pct   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpPlump     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpThin      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("     UPDATE fermentable SET amountIsWeight = ?"), {QVariant{true}}}, // All existing amounts will be weights
       };
       return executeSqlQueries(q, migrationQueries);
    }

@@ -254,7 +254,6 @@ namespace Measurement {
 
 //.:TODO:.     "SpecificVolumeType": "Specific volume is the inverse of density, with units of volume over mass, ie qt/lb or L/kg. Commonly used for mash thickness.",
 
-
 /**
  * \brief Convenience function to allow output of \c Measurement::Unit to \c QDebug or \c QTextStream stream etc
  */
