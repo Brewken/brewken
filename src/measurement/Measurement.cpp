@@ -308,8 +308,8 @@ QString Measurement::displayThickness( double thick_lkg, bool showUnits ) {
    Measurement::Unit const * weightUnit;
    Measurement::getThicknessUnits(&volUnit, &weightUnit);
 
-   double num = volUnit->fromSI(thick_lkg);
-   double den = weightUnit->fromSI(1.0);
+   double num = volUnit->fromCanonical(thick_lkg);
+   double den = weightUnit->fromCanonical(1.0);
 
    if (showUnits) {
       return QString("%L1 %2/%3").arg(num/den, fieldWidth, format, precision).arg(volUnit->name).arg(weightUnit->name);

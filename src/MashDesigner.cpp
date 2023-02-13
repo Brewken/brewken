@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -73,9 +73,9 @@ MashDesigner::MashDesigner(QWidget * parent) : QDialog     {parent},
    return;
 }
 
-void MashDesigner::proceed()
-{
+void MashDesigner::proceed() {
    nextStep(++curStep);
+   return;
 }
 
 void MashDesigner::setRecipe(Recipe* rec) {
@@ -155,8 +155,8 @@ void MashDesigner::saveStep() {
    this->mashStep->setName(this->lineEdit_name->text());
    this->mashStep->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
    // Bound the target temperature to what can be achieved
-   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toSI().quantity()));
-   this->mashStep->setStepTime_min(lineEdit_time->toSI().quantity());
+   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toCanonical().quantity()));
+   this->mashStep->setStepTime_min(lineEdit_time->toCanonical().quantity());
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
@@ -170,7 +170,7 @@ void MashDesigner::saveStep() {
 }
 
 double MashDesigner::stepTemp_c() {
-   return lineEdit_temp->toSI().quantity();
+   return lineEdit_temp->toCanonical().quantity();
 }
 
 bool MashDesigner::heating() {

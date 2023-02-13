@@ -3168,10 +3168,6 @@ Error message:
         <translation type="unfinished">Ανάμεικτη</translation>
     </message>
     <message>
-        <source>DiastaticPower</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unknown</source>
         <translation type="unfinished">Άγνωστο</translation>
     </message>
@@ -3472,6 +3468,14 @@ Log file may contain more details.</source>
     <message>
         <source>Weight</source>
         <translation type="unfinished">Βάρος</translation>
+    </message>
+    <message>
+        <source>Diastatic Power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

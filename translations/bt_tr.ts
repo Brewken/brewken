@@ -2611,10 +2611,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DiastaticPower</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2914,6 +2910,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diastatic Power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

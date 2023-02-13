@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLineEdit.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtLineEdit.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -117,16 +117,22 @@ private:
 // .:TODO:. We should change the inheritance hierarchy so that BtGenericEdit and BtStringEdit etc do not inherit from
 //          UiAmountWithUnits.
 //
-class BtGenericEdit :        public BtLineEdit { Q_OBJECT public: BtGenericEdit       (QWidget* parent); };
-class BtMassEdit :           public BtLineEdit { Q_OBJECT public: BtMassEdit          (QWidget* parent); };
-class BtVolumeEdit :         public BtLineEdit { Q_OBJECT public: BtVolumeEdit        (QWidget* parent); };
-class BtTemperatureEdit :    public BtLineEdit { Q_OBJECT public: BtTemperatureEdit   (QWidget* parent); };
-class BtTimeEdit :           public BtLineEdit { Q_OBJECT public: BtTimeEdit          (QWidget* parent); };
-class BtDensityEdit :        public BtLineEdit { Q_OBJECT public: BtDensityEdit       (QWidget* parent); };
-class BtColorEdit :          public BtLineEdit { Q_OBJECT public: BtColorEdit         (QWidget* parent); };
-class BtStringEdit :         public BtLineEdit { Q_OBJECT public: BtStringEdit        (QWidget* parent); };
+class BtGenericEdit        : public BtLineEdit { Q_OBJECT public: BtGenericEdit       (QWidget* parent); };
+class BtMassEdit           : public BtLineEdit { Q_OBJECT public: BtMassEdit          (QWidget* parent); };
+class BtVolumeEdit         : public BtLineEdit { Q_OBJECT public: BtVolumeEdit        (QWidget* parent); };
+class BtTimeEdit           : public BtLineEdit { Q_OBJECT public: BtTimeEdit          (QWidget* parent); };
+class BtTemperatureEdit    : public BtLineEdit { Q_OBJECT public: BtTemperatureEdit   (QWidget* parent); };
+class BtColorEdit          : public BtLineEdit { Q_OBJECT public: BtColorEdit         (QWidget* parent); };
+class BtDensityEdit        : public BtLineEdit { Q_OBJECT public: BtDensityEdit       (QWidget* parent); };
 class BtDiastaticPowerEdit : public BtLineEdit { Q_OBJECT public: BtDiastaticPowerEdit(QWidget* parent); };
-class BtPercentageEdit :     public BtLineEdit { Q_OBJECT public: BtPercentageEdit    (QWidget* parent); };
+class BtAcidityEdit        : public BtLineEdit { Q_OBJECT public: BtAcidityEdit       (QWidget* parent); };
+class BtBitternessEdit     : public BtLineEdit { Q_OBJECT public: BtBitternessEdit    (QWidget* parent); };
+class BtCarbonationEdit    : public BtLineEdit { Q_OBJECT public: BtCarbonationEdit   (QWidget* parent); };
+class BtConcentrationEdit  : public BtLineEdit { Q_OBJECT public: BtConcentrationEdit (QWidget* parent); };
+class BtViscosityEdit      : public BtLineEdit { Q_OBJECT public: BtViscosityEdit     (QWidget* parent); };
+class BtStringEdit         : public BtLineEdit { Q_OBJECT public: BtStringEdit        (QWidget* parent); };
+class BtPercentageEdit     : public BtLineEdit { Q_OBJECT public: BtPercentageEdit    (QWidget* parent); };
+
 
 // mixed objects are a pain.
 class BtMixedEdit : public BtLineEdit {

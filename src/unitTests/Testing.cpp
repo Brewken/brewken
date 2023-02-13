@@ -44,6 +44,7 @@
 #include "Algorithms.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
+#include "Localization.h"
 #include "Logging.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
@@ -591,8 +592,8 @@ void Testing::testUnitConversions() {
    // However, this didn't seem to have any effect on a French locale Windows.
    // So Plan B is to construct test data based on the current locale settings.
    //
-   QString const decimalSeparator   = QLocale::system().decimalPoint();
-   QString const thousandsSeparator = QLocale::system().groupSeparator();
+   QString const decimalSeparator   = Localization::getLocale().decimalPoint();
+   QString const thousandsSeparator = Localization::getLocale().groupSeparator();
    qDebug() <<
       Q_FUNC_INFO << "Decimal separator is " << decimalSeparator << " | Thousands separator is " << thousandsSeparator;
    QString testInput{};

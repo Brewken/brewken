@@ -1676,7 +1676,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::batchSize_l,
-                        lineEdit_batchSize->toSI().quantity(),
+                        lineEdit_batchSize->toCanonical().quantity(),
                         tr("Change Batch Size"));
 }
 
@@ -1687,7 +1687,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::boilSize_l,
-                        lineEdit_boilSize->toSI().quantity(),
+                        lineEdit_boilSize->toCanonical().quantity(),
                         tr("Change Boil Size"));
 }
 

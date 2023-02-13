@@ -491,7 +491,7 @@ double WaterDialog::calculateGristpH() {
 
    if ( m_rec && m_rec->fermentables().size() ) {
 
-      double platoRatio = 1/Measurement::Units::plato.fromSI(m_rec->og());
+      double platoRatio = 1/Measurement::Units::plato.fromCanonical(m_rec->og());
       double color = m_rec->color_srm();
       double colorFromGrain = 0.0;
 

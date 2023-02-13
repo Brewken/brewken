@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2022:
+ * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
@@ -21,7 +21,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QLocale>
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QVBoxLayout>
@@ -29,6 +28,7 @@
 
 #include "Algorithms.h"
 #include "BtLineEdit.h"
+#include "Localization.h"
 #include "PersistentSettings.h"
 #include "measurement/SystemOfMeasurement.h"
 #include "widgets/ToggleSwitch.h"
@@ -142,26 +142,26 @@ public:
    }
 
    void updateCalculatedFields() {
-      double og = this->input_og->toSI().quantity();
-      double fg = this->input_fg->toSI().quantity();
+      double og = this->input_og->toCanonical().quantity();
+      double fg = this->input_fg->toCanonical().quantity();
       if (this->enableAdvancedInputs->isChecked()) {
          // User wants temperature correction
-         double calibrationTempInC = this->input_calibration_temperature->toSI().quantity();
-         double ogReadTempInC          = this->input_og_temperature->toSI().quantity();
-         double fgReadTempInC          = this->input_fg_temperature->toSI().quantity();
+         double calibrationTempInC = this->input_calibration_temperature->toCanonical().quantity();
+         double ogReadTempInC          = this->input_og_temperature->toCanonical().quantity();
+         double fgReadTempInC          = this->input_fg_temperature->toCanonical().quantity();
          if (0.0 == calibrationTempInC || 0.0 == ogReadTempInC) {
             og = 0.0;
             this->corrected_og->setText("? sg");
          } else {
             og = Algorithms::correctSgForTemperature(og, ogReadTempInC, calibrationTempInC);
-            this->corrected_og->setText(QLocale().toString(og, 'f', 3).append(" sg"));
+            this->corrected_og->setText(Localization::getLocale().toString(og, 'f', 3).append(" sg"));
          }
          if (0.0 == calibrationTempInC || 0.0 == fgReadTempInC) {
             fg = 0.0;
             this->corrected_fg->setText("? sg");
          } else {
             fg = Algorithms::correctSgForTemperature(fg, fgReadTempInC, calibrationTempInC);
-            this->corrected_fg->setText(QLocale().toString(fg, 'f', 3).append(" sg"));
+            this->corrected_fg->setText(Localization::getLocale().toString(fg, 'f', 3).append(" sg"));
          }
       }
 
@@ -178,7 +178,7 @@ public:
          // So, if ABV is, say, 5.179% the call to QLocale::toString() below will correctly round it to 5.18% and the user
          // can decide whether to use 5.1% or 5.2% on labels etc.
          //
-         this->output_result->setText(QLocale().toString(abv, 'f', 2).append("%"));
+         this->output_result->setText(Localization::getLocale().toString(abv, 'f', 2).append("%"));
          return;
       }
 
@@ -254,7 +254,7 @@ public:
                                  this->enableAdvancedInputs->isChecked(),
                                  PersistentSettings::Sections::alcoholTool);
       PersistentSettings::insert(hydrometerCalibrationTemperatureInC,
-                                 this->input_calibration_temperature->toSI().quantity(),
+                                 this->input_calibration_temperature->toCanonical().quantity(),
                                  PersistentSettings::Sections::alcoholTool);
       return;
    }

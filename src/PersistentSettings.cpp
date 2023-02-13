@@ -186,7 +186,6 @@ void PersistentSettings::setUserDataDir(QDir newDirectory) {
    return;
 }
 
-
 bool PersistentSettings::contains(QString const & key,
                                   QString const section,
                                   PersistentSettings::Extension extension) {

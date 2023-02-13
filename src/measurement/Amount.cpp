@@ -121,7 +121,7 @@ bool operator<(Measurement::Amount const & lhs, Measurement::Amount const & rhs)
    // it's meaningless to compare a temperature to a mass, etc
    Q_ASSERT(lhs.unit()->getPhysicalQuantity() == rhs.unit()->getPhysicalQuantity());
 
-   return lhs.unit()->toSI(lhs.quantity()).quantity() < rhs.unit()->toSI(lhs.quantity()).quantity();
+   return lhs.unit()->toCanonical(lhs.quantity()).quantity() < rhs.unit()->toCanonical(lhs.quantity()).quantity();
 }
 
 bool operator==(Measurement::Amount const & lhs, Measurement::Amount const & rhs) {
@@ -134,7 +134,7 @@ bool operator==(Measurement::Amount const & lhs, Measurement::Amount const & rhs
    // it's meaningless to compare a temperature to a mass, etc
    Q_ASSERT(lhs.unit()->getPhysicalQuantity() == rhs.unit()->getPhysicalQuantity());
 
-   return lhs.unit()->toSI(lhs.quantity()).quantity() == rhs.unit()->toSI(lhs.quantity()).quantity();
+   return lhs.unit()->toCanonical(lhs.quantity()).quantity() == rhs.unit()->toCanonical(lhs.quantity()).quantity();
 }
 
 template<class S>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * UiAmountWithUnits.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * UiAmountWithUnits.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -123,7 +123,7 @@ public:
    /**
     * \brief Returns the field converted to canonical units for the relevant \c Measurement::PhysicalQuantity
     */
-   Measurement::Amount toSI();
+   Measurement::Amount toCanonical();
 
    /**
     * \brief Use this when you want to do something with the returned QString
