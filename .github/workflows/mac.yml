@@ -132,9 +132,9 @@ jobs:
          tree -sh
 
    - name: Package (New)
-      working-directory: ${{github.workspace}}/mbuild
       shell: bash
       run: |
+         cd mbuild
          umask 022
          ../bt package
          cd package
