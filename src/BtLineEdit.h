@@ -132,7 +132,7 @@ class BtConcentrationEdit  : public BtLineEdit { Q_OBJECT public: BtConcentratio
 class BtViscosityEdit      : public BtLineEdit { Q_OBJECT public: BtViscosityEdit     (QWidget* parent); };
 class BtStringEdit         : public BtLineEdit { Q_OBJECT public: BtStringEdit        (QWidget* parent); };
 class BtPercentageEdit     : public BtLineEdit { Q_OBJECT public: BtPercentageEdit    (QWidget* parent); };
-
+class BtDimensionlessEdit  : public BtLineEdit { Q_OBJECT public: BtDimensionlessEdit (QWidget* parent); };
 
 // mixed objects are a pain.
 class BtMixedEdit : public BtLineEdit {

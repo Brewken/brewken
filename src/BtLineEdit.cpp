@@ -314,6 +314,7 @@ BtConcentrationEdit ::BtConcentrationEdit (QWidget *parent) : BtLineEdit(parent,
 BtViscosityEdit     ::BtViscosityEdit     (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Viscosity     , &Measurement::Units::centipoise           ) { return; }
 BtStringEdit        ::BtStringEdit        (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                  , nullptr                                   ) { return; }
 BtPercentageEdit    ::BtPercentageEdit    (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Percentage              , nullptr                                , 0) { return; }
+BtDimensionlessEdit ::BtDimensionlessEdit (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Dimensionless           , nullptr                                , 3) { return; }
 
 BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mixed) {
    // This is probably pure evil I will later regret

@@ -2783,31 +2783,19 @@ Log file may contain more details.</source>
     <name>QApplication</name>
     <message>
         <source>Application terminates</source>
-        <translation>De applicatie stopt</translation>
+        <translation type="vanished">De applicatie stopt</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.
 Error message:
 %1</source>
-        <translation>The applicatie kreeg een fatale fout.
+        <translation type="vanished">The applicatie kreeg een fatale fout.
 Foutmelding:
 %1</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.</source>
-        <translation>The applicatie kreeg een fatale fout.</translation>
-    </message>
-    <message>
-        <source>Brewken is already running!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another instance of Brewken is already running.
-
-Running two copies of the program at once may lead to data loss.
-
-Press OK to quit.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">The applicatie kreeg een fatale fout.</translation>
     </message>
 </context>
 <context>
@@ -3525,6 +3513,22 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Specific Heat Capacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity Calories per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity Joules per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>c/g·C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>J/kg·K</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

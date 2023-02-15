@@ -122,12 +122,22 @@ jobs:
          export QT_QPA_PLATFORM=offscreen
          meson test
 
-    - name: Make package
+    - name: Package (via CMake/CPack)
       # Change `make package` to `make package VERBOSE=1` to get hugely detailed output
       run: |
          cd build
          pwd
          make package
+         pwd
+         tree -sh
+
+   - name: Package (New)
+      working-directory: ${{github.workspace}}/mbuild
+      shell: bash
+      run: |
+         umask 022
+         ../bt package
+         cd package
          pwd
          tree -sh
 

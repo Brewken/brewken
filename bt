@@ -1183,7 +1183,7 @@ def doPackage():
          #        │
          #        └── usr
          #            ├── bin
-         #            │   └── [projectName] ✅   <-- the executable
+         #            │   └── [projectName] ✅   <── the executable
          #            └── share
          #                ├── applications
          #                │   └── [projectName].desktop     ✅  <── [filesToInstall_desktop]
@@ -1328,7 +1328,7 @@ def doPackage():
          #    └── BUILDROOT
          #        └── usr
          #            ├── bin
-         #            │   └── [projectName] ✅   <-- the executable
+         #            │   └── [projectName] ✅   <── the executable
          #            ├── lib
          #            │   └── .build-id
          #            └── share
@@ -1774,8 +1774,38 @@ def doPackage():
       case 'Darwin':
          log.debug('Mac Packaging - TODO!')
          #
-         # See https://mesonbuild.com/Creating-OSX-packages.html for some info on building Mac packages with Meson.  I
-         # don't actually think we want to try to do everything in Meson, but what's there is a good starting point.
+         # See https://stackoverflow.com/questions/1596945/building-osx-app-bundle for essential info on building Mac
+         # app bundles.  Also *https://mesonbuild.com/Creating-OSX-packages.html suggests how to do this with Meson,
+         # though I think we're better off sticking to the Python script.
+         #
+         # We need the following directory structure for our Mac app bundle:
+         #    [projectName]_[versionNumber].app/
+         #    └── Contents/
+         #        ├── Info.plist  <── XML file
+         #        ├── MacOS/
+         #        │   └── [capitalisedProjectName]   <── the executable
+         #        └── Resources/
+         #            └── [capitalisedProjectName]Icon.icns  <── Icon file
+         #
+         # This will ultimately get bundled up into a disk image (.dmg) file.
+         #
+
+         # Make the top-level directory for the deb package and the DEBIAN subdirectory for the package control files
+         # etc
+         log.debug('Creating Mac app bundle top-level directories')
+         macBundleDirName = projectName + '_' + buildConfig['CONFIG_VERSION_STRING'] + '.app'
+         dir_packages_mac = dir_packages_platform.joinpath(macBundleDirName).joinpath('Contents')
+         dir_packages_mac_bin = dir_packages_mac.joinpath('MacOS')
+         dir_packages_mac_rsc = dir_packages_mac.joinpath('Resources')
+         os.makedirs(dir_packages_mac_bin) # This will also automatically create parent directories
+         os.makedirs(dir_packages_mac_rsc)
+
+         # Copy the Information Property List file to where it belongs
+         #
+         log.debug('Copying Information Property List file')
+         copyWithoutCommentsOrFolds(dir_build.joinpath('Info.plist').as_posix(),
+                                    dir_packages_mac.joinpath('Info.plist').as_posix())
+
          #
          # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
          # https://doc.qt.io/qt-6/macos-deployment.html#the-mac-deployment-tool

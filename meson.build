@@ -1150,7 +1150,7 @@ exportedVariables = {
    'CONFIG_DESCRIPTION_STRING' : 'Open source brewing software',
 
    # Some installers, eg NSIS on Windows, want a brief copyright string
-   'CONFIG_COPYRIGHT_STRING' : 'Copyright © various authors 2009-2023 -- see accompanying documentation',
+   'CONFIG_COPYRIGHT_STRING' : 'Copyright 2009-2023.  Distributed under the terms of the GNU General Public License (version 3).',
 
    # Installers often want the name of the organisation supplying the product, so we need something to put there
    'CONFIG_ORGANIZATION_NAME' : 'The ' + capitalisedProjectName + ' Team',
@@ -1262,6 +1262,14 @@ elif host_machine.system() == 'windows'
    #
    configure_file(input  : 'packaging/windows/NsisInstallerScript.nsi.in',
                   output : 'NsisInstallerScript.nsi',
+                  configuration : exportedVariables,
+                  install : false)
+elif host_machine.system() == 'darwin'
+   #
+   # Mac: Information Property List file
+   #
+   configure_file(input  : 'packaging/darwin/Info.plist.in',
+                  output : 'Info.plist',
                   configuration : exportedVariables,
                   install : false)
 endif
