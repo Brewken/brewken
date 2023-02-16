@@ -52,6 +52,8 @@ public:
     */
    static ObjectStoreTyped<NE> & getInstance();
 
+   using ObjectStore::insert;
+
    /**
     * \brief Insert a new object in the DB (and in our cache list)
     */
