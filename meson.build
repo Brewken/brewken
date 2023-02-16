@@ -992,6 +992,7 @@ filesToInstall_license = 'LICENSE'
 #=======================================================================================================================
 #============================================ Installation sub-directories =============================================
 #=======================================================================================================================
+# .:TBD:. We don't currently use installSubDir_bin, instead letting Meson decide where to put the binary
 if host_machine.system() == 'linux'
    #============================================= Linux Install Directories ============================================
    installSubDir_data = 'share/' + projectName
@@ -1177,23 +1178,17 @@ if host_machine.system() == 'linux'
    }
 endif
 
-### Info for InstallerApplicationIcon which is "Filename for a custom installer icon. The actual file is looked up by
-### attaching a '.icns' (macOS), '.ico' (Windows) suffix. No functionality on Unix."
+#
+# Export the name/location of the desktop icon (which, on Windows, is also the same icon for the installer) for the
+# packaging scripts.
+#
 if host_machine.system() == 'windows'
    exportedVariables += {
-#      'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon_96.ico',
-#      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'win',
       'CONFIG_INSTALLER_APPLICATION_ICON_PATH' : join_paths(meson.current_source_dir(), 'win', capitalisedProjectName + 'Icon_96.ico'),
    }
 elif host_machine.system() == 'darwin'
    exportedVariables += {
       'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon.icns',
-      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'mac',
-   }
-elif host_machine.system() == 'linux'
-   exportedVariables += {
-      'CONFIG_INSTALLER_APPLICATION_ICON'      : '',
-      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : '',
    }
 endif
 
@@ -1344,6 +1339,11 @@ if host_machine.system() == 'linux'
 else
    #----------- Windows and Mac -----------
    install_data(filesToInstall_copyright, install_dir : installSubDir_doc)
+endif
+
+if host_machine.system() == 'darwin'
+   # Desktop icon
+   install_data(filesToInstall_macIcons, install_dir : installSubDir_data)
 endif
 
 #=======================================================================================================================
