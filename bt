@@ -962,7 +962,7 @@ def doPackage():
    #     files, etc.
    #   - It puts things in different places than 'native' installers.  Eg, on Linux, everything gets installed to
    #     subdirectories of the user's home directory rather than the "usual" system directories).  Amongst other things,
-   #     this makes it harder for distros etc that want to ship our software.
+   #     this makes it harder for distros etc that want to ship our software as "standard" packages.
    #
    # The alternative approach, which I resisted for a fair while, but have ultimately become persuaded is right, is to
    # do Windows, Mac and Linux packaging separately:
@@ -1855,23 +1855,22 @@ def doPackage():
          dir_packages_mac_frm = dir_packages_mac.joinpath('Frameworks')
          dir_packages_mac_plg = dir_packages_mac.joinpath('Plugins')
          os.makedirs(dir_packages_mac_bin) # This will also automatically create parent directories
-         os.makedirs(dir_packages_mac_rsc)
          os.makedirs(dir_packages_mac_frm)
          os.makedirs(dir_packages_mac_plg)
+         # Rather than create dir_packages_mac_rsc directly, it's simplest to copy the whole Resources tree from
+         # mbuild/mackages/darwin/usr/local/Contents/Resources, as we want everything that's inside it
+         log.debug('Copying Resources')
+         shutil.copytree(dir_packages_platform.joinpath('usr/local/Contents/Resources'), dir_packages_mac_rsc)
 
          # Copy the Information Property List file to where it belongs
          log.debug('Copying Information Property List file')
          shutil.copy2(dir_build.joinpath('Info.plist').as_posix(), dir_packages_mac)
 
          # Because Meson is geared towards local installs, in the mbuild/mackages/darwin directory, it is going to have
-         # placed the executable in the usr/local/bin subdirectory.  Copy it to the right place
+         # placed the executable in the usr/local/bin subdirectory.  Copy it to the right place.
          log.debug('Copying executable')
          shutil.copy2(dir_packages_platform.joinpath('usr/local/bin').joinpath(capitalisedProjectName).as_posix(),
                       dir_packages_mac_bin)
-
-         # Everything else is in the usr/local/Contents/Resources subdirectory of mbuild/mackages/darwin
-         log.debug('Copying Resources')
-         shutil.copytree(dir_packages_platform.joinpath('usr/local/Contents/Resources'), dir_packages_mac_rsc)
 
          #
          # The macdeployqt executable shipped with Qt does for Mac what windeployqt does for Windows -- see
