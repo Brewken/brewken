@@ -1864,9 +1864,9 @@ def doPackage():
          shutil.copy2(dir_build.joinpath('Info.plist').as_posix(), dir_packages_mac)
 
          # Because Meson is geared towards local installs, in the mbuild/mackages/darwin directory, it is going to have
-         # placed the executable in the usr/bin subdirectory.  Copy it to the right place
+         # placed the executable in the usr/local/bin subdirectory.  Copy it to the right place
          log.debug('Copying executable')
-         shutil.copy2(dir_packages_platform.joinpath('usr/bin').joinpath(capitalisedProjectName).as_posix(),
+         shutil.copy2(dir_packages_platform.joinpath('usr/local/bin').joinpath(capitalisedProjectName).as_posix(),
                       dir_packages_mac_bin)
 
          # Everything else is in the usr/local/Contents/Resources subdirectory of mbuild/mackages/darwin
