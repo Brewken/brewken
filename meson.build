@@ -285,13 +285,14 @@ sharedLibraryPaths = []
 qtCommonDependencies = dependency('qt5',
                                   version : '>=5.9.5',
                                   modules : ['Core',
+                                             'Gui',          # Needed for QColor on Mac?
                                              'Multimedia',
                                              'Network',
                                              'PrintSupport',
                                              'Sql',
-                                             'Svg',
+                                             'Svg',          # Needed to make the deploy scripts pick up the svg plugins
                                              'Widgets',
-                                             'Xml'],
+                                             'Xml'],         # TBD: Not sure we need this any more
                                   include_type : 'system',
                                   static : true)
 # The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
