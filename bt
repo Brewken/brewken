@@ -1883,9 +1883,17 @@ def doPackage():
          # implementations and command line options, so it would be unhelpful to try to treat them identically.
          #
          #
-         log.debug('Running macdeployqt')
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
          os.chdir(dir_packages_mac_bin)
+         log.debug('Running otool')
+         abortOnRunFail(
+            subprocess.run(['otool',
+                            '-L',
+                            capitalisedProjectName],
+                           capture_output=False)
+         )
+         log.debug('Running macdeployqt')
+         os.chdir(dir_packages_platform)
          abortOnRunFail(
             # The -executable argument is to automatically alter the search path of the executable for the Qt libraries
             # (ie so the executable knows where to find them inside the bundle)
@@ -1893,13 +1901,6 @@ def doPackage():
                             '-verbose=3',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
                             macBundleDirName,
                             '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName],
-                           capture_output=False)
-         )
-         log.debug('Running otool')
-         abortOnRunFail(
-            subprocess.run(['otool',
-                            '-L',
-                            capitalisedProjectName],
                            capture_output=False)
          )
          os.chdir(previousWorkingDirectory)
