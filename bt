@@ -1895,11 +1895,12 @@ def doPackage():
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
          abortOnRunFail(
+            # Note that app bundle name has to be the first parameter and options come afterwards.
             # The -executable argument is to automatically alter the search path of the executable for the Qt libraries
             # (ie so the executable knows where to find them inside the bundle)
             subprocess.run(['macdeployqt',
-                            '-verbose=3',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
                             macBundleDirName,
+                            '-verbose=3',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
                             '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName],
                            capture_output=False)
          )
