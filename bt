@@ -1997,7 +1997,7 @@ def doPackage():
             subprocess.run(
                ['dmgbuild',
                 '-s', settingsFileName,
-                capitalisedProjectName + ' ' + buildConfig['CONFIG_VERSION_STRING',
+                capitalisedProjectName + ' ' + buildConfig['CONFIG_VERSION_STRING'],
                 dmgFileName],
                capture_output=False
             )
