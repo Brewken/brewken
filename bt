@@ -1935,18 +1935,78 @@ def doPackage():
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
          log.debug('Running otool before macdeployqt')
          os.chdir(dir_packages_mac_bin)
-         abortOnRunFail(
+         otoolOutput = abortOnRunFail(
             subprocess.run(['otool',
                             '-L',
                             capitalisedProjectName],
-                           capture_output=False)
-         )
+                           capture_output=True)
+         ).stdout.decode('UTF-8')
+         log.debug('otool output: ' + otoolOutput)
+         #
+         # The output from otool at this stage will be along the following lines:
+         #
+         #    [capitalisedProjectName]:
+         #       /usr/local/opt/qt@5/lib/QtCore.framework/Versions/5/QtCore (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/qt@5/lib/QtGui.framework/Versions/5/QtGui (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/qt@5/lib/QtMultimedia.framework/Versions/5/QtMultimedia (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/qt@5/lib/QtNetwork.framework/Versions/5/QtNetwork (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/qt@5/lib/QtPrintSupport.framework/Versions/5/QtPrintSupport (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/qt@5/lib/QtSql.framework/Versions/5/QtSql (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/qt@5/lib/QtWidgets.framework/Versions/5/QtWidgets (compatibility version 5.15.0, current version 5.15.8)
+         #       /usr/local/opt/xerces-c/lib/libxerces-c-3.2.dylib (compatibility version 0.0.0, current version 0.0.0)
+         #       /usr/local/opt/xalan-c/lib/libxalan-c.112.dylib (compatibility version 112.0.0, current version 112.0.0)
+         #       /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 1300.36.0)
+         #       /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1319.0.0)
+         #
+         # After running `macdeployqt`, all the paths for non-system libraries will be changed to ones beginning
+         # '@loader_path/../Frameworks/', as will be seen from the subsequent output of running `otool`.
+         #
+         # We want to grab:
+         #   - the directory containing libxalan-c, as that's the same directory in which we should find libxalanMsg
+         #   - the directory called QtSql, as that should contain libqsqlpsql.dylib
+         #
+         xalanDir = ''
+         xalanLibname = ''
+         xalanMatch = re.compile(r'^\s*(\S+/)(libxalan-c\S*.dylib)')
+         if (xalanMatch):
+            # The [1] index gives us the first parenthesized subgroup of the regexp match, which in this case should be
+            # the directory path to libxalan-c.xxx.dylib
+            xalanDir = xalanMatch[1]
+            xalanLibname = xalanMatch[2]
+         else:
+            log.warning(
+               'Could not find libxalan dependency in ' + capitalisedProjectName +
+               ' so assuming /usr/local/opt/xalan-c/lib/'
+            )
+            xalanDir = '/usr/local/opt/xalan-c/lib/'
+            xalanLibname = 'libxalan-c.112.dylib'
+         log.debug('xalanDir: ' + xalanDir + '; contents:')
+         abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
+         sqlDir = ''
+         sqlMatch = re.compile(r'^\s*(\S+/QtSql\S*)\s')
+         if (sqlMatch):
+            sqlDir = sqlMatch[1]
+         else:
+            log.warning(
+               'Could not find QtSql dependency in ' + capitalisedProjectName +
+               ' so assuming /usr/local/opt/qt@5/lib/QtSql.framework/Versions/5/QtSql'
+            )
+            sqlDir = '/usr/local/opt/qt@5/lib/QtSql.framework/Versions/5/QtSql'
+         log.debug('sqlDir: ' + sqlDir + '; contents:')
+         abortOnRunFail(subprocess.run(['ls', '-l', sqlDir], capture_output=False))
+
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
          abortOnRunFail(
+            #
             # Note that app bundle name has to be the first parameter and options come afterwards.
             # The -executable argument is to automatically alter the search path of the executable for the Qt libraries
             # (ie so the executable knows where to find them inside the bundle)
+            #
+            # We do not use the -dmg option, partly because we still have some more fix-up work to do before packaging
+            # up the directory tree (although we could do that beforehand) and partly because we want more control over
+            # the dmg (eg to specify an icon for it).
+            #
             subprocess.run(['macdeployqt',
                             macBundleDirName,
                             '-verbose=2',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
@@ -1959,6 +2019,14 @@ def doPackage():
             subprocess.run(['otool',
                             '-L',
                             capitalisedProjectName],
+                           capture_output=False)
+         )
+         log.debug('Running otool on ' + xalanLibname)
+         os.chdir(dir_packages_platform)
+         abortOnRunFail(
+            subprocess.run(['otool',
+                            '-L',
+                            macBundleDirName + '/Contents/Frameworks/' + xalanLibname],
                            capture_output=False)
          )
          # TODO: Need to grab libxalanMsg and libqsqlpsql.dylib
@@ -1992,7 +2060,8 @@ def doPackage():
             sf.write('\n')
             sf.write('# Icon used to badge the system’s standard external disk icon\n')
             sf.write('# This is a convenient way to construct a suitable icon from your application\’s icon\n')
-            sf.write('badge_icon = "/Applications/'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
+            # Doco implies path should start with /Applications/, but this does not work
+            sf.write('badge_icon = "'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
             sf.write('\n')
             sf.write('# Expected usage is drag to install, so default view of icons makes most sense\n')
             sf.write('default_view = "icon-view"\n')
