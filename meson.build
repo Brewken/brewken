@@ -266,7 +266,7 @@ prefix = get_option('prefix')
 #
 # Finding out how to get shared library paths information was, err, fun because it's not very well documented.
 # Eventually, I realised that you can look in meson-private/cmake_XercesC/cmake_trace.txt,
-# meson-private/cmake_XercesC/cmake_trace.txt and so on to see what information Meson got back from CMake and thus know
+# meson-private/cmake_XalanC/cmake_trace.txt and so on to see what information Meson got back from CMake and thus know
 # which CMake variables are exposed via the get_variable() call.
 #
 sharedLibraryPaths = []

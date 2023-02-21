@@ -134,7 +134,7 @@ jobs:
         run: |
            cd mbuild
            umask 022
-           ../bt package
+           ../bt -v package
            cd packages
            pwd
            tree -sh

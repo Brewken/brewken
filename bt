@@ -1933,6 +1933,14 @@ def doPackage():
          #    - libqsqlpsql.dylib -- which would be needed for any user that wants to use PostgreSQL instead of SQLite
          #
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+         log.debug('Running otool before macdeployqt')
+         os.chdir(dir_packages_mac_bin)
+         abortOnRunFail(
+            subprocess.run(['otool',
+                            '-L',
+                            capitalisedProjectName],
+                           capture_output=False)
+         )
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
          abortOnRunFail(
@@ -1941,11 +1949,11 @@ def doPackage():
             # (ie so the executable knows where to find them inside the bundle)
             subprocess.run(['macdeployqt',
                             macBundleDirName,
-                            '-verbose=3',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
+                            '-verbose=2',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
                             '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName],
                            capture_output=False)
          )
-         log.debug('Running otool directly')
+         log.debug('Running otool after macdeployqt')
          os.chdir(dir_packages_mac_bin)
          abortOnRunFail(
             subprocess.run(['otool',
@@ -1953,6 +1961,7 @@ def doPackage():
                             capitalisedProjectName],
                            capture_output=False)
          )
+         # TODO: Need to grab libxalanMsg and libqsqlpsql.dylib
 
          #
          # Now that we have the app bundle directory structure, we need to compress it into a dmg file
@@ -1983,7 +1992,7 @@ def doPackage():
             sf.write('\n')
             sf.write('# Icon used to badge the system’s standard external disk icon\n')
             sf.write('# This is a convenient way to construct a suitable icon from your application\’s icon\n')
-            sf.write('badge_icon = /Applications/"'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
+            sf.write('badge_icon = "/Applications/'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
             sf.write('\n')
             sf.write('# Expected usage is drag to install, so default view of icons makes most sense\n')
             sf.write('default_view = "icon-view"\n')
