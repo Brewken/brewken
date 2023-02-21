@@ -1967,33 +1967,43 @@ def doPackage():
          os.chdir(dir_packages_platform)
          settingsFileName = 'dmgSettings.py'
          dmgFileName = capitalisedProjectName + '-' + buildConfig['CONFIG_VERSION_STRING'] + '.dmg'
-         with open(settingsFileName, 'wt') as settingsFile:
-            settingsFile.write('#----------------------------\n')
-            settingsFile.write('# Settings file for dmgbuild to generate ' + dmgFileName + '\n')
-            settingsFile.write('#----------------------------\n')
-            settingsFile.write('\n')
-            settingsFile.write('filename = "'+ dmgFileName + '"\n')
-            settingsFile.write('\n')
-            settingsFile.write('volume_name = "'+ capitalisedProjectName + ' ' + buildConfig['CONFIG_VERSION_STRING'] + '"\n')
-            settingsFile.write('\n')
-            settingsFile.write('# Compressed (bzip2) format\n')
-            settingsFile.write('format = "UDBZ"\n')
-            settingsFile.write('\n')
-            settingsFile.write('# This is the default file system, but no harm to be explicit\n')
-            settingsFile.write('filesystem = "HFS+"\n')
-            settingsFile.write('\n')
-            settingsFile.write('# Disk image holds just one folder\n')
-            settingsFile.write('file = "'+ macBundleDirName + '"\n')
-            settingsFile.write('\n')
-            settingsFile.write('# Icon used to badge the system’s standard external disk icon\n')
-            settingsFile.write('# This is a convenient way to construct a suitable icon from your application\’s icon\n')
-            settingsFile.write('badge_icon = /Applications/"'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
-            settingsFile.write('\n')
-            settingsFile.write('# Expected usage is drag to install, so default view of icons makes most sense\n')
-            settingsFile.write('default_view = "icon-view"\n')
+         with open(settingsFileName, 'wt') as sf:
+            sf.write('#----------------------------\n')
+            sf.write('# Settings file for dmgbuild to generate ' + dmgFileName + '\n')
+            sf.write('#----------------------------\n')
+            sf.write('\n')
+            sf.write('# Compressed (bzip2) format\n')
+            sf.write('format = "UDBZ"\n')
+            sf.write('\n')
+            sf.write('# This is the default file system, but no harm to be explicit\n')
+            sf.write('filesystem = "HFS+"\n')
+            sf.write('\n')
+            sf.write('# Disk image holds just one folder\n')
+            sf.write('file = "'+ macBundleDirName + '"\n')
+            sf.write('\n')
+            sf.write('# Icon used to badge the system’s standard external disk icon\n')
+            sf.write('# This is a convenient way to construct a suitable icon from your application\’s icon\n')
+            sf.write('badge_icon = /Applications/"'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
+            sf.write('\n')
+            sf.write('# Expected usage is drag to install, so default view of icons makes most sense\n')
+            sf.write('default_view = "icon-view"\n')
 
-         abortOnRunFail(subprocess.run(['dmgbuild', '-s', settingsFileName], capture_output=False))
+         #
+         # Confusingly, although the .dmg file name and the volume name can be passed in via the settings file they are
+         # nonetheless required parameters on the command line.  Specifically, usage is:
+         #    dmgbuild [-h] [-s SETTINGS] [-D DEFINES] [--no-hidpi] volume-name output.dmg
+         #
+         abortOnRunFail(
+            subprocess.run(
+               ['dmgbuild',
+                '-s', settingsFileName,
+                capitalisedProjectName + ' ' + buildConfig['CONFIG_VERSION_STRING',
+                dmgFileName],
+               capture_output=False
+            )
+         )
          os.chdir(previousWorkingDirectory)
+         log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform)
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
