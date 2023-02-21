@@ -2021,7 +2021,13 @@ def doPackage():
                             capitalisedProjectName],
                            capture_output=False)
          )
-         log.debug('Running otool on ' + xalanLibname)
+         abortOnRunFail(
+            subprocess.run(['otool',
+                            '-l',
+                            capitalisedProjectName],
+                           capture_output=False)
+         )
+         log.debug('Running otool -L on ' + xalanLibname)
          os.chdir(dir_packages_platform)
          abortOnRunFail(
             subprocess.run(['otool',
@@ -2081,7 +2087,7 @@ def doPackage():
             )
          )
          os.chdir(previousWorkingDirectory)
-         log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform)
+         log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform.as_posix())
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
