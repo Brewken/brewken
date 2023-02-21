@@ -1967,7 +1967,7 @@ def doPackage():
          #
          xalanDir = ''
          xalanLibname = ''
-         xalanMatch =  re.search(re.compile(r'^\s*(\S+/)(libxalan-c\S*.dylib)'), otoolOutput, re.MULTILINE)
+         xalanMatch =  re.search(r'^\s*(\S+/)(libxalan-c\S*.dylib)', otoolOutput, re.MULTILINE)
          if (xalanMatch):
             # The [1] index gives us the first parenthesized subgroup of the regexp match, which in this case should be
             # the directory path to libxalan-c.xxx.dylib
@@ -1983,7 +1983,7 @@ def doPackage():
          log.debug('xalanDir: ' + xalanDir + '; contents:')
          abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
          sqlDir = ''
-         sqlMatch = re.search(re.compile(r'^\s*(\S+/QtSql\S*)\s'), otoolOutput, re.MULTILINE)
+         sqlMatch = re.search(r'^\s*(\S+/QtSql\S*)\s', otoolOutput, re.MULTILINE)
          if (sqlMatch):
             sqlDir = sqlMatch[1]
          else:
