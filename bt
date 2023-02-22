@@ -1925,7 +1925,8 @@ def doPackage():
          #
          # As discussed at https://stackoverflow.com/questions/2809930/macdeployqt-and-third-party-libraries, there are
          # usually cases where you have to do some of the same work by hand because macdeployqt doesn't automatically
-         # detect all the dependencies.
+         # detect all the dependencies.  One example of this is that, if a shared library depends on another shared
+         # library then macdeployqt won't detect it, because it does not recursively run its dependency checking.
          #
          # For us, macdeployqt does seem to cover almost all the shared libraries and frameworks we need, including
          # those that are not part of Qt.  The exceptions are:
@@ -1935,13 +1936,13 @@ def doPackage():
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
          log.debug('Running otool before macdeployqt')
          os.chdir(dir_packages_mac_bin)
-         otoolOutput = abortOnRunFail(
+         otoolOutputExe = abortOnRunFail(
             subprocess.run(['otool',
                             '-L',
                             capitalisedProjectName],
                            capture_output=True)
          ).stdout.decode('UTF-8')
-         log.debug('otool output: ' + otoolOutput)
+         log.debug('Output of `otool -L' + capitalisedProjectName + '`: ' + otoolOutputExe)
          #
          # The output from otool at this stage will be along the following lines:
          #
@@ -1963,38 +1964,63 @@ def doPackage():
          #
          # We want to grab:
          #   - the directory containing libxalan-c, as that's the same directory in which we should find libxalanMsg
-         #   - the directory called QtSql, as that should contain libqsqlpsql.dylib
+         #   - information that would allow us to find libqsqlpsql.dylib .:TODO:. Still to work out how to do this.  For
+         #     now, I think that means users requiring PostgreSQL support on MacOS will need to build the app from
+         #     source.
          #
          xalanDir = ''
-         xalanLibname = ''
-         xalanMatch =  re.search(r'^\s*(\S+/)(libxalan-c\S*.dylib)', otoolOutput, re.MULTILINE)
+         xalanLibName = ''
+         xalanMatch =  re.search(r'^\s*(\S+/)(libxalan-c\S*.dylib)', otoolOutputExe, re.MULTILINE)
          if (xalanMatch):
             # The [1] index gives us the first parenthesized subgroup of the regexp match, which in this case should be
             # the directory path to libxalan-c.xxx.dylib
             xalanDir = xalanMatch[1]
-            xalanLibname = xalanMatch[2]
+            xalanLibName = xalanMatch[2]
          else:
             log.warning(
                'Could not find libxalan dependency in ' + capitalisedProjectName +
                ' so assuming /usr/local/opt/xalan-c/lib/'
             )
             xalanDir = '/usr/local/opt/xalan-c/lib/'
-            xalanLibname = 'libxalan-c.112.dylib'
+            xalanLibName = 'libxalan-c.112.dylib'
          log.debug('xalanDir: ' + xalanDir + '; contents:')
          abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
-         sqlDir = ''
-         sqlMatch = re.search(r'^\s*(\S+/QtSql\S*)\s', otoolOutput, re.MULTILINE)
-         if (sqlMatch):
-            sqlDir = sqlMatch[1]
+
+         #
+         # Strictly speaking, we should look at every /usr/local/opt/.../*.dylib dependency of our executable, and run
+         # each of those .dylib files through otool to get its dependencies, then repeat until we find no new
+         # dependencies.  Then we should ensure each dependency is copied into the app bundle and whatever depends on it
+         # knows where to find it etc.  Pretty soon we'd have ended up reimplementing macdeployqt.  Fortunately, in
+         # practice, for Xalan, it suffices to grab libxalanMsg and put it in the same directory in the bundle as
+         # libxalanc.
+         #
+         # We use otool to get the right name for libxalanMsg, which is typically listed as a relative path dependency
+         # eg '@rpath/libxalanMsg.112.dylib'.
+         #
+         log.debug('Running otool -L on ' + xalanLibName)
+         otoolOutputXalan = abortOnRunFail(
+            subprocess.run(['otool',
+                            '-L',
+                            xalanDir + xalanLibName],
+                           capture_output=False)
+         ).stdout.decode('UTF-8')
+         log.debug('Output of `otool -L' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
+         xalanMsgLibName = ''
+         xalanMsgMatch =  re.search(r'^\s*(\S+*/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
+         if (xalanMsgMatch):
+            xalanMsgLibName = xalanMsgMatch[2]
          else:
             log.warning(
-               'Could not find QtSql dependency in ' + capitalisedProjectName +
-               ' so assuming /usr/local/opt/qt@5/lib/QtSql.framework/Versions/5/QtSql'
+               'Could not find libxalanMsg dependency in ' + xalanDir + xalanLibName +
+               ' so assuming libxalanMsg.112.dylib'
             )
-            sqlDir = '/usr/local/opt/qt@5/lib/QtSql.framework/Versions/5/QtSql'
-         log.debug('sqlDir: ' + sqlDir + '; contents:')
-         abortOnRunFail(subprocess.run(['ls', '-l', sqlDir], capture_output=False))
+            xalanMsgLibName = 'libxalanMsg.112.dylib'
+         log.debug('Copying ' + xalanDir + xalanMsgLibName + ' to ' + dir_packages_mac_frm.as_posix())
+         shutil.copy2(xalanDir + xalanMsgLibName, dir_packages_mac_frm)
 
+         #
+         # Now let macdeployqt do most of the heavy lifting
+         #
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
          abortOnRunFail(
@@ -2003,9 +2029,9 @@ def doPackage():
             # The -executable argument is to automatically alter the search path of the executable for the Qt libraries
             # (ie so the executable knows where to find them inside the bundle)
             #
-            # We do not use the -dmg option, partly because we still have some more fix-up work to do before packaging
-            # up the directory tree (although we could do that beforehand) and partly because we want more control over
-            # the dmg (eg to specify an icon for it).
+            # We do not use the -dmg option, partly because we might still have some more fix-up work to do before
+            # packaging up the directory tree (although so far I think we can do it all beforehand) and partly because
+            # we want more control over the dmg (eg to specify an icon for it).
             #
             subprocess.run(['macdeployqt',
                             macBundleDirName,
@@ -2027,15 +2053,6 @@ def doPackage():
                             capitalisedProjectName],
                            capture_output=False)
          )
-         log.debug('Running otool -L on ' + xalanLibname)
-         os.chdir(dir_packages_platform)
-         abortOnRunFail(
-            subprocess.run(['otool',
-                            '-L',
-                            macBundleDirName + '/Contents/Frameworks/' + xalanLibname],
-                           capture_output=False)
-         )
-         # TODO: Need to grab libxalanMsg and libqsqlpsql.dylib
 
          #
          # Now that we have the app bundle directory structure, we need to compress it into a dmg file
@@ -2071,7 +2088,6 @@ def doPackage():
             sf.write('\n')
             sf.write('# Expected usage is drag to install, so default view of icons makes most sense\n')
             sf.write('default_view = "icon-view"\n')
-
          #
          # Confusingly, although the .dmg file name and the volume name can be passed in via the settings file they are
          # nonetheless required parameters on the command line.  Specifically, usage is:
