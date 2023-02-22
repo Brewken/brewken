@@ -1779,6 +1779,12 @@ def doPackage():
             )
          )
 
+         #
+         # Make the checksum file TODO
+         #
+         ##log.info('Generating checksum file for ' + ¥¥¥debPackageName)  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+         ##writeSha256sum(dir_packages_platform, ¥¥¥debPackageName)
+
       #-----------------------------------------------------------------------------------------------------------------
       #------------------------------------------------- Mac Packaging -------------------------------------------------
       #-----------------------------------------------------------------------------------------------------------------
@@ -1798,7 +1804,7 @@ def doPackage():
          # `macdeployqt`, and those marked ❇ are ones we need to relocate, generate or modify ourselves.
          #
          # (When working on this bit, use ❌ for things that are generated automatically but not actually needed, and ✴
-         # for things we still need to add.  Not currently not aware of any of either.)
+         # for things we still need to add.)
          #    [projectName]_[versionNumber].app
          #    └── Contents
          #        ├── Info.plist ❇  <── "Information property list" file = required configuration information (in XML)
@@ -1853,8 +1859,8 @@ def doPackage():
          #        │   │   └── libcocoaprintersupport.dylib 🟢
          #        │   ├── sqldrivers
          #        │   │   ├── libqsqlite.dylib  🟢
-         #        │   │   ├── libqsqlodbc.dylib ❇ ✴
-         #        │   │   └── libqsqlpsql.dylib ❇ ✴
+         #        │   │   ├── libqsqlodbc.dylib ✴  Not sure we need this one, but it got shipped with Brewtarget 2.3
+         #        │   │   └── libqsqlpsql.dylib ✴
          #        │   ├── styles
          #        │   │  └── libqmacstyle.dylib 🟢
          #        │   └── virtualkeyboard
@@ -2039,20 +2045,11 @@ def doPackage():
                             '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName],
                            capture_output=False)
          )
+
          log.debug('Running otool after macdeployqt')
          os.chdir(dir_packages_mac_bin)
-         abortOnRunFail(
-            subprocess.run(['otool',
-                            '-L',
-                            capitalisedProjectName],
-                           capture_output=False)
-         )
-         abortOnRunFail(
-            subprocess.run(['otool',
-                            '-l',
-                            capitalisedProjectName],
-                           capture_output=False)
-         )
+         abortOnRunFail(subprocess.run(['otool', '-L', capitalisedProjectName], capture_output=False))
+         abortOnRunFail(subprocess.run(['otool', '-l', capitalisedProjectName], capture_output=False))
 
          #
          # Now that we have the app bundle directory structure, we need to compress it into a dmg file
@@ -2068,9 +2065,9 @@ def doPackage():
          settingsFileName = 'dmgSettings.py'
          dmgFileName = capitalisedProjectName + '-' + buildConfig['CONFIG_VERSION_STRING'] + '.dmg'
          with open(settingsFileName, 'wt') as sf:
-            sf.write('#----------------------------\n')
+            sf.write('#------------------------------------------------------------------------------------\n')
             sf.write('# Settings file for dmgbuild to generate ' + dmgFileName + '\n')
-            sf.write('#----------------------------\n')
+            sf.write('#------------------------------------------------------------------------------------\n')
             sf.write('\n')
             sf.write('# Compressed (bzip2) format\n')
             sf.write('format = "UDBZ"\n')
@@ -2104,6 +2101,12 @@ def doPackage():
          )
          os.chdir(previousWorkingDirectory)
          log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform.as_posix())
+
+         #
+         # Make the checksum file
+         #
+         log.info('Generating checksum file for ' + dmgFileName)
+         writeSha256sum(dir_packages_platform, dmgFileName)
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())

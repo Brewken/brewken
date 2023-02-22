@@ -181,11 +181,21 @@ jobs:
           export QT_QPA_PLATFORM=offscreen
           meson test
 
-      - name: Package
+      - name: Package (via CMake/CPack)
         shell: msys2 {0}
         run: |
           cd /C/_/build
           cmake --build . --target package --verbose
+
+      - name: Package (New)
+        shell: bash
+        run: |
+           cd mbuild
+           umask 022
+           ../bt -v package
+           cd packages
+           pwd
+           tree -sh
 
       - name: Upload Windows binaries (installers)
         if: ${{ success()}}

@@ -147,6 +147,8 @@ jobs:
           path: |
              ${{github.workspace}}/build/brewken*.dmg
              ${{github.workspace}}/build/brewken*.dmg.sha256
+             ${{github.workspace}}/mbuild/packages/darwin/Brewken*.dmg
+             ${{github.workspace}}/mbuild/packages/darwin/Brewken*.dmg.sha256sum
           retention-days: 7
 
       - name: Post-processing on any core dump
