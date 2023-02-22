@@ -2002,7 +2002,7 @@ def doPackage():
             subprocess.run(['otool',
                             '-L',
                             xalanDir + xalanLibName],
-                           capture_output=False)
+                           capture_output=True)
          ).stdout.decode('UTF-8')
          log.debug('Output of `otool -L' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
          xalanMsgLibName = ''
