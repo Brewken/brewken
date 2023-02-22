@@ -2006,7 +2006,7 @@ def doPackage():
          ).stdout.decode('UTF-8')
          log.debug('Output of `otool -L' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
          xalanMsgLibName = ''
-         xalanMsgMatch =  re.search(r'^\s*(\S+*/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
+         xalanMsgMatch =  re.search(r'^\s*(\S+/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
          if (xalanMsgMatch):
             xalanMsgLibName = xalanMsgMatch[2]
          else:
