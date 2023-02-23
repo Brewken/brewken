@@ -190,7 +190,7 @@ jobs:
       - name: Package (New)
         shell: bash
         run: |
-           cd mbuild
+           cd /C/_/mbuild
            umask 022
            ../bt -v package
            cd packages

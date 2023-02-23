@@ -436,6 +436,10 @@ def installDependencies():
    # changes between "current" Conan 1.X and "soon-to-be-released" Conan 2.0.  So, will leave it for now and stick
    # mostly to native installs for each of the 3 platforms (Linux, Windows, Mac).
    #
+   # Other notes:
+   #    - GNU coreutils (https://www.gnu.org/software/coreutils/manual/coreutils.html) is probably already installed on
+   #      most Linux distros, but not necessarily on Mac and Windows.  It gives us sha256sum.
+   #
    match platform.system():
 
       #-----------------------------------------------------------------------------------------------------------------
@@ -584,6 +588,7 @@ def installDependencies():
             subprocess.run(
                ['sudo', 'apt', 'install', '-y', 'build-essential',
                                                 'cmake',
+                                                'coreutils',
                                                 'debhelper',
                                                 'git',
                                                 'libqt5multimedia5-plugins',
@@ -694,6 +699,7 @@ def installDependencies():
          arch = 'i686'
          installList = ['base-devel',
                         'cmake',
+                        'coreutils',
                         'doxygen',
                         'gcc',
                         'git',
@@ -762,6 +768,7 @@ def installDependencies():
          #
          installList = ['boost',
                         'cmake',
+                        'coreutils',
                         'doxygen',
                         'gcc',
                         'git',
