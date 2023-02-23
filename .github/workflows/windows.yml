@@ -187,15 +187,26 @@ jobs:
           cd /C/_/build
           cmake --build . --target package --verbose
 
+      #
+      # See above for explanation of the extra things we need to do on Windows before running the bt script.
+      #
       - name: Package (New)
-        shell: bash
+        shell: msys2 {0}
         run: |
-           cd /C/_/mbuild
-           umask 022
-           ../bt -v package
-           cd packages
-           pwd
-           tree -sh
+          cd /C/_/
+          echo "Working directory is:"
+          pwd
+          echo "Installed Python is:"
+          which python
+          python --version
+          echo "Installed pip is:"
+          which pip
+          pip --version
+          echo "Running ./bt -v package"
+          ./bt -v package
+          cd mbuild/packages
+          pwd
+          tree -sh
 
       - name: Upload Windows binaries (installers)
         if: ${{ success()}}
