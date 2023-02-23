@@ -188,7 +188,8 @@ jobs:
           cmake --build . --target package --verbose
 
       #
-      # See above for explanation of the extra things we need to do on Windows before running the bt script.
+      # See above for explanation of the extra things we need to do on Windows before running the bt script.  Most of
+      # that does not need doing again here, but PYTHONIOENCODING does need setting again.
       #
       - name: Package (New)
         shell: msys2 {0}
@@ -202,6 +203,7 @@ jobs:
           echo "Installed pip is:"
           which pip
           pip --version
+          export PYTHONIOENCODING=utf8
           echo "Running ./bt -v package"
           ./bt -v package
           cd mbuild/packages
