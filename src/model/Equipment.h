@@ -82,7 +82,7 @@ public:
    Q_PROPERTY( double tunVolume_l           READ tunVolume_l           WRITE setTunVolume_l           NOTIFY changedTunVolume_l )
    //! \brief Set the tun mass in kg.
    Q_PROPERTY( double tunWeight_kg          READ tunWeight_kg          WRITE setTunWeight_kg          NOTIFY changedTunWeight_kg )
-   //! \brief Set the tun specific heat in kcal/(g*C)
+   //! \brief Set the tun specific heat in cal/(g*C)
    Q_PROPERTY( double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC NOTIFY changedTunSpecificHeat_calGC )
    //! \brief Set the top-up water in liters.
    Q_PROPERTY( double topUpWater_l          READ topUpWater_l          WRITE setTopUpWater_l          NOTIFY changedTopUpWater_l )
@@ -95,7 +95,7 @@ public:
    //! \brief Set the boil time in minutes.
    Q_PROPERTY( double boilTime_min          READ boilTime_min          WRITE setBoilTime_min          NOTIFY changedBoilTime_min )
    //! \brief Set whether you want the boil volume to be automatically calculated.
-   Q_PROPERTY( bool calcBoilVolume          READ calcBoilVolume        WRITE setCalcBoilVolume        NOTIFY changedCalcBoilVolume )
+   Q_PROPERTY( bool   calcBoilVolume        READ calcBoilVolume        WRITE setCalcBoilVolume        NOTIFY changedCalcBoilVolume )
    //! \brief Set the lauter tun's deadspace in liters.
    Q_PROPERTY( double lauterDeadspace_l     READ lauterDeadspace_l     WRITE setLauterDeadspace_l     NOTIFY changedLauterDeadspace_l )
    //! \brief Set the kettle top up in liters.
@@ -129,23 +129,23 @@ public:
    void setBoilingPoint_c(double var);
 
    // Get
-   double boilSize_l() const;
-   double batchSize_l() const;
-   double tunVolume_l() const;
-   double tunWeight_kg() const;
-   double tunSpecificHeat_calGC() const;
-   double topUpWater_l() const;
-   double trubChillerLoss_l() const;
-   double evapRate_pctHr() const;
-   double evapRate_lHr() const;
-   double boilTime_min() const;
-   bool calcBoilVolume() const;
-   double lauterDeadspace_l() const;
-   double topUpKettle_l() const;
-   double hopUtilization_pct() const;
-   QString notes() const;
-   double grainAbsorption_LKg();
-   double boilingPoint_c() const;
+   double  boilSize_l           () const;
+   double  batchSize_l          () const;
+   double  tunVolume_l          () const;
+   double  tunWeight_kg         () const;
+   double  tunSpecificHeat_calGC() const;
+   double  topUpWater_l         () const;
+   double  trubChillerLoss_l    () const;
+   double  evapRate_pctHr       () const;
+   double  evapRate_lHr         () const;
+   double  boilTime_min         () const;
+   bool    calcBoilVolume       () const;
+   double  lauterDeadspace_l    () const;
+   double  topUpKettle_l        () const;
+   double  hopUtilization_pct   () const;
+   QString notes                () const;
+   double  grainAbsorption_LKg  ();
+   double  boilingPoint_c       () const;
 
    //! \brief Calculate how much wort is left immediately at knockout.
    double wortEndOfBoil_l( double kettleWort_l ) const;

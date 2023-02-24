@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * measurement/UnitSystem.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -21,7 +21,6 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QLocale>
 #include <QRegExp>
 
 #include "Localization.h"
@@ -32,16 +31,6 @@ namespace {
    int const fieldWidth = 0;
    char const format = 'f';
    int const defaultPrecision = 3;
-
-   // All functions in QRegExp are reentrant, so it should be safe to use as a shared const in multi-threaded code.
-   QRegExp const amtUnit {
-      // Make sure we get the right decimal point (. or ,) and the right grouping separator (, or .).  Some locales
-      // write 1.000,10 and others write 1,000.10.  We need to catch both.
-      "((?:\\d+" + QRegExp::escape(QLocale::system().groupSeparator()) + ")?\\d+(?:" +
-      QRegExp::escape(QLocale::system().decimalPoint()) + "\\d+)?|" +
-      QRegExp::escape(QLocale::system().decimalPoint()) + "\\d+)\\s*(\\w+)?",
-      Qt::CaseInsensitive
-   };
 
    QMultiMap<Measurement::PhysicalQuantity, Measurement::UnitSystem const *> physicalQuantityToUnitSystems;
 
@@ -129,12 +118,12 @@ public:
          return std::pair(amount.quantity(), "");
       }
 
-      auto siAmount = amount.unit()->toSI(amount.quantity());
+      auto siAmount = amount.unit()->toCanonical(amount.quantity());
 
       // If there is only one unit in this unit system, then the scale to unit mapping will be empty as there's nothing
       // to choose from
       if (this->scaleToUnit.size() == 0) {
-         return std::pair(this->defaultUnit->fromSI(siAmount.quantity()), this->defaultUnit->name);
+         return std::pair(this->defaultUnit->fromCanonical(siAmount.quantity()), this->defaultUnit->name);
       }
 
       // Conversely, if we have a non-empty mapping then it's a coding error if it only has one entry!
@@ -145,7 +134,7 @@ public:
          // It's a coding error to specify a forced scale that is not in the UnitSystem
          Q_ASSERT(this->scaleToUnit.contains(*forcedScale));
          Measurement::Unit const * bb = this->scaleToUnit.value(*forcedScale);
-         return std::pair(bb->fromSI(siAmount.quantity()), bb->name);
+         return std::pair(bb->fromCanonical(siAmount.quantity()), bb->name);
       }
 
       // Search for the smallest measure in this system that's not too big to show the supplied value
@@ -153,7 +142,7 @@ public:
       // (e.g., mg, g, kg).
       Measurement::Unit const * last  = nullptr;
       for (auto it : this->scaleToUnit) {
-         if (last != nullptr && qAbs(siAmount.quantity()) < it->toSI(it->boundary()).quantity()) {
+         if (last != nullptr && qAbs(siAmount.quantity()) < it->toCanonical(it->boundary()).quantity()) {
             // Stop looping as we've found a unit that's too big to use (so we'll return the last one, ie the one smaller,
             // below)
             break;
@@ -163,7 +152,7 @@ public:
 
       // It is a programming error if the map was empty (ie we didn't go through the loop at all)
       Q_ASSERT(last != nullptr);
-      return std::pair(last->fromSI(siAmount.quantity()), last->name);
+      return std::pair(last->fromCanonical(siAmount.quantity()), last->name);
    }
 
    // Member variables for impl
@@ -206,6 +195,15 @@ bool Measurement::UnitSystem::operator==(UnitSystem const & other) const {
 }
 
 Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit const & defUnit) const {
+   // All functions in QRegExp are reentrant, so it should be safe to use as a shared const in multi-threaded code.
+   static QRegExp const amtUnit {
+      // Make sure we get the right decimal point (. or ,) and the right grouping separator (, or .).  Some locales
+      // write 1.000,10 and others write 1,000.10.  We need to catch both.
+      "((?:\\d+" + QRegExp::escape(Localization::getLocale().groupSeparator()) + ")?\\d+(?:" +
+      QRegExp::escape(Localization::getLocale().decimalPoint()) + "\\d+)?|" +
+      QRegExp::escape(Localization::getLocale().decimalPoint()) + "\\d+)\\s*(\\w+)?",
+      Qt::CaseInsensitive
+   };
 
    // make sure we can parse the string
    if (amtUnit.indexIn(qstr) == -1) {
@@ -245,7 +243,7 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
       unitToUse = &defUnit;
    }
 
-   Measurement::Amount siAmount = unitToUse->toSI(amt);
+   Measurement::Amount siAmount = unitToUse->toCanonical(amt);
    qDebug() <<
       Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" << siAmount.quantity() <<
       "in" << siAmount.unit()->name;
@@ -540,4 +538,15 @@ namespace Measurement::UnitSystems {
                                               &Measurement::Units::millipascalSecond,
                                               "viscosity_MetricAlternate",
                                               Measurement::SystemOfMeasurement::MetricAlternate};
+
+   UnitSystem const specificHeatCapacity_Calories{PhysicalQuantity::SpecificHeatCapacity,
+                                                  &Measurement::Units::caloriesPerCelsiusPerGram,
+                                                  "specificHeatCapacity_Calories",
+                                                  Measurement::SystemOfMeasurement::SpecificHeatCapacityCalories};
+
+   UnitSystem const specificHeatCapacity_Joules{PhysicalQuantity::SpecificHeatCapacity,
+                                                &Measurement::Units::joulesPerKelvinPerKg,
+                                                "specificHeatCapacity_Joules",
+                                                Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules};
+
 }

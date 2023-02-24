@@ -3232,10 +3232,6 @@ Error message:
         <translation type="unfinished">Mixte</translation>
     </message>
     <message>
-        <source>DiastaticPower</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unknown</source>
         <translation type="unfinished">Desconegut</translation>
     </message>
@@ -3536,6 +3532,30 @@ Log file may contain more details.</source>
     <message>
         <source>Weight</source>
         <translation type="unfinished">Massa</translation>
+    </message>
+    <message>
+        <source>Diastatic Power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity Calories per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity Joules per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>c/g·C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>J/kg·K</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

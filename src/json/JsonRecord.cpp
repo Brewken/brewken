@@ -158,7 +158,7 @@ namespace {
 
       Measurement::Unit const * unit =
          std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.find(unitName)->second;
-      Measurement::Amount canonicalValue = unit->toSI(value);
+      Measurement::Amount canonicalValue = unit->toCanonical(value);
 
       qDebug() <<
          Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" << canonicalValue;
@@ -226,7 +226,7 @@ namespace {
          return std::nullopt;
       }
 
-      Measurement::Amount canonicalValue = unit->toSI(value);
+      Measurement::Amount canonicalValue = unit->toCanonical(value);
 
       qDebug() <<
          Q_FUNC_INFO << "Converted" << value << " " << std::string(unitName).c_str() << "to" << canonicalValue;

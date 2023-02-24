@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>

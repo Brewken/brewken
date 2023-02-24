@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * main.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * main.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -33,6 +33,7 @@
 #include "Application.h"
 #include "config.h"
 #include "database/Database.h"
+#include "Localization.h"
 #include "Logging.h"
 #include "PersistentSettings.h"
 #include "xml/BeerXml.h"
@@ -202,10 +203,6 @@ int main(int argc, char **argv) {
       qInfo() << "Configuration directory:" << PersistentSettings::getConfigDir().absolutePath();
       qInfo() << "Data directory:" << PersistentSettings::getUserDataDir().absolutePath();
       qInfo() << "Resource directory:" << Application::getResourceDir().absolutePath();
-      QLocale const systemLocale = QLocale::system();
-      qInfo() <<
-         "Locale:" << systemLocale.name() << "(Decimal point:" << systemLocale.decimalPoint() <<
-         "/ Thousands separator:" << systemLocale.groupSeparator() << ")";
 
       qDebug() << Q_FUNC_INFO << "Library Paths:" << qApp->libraryPaths();
 

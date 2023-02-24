@@ -130,9 +130,13 @@ namespace Measurement {
       //
       // See https://en.wikipedia.org/wiki/Parts-per_notation for more info
       ConcentrationPartsPer,
-      ConcentrationMassPerVolume
+      ConcentrationMassPerVolume,
 
       // See comment in measurement/Unit.h about the different viscosity units
+
+      // Specific Heat Capacity
+      SpecificHeatCapacityCalories,
+      SpecificHeatCapacityJoules,
    };
 
 

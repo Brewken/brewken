@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/EnumStringMapping.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * utils/EnumStringMapping.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -72,8 +72,11 @@ public:
    /**
     * \brief Convert data that \b might not be a valid string representation of an enum to the \c int value of that
     *        enum.  This is useful when we are deserialising a file for instance
+    * \param stringValue
+    * \param caseInensitiveFallback If \c true (the default), this means we'll do a case-insensitive search if we didn't
+    *                               find \c stringValue as a case-sensitive match.
     */
-   std::optional<int>     stringToEnumAsInt(QString const & stringValue) const;
+   std::optional<int>     stringToEnumAsInt(QString const & stringValue, bool const caseInensitiveFallback = true) const;
 
    /**
     * \brief Convert data that \b might not be a valid \c int value of an enum to the string representation of that

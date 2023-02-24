@@ -1676,7 +1676,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::batchSize_l,
-                        lineEdit_batchSize->toSI().quantity(),
+                        lineEdit_batchSize->toCanonical().quantity(),
                         tr("Change Batch Size"));
 }
 
@@ -1687,7 +1687,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::boilSize_l,
-                        lineEdit_boilSize->toSI().quantity(),
+                        lineEdit_boilSize->toCanonical().quantity(),
                         tr("Change Boil Size"));
 }
 
@@ -2935,10 +2935,8 @@ void MainWindow::showStyleEditor()
    }
 }
 
-void MainWindow::changeBrewDate()
-{
+void MainWindow::changeBrewDate() {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
-   QDate newDate;
 
    for (QModelIndex selected : indexes) {
       auto target = treeView_recipe->getItem<BrewNote>(selected);
@@ -2950,24 +2948,22 @@ void MainWindow::changeBrewDate()
       // Pop the calendar, get the date.
       if ( btDatePopup->exec() == QDialog::Accepted )
       {
-         newDate = btDatePopup->selectedDate();
+         QDate newDate = btDatePopup->selectedDate();
          target->setBrewDate(newDate);
 
          // If this note is open in a tab
          BrewNoteWidget* ni = findBrewNoteWidget(target);
-         if ( ni )
-         {
+         if (ni) {
             tabWidget_recipeView->setTabText(tabWidget_recipeView->indexOf(ni), target->brewDate_short());
             return;
          }
       }
    }
+   return;
 }
 
-void MainWindow::fixBrewNote()
-{
+void MainWindow::fixBrewNote() {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
-   QDate newDate;
 
    for (QModelIndex selected : indexes) {
       auto target = treeView_recipe->getItem<BrewNote>(selected);
@@ -2985,18 +2981,21 @@ void MainWindow::fixBrewNote()
 
       target->recalculateEff(noteParent);
    }
+   return;
 }
 
 void MainWindow::updateStatus(const QString status) {
-   if( statusBar() )
+   if (statusBar()) {
       statusBar()->showMessage(status, 3000);
+   }
+   return;
 }
 
-void MainWindow::versionedRecipe(Recipe* descendant)
-{
+void MainWindow::versionedRecipe(Recipe* descendant) {
    QModelIndex ndx = treeView_recipe->findElement(descendant);
    setRecipe(descendant);
    treeView_recipe->setCurrentIndex(ndx);
+   return;
 }
 
 // .:TBD:. Seems redundant to pass both the brewnote ID and a pointer to it; we only need one of these

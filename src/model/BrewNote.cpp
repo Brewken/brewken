@@ -23,7 +23,6 @@
 
 #include <algorithm>
 #include <QDebug>
-#include <QLocale>
 #include <QObject>
 #include <QRegExp>
 #include <QString>

@@ -266,7 +266,7 @@ prefix = get_option('prefix')
 #
 # Finding out how to get shared library paths information was, err, fun because it's not very well documented.
 # Eventually, I realised that you can look in meson-private/cmake_XercesC/cmake_trace.txt,
-# meson-private/cmake_XercesC/cmake_trace.txt and so on to see what information Meson got back from CMake and thus know
+# meson-private/cmake_XalanC/cmake_trace.txt and so on to see what information Meson got back from CMake and thus know
 # which CMake variables are exposed via the get_variable() call.
 #
 sharedLibraryPaths = []
@@ -285,13 +285,14 @@ sharedLibraryPaths = []
 qtCommonDependencies = dependency('qt5',
                                   version : '>=5.9.5',
                                   modules : ['Core',
+                                             'Gui',          # Needed for QColor on Mac?
                                              'Multimedia',
                                              'Network',
                                              'PrintSupport',
                                              'Sql',
-                                             'Svg',
+                                             'Svg',          # Needed to make the deploy scripts pick up the svg plugins
                                              'Widgets',
-                                             'Xml'],
+                                             'Xml'],         # TBD: Not sure we need this any more
                                   include_type : 'system',
                                   static : true)
 # The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
@@ -992,6 +993,7 @@ filesToInstall_license = 'LICENSE'
 #=======================================================================================================================
 #============================================ Installation sub-directories =============================================
 #=======================================================================================================================
+# .:TBD:. We don't currently use installSubDir_bin, instead letting Meson decide where to put the binary
 if host_machine.system() == 'linux'
    #============================================= Linux Install Directories ============================================
    installSubDir_data = 'share/' + projectName
@@ -1150,7 +1152,7 @@ exportedVariables = {
    'CONFIG_DESCRIPTION_STRING' : 'Open source brewing software',
 
    # Some installers, eg NSIS on Windows, want a brief copyright string
-   'CONFIG_COPYRIGHT_STRING' : 'Copyright © various authors 2009-2023 -- see accompanying documentation',
+   'CONFIG_COPYRIGHT_STRING' : 'Copyright 2009-2023.  Distributed under the terms of the GNU General Public License (version 3).',
 
    # Installers often want the name of the organisation supplying the product, so we need something to put there
    'CONFIG_ORGANIZATION_NAME' : 'The ' + capitalisedProjectName + ' Team',
@@ -1177,23 +1179,17 @@ if host_machine.system() == 'linux'
    }
 endif
 
-### Info for InstallerApplicationIcon which is "Filename for a custom installer icon. The actual file is looked up by
-### attaching a '.icns' (macOS), '.ico' (Windows) suffix. No functionality on Unix."
+#
+# Export the name/location of the desktop icon (which, on Windows, is also the same icon for the installer) for the
+# packaging scripts.
+#
 if host_machine.system() == 'windows'
    exportedVariables += {
-#      'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon_96.ico',
-#      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'win',
       'CONFIG_INSTALLER_APPLICATION_ICON_PATH' : join_paths(meson.current_source_dir(), 'win', capitalisedProjectName + 'Icon_96.ico'),
    }
 elif host_machine.system() == 'darwin'
    exportedVariables += {
       'CONFIG_INSTALLER_APPLICATION_ICON'      : capitalisedProjectName + 'Icon.icns',
-      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : 'mac',
-   }
-elif host_machine.system() == 'linux'
-   exportedVariables += {
-      'CONFIG_INSTALLER_APPLICATION_ICON'      : '',
-      'CONFIG_INSTALLER_APPLICATION_ICON_DIR'  : '',
    }
 endif
 
@@ -1262,6 +1258,14 @@ elif host_machine.system() == 'windows'
    #
    configure_file(input  : 'packaging/windows/NsisInstallerScript.nsi.in',
                   output : 'NsisInstallerScript.nsi',
+                  configuration : exportedVariables,
+                  install : false)
+elif host_machine.system() == 'darwin'
+   #
+   # Mac: Information Property List file
+   #
+   configure_file(input  : 'packaging/darwin/Info.plist.in',
+                  output : 'Info.plist',
                   configuration : exportedVariables,
                   install : false)
 endif
@@ -1336,6 +1340,11 @@ if host_machine.system() == 'linux'
 else
    #----------- Windows and Mac -----------
    install_data(filesToInstall_copyright, install_dir : installSubDir_doc)
+endif
+
+if host_machine.system() == 'darwin'
+   # Desktop icon
+   install_data(filesToInstall_macIcons, install_dir : installSubDir_data)
 endif
 
 #=======================================================================================================================

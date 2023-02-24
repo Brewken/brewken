@@ -380,9 +380,14 @@ bool Application::initialize() {
    // Make sure all the necessary directories and files we need exist before starting.
    ensureDirectoriesExist();
 
-   readSystemOptions();
+   Application::readSystemOptions();
 
    Localization::loadTranslations(); // Do internationalization.
+
+   QLocale const & locale = Localization::getLocale();
+   qInfo() <<
+      "Locale:" << locale.name() << "(Decimal point:" << locale.decimalPoint() << "/ Thousands separator:" <<
+      locale.groupSeparator() << ")";
 
 #if defined(Q_OS_MAC)
    qt_set_sequence_auto_mnemonic(true); // turns on Mac Keyboard shortcuts
@@ -418,8 +423,7 @@ int Application::run() {
    BtSplashScreen splashScreen;
    splashScreen.show();
    qApp->processEvents();
-   if( !initialize() )
-   {
+   if (!Application::initialize()) {
       cleanup();
       return 1;
    }

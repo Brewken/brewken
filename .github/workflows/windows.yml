@@ -70,12 +70,19 @@ jobs:
       # these differences are about where things are installed, but some are about how Python behaves, eg what
       # platform.system() returns.  See comments at https://github.com/conan-io/conan/issues/2638 for more.)
       #
+      # We install the tree command here as, although it's not needed to do the build itself, it's useful for diagnosing
+      # certain build problems (eg to see what changes certain parts of the build have made to the build directory
+      # tree) when the build is running as a GitHub action.  (If need be, you can also download the entire build
+      # directory within a day of a failed build running, but you need a decent internet connection for this as it's
+      # quite large.)
+      #
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
           install: >-
             mingw-w64-${{ matrix.arch }}-python
             mingw-w64-${{ matrix.arch }}-python-pip
+            tree
           update: true
           release: true
           path-type: strict
@@ -181,11 +188,34 @@ jobs:
           export QT_QPA_PLATFORM=offscreen
           meson test
 
-      - name: Package
+      - name: Package (via CMake/CPack)
         shell: msys2 {0}
         run: |
           cd /C/_/build
           cmake --build . --target package --verbose
+
+      #
+      # See above for explanation of the extra things we need to do on Windows before running the bt script.  Most of
+      # that does not need doing again here, but PYTHONIOENCODING does need setting again.
+      #
+      - name: Package (New)
+        shell: msys2 {0}
+        run: |
+          cd /C/_/
+          echo "Working directory is:"
+          pwd
+          echo "Installed Python is:"
+          which python
+          python --version
+          echo "Installed pip is:"
+          which pip
+          pip --version
+          export PYTHONIOENCODING=utf8
+          echo "Running ./bt -v package"
+          ./bt -v package
+          cd mbuild/packages
+          pwd
+          tree -sh
 
       - name: Upload Windows binaries (installers)
         if: ${{ success()}}
@@ -195,6 +225,8 @@ jobs:
           path: |
             C:/_/build/brewken*.exe
             C:/_/build/brewken*.exe.sha256
+            C:/_/mbuild/packages/windows/Brewken*Installer.exe
+            C:/_/mbuild/packages/windows/Brewken*Installer.exe.sha256sum
           retention-days: 7
 
       - name: Upload error info from failed build

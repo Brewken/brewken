@@ -202,6 +202,7 @@ Hop::Hop(QString name) :
    m_caryophyllene_pct    {0.0},
    m_cohumulone_pct       {0.0},
    m_myrcene_pct          {0.0},
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_producer             {"" },
    m_product_id           {"" },
    m_year                 {std::nullopt},
@@ -235,6 +236,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    m_caryophyllene_pct    {namedParameterBundle.val<double   >(PropertyNames::Hop::caryophyllene_pct    )},
    m_cohumulone_pct       {namedParameterBundle.val<double   >(PropertyNames::Hop::cohumulone_pct       )},
    m_myrcene_pct          {namedParameterBundle.val<double   >(PropertyNames::Hop::myrcene_pct          )},
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_producer             {namedParameterBundle.val<QString  >(PropertyNames::Hop::producer             )},
    m_product_id           {namedParameterBundle.val<QString  >(PropertyNames::Hop::product_id           )},
    m_year                 {namedParameterBundle.val<int      >(PropertyNames::Hop::year                 )},
@@ -268,6 +270,7 @@ Hop::Hop(Hop const & other) :
    m_caryophyllene_pct     {other.m_caryophyllene_pct    },
    m_cohumulone_pct        {other.m_cohumulone_pct       },
    m_myrcene_pct           {other.m_myrcene_pct          },
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_producer              {other.m_producer             },
    m_product_id            {other.m_product_id           },
    m_year                  {other.m_year                 },

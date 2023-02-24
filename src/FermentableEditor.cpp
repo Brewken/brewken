@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -74,19 +74,19 @@ void FermentableEditor::save() {
       Fermentable::typeStringMapping.stringToEnum<Fermentable::Type>(comboBox_fermentableType->currentData().toString())
    );
 
-   obsFerm->setYield_pct(lineEdit_yield->toSI().quantity());
-   obsFerm->setColor_srm(lineEdit_color->toSI().quantity());
+   obsFerm->setYield_pct(lineEdit_yield->toCanonical().quantity());
+   obsFerm->setColor_srm(lineEdit_color->toCanonical().quantity());
    obsFerm->setAddAfterBoil((checkBox_addAfterBoil->checkState() == Qt::Checked)? true : false);
    obsFerm->setOrigin(lineEdit_origin->text());
    obsFerm->setSupplier(lineEdit_supplier->text());
-   obsFerm->setCoarseFineDiff_pct(lineEdit_coarseFineDiff->toSI().quantity());
-   obsFerm->setMoisture_pct(lineEdit_moisture->toSI().quantity());
-   obsFerm->setDiastaticPower_lintner(lineEdit_diastaticPower->toSI().quantity());
-   obsFerm->setProtein_pct(lineEdit_protein->toSI().quantity());
-   obsFerm->setMaxInBatch_pct(lineEdit_maxInBatch->toSI().quantity());
+   obsFerm->setCoarseFineDiff_pct(lineEdit_coarseFineDiff->toCanonical().quantity());
+   obsFerm->setMoisture_pct(lineEdit_moisture->toCanonical().quantity());
+   obsFerm->setDiastaticPower_lintner(lineEdit_diastaticPower->toCanonical().quantity());
+   obsFerm->setProtein_pct(lineEdit_protein->toCanonical().quantity());
+   obsFerm->setMaxInBatch_pct(lineEdit_maxInBatch->toCanonical().quantity());
    obsFerm->setRecommendMash((checkBox_recommendMash->checkState() == Qt::Checked) ? true : false);
    obsFerm->setIsMashed((checkBox_isMashed->checkState() == Qt::Checked) ? true : false);
-   obsFerm->setIbuGalPerLb(lineEdit_ibuGalPerLb->toSI().quantity());
+   obsFerm->setIbuGalPerLb(lineEdit_ibuGalPerLb->toCanonical().quantity());
    obsFerm->setNotes(textEdit_notes->toPlainText());
 
    if (this->obsFerm->key() < 0) {
@@ -95,7 +95,7 @@ void FermentableEditor::save() {
 
    // Since inventory amount isn't really an attribute of the Fermentable, it's best to store it after we know the
    // Fermentable has a DB record.
-   this->obsFerm->setInventoryAmount(lineEdit_inventory->toSI().quantity());
+   this->obsFerm->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
 
    setVisible(false);
    return;

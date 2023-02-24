@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -58,6 +58,7 @@ AddSettingName(deletewhat)
 AddSettingName(directory)                        // backups section
 AddSettingName(files)                            // backups section
 AddSettingName(firstWortHopAdjustment)
+AddSettingName(forcedLocale)
 AddSettingName(frequency)                        // backups section
 AddSettingName(geometry)
 AddSettingName(ibu_formula)

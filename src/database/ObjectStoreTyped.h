@@ -52,6 +52,8 @@ public:
     */
    static ObjectStoreTyped<NE> & getInstance();
 
+   using ObjectStore::insert;
+
    /**
     * \brief Insert a new object in the DB (and in our cache list)
     */
@@ -102,6 +104,8 @@ public:
       std::shared_ptr<NE> nePointer{&ne};
       return this->insert(nePointer);
    }
+
+   using ObjectStore::insertOrUpdate;
 
    /**
     * \brief Convenience function that calls either \c insert or \c update, depending on whether the object is already
