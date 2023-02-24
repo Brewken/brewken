@@ -70,12 +70,19 @@ jobs:
       # these differences are about where things are installed, but some are about how Python behaves, eg what
       # platform.system() returns.  See comments at https://github.com/conan-io/conan/issues/2638 for more.)
       #
+      # We install the tree command here as, although it's not needed to do the build itself, it's useful for diagnosing
+      # certain build problems (eg to see what changes certain parts of the build have made to the build directory
+      # tree) when the build is running as a GitHub action.  (If need be, you can also download the entire build
+      # directory within a day of a failed build running, but you need a decent internet connection for this as it's
+      # quite large.)
+      #
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
           install: >-
             mingw-w64-${{ matrix.arch }}-python
             mingw-w64-${{ matrix.arch }}-python-pip
+            tree
           update: true
           release: true
           path-type: strict

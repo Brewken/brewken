@@ -40,18 +40,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      #
+      # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
+      # system is ready to brew".  Having Homebrew installed should imply the Xcode Command Line Tools are also
+      # installed, but `xcode-select -p` confirms this (expected output "/Library/Developer/CommandLineTools").  As
+      # elsewhere we use the echo trick to ensure that a non-zero return value from these diagnostic commands is not
+      # treated as a build script failure.
+      #
+      # We install the tree command here as, although it's not needed to do the build itself, it's useful for diagnosing
+      # certain build problems (eg to see what changes certain parts of the build have made to the build directory
+      # tree) when the build is running as a GitHub action.  (If need be, you can also download the entire build
+      # directory within a day of a failed build running, but you need a decent internet connection for this as it's
+      # quite large.)
+      #
       - name: Install Frameworks and Libraries, and set up Meson build environment
-        #
-        # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
-        # system is ready to brew".  Having Homebrew installed should imply the Xcode Command Line Tools are also
-        # installed, but `xcode-select -p` confirms this (expected output "/Library/Developer/CommandLineTools").  As
-        # elsewhere we use the echo trick to ensure that a non-zero return value from these diagnostic commands is not
-        # treated as a build script failure.
-        #
-        # We use the tree command for diagnosing certain build problems (specifically to see what changes certain parts of
-        # the build have made to the build directory tree).  (If need be, you can also download the entire build directory
-        # within a day of a failed build running, but you need a decent internet connection for this as it's quite large.)
-        #
         run: |
            echo "Output from brew doctor: $(brew doctor)"
            echo "Output from xcode-select -p: $(xcode-select -p)"
