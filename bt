@@ -1789,8 +1789,9 @@ def doPackage():
          #
          # Make the checksum file TODO
          #
-         ##log.info('Generating checksum file for ' + ¥¥¥debPackageName)  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-         ##writeSha256sum(dir_packages_platform, ¥¥¥debPackageName)
+         winInstallerName = capitalisedProjectName + ' ' + buildConfig['CONFIG_VERSION_STRING'] + ' Installer.exe'
+         log.info('Generating checksum file for ' + winInstallerName)
+         writeSha256sum(dir_packages_platform, winInstallerName)
 
       #-----------------------------------------------------------------------------------------------------------------
       #------------------------------------------------- Mac Packaging -------------------------------------------------

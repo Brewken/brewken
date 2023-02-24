@@ -225,6 +225,8 @@ jobs:
           path: |
             C:/_/build/brewken*.exe
             C:/_/build/brewken*.exe.sha256
+            C:/_/mbuild/packages/windows/Brewken*Installer.exe
+            C:/_/mbuild/packages/windows/Brewken*Installer.exe.sha256sum
           retention-days: 7
 
       - name: Upload error info from failed build
