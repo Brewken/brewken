@@ -154,6 +154,12 @@ jobs:
             build/brewken*.deb.sha256
             build/brewken*.tar.bz2
             build/brewken*.tar.bz2.sha256
+            mbuild/packages/source/brewken*.tar.xz
+            mbuild/packages/source/brewken*.tar.xz.sha256sum
+            mbuild/packages/linux/brewken*.deb
+            mbuild/packages/linux/brewken*.deb.sha256sum
+            mbuild/packages/linux/brewken*.rpm
+            mbuild/packages/linux/brewken*.rpm.sha256sum
           retention-days: 7
 
       - name: Recover Debris Artifacts (CMake)

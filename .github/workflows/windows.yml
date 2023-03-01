@@ -1,8 +1,9 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/windows.yml is part of Brewken, and is copyright the following authors 2021-2022:
+# .github/workflows/windows.yml is part of Brewken, and is copyright the following authors 2021-2023:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Chris Speck <cgspeck@gmail.com>
 #   • Mattias Måhl <mattias@kejsarsten.com>
+#   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -134,13 +135,20 @@ jobs:
           echo "Running ./bt -v setup all"
           ./bt -v setup all
 
-      #- name: Download nsis plugins
-      #  run: |
-      #    New-Item -ItemType Directory -Force -Path /C/_/build/nsis
-      #    Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip -OutFile /C/_/build/nsis/Locate.zip
-      #    Expand-Archive -Path /C/_/build/nsis/Locate.zip -DestinationPath /C/_/build/nsis/Locate
-      #    Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip -OutFile /C/_/build/nsis/Nsislog.zip
-      #    Expand-Archive -Path /C/_/build/nsis/Nsislog.zip -DestinationPath /C/_/build/nsis/Nsislog
+      # In theory we don't need the next bit, as the bt script does it.  In practice, for reasons I haven't yet bottomed
+      # out, but which are probably to do with search paths, when called from CMake/CPack, NSIS sometimes complains it
+      # can't find Locate.nsh, so we need this bit to put it inside the CMake build directory tree.
+      - name: Download nsis plugins
+        shell: msys2 {0}
+        run: |
+          New-Item -ItemType Directory -Force -Path /C/_/build/nsis
+          Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip -OutFile /C/_/build/nsis/Locate.zip
+          Expand-Archive -Path /C/_/build/nsis/Locate.zip -DestinationPath /C/_/build/nsis/Locate
+          Invoke-WebRequest -Uri https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip -OutFile /C/_/build/nsis/Nsislog.zip
+          Expand-Archive -Path /C/_/build/nsis/Nsislog.zip -DestinationPath /C/_/build/nsis/Nsislog
+          cd /C/_/build
+          pwd
+          tree -sh
 
       # Somehow, running the configure script sets up CMake to use Ninja rather than Makefiles, which is then in
       # conflict with our other assumptions about CMake.  Error message says remove CMakeCache.txt before running CMake,
@@ -163,6 +171,7 @@ jobs:
           pwd
           find ../third-party
           cmake --build .
+          ls
 
       - name: Build (with Meson)
         shell: msys2 {0}
@@ -229,10 +238,18 @@ jobs:
             C:/_/mbuild/packages/windows/Brewken*Installer.exe.sha256sum
           retention-days: 7
 
-      - name: Upload error info from failed build
+      - name: Upload CMake error info from failed build
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.msystem }}-build
           path: C:/_/build/
+          retention-days: 1
+
+      - name: Upload Meson error info from failed build
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.msystem }}-mbuild
+          path: C:/_/mbuild/
           retention-days: 1
