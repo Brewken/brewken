@@ -2051,6 +2051,14 @@ def doPackage():
          # folder (otherwise, eg, the dmg name it creates will be wrong, as explained at
          # https://doc.qt.io/qt-6/macos-deployment.html.
          #
+         # In a previous iteration of this script, I skipped the -dmg option and tried to build the disk image with
+         # dmgbuild (code at https://github.com/dmgbuild/dmgbuild, docs at
+         # https://dmgbuild.readthedocs.io/en/latest/index.html).  The advantages of this would be that it would make it
+         # possible to do further fix-up work on the directory tree (if needed) and, potentially, give us more control
+         # over the disk image (eg to specify an icon for it).  However, it's a lot simpler to let macdeployqt create
+         # the disk image, and we currently don't think we need to do further fix-up work after it's run.  A custom icon
+         # on the disk image would be nice, but is far from essential.
+         #
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
          abortOnRunFail(
@@ -2058,10 +2066,6 @@ def doPackage():
             # Note that app bundle name has to be the first parameter and options come afterwards.
             # The -executable argument is to automatically alter the search path of the executable for the Qt libraries
             # (ie so the executable knows where to find them inside the bundle)
-            #
-            # We do not use the -dmg option, partly because we might still have some more fix-up work to do before
-            # packaging up the directory tree (although so far I think we can do it all beforehand) and partly because
-            # we want more control over the dmg (eg to specify an icon for it).
             #
             subprocess.run(['macdeployqt',
                             macBundleDirName,
@@ -2136,6 +2140,8 @@ def doPackage():
 #         )
 #         os.chdir(previousWorkingDirectory)
          log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform.as_posix())
+         log.debug('Running hdiutil on ' + dmgFileName)
+         os.chdir(dir_packages_platform)
          abortOnRunFail(
             subprocess.run(
                ['hdiutil', 'attach', '-verbose', dmgFileName]
