@@ -767,6 +767,10 @@ def installDependencies():
          #         available!")  For the moment, we're just using Boost header files on Mac though, so this should be
          #         OK.
          #
+         # We install the tree command here as, although it's not needed to do the build itself, it's useful for
+         # diagnosing certain build problems (eg to see what changes certain parts of the build have made to the build
+         # directory tree) when the build is running as a GitHub action.
+         #
          installList = ['boost',
                         'cmake',
                         'coreutils',
@@ -777,6 +781,7 @@ def installDependencies():
                         'meson',
                         'ninja',
                         'pandoc',
+                        'tree',
                         'qt@5',
                         'xalan-c',
                         'xerces-c']
@@ -1803,7 +1808,7 @@ def doPackage():
       #------------------------------------------------- Mac Packaging -------------------------------------------------
       #-----------------------------------------------------------------------------------------------------------------
       case 'Darwin':
-         log.debug('Mac Packaging - TODO!')
+         log.debug('Mac Packaging')
          #
          # See https://stackoverflow.com/questions/1596945/building-osx-app-bundle for essential info on building Mac
          # app bundles.  Also https://mesonbuild.com/Creating-OSX-packages.html suggests how to do this with Meson,
@@ -1890,6 +1895,7 @@ def doPackage():
          #            ├── en.lproj        <── Localized resources
          #            │   ├── COPYRIGHT ✅
          #            │   └── README.md ✅
+         #            ├── qt.conf ✅
          #            ├── sounds
          #            │   └── [All the filesToInstall_sounds .wav files] ✅
          #            └── translations_qm
@@ -2064,6 +2070,13 @@ def doPackage():
                             '-dmg'],
                            capture_output=False)
          )
+
+         #
+         # The result of specifying the `-dmg' flag should be a [projectName]_[versionNumber].dmg file
+         #
+         log.debug('Directory tree after running macdeployqt')
+         abortOnRunFail(subprocess.run(['tree', '-sh'], capture_output=False))
+         dmgFileName = macBundleDirName.replace('.app', '.dmg')
 
          log.debug('Running otool after macdeployqt')
          os.chdir(dir_packages_mac_bin)
