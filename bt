@@ -932,10 +932,7 @@ def doSetup(setupOption):
    print('   cd ' + os.path.relpath(dir_build))
    print('   meson compile')
    print('   meson test')
-   if (platform.system() == 'Linux'):
-      print('   sudo meson install')
-   else:
-      print('   meson install')
+   print('   meson install')
    print('   ' + projectName)
 
 
@@ -2044,6 +2041,10 @@ def doPackage():
          #
          # Now let macdeployqt do most of the heavy lifting
          #
+         # Note that it is best to run macdeployqt in the directory that contains the [projectName]_[versionNumber].app
+         # folder (otherwise, eg, the dmg name it creates will be wrong, as explained at
+         # https://doc.qt.io/qt-6/macos-deployment.html.
+         #
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
          abortOnRunFail(
@@ -2059,7 +2060,8 @@ def doPackage():
             subprocess.run(['macdeployqt',
                             macBundleDirName,
                             '-verbose=2',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
-                            '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName],
+                            '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName,
+                            '-dmg'],
                            capture_output=False)
          )
 
@@ -2069,7 +2071,10 @@ def doPackage():
          abortOnRunFail(subprocess.run(['otool', '-l', capitalisedProjectName], capture_output=False))
 
          #
-         # Now that we have the app bundle directory structure, we need to compress it into a dmg file
+         # TBD: This isn't quite working, so going to try letting macdeployqt make the image
+         #
+         # Now that we have the app bundle directory structure, we need to compress it into a dmg file using dmgbuild
+         # (code at https://github.com/dmgbuild/dmgbuild, docs at https://dmgbuild.readthedocs.io/en/latest/index.html).
          #
          # You can pass parameters in to dmgbuild on the command line, but it gets a bit unwieldy if you have a lot of
          # them.  We use the alternative method of providing a configuration file (which is actually just a Python
@@ -2086,8 +2091,8 @@ def doPackage():
             sf.write('# Settings file for dmgbuild to generate ' + dmgFileName + '\n')
             sf.write('#------------------------------------------------------------------------------------\n')
             sf.write('\n')
-            sf.write('# Compressed (bzip2) format\n')
-            sf.write('format = "UDBZ"\n')
+            sf.write('# Compressed (gzip) format\n')
+            sf.write('format = "UDZO"\n')
             sf.write('\n')
             sf.write('# This is the default file system, but no harm to be explicit\n')
             sf.write('filesystem = "HFS+"\n')
