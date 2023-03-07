@@ -189,8 +189,8 @@ public:
         UnitSystem const & unitSystem,
         std::function<double(double)> convertToCanonical,
         std::function<double(double)> convertFromCanonical,
-        double boundaryValue,
-        bool isCanonical) :
+        double const boundaryValue,
+        bool const isCanonical) :
       self                {self},
       unitSystem          {unitSystem},
       convertToCanonical  {convertToCanonical},
@@ -211,8 +211,8 @@ public:
 
    std::function<double(double)> convertToCanonical;
    std::function<double(double)> convertFromCanonical;
-   double boundaryValue;
-   bool isCanonical;
+   double const boundaryValue;
+   bool const isCanonical;
 };
 
 Measurement::Unit::Unit(UnitSystem const & unitSystem,
@@ -227,7 +227,7 @@ Measurement::Unit::Unit(UnitSystem const & unitSystem,
                                 convertToCanonical,
                                 convertFromCanonical,
                                 boundaryValue,
-                                !canonical /* canonical == nullptr means isCanonical! */ )} {
+                                (canonical == nullptr) )} {
    //
    // You might think here would be a neat place to the Unit we are constructing to unitNameLookup and, if appropriate,
    // physicalQuantityToCanonicalUnit.  However, there is not guarantee that unitSystem is constructed at this point, so
@@ -245,13 +245,12 @@ void Measurement::Unit::initialiseLookups() {
    for (auto const unit : listOfAllUnits) {
       Measurement::PhysicalQuantity const physicalQuantity = unit->pimpl->unitSystem.getPhysicalQuantity();
       unitNameLookup.insert(NameLookupKey{physicalQuantity, unit->name.toLower()}, unit);
-      if (!unit->pimpl->isCanonical) {
+      if (unit->pimpl->isCanonical) {
          physicalQuantityToCanonicalUnit.insert(physicalQuantity, unit);
       }
    }
    return;
 }
-
 
 bool Measurement::Unit::operator==(Unit const & other) const {
    // Since we're not intending to create multiple instances of any given UnitSystem, it should be enough to check

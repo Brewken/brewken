@@ -87,44 +87,6 @@ public:
       return this->scaleToUnit.value(relativeScale, nullptr);
    }
 
-///   /**
-///    * \brief Maps from unit name (in this \c UnitSystem) to \c Unit
-///    *
-///    * \param name
-///    * \param caseInensitiveFallback If \c true (the default), this means we'll do a case-insensitive search if we didn't
-///    *                               find \c name as a case-sensitive match.  Eg, we'll match "ml" for milliliters, even
-///    *                               though the correct name is "mL".  This should always be safe to do, as AFAICT there
-///    *                               are no current or foreseeable units that _we_ use whose names only differ by case.
-///    */
-///   Unit const * getUnitFromName(QString const & name, bool const caseInensitiveFallback = true) const {
-///      auto const unitsForThisSystem = this->scaleToUnit.values();
-///      auto matchingUnit = std::find_if(
-///         unitsForThisSystem.begin(),
-///         unitsForThisSystem.end(),
-///         [name](Measurement::Unit const * unit) {return unit->name == name;}
-///      );
-///
-///      //
-///      // If we didn't find an exact match, we'll try a case-insensitive one if so-configured.  (We don't do this by
-///      // default as (a) the assumption is that it's rare we'll need the case insensitivity, and (b) if we ever did have
-///      // an instance where case sensitivity were important - eg "cal" and "Cal" - then it would be incorrect to do case
-///      // insensitive matching first.)
-///      //
-///      if (matchingUnit != unitsForThisSystem.end() && caseInensitiveFallback) {
-///         matchingUnit = std::find_if(
-///            unitsForThisSystem.begin(),
-///            unitsForThisSystem.end(),
-///            [name](Measurement::Unit const * unit) {return unit->name.toLower() == name.toLower();}
-///         );
-///      }
-///
-///
-///      if (matchingUnit != unitsForThisSystem.end()) {
-///         return *matchingUnit;
-///      }
-///      return nullptr;
-///   }
-
    /**
     * \brief This does most of the work for displayAmount() and amountDisplay()
     *
