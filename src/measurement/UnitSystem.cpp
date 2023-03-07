@@ -87,21 +87,43 @@ public:
       return this->scaleToUnit.value(relativeScale, nullptr);
    }
 
-   /**
-    * \brief Maps from unit name (in this \c UnitSystem) to \c Unit
-    */
-   Unit const * getUnitFromName(QString const & name) const {
-      auto const unitsForThisSystem = this->scaleToUnit.values();
-      auto matchingUnit = std::find_if(
-         unitsForThisSystem.begin(),
-         unitsForThisSystem.end(),
-         [name](Measurement::Unit const * unit) {return unit->name == name;}
-      );
-      if (matchingUnit != unitsForThisSystem.end()) {
-         return *matchingUnit;
-      }
-      return nullptr;
-   }
+///   /**
+///    * \brief Maps from unit name (in this \c UnitSystem) to \c Unit
+///    *
+///    * \param name
+///    * \param caseInensitiveFallback If \c true (the default), this means we'll do a case-insensitive search if we didn't
+///    *                               find \c name as a case-sensitive match.  Eg, we'll match "ml" for milliliters, even
+///    *                               though the correct name is "mL".  This should always be safe to do, as AFAICT there
+///    *                               are no current or foreseeable units that _we_ use whose names only differ by case.
+///    */
+///   Unit const * getUnitFromName(QString const & name, bool const caseInensitiveFallback = true) const {
+///      auto const unitsForThisSystem = this->scaleToUnit.values();
+///      auto matchingUnit = std::find_if(
+///         unitsForThisSystem.begin(),
+///         unitsForThisSystem.end(),
+///         [name](Measurement::Unit const * unit) {return unit->name == name;}
+///      );
+///
+///      //
+///      // If we didn't find an exact match, we'll try a case-insensitive one if so-configured.  (We don't do this by
+///      // default as (a) the assumption is that it's rare we'll need the case insensitivity, and (b) if we ever did have
+///      // an instance where case sensitivity were important - eg "cal" and "Cal" - then it would be incorrect to do case
+///      // insensitive matching first.)
+///      //
+///      if (matchingUnit != unitsForThisSystem.end() && caseInensitiveFallback) {
+///         matchingUnit = std::find_if(
+///            unitsForThisSystem.begin(),
+///            unitsForThisSystem.end(),
+///            [name](Measurement::Unit const * unit) {return unit->name.toLower() == name.toLower();}
+///         );
+///      }
+///
+///
+///      if (matchingUnit != unitsForThisSystem.end()) {
+///         return *matchingUnit;
+///      }
+///      return nullptr;
+///   }
 
    /**
     * \brief This does most of the work for displayAmount() and amountDisplay()
@@ -224,12 +246,10 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
 
    Unit const * unitToUse = nullptr;
    if (!unitName.isEmpty()) {
-      // The supplied string specifies units, so see if they are ones we recognise in this unit system
-      unitToUse = this->pimpl->getUnitFromName(unitName);
-      // If we didn't find the specified units in this UnitSystem, broaden the search and look in all units
-      if (!unitToUse) {
-         unitToUse = Measurement::Unit::getUnit(unitName, this->pimpl->physicalQuantity);
-      }
+      // Unit::getUnit() will, by preference, match to a unit in the current UnitSystem if possible.  If not, it will
+      // match to a unit in another UnitSystem for the same PhysicalQuantity.  If there are no matches that way, it will
+      // return nullptr;
+      unitToUse = Unit::getUnit(unitName, *this, true);
       if (unitToUse) {
          qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "interpreted as" << unitToUse->name;
       } else {
@@ -245,8 +265,8 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
 
    Measurement::Amount siAmount = unitToUse->toCanonical(amt);
    qDebug() <<
-      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" << siAmount.quantity() <<
-      "in" << siAmount.unit()->name;
+      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" <<
+      siAmount.quantity() << "in" << siAmount.unit()->name;
 
    return siAmount;
 }

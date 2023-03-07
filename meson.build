@@ -93,13 +93,13 @@
 #
 # Then to install:
 #    meson install
+# Or, on Linux, you can do:
+#    sudo meson install
+# which avoids the pop-up window
 #
-# Note that, on Linux, although you can do `sudo meson install` to avoids the pop-up window prompting you for a
-# password to allow meson to do sudo itself, this is not a good idea.  Aside from the general principle of not
-# running-as-root for any longer than we need to, the problem is that some files in the mbuild tree (in particular
-# meson-logs/install-log.txt) will be created as, and thus owned by, root, with no write access for other users.  If you
-# then run meson again without sudo, you'll then get an error if it tries to write to file.  This certainly happens if
-# you run `bt package` for example.
+# Note that, on Linux, using `sudo meson install` sometimes creates problems with file permissions - eg
+# mbuild/meson-logs/install-log.txt ends up being writable only by root and that results in an error when you run
+# `bt package`, but this should be fixed in Meson 1.1.0.
 #
 # To build source packages (in the meson-dist subdirectory of the build directory):
 #    meson dist

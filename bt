@@ -937,7 +937,10 @@ def doSetup(setupOption):
    print('   cd ' + os.path.relpath(dir_build))
    print('   meson compile')
    print('   meson test')
-   print('   meson install')
+   if (platform.system() == 'Linux'):
+      print('   sudo meson install')
+   else:
+      print('   meson install')
    print('   ' + projectName)
 
 
@@ -2013,7 +2016,7 @@ def doPackage():
          abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
 
          #
-         # Strictly speaking, we should look at every /usr/local/opt/.../*.dylib dependency of our executable, and run
+         # Strictly speaking, we should look at every /usr/local/opt/../*.dylib dependency of our executable, and run
          # each of those .dylib files through otool to get its dependencies, then repeat until we find no new
          # dependencies.  Then we should ensure each dependency is copied into the app bundle and whatever depends on it
          # knows where to find it etc.  Pretty soon we'd have ended up reimplementing macdeployqt.  Fortunately, in
@@ -2055,9 +2058,9 @@ def doPackage():
          # dmgbuild (code at https://github.com/dmgbuild/dmgbuild, docs at
          # https://dmgbuild.readthedocs.io/en/latest/index.html).  The advantages of this would be that it would make it
          # possible to do further fix-up work on the directory tree (if needed) and, potentially, give us more control
-         # over the disk image (eg to specify an icon for it).  However, it's a lot simpler to let macdeployqt create
-         # the disk image, and we currently don't think we need to do further fix-up work after it's run.  A custom icon
-         # on the disk image would be nice, but is far from essential.
+         # over the disk image (eg to specify an icon for it).  However, it seemed to be fiddly to get it to work.  It's
+         # a lot simpler to let macdeployqt create the disk image, and we currently don't think we need to do further
+         # fix-up work after it's run.  A custom icon on the disk image would be nice, but is far from essential.
          #
          log.debug('Running macdeployqt')
          os.chdir(dir_packages_platform)
@@ -2082,69 +2085,38 @@ def doPackage():
          abortOnRunFail(subprocess.run(['tree', '-sh'], capture_output=False))
          dmgFileName = macBundleDirName.replace('.app', '.dmg')
 
-         log.debug('Running otool after macdeployqt')
+         log.debug('Running otool on ' + capitalisedProjectName + ' executable after macdeployqt')
          os.chdir(dir_packages_mac_bin)
          abortOnRunFail(subprocess.run(['otool', '-L', capitalisedProjectName], capture_output=False))
          abortOnRunFail(subprocess.run(['otool', '-l', capitalisedProjectName], capture_output=False))
+         log.debug('Running otool on ' + xalanLibName + ' library after macdeployqt')
+         os.chdir(dir_packages_mac_frm)
+         abortOnRunFail(subprocess.run(['otool', '-L', xalanLibName], capture_output=False))
+
+         log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform.as_posix())
 
          #
-         # TBD: This isn't quite working, so going to try letting macdeployqt make the image
+         # We can now mount the disk image and check its contents.  (I don't think we can modify the contents though.)
          #
-         # Now that we have the app bundle directory structure, we need to compress it into a dmg file using dmgbuild
-         # (code at https://github.com/dmgbuild/dmgbuild, docs at https://dmgbuild.readthedocs.io/en/latest/index.html).
+         # By default, a disk image called foobar.dmg will get mounted at /Volumes/foobar.
          #
-         # You can pass parameters in to dmgbuild on the command line, but it gets a bit unwieldy if you have a lot of
-         # them.  We use the alternative method of providing a configuration file (which is actually just a Python
-         # script).  So we generate that first.
-         #
-         # It would be neat if we could invoke dmgbuild directly from Python, but I haven't found a way to do this.
-         #
-#         log.debug('Creating .dmg file')
-#         os.chdir(dir_packages_platform)
-#         settingsFileName = 'dmgSettings.py'
-#         dmgFileName = capitalisedProjectName + '-' + buildConfig['CONFIG_VERSION_STRING'] + '.dmg'
-#         with open(settingsFileName, 'wt') as sf:
-#            sf.write('#------------------------------------------------------------------------------------\n')
-#            sf.write('# Settings file for dmgbuild to generate ' + dmgFileName + '\n')
-#            sf.write('#------------------------------------------------------------------------------------\n')
-#            sf.write('\n')
-#            sf.write('# Compressed (gzip) format\n')
-#            sf.write('format = "UDZO"\n')
-#            sf.write('\n')
-#            sf.write('# This is the default file system, but no harm to be explicit\n')
-#            sf.write('filesystem = "HFS+"\n')
-#            sf.write('\n')
-#            sf.write('# Disk image holds just one folder\n')
-#            sf.write('file = "'+ macBundleDirName + '"\n')
-#            sf.write('\n')
-#            sf.write('# Icon used to badge the system’s standard external disk icon\n')
-#            sf.write('# This is a convenient way to construct a suitable icon from your application\’s icon\n')
-#            # Doco implies path should start with /Applications/, but this does not work
-#            sf.write('badge_icon = "'+ macBundleDirName + '/Contents/Resources/' + capitalisedProjectName + 'Icon.icns"\n')
-#            sf.write('\n')
-#            sf.write('# Expected usage is drag to install, so default view of icons makes most sense\n')
-#            sf.write('default_view = "icon-view"\n')
-#         #
-#         # Confusingly, although the .dmg file name and the volume name can be passed in via the settings file they are
-#         # nonetheless required parameters on the command line.  Specifically, usage is:
-#         #    dmgbuild [-h] [-s SETTINGS] [-D DEFINES] [--no-hidpi] volume-name output.dmg
-#         #
-#         abortOnRunFail(
-#            subprocess.run(
-#               ['dmgbuild',
-#                '-s', settingsFileName,
-#                capitalisedProjectName + ' ' + buildConfig['CONFIG_VERSION_STRING'],
-#                dmgFileName],
-#               capture_output=False
-#            )
-#         )
-#         os.chdir(previousWorkingDirectory)
-         log.info('Created ' + dmgFileName + ' in directory ' + dir_packages_platform.as_posix())
-         log.debug('Running hdiutil on ' + dmgFileName)
+         log.debug('Running hdiutil to mount ' + dmgFileName)
          os.chdir(dir_packages_platform)
          abortOnRunFail(
             subprocess.run(
                ['hdiutil', 'attach', '-verbose', dmgFileName]
+            )
+         )
+         mountPoint = '/Volumes/' + dmgFileName.replace('.dmg', '')
+         log.debug('Directory tree of disk image')
+         abortOnRunFail(
+            subprocess.run(['tree', '-sh', mountPoint], capture_output=False)
+         )
+         log.debug('Running hdiutil to unmount ' + mountPoint)
+         os.chdir(dir_packages_platform)
+         abortOnRunFail(
+            subprocess.run(
+               ['hdiutil', 'dettach', '-verbose', mountPoint]
             )
          )
 
@@ -2153,6 +2125,8 @@ def doPackage():
          #
          log.info('Generating checksum file for ' + dmgFileName)
          writeSha256sum(dir_packages_platform, dmgFileName)
+
+         os.chdir(previousWorkingDirectory)
 
       case _:
          log.critical('Unrecognised platform: ' + platform.system())
