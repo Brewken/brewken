@@ -2035,6 +2035,8 @@ def doPackage():
          ).stdout.decode('UTF-8')
          log.debug('Output of `otool -L' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
          xalanMsgLibName = ''
+         xalanMsgInstallName = ''
+
          xalanMsgMatch =  re.search(r'^\s*(\S+/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
          if (xalanMsgMatch):
             xalanMsgLibName = xalanMsgMatch[2]
@@ -2046,6 +2048,24 @@ def doPackage():
             xalanMsgLibName = 'libxalanMsg.112.dylib'
          log.debug('Copying ' + xalanDir + xalanMsgLibName + ' to ' + dir_packages_mac_frm.as_posix())
          shutil.copy2(xalanDir + xalanMsgLibName, dir_packages_mac_frm)
+
+         #
+         # Let's copy libxalan-c.112.dylib to where it needs to go and hope that macdeployqt does not overwrite it
+         #
+         shutil.copy2(xalanDir + xalanLibName, dir_packages_mac_frm)
+
+         #
+         # We need to fix up libxalan-c.112.dylib so that it looks for libxalanMsg.112.dylib in the right place.  Long
+         # story short, this means changing '@rpath/libxalanMsg.112.dylib' to '@loader_path/libxalanMsg.112.dylib'
+         #
+         os.chdir(dir_packages_mac_frm)
+         abortOnRunFail(
+            subprocess.run(['install_name_tool',
+                            '-change',
+                            xalanMsgLibName,
+                            '@loader_path/' + xalanMsgLibName],
+                           capture_output=False)
+         )
 
          #
          # Now let macdeployqt do most of the heavy lifting
@@ -2116,7 +2136,7 @@ def doPackage():
          os.chdir(dir_packages_platform)
          abortOnRunFail(
             subprocess.run(
-               ['hdiutil', 'dettach', '-verbose', mountPoint]
+               ['hdiutil', 'detach', '-verbose', mountPoint]
             )
          )
 
