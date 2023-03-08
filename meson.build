@@ -1455,6 +1455,21 @@ endif
 #=======================================================================================================================
 #========================================== Linker-specific settings & flags ===========================================
 #=======================================================================================================================
+#
+# On MacOS, there are some extra linker flags to tell the OS where to look for shared libraries that we ship in the app
+# bundle.  These are passed in via the install_rpath parameter on Meson's `executable` function.  We don't want to pass
+# this parameter on Windows or Linux.  (I think it's harmless on Windows but might have some undesirable effect on
+# Linux.)  Fortunately we can put additional arguments in a platform-specific dictionary that can be passed to any
+# Meson function via the special 'kwargs' argument (provided there is no overlap between arguments specified directly in
+# the function call and those included in the dictionary).
+#
+# See comments in the `bt` build tool script for more on where/how MacOS searches for shared libraries.
+#
+if host_machine.system() == 'darwin'
+   platformSpecificArgs = {'install_rpath': '@executable_path/../Frameworks'}
+else
+   platformSpecificArgs = {}
+endif
 
 #=======================================================================================================================
 #===================================================== Main builds =====================================================
@@ -1478,6 +1493,7 @@ mainExecutable = executable(mainExecutableTargetName,
                             include_directories : includeDirs,
                             dependencies : mainExeDependencies,
                             link_with : commonCodeStaticLib,
+                            kwargs : platformSpecificArgs,
                             install : true)
 
 testRunner = executable(testRunnerTargetName,
