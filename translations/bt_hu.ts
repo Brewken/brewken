@@ -3056,7 +3056,6 @@ Error message:
     </message>
     <message>
         <source>kg</source>
-        <extracomment>NOTE FOR TRANSLATORS: The abbreviated name of each unit (eg &quot;kg&quot; for kilograms, &quot;g&quot; for grams, etc) must be</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>

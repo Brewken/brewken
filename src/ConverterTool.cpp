@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ConverterTool.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * ConverterTool.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -27,12 +27,12 @@
 ConverterTool::ConverterTool(QWidget* parent) : QDialog(parent) {
    this->doLayout();
 
-   connect( pushButton_convert, &QAbstractButton::clicked, this, &ConverterTool::convert );
+   connect(pushButton_convert, &QAbstractButton::clicked, this, &ConverterTool::convert);
    return;
 }
 
 void ConverterTool::convert() {
-   this->outputLineEdit->setText(Measurement::Unit::convert(inputLineEdit->text(), outputUnitsLineEdit->text()));
+   this->outputLineEdit->setText(Measurement::Unit::convertWithoutContext(inputLineEdit->text(), outputUnitsLineEdit->text()));
    return;
 }
 
