@@ -191,7 +191,7 @@ S & operator<<(S & stream, Measurement::PhysicalQuantity const physicalQuantity)
  * \brief Convenience function for logging
  */
 template<class S>
-S & operator<<(S & stream, Measurement::Mixed2PhysicalQuantities const & mixed2PhysicalQuantities) {
+S & operator<<(S & stream, Measurement::Mixed2PhysicalQuantities const mixed2PhysicalQuantities) {
    stream <<
       "Mixed2PhysicalQuantities:" << std::get<0>(mixed2PhysicalQuantities) << std::get<1>(mixed2PhysicalQuantities);
    return stream;

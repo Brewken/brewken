@@ -17,6 +17,8 @@
 #define MEASUREMENT_CONSTRAINEDAMOUNT_H
 #pragma once
 
+#include <QDebug>
+
 #include "measurement/Amount.h"
 #include "measurement/Unit.h"
 
