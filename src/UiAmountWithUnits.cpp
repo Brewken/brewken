@@ -22,6 +22,8 @@
  =====================================================================================================================*/
 #include "UiAmountWithUnits.h"
 
+#include <tuple>
+
 #include <QDebug>
 #include <QVariant>
 #include <QWidget>
