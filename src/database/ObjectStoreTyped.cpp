@@ -144,8 +144,8 @@ namespace {
          {ObjectStore::FieldType::Double, "hardnessPrpGlassy_pct" , PropertyNames::Fermentable::hardnessPrpGlassy_pct   },
          {ObjectStore::FieldType::Double, "hardnessPrpHalf_pct"   , PropertyNames::Fermentable::hardnessPrpHalf_pct     },
          {ObjectStore::FieldType::Double, "hardnessPrpMealy_pct"  , PropertyNames::Fermentable::hardnessPrpMealy_pct    },
-         {ObjectStore::FieldType::Double, "kernelSizePrpPlump"    , PropertyNames::Fermentable::kernelSizePrpPlump      },
-         {ObjectStore::FieldType::Double, "kernelSizePrpThin"     , PropertyNames::Fermentable::kernelSizePrpThin       },
+         {ObjectStore::FieldType::Double, "kernelSizePrpPlump_pct", PropertyNames::Fermentable::kernelSizePrpPlump_pct  },
+         {ObjectStore::FieldType::Double, "kernelSizePrpThin_pct" , PropertyNames::Fermentable::kernelSizePrpThin_pct   },
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {

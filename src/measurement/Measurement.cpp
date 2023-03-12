@@ -124,9 +124,6 @@ Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::P
    // called.
    Q_ASSERT(!physicalQuantityToUnitSystem.isEmpty());
 
-   // It is a coding error to supply Measurement::PhysicalQuantity::Mixed as the parameter
-   Q_ASSERT(physicalQuantity != Measurement::PhysicalQuantity::Mixed);
-
    Measurement::UnitSystem const * unitSystem = physicalQuantityToUnitSystem.value(physicalQuantity, nullptr);
    if (nullptr == unitSystem) {
       // This is a coding error
@@ -415,17 +412,22 @@ void Measurement::setForcedRelativeScaleForField(QString const & field,
 
 Measurement::SystemOfMeasurement Measurement::getSystemOfMeasurementForField(QString const & field,
                                                                              QString const & section,
-                                                                             Measurement::PhysicalQuantity physicalQuantity) {
+                                                                             Measurement::PhysicalQuantities physicalQuantities) {
    auto forcedSystemOfMeasurement = Measurement::getForcedSystemOfMeasurementForField(field, section);
    if (forcedSystemOfMeasurement) {
       return *forcedSystemOfMeasurement;
    }
+
    // If there is no forced System Of Measurement for the field, then we can look to the globally-set UnitSystem for
-   // this PhysicalQuantity -- except that, if PhysicalQuantity is Mixed, there won't be one.  In that case, we have to
-   // choose between whatever is defined for Mass and for Volume.  We use Volume as that's the choice we make elsewhere.
-   return Measurement::getDisplayUnitSystem(
-      Measurement::PhysicalQuantity::Mixed == physicalQuantity ? Measurement::PhysicalQuantity::Volume : physicalQuantity
-   ).systemOfMeasurement;
+   // this PhysicalQuantity -- except that, if there are two values of PhysicalQuantity, we have to
+   // choose one arbitrarily.  The end result should be the same, because Mass & Volume share the same
+   // SystemOfMeasurement, as do MassConcentration & VolumeConcentration.
+   Measurement::PhysicalQuantity const physicalQuantity =
+      std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) ?
+         std::get<Measurement::PhysicalQuantity>(physicalQuantities) :
+         std::get<0>(std::get<Mixed2PhysicalQuantities>(physicalQuantities));
+
+   return Measurement::getDisplayUnitSystem(physicalQuantity).systemOfMeasurement;
 }
 
 

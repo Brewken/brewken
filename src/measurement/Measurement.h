@@ -49,7 +49,6 @@ namespace Measurement {
 
    /**
     * \brief Get the display \c UnitSystem for the specified \c PhysicalQuantity
-    *        Callers should not call this with \c Mixed as a parameter
     */
    UnitSystem const & getDisplayUnitSystem(PhysicalQuantity physicalQuantity);
 
@@ -212,18 +211,16 @@ namespace Measurement {
    /**
     * \brief Returns the \c SystemOfMeasurement that should be used to display this field, based on the forced
     *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-    *        \c UnitSystem for the specified \c PhysicalQuantity.  NB: It \b is valid to call this for
-    *        \c Measurement::PhysicalQuantity::Mixed.
+    *        \c UnitSystem for the specified \c PhysicalQuantity.
     */
    Measurement::SystemOfMeasurement getSystemOfMeasurementForField(QString const & field,
                                                                    QString const & section,
-                                                                   Measurement::PhysicalQuantity physicalQuantity);
+                                                                   Measurement::PhysicalQuantities physicalQuantities);
 
    /**
     * \brief Returns the \c UnitSystem that should be used to display this field, based on the forced
     *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-    *        \c UnitSystem for the specified \c PhysicalQuantity.  NB: It is \b not valid to call this for
-    *        \c Measurement::PhysicalQuantity::Mixed.
+    *        \c UnitSystem for the specified \c PhysicalQuantity.
     */
    Measurement::UnitSystem const & getUnitSystemForField(QString const & field,
                                                          QString const & section,

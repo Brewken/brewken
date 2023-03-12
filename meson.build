@@ -133,7 +133,7 @@
 #   - Meson 0.60.0 or newer to use + to append items to lists (aka 'list.<plus>' feature -- at least that's what the
 #     warning message says if you've specified a lower minimum version of Meson)
 # We would/will need:
-#   - Meson 0.62.0 or newer for dep 'dl' custom lookup
+#   - Meson 0.62.0 or newer for dep 'dl' custom lookup, but current version of Meson on Ubuntu 22.04 LTS is only 0.61.2
 #
 # NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
 #     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
@@ -648,6 +648,7 @@ commonSourceFiles = files([
    'src/MashWizard.cpp',
    'src/matrix.cpp',
    'src/measurement/Amount.cpp',
+   'src/measurement/ConstrainedAmount.cpp',
    'src/measurement/ColorMethods.cpp',
    'src/measurement/IbuMethods.cpp',
    'src/measurement/Measurement.cpp',

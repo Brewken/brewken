@@ -15,31 +15,41 @@
  =====================================================================================================================*/
 #include "measurement/PhysicalQuantity.h"
 
+#include <utility>
 #include <QDebug>
 
-#include "utils/EnumStringMapping.h"
-
-namespace {
-   EnumStringMapping const physicalQuantityToName {
-      {QObject::tr("Mass"                  ), Measurement::PhysicalQuantity::Mass                },
-      {QObject::tr("Volume"                ), Measurement::PhysicalQuantity::Volume              },
-      {QObject::tr("Time"                  ), Measurement::PhysicalQuantity::Time                },
-      {QObject::tr("Temperature"           ), Measurement::PhysicalQuantity::Temperature         },
-      {QObject::tr("Color"                 ), Measurement::PhysicalQuantity::Color               },
-      {QObject::tr("Density"               ), Measurement::PhysicalQuantity::Density             },
-      {QObject::tr("Mixed"                 ), Measurement::PhysicalQuantity::Mixed               },
-      {QObject::tr("Diastatic Power"       ), Measurement::PhysicalQuantity::DiastaticPower      },
-      {QObject::tr("Acidity"               ), Measurement::PhysicalQuantity::Acidity             },
-      {QObject::tr("Bitterness"            ), Measurement::PhysicalQuantity::Bitterness          },
-      {QObject::tr("Carbonation"           ), Measurement::PhysicalQuantity::Carbonation         },
-      {QObject::tr("Concentration"         ), Measurement::PhysicalQuantity::Concentration       },
-      {QObject::tr("Viscosity"             ), Measurement::PhysicalQuantity::Viscosity           },
-      {QObject::tr("Specific Heat Capacity"), Measurement::PhysicalQuantity::SpecificHeatCapacity},
-   };
+QString Measurement::getDisplayName(Measurement::PhysicalQuantity physicalQuantity) {
+   //
+   // We could use an EnumStringMapping object to hold all the data and then call its enumToString member function.
+   // However, the advantage of using a switch statement is that the compiler will warn us if we have missed one of the
+   // enum values (because it's a strongly-typed enum).  This is better than waiting until run time for
+   // EnumStringMapping::enumToString to log an error and throw an exception).
+   //
+   switch (physicalQuantity) {
+      case Measurement::PhysicalQuantity::Mass                : return QObject::tr("Mass"                  );
+      case Measurement::PhysicalQuantity::Volume              : return QObject::tr("Volume"                );
+      case Measurement::PhysicalQuantity::Time                : return QObject::tr("Time"                  );
+      case Measurement::PhysicalQuantity::Temperature         : return QObject::tr("Temperature"           );
+      case Measurement::PhysicalQuantity::Color               : return QObject::tr("Color"                 );
+      case Measurement::PhysicalQuantity::Density             : return QObject::tr("Density"               );
+      case Measurement::PhysicalQuantity::DiastaticPower      : return QObject::tr("Diastatic Power"       );
+      case Measurement::PhysicalQuantity::Acidity             : return QObject::tr("Acidity"               );
+      case Measurement::PhysicalQuantity::Bitterness          : return QObject::tr("Bitterness"            );
+      case Measurement::PhysicalQuantity::Carbonation         : return QObject::tr("Carbonation"           );
+      case Measurement::PhysicalQuantity::MassConcentration   : return QObject::tr("Mass Concentration"    );
+      case Measurement::PhysicalQuantity::VolumeConcentration : return QObject::tr("Volume Concentration"  );
+      case Measurement::PhysicalQuantity::Viscosity           : return QObject::tr("Viscosity"             );
+      case Measurement::PhysicalQuantity::SpecificHeatCapacity: return QObject::tr("Specific Heat Capacity");
+      // In C++23, we'd add:
+      // default: std::unreachable();
+   }
+   // In C++23, we'd add:
+   // std::unreachable()
+   // It's a coding error if we get here
+   Q_ASSERT(false);
 }
 
-QString Measurement::getDisplayName(Measurement::PhysicalQuantity physicalQuantity) {
-   // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log an error and
-   // throw an exception).
-   return physicalQuantityToName.enumToString(physicalQuantity);
+namespace Measurement {
+   Mixed2PhysicalQuantities const PqEitherMassOrVolume              {std::make_tuple(PhysicalQuantity::Mass,              PhysicalQuantity::Volume             )};
+   Mixed2PhysicalQuantities const PqEitherMassOrVolumeConcentration {std::make_tuple(PhysicalQuantity::MassConcentration, PhysicalQuantity::VolumeConcentration)};
 }

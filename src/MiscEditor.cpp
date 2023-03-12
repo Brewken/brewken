@@ -65,13 +65,13 @@ void MiscEditor::save() {
    qDebug() << Q_FUNC_INFO << comboBox_type->currentIndex();
    qDebug() << Q_FUNC_INFO << comboBox_use->currentIndex();
 
-   this->obsMisc->setName(lineEdit_name->text());
-   this->obsMisc->setType(static_cast<Misc::Type>(comboBox_type->currentIndex()));
-   this->obsMisc->setUse(static_cast<Misc::Use>(comboBox_use->currentIndex()));
-   this->obsMisc->setTime(lineEdit_time->toCanonical().quantity());
-   this->obsMisc->setAmountIsWeight((checkBox_isWeight->checkState() == Qt::Checked) ? true : false);
-   this->obsMisc->setUseFor(textEdit_useFor->toPlainText());
-   this->obsMisc->setNotes(textEdit_notes->toPlainText());
+   this->obsMisc->setName          (lineEdit_name->text());
+   this->obsMisc->setType          (static_cast<Misc::Type>(comboBox_type->currentIndex()));
+   this->obsMisc->setUse           (static_cast<Misc::Use>(comboBox_use->currentIndex()));
+   this->obsMisc->setTime          (lineEdit_time->toCanonical().quantity());
+   this->obsMisc->setAmountIsWeight(checkBox_isWeight->checkState() == Qt::Checked);
+   this->obsMisc->setUseFor        (textEdit_useFor->toPlainText());
+   this->obsMisc->setNotes         (textEdit_notes->toPlainText());
 
    if (this->obsMisc->key() < 0) {
       qDebug() << Q_FUNC_INFO << "Inserting into database";
@@ -136,6 +136,7 @@ void MiscEditor::showChanges(QMetaProperty * metaProp) {
       }
    }
    if (propName == PropertyNames::Misc::amountIsWeight || updateAll) {
+      qDebug() << Q_FUNC_INFO;
       checkBox_isWeight->setCheckState(obsMisc->amountIsWeight() ? Qt::Checked : Qt::Unchecked);
       if (!updateAll) {
          return;
@@ -162,8 +163,7 @@ void MiscEditor::showChanges(QMetaProperty * metaProp) {
 }
 
 void MiscEditor::newMisc(QString folder) {
-   QString name = QInputDialog::getText(this, tr("Misc name"),
-                                        tr("Misc name:"));
+   QString name = QInputDialog::getText(this, tr("Misc name"), tr("Misc name:"));
    if (name.isEmpty()) {
       return;
    }

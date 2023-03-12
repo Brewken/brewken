@@ -42,16 +42,17 @@ UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
 UiAmountWithUnits::~UiAmountWithUnits() = default;
 
 BtFieldType UiAmountWithUnits::getFieldType() const {
-   // If it's not Measurement::PhysicalQuantity::Mixed, just return what it is
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType) ||
-       Measurement::PhysicalQuantity::Mixed != std::get<Measurement::PhysicalQuantity>(this->fieldType)) {
+   // If it's not a "mixed" field (ie one in which the measurement could be for more than one
+   // Measurement::PhysicalQuantity, eg Mass & Volume), just return what it is
+   if (!std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(this->fieldType)) {
       return this->fieldType;
    }
-   // If it is Measurement::PhysicalQuantity::Mixed, then should return either Mass or Volume;
+   // If it is a "mixed" field, we should return the physical quantity corresponding to the current units
    auto const physicalQuantity = this->units->getPhysicalQuantity();
    // It's a coding error if we somehow have units other than Mass or Volume
-   Q_ASSERT(Measurement::PhysicalQuantity::Mass == physicalQuantity ||
-            Measurement::PhysicalQuantity::Volume == physicalQuantity);
+   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(this->fieldType);
+   Q_ASSERT(std::get<0>(tupleOfPqs) == physicalQuantity ||
+            std::get<1>(tupleOfPqs) == physicalQuantity);
    return physicalQuantity;
 }
 

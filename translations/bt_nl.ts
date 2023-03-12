@@ -3230,7 +3230,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Mixed</source>
-        <translation type="unfinished">Gemengd</translation>
+        <translation type="obsolete">Gemengd</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -3463,10 +3463,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Viscosity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3492,14 +3488,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Carbonation Mass Per Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Concentration Parts Per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Concentration Mass Per Volume</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3540,6 +3528,18 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>J/kg·K</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metric Concentration</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

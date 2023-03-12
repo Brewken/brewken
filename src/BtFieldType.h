@@ -50,7 +50,15 @@ QString GetDisplayName(NonPhysicalQuantity nonPhysicalQuantity);
 /**
  * \brief All types of value that can be shown in a UI field
  */
-typedef std::variant<Measurement::PhysicalQuantity, NonPhysicalQuantity> BtFieldType;
+typedef std::variant<Measurement::PhysicalQuantity,
+                     Measurement::Mixed2PhysicalQuantities,
+                     NonPhysicalQuantity> BtFieldType;
+
+/**
+ * \brief If you know a \c BtFieldType does \b not contain a \c NonPhysicalQuantity, then this will convert it into
+ *        a Measurement::PhysicalQuantities
+ */
+Measurement::PhysicalQuantities ConvertToPhysicalQuantities(BtFieldType const & btFieldType);
 
 /**
  * \brief Convenience function to allow output of \c BtFieldType to \c QDebug or \c QTextStream stream
@@ -60,9 +68,15 @@ typedef std::variant<Measurement::PhysicalQuantity, NonPhysicalQuantity> BtField
 template<class S>
 S & operator<<(S & stream, BtFieldType fieldType) {
    if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
-      stream << "NonPhysicalQuantity:" << GetDisplayName(std::get<NonPhysicalQuantity>(fieldType));
+      stream << "BtFieldType: NonPhysicalQuantity:" << GetDisplayName(std::get<NonPhysicalQuantity>(fieldType));
+   } else if (std::holds_alternative<Measurement::PhysicalQuantity>(fieldType)) {
+      stream << "BtFieldType: PhysicalQuantity:" << std::get<Measurement::PhysicalQuantity>(fieldType);
    } else {
-      stream << "PhysicalQuantity:" << Measurement::getDisplayName(std::get<Measurement::PhysicalQuantity>(fieldType));
+      Q_ASSERT(std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(fieldType));
+      stream <<
+         "BtFieldType: Mixed2PhysicalQuantities:" <<
+         std::get<0>(std::get<Measurement::Mixed2PhysicalQuantities>(fieldType)) << " & " <<
+         std::get<1>(std::get<Measurement::Mixed2PhysicalQuantities>(fieldType));
    }
    return stream;
 }

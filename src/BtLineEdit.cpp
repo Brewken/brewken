@@ -41,7 +41,6 @@ namespace {
    int const min_text_size = 8;
    int const max_text_size = 50;
 
-
    /**
     * @brief Convert a QString to a number.  Called by \c BtLineEdit::getValueAs()
     *
@@ -120,7 +119,7 @@ void BtLineEdit::onLineChanged() {
       ", forcedSystemOfMeasurement=" << this->getForcedSystemOfMeasurement() << ", forcedRelativeScale=" <<
       this->getForcedRelativeScale() << ", value=" << this->getWidgetText();
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(myFieldType)) {
+   if (std::holds_alternative<NonPhysicalQuantity>(myFieldType)) {
       qDebug() << Q_FUNC_INFO << "Not physical quantity";
       if (sender() == this) {
          emit textModified();
@@ -128,18 +127,21 @@ void BtLineEdit::onLineChanged() {
       return;
    }
 
-   Measurement::UnitSystem const & oldUnitSystem =
-      Measurement::getUnitSystemForField(this->editField,
-                                         this->configSection,
-                                         std::get<Measurement::PhysicalQuantity>(myFieldType));
+   Measurement::PhysicalQuantities const physicalQuantities = ConvertToPhysicalQuantities(myFieldType);
+
+   Measurement::SystemOfMeasurement const oldSystemOfMeasurement =
+      Measurement::getSystemOfMeasurementForField(this->editField,
+                                                  this->configSection,
+                                                  physicalQuantities);
    auto oldForcedRelativeScale = Measurement::getForcedRelativeScaleForField(this->editField, this->configSection);
    PreviousScaleInfo previousScaleInfo{
-      oldUnitSystem.systemOfMeasurement,
+      oldSystemOfMeasurement,
       oldForcedRelativeScale
    };
 
    qDebug() <<
-      Q_FUNC_INFO << "oldUnitSystem=" << oldUnitSystem << ", oldForcedRelativeScale=" << oldForcedRelativeScale;
+      Q_FUNC_INFO << "oldSystemOfMeasurement=" << oldSystemOfMeasurement << ", oldForcedRelativeScale=" <<
+      oldForcedRelativeScale;
 
    this->lineChanged(previousScaleInfo);
    return;
@@ -299,30 +301,32 @@ void BtLineEdit::setDisplaySize(bool recalculate) {
    return;
 }
 
-BtGenericEdit       ::BtGenericEdit       (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                  , nullptr                                   ) { return; }
-BtMassEdit          ::BtMassEdit          (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mass          , &Measurement::Units::kilograms            ) { return; }
-BtVolumeEdit        ::BtVolumeEdit        (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Volume        , &Measurement::Units::liters               ) { return; }
-BtTimeEdit          ::BtTimeEdit          (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Time          , &Measurement::Units::minutes           , 3) { return; }
-BtTemperatureEdit   ::BtTemperatureEdit   (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Temperature   , &Measurement::Units::celsius           , 1) { return; }
-BtColorEdit         ::BtColorEdit         (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Color         , &Measurement::Units::srm                  ) { return; }
-BtDensityEdit       ::BtDensityEdit       (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Density       , &Measurement::Units::sp_grav              ) { return; }
-BtDiastaticPowerEdit::BtDiastaticPowerEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::DiastaticPower, &Measurement::Units::lintner              ) { return; }
-BtAcidityEdit       ::BtAcidityEdit       (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Acidity       , &Measurement::Units::pH                   ) { return; }
-BtBitternessEdit    ::BtBitternessEdit    (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Bitterness    , &Measurement::Units::ibu                  ) { return; }
-BtCarbonationEdit   ::BtCarbonationEdit   (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Carbonation   , &Measurement::Units::carbonationVolumes   ) { return; }
-BtConcentrationEdit ::BtConcentrationEdit (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Concentration , &Measurement::Units::partsPerMillion      ) { return; }
-BtViscosityEdit     ::BtViscosityEdit     (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Viscosity     , &Measurement::Units::centipoise           ) { return; }
-BtStringEdit        ::BtStringEdit        (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                  , nullptr                                   ) { return; }
-BtPercentageEdit    ::BtPercentageEdit    (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Percentage              , nullptr                                , 0) { return; }
-BtDimensionlessEdit ::BtDimensionlessEdit (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Dimensionless           , nullptr                                , 3) { return; }
+BtGenericEdit            ::BtGenericEdit            (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                       , nullptr                                   ) { return; }
+BtMassEdit               ::BtMassEdit               (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mass               , &Measurement::Units::kilograms            ) { return; }
+BtVolumeEdit             ::BtVolumeEdit             (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Volume             , &Measurement::Units::liters               ) { return; }
+BtTimeEdit               ::BtTimeEdit               (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Time               , &Measurement::Units::minutes           , 3) { return; }
+BtTemperatureEdit        ::BtTemperatureEdit        (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Temperature        , &Measurement::Units::celsius           , 1) { return; }
+BtColorEdit              ::BtColorEdit              (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Color              , &Measurement::Units::srm                  ) { return; }
+BtDensityEdit            ::BtDensityEdit            (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Density            , &Measurement::Units::sp_grav              ) { return; }
+BtDiastaticPowerEdit     ::BtDiastaticPowerEdit     (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::DiastaticPower     , &Measurement::Units::lintner              ) { return; }
+BtAcidityEdit            ::BtAcidityEdit            (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Acidity            , &Measurement::Units::pH                   ) { return; }
+BtBitternessEdit         ::BtBitternessEdit         (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Bitterness         , &Measurement::Units::ibu                  ) { return; }
+BtCarbonationEdit        ::BtCarbonationEdit        (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Carbonation        , &Measurement::Units::carbonationVolumes   ) { return; }
+BtMassConcentrationEdit  ::BtMassConcentrationEdit  (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::MassConcentration  , &Measurement::Units::partsPerMillion      ) { return; }
+BtVolumeConcentrationEdit::BtVolumeConcentrationEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::VolumeConcentration, &Measurement::Units::milligramsPerLiter   ) { return; }
+BtViscosityEdit          ::BtViscosityEdit          (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Viscosity          , &Measurement::Units::centipoise           ) { return; }
+BtStringEdit             ::BtStringEdit             (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                       , nullptr                                   ) { return; }
+BtPercentageEdit         ::BtPercentageEdit         (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Percentage                   , nullptr                                , 0) { return; }
+BtDimensionlessEdit      ::BtDimensionlessEdit      (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Dimensionless                , nullptr                                , 3) { return; }
 
-BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mixed) {
+BtMixedMassOrVolumeEdit::BtMixedMassOrVolumeEdit(QWidget *parent) :
+   BtLineEdit(parent, Measurement::PqEitherMassOrVolume) {
    // This is probably pure evil I will later regret
    this->units = &Measurement::Units::liters;
    return;
 }
 
-void BtMixedEdit::setIsWeight(bool state) {
+void BtMixedMassOrVolumeEdit::setIsWeight(bool state) {
    // But you have to admit, this is clever
    if (state) {
       this->units = &Measurement::Units::kilograms;

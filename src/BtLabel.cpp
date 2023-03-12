@@ -52,7 +52,7 @@ void BtLabel::leaveEvent([[maybe_unused]] QEvent * event) {
    return;
 }
 
-void BtLabel::mouseReleaseEvent (QMouseEvent * event) {
+void BtLabel::mouseReleaseEvent(QMouseEvent * event) {
    // For the moment, we want left-click and right-click to have the same effect, so when we get a left-click event, we
    // send ourselves the right-click signal, which will then fire BtLabel::popContextMenu().
    emit this->QWidget::customContextMenuRequested(event->pos());
@@ -256,12 +256,12 @@ void BtLabel::popContextMenu(const QPoint& point) {
    return;
 }
 
-BtColorLabel::BtColorLabel(QWidget *parent) :                   BtLabel(parent, Measurement::PhysicalQuantity::Color)          { return; }
-BtDateLabel::BtDateLabel(QWidget *parent) :                     BtLabel(parent, NonPhysicalQuantity::Date)                     { return; }
-BtDensityLabel::BtDensityLabel(QWidget *parent) :               BtLabel(parent, Measurement::PhysicalQuantity::Density)        { return; }
-BtMassLabel::BtMassLabel(QWidget *parent) :                     BtLabel(parent, Measurement::PhysicalQuantity::Mass)           { return; }
-BtMixedLabel::BtMixedLabel(QWidget *parent) :                   BtLabel(parent, Measurement::PhysicalQuantity::Mixed)          { return; }
-BtTemperatureLabel::BtTemperatureLabel(QWidget *parent) :       BtLabel(parent, Measurement::PhysicalQuantity::Temperature)    { return; }
-BtTimeLabel::BtTimeLabel(QWidget *parent) :                     BtLabel(parent, Measurement::PhysicalQuantity::Time)           { return; }
-BtVolumeLabel::BtVolumeLabel(QWidget *parent) :                 BtLabel(parent, Measurement::PhysicalQuantity::Volume)         { return; }
-BtDiastaticPowerLabel::BtDiastaticPowerLabel(QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::DiastaticPower) { return; }
+BtColorLabel            ::BtColorLabel            (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Color         ) { return; }
+BtDateLabel             ::BtDateLabel             (QWidget *parent) : BtLabel(parent, NonPhysicalQuantity::Date                    ) { return; }
+BtDensityLabel          ::BtDensityLabel          (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Density       ) { return; }
+BtMassLabel             ::BtMassLabel             (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Mass          ) { return; }
+BtMixedMassOrVolumeLabel::BtMixedMassOrVolumeLabel(QWidget *parent) : BtLabel(parent, Measurement::PqEitherMassOrVolume            ) { return; }
+BtTemperatureLabel      ::BtTemperatureLabel      (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Temperature   ) { return; }
+BtTimeLabel             ::BtTimeLabel             (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Time          ) { return; }
+BtVolumeLabel           ::BtVolumeLabel           (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Volume        ) { return; }
+BtDiastaticPowerLabel   ::BtDiastaticPowerLabel   (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::DiastaticPower) { return; }

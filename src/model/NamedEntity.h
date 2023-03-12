@@ -397,6 +397,19 @@ protected:
    }
 
    /**
+    * \brief Partial specialisation for optional value
+    */
+   template<typename T> std::optional<T> enforceMin(std::optional<T> const value,
+                                                    char const * const name,
+                                                    T const minValue = 0,
+                                                    T const defaultValue = 0) {
+      if (value) {
+         return this->enforceMin(*value, name, minValue, defaultValue);
+      }
+      return value;
+   }
+
+   /**
     * \brief Like \c enforceMin, but for a range
     *
     *        (We often want \c minValue = 0 and \c maxValue = 100, but I don't default them here as I want it to be
@@ -412,6 +425,20 @@ protected:
             Q_FUNC_INFO << this->metaObject()->className() << ":" << name << "value" << value <<
             "outside range min of" << minValue << "-" << maxValue << "so using" << defaultValue << "instead";
          return defaultValue;
+      }
+      return value;
+   }
+
+   /**
+    * \brief Partial specialisation for optional value
+    */
+   template<typename T> std::optional<T> enforceMinAndMax(std::optional<T> const value,
+                                                          char const * const name,
+                                                          T const minValue,
+                                                          T const maxValue,
+                                                          T const defaultValue = 0) {
+      if (value) {
+         return this->enforceMinAndMax(*value, name, minValue, maxValue, defaultValue);
       }
       return value;
    }
