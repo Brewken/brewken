@@ -74,7 +74,6 @@
 #include "Application.h"
 #include "BrewNoteWidget.h"
 #include "BtDatePopup.h"
-#include "BtDigitWidget.h"
 #include "BtFolder.h"
 #include "BtHorizontalTabs.h"
 #include "BtTabWidget.h"
@@ -1355,16 +1354,16 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    }
 
    // May St. Stevens preserve me
-   lineEdit_name->setText(recipeObs->name());
-   lineEdit_batchSize->setText(recipeObs);
-   lineEdit_boilSize->setText(recipeObs);
-   lineEdit_efficiency->setText(recipeObs);
-   lineEdit_boilTime->setText(recipeObs);
-   lineEdit_name->setCursorPosition(0);
-   lineEdit_batchSize->setCursorPosition(0);
-   lineEdit_boilSize->setCursorPosition(0);
+   lineEdit_name      ->setText(recipeObs->name          ());
+   lineEdit_batchSize ->setText(recipeObs->batchSize_l   ());
+   lineEdit_boilSize  ->setText(recipeObs->boilSize_l    ());
+   lineEdit_efficiency->setText(recipeObs->efficiency_pct());
+   lineEdit_boilTime  ->setText(recipeObs->boilTime_min  ());
+   lineEdit_name      ->setCursorPosition(0);
+   lineEdit_batchSize ->setCursorPosition(0);
+   lineEdit_boilSize  ->setCursorPosition(0);
    lineEdit_efficiency->setCursorPosition(0);
-   lineEdit_boilTime->setCursorPosition(0);
+   lineEdit_boilTime  ->setCursorPosition(0);
 /*
    lineEdit_calcBatchSize->setText(recipeObs);
    lineEdit_calcBoilSize->setText(recipeObs);
@@ -1712,7 +1711,7 @@ void MainWindow::updateRecipeBoilTime() {
 }
 
 void MainWindow::updateRecipeEfficiency() {
-   qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getWidgetText();
+   qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getValueAs<double>();
    if (!this->recipeObs) {
       return;
    }

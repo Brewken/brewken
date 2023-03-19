@@ -585,12 +585,12 @@ commonSourceFiles = files([
    'src/Application.cpp',
    'src/BeerColorWidget.cpp',
    'src/boiltime.cpp',
-   'src/BrewDayScrollWidget.cpp',
    'src/BrewDayFormatter.cpp',
+   'src/BrewDayScrollWidget.cpp',
    'src/BrewNoteWidget.cpp',
+   'src/BtAmountEdit.cpp',
    'src/BtColor.cpp',
    'src/BtDatePopup.cpp',
-   'src/BtDigitWidget.cpp',
    'src/BtFieldType.cpp',
    'src/BtFolder.cpp',
    'src/BtLabel.cpp',
@@ -648,8 +648,8 @@ commonSourceFiles = files([
    'src/MashWizard.cpp',
    'src/matrix.cpp',
    'src/measurement/Amount.cpp',
-   'src/measurement/ConstrainedAmount.cpp',
    'src/measurement/ColorMethods.cpp',
+   'src/measurement/ConstrainedAmount.cpp',
    'src/measurement/IbuMethods.cpp',
    'src/measurement/Measurement.cpp',
    'src/measurement/PhysicalQuantity.cpp',
@@ -727,6 +727,8 @@ commonSourceFiles = files([
    'src/WaterSortFilterProxyModel.cpp',
    'src/WaterTableWidget.cpp',
    'src/widgets/Animator.cpp',
+   'src/widgets/BtAmountDigitWidget.cpp',
+   'src/widgets/BtDigitWidget.cpp',
    'src/widgets/SelectionControl.cpp',
    'src/widgets/ToggleSwitch.cpp',
    'src/widgets/UnitAndScalePopUpMenu.cpp',
@@ -740,7 +742,7 @@ commonSourceFiles = files([
    'src/xml/XmlRecord.cpp',
    'src/YeastDialog.cpp',
    'src/YeastEditor.cpp',
-   'src/YeastSortFilterProxyModel.cpp'
+   'src/YeastSortFilterProxyModel.cpp',
 ])
 
 applicationMainSourceFile = files([
@@ -767,8 +769,8 @@ mocHeaders = files([
    'src/BrewDayFormatter.h',
    'src/BrewDayScrollWidget.h',
    'src/BrewNoteWidget.h',
+   'src/BtAmountEdit.h',
    'src/BtDatePopup.h',
-   'src/BtDigitWidget.h',
    'src/BtFolder.h',
    'src/BtLabel.h',
    'src/BtLineEdit.h',
@@ -859,6 +861,8 @@ mocHeaders = files([
    'src/WaterSortFilterProxyModel.h',
    'src/WaterTableWidget.h',
    'src/widgets/Animator.h',
+   'src/widgets/BtAmountDigitWidget.h',
+   'src/widgets/BtDigitWidget.h',
    'src/widgets/SelectionControl.h',
    'src/widgets/ToggleSwitch.h',
    'src/YeastDialog.h',
@@ -906,7 +910,7 @@ uiFiles = files([
    'ui/timerWidget.ui',
    'ui/waterDialog.ui',
    'ui/waterEditor.ui',
-   'ui/yeastEditor.ui'
+   'ui/yeastEditor.ui',
 ])
 
 #
@@ -1514,6 +1518,7 @@ test('Test recipe calculations - all grain', testRunner, args : ['recipeCalcTest
 test('Test post boil loss OG',               testRunner, args : ['postBoilLossOgTest'])
 test('Test unit conversions',                testRunner, args : ['testUnitConversions'])
 test('Test NamedParameterBundle',            testRunner, args : ['testNamedParameterBundle'])
+test('Test number display and parsing',      testRunner, args : ['testNumberDisplayAndParsing'])
 test('Test algorithms',                      testRunner, args : ['testAlgorithms'])
 test('Test type lookups',                    testRunner, args : ['testTypeLookups'])
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms

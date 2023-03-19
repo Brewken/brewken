@@ -61,6 +61,12 @@ typedef std::variant<Measurement::PhysicalQuantity,
 Measurement::PhysicalQuantities ConvertToPhysicalQuantities(BtFieldType const & btFieldType);
 
 /**
+ * \brief If you have a \c Measurement::PhysicalQuantities variant and need to convert it to a \c BtFieldType variant,
+ *        this is the function to call.
+ */
+BtFieldType ConvertToBtFieldType(Measurement::PhysicalQuantities const & physicalQuantities);
+
+/**
  * \brief Convenience function to allow output of \c BtFieldType to \c QDebug or \c QTextStream stream
  *
  *        (For some reason, \c QDebug does not inherit from \c QTextStream so we template the stream class.)

@@ -103,7 +103,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="BtGenericEdit" name="lineEdit_vols">
+         <widget class="BtCarbonationEdit" name="lineEdit_vols">
           <property name="minimumSize">
            <size>
             <width>40</width>
@@ -254,14 +254,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtGenericEdit</class>
+   <class>BtCarbonationEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
   </customwidget>
   <customwidget>
    <class>BtTemperatureEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -285,7 +285,7 @@
   <customwidget>
    <class>BtVolumeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -302,7 +302,7 @@
   <customwidget>
    <class>BtMassEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <signal>textModified()</signal>
     <slot>lineChanged()</slot>

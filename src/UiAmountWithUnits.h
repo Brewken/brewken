@@ -27,7 +27,6 @@
 
 #include <QString>
 
-#include "BtFieldType.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
@@ -41,17 +40,18 @@ struct PreviousScaleInfo {
 
 /**
  * \class UiAmountWithUnits A base class, suitable for combining with \c QLabel, \c QLineEdit, etc, that handles all the
- *                          unit transformation such a widget would need to do.
+ *                          unit transformation such a widget would need to do.  It is inherited by \c BtDigitWidget and
+ *                          \c BtAmountEdit.
  */
 class UiAmountWithUnits {
 public:
    /**
     * \param parent
-    * \param fieldType
+    * \param physicalQuantities the \c PhysicalQuantity or \c Mixed2PhysicalQuantities to which this amount relates
     * \param units
     */
    UiAmountWithUnits(QWidget * parent,
-                     BtFieldType fieldType,
+                     Measurement::PhysicalQuantities const physicalQuantities,
                      Measurement::Unit const * units = nullptr);
    virtual ~UiAmountWithUnits();
 
@@ -74,7 +74,7 @@ public:
     * \brief Returns what type of field this is - except that, if it is \c Mixed2PhysicalQuantities, will one of the two
     *        possible \c Measurement::PhysicalQuantity values depending on the value of \c this->units.
     */
-   BtFieldType getFieldType() const;
+   Measurement::PhysicalQuantity getPhysicalQuantity() const;
 
    void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
    void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
@@ -122,12 +122,12 @@ public:
    /**
     * \brief Returns the field converted to canonical units for the relevant \c Measurement::PhysicalQuantity
     */
-   Measurement::Amount toCanonical();
+   Measurement::Amount toCanonical() const;
 
    /**
     * \brief Use this when you want to do something with the returned QString
     */
-   QString displayAmount(double amount, int precision = 3);
+   QString displayAmount(double amount, int precision = 3) const;
 
 protected:
    /**
@@ -147,9 +147,9 @@ private:
    QWidget * parent;
    /**
     * \brief Even inside the class (or any subclasses), this should never be accessed directly but always through
-    *        \c this->getFieldType, as there is special case handling for \c Mixed2PhysicalQuantities.
+    *        \c this->getPhysicalQuantity, as there is special case handling for \c Mixed2PhysicalQuantities.
     */
-   BtFieldType const fieldType;
+   Measurement::PhysicalQuantities const physicalQuantities;
 
 protected:
    /**
@@ -166,4 +166,5 @@ protected:
    QString editField;
    QString configSection;
 };
+
 #endif

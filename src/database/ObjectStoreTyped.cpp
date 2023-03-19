@@ -146,6 +146,9 @@ namespace {
          {ObjectStore::FieldType::Double, "hardnessPrpMealy_pct"  , PropertyNames::Fermentable::hardnessPrpMealy_pct    },
          {ObjectStore::FieldType::Double, "kernelSizePrpPlump_pct", PropertyNames::Fermentable::kernelSizePrpPlump_pct  },
          {ObjectStore::FieldType::Double, "kernelSizePrpThin_pct" , PropertyNames::Fermentable::kernelSizePrpThin_pct   },
+         {ObjectStore::FieldType::Double, "friability_pct"        , PropertyNames::Fermentable::friability_pct          },
+         {ObjectStore::FieldType::Double, "di_ph"                 , PropertyNames::Fermentable::di_ph                   },
+         {ObjectStore::FieldType::Double, "viscosity_cP"          , PropertyNames::Fermentable::viscosity_cP            },
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {
@@ -570,7 +573,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "deleted",             PropertyNames::NamedEntity::deleted        },
          {ObjectStore::FieldType::Bool,   "display",             PropertyNames::NamedEntity::display        },
          {ObjectStore::FieldType::String, "folder",              PropertyNames::NamedEntity::folder         },
-         {ObjectStore::FieldType::Double, "age",                 PropertyNames::Recipe::age                 },
+         {ObjectStore::FieldType::Double, "age",                 PropertyNames::Recipe::age_days                 },
          {ObjectStore::FieldType::Double, "age_temp",            PropertyNames::Recipe::ageTemp_c           },
          {ObjectStore::FieldType::String, "assistant_brewer",    PropertyNames::Recipe::asstBrewer          },
          {ObjectStore::FieldType::Double, "batch_size",          PropertyNames::Recipe::batchSize_l         },

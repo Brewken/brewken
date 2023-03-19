@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * StyleRangeWidget.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * StyleRangeWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,29 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #include "StyleRangeWidget.h"
-#include <QPaintEvent>
-#include <QPainter>
+
 #include <QColor>
-#include <QPalette>
-#include <QApplication>
-#include <QRectF>
-#include <QFont>
-#include <QMouseEvent>
-#include <QLabel>
-#include <QToolTip>
-#include <QLinearGradient>
-#include <QPainterPath>
+#include <QWidget>
 
-#include <QDebug>
-
-StyleRangeWidget::StyleRangeWidget(QWidget* parent)
-   : RangedSlider(parent)
-{
+StyleRangeWidget::StyleRangeWidget(QWidget* parent) : RangedSlider(parent) {
    setBackgroundBrush(QColor(121,201,121));
    setPreferredRangeBrush(QColor(0,127,0));
    setMarkerTextIsValue(true);
 
    repaint();
+   return;
 }

@@ -486,7 +486,7 @@
           </widget>
          </item>
          <item row="12" column="0">
-          <widget class="QLabel" name="labe_carbVols">
+          <widget class="QLabel" name="label_carbVols">
            <property name="text">
             <string>Carbonation Volumes</string>
            </property>
@@ -496,7 +496,7 @@
           </widget>
          </item>
          <item row="12" column="1">
-          <widget class="BtGenericEdit" name="lineEdit_carbVols">
+          <widget class="BtCarbonationEdit" name="lineEdit_carbVols">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -585,10 +585,15 @@
   <customwidget>
    <class>BtTimeEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">BtLineEdit.h</header>
+   <header location="global">BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>BtCarbonationEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">BtAmountEdit.h</header>
   </customwidget>
   <customwidget>
    <class>BtTimeLabel</class>
@@ -609,7 +614,7 @@
   <customwidget>
    <class>BtTemperatureEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">BtLineEdit.h</header>
+   <header location="global">BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>

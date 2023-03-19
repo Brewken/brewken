@@ -33,6 +33,13 @@ class BtStringConst;
 class NamedEntity;
 
 namespace Measurement {
+
+   /**
+    * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
+    *        symbols)
+    */
+   template<typename T> T extractRawFromString(QString const & input, bool * ok = nullptr);
+
    void loadDisplayScales();
    void saveDisplayScales();
 
@@ -52,11 +59,12 @@ namespace Measurement {
     */
    UnitSystem const & getDisplayUnitSystem(PhysicalQuantity physicalQuantity);
 
-   /**
-    * \brief Returns the \c Unit (usually a Metric/SI one where this is an option) that we use for storing a given
-    *        \c PhysicalQuantity
-    */
-   Unit const & getUnitForInternalStorage(PhysicalQuantity physicalQuantity);
+   // Previous function Measurement::getUnitForInternalStorage() is replaced by Measurement::Unit::getCanonicalUnit()
+//   /**
+//    * \brief Returns the \c Unit (usually a Metric/SI one where this is an option) that we use for storing a given
+//    *        \c PhysicalQuantity
+//    */
+//   Unit const & getUnitForInternalStorage(PhysicalQuantity physicalQuantity);
 
    /*!
     * \brief Converts a quantity without units to a displayable string

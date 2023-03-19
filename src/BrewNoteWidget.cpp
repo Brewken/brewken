@@ -38,18 +38,18 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
    bNoteObs = 0;
    setObjectName("BrewNoteWidget");
 
-   connect(lineEdit_SG, &BtLineEdit::textModified, this, &BrewNoteWidget::updateSG);
-   connect(lineEdit_volIntoBK, &BtLineEdit::textModified, this, &BrewNoteWidget::updateVolumeIntoBK_l);
-   connect(lineEdit_strikeTemp, &BtLineEdit::textModified, this, &BrewNoteWidget::updateStrikeTemp_c);
-   connect(lineEdit_mashFinTemp, &BtLineEdit::textModified, this, &BrewNoteWidget::updateMashFinTemp_c);
+   connect(lineEdit_SG,          &BtLineEdit::textModified,   this, &BrewNoteWidget::updateSG);
+   connect(lineEdit_volIntoBK,   &BtLineEdit::textModified,   this, &BrewNoteWidget::updateVolumeIntoBK_l);
+   connect(lineEdit_strikeTemp,  &BtLineEdit::textModified,   this, &BrewNoteWidget::updateStrikeTemp_c);
+   connect(lineEdit_mashFinTemp, &BtLineEdit::textModified,   this, &BrewNoteWidget::updateMashFinTemp_c);
 
-   connect(lineEdit_OG, &BtLineEdit::textModified, this, &BrewNoteWidget::updateOG);
-   connect(lineEdit_postBoilVol, &BtLineEdit::textModified, this, &BrewNoteWidget::updatePostBoilVolume_l);
-   connect(lineEdit_volIntoFerm, &BtLineEdit::textModified, this, &BrewNoteWidget::updateVolumeIntoFerm_l);
-   connect(lineEdit_pitchTemp, &BtLineEdit::textModified, this, &BrewNoteWidget::updatePitchTemp_c);
+   connect(lineEdit_OG,          &BtLineEdit::textModified,   this, &BrewNoteWidget::updateOG);
+   connect(lineEdit_postBoilVol, &BtLineEdit::textModified,   this, &BrewNoteWidget::updatePostBoilVolume_l);
+   connect(lineEdit_volIntoFerm, &BtLineEdit::textModified,   this, &BrewNoteWidget::updateVolumeIntoFerm_l);
+   connect(lineEdit_pitchTemp,   &BtLineEdit::textModified,   this, &BrewNoteWidget::updatePitchTemp_c);
 
-   connect(lineEdit_FG, &BtLineEdit::textModified, this, &BrewNoteWidget::updateFG);
-   connect(lineEdit_finalVol, &BtLineEdit::textModified, this, &BrewNoteWidget::updateFinalVolume_l);
+   connect(lineEdit_FG,          &BtLineEdit::textModified,   this, &BrewNoteWidget::updateFG);
+   connect(lineEdit_finalVol,    &BtLineEdit::textModified,   this, &BrewNoteWidget::updateFinalVolume_l);
    connect(lineEdit_fermentDate, &QDateTimeEdit::dateChanged, this, &BrewNoteWidget::updateFermentDate);
 
    connect(btTextEdit_brewNotes, &BtTextEdit::textModified, this, &BrewNoteWidget::updateNotes);
@@ -110,26 +110,26 @@ void BrewNoteWidget::setBrewNote(BrewNote* bNote) {
       connect(this->bNoteObs, &NamedEntity::changed, this, &BrewNoteWidget::changed);
 
       // Set the highs and the lows for the lcds
-      lcdnumber_effBK->setLowLim(bNoteObs->projEff_pct() * lowLimitPct);
+      lcdnumber_effBK->setLowLim (bNoteObs->projEff_pct() * lowLimitPct);
       lcdnumber_effBK->setHighLim(bNoteObs->projEff_pct() * highLimitPct);
 
-      lcdnumber_projectedOG->setLowLim( bNoteObs->projOg() * lowLimitPct);
-      lcdnumber_projectedOG->setHighLim( bNoteObs->projOg() * highLimitPct);
+      lcdnumber_projectedOG->setLowLim (bNoteObs->projOg() * lowLimitPct);
+      lcdnumber_projectedOG->setHighLim(bNoteObs->projOg() * highLimitPct);
 
-      lcdnumber_brewhouseEff->setLowLim(bNoteObs->projEff_pct() * lowLimitPct);
+      lcdnumber_brewhouseEff->setLowLim (bNoteObs->projEff_pct() * lowLimitPct);
       lcdnumber_brewhouseEff->setHighLim(bNoteObs->projEff_pct() * highLimitPct);
 
-      lcdnumber_projABV->setLowLim( bNoteObs->projABV_pct() * lowLimitPct);
-      lcdnumber_projABV->setHighLim( bNoteObs->projABV_pct() * highLimitPct);
+      lcdnumber_projABV->setLowLim (bNoteObs->projABV_pct() * lowLimitPct);
+      lcdnumber_projABV->setHighLim(bNoteObs->projABV_pct() * highLimitPct);
 
-      lcdnumber_abv->setLowLim( bNoteObs->projABV_pct() * lowLimitPct);
-      lcdnumber_abv->setHighLim( bNoteObs->projABV_pct() * highLimitPct);
+      lcdnumber_abv->setLowLim (bNoteObs->projABV_pct() * lowLimitPct);
+      lcdnumber_abv->setHighLim(bNoteObs->projABV_pct() * highLimitPct);
 
-      lcdnumber_atten->setLowLim( bNoteObs->projAtten() * lowLimitPct );
-      lcdnumber_atten->setHighLim( bNoteObs->projAtten() * highLimitPct );
+      lcdnumber_atten->setLowLim (bNoteObs->projAtten() * lowLimitPct);
+      lcdnumber_atten->setHighLim(bNoteObs->projAtten() * highLimitPct);
 
-      lcdnumber_projAtten->setLowLim( bNoteObs->projAtten() * lowLimitPct );
-      lcdnumber_projAtten->setHighLim( bNoteObs->projAtten() * highLimitPct );
+      lcdnumber_projAtten->setLowLim (bNoteObs->projAtten() * lowLimitPct);
+      lcdnumber_projAtten->setHighLim(bNoteObs->projAtten() * highLimitPct);
 
       showChanges();
    }

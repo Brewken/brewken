@@ -350,7 +350,6 @@ void Testing::initTestCase() {
       QCoreApplication::setOrganizationDomain("brewken.com/test");
       QCoreApplication::setApplicationName("brewken-test");
 
-
       // Set options so that any data modification does not affect any other data
       PersistentSettings::initialise(this->tempDir.absolutePath());
 
@@ -369,8 +368,11 @@ void Testing::initTestCase() {
       // logging output to stderr.
       qDebug() << Q_FUNC_INFO << "Initialised";
 
-      PersistentSettings::insert(PersistentSettings::Names::color_formula, "morey");
-      PersistentSettings::insert(PersistentSettings::Names::ibu_formula, "tinseth");
+      // Setting French locale below forces ',' as decimal separator and '.' as thousands separator.  Hopefully this
+      // helps catch cases where we incorrectly assume locale 'C' etc.
+      PersistentSettings::insert(PersistentSettings::Names::color_formula, "morey"  );
+      PersistentSettings::insert(PersistentSettings::Names::ibu_formula  , "tinseth");
+      PersistentSettings::insert(PersistentSettings::Names::forcedLocale , "fr_FR"  );
 
       // Tell Brewken not to require any "user" input on starting
       Application::setInteractive(false);
@@ -713,6 +715,18 @@ void Testing::testNamedParameterBundle() {
       "Error retrieving optional enum"
    );
 
+   return;
+}
+
+void Testing::testNumberDisplayAndParsing() {
+   // Per comment above, we should be seeing number formats in French locale here
+   // Eg: 1,234.56 in US locale = 1.234,56 in French locale
+   QVERIFY(1.23 == Measurement::extractRawFromString<double>("1,23 %"));
+   QVERIFY(3.45 == Measurement::extractRawFromString<double>("  03,45 srm  "));
+   QVERIFY(6.78 == Measurement::extractRawFromString<double>("\t6,78000000    bananas!"));
+   QVERIFY(1    == Measurement::extractRawFromString<int>   ("1,23 %"));
+   QVERIFY(3    == Measurement::extractRawFromString<int>   ("  03,45 srm  "));
+   QVERIFY(6    == Measurement::extractRawFromString<int>   ("\t6,78000000    bananas!"));
    return;
 }
 

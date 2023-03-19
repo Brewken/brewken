@@ -23,6 +23,8 @@
 
 #include <QString>
 
+#include "utils/BtStringConst.h"
+
 namespace Measurement {
    /**
     * \enum PhysicalQuantity lists the various types of measurable physical quantity
@@ -138,9 +140,27 @@ namespace Measurement {
    };
 
    /**
+    * \brief Array of all possible values of \c Measurement::PhysicalQuantity.  NB: This is \b not guaranteed to be in
+    *        the same order as the values of the enum.
+    *
+    *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
+    *        of enum class \c Measurement::PhysicalQuantity.  Hopefully, one day, when reflection
+    *        (https://en.cppreference.com/w/cpp/experimental/reflect) gets incorporated into C++, this will ultimately
+    *        be unnecessary.
+    */
+   extern std::array<Measurement::PhysicalQuantity, 14> const allPhysicalQuantites;
+
+   /**
     * \brief Return the name of a \c PhysicalQuantity suitable either for display to the user or logging
     */
-   QString getDisplayName(PhysicalQuantity physicalQuantity);
+   QString getDisplayName(Measurement::PhysicalQuantity const physicalQuantity);
+
+   /**
+    * \brief Return the \c PersistentSettings name for looking up the display \c UnitSystem for the specified
+    *        \c PhysicalQuantity
+    */
+   BtStringConst const & getSettingsName(Measurement::PhysicalQuantity const physicalQuantity);
+
 
    /**
     * \brief In a few cases, we want to be able to handle two different ways of measuring a thing (eg Mass and Volume,

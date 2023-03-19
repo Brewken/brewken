@@ -29,6 +29,7 @@
 #include <QPoint>
 
 #include "BtFieldType.h"
+#include "BtLineEdit.h"
 #include "measurement/UnitSystem.h"
 #include "UiAmountWithUnits.h" // For PreviousScaleInfo
 
@@ -74,6 +75,12 @@ public:
    virtual ~BtLabel();
 
    /**
+    * \brief Our "buddy" should always be a \c BtLabel.  This is a convenience function to get it without the caller
+    *        having to downcast from \c QWidget etc.
+    */
+   BtLineEdit & getBuddy() const;
+
+   /**
     * \brief We override the \c QWidget event handlers \c enterEvent and \c leaveEvent to implement mouse-over effects
     *        on the label text - specifically to give the user a visual clue that the label text is (right)-clickable
     */
@@ -85,6 +92,7 @@ public:
     *        clicks get notified to us via the \c QWidget::customContextMenuRequested signal.)
     */
    virtual void mouseReleaseEvent(QMouseEvent * event);
+
 
 private:
    void textEffect(bool enabled);

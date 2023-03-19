@@ -81,9 +81,18 @@ void HopEditor::save() {
       return;
    }
 
-   this->obsHop->setName(lineEdit_name->text());
-   this->obsHop->setAlpha_pct(lineEdit_alpha->toCanonical().quantity());
-   this->obsHop->setTime_min(lineEdit_time->toCanonical().quantity());
+   this->obsHop->setName             (lineEdit_name         ->text());
+   this->obsHop->setAlpha_pct        (lineEdit_alpha        ->getValueAs<double>());
+   this->obsHop->setTime_min         (lineEdit_time         ->toCanonical().quantity());
+   this->obsHop->setBeta_pct         (lineEdit_beta         ->getValueAs<double>());
+   this->obsHop->setHsi_pct          (lineEdit_HSI          ->getValueAs<double>());
+   this->obsHop->setOrigin           (lineEdit_origin       ->text()           );
+   this->obsHop->setHumulene_pct     (lineEdit_humulene     ->getValueAs<double>());
+   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->getValueAs<double>());
+   this->obsHop->setCohumulone_pct   (lineEdit_cohumulone   ->getValueAs<double>());
+   this->obsHop->setMyrcene_pct      (lineEdit_myrcene      ->getValueAs<double>());
+   this->obsHop->setSubstitutes      (textEdit_substitutes  ->toPlainText()    );
+   this->obsHop->setNotes            (textEdit_notes        ->toPlainText()    );
 
    //
    // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
@@ -92,16 +101,6 @@ void HopEditor::save() {
    this->obsHop->setType(Hop::typeStringMapping.stringToEnum<Hop::Type>(comboBox_hopType->currentData().toString()));
    this->obsHop->setForm(Hop::formStringMapping.stringToEnum<Hop::Form>(comboBox_hopForm->currentData().toString()));
    this->obsHop->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
-
-   this->obsHop->setBeta_pct         (lineEdit_beta         ->toCanonical().quantity());
-   this->obsHop->setHsi_pct          (lineEdit_HSI          ->toCanonical().quantity());
-   this->obsHop->setOrigin           (lineEdit_origin       ->text()           );
-   this->obsHop->setHumulene_pct     (lineEdit_humulene     ->toCanonical().quantity());
-   this->obsHop->setCaryophyllene_pct(lineEdit_caryophyllene->toCanonical().quantity());
-   this->obsHop->setCohumulone_pct   (lineEdit_cohumulone   ->toCanonical().quantity());
-   this->obsHop->setMyrcene_pct      (lineEdit_myrcene      ->toCanonical().quantity());
-   this->obsHop->setSubstitutes      (textEdit_substitutes  ->toPlainText()    );
-   this->obsHop->setNotes            (textEdit_notes        ->toPlainText()    );
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 
@@ -168,33 +167,34 @@ void HopEditor::showChanges(QMetaProperty * prop) {
          return;
       }
    }
-   if (updateAll || propName == PropertyNames::NamedEntity::name     ) { lineEdit_name         ->setText(obsHop->name());   lineEdit_name  ->setCursorPosition(0); tabWidget_editor->setTabText(0, obsHop->name()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::origin           ) { lineEdit_origin       ->setText(obsHop->origin()); lineEdit_origin->setCursorPosition(0); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::alpha_pct        ) { lineEdit_alpha        ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::time_min         ) { lineEdit_time         ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::beta_pct         ) { lineEdit_beta         ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::hsi_pct          ) { lineEdit_HSI          ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::humulene_pct     ) { lineEdit_humulene     ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::caryophyllene_pct) { lineEdit_caryophyllene->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::cohumulone_pct   ) { lineEdit_cohumulone   ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::myrcene_pct      ) { lineEdit_myrcene      ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::substitutes      ) { textEdit_substitutes  ->setPlainText(obsHop->substitutes()); if (!updateAll) { return; }}
-   if (updateAll || propName == PropertyNames::Hop::notes            ) { textEdit_notes        ->setPlainText(obsHop->notes());       if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { lineEdit_inventory->setText(obsHop); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntity::name                  ) { lineEdit_name                ->setText(obsHop->name                 ()); // Continues to next line
+                                                                                      lineEdit_name  ->setCursorPosition(0); tabWidget_editor->setTabText(0, obsHop->name());                         if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::origin                        ) { lineEdit_origin              ->setText(obsHop->origin               ()); lineEdit_origin->setCursorPosition(0); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::alpha_pct                     ) { lineEdit_alpha               ->setText(obsHop->alpha_pct            ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::time_min                      ) { lineEdit_time                ->setText(obsHop->time_min             ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::beta_pct                      ) { lineEdit_beta                ->setText(obsHop->beta_pct             ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::hsi_pct                       ) { lineEdit_HSI                 ->setText(obsHop->hsi_pct              ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::humulene_pct                  ) { lineEdit_humulene            ->setText(obsHop->humulene_pct         ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::caryophyllene_pct             ) { lineEdit_caryophyllene       ->setText(obsHop->caryophyllene_pct    ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::cohumulone_pct                ) { lineEdit_cohumulone          ->setText(obsHop->cohumulone_pct       ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::myrcene_pct                   ) { lineEdit_myrcene             ->setText(obsHop->myrcene_pct          ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::substitutes                   ) { textEdit_substitutes         ->setPlainText(obsHop->substitutes     ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::notes                         ) { textEdit_notes               ->setPlainText(obsHop->notes           ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { lineEdit_inventory           ->setText(obsHop->inventory            ());                                        if (!updateAll) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   if (updateAll || propName == PropertyNames::Hop::producer             ) {lineEdit_producer             ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::product_id           ) {lineEdit_product_id           ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::year                 ) {lineEdit_year                 ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::total_oil_ml_per_100g) {lineEdit_total_oil_ml_per_100g->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::farnesene_pct        ) {lineEdit_farnesene            ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::geraniol_pct         ) {lineEdit_geraniol             ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::b_pinene_pct         ) {lineEdit_b_pinene             ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::linalool_pct         ) {lineEdit_linalool             ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::limonene_pct         ) {lineEdit_limonene             ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::nerol_pct            ) {lineEdit_nerol                ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::pinene_pct           ) {lineEdit_pinene               ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::polyphenols_pct      ) {lineEdit_polyphenols          ->setText(obsHop); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Hop::xanthohumol_pct      ) {lineEdit_xanthohumol          ->setText(obsHop); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::producer                      ) {lineEdit_producer             ->setText(obsHop->producer             ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::product_id                    ) {lineEdit_product_id           ->setText(obsHop->product_id           ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::year                          ) {lineEdit_year                 ->setText(obsHop->year                 ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::total_oil_ml_per_100g         ) {lineEdit_total_oil_ml_per_100g->setText(obsHop->total_oil_ml_per_100g());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::farnesene_pct                 ) {lineEdit_farnesene            ->setText(obsHop->farnesene_pct        ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::geraniol_pct                  ) {lineEdit_geraniol             ->setText(obsHop->geraniol_pct         ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::b_pinene_pct                  ) {lineEdit_b_pinene             ->setText(obsHop->b_pinene_pct         ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::linalool_pct                  ) {lineEdit_linalool             ->setText(obsHop->linalool_pct         ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::limonene_pct                  ) {lineEdit_limonene             ->setText(obsHop->limonene_pct         ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::nerol_pct                     ) {lineEdit_nerol                ->setText(obsHop->nerol_pct            ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::pinene_pct                    ) {lineEdit_pinene               ->setText(obsHop->pinene_pct           ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::polyphenols_pct               ) {lineEdit_polyphenols          ->setText(obsHop->polyphenols_pct      ());                                        if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Hop::xanthohumol_pct               ) {lineEdit_xanthohumol          ->setText(obsHop->xanthohumol_pct      ());                                        if (!updateAll) { return; } }
 
    return;
 }

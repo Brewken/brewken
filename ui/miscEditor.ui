@@ -411,7 +411,7 @@
   <customwidget>
    <class>BtTimeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -435,7 +435,7 @@
   <customwidget>
    <class>BtMixedMassOrVolumeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
     <slot>setIsWeight(bool)</slot>

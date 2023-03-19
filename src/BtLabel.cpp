@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 
+#include "BtAmountEdit.h"
 #include "measurement/Measurement.h"
 #include "model/Style.h"
 #include "model/Recipe.h"
@@ -41,6 +42,16 @@ BtLabel::BtLabel(QWidget *parent,
 }
 
 BtLabel::~BtLabel() = default;
+
+BtLineEdit & BtLabel::getBuddy() const {
+   // Call QLabel's built-in function to get the buddy
+   QWidget * buddy = this->buddy();
+
+   // We assert that it's a coding error for there not to be a buddy!
+   Q_ASSERT(buddy);
+
+   return static_cast<BtLineEdit &>(*buddy);
+}
 
 void BtLabel::enterEvent([[maybe_unused]] QEvent * event) {
    this->textEffect(true);
@@ -133,12 +144,15 @@ void BtLabel::initializeMenu() {
       Q_FUNC_INFO << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement << ", forcedRelativeScale=" <<
       forcedRelativeScale;
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->fieldType)) {
+   auto fieldType = this->getBuddy().getFieldType();
+   if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
       return;
    }
 
-   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->fieldType);
-
+   // Since fieldType is not this->getBuddy(), we know our buddy is BtAmountEdit, not just BtLineEdit, so this cast
+   // should be safe.
+   BtAmountEdit & amountBuddy = static_cast<BtAmountEdit &>(this->getBuddy());
+   Measurement::PhysicalQuantity physicalQuantity = amountBuddy.getPhysicalQuantity();
    this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent,
                                                      physicalQuantity,
                                                      forcedSystemOfMeasurement,

@@ -218,7 +218,7 @@ public:
     *        recommendation used in recipe formulation.
     */
    Q_PROPERTY(bool           recommendMash          READ recommendMash          WRITE setRecommendMash                      )
-   //! \brief The IBUs per gal/lb if this is a liquid extract.
+   //! \brief The IBUs per gal/lb if this is a liquid extract.  .:TODO:.  Should this be a metric measure?
    Q_PROPERTY(double         ibuGalPerLb            READ ibuGalPerLb            WRITE setIbuGalPerLb                        )
    //! \brief The maximum kg of equivalent glucose that will come from this Fermentable.
    Q_PROPERTY(double         equivSucrose_kg        READ equivSucrose_kg        /*WRITE*/                       STORED false)

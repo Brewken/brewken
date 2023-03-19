@@ -33,26 +33,26 @@
 #include "utils/OptionalHelpers.h"
 
 UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
-                                     BtFieldType fieldType,
+                                     Measurement::PhysicalQuantities const physicalQuantities,
                                      Measurement::Unit const * units) :
    parent{parent},
-   fieldType{fieldType},
+   physicalQuantities{physicalQuantities},
    units{units} {
    return;
 }
 
 UiAmountWithUnits::~UiAmountWithUnits() = default;
 
-BtFieldType UiAmountWithUnits::getFieldType() const {
+Measurement::PhysicalQuantity UiAmountWithUnits::getPhysicalQuantity() const {
    // If it's not a "mixed" field (ie one in which the measurement could be for more than one
    // Measurement::PhysicalQuantity, eg Mass & Volume), just return what it is
-   if (!std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(this->fieldType)) {
-      return this->fieldType;
+   if (std::holds_alternative<Measurement::PhysicalQuantity>(this->physicalQuantities)) {
+      return std::get<Measurement::PhysicalQuantity>(this->physicalQuantities);
    }
    // If it is a "mixed" field, we should return the physical quantity corresponding to the current units
    auto const physicalQuantity = this->units->getPhysicalQuantity();
    // It's a coding error if we somehow have units other than Mass or Volume
-   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(this->fieldType);
+   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(this->physicalQuantities);
    Q_ASSERT(std::get<0>(tupleOfPqs) == physicalQuantity ||
             std::get<1>(tupleOfPqs) == physicalQuantity);
    return physicalQuantity;
@@ -133,43 +133,10 @@ QString UiAmountWithUnits::getConfigSection() {
 }
 
 double UiAmountWithUnits::toDoubleRaw(bool * ok) const {
-   if (ok) {
-      *ok = true;
-   }
-
-   // Make sure we get the right decimal point (. or ,) and the right grouping
-   // separator (, or .). Some locales write 1.000,10 and other write
-   // 1,000.10. We need to catch both
-   QString const decimal = QRegExp::escape(Localization::getLocale().decimalPoint());
-   QString const grouping = QRegExp::escape(Localization::getLocale().groupSeparator());
-
-   QRegExp amtUnit;
-   amtUnit.setPattern("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
-   amtUnit.setCaseSensitivity(Qt::CaseInsensitive);
-
-   // If the regex dies, return 0.0
-   if (amtUnit.indexIn(this->getWidgetText()) == -1) {
-      if (ok) {
-         *ok = false;
-      }
-      return 0.0;
-   }
-
-   return Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
+   return Measurement::extractRawFromString<double>(this->getWidgetText(), ok);
 }
 
-Measurement::Amount UiAmountWithUnits::toCanonical() {
-   // It's a coding error to call this function if we are not dealing with a physical quantity
-   // However, we can often recover by returning just the numeric part of the field and pretending it is seconds.
-   // If caller ignores the units and just used the quantity, then it will probably be OK.  Of course, we log an error
-   // and hope this prompts caller to call toDoubleRaw() instead of toCanonical().quantity()!
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType())) {
-      qCritical() <<
-         Q_FUNC_INFO << "Coding error - call to toCanonical() for" << this->getFieldType() << "for field with contents:" <<
-         this->getWidgetText();
-      return Measurement::Amount{this->getWidgetText().toDouble(), Measurement::Units::seconds};
-   }
-
+Measurement::Amount UiAmountWithUnits::toCanonical() const {
    Q_ASSERT(this->units);
    return Measurement::qStringToSI(this->getWidgetText(),
                                    this->units->getPhysicalQuantity(),
@@ -178,7 +145,7 @@ Measurement::Amount UiAmountWithUnits::toCanonical() {
 }
 
 
-QString UiAmountWithUnits::displayAmount(double amount, int precision) {
+QString UiAmountWithUnits::displayAmount(double amount, int precision) const {
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the
    // unit and scale.
@@ -205,23 +172,20 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
       return;
    }
 
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType())) {
-      correctedText = rawValue;
-   } else {
-      // The idea here is we need to first translate the field into a known
-      // amount (aka to SI) and then into the unit we want.
-      Measurement::Amount amountAsCanonical = this->convertToSI(previousScaleInfo);
+   // The idea here is we need to first translate the field into a known
+   // amount (aka to SI) and then into the unit we want.
+   Measurement::Amount amountAsCanonical = this->convertToSI(previousScaleInfo);
 
-      Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->getFieldType());
-      int precision = 3;
-      if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
-         precision = 0;
-      }
-      correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
-      qDebug() <<
-         Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
-      qDebug() << Q_FUNC_INFO << "this->units=" << this->units;
+   Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
+   int precision = 3;
+   if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
+      precision = 0;
    }
+   correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
+   qDebug() <<
+      Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
+   qDebug() << Q_FUNC_INFO << "this->units=" << this->units;
+
    this->setWidgetText(correctedText);
    return;
 }
@@ -232,11 +196,7 @@ Measurement::Amount UiAmountWithUnits::convertToSI(PreviousScaleInfo previousSca
       Q_FUNC_INFO << "rawValue:" << rawValue <<  ", old SystemOfMeasurement:" << previousScaleInfo.oldSystemOfMeasurement <<
       ", old ForcedScale: " << previousScaleInfo.oldForcedScale;
 
-   // It is a coding error if this function is called for a field is not holding a physical quantity.  Eg, it makes no
-   // sense to call convertToSI for a date or a string field, not least as there will be no sane value to supply for
-   // oldSystemOfMeasurement.
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(this->getFieldType()));
-   Measurement::PhysicalQuantity physicalQuantity = std::get<Measurement::PhysicalQuantity>(this->getFieldType());
+   Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
 
    Measurement::UnitSystem const & oldUnitSystem =
       Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement, physicalQuantity);

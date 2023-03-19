@@ -226,7 +226,7 @@
           </widget>
          </item>
          <item>
-          <widget class="BtGenericEdit" name="lineEdit_spargePh">
+          <widget class="BtAcidityEdit" name="lineEdit_spargePh">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -444,7 +444,7 @@
              </widget>
             </item>
             <item>
-             <widget class="BtGenericEdit" name="lineEdit_tunSpHeat">
+             <widget class="BtSpecificHeatCapacityEdit" name="lineEdit_tunSpHeat">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -608,9 +608,19 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>BtSpecificHeatCapacityEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtAmountEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtAcidityEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtAmountEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>BtTemperatureEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -635,7 +645,7 @@
   <customwidget>
    <class>BtMassEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <signal>textModified()</signal>
     <slot>lineChanged()</slot>

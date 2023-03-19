@@ -81,12 +81,6 @@ AddSettingName(treeView_misc_headerState)        // MainWindow section
 AddSettingName(treeView_recipe_headerState)      // MainWindow section
 AddSettingName(treeView_style_headerState)       // MainWindow section
 AddSettingName(treeView_yeast_headerState)       // MainWindow section
-AddSettingName(unitSystem_color)
-AddSettingName(unitSystem_density)
-AddSettingName(unitSystem_diastaticPower)
-AddSettingName(unitSystem_temperature)
-AddSettingName(unitSystem_volume)
-AddSettingName(unitSystem_weight)
 AddSettingName(UserDataDirectory)
 AddSettingName(versioning)
 AddSettingName(windowState)

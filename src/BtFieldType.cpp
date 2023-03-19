@@ -47,3 +47,11 @@ Measurement::PhysicalQuantities ConvertToPhysicalQuantities(BtFieldType const & 
 
    return std::get<Measurement::Mixed2PhysicalQuantities>(btFieldType);
 }
+
+BtFieldType ConvertToBtFieldType(Measurement::PhysicalQuantities const & physicalQuantities) {
+   if (std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities)) {
+      return std::get<Measurement::PhysicalQuantity>(physicalQuantities);
+   }
+
+   return std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities);
+}

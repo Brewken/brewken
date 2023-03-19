@@ -37,11 +37,11 @@ namespace {
    char const format = 'f';
 
    /**
-    * \brief Stores the current \c Measurement::UnitSystem being used for each \c Measurement::PhysicalQuantity
-    *        Note that this is for input and display.  We always convert to a standard \c Measurement::Unit (usually
-    *        Metric/SI where that's an option) for storing in the DB.
+    * \brief Stores the current \c Measurement::UnitSystem being used for \b input and \b display for each
+    *        \c Measurement::PhysicalQuantity.  Note that we always convert to a standard ("canonical")
+    *        \c Measurement::Unit (usually Metric/SI where that's an option) for storing in the DB.
     */
-   QMap<Measurement::PhysicalQuantity, Measurement::UnitSystem const *> physicalQuantityToUnitSystem;
+   QMap<Measurement::PhysicalQuantity, Measurement::UnitSystem const *> physicalQuantityToDisplayUnitSystem;
 
    //
    // Load the previous stored setting for which UnitSystem we use for a particular physical quantity
@@ -63,41 +63,78 @@ namespace {
    }
 
    /**
-    * For each \c PhysicalQuantity we have one \c Unit that we use for storing amounts internally (including in the DB)
+    * \brief Given a string of number plus, optionally, some units or pseudo-units, extract the number (and ignore the
+    *        units or pseudo-units)
     */
-   QMap<Measurement::PhysicalQuantity, Measurement::Unit const *> const physicalQuantityToUnit {
-      {Measurement::PhysicalQuantity::Mass,           &Measurement::Units::kilograms},
-      {Measurement::PhysicalQuantity::Volume,         &Measurement::Units::liters},
-      {Measurement::PhysicalQuantity::Time,           &Measurement::Units::minutes},
-      {Measurement::PhysicalQuantity::Temperature,    &Measurement::Units::celsius},
-      {Measurement::PhysicalQuantity::Color,          &Measurement::Units::srm},     // We will consider the standard unit of color to be SRM.
-      {Measurement::PhysicalQuantity::Density,        &Measurement::Units::sp_grav}, // Specific gravity (aka, Sg) will be the standard unit, since that is how we store things in the database.
-      {Measurement::PhysicalQuantity::DiastaticPower, &Measurement::Units::lintner}  // Lintner will be the standard unit, since that is how we store things in the database.
-   };
+   double extractRawDoubleFromString(QString const & input, bool * ok) {
+      if (ok) {
+         *ok = true;
+      }
 
+      // Make sure we get the right decimal point (. or ,) and the right grouping
+      // separator (, or .). Some locales write 1.000,10 and other write
+      // 1,000.10. We need to catch both
+      QString const decimal  = QRegExp::escape(Localization::getLocale().decimalPoint());
+      QString const grouping = QRegExp::escape(Localization::getLocale().groupSeparator());
+
+      QRegExp amtUnit;
+      amtUnit.setPattern("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
+      amtUnit.setCaseSensitivity(Qt::CaseInsensitive);
+
+      // If the regex dies, return 0.0
+      if (amtUnit.indexIn(input) == -1) {
+         if (ok) {
+            *ok = false;
+            qWarning() << Q_FUNC_INFO << "Error parsing" << input << "as number";
+         }
+         return 0.0;
+      }
+
+      QString numericPartOfInput = amtUnit.cap(1);
+      double returnValue = 0.0;
+      try {
+         returnValue = Localization::toDouble(numericPartOfInput, ok);
+      } catch (std::invalid_argument const & ex) {
+         qWarning() << Q_FUNC_INFO << "Could not parse" << numericPartOfInput << "as number:" << ex.what();
+      } catch(std::out_of_range const & ex) {
+         qWarning() << Q_FUNC_INFO << "Out of range parsing" << numericPartOfInput << "as number:" << ex.what();
+      }
+
+      return returnValue;
+   }
 }
 
+//
+// There isn't a generic version of this function, just the specialisations below
+//
+// Note that Qt conversion functions are generally not very accepting of extra characters.  Eg
+// \c QString::toInt() will give 0 when parsing "12.34" as it barfs on the decimal point, whereas
+// \c std::stoi() will give 12 on the same string input.  Nonetheless, we want to use Localization for decimal
+// separators etc.  So, we always convert everything to double first and then, if needed, convert the double
+// to an int / unsigned int, as this will give the behaviour we want.
+//
+template<typename T> T Measurement::extractRawFromString(QString const & input, bool * ok) {
+   // This compile-time assert relies on the fact that no type has size 0
+   static_assert(sizeof(T) == 0, "Only specializations of stringTo() can be used");
+}
+template<> int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(extractRawDoubleFromString(input, ok)); }
+template<> unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(extractRawDoubleFromString(input, ok)); }
+template<> double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           extractRawDoubleFromString(input, ok);  }
+
 void Measurement::loadDisplayScales() {
-   loadDisplayScale(Measurement::PhysicalQuantity::Mass,           PersistentSettings::Names::unitSystem_weight,         Measurement::UnitSystems::mass_Metric);
-   loadDisplayScale(Measurement::PhysicalQuantity::Volume,         PersistentSettings::Names::unitSystem_volume,         Measurement::UnitSystems::volume_Metric);
-   loadDisplayScale(Measurement::PhysicalQuantity::Temperature,    PersistentSettings::Names::unitSystem_temperature,    Measurement::UnitSystems::temperature_MetricIsCelsius);
-   loadDisplayScale(Measurement::PhysicalQuantity::Density,        PersistentSettings::Names::unitSystem_density,        Measurement::UnitSystems::density_SpecificGravity);
-   loadDisplayScale(Measurement::PhysicalQuantity::Color,          PersistentSettings::Names::unitSystem_color,          Measurement::UnitSystems::color_StandardReferenceMethod);
-   loadDisplayScale(Measurement::PhysicalQuantity::DiastaticPower, PersistentSettings::Names::unitSystem_diastaticPower, Measurement::UnitSystems::diastaticPower_Lintner);
-
-   // These physical quantities only have one UnitSystem, so we don't bother storing it in PersistentSettings
-   Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity::Time, Measurement::UnitSystems::time_CoordinatedUniversalTime);
-
+   for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
+      loadDisplayScale(physicalQuantity,
+                       Measurement::getSettingsName(physicalQuantity),
+                       Measurement::Unit::getCanonicalUnit(physicalQuantity).getUnitSystem());
+   }
    return;
 }
 
 void Measurement::saveDisplayScales() {
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_weight,         Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Mass).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_volume,         Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_temperature,    Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Temperature).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_density,        Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Density).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_color,          Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Color).uniqueName);
-   PersistentSettings::insert(PersistentSettings::Names::unitSystem_diastaticPower, Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::DiastaticPower).uniqueName);
+   for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
+      PersistentSettings::insert(Measurement::getSettingsName(physicalQuantity),
+                                 Measurement::getDisplayUnitSystem(physicalQuantity).uniqueName);
+   }
    return;
 }
 
@@ -108,7 +145,7 @@ void Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity physicalQua
    qDebug() <<
       Q_FUNC_INFO << "Setting UnitSystem for" << Measurement::getDisplayName(physicalQuantity) << "to" <<
       unitSystem.uniqueName;
-   physicalQuantityToUnitSystem.insert(physicalQuantity, &unitSystem);
+   physicalQuantityToDisplayUnitSystem.insert(physicalQuantity, &unitSystem);
    return;
 }
 
@@ -120,11 +157,11 @@ void Measurement::setDisplayUnitSystem(UnitSystem const & unitSystem) {
 }
 
 Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity physicalQuantity) {
-   // It is a coding error if physicalQuantityToUnitSystem has not had data loaded into it by the time this function is
+   // It is a coding error if physicalQuantityToDisplayUnitSystem has not had data loaded into it by the time this function is
    // called.
-   Q_ASSERT(!physicalQuantityToUnitSystem.isEmpty());
+   Q_ASSERT(!physicalQuantityToDisplayUnitSystem.isEmpty());
 
-   Measurement::UnitSystem const * unitSystem = physicalQuantityToUnitSystem.value(physicalQuantity, nullptr);
+   Measurement::UnitSystem const * unitSystem = physicalQuantityToDisplayUnitSystem.value(physicalQuantity, nullptr);
    if (nullptr == unitSystem) {
       // This is a coding error
       qCritical() <<
@@ -133,19 +170,6 @@ Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::P
       Q_ASSERT(false);
    }
    return *unitSystem;
-}
-
-Measurement::Unit const & Measurement::getUnitForInternalStorage(PhysicalQuantity physicalQuantity) {
-   // Every physical quantity we use should have a corresponding unit we use for measuring it...
-   if (!physicalQuantityToUnit.contains(physicalQuantity) ||
-       nullptr == physicalQuantityToUnit.value(physicalQuantity)) {
-      // ...so it's a coding error if this is not the case
-      qCritical() <<
-         Q_FUNC_INFO << "No internal storage Unit defined for physical quantity" <<
-         Measurement::getDisplayName(physicalQuantity);
-      Q_ASSERT(false);
-   }
-   return *physicalQuantityToUnit.value(physicalQuantity);
 }
 
 QString Measurement::displayQuantity(double quantity, int precision) {
@@ -340,7 +364,7 @@ Measurement::Amount Measurement::qStringToSI(QString qstr,
    // oldUnitSystem.  However, we can recover.
    if (!defaultUnit) {
       qWarning() << Q_FUNC_INFO << "forcedScale invalid?" << forcedScale;
-      defaultUnit = &Measurement::getUnitForInternalStorage(physicalQuantity);
+      defaultUnit = &Measurement::Unit::getCanonicalUnit(physicalQuantity);
    }
 
    return displayUnitSystem.qstringToSI(qstr, *defaultUnit);
