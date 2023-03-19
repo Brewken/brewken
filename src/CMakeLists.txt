@@ -48,7 +48,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
-    ${repoDir}/src/BtAmountEdit.cpp'
+    ${repoDir}/src/BtAmountEdit.cpp
     ${repoDir}/src/BtColor.cpp
     ${repoDir}/src/BtDatePopup.cpp
     ${repoDir}/src/BtFieldType.cpp
