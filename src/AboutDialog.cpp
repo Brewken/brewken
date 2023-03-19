@@ -79,6 +79,8 @@ AboutDialog::AboutDialog(QWidget * parent) :
    //
    //    cat src/AboutDialog.cpp | awk '/"  <li>.*@/{print}' | sed 's/.*<li>/   /; s+</li>.*$++; s/&lt;/</; s/&gt;/>/'
    //
+   // .:TODO:. We should probably get Meson or the `bt` build script to do some of the processing
+   //
    label->setText(
       QString::fromUtf8(
          "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
@@ -160,6 +162,16 @@ AboutDialog::AboutDialog(QWidget * parent) :
          "  <li>2013      Tim Payne &lt;swstim@gmail.com&gt;</li>"           // Probably https://github.com/swstim
          "  <li>2016      Tyler Cipriani &lt;tcipriani@wikimedia.org&gt;</li>"
          //     2013      U-CHIMCHIM\mik <mik@chimchim.(none)>               // Incomplete name and email
+         " </ul>"
+         ""
+         // **********************************************************************************************************
+         // * Note that the HTML source indentation here is different than above so that we don't pick up testers as *
+         // * copyright holders in the awk command above!                                                            *
+         // **********************************************************************************************************
+         " <p>The following people have made notable contributions with testing and bug reports:</p>"
+         " <ul>"
+         "  <li>Mik Firestone &lt;mikfire@gmail.com&gt;</li>"
+         "  <li>Nikolas &quot;Jazzbeerman&quot; </li>"
          " </ul>"
          ""
          " <h2>License (GPLv3)</h2>"
