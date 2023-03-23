@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/PhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * measurement/PhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,23 +21,25 @@
 
 namespace {
    EnumStringMapping const physicalQuantityToName {
-      {QT_TR_NOOP("Mass")          , Measurement::PhysicalQuantity::Mass          },
-      {QT_TR_NOOP("Volume")        , Measurement::PhysicalQuantity::Volume        },
-      {QT_TR_NOOP("Time")          , Measurement::PhysicalQuantity::Time          },
-      {QT_TR_NOOP("Temperature")   , Measurement::PhysicalQuantity::Temperature   },
-      {QT_TR_NOOP("Color")         , Measurement::PhysicalQuantity::Color         },
-      {QT_TR_NOOP("Density")       , Measurement::PhysicalQuantity::Density       },
-      {QT_TR_NOOP("Mixed")         , Measurement::PhysicalQuantity::Mixed         },
-      {QT_TR_NOOP("DiastaticPower"), Measurement::PhysicalQuantity::DiastaticPower}
+      {QObject::tr("Mass"                  ), Measurement::PhysicalQuantity::Mass                },
+      {QObject::tr("Volume"                ), Measurement::PhysicalQuantity::Volume              },
+      {QObject::tr("Time"                  ), Measurement::PhysicalQuantity::Time                },
+      {QObject::tr("Temperature"           ), Measurement::PhysicalQuantity::Temperature         },
+      {QObject::tr("Color"                 ), Measurement::PhysicalQuantity::Color               },
+      {QObject::tr("Density"               ), Measurement::PhysicalQuantity::Density             },
+      {QObject::tr("Mixed"                 ), Measurement::PhysicalQuantity::Mixed               },
+      {QObject::tr("Diastatic Power"       ), Measurement::PhysicalQuantity::DiastaticPower      },
+      {QObject::tr("Acidity"               ), Measurement::PhysicalQuantity::Acidity             },
+      {QObject::tr("Bitterness"            ), Measurement::PhysicalQuantity::Bitterness          },
+      {QObject::tr("Carbonation"           ), Measurement::PhysicalQuantity::Carbonation         },
+      {QObject::tr("Concentration"         ), Measurement::PhysicalQuantity::Concentration       },
+      {QObject::tr("Viscosity"             ), Measurement::PhysicalQuantity::Viscosity           },
+      {QObject::tr("Specific Heat Capacity"), Measurement::PhysicalQuantity::SpecificHeatCapacity},
    };
 }
 
 QString Measurement::getDisplayName(Measurement::PhysicalQuantity physicalQuantity) {
-   auto returnValue = physicalQuantityToName.enumToString(physicalQuantity);
-   // It's a coding error if we don't find a result!
-   if (!returnValue) {
-      qCritical() << Q_FUNC_INFO << "No mapping defined for PhysicalQuantity #" << static_cast<int>(physicalQuantity);
-      Q_ASSERT(false); // Stop here on debug builds
-   }
-   return *returnValue;
+   // It's a coding error if we don't find a result (in which case EnumStringMapping::enumToString will log an error and
+   // throw an exception).
+   return physicalQuantityToName.enumToString(physicalQuantity);
 }

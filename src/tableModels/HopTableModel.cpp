@@ -191,7 +191,8 @@ bool HopTableModel::remove(std::shared_ptr<Hop> hop) {
    return false;
 }
 
-void HopTableModel::removeHop(int hopId, std::shared_ptr<QObject> object) {
+void HopTableModel::removeHop([[maybe_unused]] int hopId,
+                              std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Hop>(object));
    return;
 }
@@ -222,13 +223,12 @@ void HopTableModel::changedInventory(int invKey, BtStringConst const & propertyN
    return;
 }
 
-void HopTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
+void HopTableModel::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {
 
    // Find the notifier in the list
    Hop * hopSender = qobject_cast<Hop *>(sender());
    if (hopSender) {
-      auto spHopSender = ObjectStoreWrapper::getSharedFromRaw(hopSender);
-      int ii = this->rows.indexOf(spHopSender);
+      int ii = this->findIndexOf(hopSender);
       if (ii < 0) {
          return;
       }
@@ -298,7 +298,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          break;
       case HOPUSECOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->useStringTr());
+            return QVariant(Hop::useDisplayNames[row->use()]);
          }
          if (role == Qt::UserRole) {
             return QVariant(static_cast<int>(row->use()));
@@ -314,7 +314,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
          break;
       case HOPFORMCOL:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->formStringTr());
+            return QVariant(Hop::formDisplayNames[row->form()]);
          } else if (role == Qt::UserRole) {
             return QVariant(static_cast<int>(row->form()));
          }
@@ -397,7 +397,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Mass,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)).quantity,
+                                        this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Hop Inventory Amount")
             );
          }
@@ -411,7 +411,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Mass,
                                         this->getForcedSystemOfMeasurementForColumn(column),
-                                        this->getForcedRelativeScaleForColumn(column)).quantity,
+                                        this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Hop Amount")
             );
          }
@@ -443,7 +443,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Time,
                                         std::nullopt,
-                                        this->getForcedRelativeScaleForColumn(column)).quantity,
+                                        this->getForcedRelativeScaleForColumn(column)).quantity(),
                tr("Change Hop Time")
             );
          }
@@ -470,7 +470,7 @@ QWidget * HopItemDelegate::createEditor(QWidget * parent, const QStyleOptionView
                                         const QModelIndex & index) const {
    if (index.column() == HOPUSECOL) {
       QComboBox * box = new QComboBox(parent);
-
+//¥¥¥¥¥ DO THESE PLUS WHERE USED
       // NOTE: these need to be in the same order as the Hop::Use enum.
       box->addItem(tr("Mash"));
       box->addItem(tr("First Wort"));

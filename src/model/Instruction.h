@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * model/Instruction.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -32,10 +32,10 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Instruction { BtStringConst const property{#property}; }
-AddPropertyName(completed)
+AddPropertyName(completed )
 AddPropertyName(directions)
-AddPropertyName(hasTimer)
-AddPropertyName(interval)
+AddPropertyName(hasTimer  )
+AddPropertyName(interval  )
 AddPropertyName(timerValue)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -55,6 +55,12 @@ class Instruction : public NamedEntity {
 
 
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Instruction(QString name = "");
    Instruction(NamedParameterBundle const & namedParameterBundle);
    Instruction(Instruction const & other);

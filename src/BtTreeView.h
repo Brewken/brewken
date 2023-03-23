@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -86,7 +86,7 @@ public:
    QString folderName(QModelIndex starter);
 
    //! \brief gets the type of the item at \c index.
-   std::optional<BtTreeItem::Type> type(QModelIndex const & index);
+   std::optional<BtTreeItem::Type> type(QModelIndex const & index) const;
 
    //! \brief returns true if the recipe at ndx is showing its ancestors
    bool ancestorsAreShowing(QModelIndex ndx);

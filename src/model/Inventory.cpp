@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Inventory.cpp is part of Brewken, and is copyright the following authors 2021:
+ * model/Inventory.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 #include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Yeast.h"
+#include "utils/TypeLookup.h"
 
 namespace {
 
@@ -57,8 +58,8 @@ public:
    }
 
    impl(NamedParameterBundle const & namedParameterBundle) :
-      id    {namedParameterBundle(PropertyNames::Inventory::id).toInt()       },
-      amount{namedParameterBundle(PropertyNames::Inventory::amount).toDouble()} {
+      id    {namedParameterBundle.val<int   >(PropertyNames::Inventory::id    )},
+      amount{namedParameterBundle.val<double>(PropertyNames::Inventory::amount)} {
       return;
    }
 
@@ -78,23 +79,37 @@ public:
 };
 
 
-Inventory::Inventory() : pimpl{ new impl{} } {
+Inventory::Inventory() : pimpl{std::make_unique<impl>()} {
    return;
 }
 
 Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
-   pimpl{ new impl{namedParameterBundle} } {
+   pimpl{std::make_unique<impl>(namedParameterBundle)} {
    return;
 }
 
+TypeLookup const Inventory::typeLookup {
+   "Inventory",
+   {
+      // Note that we need Enums to be treated as ints for the purposes of type lookup
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::amount               , Inventory::impl::amount),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::id                   , Inventory::impl::id    ),
+   },
+   // Parent class lookup
+   // Note that Inventory does _not_ inherit from NamedEntity, so this is intentionally null
+   nullptr
+};
+
+// Strictly speaking a QObject is not allowed to be copied, which would mean that since we do not use any state in the
+// QObject from which we inherit, we allow Inventory to be copied and just default-initialise the QObject base class in
+// the copy.  Hopefully this will never come back to bite us...
 Inventory::Inventory(Inventory const & other) :
-   pimpl{ new impl{*other.pimpl} } {
+   QObject{},
+   pimpl{std::make_unique<impl>(*other.pimpl)} {
    return;
 }
-
 
 Inventory::~Inventory() = default;
-
 
 int    Inventory::getId() const      { return this->pimpl->id; }
 double Inventory::getAmount() const  { return this->pimpl->amount; }
@@ -120,13 +135,13 @@ void Inventory::setAmount(double amount) {
    return;
 }
 
-void Inventory::setDeleted(bool var) {
+void Inventory::setDeleted([[maybe_unused]] bool var) {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
    Q_ASSERT(false);
    return;
 }
 
-void Inventory::setDisplay(bool var) {
+void Inventory::setDisplay([[maybe_unused]] bool var) {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
    Q_ASSERT(false);
    return;
@@ -139,14 +154,14 @@ void Inventory::hardDeleteOwnedEntities() {
 
 
 char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
-char const * InventoryHop::getIngredientClass() const         { return "Hop"; }
-char const * InventoryMisc::getIngredientClass() const        { return "Misc"; }
-char const * InventoryYeast::getIngredientClass() const       { return "Yeast"; }
+char const * InventoryHop::getIngredientClass()         const { return "Hop";         }
+char const * InventoryMisc::getIngredientClass()        const { return "Misc";        }
+char const * InventoryYeast::getIngredientClass()       const { return "Yeast";       }
 
 ObjectStore & InventoryFermentable::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
-ObjectStore & InventoryHop::getObjectStoreTypedInstance() const         { return ObjectStoreTyped<InventoryHop>::getInstance(); }
-ObjectStore & InventoryMisc::getObjectStoreTypedInstance() const        { return ObjectStoreTyped<InventoryMisc>::getInstance(); }
-ObjectStore & InventoryYeast::getObjectStoreTypedInstance() const       { return ObjectStoreTyped<InventoryYeast>::getInstance(); }
+ObjectStore & InventoryHop::getObjectStoreTypedInstance()         const { return ObjectStoreTyped<InventoryHop        >::getInstance(); }
+ObjectStore & InventoryMisc::getObjectStoreTypedInstance()        const { return ObjectStoreTyped<InventoryMisc       >::getInstance(); }
+ObjectStore & InventoryYeast::getObjectStoreTypedInstance()       const { return ObjectStoreTyped<InventoryYeast      >::getInstance(); }
 
 template<class Ing>
 void InventoryUtils::setAmount(Ing & ing, double amount) {

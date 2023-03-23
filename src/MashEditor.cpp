@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -60,12 +60,12 @@ void MashEditor::saveAndClose() {
    mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
 
    mashObs->setName(lineEdit_name->text());
-   mashObs->setGrainTemp_c(lineEdit_grainTemp->toSI().quantity);
-   mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toSI().quantity);
-   mashObs->setPh(lineEdit_spargePh->toSI().quantity);
-   mashObs->setTunTemp_c(lineEdit_tunTemp->toSI().quantity);
-   mashObs->setTunWeight_kg(lineEdit_tunMass->toSI().quantity);
-   mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toSI().quantity);
+   mashObs->setGrainTemp_c(lineEdit_grainTemp->toCanonical().quantity());
+   mashObs->setSpargeTemp_c(lineEdit_spargeTemp->toCanonical().quantity());
+   mashObs->setPh(lineEdit_spargePh->toCanonical().quantity());
+   mashObs->setTunTemp_c(lineEdit_tunTemp->toCanonical().quantity());
+   mashObs->setTunWeight_kg(lineEdit_tunMass->toCanonical().quantity());
+   mashObs->setTunSpecificHeat_calGC(lineEdit_tunSpHeat->toCanonical().quantity());
 
    mashObs->setNotes(textEdit_notes->toPlainText());
 

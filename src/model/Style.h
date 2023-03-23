@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/Style.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -31,28 +31,28 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Style { BtStringConst const property{#property}; }
-AddPropertyName(abvMax_pct)
-AddPropertyName(abvMin_pct)
-AddPropertyName(carbMax_vol)
-AddPropertyName(carbMin_vol)
-AddPropertyName(category)
+AddPropertyName(abvMax_pct    )
+AddPropertyName(abvMin_pct    )
+AddPropertyName(carbMax_vol   )
+AddPropertyName(carbMin_vol   )
+AddPropertyName(category      )
 AddPropertyName(categoryNumber)
-AddPropertyName(colorMax_srm)
-AddPropertyName(colorMin_srm)
-AddPropertyName(examples)
-AddPropertyName(fgMax)
-AddPropertyName(fgMin)
-AddPropertyName(ibuMax)
-AddPropertyName(ibuMin)
-AddPropertyName(ingredients)
-AddPropertyName(notes)
-AddPropertyName(ogMax)
-AddPropertyName(ogMin)
-AddPropertyName(profile)
-AddPropertyName(styleGuide)
-AddPropertyName(styleLetter)
-AddPropertyName(type)
-AddPropertyName(typeString)
+AddPropertyName(colorMax_srm  )
+AddPropertyName(colorMin_srm  )
+AddPropertyName(examples      )
+AddPropertyName(fgMax         )
+AddPropertyName(fgMin         )
+AddPropertyName(ibuMax        )
+AddPropertyName(ibuMin        )
+AddPropertyName(ingredients   )
+AddPropertyName(notes         )
+AddPropertyName(ogMax         )
+AddPropertyName(ogMin         )
+AddPropertyName(profile       )
+AddPropertyName(styleGuide    )
+AddPropertyName(styleLetter   )
+AddPropertyName(type          )
+AddPropertyName(typeString    )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -67,18 +67,22 @@ class Style : public NamedEntity {
    Q_OBJECT
    Q_CLASSINFO("signal", "styles")
 
-
-   friend class StyleEditor;
 public:
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
    Style(QString t_name = "");
    Style(NamedParameterBundle const & namedParameterBundle);
    Style(Style const & other);
 
-   virtual ~Style() = default;
+   virtual ~Style();
 
    //! \brief The type of beverage.
    enum class Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
-   Q_ENUMS( Type )
+   Q_ENUM(Type)
 
    //! \brief The category.
    Q_PROPERTY( QString category READ category WRITE setCategory /*NOTIFY changed*/ /*changedCategory*/ )

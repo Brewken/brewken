@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/SystemOfMeasurement.h is part of Brewken, and is copyright the following authors 2022:
+ * measurement/SystemOfMeasurement.h is part of Brewken, and is copyright the following authors 2022-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -130,9 +130,13 @@ namespace Measurement {
       //
       // See https://en.wikipedia.org/wiki/Parts-per_notation for more info
       ConcentrationPartsPer,
-      ConcentrationMassPerVolume
+      ConcentrationMassPerVolume,
 
       // See comment in measurement/Unit.h about the different viscosity units
+
+      // Specific Heat Capacity
+      SpecificHeatCapacityCalories,
+      SpecificHeatCapacityJoules,
    };
 
 

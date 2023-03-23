@@ -284,6 +284,11 @@ namespace Measurement {
       extern UnitSystem const viscosity_Metric;
       extern UnitSystem const viscosity_MetricAlternate;
 
+      // As explained in measurement/Unit.h, our canonical unit system for specific heat capacity is calories per ...
+      // rather than joules per ...
+      extern UnitSystem const specificHeatCapacity_Calories;
+      extern UnitSystem const specificHeatCapacity_Joules;
+
    }
 }
 

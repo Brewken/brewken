@@ -109,7 +109,9 @@ namespace Measurement {
       // separate.
       Carbonation,
       Concentration,
-      Viscosity
+      Viscosity,
+      // Specific heat capacity -- see https://en.wikipedia.org/wiki/Specific_heat_capacity
+      SpecificHeatCapacity,
    };
 
    /**

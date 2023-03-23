@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <type_traits>
 
 #include <QDateTime>
@@ -33,6 +34,7 @@
 #include <QVariant>
 
 #include "utils/BtStringConst.h"
+#include "utils/TypeLookup.h"
 
 class NamedParameterBundle;
 class ObjectStore;
@@ -42,6 +44,11 @@ class Recipe;
 //========================================== Start of property name constants ==========================================
 // Make this class's property names available via constants in sub-namespace of PropertyNames
 // One advantage of using these constants is you get compile-time checking for typos etc
+//
+// Note that, because we are both declaring and defining these in the header file, I don't think we can guarantee on
+// every platform there is always exactly one instance of each property name.  So, whilst it's always valid to compare
+// the values of two property names, we cannot _guarantee_ that two identical property names always have the same
+// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::Folder) ...`.
 #define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)
@@ -73,25 +80,92 @@ AddPropertyName(parentKey)
  *           \b Water
  *           \b Yeast
  *
- * Note that this class has previously been called \b Ingredient and \b BeerXMLElement.  We've changed the name to try
- * to best reflect what the class represents.  Although some of this class's subclasses (eg \b Hop, \b Fermentable,
- * \b Yeast) are ingredients in the normal sense of the word, others (eg \b Instruction, \b Equipment, \b Style,
- * \b Mash) are not really.  Equally, the fact that derived classes can be instantiated from BeerXML is not their
- * defining characteristic.
+ *        I know \b NamedEntity isn't the snappiest name, but it's the best we've come up with so far.  If you look at
+ *        older versions of the code, you'll see that this class has previously been called \b Ingredient and
+ *        \b BeerXMLElement.  The current name tries to best reflect what the class represents.  Although some of this
+ *        class's subclasses (eg \b Hop, \b Fermentable, \b Yeast) are ingredients in the normal sense of the word,
+ *        others (eg \b Instruction, \b Equipment, \b Style, \b Mash) are not really.  Equally, the fact that derived
+ *        classes can be instantiated from BeerXML is not their defining characteristic.
  *
- * NB: Although we can template individual member functions, we cannot make this a template class (eg to use
- * https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc) cannot
- * handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
+ *        NOTE: One of the things that can be confusing about our class and DB structure is that we are often
+ *        doubling-up two different concepts: a global "variety" record/object and a recipe-specific "use of"
+ *        record/object.  Eg, there might be one global "variety" record/object for Fuggle hops, with information about
+ *        origin, average alpha acid etc.  Then, each time this type of hop is used in a recipe, there will be a
+ *        related record with information about quantity used, actual alpha acid, etc PLUS a COPY of all the information
+ *        in the variety record.  The "use of" and "variety" records are stored in the same DB table and the
+ *        relationship between them is tracked via parent_id/child_id - where "variety" is the parent and "use of" is
+ *        the child.
+ *           This structure exists for historical reasons because the code was originally modelled on the BeerXML data
+ *        structure (which doesn't really distinguish between "variety" and "use of") and, in the beginning, did not use
+ *        a relational database (operating directly on BeerXML files instead).
+ *           If we were starting today from a blank sheet of paper, you might, quite reasonably, argue that we should
+ *        have separate DB tables and classes for "variety" and "use of" -- eg HopVariety and HopUse (or HopAddition).
+ *        However, given where we actually are at the moment, it would be a very considerable amount of work to get to
+ *        such a structure -- and it feels like we have a lot more important issues to which we should devote our
+ *        efforts.
+ *           Moreover, such a would actually remove some potentially valuable flexibility from the code.  It is open to
+ *        debate exactly which fields belong in the "variety" record, which ones belong in the "use of" record, and
+ *        which ones should be should be in both, and we might want to leave it open (within reason) for different users
+ *        to do different things.  Eg, for hops, BeerJSON requires name and alpha acid in both types of records, allows
+ *        (but does not require) producer, product ID, origin, year, form (ie leaf/pellet/etc) and beta acid in either
+ *        type, but only allows oil content and inventory information in the "variety" record.  This isn't wrong per se,
+ *        but it means that, if you want separate BeerJSON inventory records for Fuggle 2021 harvest and Fuggle 2022
+ *        harvest, then you need two separate Fuggle variety records, which might not be what you want.  (This also then
+ *        makes you think there should be three types of Hop record, but I'm not going to go there!)
+ *           So, for the moment at least, we (mostly) retain the idea that a single class/table for both "variety" and
+ *        "use of" objects/records.  You just have to be mindful of this when looking at the code and the DB -- eg
+ *        the amount field of a Hop can be either inventory or how much to add to a recipe, depending on whether it's a
+ *        "variety" or "use of" record.
+ *        .:TODO:. It would be good to make explicit which member variables (and their getters/setters) are valid ONLY
+ *        for "use of".
  *
- * NB: Because NamedEntity inherits from QObject, no extra work is required to store pointers to NamedEntity objects
- *     inside QVariant
+ *        NOTE: Although we can template individual member functions, we cannot make this a template class (eg to use
+ *        https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc)
+ *        cannot handle templates, and we want to be able to use the Qt Property system as well as signals and slots.
+ *
+ *        NOTE: Because NamedEntity inherits from QObject, no extra work is required to store pointers to NamedEntity
+ *        objects inside QVariant.  We also get to have Qt properties for free.  Because we do not use any state in the
+ *        QObject from which we inherit, we can get away with not trying to move/copy such state in our copy
+ *        constructor, assignment operator, etc.  This is good because there isn't a handy way to do such moves or
+ *        copies.
+ *
+ *        NOTE: When modifying or extending subclasses of \c NamedEntity, there are mostly plenty of examples to guide
+ *        you, but a couple of things are worth knowing in advance:
+ *          - Attributes that we want to be able to store, eg in the DB and/or in an XML or JSON file, need to be Qt
+ *            properties.  There are then mappings in xml/BeerXml.cpp, json/BeerJson.cpp and
+ *            database/ObjectStoreTyped.cpp that determine how these properties are read/written.
+ *          - Our data structures have, for obvious reasons, been quite heavily influenced by BeerXML and BeerJSON.  The
+ *            latter is a much larger data model than the former, so there are a few minor contortions in the BeerXML
+ *            mappings (as you'll see from the comments in xml/BeerXml.cpp).
+ *          - Because Qt properties don't really handle Null (or std::optional), there are a few places in the code
+ *            where we say "we'll treat this value as null".  Eg, for any int that's a DB key, -1 means it's null.
+ *          - Mostly the order of enum values should not matter, eg for serialisation where we generally to convert to
+ *            strings.  \b However, the .ui files and the .conf file still contain a lot of instances where the order
+ *            and/or the int value of an enum do matter, so it's best to avoid changing this, for now at least.
+ *
+ * .:TODO:. It would be nice to have a canonical serialisation of enums
  */
 class NamedEntity : public QObject {
    Q_OBJECT
    Q_CLASSINFO("version","1")
 
-
 public:
+
+   /**
+    * \brief Type lookup info for this class.  Note this is intentionally static, public and const.  Subclasses need to
+    *        override this member with one that chains to it.  (See \c TypeLookup constructor for more info.)
+    *
+    *        Note that this is a static member variable and is \b not intended to do run-time validation (eg to say
+    *        whether the object is in a state where the property is allowed to be null).  It just allows us to tell
+    *        (amongst other things) whether, in principle, a given field can ever be null.
+    *
+    *        Why is this a static member variable and not a virtual function?  It's because we need to be able to access
+    *        it \b before we have created the object.  Eg, if we are reading a \c Fermentable from the DB, we first read
+    *        all the fields and construct a \c NamedParameterBundle, and then use that \c NamedParameterBundle to
+    *        construct the \c Fermentable.
+    */
+   static TypeLookup const typeLookup;
+
    NamedEntity(QString t_name, bool t_display = false, QString folder = QString());
    NamedEntity(NamedEntity const & other);
 
@@ -101,10 +175,36 @@ public:
     */
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
+protected:
+   /**
+    * \brief Swap the contents of two NamedEntity objects - which provides an exception-safe way of implementing
+    *        operator=
+    */
+   void swap(NamedEntity & other) noexcept;
+
+public:
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
    // virtue of inheriting from QObject, but this declaration does no harm.
    virtual ~NamedEntity();
+
+   /**
+    * \brief Although we might need to implement assignment operator for some of its derived classes (eg Water),
+    *        NamedEntity itself is an abstract class, so there isn't a meaningful implementation, and we don't ever
+    *        want the compiler to try to create one (per the "Rule of Three").
+    */
+   NamedEntity & operator=(NamedEntity const &) = delete;
+
+   /**
+    * \brief Don't think we want move assignment either.
+    */
+   NamedEntity & operator=(NamedEntity &&) = delete;
+
+   /**
+    * \brief For the moment, we don't need a move constructor, so make sure the compiler doesn't generate one for us (as
+    *        it would likely be wrong).
+    */
+   NamedEntity(NamedEntity &&) = delete;
 
    /**
     * \brief Turns a straight copy of an object into a "child" copy that can be used in a Recipe.  (A child copy is
@@ -121,12 +221,6 @@ public:
     *        overload) the protected virtual isEqualTo() function.
     */
    bool operator==(NamedEntity const & other) const;
-
-   /**
-    * \brief We don't have a need to assign one NamedEntity to another, and the compiler implementation of this would
-    *        be wrong, so we delete it.
-    */
-   NamedEntity & operator=(NamedEntity const &) = delete;
 
    /**
     * \brief This generic version of operator!= should work for subclasses provided they correctly _override_ (NB not
@@ -245,9 +339,10 @@ public:
 
 signals:
    /*!
-    * Passes the meta property that has changed about this object.
-    * NOTE: when subclassing, be \em extra careful not to create a method with
-    * the same signature. Otherwise, everything will silently break.
+    * \brief Passes the meta property that has changed about this object.
+    *
+    * NOTE: When subclassing, be \em extra careful not to create a member function with the same signature.
+    *       Otherwise, everything will silently break.
     */
    void changed(QMetaProperty, QVariant value = QVariant()) const;
    void changedFolder(QString);
@@ -383,6 +478,10 @@ private:
   bool m_beingModified;
 };
 
+/**
+ * \brief Convenience typedef for pointer to \c isOptional();
+ */
+using IsOptionalFnPtr = bool (*)(BtStringConst const &);
 
 /**
  * \class NamedEntityModifyingMarker
@@ -409,7 +508,7 @@ private:
  */
 template<class S>
 S & operator<<(S & stream, NamedEntity const & namedEntity) {
-   stream << namedEntity.metaObject()->className() << " #" << namedEntity.key();
+   stream << namedEntity.metaObject()->className() << " #" << namedEntity.key() << "(" << namedEntity.name() << ")";
    return stream;
 }
 
@@ -442,6 +541,28 @@ S & operator<<(S & stream, NE const * namedEntity) {
       stream << "Null " << NE::staticMetaObject.metaObject()->className();
    }
    return stream;
+}
+
+/**
+ * \brief Convenience function for, in effect, casting std::optional<int> to std::optional<T> where T is an enum class
+ */
+template <class T>
+std::optional<T> castFromOptInt(std::optional<int> const & val) {
+   if (val.has_value()) {
+      return static_cast<T>(val.value());
+   }
+   return std::nullopt;
+}
+
+/**
+ * \brief Convenience function for, in effect, casting std::optional<T> to std::optional<int> where T is an enum class
+ */
+template <class T>
+std::optional<int> castToOptInt(std::optional<T> const & val) {
+   if (val.has_value()) {
+      return static_cast<int>(val.value());
+   }
+   return std::nullopt;
 }
 
 #endif

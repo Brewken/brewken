@@ -19,6 +19,7 @@
  =====================================================================================================================*/
 #include "model/NamedEntity.h"
 
+#include <map>
 #include <typeinfo>
 
 #include <QDebug>
@@ -29,26 +30,14 @@
 #include "model/Recipe.h"
 
 NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
-   QObject    {nullptr  },
-   m_key      {-1       },
-   parentKey  {-1       },
-   m_folder   {folder   },
-   m_name     {t_name   },
-   m_display  {t_display},
-   m_deleted  {false    },
-   m_beingModified{false} {
-   return;
-}
-
-NamedEntity::NamedEntity(NamedEntity const & other) :
-   QObject     {nullptr          }, // QObject doesn't have a copy constructor, so just make a new one
-   m_key       {-1               }, // We don't want to copy the other object's key/ID
-   parentKey   {other.parentKey  },
-   m_folder    {other.m_folder   },
-   m_name      {other.m_name     },
-   m_display   {other.m_display  },
-   m_deleted   {other.m_deleted  },
-   m_beingModified{false} {
+   QObject        {nullptr  },
+   m_key          {-1       },
+   parentKey      {-1       },
+   m_folder       {folder   },
+   m_name         {t_name   },
+   m_display      {t_display},
+   m_deleted      {false    },
+   m_beingModified{false    } {
    return;
 }
 
@@ -67,16 +56,64 @@ NamedEntity::NamedEntity(NamedEntity const & other) :
 //         future.
 //
 NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
-   QObject{nullptr},
-   m_key      {namedParameterBundle(PropertyNames::NamedEntity::key, -1)          },
-   parentKey  {namedParameterBundle(PropertyNames::NamedEntity::parentKey, -1)    },
-   m_folder   {namedParameterBundle(PropertyNames::NamedEntity::folder, QString{})},
-   m_name     {namedParameterBundle(PropertyNames::NamedEntity::name, QString{})  },
-   m_display  {namedParameterBundle(PropertyNames::NamedEntity::display, true)    },
-   m_deleted  {namedParameterBundle(PropertyNames::NamedEntity::deleted, false)   },
+   QObject        {nullptr},
+   m_key          {namedParameterBundle.val(PropertyNames::NamedEntity::key,       -1       )},
+   parentKey      {namedParameterBundle.val(PropertyNames::NamedEntity::parentKey, -1       )},
+   m_folder       {namedParameterBundle.val(PropertyNames::NamedEntity::folder,    QString{})},
+   m_name         {namedParameterBundle.val(PropertyNames::NamedEntity::name,      QString{})},
+   m_display      {namedParameterBundle.val(PropertyNames::NamedEntity::display,   true     )},
+   m_deleted      {namedParameterBundle.val(PropertyNames::NamedEntity::deleted,   false    )},
    m_beingModified{false} {
    return;
 }
+
+NamedEntity::NamedEntity(NamedEntity const & other) :
+   QObject     {nullptr        }, // QObject doesn't have a copy constructor, so just make a new one
+   m_key       {-1             }, // We don't want to copy the other object's key/ID
+   parentKey   {other.parentKey},
+   m_folder    {other.m_folder },
+   m_name      {other.m_name   },
+   m_display   {other.m_display},
+   m_deleted   {other.m_deleted},
+   m_beingModified{false} {
+   return;
+}
+
+void NamedEntity::swap(NamedEntity & other) noexcept {
+   // Assume nothing important to swap in QObject (see comment in model/NamedEntity.h
+   //
+   // Since we're only using this for assignment operator, which in turn uses copy constructor, we're assuming we are
+   // NEVER swapping two objects that both have a valid key.  Assert that here.
+   Q_ASSERT(-1 == this->m_key || -1 == other.m_key);
+   // Similarly, we assert we are never trying to swap an object that is in the middle of being modified
+   Q_ASSERT(!this->m_beingModified);
+   Q_ASSERT(!other.m_beingModified);
+   // Now do the actual swapping
+   std::swap(this->parentKey, other.parentKey);
+   std::swap(this->m_folder , other.m_folder );
+   std::swap(this->m_name   , other.m_name   );
+   std::swap(this->m_display, other.m_display);
+   std::swap(this->m_deleted, other.m_deleted);
+   return;
+}
+
+TypeLookup const NamedEntity::typeLookup {
+   "NamedEntity",
+   {
+      // As long as we map each property name to its corresponding member variable, the compiler should be able to work
+      // everything else out.  The only exception is that, for enums, we have to pretend they are stored as int, because
+      // that's what's going to come out of the Qt property system (and it would significantly complicate other bits of
+      // the code to separately register every different enum that we use.)
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_display),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::display  , NamedEntity::m_display),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::folder   , NamedEntity::m_folder ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::key      , NamedEntity::m_key    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::name     , NamedEntity::m_name   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::parentKey, NamedEntity::parentKey),
+   },
+   // Parent class lookup - none as we're top of the tree
+   nullptr
+};
 
 NamedEntity::~NamedEntity() = default;
 

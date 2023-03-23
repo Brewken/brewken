@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -101,18 +101,18 @@ void StyleEditor::save() {
    this->obsStyle->setStyleLetter( lineEdit_styleLetter->text() );
    this->obsStyle->setStyleGuide( lineEdit_styleGuide->text() );
    this->obsStyle->setType( static_cast<Style::Type>(comboBox_type->currentIndex()) );
-   this->obsStyle->setOgMin( lineEdit_ogMin->toSI().quantity );
-   this->obsStyle->setOgMax( lineEdit_ogMax->toSI().quantity );
-   this->obsStyle->setFgMin( lineEdit_fgMin->toSI().quantity );
-   this->obsStyle->setFgMax( lineEdit_fgMax->toSI().quantity );
-   this->obsStyle->setIbuMin( lineEdit_ibuMin->toSI().quantity );
-   this->obsStyle->setIbuMax( lineEdit_ibuMax->toSI().quantity );
-   this->obsStyle->setColorMin_srm( lineEdit_colorMin->toSI().quantity );
-   this->obsStyle->setColorMax_srm( lineEdit_colorMax->toSI().quantity );
-   this->obsStyle->setCarbMin_vol( lineEdit_carbMin->toSI().quantity );
-   this->obsStyle->setCarbMax_vol( lineEdit_carbMax->toSI().quantity );
-   this->obsStyle->setAbvMin_pct( lineEdit_abvMin->toSI().quantity );
-   this->obsStyle->setAbvMax_pct( lineEdit_abvMax->toSI().quantity );
+   this->obsStyle->setOgMin( lineEdit_ogMin->toCanonical().quantity() );
+   this->obsStyle->setOgMax( lineEdit_ogMax->toCanonical().quantity() );
+   this->obsStyle->setFgMin( lineEdit_fgMin->toCanonical().quantity() );
+   this->obsStyle->setFgMax( lineEdit_fgMax->toCanonical().quantity() );
+   this->obsStyle->setIbuMin( lineEdit_ibuMin->toCanonical().quantity() );
+   this->obsStyle->setIbuMax( lineEdit_ibuMax->toCanonical().quantity() );
+   this->obsStyle->setColorMin_srm( lineEdit_colorMin->toCanonical().quantity() );
+   this->obsStyle->setColorMax_srm( lineEdit_colorMax->toCanonical().quantity() );
+   this->obsStyle->setCarbMin_vol( lineEdit_carbMin->toCanonical().quantity() );
+   this->obsStyle->setCarbMax_vol( lineEdit_carbMax->toCanonical().quantity() );
+   this->obsStyle->setAbvMin_pct( lineEdit_abvMin->toCanonical().quantity() );
+   this->obsStyle->setAbvMax_pct( lineEdit_abvMax->toCanonical().quantity() );
    this->obsStyle->setProfile( textEdit_profile->toPlainText() );
    this->obsStyle->setIngredients( textEdit_ingredients->toPlainText() );
    this->obsStyle->setExamples( textEdit_examples->toPlainText() );

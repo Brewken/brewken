@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -36,9 +36,10 @@ public:
     *
     * \param primaryTable First in the list of fields in this table defn should be the primary key
     */
-   ObjectStoreTyped(TableDefinition const & primaryTable,
+   ObjectStoreTyped(TypeLookup               const & typeLookup,
+                    TableDefinition          const & primaryTable,
                     JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{}) :
-      ObjectStore(primaryTable, junctionTables) {
+      ObjectStore(typeLookup, primaryTable, junctionTables) {
       return;
    }
 
@@ -50,6 +51,8 @@ public:
     * \brief Get the singleton instance of this class
     */
    static ObjectStoreTyped<NE> & getInstance();
+
+   using ObjectStore::insert;
 
    /**
     * \brief Insert a new object in the DB (and in our cache list)
@@ -97,9 +100,12 @@ public:
     * \return ID of the newly-inserted object in the database
     */
    int insert(NE & ne) {
+      qWarning() << Q_FUNC_INFO << "Deprecated function";
       std::shared_ptr<NE> nePointer{&ne};
       return this->insert(nePointer);
    }
+
+   using ObjectStore::insertOrUpdate;
 
    /**
     * \brief Convenience function that calls either \c insert or \c update, depending on whether the object is already
@@ -113,11 +119,13 @@ public:
    }
 
    /**
-    * \brief Raw pointer version of \c insertOrUpdate
+    * \brief Raw pointer version of \c insertOrUpdate.  This is deprecated as, in the case of insert, the caller needs
+    *        to be REALLY certain that no shared_ptr exists already for the supplied parameter.
     *
     * \return ID of what was inserted or updated
     */
    int insertOrUpdate(NE & ne) {
+      qWarning() << Q_FUNC_INFO << "Deprecated function";
       int id = ne.key();
       if (id > 0) {
          std::shared_ptr<NE> nep = this->getById(id);
@@ -235,7 +243,8 @@ public:
    /**
     * \brief Search the set of all cached objects with a lambda.
     *
-    * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
+    * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false
+    *                      otherwise.
     *
     * \return List of shared pointers to all the objects that give a \c true result to \c matchFunction (and thus an
     *         empty list if none does).
@@ -372,9 +381,12 @@ private:
 
    //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
    ObjectStoreTyped(ObjectStoreTyped const &) = delete;
-   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
+   //! No copy assignment operator, as never want anyone, not even our friends, to make copies of a singleton.
    ObjectStoreTyped & operator=(ObjectStoreTyped const &) = delete;
-
+   //! No move constructor
+   ObjectStoreTyped(ObjectStoreTyped && other) = delete;
+   //! No move assignment operator
+   ObjectStoreTyped& operator=(ObjectStoreTyped&& other) = delete;
 };
 
 /**

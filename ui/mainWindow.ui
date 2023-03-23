@@ -26,7 +26,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string notr="true">Brewken - $VERSIONSTRING</string>
+   <string notr="true">Brewken - $CONFIG_VERSION_STRING</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../brewken.qrc">
@@ -1155,6 +1155,9 @@
                 <property name="contextMenuPolicy">
                  <enum>Qt::CustomContextMenu</enum>
                 </property>
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
               <item>
@@ -1894,7 +1897,7 @@
     <string>Ctrl+T</string>
    </property>
   </action>
-    <action name="actionPrint">
+  <action name="actionPrint">
    <property name="icon">
     <iconset resource="../brewken.qrc">
      <normaloff>:/images/printer.png</normaloff>:/images/printer.png</iconset>

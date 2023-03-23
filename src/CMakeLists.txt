@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
-# src/CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2022:
+# src/CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2023:
 #   • Aidan Roberts <aidanr67@gmail.com>
 #   • Daniel Moreno <danielm5@users.noreply.github.com>
 #   • Mark de Wever <koraq@xs4all.nl>
@@ -42,10 +42,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/AlcoholTool.cpp
     ${repoDir}/src/Algorithms.cpp
     ${repoDir}/src/AncestorDialog.cpp
+    ${repoDir}/src/Application.cpp
     ${repoDir}/src/BeerColorWidget.cpp
     ${repoDir}/src/boiltime.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
-    ${repoDir}/src/Brewken.cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
     ${repoDir}/src/BtColor.cpp
@@ -84,10 +84,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
+    ${repoDir}/src/ImportExport.cpp
     ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/json/BeerJson.cpp
     ${repoDir}/src/json/JsonCoding.cpp
+    ${repoDir}/src/json/JsonMeasureableUnitsMapping.cpp
     ${repoDir}/src/json/JsonRecord.cpp
     ${repoDir}/src/json/JsonRecordDefinition.cpp
     ${repoDir}/src/json/JsonSchema.cpp
@@ -174,6 +176,9 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
+    ${repoDir}/src/utils/OStreamWriterForQFile.cpp
+    ${repoDir}/src/utils/TimerUtils.cpp
+    ${repoDir}/src/utils/TypeLookup.cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/WaterEditor.cpp

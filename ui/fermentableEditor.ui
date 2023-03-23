@@ -83,7 +83,7 @@
         </spacer>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="comboBox_type">
+        <widget class="QComboBox" name="comboBox_fermentableType">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -97,33 +97,8 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Type</string>
+          <string>Fermantable Type</string>
          </property>
-         <item>
-          <property name="text">
-           <string>Grain</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sugar</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Extract</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Dry Extract</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Adjunct</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="2" column="3">
@@ -205,7 +180,7 @@
           <string>Type</string>
          </property>
          <property name="buddy">
-          <cstring>comboBox_type</cstring>
+          <cstring>comboBox_fermentableType</cstring>
          </property>
         </widget>
        </item>
@@ -789,7 +764,7 @@
  <tabstops>
   <tabstop>tabWidget_editor</tabstop>
   <tabstop>lineEdit_name</tabstop>
-  <tabstop>comboBox_type</tabstop>
+  <tabstop>comboBox_fermentableType</tabstop>
   <tabstop>lineEdit_color</tabstop>
   <tabstop>lineEdit_yield</tabstop>
   <tabstop>lineEdit_inventory</tabstop>

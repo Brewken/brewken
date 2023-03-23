@@ -42,71 +42,17 @@ class JsonCoding {
 
 public:
    /**
-    * \brief C++ does not permit you to have a function pointer to a class constructor, so this templated wrapper
-    *        function is a "trick" that allows us to come close enough for our purposes.  Using a pointer to a
-    *        template specialisation of this function for some subclass of JsonRecord effectively gives us a pointer to
-    *        a create-on-the-heap constructor for that subclass, (provided it takes the same parameters as this
-    *        function).
-    *
-    *        To make it easier for callers, we also typedef \c JsonCoding::JsonRecordConstructorWrapperto be a pointer to
-    *        a function of this type.
-    *
-    * \param recordName passed into the constructor of T (which should be \c JsonRecord or a subclass thereof)
-    * \param xmlCoding passed into the constructor of T (which should be \c JsonRecord or a subclass thereof)
-    * \param fieldDefinitions passed into the constructor of T (which should be \c JsonRecord or a subclass thereof)
-    * \return Pointer to a new instance, constructed on the heap, of an JsonRecord (or subclass thereof) suitable for
-    *         reading in objects of type T (where T ie expected either to be some subclass of NamedEntity or void to
-    *         signify the root element). Eg:
-    *           JsonCoding::construct<Hop>() will construct an JsonNamedEntityRecord<Hop> object
-    *           JsonCoding::construct<Yeast>() will construct an JsonNamedEntityRecord<Yeast> object
-    *           JsonCoding::construct<Recipe>() will construct an JsonRecipeRecord object ‡
-    *           JsonCoding::construct<void>() will construct an JsonRecipe object ‡
-    *         ‡ courtesy of template specialisation below
-    *
-    *         NB: The caller owns this object and is responsible for its deletion.
-    */
-/*   template<typename T>
-   static JsonRecord * construct(QString const & recordName,
-                                JsonCoding const & xmlCoding,
-                                JsonRecordDefinition::FieldDefinitions const & fieldDefinitions) {
-      return new JsonNamedEntityRecord<T>{recordName, xmlCoding, fieldDefinitions};
-   }*/
-
-   /**
-    * \brief This is just a convenience typedef representing a pointer to a template specialisation of
-    *        \c JsonCoding::construct().
-    */
-/*   typedef JsonRecord * (*JsonRecordConstructorWrapper)(QString const & recordName,
-                                                      JsonCoding const &,
-                                                      JsonRecordDefinition::FieldDefinitions const &);
-*/
-   /**
-    * Given an JSON element that corresponds to a record, this is the info we need to construct a \c JsonRecord object
-    * for this encoding.
-    */
-/*   struct JsonRecordDefinition {
-      JsonRecordConstructorWrapper constructorWrapper;
-      JsonRecordDefinition::FieldDefinitions const * fieldDefinitions;
-   };*/
-
-   /**
     * \brief Constructor
     * \param name The name of this encoding (eg "BeerJSON 1.0").  Used primarily for logging.
     * \param version The version to write out to BeerJSON records
     * \param schema The wrapper around the JSON schema that we'll use to validate the input (if we are reading from,
     *               rather than writing to, JSON).
     * \param jsonRecordDefinitions
-    *
-    *
-    *
-///    * \param entityNameToJsonRecordDefinition Mapping from JSON object name to the information we need to construct a
-///    *                                         suitable \c JsonRecord object.
     */
    JsonCoding(char const * const name,
               char const * const version,
               JsonSchema::Id const schemaId,
               std::initializer_list<JsonRecordDefinition> jsonRecordDefinitions);
-///              QHash<QString, JsonRecordDefinition> const & entityNameToJsonRecordDefinition);
 
    /**
     * \brief Destructor
@@ -119,7 +65,7 @@ public:
     * \return \c true if we know how to process (ie we have the address of a function that can create a suitable
     *         \c JsonRecord object), \c false if not
     */
-   bool isKnownJsonRecordDefinition(QString recordName) const;
+   [[nodiscard]] bool isKnownJsonRecordDefinition(QString recordName) const;
 
    /**
     * \brief Get the root definition element, ie what we use to start processing a document
@@ -151,7 +97,7 @@ public:
     * \return true if file validated OK (including if there were "errors" that we can safely ignore)
     *         false if there was a problem that means it's not worth trying to read in the data from the file
     */
-   bool validateLoadAndStoreInDb(boost::json::value const & inputDocument,
+   bool validateLoadAndStoreInDb(boost::json::value & inputDocument,
                                  QTextStream & userMessage) const;
 
 private:

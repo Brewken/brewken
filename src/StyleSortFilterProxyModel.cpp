@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * StyleSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * StyleSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,24 +14,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #include "StyleSortFilterProxyModel.h"
+
 #include "StyleListModel.h"
 #include "model/Style.h"
 
 StyleSortFilterProxyModel::StyleSortFilterProxyModel(QObject* parent)
-   : QSortFilterProxyModel(parent)
-{
+   : QSortFilterProxyModel(parent) {
+   return;
 }
 
-bool StyleSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent) const
-{
+bool StyleSortFilterProxyModel::filterAcceptsRow(int source_row,
+                                                 [[maybe_unused]] QModelIndex const & source_parent) const {
    StyleListModel* m = qobject_cast<StyleListModel*>(sourceModel());
-   if( !m )
+   if (!m) {
       return true;
+   }
+
    Style* s = m->at(source_row);
-   if( !s )
+   if (!s) {
       return true;
+   }
 
    return s->display() && !s->deleted();
 }

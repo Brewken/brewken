@@ -48,16 +48,16 @@
 
 namespace {
    EnumStringMapping const itemTypeToName {
-      {QT_TR_NOOP("RECIPE"     )          , BtTreeItem::Type::RECIPE      },
-      {QT_TR_NOOP("EQUIPMENT"  )          , BtTreeItem::Type::EQUIPMENT   },
-      {QT_TR_NOOP("FERMENTABLE")          , BtTreeItem::Type::FERMENTABLE },
-      {QT_TR_NOOP("HOP"        )          , BtTreeItem::Type::HOP         },
-      {QT_TR_NOOP("MISC"       )          , BtTreeItem::Type::MISC        },
-      {QT_TR_NOOP("YEAST"      )          , BtTreeItem::Type::YEAST       },
-      {QT_TR_NOOP("BREWNOTE"   )          , BtTreeItem::Type::BREWNOTE    },
-      {QT_TR_NOOP("STYLE"      )          , BtTreeItem::Type::STYLE       },
-      {QT_TR_NOOP("FOLDER"     )          , BtTreeItem::Type::FOLDER      },
-      {QT_TR_NOOP("WATER"      )          , BtTreeItem::Type::WATER       }
+      {"RECIPE"     , BtTreeItem::Type::RECIPE     },
+      {"EQUIPMENT"  , BtTreeItem::Type::EQUIPMENT  },
+      {"FERMENTABLE", BtTreeItem::Type::FERMENTABLE},
+      {"HOP"        , BtTreeItem::Type::HOP        },
+      {"MISC"       , BtTreeItem::Type::MISC       },
+      {"YEAST"      , BtTreeItem::Type::YEAST      },
+      {"BREWNOTE"   , BtTreeItem::Type::BREWNOTE   },
+      {"STYLE"      , BtTreeItem::Type::STYLE      },
+      {"FOLDER"     , BtTreeItem::Type::FOLDER     },
+      {"WATER"      , BtTreeItem::Type::WATER      }
    };
 }
 
@@ -278,7 +278,7 @@ QVariant BtTreeItem::dataFermentable(int column) {
          }
       case FERMENTABLETYPECOL:
          if (ferm) {
-            return QVariant(ferm->typeStringTr());
+            return QVariant(Fermentable::typeDisplayNames[ferm->type()]);
          }
          break;
       case FERMENTABLECOLORCOL:
@@ -307,12 +307,12 @@ QVariant BtTreeItem::dataHop(int column) {
          }
       case HOPFORMCOL:
          if (hop) {
-            return QVariant(hop->formStringTr());
+            return QVariant(Hop::formDisplayNames[hop->form()]);
          }
          break;
       case HOPUSECOL:
          if (hop) {
-            return QVariant(hop->useStringTr());
+            return QVariant(Hop::useDisplayNames[hop->use()]);
          }
          break;
       default :
@@ -371,12 +371,12 @@ QVariant BtTreeItem::dataYeast(int column) {
    return QVariant();
 }
 
-QVariant BtTreeItem::dataBrewNote(int column) {
-   if (! _thing) {
+QVariant BtTreeItem::dataBrewNote([[maybe_unused]] int column) {
+   if (!this->_thing) {
       return QVariant();
    }
 
-   BrewNote * bNote = qobject_cast<BrewNote *>(_thing);
+   BrewNote * bNote = qobject_cast<BrewNote *>(this->_thing);
 
    return bNote->brewDate_short();
 }

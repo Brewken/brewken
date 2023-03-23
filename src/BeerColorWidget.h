@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BeerColorWidget.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * BeerColorWidget.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>

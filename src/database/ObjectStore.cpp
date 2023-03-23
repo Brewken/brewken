@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStore.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * database/ObjectStore.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -27,31 +27,31 @@
 #include "database/BtSqlQuery.h"
 #include "database/Database.h"
 #include "database/DbTransaction.h"
+#include "Logging.h"
 #include "model/NamedParameterBundle.h"
+#include "utils/OptionalHelpers.h"
 
 // Private implementation details that don't need access to class member variables
 namespace {
 
    /**
-    * For a given field type, get the native database typename
+    * \brief For a given field type, get the native database typename
     */
    char const * getDatabaseNativeTypeName(Database const & database, ObjectStore::FieldType const fieldType) {
       switch (fieldType) {
-         case ObjectStore::FieldType::Bool:   return database.getDbNativeTypeName<bool>();
-         case ObjectStore::FieldType::Int:    return database.getDbNativeTypeName<int>();
-         case ObjectStore::FieldType::UInt:   return database.getDbNativeTypeName<unsigned int>();
-         case ObjectStore::FieldType::Double: return database.getDbNativeTypeName<double>();
-         case ObjectStore::FieldType::String: return database.getDbNativeTypeName<QString>();
-         case ObjectStore::FieldType::Date:   return database.getDbNativeTypeName<QDate>();
-         case ObjectStore::FieldType::Enum:   return database.getDbNativeTypeName<QString>();
-         default:
-            // It's a coding error if we get here!
-            Q_ASSERT(false);
-            break;
+         case ObjectStore::FieldType::Bool:    return database.getDbNativeTypeName<bool>();
+         case ObjectStore::FieldType::Int:     return database.getDbNativeTypeName<int>();
+         case ObjectStore::FieldType::UInt:    return database.getDbNativeTypeName<unsigned int>();
+         case ObjectStore::FieldType::Double:  return database.getDbNativeTypeName<double>();
+         case ObjectStore::FieldType::String:  return database.getDbNativeTypeName<QString>();
+         case ObjectStore::FieldType::Date:    return database.getDbNativeTypeName<QDate>();
+         case ObjectStore::FieldType::Enum:    return database.getDbNativeTypeName<QString>();
+         // No default case needed as compiler should warn us if any options covered above
       }
+      // It's a coding error if we get here!
+      Q_ASSERT(false);
       return nullptr; // Should never get here
    }
-
 
    /**
     * \brief Create a database table without foreign key constraints (allowing tables to be created in any order)
@@ -81,7 +81,8 @@ namespace {
       //       bug DATE
       //    );
       // .:TBD:. At some future point we might extend our model to allow marking some columns as NOT NULL (eg via some
-      //         extra optional flag on ObjectStore::TableField), but it doesn't seem pressing at the moment.
+      //         making the derived class of NamedEntity available in ObjectStore::TableDefinition so we can query
+      //         isOptional() on each property), but it doesn't seem pressing at the moment.
       //
       QString queryString{"CREATE TABLE "};
       QTextStream queryStringAsStream{&queryString};
@@ -195,11 +196,11 @@ namespace {
    }
 
    /**
-    * Return a string containing all the bound values on a query.   This is quite a useful thing to have logged when
-    * you get an error!
+    * \brief Return a string containing all the bound values on a query.   This is quite a useful thing to have logged
+    *        when you get an error!
     *
-    * NB: This can be a long string.  It includes newlines, and is intended to be logged with qDebug().noquote() or
-    *     similar.
+    *        NOTE: This can be a long string.  It includes newlines, and is intended to be logged with
+    *              qDebug().noquote() or similar.
     */
    QString BoundValuesToString(BtSqlQuery const & sqlQuery) {
       QString result;
@@ -214,46 +215,26 @@ namespace {
    }
 
    /**
-    * Given a (QVariant-wrapped) string value pulled out of the DB for an enum, look up and return its internal
-    * numerical enum equivalent
+    * \brief Given a string value pulled out of the DB for an enum, look up and return its internal numerical enum
+    *        equivalent.  Caller's responsibility to handle null values etc before deciding whether to call this
+    *        function.
     */
-   int stringToEnum(ObjectStore::TableField const & fieldDefn, QVariant const & valueFromDb) {
+   int stringToEnum(ObjectStore::TableDefinition const & primaryTable,
+                    ObjectStore::TableField const &      fieldDefn,
+                    QString const &                      stringValue) {
       // It's a coding error if we called this function for a non-enum field
-      Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
+      // It's OK to be called for EnumOpt as stringToEnumOpt() calls us to avoid duplication
+      Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
-
-      if (valueFromDb.isNull()) {
-         qCritical() <<
-            Q_FUNC_INFO << "Found null value for enum when mapping column " << fieldDefn.columnName <<
-            " to property " << fieldDefn.propertyName << " so using 0";
-         return 0;
-      }
-
-      QString stringValue = valueFromDb.toString();
-      auto match = fieldDefn.enumMapping->stringToEnum(stringValue);
-      // If we didn't find a match, its either a coding error or someone messed with the DB data
+      auto match = fieldDefn.enumMapping->stringToEnumAsInt(stringValue);
+      // If we didn't find a match, it's either a coding error or someone messed with the DB data
       if (!match) {
          qCritical() <<
-            Q_FUNC_INFO << "Could not decode " << stringValue << " to enum when mapping column " <<
-            fieldDefn.columnName << " to property " << fieldDefn.propertyName << " so using 0";
+            Q_FUNC_INFO << "Could not decode" << stringValue << "to enum when mapping column" <<
+            fieldDefn.columnName << "to property" << fieldDefn.propertyName << "for" << primaryTable.tableName <<
+            "so using 0";
          return 0;
       }
-      return match.value();
-   }
-
-   /**
-    * Given a (QVariant-wrapped) int value of a native enum, look up and return the corresponding string we use to
-    * store it in the DB
-    */
-   QString enumToString(ObjectStore::TableField const & fieldDefn, QVariant const & propertyValue) {
-      // It's a coding error if we called this function for a non-enum field
-      Q_ASSERT(fieldDefn.fieldType == ObjectStore::Enum);
-      Q_ASSERT(fieldDefn.enumMapping != nullptr);
-
-      auto match = fieldDefn.enumMapping->enumToString(propertyValue.toInt());
-      // It's a coding error if we couldn't find a match
-      Q_ASSERT(match);
-
       return match.value();
    }
 
@@ -345,8 +326,9 @@ namespace {
 
       //
       // Note that, when we are using bind values, we do NOT want to call the
-      // BtSqlQuery::BtSqlQuery(const QString &, QSqlDatabase db) version of the BtSqlQuery constructor because that would
-      // result in the supplied query being executed immediately (ie before we've had a chance to bind parameters).
+      // BtSqlQuery::BtSqlQuery(const QString &, QSqlDatabase db) version of the BtSqlQuery constructor because that
+      // would result in the supplied query being executed immediately (ie before we've had a chance to bind
+      // parameters).
       //
       BtSqlQuery sqlQuery{connection};
       sqlQuery.prepare(queryString);
@@ -388,8 +370,8 @@ namespace {
          propertyValues.append(theValue);
       } else {
          //
-         // The propertyValuesWrapper QVariant should hold QVector<int>.  If it doesn't it's a coding error (because we have a
-         // property getter that's returning something else).
+         // The propertyValuesWrapper QVariant should hold QVector<int>.  If it doesn't it's a coding error (because we
+         // have a property getter that's returning something else).
          //
          // Note that QVariant::toList() is NOT going to be useful to us here because that ONLY works if the contained
          // type is QList<QVariant> (aka QVariantList) or QStringList.  If your QVariant contains some other list-like
@@ -407,9 +389,9 @@ namespace {
       // Now loop through and bind/run the insert query once for each item in the list
       int itemNumber = 1;
       qDebug() <<
-         Q_FUNC_INFO << propertyValues.size() << "value(s) (in" << propertyValuesWrapper.typeName() << ") for property" <<
-         GetJunctionTableDefinitionPropertyName(junctionTable) << "of" << object.metaObject()->className() <<
-         "#" << primaryKey.toInt();
+         Q_FUNC_INFO << propertyValues.size() << "value(s) (in" << propertyValuesWrapper.typeName() <<
+         ") for property" << GetJunctionTableDefinitionPropertyName(junctionTable) << "of" <<
+         object.metaObject()->className() << "#" << primaryKey.toInt();
       for (int curValue : propertyValues) {
          sqlQuery.bindValue(thisPrimaryKeyBindName, primaryKey);
          sqlQuery.bindValue(otherPrimaryKeyBindName, curValue);
@@ -449,7 +431,8 @@ namespace {
          Q_FUNC_INFO << "Deleting property " << GetJunctionTableDefinitionPropertyName(junctionTable) <<
          " in junction table " << junctionTable.tableName;
 
-      QString const thisPrimaryKeyBindName = QString{":"} + *GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
+      QString const thisPrimaryKeyBindName =
+         QString{":"} + *GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable);
 
       // Construct the DELETE query
       QString queryString{"DELETE FROM "};
@@ -484,19 +467,155 @@ public:
    /**
     * Constructor
     */
-   impl(TableDefinition const &           primaryTable,
-        JunctionTableDefinitions const & junctionTables) : primaryTable{primaryTable},
+   impl(TypeLookup               const & typeLookup,
+        TableDefinition          const & primaryTable,
+        JunctionTableDefinitions const & junctionTables) : typeLookup{typeLookup},
+                                                           primaryTable{primaryTable},
                                                            junctionTables{junctionTables},
                                                            allObjects{},
                                                            database{nullptr} {
       return;
    }
 
-
    /**
     * Destructor
     */
    ~impl() = default;
+
+   /**
+    * \brief This function does any required special handling for optional and/or enum fields retrieved from a
+    *        \c NamedEntity or subclass thereof.  It takes the \c QVariant returned from \c QObject::property() and does
+    *        any necessary conversion to turn it into a \c QVariant that we can bind to a SQL query for inserting or
+    *        updating data in the DB.
+    *
+    *        Enums are stored in the DB as strings rather than the raw int value of the enum.  This is because (a) it is
+    *        (or at least should be) less fragile and (b) it makes debugging easier.
+    *
+    *        Optional (aka nullable) fields need some special handling.  Although \c QVariant already has the concept of
+    *        null values, this is not an inherent part of the QProperty system.  If you have, say, a double QProperty
+    *        that you want to be nullable then you have to put either a \c QVariant or \c std::optional wrapper around
+    *        it, which in turn will get wrapped inside \c QVariant when getting the value via \c QObject::property().
+    *        (Yes, you can have a \c QVariant inside a \c QVariant!  But we use \c std::optional as our inner wrapping
+    *        because it's more strongly typed.)  Two layers of wrapping is one too many, so we need to remove the inner
+    *        layer if it is present.
+    *
+    *        Optional enums need both sets of processing.
+    */
+   void unwrapAndMapAsNeeded(ObjectStore::TableField const & fieldDefn, QVariant & propertyValue) {
+
+      if (this->typeLookup.isOptional(fieldDefn.propertyName)) {
+         //
+         // This is an optional field, so we are converting a QVariant holding std::optional<T> to a QVariant holding
+         // either T or null, with relevant special case handling for when T is actually an enum (where we need to
+         // convert it to QString if it's not null).
+         //
+         switch (fieldDefn.fieldType) {
+            case ObjectStore::FieldType::Bool:   { Optional::removeOptionalWrapper<bool        >(propertyValue); return; }
+            case ObjectStore::FieldType::Int:    { Optional::removeOptionalWrapper<int         >(propertyValue); return; }
+            case ObjectStore::FieldType::UInt:   { Optional::removeOptionalWrapper<unsigned int>(propertyValue); return; }
+            case ObjectStore::FieldType::Double: { Optional::removeOptionalWrapper<double      >(propertyValue); return; }
+            case ObjectStore::FieldType::String: { Optional::removeOptionalWrapper<QString     >(propertyValue); return; }
+            case ObjectStore::FieldType::Date:   { Optional::removeOptionalWrapper<QDate       >(propertyValue); return; }
+            case ObjectStore::FieldType::Enum:   {
+               auto val = propertyValue.value<std::optional<int> >();
+               if (val.has_value()) {
+                  // It's a coding error if we don't have an enum mapping for an enum field
+                  Q_ASSERT(fieldDefn.enumMapping != nullptr);
+                  propertyValue = QVariant(fieldDefn.enumMapping->enumToString(val.value()));
+                  return;
+               }
+               propertyValue = QVariant();
+               return;
+            }
+            // No default case needed as compiler should warn us if any options covered above
+         }
+         // It's a coding error if we get here!
+         Q_ASSERT(false);
+      }
+
+      if (fieldDefn.fieldType == ObjectStore::FieldType::Enum) {
+         // This is a non-optional enum, so we need to map it to a QString
+         propertyValue = QVariant(fieldDefn.enumMapping->enumToString(propertyValue.toInt()));
+         return;
+      }
+
+      // There is no unwrapping or mapping to do, so we leave the supplied value unchanged
+      return;
+   }
+
+   /**
+    * \brief This is the inverse of \c unwrapAndMapAsNeeded
+    *
+    * \param primaryTable This is used only for logging errors (in case there is bad data in the DB, which could happen
+    *                     if the DB has been manually edited or partially restored from an old verison etc.
+    * \param fieldDefn
+    * \param valueFromDb the QVariant that we may need to modify
+    */
+   void wrapAndUnmapAsNeeded(ObjectStore::TableDefinition const & primaryTable,
+                             ObjectStore::TableField const & fieldDefn,
+                             QVariant & propertyValue) {
+      if (this->typeLookup.isOptional(fieldDefn.propertyName)) {
+         //
+         // This is an optional field, so we are converting from a QVariant holding either T or null to a QVariant
+         // holding std::optional<T>, with relevant special case handling for when T is actually an enum (where we need
+         // to convert it from QString to int if it's not null).
+         //
+         switch (fieldDefn.fieldType) {
+            case ObjectStore::FieldType::Bool:   { Optional::insertOptionalWrapper<bool        >(propertyValue); return; }
+            case ObjectStore::FieldType::Int:    { Optional::insertOptionalWrapper<int         >(propertyValue); return; }
+            case ObjectStore::FieldType::UInt:   { Optional::insertOptionalWrapper<unsigned int>(propertyValue); return; }
+            case ObjectStore::FieldType::Double: { Optional::insertOptionalWrapper<double      >(propertyValue); return; }
+            case ObjectStore::FieldType::String: { Optional::insertOptionalWrapper<QString     >(propertyValue); return; }
+            case ObjectStore::FieldType::Date:   { Optional::insertOptionalWrapper<QDate       >(propertyValue); return; }
+            case ObjectStore::FieldType::Enum:   {
+               if (propertyValue.isNull()) {
+                  propertyValue = QVariant::fromValue(std::optional<int>());
+               } else {
+                  propertyValue = QVariant::fromValue(
+                     std::optional<int>(stringToEnum(primaryTable, fieldDefn, propertyValue.toString()))
+                  );
+               }
+               return;
+            }
+            // No default case needed as compiler should warn us if any options covered above
+         }
+         // It's a coding error if we get here!
+         Q_ASSERT(false);
+      }
+
+      if (fieldDefn.fieldType == ObjectStore::FieldType::Enum) {
+         // This is a non-optional enum, so we need to map from a QString to an int
+         if (propertyValue.isNull()) {
+            // This is either a coding error or someone messed with the DB data.
+            qCritical() <<
+               Q_FUNC_INFO << "Found null value for non-optional enum when mapping column " << fieldDefn.columnName <<
+               " to property " << fieldDefn.propertyName << "for" << primaryTable.tableName <<
+               "so using 0";
+            propertyValue = QVariant(0);
+            return;
+         }
+
+         propertyValue = QVariant(stringToEnum(primaryTable, fieldDefn, propertyValue.toString()));
+         return;
+      }
+
+      //
+      // There is no wrapping or unmapping to do, so we leave the supplied value unchanged, except...
+      // ...if a non-optional int is NULL in the DB then we'll hold it as -1, as this is more ambiguously "not set" than
+      // the "default" value of 0.
+      //
+      // I _think_ this is always a valid & sensible thing to do.  If we decide later we need to have exceptions
+      // then we could either move this logic into the constructors and NamedParameterBundle or be more rigorous about
+      // back-applying std::optional wrappers to existing int object properties.
+      //
+      if (fieldDefn.fieldType == ObjectStore::FieldType::Int) {
+         if (propertyValue.isNull()) {
+            propertyValue = QVariant(-1);
+         }
+      }
+
+      return;
+   }
 
    /**
     * \brief Append, to the supplied query string we are constructing, a comma-separated list of all the column names
@@ -564,7 +683,8 @@ public:
       QVariant const        primaryKey       {this->getPrimaryKey(object)};
 
       //
-      // First check whether this is a simple property.  (If not we look for it in the ones we store in junction tables.)
+      // First check whether this is a simple property.  (If not we look for it in the ones we store in junction
+      // tables.)
       //
       auto matchingFieldDefn = std::find_if(
          this->primaryTable.tableFields.begin(),
@@ -606,12 +726,14 @@ public:
             this->primaryTable.tableFields.end(),
             [propertyName](TableField const & fd){return propertyName == fd.propertyName;}
          );
+
          // It's a coding error if we're trying to update a property that's not in the field definitions
          Q_ASSERT(fieldDefn != this->primaryTable.tableFields.end());
-         if (fieldDefn->fieldType == ObjectStore::Enum) {
-            // Enums need to be converted to strings first
-            propertyBindValue = QVariant{enumToString(*fieldDefn, propertyBindValue)};
-         } else if (fieldDefn->foreignKeyTo) {
+
+         // Fix-up the QVariant if needed, including converting enums to strings
+         this->unwrapAndMapAsNeeded(*fieldDefn, propertyBindValue);
+
+         if (fieldDefn->foreignKeyTo) {
             //
             // If the columns if a foreign key and the caller is setting it to a non-positive value then we actually
             // need to store NULL in the DB.  (In the code we store foreign key IDs as ints, and use -1 to mean null.
@@ -641,7 +763,8 @@ public:
          }
       } else {
          //
-         // The property we've been given isn't a simple property, so look for it in the ones we store in junction tables
+         // The property we've been given isn't a simple property, so look for it in the ones we store in junction
+         // tables
          //
          auto matchingJunctionTableDefinitionDefn = std::find_if(
             this->junctionTables.begin(),
@@ -660,8 +783,8 @@ public:
          }
 
          //
-         // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object and then
-         // write out data based on the current property values.
+         // As elsewhere, the simplest way to update a junction table is to blat any rows relating to the current object
+         // and then write out data based on the current property values.
          //
          qDebug() <<
             Q_FUNC_INFO << "Updating" << object.metaObject()->className() << "property" << propertyName <<
@@ -727,10 +850,11 @@ public:
          auto const & fieldDefn = this->primaryTable.tableFields[ii];
 
          QVariant bindValue{object.property(*fieldDefn.propertyName)};
-         if (fieldDefn.fieldType == ObjectStore::Enum) {
-            // Enums need to be converted to strings first
-            bindValue = QVariant{enumToString(fieldDefn, bindValue)};
-         } else if (fieldDefn.foreignKeyTo && bindValue.toInt() <= 0) {
+
+         // Fix-up the QVariant if needed, including converting enums to strings
+         this->unwrapAndMapAsNeeded(fieldDefn, bindValue);
+
+         if (fieldDefn.foreignKeyTo && bindValue.toInt() <= 0) {
             // If the field is a foreign key and the value we would otherwise put in it is not a valid key (eg we are
             // inserting a Recipe on which the Equipment has not yet been set) then the query would barf at the invalid
             // key.  So, in this case, we need to insert NULL.
@@ -818,20 +942,25 @@ public:
       return primaryKeyInDb;
    }
 
+   TypeLookup const & typeLookup;
    TableDefinition const & primaryTable;
    JunctionTableDefinitions const & junctionTables;
    QHash<int, std::shared_ptr<QObject> > allObjects;
    Database * database;
 };
 
-
-ObjectStore::ObjectStore(TableDefinition const &           primaryTable,
+ObjectStore::ObjectStore(TypeLookup               const & typeLookup,
+                         TableDefinition          const & primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
-   pimpl{ std::make_unique<impl>(primaryTable, junctionTables) } {
+   pimpl{ std::make_unique<impl>(typeLookup, primaryTable, junctionTables) } {
    qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
+   // We have seen a circumstance where primaryTable.tableName is null, which shouldn't be possible.  This is some
+   // diagnostic to try to find out why.
+   if (this->pimpl->primaryTable.tableName.isNull()) {
+      qCritical().noquote() << Q_FUNC_INFO << "Primary table without name.  Call stack is:" << Logging::getStackTrace();
+   }
    return;
 }
-
 
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
 // header file)
@@ -841,6 +970,16 @@ ObjectStore::~ObjectStore() {
    //qDebug() <<
    //   Q_FUNC_INFO << "Destruct of object store for primary table" << this->pimpl->primaryTable.tableName <<
    //   "(containing" << this->pimpl->allObjects.size() << "objects)";
+   return;
+}
+
+void ObjectStore::logDiagnostics() const {
+   for (int key : this->pimpl->allObjects.keys()) {
+      std::shared_ptr<QObject> object = this->pimpl->allObjects.value(key);
+      qDebug() <<
+         Q_FUNC_INFO << "Object @" << static_cast<void *>(object.get()) << "stored as #" << key << "has key" <<
+         this->pimpl->getPrimaryKey(*object) << "and shared pointer use count" << object.use_count();
+   }
    return;
 }
 
@@ -986,13 +1125,8 @@ void ObjectStore::loadAll(Database * database) {
             break;
          }
 
-         // Enums need to be converted from their string representation in the DB to a numeric value
-         if (fieldDefn.fieldType == ObjectStore::Enum) {
-            fieldValue = QVariant(stringToEnum(fieldDefn, fieldValue));
-            //qDebug() <<
-            //   Q_FUNC_INFO << "Value for property" << fieldDefn.propertyName << "after enum conversion: " <<
-            //   fieldValue;
-         }
+         // Fix-up the QVariant if needed, including converting enum string representation to int
+         this->pimpl->wrapAndUnmapAsNeeded(this->pimpl->primaryTable, fieldDefn, fieldValue);
 
          // It's a coding error if we got the same parameter twice
          Q_ASSERT(!namedParameterBundle.contains(*fieldDefn.propertyName));
@@ -1147,7 +1281,8 @@ void ObjectStore::loadAll(Database * database) {
             return;          // Continue but abort the transaction on a non-debug build
          }
 
-         // This is useful for debugging but I usually leave it commented out as it generates a lot of logging at start-up
+         // This is useful for debugging but I usually leave it commented out as it generates a lot of logging at
+         // start-up
 //         qDebug() <<
 //            Q_FUNC_INFO << "Set" <<
 //            (junctionTable.assumedNumEntries == ObjectStore::MAX_ONE_ENTRY ? 1 : otherKeys.size()) <<
@@ -1187,7 +1322,6 @@ QList<std::shared_ptr<QObject> > ObjectStore::getByIds(QVector<int> const & list
    }
    return listToReturn;
 }
-
 
 int ObjectStore::insert(std::shared_ptr<QObject> object) {
    // Start transaction
@@ -1276,10 +1410,8 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    for (auto const & fieldDefn: this->pimpl->primaryTable.tableFields) {
       QVariant bindValue{object->property(*fieldDefn.propertyName)};
 
-      // Enums need to be converted to strings first
-      if (fieldDefn.fieldType == ObjectStore::Enum) {
-         bindValue = QVariant{enumToString(fieldDefn, bindValue)};
-      }
+      // Fix-up the QVariant if needed, including converting enums to strings
+      this->pimpl->unwrapAndMapAsNeeded(fieldDefn, bindValue);
 
       sqlQuery.bindValue(QString{":"} + *fieldDefn.columnName, bindValue);
    }
@@ -1320,6 +1452,16 @@ void ObjectStore::update(std::shared_ptr<QObject> object) {
    return;
 }
 
+void ObjectStore::update(QObject & object) {
+   // It's a coding error to call this function for something that's not already stored in the DB
+   int const primaryKey = this->pimpl->getPrimaryKey(object).toInt();
+   Q_ASSERT(primaryKey > 0);
+
+   // Since the object is already stored, we want a copy of the shared_ptr that we already have for it
+   auto sharedPointer = this->getById(primaryKey);
+   this->update(sharedPointer);
+   return;
+}
 
 std::shared_ptr<QObject> ObjectStore::insertOrUpdate(std::shared_ptr<QObject> object) {
    QVariant const primaryKey = this->pimpl->getPrimaryKey(*object);
@@ -1332,8 +1474,17 @@ std::shared_ptr<QObject> ObjectStore::insertOrUpdate(std::shared_ptr<QObject> ob
 }
 
 int ObjectStore::insertOrUpdate(QObject & object) {
-   std::shared_ptr<QObject> sharedPointer{&object};
-   this->insertOrUpdate(sharedPointer);
+   QVariant const primaryKey = this->pimpl->getPrimaryKey(object);
+   if (primaryKey.toInt() > 0) {
+      // If the object is already stored, then we want a copy of the shared_ptr that we already have for it
+      auto sharedPointer = this->getById(primaryKey.toInt());
+      this->update(sharedPointer);
+   } else {
+      // If the object is NOT already stored, then we are assuming (because calling this member function rather than
+      // the one with the shared_ptr parameter) that no-one has yet made a shared_ptr for it and we are safe to do so.
+      std::shared_ptr<QObject> sharedPointer{&object};
+      this->insert(sharedPointer);
+   }
    return this->pimpl->getPrimaryKey(object).toInt();
 }
 
@@ -1357,7 +1508,6 @@ void ObjectStore::updateProperty(QObject const & object, BtStringConst const & p
    return;
 }
 
-
 std::shared_ptr<QObject>  ObjectStore::defaultSoftDelete(int id) {
    //
    // We assume on soft-delete that there is nothing to do on related objects - eg if a Mash is soft deleted (ie marked
@@ -1375,7 +1525,6 @@ std::shared_ptr<QObject>  ObjectStore::defaultSoftDelete(int id) {
    return object;
 }
 
-//
 std::shared_ptr<QObject>  ObjectStore::defaultHardDelete(int id) {
    //
    // We assume on hard-delete that the subclass ObjectStore (specifically ObjectStoreTyped) will override this member
@@ -1446,7 +1595,6 @@ std::shared_ptr<QObject>  ObjectStore::defaultHardDelete(int id) {
    return object;
 }
 
-
 std::optional< std::shared_ptr<QObject> > ObjectStore::findFirstMatching(
    std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
 ) const {
@@ -1478,7 +1626,9 @@ QList<std::shared_ptr<QObject> > ObjectStore::findAllMatching(
    // rest of the code expects it and (b) from Qt 6, QList will become the same as QVector (see
    // https://www.qt.io/blog/qlist-changes-in-qt-6)
    QList<std::shared_ptr<QObject> > results;
-   std::copy_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), std::back_inserter(results), matchFunction);
+   std::copy_if(this->pimpl->allObjects.cbegin(),
+                this->pimpl->allObjects.cend(),
+                std::back_inserter(results), matchFunction);
    return results;
 }
 

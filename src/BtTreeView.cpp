@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -170,7 +170,7 @@ void BtTreeView::renameFolder(BtFolder * victim, QString newName) {
    m_model->renameFolder(victim, newName);
 }
 
-std::optional<BtTreeItem::Type> BtTreeView::type(const QModelIndex & index) {
+std::optional<BtTreeItem::Type> BtTreeView::type(const QModelIndex & index) const {
    return this->m_model->type(this->m_filter->mapToSource(index));
 }
 
@@ -266,15 +266,18 @@ QMimeData * BtTreeView::mimeData(QModelIndexList indexes) {
       stream << static_cast<int>(*itemType) << id << name;
    }
 
-   if (!itsa) {
-      // Everything other than folders get dropped on the ingredients pane
-      name = "application/x-brewken-ingredient";
-   } else if (*itsa == BtTreeItem::Type::RECIPE || *itsa == BtTreeItem::Type::STYLE || *itsa == BtTreeItem::Type::EQUIPMENT) {
+   if (*itsa == BtTreeItem::Type::RECIPE || *itsa == BtTreeItem::Type::STYLE || *itsa == BtTreeItem::Type::EQUIPMENT) {
       // Recipes, equipment and styles get dropped on the recipe pane
       name = "application/x-brewken-recipe";
-   } else {
+   } else if ( *itsa == BtTreeItem::Type::FOLDER ) {
       // folders will be handled by themselves.
       name = "application/x-brewken-folder";
+   } else if ( *itsa != BtTreeItem::Type::WATER ) {
+      // Everything other than folders get dropped on the ingredients pane
+      name = "application/x-brewken-ingredient";
+   } else {
+      // This isn't used yet, but maybe some day I will fix that
+      name = "application/x-brewken-water";
    }
 
    QMimeData * mimeData = new QMimeData();

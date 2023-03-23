@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2021:
+ * xml/XmlRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
 #include "utils/ImportRecordCount.h"
+#include "utils/TypeLookup.h"
 #include "xml/XQString.h"
 
 class XmlCoding;
@@ -65,10 +66,10 @@ public:
       Double,
       String,
       Date,
-      Enum,
-      RequiredConstant,   // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
-      RecordSimple,       // Single contained record
-      RecordComplex,      // Zero, one or more contained records
+      Enum,              // A string that we need to map to/from our own enum
+      RequiredConstant,  // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
+      RecordSimple,      // Single contained record
+      RecordComplex,     // Zero, one or more contained records
       INVALID
    };
 
@@ -81,7 +82,11 @@ public:
       XQString            xPath;
       BtStringConst const & propertyName;  // If fieldType == RecordComplex, then this is used only on export
                                            // If fieldType == RequiredConstant, then this is actually the constant value
-      EnumStringMapping const * enumMapping;
+      EnumStringMapping const * enumMapping; // Only used if fieldType == Enum, otherwise should be nullptr
+      FieldDefinition(FieldType           fieldType,
+                      XQString            xPath,
+                      BtStringConst const & propertyName,
+                      EnumStringMapping const * enumMapping = nullptr);
    };
 
    typedef QVector<FieldDefinition> FieldDefinitions;
@@ -94,13 +99,19 @@ public:
     *                  we'll need to look up how to handle nested records inside this one.
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
+    * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
+    *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, or empty string if
     *                             there is none
     */
-   XmlRecord(QString const & recordName,
-             XmlCoding const & xmlCoding,
+   XmlRecord(QString          const & recordName,
+             XmlCoding        const & xmlCoding,
              FieldDefinitions const & fieldDefinitions,
-             QString const & namedEntityClassName);
+             TypeLookup       const * const typeLookup,
+             QString          const & namedEntityClassName);
+
+   // Need a virtual destructor as we have virtual member functions
+   virtual ~XmlRecord();
 
    /**
     * \brief Get the record name (in this coding)
@@ -211,14 +222,18 @@ protected:
                                           ImportRecordCount & stats);
 
    /**
-    * \brief Checks whether the \b NamedEntity for this record is, in all the ways that count, a duplicate of one we
+    * \brief Checks whether the \c NamedEntity for this record is, in all the ways that count, a duplicate of one we
     *        already have stored in the DB
+    *
+    *        Note that this is \b not a \c const function as, in the case that we do find a duplicate, we will update
+    *        some of our internal data to point to the existing stored \c NamedEntity.
+    *
     * \return \b true if this is a duplicate and should be skipped rather than stored
     */
    virtual bool isDuplicate();
 
    /**
-    * \brief If the \b NamedEntity for this record is supposed to have globally unique names, then this method will
+    * \brief If the \c NamedEntity for this record is supposed to have globally unique names, then this method will
     *        check the current name and modify it if necessary.  NB: This function should be called _after_
     *        \b isDuplicate().
     */
@@ -275,6 +290,9 @@ protected:
    XmlCoding const &        xmlCoding;
    FieldDefinitions const & fieldDefinitions;
 public:
+
+   TypeLookup const * const typeLookup;
+
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).
    QString const namedEntityClassName;

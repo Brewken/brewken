@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021:
+ * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -26,19 +26,20 @@
 #include <QString>
 #include <QVector>
 
+#include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/TypeLookup.h"
 
 class Database;
 class NamedParameterBundle;
-
 
 /**
  * \brief Base class for storing objects (of a given class) in (a) the database and (b) a local in-memory cache.
  *
  *        This class does all the generic work and, by virtue of being a non-template class, can have most of its
  *        implementation private.  The template class \c ObjectStoreTyped then does the class-specific work (eg
- *        call constructor for the right type of object) and provides a class- specific interface (so that callers
+ *        call constructor for the right type of object) and provides a class-specific interface (so that callers
  *        don't have to downcast return values etc).
  *
  *        A further namespace \c ObjectStoreWrapper slightly simplifies the syntax of calls into \c ObjectStoreTyped
@@ -62,20 +63,20 @@ public:
    /**
     * \brief The different field types that can be stored directly in an object's DB table.
     *
-    *        Note that older versions of the code do a lot of special handling for boolean because SQLite has no native
+    *        Note that older versions of the code did a lot of special handling for boolean because SQLite has no native
     *        boolean type and therefore stores bools as integers (0 or 1).  However, since bugs in this area of Qt were
     *        fixed back in 2012 -- see https://bugreports.qt.io/browse/QTBUG-23895 (and
     *        https://bugreports.qt.io/browse/QTBUG-15640) -- I believe we are now safe to rely on QVariant to do all
     *        the right conversions for us.
     */
-   enum FieldType {
+   enum class FieldType {
       Bool,
       Int,
       UInt,
       Double,
       String,
       Date,
-      Enum   // Stored as a string in the DB
+      Enum,          // Stored as a string in the DB
    };
 
    //
@@ -89,17 +90,17 @@ public:
 
    struct TableDefinition;
    struct TableField {
-      FieldType const                 fieldType;
-      BtStringConst const             columnName;   // Shouldn't ever be empty in practice
-      BtStringConst const             propertyName; // Can be empty in a junction table (see below)
+      FieldType                 const fieldType;
+      BtStringConst             const columnName;   // Shouldn't ever be empty in practice
+      BtStringConst             const propertyName; // Can be empty in a junction table (see below)
       EnumStringMapping const * const enumMapping;  // Only needed if fieldType is Enum
-      TableDefinition const * const   foreignKeyTo;
+      TableDefinition   const * const foreignKeyTo;
       //! Constructor
-      TableField(FieldType const                 fieldType,
-                 char const * const              columnName = nullptr,
-                 BtStringConst const &           propertyName = BtString::NULL_STR,
-                 EnumStringMapping const * const enumMapping = nullptr,
-                 TableDefinition const * const   foreignKeyTo = nullptr) :
+      TableField(FieldType                 const   fieldType,
+                 char              const * const   columnName   = nullptr,
+                 BtStringConst             const & propertyName = BtString::NULL_STR,
+                 EnumStringMapping const * const   enumMapping  = nullptr,
+                 TableDefinition   const * const   foreignKeyTo = nullptr) :
          fieldType{fieldType},
          columnName{columnName},
          propertyName{propertyName},
@@ -183,20 +184,28 @@ public:
 
    };
 
-
    // This isn't strictly necessary, but it makes various declarations more concise
    typedef QVector<JunctionTableDefinition> JunctionTableDefinitions;
 
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
+    * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
+    *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
     */
-   ObjectStore(TableDefinition const &          primaryTable,
+   ObjectStore(TypeLookup               const & typeLookup,
+               TableDefinition          const & primaryTable,
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();
+
+   /**
+    * \brief This will log info about every object the store knows about.  Usually only needed for debugging double-free
+    *        problems.
+    */
+   void logDiagnostics() const;
 
    /**
     * \brief Create the table(s) for the objects handled by this store.  It is the caller's responsibility to handle
@@ -232,9 +241,23 @@ public:
    virtual int insert(std::shared_ptr<QObject> object);
 
    /**
+    * \brief We don't want the compiler automatically constructing a shared_ptr for us if we accidentally call insert
+    *        with, say, a raw pointer, so this template trick ensures it can't.
+    */
+   template <typename D> void insert(D) = delete;
+
+   /**
     * \brief Update an existing object in the DB
     */
    virtual void update(std::shared_ptr<QObject> object);
+
+   virtual void update(QObject & object);
+
+   /**
+    * \brief We don't want the compiler automatically constructing a shared_ptr for us if we accidentally call update
+    *        with, say, a raw pointer, so this template trick ensures it can't.
+    */
+   template <typename D> void update(D) = delete;
 
    /**
     * \brief Convenience function that calls either \c insert or \c update, depending on whether the object is already
@@ -252,6 +275,12 @@ public:
     * \return ID of what was inserted or updated
     */
    int insertOrUpdate(QObject & object);
+
+   /**
+    * \brief We don't want the compiler automatically constructing a shared_ptr for us if we accidentally call
+    *        insertOrUpdate with, say, a raw pointer, so this template trick ensures it can't.
+    */
+   template <typename D> void insertOrUpdate(D) = delete;
 
    /**
     * \brief Update a single property of an existing object in the DB
@@ -471,6 +500,5 @@ private:
    ObjectStore & operator=(ObjectStore &&) = delete;
 
 };
-
 
 #endif

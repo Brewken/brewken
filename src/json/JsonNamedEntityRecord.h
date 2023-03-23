@@ -42,7 +42,7 @@ public:
     *        Everything else is done in the base class.
     */
    JsonNamedEntityRecord(JsonCoding const & jsonCoding,
-                         boost::json::value const & recordData,
+                         boost::json::value & recordData,
                          JsonRecordDefinition const & recordDefinition) :
       JsonRecord{jsonCoding, recordData, recordDefinition /*, NE::staticMetaObject.className()*/} {
       this->includeInStats = this->includedInStats();
@@ -159,7 +159,7 @@ protected:
    /**
     * \brief Implementation of the general case where the object is independent of its containing entity
     */
-   virtual void setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
+   virtual void setContainingEntity([[maybe_unused]] std::shared_ptr<NamedEntity> containingEntity) {
       return;
    }
 

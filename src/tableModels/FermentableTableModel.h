@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/FermentableTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -32,6 +32,7 @@
 #include <QWidget>
 
 #include "measurement/Unit.h"
+#include "model/Fermentable.h"
 #include "tableModels/BtTableModelInventory.h"
 
 // Forward declarations.
@@ -40,7 +41,7 @@ class Fermentable;
 class Recipe;
 class FermentableItemDelegate;
 
-enum{FERMNAMECOL, FERMTYPECOL, FERMAMOUNTCOL, FERMINVENTORYCOL, FERMISMASHEDCOL, FERMAFTERBOIL, FERMYIELDCOL, FERMCOLORCOL, FERMNUMCOLS /*This one MUST be last*/};
+enum{FERMNAMECOL, FERMTYPECOL, FERMAMOUNTCOL, FERMINVENTORYCOL, FERMISWEIGHT, FERMISMASHEDCOL, FERMAFTERBOIL, FERMYIELDCOL, FERMCOLORCOL, FERMNUMCOLS /*This one MUST be last*/};
 
 /*!
  * \class FermentableTableModel

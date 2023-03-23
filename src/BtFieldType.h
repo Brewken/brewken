@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtFieldType.h is part of Brewken, and is copyright the following authors 2022:
+ * BtFieldType.h is part of Brewken, and is copyright the following authors 2022-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -32,7 +32,14 @@ enum class NonPhysicalQuantity {
    Date,
    String,
    Count,
-   Percentage
+   Percentage,
+   Bool,
+   /**
+    * \brief This is for a number that has no units, not even pseudo ones.  It is currently a bit over-used -- ie there
+    *        are places we are using this (typically via BtNumberOnlyEdit) where we probably should be using a
+    *        \c PhysicalQuantity.  We should fix these over time.
+    */
+   Dimensionless,
 };
 
 /**

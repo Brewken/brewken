@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * MashDesigner.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -73,9 +73,9 @@ MashDesigner::MashDesigner(QWidget * parent) : QDialog     {parent},
    return;
 }
 
-void MashDesigner::proceed()
-{
+void MashDesigner::proceed() {
    nextStep(++curStep);
+   return;
 }
 
 void MashDesigner::setRecipe(Recipe* rec) {
@@ -155,8 +155,8 @@ void MashDesigner::saveStep() {
    this->mashStep->setName(this->lineEdit_name->text());
    this->mashStep->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
    // Bound the target temperature to what can be achieved
-   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toSI().quantity));
-   this->mashStep->setStepTime_min(lineEdit_time->toSI().quantity);
+   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toCanonical().quantity()));
+   this->mashStep->setStepTime_min(lineEdit_time->toCanonical().quantity());
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
@@ -170,7 +170,7 @@ void MashDesigner::saveStep() {
 }
 
 double MashDesigner::stepTemp_c() {
-   return lineEdit_temp->toSI().quantity;
+   return lineEdit_temp->toCanonical().quantity();
 }
 
 bool MashDesigner::heating() {
@@ -352,7 +352,7 @@ bool MashDesigner::initializeMash() {
    // Order matters. Don't do this until every that could return false has
    this->mash->setTunSpecificHeat_calGC(this->equip->tunSpecificHeat_calGC());
    this->mash->setTunWeight_kg(this->equip->tunWeight_kg());
-   this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity);
+   this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity());
 
    this->curStep = 0;
    this->addedWater_l = 0;
@@ -638,7 +638,7 @@ double MashDesigner::getDecoctionAmount_l() {
    r = ((MC)*(tf-t1)) / ((m_w*c_w + m_g*c_g)*(maxTemp_c()-tf) + (m_w*c_w + m_g*c_g)*(tf-t1));
    if (r < 0 || r > 1) {
       //QMessageBox::critical(this, tr("Decoction error"), tr("Something went wrong in decoction calculation."));
-      //Brewken::log(Brewken::ERROR, QString("MashDesigner Decoction: r=%1").arg(r));
+      //Application::log(Application::ERROR, QString("MashDesigner Decoction: r=%1").arg(r));
       return 0;
    }
 

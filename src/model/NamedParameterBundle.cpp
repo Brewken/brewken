@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021:
+ * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -25,27 +25,21 @@
 #include <QString>
 #include <QTextStream>
 
-namespace {
-   template <class T> T valueFromQVariant(QVariant const & qv);
-   template <> QString valueFromQVariant(QVariant const & qv) {return qv.toString();}
-   template <> bool    valueFromQVariant(QVariant const & qv) {return qv.toBool();}
-   template <> int     valueFromQVariant(QVariant const & qv) {return qv.toInt();}
-   template <> double  valueFromQVariant(QVariant const & qv) {return qv.toDouble();}
-}
-
 NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :
-   QHash<QString, QVariant>(), mode{mode} {
+   QHash<QString, QVariant>(),
+   mode{mode} {
    return;
 }
 
 NamedParameterBundle::~NamedParameterBundle() = default;
 
-NamedParameterBundle::iterator NamedParameterBundle::insert(BtStringConst const & parameterName, QVariant const & value) {
+NamedParameterBundle::iterator NamedParameterBundle::insert(BtStringConst const & parameterName,
+                                                            QVariant const & value) {
    return this->QHash<QString, QVariant>::insert(QString{*parameterName}, value);
 }
 
 
-QVariant NamedParameterBundle::operator()(BtStringConst const & parameterName) const {
+QVariant NamedParameterBundle::get(BtStringConst const & parameterName) const {
    if (!this->contains(*parameterName)) {
       QString errorMessage = QString("No value supplied for required parameter, %1.").arg(*parameterName);
       QTextStream errorMessageAsStream(&errorMessage);
@@ -93,16 +87,47 @@ QVariant NamedParameterBundle::operator()(BtStringConst const & parameterName) c
    return returnValue;
 }
 
-template <class T> T NamedParameterBundle::operator()(BtStringConst const & parameterName, T const & defaultValue) const {
-   Q_ASSERT(!parameterName.isNull());
-   return this->contains(*parameterName) ? valueFromQVariant<T>(this->value(*parameterName)) : defaultValue;
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle);
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle);
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle) {
+   stream << namedParameterBundle.size() << "element NamedParameterBundle @" <<
+   static_cast<void const *>(&namedParameterBundle) << " {";
+   // QHash::constKeyValueBegin() and similar functions were not introduced until Qt 5.10, and
+   // QKeyValueIterator::operator->() was not introduced until Qt 5.15.  For the moment, we are still supporting
+   // Qt 5.9.5, so we need to do things differently for that.
+#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
+   for (auto ii = namedParameterBundle.cbegin(); ii != namedParameterBundle.cend(); ++ii) {
+      stream << ii.key() << "->" << ii.value().toString() << " ";
+   }
+#else
+   for (auto ii = namedParameterBundle.constKeyValueBegin(); ii != namedParameterBundle.constKeyValueEnd(); ++ii) {
+      stream << ii->first << "->" << ii->second.toString() << " ";
+   }
+#endif
+   stream << "}";
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle) {
+   if (namedParameterBundle) {
+      stream << *namedParameterBundle;
+   } else {
+      stream << "NULL";
+   }
+   return stream;
 }
 
 //
-// Instantiate the above template function for the types that are going to use it
+// Instantiate the above template functions for the types that are going to use them
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template QString    NamedParameterBundle::operator()(BtStringConst const & parameterName, QString const & defaultValue) const;
-template bool       NamedParameterBundle::operator()(BtStringConst const & parameterName, bool    const & defaultValue) const;
-template int        NamedParameterBundle::operator()(BtStringConst const & parameterName, int     const & defaultValue) const;
-template double     NamedParameterBundle::operator()(BtStringConst const & parameterName, double  const & defaultValue) const;
+template QDebug &      operator<<(QDebug &      stream, NamedParameterBundle const & namedParameterBundle);
+template QTextStream & operator<<(QTextStream & stream, NamedParameterBundle const & namedParameterBundle);
+template QDebug &      operator<<(QDebug &      stream, NamedParameterBundle const * namedParameterBundle);
+template QTextStream & operator<<(QTextStream & stream, NamedParameterBundle const * namedParameterBundle);

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/MashStep.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -32,16 +32,16 @@
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::MashStep { BtStringConst const property{#property}; }
 AddPropertyName(decoctionAmount_l)
-AddPropertyName(endTemp_c)
-AddPropertyName(infuseAmount_l)
-AddPropertyName(infuseTemp_c)
-AddPropertyName(mashId)
-AddPropertyName(rampTime_min)
-AddPropertyName(stepNumber)
-AddPropertyName(stepTemp_c)
-AddPropertyName(stepTime_min)
-AddPropertyName(typeString)
-AddPropertyName(type)
+AddPropertyName(endTemp_c        )
+AddPropertyName(infuseAmount_l   )
+AddPropertyName(infuseTemp_c     )
+AddPropertyName(mashId           )
+AddPropertyName(rampTime_min     )
+AddPropertyName(stepNumber       )
+AddPropertyName(stepTemp_c       )
+AddPropertyName(stepTime_min     )
+AddPropertyName(type             )
+AddPropertyName(typeString       )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -65,7 +65,14 @@ public:
 
    //! \brief The type of step.
    enum class Type { Infusion, Temperature, Decoction, flySparge, batchSparge };
-   Q_ENUMS( Type )
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
 
    MashStep(QString name = "");
    MashStep(NamedParameterBundle const & namedParameterBundle);
@@ -132,6 +139,7 @@ public:
 
    virtual Recipe * getOwningRecipe();
 
+   // .:TODO:.  Rework this
    static QStringList const types;
 signals:
 
@@ -140,7 +148,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Type m_type;
+   Type   m_type;
    double m_infuseAmount_l;
    double m_stepTemp_c;
    double m_stepTime_min;
@@ -148,8 +156,8 @@ private:
    double m_endTemp_c;
    double m_infuseTemp_c;
    double m_decoctionAmount_l;
-   int m_stepNumber;
-   int mashId;
+   int    m_stepNumber;
+   int    m_mashId;
 };
 
 #endif

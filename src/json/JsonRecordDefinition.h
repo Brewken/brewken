@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,14 +18,17 @@
 #pragma once
 
 #include <memory>
+#include <variant>
 
 #include <QVector>
 
-#include "utils/BtStringConst.h"
-#include "utils/EnumStringMapping.h"
 #include "json/JsonMeasureableUnitsMapping.h"
 #include "json/JsonSingleUnitSpecifier.h"
 #include "json/JsonXPath.h"
+#include "model/NamedEntity.h"
+#include "utils/BtStringConst.h"
+#include "utils/EnumStringMapping.h"
+#include "utils/TypeLookup.h"
 
 // Forward declarations
 namespace boost::json {
@@ -34,9 +37,11 @@ namespace boost::json {
 }
 class JsonCoding;
 class JsonRecord;
+template<class NE>
+class JsonNamedEntityRecord;
 
-// See below for more on this.  It's useful to have a type name for a list of pointers to JsonMeasureableUnitsMapping
-// objects, but we don't need to create a whole new class just for that.
+// See comment below about OneOfMeasurementsWithUnits for more on this.  It's useful to have a type name for a list of
+// pointers to JsonMeasureableUnitsMapping objects, but we don't need to create a whole new class just for that.
 using ListOfJsonMeasureableUnitsMappings = QVector<JsonMeasureableUnitsMapping const *>;
 
 /**
@@ -139,7 +144,8 @@ public:
     *                              value : decimal
     *          ViscosityType:      unit ∈ {"cP", "mPa-s"}
     *                              value : decimal
-    *          VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz", "ipt", "iqt", "igal", "ibbl"}
+    *          VolumeType:         unit ∈ {"ml", "l", "tsp", "tbsp", "floz", "cup", "pt", "qt", "gal", "bbl", "ifloz",
+    *                                      "ipt", "iqt", "igal", "ibbl"}
     *                              value : decimal
     *
     *       Furthermore, for many of these types, an additional "range" type is defined - eg GravityRangeType,
@@ -158,13 +164,13 @@ public:
       //
       // These values correspond with base JSON types
       //
-      Bool,             // boost::json::kind::bool_
-      Int,              // boost::json::kind::int64
-      UInt,             // boost::json::kind::uint64
-      Double,           // boost::json::kind::double_
-      String,           // boost::json::kind::string
-      Enum,             // A string that we need to map to/from our own enum
-      Array,            // Zero, one or more contained records
+      Bool,     // boost::json::kind::bool_
+      Int,      // boost::json::kind::int64
+      UInt,     // boost::json::kind::uint64
+      Double,   // boost::json::kind::double_
+      String,   // boost::json::kind::string
+      Enum,     // A string that we need to map to/from our own enum
+      Array,    // Zero, one or more contained records
       //
       // Other types start here
       //
@@ -190,9 +196,8 @@ public:
       // NOTE that we ASSUME that each of the JsonMeasureableUnitsMapping objects in the list has the SAME values for
       // unitField and valueField.  (We could have done yet another data structure to enforce this, instead of using
       // a list of JsonMeasureableUnitsMapping objects, but the latter has the benefit of allowing us to use the same
-      // definitions for fields that can only be measured in one way.  (Eg, we might have some fields that are allowed
+      // definitions for fields that can only be measured in one way.  Eg, we might have some fields that are allowed
       // to be specified by mass or by volume and others that can only be specified by mass or only by volume.)
-      //
       //
       OneOfMeasurementsWithUnits,
       //
@@ -251,44 +256,26 @@ public:
    struct FieldDefinition {
       FieldType             type;
       JsonXPath             xPath;
+      // Both propertyName and the options inside valueDecoder are pointers rather than references because we store
+      // FieldDefinitions in a vector, so everything needs to be copyable.
+      // NOTE that propertyName should never be null (use BtString::NULL_STR instead).  This requirement makes logging
+      // simpler elsewhere.
       BtStringConst const * propertyName;
-      union ValueDecoder {
-         EnumStringMapping                  const * enumMapping;         // FieldType::Enum
-         JsonMeasureableUnitsMapping        const * unitsMapping;        // FieldType::MeasurementWithUnits
-         ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings; // FieldType::OneOfMeasurementsWithUnits
-         JsonSingleUnitSpecifier            const * singleUnitSpecifier; // FieldType::SingleUnitValue
-         // Explicit Union constructors here make the FieldDefinition constructor implementations slightly less clunky
-         ValueDecoder(EnumStringMapping                  const * enumMapping);
-         ValueDecoder(JsonMeasureableUnitsMapping        const * unitsMapping);
-         ValueDecoder(ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings);
-         ValueDecoder(JsonSingleUnitSpecifier            const * singleUnitSpecifier);
-      } valueDecoder;
-
-      // In C++20, we finally get designated initializers (a feature that has long been present in C!).  This would
-      // permit brace initialisation of union members other than the first one - eg ".unitsMapping = ".  Unfortunately
-      // we are not yet on C++20, so we have to do things the old way with constructors.
-      FieldDefinition(FieldType                 type,
-                      char const *              xPath,
-                      BtStringConst const *     propertyName,
-                      EnumStringMapping const * enumMapping);
-      FieldDefinition(FieldType                           type,
-                      char const *                        xPath,
-                      BtStringConst const *               propertyName,
-                      JsonMeasureableUnitsMapping const * unitsMapping);
-      FieldDefinition(FieldType                                  type,
-                      char const *                               xPath,
-                      BtStringConst const *                      propertyName,
-                      ListOfJsonMeasureableUnitsMappings const * listOfUnitsMappings);
-      FieldDefinition(FieldType                           type,
-                      char const *                        xPath,
-                      BtStringConst const *               propertyName,
-                      JsonSingleUnitSpecifier     const * singleUnitSpecifier);
-      // We need this one too, otherwise having fourth constructor parameter nullptr leaves the compiler not knowing
-      // which of the above two constructors to use.  (And there's no elegant way to tell the compiler it doesn't matter
-      // in this case!)
-      FieldDefinition(FieldType                 type,
-                      char const *              xPath,
-                      BtStringConst const *     propertyName);
+      using ValueDecoder =
+         std::variant<std::monostate,
+                     EnumStringMapping                  const *,  // FieldType::Enum
+                     JsonMeasureableUnitsMapping        const *,  // FieldType::MeasurementWithUnits
+                     ListOfJsonMeasureableUnitsMappings const *,  // FieldType::OneOfMeasurementsWithUnits
+                     JsonSingleUnitSpecifier            const *>; // FieldType::SingleUnitValue
+      ValueDecoder valueDecoder;
+      /**
+       * \brief Trivial constructor allows us to default \c valueDecoder and saves us having to put & before every
+       *        property name!
+       */
+      FieldDefinition(FieldType type,
+                      JsonXPath xPath,
+                      BtStringConst const & propertyName,
+                      ValueDecoder valueDecoder = ValueDecoder{});
    };
 
    /**
@@ -305,34 +292,37 @@ public:
     *        (We maybe could have called this function jsonRecordConstructorWrapper but it makes things rather long-
     *        winded in the definitions.)
     */
-   template<typename T>
-   static JsonRecord * create(JsonCoding const & jsonCoding,
-                              boost::json::value const & recordData,
-                              JsonRecordDefinition const & recordDefinition) {
-      return new T(jsonCoding, recordData, recordDefinition);
+   template<typename JRT>
+   static std::unique_ptr<JsonRecord> create(JsonCoding           const & jsonCoding,
+                                             boost::json::value         & recordData,
+                                             JsonRecordDefinition const & recordDefinition) {
+      return std::make_unique<JRT>(jsonCoding, recordData, recordDefinition);
    }
 
    /**
     * \brief This is just a convenience typedef representing a pointer to a template instantiation of
     *        \b JsonRecordDefinition::create().
     */
-   typedef JsonRecord * (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
-                                                        boost::json::value const & recordData,
-                                                        JsonRecordDefinition const & recordDefinition);
+   typedef std::unique_ptr<JsonRecord> (*JsonRecordConstructorWrapper)(JsonCoding const & jsonCoding,
+                                                                       boost::json::value & recordData,
+                                                                       JsonRecordDefinition const & recordDefinition);
 
    /**
     * \brief Constructor
     * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
     *                   fermentables in BeerJSON.
+    * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
+    *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
     * \param jsonRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     */
-   JsonRecordDefinition(char const * const recordName,
-                        char const * const namedEntityClassName,
-                        JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
+   JsonRecordDefinition(char                     const * const recordName,
+                        TypeLookup               const * const typeLookup,
+                        char                     const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
 
    /**
@@ -341,19 +331,22 @@ public:
     *                         and how to parse them.  Effectively the constructor just concatenates all the lists.
     *                         See comments fin BeerJson.cpp for why we want to do this.
     */
-   JsonRecordDefinition(char const * const recordName,
-                        char const * const namedEntityClassName,
-                        JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
+   JsonRecordDefinition(char                                              const * const recordName,
+                        TypeLookup                                        const * const typeLookup,
+                        char                                              const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper                                    jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
 
    /**
-    * \brief This is the way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It ensures you
-    *        get the right subclass (if any) of \c JsonRecord.
+    * \brief This is the simplest way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It
+    *        ensures you get the right subclass (if any) of \c JsonRecord.
     */
-   std::shared_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::value const & recordData) const;
+   std::unique_ptr<JsonRecord> makeRecord(JsonCoding const & jsonCoding, boost::json::value & recordData) const;
 
 public:
    BtStringConst const       recordName;
+
+   TypeLookup const * const typeLookup;
 
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).

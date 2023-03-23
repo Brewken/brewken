@@ -17,6 +17,11 @@
 #define JSON_BEERJSON_H
 #pragma once
 
+#include <memory> // For PImpl
+
+#include <QList>
+
+class QFile;
 class QString;
 class QTextStream;
 
@@ -32,6 +37,44 @@ namespace BeerJson {
     */
    bool import(QString const & filename, QTextStream & userMessage);
 
+   /**
+    * \brief Objects of this class are intended to be relatively short-lived, existing only for the time it takes to
+    *        construct the serialized representation and write it to a file.
+    */
+   class Exporter {
+   public:
+      /**
+      * \param outFile Should be open already.  Caller is responsible for closing it after \c close() or our destructor
+      *                is called
+      * \param userMessage
+      */
+      Exporter(QFile & outFile, QTextStream & userMessage);
+      ~Exporter();
+
+      /**
+      * \brief Add a list of \c NamedEntity objects to the serializer
+      */
+      template<class NE> void add(QList<NE const *> const & nes);
+
+      /**
+      * \brief Write the serialized data to the file.  Will be called in destructor if not already invoked directly.
+      */
+      void close();
+
+   private:
+      // Private implementation details - see https://herbsutter.com/gotw/_100/
+      class impl;
+      std::unique_ptr<impl> pimpl;
+
+      //! No copy constructor, as we don't want two objects trying to write to the same file
+      Exporter(Exporter const&) = delete;
+      //! No assignment operator, as never want anyone, not even our friends, to make copies of a singleton.
+      Exporter& operator=(Exporter const&) = delete;
+      //! No move constructor
+      Exporter(Exporter &&) = delete;
+      //! No move assignment
+      Exporter& operator=(Exporter &&) = delete;
+   };
 
 }
 

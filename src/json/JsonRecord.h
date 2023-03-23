@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,24 +18,25 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <boost/json/object.hpp>
 #include <boost/json/array.hpp>
 
 #include <QTextStream>
-#include <QVector>
 
 #include "json/JsonRecordDefinition.h"
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/ImportRecordCount.h"
 
 class JsonCoding;
 
 /**
  * \brief This class holds data about a specific individual record that we are reading from or writing to a JSON
- *        document.  It uses data from a corresponding singleton const \c JsonRecordDefinition to map between our internal
- *        data structures and fields in a JSON document.
+ *        document.  It uses data from a corresponding singleton const \c JsonRecordDefinition to map between our
+ *        internal data structures and fields in a JSON document.
  */
 class JsonRecord {
 public:
@@ -72,14 +73,14 @@ public:
     * \param recordDefinition
     */
    JsonRecord(JsonCoding const & jsonCoding,
-              boost::json::value const & recordData,
+              boost::json::value & recordData,
               JsonRecordDefinition const & recordDefinition);
    /**
     * \brief See constructor comment above for why we don't want to let the compiler do automatic conversions of the
     *        constructor arguments (which is what this template trick achieves).
     */
    template <typename P, typename Q, typename R> JsonRecord(P, Q, R) = delete;
-   ~JsonRecord();
+   virtual ~JsonRecord();
 
    /**
     * \brief Getter for the NamedParameterBundle we read in from this record
@@ -100,7 +101,7 @@ public:
     *
     * \return Shared pointer, which will contain nullptr for the root record
     */
-   std::shared_ptr<NamedEntity>  getNamedEntity() const;
+   std::shared_ptr<NamedEntity> getNamedEntity() const;
 
    /**
     * \brief From the supplied record (ie node) in an JSON document, load into memory the data it contains, including
@@ -110,7 +111,7 @@ public:
     *
     * \return \b true if load succeeded, \b false if there was an error
     */
-   bool load(QTextStream & userMessage);
+   [[nodiscard]] bool load(QTextStream & userMessage);
 
    /**
     * \brief Once the record (including all its sub-records) is loaded into memory, we this function does any final
@@ -130,16 +131,14 @@ public:
     * \return \b Succeeded, if processing succeeded, \b Failed, if there was an unresolvable problem, \b FoundDuplicate
     *         if the current record is a duplicate of one already in the DB and should be skipped.
     */
-///   virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
-///                                                  QTextStream & userMessage,
-///                                                  JsonRecordCount & stats);
+   [[nodiscard]] virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
+                                                                QTextStream & userMessage,
+                                                                ImportRecordCount & stats);
    /**
-    * \brief Export to JSON
-    * \param namedEntityToExport The object that we want to export to JSON
-    * \param out Where to write the JSON
+    * \brief Convert a \c NamedEntity to JSON
+    * \param namedEntityToExport The object that we want to convert to JSON
     */
-   void toJson(NamedEntity const & namedEntityToExport,
-              QTextStream & out) const;
+   void toJson(NamedEntity const & namedEntityToExport);
 
 private:
    /**
@@ -147,9 +146,10 @@ private:
     *        process (eg Hop records inside a Recipe).  But the algorithm for processing is generic, so we implement it
     *        in this base class.
     */
-   bool loadChildRecords(JsonRecordDefinition const & childRecordDefinition,
-                         boost::json::array const & childRecordsData,
-                         QTextStream & userMessage);
+   [[nodiscard]] bool loadChildRecords(JsonRecordDefinition::FieldDefinition const & parentFieldDefinition,
+                                       JsonRecordDefinition const & childRecordDefinition,
+                                       boost::json::array & childRecordsData,
+                                       QTextStream & userMessage);
 
 protected:
    /**
@@ -172,15 +172,14 @@ public:
    virtual void deleteNamedEntityFromDb();
 
 protected:
-///   bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
-///                                          JsonRecordCount & stats);
+   [[nodiscard]] bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage, ImportRecordCount & stats);
 
    /**
     * \brief Checks whether the \b NamedEntity for this record is, in all the ways that count, a duplicate of one we
     *        already have stored in the DB
     * \return \b true if this is a duplicate and should be skipped rather than stored
     */
-   virtual bool isDuplicate();
+   [[nodiscard]] virtual bool isDuplicate();
 
    /**
     * \brief If the \b NamedEntity for this record is supposed to have globally unique names, then this method will
@@ -226,6 +225,22 @@ protected:
     */
    static void modifyClashingName(QString & candidateName);
 
+private:
+   /**
+    * \brief Add a value to a JSON object
+    *
+    * \param fieldDefinition
+    * \param recordDataAsObject
+    * \param key
+    * \param value  The value to add.  NB this can be modified by this function (specifically to change the contents
+    *               from \c std::optional<T> to \c T).  Caller is not expected to need the value after this function
+    *               returns.
+    */
+   void insertValue(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
+                    boost::json::object & recordDataAsObject,
+                    std::string_view const & key,
+                    QVariant & value);
+
 protected:
    JsonCoding const & jsonCoding;
 
@@ -235,7 +250,7 @@ protected:
     * extract the contained \c boost::json::object from a \c boost::json::value, you cannot go in the other direction
     * and get the containing \c boost::json::value from a \c boost::json::object).
     */
-   boost::json::value const & recordData;
+   boost::json::value & recordData;
    JsonRecordDefinition const & recordDefinition;
 
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
@@ -264,10 +279,23 @@ protected:
    // Keep track of any child (ie contained) records
    //
    struct ChildRecord {
-      JsonRecordDefinition::FieldDefinition const * fieldDefinition;
-      std::shared_ptr<JsonRecord> jsonRecord;
+      /**
+       * \brief Notes the attribute/field to which this child record relates.  Eg, if a recipe record has hop and
+       *        fermentable child records, then it needs to know which is which and how to store them.
+       *        If it's \c nullptr then that means this is a top-level record (eg just a hop variety rather than a use
+       *        of a hop in a recipe).
+       */
+      JsonRecordDefinition::FieldDefinition const * parentFieldDefinition;
+
+      /**
+       * \brief The actual child record
+       */
+      std::unique_ptr<JsonRecord> record;
    };
-   QVector<ChildRecord> childRecords;
+
+   // Note that we don't use QVector here as it always wants to be able to copy things, which doesn't play nicely with
+   // there being a std::unique_ptr inside the ChildRecord struct.
+   std::vector<ChildRecord> childRecords;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterListModel.cpp is part of Brewken, and is copyright the following authors 2020-2021:
+ * WaterListModel.cpp is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -72,7 +72,8 @@ void WaterListModel::addWaters(QList<Water*> waters)
    }
 }
 
-void WaterListModel::removeWater(int waterId, std::shared_ptr<QObject> object) {
+void WaterListModel::removeWater([[maybe_unused]] int waterId,
+                                 std::shared_ptr<QObject> object) {
    this->remove(std::static_pointer_cast<Water>(object).get());
    return;
 }

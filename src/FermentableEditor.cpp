@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -29,54 +29,65 @@
 #include "measurement/Unit.h"
 #include "model/Fermentable.h"
 
-FermentableEditor::FermentableEditor( QWidget* parent ) :
-   QDialog(parent), obsFerm(nullptr) {
+FermentableEditor::FermentableEditor(QWidget* parent) :
+   QDialog(parent),
+   obsFerm(nullptr) {
    setupUi(this);
 
-   this->tabWidget_editor->tabBar()->setStyle( new BtHorizontalTabs );
+   this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-   connect( pushButton_new,    SIGNAL( clicked() ),       this, SLOT( newFermentable() ) );
-   connect( pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save );
-   connect( pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose );
+   // See comment in HopEditor.cpp about combo box setup in Qt
+   for (auto ii : Fermentable::allTypes) {
+      this->comboBox_fermentableType->addItem(Fermentable::typeDisplayNames[ii],
+                                              Fermentable::typeStringMapping.enumToString(ii));
+   }
+
+   connect(pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNewFermentable);
+   connect(pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save);
+   connect(pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose);
    return;
 }
 
-void FermentableEditor::setFermentable( Fermentable* newFerm ) {
-   if(newFerm) {
+FermentableEditor::~FermentableEditor() = default;
+
+void FermentableEditor::setFermentable(Fermentable * newFerm) {
+   if (newFerm) {
       obsFerm = newFerm;
       showChanges();
    }
    return;
 }
 
-void FermentableEditor::save()
-{
-   if( !obsFerm )
-   {
+void FermentableEditor::save() {
+   if (!obsFerm) {
       setVisible(false);
       return;
    }
 
    obsFerm->setName(lineEdit_name->text());
 
-   // NOTE: the following assumes that Fermentable::Type is enumerated in the same
-   // order as the combobox.
-   obsFerm->setType( static_cast<Fermentable::Type>(comboBox_type->currentIndex()) );
+   //
+   // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
+   // std::bad_optional_access exception in such a case
+   //
+   this->obsFerm->setType(
+      Fermentable::typeStringMapping.stringToEnum<Fermentable::Type>(comboBox_fermentableType->currentData().toString())
+   );
 
-   obsFerm->setYield_pct(lineEdit_yield->toSI().quantity);
-   obsFerm->setColor_srm(lineEdit_color->toSI().quantity);
-   obsFerm->setAddAfterBoil( (checkBox_addAfterBoil->checkState() == Qt::Checked)? true : false );
-   obsFerm->setOrigin( lineEdit_origin->text() );
-   obsFerm->setSupplier( lineEdit_supplier->text() );
-   obsFerm->setCoarseFineDiff_pct( lineEdit_coarseFineDiff->toSI().quantity );
-   obsFerm->setMoisture_pct( lineEdit_moisture->toSI().quantity );
-   obsFerm->setDiastaticPower_lintner( lineEdit_diastaticPower->toSI().quantity );
-   obsFerm->setProtein_pct( lineEdit_protein->toSI().quantity );
-   obsFerm->setMaxInBatch_pct( lineEdit_maxInBatch->toSI().quantity );
-   obsFerm->setRecommendMash( (checkBox_recommendMash->checkState() == Qt::Checked) ? true : false );
-   obsFerm->setIsMashed( (checkBox_isMashed->checkState() == Qt::Checked) ? true : false );
-   obsFerm->setIbuGalPerLb( lineEdit_ibuGalPerLb->toSI().quantity );
-   obsFerm->setNotes( textEdit_notes->toPlainText() );
+   obsFerm->setYield_pct(lineEdit_yield->toCanonical().quantity());
+   obsFerm->setColor_srm(lineEdit_color->toCanonical().quantity());
+   obsFerm->setAddAfterBoil((checkBox_addAfterBoil->checkState() == Qt::Checked)? true : false);
+   obsFerm->setOrigin(lineEdit_origin->text());
+   obsFerm->setSupplier(lineEdit_supplier->text());
+   obsFerm->setCoarseFineDiff_pct(lineEdit_coarseFineDiff->toCanonical().quantity());
+   obsFerm->setMoisture_pct(lineEdit_moisture->toCanonical().quantity());
+   obsFerm->setDiastaticPower_lintner(lineEdit_diastaticPower->toCanonical().quantity());
+   obsFerm->setProtein_pct(lineEdit_protein->toCanonical().quantity());
+   obsFerm->setMaxInBatch_pct(lineEdit_maxInBatch->toCanonical().quantity());
+   obsFerm->setRecommendMash((checkBox_recommendMash->checkState() == Qt::Checked) ? true : false);
+   obsFerm->setIsMashed((checkBox_isMashed->checkState() == Qt::Checked) ? true : false);
+   obsFerm->setIbuGalPerLb(lineEdit_ibuGalPerLb->toCanonical().quantity());
+   obsFerm->setNotes(textEdit_notes->toPlainText());
 
    if (this->obsFerm->key() < 0) {
       ObjectStoreWrapper::insert(*this->obsFerm);
@@ -84,7 +95,7 @@ void FermentableEditor::save()
 
    // Since inventory amount isn't really an attribute of the Fermentable, it's best to store it after we know the
    // Fermentable has a DB record.
-   this->obsFerm->setInventoryAmount(lineEdit_inventory->toSI().quantity);
+   this->obsFerm->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
 
    setVisible(false);
    return;
@@ -102,134 +113,50 @@ void FermentableEditor::showChanges(QMetaProperty* metaProp) {
 
    QString propName;
    bool updateAll = false;
-   if( metaProp == nullptr ) {
+   if (metaProp == nullptr) {
       updateAll = true;
    } else {
       propName = metaProp->name();
    }
 
-   if( propName == PropertyNames::NamedEntity::name || updateAll ) {
-      lineEdit_name->setText(obsFerm->name());
-      lineEdit_name->setCursorPosition(0);
-
-      tabWidget_editor->setTabText(0, obsFerm->name() );
-      if( ! updateAll ) {
-         return;
-      }
-   }
    if (propName == PropertyNames::Fermentable::type || updateAll) {
-      // NOTE: assumes the comboBox entries are in same order as Fermentable::Type
-      comboBox_type->setCurrentIndex(static_cast<int>(obsFerm->type()));
+      // As above, it's a coding error if there isn't a combo box entry corresponding to the Hop type
+      comboBox_fermentableType->setCurrentIndex(
+         comboBox_fermentableType->findData(Fermentable::typeStringMapping.enumToString(obsFerm->type()))
+      );
       if (!updateAll) {
          return;
       }
    }
-   if (propName == PropertyNames::NamedEntityWithInventory::inventory || updateAll) {
-      lineEdit_inventory->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::yield_pct || updateAll) {
-      lineEdit_yield->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Fermentable::color_srm || updateAll) {
-      lineEdit_color->setText(obsFerm, 0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::addAfterBoil || updateAll) {
-      checkBox_addAfterBoil->setCheckState( obsFerm->addAfterBoil() ? Qt::Checked : Qt::Unchecked );
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Fermentable::origin || updateAll) {
-      lineEdit_origin->setText(obsFerm->origin());
-      lineEdit_origin->setCursorPosition(0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Fermentable::supplier || updateAll) {
-      lineEdit_supplier->setText(obsFerm->supplier());
-      lineEdit_supplier->setCursorPosition(0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::coarseFineDiff_pct || updateAll) {
-      lineEdit_coarseFineDiff->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::moisture_pct || updateAll) {
-      lineEdit_moisture->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::diastaticPower_lintner || updateAll) {
-      lineEdit_diastaticPower->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::protein_pct || updateAll) {
-      lineEdit_protein->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::maxInBatch_pct || updateAll) {
-      lineEdit_maxInBatch->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::recommendMash || updateAll) {
-      checkBox_recommendMash->setCheckState( obsFerm->recommendMash() ? Qt::Checked : Qt::Unchecked );
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::isMashed || updateAll) {
-      checkBox_isMashed->setCheckState( obsFerm->isMashed() ? Qt::Checked : Qt::Unchecked );
-      if (!updateAll) {
-         return;
-      }
-   }
-   if( propName == PropertyNames::Fermentable::ibuGalPerLb || updateAll) {
-      lineEdit_ibuGalPerLb->setText(obsFerm);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Fermentable::notes || updateAll) {
-      textEdit_notes->setPlainText( obsFerm->notes() );
-      if (!updateAll) {
-         return;
-      }
-   }
+   if (updateAll || propName == PropertyNames::NamedEntity::name                  ) {lineEdit_name          ->setText(obsFerm->name()); lineEdit_name->setCursorPosition(0); tabWidget_editor->setTabText(0, obsFerm->name()); if (! updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) {lineEdit_inventory     ->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::yield_pct             ) {lineEdit_yield         ->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::color_srm             ) {lineEdit_color         ->setText(obsFerm, 0);                                                   if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::addAfterBoil          ) {checkBox_addAfterBoil  ->setCheckState(obsFerm->addAfterBoil() ? Qt::Checked : Qt::Unchecked);  if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::origin                ) {lineEdit_origin        ->setText(obsFerm->origin());   lineEdit_origin->setCursorPosition(0);   if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::supplier              ) {lineEdit_supplier      ->setText(obsFerm->supplier()); lineEdit_supplier->setCursorPosition(0); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::coarseFineDiff_pct    ) {lineEdit_coarseFineDiff->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::moisture_pct          ) {lineEdit_moisture      ->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::diastaticPower_lintner) {lineEdit_diastaticPower->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::protein_pct           ) {lineEdit_protein       ->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::maxInBatch_pct        ) {lineEdit_maxInBatch    ->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::recommendMash         ) {checkBox_recommendMash ->setCheckState(obsFerm->recommendMash() ? Qt::Checked : Qt::Unchecked); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::isMashed              ) {checkBox_isMashed      ->setCheckState(obsFerm->isMashed() ? Qt::Checked : Qt::Unchecked);      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::ibuGalPerLb           ) {lineEdit_ibuGalPerLb   ->setText(obsFerm);                                                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::notes                 ) {textEdit_notes         ->setPlainText(obsFerm->notes());                                        if (!updateAll) { return; } }
    return;
 }
 
 void FermentableEditor::newFermentable(QString folder)  {
-   QString name = QInputDialog::getText(this, tr("Fermentable name"),
-                                          tr("Fermentable name:"));
-   if( name.isEmpty() ) {
+   QString name = QInputDialog::getText(this, tr("Fermentable name"), tr("Fermentable name:"));
+   if (name.isEmpty()) {
       return;
    }
 
    // .:TODO:. Change to shared_ptr as currently leads to memory leak in clearAndClose()
    Fermentable * f = new Fermentable(name);
 
-   if ( ! folder.isEmpty() ) {
+   if (! folder.isEmpty()) {
       f->setFolder(folder);
    }
 
@@ -238,7 +165,7 @@ void FermentableEditor::newFermentable(QString folder)  {
    return;
 }
 
-void FermentableEditor::newFermentable() {
+void FermentableEditor::clickedNewFermentable() {
    newFermentable(QString());
    return;
 }

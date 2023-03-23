@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * AncestorDialog.cpp is part of Brewken, and is copyright the following authors 2021:
+ * AncestorDialog.cpp is part of Brewken, and is copyright the following authors 2021-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@fastmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -36,8 +37,7 @@
 #include "model/NamedEntity.h"
 #include "model/Recipe.h"
 
-AncestorDialog::AncestorDialog(QWidget * parent)
-   : QDialog(parent) {
+AncestorDialog::AncestorDialog(QWidget * parent) : QDialog(parent) {
 
    setupUi(this);
 
@@ -53,7 +53,10 @@ AncestorDialog::AncestorDialog(QWidget * parent)
    // just some nice things
    connect(comboBox_ancestor,   SIGNAL(activated(int)), this, SLOT(ancestorSelected(int)));
    // connect( comboBox_descendant, SIGNAL(activated(int)), this, SLOT(activateButton()));
+   return;
 }
+
+AncestorDialog::~AncestorDialog() = default;
 
 bool AncestorDialog::recipeLessThan(Recipe * right, Recipe * left) {
    if (right->name() == left->name()) {
@@ -73,6 +76,7 @@ void AncestorDialog::buildAncestorBox() {
       }
    }
    comboBox_ancestor->setCurrentIndex(-1);
+   return;
 }
 
 void AncestorDialog::buildDescendantBox(Recipe * ignore) {
@@ -95,13 +99,12 @@ void AncestorDialog::buildDescendantBox(Recipe * ignore) {
       }
       comboBox_descendant->addItem(recipe->name(), recipe->key());
    }
+   return;
 }
 
 void AncestorDialog::connectDescendant() {
-   Recipe * ancestor, *descendant;
-
-   ancestor   = ObjectStoreWrapper::getByIdRaw<Recipe>(comboBox_ancestor->currentData().toInt());
-   descendant = ObjectStoreWrapper::getByIdRaw<Recipe>(comboBox_descendant->currentData().toInt());
+   Recipe * ancestor   = ObjectStoreWrapper::getByIdRaw<Recipe>(comboBox_ancestor->currentData().toInt());
+   Recipe * descendant = ObjectStoreWrapper::getByIdRaw<Recipe>(comboBox_descendant->currentData().toInt());
 
    // No loops in the inheritance
    if (! descendant->isMyAncestor(*ancestor)) {
@@ -120,6 +123,7 @@ void AncestorDialog::connectDescendant() {
    // and rebuild the ancestors box
    comboBox_ancestor->clear();
    buildAncestorBox();
+   return;
 }
 
 void AncestorDialog::setAncestor(Recipe * anc) {
@@ -128,19 +132,22 @@ void AncestorDialog::setAncestor(Recipe * anc) {
 
    comboBox_descendant->setEnabled(true);
    activateButton();
+   return;
 }
 
-void AncestorDialog::ancestorSelected(int ndx) {
+void AncestorDialog::ancestorSelected([[maybe_unused]] int ndx) {
    Recipe * ancestor = ObjectStoreWrapper::getByIdRaw<Recipe>(comboBox_ancestor->currentData().toInt());
    comboBox_descendant->setEnabled(true);
 
    buildDescendantBox(ancestor);
 
    activateButton();
+   return;
 }
 
 void AncestorDialog::activateButton() {
    if (! pushButton_apply->isEnabled()) {
       pushButton_apply->setEnabled(true);
    }
+   return;
 }

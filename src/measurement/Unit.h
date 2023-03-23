@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Unit.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * measurement/Unit.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -78,6 +78,18 @@ namespace Measurement {
       ~Unit();
 
       /**
+       * \brief This gets called by \c getUnit, \c getCanonicalUnit and \c convertWithoutContext to ensure their lookup
+       *        maps are initialised.
+       *
+       *        It would be private, except we need to call it from an anonymous namespace function in
+       *        \c measurement/Unit.cpp.
+       *
+       *        It would be an anonymous namespace function itself, except it needs access to private members of
+       *        \c Unit.
+       */
+      static void initialiseLookups();
+
+      /**
        * \brief Test whether two \c Unit references are the same.  (This is by no means a full test for equality,
        *        since we assume there is only one, constant, instance of each different \c Unit.
        */
@@ -89,19 +101,22 @@ namespace Measurement {
       QString const name;
 
       /**
-       * \brief Returns the canonical units we use for \c PhysicalQuantity this \c Unit relates to
+       * \brief Returns the canonical units we use for \c PhysicalQuantity this \c Unit relates to.  These are the units
+       *        we use for internal storage and (for the most part) for calculations.
        */
       Measurement::Unit const & getCanonical() const;
 
       /**
-       * \brief Convert an amount of this unit to its canonical system of measurement (usually, but not always, an SI measure)
+       * \brief Convert an amount of this unit to its canonical system of measurement (usually, but not always, an SI or
+       *        other metric measure)
        */
-      Measurement::Amount toSI(double amt) const;
+      Measurement::Amount toCanonical(double amt) const;
 
       /**
-       * \brief Convert an amount of this unit from its canonical system of measurement (usually, but not always, an SI measure)
+       * \brief Convert an amount of this unit from its canonical system of measurement (usually, but not always, an SI
+       *        or other metric measure)
        */
-      double fromSI(double amt) const;
+      double fromCanonical(double amt) const;
 
       /**
        * \brief Returns the \c Measurement::PhysicalQuantity that this \c Measurement::Unit measures.  This is a
@@ -130,14 +145,36 @@ namespace Measurement {
        *        know what "qt" is, we go searching for it.
        *
        * \param name
-       * \param physicalQuantity If the caller knows what \c PhysicalQuantity the name relates to, this will help with
-       *                         disambiguation (eg between Liters and Lintner, both of which have name/abbreviation
-       *                         "L").  Otherwise specify \c std::nullopt here.
+       * \param physicalQuantity Caller supplies this to help with disambiguation (eg between Liters and Lintner, both
+       *                         of which have name/abbreviation "L").
+       * \param caseInensitiveMatching If \c true (the default), this means we'll do a case-insensitive search.  Eg,
+       *                               we'll match "ml" for milliliters, even though the correct name is "mL".  This
+       *                               should always be safe to do, as AFAICT there are no current or foreseeable units
+       *                               that _we_ use whose names only differ by case.
        *
        * \return \c nullptr if no sane match could be found
        */
       static Unit const * getUnit(QString const & name,
-                                  std::optional<Measurement::PhysicalQuantity> physicalQuantity = std::nullopt);
+                                  Measurement::PhysicalQuantity const & physicalQuantity,
+                                  bool const caseInensitiveMatching = true);
+
+      /**
+       * \brief Try to find a Unit by name in the supplied UnitSystem.  If no unit is found, search against the
+       *        PhysicalQuantity to which the supplied UnitSystem relates (which is doable because, per the comment in
+       *        measurement/UnitSystem.h, we each UnitSystem relates to a single PhysicalQuantity).
+       *
+       * \param name
+       * \param unitSystem
+       * \param caseInensitiveMatching If \c true (the default), this means we'll do a case-insensitive search.  Eg,
+       *                               we'll match "ml" for milliliters, even though the correct name is "mL".  This
+       *                               should always be safe to do, as AFAICT there are no current or foreseeable units
+       *                               that _we_ use whose names only differ by case.
+       *
+       * \return \c nullptr if no sane match could be found
+       */
+      static Unit const * getUnit(QString const & name,
+                                  Measurement::UnitSystem const & unitSystem,
+                                  bool const caseInensitiveMatching = true);
 
       /**
        * \brief Get the canonical \c Unit for a given \c PhysicalQuantity.  This will be the unit we use for storing
@@ -153,7 +190,7 @@ namespace Measurement {
        *        we are dealing with because it's a generic tool to allow the user to convert "3 qt" to liters or "5lb"
        *        to kilograms etc.
        */
-      static QString convert(QString qstr, QString toUnit);
+      static QString convertWithoutContext(QString const & qstr, QString const & toUnitName);
 
    private:
       // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -249,11 +286,30 @@ namespace Measurement {
       // to be much used in brewing, so we do not implement it.)
       extern Unit const centipoise;
       extern Unit const millipascalSecond;
+      // == Specific Heat Capacity ==
+      // Per https://en.wikipedia.org/wiki/Specific_heat_capacity SI units are "joules per kelvin per kilogram" (which
+      // is the same as "joules per degree Celsius per kilogram").  However, historically a measurement involving
+      // calories instead of joules was used in chemistry, nutrition and, it seems, brewing.  There are two types of
+      // calorie:
+      //   - the "small calorie" (or "gram-calorie", "cal") = 4.184 J
+      //   - The "grand calorie" (aka "kilocalorie", "kcal" or "Cal") = 1000 small calories = 4184 J
+      //
+      // However, the specific heat measurement using "cal" is the same as that for "Cal":
+      //   1 cal / (°C × g) = 1 Cal / (°C × kg) = 4184 J / (°K × kg) = the specific heat capacity of liquid water
+      //
+      // So, we only implement "calories per degree Celsius per gram" as it's identical to "kilocalories per degree
+      // Celsius per kilogram".
+      //
+      // NOTE: This is one instance where our "canonical" unit is NOT the metric one.  Historically, the code has always
+      //       used "calories per Celsius per gram" rather than "joules per Celsius per kilogram", including for storing
+      //       amounts in the DB.   Also the "calories" version is what is used by BeerJSON and BeerXML.
+      //
+      extern Unit const caloriesPerCelsiusPerGram;
+      extern Unit const joulesPerKelvinPerKg;
    }
 }
 
 //.:TODO:.     "SpecificVolumeType": "Specific volume is the inverse of density, with units of volume over mass, ie qt/lb or L/kg. Commonly used for mash thickness.",
-
 
 /**
  * \brief Convenience function to allow output of \c Measurement::Unit to \c QDebug or \c QTextStream stream etc

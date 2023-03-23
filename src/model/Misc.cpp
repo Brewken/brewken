@@ -37,12 +37,12 @@ namespace {
    QStringList types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
    QStringList amountTypes = QStringList() << "Weight" << "Volume";
    QStringList typesTr =
-      QStringList() << QT_TR_NOOP("Spice") << QT_TR_NOOP("Fining") << QT_TR_NOOP("Water Agent") << QT_TR_NOOP("Herb") <<
-      QT_TR_NOOP("Flavor") << QT_TR_NOOP("Other");
+      QStringList() << Misc::tr("Spice") << Misc::tr("Fining") << Misc::tr("Water Agent") << Misc::tr("Herb") <<
+      Misc::tr("Flavor") << Misc::tr("Other");
    QStringList usesTr =
-      QStringList() << QT_TR_NOOP("Boil") << QT_TR_NOOP("Mash") << QT_TR_NOOP("Primary") << QT_TR_NOOP("Secondary") <<
-      QT_TR_NOOP("Bottling");
-   QStringList amountTypesTr = QStringList() << QT_TR_NOOP("Weight") << QT_TR_NOOP("Volume");
+      QStringList() << Misc::tr("Boil") << Misc::tr("Mash") << Misc::tr("Primary") << Misc::tr("Secondary") <<
+      Misc::tr("Bottling");
+   QStringList amountTypesTr = QStringList() << Misc::tr("Weight") << Misc::tr("Volume");
 }
 
 bool Misc::isEqualTo(NamedEntity const & other) const {
@@ -50,8 +50,7 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
    Misc const & rhs = static_cast<Misc const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_type == rhs.m_type &&
-      this->m_use  == rhs.m_use
+      this->m_type == rhs.m_type
    );
 }
 
@@ -59,7 +58,51 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<Misc>::getInstance();
 }
 
+TypeLookup const Misc::typeLookup {
+   "Misc",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountType    , Misc::m_amountType    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time          , Misc::m_time          ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::typeString    , Misc::m_typeString    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type          , Misc::m_type          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useString     , Misc::m_useString     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ),
+   },
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
+};
+static_assert(std::is_base_of<NamedEntityWithInventory, Misc>::value);
+
 //============================CONSTRUCTORS======================================
+
+Misc::Misc(QString name) :
+   NamedEntityWithInventory{name, true},
+   m_type          {Misc::Type::Spice},
+   m_use           {Misc::Use::Boil  },
+   m_time          {0.0              },
+   m_amount        {0.0              },
+   m_amountIsWeight{false            },
+   m_useFor        {""               },
+   m_notes         {""               } {
+   return;
+}
+
+Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntityWithInventory{namedParameterBundle},
+   m_type                  {namedParameterBundle.val<Misc::Type>(PropertyNames::Misc::type          )},
+   m_use                   {namedParameterBundle.val<Misc::Use >(PropertyNames::Misc::use           )},
+   m_time                  {namedParameterBundle.val<double    >(PropertyNames::Misc::time          )},
+   m_amount                {namedParameterBundle.val<double    >(PropertyNames::Misc::amount        )},
+   m_amountIsWeight        {namedParameterBundle.val<bool      >(PropertyNames::Misc::amountIsWeight)},
+   m_useFor                {namedParameterBundle.val<QString   >(PropertyNames::Misc::useFor        )},
+   m_notes                 {namedParameterBundle.val<QString   >(PropertyNames::Misc::notes         )} {
+   return;
+}
+
 Misc::Misc(Misc const & other) :
    NamedEntityWithInventory{other                 },
    m_type                  {other.m_type          },
@@ -72,30 +115,7 @@ Misc::Misc(Misc const & other) :
    return;
 }
 
-Misc::Misc(QString name) :
-   NamedEntityWithInventory{name, true},
-   m_type                  {Misc::Type::Spice},
-   m_use                   {Misc::Use::Boil },
-   m_time                  {0.0        },
-   m_amount                {0.0        },
-   m_amountIsWeight        {false      },
-   m_useFor                {""         },
-   m_notes                 {""         } {
-   return;
-}
-
-Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithInventory{namedParameterBundle},
-   m_type                  {static_cast<Misc::Type>(namedParameterBundle(PropertyNames::Misc::type).toInt())},
-   m_use                   {static_cast<Misc::Use>(namedParameterBundle(PropertyNames::Misc::use).toInt())},
-   m_time                  {namedParameterBundle(PropertyNames::Misc::time          ).toDouble()},
-   m_amount                {namedParameterBundle(PropertyNames::Misc::amount        ).toDouble()},
-   m_amountIsWeight        {namedParameterBundle(PropertyNames::Misc::amountIsWeight).toBool()},
-   m_useFor                {namedParameterBundle(PropertyNames::Misc::useFor        ).toString()},
-   m_notes                 {namedParameterBundle(PropertyNames::Misc::notes         ).toString()} {
-   return;
-}
-
+Misc::~Misc() = default;
 
 //============================"GET" METHODS=====================================
 Misc::Type Misc::type() const { return m_type; }

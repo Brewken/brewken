@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HelpDialog.h is part of Brewken, and is copyright the following authors 2021:
+ * HelpDialog.h is part of Brewken, and is copyright the following authors 2021-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,7 +20,9 @@
 #include <memory> // For PImpl
 
 #include <QDialog>
-#include <QEvent>
+
+class QEvent;
+class QWidget;
 
 /*!
  * \class HelpDialog
@@ -28,6 +30,7 @@
  * \brief Gives user info on file locations and links to Brewken website(s).
  */
 class HelpDialog : public QDialog {
+   Q_OBJECT
 
 public:
    HelpDialog(QWidget * parent = nullptr);
