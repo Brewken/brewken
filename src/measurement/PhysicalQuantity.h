@@ -17,6 +17,7 @@
 #define MEASUREMENT_PHYSICALQUANTITY_H
 #pragma once
 
+#include <array>
 #include <tuple>
 #include <utility>
 #include <variant>

@@ -49,13 +49,13 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
    BtTableModelInventory{
       parent,
       editable,
-      {{YEASTNAMECOL,      {tr("Name"),       NonPhysicalQuantity::String                   , ""                           }},
-       {YEASTLABCOL,       {tr("Laboratory"), NonPhysicalQuantity::String                   , ""                           }},
-       {YEASTPRODIDCOL,    {tr("Product ID"), NonPhysicalQuantity::String                   , ""                           }},
-       {YEASTTYPECOL,      {tr("Type"),       NonPhysicalQuantity::String                   , ""                           }},
-       {YEASTFORMCOL,      {tr("Form"),       NonPhysicalQuantity::String                   , ""                           }},
-       {YEASTAMOUNTCOL,    {tr("Amount"),     Measurement::PqEitherMassOrVolumeConcentration, *PropertyNames::Yeast::amount}},
-       {YEASTINVENTORYCOL, {tr("Inventory"),  NonPhysicalQuantity::Count                    , ""                           }}}
+      {{YEASTNAMECOL,      {tr("Name"),       NonPhysicalQuantity::String      , ""                           }},
+       {YEASTLABCOL,       {tr("Laboratory"), NonPhysicalQuantity::String      , ""                           }},
+       {YEASTPRODIDCOL,    {tr("Product ID"), NonPhysicalQuantity::String      , ""                           }},
+       {YEASTTYPECOL,      {tr("Type"),       NonPhysicalQuantity::String      , ""                           }},
+       {YEASTFORMCOL,      {tr("Form"),       NonPhysicalQuantity::String      , ""                           }},
+       {YEASTAMOUNTCOL,    {tr("Amount"),     Measurement::PqEitherMassOrVolume, *PropertyNames::Yeast::amount}},
+       {YEASTINVENTORYCOL, {tr("Inventory"),  NonPhysicalQuantity::Count       , ""                           }}}
    },
    BtTableModelData<Yeast>{} {
 

@@ -34,9 +34,6 @@
 #include "model/NamedParameterBundle.h"
 #include "utils/OptionalHelpers.h"
 
-//// DELETE THIS!
-#include "model/Water.h"
-
 // Private implementation details that don't need access to class member variables
 namespace {
 
@@ -86,9 +83,9 @@ namespace {
       //       ...
       //       bug DATE
       //    );
-      // .:TBD:. At some future point we might extend our model to allow marking some columns as NOT NULL (eg via some
-      //         making the derived class of NamedEntity available in ObjectStore::TableDefinition so we can query
-      //         isOptional() on each property), but it doesn't seem pressing at the moment.
+      // .:TBD:. At some future point we might extend our model to allow marking some columns as NOT NULL (eg by making
+      //         the derived class of NamedEntity available in ObjectStore::TableDefinition so we can query isOptional()
+      //         on each property), but it doesn't seem pressing at the moment.
       //
       QString queryString{"CREATE TABLE "};
       QTextStream queryStringAsStream{&queryString};
@@ -229,7 +226,6 @@ namespace {
                     ObjectStore::TableField const &      fieldDefn,
                     QString const &                      stringValue) {
       // It's a coding error if we called this function for a non-enum field
-      // It's OK to be called for EnumOpt as stringToEnumOpt() calls us to avoid duplication
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Enum);
       Q_ASSERT(fieldDefn.enumMapping != nullptr);
       auto match = fieldDefn.enumMapping->stringToEnumAsInt(stringValue);
@@ -760,9 +756,9 @@ public:
             if (propertyValue.isNull()) {
                // This is either a coding error or someone messed with the DB data.
                qCritical() <<
-                  Q_FUNC_INFO << "Found null value for non-optional enum when mapping column " << fieldDefn.columnName <<
-                  " to property " << fieldDefn.propertyName << "for" << primaryTable.tableName <<
-                  "so using 0";
+                  Q_FUNC_INFO << "Found null value for non-optional enum when mapping column " <<
+                  fieldDefn.columnName << " to property " << fieldDefn.propertyName << "for" <<
+                  primaryTable.tableName << "so using 0";
                propertyValue = QVariant(0);
                return;
             }

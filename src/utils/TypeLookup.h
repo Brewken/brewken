@@ -133,7 +133,6 @@ struct TypeInfo {
 class TypeLookup {
 public:
 
-
    /**
     * \brief If we want to change from using std::map in future, it's easier if we have a typedef alias for it
     */

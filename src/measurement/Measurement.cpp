@@ -24,6 +24,7 @@
 
 #include "Algorithms.h"
 #include "Localization.h"
+#include "measurement/PhysicalQuantity.h"
 #include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
 #include "model/Style.h" // For PropertyNames::Style::colorMin_srm, PropertyNames::Style::colorMax_srm

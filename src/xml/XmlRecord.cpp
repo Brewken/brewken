@@ -211,10 +211,14 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                // I think it gets messy to have different types there than on the QProperty setters.  It's not much
                // overhead to do things here IMHO.)
                //
-               // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+               // Note that:
+               //    - propertyName is not actually a property name when fieldType is RequiredConstant
+               //    - when propertyName is not set, there is nothing to look up (because this is a field we don't
+               //      support, usually an "Extension tag")
                //
                bool const propertyIsOptional {
-                  (fieldDefinition->fieldType == XmlRecord::FieldType::RequiredConstant) ?
+                  (fieldDefinition->fieldType == XmlRecord::FieldType::RequiredConstant ||
+                   fieldDefinition->propertyName.isNull()) ?
                      false : this->typeLookup->isOptional(fieldDefinition->propertyName)
                };
 
@@ -856,10 +860,14 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          // skip writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in
          // other ways elsewhere).
          //
-         // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+         // Note that:
+         //    - propertyName is not actually a property name when fieldType is RequiredConstant
+         //    - when propertyName is not set, there is nothing to look up (because this is a field we don't support,
+         //      usually an "Extension tag")
          //
          bool const propertyIsOptional {
-            (fieldDefinition.fieldType == XmlRecord::FieldType::RequiredConstant) ?
+            (fieldDefinition.fieldType == XmlRecord::FieldType::RequiredConstant ||
+               fieldDefinition.propertyName.isNull()) ?
                false : this->typeLookup->isOptional(fieldDefinition.propertyName)
          };
          switch (fieldDefinition.fieldType) {
