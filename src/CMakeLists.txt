@@ -45,12 +45,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/Application.cpp
     ${repoDir}/src/BeerColorWidget.cpp
     ${repoDir}/src/boiltime.cpp
-    ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewDayFormatter.cpp
+    ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
+    ${repoDir}/src/BtAmountEdit.cpp
     ${repoDir}/src/BtColor.cpp
     ${repoDir}/src/BtDatePopup.cpp
-    ${repoDir}/src/BtDigitWidget.cpp
     ${repoDir}/src/BtFieldType.cpp
     ${repoDir}/src/BtFolder.cpp
     ${repoDir}/src/BtLabel.cpp
@@ -109,6 +109,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/matrix.cpp
     ${repoDir}/src/measurement/Amount.cpp
     ${repoDir}/src/measurement/ColorMethods.cpp
+    ${repoDir}/src/measurement/ConstrainedAmount.cpp
     ${repoDir}/src/measurement/IbuMethods.cpp
     ${repoDir}/src/measurement/Measurement.cpp
     ${repoDir}/src/measurement/PhysicalQuantity.cpp
@@ -186,6 +187,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/WaterTableWidget.cpp
     ${repoDir}/src/widgets/Animator.cpp
+    ${repoDir}/src/widgets/BtAmountDigitWidget.cpp
+    ${repoDir}/src/widgets/BtDigitWidget.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/ToggleSwitch.cpp
     ${repoDir}/src/widgets/UnitAndScalePopUpMenu.cpp

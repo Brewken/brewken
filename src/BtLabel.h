@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLabel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtLabel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -29,6 +29,7 @@
 #include <QPoint>
 
 #include "BtFieldType.h"
+#include "BtLineEdit.h"
 #include "measurement/UnitSystem.h"
 #include "UiAmountWithUnits.h" // For PreviousScaleInfo
 
@@ -74,6 +75,12 @@ public:
    virtual ~BtLabel();
 
    /**
+    * \brief Our "buddy" should always be a \c BtLabel.  This is a convenience function to get it without the caller
+    *        having to downcast from \c QWidget etc.
+    */
+   BtLineEdit & getBuddy() const;
+
+   /**
     * \brief We override the \c QWidget event handlers \c enterEvent and \c leaveEvent to implement mouse-over effects
     *        on the label text - specifically to give the user a visual clue that the label text is (right)-clickable
     */
@@ -84,7 +91,8 @@ public:
     * \brief We override the \c QWidget event handler \c mouseReleaseEvent to capture left mouse clicks on us.  (Right
     *        clicks get notified to us via the \c QWidget::customContextMenuRequested signal.)
     */
-   virtual void mouseReleaseEvent (QMouseEvent * event);
+   virtual void mouseReleaseEvent(QMouseEvent * event);
+
 
 private:
    void textEffect(bool enabled);
@@ -147,13 +155,13 @@ protected:
 // templates, so we can't do that for classes that need to use the Q_OBJECT macro (required for classes that declare
 // their own signals and slots or that use other services provided by Qt's meta-object system).
 //
-class BtColorLabel :          public BtLabel { Q_OBJECT public: BtColorLabel(QWidget* parent = nullptr);          };
-class BtDensityLabel :        public BtLabel { Q_OBJECT public: BtDensityLabel(QWidget* parent = nullptr);        };
-class BtMassLabel :           public BtLabel { Q_OBJECT public: BtMassLabel(QWidget* parent = nullptr);           };
-class BtTemperatureLabel :    public BtLabel { Q_OBJECT public: BtTemperatureLabel(QWidget* parent = nullptr);    };
-class BtVolumeLabel :         public BtLabel { Q_OBJECT public: BtVolumeLabel(QWidget* parent = nullptr);         };
-class BtTimeLabel :           public BtLabel { Q_OBJECT public: BtTimeLabel(QWidget* parent = nullptr);           };
-class BtMixedLabel :          public BtLabel { Q_OBJECT public: BtMixedLabel(QWidget* parent = nullptr);          };
-class BtDateLabel :           public BtLabel { Q_OBJECT public: BtDateLabel(QWidget* parent = nullptr);           };
-class BtDiastaticPowerLabel : public BtLabel { Q_OBJECT public: BtDiastaticPowerLabel(QWidget* parent = nullptr); };
+class BtColorLabel             : public BtLabel { Q_OBJECT public: BtColorLabel            (QWidget* parent = nullptr); };
+class BtDensityLabel           : public BtLabel { Q_OBJECT public: BtDensityLabel          (QWidget* parent = nullptr); };
+class BtMassLabel              : public BtLabel { Q_OBJECT public: BtMassLabel             (QWidget* parent = nullptr); };
+class BtTemperatureLabel       : public BtLabel { Q_OBJECT public: BtTemperatureLabel      (QWidget* parent = nullptr); };
+class BtVolumeLabel            : public BtLabel { Q_OBJECT public: BtVolumeLabel           (QWidget* parent = nullptr); };
+class BtTimeLabel              : public BtLabel { Q_OBJECT public: BtTimeLabel             (QWidget* parent = nullptr); };
+class BtMixedMassOrVolumeLabel : public BtLabel { Q_OBJECT public: BtMixedMassOrVolumeLabel(QWidget* parent = nullptr); };
+class BtDateLabel              : public BtLabel { Q_OBJECT public: BtDateLabel             (QWidget* parent = nullptr); };
+class BtDiastaticPowerLabel    : public BtLabel { Q_OBJECT public: BtDiastaticPowerLabel   (QWidget* parent = nullptr); };
 #endif

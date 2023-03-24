@@ -381,7 +381,7 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_attenuation">
+        <widget class="BtPercentageEdit" name="lineEdit_attenuation">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -621,6 +621,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>BtPercentageEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>BtGenericEdit</class>
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
@@ -628,7 +633,7 @@
   <customwidget>
    <class>BtTemperatureEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>

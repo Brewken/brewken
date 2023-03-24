@@ -34,6 +34,7 @@
 #include <QSqlRecord>
 
 #include "measurement/Amount.h"
+#include "measurement/ConstrainedAmount.h"
 #include "measurement/Unit.h"
 #include "model/NamedEntityWithInventory.h"
 #include "utils/EnumStringMapping.h"
@@ -50,15 +51,17 @@ AddPropertyName(coarseFineDiff_pct    )
 AddPropertyName(coarseGrindYield_pct  )
 AddPropertyName(color_srm             )
 AddPropertyName(diastaticPower_lintner)
+AddPropertyName(di_ph                 )
 AddPropertyName(fineGrindYield_pct    )
+AddPropertyName(friability_pct        )
 AddPropertyName(grainGroup            )
 AddPropertyName(hardnessPrpGlassy_pct )
 AddPropertyName(hardnessPrpHalf_pct   )
 AddPropertyName(hardnessPrpMealy_pct  )
 AddPropertyName(ibuGalPerLb           )
 AddPropertyName(isMashed              )
-AddPropertyName(kernelSizePrpPlump    )
-AddPropertyName(kernelSizePrpThin     )
+AddPropertyName(kernelSizePrpPlump_pct)
+AddPropertyName(kernelSizePrpThin_pct )
 AddPropertyName(kolbachIndex_pct      )
 AddPropertyName(maxInBatch_pct        )
 AddPropertyName(moisture_pct          )
@@ -71,6 +74,7 @@ AddPropertyName(protein_pct           )
 AddPropertyName(recommendMash         )
 AddPropertyName(supplier              )
 AddPropertyName(type                  )
+AddPropertyName(viscosity_cP          )
 AddPropertyName(yield_pct             )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -214,7 +218,7 @@ public:
     *        recommendation used in recipe formulation.
     */
    Q_PROPERTY(bool           recommendMash          READ recommendMash          WRITE setRecommendMash                      )
-   //! \brief The IBUs per gal/lb if this is a liquid extract.
+   //! \brief The IBUs per gal/lb if this is a liquid extract.  .:TODO:.  Should this be a metric measure?
    Q_PROPERTY(double         ibuGalPerLb            READ ibuGalPerLb            WRITE setIbuGalPerLb                        )
    //! \brief The maximum kg of equivalent glucose that will come from this Fermentable.
    Q_PROPERTY(double         equivSucrose_kg        READ equivSucrose_kg        /*WRITE*/                       STORED false)
@@ -267,7 +271,7 @@ public:
    /**
     * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
     *
-    * .:TBD JSON:. Check what else we need to do to tie in to PhysicalQuantity::Mixed, plus look at how we force weight
+    * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
     * for BeerXML.
     */
    Q_PROPERTY(MassOrVolumeAmt    amountWithUnits                  READ amountWithUnits                  WRITE setAmountWithUnits                   )
@@ -301,6 +305,10 @@ public:
 
    /**
     * \brief Percentage of malt that is "mealy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
+    *
+    *        (The opposite of mealiness is “vitreosity,” which is sometimes used as an alternative measurement.  A value
+    *        of 1 is assigned to glassy (vitreous) kernels, 0.5 to half-glassy and 0 to mealy kernels. The percentages
+    *        of each are summed and averaged; a vitreosity value of 0.25 or less is considered desirable.)
     */
    Q_PROPERTY(std::optional<double> hardnessPrpMealy_pct    READ hardnessPrpMealy_pct    WRITE setHardnessPrpMealy_pct  )
 
@@ -328,25 +336,71 @@ public:
     *            the malt will crush. Any lot of malt that will crush reasonably well must have kernels that are at
     *            least 90% adjacent sizes, regardless of the plumpness.
     */
-   Q_PROPERTY(std::optional<double> kernelSizePrpPlump      READ kernelSizePrpPlump      WRITE setKernelSizePrpPlump    )
+   Q_PROPERTY(std::optional<double> kernelSizePrpPlump_pct      READ kernelSizePrpPlump_pct      WRITE setKernelSizePrpPlump_pct    )
 
    /**
     * \brief The Percentage of grain that is "tine", ie makes it through a thin mesh screen, typically 5/64 inch.
-    *        Values less than 3% are desired.
+    *        Values less than 3% are desired.  (In BeerJSON this is called "thru".)
     */
-   Q_PROPERTY(std::optional<double> kernelSizePrpThin       READ kernelSizePrpThin       WRITE setKernelSizePrpThin     )
+   Q_PROPERTY(std::optional<double> kernelSizePrpThin_pct       READ kernelSizePrpThin_pct       WRITE setKernelSizePrpThin_pct     )
 
    /**
+    * \brief Friability is the relative ease of crumbling when a malt is milled.  It is related to mealiness, and may be
+    *        reported in its place.  It is used as an indicator for  easy gelatinization of the grain and starches, as
+    *        well as modification of the malt.  All malt should be at least 80% friable.  A value of 85% of higher
+    *        indicates a well modified malt and is suitable for single step / infusion mashes. Lower values may require
+    *         a step mash.
+    */
+   Q_PROPERTY(std::optional<double> friability_pct       READ friability_pct       WRITE setFriability_pct     )
+
+/**
     * .:TODO JSON:. Finish adding the other BeerJSON fields to \c Fermentable
     *           ...
-    *           The opposite of mealiness is “vitreosity,” which is sometimes used as an alternative measurement.
-    *           A value of 1 is assigned to glassy (vitreous) kernels, 0.5 to half-glassy and 0 to mealy kernels. The
-    *           percentages of each are summed and averaged; a vitreosity value of 0.25 or less is considered desirable.
     *
-    *           Friability is the relative ease of crumbling when a malt is milled. It is related to mealiness, and may
-    *           be reported in its place. All malt should be at least 80% friable, and at least 85% friable for infusion
-    *           mashing.
     */
+   /**
+    * \brief DI pH is the pH of the resultant wort for 40 grams of grain mashed in 100 mL of distilled water (or 1 lb of
+    *        grain mashed in 1 gallon of distilled water).  Can be used in water chemistry and/or mash pH prediction
+    *        calculations.
+    *
+    *        As explained at https://www.thescrewybrewer.com/2016/12/the-influence-of-grain-di-ph-on-mash-ph.html, "The
+    *        term DI pH is derived from the word distilled as in distilled water and pH as in pH value.  You can
+    *        determine the DI pH value of any grain by finely crushing 40 grams of grain, mixing it in with 100
+    *        milliliters of distilled water and then heating the resulting mash to 125°F [52°C] for 20 minutes.  A pH
+    *        reading taken of the resulting wort when cooled to 77°F [25°C] is the DI pH value of the grain.  Various
+    *        grain types, and sometimes the same grain type sourced from several maltsters, will have different DI pH
+    *        values.  Accurately calculating brewing water adjustments to optimize enzyme activity in the mash is
+    *        largely dependent on knowing the correct DI pH value for each grain."
+    */
+   Q_PROPERTY(std::optional<double> di_ph               READ di_ph                WRITE setDi_ph     )
+
+   /**
+    * \brief Viscosity of this malt in a "congress mash".  A congress mash is a standardized small-scale mashing
+    *        procedure, instituted by the European Brewing Congress (EBC) in 1975, to produce a "congress wort" that is
+    *        used to assess malt quality.
+    *
+    *        Wort viscosity is typically associated with the breakdown of beta-glucans.  The higher the viscosity, the
+    *        greater the need for a glucan rest and the less suitable for a fly sparge.
+    *
+    *        See measurement/Units for more on viscosity measurement; cP = centipoise.
+    */
+   Q_PROPERTY(std::optional<double> viscosity_cP               READ viscosity_cP                WRITE setViscosity_cP     )
+
+   /**
+    * \brief The amount of DMS precursors, namely S-methyl methionine (SMM) and dimethyl sulfoxide (DMSO) in the malt
+    *        which convert to dimethyl sulfide (DMS) when the wort is heated.  The DMS-P (also sometimes written DMSP or
+    *        DMSp) should be 5-15 ppm for lager malts, less for ales.  The more fully modified the malt, the lower the
+    *        DMS-P levels should be.
+    *
+    *        Measurement of DMS-P is often performed by heating "congress wort" samples (see above) in closed vials,
+    *        sampling the headspace after incubation, and quantifying DMS using gas chromatography.
+    */
+//   dmsP_XXXunitXXX           //conc units
+//fan             //conc units
+//fermentability_pct
+//beta_glucan     //conc units
+
+
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                    () const;
@@ -380,8 +434,11 @@ public:
    std::optional<double>     hardnessPrpGlassy_pct () const;
    std::optional<double>     hardnessPrpHalf_pct   () const;
    std::optional<double>     hardnessPrpMealy_pct  () const;
-   std::optional<double>     kernelSizePrpPlump    () const;
-   std::optional<double>     kernelSizePrpThin     () const;
+   std::optional<double>     kernelSizePrpPlump_pct() const;
+   std::optional<double>     kernelSizePrpThin_pct () const;
+   std::optional<double>     friability_pct        () const;
+   std::optional<double>     di_ph                 () const;
+   std::optional<double>     viscosity_cP          () const;
 
    // Calculated getters.
    double  equivSucrose_kg       () const;
@@ -422,8 +479,11 @@ public:
    void setHardnessPrpGlassy_pct (std::optional<double>     const   val);
    void setHardnessPrpHalf_pct   (std::optional<double>     const   val);
    void setHardnessPrpMealy_pct  (std::optional<double>     const   val);
-   void setKernelSizePrpPlump    (std::optional<double>     const   val);
-   void setKernelSizePrpThin     (std::optional<double>     const   val);
+   void setKernelSizePrpPlump_pct(std::optional<double>     const   val);
+   void setKernelSizePrpThin_pct (std::optional<double>     const   val);
+   void setFriability_pct        (std::optional<double>     const   val);
+   void setDi_ph                 (std::optional<double>     const   val);
+   void setViscosity_cP          (std::optional<double>     const   val);
 
    virtual void setInventoryAmount(double amount);
 
@@ -436,23 +496,23 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Type    m_type          ;
-   double  m_amount        ; // Primarily valid in "Use Of" instance
-   bool    m_amountIsWeight; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   double  m_yieldPct      ;
-   double  m_colorSrm      ;
-   bool    m_isAfterBoil   ; // Primarily valid in "Use Of" instance
-   QString m_origin        ;
-   QString m_supplier      ;
-   QString m_notes         ;
-   double  m_coarseFineDiff;
-   double  m_moisturePct   ;
-   double  m_diastaticPower;
-   double  m_proteinPct    ;
-   double  m_maxInBatchPct ;
-   bool    m_recommendMash ;
-   double  m_ibuGalPerLb   ;
-   bool    m_isMashed      ; // Primarily valid in "Use Of" instance
+   Type                      m_type                  ;
+   double                    m_amount                ; // Primarily valid in "Use Of" instance
+   bool                      m_amountIsWeight        ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   double                    m_yield_pct             ;
+   double                    m_color_srm             ;
+   bool                      m_addAfterBoil          ; // Primarily valid in "Use Of" instance
+   QString                   m_origin                ;
+   QString                   m_supplier              ;
+   QString                   m_notes                 ;
+   double                    m_coarseFineDiff_pct    ;
+   double                    m_moisture_pct          ;
+   double                    m_diastaticPower_lintner;
+   double                    m_protein_pct           ;
+   double                    m_maxInBatch_pct        ;
+   bool                      m_recommendMash         ;
+   double                    m_ibuGalPerLb           ;
+   bool                      m_isMashed              ; // Primarily valid in "Use Of" instance
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> m_grainGroup            ;
    QString                   m_producer              ;
@@ -465,8 +525,11 @@ private:
    std::optional<double>     m_hardnessPrpGlassy_pct ;
    std::optional<double>     m_hardnessPrpHalf_pct   ;
    std::optional<double>     m_hardnessPrpMealy_pct  ;
-   std::optional<double>     m_kernelSizePrpPlump    ;
-   std::optional<double>     m_kernelSizePrpThin     ;
+   std::optional<double>     m_kernelSizePrpPlump_pct;
+   std::optional<double>     m_kernelSizePrpThin_pct ;
+   std::optional<double>     m_friability_pct        ;
+   std::optional<double>     m_di_ph                 ;
+   std::optional<double>     m_viscosity_cP          ;
 
 };
 

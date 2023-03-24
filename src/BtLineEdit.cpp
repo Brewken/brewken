@@ -22,17 +22,14 @@
  =====================================================================================================================*/
 #include "BtLineEdit.h"
 
-#include <string>
-
 #include <QDebug>
 #include <QSettings>
 #include <QStyle>
 
 #include "Algorithms.h"
 #include "Localization.h"
+#include "Logging.h"
 #include "measurement/Measurement.h"
-#include "measurement/Unit.h"
-#include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
 #include "PersistentSettings.h"
 #include "utils/OptionalHelpers.h"
@@ -40,39 +37,19 @@
 namespace {
    int const min_text_size = 8;
    int const max_text_size = 50;
-
-
-   /**
-    * @brief Convert a QString to a number.  Called by \c BtLineEdit::getValueAs()
-    *
-    *        There isn't a generic version of this function, just the specialisations below
-    *
-    *        Note that the reason we don't use \c QString::toInt(), \c QString::toUInt(), \c QString::toDouble(), etc in
-    *        the specialization implementations is that they are not very accepting of extra characters.  Eg
-    *        \c QString::toInt() will give 0 when parsing "12.34" as it barfs on the decimal point, whereas
-    *        \c std::stoi() will give 12 on the same string input.  Of course, this means we have to convert from
-    *        \c QString to \c std::string, but it's better than doing our own parsing.
-    */
-   template<typename T> T stringTo(QString const & input) {
-      // This compile-time assert relies on the fact that no type has size 0
-      static_assert(sizeof(T) == 0, "Only specializations of stringTo() can be used");
-   }
-   template<> int          stringTo<int>         (QString const & input) { return std::stoi(input.toStdString()); }
-   template<> unsigned int stringTo<unsigned int>(QString const & input) { return std::stoul(input.toStdString()); }
-   template<> double       stringTo<double>      (QString const & input) { return std::stod(input.toStdString()); }
-
 }
 
 BtLineEdit::BtLineEdit(QWidget *parent,
                        BtFieldType fieldType,
-                       Measurement::Unit const * units,
                        int const defaultPrecision,
                        QString const & maximalDisplayString) :
    QLineEdit{parent},
-   UiAmountWithUnits{parent, fieldType, units},
+   fieldType{fieldType},
    defaultPrecision{defaultPrecision} {
-   this->configSection = property("configSection").toString();
-   connect(this, &QLineEdit::editingFinished, this, &BtLineEdit::onLineChanged);
+
+   if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
+      connect(this, &QLineEdit::editingFinished, this, &BtLineEdit::onLineChanged);
+   }
 
    // We can work out (and store) our display size here, but not yet set it.  The way the Designer UI Files work is to
    // generate code that calls setters such as setMaximumWidth() etc, which would override anything we do here in the
@@ -84,171 +61,61 @@ BtLineEdit::BtLineEdit(QWidget *parent,
 
 BtLineEdit::~BtLineEdit() = default;
 
-QString BtLineEdit::getWidgetText() const {
-   return this->text();
-}
-
-void BtLineEdit::setWidgetText(QString text) {
-   this->QLineEdit::setText(text);
-   return;
+BtFieldType const BtLineEdit::getFieldType() const {
+   return this->fieldType;
 }
 
 template<typename T> T BtLineEdit::getValueAs() const {
-   T returnValue = 0;
-   try {
-      returnValue = stringTo<T>(this->text());
-   } catch (std::invalid_argument const & ex) {
-      qWarning() << Q_FUNC_INFO << "Could not parse" << this->text() << "as number:" << ex.what();
-   } catch(std::out_of_range const& ex) {
-      qWarning() << Q_FUNC_INFO << "Out of range parsing" << this->text() << "as number:" << ex.what();
-   }
-   return returnValue;
+   qDebug() << Q_FUNC_INFO << "Converting" << this->text() << "to" << Measurement::extractRawFromString<T>(this->text());
+   return Measurement::extractRawFromString<T>(this->text());
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // saves having to put a bunch of std::string stuff there.)
 //
-template int BtLineEdit::getValueAs<int>() const;
+template int          BtLineEdit::getValueAs<int         >() const;
 template unsigned int BtLineEdit::getValueAs<unsigned int>() const;
-template double BtLineEdit::getValueAs<double>() const;
+template double       BtLineEdit::getValueAs<double      >() const;
 
 void BtLineEdit::onLineChanged() {
-   auto const myFieldType = this->getFieldType();
-   qDebug() <<
-      Q_FUNC_INFO << "this->fieldType=" << myFieldType << ", this->units=" << this->units <<
-      ", forcedSystemOfMeasurement=" << this->getForcedSystemOfMeasurement() << ", forcedRelativeScale=" <<
-      this->getForcedRelativeScale() << ", value=" << this->getWidgetText();
-
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(myFieldType)) {
-      qDebug() << Q_FUNC_INFO << "Not physical quantity";
-      if (sender() == this) {
-         emit textModified();
-      }
-      return;
-   }
-
-   Measurement::UnitSystem const & oldUnitSystem =
-      Measurement::getUnitSystemForField(this->editField,
-                                         this->configSection,
-                                         std::get<Measurement::PhysicalQuantity>(myFieldType));
-   auto oldForcedRelativeScale = Measurement::getForcedRelativeScaleForField(this->editField, this->configSection);
-   PreviousScaleInfo previousScaleInfo{
-      oldUnitSystem.systemOfMeasurement,
-      oldForcedRelativeScale
-   };
-
-   qDebug() <<
-      Q_FUNC_INFO << "oldUnitSystem=" << oldUnitSystem << ", oldForcedRelativeScale=" << oldForcedRelativeScale;
-
-   this->lineChanged(previousScaleInfo);
-   return;
-}
-
-void BtLineEdit::lineChanged(PreviousScaleInfo previousScaleInfo) {
-   // editingFinished happens on focus being lost, regardless of anything
-   // being changed. I am hoping this short circuits properly and we do
-   // nothing if nothing changed.
-   if (this->sender() == this && !isModified()) {
-      qDebug() << Q_FUNC_INFO << "Nothing changed; field holds" << this->getWidgetText();
-      return;
-   }
-
-   this->textOrUnitsChanged(previousScaleInfo);
-
+   qDebug() << Q_FUNC_INFO;
    if (sender() == this) {
       emit textModified();
    }
-
    return;
 }
 
-void BtLineEdit::setText(double amount) {
-   this->setText(amount, this->defaultPrecision);
-   return;
-}
-
-void BtLineEdit::setText(double amount, int precision) {
-   this->setWidgetText(this->displayAmount(amount, precision));
+void BtLineEdit::setText(std::optional<double> amount, std::optional<int> precision) {
+   // For percentages, we'd like to show the % symbol after the number
+   QString symbol{""};
+   if (NonPhysicalQuantity::Percentage == std::get<NonPhysicalQuantity>(this->fieldType)) {
+      symbol = " %";
+   }
+   if (amount) {
+      this->QLineEdit::setText(
+         Measurement::displayQuantity(*amount, precision.value_or(this->defaultPrecision)) + symbol
+      );
+   } else {
+      this->QLineEdit::setText("");
+   }
    this->setDisplaySize();
    return;
 }
 
-void BtLineEdit::setText(NamedEntity * element) {
-   this->setText(element, this->defaultPrecision);
-   return;
-}
-
-void BtLineEdit::setText(NamedEntity * element, int precision) {
-   QString display;
-
-   char const * const propertyName = this->editField.toLatin1().constData();
-   QVariant const propertyValue = element->property(propertyName);
-   qDebug() <<
-      Q_FUNC_INFO << "Read property" << this->editField << "(" << propertyName << ") of" << *element << "as" <<
-      propertyValue;
-   bool force = false;
-   auto const myFieldType = this->getFieldType();
-   if (std::holds_alternative<NonPhysicalQuantity>(myFieldType) &&
-       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(myFieldType)) {
-      display = propertyValue.toString();
-      force = true;
-   } else if (propertyValue.canConvert(QVariant::Double)) {
+void BtLineEdit::setText(QString amount, std::optional<int> precision) {
+   if (!amount.isEmpty() && NonPhysicalQuantity::String != std::get<NonPhysicalQuantity>(this->fieldType)) {
       bool ok = false;
-      // It is important here to use QVariant::toDouble() instead of going
-      // through toString() and then Localization::toDouble().
-      double amount = propertyValue.toDouble(&ok);
+      double amt = Measurement::extractRawFromString<double>(amount, &ok);
       if (!ok) {
-         qWarning() <<
-            Q_FUNC_INFO << "Could not convert " << propertyValue.toString() << " (" << this->configSection << ":" <<
-            this->editField << ") to double";
+         qWarning() << Q_FUNC_INFO << "Could not convert" << amount << "to double";
       }
-
-      display = this->displayAmount(amount, precision);
-   } else {
-      display = "?";
+      this->setText(amt, precision.value_or(this->defaultPrecision));
+      return;
    }
 
-   this->setWidgetText(display);
-   this->setDisplaySize(force);
-   return;
-}
-
-void BtLineEdit::setText(QString amount) {
-   this->setText(amount, this->defaultPrecision);
-   return;
-}
-
-void BtLineEdit::setText(QString amount, int precision) {
-   bool force = false;
-
-   auto const myFieldType = this->getFieldType();
-   if (std::holds_alternative<NonPhysicalQuantity>(myFieldType) &&
-       NonPhysicalQuantity::String == std::get<NonPhysicalQuantity>(myFieldType)) {
-      this->setWidgetText(amount);
-      force = true;
-   } else {
-      bool ok = false;
-      double amt = Localization::toDouble(amount, &ok);
-      if (!ok) {
-         qWarning() <<
-            Q_FUNC_INFO << "Could not convert" << amount << "(" << this->configSection << ":" << this->editField <<
-            ") to double";
-      }
-      this->setWidgetText(this->displayAmount(amt, precision));
-   }
-
-   this->setDisplaySize(force);
-   return;
-}
-
-void BtLineEdit::setText(QVariant amount) {
-   this->setText(amount, this->defaultPrecision);
-   return;
-}
-
-void BtLineEdit::setText(QVariant amount, int precision) {
-   this->setText(amount.toString(), precision);
+   this->QLineEdit::setText(amount);
+   this->setDisplaySize(true);
    return;
 }
 
@@ -299,38 +166,8 @@ void BtLineEdit::setDisplaySize(bool recalculate) {
    return;
 }
 
-BtGenericEdit       ::BtGenericEdit       (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                  , nullptr                                   ) { return; }
-BtMassEdit          ::BtMassEdit          (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mass          , &Measurement::Units::kilograms            ) { return; }
-BtVolumeEdit        ::BtVolumeEdit        (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Volume        , &Measurement::Units::liters               ) { return; }
-BtTimeEdit          ::BtTimeEdit          (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Time          , &Measurement::Units::minutes           , 3) { return; }
-BtTemperatureEdit   ::BtTemperatureEdit   (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Temperature   , &Measurement::Units::celsius           , 1) { return; }
-BtColorEdit         ::BtColorEdit         (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Color         , &Measurement::Units::srm                  ) { return; }
-BtDensityEdit       ::BtDensityEdit       (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Density       , &Measurement::Units::sp_grav              ) { return; }
-BtDiastaticPowerEdit::BtDiastaticPowerEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::DiastaticPower, &Measurement::Units::lintner              ) { return; }
-BtAcidityEdit       ::BtAcidityEdit       (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Acidity       , &Measurement::Units::pH                   ) { return; }
-BtBitternessEdit    ::BtBitternessEdit    (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Bitterness    , &Measurement::Units::ibu                  ) { return; }
-BtCarbonationEdit   ::BtCarbonationEdit   (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Carbonation   , &Measurement::Units::carbonationVolumes   ) { return; }
-BtConcentrationEdit ::BtConcentrationEdit (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Concentration , &Measurement::Units::partsPerMillion      ) { return; }
-BtViscosityEdit     ::BtViscosityEdit     (QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Viscosity     , &Measurement::Units::centipoise           ) { return; }
-BtStringEdit        ::BtStringEdit        (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String                  , nullptr                                   ) { return; }
-BtPercentageEdit    ::BtPercentageEdit    (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Percentage              , nullptr                                , 0) { return; }
-BtDimensionlessEdit ::BtDimensionlessEdit (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Dimensionless           , nullptr                                , 3) { return; }
 
-BtMixedEdit::BtMixedEdit(QWidget *parent) : BtLineEdit(parent, Measurement::PhysicalQuantity::Mixed) {
-   // This is probably pure evil I will later regret
-   this->units = &Measurement::Units::liters;
-   return;
-}
-
-void BtMixedEdit::setIsWeight(bool state) {
-   // But you have to admit, this is clever
-   if (state) {
-      this->units = &Measurement::Units::kilograms;
-   } else {
-      this->units = &Measurement::Units::liters;
-   }
-
-   // maybe? My head hurts now
-   this->onLineChanged();
-   return;
-}
+BtGenericEdit      ::BtGenericEdit      (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String          ) { return; }
+BtStringEdit       ::BtStringEdit       (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::String          ) { return; }
+BtPercentageEdit   ::BtPercentageEdit   (QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Percentage   , 0) { return; }
+BtDimensionlessEdit::BtDimensionlessEdit(QWidget *parent) : BtLineEdit(parent, NonPhysicalQuantity::Dimensionless, 3) { return; }

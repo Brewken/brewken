@@ -225,16 +225,16 @@ public:
    Q_PROPERTY(QString producer              READ producer              WRITE setProducer             )
    Q_PROPERTY(QString product_id            READ product_id            WRITE setProduct_id           )
    Q_PROPERTY(std::optional<int>     year                  READ year                  WRITE setYear                 )
-   Q_PROPERTY(double  total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
-   Q_PROPERTY(double  farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
-   Q_PROPERTY(double  geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
-   Q_PROPERTY(double  b_pinene_pct          READ b_pinene_pct          WRITE setB_pinene_pct         )
-   Q_PROPERTY(double  linalool_pct          READ linalool_pct          WRITE setLinalool_pct         )
-   Q_PROPERTY(double  limonene_pct          READ limonene_pct          WRITE setLimonene_pct         )
-   Q_PROPERTY(double  nerol_pct             READ nerol_pct             WRITE setNerol_pct            )
-   Q_PROPERTY(double  pinene_pct            READ pinene_pct            WRITE setPinene_pct           )
-   Q_PROPERTY(double  polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
-   Q_PROPERTY(double  xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
+   Q_PROPERTY(std::optional<double>  total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
+   Q_PROPERTY(std::optional<double>  farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
+   Q_PROPERTY(std::optional<double>  geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
+   Q_PROPERTY(std::optional<double>  b_pinene_pct          READ b_pinene_pct          WRITE setB_pinene_pct         )
+   Q_PROPERTY(std::optional<double>  linalool_pct          READ linalool_pct          WRITE setLinalool_pct         )
+   Q_PROPERTY(std::optional<double>  limonene_pct          READ limonene_pct          WRITE setLimonene_pct         )
+   Q_PROPERTY(std::optional<double>  nerol_pct             READ nerol_pct             WRITE setNerol_pct            )
+   Q_PROPERTY(std::optional<double>  pinene_pct            READ pinene_pct            WRITE setPinene_pct           )
+   Q_PROPERTY(std::optional<double>  polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
+   Q_PROPERTY(std::optional<double>  xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    double  alpha_pct            () const;
@@ -256,16 +256,16 @@ public:
    QString producer             () const;
    QString product_id           () const;
    std::optional<int>     year                 () const;
-   double  total_oil_ml_per_100g() const;
-   double  farnesene_pct        () const;
-   double  geraniol_pct         () const;
-   double  b_pinene_pct         () const;
-   double  linalool_pct         () const;
-   double  limonene_pct         () const;
-   double  nerol_pct            () const;
-   double  pinene_pct           () const;
-   double  polyphenols_pct      () const;
-   double  xanthohumol_pct      () const;
+   std::optional<double>  total_oil_ml_per_100g() const;
+   std::optional<double>  farnesene_pct        () const;
+   std::optional<double>  geraniol_pct         () const;
+   std::optional<double>  b_pinene_pct         () const;
+   std::optional<double>  linalool_pct         () const;
+   std::optional<double>  limonene_pct         () const;
+   std::optional<double>  nerol_pct            () const;
+   std::optional<double>  pinene_pct           () const;
+   std::optional<double>  polyphenols_pct      () const;
+   std::optional<double>  xanthohumol_pct      () const;
 
    virtual double inventory() const;
 
@@ -289,16 +289,16 @@ public:
    void setProducer             (QString const & val);
    void setProduct_id           (QString const & val);
    void setYear                 (std::optional<int>     const   val);
-   void setTotal_oil_ml_per_100g(double  const   val);
-   void setFarnesene_pct        (double  const   val);
-   void setGeraniol_pct         (double  const   val);
-   void setB_pinene_pct         (double  const   val);
-   void setLinalool_pct         (double  const   val);
-   void setLimonene_pct         (double  const   val);
-   void setNerol_pct            (double  const   val);
-   void setPinene_pct           (double  const   val);
-   void setPolyphenols_pct      (double  const   val);
-   void setXanthohumol_pct      (double  const   val);
+   void setTotal_oil_ml_per_100g(std::optional<double>  const   val);
+   void setFarnesene_pct        (std::optional<double>  const   val);
+   void setGeraniol_pct         (std::optional<double>  const   val);
+   void setB_pinene_pct         (std::optional<double>  const   val);
+   void setLinalool_pct         (std::optional<double>  const   val);
+   void setLimonene_pct         (std::optional<double>  const   val);
+   void setNerol_pct            (std::optional<double>  const   val);
+   void setPinene_pct           (std::optional<double>  const   val);
+   void setPolyphenols_pct      (std::optional<double>  const   val);
+   void setXanthohumol_pct      (std::optional<double>  const   val);
 
    virtual void setInventoryAmount(double const val);
 
@@ -328,16 +328,16 @@ private:
    QString m_producer;
    QString m_product_id;
    std::optional<int>     m_year;
-   double  m_total_oil_ml_per_100g;
-   double  m_farnesene_pct;
-   double  m_geraniol_pct;
-   double  m_b_pinene_pct;
-   double  m_linalool_pct;
-   double  m_limonene_pct;
-   double  m_nerol_pct;
-   double  m_pinene_pct;
-   double  m_polyphenols_pct;
-   double  m_xanthohumol_pct;
+   std::optional<double>  m_total_oil_ml_per_100g;
+   std::optional<double>  m_farnesene_pct;
+   std::optional<double>  m_geraniol_pct;
+   std::optional<double>  m_b_pinene_pct;
+   std::optional<double>  m_linalool_pct;
+   std::optional<double>  m_limonene_pct;
+   std::optional<double>  m_nerol_pct;
+   std::optional<double>  m_pinene_pct;
+   std::optional<double>  m_polyphenols_pct;
+   std::optional<double>  m_xanthohumol_pct;
 
    void setDefaults();
 };

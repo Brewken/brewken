@@ -62,6 +62,33 @@ namespace {
       Database::instance().createBlank(filename);
       exit(0);
    }
+
+   /**
+    * \brief Uncaught exceptions in a Qt application will terminate the program with a generic error message that does
+    *        not give as much info about the exception as we might like.  This small extension of Qt's \c QApplication
+    *        class allows us to attempt to log some additional info in such an event.
+    *
+    *        NOTE that the info logged here will not be anywhere near as helpful as when we can catch exceptions in the
+    *        thread where they are thrown, so this is very much a last resort.
+    */
+   class ExceptionCatchingQApplication : public QApplication {
+   public:
+      using QApplication::QApplication;
+      virtual bool notify(QObject * receiver, QEvent * event) override {
+         try {
+            return QApplication::notify(receiver, event);
+         } catch (std::exception & e) {
+            qCritical() << Q_FUNC_INFO << "Uncaught exception: " << e.what();
+            qCritical().noquote() << Q_FUNC_INFO << "Stacktrace:" << Logging::getStackTrace();
+
+            // If we wanted the application to keep running here, we could just drop through to `return false`.  But we
+            // don't know whether continuing is a good idea.  So the safest thing is to exit now that we've logged some
+            // diagnostics.
+            this->exit();
+         }
+         return false;
+      }
+   };
 }
 
 int main(int argc, char **argv) {
@@ -87,7 +114,7 @@ int main(int argc, char **argv) {
    // application name are set on the QApplication object, but omitting the call to setOrganizationName() takes out the
    // extra directory layer).
    //
-   QApplication app(argc, argv);
+   ExceptionCatchingQApplication app(argc, argv);
    app.setOrganizationDomain("brewken.com");
    // We used to vary the application name (and therefore location of config files etc) depending on whether we're
    // building with debug or release version of Qt, but on the whole I don't think this is helpful

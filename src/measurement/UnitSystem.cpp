@@ -361,7 +361,7 @@ template QTextStream & operator<<(QTextStream & stream, Measurement::UnitSystem:
 //---------------------------------------------------------------------------------------------------------------------
 namespace Measurement::UnitSystems {
    //
-   // NB: For the mass_Xxxx and volume_Xxxx unit systems, to make Measurement::PhysicalQuantity::Mixed work, we rely on
+   // NB: For the mass_Xxxx and volume_Xxxx unit systems, to make Measurement::Mixed2PhysicalQuantities work, we rely on
    //     systemOfMeasurementName being identical for identical systems of measurement (because, for reasons explained
    //     in comments in measurement/PhysicalQuantity.h, we don't explicitly model system of measurement).
    //
@@ -499,17 +499,17 @@ namespace Measurement::UnitSystems {
                                               "carbonation_MassPerVolume",
                                               Measurement::SystemOfMeasurement::CarbonationMassPerVolume};
 
-   UnitSystem const concentration_PartsPer{PhysicalQuantity::Concentration,
+   UnitSystem const concentration_PartsPer{PhysicalQuantity::VolumeConcentration,
                                            &Measurement::Units::partsPerMillion,
                                            "concentration_PartsPer",
-                                           Measurement::SystemOfMeasurement::ConcentrationPartsPer,
+                                           Measurement::SystemOfMeasurement::MetricConcentration,
                                            {{UnitSystem::RelativeScale::Small,  &Measurement::Units::partsPerBillion},
                                             {UnitSystem::RelativeScale::Medium, &Measurement::Units::partsPerMillion}}};
 
-   UnitSystem const concentration_MassPerVolume{PhysicalQuantity::Concentration,
+   UnitSystem const concentration_MassPerVolume{PhysicalQuantity::MassConcentration,
                                                 &Measurement::Units::milligramsPerLiter,
                                                 "concentration_MassPerVolume",
-                                                Measurement::SystemOfMeasurement::ConcentrationMassPerVolume};
+                                                Measurement::SystemOfMeasurement::MetricConcentration};
 
    UnitSystem const viscosity_Metric{PhysicalQuantity::Viscosity,
                                      &Measurement::Units::centipoise,

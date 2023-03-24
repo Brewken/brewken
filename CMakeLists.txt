@@ -1192,42 +1192,15 @@ set_target_properties(${fileName_unitTestRunner} PROPERTIES RUNTIME_OUTPUT_DIREC
 # Test app needs all the same libraries as the main app, plus Qt5::Test
 target_link_libraries(${fileName_unitTestRunner} ${appAndTestCommonLibraries} Qt5::Test)
 
-add_test(
-   NAME pstdintTest
-   COMMAND bin/${fileName_unitTestRunner} pstdintTest
-)
-add_test(
-   NAME recipeCalcTest_allGrain
-   COMMAND bin/${fileName_unitTestRunner} recipeCalcTest_allGrain
-)
-add_test(
-   NAME postBoilLossOgTest
-   COMMAND bin/${fileName_unitTestRunner} postBoilLossOgTest
-)
-add_test(
-   NAME testUnitConversions
-   COMMAND bin/${fileName_unitTestRunner} testUnitConversions
-)
-
-add_test(
-   NAME testNamedParameterBundle
-   COMMAND bin/${fileName_unitTestRunner} testNamedParameterBundle
-)
-
-add_test(
-   NAME testAlgorithms
-   COMMAND bin/${fileName_unitTestRunner} testAlgorithms
-)
-
-add_test(
-   NAME testTypeLookups
-   COMMAND bin/${fileName_unitTestRunner} testTypeLookups
-)
-
-add_test(
-   NAME testLogRotation
-   COMMAND bin/${fileName_unitTestRunner} testLogRotation
-)
+add_test(NAME pstdintTest                 COMMAND bin/${fileName_unitTestRunner} pstdintTest                )
+add_test(NAME recipeCalcTest_allGrain     COMMAND bin/${fileName_unitTestRunner} recipeCalcTest_allGrain    )
+add_test(NAME postBoilLossOgTest          COMMAND bin/${fileName_unitTestRunner} postBoilLossOgTest         )
+add_test(NAME testUnitConversions         COMMAND bin/${fileName_unitTestRunner} testUnitConversions        )
+add_test(NAME testNamedParameterBundle    COMMAND bin/${fileName_unitTestRunner} testNamedParameterBundle   )
+add_test(NAME testNumberDisplayAndParsing COMMAND bin/${fileName_unitTestRunner} testNumberDisplayAndParsing)
+add_test(NAME testAlgorithms              COMMAND bin/${fileName_unitTestRunner} testAlgorithms             )
+add_test(NAME testTypeLookups             COMMAND bin/${fileName_unitTestRunner} testTypeLookups            )
+add_test(NAME testLogRotation             COMMAND bin/${fileName_unitTestRunner} testLogRotation            )
 
 #=======================================================================================================================
 #============================================== Debian-friendly ChangeLog ==============================================

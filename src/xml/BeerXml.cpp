@@ -536,7 +536,7 @@ namespace {
       {XmlRecord::FieldType::Double,           "SECONDARY_TEMP",           PropertyNames::Recipe::secondaryTemp_c,    nullptr},
       {XmlRecord::FieldType::Double,           "TERTIARY_AGE",             PropertyNames::Recipe::tertiaryAge_days,   nullptr},
       {XmlRecord::FieldType::Double,           "TERTIARY_TEMP",            PropertyNames::Recipe::tertiaryTemp_c,     nullptr},
-      {XmlRecord::FieldType::Double,           "AGE",                      PropertyNames::Recipe::age,                nullptr},
+      {XmlRecord::FieldType::Double,           "AGE",                      PropertyNames::Recipe::age_days,           nullptr},
       {XmlRecord::FieldType::Double,           "AGE_TEMP",                 PropertyNames::Recipe::ageTemp_c,          nullptr},
       {XmlRecord::FieldType::Date,             "DATE",                     PropertyNames::Recipe::date,               nullptr},
       {XmlRecord::FieldType::Double,           "CARBONATION",              PropertyNames::Recipe::carbonation_vols,   nullptr},

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -21,6 +21,7 @@
 #pragma once
 
 #include <memory> // For PImpl
+#include <optional>
 
 #include <QDialog>
 #include <QMetaProperty>

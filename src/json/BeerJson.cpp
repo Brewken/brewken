@@ -56,7 +56,6 @@ namespace {
    // min/max versions we can read plus whatever version we write.
    BtStringConst const jsonVersionWeSupport{"2.06"};
 
-
    //
    // These are mappings we use in multiple places
    //
@@ -121,11 +120,21 @@ namespace {
        {"g/l",  &Measurement::Units::carbonationGramsPerLiter}}
    };
 
-   JsonMeasureableUnitsMapping const BEER_JSON_CONCENTRATION_UNIT_MAPPER {
+   JsonMeasureableUnitsMapping const BEER_JSON_VOLUME_CONCENTRATION_UNIT_MAPPER {
+      // ConcentrationUnitType in measurable_units.json in BeerJSON schema
+      {{"ppm",  &Measurement::Units::partsPerMillion},
+       {"ppb",  &Measurement::Units::partsPerBillion}}
+   };
+
+   JsonMeasureableUnitsMapping const BEER_JSON_MASS_CONCENTRATION_UNIT_MAPPER {
       // ConcentrationUnitType in measurable_units.json in BeerJSON schema
       {{"ppm",  &Measurement::Units::partsPerMillion},
        {"ppb",  &Measurement::Units::partsPerBillion},
        {"mg/l", &Measurement::Units::milligramsPerLiter}}
+   };
+
+   ListOfJsonMeasureableUnitsMappings const BEER_JSON_CONCENTRATION_UNIT_MAPPER {
+      {&BEER_JSON_VOLUME_CONCENTRATION_UNIT_MAPPER, &BEER_JSON_MASS_CONCENTRATION_UNIT_MAPPER}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_DENSITY_UNIT_MAPPER {
@@ -268,27 +277,27 @@ namespace {
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_FermentableType_ExclBase {
       // Type                                                       XPath               Q_PROPERTY                                          Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::String                    , "notes"           , PropertyNames::Fermentable::notes,                                                        },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "moisture"        , PropertyNames::Fermentable::moisture_pct,           &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::String                    , "notes"           , PropertyNames::Fermentable::notes                 ,                                       },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "moisture"        , PropertyNames::Fermentable::moisture_pct          , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::Double                    , "alpha_amylase"   , PropertyNames::Fermentable::alphaAmylase_dextUnits,                                       },
       {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "diastatic_power" , PropertyNames::Fermentable::diastaticPower_lintner, &BEER_JSON_DIASTATIC_POWER_UNIT_MAPPER},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "protein"         , PropertyNames::Fermentable::protein_pct,            &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::Double                    , "kolbach_index"   , PropertyNames::Fermentable::kolbachIndex_pct,                                             },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "max_in_batch"    , PropertyNames::Fermentable::maxInBatch_pct,         &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::Bool                      , "recommend_mash"  , PropertyNames::Fermentable::recommendMash,                                                },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Fermentable::amount,                 &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "glassy"          , PropertyNames::Fermentable::hardnessPrpGlassy_pct,  &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "plump"           , BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "half"            , PropertyNames::Fermentable::hardnessPrpHalf_pct,    &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "mealy"           , PropertyNames::Fermentable::hardnessPrpMealy_pct,   &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "thru"            , BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "friability"      , BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "protein"         , PropertyNames::Fermentable::protein_pct           , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::Double                    , "kolbach_index"   , PropertyNames::Fermentable::kolbachIndex_pct      ,                                       },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "max_in_batch"    , PropertyNames::Fermentable::maxInBatch_pct        , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::Bool                      , "recommend_mash"  , PropertyNames::Fermentable::recommendMash         ,                                       },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Fermentable::amountWithUnits       , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "glassy"          , PropertyNames::Fermentable::hardnessPrpGlassy_pct , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "plump"           , PropertyNames::Fermentable::kernelSizePrpPlump_pct, &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "half"            , PropertyNames::Fermentable::hardnessPrpHalf_pct   , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "mealy"           , PropertyNames::Fermentable::hardnessPrpMealy_pct  , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "thru"            , PropertyNames::Fermentable::kernelSizePrpThin_pct , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "friability"      , PropertyNames::Fermentable::friability_pct        , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "di_ph"           , BtString::NULL_STR,                                 &BEER_JSON_ACIDITY_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "viscosity"       , BtString::NULL_STR,                                 &BEER_JSON_VISCOSITY_UNIT_MAPPER      }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "dms_p"           , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "fan"             , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "dms_p"           , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "fan"             , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "fermentability"  , BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "beta_glucan"     , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "beta_glucan"     , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
    };
    // .:TODO.JSON:.  Extend Recipe to have an enum for this
    EnumStringMapping const BEER_JSON_RECIPE_ADDITION_POINT_MAPPER {
@@ -502,22 +511,22 @@ namespace {
       "Water",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
       {
-         // Type                                                 XPath             Q_PROPERTY                             Enum/Unit Mapper
-         {JsonRecordDefinition::FieldType::String,               "name",           PropertyNames::NamedEntity::name,      },
-         {JsonRecordDefinition::FieldType::String,               "producer",       BtString::NULL_STR,                    }, // Not sure what this means for water...
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "calcium",        PropertyNames::Water::calcium_ppm,     &BEER_JSON_CONCENTRATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "bicarbonate",    PropertyNames::Water::bicarbonate_ppm, &BEER_JSON_CONCENTRATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "potassium",      BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "iron",           BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "nitrate",        BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "nitrite",        BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "flouride",       BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "sulfate",        PropertyNames::Water::sulfate_ppm,     &BEER_JSON_CONCENTRATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "chloride",       PropertyNames::Water::chloride_ppm,    &BEER_JSON_CONCENTRATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "sodium",         PropertyNames::Water::sodium_ppm,      &BEER_JSON_CONCENTRATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "magnesium",      PropertyNames::Water::magnesium_ppm,   &BEER_JSON_CONCENTRATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "ph",             PropertyNames::Water::ph,              &BEER_JSON_ACIDITY_UNIT},
-         {JsonRecordDefinition::FieldType::String,               "notes",          PropertyNames::Water::notes,           },
+         // Type                                                       XPath             Q_PROPERTY                             Enum/Unit Mapper
+         {JsonRecordDefinition::FieldType::String,                     "name",           PropertyNames::NamedEntity::name,      },
+         {JsonRecordDefinition::FieldType::String,                     "producer",       BtString::NULL_STR,                    }, // Not sure what this means for water...
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "calcium",        PropertyNames::Water::calcium_ppm,     &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "bicarbonate",    PropertyNames::Water::bicarbonate_ppm, &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "potassium",      BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "iron",           BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrate",        BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrite",        BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "flouride",       BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sulfate",        PropertyNames::Water::sulfate_ppm,     &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "chloride",       PropertyNames::Water::chloride_ppm,    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sodium",         PropertyNames::Water::sodium_ppm,      &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "magnesium",      PropertyNames::Water::magnesium_ppm,   &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::SingleUnitValue,            "ph",             PropertyNames::Water::ph,              &BEER_JSON_ACIDITY_UNIT},
+         {JsonRecordDefinition::FieldType::String,                     "notes",          PropertyNames::Water::notes,           },
 
          // .:TODO.JSON:. Note that we'll need to look at WaterAdditionType at some point...
       }

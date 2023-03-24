@@ -461,7 +461,7 @@
         </widget>
        </item>
        <item row="6" column="2">
-        <widget class="BtGenericEdit" name="lineEdit_abvMax">
+        <widget class="BtPercentageEdit" name="lineEdit_abvMax">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -487,7 +487,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_carbMin">
+        <widget class="BtCarbonationEdit" name="lineEdit_carbMin">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -660,7 +660,7 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_abvMin">
+        <widget class="BtPercentageEdit" name="lineEdit_abvMin">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -692,7 +692,7 @@
         </widget>
        </item>
        <item row="5" column="2">
-        <widget class="BtGenericEdit" name="lineEdit_carbMax">
+        <widget class="BtCarbonationEdit" name="lineEdit_carbMax">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -883,6 +883,21 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>BtCarbonationEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtAmountEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtPercentageEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtDimensionlessEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtLineEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>BtGenericEdit</class>
    <extends>QLineEdit</extends>
    <header>BtLineEdit.h</header>
@@ -903,7 +918,7 @@
   <customwidget>
    <class>BtColorEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -919,7 +934,7 @@
   <customwidget>
    <class>BtDensityEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>

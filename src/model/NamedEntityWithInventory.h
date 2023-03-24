@@ -50,9 +50,9 @@ public:
    virtual ~NamedEntityWithInventory();
 
    //! \brief The amount in inventory (usually in kg)
-   Q_PROPERTY( double inventory              READ inventory              WRITE setInventoryAmount        /*NOTIFY changed*/ /*changedInventory*/ )
+   Q_PROPERTY(double inventory    READ inventory    WRITE setInventoryAmount)
    //! \brief The inventory table id, needed for signals
-   Q_PROPERTY( double inventoryId            READ inventoryId            WRITE setInventoryId            /*NOTIFY changed*/ /*changedInventoryId*/ )
+   Q_PROPERTY(int    inventoryId  READ inventoryId  WRITE setInventoryId    )
 
    /**
     * \brief Override \c NamedEntity::makeChild() as we have additional work to do for objects with inventory.

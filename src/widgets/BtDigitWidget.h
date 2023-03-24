@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * widgets/BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef BTDIGITWIDGET_H
-#define BTDIGITWIDGET_H
+#ifndef WIDGETS_BTDIGITWIDGET_H
+#define WIDGETS_BTDIGITWIDGET_H
 #pragma once
 
 #include <memory> // For PImpl
@@ -38,30 +38,16 @@
  *        waterDialog.ui (ie Water Chemistry Dialog).
  *
  * \todo Make this thing directly accept signals from the model items it is supposed to watch.
- *
- *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
- *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
- *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
- *        put Q_PROPERTY declarations for UiAmountWithUnits attributes here rather than in UiAmountWithUnits itself.
  */
-class BtDigitWidget : public QLabel, public UiAmountWithUnits {
+class BtDigitWidget : public QLabel {
    Q_OBJECT
-///   Q_PROPERTY(int     type                      READ type                                  WRITE setType                               STORED false)
-   Q_PROPERTY(QString configSection             READ getConfigSection                      WRITE setConfigSection                      STORED false)
-   Q_PROPERTY(QString editField                 READ getEditField                          WRITE setEditField                          STORED false)
-   Q_PROPERTY(QString forcedSystemOfMeasurement READ getForcedSystemOfMeasurementViaString WRITE setForcedSystemOfMeasurementViaString STORED false)
-   Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
 
 public:
-   enum ColorType{ NONE, LOW, GOOD, HIGH, BLACK };
+   enum ColorType{NONE, LOW, GOOD, HIGH, BLACK};
 
    BtDigitWidget(QWidget * parent,
-                 BtFieldType fieldType,
-                 Measurement::Unit const * units = nullptr);
+                 BtFieldType fieldType);
    virtual ~BtDigitWidget();
-
-   virtual QString getWidgetText() const;
-   virtual void setWidgetText(QString text);
 
    //! \brief Displays the given \c num with precision \c prec.
    void display(double num, int prec = 0);
@@ -75,11 +61,12 @@ public:
    //! \brief Set the upper limit of the "good" range.
    void setHighLim(double num);
 
-   //! \brief Always use a constant color. Use a constantColor of NONE to
-   //!  unset
+   /**
+    * \brief Always use a constant color. Use a constantColor of NONE to unset
+    */
    void setConstantColor(ColorType c);
 
-   //! \brief Convience method to set high and low limits in one call
+   //! \brief Convenience method to set high and low limits in one call
    void setLimits(double low, double high);
 
    //! \brief Methods to set the low, good and high messages
@@ -91,15 +78,16 @@ public:
    void setMessages(QStringList msgs);
 
    void setText(QString amount, int precision = 2);
-   void setText(double amount, int precision = 2);
+   void setText(double  amount, int precision = 2);
 
-public slots:
    /**
-    * \brief Received from \c BtLabel when the user has change \c UnitSystem
-    *
-    * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
+    * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
+    *        symbols)
     */
-   void displayChanged(PreviousScaleInfo previousScaleInfo);
+   template<typename T> T getValueAs() const;
+
+protected:
+   BtFieldType fieldType;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -108,9 +96,8 @@ private:
 };
 
 //
-// See comment in BtLabel.h for why we need these trivial child classes to use in .ui files
+// See comment in BtLineEdit.h for why we need these trivial child classes to use in .ui files
 //
-class BtMassDigit :    public BtDigitWidget { Q_OBJECT public: BtMassDigit(QWidget * parent); };
 class BtGenericDigit : public BtDigitWidget { Q_OBJECT public: BtGenericDigit(QWidget * parent); };
 
 #endif

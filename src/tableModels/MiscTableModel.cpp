@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -41,13 +41,13 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    BtTableModelInventory{
       parent,
       editable,
-      {{MISCNAMECOL,      {tr("Name"),        NonPhysicalQuantity::String,          ""                                                 }},
-       {MISCTYPECOL,      {tr("Type"),        NonPhysicalQuantity::String,          ""                                                 }},
-       {MISCUSECOL,       {tr("Use"),         NonPhysicalQuantity::String,          ""                                                 }},
-       {MISCTIMECOL,      {tr("Time"),        Measurement::PhysicalQuantity::Time,  *PropertyNames::Misc::time                         }},
-       {MISCAMOUNTCOL,    {tr("Amount"),      Measurement::PhysicalQuantity::Mixed, *PropertyNames::Misc::amount                       }},
-       {MISCINVENTORYCOL, {tr("Inventory"),   Measurement::PhysicalQuantity::Mixed, *PropertyNames::NamedEntityWithInventory::inventory}},
-       {MISCISWEIGHT,     {tr("Amount Type"), NonPhysicalQuantity::String,          ""                                                 }}}
+      {{MISCNAMECOL,      {tr("Name"),        NonPhysicalQuantity::String                   , ""                                                 }},
+       {MISCTYPECOL,      {tr("Type"),        NonPhysicalQuantity::String                   , ""                                                 }},
+       {MISCUSECOL,       {tr("Use"),         NonPhysicalQuantity::String                   , ""                                                 }},
+       {MISCTIMECOL,      {tr("Time"),        Measurement::PhysicalQuantity::Time           , *PropertyNames::Misc::time                         }},
+       {MISCAMOUNTCOL,    {tr("Amount"),      Measurement::PqEitherMassOrVolumeConcentration, *PropertyNames::Misc::amount                       }},
+       {MISCINVENTORYCOL, {tr("Inventory"),   Measurement::PqEitherMassOrVolumeConcentration, *PropertyNames::NamedEntityWithInventory::inventory}},
+       {MISCISWEIGHT,     {tr("Amount Type"), NonPhysicalQuantity::String                   , ""                                                 }}}
    },
    BtTableModelData<Misc>{} {
    this->rows.clear();

@@ -36,20 +36,24 @@ YeastEditor::YeastEditor(QWidget * parent) :
    setupUi(this);
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
-   connect(pushButton_new, SIGNAL(clicked()), this, SLOT(newYeast()));
-   connect(pushButton_save,   &QAbstractButton::clicked, this, &YeastEditor::save);
-   connect(pushButton_cancel, &QAbstractButton::clicked, this, &YeastEditor::clearAndClose);
+   // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
+   // function to allow use of default argument on newYeast() slot
+   connect(pushButton_new,    &QAbstractButton::clicked, this, [this]() { this->newYeast(); return; } );
+   connect(pushButton_save,   &QAbstractButton::clicked, this, &YeastEditor::save                     );
+   connect(pushButton_cancel, &QAbstractButton::clicked, this, &YeastEditor::clearAndClose            );
    return;
 }
 
+YeastEditor::~YeastEditor() = default;
+
 void YeastEditor::setYeast(Yeast * y) {
-   if (obsYeast) {
-      disconnect(obsYeast, nullptr, this, nullptr);
+   if (this->obsYeast) {
+      disconnect(this->obsYeast, nullptr, this, nullptr);
    }
 
-   obsYeast = y;
-   if (obsYeast) {
-      connect(obsYeast, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
+   this->obsYeast = y;
+   if (this->obsYeast) {
+      connect(this->obsYeast, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
       showChanges();
    }
 }
@@ -60,23 +64,21 @@ void YeastEditor::save() {
       return;
    }
 
-   this->obsYeast->setName(lineEdit_name->text());
-   this->obsYeast->setType(static_cast<Yeast::Type>(comboBox_type->currentIndex()));
-   this->obsYeast->setForm(static_cast<Yeast::Form>(comboBox_form->currentIndex()));
-   this->obsYeast->setAmountIsWeight((checkBox_amountIsWeight->checkState() == Qt::Checked) ? true : false);
-
-   this->obsYeast->setLaboratory(lineEdit_laboratory->text());
-   this->obsYeast->setProductID(lineEdit_productID->text());
-   this->obsYeast->setMinTemperature_c(lineEdit_minTemperature->toCanonical().quantity());
-   this->obsYeast->setMaxTemperature_c(lineEdit_maxTemperature->toCanonical().quantity());
-   this->obsYeast->setFlocculation(static_cast<Yeast::Flocculation>(comboBox_flocculation->currentIndex()));
-   this->obsYeast->setAttenuation_pct(lineEdit_attenuation->toCanonical().quantity());
-
-   this->obsYeast->setTimesCultured(lineEdit_timesCultured->text().toInt());
-   this->obsYeast->setMaxReuse(lineEdit_maxReuse->text().toInt());
-   this->obsYeast->setAddToSecondary((checkBox_addToSecondary->checkState() == Qt::Checked) ? true : false);
-   this->obsYeast->setBestFor(textEdit_bestFor->toPlainText());
-   this->obsYeast->setNotes(textEdit_notes->toPlainText());
+   this->obsYeast->setName            (lineEdit_name          ->text()                                        );
+   this->obsYeast->setType            (static_cast<Yeast::Type>(comboBox_type->currentIndex())                );
+   this->obsYeast->setForm            (static_cast<Yeast::Form>(comboBox_form->currentIndex())                );
+   this->obsYeast->setAmountIsWeight  (checkBox_amountIsWeight->checkState() == Qt::Checked                   );
+   this->obsYeast->setLaboratory      (lineEdit_laboratory    ->text()                                        );
+   this->obsYeast->setProductID       (lineEdit_productID     ->text()                                        );
+   this->obsYeast->setMinTemperature_c(lineEdit_minTemperature->toCanonical().quantity()                      );
+   this->obsYeast->setMaxTemperature_c(lineEdit_maxTemperature->toCanonical().quantity()                      );
+   this->obsYeast->setFlocculation    (static_cast<Yeast::Flocculation>(comboBox_flocculation->currentIndex()));
+   this->obsYeast->setAttenuation_pct (lineEdit_attenuation   ->getValueAs<double>()                          );
+   this->obsYeast->setTimesCultured   (lineEdit_timesCultured ->getValueAs<int>()                             );
+   this->obsYeast->setMaxReuse        (lineEdit_maxReuse      ->getValueAs<int>()                             );
+   this->obsYeast->setAddToSecondary  (checkBox_addToSecondary->checkState() == Qt::Checked                   );
+   this->obsYeast->setBestFor         (textEdit_bestFor       ->toPlainText()                                 );
+   this->obsYeast->setNotes           (textEdit_notes         ->toPlainText()                                 );
 
    if (this->obsYeast->key() < 0) {
       ObjectStoreWrapper::insert(*this->obsYeast);
@@ -123,115 +125,32 @@ void YeastEditor::showChanges(QMetaProperty * metaProp) {
          return;
       }
    }
-   if (propName == PropertyNames::Yeast::type || updateAll) {
-      comboBox_type->setCurrentIndex(static_cast<int>(obsYeast->type()));
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::form || updateAll) {
-      comboBox_form->setCurrentIndex(static_cast<int>(obsYeast->form()));
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::NamedEntityWithInventory::inventory || updateAll) {
-      lineEdit_inventory->setText(obsYeast->inventory(), 0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::amountIsWeight || updateAll) {
-      checkBox_amountIsWeight->setCheckState((obsYeast->amountIsWeight()) ? Qt::Checked : Qt::Unchecked);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::laboratory || updateAll) {
-      lineEdit_laboratory->setText(obsYeast->laboratory());
-      lineEdit_laboratory->setCursorPosition(0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::productID || updateAll) {
-      lineEdit_productID->setText(obsYeast->productID());
-      lineEdit_productID->setCursorPosition(0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::minTemperature_c || updateAll) {
-      lineEdit_minTemperature->setText(obsYeast);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::maxTemperature_c || updateAll) {
-      lineEdit_maxTemperature->setText(obsYeast);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::flocculation || updateAll) {
-      comboBox_flocculation->setCurrentIndex(static_cast<int>(obsYeast->flocculation()));
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::attenuation_pct || updateAll) {
-      lineEdit_attenuation->setText(obsYeast);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::timesCultured || updateAll) {
-      lineEdit_timesCultured->setText(obsYeast->timesCultured(), 0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::maxReuse || updateAll) {
-      lineEdit_maxReuse->setText(obsYeast->maxReuse(), 0);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::addToSecondary || updateAll) {
-      checkBox_addToSecondary->setCheckState((obsYeast->addToSecondary()) ? Qt::Checked : Qt::Unchecked);
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::bestFor || updateAll) {
-      textEdit_bestFor->setPlainText(obsYeast->bestFor());
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (propName == PropertyNames::Yeast::notes || updateAll) {
-      textEdit_notes->setPlainText(obsYeast->notes());
-      if (!updateAll) {
-         return;
-      }
-   }
-}
-
-void YeastEditor::newYeast() {
-   newYeast(QString());
+   if (updateAll || propName == PropertyNames::Yeast::type                        ) { comboBox_type->setCurrentIndex(static_cast<int>(obsYeast->type()));                                            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::form                        ) { comboBox_form->setCurrentIndex(static_cast<int>(obsYeast->form()));                                            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { lineEdit_inventory     ->setText(obsYeast->inventory       ()                                 , 0);            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::amountIsWeight              ) { checkBox_amountIsWeight->setCheckState((obsYeast->amountIsWeight()) ? Qt::Checked : Qt::Unchecked);            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::laboratory                  ) { lineEdit_laboratory    ->setText(obsYeast->laboratory      ()    ); lineEdit_laboratory->setCursorPosition(0); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::productID                   ) { lineEdit_productID     ->setText(obsYeast->productID       ()    ); lineEdit_productID ->setCursorPosition(0); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::minTemperature_c            ) { lineEdit_minTemperature->setText(obsYeast->minTemperature_c()                                    );            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::maxTemperature_c            ) { lineEdit_maxTemperature->setText(obsYeast->maxTemperature_c()                                    );            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::flocculation                ) { comboBox_flocculation  ->setCurrentIndex(static_cast<int>(obsYeast->flocculation())              );            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::attenuation_pct             ) { lineEdit_attenuation   ->setText(obsYeast->attenuation_pct()                                     );            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::timesCultured               ) { lineEdit_timesCultured ->setText(obsYeast->timesCultured  ()                                  , 0);            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::maxReuse                    ) { lineEdit_maxReuse      ->setText(obsYeast->maxReuse       ()                                  , 0);            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::addToSecondary              ) { checkBox_addToSecondary->setCheckState((obsYeast->addToSecondary()) ? Qt::Checked : Qt::Unchecked);            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::bestFor                     ) { textEdit_bestFor       ->setPlainText(obsYeast->bestFor   ()                                     );            if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Yeast::notes                       ) { textEdit_notes         ->setPlainText(obsYeast->notes     ()                                     );            if (!updateAll) { return; } }
    return;
 }
 
 void YeastEditor::newYeast(QString folder) {
-   QString name = QInputDialog::getText(this, tr("Yeast name"),
-                                        tr("Yeast name:"));
+   QString name = QInputDialog::getText(this, tr("Yeast name"), tr("Yeast name:"));
    if (name.isEmpty()) {
       return;
    }
 
    // .:TODO:. Change to shared_ptr as currently leads to memory leak in clearAndClose()
    Yeast * y = new Yeast(name);
-
    if (! folder.isEmpty()) {
       y->setFolder(folder);
    }

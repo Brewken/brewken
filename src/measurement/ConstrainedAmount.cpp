@@ -1,7 +1,6 @@
 /*======================================================================================================================
- * StyleRangeWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * measurement/ConstrainedAmount.cpp is part of Brewken, and is copyright the following authors 2023:
  *   • Matt Young <mfsy@yahoo.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,16 +13,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "StyleRangeWidget.h"
+#include "measurement/ConstrainedAmount.h"
 
-#include <QColor>
-#include <QWidget>
+bool MassOrVolumeAmt::isMass() const {
+   return this->isFirst();
+}
 
-StyleRangeWidget::StyleRangeWidget(QWidget* parent) : RangedSlider(parent) {
-   setBackgroundBrush(QColor(121,201,121));
-   setPreferredRangeBrush(QColor(0,127,0));
-   setMarkerTextIsValue(true);
-
-   repaint();
-   return;
+bool MassOrVolumeConcentrationAmt::isMassConcentration() const {
+   return this->isFirst();
 }

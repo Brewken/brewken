@@ -86,7 +86,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_ca">
+        <widget class="BtVolumeConcentrationEdit" name="lineEdit_ca">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -124,7 +124,7 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_cl">
+        <widget class="BtVolumeConcentrationEdit" name="lineEdit_cl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -162,7 +162,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_mg">
+        <widget class="BtVolumeConcentrationEdit" name="lineEdit_mg">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -203,7 +203,7 @@
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_so4">
+        <widget class="BtVolumeConcentrationEdit" name="lineEdit_so4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -241,7 +241,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_na">
+        <widget class="BtVolumeConcentrationEdit" name="lineEdit_na">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -283,7 +283,7 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_alk">
+        <widget class="BtVolumeConcentrationEdit" name="lineEdit_alk">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -321,7 +321,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_ph">
+        <widget class="BtAcidityEdit" name="lineEdit_ph">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -386,6 +386,16 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>BtAcidityEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtAmountEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BtVolumeConcentrationEdit</class>
+   <extends>QLineEdit</extends>
+   <header>BtAmountEdit.h</header>
+  </customwidget>
   <customwidget>
    <class>BtGenericEdit</class>
    <extends>QLineEdit</extends>

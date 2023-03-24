@@ -573,7 +573,7 @@
   <customwidget>
    <class>BtTemperatureEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -594,7 +594,7 @@
   <customwidget>
    <class>BtTimeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -610,7 +610,7 @@
   <customwidget>
    <class>BtMassEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <signal>textModified()</signal>
     <slot>lineChanged()</slot>
@@ -637,7 +637,7 @@
   <customwidget>
    <class>BtVolumeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>

@@ -26,7 +26,6 @@
 #include <QFont>
 #include <QInputDialog>
 
-#include "BtDigitWidget.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/ColorMethods.h"
 #include "model/Fermentable.h"
@@ -34,12 +33,14 @@
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
+#include "tableModels/SaltTableModel.h"
+#include "tableModels/WaterTableModel.h"
 #include "WaterButton.h"
 #include "WaterEditor.h"
 #include "WaterListModel.h"
 #include "WaterSortFilterProxyModel.h"
-#include "tableModels/SaltTableModel.h"
-#include "tableModels/WaterTableModel.h"
+#include "widgets/BtDigitWidget.h"
+
 
 //
 // All of the pH calculations are taken from the work done by Kai Troester and published at
@@ -76,8 +77,7 @@ WaterDialog::WaterDialog(QWidget* parent) :
    m_mashRO{0.0},
    m_spargeRO{0.0},
    m_total_grains{0.0},
-   m_thickness{0.0}
-{
+   m_thickness{0.0} {
    QStringList msgs = QStringList() << tr("Too low for target profile.")
                                     << tr("In range for target profile.")
                                     << tr("Too high for target profile.");
@@ -116,7 +116,7 @@ WaterDialog::WaterDialog(QWidget* parent) :
    m_total_digits[static_cast<int>(Salt::Types::NAHCO3)] = btDigit_totalnahco3;
 
    // foreach( BtDigitWidget* i, m_ppm_digits ) {
-   for(int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
+   for (int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
       m_ppm_digits[i]->setLimits(0.0,1000.0);
       m_ppm_digits[i]->setText(0.0, 1);
       m_ppm_digits[i]->setMessages(msgs);
@@ -137,24 +137,24 @@ WaterDialog::WaterDialog(QWidget* parent) :
    tableView_salts->setItemDelegate(m_salt_delegate);
    tableView_salts->setModel(m_salt_table_model);
 
-   m_base_editor = new WaterEditor(this, "Base");
+   m_base_editor   = new WaterEditor(this, "Base");
    m_target_editor = new WaterEditor(this, "Target");
 
    // all the signals
-   connect(baseProfileCombo,   SIGNAL( activated(int)), this, SLOT(update_baseProfile(int)));
-   connect(targetProfileCombo, SIGNAL( activated(int)), this, SLOT(update_targetProfile(int)));
+   connect(baseProfileCombo,   QOverload<int>::of(&QComboBox::activated), this, &WaterDialog::update_baseProfile  );
+   connect(targetProfileCombo, QOverload<int>::of(&QComboBox::activated), this, &WaterDialog::update_targetProfile);
 
    connect(baseProfileButton,   &WaterButton::clicked, m_base_editor,   &QWidget::show);
    connect(targetProfileButton, &WaterButton::clicked, m_target_editor, &QWidget::show);
 
-   connect(m_salt_table_model,    &SaltTableModel::newTotals, this, &WaterDialog::newTotals);
+   connect(m_salt_table_model,    &SaltTableModel::newTotals, this,               &WaterDialog::newTotals   );
    connect(pushButton_addSalt,    &QAbstractButton::clicked,  m_salt_table_model, &SaltTableModel::catchSalt);
-   connect(pushButton_removeSalt, &QAbstractButton::clicked,  this, &WaterDialog::removeSalts);
+   connect(pushButton_removeSalt, &QAbstractButton::clicked,  this,               &WaterDialog::removeSalts );
 
-   connect(spinBox_mashRO, SIGNAL(valueChanged(int)),   this, SLOT(setMashRO(int)));
-   connect(spinBox_spargeRO, SIGNAL(valueChanged(int)), this, SLOT(setSpargeRO(int)));
+   connect(spinBox_mashRO,   QOverload<int>::of(&QSpinBox::valueChanged), this, &WaterDialog::setMashRO  );
+   connect(spinBox_spargeRO, QOverload<int>::of(&QSpinBox::valueChanged), this, &WaterDialog::setSpargeRO);
 
-   connect(buttonBox_save, &QDialogButtonBox::accepted, this, &WaterDialog::saveAndClose);
+   connect(buttonBox_save, &QDialogButtonBox::accepted, this, &WaterDialog::saveAndClose );
    connect(buttonBox_save, &QDialogButtonBox::rejected, this, &WaterDialog::clearAndClose);
 
    return;
@@ -166,12 +166,14 @@ void WaterDialog::setMashRO(int val) {
    m_mashRO = val/100.0;
    if ( m_base ) m_base->setMashRO(m_mashRO);
    newTotals();
+   return;
 }
 
 void WaterDialog::setSpargeRO(int val) {
    m_spargeRO = val/100.0;
    if ( m_base ) m_base->setSpargeRO(m_spargeRO);
    newTotals();
+   return;
 }
 
 void WaterDialog::setDigits() {
@@ -389,6 +391,7 @@ void WaterDialog::newTotals() {
          m_ppm_digits[i]->setText( m_salt_table_model->total(ion) / allTheWaters, 0 );
       }
    }
+   return;
 }
 
 void WaterDialog::removeSalts() {
