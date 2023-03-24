@@ -46,7 +46,7 @@
 //========================================== Start of property name constants ==========================================
 #define AddPropertyName(property) namespace PropertyNames::Recipe { BtStringConst const property{#property}; }
 AddPropertyName(ABV_pct           )
-AddPropertyName(age               )
+AddPropertyName(age_days          )
 AddPropertyName(ageTemp_c         )
 AddPropertyName(ancestorId        )
 AddPropertyName(asstBrewer        )
@@ -197,7 +197,7 @@ public:
    //! \brief The temp in C in tertiary.
    Q_PROPERTY(double tertiaryTemp_c READ tertiaryTemp_c WRITE setTertiaryTemp_c /*NOTIFY changed*/ /*changedTertiaryTemp_c*/)
    //! \brief The number of days to age the beer after bottling.
-   Q_PROPERTY(double age READ age_days WRITE setAge_days /*NOTIFY changed*/ /*changedAge_days*/)
+   Q_PROPERTY(double age_days READ age_days WRITE setAge_days /*NOTIFY changed*/ /*changedAge_days*/)
    //! \brief The temp in C as beer is aging after bottling.
    Q_PROPERTY(double ageTemp_c READ ageTemp_c WRITE setAgeTemp_c /*NOTIFY changed*/ /*changedAgeTemp_c*/)
    //! \brief The date the recipe was created or brewed. I'm not sure yet.

@@ -579,8 +579,11 @@ namespace {
          {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpGlassy_pct  %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpHalf_pct    %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpMealy_pct   %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpPlump     %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpThin      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpPlump_pct %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpThin_pct  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN friability_pct         %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN di_ph                  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN viscosity_cP           %1").arg(db.getDbNativeTypeName<double >())},
          {QString("     UPDATE fermentable SET amountIsWeight = ?"), {QVariant{true}}}, // All existing amounts will be weights
       };
       return executeSqlQueries(q, migrationQueries);

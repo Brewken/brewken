@@ -248,7 +248,7 @@
         </spacer>
        </item>
        <item row="4" column="2">
-        <widget class="BtMixedLabel" name="label_inventory">
+        <widget class="BtMixedMassOrVolumeLabel" name="label_inventory">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -261,7 +261,7 @@
         </widget>
        </item>
        <item row="4" column="4">
-        <widget class="BtMixedEdit" name="lineEdit_inventory">
+        <widget class="BtMixedMassOrVolumeEdit" name="lineEdit_inventory">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -411,7 +411,7 @@
   <customwidget>
    <class>BtTimeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -425,7 +425,7 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtMixedLabel</class>
+   <class>BtMixedMassOrVolumeLabel</class>
    <extends>QLabel</extends>
    <header>BtLabel.h</header>
    <slots>
@@ -433,9 +433,9 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtMixedEdit</class>
+   <class>BtMixedMassOrVolumeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
     <slot>setIsWeight(bool)</slot>

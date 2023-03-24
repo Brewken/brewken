@@ -36,10 +36,10 @@ HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
    this->doLayout();
 
    connect(pushButton_convert, &QAbstractButton::clicked, this, &HydrometerTool::convert );
-   connect(label_inputTemp,      &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_inputTemp,      &BtLineEdit::lineChanged);
-   connect(label_inputSg,        &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_inputSg,        &BtLineEdit::lineChanged);
-   connect(label_outputSg,       &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_outputSg,       &BtLineEdit::lineChanged);
-   connect(label_calibratedTemp, &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_calibratedTemp, &BtLineEdit::lineChanged);
+   connect(label_inputTemp,      &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_inputTemp,      &BtAmountEdit::lineChanged);
+   connect(label_inputSg,        &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_inputSg,        &BtAmountEdit::lineChanged);
+   connect(label_outputSg,       &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_outputSg,       &BtAmountEdit::lineChanged);
+   connect(label_calibratedTemp, &BtLabel::changedSystemOfMeasurementOrScale, lineEdit_calibratedTemp, &BtAmountEdit::lineChanged);
 
    QMetaObject::connectSlotsByName(this);
    return;

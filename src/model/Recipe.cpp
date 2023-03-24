@@ -366,7 +366,7 @@ TypeLookup const Recipe::typeLookup {
    "Recipe",
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ABV_pct           , Recipe::m_ABV_pct           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::age               , Recipe::m_age               ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::age_days               , Recipe::m_age               ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ageTemp_c         , Recipe::m_ageTemp_c         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ancestorId        , Recipe::m_ancestor_id       ), //<<
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::asstBrewer        , Recipe::m_asstBrewer        ),
@@ -492,7 +492,7 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    m_secondaryTemp_c   {namedParameterBundle.val<double      >(PropertyNames::Recipe::secondaryTemp_c   )},
    m_tertiaryAge_days  {namedParameterBundle.val<double      >(PropertyNames::Recipe::tertiaryAge_days  )},
    m_tertiaryTemp_c    {namedParameterBundle.val<double      >(PropertyNames::Recipe::tertiaryTemp_c    )},
-   m_age               {namedParameterBundle.val<double      >(PropertyNames::Recipe::age               )},
+   m_age               {namedParameterBundle.val<double      >(PropertyNames::Recipe::age_days          )},
    m_ageTemp_c         {namedParameterBundle.val<double      >(PropertyNames::Recipe::ageTemp_c         )},
    m_date              {namedParameterBundle.val<QDate       >(PropertyNames::Recipe::date              )},
    m_carbonation_vols  {namedParameterBundle.val<double      >(PropertyNames::Recipe::carbonation_vols  )},
@@ -1702,7 +1702,7 @@ void Recipe::setTertiaryTemp_c(double var) {
 }
 
 void Recipe::setAge_days(double var) {
-   this->setAndNotify(PropertyNames::Recipe::age, this->m_age, this->enforceMin(var, "age"));
+   this->setAndNotify(PropertyNames::Recipe::age_days, this->m_age, this->enforceMin(var, "age"));
    return;
 }
 

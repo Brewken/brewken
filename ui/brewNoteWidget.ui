@@ -816,7 +816,7 @@
   <customwidget>
    <class>BtVolumeEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -824,7 +824,7 @@
   <customwidget>
    <class>BtDensityEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>BtAmountEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -832,7 +832,7 @@
   <customwidget>
    <class>BtGenericDigit</class>
    <extends>QLabel</extends>
-   <header>BtDigitWidget.h</header>
+   <header>widgets/BtDigitWidget.h</header>
   </customwidget>
   <customwidget>
    <class>BtDateLabel</class>

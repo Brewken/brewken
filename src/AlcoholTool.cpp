@@ -27,6 +27,7 @@
 #include <QWidget>
 
 #include "Algorithms.h"
+#include "BtAmountEdit.h"
 #include "BtLineEdit.h"
 #include "Localization.h"
 #include "PersistentSettings.h"

@@ -23,46 +23,38 @@
 #define BTLINEEDIT_H
 #pragma once
 
+#include  <optional>
+
 #include <QLineEdit>
 #include <QString>
 #include <QWidget>
 
 #include "BtFieldType.h"
-#include "measurement/PhysicalQuantity.h"
-#include "measurement/Unit.h"
-#include "measurement/UnitSystem.h"
-#include "UiAmountWithUnits.h"
 
 class NamedEntity;
 
 /*!
  * \class BtLineEdit
  *
- * \brief This extends QLineEdit such that the Object handles all the unit transformation we do, instead of each dialog.
+ * \brief This class and its subclasses extends QLineEdit such that the Object handles all the unit transformation we
+ *        do, instead of each dialog.
+ *
  *        It makes the code much nicer and prevents more cut'n'paste code.
  *
  *        A \c BtLineEdit (or subclass thereof) will usually have a corresponding \c BtLabel (or subclass thereof).
  *        See comment in BtLabel.h for more details on the relationship between the two classes.
- *
- *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
- *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
- *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
- *        put Q_PROPERTY declarations for UiAmountWithUnits attributes here rather than in UiAmountWithUnits itself.
  */
-class BtLineEdit : public QLineEdit, public UiAmountWithUnits {
+class BtLineEdit : public QLineEdit {
    Q_OBJECT
-
-   Q_PROPERTY(QString configSection             READ getConfigSection                      WRITE setConfigSection                      STORED false)
-   Q_PROPERTY(QString editField                 READ getEditField                          WRITE setEditField                          STORED false)
-   Q_PROPERTY(QString forcedSystemOfMeasurement READ getForcedSystemOfMeasurementViaString WRITE setForcedSystemOfMeasurementViaString STORED false)
-   Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
 
 public:
    /*!
     * \brief Initialize the BtLineEdit with the parent and do some things with the type
     *
     * \param parent - QWidget* to the parent object
-    * \param lType - the type of label: none, gravity, mass or volume
+    * \param fieldType the type of input field; if it is not \c NonPhysicalQuantity then we should be being called
+    *                  from \c BtAmountEdit or a subclass thereof
+    * \param defaultPrecision
     * \param maximalDisplayString - an example of the widest string this widget would be expected to need to display
     *
     * \todo Not sure if I can get the name of the widget being created.
@@ -70,77 +62,78 @@ public:
     */
    BtLineEdit(QWidget* parent = nullptr,
               BtFieldType fieldType = NonPhysicalQuantity::String,
-              Measurement::Unit const * units = nullptr,
               int const defaultPrecision = 3,
               QString const & maximalDisplayString = "100.000 srm");
 
    virtual ~BtLineEdit();
 
-   virtual QString getWidgetText() const;
-   virtual void setWidgetText(QString text);
+   BtFieldType const getFieldType() const;
 
-   // Use one of these when you just want to set the text
-   void setText(NamedEntity* element);
-   void setText(NamedEntity* element, int precision);
-   void setText(double amount);
-   void setText(double amount, int precision);
-   void setText(QString amount);
-   void setText(QString amount, int precision);
-   void setText(QVariant amount);
-   void setText(QVariant amount, int precision);
+   /**
+    * \brief Set the amount for a decimal field
+    *
+    * \param amount is the amount to display, but the field should be blank if this is \b std::nullopt
+    * \param precision is how many decimal places to show.  If not specified, the default will be used.
+    */
+   void setText(std::optional<double> amount, std::optional<int> precision = std::nullopt);
 
-   // Use this when you want to get the text as a number
+   /**
+    * \brief .:TBD:. Do we need this to be able to parse numbers out of strings, or just to set string text?
+    */
+   void setText(QString               amount, std::optional<int> precision = std::nullopt);
+
+   /**
+    * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
+    *        symbols)
+    */
    template<typename T> T getValueAs() const;
 
 public slots:
-   void onLineChanged();
    /**
-    * \brief Received from \c BtLabel when the user has change \c UnitSystem
-    *
-    * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
+    * \brief This slot receives the \c QLineEdit::editingFinished signal
     */
-   void lineChanged(PreviousScaleInfo previousScaleInfo);
+   void onLineChanged();
 
 signals:
+   /**
+    * \brief Where we want "instant updates", this signal should be picked up by the editor or widget object using this
+    *        input field so it can read the changed value and update the underlying data model.
+    *
+    *        Where we want to defer updating the underlying data model until the user clicks "Save" etc, then this
+    *        signal will typically be ignored.
+    */
    void textModified();
 
-private:
+protected:
+   BtFieldType fieldType;
+
+   int const defaultPrecision;
+
    void calculateDisplaySize(QString const & maximalDisplayString);
    void setDisplaySize(bool recalculate = false);
-   int const defaultPrecision;
+
    int desiredWidthInPixels;
 };
 
 //
-// See comment in BtLabel.h for why we need all these trivial child classes to use in .ui files
+// These are trivial specialisations of BtLineEdit that make it possible to use specific types of BtLineEdit in .ui
+// files.  It's a bit of a sledgehammer way to pass in a constructor parameter but seems necessary because of
+// limitations in Qt.
 //
-// .:TODO:. We should change the inheritance hierarchy so that BtGenericEdit and BtStringEdit etc do not inherit from
-//          UiAmountWithUnits.
+// AFAIK there is no way to pass constructor parameters to an object in a .ui file.  (If you want to do that, the advice
+// seems to be to build the layout manually in C++ code.)
 //
-class BtGenericEdit        : public BtLineEdit { Q_OBJECT public: BtGenericEdit       (QWidget* parent); };
-class BtMassEdit           : public BtLineEdit { Q_OBJECT public: BtMassEdit          (QWidget* parent); };
-class BtVolumeEdit         : public BtLineEdit { Q_OBJECT public: BtVolumeEdit        (QWidget* parent); };
-class BtTimeEdit           : public BtLineEdit { Q_OBJECT public: BtTimeEdit          (QWidget* parent); };
-class BtTemperatureEdit    : public BtLineEdit { Q_OBJECT public: BtTemperatureEdit   (QWidget* parent); };
-class BtColorEdit          : public BtLineEdit { Q_OBJECT public: BtColorEdit         (QWidget* parent); };
-class BtDensityEdit        : public BtLineEdit { Q_OBJECT public: BtDensityEdit       (QWidget* parent); };
-class BtDiastaticPowerEdit : public BtLineEdit { Q_OBJECT public: BtDiastaticPowerEdit(QWidget* parent); };
-class BtAcidityEdit        : public BtLineEdit { Q_OBJECT public: BtAcidityEdit       (QWidget* parent); };
-class BtBitternessEdit     : public BtLineEdit { Q_OBJECT public: BtBitternessEdit    (QWidget* parent); };
-class BtCarbonationEdit    : public BtLineEdit { Q_OBJECT public: BtCarbonationEdit   (QWidget* parent); };
-class BtConcentrationEdit  : public BtLineEdit { Q_OBJECT public: BtConcentrationEdit (QWidget* parent); };
-class BtViscosityEdit      : public BtLineEdit { Q_OBJECT public: BtViscosityEdit     (QWidget* parent); };
-class BtStringEdit         : public BtLineEdit { Q_OBJECT public: BtStringEdit        (QWidget* parent); };
-class BtPercentageEdit     : public BtLineEdit { Q_OBJECT public: BtPercentageEdit    (QWidget* parent); };
-class BtDimensionlessEdit  : public BtLineEdit { Q_OBJECT public: BtDimensionlessEdit (QWidget* parent); };
-
-// mixed objects are a pain.
-class BtMixedEdit : public BtLineEdit {
-   Q_OBJECT
-public:
-   BtMixedEdit(QWidget* parent);
-public slots:
-   void setIsWeight(bool state);
-};
+// Similarly, we might think to template BtLineEdit, but the Qt Meta-Object Compiler (moc) doesn't understand C++
+// templates.  This means we can't template classes that need to use the Q_OBJECT macro (required for classes that
+// declare their own signals and slots or that use other services provided by Qt's meta-object system).
+//
+// TODO: Kill BtGenericEdit
+//
+// TBD: Can we think of a more elegant way of handing, eg, different numbers of decimal places for %
+//
+class BtGenericEdit       : public BtLineEdit { Q_OBJECT public: BtGenericEdit      (QWidget* parent); };
+class BtStringEdit        : public BtLineEdit { Q_OBJECT public: BtStringEdit       (QWidget* parent); };
+class BtPercentageEdit    : public BtLineEdit { Q_OBJECT public: BtPercentageEdit   (QWidget* parent); };
+class BtDimensionlessEdit : public BtLineEdit { Q_OBJECT public: BtDimensionlessEdit(QWidget* parent); };
 
 #endif

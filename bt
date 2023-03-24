@@ -2016,7 +2016,7 @@ def doPackage():
          abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
 
          #
-         # Strictly speaking, we should look at every /usr/local/opt/../*.dylib dependency of our executable, and run
+         # Strictly speaking, we should look at every /usr/local/opt/.../*.dylib dependency of our executable, and run
          # each of those .dylib files through otool to get its dependencies, then repeat until we find no new
          # dependencies.  Then we should ensure each dependency is copied into the app bundle and whatever depends on it
          # knows where to find it etc.  Pretty soon we'd have ended up reimplementing macdeployqt.  Fortunately, in

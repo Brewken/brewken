@@ -24,7 +24,7 @@
  * \class BtSqlQuery is an extension of \c QSqlQuery with more helpful behaviour around prepared statements
  *
  *        It's not clear from the Qt documentation, but it turns out that, if you call QSqlQuery::prepare() on a SQL
- *        statement that doesn't have any placeholders for binding values, then you get  a syntax error when you're
+ *        statement that doesn't have any placeholders for binding values, then you get a syntax error when you're
  *        using PostgreSQL; you have to call exec() directly on the SQL.
  *
  *        At one level, this is "correct" because a query without bind value placeholders is not a prepared statement

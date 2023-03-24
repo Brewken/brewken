@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * StyleRangeWidget.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * StyleRangeWidget.h is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,21 +18,19 @@
 #define STYLERANGEWIDGET_H
 #pragma once
 
-#include <QWidget>
-#include <QSize>
-#include <QString>
 #include "RangedSlider.h"
-class QPaintEvent;
+
 class QMouseEvent;
+class QPaintEvent;
+class QWidget;
 
 /*!
  * \brief Widget to display a recipe statistic with "in-range" context from the style.
  */
-class StyleRangeWidget : public RangedSlider
-{
+class StyleRangeWidget : public RangedSlider {
    Q_OBJECT
 public:
-   StyleRangeWidget(QWidget* parent=0);
+   StyleRangeWidget(QWidget* parent = nullptr);
 };
 
 #endif

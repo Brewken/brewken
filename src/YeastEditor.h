@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * YeastEditor.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * YeastEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -33,22 +34,21 @@ class Yeast;
  *
  * \brief View/controller dialog for modifying yeasts.
  */
-class YeastEditor : public QDialog, private Ui::yeastEditor
-{
+class YeastEditor : public QDialog, private Ui::yeastEditor {
    Q_OBJECT
 
 public:
-   YeastEditor( QWidget *parent=nullptr );
-   virtual ~YeastEditor() {}
+   YeastEditor(QWidget * parent = nullptr);
+   virtual ~YeastEditor();
+
    //! Set the yeast we want to modify.
-   void setYeast( Yeast* y );
-   void newYeast(QString folder);
+   void setYeast(Yeast * y);
+   void newYeast(QString folder = "");
 
 public slots:
    void save();
    void clearAndClose();
-   void changed(QMetaProperty,QVariant);
-   void newYeast();
+   void changed(QMetaProperty, QVariant);
 
 private:
    Yeast* obsYeast;

@@ -25,6 +25,7 @@
 #include <QVariant>
 
 #include "measurement/Amount.h"
+#include "measurement/ConstrainedAmount.h"
 #include "utils/BtStringConst.h"
 
 //

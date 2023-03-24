@@ -79,6 +79,11 @@ public:
       Enum,          // Stored as a string in the DB
    };
 
+   /**
+    * \brief Convenience function for logging
+    */
+   static QString getDisplayName(FieldType const fieldType);
+
    //
    // It's a bit tedious having to create constructors for structs but we need them to allow BtStringConst members to be
    // constructed from a string literal without having to put wrappers (BtStringConst const {}) around each string
@@ -500,5 +505,15 @@ private:
    ObjectStore & operator=(ObjectStore &&) = delete;
 
 };
+
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, ObjectStore::FieldType const fieldType) {
+   stream << "FieldType #" << static_cast<int>(fieldType) << ": (" << ObjectStore::getDisplayName(fieldType) << ")";
+   return stream;
+}
 
 #endif

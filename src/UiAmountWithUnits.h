@@ -27,7 +27,6 @@
 
 #include <QString>
 
-#include "BtFieldType.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
@@ -41,17 +40,18 @@ struct PreviousScaleInfo {
 
 /**
  * \class UiAmountWithUnits A base class, suitable for combining with \c QLabel, \c QLineEdit, etc, that handles all the
- *                          unit transformation such a widget would need to do.
+ *                          unit transformation such a widget would need to do.  It is inherited by \c BtDigitWidget and
+ *                          \c BtAmountEdit.
  */
 class UiAmountWithUnits {
 public:
    /**
     * \param parent
-    * \param fieldType
+    * \param physicalQuantities the \c PhysicalQuantity or \c Mixed2PhysicalQuantities to which this amount relates
     * \param units
     */
    UiAmountWithUnits(QWidget * parent,
-                     BtFieldType fieldType,
+                     Measurement::PhysicalQuantities const physicalQuantities,
                      Measurement::Unit const * units = nullptr);
    virtual ~UiAmountWithUnits();
 
@@ -71,11 +71,10 @@ public:
    virtual void setWidgetText(QString text) = 0;
 
    /**
-    * \brief Returns what type of field this is - except that, if it is \c Measurement::PhysicalQuantity::Mixed, will
-    *        return either \c Measurement::PhysicalQuantity::Mass or \c Measurement::PhysicalQuantity::Volume depending
-    *        on the value of \c this->units.
+    * \brief Returns what type of field this is - except that, if it is \c Mixed2PhysicalQuantities, will one of the two
+    *        possible \c Measurement::PhysicalQuantity values depending on the value of \c this->units.
     */
-   BtFieldType getFieldType() const;
+   Measurement::PhysicalQuantity getPhysicalQuantity() const;
 
    void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
    void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
@@ -90,8 +89,8 @@ public:
    void setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString);
 
    /**
-    * \brief QString version of \c getForcedSystemOfMeasurement to work with code generated from .ui files (via Q_PROPERTY
-    *        declared in subclass of this class)
+    * \brief QString version of \c getForcedSystemOfMeasurement to work with code generated from .ui files (via
+    *        Q_PROPERTY declared in subclass of this class)
     */
    QString getForcedSystemOfMeasurementViaString() const;
 
@@ -123,12 +122,12 @@ public:
    /**
     * \brief Returns the field converted to canonical units for the relevant \c Measurement::PhysicalQuantity
     */
-   Measurement::Amount toCanonical();
+   Measurement::Amount toCanonical() const;
 
    /**
     * \brief Use this when you want to do something with the returned QString
     */
-   QString displayAmount(double amount, int precision = 3);
+   QString displayAmount(double amount, int precision = 3) const;
 
 protected:
    /**
@@ -148,9 +147,9 @@ private:
    QWidget * parent;
    /**
     * \brief Even inside the class (or any subclasses), this should never be accessed directly but always through
-    *        \c this->getFieldType, as there is special case handling for \c Measurement::PhysicalQuantity::Mixed.
+    *        \c this->getPhysicalQuantity, as there is special case handling for \c Mixed2PhysicalQuantities.
     */
-   BtFieldType const fieldType;
+   Measurement::PhysicalQuantities const physicalQuantities;
 
 protected:
    /**
@@ -158,14 +157,14 @@ protected:
     *        to store the amount of this field.  This is normally fixed as our "standard" (normally metric) unit for the
     *        \c Measurement::PhysicalQuantity of the field -- eg kilograms for Mass, liters for Volume,
     *        celsius for Temperature, minutes for Time, etc.  However, for \c fieldType of
-    *        \c Measurement::PhysicalQuantity::Mixed, this will need to vary between \c Measurement::Units::kilograms
-    *        and \c Measurement::Units::liters depending on whether the current field is to be measured by weight or
-    *        volume.
+    *        \c Mixed2PhysicalQuantities, this will need to vary between two different \c Measurement::Units values
+    *        depending on which \c Measurement::PhysicalQuantity the field is currently set to measure.
     *
-    *        If \c fieldType is not a \c Measurement::PhysicalQuantity, this will be \c nullptr
+    *        If \c fieldType is \c NonPhysicalQuantity, this will be \c nullptr
     */
    Measurement::Unit const * units;
    QString editField;
    QString configSection;
 };
+
 #endif

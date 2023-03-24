@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * PrimingDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * PrimingDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,27 +19,27 @@
 #pragma once
 
 #include <QDialog>
-#include <QWidget>
-#include <QButtonGroup>
 #include "ui_primingDialog.h"
+
+class QButtonGroup;
+class QWidget;
 
 /*!
  * \class PrimingDialog
  *
- * \brief Dialog to calculate priming sugar amounts.
+ * \brief Dialog to calculate priming sugar amounts
  */
-class PrimingDialog : public QDialog, public Ui::primingDialog
-{
-   Q_OBJECT
-   public:
-      PrimingDialog(QWidget* parent = 0);
-      ~PrimingDialog();
+class PrimingDialog : public QDialog, public Ui::primingDialog {
+Q_OBJECT
+public:
+   PrimingDialog(QWidget* parent = nullptr);
+   virtual ~PrimingDialog();
 
-   public slots:
-      void calculate();
+public slots:
+   void calculate();
 
-   private:
-      QButtonGroup* sugarGroup;
+private:
+   QButtonGroup* sugarGroup;
 };
 
 #endif

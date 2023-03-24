@@ -514,12 +514,12 @@
   <customwidget>
    <class>BtGenericDigit</class>
    <extends>QLabel</extends>
-   <header>BtDigitWidget.h</header>
+   <header>widgets/BtDigitWidget.h</header>
   </customwidget>
   <customwidget>
    <class>BtMassDigit</class>
    <extends>QLabel</extends>
-   <header>BtDigitWidget.h</header>
+   <header>widgets/BtAmountDigitWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/YeastTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -49,13 +49,13 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
    BtTableModelInventory{
       parent,
       editable,
-      {{YEASTNAMECOL,      {tr("Name"),       NonPhysicalQuantity::String,          ""      }},
-       {YEASTLABCOL,       {tr("Laboratory"), NonPhysicalQuantity::String,          ""      }},
-       {YEASTPRODIDCOL,    {tr("Product ID"), NonPhysicalQuantity::String,          ""      }},
-       {YEASTTYPECOL,      {tr("Type"),       NonPhysicalQuantity::String,          ""      }},
-       {YEASTFORMCOL,      {tr("Form"),       NonPhysicalQuantity::String,          ""      }},
-       {YEASTAMOUNTCOL,    {tr("Amount"),     Measurement::PhysicalQuantity::Mixed, "amount"}},
-       {YEASTINVENTORYCOL, {tr("Inventory"),  NonPhysicalQuantity::Count,           ""      }}}
+      {{YEASTNAMECOL,      {tr("Name"),       NonPhysicalQuantity::String                   , ""                           }},
+       {YEASTLABCOL,       {tr("Laboratory"), NonPhysicalQuantity::String                   , ""                           }},
+       {YEASTPRODIDCOL,    {tr("Product ID"), NonPhysicalQuantity::String                   , ""                           }},
+       {YEASTTYPECOL,      {tr("Type"),       NonPhysicalQuantity::String                   , ""                           }},
+       {YEASTFORMCOL,      {tr("Form"),       NonPhysicalQuantity::String                   , ""                           }},
+       {YEASTAMOUNTCOL,    {tr("Amount"),     Measurement::PqEitherMassOrVolumeConcentration, *PropertyNames::Yeast::amount}},
+       {YEASTINVENTORYCOL, {tr("Inventory"),  NonPhysicalQuantity::Count                    , ""                           }}}
    },
    BtTableModelData<Yeast>{} {
 

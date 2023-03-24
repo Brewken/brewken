@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/SaltTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -64,10 +64,10 @@ SaltTableModel::SaltTableModel(QTableView* parent) :
    BtTableModelRecipeObserver{
       parent,
       false,
-      {{SALTNAMECOL,    {tr("Name"),     NonPhysicalQuantity::String,          ""      }},
-       {SALTAMOUNTCOL,  {tr("Amount"),   Measurement::PhysicalQuantity::Mixed, "amount"}},
-       {SALTADDTOCOL,   {tr("Added To"), NonPhysicalQuantity::String,          ""      }},
-       {SALTPCTACIDCOL, {tr("% Acid"),   NonPhysicalQuantity::Percentage,      ""      }}}
+      {{SALTNAMECOL,    {tr("Name"),     NonPhysicalQuantity::String                   , ""                          }},
+       {SALTAMOUNTCOL,  {tr("Amount"),   Measurement::PqEitherMassOrVolumeConcentration, *PropertyNames::Salt::amount}},
+       {SALTADDTOCOL,   {tr("Added To"), NonPhysicalQuantity::String                   , ""                          }},
+       {SALTPCTACIDCOL, {tr("% Acid"),   NonPhysicalQuantity::Percentage               , ""                          }}}
    },
    BtTableModelData<Salt>{} {
    setObjectName("saltTable");
