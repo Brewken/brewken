@@ -21,6 +21,7 @@
 #include "OgAdjuster.h"
 
 #include "Algorithms.h"
+#include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/Equipment.h"
 #include "model/Recipe.h"
@@ -48,7 +49,7 @@ void OgAdjuster::calculate() {
    // Get inputs.
    double sg          = lineEdit_sg->toCanonical().quantity();
    bool   okPlato = true;
-   double plato       = lineEdit_plato->toDoubleRaw(&okPlato);
+   double plato       = Measurement::extractRawFromString<double>(lineEdit_plato->text(), &okPlato);
    double temp_c      = lineEdit_temp->toCanonical().quantity();
    double hydroTemp_c = lineEdit_calTemp->toCanonical().quantity();
    double wort_l      = lineEdit_volume->toCanonical().quantity();

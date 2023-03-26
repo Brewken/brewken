@@ -39,19 +39,18 @@ public:
    Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
 
    BtAmountDigitWidget(QWidget * parent,
-                       Measurement::PhysicalQuantities const physicalQuantities,
-                       Measurement::Unit const * units = nullptr);
+                       Measurement::PhysicalQuantities const physicalQuantities);
    virtual ~BtAmountDigitWidget();
 
-   /**
-    * \see \c UiAmountWithUnits for what this member function needs to do
-    */
-   virtual QString getWidgetText() const;
-
-   /**
-    * \see \c UiAmountWithUnits for what this member function needs to do
-    */
-   virtual void    setWidgetText(QString text);
+///   /**
+///    * \see \c UiAmountWithUnits for what this member function needs to do
+///    */
+///   virtual QString getWidgetText() const;
+///
+///   /**
+///    * \see \c UiAmountWithUnits for what this member function needs to do
+///    */
+///   virtual void    setWidgetText(QString text);
 
 public slots:
    /**

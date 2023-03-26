@@ -139,7 +139,7 @@ public:
    using LookupMap = std::map<BtStringConst const *, TypeInfo>;
 
    /**
-    * \brief Construct a \c TypeLookup that optinoally extends an existing one (typically from the parent class)
+    * \brief Construct a \c TypeLookup that optionally extends an existing one (typically from the parent class)
     *
     * \param className Name of the class for which this is the property type lookup.  Eg for the \c TypeLookup for
     *                  \c Hop, this should be "Hop".  Used for error logging.

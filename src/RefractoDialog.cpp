@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RefractoDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * RefractoDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -45,9 +45,9 @@ void RefractoDialog::calculate() {
 
    // User can enter in specific gravity or Plato, but the lineEdit is going to convert it to Plato, so we can just
    // grab the number
-   double originalPlato = lineEdit_op->toDoubleRaw(&haveOP);
-   double inputOG       = lineEdit_inputOG->toDoubleRaw(&haveOG);
-   double currentPlato  = lineEdit_cp->toDoubleRaw(&haveCP);
+   double originalPlato = Measurement::extractRawFromString<double>(lineEdit_op     ->text(), &haveOP);
+   double inputOG       = Measurement::extractRawFromString<double>(lineEdit_inputOG->text(), &haveOG);
+   double currentPlato  = Measurement::extractRawFromString<double>(lineEdit_cp     ->text(), &haveCP);
 
    clearOutputFields();
 

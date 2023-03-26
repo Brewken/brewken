@@ -19,30 +19,29 @@
 #include "widgets/BtAmountDigitWidget.h"
 
 BtAmountDigitWidget::BtAmountDigitWidget(QWidget * parent,
-                                         Measurement::PhysicalQuantities const physicalQuantities,
-                                         Measurement::Unit const * units) :
+                                         Measurement::PhysicalQuantities const physicalQuantities) :
    BtDigitWidget{parent, ConvertToBtFieldType(physicalQuantities)},
-   UiAmountWithUnits(parent, physicalQuantities, units) {
+   UiAmountWithUnits(parent, physicalQuantities) {
    return;
 }
 
 BtAmountDigitWidget::~BtAmountDigitWidget() = default;
 
-QString BtAmountDigitWidget::getWidgetText() const {
-   return this->text();
-}
-
-void BtAmountDigitWidget::setWidgetText(QString text) {
-   this->QLabel::setText(text);
-   return;
-}
+///QString BtAmountDigitWidget::getWidgetText() const {
+///   return this->text();
+///}
+///
+///void BtAmountDigitWidget::setWidgetText(QString text) {
+///   this->QLabel::setText(text);
+///   return;
+///}
 
 void BtAmountDigitWidget::displayChanged(PreviousScaleInfo previousScaleInfo) {
-   this->textOrUnitsChanged(previousScaleInfo);
+   this->QLabel::setText(this->correctEnteredText(this->text(), previousScaleInfo));
    return;
 }
 
 BtMassDigit::BtMassDigit(QWidget* parent) :
-   BtAmountDigitWidget{parent, Measurement::PhysicalQuantity::Mass, &Measurement::Units::kilograms} {
+   BtAmountDigitWidget{parent, Measurement::PhysicalQuantity::Mass} {
    return;
 }

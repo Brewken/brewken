@@ -190,6 +190,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/BtAmountDigitWidget.cpp
     ${repoDir}/src/widgets/BtDigitWidget.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
+    ${repoDir}/src/widgets/SmartLabel.cpp
     ${repoDir}/src/widgets/SmartLineEdit.cpp
     ${repoDir}/src/widgets/ToggleSwitch.cpp
     ${repoDir}/src/widgets/UnitAndScalePopUpMenu.cpp

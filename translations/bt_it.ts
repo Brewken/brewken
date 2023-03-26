@@ -4327,6 +4327,13 @@ Il Volume finale del primo è %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartLabel</name>
+    <message>
+        <source>Color (%1)</source>
+        <translation type="unfinished">Colore (%1)</translation>
+    </message>
+</context>
+<context>
     <name>StyleEditor</name>
     <message>
         <source>Style name</source>

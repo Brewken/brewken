@@ -32,45 +32,122 @@
 #include "measurement/Measurement.h"
 #include "utils/OptionalHelpers.h"
 
-UiAmountWithUnits::UiAmountWithUnits(QWidget * parent,
-                                     Measurement::PhysicalQuantities const physicalQuantities,
-                                     Measurement::Unit const * units) :
-   parent{parent},
-   physicalQuantities{physicalQuantities},
-   units{units} {
+// This private implementation class holds all private non-virtual members of UiAmountWithUnits
+class UiAmountWithUnits::impl {
+public:
+   impl(UiAmountWithUnits & self,
+        QWidget const * const parent,
+        Measurement::PhysicalQuantities const physicalQuantities) :
+      m_self                     {self},
+      m_parent                   {parent},
+      m_allowedPhysicalQuantities{physicalQuantities},
+      m_currentPhysicalQuantity  {
+         // If the field supports more than one PhysicalQuantity (eg PqEitherMassOrVolume or
+         // PqEitherMassOrVolumeConcentration), our starting assumption is that we hold the second one (eg Volume or
+         // VolumeConcentration).  Currently this matters because the assumption is baked into the UI of MiscEditor,
+         // but we should change that at some point.
+         std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) ?
+            std::get<Measurement::PhysicalQuantity>(physicalQuantities) :
+            std::get<1>(std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities))
+      } {
+      return;
+   }
+
+   ~impl() = default;
+
+   /**
+    * \brief Returns the contents of the field converted, if necessary, to SI units
+    *
+    * \param enteredText
+    * \param previousScaleInfo
+    */
+   Measurement::Amount toCanonical(QString const & enteredText, PreviousScaleInfo previousScaleInfo) {
+      qDebug() <<
+         Q_FUNC_INFO << "enteredText:" << enteredText <<  ", old SystemOfMeasurement:" <<
+         previousScaleInfo.oldSystemOfMeasurement << ", old ForcedScale: " << previousScaleInfo.oldForcedScale;
+
+      Measurement::UnitSystem const & oldUnitSystem =
+         Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement,
+                                              this->m_currentPhysicalQuantity);
+
+      Measurement::Unit const * defaultUnit{
+         previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
+      };
+
+      // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
+      // oldUnitSystem.  However, we can recover.
+      if (!defaultUnit) {
+         qWarning() << Q_FUNC_INFO << "previousScaleInfo.oldForcedScale invalid?" << previousScaleInfo.oldForcedScale;
+         defaultUnit = oldUnitSystem.unit();
+      }
+
+      //
+      // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
+      // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
+      // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
+      // specific field or, failing that, what is configured globally.
+      //
+      // Measurement::UnitSystem::qStringToSI will handle all the logic to deal with any units specified by the user in the
+      // string.  (In theory, we just grab the units that the user has specified in the input text.  In reality, it's not
+      // that easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we
+      // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
+      // gallons, then we'll go with US customary gallons over Imperial ones.)
+      //
+      auto amount = oldUnitSystem.qstringToSI(enteredText, *defaultUnit);
+      qDebug() << Q_FUNC_INFO << "Converted to" << amount;
+      return amount;
+   }
+
+   UiAmountWithUnits &                   m_self;
+   QWidget const * const                 m_parent;
+   Measurement::PhysicalQuantities const m_allowedPhysicalQuantities;
+   Measurement::PhysicalQuantity         m_currentPhysicalQuantity;
+   QString                               m_editField;
+   QString                               m_configSection;
+
+};
+
+
+UiAmountWithUnits::UiAmountWithUnits(QWidget const * const parent,
+                                     Measurement::PhysicalQuantities const physicalQuantities) :
+   pimpl{std::make_unique<impl>(*this, parent, physicalQuantities)} {
    return;
 }
 
 UiAmountWithUnits::~UiAmountWithUnits() = default;
 
 Measurement::PhysicalQuantity UiAmountWithUnits::getPhysicalQuantity() const {
-   // If it's not a "mixed" field (ie one in which the measurement could be for more than one
-   // Measurement::PhysicalQuantity, eg Mass & Volume), just return what it is
-   if (std::holds_alternative<Measurement::PhysicalQuantity>(this->physicalQuantities)) {
-      return std::get<Measurement::PhysicalQuantity>(this->physicalQuantities);
-   }
-   // If it is a "mixed" field, we should return the physical quantity corresponding to the current units
-   auto const physicalQuantity = this->units->getPhysicalQuantity();
-   // It's a coding error if we somehow have units other than Mass or Volume
-   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(this->physicalQuantities);
+   return this->pimpl->m_currentPhysicalQuantity;
+}
+
+void UiAmountWithUnits::selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity) {
+   // It's a coding error to call this if we only hold one PhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<Measurement::PhysicalQuantity>(this->pimpl->m_allowedPhysicalQuantities));
+
+   // It's a coding error to try to select a PhysicalQuantity that was not specified in the constructor
+   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(this->pimpl->m_allowedPhysicalQuantities);
    Q_ASSERT(std::get<0>(tupleOfPqs) == physicalQuantity ||
             std::get<1>(tupleOfPqs) == physicalQuantity);
-   return physicalQuantity;
+
+   this->pimpl->m_currentPhysicalQuantity = physicalQuantity;
+   return;
 }
 
 void UiAmountWithUnits::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
-   Measurement::setForcedSystemOfMeasurementForField(this->editField, this->configSection, systemOfMeasurement);
+   Measurement::setForcedSystemOfMeasurementForField(this->pimpl->m_editField,
+                                                     this->pimpl->m_configSection,
+                                                     systemOfMeasurement);
    return;
 }
 
 std::optional<Measurement::SystemOfMeasurement> UiAmountWithUnits::getForcedSystemOfMeasurement() const {
-   return Measurement::getForcedSystemOfMeasurementForField(this->editField, this->configSection);
+   return Measurement::getForcedSystemOfMeasurementForField(this->pimpl->m_editField, this->pimpl->m_configSection);
 }
 
 void UiAmountWithUnits::setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString) {
    qDebug() <<
-      Q_FUNC_INFO << "Measurement system" << systemOfMeasurementAsString << "for" << this->configSection << ">" <<
-      this->editField;
+      Q_FUNC_INFO << "Measurement system" << systemOfMeasurementAsString << "for" << this->pimpl->m_configSection <<
+      ">" << this->pimpl->m_editField;
    this->setForcedSystemOfMeasurement(Measurement::getFromUniqueName(systemOfMeasurementAsString));
    return;
 }
@@ -81,17 +158,18 @@ QString UiAmountWithUnits::getForcedSystemOfMeasurementViaString() const {
 }
 
 void UiAmountWithUnits::setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
-   Measurement::setForcedRelativeScaleForField(this->editField, this->configSection, relativeScale);
+   Measurement::setForcedRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_configSection, relativeScale);
    return;
 }
 
 std::optional<Measurement::UnitSystem::RelativeScale> UiAmountWithUnits::getForcedRelativeScale() const {
-   return Measurement::getForcedRelativeScaleForField(this->editField, this->configSection);
+   return Measurement::getForcedRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_configSection);
 }
 
 void UiAmountWithUnits::setForcedRelativeScaleViaString(QString relativeScaleAsString) {
    qDebug() <<
-      Q_FUNC_INFO << "Scale" << relativeScaleAsString << "for" << this->configSection << ">" << this->editField;
+      Q_FUNC_INFO << "Scale" << relativeScaleAsString << "for" << this->pimpl->m_configSection << ">" <<
+      this->pimpl->m_editField;
    this->setForcedRelativeScale(Measurement::UnitSystem::getScaleFromUniqueName(relativeScaleAsString));
    return;
 }
@@ -102,80 +180,75 @@ QString UiAmountWithUnits::getForcedRelativeScaleViaString() const {
 }
 
 void UiAmountWithUnits::setEditField(QString editField) {
-   this->editField = editField;
+   this->pimpl->m_editField = editField;
    return;
 }
 
 QString UiAmountWithUnits::getEditField() const {
-   return this->editField;
+   return this->pimpl->m_editField;
 }
 
 void UiAmountWithUnits::setConfigSection(QString configSection) {
    // The cascade looks a little odd, but it is intentional.
-   this->configSection = configSection;
-   if (this->configSection.isEmpty()) {
-      this->configSection = this->parent->property("configSection").toString();
+   this->pimpl->m_configSection = configSection;
+   if (this->pimpl->m_configSection.isEmpty()) {
+      this->pimpl->m_configSection = this->pimpl->m_parent->property("configSection").toString();
    }
-   if (this->configSection.isEmpty()) {
-      this->configSection = this->parent->objectName();
+   if (this->pimpl->m_configSection.isEmpty()) {
+      this->pimpl->m_configSection = this->pimpl->m_parent->objectName();
    }
    return;
 }
 
 QString UiAmountWithUnits::getConfigSection() {
-   if (this->configSection.isEmpty()) {
+   if (this->pimpl->m_configSection.isEmpty()) {
       // Setting the config section to blank will actually attempt to populate it with default values -- see
       // UiAmountWithUnits::setConfigSection()
       this->setConfigSection("");
    }
 
-   return this->configSection;
+   return this->pimpl->m_configSection;
 }
 
-double UiAmountWithUnits::toDoubleRaw(bool * ok) const {
-   return Measurement::extractRawFromString<double>(this->getWidgetText(), ok);
-}
+///double UiAmountWithUnits::toDoubleRaw(bool * ok) const {
+///   return Measurement::extractRawFromString<double>(this->getWidgetText(), ok);
+///}
 
-Measurement::Amount UiAmountWithUnits::toCanonical() const {
-   Q_ASSERT(this->units);
-   return Measurement::qStringToSI(this->getWidgetText(),
-                                   this->units->getPhysicalQuantity(),
+Measurement::Amount UiAmountWithUnits::rawToCanonical(QString const & rawValue) const {
+   return Measurement::qStringToSI(rawValue,
+                                   this->pimpl->m_currentPhysicalQuantity,
                                    this->getForcedSystemOfMeasurement(),
                                    this->getForcedRelativeScale());
 }
-
 
 QString UiAmountWithUnits::displayAmount(double amount, int precision) const {
    // I find this a nice level of abstraction. This lets all of the setText()
    // methods make a single call w/o having to do the logic for finding the
    // unit and scale.
-   if (this->units) {
-      return Measurement::displayAmount(Measurement::Amount{amount, *this->units},
-                                        precision,
-                                        this->getForcedSystemOfMeasurement(),
-                                        this->getForcedRelativeScale());
-   }
-   return Measurement::displayQuantity(amount, precision);
+   return Measurement::displayAmount(
+      Measurement::Amount{amount, Measurement::Unit::getCanonicalUnit(this->pimpl->m_currentPhysicalQuantity)},
+      precision,
+      this->getForcedSystemOfMeasurement(),
+      this->getForcedRelativeScale()
+   );
 }
 
-void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) {
-   // This is where it gets hard
-   //
-   // We may need to fix the text that the user entered, eg if this field is set to show US Customary volumes and user
-   // enters an amount in litres then we need to convert it to display in pints or quarts etc.
+QString UiAmountWithUnits::correctEnteredText(QString const & enteredText, PreviousScaleInfo previousScaleInfo) {
    QString correctedText;
 
-   QString rawValue = this->getWidgetText();
-   qDebug() << Q_FUNC_INFO << "rawValue:" << rawValue;
+   qDebug() << Q_FUNC_INFO << "enteredText:" << enteredText;
 
-   if (rawValue.isEmpty()) {
-      return;
+   if (enteredText.isEmpty()) {
+      return enteredText;
    }
 
    // The idea here is we need to first translate the field into a known
    // amount (aka to SI) and then into the unit we want.
-   Measurement::Amount amountAsCanonical = this->convertToSI(previousScaleInfo);
+   Measurement::Amount amountAsCanonical = this->pimpl->toCanonical(enteredText, previousScaleInfo);
 
+   //
+   // .:TBD:. This seems like a hack we should do away with...
+   //
    Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
    int precision = 3;
    if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
@@ -183,48 +256,75 @@ void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) 
    }
    correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
    qDebug() <<
-      Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
-   qDebug() << Q_FUNC_INFO << "this->units=" << this->units;
+      Q_FUNC_INFO << "Interpreted" << enteredText << "as" << amountAsCanonical << "and corrected to" << correctedText;
 
-   this->setWidgetText(correctedText);
-   return;
+   return correctedText;
 }
 
-Measurement::Amount UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
-   QString rawValue = this->getWidgetText();
-   qDebug() <<
-      Q_FUNC_INFO << "rawValue:" << rawValue <<  ", old SystemOfMeasurement:" << previousScaleInfo.oldSystemOfMeasurement <<
-      ", old ForcedScale: " << previousScaleInfo.oldForcedScale;
+///void UiAmountWithUnits::textOrUnitsChanged(PreviousScaleInfo previousScaleInfo) {
+///   // This is where it gets hard
+///   //
+///   // We may need to fix the text that the user entered, eg if this field is set to show US Customary volumes and user
+///   // enters an amount in litres then we need to convert it to display in pints or quarts etc.
+///   QString correctedText;
+///
+///   QString rawValue = this->getWidgetText();
+///   qDebug() << Q_FUNC_INFO << "rawValue:" << rawValue;
+///
+///   if (rawValue.isEmpty()) {
+///      return;
+///   }
+///
+///   // The idea here is we need to first translate the field into a known
+///   // amount (aka to SI) and then into the unit we want.
+///   Measurement::Amount amountAsCanonical = this->convertToSI(previousScaleInfo);
+///
+///   Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
+///   int precision = 3;
+///   if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
+///      precision = 0;
+///   }
+///   correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
+///   qDebug() <<
+///      Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
+///
+///   this->setWidgetText(correctedText);
+///   return;
+///}
 
-   Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
-
-   Measurement::UnitSystem const & oldUnitSystem =
-      Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement, physicalQuantity);
-
-   Measurement::Unit const * defaultUnit{
-      previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
-   };
-
-   // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
-   // oldUnitSystem.  However, we can recover.
-   if (!defaultUnit) {
-      qWarning() << Q_FUNC_INFO << "previousScaleInfo.oldForcedScale invalid?" << previousScaleInfo.oldForcedScale;
-      defaultUnit = oldUnitSystem.unit();
-   }
-
-   //
-   // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
-   // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
-   // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
-   // specific field or, failing that, what is configured globally.
-   //
-   // Measurement::UnitSystem::qStringToSI will handle all the logic to deal with any units specified by the user in the
-   // string.  (In theory, we just grab the units that the user has specified in the input text.  In reality, it's not
-   // that easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we
-   // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
-   // gallons, then we'll go with US customary gallons over Imperial ones.)
-   //
-   auto amount = oldUnitSystem.qstringToSI(rawValue, *defaultUnit);
-   qDebug() << Q_FUNC_INFO << "Converted to" << amount;
-   return amount;
-}
+///Measurement::Amount UiAmountWithUnits::convertToSI(PreviousScaleInfo previousScaleInfo) {
+///   QString rawValue = this->getWidgetText();
+///   qDebug() <<
+///      Q_FUNC_INFO << "rawValue:" << rawValue <<  ", old SystemOfMeasurement:" <<
+///      previousScaleInfo.oldSystemOfMeasurement << ", old ForcedScale: " << previousScaleInfo.oldForcedScale;
+///
+///   Measurement::UnitSystem const & oldUnitSystem =
+///      Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement, this->pimpl->m_currentPhysicalQuantity);
+///
+///   Measurement::Unit const * defaultUnit{
+///      previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
+///   };
+///
+///   // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
+///   // oldUnitSystem.  However, we can recover.
+///   if (!defaultUnit) {
+///      qWarning() << Q_FUNC_INFO << "previousScaleInfo.oldForcedScale invalid?" << previousScaleInfo.oldForcedScale;
+///      defaultUnit = oldUnitSystem.unit();
+///   }
+///
+///   //
+///   // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
+///   // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
+///   // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
+///   // specific field or, failing that, what is configured globally.
+///   //
+///   // Measurement::UnitSystem::qStringToSI will handle all the logic to deal with any units specified by the user in the
+///   // string.  (In theory, we just grab the units that the user has specified in the input text.  In reality, it's not
+///   // that easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we
+///   // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
+///   // gallons, then we'll go with US customary gallons over Imperial ones.)
+///   //
+///   auto amount = oldUnitSystem.qstringToSI(rawValue, *defaultUnit);
+///   qDebug() << Q_FUNC_INFO << "Converted to" << amount;
+///   return amount;
+///}

@@ -49,20 +49,21 @@ class BtAmountEdit : public BtLineEdit, public UiAmountWithUnits {
 public:
    BtAmountEdit(QWidget * parent,
                 Measurement::PhysicalQuantities const physicalQuantities,
-                Measurement::Unit const * units,
                 int const defaultPrecision = 3,
                 QString const & maximalDisplayString = "100.000 srm");
    virtual ~BtAmountEdit();
 
-   /**
-    * \see \c UiAmountWithUnits for what this member function needs to do
-    */
-   virtual QString getWidgetText() const;
+///   /**
+///    * \see \c UiAmountWithUnits for what this member function needs to do
+///    */
+///   virtual QString getWidgetText() const;
+///
+///   /**
+///    * \see \c UiAmountWithUnits for what this member function needs to do
+///    */
+///   virtual void setWidgetText(QString text);
 
-   /**
-    * \see \c UiAmountWithUnits for what this member function needs to do
-    */
-   virtual void setWidgetText(QString text);
+   Measurement::Amount toCanonical() const;
 
    // Use one of these when you just want to set the text
    void setText(NamedEntity* element);

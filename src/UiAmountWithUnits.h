@@ -23,6 +23,7 @@
 #define UIAMOUNTWITHUNITS_H
 #pragma once
 
+#include <memory> // For PImpl
 #include <optional>
 
 #include <QString>
@@ -39,42 +40,49 @@ struct PreviousScaleInfo {
 };
 
 /**
- * \class UiAmountWithUnits A base class, suitable for combining with \c QLabel, \c QLineEdit, etc, that handles all the
- *                          unit transformation such a widget would need to do.  It is inherited by \c BtDigitWidget and
+ * \class UiAmountWithUnits A class, suitable for combining with \c QLabel, \c QLineEdit, etc, that handles all the unit
+ *                          transformation such a widget would need to do.  It is inherited by \c BtDigitWidget and
  *                          \c BtAmountEdit.
  */
 class UiAmountWithUnits {
 public:
    /**
-    * \param parent
+    * \param parent The \c QWidget that "owns" us.  Used for looking up config section names for retrieving forced
+    *               scales etc for this individual field
     * \param physicalQuantities the \c PhysicalQuantity or \c Mixed2PhysicalQuantities to which this amount relates
-    * \param units
     */
-   UiAmountWithUnits(QWidget * parent,
-                     Measurement::PhysicalQuantities const physicalQuantities,
-                     Measurement::Unit const * units = nullptr);
+   UiAmountWithUnits(QWidget const * const parent,
+                     Measurement::PhysicalQuantities const physicalQuantities);
    virtual ~UiAmountWithUnits();
 
-   /**
-    * \brief A class inheriting from this class is also expected to also inherit from a \c QWidget such as \c QLabel or
-    *        \c QLineEdit.  We would like to be able to access the text() member function of that parent class in parts
-    *        of our own implementation.  This is a bit tricky as \c QLabel::text() and \c QLineEdit::text() are actually
-    *        unrelated, despite both having the same signature.  We therefore require child classes to implement this
-    *        wrapper function that returns the value of \c text() from their other superclass.
-    */
-   virtual QString getWidgetText() const = 0;
-
-   /**
-    * \brief Similar to \c getText(), this allows this base class to access \c QLabel::setText() or
-    *        \c QLineEdit::setText() in the subclass that also inherits from \c QLabel or \c QLineEdit.
-    */
-   virtual void setWidgetText(QString text) = 0;
+///   /**
+///    * \brief A class inheriting from this class is also expected to also inherit from a \c QWidget such as \c QLabel or
+///    *        \c QLineEdit.  We would like to be able to access the text() member function of that parent class in parts
+///    *        of our own implementation.  This is a bit tricky as \c QLabel::text() and \c QLineEdit::text() are actually
+///    *        unrelated, despite both having the same signature.  We therefore require child classes to implement this
+///    *        wrapper function that returns the value of \c text() from their other superclass.
+///    */
+///   virtual QString getWidgetText() const = 0;
+///
+///   /**
+///    * \brief Similar to \c getText(), this allows this base class to access \c QLabel::setText() or
+///    *        \c QLineEdit::setText() in the subclass that also inherits from \c QLabel or \c QLineEdit.
+///    */
+///   virtual void setWidgetText(QString text) = 0;
 
    /**
     * \brief Returns what type of field this is - except that, if it is \c Mixed2PhysicalQuantities, will one of the two
     *        possible \c Measurement::PhysicalQuantity values depending on the value of \c this->units.
     */
    Measurement::PhysicalQuantity getPhysicalQuantity() const;
+
+   /**
+    * \brief If the \c Measurement::PhysicalQuantities supplied in the constructor was not a single
+    *        \c Measurement::PhysicalQuantity, then this member function permits selecting the current
+    *        \c Measurement::PhysicalQuantity from two in the \c Measurement::Mixed2PhysicalQuantities supplied in the
+    *        constructor.
+    */
+   void selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity);
 
    void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
    void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
@@ -113,58 +121,67 @@ public:
    void    setConfigSection(QString configSection);
    QString getConfigSection();
 
-   /**
-    * \brief Converts the numeric part of the input field to a double, ignoring any string suffix.  So "5.5 gal" will
-    *        give 5.5, "20L" will return 20.0, and so on.
-    */
-   double toDoubleRaw(bool * ok = nullptr) const;
+///   /**
+///    * \brief Converts the numeric part of the input field to a double, ignoring any string suffix.  So "5.5 gal" will
+///    *        give 5.5, "20L" will return 20.0, and so on.
+///    */
+///   double toDoubleRaw(bool * ok = nullptr) const;
 
    /**
     * \brief Returns the field converted to canonical units for the relevant \c Measurement::PhysicalQuantity
+    *
+    * \param rawValue field text to process
+    * \return
     */
-   Measurement::Amount toCanonical() const;
+   Measurement::Amount rawToCanonical(QString const & rawValue) const;
 
    /**
     * \brief Use this when you want to do something with the returned QString
-    */
-   QString displayAmount(double amount, int precision = 3) const;
-
-protected:
-   /**
-    * \brief
-    */
-   void textOrUnitsChanged(PreviousScaleInfo previousScaleInfo);
-
-   /**
-    * \brief Returns the contents of the field converted, if necessary, to SI units
     *
-    * \param oldSystemOfMeasurement
-    * \param oldScale (optional)
+    * \param amount Must be in canonical units eg kilograms for mass, liters for volume
     */
-   Measurement::Amount convertToSI(PreviousScaleInfo previousScaleInfo);
+   [[nodiscard]] QString displayAmount(double amount, int precision = 3) const;
 
-private:
-   QWidget * parent;
    /**
-    * \brief Even inside the class (or any subclasses), this should never be accessed directly but always through
-    *        \c this->getPhysicalQuantity, as there is special case handling for \c Mixed2PhysicalQuantities.
+    * \brief When the user has finished entering some text, this function does the corrections, eg if the field is set
+    *        to show US Customary volumes and user enters an amount in liters (aka litres) then we need to convert it to
+    *        display in pints or quarts etc.
+    * \param enteredText Typically retrieved by caller from \c QLabel::text() or \c QLineEdit::text()
+    * \param previousScaleInfo
+    *
+    * \return Corrected text that caller should typically pass back to \c QLabel::setText() or \c QLineEdit::setText()
     */
-   Measurement::PhysicalQuantities const physicalQuantities;
+   [[nodiscard]] QString correctEnteredText(QString const & enteredText, PreviousScaleInfo previousScaleInfo);
+
+protected:
+///   /**
+///    * \brief
+///    */
+///   void textOrUnitsChanged(PreviousScaleInfo previousScaleInfo);
+private:
+///   /**
+///    * \brief Returns the contents of the field converted, if necessary, to SI units
+///    *
+///    * \param oldSystemOfMeasurement
+///    * \param oldScale (optional)
+///    */
+///   Measurement::Amount convertToSI(PreviousScaleInfo previousScaleInfo);
 
 protected:
    /**
-    * \brief If \c fieldType is a \c Measurement::PhysicalQuantity, this is the \c Measurement::Unit that should be used
-    *        to store the amount of this field.  This is normally fixed as our "standard" (normally metric) unit for the
-    *        \c Measurement::PhysicalQuantity of the field -- eg kilograms for Mass, liters for Volume,
-    *        celsius for Temperature, minutes for Time, etc.  However, for \c fieldType of
+    * \brief If \c physicalQuantities is a \c Measurement::PhysicalQuantity, this is the \c Measurement::Unit that
+    *        should be used to store the amount of this field.  This is normally fixed as our "standard" (normally
+    *        metric) unit for the \c Measurement::PhysicalQuantity of the field -- eg kilograms for Mass, liters for
+    *        Volume, celsius for Temperature, minutes for Time, etc.  However, for \c physicalQuantities of
     *        \c Mixed2PhysicalQuantities, this will need to vary between two different \c Measurement::Units values
     *        depending on which \c Measurement::PhysicalQuantity the field is currently set to measure.
-    *
-    *        If \c fieldType is \c NonPhysicalQuantity, this will be \c nullptr
     */
-   Measurement::Unit const * units;
-   QString editField;
-   QString configSection;
+   Measurement::Unit const * m_canonicalUnits;
+
+private:
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
 #endif

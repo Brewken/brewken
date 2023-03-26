@@ -30,6 +30,8 @@
 #include <QWidget>
 
 #include "BtFieldType.h"
+#include "utils/TypeLookup.h"
+#include "UiAmountWithUnits.h"
 
 /*!
  * \class SmartLineEdit
@@ -40,7 +42,7 @@
  *        \c widgets/SmartLabel.h for more details on the relationship between the two classes.
  *
  *        Typically, each \c SmartLineEdit and \c SmartLabel instance are declared in a dialog's Qt Designer UI File
- *        (\c ui/hopEditor.ui).  After it is constructed, the needs to be configured via \c SmartLineEdit::configure.
+ *        (\c ui/hopEditor.ui).  After it is constructed, the needs to be configured via \c SmartLineEdit::init.
  *
  *        This two-step set-up is needed because AFAIK there is no way to pass constructor parameters to an object in a
  *        .ui file.  (If you want to do that, the advice seems to be to build the layout manually in C++ code.)
@@ -67,11 +69,72 @@ public:
    virtual ~SmartLineEdit();
 
    /**
-    * \brief TODO write this!
+    * \brief This needs to be called before the object is used, typically in constructor of whatever editor is using the
+    *        widget.
+    * \param fieldType            Tells us what \c PhysicalQuantity (or non-physical quantity such as
+    *                             \c NonPhysicalQuantity::Date, \c NonPhysicalQuantity::String, etc) this field holds
+    * \param typeInfo             Tells us what data type we use to store the contents of the field (when converted to
+    *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
+    *                             field (in which case we need to handle blank / empty string as a valid value).
+    * \param defaultPrecision     Where relevant determines the number of decimal places to show
+    * \param maximalDisplayString Used for determining the width of the widget
     */
-   void configure(BtFieldType const fieldType = NonPhysicalQuantity::String,
-                  int const defaultPrecision = 3,
-                  QString const & maximalDisplayString = "100.000 srm");
+   void init(BtFieldType const fieldType,
+             TypeInfo const & typeInfo,
+             int const defaultPrecision = 3,
+             QString const & maximalDisplayString = "100.000 srm");
+
+   BtFieldType const getFieldType() const;
+
+   TypeInfo const & getTypeInfo() const;
+
+   /**
+    * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the \c UiAmountWithUnits for handling
+    *        units.  (It is a coding error to call this function if our field type \c is \c NonPhysicalQuantity.)
+    */
+   UiAmountWithUnits const & getUiAmountWithUnits() const;
+
+   /**
+    * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the field converted to canonical
+    *        units for the relevant \c Measurement::PhysicalQuantity.  (It is a coding error to call this function if
+    *        our field type \c is \c NonPhysicalQuantity.)
+    */
+   Measurement::Amount toCanonical() const;
+
+   /**
+    * \brief Set the amount for a decimal field
+    *
+    * \param amount is the amount to display, but the field should be blank if this is \b std::nullopt
+    * \param precision is how many decimal places to show.  If not specified, the default will be used.
+    */
+   void setText(std::optional<double> amount, std::optional<int> precision = std::nullopt);
+
+   /**
+    * \brief .:TBD:. Do we need this to be able to parse numbers out of strings, or just to set string text?
+    */
+   void setText(QString               amount, std::optional<int> precision = std::nullopt);
+
+   /**
+    * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
+    *        symbols)
+    */
+   template<typename T> T getValueAs() const;
+
+public slots:
+   /**
+    * \brief This slot receives the \c QLineEdit::editingFinished signal
+    */
+   void onLineChanged();
+
+signals:
+   /**
+    * \brief Where we want "instant updates", this signal should be picked up by the editor or widget object using this
+    *        input field so it can read the changed value and update the underlying data model.
+    *
+    *        Where we want to defer updating the underlying data model until the user clicks "Save" etc, then this
+    *        signal will typically be ignored.
+    */
+   void textModified();
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

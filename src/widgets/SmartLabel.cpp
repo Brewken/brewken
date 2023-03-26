@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtLabel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartLabel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "BtLabel.h"
+#include "widgets/SmartLabel.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -31,53 +31,51 @@
 #include "utils/OptionalHelpers.h"
 #include "widgets/UnitAndScalePopUpMenu.h"
 
-BtLabel::BtLabel(QWidget *parent,
-                 BtFieldType fieldType) :
+SmartLabel::SmartLabel(QWidget *parent) :
    QLabel{parent},
-   fieldType{fieldType},
    btParent{parent},
    contextMenu{nullptr} {
-   connect(this, &QWidget::customContextMenuRequested, this, &BtLabel::popContextMenu);
+   connect(this, &QWidget::customContextMenuRequested, this, &SmartLabel::popContextMenu);
    return;
 }
 
-BtLabel::~BtLabel() = default;
+SmartLabel::~SmartLabel() = default;
 
-BtLineEdit & BtLabel::getBuddy() const {
+SmartLineEdit & SmartLabel::getBuddy() const {
    // Call QLabel's built-in function to get the buddy
    QWidget * buddy = this->buddy();
 
    // We assert that it's a coding error for there not to be a buddy!
    Q_ASSERT(buddy);
 
-   return static_cast<BtLineEdit &>(*buddy);
+   return static_cast<SmartLineEdit &>(*buddy);
 }
 
-void BtLabel::enterEvent([[maybe_unused]] QEvent * event) {
+void SmartLabel::enterEvent([[maybe_unused]] QEvent * event) {
    this->textEffect(true);
    return;
 }
 
-void BtLabel::leaveEvent([[maybe_unused]] QEvent * event) {
+void SmartLabel::leaveEvent([[maybe_unused]] QEvent * event) {
    this->textEffect(false);
    return;
 }
 
-void BtLabel::mouseReleaseEvent(QMouseEvent * event) {
+void SmartLabel::mouseReleaseEvent(QMouseEvent * event) {
    // For the moment, we want left-click and right-click to have the same effect, so when we get a left-click event, we
-   // send ourselves the right-click signal, which will then fire BtLabel::popContextMenu().
+   // send ourselves the right-click signal, which will then fire SmartLabel::popContextMenu().
    emit this->QWidget::customContextMenuRequested(event->pos());
    return;
 }
 
-void BtLabel::textEffect(bool enabled) {
+void SmartLabel::textEffect(bool enabled) {
    QFont myFont = this->font();
    myFont.setUnderline(enabled);
    this->setFont(myFont);
    return;
 }
 
-void BtLabel::initializeSection() {
+void SmartLabel::initializeSection() {
    if (!this->configSection.isEmpty()) {
       return;
    }
@@ -105,7 +103,7 @@ void BtLabel::initializeSection() {
    return;
 }
 
-void BtLabel::initializeProperty() {
+void SmartLabel::initializeProperty() {
 
    if (!this->propertyName.isEmpty()) {
       return;
@@ -122,7 +120,7 @@ void BtLabel::initializeProperty() {
    return;
 }
 
-void BtLabel::initializeMenu() {
+void SmartLabel::initializeMenu() {
    // If a context menu already exists, we need to delete it and recreate it.  We can't always reuse an existing menu
    // because the sub-menu for relative scale needs to change when a different unit system is selected.  (In theory we
    // could only recreate the context menu when a different unit system is selected, but that adds complication.)
@@ -142,15 +140,14 @@ void BtLabel::initializeMenu() {
       Q_FUNC_INFO << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement << ", forcedRelativeScale=" <<
       forcedRelativeScale;
 
-   auto fieldType = this->getBuddy().getFieldType();
+   auto const & buddy = this->getBuddy();
+   auto fieldType = buddy.getFieldType();
    if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
       return;
    }
 
-   // Since fieldType is not this->getBuddy(), we know our buddy is BtAmountEdit, not just BtLineEdit, so this cast
-   // should be safe.
-   BtAmountEdit & amountBuddy = static_cast<BtAmountEdit &>(this->getBuddy());
-   Measurement::PhysicalQuantity physicalQuantity = amountBuddy.getPhysicalQuantity();
+   // Since fieldType is not NonPhysicalQuantity this cast should be safe
+   Measurement::PhysicalQuantity const physicalQuantity = buddy.getUiAmountWithUnits().getPhysicalQuantity();
    this->contextMenu = UnitAndScalePopUpMenu::create(this->btParent,
                                                      physicalQuantity,
                                                      forcedSystemOfMeasurement,
@@ -158,7 +155,7 @@ void BtLabel::initializeMenu() {
    return;
 }
 
-void BtLabel::popContextMenu(const QPoint& point) {
+void SmartLabel::popContextMenu(const QPoint& point) {
    // For the moment, at least, we do not allow people to choose date formats per-field.  (Although you might want to
    // mix and match metric and imperial systems in certain circumstances, it's less clear that there's a benefit to
    // mixing and matching date formats.)
@@ -267,13 +264,3 @@ void BtLabel::popContextMenu(const QPoint& point) {
 
    return;
 }
-
-BtColorLabel            ::BtColorLabel            (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Color         ) { return; }
-BtDateLabel             ::BtDateLabel             (QWidget *parent) : BtLabel(parent, NonPhysicalQuantity::Date                    ) { return; }
-BtDensityLabel          ::BtDensityLabel          (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Density       ) { return; }
-BtMassLabel             ::BtMassLabel             (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Mass          ) { return; }
-BtMixedMassOrVolumeLabel::BtMixedMassOrVolumeLabel(QWidget *parent) : BtLabel(parent, Measurement::PqEitherMassOrVolume            ) { return; }
-BtTemperatureLabel      ::BtTemperatureLabel      (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Temperature   ) { return; }
-BtTimeLabel             ::BtTimeLabel             (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Time          ) { return; }
-BtVolumeLabel           ::BtVolumeLabel           (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::Volume        ) { return; }
-BtDiastaticPowerLabel   ::BtDiastaticPowerLabel   (QWidget *parent) : BtLabel(parent, Measurement::PhysicalQuantity::DiastaticPower) { return; }
