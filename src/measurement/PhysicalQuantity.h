@@ -95,7 +95,7 @@ namespace Measurement {
       Mass,           // Elsewhere we use weight instead of mass because it's more idiomatic (despite being,
                       // strictly speaking, not the same thing)
       Volume,
-      Time,           // Note this is durations of time, NOT dates or times of day
+      Time,           // Note this is durations of time, NOT dates or times of day  .:TBD:. Rename to TimeDuration
       Temperature,
       Color,
       // Density is sometimes referred to as "gravity" as a shorthand for "specific gravity".  Strictly, what we're

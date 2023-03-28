@@ -867,6 +867,7 @@ mocHeaders = files([
    'src/widgets/BtDigitWidget.h',
    'src/widgets/SelectionControl.h',
    'src/widgets/SmartLabel.h',
+   'src/widgets/SmartLineEdit.h',
    'src/widgets/ToggleSwitch.h',
    'src/YeastDialog.h',
    'src/YeastEditor.h',

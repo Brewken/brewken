@@ -20,6 +20,7 @@
 #define WIDGETS_SMARTLABEL_H
 #pragma once
 
+#include <memory> // For PImpl
 #include <optional>
 
 #include <QAction>
@@ -29,9 +30,10 @@
 #include <QPoint>
 
 #include "BtFieldType.h"
-#include "widgets/SmartLineEdit.h"
 #include "measurement/UnitSystem.h"
 #include "UiAmountWithUnits.h" // For PreviousScaleInfo
+
+class SmartLineEdit;
 
 /*!
  * \class SmartLabel
@@ -76,8 +78,12 @@ public:
    virtual ~SmartLabel();
 
    /**
-    * \brief Our "buddy" should always be a \c SmartSmartLineEditLabel.  This is a convenience function to get it
-    *        without the caller having to downcast from \c QWidget etc.
+    * \brief Our "buddy" should always be a \c SmartLineEdit.  This is a convenience function to get it without the
+    *        caller having to downcast from \c QWidget etc.
+    *
+    *        Note that the buddy relationship is not symmetric.  Although it is easy to get the buddy of a \c QLabel (or
+    *        derived class), it is not easy to go in the other direction.  In other words, if you have the buddy of a
+    *        \c QLabel, there is not built-in way in Qt to get back to the \c QLabel.
     */
    SmartLineEdit & getBuddy() const;
 
@@ -133,15 +139,15 @@ signals:
 // Using protected instead of private allows me to not use the friends
 // declaration
 protected:
-   BtFieldType fieldType;
-   QString propertyName;
-   QString configSection;
-   QWidget *btParent;
-   QMenu* contextMenu;
 
    void initializeSection();
    void initializeProperty();
    void initializeMenu();
+
+private:
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 
 };
 

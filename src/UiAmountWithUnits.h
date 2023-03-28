@@ -31,6 +31,15 @@
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "utils/BtStringConst.h"
+
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+#define AddPropertyName(property) namespace PropertyNames::UiAmountWithUnits { BtStringConst const property{#property}; }
+AddPropertyName(configSection)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
 
 class QWidget;
 

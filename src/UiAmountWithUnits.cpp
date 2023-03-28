@@ -192,7 +192,8 @@ void UiAmountWithUnits::setConfigSection(QString configSection) {
    // The cascade looks a little odd, but it is intentional.
    this->pimpl->m_configSection = configSection;
    if (this->pimpl->m_configSection.isEmpty()) {
-      this->pimpl->m_configSection = this->pimpl->m_parent->property("configSection").toString();
+      this->pimpl->m_configSection =
+         this->pimpl->m_parent->property(*PropertyNames::UiAmountWithUnits::configSection).toString();
    }
    if (this->pimpl->m_configSection.isEmpty()) {
       this->pimpl->m_configSection = this->pimpl->m_parent->objectName();
@@ -256,7 +257,8 @@ QString UiAmountWithUnits::correctEnteredText(QString const & enteredText, Previ
    }
    correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
    qDebug() <<
-      Q_FUNC_INFO << "Interpreted" << enteredText << "as" << amountAsCanonical << "and corrected to" << correctedText;
+      Q_FUNC_INFO << "Interpreted" << enteredText << "as" << amountAsCanonical << "and corrected to" << correctedText <<
+      "(Edit Field =" << this->pimpl->m_editField << "Config Section =" << this->pimpl->m_configSection << ")";
 
    return correctedText;
 }

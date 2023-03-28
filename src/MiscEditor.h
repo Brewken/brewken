@@ -20,8 +20,9 @@
 #define MISCEDITOR_H
 #pragma once
 
-#include <QDialog>
 #include "ui_miscEditor.h"
+
+#include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
 
@@ -33,17 +34,15 @@ class Misc;
  *
  * \brief View/controller dialog for editing miscs.
  */
-class MiscEditor : public QDialog, private Ui::miscEditor
-{
+class MiscEditor : public QDialog, private Ui::miscEditor {
    Q_OBJECT
 
 public:
    MiscEditor( QWidget *parent=nullptr );
-   virtual ~MiscEditor() {}
+   virtual ~MiscEditor();
    //! Set the misc we wish to view/edit.
    void setMisc( Misc* m );
   //! Create a misc with folders
-   void newMisc(QString folder);
 
 public slots:
    //! Save changes.
@@ -51,8 +50,9 @@ public slots:
    //! Clear dialog and close.
    void clearAndClose();
    //! Add a new misc
-   void newMisc();
-   void changed(QMetaProperty,QVariant);
+   void newMisc(QString folder = "");
+   void changed(QMetaProperty, QVariant);
+   void setIsWeight(bool state);
 
 private:
    Misc* obsMisc;

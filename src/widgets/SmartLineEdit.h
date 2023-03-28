@@ -33,6 +33,8 @@
 #include "utils/TypeLookup.h"
 #include "UiAmountWithUnits.h"
 
+class SmartLabel;
+
 /*!
  * \class SmartLineEdit
  *
@@ -45,7 +47,9 @@
  *        (\c ui/hopEditor.ui).  After it is constructed, the needs to be configured via \c SmartLineEdit::init.
  *
  *        This two-step set-up is needed because AFAIK there is no way to pass constructor parameters to an object in a
- *        .ui file.  (If you want to do that, the advice seems to be to build the layout manually in C++ code.)
+ *        .ui file.  (If you want to do that, the advice seems to be to build the layout manually in C++ code.)  You can
+ *        (and we do) set Qt properties from (the code generated from) a .ui file, but that means passing in everything
+ *        as a string and losing a lot of compile-time checks.
  *
  *        Similarly, we might think to template \c SmartLineEdit, but the Qt Meta-Object Compiler (moc) doesn't
  *        understand C++ templates.  This means we can't template classes that need to use the \c Q_OBJECT macro
@@ -63,6 +67,15 @@
 class SmartLineEdit : public QLineEdit {
    Q_OBJECT
 
+   // These properties are needed so that the .ui files can uniquely identify each field and so that, for fields
+   // relating to physical quantities, the user can individually set the system of measurement and relative scale.
+   //
+   // They all pass through to UiAmountWithUnits
+   Q_PROPERTY(QString configSection             READ getConfigSection                      WRITE setConfigSection                      STORED false)
+   Q_PROPERTY(QString editField                 READ getEditField                          WRITE setEditField                          STORED false)
+   Q_PROPERTY(QString forcedSystemOfMeasurement READ getForcedSystemOfMeasurementViaString WRITE setForcedSystemOfMeasurementViaString STORED false)
+   Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
+
 public:
 
    SmartLineEdit(QWidget* parent = nullptr);
@@ -70,17 +83,30 @@ public:
 
    /**
     * \brief This needs to be called before the object is used, typically in constructor of whatever editor is using the
-    *        widget.
-    * \param fieldType            Tells us what \c PhysicalQuantity (or non-physical quantity such as
-    *                             \c NonPhysicalQuantity::Date, \c NonPhysicalQuantity::String, etc) this field holds
+    *        widget.  As well as passing in a bunch of info that cannot easily be given to the constructor (per comment
+    *        above), it also ensures, if necessary, that the \c changedSystemOfMeasurementOrScale signal from the
+    *        \c SmartLabel buddy is connected to the \c lineChanged slot of this \c SmartLineEdit.
+    *
+    * \param physicalQuantities   Tells us what \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) this field holds
     * \param typeInfo             Tells us what data type we use to store the contents of the field (when converted to
     *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
     *                             field (in which case we need to handle blank / empty string as a valid value).
+    * \param buddyLabel           Required if \c fieldType is \b not a \c NonPhysicalQuantity
     * \param defaultPrecision     Where relevant determines the number of decimal places to show
     * \param maximalDisplayString Used for determining the width of the widget
     */
-   void init(BtFieldType const fieldType,
-             TypeInfo const & typeInfo,
+   void init(Measurement::PhysicalQuantities const   physicalQuantities,
+             TypeInfo                        const & typeInfo,
+             SmartLabel                            & buddyLabel,
+             int                             const   defaultPrecision = 3,
+             QString                         const & maximalDisplayString = "100.000 srm");
+
+   /**
+    * \brief As above, but for non-physical quantity such as \c NonPhysicalQuantity::Date,
+    *        \c NonPhysicalQuantity::String, etc.
+    */
+   void init(NonPhysicalQuantity const   nonPhysicalQuantity,
+             TypeInfo            const & typeInfo,
              int const defaultPrecision = 3,
              QString const & maximalDisplayString = "100.000 srm");
 
@@ -92,7 +118,7 @@ public:
     * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the \c UiAmountWithUnits for handling
     *        units.  (It is a coding error to call this function if our field type \c is \c NonPhysicalQuantity.)
     */
-   UiAmountWithUnits const & getUiAmountWithUnits() const;
+   UiAmountWithUnits & getUiAmountWithUnits() const;
 
    /**
     * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the field converted to canonical
@@ -107,12 +133,12 @@ public:
     * \param amount is the amount to display, but the field should be blank if this is \b std::nullopt
     * \param precision is how many decimal places to show.  If not specified, the default will be used.
     */
-   void setText(std::optional<double> amount, std::optional<int> precision = std::nullopt);
+   void setAmount(std::optional<double> amount, std::optional<int> precision = std::nullopt);
 
-   /**
-    * \brief .:TBD:. Do we need this to be able to parse numbers out of strings, or just to set string text?
-    */
-   void setText(QString               amount, std::optional<int> precision = std::nullopt);
+//   /**
+//    * \brief Set the text for a non-numeric field
+//    */
+//   void setText(QString               amount, std::optional<int> precision = std::nullopt);
 
    /**
     * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
@@ -120,11 +146,34 @@ public:
     */
    template<typename T> T getValueAs() const;
 
+   //========================================== Property Getters and Setters ===========================================
+   void    setEditField(QString editField);
+   void    setConfigSection(QString configSection);
+   void    setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString);
+   void    setForcedRelativeScaleViaString(QString relativeScaleAsString);
+
+   QString getEditField() const;
+   QString getConfigSection(); // This does lazy-loading so isn't const
+   QString getForcedSystemOfMeasurementViaString() const;
+   QString getForcedRelativeScaleViaString() const;
+   //===================================================================================================================
+
+
 public slots:
    /**
     * \brief This slot receives the \c QLineEdit::editingFinished signal
     */
    void onLineChanged();
+
+   /**
+    * \brief This is called from \c onLineChanged and also directly receives the
+    *        \c SmartLabel::changedSystemOfMeasurementOrScale signal when the user has changed units (eg from US
+    *        Customary to Metric).
+    *
+    *        In previous versions of the code, this was mostly referenced in .ui files.  One disadvantage of that
+    *        approach was that the signal connections were only checked at run-time.
+    */
+   void lineChanged(PreviousScaleInfo previousScaleInfo);
 
 signals:
    /**

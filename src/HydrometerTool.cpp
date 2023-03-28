@@ -50,7 +50,7 @@ void HydrometerTool::doLayout() {
    QHBoxLayout* hLayout = new QHBoxLayout(this);
      QFormLayout* formLayout = new QFormLayout();
      groupBox_inputSg = new QGroupBox(this);
-     groupBox_inputSg->setProperty("configSection", QVariant(QStringLiteral("hydrometerTool")));
+     groupBox_inputSg->setProperty(*PropertyNames::UiAmountWithUnits::configSection, QVariant(QStringLiteral("hydrometerTool")));
 
      label_inputSg = new BtDensityLabel(groupBox_inputSg);
         label_inputSg ->setContextMenuPolicy(Qt::CustomContextMenu);
