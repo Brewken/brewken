@@ -290,8 +290,7 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       # On older versions of GCC, it is not sufficient to specify C++20 to enable concepts, you also have to set a
       # special compiler flag.
       #
-      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fconcepts")
-      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fconcepts")
+      add_compile_options(-fconcepts)
    endif()
 
    # Speed up compilation if using gcc.

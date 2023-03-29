@@ -73,6 +73,31 @@ jobs:
           pwd
           ./bt -v setup all
 
+      - name: Build (with Meson)
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          pwd
+          meson compile
+
+      # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
+      # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
+      # (which would cause the test runner to abort before running any tests).
+      - name: Test (via Meson)
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          export QT_DEBUG_PLUGINS=1
+          export QT_QPA_PLATFORM=offscreen
+          meson test
+
+      - name: Package (New)
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          umask 022
+          ../bt package
+
       - name: Create CMake build environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
@@ -95,13 +120,6 @@ jobs:
           find ../third-party
           make
 
-      - name: Build (with Meson)
-        working-directory: ${{github.workspace}}/mbuild
-        shell: bash
-        run: |
-          pwd
-          meson compile
-
       - name: Test (via CMake)
         working-directory: ${{github.workspace}}/build
         shell: bash
@@ -111,17 +129,6 @@ jobs:
         run: |
           make test
 
-      # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
-      # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
-      # (which would cause the test runner to abort before running any tests).
-      - name: Test (via Meson)
-        working-directory: ${{github.workspace}}/mbuild
-        shell: bash
-        run: |
-          export QT_DEBUG_PLUGINS=1
-          export QT_QPA_PLATFORM=offscreen
-          meson test
-
       - name: Package (via CMake/CPack)
         working-directory: ${{github.workspace}}/build
         shell: bash
@@ -129,14 +136,7 @@ jobs:
           umask 022
           make package
 
-      - name: Package (New)
-        working-directory: ${{github.workspace}}/mbuild
-        shell: bash
-        run: |
-          umask 022
-          ../bt package
-
-      - name: LintianAndRpmLint
+      - name: LintianAndRpmLint (for CMake/CPack)
         continue-on-error: true
         working-directory: ${{github.workspace}}/build
         shell: bash
