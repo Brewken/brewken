@@ -286,11 +286,6 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
          set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie")
       endif()
 
-      #
-      # On older versions of GCC, it is not sufficient to specify C++20 to enable concepts, you also have to set a
-      # special compiler flag.
-      #
-      add_compile_options(-fconcepts)
    endif()
 
    # Speed up compilation if using gcc.
@@ -298,6 +293,13 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -pipe")
       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pipe")
    endif()
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX)
+   #
+   # On older versions of GCC, it is not sufficient to specify C++20 to enable concepts, you also have to set a
+   # special compiler flag.
+   #
+   add_compile_options(-fconcepts)
 endif()
 
 # Windows-specific compilation settings

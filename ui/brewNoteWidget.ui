@@ -84,7 +84,7 @@
             </attribute>
             <layout class="QFormLayout" name="formLayout_2">
              <item row="0" column="0">
-              <widget class="BtDensityLabel" name="btLabel_Sg">
+              <widget class="SmartLabel" name="label_Sg">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -95,12 +95,12 @@
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
                <property name="buddy">
-                <cstring>lineEdit_SG</cstring>
+                <cstring>lineEdit_Sg</cstring>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="BtDensityEdit" name="lineEdit_SG">
+              <widget class="SmartLineEdit" name="lineEdit_Sg">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -131,7 +131,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="BtVolumeLabel" name="btLabel_volIntoBk">
+              <widget class="SmartLabel" name="label_volIntoBk">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -142,12 +142,12 @@
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
                <property name="buddy">
-                <cstring>lineEdit_volIntoBK</cstring>
+                <cstring>lineEdit_volIntoBk</cstring>
                </property>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="BtVolumeEdit" name="lineEdit_volIntoBK">
+              <widget class="SmartLineEdit" name="lineEdit_volIntoBk">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -175,7 +175,7 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="BtTemperatureLabel" name="btLabel_strikeTemp">
+              <widget class="SmartLabel" name="label_strikeTemp">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -191,7 +191,7 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="BtTemperatureEdit" name="lineEdit_strikeTemp">
+              <widget class="SmartLineEdit" name="lineEdit_strikeTemp">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -219,7 +219,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="BtTemperatureLabel" name="btLabel_mashFinTemp">
+              <widget class="SmartLabel" name="label_mashFinTemp">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -235,7 +235,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="BtTemperatureEdit" name="lineEdit_mashFinTemp">
+              <widget class="SmartLineEdit" name="lineEdit_mashFinTemp">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -281,7 +281,7 @@
             </attribute>
             <layout class="QFormLayout" name="formLayout">
              <item row="0" column="0">
-              <widget class="BtDensityLabel" name="btLabel_Og">
+              <widget class="SmartLabel" name="label_Og">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -292,12 +292,12 @@
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
                <property name="buddy">
-                <cstring>lineEdit_OG</cstring>
+                <cstring>lineEdit_Og</cstring>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="BtDensityEdit" name="lineEdit_OG">
+              <widget class="SmartLineEdit" name="lineEdit_Og">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -325,7 +325,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="BtVolumeLabel" name="btLabel_postBoilVol">
+              <widget class="SmartLabel" name="label_postBoilVol">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -347,7 +347,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="BtVolumeEdit" name="lineEdit_postBoilVol">
+              <widget class="SmartLineEdit" name="lineEdit_postBoilVol">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -375,7 +375,7 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="BtVolumeLabel" name="btLabel_volIntoFerm">
+              <widget class="SmartLabel" name="label_volIntoFerm">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -397,7 +397,7 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="BtVolumeEdit" name="lineEdit_volIntoFerm">
+              <widget class="SmartLineEdit" name="lineEdit_volIntoFerm">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -422,7 +422,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="BtTemperatureLabel" name="btLabel_pitchTemp">
+              <widget class="SmartLabel" name="label_pitchTemp">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -441,7 +441,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="BtTemperatureEdit" name="lineEdit_pitchTemp">
+              <widget class="SmartLineEdit" name="lineEdit_pitchTemp">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -487,7 +487,7 @@
             </attribute>
             <layout class="QFormLayout" name="formLayout_5">
              <item row="0" column="0">
-              <widget class="BtDensityLabel" name="btLabel_postFermentFg">
+              <widget class="SmartLabel" name="label_Fg">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -495,12 +495,12 @@
                 <string notr="true">FG</string>
                </property>
                <property name="buddy">
-                <cstring>lineEdit_FG</cstring>
+                <cstring>lineEdit_Fg</cstring>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="BtDensityEdit" name="lineEdit_FG">
+              <widget class="SmartLineEdit" name="lineEdit_Fg">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -528,7 +528,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="BtVolumeLabel" name="btLabel_finalVolume">
+              <widget class="SmartLabel" name="label_finalVolume">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -536,12 +536,12 @@
                 <string notr="true">Volume</string>
                </property>
                <property name="buddy">
-                <cstring>lineEdit_finalVol</cstring>
+                <cstring>lineEdit_finalVolume</cstring>
                </property>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="BtVolumeEdit" name="lineEdit_finalVol">
+              <widget class="SmartLineEdit" name="lineEdit_finalVolume">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -569,7 +569,7 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="BtDateLabel" name="btLabel_fermentDate">
+              <widget class="SmartLabel" name="label_fermentDate">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -613,7 +613,7 @@
               <enum>QFormLayout::ExpandingFieldsGrow</enum>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="btLabel_effInfoBk">
+              <widget class="QLabel" name="label_effInfoBk">
                <property name="statusTip">
                 <string>Percent efficiency into boil kettle</string>
                </property>
@@ -630,7 +630,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="BtDensityLabel" name="btLabel_projectedOg">
+              <widget class="SmartLabel" name="label_projectedOg">
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -656,7 +656,7 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="btLabel_brewHouseEff">
+              <widget class="QLabel" name="label_brewHouseEff">
                <property name="statusTip">
                 <string>Brewhouse efficiency</string>
                </property>
@@ -673,7 +673,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="btLabel_projectedAbv">
+              <widget class="QLabel" name="label_projectedAbv">
                <property name="statusTip">
                 <string>Expected ABV based on recipe OG</string>
                </property>
@@ -707,7 +707,7 @@
               </widget>
              </item>
              <item row="5" column="0">
-              <widget class="QLabel" name="btLabel_yeastProjAtten">
+              <widget class="QLabel" name="label_yeastProjAtten">
                <property name="statusTip">
                 <string>Yeast attenuation based on yeast specified in recipe</string>
                </property>
@@ -724,7 +724,7 @@
               </widget>
              </item>
              <item row="6" column="0">
-              <widget class="QLabel" name="btLabel_yeastAtten">
+              <widget class="QLabel" name="label_yeastAtten">
                <property name="statusTip">
                 <string>Yeast attentuation based on user-reported OG and FG</string>
                </property>
@@ -777,17 +777,9 @@
  <layoutdefault spacing="4" margin="4"/>
  <customwidgets>
   <customwidget>
-   <class>BtTemperatureEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTemperatureLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
@@ -798,33 +790,9 @@
    <header location="global">BtTextEdit.h</header>
   </customwidget>
   <customwidget>
-   <class>BtVolumeLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtDensityLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtVolumeEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtDensityEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
@@ -834,20 +802,15 @@
    <extends>QLabel</extends>
    <header>widgets/BtDigitWidget.h</header>
   </customwidget>
-  <customwidget>
-   <class>BtDateLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
  <connections>
   <connection>
-   <sender>btLabel_Sg</sender>
+   <sender>label_Sg</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_SG</receiver>
+   <receiver>lineEdit_Sg</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -861,9 +824,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_volIntoBk</sender>
+   <sender>label_volIntoBk</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_volIntoBK</receiver>
+   <receiver>lineEdit_volIntoBk</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -877,7 +840,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_strikeTemp</sender>
+   <sender>label_strikeTemp</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_strikeTemp</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
@@ -893,7 +856,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_mashFinTemp</sender>
+   <sender>label_mashFinTemp</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_mashFinTemp</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
@@ -909,9 +872,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_Og</sender>
+   <sender>label_Og</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_OG</receiver>
+   <receiver>lineEdit_Og</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -925,7 +888,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_postBoilVol</sender>
+   <sender>label_postBoilVol</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_postBoilVol</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
@@ -941,7 +904,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_volIntoFerm</sender>
+   <sender>label_volIntoFerm</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_volIntoFerm</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
@@ -957,7 +920,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_pitchTemp</sender>
+   <sender>label_pitchTemp</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    <receiver>lineEdit_pitchTemp</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
@@ -973,9 +936,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_postFermentFg</sender>
+   <sender>label_Fg</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_FG</receiver>
+   <receiver>lineEdit_Fg</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -989,9 +952,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>btLabel_finalVolume</sender>
+   <sender>label_finalVolume</sender>
    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_finalVol</receiver>
+   <receiver>lineEdit_finalVolume</receiver>
    <slot>lineChanged(PreviousScaleInfo)</slot>
    <hints>
     <hint type="sourcelabel">

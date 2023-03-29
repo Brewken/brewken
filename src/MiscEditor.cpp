@@ -59,7 +59,7 @@ void MiscEditor::setMisc(Misc * m) {
 
    obsMisc = m;
    if (obsMisc) {
-      connect(obsMisc, SIGNAL(changed(QMetaProperty, QVariant)), this, SLOT(changed(QMetaProperty, QVariant)));
+      connect(obsMisc, &NamedEntity::changed, this, &MiscEditor::changed);
       showChanges();
    }
    return;
