@@ -56,25 +56,27 @@
  *        \c PROPERTY_TYPE_LOOKUP_ENTRY macro below takes care of everything for constructor calls where you would
  *        otherwise need them.
  */
-template <typename T>
-struct is_optional : public std::false_type{};
-template <typename T>
-struct is_optional< std::optional<T> > : public std::true_type{};
+template <typename T> struct is_optional : public std::false_type{};
+template <typename T> struct is_optional< std::optional<T> > : public std::true_type{};
 
-template <typename T>
-struct is_optional_enum : public std::false_type{};
-template <typename T>
-struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};
+template <typename T> struct is_optional_enum : public std::false_type{};
+template <typename T> struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};
 
 // This bit requires C++20 or later.  It makes the specialisations of TypeInfo::construct() below a bit less clunky
-template <typename T>
-concept IsRequiredEnum = std::is_enum<T>::value;
-template <typename T>
-concept IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
-template <typename T>
-concept IsOptionalEnum = is_optional_enum<T>::value;
-template <typename T>
-concept IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
+// Older versions of GCC (eg as shipped with Ubuntu 20.04 LTS) have a sort of pre-release support for concepts so we
+// have to use non-standard syntax there
+
+#if defined(__GNUC__) && (__GNUC__ < 10)
+template <typename T> concept bool IsRequiredEnum  = std::is_enum<T>::value;
+template <typename T> concept bool IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
+template <typename T> concept bool IsOptionalEnum  = is_optional_enum<T>::value;
+template <typename T> concept bool IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
+#else
+template <typename T> concept IsRequiredEnum  = std::is_enum<T>::value;
+template <typename T> concept IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
+template <typename T> concept IsOptionalEnum  = is_optional_enum<T>::value;
+template <typename T> concept IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
+#endif
 
 /**
  * \brief Extends \c std::type_index with some other info we need about a type for serialisation, specifically whether
