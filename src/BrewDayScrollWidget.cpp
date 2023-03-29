@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Carles Muñoz Gorriz <carlesmu@internautas.org>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -82,6 +82,7 @@ BrewDayScrollWidget::~BrewDayScrollWidget() = default;
 
 void BrewDayScrollWidget::saveInstruction() {
   this->recObs->instructions()[ listWidget->currentRow() ]->setDirections( btTextEdit->toPlainText() );
+  return;
 }
 
 void BrewDayScrollWidget::showInstruction(int insNdx) {
@@ -273,7 +274,7 @@ void BrewDayScrollWidget::insertInstruction() {
    // After updating the model, this is the simplest way to update the display
    this->setRecipe(this->recObs);
 
-   listWidget->setCurrentRow(pos-1);
+   listWidget->setCurrentRow(pos - 1);
    return;
 }
 
@@ -316,7 +317,7 @@ void BrewDayScrollWidget::showChanges() {
       return;
    }
 
-   repopulateListWidget();
+   this->repopulateListWidget();
    return;
 }
 

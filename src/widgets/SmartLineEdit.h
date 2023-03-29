@@ -87,7 +87,8 @@ public:
     *        above), it also ensures, if necessary, that the \c changedSystemOfMeasurementOrScale signal from the
     *        \c SmartLabel buddy is connected to the \c lineChanged slot of this \c SmartLineEdit.
     *
-    * \param physicalQuantities   Tells us what \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) this field holds
+    *        This version is for a \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) field
+    *
     * \param typeInfo             Tells us what data type we use to store the contents of the field (when converted to
     *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
     *                             field (in which case we need to handle blank / empty string as a valid value).
@@ -95,20 +96,18 @@ public:
     * \param defaultPrecision     Where relevant determines the number of decimal places to show
     * \param maximalDisplayString Used for determining the width of the widget
     */
-   void init(Measurement::PhysicalQuantities const   physicalQuantities,
-             TypeInfo                        const & typeInfo,
-             SmartLabel                            & buddyLabel,
-             int                             const   defaultPrecision = 3,
-             QString                         const & maximalDisplayString = "100.000 srm");
+   void init(TypeInfo   const & typeInfo,
+             SmartLabel       & buddyLabel,
+             int        const   defaultPrecision = 3,
+             QString    const & maximalDisplayString = "100.000 srm");
 
    /**
     * \brief As above, but for non-physical quantity such as \c NonPhysicalQuantity::Date,
     *        \c NonPhysicalQuantity::String, etc.
     */
-   void init(NonPhysicalQuantity const   nonPhysicalQuantity,
-             TypeInfo            const & typeInfo,
-             int const defaultPrecision = 3,
-             QString const & maximalDisplayString = "100.000 srm");
+   void init(TypeInfo const & typeInfo,
+             int      const   defaultPrecision = 3,
+             QString  const & maximalDisplayString = "100.000 srm");
 
    BtFieldType const getFieldType() const;
 

@@ -36,9 +36,9 @@ MiscEditor::MiscEditor(QWidget * parent) :
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-   this->lineEdit_name     ->init(NonPhysicalQuantity::String        , Misc::typeLookup.getType(PropertyNames::NamedEntity::name)                        );
-   this->lineEdit_inventory->init(Measurement::PqEitherMassOrVolume  , Misc::typeLookup.getType(PropertyNames::Misc::amount     ), *this->label_inventory);
-   this->lineEdit_time     ->init(Measurement::PhysicalQuantity::Time, Misc::typeLookup.getType(PropertyNames::Misc::time       ), *this->label_time     );
+   this->lineEdit_name     ->init(Misc::typeLookup.getType(PropertyNames::NamedEntity::name)                        );
+   this->lineEdit_inventory->init(Misc::typeLookup.getType(PropertyNames::Misc::amount     ), *this->label_inventory);
+   this->lineEdit_time     ->init(Misc::typeLookup.getType(PropertyNames::Misc::time       ), *this->label_time     );
 
    // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
    // function to allow use of default argument on newStyle() slot
@@ -46,10 +46,6 @@ MiscEditor::MiscEditor(QWidget * parent) :
    connect(pushButton_save,   &QAbstractButton::clicked, this, &MiscEditor::save                     );
    connect(pushButton_cancel, &QAbstractButton::clicked, this, &MiscEditor::clearAndClose            );
    connect(checkBox_isWeight, &QCheckBox::toggled,       this, &MiscEditor::setIsWeight              );
-
-///   // .:TBD:. Since these are buddies, you might think we could automate this...
-///   connect(label_time,      &SmartLabel::changedSystemOfMeasurementOrScale, lineEdit_time,      &SmartLineEdit::lineChanged);
-///   connect(label_inventory, &SmartLabel::changedSystemOfMeasurementOrScale, lineEdit_inventory, &SmartLineEdit::lineChanged);
 
    return;
 }

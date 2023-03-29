@@ -44,7 +44,6 @@ public:
    impl(SmartLineEdit & self) :
       m_self                {self},
       m_initialised         {false},
-      m_fieldType           {NonPhysicalQuantity::String},
       m_typeInfo            {nullptr},
       m_buddyLabel          {nullptr},
       m_uiAmountWithUnits   {nullptr},
@@ -109,15 +108,13 @@ public:
     * \brief We want to have two different signatures of \c SmartLineEdit::init so we can catch missing parameters at
     *        compile time.  Ultimately they both do pretty much the same work, by calling this function.
     */
-   void init(BtFieldType const   fieldType,
-             TypeInfo    const & typeInfo,
+   void init(TypeInfo    const & typeInfo,
              SmartLabel        * buddyLabel,
              int         const   defaultPrecision,
              QString     const & maximalDisplayString) {
       // It's a coding error to call this function twice on the same object, ie we should only initialise something once!
       Q_ASSERT(!this->m_initialised);
 
-      this->m_fieldType            = fieldType;
       this->m_typeInfo             = &typeInfo;
       this->m_buddyLabel           = buddyLabel;
       this->m_defaultPrecision     = defaultPrecision;
@@ -125,7 +122,7 @@ public:
       this->m_initialised          = true;
 
       connect(&this->m_self, &QLineEdit::editingFinished, &this->m_self, &SmartLineEdit::onLineChanged);
-      if (!std::holds_alternative<NonPhysicalQuantity>(this->m_fieldType)) {
+      if (!std::holds_alternative<NonPhysicalQuantity>(*this->m_typeInfo->fieldType)) {
          QString configSection =
             this->m_self.property(*PropertyNames::UiAmountWithUnits::configSection).toString();
          qDebug() << Q_FUNC_INFO << "Config Section =" << configSection;
@@ -152,7 +149,6 @@ public:
 
    SmartLineEdit &                    m_self;
    bool                               m_initialised;
-   BtFieldType                        m_fieldType;
    TypeInfo const *                   m_typeInfo;
    SmartLabel *                       m_buddyLabel;
    std::unique_ptr<UiAmountWithUnits> m_uiAmountWithUnits;
@@ -172,39 +168,39 @@ SmartLineEdit::SmartLineEdit(QWidget * parent) : QLineEdit(parent), pimpl{std::m
 
 SmartLineEdit::~SmartLineEdit() = default;
 
-void SmartLineEdit::init(Measurement::PhysicalQuantities const   physicalQuantities,
-                         TypeInfo                        const & typeInfo,
+void SmartLineEdit::init(TypeInfo                        const & typeInfo,
                          SmartLabel                            & buddyLabel,
                          int                             const   defaultPrecision,
                          QString                         const & maximalDisplayString) {
+   // It's a coding error to call this version of init with a NonPhysicalQuantity
+   Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
+
    // It's only meaningful to have a UiAmountWithUnits if we are dealing with a PhysicalQuantity, hence why we do it
    // here and not in SmartLineEdit::impl::init().
    // It's a coding error if we already created a UiAmountWithUnits
    Q_ASSERT(!this->pimpl->m_uiAmountWithUnits);
-   this->pimpl->m_uiAmountWithUnits = std::make_unique<UiAmountWithUnits>(this->parentWidget(), physicalQuantities);
+   this->pimpl->m_uiAmountWithUnits = std::make_unique<UiAmountWithUnits>(this->parentWidget(), ConvertToPhysicalQuantities(*typeInfo.fieldType));
    // See above for why we need to pass these in to UiAmountWithUnits
    if (!this->pimpl->m_editField    .isEmpty()) { this->pimpl->m_uiAmountWithUnits->setEditField    (this->pimpl->m_editField    ); }
    if (!this->pimpl->m_configSection.isEmpty()) { this->pimpl->m_uiAmountWithUnits->setConfigSection(this->pimpl->m_configSection); }
 
-   this->pimpl->init(ConvertToBtFieldType(physicalQuantities),
-                     typeInfo,
-                     &buddyLabel,
-                     defaultPrecision,
-                     maximalDisplayString);
+   this->pimpl->init(typeInfo, &buddyLabel, defaultPrecision, maximalDisplayString);
    return;
 }
 
-void SmartLineEdit::init(NonPhysicalQuantity const   nonPhysicalQuantity,
-                         TypeInfo            const & typeInfo,
+void SmartLineEdit::init(TypeInfo            const & typeInfo,
                          int                 const   defaultPrecision,
                          QString             const & maximalDisplayString) {
-   this->pimpl->init(nonPhysicalQuantity, typeInfo, nullptr, defaultPrecision, maximalDisplayString);
+   // It's a coding error to call this version of init with anything other than a NonPhysicalQuantity
+   Q_ASSERT(typeInfo.fieldType && std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
+
+   this->pimpl->init(typeInfo, nullptr, defaultPrecision, maximalDisplayString);
    return;
 }
 
 BtFieldType const SmartLineEdit::getFieldType() const {
    Q_ASSERT(this->pimpl->m_initialised);
-   return this->pimpl->m_fieldType;
+   return *this->pimpl->m_typeInfo->fieldType;
 }
 
 TypeInfo const & SmartLineEdit::getTypeInfo() const {
@@ -230,10 +226,10 @@ void SmartLineEdit::setAmount(std::optional<double> amount, std::optional<int> p
    if (!amount) {
       // What the field is measuring doesn't matter as it's not set
       this->QLineEdit::setText("");
-   } else if (std::holds_alternative<NonPhysicalQuantity>(this->pimpl->m_fieldType)) {
+   } else if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
       // The field is not measuring a physical quantity so there are no units or unit conversions to handle
 
-      NonPhysicalQuantity const nonPhysicalQuantity = std::get<NonPhysicalQuantity>(this->pimpl->m_fieldType);
+      NonPhysicalQuantity const nonPhysicalQuantity = std::get<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType);
       // It's a coding error if we're trying to pass a number in to a string field
       Q_ASSERT(nonPhysicalQuantity != NonPhysicalQuantity::String);
 
@@ -276,7 +272,7 @@ QString SmartLineEdit::getForcedRelativeScaleViaString()       const { Q_ASSERT(
 void SmartLineEdit::onLineChanged() {
    Q_ASSERT(this->pimpl->m_initialised);
 
-   if (std::holds_alternative<NonPhysicalQuantity>(this->pimpl->m_fieldType)) {
+   if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
       // The field is not measuring a physical quantity so there are no units or unit conversions to handle
       qDebug() << Q_FUNC_INFO;
       if (sender() == this) {
@@ -288,11 +284,11 @@ void SmartLineEdit::onLineChanged() {
    // The field is measuring a physical quantity
    Q_ASSERT(this->pimpl->m_uiAmountWithUnits);
    qDebug() <<
-      Q_FUNC_INFO << "this->fieldType=" << this->pimpl->m_fieldType << ", forcedSystemOfMeasurement=" <<
+      Q_FUNC_INFO << "Field Type:" << *this->pimpl->m_typeInfo->fieldType << ", forcedSystemOfMeasurement=" <<
       this->pimpl->m_uiAmountWithUnits->getForcedSystemOfMeasurement() << ", forcedRelativeScale=" <<
       this->pimpl->m_uiAmountWithUnits->getForcedRelativeScale() << ", value=" << this->text();
 
-   Measurement::PhysicalQuantities const physicalQuantities = ConvertToPhysicalQuantities(this->pimpl->m_fieldType);
+   Measurement::PhysicalQuantities const physicalQuantities = ConvertToPhysicalQuantities(*this->pimpl->m_typeInfo->fieldType);
 
    QString const propertyName = this->pimpl->m_uiAmountWithUnits->getEditField();
    QString const configSection = this->pimpl->m_uiAmountWithUnits->getConfigSection();
