@@ -49,6 +49,13 @@ class Recipe;
 // every platform there is always exactly one instance of each property name.  So, whilst it's always valid to compare
 // the values of two property names, we cannot _guarantee_ that two identical property names always have the same
 // address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::Folder) ...`.
+//
+// I did also think about creating a macro that would combine this with Q_PROPERTY, but I didn't see an elegant way to
+// do it given that these need to be outside the class and Q_PROPERTY needs to be inside it.
+//
+// IMPORTANT: These property names are unique within a class, but they are not globally unique, so we have to be a bit
+//            careful about how we use them in look-ups.
+//
 #define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)

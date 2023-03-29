@@ -29,6 +29,7 @@
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
+// See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Water { BtStringConst const property{#property}; }
 AddPropertyName(alkalinity      )
 AddPropertyName(alkalinityAsHCO3)

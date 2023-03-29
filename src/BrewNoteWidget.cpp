@@ -38,6 +38,18 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
    bNoteObs = 0;
    setObjectName("BrewNoteWidget");
 
+///
+///.. lineEdit_FG         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::fg),
+///.. lineEdit_OG         ->init();        x class="BtDensityEdit"     name=
+///.. lineEdit_SG         ->init();        x class="BtDensityEdit"     name=
+///.. lineEdit_mashFinTemp->init();                 x class="BtTemperatureEdit" name=
+///.. lineEdit_pitchTemp  ->init();               x class="BtTemperatureEdit" name=
+///.. lineEdit_strikeTemp ->init();                x class="BtTemperatureEdit" name=
+///.. lineEdit_finalVol   ->init();              x class="BtVolumeEdit"      name=
+///.. lineEdit_postBoilVol->init();                 x class="BtVolumeEdit"      name=
+///.. lineEdit_volIntoBK  ->init();               x class="BtVolumeEdit"      name=
+///.. lineEdit_volIntoFerm->init();                 x class="BtVolumeEdit"      name=
+
    connect(lineEdit_SG,          &BtLineEdit::textModified,   this, &BrewNoteWidget::updateSG);
    connect(lineEdit_volIntoBK,   &BtLineEdit::textModified,   this, &BrewNoteWidget::updateVolumeIntoBK_l);
    connect(lineEdit_strikeTemp,  &BtLineEdit::textModified,   this, &BrewNoteWidget::updateStrikeTemp_c);

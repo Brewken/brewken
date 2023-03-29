@@ -1417,6 +1417,9 @@ if compiler.get_id() == 'gcc'
    #                    However, even this is not sufficient(!).  So, for the moment, we suppress the rpmlint error (see
    #                 packaging/rpmLintFilters.toml).
    #
+   # -fconcepts  Is needed on older versions of GCC to enable C++20 concepts (because specifying C++20 was not enough
+   #             for some reason).
+   #
    # The following are, according to some comments at
    # https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers, needed
    # for Boost stacktrace to work properly:
@@ -1432,6 +1435,7 @@ if compiler.get_id() == 'gcc'
    add_global_arguments(['-g3',
                          '-O2',
                          '-z', 'noexecstack', # NB Not '-z noexecstack' as otherwise will be passed to gcc in quotes!
+                         '-fconcepts'
                          ], language : 'cpp')
    if host_machine.system() == 'windows'
       add_global_arguments     (['-no-pie', '-fno-pie'], language : 'cpp')

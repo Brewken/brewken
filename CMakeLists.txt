@@ -242,8 +242,8 @@ set(RUNTIME_INSTALL_COMPONENT "Runtime")
 # We use different compilers on different platforms.  Where possible, we want to let CMake handle the actual compiler
 # settings
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# We need C++20 for std::map::contains(), C++17 or later for nested namespaces and structured bindings, and C++11 or
-# later for lambdas.
+# We need C++20 for std::map::contains() and concepts, C++17 or later for nested namespaces and structured bindings, and
+# C++11 or later for lambdas.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -285,6 +285,13 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       else()
          set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie")
       endif()
+
+      #
+      # On older versions of GCC, it is not sufficient to specify C++20 to enable concepts, you also have to set a
+      # special compiler flag.
+      #
+      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fconcepts")
+      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fconcepts")
    endif()
 
    # Speed up compilation if using gcc.

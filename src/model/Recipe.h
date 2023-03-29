@@ -44,6 +44,7 @@
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
+// See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Recipe { BtStringConst const property{#property}; }
 AddPropertyName(ABV_pct           )
 AddPropertyName(age_days          )
