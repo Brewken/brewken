@@ -73,6 +73,50 @@ jobs:
           pwd
           ./bt -v setup all
 
+      - name: Create CMake build environment
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: |
+          umask 022
+          cmake \
+            DESTDIR=/usr \
+            -DDO_RELEASE_BUILD=ON \
+            -DNO_MESSING_WITH_FLAGS=ON \
+            $GITHUB_WORKSPACE
+
+      - name: Build (with CMake)
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: |
+          pwd
+          find ../third-party
+          make VERBOSE=1
+
+      - name: Test (via CMake)
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        env:
+          CTEST_OUTPUT_ON_FAILURE: TRUE
+          QT_QPA_PLATFORM: minimal
+        run: |
+          make test
+
+      - name: Package (via CMake/CPack)
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: |
+          umask 022
+          make package
+
+      - name: LintianAndRpmLint (for CMake/CPack)
+        continue-on-error: true
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: make package_lint
+
       - name: Build (with Meson)
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
@@ -97,50 +141,6 @@ jobs:
         run: |
           umask 022
           ../bt package
-
-      - name: Create CMake build environment
-        run: cmake -E make_directory ${{github.workspace}}/build
-
-      - name: Configure CMake
-        shell: bash
-        working-directory: ${{github.workspace}}/build
-        run: |
-          umask 022
-          cmake \
-            DESTDIR=/usr \
-            -DDO_RELEASE_BUILD=ON \
-            -DNO_MESSING_WITH_FLAGS=ON \
-            $GITHUB_WORKSPACE
-
-      - name: Build (with CMake)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: |
-          pwd
-          find ../third-party
-          make
-
-      - name: Test (via CMake)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        env:
-          CTEST_OUTPUT_ON_FAILURE: TRUE
-          QT_QPA_PLATFORM: minimal
-        run: |
-          make test
-
-      - name: Package (via CMake/CPack)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: |
-          umask 022
-          make package
-
-      - name: LintianAndRpmLint (for CMake/CPack)
-        continue-on-error: true
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: make package_lint
 
       - name: Upload Linux Packages (Installers)
         if: ${{ success() }}

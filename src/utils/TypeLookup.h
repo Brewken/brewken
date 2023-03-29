@@ -62,10 +62,11 @@ template <typename T> struct is_optional< std::optional<T> > : public std::true_
 template <typename T> struct is_optional_enum : public std::false_type{};
 template <typename T> struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};
 
+//
 // This bit requires C++20 or later.  It makes the specialisations of TypeInfo::construct() below a bit less clunky
 // Older versions of GCC (eg as shipped with Ubuntu 20.04 LTS) have a sort of pre-release support for concepts so we
 // have to use non-standard syntax there
-
+//
 #if defined(__GNUC__) && (__GNUC__ < 10)
 template <typename T> concept bool IsRequiredEnum  = std::is_enum<T>::value;
 template <typename T> concept bool IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
