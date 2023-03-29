@@ -146,7 +146,6 @@ public:
       return;
    }
 
-
    SmartLineEdit &                    m_self;
    bool                               m_initialised;
    TypeInfo const *                   m_typeInfo;
@@ -172,6 +171,8 @@ void SmartLineEdit::init(TypeInfo                        const & typeInfo,
                          SmartLabel                            & buddyLabel,
                          int                             const   defaultPrecision,
                          QString                         const & maximalDisplayString) {
+   qDebug() << Q_FUNC_INFO << typeInfo;
+
    // It's a coding error to call this version of init with a NonPhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
 
@@ -191,6 +192,8 @@ void SmartLineEdit::init(TypeInfo                        const & typeInfo,
 void SmartLineEdit::init(TypeInfo            const & typeInfo,
                          int                 const   defaultPrecision,
                          QString             const & maximalDisplayString) {
+   qDebug() << Q_FUNC_INFO << typeInfo;
+
    // It's a coding error to call this version of init with anything other than a NonPhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
 
@@ -252,6 +255,20 @@ void SmartLineEdit::setAmount(std::optional<double> amount, std::optional<int> p
    this->pimpl->setDisplaySize();
    return;
 }
+
+template<typename T> T SmartLineEdit::getValueAs() const {
+   qDebug() << Q_FUNC_INFO << "Converting" << this->text() << "to" << Measurement::extractRawFromString<T>(this->text());
+   return Measurement::extractRawFromString<T>(this->text());
+}
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
+// saves having to put a bunch of std::string stuff there.)
+//
+template int          SmartLineEdit::getValueAs<int         >() const;
+template unsigned int SmartLineEdit::getValueAs<unsigned int>() const;
+template double       SmartLineEdit::getValueAs<double      >() const;
+
 
 //============================================ Property Getters and Setters ============================================
 // Note that we cannot assume init() has yet been run when these are called from (code generated from) a .ui file

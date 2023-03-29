@@ -64,7 +64,7 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
    Measurement::Unit const * weightUnit = nullptr;
    Measurement::Unit const * volumeUnit = nullptr;
    Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
-   label_absorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
+   label_grainAbsorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
 
    equipmentListModel = new EquipmentListModel(equipmentComboBox);
    equipmentSortProxyModel = new NamedEntitySortProxyModel(equipmentListModel);
@@ -72,12 +72,28 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
 
    obsEquip = nullptr;
 
+   this->lineEdit_tunSpecificHeat->init(Equipment::typeLookup.getType(PropertyNames::Equipment::tunSpecificHeat_calGC), *this->label_tunSpecificHeat   );
+   this->lineEdit_grainAbsorption->init(Equipment::typeLookup.getType(PropertyNames::Equipment::grainAbsorption_LKg  )                                 );
+   this->lineEdit_hopUtilization ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::hopUtilization_pct   )                              , 0); // label_hopUtilization
+   this->lineEdit_tunWeight      ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::tunWeight_kg         ), *this->label_tunWeight         );
+   this->lineEdit_name           ->init(Equipment::typeLookup.getType(PropertyNames::NamedEntity::name               )                                 );
+   this->lineEdit_boilingPoint   ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::boilingPoint_c       ), *this->label_boilingPoint   , 1);
+   this->lineEdit_boilTime       ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::boilTime_min         ), *this->label_boilTime          );
+   this->lineEdit_batchSize      ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::batchSize_l          ), *this->label_batchSize         );
+   this->lineEdit_boilSize       ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::boilSize_l           ), *this->label_boilSize          );
+   this->lineEdit_evaporationRate->init(Equipment::typeLookup.getType(PropertyNames::Equipment::evapRate_lHr         ), *this->label_evaporationRate   );
+   this->lineEdit_lauterDeadspace->init(Equipment::typeLookup.getType(PropertyNames::Equipment::lauterDeadspace_l    ), *this->label_lauterDeadspace   );
+   this->lineEdit_topUpKettle    ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::topUpKettle_l        ), *this->label_topUpKettle       );
+   this->lineEdit_topUpWater     ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::topUpWater_l         ), *this->label_topUpWater        );
+   this->lineEdit_trubChillerLoss->init(Equipment::typeLookup.getType(PropertyNames::Equipment::trubChillerLoss_l    ), *this->label_trubChillerLoss   );
+   this->lineEdit_tunVolume      ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::tunVolume_l          ), *this->label_tunVolume         );
+
    // Connect all the edit boxen
-   connect(lineEdit_boilTime,         &BtLineEdit::textModified,      this, &EquipmentEditor::updateCheckboxRecord     );
-   connect(lineEdit_evaporationRate,  &BtLineEdit::textModified,      this, &EquipmentEditor::updateCheckboxRecord     );
-   connect(lineEdit_topUpWater,       &BtLineEdit::textModified,      this, &EquipmentEditor::updateCheckboxRecord     );
-   connect(lineEdit_trubChillerLoss,  &BtLineEdit::textModified,      this, &EquipmentEditor::updateCheckboxRecord     );
-   connect(lineEdit_batchSize,        &BtLineEdit::textModified,      this, &EquipmentEditor::updateCheckboxRecord     );
+   connect(lineEdit_boilTime,         &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );
+   connect(lineEdit_evaporationRate,  &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );
+   connect(lineEdit_topUpWater,       &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );
+   connect(lineEdit_trubChillerLoss,  &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );
+   connect(lineEdit_batchSize,        &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );
    // Set up the buttons
    // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
    // function to allow use of default argument on newEquipment() slot
@@ -271,7 +287,7 @@ void EquipmentEditor::resetAbsorption() {
    Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
    double gaCustomUnits = PhysicalConstants::grainAbsorption_Lkg * volumeUnit->fromCanonical(1.0) * weightUnit->toCanonical(1.0).quantity();
 
-   lineEdit_grainAbsorption->setText(gaCustomUnits);
+   lineEdit_grainAbsorption->setAmount(gaCustomUnits);
    return;
 }
 
@@ -292,37 +308,37 @@ void EquipmentEditor::showChanges() {
    Measurement::Unit const * weightUnit = nullptr;
    Measurement::Unit const * volumeUnit = nullptr;
    Measurement::getThicknessUnits( &volumeUnit, &weightUnit );
-   label_absorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
+   this->label_grainAbsorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
 
    //equipmentComboBox->setIndexByEquipment(this->obsEquip);
 
-   lineEdit_name->setText(this->obsEquip->name());
-   lineEdit_name->setCursorPosition(0);
-   tabWidget_editor->setTabText(0, this->obsEquip->name());
-   lineEdit_boilSize->setText(this->obsEquip->boilSize_l());
+   this->lineEdit_name            ->setText(this->obsEquip->name());
+   this->lineEdit_name            ->setCursorPosition(0);
+   this->tabWidget_editor         ->setTabText(0, this->obsEquip->name());
+   this->lineEdit_boilSize        ->setAmount(this->obsEquip->boilSize_l());
 
-   checkBox_calcBoilVolume->blockSignals(true); // Keep next line from emitting a signal and changing this->obsEquip.
-   checkBox_calcBoilVolume->setCheckState( (this->obsEquip->calcBoilVolume())? Qt::Checked : Qt::Unchecked );
-   checkBox_calcBoilVolume->blockSignals(false);
+   this->checkBox_calcBoilVolume  ->blockSignals(true); // Keep next line from emitting a signal and changing this->obsEquip.
+   this->checkBox_calcBoilVolume  ->setCheckState( (this->obsEquip->calcBoilVolume())? Qt::Checked : Qt::Unchecked );
+   this->checkBox_calcBoilVolume  ->blockSignals(false);
 
-   lineEdit_batchSize      ->setText(this->obsEquip->batchSize_l          ());
-   lineEdit_tunVolume      ->setText(this->obsEquip->tunVolume_l          ());
-   lineEdit_tunWeight      ->setText(this->obsEquip->tunWeight_kg         ());
-   lineEdit_tunSpecificHeat->setText(this->obsEquip->tunSpecificHeat_calGC());
-   lineEdit_boilTime       ->setText(this->obsEquip->boilTime_min         ());
-   lineEdit_evaporationRate->setText(this->obsEquip->evapRate_lHr         ());
-   lineEdit_topUpKettle    ->setText(this->obsEquip->topUpKettle_l        ());
-   lineEdit_topUpWater     ->setText(this->obsEquip->topUpWater_l         ());
-   lineEdit_trubChillerLoss->setText(this->obsEquip->trubChillerLoss_l    ());
-   lineEdit_lauterDeadspace->setText(this->obsEquip->lauterDeadspace_l    ());
-   textEdit_notes          ->setText(this->obsEquip->notes                ());
+   this->lineEdit_batchSize       ->setAmount(this->obsEquip->batchSize_l          ());
+   this->lineEdit_tunVolume       ->setAmount(this->obsEquip->tunVolume_l          ());
+   this->lineEdit_tunWeight       ->setAmount(this->obsEquip->tunWeight_kg         ());
+   this->lineEdit_tunSpecificHeat ->setAmount(this->obsEquip->tunSpecificHeat_calGC());
+   this->lineEdit_boilTime        ->setAmount(this->obsEquip->boilTime_min         ());
+   this->lineEdit_evaporationRate ->setAmount(this->obsEquip->evapRate_lHr         ());
+   this->lineEdit_topUpKettle     ->setAmount(this->obsEquip->topUpKettle_l        ());
+   this->lineEdit_topUpWater      ->setAmount(this->obsEquip->topUpWater_l         ());
+   this->lineEdit_trubChillerLoss ->setAmount(this->obsEquip->trubChillerLoss_l    ());
+   this->lineEdit_lauterDeadspace ->setAmount(this->obsEquip->lauterDeadspace_l    ());
+   this->textEdit_notes           ->setText  (this->obsEquip->notes                ());
 
    double gaCustomUnits = this->obsEquip->grainAbsorption_LKg() * volumeUnit->fromCanonical(1.0) * weightUnit->toCanonical(1.0).quantity();
-   lineEdit_grainAbsorption->setText(gaCustomUnits);
+   this->lineEdit_grainAbsorption ->setAmount(gaCustomUnits);
 
-   lineEdit_boilingPoint  ->setText(this->obsEquip->boilingPoint_c    ());
-   lineEdit_hopUtilization->setText(this->obsEquip->hopUtilization_pct());
-   checkBox_defaultEquipment->blockSignals(true);
+   this->lineEdit_boilingPoint    ->setAmount(this->obsEquip->boilingPoint_c    ());
+   this->lineEdit_hopUtilization  ->setAmount(this->obsEquip->hopUtilization_pct());
+   this->checkBox_defaultEquipment->blockSignals(true);
    if (PersistentSettings::value(PersistentSettings::Names::defaultEquipmentKey, -1) == this->obsEquip->key()) {
       checkBox_defaultEquipment->setCheckState(Qt::Checked);
    } else {
@@ -334,24 +350,22 @@ void EquipmentEditor::showChanges() {
 }
 
 void EquipmentEditor::updateCheckboxRecord() {
-   int state = checkBox_calcBoilVolume->checkState();
-   if ( state == Qt::Checked ) {
-      double bar = calcBatchSize();
-      lineEdit_boilSize->setText(bar);
-      lineEdit_boilSize->setEnabled(false);
+   if (Qt::Checked == this->checkBox_calcBoilVolume->checkState()) {
+      this->lineEdit_boilSize->setAmount(this->calcBatchSize());
+      this->lineEdit_boilSize->setEnabled(false);
    } else {
-      lineEdit_boilSize->setText(lineEdit_batchSize->toCanonical().quantity());
-      lineEdit_boilSize->setEnabled(true);
+      this->lineEdit_boilSize->setAmount(this->lineEdit_batchSize->toCanonical().quantity());
+      this->lineEdit_boilSize->setEnabled(true);
    }
    return;
 }
 
 double EquipmentEditor::calcBatchSize() {
-   double size     = lineEdit_batchSize->toCanonical().quantity();
-   double topUp    = lineEdit_topUpWater->toCanonical().quantity();
+   double size     = lineEdit_batchSize      ->toCanonical().quantity();
+   double topUp    = lineEdit_topUpWater     ->toCanonical().quantity();
    double trubLoss = lineEdit_trubChillerLoss->toCanonical().quantity();
    double evapRate = lineEdit_evaporationRate->toCanonical().quantity();
-   double time     = lineEdit_boilTime->toCanonical().quantity();
+   double time     = lineEdit_boilTime       ->toCanonical().quantity();
 
    return size - topUp + trubLoss + (time/60.0)*evapRate;
 }

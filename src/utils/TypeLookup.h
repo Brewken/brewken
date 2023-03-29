@@ -24,6 +24,7 @@
 
 #include "BtFieldType.h"
 #include "utils/BtStringConst.h"
+#include "utils/OptionalHelpers.h"
 
 /**
  * \brief Together with \c std::is_enum from \c <type_traits>, the \c is_optional and \c is_optional_enum templates
@@ -222,7 +223,14 @@ private:
 #define PROPERTY_TYPE_LOOKUP_ENTRY(propNameConstVar, memberVar, ...) {&propNameConstVar, TypeInfo::construct<decltype(memberVar)>(__VA_OPT__ (__VA_ARGS__))}
 
 /**
- * \brief
+ * \brief Convenience function for logging
  */
+template<class S>
+S & operator<<(S & stream, TypeInfo const & typeInfo) {
+   stream <<
+      "TypeInfo " << (typeInfo.isOptional() ? "" : "non-") << "optional \"" << typeInfo.typeIndex.name() <<
+      "\" fieldType:" << typeInfo.fieldType;
+   return stream;
+}
 
 #endif
