@@ -223,15 +223,13 @@ Measurement::Amount SmartLineEdit::toCanonical() const {
    return this->pimpl->m_uiAmountWithUnits->rawToCanonical(this->text());
 }
 
-void SmartLineEdit::setAmount(std::optional<double> amount, std::optional<int> precision) {
+void SmartLineEdit::setAmount(std::optional<double> amount) {
    Q_ASSERT(this->pimpl->m_initialised);
 
    if (!amount) {
       // What the field is measuring doesn't matter as it's not set
       this->QLineEdit::setText("");
    } else {
-      this->pimpl->m_precision = precision.value_or(this->pimpl->m_precision);
-
       if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
          // The field is not measuring a physical quantity so there are no units or unit conversions to handle
 

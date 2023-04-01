@@ -130,9 +130,8 @@ public:
     * \brief Set the amount for a decimal field
     *
     * \param amount is the amount to display, but the field should be blank if this is \b std::nullopt
-    * \param precision is how many decimal places to show.  If not specified, the default will be used.
     */
-   void setAmount(std::optional<double> amount, std::optional<int> precision = std::nullopt);
+   void setAmount(std::optional<double> amount);
 
 //   /**
 //    * \brief Set the text for a non-numeric field
