@@ -207,7 +207,7 @@ public:
    Q_PROPERTY(double         coarseFineDiff_pct     READ coarseFineDiff_pct     WRITE setCoarseFineDiff_pct                 )
    //! \brief The moisture in pct.
    Q_PROPERTY(double         moisture_pct           READ moisture_pct           WRITE setMoisture_pct                       )
-   //! \brief The diastatic power in Lintner.
+   //! \brief The diastatic power in Lintner.  .:TODO:. Should probably make this optional and change all current 0 values to NULL
    Q_PROPERTY(double         diastaticPower_lintner READ diastaticPower_lintner WRITE setDiastaticPower_lintner             )
    //! \brief The percent protein.
    Q_PROPERTY(double         protein_pct            READ protein_pct            WRITE setProtein_pct                        )

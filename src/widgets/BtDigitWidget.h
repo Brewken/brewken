@@ -87,6 +87,8 @@ public:
    template<typename T> T getValueAs() const;
 
 protected:
+   int getPrecision() const;
+
    BtFieldType fieldType;
 
 private:

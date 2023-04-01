@@ -47,15 +47,6 @@ BtAmountEdit::BtAmountEdit(QWidget *parent,
 
 BtAmountEdit::~BtAmountEdit() = default;
 
-///QString BtAmountEdit::getWidgetText() const {
-///   return this->text();
-///}
-///
-///void BtAmountEdit::setWidgetText(QString text) {
-///   this->QLineEdit::setText(text);
-///   return;
-///}
-
 Measurement::Amount BtAmountEdit::toCanonical() const {
    return this->rawToCanonical(this->text());
 }
@@ -171,7 +162,7 @@ void BtAmountEdit::lineChanged(PreviousScaleInfo previousScaleInfo) {
       return;
    }
 
-   this->QLineEdit::setText(this->correctEnteredText(this->text(), previousScaleInfo));
+   this->QLineEdit::setText(this->correctEnteredText(this->text(), 3, previousScaleInfo));
 
    if (sender() == this) {
       emit textModified();

@@ -234,7 +234,9 @@ QString UiAmountWithUnits::displayAmount(double amount, int precision) const {
    );
 }
 
-QString UiAmountWithUnits::correctEnteredText(QString const & enteredText, PreviousScaleInfo previousScaleInfo) {
+QString UiAmountWithUnits::correctEnteredText(QString const & enteredText,
+                                              int precision,
+                                              PreviousScaleInfo previousScaleInfo) {
    QString correctedText;
 
    qDebug() << Q_FUNC_INFO << "enteredText:" << enteredText;
@@ -247,14 +249,6 @@ QString UiAmountWithUnits::correctEnteredText(QString const & enteredText, Previ
    // amount (aka to SI) and then into the unit we want.
    Measurement::Amount amountAsCanonical = this->pimpl->toCanonical(enteredText, previousScaleInfo);
 
-   //
-   // .:TBD:. This seems like a hack we should do away with...
-   //
-   Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
-   int precision = 3;
-   if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
-      precision = 0;
-   }
    correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
    qDebug() <<
       Q_FUNC_INFO << "Interpreted" << enteredText << "as" << amountAsCanonical << "and corrected to" << correctedText <<

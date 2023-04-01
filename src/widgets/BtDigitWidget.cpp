@@ -226,6 +226,9 @@ template int          BtDigitWidget::getValueAs<int         >() const;
 template unsigned int BtDigitWidget::getValueAs<unsigned int>() const;
 template double       BtDigitWidget::getValueAs<double      >() const;
 
+int BtDigitWidget::getPrecision() const {
+   return this->pimpl->m_lastPrec;
+}
 
 BtGenericDigit::BtGenericDigit(QWidget* parent) :
    BtDigitWidget{parent, NonPhysicalQuantity::Count} {

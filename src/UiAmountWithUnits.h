@@ -64,21 +64,6 @@ public:
                      Measurement::PhysicalQuantities const physicalQuantities);
    virtual ~UiAmountWithUnits();
 
-///   /**
-///    * \brief A class inheriting from this class is also expected to also inherit from a \c QWidget such as \c QLabel or
-///    *        \c QLineEdit.  We would like to be able to access the text() member function of that parent class in parts
-///    *        of our own implementation.  This is a bit tricky as \c QLabel::text() and \c QLineEdit::text() are actually
-///    *        unrelated, despite both having the same signature.  We therefore require child classes to implement this
-///    *        wrapper function that returns the value of \c text() from their other superclass.
-///    */
-///   virtual QString getWidgetText() const = 0;
-///
-///   /**
-///    * \brief Similar to \c getText(), this allows this base class to access \c QLabel::setText() or
-///    *        \c QLineEdit::setText() in the subclass that also inherits from \c QLabel or \c QLineEdit.
-///    */
-///   virtual void setWidgetText(QString text) = 0;
-
    /**
     * \brief Returns what type of field this is - except that, if it is \c Mixed2PhysicalQuantities, will one of the two
     *        possible \c Measurement::PhysicalQuantity values depending on the value of \c this->units.
@@ -148,6 +133,7 @@ public:
     * \brief Use this when you want to do something with the returned QString
     *
     * \param amount Must be in canonical units eg kilograms for mass, liters for volume
+    * \param precision Number of decimals to show .:TBD:. Remove default value here?
     */
    [[nodiscard]] QString displayAmount(double amount, int precision = 3) const;
 
@@ -156,11 +142,14 @@ public:
     *        to show US Customary volumes and user enters an amount in liters (aka litres) then we need to convert it to
     *        display in pints or quarts etc.
     * \param enteredText Typically retrieved by caller from \c QLabel::text() or \c QLineEdit::text()
+    * \param precision Number of decimals to show
     * \param previousScaleInfo
     *
     * \return Corrected text that caller should typically pass back to \c QLabel::setText() or \c QLineEdit::setText()
     */
-   [[nodiscard]] QString correctEnteredText(QString const & enteredText, PreviousScaleInfo previousScaleInfo);
+   [[nodiscard]] QString correctEnteredText(QString const & enteredText,
+                                            int precision,
+                                            PreviousScaleInfo previousScaleInfo);
 
 protected:
 ///   /**

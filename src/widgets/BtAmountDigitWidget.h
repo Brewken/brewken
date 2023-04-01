@@ -42,16 +42,6 @@ public:
                        Measurement::PhysicalQuantities const physicalQuantities);
    virtual ~BtAmountDigitWidget();
 
-///   /**
-///    * \see \c UiAmountWithUnits for what this member function needs to do
-///    */
-///   virtual QString getWidgetText() const;
-///
-///   /**
-///    * \see \c UiAmountWithUnits for what this member function needs to do
-///    */
-///   virtual void    setWidgetText(QString text);
-
 public slots:
    /**
     * \brief Received from \c BtLabel when the user has change \c UnitSystem

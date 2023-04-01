@@ -27,17 +27,8 @@ BtAmountDigitWidget::BtAmountDigitWidget(QWidget * parent,
 
 BtAmountDigitWidget::~BtAmountDigitWidget() = default;
 
-///QString BtAmountDigitWidget::getWidgetText() const {
-///   return this->text();
-///}
-///
-///void BtAmountDigitWidget::setWidgetText(QString text) {
-///   this->QLabel::setText(text);
-///   return;
-///}
-
 void BtAmountDigitWidget::displayChanged(PreviousScaleInfo previousScaleInfo) {
-   this->QLabel::setText(this->correctEnteredText(this->text(), previousScaleInfo));
+   this->QLabel::setText(this->correctEnteredText(this->text(), this->getPrecision(), previousScaleInfo));
    return;
 }
 

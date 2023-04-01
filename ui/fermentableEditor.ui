@@ -150,7 +150,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="BtStringEdit" name="lineEdit_name">
+        <widget class="SmartLineEdit" name="lineEdit_name">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -211,7 +211,7 @@
         </widget>
        </item>
        <item row="7" column="0">
-        <widget class="BtMassLabel" name="label_inventory">
+        <widget class="SmartLabel" name="label_inventory">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -227,7 +227,7 @@
         </widget>
        </item>
        <item row="7" column="1">
-        <widget class="BtMassEdit" name="lineEdit_inventory">
+        <widget class="SmartLineEdit" name="lineEdit_inventory">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -249,7 +249,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="BtColorLabel" name="label_color">
+        <widget class="SmartLabel" name="label_color">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -265,7 +265,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="BtColorEdit" name="lineEdit_color">
+        <widget class="SmartLineEdit" name="lineEdit_color">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -300,7 +300,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_yield">
+        <widget class="SmartLineEdit" name="lineEdit_yield">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -329,7 +329,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="2" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_moisture">
+        <widget class="SmartLineEdit" name="lineEdit_moisture">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -361,7 +361,7 @@
         </widget>
        </item>
        <item row="3" column="4">
-        <widget class="BtGenericEdit" name="lineEdit_ibuGalPerLb">
+        <widget class="SmartLineEdit" name="lineEdit_ibuGalPerLb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -393,7 +393,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="BtStringEdit" name="lineEdit_origin">
+        <widget class="SmartLineEdit" name="lineEdit_origin">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -435,7 +435,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="BtDiastaticPowerLabel" name="label_diastaticPower">
+        <widget class="SmartLabel" name="label_diastaticPower">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -448,7 +448,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="BtDiastaticPowerEdit" name="lineEdit_diastaticPower">
+        <widget class="SmartLineEdit" name="lineEdit_diastaticPower">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -493,7 +493,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="BtStringEdit" name="lineEdit_supplier">
+        <widget class="SmartLineEdit" name="lineEdit_supplier">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -515,7 +515,7 @@
         </widget>
        </item>
        <item row="1" column="4">
-        <widget class="BtGenericEdit" name="lineEdit_maxInBatch">
+        <widget class="SmartLineEdit" name="lineEdit_maxInBatch">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -550,7 +550,7 @@
         </spacer>
        </item>
        <item row="0" column="4">
-        <widget class="BtGenericEdit" name="lineEdit_protein">
+        <widget class="SmartLineEdit" name="lineEdit_protein">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -582,7 +582,7 @@
         </widget>
        </item>
        <item row="2" column="4">
-        <widget class="BtGenericEdit" name="lineEdit_coarseFineDiff">
+        <widget class="SmartLineEdit" name="lineEdit_coarseFineDiff">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -700,64 +700,22 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtGenericEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtStringEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtColorLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtColorEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtMassEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <signal>textModified()</signal>
-    <slot>lineChanged()</slot>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtMassLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
     <slot>popContextMenu(QPoint)</slot>
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtDiastaticPowerEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
+    <signal>textModified()</signal>
+    <slot>lineChanged()</slot>
     <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtDiastaticPowerLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
  </customwidgets>

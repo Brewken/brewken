@@ -93,12 +93,12 @@ public:
     *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
     *                             field (in which case we need to handle blank / empty string as a valid value).
     * \param buddyLabel           Required if \c fieldType is \b not a \c NonPhysicalQuantity
-    * \param defaultPrecision     Where relevant determines the number of decimal places to show
+    * \param precision            Where relevant determines the number of decimal places to show
     * \param maximalDisplayString Used for determining the width of the widget
     */
    void init(TypeInfo   const & typeInfo,
              SmartLabel       & buddyLabel,
-             int        const   defaultPrecision = 3,
+             int        const   precision = 3,
              QString    const & maximalDisplayString = "100.000 srm");
 
    /**
@@ -106,7 +106,7 @@ public:
     *        \c NonPhysicalQuantity::String, etc.
     */
    void init(TypeInfo const & typeInfo,
-             int      const   defaultPrecision = 3,
+             int      const   precision = 3,
              QString  const & maximalDisplayString = "100.000 srm");
 
    BtFieldType const getFieldType() const;

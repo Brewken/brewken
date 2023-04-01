@@ -42,6 +42,19 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
                                               Fermentable::typeStringMapping.enumToString(ii));
    }
 
+   this->lineEdit_name          ->init(Fermentable::typeLookup.getType(PropertyNames::NamedEntity::name                  )                                );
+   this->lineEdit_color         ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::color_srm             ), *this->label_color            );
+   this->lineEdit_diastaticPower->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::diastaticPower_lintner), *this->label_diastaticPower   );
+   this->lineEdit_coarseFineDiff->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::coarseFineDiff_pct    )                             , 0);
+   this->lineEdit_ibuGalPerLb   ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::ibuGalPerLb           )                             , 0);
+   this->lineEdit_maxInBatch    ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::maxInBatch_pct        )                             , 0);
+   this->lineEdit_moisture      ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::moisture_pct          )                             , 0);
+   this->lineEdit_protein       ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::protein_pct           )                             , 0);
+   this->lineEdit_yield         ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::yield_pct             )                             , 1);
+   this->lineEdit_inventory     ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::amount                ), *this->label_inventory        );
+   this->lineEdit_origin        ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::origin                )                                );
+   this->lineEdit_supplier      ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::supplier              )                                );
+
    connect(pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNewFermentable);
    connect(pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save);
    connect(pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose);
@@ -128,23 +141,23 @@ void FermentableEditor::showChanges(QMetaProperty* metaProp) {
          return;
       }
    }
-   if (updateAll || propName == PropertyNames::NamedEntity::name                  ) { lineEdit_name          ->setText(obsFerm->name()                  ); // Continues to next line
-                                                                                      lineEdit_name->setCursorPosition(0); tabWidget_editor->setTabText(0, obsFerm->name());                        if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { lineEdit_inventory     ->setText(obsFerm->inventory()             );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::yield_pct             ) { lineEdit_yield         ->setText(obsFerm->yield_pct()             );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::color_srm             ) { lineEdit_color         ->setText(obsFerm->color_srm(), 0          );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::addAfterBoil          ) { checkBox_addAfterBoil  ->setCheckState(obsFerm->addAfterBoil() ? Qt::Checked : Qt::Unchecked);                if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::origin                ) { lineEdit_origin        ->setText(obsFerm->origin()                ); lineEdit_origin  ->setCursorPosition(0); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::supplier              ) { lineEdit_supplier      ->setText(obsFerm->supplier()              ); lineEdit_supplier->setCursorPosition(0); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::coarseFineDiff_pct    ) { lineEdit_coarseFineDiff->setText(obsFerm->coarseFineDiff_pct()    );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::moisture_pct          ) { lineEdit_moisture      ->setText(obsFerm->moisture_pct()          );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::diastaticPower_lintner) { lineEdit_diastaticPower->setText(obsFerm->diastaticPower_lintner());                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::protein_pct           ) { lineEdit_protein       ->setText(obsFerm->protein_pct()           );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::maxInBatch_pct        ) { lineEdit_maxInBatch    ->setText(obsFerm->maxInBatch_pct()        );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::recommendMash         ) { checkBox_recommendMash ->setCheckState(obsFerm->recommendMash() ? Qt::Checked : Qt::Unchecked);               if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::isMashed              ) { checkBox_isMashed      ->setCheckState(obsFerm->isMashed()      ? Qt::Checked : Qt::Unchecked);               if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::ibuGalPerLb           ) { lineEdit_ibuGalPerLb   ->setText(obsFerm->ibuGalPerLb()           );                                          if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Fermentable::notes                 ) { textEdit_notes         ->setPlainText(obsFerm->notes()            );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntity::name                  ) { lineEdit_name          ->setText      (obsFerm->name()                  ); // Continues to next line
+                                                                                      lineEdit_name->setCursorPosition(0); tabWidget_editor->setTabText(0, obsFerm->name());                              if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { lineEdit_inventory     ->setAmount    (obsFerm->inventory()             );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::yield_pct             ) { lineEdit_yield         ->setAmount    (obsFerm->yield_pct()             );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::color_srm             ) { lineEdit_color         ->setAmount    (obsFerm->color_srm(), 0          );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::addAfterBoil          ) { checkBox_addAfterBoil  ->setCheckState(obsFerm->addAfterBoil() ? Qt::Checked : Qt::Unchecked);                      if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::origin                ) { lineEdit_origin        ->setText      (obsFerm->origin()                ); lineEdit_origin  ->setCursorPosition(0); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::supplier              ) { lineEdit_supplier      ->setText      (obsFerm->supplier()              ); lineEdit_supplier->setCursorPosition(0); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::coarseFineDiff_pct    ) { lineEdit_coarseFineDiff->setAmount    (obsFerm->coarseFineDiff_pct()    );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::moisture_pct          ) { lineEdit_moisture      ->setAmount    (obsFerm->moisture_pct()          );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::diastaticPower_lintner) { lineEdit_diastaticPower->setAmount    (obsFerm->diastaticPower_lintner());                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::protein_pct           ) { lineEdit_protein       ->setAmount    (obsFerm->protein_pct()           );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::maxInBatch_pct        ) { lineEdit_maxInBatch    ->setAmount    (obsFerm->maxInBatch_pct()        );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::recommendMash         ) { checkBox_recommendMash ->setCheckState(obsFerm->recommendMash() ? Qt::Checked : Qt::Unchecked);                     if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::isMashed              ) { checkBox_isMashed      ->setCheckState(obsFerm->isMashed()      ? Qt::Checked : Qt::Unchecked);                     if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::ibuGalPerLb           ) { lineEdit_ibuGalPerLb   ->setAmount    (obsFerm->ibuGalPerLb()           );                                          if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Fermentable::notes                 ) { textEdit_notes         ->setPlainText (obsFerm->notes()                 );                                          if (!updateAll) { return; } }
    return;
 }
 
