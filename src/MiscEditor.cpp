@@ -36,9 +36,13 @@ MiscEditor::MiscEditor(QWidget * parent) :
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-   this->lineEdit_name     ->init(Misc::typeLookup.getType(PropertyNames::NamedEntity::name)                        );
-   this->lineEdit_inventory->init(Misc::typeLookup.getType(PropertyNames::Misc::amount     ), *this->label_inventory);
-   this->lineEdit_time     ->init(Misc::typeLookup.getType(PropertyNames::Misc::time       ), *this->label_time     );
+   SMART_LINE_EDIT_INIT(MiscEditor, Misc, lineEdit_name     , PropertyNames::NamedEntity::name                        );
+   SMART_LINE_EDIT_INIT(MiscEditor, Misc, lineEdit_inventory, PropertyNames::Misc::amount     , *this->label_inventory);
+   SMART_LINE_EDIT_INIT(MiscEditor, Misc, lineEdit_time     , PropertyNames::Misc::time       , *this->label_time     );
+
+///   this->lineEdit_name     ->init(Misc::typeLookup.getType(PropertyNames::NamedEntity::name)                        );
+///   this->lineEdit_inventory->init(Misc::typeLookup.getType(PropertyNames::Misc::amount     ), *this->label_inventory);
+///   this->lineEdit_time     ->init(Misc::typeLookup.getType(PropertyNames::Misc::time       ), *this->label_time     );
 
    // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
    // function to allow use of default argument on newStyle() slot

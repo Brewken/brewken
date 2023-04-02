@@ -38,16 +38,27 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
    bNoteObs = 0;
    setObjectName("BrewNoteWidget");
 
-   this->lineEdit_Fg         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::fg              ), *this->label_Fg         );
-   this->lineEdit_Og         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::og              ), *this->label_Og         );
-   this->lineEdit_Sg         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::sg              ), *this->label_Sg         );
-   this->lineEdit_mashFinTemp->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::mashFinTemp_c   ), *this->label_mashFinTemp);
-   this->lineEdit_pitchTemp  ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::pitchTemp_c     ), *this->label_pitchTemp  );
-   this->lineEdit_strikeTemp ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::strikeTemp_c    ), *this->label_strikeTemp );
-   this->lineEdit_finalVolume->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::finalVolume_l   ), *this->label_finalVolume   );
-   this->lineEdit_postBoilVol->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::postBoilVolume_l), *this->label_postBoilVol);
-   this->lineEdit_volIntoBk  ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::volumeIntoBK_l  ), *this->label_volIntoBk  );
-   this->lineEdit_volIntoFerm->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::volumeIntoFerm_l), *this->label_volIntoFerm);
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_Fg         , PropertyNames::BrewNote::fg              , *this->label_Fg         );
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_Og         , PropertyNames::BrewNote::og              , *this->label_Og         );
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_Sg         , PropertyNames::BrewNote::sg              , *this->label_Sg         );
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_mashFinTemp, PropertyNames::BrewNote::mashFinTemp_c   , *this->label_mashFinTemp);
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_pitchTemp  , PropertyNames::BrewNote::pitchTemp_c     , *this->label_pitchTemp  );
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_strikeTemp , PropertyNames::BrewNote::strikeTemp_c    , *this->label_strikeTemp );
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_finalVolume, PropertyNames::BrewNote::finalVolume_l   , *this->label_finalVolume);
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_postBoilVol, PropertyNames::BrewNote::postBoilVolume_l, *this->label_postBoilVol);
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_volIntoBk  , PropertyNames::BrewNote::volumeIntoBK_l  , *this->label_volIntoBk  );
+   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_volIntoFerm, PropertyNames::BrewNote::volumeIntoFerm_l, *this->label_volIntoFerm);
+
+///   this->lineEdit_Fg         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::fg              ), *this->label_Fg         );
+///   this->lineEdit_Og         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::og              ), *this->label_Og         );
+///   this->lineEdit_Sg         ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::sg              ), *this->label_Sg         );
+///   this->lineEdit_mashFinTemp->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::mashFinTemp_c   ), *this->label_mashFinTemp);
+///   this->lineEdit_pitchTemp  ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::pitchTemp_c     ), *this->label_pitchTemp  );
+///   this->lineEdit_strikeTemp ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::strikeTemp_c    ), *this->label_strikeTemp );
+///   this->lineEdit_finalVolume->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::finalVolume_l   ), *this->label_finalVolume   );
+///   this->lineEdit_postBoilVol->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::postBoilVolume_l), *this->label_postBoilVol);
+///   this->lineEdit_volIntoBk  ->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::volumeIntoBK_l  ), *this->label_volIntoBk  );
+///   this->lineEdit_volIntoFerm->init(BrewNote::typeLookup.getType(PropertyNames::BrewNote::volumeIntoFerm_l), *this->label_volIntoFerm);
 
    connect(this->lineEdit_Sg,          &SmartLineEdit::textModified,   this, &BrewNoteWidget::updateSG              );
    connect(this->lineEdit_volIntoBk,   &SmartLineEdit::textModified,   this, &BrewNoteWidget::updateVolumeIntoBK_l  );

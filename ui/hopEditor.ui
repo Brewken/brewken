@@ -85,7 +85,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_alpha">
+        <widget class="SmartLineEdit" name="lineEdit_alpha">
          <property name="toolTip">
           <string>Alpha acids as percent by mass</string>
          </property>
@@ -95,7 +95,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="BtStringEdit" name="lineEdit_name">
+        <widget class="SmartLineEdit" name="lineEdit_name">
          <property name="toolTip">
           <string>Name</string>
          </property>
@@ -168,7 +168,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="BtMassLabel" name="label_inventory">
+        <widget class="SmartLabel" name="label_inventory">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -181,7 +181,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="BtMassEdit" name="lineEdit_inventory">
+        <widget class="SmartLineEdit" name="lineEdit_inventory">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -207,7 +207,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="BtStringEdit" name="lineEdit_origin">
+        <widget class="SmartLineEdit" name="lineEdit_origin">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -230,7 +230,7 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_year">
+        <widget class="SmartLineEdit" name="lineEdit_year">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -256,7 +256,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="BtStringEdit" name="lineEdit_producer">
+        <widget class="SmartLineEdit" name="lineEdit_producer">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -279,7 +279,7 @@
         </widget>
        </item>
        <item row="4" column="3">
-        <widget class="BtStringEdit" name="lineEdit_product_id">
+        <widget class="SmartLineEdit" name="lineEdit_product_id">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -292,7 +292,7 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="BtTimeLabel" name="label_time">
+        <widget class="SmartLabel" name="label_time">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -305,7 +305,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="BtTimeEdit" name="lineEdit_time">
+        <widget class="SmartLineEdit" name="lineEdit_time">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -338,7 +338,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_beta">
+        <widget class="SmartLineEdit" name="lineEdit_beta">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -364,7 +364,7 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_HSI">
+        <widget class="SmartLineEdit" name="lineEdit_HSI">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -396,7 +396,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_humulene">
+        <widget class="SmartLineEdit" name="lineEdit_humulene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -428,7 +428,7 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_linalool">
+        <widget class="SmartLineEdit" name="lineEdit_linalool">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -460,7 +460,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_caryophyllene">
+        <widget class="SmartLineEdit" name="lineEdit_caryophyllene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -492,7 +492,7 @@
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_limonene">
+        <widget class="SmartLineEdit" name="lineEdit_limonene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -524,7 +524,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_cohumulone">
+        <widget class="SmartLineEdit" name="lineEdit_cohumulone">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -556,7 +556,7 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_nerol">
+        <widget class="SmartLineEdit" name="lineEdit_nerol">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -588,7 +588,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_myrcene">
+        <widget class="SmartLineEdit" name="lineEdit_myrcene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -620,7 +620,7 @@
         </widget>
        </item>
        <item row="4" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_pinene">
+        <widget class="SmartLineEdit" name="lineEdit_pinene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -652,7 +652,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_farnesene">
+        <widget class="SmartLineEdit" name="lineEdit_farnesene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -684,7 +684,7 @@
         </widget>
        </item>
        <item row="5" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_polyphenols">
+        <widget class="SmartLineEdit" name="lineEdit_polyphenols">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -716,7 +716,7 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_geraniol">
+        <widget class="SmartLineEdit" name="lineEdit_geraniol">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -748,7 +748,7 @@
         </widget>
        </item>
        <item row="6" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_xanthohumol">
+        <widget class="SmartLineEdit" name="lineEdit_xanthohumol">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -780,7 +780,7 @@
         </widget>
        </item>
        <item row="7" column="1">
-        <widget class="BtGenericEdit" name="lineEdit_b_pinene">
+        <widget class="SmartLineEdit" name="lineEdit_b_pinene">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -812,7 +812,7 @@
         </widget>
        </item>
        <item row="7" column="3">
-        <widget class="BtGenericEdit" name="lineEdit_total_oil_ml_per_100g">
+        <widget class="SmartLineEdit" name="lineEdit_total_oil_ml_per_100g">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -965,48 +965,21 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtGenericEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtStringEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtTimeEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTimeLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtMassEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
     <signal>textModified()</signal>
     <slot>lineChanged()</slot>
     <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtMassLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-    <slot>popContextMenu(QPoint)</slot>
    </slots>
   </customwidget>
  </customwidgets>

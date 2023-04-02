@@ -89,25 +89,30 @@ public:
     *
     *        This version is for a \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) field
     *
+    * \param name      Used only for logging, mostly for debugging.  (We have hundreds of instances of this object and
+    *                  if we detect that one of them is misconfigured, it's very useful to be able to log which one!)
     * \param typeInfo             Tells us what data type we use to store the contents of the field (when converted to
     *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
     *                             field (in which case we need to handle blank / empty string as a valid value).
     * \param buddyLabel           Required if \c fieldType is \b not a \c NonPhysicalQuantity
-    * \param precision            Where relevant determines the number of decimal places to show
+    * \param precision            For a decimal field, this determines the number of decimal places to show.  If not
+    *                             specified, we show 3 decimal places.
     * \param maximalDisplayString Used for determining the width of the widget
     */
-   void init(TypeInfo   const & typeInfo,
-             SmartLabel       & buddyLabel,
-             int        const   precision = 3,
-             QString    const & maximalDisplayString = "100.000 srm");
+   void init(char       const * const   name,
+             TypeInfo           const & typeInfo,
+             SmartLabel               & buddyLabel,
+             std::optional<int> const   precision = std::nullopt,
+             QString            const & maximalDisplayString = "100.000 srm");
 
    /**
     * \brief As above, but for non-physical quantity such as \c NonPhysicalQuantity::Date,
     *        \c NonPhysicalQuantity::String, etc.
     */
-   void init(TypeInfo const & typeInfo,
-             int      const   precision = 3,
-             QString  const & maximalDisplayString = "100.000 srm");
+   void init(char       const * const   name,
+             TypeInfo           const & typeInfo,
+             std::optional<int> const   precision = std::nullopt,
+             QString            const & maximalDisplayString = "100.000 srm");
 
    BtFieldType const getFieldType() const;
 
@@ -127,11 +132,12 @@ public:
    Measurement::Amount toCanonical() const;
 
    /**
-    * \brief Set the amount for a decimal field
+    * \brief Set the amount for a numeric field
     *
     * \param amount is the amount to display, but the field should be blank if this is \b std::nullopt
     */
-   void setAmount(std::optional<double> amount);
+   template<typename T> void setAmount(std::optional<T> amount);
+   template<typename T> void setAmount(T                amount);
 
 //   /**
 //    * \brief Set the text for a non-numeric field
@@ -188,5 +194,44 @@ private:
    class impl;
    std::unique_ptr<impl> pimpl;
 };
+
+/**
+ * \brief Helper macro for \c SMART_LINE_EDIT_INIT.  Essentially does concatenation, using the magic, that, for the
+ *        compiler, there is no difference between writing a string literal as:
+ *           "foobarhumbug"
+ *        and writing it as:
+ *           "foo" "bar" "humbug"
+ */
+#define SLE_LOG_NAME(editorClass, fieldName) #editorClass "->" #fieldName
+
+/**
+ * \brief This macro saves a bit of copy-and-paste when invoking \c SmartLineEdit::init.  Eg instead of writing:
+ *
+ *           this->lineEdit_color->init("FermentableEditor->lineEdit_color", Fermentable::typeLookup.getType(PropertyNames::Fermentable::color_srm), *this->label_color, 0);
+ *
+ *        you write:
+ *
+ *           SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_color, PropertyNames::Fermentable::color_srm, *this->label_color, 0);
+ *
+ * \param editorClass The class name of the class holding the field we're initialising, eg \c HopEditor.  (In theory we
+ *                    could pick this up via \c staticMetaObject.className(), but then we wouldn't be able to do the
+ *                    macro concatenation here.)
+ * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop
+ * \param fieldName  The name of the member variable for this field, eg in \c HopEditor, this could be \c lineEdit_name,
+ *                   \c lineEdit_alpha, etc.  Note that:
+ *                     - We deliberately don't try to do anything clever with automatically inserting the "lineEdit_"
+ *                       prefix, as this would make the code harder to read and search.
+ *                     - It is intentional that field names sometimes differ slightly from property names.  The latter
+ *                       always include their canonical unit names (eg \c PropertyNames::Fermentable::color_srm) whereas
+ *                       the former do not (eg \c lineEdit_color) because the user can enter data in any supported
+ *                       units.
+ * \param propertyName The name of the property to which this field relates, eg in \c HopEditor, this could be
+ *                     \c PropertyNames::NamedEntity::name, \c PropertyNames::Hop::alpha_pct, etc.  (Note, as above, we
+ *                     intentionally do \b not automatically insert the \c PropertyNames:: prefix.)
+ * \param ...  Any remaining arguments are passed through to \c SmartLineEdit::init in third position and above
+ *             Note that the introduction of __VA_OPT__ in C++20 makes our lives easier here.
+ */
+#define SMART_LINE_EDIT_INIT(editorClass, modelClass, fieldName, propertyName, ...) \
+   this-> fieldName ->init(SLE_LOG_NAME(editorClass, fieldName), modelClass ::typeLookup.getType(propertyName) __VA_OPT__(, __VA_ARGS__))
 
 #endif
