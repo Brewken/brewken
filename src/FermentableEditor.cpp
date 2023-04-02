@@ -55,19 +55,6 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_origin        , PropertyNames::Fermentable::origin                                                );
    SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_supplier      , PropertyNames::Fermentable::supplier                                              );
 
-//   this->lineEdit_name          ->init(Fermentable::typeLookup.getType(PropertyNames::NamedEntity::name                  )                                );
-//   this->lineEdit_color         ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::color_srm             ), *this->label_color         , 0);
-//   this->lineEdit_diastaticPower->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::diastaticPower_lintner), *this->label_diastaticPower   );
-//   this->lineEdit_coarseFineDiff->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::coarseFineDiff_pct    )                             , 0);
-//   this->lineEdit_ibuGalPerLb   ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::ibuGalPerLb           )                             , 0);
-//   this->lineEdit_maxInBatch    ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::maxInBatch_pct        )                             , 0);
-//   this->lineEdit_moisture      ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::moisture_pct          )                             , 0);
-//   this->lineEdit_protein       ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::protein_pct           )                             , 0);
-//   this->lineEdit_yield         ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::yield_pct             )                             , 1);
-//   this->lineEdit_inventory     ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::amount                ), *this->label_inventory        );
-//   this->lineEdit_origin        ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::origin                )                                );
-//   this->lineEdit_supplier      ->init(Fermentable::typeLookup.getType(PropertyNames::Fermentable::supplier              )                                );
-
    connect(pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNewFermentable);
    connect(pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save);
    connect(pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose);

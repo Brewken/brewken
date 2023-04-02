@@ -48,6 +48,25 @@ StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog{pare
    styleProxyModel->setSourceModel(styleListModel);
    styleComboBox->setModel(styleProxyModel);
 
+   // Note that the Min / Max pairs of entry fields each share a label (which is shown to the left of both fields)
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_name          , PropertyNames::NamedEntity::name                        );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_category      , PropertyNames::Style::category                          );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_categoryNumber, PropertyNames::Style::categoryNumber                    );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleLetter   , PropertyNames::Style::styleLetter                       );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleGuide    , PropertyNames::Style::styleGuide                        );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMin         , PropertyNames::Style::ogMin         , *this->label_og   );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMax         , PropertyNames::Style::ogMax         , *this->label_og   );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMin         , PropertyNames::Style::fgMin         , *this->label_fg   );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMax         , PropertyNames::Style::fgMax         , *this->label_fg   );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ibuMin        , PropertyNames::Style::ibuMin        , *this->label_ibu  , 0);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ibuMax        , PropertyNames::Style::ibuMax        , *this->label_ibu  , 0);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMin      , PropertyNames::Style::colorMin_srm  , *this->label_color);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMax      , PropertyNames::Style::colorMax_srm  , *this->label_color);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_carbMin       , PropertyNames::Style::carbMin_vol   , *this->label_carb , 0);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_carbMax       , PropertyNames::Style::carbMax_vol   , *this->label_carb , 0);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_abvMin        , PropertyNames::Style::abvMin_pct                        , 1);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_abvMax        , PropertyNames::Style::abvMax_pct                        , 1);
+
    // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
    // function to allow use of default argument on newStyle() slot
    connect(pushButton_save  , &QAbstractButton::clicked     , this, &StyleEditor::save                     );
@@ -198,28 +217,28 @@ void StyleEditor::showChanges(QMetaProperty const * metaProp) {
 //   QVariant val = metaProp->read(this->obsStyle);
    }
 
-   if (updateAll || propName == PropertyNames::NamedEntity::name    ) { lineEdit_name          ->setText(this->obsStyle->name          ()); // Continues to next line
+   if (updateAll || propName == PropertyNames::NamedEntity::name    ) { lineEdit_name          ->setText   (this->obsStyle->name          ()); // Continues to next line
                                                                         tabWidget_profile      ->setTabText(0, this->obsStyle->name    ()); }
-   if (updateAll || propName == PropertyNames::Style::category      ) { lineEdit_category      ->setText(this->obsStyle->category      ()); }
-   if (updateAll || propName == PropertyNames::Style::categoryNumber) { lineEdit_categoryNumber->setText(this->obsStyle->categoryNumber()); }
-   if (updateAll || propName == PropertyNames::Style::styleLetter   ) { lineEdit_styleLetter   ->setText(this->obsStyle->styleLetter   ()); }
-   if (updateAll || propName == PropertyNames::Style::styleGuide    ) { lineEdit_styleGuide    ->setText(this->obsStyle->styleGuide    ()); }
+   if (updateAll || propName == PropertyNames::Style::category      ) { lineEdit_category      ->setText   (this->obsStyle->category      ()); }
+   if (updateAll || propName == PropertyNames::Style::categoryNumber) { lineEdit_categoryNumber->setText   (this->obsStyle->categoryNumber()); }
+   if (updateAll || propName == PropertyNames::Style::styleLetter   ) { lineEdit_styleLetter   ->setText   (this->obsStyle->styleLetter   ()); }
+   if (updateAll || propName == PropertyNames::Style::styleGuide    ) { lineEdit_styleGuide    ->setText   (this->obsStyle->styleGuide    ()); }
    if (updateAll || propName == PropertyNames::Style::type          ) { comboBox_type          ->setCurrentIndex(static_cast<int>(this->obsStyle->type())); }
-   if (updateAll || propName == PropertyNames::Style::ogMin         ) { lineEdit_ogMin         ->setText(this->obsStyle->ogMin         ()); }
-   if (updateAll || propName == PropertyNames::Style::ogMax         ) { lineEdit_ogMax         ->setText(this->obsStyle->ogMax         ()); }
-   if (updateAll || propName == PropertyNames::Style::fgMin         ) { lineEdit_fgMin         ->setText(this->obsStyle->fgMin         ()); }
-   if (updateAll || propName == PropertyNames::Style::fgMax         ) { lineEdit_fgMax         ->setText(this->obsStyle->fgMax         ()); }
-   if (updateAll || propName == PropertyNames::Style::ibuMin        ) { lineEdit_ibuMin        ->setText(this->obsStyle->ibuMin        ()); }
-   if (updateAll || propName == PropertyNames::Style::ibuMax        ) { lineEdit_ibuMax        ->setText(this->obsStyle->ibuMax        ()); }
-   if (updateAll || propName == PropertyNames::Style::colorMin_srm  ) { lineEdit_colorMin      ->setText(this->obsStyle->colorMin_srm  ()); }
-   if (updateAll || propName == PropertyNames::Style::colorMax_srm  ) { lineEdit_colorMax      ->setText(this->obsStyle->colorMax_srm  ()); }
-   if (updateAll || propName == PropertyNames::Style::carbMin_vol   ) { lineEdit_carbMin       ->setText(this->obsStyle->carbMin_vol   ()); }
-   if (updateAll || propName == PropertyNames::Style::carbMax_vol   ) { lineEdit_carbMax       ->setText(this->obsStyle->carbMax_vol   ()); }
-   if (updateAll || propName == PropertyNames::Style::abvMin_pct    ) { lineEdit_abvMin        ->setText(this->obsStyle->abvMin_pct    ()); }
-   if (updateAll || propName == PropertyNames::Style::abvMax_pct    ) { lineEdit_abvMax        ->setText(this->obsStyle->abvMax_pct    ()); }
-   if (updateAll || propName == PropertyNames::Style::profile       ) { textEdit_profile       ->setText(this->obsStyle->profile       ()); }
-   if (updateAll || propName == PropertyNames::Style::ingredients   ) { textEdit_ingredients   ->setText(this->obsStyle->ingredients   ()); }
-   if (updateAll || propName == PropertyNames::Style::examples      ) { textEdit_examples      ->setText(this->obsStyle->examples      ()); }
-   if (updateAll || propName == PropertyNames::Style::notes         ) { textEdit_notes         ->setText(this->obsStyle->notes         ()); }
+   if (updateAll || propName == PropertyNames::Style::ogMin         ) { lineEdit_ogMin         ->setAmount (this->obsStyle->ogMin         ()); }
+   if (updateAll || propName == PropertyNames::Style::ogMax         ) { lineEdit_ogMax         ->setAmount (this->obsStyle->ogMax         ()); }
+   if (updateAll || propName == PropertyNames::Style::fgMin         ) { lineEdit_fgMin         ->setAmount (this->obsStyle->fgMin         ()); }
+   if (updateAll || propName == PropertyNames::Style::fgMax         ) { lineEdit_fgMax         ->setAmount (this->obsStyle->fgMax         ()); }
+   if (updateAll || propName == PropertyNames::Style::ibuMin        ) { lineEdit_ibuMin        ->setAmount (this->obsStyle->ibuMin        ()); }
+   if (updateAll || propName == PropertyNames::Style::ibuMax        ) { lineEdit_ibuMax        ->setAmount (this->obsStyle->ibuMax        ()); }
+   if (updateAll || propName == PropertyNames::Style::colorMin_srm  ) { lineEdit_colorMin      ->setAmount (this->obsStyle->colorMin_srm  ()); }
+   if (updateAll || propName == PropertyNames::Style::colorMax_srm  ) { lineEdit_colorMax      ->setAmount (this->obsStyle->colorMax_srm  ()); }
+   if (updateAll || propName == PropertyNames::Style::carbMin_vol   ) { lineEdit_carbMin       ->setAmount (this->obsStyle->carbMin_vol   ()); }
+   if (updateAll || propName == PropertyNames::Style::carbMax_vol   ) { lineEdit_carbMax       ->setAmount (this->obsStyle->carbMax_vol   ()); }
+   if (updateAll || propName == PropertyNames::Style::abvMin_pct    ) { lineEdit_abvMin        ->setAmount (this->obsStyle->abvMin_pct    ()); }
+   if (updateAll || propName == PropertyNames::Style::abvMax_pct    ) { lineEdit_abvMax        ->setAmount (this->obsStyle->abvMax_pct    ()); }
+   if (updateAll || propName == PropertyNames::Style::profile       ) { textEdit_profile       ->setText   (this->obsStyle->profile       ()); }
+   if (updateAll || propName == PropertyNames::Style::ingredients   ) { textEdit_ingredients   ->setText   (this->obsStyle->ingredients   ()); }
+   if (updateAll || propName == PropertyNames::Style::examples      ) { textEdit_examples      ->setText   (this->obsStyle->examples      ()); }
+   if (updateAll || propName == PropertyNames::Style::notes         ) { textEdit_notes         ->setText   (this->obsStyle->notes         ()); }
    return;
 }
