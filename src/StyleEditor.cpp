@@ -49,19 +49,19 @@ StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog{pare
    styleComboBox->setModel(styleProxyModel);
 
    // Note that the Min / Max pairs of entry fields each share a label (which is shown to the left of both fields)
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_name          , PropertyNames::NamedEntity::name                        );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_category      , PropertyNames::Style::category                          );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_categoryNumber, PropertyNames::Style::categoryNumber                    );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleLetter   , PropertyNames::Style::styleLetter                       );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleGuide    , PropertyNames::Style::styleGuide                        );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMin         , PropertyNames::Style::ogMin         , *this->label_og   );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMax         , PropertyNames::Style::ogMax         , *this->label_og   );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMin         , PropertyNames::Style::fgMin         , *this->label_fg   );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMax         , PropertyNames::Style::fgMax         , *this->label_fg   );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_name          , PropertyNames::NamedEntity::name                           );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_category      , PropertyNames::Style::category                             );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_categoryNumber, PropertyNames::Style::categoryNumber                       );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleLetter   , PropertyNames::Style::styleLetter                          );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleGuide    , PropertyNames::Style::styleGuide                           );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMin         , PropertyNames::Style::ogMin         , *this->label_og      );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMax         , PropertyNames::Style::ogMax         , *this->label_og      );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMin         , PropertyNames::Style::fgMin         , *this->label_fg      );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMax         , PropertyNames::Style::fgMax         , *this->label_fg      );
    SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ibuMin        , PropertyNames::Style::ibuMin        , *this->label_ibu  , 0);
    SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ibuMax        , PropertyNames::Style::ibuMax        , *this->label_ibu  , 0);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMin      , PropertyNames::Style::colorMin_srm  , *this->label_color);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMax      , PropertyNames::Style::colorMax_srm  , *this->label_color);
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMin      , PropertyNames::Style::colorMin_srm  , *this->label_color   );
+   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMax      , PropertyNames::Style::colorMax_srm  , *this->label_color   );
    SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_carbMin       , PropertyNames::Style::carbMin_vol   , *this->label_carb , 0);
    SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_carbMax       , PropertyNames::Style::carbMax_vol   , *this->label_carb , 0);
    SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_abvMin        , PropertyNames::Style::abvMin_pct                        , 1);
@@ -126,22 +126,22 @@ void StyleEditor::save() {
    this->obsStyle->setStyleLetter   (lineEdit_styleLetter   ->text()                        );
    this->obsStyle->setStyleGuide    (lineEdit_styleGuide    ->text()                        );
    this->obsStyle->setType          (static_cast<Style::Type>(comboBox_type->currentIndex()));
-   this->obsStyle->setOgMin         (lineEdit_ogMin        ->toCanonical().quantity()       );
-   this->obsStyle->setOgMax         (lineEdit_ogMax        ->toCanonical().quantity()       );
-   this->obsStyle->setFgMin         (lineEdit_fgMin        ->toCanonical().quantity()       );
-   this->obsStyle->setFgMax         (lineEdit_fgMax        ->toCanonical().quantity()       );
-   this->obsStyle->setIbuMin        (lineEdit_ibuMin       ->getValueAs<double>()           );
-   this->obsStyle->setIbuMax        (lineEdit_ibuMax       ->getValueAs<double>()           );
-   this->obsStyle->setColorMin_srm  (lineEdit_colorMin     ->toCanonical().quantity()       );
-   this->obsStyle->setColorMax_srm  (lineEdit_colorMax     ->toCanonical().quantity()       );
-   this->obsStyle->setCarbMin_vol   (lineEdit_carbMin      ->toCanonical().quantity()       );
-   this->obsStyle->setCarbMax_vol   (lineEdit_carbMax      ->toCanonical().quantity()       );
-   this->obsStyle->setAbvMin_pct    (lineEdit_abvMin       ->getValueAs<double>()           );
-   this->obsStyle->setAbvMax_pct    (lineEdit_abvMax       ->getValueAs<double>()           );
-   this->obsStyle->setProfile       (textEdit_profile      ->toPlainText()                  );
-   this->obsStyle->setIngredients   (textEdit_ingredients  ->toPlainText()                  );
-   this->obsStyle->setExamples      (textEdit_examples     ->toPlainText()                  );
-   this->obsStyle->setNotes         (textEdit_notes        ->toPlainText()                  );
+   this->obsStyle->setOgMin         (lineEdit_ogMin         ->toCanonical().quantity()      );
+   this->obsStyle->setOgMax         (lineEdit_ogMax         ->toCanonical().quantity()      );
+   this->obsStyle->setFgMin         (lineEdit_fgMin         ->toCanonical().quantity()      );
+   this->obsStyle->setFgMax         (lineEdit_fgMax         ->toCanonical().quantity()      );
+   this->obsStyle->setIbuMin        (lineEdit_ibuMin        ->getValueAs<double>()          );
+   this->obsStyle->setIbuMax        (lineEdit_ibuMax        ->getValueAs<double>()          );
+   this->obsStyle->setColorMin_srm  (lineEdit_colorMin      ->toCanonical().quantity()      );
+   this->obsStyle->setColorMax_srm  (lineEdit_colorMax      ->toCanonical().quantity()      );
+   this->obsStyle->setCarbMin_vol   (lineEdit_carbMin       ->toCanonical().quantity()      );
+   this->obsStyle->setCarbMax_vol   (lineEdit_carbMax       ->toCanonical().quantity()      );
+   this->obsStyle->setAbvMin_pct    (lineEdit_abvMin        ->getValueAs<double>()          );
+   this->obsStyle->setAbvMax_pct    (lineEdit_abvMax        ->getValueAs<double>()          );
+   this->obsStyle->setProfile       (textEdit_profile       ->toPlainText()                 );
+   this->obsStyle->setIngredients   (textEdit_ingredients   ->toPlainText()                 );
+   this->obsStyle->setExamples      (textEdit_examples      ->toPlainText()                 );
+   this->obsStyle->setNotes         (textEdit_notes         ->toPlainText()                 );
 
    if (this->obsStyle->key() < 0) {
       ObjectStoreWrapper::insert(*this->obsStyle);
@@ -218,7 +218,7 @@ void StyleEditor::showChanges(QMetaProperty const * metaProp) {
    }
 
    if (updateAll || propName == PropertyNames::NamedEntity::name    ) { lineEdit_name          ->setText   (this->obsStyle->name          ()); // Continues to next line
-                                                                        tabWidget_profile      ->setTabText(0, this->obsStyle->name    ()); }
+                                                                        tabWidget_profile      ->setTabText(0, this->obsStyle->name       ()); }
    if (updateAll || propName == PropertyNames::Style::category      ) { lineEdit_category      ->setText   (this->obsStyle->category      ()); }
    if (updateAll || propName == PropertyNames::Style::categoryNumber) { lineEdit_categoryNumber->setText   (this->obsStyle->categoryNumber()); }
    if (updateAll || propName == PropertyNames::Style::styleLetter   ) { lineEdit_styleLetter   ->setText   (this->obsStyle->styleLetter   ()); }

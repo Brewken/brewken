@@ -41,7 +41,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_name">
+        <widget class="SmartLineEdit" name="lineEdit_name">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -64,7 +64,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="BtTemperatureLabel" name="label_grainTemp">
+        <widget class="SmartLabel" name="label_grainTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -83,7 +83,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTemperatureEdit" name="lineEdit_grainTemp">
+        <widget class="SmartLineEdit" name="lineEdit_grainTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -109,7 +109,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="BtTemperatureLabel" name="label_spargeTemp">
+        <widget class="SmartLabel" name="label_spargeTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -128,7 +128,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTemperatureEdit" name="lineEdit_spargeTemp">
+        <widget class="SmartLineEdit" name="lineEdit_spargeTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -154,7 +154,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QLabel" name="label_spargePh">
+        <widget class="SmartLabel" name="label_spargePh">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -170,7 +170,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtAcidityEdit" name="lineEdit_spargePh">
+        <widget class="SmartLineEdit" name="lineEdit_spargePh">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -252,7 +252,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="BtTemperatureLabel" name="label_tunTemp">
+           <widget class="SmartLabel" name="label_tunTemp">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -271,7 +271,7 @@
            </widget>
           </item>
           <item>
-           <widget class="BtTemperatureEdit" name="lineEdit_tunTemp">
+           <widget class="SmartLineEdit" name="lineEdit_tunTemp">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -316,7 +316,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="BtMassLabel" name="label_tunMass">
+           <widget class="SmartLabel" name="label_tunMass">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -335,7 +335,7 @@
            </widget>
           </item>
           <item>
-           <widget class="BtMassEdit" name="lineEdit_tunMass">
+           <widget class="SmartLineEdit" name="lineEdit_tunMass">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -361,7 +361,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <widget class="QLabel" name="label_tunSpHeat">
+           <widget class="SmartLabel" name="label_tunSpHeat">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -377,7 +377,7 @@
            </widget>
           </item>
           <item>
-           <widget class="BtSpecificHeatCapacityEdit" name="lineEdit_tunSpHeat">
+           <widget class="SmartLineEdit" name="lineEdit_tunSpHeat">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -432,52 +432,21 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtGenericEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtAcidityEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtSpecificHeatCapacityEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtMassEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <signal>textModified()</signal>
-    <slot>lineChanged()</slot>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtMassLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
     <slot>popContextMenu(QPoint)</slot>
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtTemperatureLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTemperatureEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
+    <signal>textModified()</signal>
+    <slot>lineChanged()</slot>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
   </customwidget>
