@@ -91,6 +91,13 @@ void SmartLabel::mouseReleaseEvent(QMouseEvent * event) {
 }
 
 void SmartLabel::textEffect(bool enabled) {
+   // If our buddy is an input field for a NonPhysicalQuantity, then we don't want the underline effect as there are no
+   // scale choices for the user to make.
+   auto const fieldType = this->getBuddy().getFieldType();
+   if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
+      return;
+   }
+
    QFont myFont = this->font();
    myFont.setUnderline(enabled);
    this->setFont(myFont);
@@ -102,7 +109,6 @@ void SmartLabel::initializeSection() {
       // We're already initialised
       return;
    }
-
 
    //
    // If the label has the pimpl->m_configSection defined, use it

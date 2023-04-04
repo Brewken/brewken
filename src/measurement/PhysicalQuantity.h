@@ -138,6 +138,8 @@ namespace Measurement {
       Viscosity,
       // Specific heat capacity -- see https://en.wikipedia.org/wiki/Specific_heat_capacity
       SpecificHeatCapacity,
+      // .:TBD:. Should we add Energy for PropertyNames::Recipe::calories (in which case, should canonical measure be
+      //         Joules)?
    };
 
    /**

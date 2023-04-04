@@ -31,12 +31,12 @@
 MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    setupUi(this);
 
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_name      , PropertyNames::NamedEntity::name                                   );
+   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_name      , PropertyNames::NamedEntity::name                                      );
    SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_grainTemp , PropertyNames::Mash::grainTemp_c          , *this->label_grainTemp , 1);
    SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_spargeTemp, PropertyNames::Mash::spargeTemp_c         , *this->label_spargeTemp, 1);
    SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_spargePh  , PropertyNames::Mash::ph                   , *this->label_spargePh  , 0);
    SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunTemp   , PropertyNames::Mash::tunTemp_c            , *this->label_tunTemp   , 1);
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunMass   , PropertyNames::Mash::tunWeight_kg         , *this->label_tunMass   );
+   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunMass   , PropertyNames::Mash::tunWeight_kg         , *this->label_tunMass      );
    SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunSpHeat , PropertyNames::Mash::tunSpecificHeat_calGC, *this->label_tunSpHeat , 1);
 
    connect(pushButton_fromEquipment, &QAbstractButton::clicked, this, &MashEditor::fromEquipment);

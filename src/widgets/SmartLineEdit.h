@@ -87,16 +87,23 @@ public:
     *        above), it also ensures, if necessary, that the \c changedSystemOfMeasurementOrScale signal from the
     *        \c SmartLabel buddy is connected to the \c lineChanged slot of this \c SmartLineEdit.
     *
-    *        This version is for a \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) field
+    *        This version is for a \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) field.
+    *
+    *        Note, in reality, you actually use the \c SMART_LINE_EDIT_INIT macro (see below).
     *
     * \param name      Used only for logging, mostly for debugging.  (We have hundreds of instances of this object and
     *                  if we detect that one of them is misconfigured, it's very useful to be able to log which one!)
+    *
     * \param typeInfo             Tells us what data type we use to store the contents of the field (when converted to
     *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
     *                             field (in which case we need to handle blank / empty string as a valid value).
+    *
     * \param buddyLabel           Required if \c fieldType is \b not a \c NonPhysicalQuantity
+    *
     * \param precision            For a decimal field, this determines the number of decimal places to show.  If not
-    *                             specified, we show 3 decimal places.
+    *                             specified, we show 3 decimal places.  TBD: IDK if one day we might need to be more
+    *                             sophisticated about this, ie with number of decimal places dependent on the units that
+    *                             the user has chosen, but for now we assume it's the same for everything.
     * \param maximalDisplayString Used for determining the width of the widget
     */
    void init(char       const * const   name,
@@ -108,6 +115,8 @@ public:
    /**
     * \brief As above, but for non-physical quantity such as \c NonPhysicalQuantity::Date,
     *        \c NonPhysicalQuantity::String, etc.
+    *
+    *        Note, in reality, you actually use the \c SMART_LINE_EDIT_INIT macro (see below).
     */
    void init(char       const * const   name,
              TypeInfo           const & typeInfo,

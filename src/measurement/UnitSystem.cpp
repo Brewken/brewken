@@ -37,6 +37,8 @@ namespace {
    // Used by UnitSystem::getInstanceByName()
    QMap<QString, Measurement::UnitSystem const *> nameToUnitSystem;
 
+   // .:TBD:. See if we can eliminate all this and get compile-time checking benefits
+   //
    // We sometimes want to be able to access RelativeScale enum values via a string name (eg code generated from .ui
    // files) so it's useful to be able to map between them.  There is some functionality built in to Qt to do this via
    // QMetaEnum, but this is at the cost of inheriting from QObject, which seems overkill here.  Alternatively, we could

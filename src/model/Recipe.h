@@ -181,7 +181,10 @@ public:
    Q_PROPERTY(QString notes READ notes WRITE setNotes /*NOTIFY changed*/ /*changedNotes*/)
    //! \brief The tasting notes.
    Q_PROPERTY(QString tasteNotes READ tasteNotes WRITE setTasteNotes /*NOTIFY changed*/ /*changedTasteNotes*/)
-   //! \brief The taste rating.
+   /** \brief Decimal number between zero and 50.0 denoting the taste rating – corresponds to the 50 point BJCP rating
+    *         system.
+    *         .:TBD:. This is stored as a double but the UI constrains it to an unsigned int.
+    */
    Q_PROPERTY(double tasteRating READ tasteRating WRITE setTasteRating /*NOTIFY changed*/ /*changedTasteRating*/)
    //! \brief The number of fermentation stages.
    Q_PROPERTY(int fermentationStages READ fermentationStages WRITE setFermentationStages /*NOTIFY changed*/ /*changedFermentationStages*/)
