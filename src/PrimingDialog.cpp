@@ -27,6 +27,13 @@
 
 #include "measurement/Unit.h"
 
+namespace {
+   auto const BATCH_SIZE   = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Volume);
+   auto const TEMP         = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Temperature);
+   auto const CARB_VOLS    = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Carbonation);
+   auto const SUGAR_AMOUNT = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Mass);
+}
+
 PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    this->setupUi(this);
 
@@ -38,6 +45,11 @@ PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    this->sugarGroup->addButton(radioButton_sucrose);
    this->sugarGroup->addButton(radioButton_dme);
 
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_beerVol, BATCH_SIZE  , *this->label_beerVol   );
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_temp   , TEMP        , *this->label_temp   , 1);
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_vols   , CARB_VOLS   , *this->label_vols   , 1);
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_output , SUGAR_AMOUNT, *this->label_output    );
+
    connect(pushButton_calculate, &QAbstractButton::clicked, this, &PrimingDialog::calculate);
    return;
 }
@@ -46,17 +58,17 @@ PrimingDialog::~PrimingDialog() = default;
 
 void PrimingDialog::calculate() {
 
-   double beer_l = lineEdit_beerVol->toCanonical().quantity();
-   double temp_c = lineEdit_temp->toCanonical().quantity();
-   double desiredVols = lineEdit_vols->toCanonical().quantity();
+   double const beer_l      = lineEdit_beerVol->toCanonical().quantity();
+   double const temp_c      = lineEdit_temp   ->toCanonical().quantity();
+   double const desiredVols = lineEdit_vols   ->toCanonical().quantity();
    qDebug() <<
       Q_FUNC_INFO << "Beer volume (liters):" << beer_l << ", Temp (°C):" << temp_c << ", Desired Volumes:" <<
       desiredVols;
 
-   double residualVols = 1.57 * pow(0.97, temp_c); // Amount of CO2 still in suspension.
-   double addedVols = desiredVols - residualVols;
-   double co2_l = addedVols * beer_l; // Liters of CO2 we need to generate (at 273 K and 1 atm).
-   double co2_mol = co2_l / 22.4; // Mols of CO2 we need.
+   double const residualVols = 1.57 * pow(0.97, temp_c); // Amount of CO2 still in suspension.
+   double const addedVols = desiredVols - residualVols;
+   double const co2_l = addedVols * beer_l; // Liters of CO2 we need to generate (at 273 K and 1 atm).
+   double const co2_mol = co2_l / 22.4; // Mols of CO2 we need.
 
    double sugar_mol;
    double sugar_g;
@@ -85,7 +97,7 @@ void PrimingDialog::calculate() {
 
    // The amount have to be set in default unit to BtLineEdit.
    // We should find a better solution, but until it is not, we must do it this way.
-   lineEdit_output->setText( sugar_g/1000 );
+   lineEdit_output->setAmount(sugar_g/1000);
 
    return;
 }

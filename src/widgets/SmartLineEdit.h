@@ -106,11 +106,11 @@ public:
     *                             the user has chosen, but for now we assume it's the same for everything.
     * \param maximalDisplayString Used for determining the width of the widget
     */
-   void init(char       const * const   name,
-             TypeInfo           const & typeInfo,
-             SmartLabel               & buddyLabel,
-             std::optional<int> const   precision = std::nullopt,
-             QString            const & maximalDisplayString = "100.000 srm");
+   void init(char const *                const   name,
+             TypeInfo                    const & typeInfo,
+             SmartLabel                        & buddyLabel,
+             std::optional<unsigned int> const   precision = std::nullopt,
+             QString                     const & maximalDisplayString = "100.000 srm");
 
    /**
     * \brief As above, but for non-physical quantity such as \c NonPhysicalQuantity::Date,
@@ -118,10 +118,10 @@ public:
     *
     *        Note, in reality, you actually use the \c SMART_LINE_EDIT_INIT macro (see below).
     */
-   void init(char       const * const   name,
-             TypeInfo           const & typeInfo,
-             std::optional<int> const   precision = std::nullopt,
-             QString            const & maximalDisplayString = "100.000 srm");
+   void init(char const *                const   name,
+             TypeInfo                    const & typeInfo,
+             std::optional<unsigned int> const   precision = std::nullopt,
+             QString                     const & maximalDisplayString = "100.000 srm");
 
    BtFieldType const getFieldType() const;
 
@@ -242,5 +242,12 @@ private:
  */
 #define SMART_LINE_EDIT_INIT(editorClass, modelClass, fieldName, propertyName, ...) \
    this-> fieldName ->init(SLE_LOG_NAME(editorClass, fieldName), modelClass ::typeLookup.getType(propertyName) __VA_OPT__(, __VA_ARGS__))
+
+/**
+ *\brief An alternate version of \c SMART_LINE_EDIT_INIT for use when there is no \c modelClass (eg in a free-standing
+ *       calculation dialog that does not update the model).
+ */
+#define SMART_LINE_EDIT_INIT_FS(editorClass, fieldName, typeInfoVar, ...) \
+   this-> fieldName ->init(SLE_LOG_NAME(editorClass, fieldName), typeInfoVar __VA_OPT__(, __VA_ARGS__))
 
 #endif

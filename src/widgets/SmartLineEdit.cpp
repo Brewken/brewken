@@ -109,11 +109,11 @@ public:
     * \brief We want to have two different signatures of \c SmartLineEdit::init so we can catch missing parameters at
     *        compile time.  Ultimately they both do pretty much the same work, by calling this function.
     */
-   void init(char       const * const   name,
-             TypeInfo           const & typeInfo,
-             SmartLabel               * buddyLabel,
-             std::optional<int> const   precision,
-             QString            const & maximalDisplayString) {
+   void init(char const *                const   name,
+             TypeInfo                    const & typeInfo,
+             SmartLabel                        * buddyLabel,
+             std::optional<unsigned int> const   precision,
+             QString                     const & maximalDisplayString) {
       // It's a coding error to call this function twice on the same object, ie we should only initialise something once!
       Q_ASSERT(!this->m_initialised);
 
@@ -125,6 +125,10 @@ public:
          // but we don't use float)
          Q_ASSERT(this->m_typeInfo->typeIndex == typeid(double) ||
                   this->m_typeInfo->typeIndex == typeid(std::optional<double>));
+
+         // It's a coding error if precision is not some plausible value.  For the moment at least, we assert there are
+         // no envisageable circumstances where we need to show more than 3 decimal places
+         Q_ASSERT(*precision <= 3);
          this->m_precision = *precision;
       }
       // For integers, there are no decimal places to show
@@ -179,7 +183,7 @@ public:
    std::unique_ptr<UiAmountWithUnits> m_uiAmountWithUnits;
    // "Precision" (ie number of decimal places to show) is used if and only the field is numeric.  For int and unsigned
    // int, it must always be 0.
-   int                                m_precision;
+   unsigned int                       m_precision;
    QString                            m_maximalDisplayString;
    int                                m_desiredWidthInPixels;
    // .:TBD:. This is a bit ugly.  We keep our own copies of fields that exist in UiAmountWithUnits because we get given
@@ -195,11 +199,11 @@ SmartLineEdit::SmartLineEdit(QWidget * parent) : QLineEdit(parent), pimpl{std::m
 
 SmartLineEdit::~SmartLineEdit() = default;
 
-void SmartLineEdit::init(char       const * const   name,
-                         TypeInfo           const & typeInfo,
-                         SmartLabel               & buddyLabel,
-                         std::optional<int> const   precision,
-                         QString            const & maximalDisplayString) {
+void SmartLineEdit::init(char const *                const   name,
+                         TypeInfo                    const & typeInfo,
+                         SmartLabel                        & buddyLabel,
+                         std::optional<unsigned int> const   precision,
+                         QString                     const & maximalDisplayString) {
    qDebug() << Q_FUNC_INFO << name << ":" << typeInfo;
 
    // It's a coding error to call this version of init with a NonPhysicalQuantity
@@ -218,10 +222,10 @@ void SmartLineEdit::init(char       const * const   name,
    return;
 }
 
-void SmartLineEdit::init(char       const * const   name,
-                         TypeInfo           const & typeInfo,
-                         std::optional<int> const   precision,
-                         QString            const & maximalDisplayString) {
+void SmartLineEdit::init(char const *                const   name,
+                         TypeInfo                    const & typeInfo,
+                         std::optional<unsigned int> const   precision,
+                         QString                     const & maximalDisplayString) {
    qDebug() << Q_FUNC_INFO << name << ":" << typeInfo;
 
    // It's a coding error to call this version of init with anything other than a NonPhysicalQuantity.  (If you hit this
