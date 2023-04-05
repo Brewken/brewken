@@ -71,10 +71,10 @@ class SmartLineEdit : public QLineEdit {
    // relating to physical quantities, the user can individually set the system of measurement and relative scale.
    //
    // They all pass through to UiAmountWithUnits
-   Q_PROPERTY(QString configSection             READ getConfigSection                      WRITE setConfigSection                      STORED false)
-   Q_PROPERTY(QString editField                 READ getEditField                          WRITE setEditField                          STORED false)
-   Q_PROPERTY(QString forcedSystemOfMeasurement READ getForcedSystemOfMeasurementViaString WRITE setForcedSystemOfMeasurementViaString STORED false)
-   Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
+///   Q_PROPERTY(QString configSection             READ getConfigSection                      WRITE setConfigSection                      STORED false)
+///   Q_PROPERTY(QString editField                 READ getEditField                          WRITE setEditField                          STORED false)
+///   Q_PROPERTY(QString forcedSystemOfMeasurement READ getForcedSystemOfMeasurementViaString WRITE setForcedSystemOfMeasurementViaString STORED false)
+///   Q_PROPERTY(QString forcedRelativeScale       READ getForcedRelativeScaleViaString       WRITE setForcedRelativeScaleViaString       STORED false)
 
 public:
 
@@ -91,8 +91,14 @@ public:
     *
     *        Note, in reality, you actually use the \c SMART_LINE_EDIT_INIT macro (see below).
     *
-    * \param name      Used only for logging, mostly for debugging.  (We have hundreds of instances of this object and
-    *                  if we detect that one of them is misconfigured, it's very useful to be able to log which one!)
+    * \param name      This should uniquely identify this field in the application.  (Usually, it's a combination of the
+    *                  owning widget and the member variable, eg "FermentableEditor->lineEdit_color".)  This serves two
+    *                  purposes:
+    *                     - For logging, it helps a lot with debugging.  (We have hundreds of instances of this object
+    *                       and if we detect that one of them is misconfigured, it's very useful to be able to log which
+    *                       one!)
+    *                     - For fields where there is a choice of \c SystemOfMeasurement and/or \c RelativeScale, this
+    *                       provides a unique name against which to store the user's choice in \c PersistentSettings
     *
     * \param typeInfo             Tells us what data type we use to store the contents of the field (when converted to
     *                             canonical units if it is a \c PhysicalQuantity) and, whether this is an optional
@@ -116,12 +122,30 @@ public:
     * \brief As above, but for non-physical quantity such as \c NonPhysicalQuantity::Date,
     *        \c NonPhysicalQuantity::String, etc.
     *
+    *        The reason for having two versions of init() is to make it harder to forget the \c buddyLabel parameter
+    *        when the field relates to a \c PhysicalQuantity.
+    *
     *        Note, in reality, you actually use the \c SMART_LINE_EDIT_INIT macro (see below).
     */
    void init(char const *                const   name,
              TypeInfo                    const & typeInfo,
              std::optional<unsigned int> const   precision = std::nullopt,
              QString                     const & maximalDisplayString = "100.000 srm");
+
+   /**
+    * \brief As \c init, but for a \c PhysicalQuantity (or \c Mixed2PhysicalQuantities) field where the user does \b not
+    *        have a choice about units or scales (even though they otherwise would for this sort of
+    *        \c PhysicalQuantity).  This is typically used on conversion dialogs, eg \c RefractoDialog, where we are
+    *        asking the user to give us inputs in specific units in order to convert them to other units measuring the
+    *        same physical quantity.
+    *
+    *        Note that we allow this to be used for a \c NonPhysicalQuantity too because, in this "fixed" case, there is
+    *        no concern about needing to remember whether or not to specify the buddy label.
+    */
+   void initFixed(char const *                const   name,
+                  TypeInfo                    const & typeInfo,
+                  std::optional<unsigned int> const   precision = std::nullopt,
+                  QString                     const & maximalDisplayString = "100.000 srm");
 
    BtFieldType const getFieldType() const;
 
@@ -160,15 +184,15 @@ public:
    template<typename T> T getValueAs() const;
 
    //========================================== Property Getters and Setters ===========================================
-   void    setEditField(QString editField);
-   void    setConfigSection(QString configSection);
-   void    setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString);
-   void    setForcedRelativeScaleViaString(QString relativeScaleAsString);
-
-   QString getEditField() const;
-   QString getConfigSection(); // This does lazy-loading so isn't const
-   QString getForcedSystemOfMeasurementViaString() const;
-   QString getForcedRelativeScaleViaString() const;
+///   void    setEditField(QString editField);
+///   void    setConfigSection(QString configSection);
+///   void    setForcedSystemOfMeasurementViaString(QString systemOfMeasurementAsString);
+///   void    setForcedRelativeScaleViaString(QString relativeScaleAsString);
+///
+///   QString getEditField() const;
+///   QString getConfigSection(); // This does lazy-loading so isn't const
+///   QString getForcedSystemOfMeasurementViaString() const;
+///   QString getForcedRelativeScaleViaString() const;
    //===================================================================================================================
 
 
@@ -245,9 +269,35 @@ private:
 
 /**
  *\brief An alternate version of \c SMART_LINE_EDIT_INIT for use when there is no \c modelClass (eg in a free-standing
- *       calculation dialog that does not update the model).
+ *       calculation dialog that does not update the model).  Instead of writing:
+ *
+ *          static auto const typeInfoFor_lineEdit_temp = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Temperature);
+ *          this->lineEdit_temp->init("PrimingDialog->lineEdit_temp", typeInfoFor_lineEdit_temp, *this->label_temp, 1);
+ *
+ *       you write:
+ *
+ *           SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_temp, double, Measurement::PhysicalQuantity::Temperature, *this->label_temp, 1);
+ *
+ *       The _FS in the name stands for "free-standing".
+ *
+ * \param editorClass As for \c SMART_LINE_EDIT_INIT.
+ * \param fieldName   As for \c SMART_LINE_EDIT_INIT
+ * \param nativeType  The native type in which this value is / would be stored, eg double
+ * \param btFieldType The \c BtFieldType for this field.  Together with \c nativeType, this is used to construct a
+ *                    static local \c TypeInfo struct to pass by reference to \c SmartLineEdit::init.
+ * \param ...  Any remaining arguments are passed through to \c SmartLineEdit::init in third position and above
  */
-#define SMART_LINE_EDIT_INIT_FS(editorClass, fieldName, typeInfoVar, ...) \
-   this-> fieldName ->init(SLE_LOG_NAME(editorClass, fieldName), typeInfoVar __VA_OPT__(, __VA_ARGS__))
+#define SMART_LINE_EDIT_INIT_FS(editorClass, fieldName, nativeType, btFieldType, ...) \
+   static auto const typeInfoFor_##fieldName = TypeInfo::construct<nativeType>(btFieldType); \
+   this-> fieldName ->init(SLE_LOG_NAME(editorClass, fieldName), typeInfoFor_##fieldName __VA_OPT__(, __VA_ARGS__))
+
+/**
+ * \brief A alternate version of \c SMART_LINE_EDIT_INIT_FS that calls \c SmartLineEdit::initFixed instead of
+ *        \c SmartLineEdit::init.  This is what you use for fields where we want to remove the choice of units and scale
+ *        from the user, as explained in comments for \c SmartLineEdit::initFixed.
+ */
+#define SMART_LINE_EDIT_INIT_FS_FIXED(editorClass, fieldName, nativeType, btFieldType, ...) \
+   static auto const typeInfoFor_##fieldName = TypeInfo::construct<nativeType>(btFieldType); \
+   this-> fieldName ->initFixed(SLE_LOG_NAME(editorClass, fieldName), typeInfoFor_##fieldName __VA_OPT__(, __VA_ARGS__))
 
 #endif

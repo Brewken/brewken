@@ -27,13 +27,6 @@
 
 #include "measurement/Unit.h"
 
-namespace {
-   auto const BATCH_SIZE   = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Volume);
-   auto const TEMP         = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Temperature);
-   auto const CARB_VOLS    = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Carbonation);
-   auto const SUGAR_AMOUNT = TypeInfo::construct<double>(Measurement::PhysicalQuantity::Mass);
-}
-
 PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    this->setupUi(this);
 
@@ -45,10 +38,10 @@ PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    this->sugarGroup->addButton(radioButton_sucrose);
    this->sugarGroup->addButton(radioButton_dme);
 
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_beerVol, BATCH_SIZE  , *this->label_beerVol   );
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_temp   , TEMP        , *this->label_temp   , 1);
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_vols   , CARB_VOLS   , *this->label_vols   , 1);
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_output , SUGAR_AMOUNT, *this->label_output    );
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_beerVol, double, Measurement::PhysicalQuantity::Volume     , *this->label_beerVol   );
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_temp   , double, Measurement::PhysicalQuantity::Temperature, *this->label_temp   , 1);
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_vols   , double, Measurement::PhysicalQuantity::Carbonation, *this->label_vols   , 1);
+   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_output , double, Measurement::PhysicalQuantity::Mass       , *this->label_output    );
 
    connect(pushButton_calculate, &QAbstractButton::clicked, this, &PrimingDialog::calculate);
    return;

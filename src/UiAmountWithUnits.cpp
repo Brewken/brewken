@@ -134,6 +134,9 @@ void UiAmountWithUnits::selectPhysicalQuantity(Measurement::PhysicalQuantity con
 }
 
 void UiAmountWithUnits::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
+   qDebug() <<
+      Q_FUNC_INFO << "Measurement system" << systemOfMeasurement << "for" << this->pimpl->m_configSection << ">" <<
+      this->pimpl->m_editField;
    Measurement::setForcedSystemOfMeasurementForField(this->pimpl->m_editField,
                                                      this->pimpl->m_configSection,
                                                      systemOfMeasurement);
@@ -158,6 +161,9 @@ QString UiAmountWithUnits::getForcedSystemOfMeasurementViaString() const {
 }
 
 void UiAmountWithUnits::setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
+   qDebug() <<
+      Q_FUNC_INFO << "Scale" << relativeScale << "for" << this->pimpl->m_configSection << ">" <<
+      this->pimpl->m_editField;
    Measurement::setForcedRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_configSection, relativeScale);
    return;
 }
