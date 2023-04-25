@@ -471,22 +471,15 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>For lav for øltypen</translation>
+        <translation type="vanished">For lav for øltypen</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Innenfor område til øltypen</translation>
+        <translation type="vanished">Innenfor område til øltypen</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>For høy for øltypen</translation>
-    </message>
-</context>
-<context>
-    <name>BtLabel</name>
-    <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">For høy for øltypen</translation>
     </message>
 </context>
 <context>
@@ -4208,10 +4201,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Bad column: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -4255,10 +4244,18 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
 </context>
 <context>
-    <name>SmartLabel</name>
+    <name>SmartDigitWidget</name>
     <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <source>Too low for style.</source>
+        <translation type="unfinished">For lav for øltypen</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Innenfor område til øltypen</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">For høy for øltypen</translation>
     </message>
 </context>
 <context>
@@ -8176,6 +8173,14 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

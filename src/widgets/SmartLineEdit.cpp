@@ -29,8 +29,9 @@
 #include <QStyle>
 
 #include "measurement/Measurement.h"
-#include "UiAmountWithUnits.h"
+#include "SmartField.h"
 #include "utils/OptionalHelpers.h"
+#include "utils/TypeLookup.h"
 #include "widgets/SmartLabel.h"
 
 namespace {
@@ -42,18 +43,26 @@ namespace {
 class SmartLineEdit::impl {
 public:
    impl(SmartLineEdit & self) :
-      m_self                {self},
-      m_initialised         {false},
-      m_name                {"Uninitialised!"},
-      m_typeInfo            {nullptr},
-      m_buddyLabel          {nullptr},
-      m_uiAmountWithUnits   {nullptr},
-      m_precision           {3},
-      m_maximalDisplayString{"100.000 srm"},
+      m_self{self},
       m_desiredWidthInPixels{0} {
       return;
    }
-
+///   impl(SmartLineEdit & self) :
+///      m_self                {self},
+///      m_initialised         {false},
+///      m_editorName          {"Uninitialised m_editorName!"     },
+///      m_lineEditName        {"Uninitialised m_lineEditName!"   },
+///      m_lineEditlFqName     {"Uninitialised m_lineEditlFqName!"},
+///      m_typeInfo            {nullptr},
+///      m_fixedDisplayUnit    {nullptr},
+///      m_smartBuddyLabel     {nullptr},
+///      m_uiAmountWithUnits   {nullptr},
+///      m_precision           {3},
+///      m_maximalDisplayString{"100.000 srm"},
+///      m_desiredWidthInPixels{0} {
+///      return;
+///   }
+///
    ~impl() = default;
 
    void calculateDisplaySize(QString const & maximalDisplayString) {
@@ -104,83 +113,6 @@ public:
    }
 
    /**
-    * \brief We want to have two different signatures of \c SmartLineEdit::init so we can catch missing parameters at
-    *        compile time.  Ultimately they both do pretty much the same work, by calling this function.
-    */
-   void init(char const *                const   name,
-             TypeInfo                    const & typeInfo,
-             SmartLabel                        * buddyLabel,
-             std::optional<unsigned int> const   precision,
-             QString                     const & maximalDisplayString,
-             bool                                fixedUnitsAndScale = false) {
-      // It's a coding error to call this function twice on the same object, ie we should only initialise something once!
-      Q_ASSERT(!this->m_initialised);
-
-      this->m_name       = name;
-      this->m_typeInfo   = &typeInfo;
-      this->m_buddyLabel = buddyLabel;
-      if (precision) {
-         // It's a coding error to specify precision for a field that's not a (possibly optional) double (or a float,
-         // but we don't use float)
-         Q_ASSERT(this->m_typeInfo->typeIndex == typeid(double) ||
-                  this->m_typeInfo->typeIndex == typeid(std::optional<double>));
-
-         // It's a coding error if precision is not some plausible value.  For the moment at least, we assert there are
-         // no envisageable circumstances where we need to show more than 3 decimal places
-         Q_ASSERT(*precision <= 3);
-         this->m_precision = *precision;
-      }
-      // For integers, there are no decimal places to show
-      if (this->m_typeInfo->typeIndex == typeid(int) ||
-          this->m_typeInfo->typeIndex == typeid(unsigned int)) {
-         this->m_precision = 0;
-      }
-      this->m_maximalDisplayString = maximalDisplayString;
-      this->m_initialised          = true;
-
-      connect(&this->m_self, &QLineEdit::editingFinished, &this->m_self, &SmartLineEdit::onLineChanged);
-      if (!std::holds_alternative<NonPhysicalQuantity>(*this->m_typeInfo->fieldType)) {
-
-         // It's only meaningful to have a UiAmountWithUnits if we are dealing with a PhysicalQuantity.
-         // It's a coding error if we already created a UiAmountWithUnits
-         Q_ASSERT(!this->m_uiAmountWithUnits);
-         this->m_uiAmountWithUnits =
-            std::make_unique<UiAmountWithUnits>(this->m_self.parentWidget(),
-                                                ConvertToPhysicalQuantities(*typeInfo.fieldType));
-         // In older versions of the code, we had the .ui file set the "editField" property on a subclass of BtLineEdit
-         // for the forcedSystemOfMeasurement and/or forcedRelativeScale to be stored in PersistentSettings.  Now that
-         // we have a globally unique name set in init, we use that instead.
-         this->m_uiAmountWithUnits->setEditField    (this->m_name   );
-         this->m_uiAmountWithUnits->setConfigSection("SmartLineEdit");
-
-         QString configSection =
-            this->m_self.property(*PropertyNames::UiAmountWithUnits::configSection).toString();
-         qDebug() << Q_FUNC_INFO << "Config Section =" << configSection;
-         this->m_uiAmountWithUnits->setConfigSection(configSection);
-
-         // Unless we specified that this is a "fixed" field (ie where the user cannot exercise the choices about units
-         // and scale that she otherwise would), it's a coding error if we didn't specify the buddy for something
-         // measuring a physical quantity
-         Q_ASSERT(fixedUnitsAndScale || this->m_buddyLabel);
-
-         if (!fixedUnitsAndScale) {
-            // It's also a coding error if we are not the buddy of the label we think we are.  However, we cannot test this
-            // here as the buddy's QLabel::setBuddy() hasn't necessarily yet been called from the code generated from the
-            // .ui file.  What we can do, as belt-and-braces is call it here.
-            this->m_buddyLabel->setBuddy(&this->m_self);
-
-            connect(this->m_buddyLabel, &SmartLabel::changedSystemOfMeasurementOrScale, &this->m_self, &SmartLineEdit::lineChanged);
-         }
-      }
-
-      // We can work out (and store) our display size here, but we don't yet set it.  The way the Designer UI Files work is
-      // to generate code that calls setters such as setMaximumWidth() etc, which would override anything we do too early
-      // on in the life of the object.  To be safe therefore, we set our size when setText() is called.
-      this->calculateDisplaySize(maximalDisplayString);
-      return;
-   }
-
-   /**
     * \brief You can't pass in std::nullopt to setAmount as it's of type std::nullopt_t, so this saves us repeating some
     *        code.
     */
@@ -192,231 +124,55 @@ public:
    }
 
    SmartLineEdit &                    m_self;
-   bool                               m_initialised;
-   char const *                       m_name;
-   TypeInfo const *                   m_typeInfo;
-   SmartLabel *                       m_buddyLabel;
-   std::unique_ptr<UiAmountWithUnits> m_uiAmountWithUnits;
-   // "Precision" (ie number of decimal places to show) is used if and only the field is numeric.  For int and unsigned
-   // int, it must always be 0.
-   unsigned int                       m_precision;
-   QString                            m_maximalDisplayString;
    int                                m_desiredWidthInPixels;
 };
 
-SmartLineEdit::SmartLineEdit(QWidget * parent) : QLineEdit(parent), pimpl{std::make_unique<impl>(*this)} {
+SmartLineEdit::SmartLineEdit(QWidget * parent) :
+   QLineEdit(parent),
+   SmartField{},
+   pimpl{std::make_unique<impl>(*this)} {
+
+   connect(this, &QLineEdit::editingFinished, this, &SmartLineEdit::onLineChanged);
+
    return;
 }
 
 SmartLineEdit::~SmartLineEdit() = default;
 
-void SmartLineEdit::init(char const *                const   name,
-                         TypeInfo                    const & typeInfo,
-                         SmartLabel                        & buddyLabel,
-                         std::optional<unsigned int> const   precision,
-                         QString                     const & maximalDisplayString) {
-   qDebug() << Q_FUNC_INFO << name << ":" << typeInfo;
-
-   // It's a coding error to call this version of init with a NonPhysicalQuantity
-   Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
-
-   this->pimpl->init(name, typeInfo, &buddyLabel, precision, maximalDisplayString);
-   return;
+QString SmartLineEdit::getRawText() const {
+   return this->text();
 }
 
-void SmartLineEdit::init(char const *                const   name,
-                         TypeInfo                    const & typeInfo,
-                         std::optional<unsigned int> const   precision,
-                         QString                     const & maximalDisplayString) {
-   qDebug() << Q_FUNC_INFO << name << ":" << typeInfo;
-
-   // It's a coding error to call this version of init with anything other than a NonPhysicalQuantity.  (If you hit this
-   // assert, the debug log above should tell you which field is emitting it!)
-   Q_ASSERT(typeInfo.fieldType && std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
-
-   this->pimpl->init(name, typeInfo, nullptr, precision, maximalDisplayString);
-   return;
-}
-
-void SmartLineEdit::initFixed(char const *                const   name,
-                              TypeInfo                    const & typeInfo,
-                              std::optional<unsigned int> const   precision,
-                              QString                     const & maximalDisplayString) {
-   qDebug() << Q_FUNC_INFO << name << ":" << typeInfo;
-
-   // Unlike the two init() functions, it's OK to call this function with either a PhysicalQuantity or a
-   // NonPhysicalQuantity.  (Strictly speaking "fixed" is a given for a NonPhysicalQuantity, because there are no units
-   // or scales to change, but enforcing that as a requirement, would not, I think, help prevent any bugs.)
-   Q_ASSERT(typeInfo.fieldType);
-
-   this->pimpl->init(name, typeInfo, nullptr, precision, maximalDisplayString, true);
-   return;
-}
-
-BtFieldType const SmartLineEdit::getFieldType() const {
-   Q_ASSERT(this->pimpl->m_initialised);
-   return *this->pimpl->m_typeInfo->fieldType;
-}
-
-TypeInfo const & SmartLineEdit::getTypeInfo() const {
-   Q_ASSERT(this->pimpl->m_initialised);
-   return *this->pimpl->m_typeInfo;
-}
-
-UiAmountWithUnits & SmartLineEdit::getUiAmountWithUnits() const {
-   Q_ASSERT(this->pimpl->m_initialised);
-   Q_ASSERT(this->pimpl->m_uiAmountWithUnits);
-   return *this->pimpl->m_uiAmountWithUnits;
-}
-
-Measurement::Amount SmartLineEdit::toCanonical() const {
-   Q_ASSERT(this->pimpl->m_initialised);
-   Q_ASSERT(this->pimpl->m_uiAmountWithUnits);
-   return this->pimpl->m_uiAmountWithUnits->rawToCanonical(this->text());
-}
-
-template<typename T>
-void SmartLineEdit::setAmount(std::optional<T> amount) {
-   Q_ASSERT(this->pimpl->m_initialised);
-
-   if (this->pimpl->m_typeInfo->typeIndex != typeid(T)) {
-      qCritical() <<
-         Q_FUNC_INFO << this->pimpl->m_name << ": Trying to set wrong type; m_typeInfo=" << this->pimpl->m_typeInfo;
-   }
-
-   if (!amount) {
-      this->pimpl->setNoAmount();
-      return;
-   }
-
-   this->setAmount<T>(*amount);
-   return;
-}
-
-//
-// Instantiate the above template function for the types that are going to use it
-// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
-// saves having to put a bunch of std::string stuff there.)
-//
-template void SmartLineEdit::setAmount(std::optional<int         > amount);
-template void SmartLineEdit::setAmount(std::optional<unsigned int> amount);
-template void SmartLineEdit::setAmount(std::optional<double      > amount);
-
-template<typename T> void SmartLineEdit::setAmount(T amount) {
-   Q_ASSERT(this->pimpl->m_initialised);
-   qDebug() << Q_FUNC_INFO << this->pimpl->m_name << "amount =" << amount;
-
-   if (this->pimpl->m_typeInfo->typeIndex != typeid(T)) {
-      qCritical() <<
-         Q_FUNC_INFO << this->pimpl->m_name << ": Trying to set wrong type; m_typeInfo=" << this->pimpl->m_typeInfo;
-   }
-
-   if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
-      // The field is not measuring a physical quantity so there are no units or unit conversions to handle
-
-      NonPhysicalQuantity const nonPhysicalQuantity =
-         std::get<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType);
-      // It's a coding error if we're trying to pass a number in to a string field
-      Q_ASSERT(nonPhysicalQuantity != NonPhysicalQuantity::String);
-
-      // For percentages, we'd like to show the % symbol after the number
-      QString symbol{""};
-      if (NonPhysicalQuantity::Percentage == nonPhysicalQuantity) {
-         symbol = " %";
-      }
-
-      this->QLineEdit::setText(
-         Measurement::displayQuantity(amount, this->pimpl->m_precision) + symbol
-      );
-   } else {
-      // The field is measuring a physical quantity
-      qDebug() <<
-         Q_FUNC_INFO << this->pimpl->m_name << "forcedSystemOfMeasurement:" <<
-         this->pimpl->m_uiAmountWithUnits->getForcedSystemOfMeasurement() << ", forcedRelativeScale:" <<
-         this->pimpl->m_uiAmountWithUnits->getForcedRelativeScale();
-      this->QLineEdit::setText(
-         this->pimpl->m_uiAmountWithUnits->displayAmount(amount, this->pimpl->m_precision)
-      );
-   }
-
+void SmartLineEdit::setRawText(QString const & text) {
+   this->QLineEdit::setText(text);
    this->pimpl->setDisplaySize();
    return;
 }
 
-template void SmartLineEdit::setAmount(int          amount);
-template void SmartLineEdit::setAmount(unsigned int amount);
-template void SmartLineEdit::setAmount(double       amount);
-
-template<typename T> T SmartLineEdit::getValueAs() const {
-   qDebug() <<
-      Q_FUNC_INFO << this->pimpl->m_name << ": Converting" << this->text() << "to" <<
-      Measurement::extractRawFromString<T>(this->text());
-   return Measurement::extractRawFromString<T>(this->text());
+void SmartLineEdit::connectSmartLabelSignal(SmartLabel & smartLabel) {
+   connect(&smartLabel, &SmartLabel::changedSystemOfMeasurementOrScale, this, &SmartLineEdit::lineChanged);
+   return;
 }
-//
-// Instantiate the above template function for the types that are going to use it
-// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
-// saves having to put a bunch of std::string stuff there.)
-//
-template int          SmartLineEdit::getValueAs<int         >() const;
-template unsigned int SmartLineEdit::getValueAs<unsigned int>() const;
-template double       SmartLineEdit::getValueAs<double      >() const;
 
-
-//============================================ Property Getters and Setters ============================================
-// Note that we cannot assume init() has yet been run when these are called from (code generated from) a .ui file
-///
-///void    SmartLineEdit::setEditField                         (QString val) { this->pimpl->m_editField     = val; if (this->pimpl->m_initialised) { this->pimpl->m_uiAmountWithUnits->setEditField     (val); } return; }
-///void    SmartLineEdit::setConfigSection                     (QString val) { this->pimpl->m_configSection = val; if (this->pimpl->m_initialised) { this->pimpl->m_uiAmountWithUnits->setConfigSection (val); } return; }
-/// // TODO Check where these two are used and whether we can eliminate them
-///void    SmartLineEdit::setForcedSystemOfMeasurementViaString(QString val) { Q_ASSERT(this->pimpl->m_initialised); this->pimpl->m_uiAmountWithUnits->setForcedSystemOfMeasurementViaString(val); return; }
-///void    SmartLineEdit::setForcedRelativeScaleViaString      (QString val) { Q_ASSERT(this->pimpl->m_initialised); this->pimpl->m_uiAmountWithUnits->setForcedRelativeScaleViaString      (val); return; }
-///
-///QString SmartLineEdit::getEditField()                          const { if (this->pimpl->m_initialised) { return this->pimpl->m_uiAmountWithUnits->getEditField()                     ; } return this->pimpl->m_editField    ; }
-///QString SmartLineEdit::getConfigSection() /* not const */            { if (this->pimpl->m_initialised) { return this->pimpl->m_uiAmountWithUnits->getConfigSection() /* not const */ ; } return this->pimpl->m_configSection; }
-///QString SmartLineEdit::getForcedSystemOfMeasurementViaString() const { Q_ASSERT(this->pimpl->m_initialised); return this->pimpl->m_uiAmountWithUnits->getForcedSystemOfMeasurementViaString(); }
-///QString SmartLineEdit::getForcedRelativeScaleViaString()       const { Q_ASSERT(this->pimpl->m_initialised); return this->pimpl->m_uiAmountWithUnits->getForcedRelativeScaleViaString()      ; }
-
-//======================================================================================================================
+void SmartLineEdit::doPostInitWork() {
+   // We can work out (and store) our display size here, but we don't yet set it.  The way the Designer UI Files work is
+   // to generate code that calls setters such as setMaximumWidth() etc, which would override anything we do too early
+   // on in the life of the object.  To be safe therefore, we set our size when setText() is called.
+   this->pimpl->calculateDisplaySize(this->getMaximalDisplayString());
+   return;
+}
 
 void SmartLineEdit::onLineChanged() {
-   Q_ASSERT(this->pimpl->m_initialised);
+   Q_ASSERT(this->isInitialised());
 
    // .:TODO:. Finish work on optional
-   if ("" == this->text() && this->pimpl->m_typeInfo->isOptional()) {
+   if ("" == this->getRawText() && this->getTypeInfo().isOptional()) {
       this->pimpl->setNoAmount();
-   } else if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
+   } else if (std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType)) {
       // The field is not measuring a physical quantity so there are no units or unit conversions to handle
       // However, for anything other than a string, we still want to parse out the numeric part of the input
       qDebug() << Q_FUNC_INFO;
-
-      // .:TBD:. At the moment, the special handling here for types other than double is a bit moot, but we keep it in
-      // case we need to do more in future.
-      NonPhysicalQuantity const nonPhysicalQuantity =
-         std::get<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType);
-      if (nonPhysicalQuantity != NonPhysicalQuantity::String) {
-         bool ok = false;
-         if (this->pimpl->m_typeInfo->typeIndex == typeid(double)) {
-            double amount = Measurement::extractRawFromString<double>(this->text(), &ok);
-            this->setAmount(amount);
-         } else if (this->pimpl->m_typeInfo->typeIndex == typeid(int)) {
-            int amount = Measurement::extractRawFromString<int>(this->text(), &ok);
-            this->setAmount(amount);
-         } else if (this->pimpl->m_typeInfo->typeIndex == typeid(unsigned int)) {
-            unsigned int amount = Measurement::extractRawFromString<unsigned int>(this->text(), &ok);
-            this->setAmount(amount);
-         } else {
-            // It's a coding error if we get here
-            qCritical() << Q_FUNC_INFO << this->pimpl->m_name << ": Don't know how to parse" << this->pimpl->m_typeInfo;
-            Q_ASSERT(false);
-         }
-         if (!ok) {
-            qWarning() <<
-               Q_FUNC_INFO << this->pimpl->m_name << ": Unable to extract number from" << this->text() << "for" <<
-               this->pimpl->m_typeInfo;
-            this->setAmount(0);
-         }
-      }
+      this->correctEnteredText();
 
       if (sender() == this) {
          emit textModified();
@@ -425,48 +181,27 @@ void SmartLineEdit::onLineChanged() {
    }
 
    // The field is measuring a physical quantity
-   Q_ASSERT(this->pimpl->m_uiAmountWithUnits);
-   qDebug() <<
-      Q_FUNC_INFO << this->pimpl->m_name << ": Field Type:" << *this->pimpl->m_typeInfo->fieldType <<
-      ", forcedSystemOfMeasurement=" << this->pimpl->m_uiAmountWithUnits->getForcedSystemOfMeasurement() <<
-      ", forcedRelativeScale=" << this->pimpl->m_uiAmountWithUnits->getForcedRelativeScale() << ", value=" <<
-      this->text();
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
 
-   Measurement::PhysicalQuantities const physicalQuantities = ConvertToPhysicalQuantities(*this->pimpl->m_typeInfo->fieldType);
-
-   QString const propertyName = this->pimpl->m_uiAmountWithUnits->getEditField();
-   QString const configSection = this->pimpl->m_uiAmountWithUnits->getConfigSection();
-   Measurement::SystemOfMeasurement const oldSystemOfMeasurement =
-      Measurement::getSystemOfMeasurementForField(propertyName, configSection, physicalQuantities);
-   auto oldForcedRelativeScale = Measurement::getForcedRelativeScaleForField(propertyName, configSection);
-   PreviousScaleInfo previousScaleInfo{
-      oldSystemOfMeasurement,
-      oldForcedRelativeScale
-   };
-
-   qDebug() <<
-      Q_FUNC_INFO << "propertyName=" << propertyName << ", configSection=" << configSection <<
-      ", oldSystemOfMeasurement=" << oldSystemOfMeasurement << ", oldForcedRelativeScale=" << oldForcedRelativeScale;
+   auto const previousScaleInfo = this->getScaleInfo();
 
    this->lineChanged(previousScaleInfo);
    return;
 }
 
-void SmartLineEdit::lineChanged(PreviousScaleInfo previousScaleInfo) {
-   Q_ASSERT(this->pimpl->m_initialised);
-   Q_ASSERT(this->pimpl->m_uiAmountWithUnits);
+void SmartLineEdit::lineChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
+   Q_ASSERT(this->isInitialised());
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
 
    // editingFinished happens on focus being lost, regardless of anything
    // being changed. I am hoping this short circuits properly and we do
    // nothing if nothing changed.
    if (this->sender() == this && !this->isModified()) {
-      qDebug() << Q_FUNC_INFO << this->pimpl->m_name << ": Nothing changed; field holds" << this->text();
+      qDebug() << Q_FUNC_INFO << this->getFqFieldName() << ": Nothing changed; field holds" << this->text();
       return;
    }
 
-   this->QLineEdit::setText(
-      this->pimpl->m_uiAmountWithUnits->correctEnteredText(this->text(), this->pimpl->m_precision, previousScaleInfo)
-   );
+   this->correctEnteredText(previousScaleInfo);
 
    if (sender() == this) {
       emit textModified();

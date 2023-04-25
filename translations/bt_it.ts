@@ -523,22 +523,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Troopo basso per lo stile.</translation>
+        <translation type="vanished">Troopo basso per lo stile.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Adeguato per lo stile.</translation>
+        <translation type="vanished">Adeguato per lo stile.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Troppo alto per lo stile.</translation>
+        <translation type="vanished">Troppo alto per lo stile.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Colore (%1)</translation>
+        <translation type="vanished">Colore (%1)</translation>
     </message>
 </context>
 <context>
@@ -4282,7 +4282,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Cattiva colonna: %1</translation>
+        <translation type="obsolete">Cattiva colonna: %1</translation>
     </message>
 </context>
 <context>
@@ -4327,10 +4327,25 @@ Il Volume finale del primo è %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Troopo basso per lo stile.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Adeguato per lo stile.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Troppo alto per lo stile.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Colore (%1)</translation>
+        <translation type="obsolete">Colore (%1)</translation>
     </message>
 </context>
 <context>
@@ -8267,6 +8282,14 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

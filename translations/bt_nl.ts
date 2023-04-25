@@ -515,22 +515,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Te laag voor deze stijl.</translation>
+        <translation type="vanished">Te laag voor deze stijl.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Conform stijl.</translation>
+        <translation type="vanished">Conform stijl.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Te hoog voor deze stijl.</translation>
+        <translation type="vanished">Te hoog voor deze stijl.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Kleur (%1)</translation>
+        <translation type="vanished">Kleur (%1)</translation>
     </message>
 </context>
 <context>
@@ -4282,10 +4282,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Bad column: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -4329,10 +4325,25 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Te laag voor deze stijl.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Conform stijl.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Te hoog voor deze stijl.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Kleur (%1)</translation>
+        <translation type="obsolete">Kleur (%1)</translation>
     </message>
 </context>
 <context>
@@ -8079,6 +8090,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BrewDayFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -74,9 +74,7 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
            .arg(tr("Boil Time"))
            .arg(
               recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min(),
-                                                                                   Measurement::Units::minutes},
-                                                               PersistentSettings::Sections::tab_recipe,
-                                                               PropertyNames::Equipment::boilTime_min) : "unknown"
+                                                                                   Measurement::Units::minutes}) : "unknown"
            )
            .arg(tr("Efficiency"))
            .arg(Measurement::displayQuantity(recObs->efficiency_pct(), 0));
@@ -84,38 +82,23 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
    // third row: pre-Boil Volume and Preboil Gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Boil Volume"))
-           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters},
-                                           PersistentSettings::Sections::tab_recipe,
-                                           PropertyNames::Recipe::boilVolume_l,
-                                           2))
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters}, 2))
            .arg(tr("Preboil Gravity"))
-           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav},
-                                           PersistentSettings::Sections::tab_recipe,
-                                           PropertyNames::Recipe::boilGrav,
-                                           3));
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav}, 3));
 
    // fourth row: Final volume and starting gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Final Volume"))
-           .arg(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters},
-                                           PersistentSettings::Sections::tab_recipe,
-                                           PropertyNames::Recipe::finalVolume_l,
-                                           2))
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters}, 2))
            .arg(tr("Starting Gravity"))
-           .arg(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav},
-                                           PersistentSettings::Sections::tab_recipe,
-                                           PropertyNames::Recipe::og,
-                                           3));
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav}, 3));
 
    // fifth row: IBU and Final gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
            .arg(tr("IBU"))
            .arg(Measurement::displayQuantity(recObs->IBU(), 1))
            .arg(tr("Final Gravity"))
-           .arg(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::sp_grav},
-                                           PersistentSettings::Sections::tab_recipe,
-                                           PropertyNames::Recipe::fg,
-                                           3));
+           .arg(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::sp_grav}, 3));
 
    // sixth row: ABV and estimate calories
    bool metricVolume =
@@ -153,9 +136,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
    row.append(tr("Boil Time"));
    row.append(
       recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min(),
-                                                                           Measurement::Units::minutes},
-                                                       PersistentSettings::Sections::tab_recipe,
-                                                       PropertyNames::Equipment::boilTime_min) : "unknown"
+                                                                           Measurement::Units::minutes}) : "unknown"
    );
    row.append(tr("Efficiency"));
    row.append(Measurement::displayQuantity(recObs->efficiency_pct(), 0));
@@ -164,15 +145,9 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
 
    // third row: pre-Boil Volume and Preboil Gravity
    row.append(tr("Boil Volume"));
-   row.append(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters},
-                                         PersistentSettings::Sections::tab_recipe,
-                                         PropertyNames::Recipe::boilVolume_l,
-                                         2));
+   row.append(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters}, 2));
    row.append(tr("Preboil Gravity"));
-   row.append(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav},
-                                         PersistentSettings::Sections::tab_recipe,
-                                         PropertyNames::Recipe::boilGrav,
-                                         3));
+   row.append(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav}, 3));
    ret.append(row);
    row.clear();
    ret.append(row);
@@ -180,15 +155,9 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
 
    // fourth row: Final volume and starting gravity
    row.append(tr("Final Volume"));
-   row.append(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters},
-                                         PersistentSettings::Sections::tab_recipe,
-                                         PropertyNames::Recipe::finalVolume_l,
-                                         2));
+   row.append(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters}, 2));
    row.append(tr("Starting Gravity"));
-   row.append(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav},
-                                         PersistentSettings::Sections::tab_recipe,
-                                         PropertyNames::Recipe::og,
-                                         3));
+   row.append(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav}, 3));
    ret.append(row);
    row.clear();
 
@@ -196,10 +165,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
    row.append(tr("IBU"));
    row.append(Measurement::displayQuantity(recObs->IBU(), 1));
    row.append(tr("Final Gravity"));
-   row.append(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::sp_grav},
-                                         PersistentSettings::Sections::tab_recipe,
-                                         PropertyNames::Recipe::fg,
-                                         3));
+   row.append(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::sp_grav}, 3));
    ret.append(row);
    row.clear();
 

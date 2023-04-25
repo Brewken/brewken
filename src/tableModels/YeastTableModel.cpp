@@ -49,13 +49,15 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
    BtTableModelInventory{
       parent,
       editable,
-      {{YEASTNAMECOL,      {tr("Name"),       NonPhysicalQuantity::String      , ""                           }},
-       {YEASTLABCOL,       {tr("Laboratory"), NonPhysicalQuantity::String      , ""                           }},
-       {YEASTPRODIDCOL,    {tr("Product ID"), NonPhysicalQuantity::String      , ""                           }},
-       {YEASTTYPECOL,      {tr("Type"),       NonPhysicalQuantity::String      , ""                           }},
-       {YEASTFORMCOL,      {tr("Form"),       NonPhysicalQuantity::String      , ""                           }},
-       {YEASTAMOUNTCOL,    {tr("Amount"),     Measurement::PqEitherMassOrVolume, *PropertyNames::Yeast::amount}},
-       {YEASTINVENTORYCOL, {tr("Inventory"),  NonPhysicalQuantity::Count       , ""                           }}}
+      {
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Name     , tr("Name"      ), NonPhysicalQuantity::String      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Lab      , tr("Laboratory"), NonPhysicalQuantity::String      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, ProdId   , tr("Product ID"), NonPhysicalQuantity::String      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Type     , tr("Type"      ), NonPhysicalQuantity::String      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Form     , tr("Form"      ), NonPhysicalQuantity::String      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Amount   , tr("Amount"    ), Measurement::PqEitherMassOrVolume),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Inventory, tr("Inventory" ), NonPhysicalQuantity::Count       ),
+      }
    },
    BtTableModelData<Yeast>{} {
 
@@ -74,6 +76,10 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
 }
 
 YeastTableModel::~YeastTableModel() = default;
+
+BtTableModel::ColumnInfo const & YeastTableModel::getColumnInfo(YeastTableModel::ColumnIndex const columnIndex) const {
+   return this->BtTableModel::getColumnInfo(static_cast<size_t>(columnIndex));
+}
 
 void YeastTableModel::addYeast(int yeastId) {
    auto yeast = ObjectStoreWrapper::getById<Yeast>(yeastId);
@@ -193,8 +199,8 @@ void YeastTableModel::changedInventory(int invKey, BtStringConst const & propert
    if (propertyName == PropertyNames::Inventory::amount) {
       for (int ii = 0; ii < this->rows.size(); ++ii) {
          if (invKey == this->rows.at(ii)->inventoryId()) {
-            emit dataChanged(QAbstractItemModel::createIndex(ii, YEASTINVENTORYCOL),
-                             QAbstractItemModel::createIndex(ii, YEASTINVENTORYCOL));
+            emit dataChanged(QAbstractItemModel::createIndex(ii, static_cast<int>(YeastTableModel::ColumnIndex::Inventory)),
+                             QAbstractItemModel::createIndex(ii, static_cast<int>(YeastTableModel::ColumnIndex::Inventory)));
          }
       }
    }
@@ -208,7 +214,7 @@ void YeastTableModel::changed(QMetaProperty prop, QVariant /*val*/) {
       int ii = this->findIndexOf(yeastSender);
       if (ii >= 0) {
          emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
-                          QAbstractItemModel::createIndex(ii, YEASTNUMCOLS - 1));
+                          QAbstractItemModel::createIndex(ii, this->columnCount() - 1));
       }
       return;
    }
@@ -240,14 +246,14 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
 
    auto row = this->rows[index.row()];
 
-   int const column = index.column();
-   switch (column) {
-      case YEASTNAMECOL:
+   auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
+   switch (columnIndex) {
+      case YeastTableModel::ColumnIndex::Name:
          if (role == Qt::DisplayRole) {
             return QVariant(row->name());
          }
          break;
-      case YEASTTYPECOL:
+      case YeastTableModel::ColumnIndex::Type:
          if (role == Qt::DisplayRole) {
             return QVariant(row->typeStringTr());
          }
@@ -255,17 +261,17 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(static_cast<int>(row->type()));
          }
          break;
-      case YEASTLABCOL:
+      case YeastTableModel::ColumnIndex::Lab:
          if (role == Qt::DisplayRole) {
             return QVariant(row->laboratory());
          }
          break;
-      case YEASTPRODIDCOL:
+      case YeastTableModel::ColumnIndex::ProdId:
          if (role == Qt::DisplayRole) {
             return QVariant(row->productID());
          }
          break;
-      case YEASTFORMCOL:
+      case YeastTableModel::ColumnIndex::Form:
          if (role == Qt::DisplayRole) {
             return QVariant(row->formStringTr());
          }
@@ -273,12 +279,12 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
             return QVariant(static_cast<int>(row->form()));
          }
          break;
-      case YEASTINVENTORYCOL:
+      case YeastTableModel::ColumnIndex::Inventory:
          if (role == Qt::DisplayRole) {
             return QVariant(row->inventory());
          }
          break;
-      case YEASTAMOUNTCOL:
+      case YeastTableModel::ColumnIndex::Amount:
          if (role == Qt::DisplayRole) {
             return QVariant(
                Measurement::displayAmount(
@@ -287,14 +293,14 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
                      row->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
                   },
                   3,
-                  this->getForcedSystemOfMeasurementForColumn(column),
+                  this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
                   std::nullopt
                )
             );
          }
          break;
       default :
-         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          break;
    }
    return QVariant();
@@ -302,22 +308,21 @@ QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
 
 QVariant YeastTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-      return this->getColumName(section);
+      return this->getColumnLabel(section);
    }
    return QVariant();
 }
 
 Qt::ItemFlags YeastTableModel::flags(const QModelIndex & index) const {
-   int col = index.column();
-   switch (col) {
-      case YEASTNAMECOL:
-         return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
-      case YEASTINVENTORYCOL:
-         return (Qt::ItemIsEnabled | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags));
-      default:
-         return Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled |
-                Qt::ItemIsEnabled;
+   auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
+   if (columnIndex == YeastTableModel::ColumnIndex::Name) {
+      return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
    }
+   if (columnIndex == YeastTableModel::ColumnIndex::Inventory) {
+      return (Qt::ItemIsEnabled | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags));
+   }
+   return Qt::ItemIsSelectable |
+          (this->editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
 
 bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
@@ -327,9 +332,9 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
 
    auto row = this->rows[index.row()];
 
-   int const column = index.column();
-   switch (column) {
-      case YEASTNAMECOL:
+   auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
+   switch (columnIndex) {
+      case YeastTableModel::ColumnIndex::Name:
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
@@ -338,7 +343,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
                                                value.toString(),
                                                tr("Change Yeast Name"));
          break;
-      case YEASTLABCOL:
+      case YeastTableModel::ColumnIndex::Lab:
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
@@ -347,7 +352,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
                                                value.toString(),
                                                tr("Change Yeast Laboratory"));
          break;
-      case YEASTPRODIDCOL:
+      case YeastTableModel::ColumnIndex::ProdId:
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
@@ -356,7 +361,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
                                                value.toString(),
                                                tr("Change Yeast Product ID"));
          break;
-      case YEASTTYPECOL:
+      case YeastTableModel::ColumnIndex::Type:
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
@@ -365,7 +370,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
                                                value.toInt(),
                                                tr("Change Yeast Type"));
          break;
-      case YEASTFORMCOL:
+      case YeastTableModel::ColumnIndex::Form:
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
@@ -374,7 +379,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
                                                value.toInt(),
                                                tr("Change Yeast Form"));
          break;
-      case YEASTINVENTORYCOL:
+      case YeastTableModel::ColumnIndex::Inventory:
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
@@ -383,7 +388,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
                                                value.toInt(),
                                                tr("Change Yeast Inventory Unit Size"));
          break;
-      case YEASTAMOUNTCOL:
+      case YeastTableModel::ColumnIndex::Amount:
          if (!value.canConvert(QVariant::String)) {
             return false;
          }
@@ -394,14 +399,14 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             Measurement::qStringToSI(
                value.toString(),
                row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume,
-               this->getForcedSystemOfMeasurementForColumn(column),
-               this->getForcedRelativeScaleForColumn(column)
+               this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+               this->getColumnInfo(columnIndex).getForcedRelativeScale()
             ).quantity(),
             tr("Change Yeast Amount")
          );
          break;
       default:
-         qWarning() << Q_FUNC_INFO << "Bad column: " << column;
+         qWarning() << Q_FUNC_INFO << "Bad column: " << index.column();
          return false;
    }
    return true;
@@ -415,11 +420,9 @@ YeastItemDelegate::YeastItemDelegate(QObject * parent)
 
 QWidget * YeastItemDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & /*option*/,
                                           const QModelIndex & index) const {
-   int col = index.column();
-
-   if (col == YEASTTYPECOL) {
+   auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
+   if (columnIndex == YeastTableModel::ColumnIndex::Type) {
       QComboBox * box = new QComboBox(parent);
-
       box->addItem(tr("Ale"));
       box->addItem(tr("Lager"));
       box->addItem(tr("Wheat"));
@@ -427,11 +430,11 @@ QWidget * YeastItemDelegate::createEditor(QWidget * parent, const QStyleOptionVi
       box->addItem(tr("Champagne"));
       box->setMinimumWidth(box->minimumSizeHint().width());
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-
       return box;
-   } else if (col == YEASTFORMCOL) {
-      QComboBox * box = new QComboBox(parent);
+   }
 
+   if (columnIndex == YeastTableModel::ColumnIndex::Form) {
+      QComboBox * box = new QComboBox(parent);
       box->addItem(tr("Liquid"));
       box->addItem(tr("Dry"));
       box->addItem(tr("Slant"));
@@ -439,15 +442,15 @@ QWidget * YeastItemDelegate::createEditor(QWidget * parent, const QStyleOptionVi
       box->setMinimumWidth(box->minimumSizeHint().width());
       box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
       return box;
-   } else {
-      return new QLineEdit(parent);
    }
+
+   return new QLineEdit(parent);
 }
 
 void YeastItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const {
-   int col = index.column();
-
-   if (col == YEASTTYPECOL || col == YEASTFORMCOL) {
+   auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
+   if (columnIndex == YeastTableModel::ColumnIndex::Type ||
+       columnIndex == YeastTableModel::ColumnIndex::Form) {
       QComboBox * box = qobject_cast<QComboBox *>(editor);
       int ndx = index.model()->data(index, Qt::UserRole).toInt();
 
@@ -458,12 +461,13 @@ void YeastItemDelegate::setEditorData(QWidget * editor, const QModelIndex & inde
       line->setText(index.model()->data(index, Qt::DisplayRole).toString());
    }
 
+   return;
 }
 
 void YeastItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const {
-   int col = index.column();
-
-   if (col == YEASTTYPECOL || col == YEASTFORMCOL) {
+   auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
+   if (columnIndex == YeastTableModel::ColumnIndex::Type ||
+       columnIndex == YeastTableModel::ColumnIndex::Form) {
       QComboBox * box = static_cast<QComboBox *>(editor);
       int ndx = box->currentIndex();
       int curr = model->data(index, Qt::UserRole).toInt();
@@ -478,9 +482,11 @@ void YeastItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * mode
          model->setData(index, line->text(), Qt::EditRole);
       }
    }
+   return;
 }
 
 void YeastItemDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option,
                                              const QModelIndex & /*index*/) const {
    editor->setGeometry(option.rect);
+   return;
 }

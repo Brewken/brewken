@@ -66,7 +66,7 @@ TypeLookup const BrewNote::typeLookup {
    {
       // Note that we need Enums to be treated as ints for the purposes of type lookup
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::abv              , BrewNote::m_abv              ,           NonPhysicalQuantity::Percentage ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::attenuation      , BrewNote::m_attenuation                                                  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::attenuation      , BrewNote::m_attenuation      ,           NonPhysicalQuantity::Percentage ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::boilOff_l        , BrewNote::m_boilOff_l        , Measurement::PhysicalQuantity::Volume     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::brewDate         , BrewNote::m_brewDate         ,           NonPhysicalQuantity::Date       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::brewhouseEff_pct , BrewNote::m_brewhouseEff_pct ,           NonPhysicalQuantity::Percentage ),
@@ -80,7 +80,7 @@ TypeLookup const BrewNote::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::pitchTemp_c      , BrewNote::m_pitchTemp_c      , Measurement::PhysicalQuantity::Temperature),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::postBoilVolume_l , BrewNote::m_postBoilVolume_l , Measurement::PhysicalQuantity::Volume     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projABV_pct      , BrewNote::m_projABV_pct      ,           NonPhysicalQuantity::Percentage ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projAtten        , BrewNote::m_projAtten                                                    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projAtten        , BrewNote::m_projAtten        ,           NonPhysicalQuantity::Percentage ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projBoilGrav     , BrewNote::m_projBoilGrav     , Measurement::PhysicalQuantity::Density    ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projEff_pct      , BrewNote::m_projEff_pct      ,           NonPhysicalQuantity::Percentage ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projFermPoints   , BrewNote::m_projFermPoints                                               ),

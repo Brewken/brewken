@@ -623,7 +623,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_effBK">
+              <widget class="SmartDigitWidget" name="lcdnumber_effBK">
                <property name="text">
                 <string/>
                </property>
@@ -649,7 +649,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_projectedOG">
+              <widget class="SmartDigitWidget" name="lcdnumber_projectedOG">
                <property name="text">
                 <string/>
                </property>
@@ -666,7 +666,7 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_brewhouseEff">
+              <widget class="SmartDigitWidget" name="lcdnumber_brewhouseEff">
                <property name="text">
                 <string/>
                </property>
@@ -683,14 +683,14 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_projABV">
+              <widget class="SmartDigitWidget" name="lcdnumber_projABV">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="btlabel_Abv">
+              <widget class="QLabel" name="label_Abv">
                <property name="statusTip">
                 <string>ABV based on user-reported FG</string>
                </property>
@@ -700,7 +700,7 @@
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_abv">
+              <widget class="SmartDigitWidget" name="lcdnumber_abv">
                <property name="text">
                 <string/>
                </property>
@@ -717,7 +717,7 @@
               </widget>
              </item>
              <item row="5" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_projAtten">
+              <widget class="SmartDigitWidget" name="lcdnumber_projAtten">
                <property name="text">
                 <string/>
                </property>
@@ -734,7 +734,7 @@
               </widget>
              </item>
              <item row="6" column="1">
-              <widget class="BtGenericDigit" name="lcdnumber_atten">
+              <widget class="SmartDigitWidget" name="lcdnumber_atten">
                <property name="text">
                 <string/>
                </property>
@@ -798,9 +798,9 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtGenericDigit</class>
+   <class>SmartDigitWidget</class>
    <extends>QLabel</extends>
-   <header>widgets/BtDigitWidget.h</header>
+   <header>widgets/SmartDigitWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

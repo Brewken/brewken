@@ -38,16 +38,25 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
    bNoteObs = 0;
    setObjectName("BrewNoteWidget");
 
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_Fg         , PropertyNames::BrewNote::fg              , *this->label_Fg         );
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_Og         , PropertyNames::BrewNote::og              , *this->label_Og         );
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_Sg         , PropertyNames::BrewNote::sg              , *this->label_Sg         );
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_mashFinTemp, PropertyNames::BrewNote::mashFinTemp_c   , *this->label_mashFinTemp);
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_pitchTemp  , PropertyNames::BrewNote::pitchTemp_c     , *this->label_pitchTemp  );
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_strikeTemp , PropertyNames::BrewNote::strikeTemp_c    , *this->label_strikeTemp );
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_finalVolume, PropertyNames::BrewNote::finalVolume_l   , *this->label_finalVolume);
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_postBoilVol, PropertyNames::BrewNote::postBoilVolume_l, *this->label_postBoilVol);
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_volIntoBk  , PropertyNames::BrewNote::volumeIntoBK_l  , *this->label_volIntoBk  );
-   SMART_LINE_EDIT_INIT(BrewNoteWidget, BrewNote, lineEdit_volIntoFerm, PropertyNames::BrewNote::volumeIntoFerm_l, *this->label_volIntoFerm);
+   SMART_FIELD_INIT(BrewNoteWidget, label_Fg         , lineEdit_Fg          , BrewNote, PropertyNames::BrewNote::fg              );
+   SMART_FIELD_INIT(BrewNoteWidget, label_Og         , lineEdit_Og          , BrewNote, PropertyNames::BrewNote::og              );
+   SMART_FIELD_INIT(BrewNoteWidget, label_Sg         , lineEdit_Sg          , BrewNote, PropertyNames::BrewNote::sg              );
+   SMART_FIELD_INIT(BrewNoteWidget, label_mashFinTemp, lineEdit_mashFinTemp , BrewNote, PropertyNames::BrewNote::mashFinTemp_c   );
+   SMART_FIELD_INIT(BrewNoteWidget, label_pitchTemp  , lineEdit_pitchTemp   , BrewNote, PropertyNames::BrewNote::pitchTemp_c     );
+   SMART_FIELD_INIT(BrewNoteWidget, label_strikeTemp , lineEdit_strikeTemp  , BrewNote, PropertyNames::BrewNote::strikeTemp_c    );
+   SMART_FIELD_INIT(BrewNoteWidget, label_finalVolume, lineEdit_finalVolume , BrewNote, PropertyNames::BrewNote::finalVolume_l   );
+   SMART_FIELD_INIT(BrewNoteWidget, label_postBoilVol, lineEdit_postBoilVol , BrewNote, PropertyNames::BrewNote::postBoilVolume_l);
+   SMART_FIELD_INIT(BrewNoteWidget, label_volIntoBk  , lineEdit_volIntoBk   , BrewNote, PropertyNames::BrewNote::volumeIntoBK_l  );
+   SMART_FIELD_INIT(BrewNoteWidget, label_volIntoFerm, lineEdit_volIntoFerm , BrewNote, PropertyNames::BrewNote::volumeIntoFerm_l);
+   SMART_FIELD_INIT(BrewNoteWidget, label_projectedOg, lcdnumber_projectedOG, BrewNote, PropertyNames::BrewNote::projOg          );
+
+//   SMART_FIELD_INIT(BrewNoteWidget, label_fermentDate   , lineEdit_fermentDate  , BrewNote, PropertyNames::BrewNote::fermentDate     ); No specialisation for QDateTimeEdit
+   SMART_FIELD_INIT(BrewNoteWidget, label_effInfoBk     , lcdnumber_effBK       , BrewNote, PropertyNames::BrewNote::effIntoBK_pct   );
+   SMART_FIELD_INIT(BrewNoteWidget, label_brewHouseEff  , lcdnumber_brewhouseEff, BrewNote, PropertyNames::BrewNote::brewhouseEff_pct);
+   SMART_FIELD_INIT(BrewNoteWidget, label_projectedAbv  , lcdnumber_projABV     , BrewNote, PropertyNames::BrewNote::projABV_pct     );
+   SMART_FIELD_INIT(BrewNoteWidget, label_Abv           , lcdnumber_abv         , BrewNote, PropertyNames::BrewNote::abv             );
+   SMART_FIELD_INIT(BrewNoteWidget, label_yeastProjAtten, lcdnumber_projAtten   , BrewNote, PropertyNames::BrewNote::projAtten       );
+   SMART_FIELD_INIT(BrewNoteWidget, label_yeastAtten    , lcdnumber_atten       , BrewNote, PropertyNames::BrewNote::attenuation     );
 
    connect(this->lineEdit_Sg,          &SmartLineEdit::textModified,   this, &BrewNoteWidget::updateSG              );
    connect(this->lineEdit_volIntoBk,   &SmartLineEdit::textModified,   this, &BrewNoteWidget::updateVolumeIntoBK_l  );
@@ -59,13 +68,12 @@ BrewNoteWidget::BrewNoteWidget(QWidget *parent) : QWidget(parent) {
    connect(this->lineEdit_pitchTemp,   &SmartLineEdit::textModified,   this, &BrewNoteWidget::updatePitchTemp_c     );
    connect(this->lineEdit_Fg,          &SmartLineEdit::textModified,   this, &BrewNoteWidget::updateFG              );
    connect(this->lineEdit_finalVolume, &SmartLineEdit::textModified,   this, &BrewNoteWidget::updateFinalVolume_l   );
-   connect(this->lineEdit_fermentDate, &QDateTimeEdit::dateChanged, this, &BrewNoteWidget::updateFermentDate     );
-   connect(this->btTextEdit_brewNotes, &BtTextEdit::textModified,   this, &BrewNoteWidget::updateNotes           );
+   connect(this->lineEdit_fermentDate, &QDateTimeEdit::dateChanged,    this, &BrewNoteWidget::updateFermentDate     );
+   connect(this->btTextEdit_brewNotes, &BtTextEdit::textModified,      this, &BrewNoteWidget::updateNotes           );
 
    // A few labels on this page need special handling, so I connect them here
    // instead of how we would normally do this.
    connect(this->label_projectedOg, &SmartLabel::changedSystemOfMeasurementOrScale, this, &BrewNoteWidget::updateProjOg);
-///   connect(btLabel_fermentDate, &BtLabel::changedSystemOfMeasurementOrScale, this, &BrewNoteWidget::updateDateFormat);
 
    // I think this might work
    updateDateFormat();
@@ -90,18 +98,13 @@ void BrewNoteWidget::updateDateFormat() {
 
 void BrewNoteWidget::updateProjOg() {
    // Density UnitSystems only have one scale, so we don't bother looking up UnitSystem::RelativeScale
-   auto forcedSystemOfMeasurement =
-      Measurement::getForcedSystemOfMeasurementForField(*PropertyNames::BrewNote::projOg,
-                                                        *PersistentSettings::Sections::page_preboil);
+   auto forcedSystemOfMeasurement = this->label_projectedOg->getForcedSystemOfMeasurement();
    double quant = Measurement::amountDisplay(Measurement::Amount{this->bNoteObs->projOg(), Measurement::Units::sp_grav},
                                              forcedSystemOfMeasurement);
    this->lcdnumber_projectedOG->setLowLim( lowLimitPct  * quant);
    this->lcdnumber_projectedOG->setHighLim(highLimitPct * quant);
 
-   Measurement::UnitSystem const & displayUnitSystem =
-      Measurement::getUnitSystemForField(*PropertyNames::BrewNote::projOg,
-                                         *PersistentSettings::Sections::page_preboil,
-                                         Measurement::PhysicalQuantity::Density);
+   Measurement::UnitSystem const & displayUnitSystem = this->label_projectedOg->getDisplayUnitSystem();
    int precision = (displayUnitSystem == Measurement::UnitSystems::density_Plato) ? 0 : 3;
 
    this->lcdnumber_projectedOG->display(quant, precision);
@@ -158,7 +161,7 @@ void BrewNoteWidget::updatePostBoilVolume_l()                  { if (this->bNote
 void BrewNoteWidget::updateVolumeIntoFerm_l()                  { if (this->bNoteObs) { this->bNoteObs->setVolumeIntoFerm_l(this->lineEdit_volIntoFerm->toCanonical().quantity()); this->showChanges(); } return; }
 void BrewNoteWidget::updatePitchTemp_c()                       { if (this->bNoteObs) { this->bNoteObs->setPitchTemp_c     (this->lineEdit_pitchTemp  ->toCanonical().quantity()); this->showChanges(); } return; }
 void BrewNoteWidget::updateFG()                                { if (this->bNoteObs) { this->bNoteObs->setFg              (this->lineEdit_Fg         ->toCanonical().quantity()); this->showChanges(); } return; }
-void BrewNoteWidget::updateFinalVolume_l()                     { if (this->bNoteObs) { this->bNoteObs->setFinalVolume_l   (this->lineEdit_finalVolume   ->toCanonical().quantity());                      } return; }
+void BrewNoteWidget::updateFinalVolume_l()                     { if (this->bNoteObs) { this->bNoteObs->setFinalVolume_l   (this->lineEdit_finalVolume->toCanonical().quantity());                      } return; }
 void BrewNoteWidget::updateFermentDate(QDate const & datetime) { if (this->bNoteObs) { this->bNoteObs->setFermentDate     (datetime);                                                                  } return; }
 void BrewNoteWidget::updateNotes()                             { if (this->bNoteObs) { this->bNoteObs->setNotes           (this->btTextEdit_brewNotes->toPlainText() );                                } return; }
 

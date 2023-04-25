@@ -23,7 +23,6 @@
 #include <QWidget>
 #include <QDebug>
 
-#include "BtLabel.h"
 #include "MainWindow.h"
 #include "measurement/Unit.h"
 #include "model/Recipe.h"
@@ -35,24 +34,26 @@ RecipeExtrasWidget::RecipeExtrasWidget(QWidget* parent) :
 
    this->setupUi(this);
 
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_brewer     , PropertyNames::Recipe::brewer                                        );
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_asstBrewer , PropertyNames::Recipe::asstBrewer                                    );
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_primaryAge , PropertyNames::Recipe::primaryAge_days                            , 0);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_primaryTemp, PropertyNames::Recipe::primaryTemp_c    , *this->label_primaryTemp, 1);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_secAge     , PropertyNames::Recipe::secondaryAge_days                          , 0);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_secTemp    , PropertyNames::Recipe::secondaryTemp_c  , *this->label_secTemp    , 1);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_tertAge    , PropertyNames::Recipe::tertiaryAge_days                           , 0);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_tertTemp   , PropertyNames::Recipe::tertiaryTemp_c   , *this->label_tertTemp   , 1);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_age        , PropertyNames::Recipe::age_days                                   , 0);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_ageTemp    , PropertyNames::Recipe::ageTemp_c        , *this->label_ageTemp    , 1);
-   SMART_LINE_EDIT_INIT(RecipeExtrasWidget, Recipe, lineEdit_carbVols   , PropertyNames::Recipe::carbonation_vols , *this->label_carbVols   );
+   // Note that label_primaryAge, label_secAge, label_tertAge, label_age are QLabel, not SmartLabel, as we're "forcing"
+   // the measurement to be in days rather than allowing the usual units of PhysicalQuantity::Time
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_brewer     , lineEdit_brewer     , Recipe, PropertyNames::Recipe::brewer              );
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_asstBrewer , lineEdit_asstBrewer , Recipe, PropertyNames::Recipe::asstBrewer          );
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_primaryAge , lineEdit_primaryAge , Recipe, PropertyNames::Recipe::primaryAge_days  , 0);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_primaryTemp, lineEdit_primaryTemp, Recipe, PropertyNames::Recipe::primaryTemp_c    , 1);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_secAge     , lineEdit_secAge     , Recipe, PropertyNames::Recipe::secondaryAge_days, 0);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_secTemp    , lineEdit_secTemp    , Recipe, PropertyNames::Recipe::secondaryTemp_c  , 1);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_tertAge    , lineEdit_tertAge    , Recipe, PropertyNames::Recipe::tertiaryAge_days , 0);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_tertTemp   , lineEdit_tertTemp   , Recipe, PropertyNames::Recipe::tertiaryTemp_c   , 1);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_age        , lineEdit_age        , Recipe, PropertyNames::Recipe::age_days         , 0);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_ageTemp    , lineEdit_ageTemp    , Recipe, PropertyNames::Recipe::ageTemp_c        , 1);
+   SMART_FIELD_INIT(RecipeExtrasWidget, label_carbVols   , lineEdit_carbVols   , Recipe, PropertyNames::Recipe::carbonation_vols    );
 
    // See comment in model/Recipe.cpp about things we measure in days.  If we switched them from Dimensionless to Time,
    // we would need something like this
-   // this->lineEdit_primaryAge->getUiAmountWithUnits().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
-   // this->lineEdit_secAge    ->getUiAmountWithUnits().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
-   // this->lineEdit_tertAge   ->getUiAmountWithUnits().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
-   // this->lineEdit_age       ->getUiAmountWithUnits().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
+   // this->lineEdit_primaryAge->getSmartField().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
+   // this->lineEdit_secAge    ->getSmartField().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
+   // this->lineEdit_tertAge   ->getSmartField().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
+   // this->lineEdit_age       ->getSmartField().setForcedRelativeScale(Measurement::UnitSystem::RelativeScale::Large);
 
    connect(this->lineEdit_age         , &SmartLineEdit::textModified               , this, &RecipeExtrasWidget::updateAge          );
    connect(this->lineEdit_ageTemp     , &SmartLineEdit::textModified               , this, &RecipeExtrasWidget::updateAgeTemp      );

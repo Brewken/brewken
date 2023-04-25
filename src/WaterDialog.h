@@ -81,8 +81,8 @@ private:
    double calculateAddedSaltpH();
    double calculateAcidpH();
 
-   QVector<BtDigitWidget *>    m_ppm_digits;
-   QVector<BtDigitWidget *>    m_total_digits;
+   QVector<SmartDigitWidget *>    m_ppm_digits;
+   QVector<SmartDigitWidget *>    m_total_digits;
    WaterListModel *            m_base_combo_list;
    WaterListModel *            m_target_combo_list;
    SaltTableModel *            m_salt_table_model;

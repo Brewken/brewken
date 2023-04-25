@@ -48,13 +48,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
-    ${repoDir}/src/BtAmountEdit.cpp
     ${repoDir}/src/BtColor.cpp
     ${repoDir}/src/BtDatePopup.cpp
     ${repoDir}/src/BtFieldType.cpp
     ${repoDir}/src/BtFolder.cpp
-    ${repoDir}/src/BtLabel.cpp
-    ${repoDir}/src/BtLineEdit.cpp
     ${repoDir}/src/BtSplashScreen.cpp
     ${repoDir}/src/BtTabWidget.cpp
     ${repoDir}/src/BtTextEdit.cpp
@@ -153,6 +150,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/RefractoDialog.cpp
     ${repoDir}/src/ScaleRecipeTool.cpp
     ${repoDir}/src/SimpleUndoableUpdate.cpp
+    ${repoDir}/src/SmartAmounts.cpp
+    ${repoDir}/src/SmartField.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
     ${repoDir}/src/StyleButton.cpp
     ${repoDir}/src/StyleEditor.cpp
@@ -171,7 +170,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/TimerListDialog.cpp
     ${repoDir}/src/TimerMainDialog.cpp
     ${repoDir}/src/TimerWidget.cpp
-    ${repoDir}/src/UiAmountWithUnits.cpp
     ${repoDir}/src/utils/BtException.cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
@@ -187,9 +185,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/WaterTableWidget.cpp
     ${repoDir}/src/widgets/Animator.cpp
-    ${repoDir}/src/widgets/BtAmountDigitWidget.cpp
-    ${repoDir}/src/widgets/BtDigitWidget.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
+    ${repoDir}/src/widgets/SmartDigitWidget.cpp
     ${repoDir}/src/widgets/SmartLabel.cpp
     ${repoDir}/src/widgets/SmartLineEdit.cpp
     ${repoDir}/src/widgets/ToggleSwitch.cpp

@@ -31,13 +31,13 @@
 MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    setupUi(this);
 
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_name      , PropertyNames::NamedEntity::name                                      );
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_grainTemp , PropertyNames::Mash::grainTemp_c          , *this->label_grainTemp , 1);
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_spargeTemp, PropertyNames::Mash::spargeTemp_c         , *this->label_spargeTemp, 1);
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_spargePh  , PropertyNames::Mash::ph                   , *this->label_spargePh  , 0);
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunTemp   , PropertyNames::Mash::tunTemp_c            , *this->label_tunTemp   , 1);
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunMass   , PropertyNames::Mash::tunWeight_kg         , *this->label_tunMass      );
-   SMART_LINE_EDIT_INIT(MashEditor, Mash, lineEdit_tunSpHeat , PropertyNames::Mash::tunSpecificHeat_calGC, *this->label_tunSpHeat , 1);
+   SMART_FIELD_INIT(MashEditor, label_name      , lineEdit_name      , Mash, PropertyNames::NamedEntity::name             );
+   SMART_FIELD_INIT(MashEditor, label_grainTemp , lineEdit_grainTemp , Mash, PropertyNames::Mash::grainTemp_c          , 1);
+   SMART_FIELD_INIT(MashEditor, label_spargeTemp, lineEdit_spargeTemp, Mash, PropertyNames::Mash::spargeTemp_c         , 1);
+   SMART_FIELD_INIT(MashEditor, label_spargePh  , lineEdit_spargePh  , Mash, PropertyNames::Mash::ph                   , 0);
+   SMART_FIELD_INIT(MashEditor, label_tunTemp   , lineEdit_tunTemp   , Mash, PropertyNames::Mash::tunTemp_c            , 1);
+   SMART_FIELD_INIT(MashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::tunWeight_kg            );
+   SMART_FIELD_INIT(MashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::tunSpecificHeat_calGC, 1);
 
    connect(pushButton_fromEquipment, &QAbstractButton::clicked, this, &MashEditor::fromEquipment);
    connect(this,                     &QDialog::accepted,        this, &MashEditor::saveAndClose );

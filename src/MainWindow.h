@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -462,16 +462,6 @@ private:
    void setupDrops();
    //! \brief Connect signal/slots for check boxes
    void setUpStateChanges();
-
-   void updateDensitySlider(BtStringConst const & propertyNameMin,
-                            BtStringConst const & propertyNameMax,
-                            BtStringConst const & propertyNameCurrent,
-                            RangedSlider* slider,
-                            double max);
-   void updateColorSlider(BtStringConst const & propertyNameMin,
-                          BtStringConst const & propertyNameMax,
-                          BtStringConst const & propertyNameCurrent,
-                          RangedSlider* slider);
 
 };
 

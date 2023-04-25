@@ -503,22 +503,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Stílus szerint kevés</translation>
+        <translation type="vanished">Stílus szerint kevés</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Stílusnak megfelelő</translation>
+        <translation type="vanished">Stílusnak megfelelő</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Stílus szerint sok</translation>
+        <translation type="vanished">Stílus szerint sok</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Szín (%1)</translation>
+        <translation type="vanished">Szín (%1)</translation>
     </message>
 </context>
 <context>
@@ -4250,7 +4250,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Bad column: %1</translation>
+        <translation type="obsolete">Bad column: %1</translation>
     </message>
 </context>
 <context>
@@ -4295,10 +4295,25 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Stílus szerint kevés</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Stílusnak megfelelő</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Stílus szerint sok</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Szín (%1)</translation>
+        <translation type="obsolete">Szín (%1)</translation>
     </message>
 </context>
 <context>
@@ -8089,6 +8104,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

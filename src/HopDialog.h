@@ -61,7 +61,6 @@ public:
    QLineEdit *qLineEdit_searchBox;
    //! @}
 
-   void newHop(QString folder);
 
 public slots:
    //! Add selected hop to current recipe.
@@ -71,7 +70,7 @@ public slots:
    //! Bring up the editor for the selected hop.
    void editSelected();
    //! Create a new hop.
-   void newHop();
+   void newHop(QString folder = "");
    //! FIlters the shown hops
    void filterHops(QString searchExpression);
 

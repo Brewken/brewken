@@ -36,9 +36,9 @@ MiscEditor::MiscEditor(QWidget * parent) :
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-   SMART_LINE_EDIT_INIT(MiscEditor, Misc, lineEdit_name     , PropertyNames::NamedEntity::name                        );
-   SMART_LINE_EDIT_INIT(MiscEditor, Misc, lineEdit_inventory, PropertyNames::Misc::amount     , *this->label_inventory);
-   SMART_LINE_EDIT_INIT(MiscEditor, Misc, lineEdit_time     , PropertyNames::Misc::time       , *this->label_time     );
+   SMART_FIELD_INIT(MiscEditor, label_name     , lineEdit_name     , Misc, PropertyNames::NamedEntity::name);
+   SMART_FIELD_INIT(MiscEditor, label_inventory, lineEdit_inventory, Misc, PropertyNames::Misc::amount     );
+   SMART_FIELD_INIT(MiscEditor, label_time     , lineEdit_time     , Misc, PropertyNames::Misc::time       );
 
    // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
    // function to allow use of default argument on newStyle() slot
@@ -157,7 +157,7 @@ void MiscEditor::newMisc(QString folder) {
 void MiscEditor::setIsWeight(bool const state) {
    qDebug() << Q_FUNC_INFO << "state is" << state;
    // But you have to admit, this is clever
-   this->lineEdit_inventory->getUiAmountWithUnits().selectPhysicalQuantity(
+   this->lineEdit_inventory->selectPhysicalQuantity(
       state ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume
    );
 

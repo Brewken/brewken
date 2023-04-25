@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2022:
+ * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2023:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -72,9 +72,8 @@ namespace {
                               "<td>%2</td>"
                               "</tr>")
                            .arg(fermentable->name())
-                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(), Measurement::Units::kilograms},
-                                                           PersistentSettings::Sections::fermentableTable,
-                                                           PropertyNames::NamedEntityWithInventory::inventory));
+                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(),
+                                                                               Measurement::Units::kilograms}));
          }
          result += "</table>";
       }
@@ -111,9 +110,8 @@ namespace {
                               "</tr>")
                            .arg(hop->name())
                            .arg(hop->alpha_pct())
-                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(), Measurement::Units::kilograms},
-                                                           PersistentSettings::Sections::hopTable,
-                                                           PropertyNames::NamedEntityWithInventory::inventory));
+                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(),
+                                                                               Measurement::Units::kilograms}));
          }
          result += "</table>";
       }
@@ -145,9 +143,7 @@ namespace {
                Measurement::Amount{
                   miscellaneous->inventory(),
                   miscellaneous->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-               },
-               PersistentSettings::Sections::miscTable,
-               PropertyNames::NamedEntityWithInventory::inventory
+               }
             );
             result += QString("<tr>"
                               "<td>%1</td>"
@@ -184,9 +180,7 @@ namespace {
                Measurement::Amount{
                   yeast->inventory(),
                   yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-               },
-               PersistentSettings::Sections::yeastTable,
-               PropertyNames::NamedEntityWithInventory::inventory
+               }
             );
 
             result += QString("<tr>"

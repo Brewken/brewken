@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * FermentableDialog.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * FermentableDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -39,8 +39,7 @@ FermentableDialog::FermentableDialog(MainWindow* parent) :
    QDialog(parent),
    mainWindow(parent),
    fermEdit(new FermentableEditor(this)),
-   numFerms(0)
-{
+   numFerms(0) {
    doLayout();
 
    fermTableModel = new FermentableTableModel(tableWidget, false);
@@ -49,22 +48,24 @@ FermentableDialog::FermentableDialog(MainWindow* parent) :
    fermTableProxy->setSourceModel(fermTableModel);
    tableWidget->setModel(fermTableProxy);
    tableWidget->setSortingEnabled(true);
-   tableWidget->sortByColumn( FERMNAMECOL, Qt::AscendingOrder );
+   tableWidget->sortByColumn(static_cast<int>(FermentableTableModel::ColumnIndex::Name), Qt::AscendingOrder );
    fermTableProxy->setDynamicSortFilter(true);
    fermTableProxy->setFilterKeyColumn(1);
 
-   connect( pushButton_addToRecipe, SIGNAL( clicked() ), this, SLOT( addFermentable() ) );
-   connect( pushButton_edit, &QAbstractButton::clicked, this, &FermentableDialog::editSelected );
-   connect( pushButton_remove, &QAbstractButton::clicked, this, &FermentableDialog::removeFermentable );
-   connect( pushButton_new, SIGNAL( clicked() ), this, SLOT( newFermentable() ) );
-   connect( tableWidget, &QAbstractItemView::doubleClicked, this, &FermentableDialog::addFermentable );
-   connect( qLineEdit_searchBox, &QLineEdit::textEdited, this, &FermentableDialog::filterFermentables);
+//   connect(this->pushButton_addToRecipe, &QAbstractButton::clicked,         this, &FermentableDialog::addFermentable   ); .:TODO:. Work out what this is supposed to do!
+   connect(this->pushButton_edit,        &QAbstractButton::clicked,         this, &FermentableDialog::editSelected     );
+   connect(this->pushButton_remove,      &QAbstractButton::clicked,         this, &FermentableDialog::removeFermentable);
+   // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
+   // function to allow use of default argument on newFermentable() slot
+   connect(this->pushButton_new        , &QAbstractButton::clicked,         this, [this]() { this->newFermentable(); return; } );
+   connect(this->tableWidget,            &QAbstractItemView::doubleClicked, this, &FermentableDialog::addFermentable    );
+   connect(this->qLineEdit_searchBox,    &QLineEdit::textEdited,            this, &FermentableDialog::filterFermentables);
    // Let me see if this works
    fermTableModel->observeDatabase(true);
+   return;
 }
 
-void FermentableDialog::doLayout()
-{
+void FermentableDialog::doLayout() {
    resize(800, 300);
    verticalLayout = new QVBoxLayout(this);
       tableWidget = new QTableView(this);
@@ -186,16 +187,15 @@ void FermentableDialog::addFermentable(const QModelIndex& index) {
       }
 
       translated = fermTableProxy->mapToSource(selected[0]);
-   }
-   else
-   {
+   } else {
       // Only respond if the name is selected. Since we connect to double-click signal,
       // this keeps us from adding something to the recipe when we just want to edit
       // one of the other fermentable fields.
-      if( index.column() == FERMNAMECOL )
+      if (index.column() == static_cast<int>(FermentableTableModel::ColumnIndex::Name)) {
          translated = fermTableProxy->mapToSource(index);
-      else
+      } else {
          return;
+      }
    }
 
    MainWindow::instance().addFermentableToRecipe(fermTableModel->getRow(translated.row()));
@@ -203,27 +203,25 @@ void FermentableDialog::addFermentable(const QModelIndex& index) {
    return;
 }
 
-void FermentableDialog::newFermentable(QString folder)
-{
+void FermentableDialog::newFermentable(QString folder) {
    QString name = QInputDialog::getText(this, tr("Fermentable name"),
                                           tr("Fermentable name:"));
-   if( name.isEmpty() )
+   if (name.isEmpty()) {
       return;
+   }
 
    Fermentable* ferm = new Fermentable(name);
-   if ( ! folder.isEmpty() )
+   if (!folder.isEmpty()) {
       ferm->setFolder(folder);
+   }
 
    fermEdit->setFermentable(ferm);
    fermEdit->show();
+   return;
 }
 
-void FermentableDialog::newFermentable() {
-   newFermentable(QString());
-}
-
-void FermentableDialog::filterFermentables(QString searchExpression)
-{
-    fermTableProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    fermTableProxy->setFilterFixedString(searchExpression);
+void FermentableDialog::filterFermentables(QString searchExpression) {
+   fermTableProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+   fermTableProxy->setFilterFixedString(searchExpression);
+   return;
 }

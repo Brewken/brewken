@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * MiscDialog.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * MiscDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -60,7 +61,6 @@ public:
    QPushButton *pushButton_remove;
    //! @}
 
-   void newMisc(QString folder);
 public slots:
    //! Add the selected misc to the current recipe.
    void addMisc(const QModelIndex& = QModelIndex());
@@ -69,18 +69,13 @@ public slots:
    //! Bring up the editor for the selected misc.
    void editSelected();
    //! Add a new misc to the database.
-   void newMisc();
+   void newMisc(QString folder = "");
    //! Filter out the matching miscs.
    void filterMisc(QString searchExpression);
 
 protected:
 
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QDialog::changeEvent(event);
-   }
+   virtual void changeEvent(QEvent* event);
 
 private:
    MainWindow* mainWindow;

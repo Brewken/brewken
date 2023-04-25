@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/BtDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartDigitWidget.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -29,25 +29,34 @@
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
-#include "UiAmountWithUnits.h"
+#include "SmartField.h"
 
 /*!
- * \class BtDigitWidget
+ * \class SmartDigitWidget
  *
  * \brief Widget that displays colored numbers, depending on if the number is ok, high, or low.  Currently only used in
  *        waterDialog.ui (ie Water Chemistry Dialog).
  *
  * \todo Make this thing directly accept signals from the model items it is supposed to watch.
+ *
+ *        NB: Per https://doc.qt.io/qt-5/moc.html#multiple-inheritance-requires-qobject-to-be-first, "If you are using
+ *        multiple inheritance, moc [Qt's Meta-Object Compiler] assumes that the first inherited class is a subclass of
+ *        QObject. Also, be sure that only the first inherited class is a QObject."  In particular, this means we must
+ *        put Q_PROPERTY declarations for SmartField attributes here rather than in SmartField itself.
  */
-class BtDigitWidget : public QLabel {
+class SmartDigitWidget : public QLabel, public SmartField {
    Q_OBJECT
 
 public:
    enum ColorType{NONE, LOW, GOOD, HIGH, BLACK};
 
-   BtDigitWidget(QWidget * parent,
-                 BtFieldType fieldType);
-   virtual ~BtDigitWidget();
+   SmartDigitWidget(QWidget * parent);
+   virtual ~SmartDigitWidget();
+
+   virtual QString getRawText() const;
+   virtual void setRawText(QString const & text);
+   virtual void connectSmartLabelSignal(SmartLabel & smartLabel);
+   virtual void doPostInitWork();
 
    //! \brief Displays the given \c num with precision \c prec.
    void display(double num, int prec = 0);
@@ -86,6 +95,14 @@ public:
     */
    template<typename T> T getValueAs() const;
 
+public slots:
+   /**
+    * \brief Received from \c SmartLabel when the user has change \c UnitSystem
+    *
+    * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
+    */
+   void displayChanged(SmartAmounts::ScaleInfo previousScaleInfo);
+
 protected:
    int getPrecision() const;
 
@@ -98,8 +115,8 @@ private:
 };
 
 //
-// See comment in BtLineEdit.h for why we need these trivial child classes to use in .ui files
+// See comment in widgets/BtAmountDigitWidget.h for why we need these trivial child classes to use in .ui files
 //
-class BtGenericDigit : public BtDigitWidget { Q_OBJECT public: BtGenericDigit(QWidget * parent); };
+class BtGenericDigit : public SmartDigitWidget { Q_OBJECT public: BtGenericDigit(QWidget * parent); };
 
 #endif

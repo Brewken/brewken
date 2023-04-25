@@ -507,22 +507,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Слишком низко для стиля.</translation>
+        <translation type="vanished">Слишком низко для стиля.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>В пределах стиля.</translation>
+        <translation type="vanished">В пределах стиля.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Слишком высоко для стиля.</translation>
+        <translation type="vanished">Слишком высоко для стиля.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Цвет (%1)</translation>
+        <translation type="vanished">Цвет (%1)</translation>
     </message>
 </context>
 <context>
@@ -4260,10 +4260,6 @@ The final volume in the primary is %1.</source>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Bad column: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -4307,10 +4303,25 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Слишком низко для стиля.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">В пределах стиля.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Слишком высоко для стиля.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Цвет (%1)</translation>
+        <translation type="obsolete">Цвет (%1)</translation>
     </message>
 </context>
 <context>
@@ -8217,6 +8228,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

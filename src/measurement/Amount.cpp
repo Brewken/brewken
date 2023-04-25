@@ -22,7 +22,7 @@
 
 namespace Measurement {
 
-   Amount::Amount(double quantity, Unit const & unit) : m_quantity{quantity}, m_unit{&unit} {
+   Amount::Amount(double const quantity, Unit const & unit) : m_quantity{quantity}, m_unit{&unit} {
       return;
    }
 

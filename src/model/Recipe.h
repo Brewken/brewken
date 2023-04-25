@@ -236,7 +236,7 @@ public:
    Q_PROPERTY(double ABV_pct READ ABV_pct /*WRITE*/ /*NOTIFY changed*/ /*changedABV*/ STORED false)
    //! \brief The calculated color in SRM.
    Q_PROPERTY(double color_srm READ color_srm /*WRITE*/ /*NOTIFY changed*/ /*changedColor_srm*/ STORED false)
-   //! \brief The calculated boil gravity.
+   //! \brief The calculated boil gravity. .:TBD:. This should perhaps be renamed boilSg for consistency
    Q_PROPERTY(double boilGrav READ boilGrav /*WRITE*/ /*NOTIFY changed*/ /*changedBoilGrav*/ STORED false)
    //! \brief The calculated IBUs.
    Q_PROPERTY(double IBU READ IBU /*WRITE*/ /*NOTIFY changed*/ /*changedIBU*/)

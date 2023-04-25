@@ -471,22 +471,15 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Κάτω από τα όρια του στυλ</translation>
+        <translation type="vanished">Κάτω από τα όρια του στυλ</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Στα όρια του στυλ</translation>
+        <translation type="vanished">Στα όρια του στυλ</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Πάνω από τα όρια του στυλ</translation>
-    </message>
-</context>
-<context>
-    <name>BtLabel</name>
-    <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Πάνω από τα όρια του στυλ</translation>
     </message>
 </context>
 <context>
@@ -4214,7 +4207,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Προβληματική στήλη: %1</translation>
+        <translation type="obsolete">Προβληματική στήλη: %1</translation>
     </message>
 </context>
 <context>
@@ -4259,10 +4252,18 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>SmartLabel</name>
+    <name>SmartDigitWidget</name>
     <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Κάτω από τα όρια του στυλ</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Στα όρια του στυλ</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Πάνω από τα όρια του στυλ</translation>
     </message>
 </context>
 <context>
@@ -8181,6 +8182,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

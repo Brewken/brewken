@@ -122,7 +122,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="BtTemperatureLabel" name="label_stepTemp">
+        <widget class="SmartLabel" name="label_stepTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -141,7 +141,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTemperatureEdit" name="lineEdit_stepTemp">
+        <widget class="SmartLineEdit" name="lineEdit_stepTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -173,7 +173,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="BtVolumeLabel" name="label_infuseAmount">
+        <widget class="SmartLabel" name="label_infuseAmount">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -192,7 +192,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtVolumeEdit" name="lineEdit_infuseAmount">
+        <widget class="SmartLineEdit" name="lineEdit_infuseAmount">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -224,7 +224,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9">
        <item>
-        <widget class="BtTemperatureLabel" name="label_infuseTemp">
+        <widget class="SmartLabel" name="label_infuseTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -243,7 +243,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTemperatureEdit" name="lineEdit_infuseTemp">
+        <widget class="SmartLineEdit" name="lineEdit_infuseTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -276,7 +276,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_11">
        <item>
-        <widget class="BtVolumeLabel" name="label_decoctionAmount">
+        <widget class="SmartLabel" name="label_decoctionAmount">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -295,7 +295,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtVolumeEdit" name="lineEdit_decoctionAmount">
+        <widget class="SmartLineEdit" name="lineEdit_decoctionAmount">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -327,7 +327,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="BtTimeLabel" name="label_stepTime">
+        <widget class="SmartLabel" name="label_stepTime">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -346,7 +346,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTimeEdit" name="lineEdit_stepTime">
+        <widget class="SmartLineEdit" name="lineEdit_stepTime">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -378,7 +378,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="BtTimeLabel" name="label_rampTime">
+        <widget class="SmartLabel" name="label_rampTime">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -397,7 +397,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTimeEdit" name="lineEdit_rampTime">
+        <widget class="SmartLineEdit" name="lineEdit_rampTime">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -429,7 +429,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="BtTemperatureLabel" name="label_endTemp">
+        <widget class="SmartLabel" name="label_endTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -448,7 +448,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BtTemperatureEdit" name="lineEdit_endTemp">
+        <widget class="SmartLineEdit" name="lineEdit_endTemp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -493,49 +493,17 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtTimeEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTimeLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtVolumeLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtVolumeEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTemperatureLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTemperatureEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>

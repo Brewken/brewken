@@ -67,9 +67,6 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="editField" stdset="0">
-            <string notr="true">brewer</string>
-           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -128,13 +125,10 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="editField" stdset="0">
-            <string notr="true">asstBrewer</string>
-           </property>
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="SmartLabel" name="label_primaryAge">
+          <widget class="QLabel" name="label_primaryAge">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -165,9 +159,6 @@
              <width>256</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="editField" stdset="0">
-            <string notr="true">primaryAge_days</string>
            </property>
           </widget>
          </item>
@@ -204,13 +195,10 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="editField" stdset="0">
-            <string notr="true">primaryTemp_c</string>
-           </property>
           </widget>
          </item>
          <item row="5" column="0">
-          <widget class="SmartLabel" name="label_secAge">
+          <widget class="QLabel" name="label_secAge">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -241,9 +229,6 @@
              <width>256</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="editField" stdset="0">
-            <string notr="true">secondaryAge_days</string>
            </property>
           </widget>
          </item>
@@ -280,13 +265,10 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="editField" stdset="0">
-            <string notr="true">secondaryTemp_c</string>
-           </property>
           </widget>
          </item>
          <item row="7" column="0">
-          <widget class="SmartLabel" name="label_tertAge">
+          <widget class="QLabel" name="label_tertAge">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -317,9 +299,6 @@
              <width>256</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="editField" stdset="0">
-            <string notr="true">tertiaryAge_days</string>
            </property>
           </widget>
          </item>
@@ -356,13 +335,10 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="editField" stdset="0">
-            <string notr="true">tertiaryTemp_c</string>
-           </property>
           </widget>
          </item>
          <item row="9" column="0">
-          <widget class="SmartLabel" name="label_age">
+          <widget class="QLabel" name="label_age">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -393,9 +369,6 @@
              <width>256</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="editField" stdset="0">
-            <string notr="true">age</string>
            </property>
           </widget>
          </item>
@@ -431,9 +404,6 @@
              <width>256</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="editField" stdset="0">
-            <string notr="true">ageTemp_c</string>
            </property>
           </widget>
          </item>
@@ -505,9 +475,6 @@
            </property>
            <property name="mouseTracking">
             <bool>true</bool>
-           </property>
-           <property name="editField" stdset="0">
-            <string notr="true">carbonation_vols</string>
            </property>
           </widget>
          </item>

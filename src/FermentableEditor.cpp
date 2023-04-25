@@ -42,18 +42,18 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
                                               Fermentable::typeStringMapping.enumToString(ii));
    }
 
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_name          , PropertyNames::NamedEntity::name                                                  );
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_color         , PropertyNames::Fermentable::color_srm             , *this->label_color         , 0);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_diastaticPower, PropertyNames::Fermentable::diastaticPower_lintner, *this->label_diastaticPower   );
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_coarseFineDiff, PropertyNames::Fermentable::coarseFineDiff_pct                                 , 0);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_ibuGalPerLb   , PropertyNames::Fermentable::ibuGalPerLb                                        , 0);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_maxInBatch    , PropertyNames::Fermentable::maxInBatch_pct                                     , 0);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_moisture      , PropertyNames::Fermentable::moisture_pct                                       , 0);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_protein       , PropertyNames::Fermentable::protein_pct                                        , 0);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_yield         , PropertyNames::Fermentable::yield_pct                                          , 1);
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_inventory     , PropertyNames::Fermentable::amount                , *this->label_inventory        );
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_origin        , PropertyNames::Fermentable::origin                                                );
-   SMART_LINE_EDIT_INIT(FermentableEditor, Fermentable, lineEdit_supplier      , PropertyNames::Fermentable::supplier                                              );
+   SMART_FIELD_INIT(FermentableEditor, label_name          , lineEdit_name          , Fermentable, PropertyNames::NamedEntity::name                     );
+   SMART_FIELD_INIT(FermentableEditor, label_color         , lineEdit_color         , Fermentable, PropertyNames::Fermentable::color_srm             , 0);
+   SMART_FIELD_INIT(FermentableEditor, label_diastaticPower, lineEdit_diastaticPower, Fermentable, PropertyNames::Fermentable::diastaticPower_lintner   );
+   SMART_FIELD_INIT(FermentableEditor, label_coarseFineDiff, lineEdit_coarseFineDiff, Fermentable, PropertyNames::Fermentable::coarseFineDiff_pct    , 0);
+   SMART_FIELD_INIT(FermentableEditor, label_ibuGalPerLb   , lineEdit_ibuGalPerLb   , Fermentable, PropertyNames::Fermentable::ibuGalPerLb           , 0);
+   SMART_FIELD_INIT(FermentableEditor, label_maxInBatch    , lineEdit_maxInBatch    , Fermentable, PropertyNames::Fermentable::maxInBatch_pct        , 0);
+   SMART_FIELD_INIT(FermentableEditor, label_moisture      , lineEdit_moisture      , Fermentable, PropertyNames::Fermentable::moisture_pct          , 0);
+   SMART_FIELD_INIT(FermentableEditor, label_protein       , lineEdit_protein       , Fermentable, PropertyNames::Fermentable::protein_pct           , 0);
+   SMART_FIELD_INIT(FermentableEditor, label_yield         , lineEdit_yield         , Fermentable, PropertyNames::Fermentable::yield_pct             , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_inventory     , lineEdit_inventory     , Fermentable, PropertyNames::Fermentable::amount                   );
+   SMART_FIELD_INIT(FermentableEditor, label_origin        , lineEdit_origin        , Fermentable, PropertyNames::Fermentable::origin                   );
+   SMART_FIELD_INIT(FermentableEditor, label_supplier      , lineEdit_supplier      , Fermentable, PropertyNames::Fermentable::supplier                 );
 
    connect(pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNewFermentable);
    connect(pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save);

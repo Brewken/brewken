@@ -503,22 +503,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Zu niedrig für diesen Typ.</translation>
+        <translation type="vanished">Zu niedrig für diesen Typ.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Im Bereich dieses Typs.</translation>
+        <translation type="vanished">Im Bereich dieses Typs.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Zu hoch für diesen Typ.</translation>
+        <translation type="vanished">Zu hoch für diesen Typ.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Farbe (%1)</translation>
+        <translation type="vanished">Farbe (%1)</translation>
     </message>
 </context>
 <context>
@@ -4246,7 +4246,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Fehlerhafte Spalte: %1</translation>
+        <translation type="obsolete">Fehlerhafte Spalte: %1</translation>
     </message>
 </context>
 <context>
@@ -4291,10 +4291,25 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Zu niedrig für diesen Typ.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Im Bereich dieses Typs.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Zu hoch für diesen Typ.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Farbe (%1)</translation>
+        <translation type="obsolete">Farbe (%1)</translation>
     </message>
 </context>
 <context>
@@ -8185,6 +8200,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

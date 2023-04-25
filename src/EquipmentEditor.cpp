@@ -31,8 +31,6 @@
 #include <QMessageBox>
 
 #include "BtHorizontalTabs.h"
-#include "BtLabel.h"
-#include "BtLineEdit.h"
 #include "database/ObjectStoreWrapper.h"
 #include "EquipmentListModel.h"
 #include "HeatCalculations.h"
@@ -72,38 +70,21 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
 
    obsEquip = nullptr;
 
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_tunSpecificHeat, PropertyNames::Equipment::tunSpecificHeat_calGC, *this->label_tunSpecificHeat   );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_grainAbsorption, PropertyNames::Equipment::grainAbsorption_LKg                                   );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_hopUtilization , PropertyNames::Equipment::hopUtilization_pct                                 , 0);
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_tunWeight      , PropertyNames::Equipment::tunWeight_kg         , *this->label_tunWeight         );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_name           , PropertyNames::NamedEntity::name                                                );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_boilingPoint   , PropertyNames::Equipment::boilingPoint_c       , *this->label_boilingPoint   , 1);
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_boilTime       , PropertyNames::Equipment::boilTime_min         , *this->label_boilTime          );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_batchSize      , PropertyNames::Equipment::batchSize_l          , *this->label_batchSize         );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_boilSize       , PropertyNames::Equipment::boilSize_l           , *this->label_boilSize          );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_evaporationRate, PropertyNames::Equipment::evapRate_lHr         , *this->label_evaporationRate   );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_lauterDeadspace, PropertyNames::Equipment::lauterDeadspace_l    , *this->label_lauterDeadspace   );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_topUpKettle    , PropertyNames::Equipment::topUpKettle_l        , *this->label_topUpKettle       );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_topUpWater     , PropertyNames::Equipment::topUpWater_l         , *this->label_topUpWater        );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_trubChillerLoss, PropertyNames::Equipment::trubChillerLoss_l    , *this->label_trubChillerLoss   );
-   SMART_LINE_EDIT_INIT(EquipmentEditor, Equipment, lineEdit_tunVolume      , PropertyNames::Equipment::tunVolume_l          , *this->label_tunVolume         );
-
-
-///   this->lineEdit_tunSpecificHeat->init(Equipment::typeLookup.getType(PropertyNames::Equipment::tunSpecificHeat_calGC), *this->label_tunSpecificHeat   );
-///   this->lineEdit_grainAbsorption->init(Equipment::typeLookup.getType(PropertyNames::Equipment::grainAbsorption_LKg  )                                 );
-///   this->lineEdit_hopUtilization ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::hopUtilization_pct   )                              , 0); // label_hopUtilization
-///   this->lineEdit_tunWeight      ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::tunWeight_kg         ), *this->label_tunWeight         );
-///   this->lineEdit_name           ->init(Equipment::typeLookup.getType(PropertyNames::NamedEntity::name               )                                 );
-///   this->lineEdit_boilingPoint   ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::boilingPoint_c       ), *this->label_boilingPoint   , 1);
-///   this->lineEdit_boilTime       ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::boilTime_min         ), *this->label_boilTime          );
-///   this->lineEdit_batchSize      ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::batchSize_l          ), *this->label_batchSize         );
-///   this->lineEdit_boilSize       ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::boilSize_l           ), *this->label_boilSize          );
-///   this->lineEdit_evaporationRate->init(Equipment::typeLookup.getType(PropertyNames::Equipment::evapRate_lHr         ), *this->label_evaporationRate   );
-///   this->lineEdit_lauterDeadspace->init(Equipment::typeLookup.getType(PropertyNames::Equipment::lauterDeadspace_l    ), *this->label_lauterDeadspace   );
-///   this->lineEdit_topUpKettle    ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::topUpKettle_l        ), *this->label_topUpKettle       );
-///   this->lineEdit_topUpWater     ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::topUpWater_l         ), *this->label_topUpWater        );
-///   this->lineEdit_trubChillerLoss->init(Equipment::typeLookup.getType(PropertyNames::Equipment::trubChillerLoss_l    ), *this->label_trubChillerLoss   );
-///   this->lineEdit_tunVolume      ->init(Equipment::typeLookup.getType(PropertyNames::Equipment::tunVolume_l          ), *this->label_tunVolume         );
+   SMART_FIELD_INIT(EquipmentEditor, label_tunSpecificHeat, lineEdit_tunSpecificHeat, Equipment, PropertyNames::Equipment::tunSpecificHeat_calGC   );
+   SMART_FIELD_INIT(EquipmentEditor, label_grainAbsorption, lineEdit_grainAbsorption, Equipment, PropertyNames::Equipment::grainAbsorption_LKg     );
+   SMART_FIELD_INIT(EquipmentEditor, label_hopUtilization , lineEdit_hopUtilization , Equipment, PropertyNames::Equipment::hopUtilization_pct   , 0);
+   SMART_FIELD_INIT(EquipmentEditor, label_tunWeight      , lineEdit_tunWeight      , Equipment, PropertyNames::Equipment::tunWeight_kg            );
+   SMART_FIELD_INIT(EquipmentEditor, label_name           , lineEdit_name           , Equipment, PropertyNames::NamedEntity::name                  );
+   SMART_FIELD_INIT(EquipmentEditor, label_boilingPoint   , lineEdit_boilingPoint   , Equipment, PropertyNames::Equipment::boilingPoint_c       , 1);
+   SMART_FIELD_INIT(EquipmentEditor, label_boilTime       , lineEdit_boilTime       , Equipment, PropertyNames::Equipment::boilTime_min            );
+   SMART_FIELD_INIT(EquipmentEditor, label_batchSize      , lineEdit_batchSize      , Equipment, PropertyNames::Equipment::batchSize_l             );
+   SMART_FIELD_INIT(EquipmentEditor, label_boilSize       , lineEdit_boilSize       , Equipment, PropertyNames::Equipment::boilSize_l              );
+   SMART_FIELD_INIT(EquipmentEditor, label_evaporationRate, lineEdit_evaporationRate, Equipment, PropertyNames::Equipment::evapRate_lHr            );
+   SMART_FIELD_INIT(EquipmentEditor, label_lauterDeadspace, lineEdit_lauterDeadspace, Equipment, PropertyNames::Equipment::lauterDeadspace_l       );
+   SMART_FIELD_INIT(EquipmentEditor, label_topUpKettle    , lineEdit_topUpKettle    , Equipment, PropertyNames::Equipment::topUpKettle_l           );
+   SMART_FIELD_INIT(EquipmentEditor, label_topUpWater     , lineEdit_topUpWater     , Equipment, PropertyNames::Equipment::topUpWater_l            );
+   SMART_FIELD_INIT(EquipmentEditor, label_trubChillerLoss, lineEdit_trubChillerLoss, Equipment, PropertyNames::Equipment::trubChillerLoss_l       );
+   SMART_FIELD_INIT(EquipmentEditor, label_tunVolume      , lineEdit_tunVolume      , Equipment, PropertyNames::Equipment::tunVolume_l             );
 
    // Connect all the edit boxen
    connect(lineEdit_boilTime,         &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );

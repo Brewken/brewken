@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/BtDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartDigitWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "widgets/BtDigitWidget.h"
+#include "widgets/SmartDigitWidget.h"
 
 #include <iostream>
 
@@ -29,14 +29,15 @@
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
 #include "PersistentSettings.h"
+#include "widgets/SmartLabel.h"
 
-// This private implementation class holds all private non-virtual members of BtDigitWidget
-class BtDigitWidget::impl {
+// This private implementation class holds all private non-virtual members of SmartDigitWidget
+class SmartDigitWidget::impl {
 public:
    /**
     * Constructor
     */
-   impl(BtDigitWidget & self) :
+   impl(SmartDigitWidget & self) :
       self           {self},
       m_rgblow       {0x0000d0},
       m_rgbgood      {0x008000},
@@ -47,9 +48,9 @@ public:
       m_constantColor{false},
       m_lastNum      {1.5},
       m_lastPrec     {3},
-      m_low_msg      {BtDigitWidget::tr("Too low for style.")},
-      m_good_msg     {BtDigitWidget::tr("In range for style.")},
-      m_high_msg     {BtDigitWidget::tr("Too high for style.")} {
+      m_low_msg      {SmartDigitWidget::tr("Too low for style.")},
+      m_good_msg     {SmartDigitWidget::tr("In range for style.")},
+      m_high_msg     {SmartDigitWidget::tr("Too high for style.")} {
       this->self.setStyleSheet(m_styleSheet.arg(0,6,16,QChar('0')));
       this->self.setFrameStyle(QFrame::Box);
       this->self.setFrameShadow(QFrame::Sunken);
@@ -91,7 +92,7 @@ public:
    }
 
    // Member variables for impl
-   BtDigitWidget & self;
+   SmartDigitWidget & self;
    unsigned int    m_rgblow;
    unsigned int    m_rgbgood;
    unsigned int    m_rgbhigh;
@@ -107,17 +108,34 @@ public:
    QString         m_high_msg;
 };
 
-BtDigitWidget::BtDigitWidget(QWidget *parent,
-                             BtFieldType fieldType) :
+SmartDigitWidget::SmartDigitWidget(QWidget *parent) :
    QLabel(parent),
-   fieldType{fieldType},
+   SmartField{},
    pimpl{std::make_unique<impl>(*this)} {
    return;
 }
 
-BtDigitWidget::~BtDigitWidget() = default;
+SmartDigitWidget::~SmartDigitWidget() = default;
 
-void BtDigitWidget::display(QString str) {
+QString SmartDigitWidget::getRawText() const {
+   return this->text();
+}
+
+void SmartDigitWidget::setRawText(QString const & text) {
+   this->QLabel::setText(text);
+   return;
+}
+
+void SmartDigitWidget::connectSmartLabelSignal(SmartLabel & smartLabel) {
+   connect(&smartLabel, &SmartLabel::changedSystemOfMeasurementOrScale, this, &SmartDigitWidget::displayChanged);
+   return;
+}
+
+void SmartDigitWidget::doPostInitWork() {
+   return;
+}
+
+void SmartDigitWidget::display(QString str) {
    static bool converted;
 
    this->pimpl->m_lastNum = Localization::toDouble(str, &converted);
@@ -131,7 +149,7 @@ void BtDigitWidget::display(QString str) {
    return;
 }
 
-void BtDigitWidget::display(double num, int prec) {
+void SmartDigitWidget::display(double num, int prec) {
    this->pimpl->m_lastNum = num;
    this->pimpl->m_lastPrec = prec;
 
@@ -139,7 +157,7 @@ void BtDigitWidget::display(double num, int prec) {
    return;
 }
 
-void BtDigitWidget::setLowLim(double num) {
+void SmartDigitWidget::setLowLim(double num) {
    if (num < this->pimpl->m_highLim) {
       this->pimpl->m_lowLim = num;
    }
@@ -147,7 +165,7 @@ void BtDigitWidget::setLowLim(double num) {
    return;
 }
 
-void BtDigitWidget::setHighLim(double num) {
+void SmartDigitWidget::setHighLim(double num) {
    if (num > this->pimpl->m_lowLim) {
       this->pimpl->m_highLim = num;
    }
@@ -155,14 +173,14 @@ void BtDigitWidget::setHighLim(double num) {
    return;
 }
 
-void BtDigitWidget::setConstantColor(ColorType c) {
+void SmartDigitWidget::setConstantColor(ColorType c) {
    this->pimpl->m_constantColor = (c == LOW || c == GOOD || c == HIGH || c == BLACK );
    this->pimpl->m_color = c;
    this->update(); // repaint.
    return;
 }
 
-void BtDigitWidget::setLimits(double low, double high) {
+void SmartDigitWidget::setLimits(double low, double high) {
    if (low <  high) {
       this->pimpl->m_lowLim = low;
       this->pimpl->m_highLim = high;
@@ -172,11 +190,11 @@ void BtDigitWidget::setLimits(double low, double high) {
    return;
 }
 
-void BtDigitWidget::setLowMsg (QString msg) { this->pimpl->m_low_msg  = msg; this->update(); return; }
-void BtDigitWidget::setGoodMsg(QString msg) { this->pimpl->m_good_msg = msg; this->update(); return; }
-void BtDigitWidget::setHighMsg(QString msg) { this->pimpl->m_high_msg = msg; this->update(); return; }
+void SmartDigitWidget::setLowMsg (QString msg) { this->pimpl->m_low_msg  = msg; this->update(); return; }
+void SmartDigitWidget::setGoodMsg(QString msg) { this->pimpl->m_good_msg = msg; this->update(); return; }
+void SmartDigitWidget::setHighMsg(QString msg) { this->pimpl->m_high_msg = msg; this->update(); return; }
 
-void BtDigitWidget::setMessages( QStringList msgs ) {
+void SmartDigitWidget::setMessages( QStringList msgs ) {
    if ( msgs.size() != 3 ) {
       qWarning() << Q_FUNC_INFO << "Wrong number of messages";
       return;
@@ -189,7 +207,7 @@ void BtDigitWidget::setMessages( QStringList msgs ) {
    return;
 }
 
-void BtDigitWidget::setText(QString amount, int precision) {
+void SmartDigitWidget::setText(QString amount, int precision) {
    if (NonPhysicalQuantity::String != std::get<NonPhysicalQuantity>(this->fieldType)) {
       bool ok = false;
       double amt = Measurement::extractRawFromString<double>(amount, &ok);
@@ -206,7 +224,7 @@ void BtDigitWidget::setText(QString amount, int precision) {
    return;
 }
 
-void BtDigitWidget::setText(double amount, int precision) {
+void SmartDigitWidget::setText(double amount, int precision) {
    this->pimpl->m_lastNum = amount;
    this->pimpl->m_lastPrec = precision;
 //   this->setConfigSection("");
@@ -214,7 +232,7 @@ void BtDigitWidget::setText(double amount, int precision) {
    return;
 }
 
-template<typename T> T BtDigitWidget::getValueAs() const {
+template<typename T> T SmartDigitWidget::getValueAs() const {
    return Measurement::extractRawFromString<T>(this->text());
 }
 //
@@ -222,15 +240,16 @@ template<typename T> T BtDigitWidget::getValueAs() const {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // saves having to put a bunch of std::string stuff there.)
 //
-template int          BtDigitWidget::getValueAs<int         >() const;
-template unsigned int BtDigitWidget::getValueAs<unsigned int>() const;
-template double       BtDigitWidget::getValueAs<double      >() const;
+template int          SmartDigitWidget::getValueAs<int         >() const;
+template unsigned int SmartDigitWidget::getValueAs<unsigned int>() const;
+template double       SmartDigitWidget::getValueAs<double      >() const;
 
-int BtDigitWidget::getPrecision() const {
+int SmartDigitWidget::getPrecision() const {
    return this->pimpl->m_lastPrec;
 }
 
-BtGenericDigit::BtGenericDigit(QWidget* parent) :
-   BtDigitWidget{parent, NonPhysicalQuantity::Count} {
+
+void SmartDigitWidget::displayChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
+   this->correctEnteredText(previousScaleInfo);
    return;
 }

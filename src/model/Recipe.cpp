@@ -738,36 +738,22 @@ QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining,
       QString str;
       if (step->isInfusion()) {
          str = tr("Add %1 water at %2 to mash to bring it to %3.")
-               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(), Measurement::Units::liters},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseAmount_l))
-               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseTemp_c))
-               .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::stepTemp_c));
+               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(), Measurement::Units::celsius}))
+               .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius}));
          totalWaterAdded_l += step->infuseAmount_l();
       } else if (step->isTemperature()) {
          str = tr("Heat mash to %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(),
-                                                                                         Measurement::Units::celsius},
-                                                                     PersistentSettings::Sections::mashStepTableModel,
-                                                                     PropertyNames::MashStep::stepTemp_c));
+                                                                                         Measurement::Units::celsius}));
       } else if (step->isDecoction()) {
          str = tr("Bring %1 of the mash to a boil and return to the mash tun to bring it to %2.")
                .arg(Measurement::displayAmount(Measurement::Amount{step->decoctionAmount_l(),
-                                                                   Measurement::Units::liters},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::decoctionAmount_l))
-               .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::stepTemp_c));
+                                                                   Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius}));
       }
 
       str += tr(" Hold for %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTime_min(),
-                                                                                    Measurement::Units::minutes},
-                                                                PersistentSettings::Sections::mashStepTableModel,
-                                                                PropertyNames::MashStep::stepTime_min));
+                                                                                    Measurement::Units::minutes}));
 
       preins.push_back(PreInstruction(str, QString("%1 - %2").arg(step->typeStringTr()).arg(step->name()),
                                       timeRemaining));
@@ -801,13 +787,9 @@ QVector<PreInstruction> Recipe::hopSteps(Hop::Use type) {
             str = tr("Use %1 %2 for %3");
          }
 
-         str = str.arg(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms},
-                                                  PersistentSettings::Sections::hopTable,
-                                                  PropertyNames::Hop::amount_kg))
+         str = str.arg(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms}))
                .arg(hop->name())
-               .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes},
-                                               PersistentSettings::Sections::hopTable,
-                                               PropertyNames::Misc::time));
+               .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes}));
 
          preins.push_back(PreInstruction(str, tr("Hop addition"), hop->time_min()));
       }
@@ -842,13 +824,9 @@ QVector<PreInstruction> Recipe::miscSteps(Misc::Use type) {
          str = str .arg(Measurement::displayAmount(Measurement::Amount{
                                                       misc->amount(),
                                                       misc->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-                                                   },
-                                                   PersistentSettings::Sections::miscTableModel,
-                                                   PropertyNames::Misc::amount))
+                                                   }))
                .arg(misc->name())
-               .arg(Measurement::displayAmount(Measurement::Amount{misc->time(), Measurement::Units::minutes},
-                                               PersistentSettings::Sections::miscTableModel,
-                                               PropertyNames::Misc::time));
+               .arg(Measurement::displayAmount(Measurement::Amount{misc->time(), Measurement::Units::minutes}));
 
          preins.push_back(PreInstruction(str, tr("Misc addition"), misc->time()));
       }
@@ -886,21 +864,15 @@ void Recipe::topOffIns() {
 
    double wortInBoil_l = wortFromMash_l() - e->lauterDeadspace_l();
    QString str = tr("You should now have %1 wort.")
-                 .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters},
-                                                 PersistentSettings::Sections::tab_recipe,
-                                                 PropertyNames::Recipe::boilSize_l));
+                 .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
    if (e->topUpKettle_l() != 0.0) {
       return;
    }
 
    wortInBoil_l += e->topUpKettle_l();
    QString tmp = tr(" Add %1 water to the kettle, bringing pre-boil volume to %2.")
-                 .arg(Measurement::displayAmount(Measurement::Amount{e->topUpKettle_l(), Measurement::Units::liters},
-                                                 PersistentSettings::Sections::tab_recipe,
-                                                 PropertyNames::Recipe::boilSize_l))
-                 .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters},
-                                                 PersistentSettings::Sections::tab_recipe,
-                                                 PropertyNames::Recipe::boilSize_l));
+                 .arg(Measurement::displayAmount(Measurement::Amount{e->topUpKettle_l(), Measurement::Units::liters}))
+                 .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
 
    str += tmp;
 
@@ -951,9 +923,7 @@ PreInstruction Recipe::boilFermentablesPre(double timeRemaining) {
       }
 
       str += QString("%1 %2, ")
-             .arg(Measurement::displayAmount(ferm->amountWithUnits(),
-                                             PersistentSettings::Sections::fermentableTable,
-                                             PropertyNames::Fermentable::amountWithUnits))
+             .arg(Measurement::displayAmount(ferm->amountWithUnits()))
              .arg(ferm->name());
    }
    str += ".";
@@ -977,9 +947,7 @@ PreInstruction Recipe::addExtracts(double timeRemaining) const {
       const Fermentable * ferm = flist[i];
       if (ferm->isExtract()) {
          str += QString("%1 %2, ")
-                .arg(Measurement::displayAmount(ferm->amountWithUnits(),
-                                                PersistentSettings::Sections::fermentableTable,
-                                                PropertyNames::Fermentable::amountWithUnits))
+                .arg(Measurement::displayAmount(ferm->amountWithUnits()))
                 .arg(ferm->name());
       }
    }
@@ -1003,9 +971,7 @@ void Recipe::postboilFermentablesIns() {
 
       hasFerms = true;
       tmp = QString("%1 %2, ")
-            .arg(Measurement::displayAmount(ferm->amountWithUnits(),
-                                            PersistentSettings::Sections::fermentableTable,
-                                            PropertyNames::Fermentable::amountWithUnits))
+            .arg(Measurement::displayAmount(ferm->amountWithUnits()))
             .arg(ferm->name());
       str += tmp;
    }
@@ -1038,24 +1004,16 @@ void Recipe::postboilIns() {
 
    double wort_l = e->wortEndOfBoil_l(wortInBoil_l);
    QString str = tr("You should have %1 wort post-boil.")
-                 .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters},
-                                                 PersistentSettings::Sections::tab_recipe,
-                                                 PropertyNames::Recipe::batchSize_l));
+                 .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
    str += tr("\nYou anticipate losing %1 to trub and chiller loss.")
-          .arg(Measurement::displayAmount(Measurement::Amount{e->trubChillerLoss_l(), Measurement::Units::liters},
-                                          PersistentSettings::Sections::tab_recipe,
-                                          PropertyNames::Recipe::batchSize_l));
+          .arg(Measurement::displayAmount(Measurement::Amount{e->trubChillerLoss_l(), Measurement::Units::liters}));
    wort_l -= e->trubChillerLoss_l();
    if (e->topUpWater_l() > 0.0)
       str += tr("\nAdd %1 top up water into primary.")
-             .arg(Measurement::displayAmount(Measurement::Amount{e->topUpWater_l(), Measurement::Units::liters},
-                                             PersistentSettings::Sections::tab_recipe,
-                                             PropertyNames::Recipe::batchSize_l));
+             .arg(Measurement::displayAmount(Measurement::Amount{e->topUpWater_l(), Measurement::Units::liters}));
    wort_l += e->topUpWater_l();
    str += tr("\nThe final volume in the primary is %1.")
-          .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters},
-                                          PersistentSettings::Sections::tab_recipe,
-                                          PropertyNames::Recipe::batchSize_l));
+          .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
 
    auto ins = std::make_shared<Instruction>();
    ins->setName(tr("Post boil"));
@@ -1142,9 +1100,7 @@ void Recipe::generateInstructions() {
    }
 
    QString str = tr("Bring the wort to a boil and hold for %1.").arg(
-      Measurement::displayAmount(Measurement::Amount{timeRemaining, Measurement::Units::minutes},
-                                 PersistentSettings::Sections::tab_recipe,
-                                 PropertyNames::Recipe::boilTime_min)
+      Measurement::displayAmount(Measurement::Amount{timeRemaining, Measurement::Units::minutes})
    );
 
    auto startBoilIns = std::make_shared<Instruction>();
@@ -1215,10 +1171,7 @@ void Recipe::generateInstructions() {
    addPreinstructions(miscSteps(Misc::Use::Primary));
 
    str = tr("Let ferment until FG is %1.").arg(
-      Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::sp_grav},
-                                 PersistentSettings::Sections::tab_recipe,
-                                 PropertyNames::Recipe::fg,
-                                 3)
+      Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::sp_grav}, 3)
    );
 
    auto fermentIns = std::make_shared<Instruction>();
@@ -1264,13 +1217,9 @@ QString Recipe::nextAddToBoil(double & time) {
       }
       if (h->time_min() < time && h->time_min() > max) {
          ret = tr("Add %1 %2 to boil at %3.")
-               .arg(Measurement::displayAmount(Measurement::Amount{h->amount_kg(), Measurement::Units::kilograms},
-                                               PersistentSettings::Sections::hopTable,
-                                               PropertyNames::Hop::amount_kg))
+               .arg(Measurement::displayAmount(Measurement::Amount{h->amount_kg(), Measurement::Units::kilograms}))
                .arg(h->name())
-               .arg(Measurement::displayAmount(Measurement::Amount{h->time_min(), Measurement::Units::minutes},
-                                               PersistentSettings::Sections::hopTable,
-                                               PropertyNames::Misc::time));
+               .arg(Measurement::displayAmount(Measurement::Amount{h->time_min(), Measurement::Units::minutes}));
 
          max = h->time_min();
          foundSomething = true;
@@ -1287,19 +1236,13 @@ QString Recipe::nextAddToBoil(double & time) {
       if (m->time() < time && m->time() > max) {
          ret = tr("Add %1 %2 to boil at %3.");
          if (m->amountIsWeight()) {
-            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::kilograms},
-                                                     PersistentSettings::Sections::miscTableModel,
-                                                     PropertyNames::Misc::amount));
+            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::kilograms}));
          } else {
-            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::liters},
-                                                     PersistentSettings::Sections::miscTableModel,
-                                                     PropertyNames::Misc::amount));
+            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::liters}));
          }
 
          ret = ret.arg(m->name());
-         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time(), Measurement::Units::minutes},
-                                                  PersistentSettings::Sections::miscTableModel,
-                                                  PropertyNames::Misc::time));
+         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time(), Measurement::Units::minutes}));
          max = m->time();
          foundSomething = true;
       }
@@ -2749,9 +2692,7 @@ QList<QString> Recipe::getReagents(QList<Fermentable *> ferms) {
             format = "%1 %2 ";
          }
          reagents.append(
-            format.arg(Measurement::displayAmount(ferms[ii]->amountWithUnits(),
-                                                  PersistentSettings::Sections::fermentableTable,
-                                                  PropertyNames::Fermentable::amountWithUnits))
+            format.arg(Measurement::displayAmount(ferms[ii]->amountWithUnits()))
                   .arg(ferms[ii]->name())
          );
       }
@@ -2766,9 +2707,7 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
    for (int i = 0; i < hops.size(); ++i) {
       if (firstWort && (hops[i]->use() == Hop::Use::First_Wort)) {
          tmp = QString("%1 %2,")
-               .arg(Measurement::displayAmount(Measurement::Amount{hops[i]->amount_kg(), Measurement::Units::kilograms},
-                                               PersistentSettings::Sections::hopTable,
-                                               PropertyNames::Hop::amount_kg))
+               .arg(Measurement::displayAmount(Measurement::Amount{hops[i]->amount_kg(), Measurement::Units::kilograms}))
                .arg(hops[i]->name());
          reagents.append(tmp);
       }
@@ -2787,20 +2726,12 @@ QList<QString> Recipe::getReagents(QList< std::shared_ptr<MashStep> > msteps) {
       QString tmp;
       if (i + 1 < msteps.size()) {
          tmp = tr("%1 water to %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseAmount_l))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseTemp_c));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius}));
       } else {
          tmp = tr("%1 water to %2 ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseAmount_l))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius},
-                                               PersistentSettings::Sections::mashStepTableModel,
-                                               PropertyNames::MashStep::infuseTemp_c));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius}));
       }
       reagents.append(tmp);
    }
@@ -2819,15 +2750,11 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
       Measurement::Unit const & rightUnit = salts[i]->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters;
       if (what == wanted) {
          tmp = tr("%1 %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit},
-                                               PersistentSettings::Sections::saltTable,
-                                               PropertyNames::Salt::amount))
+               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit}))
                .arg(salts[i]->name());
       } else if (what == Salt::WhenToAdd::EQUAL) {
          tmp = tr("%1 %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit},
-                                               PersistentSettings::Sections::saltTable,
-                                               PropertyNames::Salt::amount))
+               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit}))
                .arg(salts[i]->name());
       } else if (what == Salt::WhenToAdd::RATIO) {
          double ratio = 1.0;
@@ -2836,9 +2763,7 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
          }
          double amt = salts[i]->amount() * ratio;
          tmp = tr("%1 %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{amt, rightUnit},
-                                               PersistentSettings::Sections::saltTable,
-                                               PropertyNames::Salt::amount))
+               .arg(Measurement::displayAmount(Measurement::Amount{amt, rightUnit}))
                .arg(salts[i]->name());
       } else {
          continue;

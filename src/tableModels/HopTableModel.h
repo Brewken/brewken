@@ -37,8 +37,6 @@ class BtStringConst;
 class HopTableModel;
 class HopItemDelegate;
 
-enum{HOPNAMECOL, HOPALPHACOL, HOPAMOUNTCOL, HOPINVENTORYCOL, HOPFORMCOL, HOPUSECOL, HOPTIMECOL, HOPNUMCOLS /*This one MUST be last*/};
-
 /*!
  * \class HopTableModel
  *
@@ -48,8 +46,21 @@ class HopTableModel : public BtTableModelInventory, public BtTableModelData<Hop>
    Q_OBJECT
 
 public:
+   enum class ColumnIndex {
+      Name     ,
+      Alpha    ,
+      Amount   ,
+      Inventory,
+      Form     ,
+      Use      ,
+      Time     ,
+   };
+
    HopTableModel(QTableView* parent=nullptr, bool editable=true);
    virtual ~HopTableModel();
+
+   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
+   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);

@@ -503,22 +503,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Muito baixo para o estilo.</translation>
+        <translation type="vanished">Muito baixo para o estilo.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Dentro da Variação do Estilo.</translation>
+        <translation type="vanished">Dentro da Variação do Estilo.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Muito Alto para o Estilo.</translation>
+        <translation type="vanished">Muito Alto para o Estilo.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Cor (%1)</translation>
+        <translation type="vanished">Cor (%1)</translation>
     </message>
 </context>
 <context>
@@ -4228,10 +4228,6 @@ O volume final do fermentador primário é %1.</translation>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Bad column: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -4275,10 +4271,25 @@ O volume final do fermentador primário é %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Muito baixo para o estilo.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Dentro da Variação do Estilo.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Muito Alto para o Estilo.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Cor (%1)</translation>
+        <translation type="obsolete">Cor (%1)</translation>
     </message>
 </context>
 <context>
@@ -8209,6 +8220,14 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * YeastDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * YeastDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -44,7 +44,7 @@ YeastDialog::YeastDialog(MainWindow* parent)
    yeastTableProxy->setSourceModel(yeastTableModel);
    tableWidget->setModel(yeastTableProxy);
    tableWidget->setSortingEnabled(true);
-   tableWidget->sortByColumn( YEASTNAMECOL, Qt::AscendingOrder );
+   tableWidget->sortByColumn(static_cast<int>(YeastTableModel::ColumnIndex::Name), Qt::AscendingOrder );
    yeastTableProxy->setDynamicSortFilter(true);
    yeastTableProxy->setFilterKeyColumn(1);
 
@@ -167,10 +167,11 @@ void YeastDialog::addYeast(const QModelIndex& index)
       // Only respond if the name is selected. Since we connect to double-click signal,
       // this keeps us from adding something to the recipe when we just want to edit
       // one of the other columns.
-      if( index.column() == YEASTNAMECOL )
+      if (index.column() == static_cast<int>(YeastTableModel::ColumnIndex::Name)) {
          translated = yeastTableProxy->mapToSource(index);
-      else
+      } else {
          return;
+      }
    }
 
    // Adds a copy of yeast.

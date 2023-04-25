@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -41,8 +41,6 @@ class YeastTableWidget;
 class YeastItemDelegate;
 class Recipe;
 
-enum{ YEASTNAMECOL, YEASTLABCOL, YEASTPRODIDCOL, YEASTTYPECOL, YEASTFORMCOL, YEASTAMOUNTCOL, YEASTINVENTORYCOL, YEASTNUMCOLS /*This one MUST be last*/};
-
 /*!
  * \class YeastTableModel
  *
@@ -52,8 +50,20 @@ class YeastTableModel : public BtTableModelInventory, public BtTableModelData<Ye
    Q_OBJECT
 
 public:
+   enum class ColumnIndex {
+      Name     ,
+      Lab      ,
+      ProdId   ,
+      Type     ,
+      Form     ,
+      Amount   ,
+      Inventory,
+   };
    YeastTableModel(QTableView * parent = nullptr, bool editable = true);
    virtual ~YeastTableModel();
+
+   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
+   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);

@@ -122,15 +122,15 @@ public:
    Q_PROPERTY(double magnesium_ppm READ magnesium_ppm WRITE setMagnesium_ppm)
    //! \brief The pH.
    Q_PROPERTY(double ph READ ph WRITE setPh)
-   //! \brief The residual alkalinity  .:TBD:. Units!
+   //! \brief The residual alkalinity.  Units are ppm  .:TBD:. Probably should change name to reflect units!
    Q_PROPERTY(double alkalinity READ alkalinity WRITE setAlkalinity)
    //! \brief The notes.
    Q_PROPERTY(QString notes READ notes WRITE setNotes)
    //! \brief What kind of water is this
    Q_PROPERTY(Water::Types type READ type WRITE setType)
-   //! \brief percent of the mash water that is RO (reverse osmosis)
+   //! \brief percent of the mash water that is RO (reverse osmosis) .:TBD:. Probably should add _pct suffix
    Q_PROPERTY(double mashRO READ mashRO WRITE setMashRO)
-   //! \brief percent of the sparge water that is RO (reverse osmosis)
+   //! \brief percent of the sparge water that is RO (reverse osmosis) .:TBD:. Probably should add _pct suffix
    Q_PROPERTY(double spargeRO READ spargeRO WRITE setSpargeRO)
    //! \brief is the alkalinity measured as HCO3 (bicarbonate) or CO3 (carbonate)?
    Q_PROPERTY(bool alkalinityAsHCO3 READ alkalinityAsHCO3 WRITE setAlkalinityAsHCO3)

@@ -41,8 +41,6 @@ class Fermentable;
 class Recipe;
 class FermentableItemDelegate;
 
-enum{FERMNAMECOL, FERMTYPECOL, FERMAMOUNTCOL, FERMINVENTORYCOL, FERMISWEIGHT, FERMISMASHEDCOL, FERMAFTERBOIL, FERMYIELDCOL, FERMCOLORCOL, FERMNUMCOLS /*This one MUST be last*/};
-
 /*!
  * \class FermentableTableModel
  *
@@ -52,8 +50,23 @@ class FermentableTableModel : public BtTableModelInventory, public BtTableModelD
    Q_OBJECT
 
 public:
+   enum class ColumnIndex {
+      Name     ,
+      Type     ,
+      Amount   ,
+      Inventory,
+      IsWeight ,
+      IsMashed ,
+      AfterBoil,
+      Yield    ,
+      Color    ,
+   };
+
    FermentableTableModel(QTableView* parent=nullptr, bool editable=true);
    virtual ~FermentableTableModel();
+
+   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
+   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);

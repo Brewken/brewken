@@ -471,22 +471,15 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Первише ниско за изабрани стил.</translation>
+        <translation type="vanished">Первише ниско за изабрани стил.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Унутар граница за изабрани стил.</translation>
+        <translation type="vanished">Унутар граница за изабрани стил.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Превише високо за изабрани стил.</translation>
-    </message>
-</context>
-<context>
-    <name>BtLabel</name>
-    <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Превише високо за изабрани стил.</translation>
     </message>
 </context>
 <context>
@@ -4083,7 +4076,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Лоша колона: %1</translation>
+        <translation type="obsolete">Лоша колона: %1</translation>
     </message>
 </context>
 <context>
@@ -4128,10 +4121,18 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>SmartLabel</name>
+    <name>SmartDigitWidget</name>
     <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Первише ниско за изабрани стил.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Унутар граница за изабрани стил.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Превише високо за изабрани стил.</translation>
     </message>
 </context>
 <context>
@@ -7634,6 +7635,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

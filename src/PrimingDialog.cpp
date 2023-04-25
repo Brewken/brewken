@@ -38,10 +38,10 @@ PrimingDialog::PrimingDialog(QWidget* parent) : QDialog(parent) {
    this->sugarGroup->addButton(radioButton_sucrose);
    this->sugarGroup->addButton(radioButton_dme);
 
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_beerVol, double, Measurement::PhysicalQuantity::Volume     , *this->label_beerVol   );
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_temp   , double, Measurement::PhysicalQuantity::Temperature, *this->label_temp   , 1);
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_vols   , double, Measurement::PhysicalQuantity::Carbonation, *this->label_vols   , 1);
-   SMART_LINE_EDIT_INIT_FS(PrimingDialog, lineEdit_output , double, Measurement::PhysicalQuantity::Mass       , *this->label_output    );
+   SMART_FIELD_INIT_FS(PrimingDialog, label_beerVol, lineEdit_beerVol, double, Measurement::PhysicalQuantity::Volume        );
+   SMART_FIELD_INIT_FS(PrimingDialog, label_temp   , lineEdit_temp   , double, Measurement::PhysicalQuantity::Temperature, 1);
+   SMART_FIELD_INIT_FS(PrimingDialog, label_vols   , lineEdit_vols   , double, Measurement::PhysicalQuantity::Carbonation, 1);
+   SMART_FIELD_INIT_FS(PrimingDialog, label_output , lineEdit_output , double, Measurement::PhysicalQuantity::Mass          );
 
    connect(pushButton_calculate, &QAbstractButton::clicked, this, &PrimingDialog::calculate);
    return;
@@ -88,7 +88,7 @@ void PrimingDialog::calculate() {
       return;
    }
 
-   // The amount have to be set in default unit to BtLineEdit.
+   // The amount have to be set in default unit to SmartLineEdit.
    // We should find a better solution, but until it is not, we must do it this way.
    lineEdit_output->setAmount(sugar_g/1000);
 

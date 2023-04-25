@@ -25,8 +25,7 @@
  *
  * \brief Proxy model for sorting hops.
  */
-class HopSortFilterProxyModel : public QSortFilterProxyModel
-{
+class HopSortFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
 public:

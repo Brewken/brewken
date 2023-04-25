@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -43,8 +43,6 @@ class Misc;
 class MiscTableWidget;
 class Recipe;
 
-enum{MISCNAMECOL, MISCTYPECOL, MISCUSECOL, MISCTIMECOL, MISCAMOUNTCOL, MISCINVENTORYCOL, MISCISWEIGHT, MISCNUMCOLS /*This one MUST be last*/};
-
 /*!
  * \class MiscTableModel
  *
@@ -54,8 +52,21 @@ class MiscTableModel : public BtTableModelInventory, public BtTableModelData<Mis
    Q_OBJECT
 
 public:
+   enum class ColumnIndex {
+      Name     ,
+      Type     ,
+      Use      ,
+      Time     ,
+      Amount   ,
+      Inventory,
+      IsWeight ,
+   };
+
    MiscTableModel(QTableView* parent=nullptr, bool editable=true);
    virtual ~MiscTableModel();
+
+   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
+   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
    //! \brief Observe a recipe's list of miscs.
    void observeRecipe(Recipe* rec);
@@ -89,6 +100,7 @@ private slots:
    void changed(QMetaProperty, QVariant);
    void changedInventory(int invKey, BtStringConst const & propertyName);
 };
+
 
 /*!
  * \class MiscItemDelegate

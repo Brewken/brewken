@@ -39,7 +39,7 @@
 #include "WaterEditor.h"
 #include "WaterListModel.h"
 #include "WaterSortFilterProxyModel.h"
-#include "widgets/BtDigitWidget.h"
+#include "widgets/SmartDigitWidget.h"
 
 
 //
@@ -69,8 +69,8 @@ namespace {
 
 WaterDialog::WaterDialog(QWidget* parent) :
    QDialog{parent},
-   m_ppm_digits{  QVector<BtDigitWidget*>{static_cast<int>(Water::Ions::numIons)} },
-   m_total_digits{QVector<BtDigitWidget*>{static_cast<int>(Salt::Types::numTypes)} },
+   m_ppm_digits{  QVector<SmartDigitWidget*>{static_cast<int>(Water::Ions::numIons)} },
+   m_total_digits{QVector<SmartDigitWidget*>{static_cast<int>(Salt::Types::numTypes)} },
    m_rec{nullptr},
    m_base{nullptr},
    m_target{nullptr},
@@ -115,7 +115,7 @@ WaterDialog::WaterDialog(QWidget* parent) :
    m_total_digits[static_cast<int>(Salt::Types::NACL  )] = btDigit_totalnacl;
    m_total_digits[static_cast<int>(Salt::Types::NAHCO3)] = btDigit_totalnahco3;
 
-   // foreach( BtDigitWidget* i, m_ppm_digits ) {
+   // foreach( SmartDigitWidget* i, m_ppm_digits ) {
    for (int i = 0; i < static_cast<int>(Water::Ions::numIons); ++i ) {
       m_ppm_digits[i]->setLimits(0.0,1000.0);
       m_ppm_digits[i]->setText(0.0, 1);
@@ -128,7 +128,7 @@ WaterDialog::WaterDialog(QWidget* parent) :
 
    // since all the things are now digits, lets get the totals configured
    for (int i = static_cast<int>(Salt::Types::CACL2); i < static_cast<int>(Salt::Types::NAHCO3); ++i ) {
-      m_total_digits[i]->setConstantColor(BtDigitWidget::BLACK);
+      m_total_digits[i]->setConstantColor(SmartDigitWidget::BLACK);
       m_total_digits[i]->setText(0.0,1);
    }
    // and now let's see what the table does.
@@ -139,6 +139,13 @@ WaterDialog::WaterDialog(QWidget* parent) :
 
    m_base_editor   = new WaterEditor(this, "Base");
    m_target_editor = new WaterEditor(this, "Target");
+
+   SMART_FIELD_INIT_FS(WaterDialog, label_totalcacl2 , btDigit_totalcacl2 , double, Measurement::PhysicalQuantity::Mass, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_totalcaco3 , btDigit_totalcaco3 , double, Measurement::PhysicalQuantity::Mass, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_totalcaso4 , btDigit_totalcaso4 , double, Measurement::PhysicalQuantity::Mass, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_totalmgso4 , btDigit_totalmgso4 , double, Measurement::PhysicalQuantity::Mass, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_totalnacl  , btDigit_totalnacl  , double, Measurement::PhysicalQuantity::Mass, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_totalnahco3, btDigit_totalnahco3, double, Measurement::PhysicalQuantity::Mass, 2);
 
    // all the signals
    connect(baseProfileCombo,   QOverload<int>::of(&QComboBox::activated), this, &WaterDialog::update_baseProfile  );

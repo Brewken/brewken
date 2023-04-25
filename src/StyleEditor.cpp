@@ -42,38 +42,38 @@ StyleEditor::StyleEditor(QWidget* parent, bool singleStyleEditor) : QDialog{pare
 
    this->tabWidget_profile->tabBar()->setStyle(new BtHorizontalTabs);
 
-   styleListModel = new StyleListModel(styleComboBox);
-   styleProxyModel = new StyleSortFilterProxyModel(styleComboBox);
-   styleProxyModel->setDynamicSortFilter(true);
-   styleProxyModel->setSourceModel(styleListModel);
-   styleComboBox->setModel(styleProxyModel);
+   this->styleListModel = new StyleListModel(styleComboBox);
+   this->styleProxyModel = new StyleSortFilterProxyModel(styleComboBox);
+   this->styleProxyModel->setDynamicSortFilter(true);
+   this->styleProxyModel->setSourceModel(styleListModel);
+   this->styleComboBox->setModel(styleProxyModel);
 
    // Note that the Min / Max pairs of entry fields each share a label (which is shown to the left of both fields)
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_name          , PropertyNames::NamedEntity::name                           );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_category      , PropertyNames::Style::category                             );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_categoryNumber, PropertyNames::Style::categoryNumber                       );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleLetter   , PropertyNames::Style::styleLetter                          );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_styleGuide    , PropertyNames::Style::styleGuide                           );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMin         , PropertyNames::Style::ogMin         , *this->label_og      );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ogMax         , PropertyNames::Style::ogMax         , *this->label_og      );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMin         , PropertyNames::Style::fgMin         , *this->label_fg      );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_fgMax         , PropertyNames::Style::fgMax         , *this->label_fg      );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ibuMin        , PropertyNames::Style::ibuMin        , *this->label_ibu  , 0);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_ibuMax        , PropertyNames::Style::ibuMax        , *this->label_ibu  , 0);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMin      , PropertyNames::Style::colorMin_srm  , *this->label_color   );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_colorMax      , PropertyNames::Style::colorMax_srm  , *this->label_color   );
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_carbMin       , PropertyNames::Style::carbMin_vol   , *this->label_carb , 0);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_carbMax       , PropertyNames::Style::carbMax_vol   , *this->label_carb , 0);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_abvMin        , PropertyNames::Style::abvMin_pct                        , 1);
-   SMART_LINE_EDIT_INIT(StyleEditor, Style, lineEdit_abvMax        , PropertyNames::Style::abvMax_pct                        , 1);
+   SMART_FIELD_INIT(StyleEditor, label_name          , lineEdit_name          , Style, PropertyNames::NamedEntity::name       );
+   SMART_FIELD_INIT(StyleEditor, label_category      , lineEdit_category      , Style, PropertyNames::Style::category         );
+   SMART_FIELD_INIT(StyleEditor, label_categoryNumber, lineEdit_categoryNumber, Style, PropertyNames::Style::categoryNumber   );
+   SMART_FIELD_INIT(StyleEditor, label_styleLetter   , lineEdit_styleLetter   , Style, PropertyNames::Style::styleLetter      );
+   SMART_FIELD_INIT(StyleEditor, label_styleGuide    , lineEdit_styleGuide    , Style, PropertyNames::Style::styleGuide       );
+   SMART_FIELD_INIT(StyleEditor, label_og            , lineEdit_ogMin         , Style, PropertyNames::Style::ogMin            );
+   SMART_FIELD_INIT(StyleEditor, label_og            , lineEdit_ogMax         , Style, PropertyNames::Style::ogMax            );
+   SMART_FIELD_INIT(StyleEditor, label_fg            , lineEdit_fgMin         , Style, PropertyNames::Style::fgMin            );
+   SMART_FIELD_INIT(StyleEditor, label_fg            , lineEdit_fgMax         , Style, PropertyNames::Style::fgMax            );
+   SMART_FIELD_INIT(StyleEditor, label_ibu           , lineEdit_ibuMin        , Style, PropertyNames::Style::ibuMin        , 0);
+   SMART_FIELD_INIT(StyleEditor, label_ibu           , lineEdit_ibuMax        , Style, PropertyNames::Style::ibuMax        , 0);
+   SMART_FIELD_INIT(StyleEditor, label_color         , lineEdit_colorMin      , Style, PropertyNames::Style::colorMin_srm     );
+   SMART_FIELD_INIT(StyleEditor, label_color         , lineEdit_colorMax      , Style, PropertyNames::Style::colorMax_srm     );
+   SMART_FIELD_INIT(StyleEditor, label_carb          , lineEdit_carbMin       , Style, PropertyNames::Style::carbMin_vol   , 0);
+   SMART_FIELD_INIT(StyleEditor, label_carb          , lineEdit_carbMax       , Style, PropertyNames::Style::carbMax_vol   , 0);
+   SMART_FIELD_INIT(StyleEditor, label_abv           , lineEdit_abvMin        , Style, PropertyNames::Style::abvMin_pct    , 1);
+   SMART_FIELD_INIT(StyleEditor, label_abv           , lineEdit_abvMax        , Style, PropertyNames::Style::abvMax_pct    , 1);
 
    // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
    // function to allow use of default argument on newStyle() slot
-   connect(pushButton_save  , &QAbstractButton::clicked     , this, &StyleEditor::save                     );
-   connect(pushButton_new   , &QAbstractButton::clicked     , this, [this]() { this->newStyle(); return; } );
-   connect(pushButton_cancel, &QAbstractButton::clicked     , this, &StyleEditor::clearAndClose            );
-   connect(pushButton_remove, &QAbstractButton::clicked     , this, &StyleEditor::removeStyle              );
-   connect(styleComboBox    , &QComboBox::currentTextChanged, this, &StyleEditor::styleSelected            );
+   connect(this->pushButton_save  , &QAbstractButton::clicked     , this, &StyleEditor::save                     );
+   connect(this->pushButton_new   , &QAbstractButton::clicked     , this, [this]() { this->newStyle(); return; } );
+   connect(this->pushButton_cancel, &QAbstractButton::clicked     , this, &StyleEditor::clearAndClose            );
+   connect(this->pushButton_remove, &QAbstractButton::clicked     , this, &StyleEditor::removeStyle              );
+   connect(this->styleComboBox    , &QComboBox::currentTextChanged, this, &StyleEditor::styleSelected            );
 
    this->setStyle(styleListModel->at(styleComboBox->currentIndex()));
    return;

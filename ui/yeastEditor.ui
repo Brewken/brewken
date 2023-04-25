@@ -44,7 +44,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="BtStringEdit" name="lineEdit_laboratory">
+        <widget class="SmartLineEdit" name="lineEdit_laboratory">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -63,7 +63,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_lab">
+        <widget class="QLabel" name="label_laboratory">
          <property name="text">
           <string>Lab</string>
          </property>
@@ -89,7 +89,7 @@
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="BtStringEdit" name="lineEdit_inventory">
+        <widget class="SmartLineEdit" name="lineEdit_inventory">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -166,7 +166,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="BtStringEdit" name="lineEdit_name">
+        <widget class="SmartLineEdit" name="lineEdit_name">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -235,7 +235,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="BtStringEdit" name="lineEdit_productID">
+        <widget class="SmartLineEdit" name="lineEdit_productID">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -359,7 +359,7 @@
         </widget>
        </item>
        <item row="5" column="3">
-        <widget class="BtTemperatureEdit" name="lineEdit_minTemperature">
+        <widget class="SmartLineEdit" name="lineEdit_minTemperature">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -381,7 +381,7 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="BtPercentageEdit" name="lineEdit_attenuation">
+        <widget class="SmartLineEdit" name="lineEdit_attenuation">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -403,7 +403,7 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="BtTemperatureLabel" name="label_minTemperature">
+        <widget class="SmartLabel" name="label_minTemperature">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -442,7 +442,7 @@
         </spacer>
        </item>
        <item row="6" column="0">
-        <widget class="BtTemperatureLabel" name="label_maxTemperature">
+        <widget class="SmartLabel" name="label_maxTemperature">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -455,7 +455,7 @@
         </widget>
        </item>
        <item row="6" column="3">
-        <widget class="BtTemperatureEdit" name="lineEdit_maxTemperature">
+        <widget class="SmartLineEdit" name="lineEdit_maxTemperature">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -487,7 +487,7 @@
         </widget>
        </item>
        <item row="6" column="5">
-        <widget class="BtStringEdit" name="lineEdit_timesCultured">
+        <widget class="SmartLineEdit" name="lineEdit_timesCultured">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -516,7 +516,7 @@
         </widget>
        </item>
        <item row="5" column="5">
-        <widget class="BtStringEdit" name="lineEdit_maxReuse">
+        <widget class="SmartLineEdit" name="lineEdit_maxReuse">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -621,35 +621,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtPercentageEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtGenericEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtTemperatureEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTemperatureLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtStringEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
+   <slots>
+    <slot>lineChanged(PreviousScaleInfo)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>

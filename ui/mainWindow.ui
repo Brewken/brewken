@@ -374,7 +374,7 @@
                      </widget>
                     </item>
                     <item row="8" column="1">
-                     <widget class="BtDensityEdit" name="lineEdit_boilSg">
+                     <widget class="SmartLineEdit" name="lineEdit_boilSg">
                       <property name="enabled">
                        <bool>false</bool>
                       </property>
@@ -408,7 +408,7 @@
                      </widget>
                     </item>
                     <item row="7" column="0">
-                     <widget class="BtTimeLabel" name="label_boiltime">
+                     <widget class="SmartLabel" name="label_boiltime">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                         <horstretch>0</horstretch>
@@ -443,7 +443,7 @@
                      </widget>
                     </item>
                     <item row="7" column="1">
-                     <widget class="BtTimeEdit" name="lineEdit_boilTime">
+                     <widget class="SmartLineEdit" name="lineEdit_boilTime">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -474,7 +474,7 @@
                      </widget>
                     </item>
                     <item row="8" column="0">
-                     <widget class="BtDensityLabel" name="label_boilSg">
+                     <widget class="SmartLabel" name="label_boilSg">
                       <property name="contextMenuPolicy">
                        <enum>Qt::CustomContextMenu</enum>
                       </property>
@@ -487,7 +487,7 @@
                      </widget>
                     </item>
                     <item row="6" column="1">
-                     <widget class="BtPercentageEdit" name="lineEdit_efficiency">
+                     <widget class="SmartLineEdit" name="lineEdit_efficiency">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -578,7 +578,7 @@
                      </widget>
                     </item>
                     <item row="5" column="0">
-                     <widget class="BtVolumeLabel" name="label_targetBoilSize">
+                     <widget class="SmartLabel" name="label_targetBoilSize">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                         <horstretch>0</horstretch>
@@ -607,7 +607,7 @@
                      </widget>
                     </item>
                     <item row="4" column="0">
-                     <widget class="BtVolumeLabel" name="label_targetBatchSize">
+                     <widget class="SmartLabel" name="label_targetBatchSize">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                         <horstretch>0</horstretch>
@@ -626,7 +626,7 @@
                      </widget>
                     </item>
                     <item row="4" column="1">
-                     <widget class="BtVolumeEdit" name="lineEdit_batchSize">
+                     <widget class="SmartLineEdit" name="lineEdit_batchSize">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -733,7 +733,7 @@
                      </widget>
                     </item>
                     <item row="5" column="1">
-                     <widget class="BtVolumeEdit" name="lineEdit_boilSize">
+                     <widget class="SmartLineEdit" name="lineEdit_boilSize">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -830,7 +830,7 @@
                      </widget>
                     </item>
                     <item row="4" column="0">
-                     <widget class="BtColorLabel" name="colorSRMLabel">
+                     <widget class="SmartLabel" name="colorSRMLabel">
                       <property name="contextMenuPolicy">
                        <enum>Qt::CustomContextMenu</enum>
                       </property>
@@ -872,7 +872,7 @@
                      </widget>
                     </item>
                     <item row="0" column="0">
-                     <widget class="BtDensityLabel" name="oGLabel">
+                     <widget class="SmartLabel" name="oGLabel">
                       <property name="contextMenuPolicy">
                        <enum>Qt::CustomContextMenu</enum>
                       </property>
@@ -885,7 +885,7 @@
                      </widget>
                     </item>
                     <item row="1" column="0">
-                     <widget class="BtDensityLabel" name="fGLabel">
+                     <widget class="SmartLabel" name="fGLabel">
                       <property name="contextMenuPolicy">
                        <enum>Qt::CustomContextMenu</enum>
                       </property>
@@ -905,17 +905,17 @@
                      </widget>
                     </item>
                     <item row="6" column="0">
-                     <widget class="BtVolumeLabel" name="label_batchsize">
+                     <widget class="SmartLabel" name="label_batchSize">
                       <property name="text">
                        <string>Batch Size</string>
                       </property>
                       <property name="buddy">
-                       <cstring>rangeWidget_batchsize</cstring>
+                       <cstring>rangeWidget_batchSize</cstring>
                       </property>
                      </widget>
                     </item>
                     <item row="6" column="1">
-                     <widget class="StyleRangeWidget" name="rangeWidget_batchsize" native="true">
+                     <widget class="StyleRangeWidget" name="rangeWidget_batchSize" native="true">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                         <horstretch>0</horstretch>
@@ -937,7 +937,7 @@
                      </widget>
                     </item>
                     <item row="7" column="0">
-                     <widget class="BtVolumeLabel" name="label_boilsize">
+                     <widget class="SmartLabel" name="label_boilsize">
                       <property name="text">
                        <string>Boil Size</string>
                       </property>
@@ -2187,30 +2187,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtTimeEdit</class>
+   <class>SmartLabel</class>
+   <extends>QLabel</extends>
+   <header>widgets/SmartLabel.h</header>
+   <slots>
+    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTimeLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtGenericEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtPercentageEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
   </customwidget>
   <customwidget>
    <class>CustomComboBox</class>
@@ -2223,49 +2213,9 @@
    <header>StyleRangeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>BtVolumeEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtVolumeLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>MiscTreeView</class>
    <extends>QTreeView</extends>
    <header>BtTreeView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>BtDensityLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtDensityEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtColorLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
   </customwidget>
   <customwidget>
    <class>IbuGuSlider</class>

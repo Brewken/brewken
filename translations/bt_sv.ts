@@ -511,22 +511,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>För låg för vald stil.</translation>
+        <translation type="vanished">För låg för vald stil.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>I intervall för stilen.</translation>
+        <translation type="vanished">I intervall för stilen.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>För högt för stilen.</translation>
+        <translation type="vanished">För högt för stilen.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Färg (%1)</translation>
+        <translation type="vanished">Färg (%1)</translation>
     </message>
 </context>
 <context>
@@ -4274,7 +4274,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Felaktig kolumn:%1</translation>
+        <translation type="obsolete">Felaktig kolumn:%1</translation>
     </message>
 </context>
 <context>
@@ -4319,10 +4319,25 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">För låg för vald stil.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">I intervall för stilen.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">För högt för stilen.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Färg (%1)</translation>
+        <translation type="obsolete">Färg (%1)</translation>
     </message>
 </context>
 <context>
@@ -8109,6 +8124,14 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

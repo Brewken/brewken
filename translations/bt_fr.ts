@@ -511,22 +511,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Trop bas pour le style.</translation>
+        <translation type="vanished">Trop bas pour le style.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Dans les limites du style.</translation>
+        <translation type="vanished">Dans les limites du style.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Trop haut pour le style.</translation>
+        <translation type="vanished">Trop haut pour le style.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Couleur (%1)</translation>
+        <translation type="vanished">Couleur (%1)</translation>
     </message>
 </context>
 <context>
@@ -4282,7 +4282,7 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Mauvaise colonne : %1</translation>
+        <translation type="obsolete">Mauvaise colonne : %1</translation>
     </message>
 </context>
 <context>
@@ -4327,10 +4327,25 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
 </context>
 <context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Trop bas pour le style.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Dans les limites du style.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Trop haut pour le style.</translation>
+    </message>
+</context>
+<context>
     <name>SmartLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation type="unfinished">Couleur (%1)</translation>
+        <translation type="obsolete">Couleur (%1)</translation>
     </message>
 </context>
 <context>
@@ -8267,6 +8282,14 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

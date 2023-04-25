@@ -31,7 +31,7 @@ namespace Measurement {
    class Amount {
    public:
       //! Regular constructor
-      Amount(double quantity, Unit const & unit);
+      Amount(double const quantity, Unit const & unit);
 
       //! Copy constructor
       Amount(Amount const & other);

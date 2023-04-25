@@ -471,22 +471,15 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Za niska wartość dla stylu.</translation>
+        <translation type="vanished">Za niska wartość dla stylu.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Wartość mieści się w stylu.</translation>
+        <translation type="vanished">Wartość mieści się w stylu.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Za wysoka wartość dla stylu.</translation>
-    </message>
-</context>
-<context>
-    <name>BtLabel</name>
-    <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Za wysoka wartość dla stylu.</translation>
     </message>
 </context>
 <context>
@@ -4208,10 +4201,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Bad column: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -4255,10 +4244,18 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
 </context>
 <context>
-    <name>SmartLabel</name>
+    <name>SmartDigitWidget</name>
     <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Za niska wartość dla stylu.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Wartość mieści się w stylu.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Za wysoka wartość dla stylu.</translation>
     </message>
 </context>
 <context>
@@ -8177,6 +8174,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

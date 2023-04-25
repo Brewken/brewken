@@ -40,10 +40,6 @@ class Recipe;
 
 class WaterItemDelegate;
 
-enum{ WATERNAMECOL, WATERAMOUNTCOL, WATERCALCIUMCOL, WATERBICARBONATECOL,
-      WATERSULFATECOL, WATERCHLORIDECOL, WATERSODIUMCOL, WATERMAGNESIUMCOL,
-      WATERNUMCOLS /*This one MUST be last*/};
-
 /*!
  * \class WaterTableModel
  *
@@ -53,8 +49,21 @@ class WaterTableModel : public BtTableModelRecipeObserver, public BtTableModelDa
    Q_OBJECT
 
 public:
+   enum class ColumnIndex {
+      Name       ,
+      Amount     ,
+      Calcium    ,
+      Bicarbonate,
+      Sulfate    ,
+      Chloride   ,
+      Sodium     ,
+      Magnesium  ,
+   };
    WaterTableModel(WaterTableWidget* parent = nullptr);
    virtual ~WaterTableModel();
+
+   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
+   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
    void addWaters(QList<std::shared_ptr<Water> > waters);
    void observeRecipe(Recipe* rec);

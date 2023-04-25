@@ -21,9 +21,8 @@
 
 #include <QDialog>
 
-#include "BtAmountEdit.h"
-#include "BtLabel.h"
-#include "BtLineEdit.h"
+#include "widgets/SmartLabel.h"
+#include "widgets/SmartLineEdit.h"
 
 class QEvent;
 class QGroupBox;
@@ -37,17 +36,17 @@ public:
 
    //! \name Public UI Variables
    //! @{
-   QPushButton    * pushButton_convert;
-   BtDensityLabel * label_inputSg;
-   BtDensityEdit  * lineEdit_inputSg;
-   BtDensityLabel * label_outputSg;
-   BtDensityEdit  * lineEdit_outputSg;
+   QPushButton   * pushButton_convert;
+   SmartLabel    * label_inputSg;
+   SmartLineEdit * lineEdit_inputSg;
+   SmartLabel    * label_outputSg;
+   SmartLineEdit * lineEdit_outputSg;
 
-   BtTemperatureLabel * label_inputTemp;
-   BtTemperatureEdit  * lineEdit_inputTemp;
-   BtTemperatureLabel * label_calibratedTemp;
-   BtTemperatureEdit  * lineEdit_calibratedTemp;
-   QGroupBox          * groupBox_inputSg;
+   SmartLabel    * label_inputTemp;
+   SmartLineEdit * lineEdit_inputTemp;
+   SmartLabel    * label_calibratedTemp;
+   SmartLineEdit * lineEdit_calibratedTemp;
+   QGroupBox     * groupBox_inputSg;
    //! @}
 
 public slots:

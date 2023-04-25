@@ -59,18 +59,27 @@ NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool s
    //! And do some fun stuff with the equipment
    this->equipListModel = new EquipmentListModel(equipmentComboBox);
    this->equipmentComboBox->setModel(equipListModel);
-   connect(equipmentComboBox,         &QComboBox::currentTextChanged, this, &NamedMashEditor::fromEquipment   );
+
+   SMART_FIELD_INIT(NamedMashEditor, label_name      , lineEdit_name      , Mash, PropertyNames::NamedEntity::name             );
+   SMART_FIELD_INIT(NamedMashEditor, label_grainTemp , lineEdit_grainTemp , Mash, PropertyNames::Mash::grainTemp_c          , 1);
+   SMART_FIELD_INIT(NamedMashEditor, label_spargeTemp, lineEdit_spargeTemp, Mash, PropertyNames::Mash::spargeTemp_c         , 1);
+   SMART_FIELD_INIT(NamedMashEditor, label_spargePh  , lineEdit_spargePh  , Mash, PropertyNames::Mash::ph                   , 0);
+   SMART_FIELD_INIT(NamedMashEditor, label_tunTemp   , lineEdit_tunTemp   , Mash, PropertyNames::Mash::tunTemp_c            , 1);
+   SMART_FIELD_INIT(NamedMashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::tunWeight_kg            );
+   SMART_FIELD_INIT(NamedMashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::tunSpecificHeat_calGC, 1);
+
+   connect(this->equipmentComboBox,         &QComboBox::currentTextChanged, this, &NamedMashEditor::fromEquipment   );
    // ok and cancel buttons
-   connect(pushButton_save,           &QAbstractButton::clicked,      this, &NamedMashEditor::saveAndClose    );
-   connect(pushButton_cancel,         &QAbstractButton::clicked,      this, &NamedMashEditor::closeEditor     );
+   connect(this->pushButton_save,           &QAbstractButton::clicked,      this, &NamedMashEditor::saveAndClose    );
+   connect(this->pushButton_cancel,         &QAbstractButton::clicked,      this, &NamedMashEditor::closeEditor     );
    // new mash step, delete mash step, move mash step up and down
-   connect(pushButton_addMashStep,    &QAbstractButton::clicked,      this, &NamedMashEditor::addMashStep     );
-   connect(pushButton_removeMashStep, &QAbstractButton::clicked,      this, &NamedMashEditor::removeMashStep  );
-   connect(pushButton_mashUp,         &QAbstractButton::clicked,      this, &NamedMashEditor::moveMashStepUp  );
-   connect(pushButton_mashDown,       &QAbstractButton::clicked,      this, &NamedMashEditor::moveMashStepDown);
+   connect(this->pushButton_addMashStep,    &QAbstractButton::clicked,      this, &NamedMashEditor::addMashStep     );
+   connect(this->pushButton_removeMashStep, &QAbstractButton::clicked,      this, &NamedMashEditor::removeMashStep  );
+   connect(this->pushButton_mashUp,         &QAbstractButton::clicked,      this, &NamedMashEditor::moveMashStepUp  );
+   connect(this->pushButton_mashDown,       &QAbstractButton::clicked,      this, &NamedMashEditor::moveMashStepDown);
    // finally, the combo box and the remove mash button
-   connect(mashComboBox,              &QComboBox::currentTextChanged, this, &NamedMashEditor::mashSelected    );
-   connect(pushButton_remove,         &QAbstractButton::clicked,      this, &NamedMashEditor::removeMash      );
+   connect(this->mashComboBox,              &QComboBox::currentTextChanged, this, &NamedMashEditor::mashSelected    );
+   connect(this->pushButton_remove,         &QAbstractButton::clicked,      this, &NamedMashEditor::removeMash      );
 
    this->setMash(mashListModel->at(mashComboBox->currentIndex()));
    return;
@@ -148,12 +157,12 @@ void NamedMashEditor::showChanges(QMetaProperty* prop) {
    qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all" : "property") << propName;
 
    if (updateAll || propName == PropertyNames::NamedEntity::name          ) {lineEdit_name      ->setText     (mashObs->name                 ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::grainTemp_c          ) {lineEdit_grainTemp ->setText     (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c         ) {lineEdit_spargeTemp->setText     (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::ph                   ) {lineEdit_spargePh  ->setText     (mashObs->ph                   ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunTemp_c            ) {lineEdit_tunTemp   ->setText     (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunWeight_kg         ) {lineEdit_tunMass   ->setText     (mashObs->tunWeight_kg         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunSpecificHeat_calGC) {lineEdit_tunSpHeat ->setText     (mashObs->tunSpecificHeat_calGC()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::grainTemp_c          ) {lineEdit_grainTemp ->setAmount   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c         ) {lineEdit_spargeTemp->setAmount   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::ph                   ) {lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::tunTemp_c            ) {lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::tunWeight_kg         ) {lineEdit_tunMass   ->setAmount   (mashObs->tunWeight_kg         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::tunSpecificHeat_calGC) {lineEdit_tunSpHeat ->setAmount   (mashObs->tunSpecificHeat_calGC()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::notes                ) {textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
 }
 
@@ -258,8 +267,8 @@ void NamedMashEditor::fromEquipment([[maybe_unused]] QString const & name) {
    }
    Equipment * selected = equipListModel->at(equipmentComboBox->currentIndex());
    if (selected) {
-      lineEdit_tunMass  ->setText(selected->tunWeight_kg         ());
-      lineEdit_tunSpHeat->setText(selected->tunSpecificHeat_calGC());
+      lineEdit_tunMass  ->setAmount(selected->tunWeight_kg         ());
+      lineEdit_tunSpHeat->setAmount(selected->tunSpecificHeat_calGC());
    }
    return;
 }
