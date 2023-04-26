@@ -291,7 +291,7 @@
                 <item row="0" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_name">
                   <item>
-                   <widget class="QLabel" name="label">
+                   <widget class="QLabel" name="label_name">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -307,7 +307,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="lineEdit_name">
+                   <widget class="SmartLineEdit" name="lineEdit_name">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -408,7 +408,7 @@
                      </widget>
                     </item>
                     <item row="7" column="0">
-                     <widget class="SmartLabel" name="label_boiltime">
+                     <widget class="SmartLabel" name="label_boilTime">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                         <horstretch>0</horstretch>
@@ -657,7 +657,7 @@
                      </widget>
                     </item>
                     <item row="6" column="0">
-                     <widget class="QLabel" name="efficiencyLabel">
+                     <widget class="QLabel" name="label_efficiency">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                         <horstretch>0</horstretch>
@@ -937,7 +937,7 @@
                      </widget>
                     </item>
                     <item row="7" column="0">
-                     <widget class="SmartLabel" name="label_boilsize">
+                     <widget class="SmartLabel" name="label_boilSize">
                       <property name="text">
                        <string>Boil Size</string>
                       </property>
@@ -2344,70 +2344,4 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_targetBoilSize</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_boilSize</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>466</x>
-     <y>309</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>572</x>
-     <y>309</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_boilSg</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_boilSg</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>466</x>
-     <y>403</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>572</x>
-     <y>403</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_boiltime</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_boilTime</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>466</x>
-     <y>373</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>572</x>
-     <y>373</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_targetBatchSize</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_batchSize</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>466</x>
-     <y>277</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>572</x>
-     <y>277</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

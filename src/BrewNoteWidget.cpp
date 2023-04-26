@@ -99,7 +99,7 @@ void BrewNoteWidget::updateDateFormat() {
 void BrewNoteWidget::updateProjOg() {
    // Density UnitSystems only have one scale, so we don't bother looking up UnitSystem::RelativeScale
    auto forcedSystemOfMeasurement = this->label_projectedOg->getForcedSystemOfMeasurement();
-   double quant = Measurement::amountDisplay(Measurement::Amount{this->bNoteObs->projOg(), Measurement::Units::sp_grav},
+   double quant = Measurement::amountDisplay(Measurement::Amount{this->bNoteObs->projOg(), Measurement::Units::specificGravity},
                                              forcedSystemOfMeasurement);
    this->lcdnumber_projectedOG->setLowLim( lowLimitPct  * quant);
    this->lcdnumber_projectedOG->setHighLim(highLimitPct * quant);

@@ -66,16 +66,17 @@ public:
       label_result                 {new QLabel       (&self)},
       output_result                {new QLabel       (&self)},
       gridLayout                   {new QGridLayout  (&self)} {
-      this->restoreSettings();
-      this->enableAdvancedInputs->setFont(QFont("Roboto medium", 13));
-      this->output_result->setText("%");
-      this->doLayout();
 
       SMART_FIELD_INIT_FS(AlcoholTool, label_og                     , input_og                     , double, Measurement::PhysicalQuantity::Density    );
       SMART_FIELD_INIT_FS(AlcoholTool, label_fg                     , input_fg                     , double, Measurement::PhysicalQuantity::Density    );
       SMART_FIELD_INIT_FS(AlcoholTool, label_temperature            , input_og_temperature         , double, Measurement::PhysicalQuantity::Temperature);
       SMART_FIELD_INIT_FS(AlcoholTool, label_temperature            , input_fg_temperature         , double, Measurement::PhysicalQuantity::Temperature);
       SMART_FIELD_INIT_FS(AlcoholTool, label_calibration_temperature, input_calibration_temperature, double, Measurement::PhysicalQuantity::Temperature);
+
+      this->restoreSettings();
+      this->enableAdvancedInputs->setFont(QFont("Roboto medium", 13));
+      this->output_result->setText("%");
+      this->doLayout();
 
       this->connectSignals();
       return;
@@ -134,12 +135,12 @@ public:
 
    void showOrHideAdvancedControls() {
       bool visible = this->enableAdvancedInputs->isChecked();
-      this->label_temperature->setVisible(visible);
-      this->label_corrected->setVisible(visible);
-      this->input_og_temperature->setVisible(visible);
-      this->corrected_og->setVisible(visible);
-      this->input_fg_temperature->setVisible(visible);
-      this->corrected_fg->setVisible(visible);
+      this->label_temperature            ->setVisible(visible);
+      this->label_corrected              ->setVisible(visible);
+      this->input_og_temperature         ->setVisible(visible);
+      this->corrected_og                 ->setVisible(visible);
+      this->input_fg_temperature         ->setVisible(visible);
+      this->corrected_fg                 ->setVisible(visible);
       this->label_calibration_temperature->setVisible(visible);
       this->input_calibration_temperature->setVisible(visible);
 

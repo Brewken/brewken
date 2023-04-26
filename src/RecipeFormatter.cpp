@@ -319,11 +319,11 @@ public:
                      "<td align=\"left\" class=\"left\">%1</td>"
                      "<td class=\"value\">%2</td>")
             .arg(tr("OG"))
-            .arg(Measurement::displayAmount(Measurement::Amount{rec->og(), Measurement::Units::sp_grav}, 3));
+            .arg(Measurement::displayAmount(Measurement::Amount{rec->og(), Measurement::Units::specificGravity}, 3));
       body += QString("<td align=\"right\" class=\"right\">%1</td>"
                      "<td class=\"value\">%2</td></tr>")
             .arg(tr("FG"))
-            .arg(Measurement::displayAmount(Measurement::Amount{rec->fg(), Measurement::Units::sp_grav}, 3));
+            .arg(Measurement::displayAmount(Measurement::Amount{rec->fg(), Measurement::Units::specificGravity}, 3));
 
       // Fourth row: ABV and Bitterness.  We need to set the bitterness string up first
       body += QString("<tr>"
@@ -385,10 +385,10 @@ public:
       value.append(QString("%1%").arg(rec->efficiency_pct(), 0, 'f', 0));
       entry.append(tr("OG"));
       value.append(QString("%1").arg(Measurement::displayAmount(Measurement::Amount{rec->og(),
-                                                                                    Measurement::Units::sp_grav}, 3)));
+                                                                                    Measurement::Units::specificGravity}, 3)));
       entry.append(tr("FG"));
       value.append(QString("%1").arg(Measurement::displayAmount(Measurement::Amount{rec->fg(),
-                                                                                    Measurement::Units::sp_grav}, 3)));
+                                                                                    Measurement::Units::specificGravity}, 3)));
       entry.append(tr("ABV"));
       value.append(QString("%1%").arg(Measurement::displayQuantity(rec->ABV_pct(), 1)));
       entry.append(tr("Bitterness"));
@@ -1003,7 +1003,7 @@ public:
          bnTable += QString("<caption>%1</caption>").arg(tr("Preboil"));
          bnTable += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
                   .arg(tr("SG"))
-                  .arg(Measurement::displayAmount(Measurement::Amount{note->sg(), Measurement::Units::sp_grav}, 3))
+                  .arg(Measurement::displayAmount(Measurement::Amount{note->sg(), Measurement::Units::specificGravity}, 3))
                   .arg(tr("Volume into BK"))
                   .arg(Measurement::displayAmount(Measurement::Amount{note->volumeIntoBK_l(),
                                                                       Measurement::Units::liters}));
@@ -1021,7 +1021,7 @@ public:
                   .arg(Measurement::displayQuantity(note->calculateEffIntoBK_pct(), 2))
                   .arg(tr("Projected OG"))
                   .arg(Measurement::displayAmount(Measurement::Amount{note->calculateOg(),
-                                                                      Measurement::Units::sp_grav}, 3));
+                                                                      Measurement::Units::specificGravity}, 3));
          bnTable += "</table>";
 
          // POSTBOIL
@@ -1029,7 +1029,7 @@ public:
          bnTable += QString("<caption>%1</caption>").arg(tr("Postboil"));
          bnTable += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
                   .arg(tr("OG"))
-                  .arg(Measurement::displayAmount(Measurement::Amount{note->og(), Measurement::Units::sp_grav}, 3))
+                  .arg(Measurement::displayAmount(Measurement::Amount{note->og(), Measurement::Units::specificGravity}, 3))
                   .arg(tr("Postboil Volume"))
                   .arg(Measurement::displayAmount(Measurement::Amount{note->postBoilVolume_l(),
                                                                       Measurement::Units::liters}));
@@ -1050,7 +1050,7 @@ public:
          bnTable += QString("<caption>%1</caption>").arg(tr("Postferment"));
          bnTable += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
                   .arg(tr("FG"))
-                  .arg(Measurement::displayAmount(Measurement::Amount{note->fg(), Measurement::Units::sp_grav}, 3))
+                  .arg(Measurement::displayAmount(Measurement::Amount{note->fg(), Measurement::Units::specificGravity}, 3))
                   .arg(tr("Volume"))
                   .arg(Measurement::displayAmount(Measurement::Amount{note->finalVolume_l(), Measurement::Units::liters}));
 
@@ -1226,10 +1226,10 @@ QString RecipeFormatter::getToolTip(Recipe* rec) {
    // Third row: OG and FG
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("OG"))
-           .arg(Measurement::displayAmount(Measurement::Amount{rec->og(), Measurement::Units::sp_grav}, 3));
+           .arg(Measurement::displayAmount(Measurement::Amount{rec->og(), Measurement::Units::specificGravity}, 3));
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("FG"))
-           .arg(Measurement::displayAmount(Measurement::Amount{rec->fg(), Measurement::Units::sp_grav}, 3));
+           .arg(Measurement::displayAmount(Measurement::Amount{rec->fg(), Measurement::Units::specificGravity}, 3));
 
    // Fourth row: Color and Bitterness.
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2 (%3)</td>")

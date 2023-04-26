@@ -1171,7 +1171,7 @@ void Recipe::generateInstructions() {
    addPreinstructions(miscSteps(Misc::Use::Primary));
 
    str = tr("Let ferment until FG is %1.").arg(
-      Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::sp_grav}, 3)
+      Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::specificGravity}, 3)
    );
 
    auto fermentIns = std::make_shared<Instruction>();

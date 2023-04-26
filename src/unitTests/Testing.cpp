@@ -633,7 +633,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "9" << decimalSeparator << "994 P";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI(testInput, // "9.994 P"
-                                                                          Measurement::Units::sp_grav).quantity(),
+                                                                          Measurement::Units::specificGravity).quantity(),
                       1.040,
                       0.001),
             "Unit conversion error (Plato to SG)");

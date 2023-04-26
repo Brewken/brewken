@@ -185,6 +185,7 @@ namespace {
                             double const minCanonicalValue,
                             double const maxCanonicalValue,
                             double const maxPossibleCanonicalValue) {
+      qDebug() << Q_FUNC_INFO << "label" << &label;
       slider.setPreferredRange(label.getRangeToDisplay(minCanonicalValue, maxCanonicalValue        ));
       slider.setRange         (label.getRangeToDisplay(1.000            , maxPossibleCanonicalValue));
 
@@ -243,10 +244,26 @@ private:
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_unique<impl>(*this)} {
    qDebug() << Q_FUNC_INFO;
 
-   undoStack = new QUndoStack(this);
+   this->undoStack = new QUndoStack(this);
 
    // Need to call this parent class method to get all the widgets added (I think).
    this->setupUi(this);
+
+   // Initialise smart labels etc early, but after call to this->setupUi() because otherwise member variables such as
+   // label_name will not yet be set.
+   // .:TBD:. We should fix some of these inconsistently-named labels
+   SMART_FIELD_INIT(MainWindow, label_name           , lineEdit_name      , Recipe, PropertyNames::NamedEntity::name        );
+   SMART_FIELD_INIT(MainWindow, label_targetBatchSize, lineEdit_batchSize , Recipe, PropertyNames::Recipe::batchSize_l   , 2);
+   SMART_FIELD_INIT(MainWindow, label_targetBoilSize , lineEdit_boilSize  , Recipe, PropertyNames::Recipe::boilSize_l    , 2);
+   SMART_FIELD_INIT(MainWindow, label_efficiency     , lineEdit_efficiency, Recipe, PropertyNames::Recipe::efficiency_pct, 1);
+   SMART_FIELD_INIT(MainWindow, label_boilTime       , lineEdit_boilTime  , Recipe, PropertyNames::Recipe::boilTime_min  , 1);
+   SMART_FIELD_INIT(MainWindow, label_boilSg         , lineEdit_boilSg    , Recipe, PropertyNames::Recipe::boilGrav      , 3);
+
+   SMART_FIELD_INIT_NO_SF(MainWindow, oGLabel        , Recipe, PropertyNames::Recipe::og        );
+   SMART_FIELD_INIT_NO_SF(MainWindow, fGLabel        , Recipe, PropertyNames::Recipe::fg        );
+   SMART_FIELD_INIT_NO_SF(MainWindow, colorSRMLabel  , Recipe, PropertyNames::Recipe::color_srm );
+   SMART_FIELD_INIT_NO_SF(MainWindow, label_batchSize, Recipe, PropertyNames::Recipe::boilSize_l);
+   SMART_FIELD_INIT_NO_SF(MainWindow, label_boilSize , Recipe, PropertyNames::Recipe::boilSize_l);
 
    // Stop things looking ridiculously tiny on high DPI displays
    this->setSizesInPixelsBasedOnDpi();
@@ -280,11 +297,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
 #else
    printer->setPageSize(QPageSize(QPageSize::Letter));
 #endif
+
    return;
 }
 
 void MainWindow::init() {
    qDebug() << Q_FUNC_INFO;
+
+
    this->setupCSS();
    // initialize all of the dialog windows
    this->setupDialogs();
@@ -301,11 +321,6 @@ void MainWindow::init() {
    // do all the work for checkboxes (just one right now)
    this->setUpStateChanges();
 
-   // This sets up things that might have been 'remembered' (ie stored in the config file) from a previous run of the
-   // program - eg window size, which is stored in MainWindow::closeEvent().
-   // Breaks the naming convention, doesn't it?
-   this->restoreSavedState();
-
    // Connect menu item slots to triggered() signals
    this->setupTriggers();
    // Connect pushbutton slots to clicked() signals
@@ -319,18 +334,16 @@ void MainWindow::init() {
    // set up the drag/drop parts
    this->setupDrops();
 
+   // This sets up things that might have been 'remembered' (ie stored in the config file) from a previous run of the
+   // program - eg window size, which is stored in MainWindow::closeEvent().
+   // Breaks the naming convention, doesn't it?
+   this->restoreSavedState();
+
    // Moved from Database class
    Recipe::connectSignalsForAllRecipes();
    qDebug() << Q_FUNC_INFO << "Recipe signals connected";
    Mash::connectSignals();
    qDebug() << Q_FUNC_INFO << "Mash signals connected";
-
-   // .:TBD:. We should fix these inconsistently-named labels
-   SMART_FIELD_INIT(MainWindow, label_boilSg         , lineEdit_boilSg    , Recipe, PropertyNames::Recipe::boilGrav      );
-   SMART_FIELD_INIT(MainWindow, label_boiltime       , lineEdit_boilTime  , Recipe, PropertyNames::Recipe::boilTime_min  );
-   SMART_FIELD_INIT(MainWindow, efficiencyLabel      , lineEdit_efficiency, Recipe, PropertyNames::Recipe::efficiency_pct);
-   SMART_FIELD_INIT(MainWindow, label_targetBatchSize, lineEdit_batchSize , Recipe, PropertyNames::Recipe::batchSize_l   );
-   SMART_FIELD_INIT(MainWindow, label_boilsize       , lineEdit_boilSize  , Recipe, PropertyNames::Recipe::boilSize_l    );
 
    // I do not like this connection here.
    connect(this->ancestorDialog,  &AncestorDialog::ancestoryChanged, treeView_recipe->model(), &BtTreeModel::versionedRecipe);
@@ -886,10 +899,10 @@ void MainWindow::setupActivate() {
 // lineEdits with either an editingFinished() or a textModified() should go in
 // here
 void MainWindow::setupTextEdit() {
-   connect(this->lineEdit_name,       &QLineEdit::editingFinished,  this, &MainWindow::updateRecipeName);
-   connect(this->lineEdit_batchSize,  &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBatchSize);
-   connect(this->lineEdit_boilSize,   &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBoilSize);
-   connect(this->lineEdit_boilTime,   &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBoilTime);
+   connect(this->lineEdit_name      , &QLineEdit::editingFinished,  this, &MainWindow::updateRecipeName);
+   connect(this->lineEdit_batchSize , &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBatchSize);
+   connect(this->lineEdit_boilSize  , &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBoilSize);
+   connect(this->lineEdit_boilTime  , &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBoilTime);
    connect(this->lineEdit_efficiency, &SmartLineEdit::textModified, this, &MainWindow::updateRecipeEfficiency);
    return;
 }
@@ -1378,10 +1391,10 @@ void MainWindow::showChanges(QMetaProperty* prop) {
 
    Style const * style = this->recipeObs->style();
 
-   updateDensitySlider(*this->styleRangeWidget_og, this->oGLabel, style->ogMin(), style->ogMax(), 1.120);
+   updateDensitySlider(*this->styleRangeWidget_og, *this->oGLabel, style->ogMin(), style->ogMax(), 1.120);
    this->styleRangeWidget_og->setValue(this->oGLabel->getAmountToDisplay(recipeObs->og()));
 
-   updateDensitySlider(*this->styleRangeWidget_fg, this->fGLabel, style->fgMin(), style->fgMax(), 1.030);
+   updateDensitySlider(*this->styleRangeWidget_fg, *this->fGLabel, style->fgMin(), style->fgMax(), 1.030);
    this->styleRangeWidget_fg->setValue(this->fGLabel->getAmountToDisplay(recipeObs->fg()));
 
    this->styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
@@ -1394,14 +1407,14 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    this->rangeWidget_batchSize->setValue         (this->label_batchSize->getAmountToDisplay(this->recipeObs->finalVolume_l()));
 
    this->rangeWidget_boilsize->setRange         (0,
-                                                 this->label_boilsize->getAmountToDisplay(this->recipeObs->boilSize_l()));
+                                                 this->label_boilSize->getAmountToDisplay(this->recipeObs->boilSize_l()));
    this->rangeWidget_boilsize->setPreferredRange(0,
-                                                 this->label_boilsize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
-   this->rangeWidget_boilsize->setValue         (this->label_boilsize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
+                                                 this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
+   this->rangeWidget_boilsize->setValue         (this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
 
    /* Colors need the same basic treatment as gravity */
    updateColorSlider(*this->styleRangeWidget_srm,
-                     this->colorSRMLabel,
+                     *this->colorSRMLabel,
                      style->colorMin_srm(),
                      style->colorMax_srm());
    this->styleRangeWidget_srm->setValue(this->colorSRMLabel->getAmountToDisplay(this->recipeObs->color_srm()));

@@ -31,12 +31,12 @@ OgAdjuster::OgAdjuster( QWidget* parent ) :
    recObs {nullptr} {
    setupUi(this);
 
-   SMART_FIELD_INIT_FIXED(OgAdjuster, label_sg       , lineEdit_sg       , double, Measurement::Units::sp_grav               , 3); // Input: SG
+   SMART_FIELD_INIT_FIXED(OgAdjuster, label_sg       , lineEdit_sg       , double, Measurement::Units::specificGravity       , 3); // Input: SG
    SMART_FIELD_INIT_FS   (OgAdjuster, label_temp     , lineEdit_temp     , double, Measurement::PhysicalQuantity::Temperature, 1); // Input: Temp
    SMART_FIELD_INIT_FS   (OgAdjuster, label_calTemp  , lineEdit_calTemp  , double, Measurement::PhysicalQuantity::Temperature, 1); // Input: Calibration Temp
    SMART_FIELD_INIT_FIXED(OgAdjuster, label_plato    , lineEdit_plato    , double, Measurement::Units::plato                 , 1); // Input: Plato
    SMART_FIELD_INIT_FS   (OgAdjuster, label_volume   , lineEdit_volume   , double, Measurement::PhysicalQuantity::Volume        ); // Input: Pre-Boil Volume
-   SMART_FIELD_INIT_FIXED(OgAdjuster, label_og       , lineEdit_og       , double, Measurement::Units::sp_grav               , 3); // Output: OG w/o Correction
+   SMART_FIELD_INIT_FIXED(OgAdjuster, label_og       , lineEdit_og       , double, Measurement::Units::specificGravity       , 3); // Output: OG w/o Correction
    SMART_FIELD_INIT_FS   (OgAdjuster, label_add      , lineEdit_add      , double, Measurement::PhysicalQuantity::Volume        ); // Output: Add to Boil
    SMART_FIELD_INIT_FS   (OgAdjuster, label_batchSize, lineEdit_batchSize, double, Measurement::PhysicalQuantity::Volume        ); // Output: Final Batch Size
 

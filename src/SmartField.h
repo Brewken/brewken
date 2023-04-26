@@ -274,6 +274,15 @@ private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
+
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a field object
+   SmartField(SmartField const&) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a field object
+   SmartField& operator=(SmartField const&) = delete;
+   //! No move constructor
+   SmartField(SmartField &&) = delete;
+   //! No move assignment
+   SmartField & operator=(SmartField &&) = delete;
 };
 
 #endif

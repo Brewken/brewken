@@ -33,22 +33,15 @@ RefractoDialog::RefractoDialog(QWidget* parent) : QDialog(parent) {
    setupUi(this);
 
    // Note that the labels here are QLabel, not SmartLabel, because we want the units fixed, not user-selectable
-   SMART_FIELD_INIT_FS(RefractoDialog, label_op     , lineEdit_op     , double, Measurement::PhysicalQuantity::Density      , 1); // Original Plato
-   SMART_FIELD_INIT_FS(RefractoDialog, label_inputOG, lineEdit_inputOG, double, Measurement::PhysicalQuantity::Density      , 3); // Original gravity in
-   SMART_FIELD_INIT_FS(RefractoDialog, label_cp     , lineEdit_cp     , double, Measurement::PhysicalQuantity::Density      , 1); // Current Plato
-   SMART_FIELD_INIT_FS(RefractoDialog, label_ri     , lineEdit_ri     , double,           NonPhysicalQuantity::Dimensionless   ); // Refractive index
-   SMART_FIELD_INIT_FS(RefractoDialog, label_og     , lineEdit_og     , double, Measurement::PhysicalQuantity::Density      , 3); // Original gravity out
-   SMART_FIELD_INIT_FS(RefractoDialog, label_sg     , lineEdit_sg     , double, Measurement::PhysicalQuantity::Density      , 3); // Specific gravity out
-   SMART_FIELD_INIT_FS(RefractoDialog, label_abv    , lineEdit_abv    , double,           NonPhysicalQuantity::Percentage      ); // Alcohol by volume
-   SMART_FIELD_INIT_FS(RefractoDialog, label_abw    , lineEdit_abw    , double,           NonPhysicalQuantity::Percentage      ); // Alcohol by weight
-   SMART_FIELD_INIT_FS(RefractoDialog, label_re     , lineEdit_re     , double, Measurement::PhysicalQuantity::Density      , 1); // Real extract Plato
-
-   this->lineEdit_op     ->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::Plato          );
-   this->lineEdit_inputOG->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
-   this->lineEdit_cp     ->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::Plato          );
-   this->lineEdit_og     ->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
-   this->lineEdit_sg     ->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
-   this->lineEdit_re     ->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::Plato          );
+   SMART_FIELD_INIT_FIXED(RefractoDialog, label_op     , lineEdit_op     , double, Measurement::Units::plato          , 1); // Original Plato
+   SMART_FIELD_INIT_FIXED(RefractoDialog, label_inputOG, lineEdit_inputOG, double, Measurement::Units::specificGravity, 3); // Original gravity in
+   SMART_FIELD_INIT_FIXED(RefractoDialog, label_cp     , lineEdit_cp     , double, Measurement::Units::plato          , 1); // Current Plato
+   SMART_FIELD_INIT_FIXED(RefractoDialog, label_og     , lineEdit_og     , double, Measurement::Units::specificGravity, 3); // Original gravity out
+   SMART_FIELD_INIT_FIXED(RefractoDialog, label_sg     , lineEdit_sg     , double, Measurement::Units::specificGravity, 3); // Specific gravity out
+   SMART_FIELD_INIT_FIXED(RefractoDialog, label_re     , lineEdit_re     , double, Measurement::Units::plato          , 1); // Real extract Plato
+   SMART_FIELD_INIT_FS   (RefractoDialog, label_ri     , lineEdit_ri     , double, NonPhysicalQuantity::Dimensionless    ); // Refractive index
+   SMART_FIELD_INIT_FS   (RefractoDialog, label_abv    , lineEdit_abv    , double, NonPhysicalQuantity::Percentage       ); // Alcohol by volume
+   SMART_FIELD_INIT_FS   (RefractoDialog, label_abw    , lineEdit_abw    , double, NonPhysicalQuantity::Percentage       ); // Alcohol by weight
 
    connect(this->pushButton_calculate, &QAbstractButton::clicked, this, &RefractoDialog::calculate );
    return;

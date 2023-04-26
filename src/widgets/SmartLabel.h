@@ -116,6 +116,16 @@ public:
     *       Not sure how to signal the parent to redisplay
     */
    SmartLabel(QWidget * parent);
+
+   /**
+    * \brief We assert that one \c SmartLabel cannot be the parent of another.  At time of writing, on GCC on Linux,
+    *        if you have a function that takes, eg \c SmartLabel& but you accidentally pass it \c SmartLabel*, the
+    *        compiler will try to construct a temporary \c SmartLabel with the \c SmartLabel* as a parameter.  We'd much
+    *        prefer a compiler error in this case, so we explicitly delete the constructor that the compiler is being
+    *        overly-helpful in trying to call.
+    */
+   SmartLabel(SmartLabel * parent) = delete;
+
    virtual ~SmartLabel();
 
    /**
@@ -134,6 +144,11 @@ public:
              char const * const   labelFqName,
              SmartField *         smartField,
              TypeInfo     const & typeInfo);
+
+   /**
+    * \return \c true if \c init or \c initFixed has been called, \c false otherwise
+    */
+   [[nodiscard]] bool isInitialised() const;
 
    void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
    void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
@@ -235,6 +250,14 @@ private:
    class impl;
    std::unique_ptr<impl> pimpl;
 
+   //! No copy constructor, as never want anyone, not even our friends, to make copies of a label object
+   SmartLabel(SmartLabel const&) = delete;
+   //! No assignment operator , as never want anyone, not even our friends, to make copies of a label object
+   SmartLabel& operator=(SmartLabel const&) = delete;
+   //! No move constructor
+   SmartLabel(SmartLabel &&) = delete;
+   //! No move assignment
+   SmartLabel & operator=(SmartLabel &&) = delete;
 };
 
 #endif

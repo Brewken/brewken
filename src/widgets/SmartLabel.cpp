@@ -24,6 +24,7 @@
 #include <QMouseEvent>
 #include <QVector>
 
+#include "Logging.h"
 #include "measurement/Measurement.h"
 #include "model/Style.h"
 #include "model/Recipe.h"
@@ -39,9 +40,9 @@ public:
         QWidget * parent) :
       m_self        {self   },
       m_initialised {false},
-      m_editorName  {"Uninitialised m_editorName!"  },
-      m_labelName   {"Uninitialised m_labelName!"   },
-      m_labelFqName {"Uninitialised m_labellFqName!"},
+      m_editorName  {"Uninitialised m_editorName!" },
+      m_labelName   {"Uninitialised m_labelName!"  },
+      m_labelFqName {"Uninitialised m_labelFqName!"},
       m_typeInfo    {nullptr},
       m_parent      {parent },
       m_contextMenu {nullptr} {
@@ -84,7 +85,6 @@ public:
       return;
    }
 
-
    SmartLabel &             m_self       ;
    bool                     m_initialised;
    char const *             m_editorName ;
@@ -109,6 +109,8 @@ void SmartLabel::init(char const * const   editorName,
                       char const * const   labelFqName,
                       SmartField *         smartField,
                       TypeInfo     const & typeInfo) {
+   qDebug() << Q_FUNC_INFO << labelFqName << ":" << typeInfo;
+
    this->pimpl->m_editorName  = editorName ;
    this->pimpl->m_labelName   = labelName  ;
    this->pimpl->m_labelFqName = labelFqName;
@@ -119,6 +121,10 @@ void SmartLabel::init(char const * const   editorName,
 ///   }
    this->pimpl->m_initialised = true;
    return;
+}
+
+[[nodiscard]] bool SmartLabel::isInitialised() const {
+  return this->pimpl->m_initialised;
 }
 
 ///SmartField & SmartLabel::getBuddy() const {
@@ -158,6 +164,7 @@ std::optional<Measurement::UnitSystem::RelativeScale> SmartLabel::getForcedRelat
 }
 
 SmartAmounts::ScaleInfo SmartLabel::getScaleInfo() const {
+   Q_ASSERT(this->pimpl->m_initialised);
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
    return SmartAmounts::getScaleInfo(this->pimpl->m_editorName,
                                      this->pimpl->m_labelName,
@@ -165,6 +172,7 @@ SmartAmounts::ScaleInfo SmartLabel::getScaleInfo() const {
 }
 
 Measurement::UnitSystem const & SmartLabel::getDisplayUnitSystem() const {
+   Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
    // for a SmartLabel that has no associated SmartField.
    Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
@@ -174,6 +182,7 @@ Measurement::UnitSystem const & SmartLabel::getDisplayUnitSystem() const {
 }
 
 double SmartLabel::getAmountToDisplay(double const canonicalValue) const {
+   Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
    // for a SmartLabel that has no associated SmartField.
    Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
@@ -190,6 +199,15 @@ double SmartLabel::getAmountToDisplay(double const canonicalValue) const {
 
 QPair<double,double> SmartLabel::getRangeToDisplay(double const canonicalValueMin,
                                                    double const canonicalValueMax) const {
+   // Only need next bit for debugging!
+//   if (!this->pimpl->m_initialised) {
+//      qCritical() << Q_FUNC_INFO << this;
+//      qCritical().noquote() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Stack trace:" << Logging::getStackTrace();
+//   }
+   Q_ASSERT(this->pimpl->m_initialised);
+   // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
+   // for a SmartLabel that has no associated SmartField.
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
    auto const & canonicalUnit{
       Measurement::Unit::getCanonicalUnit(std::get<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType))
    };
@@ -198,7 +216,7 @@ QPair<double,double> SmartLabel::getRangeToDisplay(double const canonicalValueMi
    return QPair<double, double>(
       Measurement::amountDisplay(Measurement::Amount{canonicalValueMin, canonicalUnit}, forcedSystemOfMeasurement, forcedRelativeScale),
       Measurement::amountDisplay(Measurement::Amount{canonicalValueMax, canonicalUnit}, forcedSystemOfMeasurement, forcedRelativeScale)
-                        );
+   );
 }
 
 void SmartLabel::enterEvent([[maybe_unused]] QEvent * event) {

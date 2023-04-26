@@ -250,7 +250,7 @@ namespace Measurement {
       // usually interested in density in order to get % sugar content to do calculations about how much sugar turned to
       // alcohol.  However, since our primary measurement (specific gravity) is of density, that's the physical quantity
       // under which we'll group all three units.
-      extern Unit const sp_grav;
+      extern Unit const specificGravity;
       extern Unit const plato;
       extern Unit const brix;
       // == Diastatic power ==

@@ -52,13 +52,13 @@ namespace SmartAmounts {
    /**
     * \brief Alternate version of \c SmartAmounts::Init for when there is a \c SmartLabel but no \c SmartField
     */
-   void InitNoSle(char const * const editorName,
-                  char const * const labelName,
-                  char const * const labelFqName,
-                  SmartLabel &       label,
-                  TypeInfo                    const & typeInfo,
-                  std::optional<unsigned int> const   precision = std::nullopt,
-                  QString                     const & maximalDisplayString = "100.000 srm");
+   void InitNoSf(char const * const editorName,
+                 char const * const labelName,
+                 char const * const labelFqName,
+                 SmartLabel &       label,
+                 TypeInfo                    const & typeInfo,
+                 std::optional<unsigned int> const   precision = std::nullopt,
+                 QString                     const & maximalDisplayString = "100.000 srm");
 
    /**
     * \brief Alternate version of \c SmartAmounts::Init for when units are fixed.  (Note that this implies label is
@@ -203,13 +203,13 @@ namespace SmartAmounts {
 /**
  *  \brief Alternate version of \c SMART_FIELD_INIT for when there is no \c SmartField
  */
-#define SMART_FIELD_INIT_NO_SLE(editorClass, labelName, modelClass, propertyName, ...) \
-   SmartAmounts::InitNoSle(#editorClass, \
-                           #labelName, \
-                           SFI_FQ_NAME(editorClass, labelName), \
-                           *this->labelName, \
-                           modelClass ::typeLookup.getType(propertyName) \
-                           __VA_OPT__(, __VA_ARGS__))
+#define SMART_FIELD_INIT_NO_SF(editorClass, labelName, modelClass, propertyName, ...) \
+   SmartAmounts::InitNoSf(#editorClass, \
+                          #labelName, \
+                          SFI_FQ_NAME(editorClass, labelName), \
+                          *this->labelName, \
+                          modelClass ::typeLookup.getType(propertyName) \
+                          __VA_OPT__(, __VA_ARGS__))
 
 /**
  * \brief An alternate version of \c SMART_FIELD_INIT for use when there is no \c modelClass (eg in a free-standing

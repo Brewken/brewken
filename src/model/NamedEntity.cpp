@@ -103,7 +103,7 @@ TypeLookup const NamedEntity::typeLookup {
       // everything else out.  The only exception is that, for enums, we have to pretend they are stored as int, because
       // that's what's going to come out of the Qt property system (and it would significantly complicate other bits of
       // the code to separately register every different enum that we use.)
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_display                             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_deleted                             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::display  , NamedEntity::m_display                             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::folder   , NamedEntity::m_folder                              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::key      , NamedEntity::m_key                                 ),

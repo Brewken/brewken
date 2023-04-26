@@ -474,19 +474,19 @@ namespace Measurement::Units {
    // Per https://en.wikipedia.org/wiki/Beer_measurement, Plato and Brix are "essentially ... the same ([both based on
    // mass fraction of sucrose) [and only] differ in their conversion from weight percentage to specific gravity in the
    // fifth and sixth decimal places"
-   Unit const sp_grav             {Measurement::UnitSystems::density_SpecificGravity,             QObject::tr("sg"),       [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const specificGravity             {Measurement::UnitSystems::density_SpecificGravity,             QObject::tr("sg"),       [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const plato               {Measurement::UnitSystems::density_Plato,
                                    QObject::tr("P"),
                                           [](double x){return x == 0.0 ? 0.0 : Algorithms::PlatoToSG_20C20C(x);},
                                           [](double y){return y == 0.0 ? 0.0 : Algorithms::SG_20C20C_toPlato(y);},
                                           1.0,
-                                          &sp_grav};
+                                          &specificGravity};
    Unit const brix                {Measurement::UnitSystems::density_Brix,
                                    QObject::tr("brix"),
                                    [](double x){return x == 0.0 ? 0.0 : Algorithms::BrixToSgAt20C(x);},
                                    [](double y){return y == 0.0 ? 0.0 : Algorithms::SgAt20CToBrix(y);},
                                    1.0,
-                                   &sp_grav};
+                                   &specificGravity};
    // == Diastatic power ==
    Unit const lintner             {Measurement::UnitSystems::diastaticPower_Lintner,                  QObject::tr("L"),    [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const wk                  {Measurement::UnitSystems::diastaticPower_WindischKolbach,          QObject::tr("WK"),   [](double x){return (x + 16) / 3.5;},  [](double y){return 3.5 * y - 16;},     1.0,  &lintner};

@@ -458,7 +458,7 @@ namespace Measurement::UnitSystems {
                                    Measurement::SystemOfMeasurement::Lovibond};
 
    UnitSystem const density_SpecificGravity{PhysicalQuantity::Density,
-                                            &Measurement::Units::sp_grav,
+                                            &Measurement::Units::specificGravity,
                                             "density_SpecificGravity",
                                             Measurement::SystemOfMeasurement::SpecificGravity};
 

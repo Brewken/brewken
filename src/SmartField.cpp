@@ -29,6 +29,7 @@
 #include <QWidget>
 
 #include "Localization.h"
+#include "Logging.h"
 #include "measurement/Measurement.h"
 #include "utils/OptionalHelpers.h"
 #include "utils/TypeLookup.h"
@@ -83,7 +84,7 @@ public:
       if (precision) {
          // It's a coding error to specify precision for a field that's not a (possibly optional) double (or a float,
          // but we don't use float).  However, we allow precision of 0 for a type that is stored as an int or unsigned
-         // int.
+         // int, because that's what we're going to set it to anyway.
          Q_ASSERT(this->m_typeInfo->typeIndex == typeid(double) ||
                   this->m_typeInfo->typeIndex == typeid(std::optional<double>) ||
                   (0 == *precision && this->m_typeInfo->typeIndex == typeid(int         )) ||
@@ -103,7 +104,6 @@ public:
          this->m_precision = 0;
       }
       this->m_maximalDisplayString = maximalDisplayString;
-      this->m_initialised          = true;
 
       if (std::holds_alternative<NonPhysicalQuantity>(*this->m_typeInfo->fieldType)) {
          // It's a coding error to have either a smartBuddyLabel or a fixedDisplayUnit for a NonPhysicalQuantity
@@ -123,6 +123,8 @@ public:
             this->m_currentPhysicalQuantity = std::get<Measurement::PhysicalQuantity>(*this->m_typeInfo->fieldType);
          }
       }
+
+      this->m_initialised = true;
 
       // Now let our subclass (SmartLineEdit, SmartDigitWidget, etc) do any of its own initialisation
       this->m_self.doPostInitWork();
@@ -238,7 +240,6 @@ template<> void SmartField::init<QLabel>(char const *                const   edi
 
    // It's a coding error to call this version of init with a PhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
-
    this->pimpl->init(editorName,
                      fieldName,
                      fieldFqName,
@@ -398,6 +399,10 @@ template void SmartField::setAmount(std::optional<unsigned int> amount);
 template void SmartField::setAmount(std::optional<double      > amount);
 
 template<typename T> void SmartField::setAmount(T amount) {
+   // Only need next bit for debugging!
+//   if (!this->pimpl->m_initialised) {
+//      qCritical().noquote() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "Stack trace:" << Logging::getStackTrace();
+//   }
    Q_ASSERT(this->pimpl->m_initialised);
    qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "amount =" << amount;
 

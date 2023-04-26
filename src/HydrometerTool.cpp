@@ -40,6 +40,9 @@ HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
    SMART_FIELD_INIT_FS(HydrometerTool, label_calibratedTemp, lineEdit_calibratedTemp, double, Measurement::PhysicalQuantity::Temperature, 1);
    SMART_FIELD_INIT_FS(HydrometerTool, label_inputTemp     , lineEdit_inputTemp     , double, Measurement::PhysicalQuantity::Temperature);
 
+   this->lineEdit_calibratedTemp->setAmount(15.55555556);
+///      lineEdit_outputSg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
+
    connect(this->pushButton_convert,   &QAbstractButton::clicked,                      this,                          &HydrometerTool::convert   );
    connect(this->label_inputTemp,      &SmartLabel::changedSystemOfMeasurementOrScale, this->lineEdit_inputTemp,      &SmartLineEdit::lineChanged);
    connect(this->label_inputSg,        &SmartLabel::changedSystemOfMeasurementOrScale, this->lineEdit_inputSg,        &SmartLineEdit::lineChanged);
@@ -82,7 +85,6 @@ void HydrometerTool::doLayout() {
         lineEdit_calibratedTemp->setMinimumSize(QSize(80, 0));
         lineEdit_calibratedTemp->setMaximumSize(QSize(80, 16777215));
         lineEdit_calibratedTemp->setObjectName(QStringLiteral("lineEdit_calibratedTemp"));
-        lineEdit_calibratedTemp->setAmount(15.55555556);
 
     label_outputSg = new SmartLabel(groupBox_inputSg);
         label_outputSg ->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -90,7 +92,6 @@ void HydrometerTool::doLayout() {
     lineEdit_outputSg = new SmartLineEdit(groupBox_inputSg);
         lineEdit_outputSg->setMinimumSize(QSize(80, 0));
         lineEdit_outputSg->setMaximumSize(QSize(80, 16777215));
-///      lineEdit_outputSg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
         lineEdit_outputSg->setReadOnly(true);
 

@@ -41,11 +41,12 @@ MashDesigner::MashDesigner(QWidget * parent) : QDialog     {parent},
                                                addedWater_l{0} {
    this->setupUi(this);
 
+   // .:TODO:. Would be good to make the label & field naming a bit more consistent in the .ui file
+   SMART_FIELD_INIT_FS(MashDesigner, label_targetTemp, lineEdit_temp, double, Measurement::PhysicalQuantity::Temperature, 1); // Target temp.
+   SMART_FIELD_INIT_FS(MashDesigner, label_stepTime,   lineEdit_time, double, Measurement::PhysicalQuantity::Time,        0); // Time
+
    this->label_zeroVol ->setText(Measurement::displayAmount(Measurement::Amount{0, Measurement::Units::liters}));
    this->label_zeroWort->setText(Measurement::displayAmount(Measurement::Amount{0, Measurement::Units::liters}));
-
-   SMART_FIELD_INIT_FS(MashDesigner, label_temp,     lineEdit_temp, double, Measurement::PhysicalQuantity::Temperature, 1); // Target temp.
-   SMART_FIELD_INIT_FS(MashDesigner, label_stepTime, lineEdit_time, double, Measurement::PhysicalQuantity::Time,        0); // Time
 
    // Update temp slider when we move amount slider.
    connect(horizontalSlider_amount, &QAbstractSlider::sliderMoved, this, &MashDesigner::updateTempSlider);
