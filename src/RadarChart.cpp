@@ -22,11 +22,19 @@
 // C++20 introduces std::numbers::pi, which has better cross-platform support than the M_PI constant in cmath.  However,
 // older versions of GCC (eg as shipped with Ubuntu 20.04 LTS) do not ship with the new <numbers> header.
 //
-#if defined(__GNUC__) && (__GNUC__ < 10)
+#if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
+
 // I hope this is allowed.  We'll be able to get rid of it once we stop needing to support old versions of GCC
-constexpr double std::numbers::pi = M_PI;
+namespace std {
+   namespace numbers {
+      constexpr double pi = M_PI;
+   }
+}
+
 #else
+
 #include <numbers> // For std::numbers::pi
+
 #endif
 
 #include <QPainter>
