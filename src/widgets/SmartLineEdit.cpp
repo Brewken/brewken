@@ -47,22 +47,6 @@ public:
       m_desiredWidthInPixels{0} {
       return;
    }
-///   impl(SmartLineEdit & self) :
-///      m_self                {self},
-///      m_initialised         {false},
-///      m_editorName          {"Uninitialised m_editorName!"     },
-///      m_lineEditName        {"Uninitialised m_lineEditName!"   },
-///      m_lineEditlFqName     {"Uninitialised m_lineEditlFqName!"},
-///      m_typeInfo            {nullptr},
-///      m_fixedDisplayUnit    {nullptr},
-///      m_smartBuddyLabel     {nullptr},
-///      m_uiAmountWithUnits   {nullptr},
-///      m_precision           {3},
-///      m_maximalDisplayString{"100.000 srm"},
-///      m_desiredWidthInPixels{0} {
-///      return;
-///   }
-///
    ~impl() = default;
 
    void calculateDisplaySize(QString const & maximalDisplayString) {

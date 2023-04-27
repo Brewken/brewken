@@ -116,9 +116,6 @@
               <property name="toolTip">
                <string>Temperature of SG reading</string>
               </property>
-              <property name="editField" stdset="0">
-               <string notr="true">temperature</string>
-              </property>
              </widget>
             </item>
            </layout>
@@ -154,9 +151,6 @@
               </property>
               <property name="toolTip">
                <string>Temp to which the hydrometer is calibrated</string>
-              </property>
-              <property name="editField" stdset="0">
-               <string notr="true">calTemp</string>
               </property>
              </widget>
             </item>
@@ -254,9 +248,6 @@
               <property name="toolTip">
                <string>Plato (percent by mass of equivalent sucrose)</string>
               </property>
-              <property name="editField" stdset="0">
-               <string notr="true">plato</string>
-              </property>
               <property name="forcedSystemOfMeasurement" stdset="0">
                <string notr="true">Plato</string>
               </property>
@@ -331,9 +322,6 @@
           </property>
           <property name="toolTip">
            <string>Measured pre-boil volume</string>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">volume</string>
           </property>
          </widget>
         </item>
@@ -445,9 +433,6 @@
             <property name="readOnly">
              <bool>true</bool>
             </property>
-            <property name="editField" stdset="0">
-             <string notr="true">add</string>
-            </property>
            </widget>
           </item>
          </layout>
@@ -498,9 +483,6 @@
             </property>
             <property name="readOnly">
              <bool>true</bool>
-            </property>
-            <property name="editField" stdset="0">
-             <string notr="true">batchSize</string>
             </property>
            </widget>
           </item>
@@ -591,86 +573,4 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>label_temp</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_temp</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>30</x>
-     <y>86</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>101</x>
-     <y>85</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_calTemp</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_calTemp</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>55</x>
-     <y>121</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>126</x>
-     <y>121</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_batchSize</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_batchSize</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>411</x>
-     <y>101</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>537</x>
-     <y>101</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_add</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_add</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>411</x>
-     <y>73</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>537</x>
-     <y>73</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_volume</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_volume</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>174</x>
-     <y>155</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>268</x>
-     <y>155</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

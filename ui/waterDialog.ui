@@ -164,9 +164,6 @@
          <layout class="QGridLayout" name="gridLayout_ppm" rowstretch="0,0,0,0">
           <item row="0" column="3">
            <widget class="SmartDigitWidget" name="btDigit_na">
-            <property name="editField" stdset="0">
-             <string>nappm</string>
-            </property>
            </widget>
           </item>
           <item row="0" column="0">
@@ -178,9 +175,6 @@
           </item>
           <item row="2" column="1">
            <widget class="SmartDigitWidget" name="btDigit_so4">
-            <property name="editField" stdset="0">
-             <string>so4ppm</string>
-            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -192,23 +186,14 @@
           </item>
           <item row="0" column="1">
            <widget class="SmartDigitWidget" name="btDigit_ca">
-            <property name="editField" stdset="0">
-             <string>cappm</string>
-            </property>
            </widget>
           </item>
           <item row="3" column="1">
            <widget class="SmartDigitWidget" name="btDigit_ph">
-            <property name="editField" stdset="0">
-             <string>ph</string>
-            </property>
            </widget>
           </item>
           <item row="2" column="3">
            <widget class="SmartDigitWidget" name="btDigit_hco3">
-            <property name="editField" stdset="0">
-             <string>hco3ppm</string>
-            </property>
            </widget>
           </item>
           <item row="3" column="0">
@@ -241,16 +226,10 @@
           </item>
           <item row="1" column="1">
            <widget class="SmartDigitWidget" name="btDigit_mg">
-            <property name="editField" stdset="0">
-             <string>mgppm</string>
-            </property>
            </widget>
           </item>
           <item row="1" column="3">
            <widget class="SmartDigitWidget" name="btDigit_cl">
-            <property name="editField" stdset="0">
-             <string>clppm</string>
-            </property>
            </widget>
           </item>
           <item row="2" column="2">
@@ -287,9 +266,6 @@
           </item>
           <item row="0" column="1">
            <widget class="SmartDigitWidget" name="btDigit_totalcacl2">
-            <property name="editField" stdset="0">
-             <string>cacl</string>
-            </property>
            </widget>
           </item>
           <item row="0" column="2">
@@ -307,9 +283,6 @@
           </item>
           <item row="0" column="3">
            <widget class="SmartDigitWidget" name="btDigit_totalmgso4">
-            <property name="editField" stdset="0">
-             <string>mgso4</string>
-            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -327,9 +300,6 @@
           </item>
           <item row="1" column="1">
            <widget class="SmartDigitWidget" name="btDigit_totalcaco3">
-            <property name="editField" stdset="0">
-             <string>caco3</string>
-            </property>
            </widget>
           </item>
           <item row="1" column="2">
@@ -347,9 +317,6 @@
           </item>
           <item row="1" column="3">
            <widget class="SmartDigitWidget" name="btDigit_totalnacl">
-            <property name="editField" stdset="0">
-             <string>nacl</string>
-            </property>
            </widget>
           </item>
           <item row="2" column="0">
@@ -367,9 +334,6 @@
           </item>
           <item row="2" column="1">
            <widget class="SmartDigitWidget" name="btDigit_totalcaso4">
-            <property name="editField" stdset="0">
-             <string>caso4</string>
-            </property>
            </widget>
           </item>
           <item row="2" column="2">
@@ -387,9 +351,6 @@
           </item>
           <item row="2" column="3">
            <widget class="SmartDigitWidget" name="btDigit_totalnahco3">
-            <property name="editField" stdset="0">
-             <string>nahco3</string>
-            </property>
            </widget>
           </item>
          </layout>
@@ -560,102 +521,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_totalcacl2</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>btDigit_totalcacl2</receiver>
-   <slot>displayChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>433</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>160</x>
-     <y>433</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_totalcaco3</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>btDigit_totalcaco3</receiver>
-   <slot>displayChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>469</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>160</x>
-     <y>469</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_totalcaso4</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>btDigit_totalcaso4</receiver>
-   <slot>displayChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>506</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>160</x>
-     <y>506</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_totalmgso4</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>btDigit_totalmgso4</receiver>
-   <slot>displayChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>433</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>433</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_totalnacl</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>btDigit_totalnacl</receiver>
-   <slot>displayChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>469</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>469</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_totalnahco3</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>btDigit_totalnahco3</receiver>
-   <slot>displayChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>506</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>506</y>
     </hint>
    </hints>
   </connection>

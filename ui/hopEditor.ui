@@ -89,9 +89,6 @@
          <property name="toolTip">
           <string>Alpha acids as percent by mass</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">alpha_pct</string>
-         </property>
         </widget>
        </item>
        <item row="0" column="1">
@@ -191,9 +188,6 @@
          <property name="toolTip">
           <string>Amount in inventory</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">inventory</string>
-         </property>
         </widget>
        </item>
        <item row="3" column="0">
@@ -239,9 +233,6 @@
          </property>
          <property name="toolTip">
           <string>Year</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">year</string>
          </property>
         </widget>
        </item>
@@ -315,9 +306,6 @@
          <property name="toolTip">
           <string>Time</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">time_min</string>
-         </property>
         </widget>
        </item>
       </layout>
@@ -348,9 +336,6 @@
          <property name="toolTip">
           <string>Beta acids as percent by mass</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">beta_pct</string>
-         </property>
         </widget>
        </item>
        <item row="0" column="2">
@@ -373,9 +358,6 @@
          </property>
          <property name="toolTip">
           <string>Hop Stability/Storage index</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">hsi_pct</string>
          </property>
         </widget>
        </item>
@@ -406,9 +388,6 @@
          <property name="toolTip">
           <string>Humulene</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">humulene_pct</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="2">
@@ -437,9 +416,6 @@
          </property>
          <property name="toolTip">
           <string>Linalool</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">linalool_pct</string>
          </property>
         </widget>
        </item>
@@ -470,9 +446,6 @@
          <property name="toolTip">
           <string>Caryophyllene %</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">caryophyllene_pct</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="2">
@@ -501,9 +474,6 @@
          </property>
          <property name="toolTip">
           <string>Limonene</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">limonene_pct</string>
          </property>
         </widget>
        </item>
@@ -534,9 +504,6 @@
          <property name="toolTip">
           <string>Cohumulone</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">cohumulone_pct</string>
-         </property>
         </widget>
        </item>
        <item row="3" column="2">
@@ -565,9 +532,6 @@
          </property>
          <property name="toolTip">
           <string>Nerol</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">nerol_pct</string>
          </property>
         </widget>
        </item>
@@ -598,9 +562,6 @@
          <property name="toolTip">
           <string>Myrcene</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">myrcene_pct</string>
-         </property>
         </widget>
        </item>
        <item row="4" column="2">
@@ -629,9 +590,6 @@
          </property>
          <property name="toolTip">
           <string>Pinene</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">pinene_pct</string>
          </property>
         </widget>
        </item>
@@ -662,9 +620,6 @@
          <property name="toolTip">
           <string>Farnesene</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">farnesene_pct</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="2">
@@ -693,9 +648,6 @@
          </property>
          <property name="toolTip">
           <string>Polyphenols</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">polyphenols_pct</string>
          </property>
         </widget>
        </item>
@@ -726,9 +678,6 @@
          <property name="toolTip">
           <string>Geraniol</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">geraniol_pct</string>
-         </property>
         </widget>
        </item>
        <item row="6" column="2">
@@ -757,9 +706,6 @@
          </property>
          <property name="toolTip">
           <string>Xanthohumol</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">xanthohumol_pct</string>
          </property>
         </widget>
        </item>
@@ -790,9 +736,6 @@
          <property name="toolTip">
           <string>β-pinene</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">b_pinene_pct</string>
-         </property>
         </widget>
        </item>
        <item row="7" column="2">
@@ -821,9 +764,6 @@
          </property>
          <property name="toolTip">
           <string>Total Oil ml/100g</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">total_oil_ml_per_100g</string>
          </property>
         </widget>
        </item>

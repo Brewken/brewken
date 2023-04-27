@@ -61,9 +61,6 @@
           <property name="toolTip">
            <string>Volume of wort</string>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">wortVol</string>
-          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -95,9 +92,6 @@
           </property>
           <property name="toolTip">
            <string>Starting gravity of the wort</string>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">og</string>
           </property>
          </widget>
         </item>
@@ -199,9 +193,6 @@
           </property>
           <property name="currentSectionIndex">
            <number>0</number>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">productionDate</string>
           </property>
          </widget>
         </item>
@@ -402,9 +393,6 @@
           <property name="readOnly">
            <bool>true</bool>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">yeast</string>
-          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -433,9 +421,6 @@
           </property>
           <property name="readOnly">
            <bool>true</bool>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">starterVol</string>
           </property>
          </widget>
         </item>
@@ -482,70 +467,4 @@
   <tabstop>lineEdit_starterVol</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>label_vol</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_vol</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>178</x>
-     <y>44</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>44</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_og</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_OG</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>203</x>
-     <y>70</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>70</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_starterVol</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_starterVol</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>464</x>
-     <y>122</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>581</x>
-     <y>122</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_yeast</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_yeast</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>478</x>
-     <y>96</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>581</x>
-     <y>96</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

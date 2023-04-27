@@ -128,9 +128,6 @@
          <property name="toolTip">
           <string>Name</string>
          </property>
-         <property name="editField" stdset="0">
-          <string>name</string>
-         </property>
         </widget>
        </item>
        <item row="0" column="0">
@@ -145,16 +142,10 @@
        </item>
        <item row="2" column="1">
         <widget class="SmartLineEdit" name="lineEdit_boilSize">
-         <property name="editField" stdset="0">
-          <string>boilSize_l</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="SmartLineEdit" name="lineEdit_batchSize">
-         <property name="editField" stdset="0">
-          <string>batchSize_l</string>
-         </property>
         </widget>
        </item>
        <item row="4" column="1">
@@ -167,9 +158,6 @@
          </property>
          <property name="toolTip">
           <string>Time</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">boilTime_min</string>
          </property>
         </widget>
        </item>
@@ -228,9 +216,6 @@
        </item>
        <item row="4" column="3">
         <widget class="SmartLineEdit" name="lineEdit_evaporationRate">
-         <property name="editField" stdset="0">
-          <string>evapRate_lHr</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="2">
@@ -248,9 +233,6 @@
        </item>
        <item row="1" column="3">
         <widget class="SmartLineEdit" name="lineEdit_topUpWater">
-         <property name="editField" stdset="0">
-          <string>topUpWater_l</string>
-         </property>
         </widget>
        </item>
        <item row="0" column="2">
@@ -268,9 +250,6 @@
        </item>
        <item row="0" column="3">
         <widget class="SmartLineEdit" name="lineEdit_topUpKettle">
-         <property name="editField" stdset="0">
-          <string>topUpKettle_l</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="0">
@@ -288,9 +267,6 @@
        </item>
        <item row="5" column="1">
         <widget class="SmartLineEdit" name="lineEdit_trubChillerLoss">
-         <property name="editField" stdset="0">
-          <string>trubChillerLoss_l</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="2">
@@ -308,9 +284,6 @@
        </item>
        <item row="5" column="3">
         <widget class="SmartLineEdit" name="lineEdit_lauterDeadspace">
-         <property name="editField" stdset="0">
-          <string>lauterDeadspace_l</string>
-         </property>
         </widget>
        </item>
       </layout>
@@ -349,9 +322,6 @@
        </item>
        <item row="7" column="1">
         <widget class="SmartLineEdit" name="lineEdit_grainAbsorption">
-         <property name="editField" stdset="0">
-          <string>grainAbsorption_LKg</string>
-         </property>
         </widget>
        </item>
        <item row="6" column="0">
@@ -404,16 +374,10 @@
          <property name="toolTip">
           <string>Volume of mash tun</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">tunVolume_l</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="1">
         <widget class="SmartLineEdit" name="lineEdit_hopUtilization">
-         <property name="editField" stdset="0">
-          <string>hopUtilization_pct</string>
-         </property>
         </widget>
        </item>
        <item row="7" column="3">
@@ -431,9 +395,6 @@
        </item>
        <item row="6" column="1">
         <widget class="SmartLineEdit" name="lineEdit_boilingPoint">
-         <property name="editField" stdset="0">
-          <string>boilingPoint_c</string>
-         </property>
         </widget>
        </item>
        <item row="8" column="1">
@@ -451,9 +412,6 @@
        </item>
        <item row="3" column="3">
         <widget class="SmartLineEdit" name="lineEdit_tunWeight">
-         <property name="editField" stdset="0">
-          <string>tunWeight_kg</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="2">
@@ -465,9 +423,6 @@
        </item>
        <item row="5" column="3">
         <widget class="SmartLineEdit" name="lineEdit_tunSpecificHeat">
-         <property name="editField" stdset="0">
-          <string>tunSpecificHeat_calGC</string>
-         </property>
         </widget>
        </item>
       </layout>
@@ -609,182 +564,4 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_tunWeight</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_tunWeight</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>101</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>269</x>
-     <y>101</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_boilTime</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_boilTime</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>68</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>258</x>
-     <y>68</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_batchSize</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_batchSize</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>121</x>
-     <y>101</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>101</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_boilSize</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_boilSize</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>121</x>
-     <y>134</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>134</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_evaporationRate</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_evaporationRate</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>101</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>258</x>
-     <y>101</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_topUpKettle</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_topUpKettle</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>134</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>258</x>
-     <y>134</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_topUpWater</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_topUpWater</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>167</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>258</x>
-     <y>167</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_boilingPoint</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_boilingPoint</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>233</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>258</x>
-     <y>233</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_tunVolume</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_tunWeight</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>68</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>269</x>
-     <y>101</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_trubChillerLoss</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_trubChillerLoss</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>192</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>269</x>
-     <y>192</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_lauterDeadspace</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_lauterDeadspace</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>225</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>269</x>
-     <y>225</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

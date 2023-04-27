@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * HopDialog.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * HopDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *

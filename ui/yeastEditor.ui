@@ -375,9 +375,6 @@
          <property name="toolTip">
           <string>Min temp</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">minTemperature_c</string>
-         </property>
         </widget>
        </item>
        <item row="3" column="3">
@@ -396,9 +393,6 @@
          </property>
          <property name="toolTip">
           <string>Apparent attenuation as percentage of OG points</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">attenuation_pct</string>
          </property>
         </widget>
        </item>
@@ -470,9 +464,6 @@
          </property>
          <property name="toolTip">
           <string>Max temp</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">maxTemperature_c</string>
          </property>
         </widget>
        </item>
@@ -661,38 +652,4 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_minTemperature</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_minTemperature</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>46</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>143</x>
-     <y>251</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_maxTemperature</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_maxTemperature</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>46</x>
-     <y>275</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>143</x>
-     <y>275</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

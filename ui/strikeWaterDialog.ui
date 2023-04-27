@@ -58,9 +58,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">grainTempVal</string>
-          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -83,9 +80,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">targetMashVal</string>
           </property>
          </widget>
         </item>
@@ -113,9 +107,6 @@
           <property name="decimals" stdset="0">
            <number>1</number>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">grainWeightInitVal</string>
-          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -138,9 +129,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">waterVolumeVal</string>
           </property>
          </widget>
         </item>
@@ -180,9 +168,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">mashVolVal</string>
-          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -205,9 +190,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">grainWeight</string>
           </property>
          </widget>
         </item>
@@ -232,9 +214,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">actualMashVal</string>
-          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -258,9 +237,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">targetMashInfVal</string>
-          </property>
          </widget>
         </item>
         <item row="4" column="0">
@@ -283,9 +259,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">infusionWaterVal</string>
           </property>
          </widget>
         </item>
@@ -366,9 +339,6 @@
          <property name="readOnly">
           <bool>true</bool>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">initialResultTxt</string>
-         </property>
         </widget>
        </item>
       </layout>
@@ -410,9 +380,6 @@
          </property>
          <property name="readOnly">
           <bool>true</bool>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">mashResultTxt</string>
          </property>
         </widget>
        </item>

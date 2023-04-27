@@ -138,9 +138,6 @@
          <property name="toolTip">
           <string>Style letter</string>
          </property>
-         <property name="editField" stdset="0">
-          <string>styleLetter</string>
-         </property>
         </widget>
        </item>
        <item row="6" column="3">
@@ -165,9 +162,6 @@
          </property>
          <property name="toolTip">
           <string>Style guide</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string>styleGuide</string>
          </property>
         </widget>
        </item>
@@ -194,9 +188,6 @@
          <property name="toolTip">
           <string>Category number</string>
          </property>
-         <property name="editField" stdset="0">
-          <string>categoryNumber</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="3">
@@ -221,9 +212,6 @@
          </property>
          <property name="toolTip">
           <string>Category</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string>category</string>
          </property>
         </widget>
        </item>
@@ -378,9 +366,6 @@
          <property name="toolTip">
           <string>Name</string>
          </property>
-         <property name="editField" stdset="0">
-          <string>name</string>
-         </property>
         </widget>
        </item>
        <item row="6" column="0" colspan="2">
@@ -436,9 +421,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">ibuMax</string>
-         </property>
         </widget>
        </item>
        <item row="4" column="1">
@@ -455,9 +437,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">colorMin_srm</string>
-         </property>
         </widget>
        </item>
        <item row="6" column="2">
@@ -473,9 +452,6 @@
            <width>100</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">abvMax_pct</string>
          </property>
         </widget>
        </item>
@@ -500,9 +476,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">carbMin_vol</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -512,9 +485,6 @@
          </property>
          <property name="text">
           <string>FG</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">fg</string>
          </property>
         </widget>
        </item>
@@ -539,9 +509,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">ogMin</string>
-         </property>
         </widget>
        </item>
        <item row="3" column="1">
@@ -557,9 +524,6 @@
            <width>100</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">ibuMin</string>
          </property>
         </widget>
        </item>
@@ -577,9 +541,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">ogMax</string>
-         </property>
         </widget>
        </item>
        <item row="4" column="2">
@@ -596,9 +557,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">colorMax_srm</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="1">
@@ -614,9 +572,6 @@
            <width>100</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">fgMin</string>
          </property>
         </widget>
        </item>
@@ -641,9 +596,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">fgMax</string>
-         </property>
         </widget>
        </item>
        <item row="4" column="0">
@@ -653,9 +605,6 @@
          </property>
          <property name="text">
           <string>Color (SRM)</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">color_srm</string>
          </property>
         </widget>
        </item>
@@ -673,9 +622,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">abvMin_pct</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -685,9 +631,6 @@
          </property>
          <property name="text">
           <string>OG</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">og</string>
          </property>
         </widget>
        </item>
@@ -704,9 +647,6 @@
            <width>100</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">carbMax_vol</string>
          </property>
         </widget>
        </item>
@@ -932,102 +872,4 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_og</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_ogMin</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>284</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>128</x>
-     <y>284</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_og</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_ogMax</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>284</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>232</x>
-     <y>284</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_fg</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_fgMin</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>310</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>128</x>
-     <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_fg</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_fgMax</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>310</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>232</x>
-     <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_color</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_colorMin</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>362</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>128</x>
-     <y>362</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_color</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_colorMax</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>362</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>232</x>
-     <y>362</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

@@ -56,9 +56,6 @@
          <property name="toolTip">
           <string>Time</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">time</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -276,9 +273,6 @@
          </property>
          <property name="toolTip">
           <string>Amount in inventory</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">inventory</string>
          </property>
         </widget>
        </item>

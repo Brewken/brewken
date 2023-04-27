@@ -89,6 +89,14 @@ bool FermentableSortFilterProxyModel::lessThan(QModelIndex const & left,
             }
             return leftAmount < rightAmount;
          }
+
+      case FermentableTableModel::ColumnIndex::Name     :
+      case FermentableTableModel::ColumnIndex::Type     :
+      case FermentableTableModel::ColumnIndex::IsWeight :
+      case FermentableTableModel::ColumnIndex::IsMashed :
+      case FermentableTableModel::ColumnIndex::AfterBoil:
+         // Nothing to do for these cases
+         break;
    }
 
    return leftFermentable.toString() < rightFermentable.toString();

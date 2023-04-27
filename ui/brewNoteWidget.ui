@@ -125,9 +125,6 @@
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">sg</string>
-               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -168,9 +165,6 @@
                </property>
                <property name="toolTip">
                 <string>Volume of wort collected</string>
-               </property>
-               <property name="editField" stdset="0">
-                <string notr="true">volumeIntoBK_l</string>
                </property>
               </widget>
              </item>
@@ -213,9 +207,6 @@
                <property name="toolTip">
                 <string>Temperature of strike water before dough in</string>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">strikeTemp_c</string>
-               </property>
               </widget>
              </item>
              <item row="3" column="0">
@@ -256,9 +247,6 @@
                </property>
                <property name="toolTip">
                 <string>Temperature of mash before mash out</string>
-               </property>
-               <property name="editField" stdset="0">
-                <string notr="true">mashFinTemp_c</string>
                </property>
               </widget>
              </item>
@@ -319,9 +307,6 @@
                <property name="toolTip">
                 <string>Post boil gravity</string>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">og</string>
-               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -369,9 +354,6 @@
                <property name="toolTip">
                 <string>Volume of wort in BK after boil</string>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">postBoilVolume_l</string>
-               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -416,9 +398,6 @@
                  <height>16777215</height>
                 </size>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">volumeIntoFerm_l</string>
-               </property>
               </widget>
              </item>
              <item row="3" column="0">
@@ -462,9 +441,6 @@
                </property>
                <property name="toolTip">
                 <string>Temperature of wort when yeast is pitched</string>
-               </property>
-               <property name="editField" stdset="0">
-                <string notr="true">pitchTemp_c</string>
                </property>
               </widget>
              </item>
@@ -522,9 +498,6 @@
                <property name="toolTip">
                 <string>Final gravity</string>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">fg</string>
-               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -563,9 +536,6 @@
                <property name="toolTip">
                 <string>Volume of beer into serving keg/bottles</string>
                </property>
-               <property name="editField" stdset="0">
-                <string notr="true">finalVolume_l</string>
-               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -595,9 +565,6 @@
                </property>
                <property name="calendarPopup">
                 <bool>true</bool>
-               </property>
-               <property name="editField" stdset="0">
-                <string notr="true">fermentDate</string>
                </property>
               </widget>
              </item>
@@ -639,9 +606,6 @@
                </property>
                <property name="text">
                 <string>Projected OG</string>
-               </property>
-               <property name="editField" stdset="0">
-                <string notr="true">projOg</string>
                </property>
                <property name="configSection" stdset="0">
                 <string notr="true">page_preboil</string>
@@ -806,168 +770,6 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_Sg</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_Sg</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>131</x>
-     <y>55</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_volIntoBk</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_volIntoBk</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>81</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>131</x>
-     <y>81</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_strikeTemp</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_strikeTemp</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>48</x>
-     <y>107</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>131</x>
-     <y>107</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_mashFinTemp</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_mashFinTemp</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>51</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>131</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_Og</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_Og</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>125</x>
-     <y>81</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>81</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_postBoilVol</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_postBoilVol</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>92</x>
-     <y>107</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>107</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_volIntoFerm</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_volIntoFerm</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>76</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_pitchTemp</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_pitchTemp</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>105</x>
-     <y>159</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>159</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_Fg</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_Fg</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>50</x>
-     <y>107</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>111</x>
-     <y>107</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_finalVolume</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_finalVolume</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>38</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>111</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
  <designerdata>
   <property name="gridDeltaX">
    <number>10</number>

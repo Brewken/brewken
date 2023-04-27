@@ -166,9 +166,6 @@
          <property name="toolTip">
           <string>Name</string>
          </property>
-         <property name="editField" stdset="0">
-          <string>name</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -243,9 +240,6 @@
          <property name="toolTip">
           <string>Amount in inventory</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">inventory</string>
-         </property>
         </widget>
        </item>
        <item row="3" column="0">
@@ -281,9 +275,6 @@
          <property name="toolTip">
           <string>Lovibond rating</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">color_srm</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="0">
@@ -316,9 +307,6 @@
          <property name="toolTip">
           <string>Yield as compared to glucose</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">yield_pct</string>
-         </property>
         </widget>
        </item>
       </layout>
@@ -344,9 +332,6 @@
          </property>
          <property name="toolTip">
           <string>Moisture percentage by mass</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">moisture_pct</string>
          </property>
         </widget>
        </item>
@@ -377,9 +362,6 @@
          <property name="toolTip">
           <string>Bitterness of pre-hopped extracts</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">ibuGalPerLb</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -408,9 +390,6 @@
          </property>
          <property name="toolTip">
           <string>Origin</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string>origin</string>
          </property>
         </widget>
        </item>
@@ -464,9 +443,6 @@
          <property name="toolTip">
           <string>Diastatic power</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">diastaticPower_lintner</string>
-         </property>
         </widget>
        </item>
        <item row="2" column="3">
@@ -509,9 +485,6 @@
          <property name="toolTip">
           <string>Supplier</string>
          </property>
-         <property name="editField" stdset="0">
-          <string>supplier</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="4">
@@ -530,9 +503,6 @@
          </property>
          <property name="toolTip">
           <string>Maximum recommended percentage of total grist</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">maxInBatch_pct</string>
          </property>
         </widget>
        </item>
@@ -566,9 +536,6 @@
          <property name="toolTip">
           <string>Protein percentage by mass</string>
          </property>
-         <property name="editField" stdset="0">
-          <string notr="true">protein_pct</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="3">
@@ -597,9 +564,6 @@
          </property>
          <property name="toolTip">
           <string>Yield difference between coarse and fine grind</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">coarseFineDiff_pct</string>
          </property>
         </widget>
        </item>
@@ -745,70 +709,4 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_inventory</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_inventory</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>66</x>
-     <y>220</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>177</x>
-     <y>220</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_color</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_color</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>67</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>169</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_diastaticPower</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_diastaticPower</receiver>
-   <slot>cut()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>301</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>393</x>
-     <y>49</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_diastaticPower</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_diastaticPower</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>346</x>
-     <y>52</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>411</x>
-     <y>48</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

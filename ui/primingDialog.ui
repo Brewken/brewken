@@ -55,9 +55,6 @@
           <property name="toolTip">
            <string>Amount of beer to prime</string>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">beerVol</string>
-          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -86,9 +83,6 @@
           </property>
           <property name="toolTip">
            <string>Temp of the beer</string>
-          </property>
-          <property name="editField" stdset="0">
-           <string notr="true">beerTemp</string>
           </property>
          </widget>
         </item>
@@ -211,9 +205,6 @@
           <property name="readOnly">
            <bool>true</bool>
           </property>
-          <property name="editField" stdset="0">
-           <string notr="true">primeMass</string>
-          </property>
          </widget>
         </item>
        </layout>
@@ -285,54 +276,4 @@
   <tabstop>pushButton_calculate</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>label_beerVol</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_beerVol</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>68</x>
-     <y>44</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>169</x>
-     <y>44</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_temp</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_temp</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>80</x>
-     <y>70</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>169</x>
-     <y>70</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_output</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_output</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>44</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>349</x>
-     <y>44</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

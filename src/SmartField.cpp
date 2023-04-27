@@ -232,7 +232,7 @@ template<> void SmartField::init<SmartLabel>(char const *                const  
 template<> void SmartField::init<QLabel>(char const *                const   editorName,
                                          char const *                const   fieldName,
                                          char const *                const   fieldFqName,
-                                         QLabel                            & regularBuddyLabel,
+                                         [[maybe_unused]] QLabel           & regularBuddyLabel,
                                          TypeInfo                    const & typeInfo,
                                          std::optional<unsigned int> const   precision,
                                          QString                     const & maximalDisplayString) {
@@ -254,7 +254,7 @@ template<> void SmartField::init<QLabel>(char const *                const   edi
 void SmartField::initFixed(char const *                const   editorName,
                            char const *                const   fieldName,
                            char const *                const   fieldFqName,
-                           QLabel                            & buddyLabel,
+                           [[maybe_unused]] QLabel           & buddyLabel,
                            TypeInfo                    const & typeInfo,
                            Measurement::Unit           const & fixedDisplayUnit,
                            std::optional<unsigned int> const   precision,

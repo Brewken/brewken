@@ -402,9 +402,6 @@
                       <property name="readOnly">
                        <bool>true</bool>
                       </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">boilGrav</string>
-                      </property>
                      </widget>
                     </item>
                     <item row="7" column="0">
@@ -468,9 +465,6 @@
                       <property name="alignment">
                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                       </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">boilTime_min</string>
-                      </property>
                      </widget>
                     </item>
                     <item row="8" column="0">
@@ -514,9 +508,6 @@
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                      </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">efficiency_pct</string>
                       </property>
                      </widget>
                     </item>
@@ -651,9 +642,6 @@
                       <property name="alignment">
                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                       </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">batchSize_l</string>
-                      </property>
                      </widget>
                     </item>
                     <item row="6" column="0">
@@ -758,9 +746,6 @@
                       <property name="alignment">
                        <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                       </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">boilSize_l</string>
-                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -837,9 +822,6 @@
                       <property name="text">
                        <string>Color</string>
                       </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">color_srm</string>
-                      </property>
                      </widget>
                     </item>
                     <item row="3" column="0">
@@ -879,9 +861,6 @@
                       <property name="text">
                        <string>OG</string>
                       </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">og</string>
-                      </property>
                      </widget>
                     </item>
                     <item row="1" column="0">
@@ -891,9 +870,6 @@
                       </property>
                       <property name="text">
                        <string>FG</string>
-                      </property>
-                      <property name="editField" stdset="0">
-                       <string notr="true">fg</string>
                       </property>
                      </widget>
                     </item>

@@ -81,37 +81,6 @@ namespace Measurement {
                          std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
                          std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 
-///   /*!
-///    * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.
-///    *
-///    * \param namedEntity Named Entity of which we want to display a property
-///    * \param guiObject the GUI object doing the display, used to access configured unit system & scale
-///    * \param propertyName the \c QObject::property of \c namedEntity that returns the amount we wish to display
-///    * \param units which unit system it is in
-///    * \param precision how many decimal places to use, defaulting to 3
-///    */
-///   QString displayAmount(NamedEntity * namedEntity,
-///                         QObject * guiObject,
-///                         BtStringConst const & propertyName,
-///                         Measurement::Unit const & units,
-///                         int precision = 3);
-
-///   /*!
-///    * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.
-///    *
-///    *        .:TBD:. Need to check we do the right thing for measurements that can be either mass or volume (eg Misc,
-///    *        Fermentable, etc)
-///    *
-///    * \param amount the amount to display
-///    * \param section the name of the object to reference to get unit system & scales from the config file
-///    * \param propertyName the property name to complete the lookup for units & scales
-///    * \param precision how many decimal places to use, defaulting to 3
-///    */
-///   QString displayAmount(Measurement::Amount const & amount,
-///                         BtStringConst const & section,
-///                         BtStringConst const & propertyName,
-///                         int precision = 3);
-
    /*!
     * \brief Converts a measurement (aka amount) to its numerical equivalent in the specified or default units.
     *
@@ -123,51 +92,6 @@ namespace Measurement {
    double amountDisplay(Measurement::Amount const & amount,
                         std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
-
-///   /*!
-///    * \brief Converts a measurement (aka amount) to its numerical equivalent in the specified or default units.
-///    *
-///    * \param namedEntity Named Entity of which we want to display a property
-///    * \param guiObject the GUI object doing the display, used to access configured unit system & scale
-///    * \param propertyName the \c QObject::property of \c namedEntity that returns the amount we wish to display
-///    * \param units the units that the measurement (amount) is in
-///    */
-///   double amountDisplay(NamedEntity* namedEntity,
-///                        QObject* guiObject,
-///                        BtStringConst const & propertyName,
-///                        Unit const * units = nullptr);
-///
-///   /**
-///    * \brief Converts a range (ie min/max pair) of measurements (aka amounts) to its numerical equivalent in whatever
-///    *        units are configured for this property.
-///    *
-///    * \param namedEntity Named Entity of which we want to display a property
-///    * \param guiObject the GUI object doing the display, used to access configured unit system & scale
-///    * \param propertyNameMin
-///    * \param propertyNameMax
-///    * \param units the units that the measurement (amount) is in
-///    */
-///   QPair<double,double> displayRange(NamedEntity* namedEntity,
-///                                     QObject *guiObject,
-///                                     BtStringConst const & propertyNameMin,
-///                                     BtStringConst const & propertyNameMax,
-///                                     Unit const * units = nullptr);
-///
-///   /**
-///    * \brief Converts a range (ie min/max pair) of measurements (aka amounts) to its numerical equivalent in whatever
-///    *        units are configured for this property.
-///    *
-///    * \param guiObject the GUI object doing the display, used to access configured unit system & scale
-///    * \param propertyName
-///    * \param min
-///    * \param max
-///    * \param units the units that the measurement (amount) is in
-///    */
-///   QPair<double,double> displayRange(QObject *guiObject,
-///                                     BtStringConst const & propertyName,
-///                                     double min,
-///                                     double max,
-///                                     Unit const & units);
 
    //! \brief Displays thickness in appropriate units from standard thickness in L/kg.
    QString displayThickness(double thick_lkg, bool showUnits = true);
@@ -190,38 +114,6 @@ namespace Measurement {
                                    Measurement::PhysicalQuantity const physicalQuantity,
                                    std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
                                    std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
-
-
-///   /**
-///    * \brief .:TODO:. Need some additional thought on how \c getForcedSystemOfMeasurementForField and
-///    *        \c getForcedRelativeScaleForField should work for fields that can be either mass or volume.
-///    */
-///   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurementForField(QString const & field,
-///                                                                                        QString const & section);
-///   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScaleForField(QString const & field,
-///                                                                                        QString const & section);
-///
-///   void setForcedSystemOfMeasurementForField(QString const & field,
-///                                             QString const & section,
-///                                             std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement);
-///
-///   void setForcedRelativeScaleForField(QString const & field,
-///                                       QString const & section,
-///                                       std::optional<Measurement::UnitSystem::RelativeScale> forcedScale);
-///
-///   /**
-///    * \brief Returns the \c SystemOfMeasurement that should be used to display this field, based on the forced
-///    *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-///    *        \c UnitSystem for the specified \c PhysicalQuantity.
-///    */
-///   Measurement::SystemOfMeasurement getSystemOfMeasurementForField(Measurement::PhysicalQuantities physicalQuantities);
-///
-///   /**
-///    * \brief Returns the \c UnitSystem that should be used to display this field, based on the forced
-///    *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-///    *        \c UnitSystem for the specified \c PhysicalQuantity.
-///    */
-///   Measurement::UnitSystem const & getUnitSystemForField(Measurement::PhysicalQuantity physicalQuantity);
 }
 
 #endif

@@ -80,6 +80,12 @@ bool HopSortFilterProxyModel::lessThan(QModelIndex const & left,
 
             return lUse < rUse;
          }
+
+      case HopTableModel::ColumnIndex::Name:
+      case HopTableModel::ColumnIndex::Form:
+      case HopTableModel::ColumnIndex::Use :
+         // Nothing to do for these cases
+         break;
    }
 
    return leftHop.toString() < rightHop.toString();
