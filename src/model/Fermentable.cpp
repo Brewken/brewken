@@ -43,8 +43,8 @@ std::array<Fermentable::Type, 8> const Fermentable::allTypes {
    Fermentable::Type::Other_Adjunct
 };
 
-// Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
-// for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+// Note that Fermentable::typeStringMapping and Fermentable::FormMapping are as defined by BeerJSON, but we also use
+// them for the DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Fermentable::typeStringMapping {
    {"dry extract", Fermentable::Type::Dry_Extract},
    {"extract",     Fermentable::Type::Extract},

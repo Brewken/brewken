@@ -123,6 +123,11 @@ public:
     */
    static EnumStringMapping const typeStringMapping;
 
+   /*!
+    * \brief Localised names of \c Fermentable::Type values suitable for displaying to the end user
+    */
+   static QMap<Fermentable::Type, QString> const typeDisplayNames;
+
    /**
     * \brief An additional classification of \c Fermentable introduced in BeerJSON
     *
@@ -155,11 +160,6 @@ public:
     *        BeerXML, etc.
     */
    static EnumStringMapping const grainGroupStringMapping;
-
-   /*!
-    * \brief Localised names of \c Fermentable::Type values suitable for displaying to the end user
-    */
-   static QMap<Fermentable::Type, QString> const typeDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more

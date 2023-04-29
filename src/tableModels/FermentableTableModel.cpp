@@ -89,9 +89,9 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
       {
          SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Name     , tr("Name"       ),           NonPhysicalQuantity::String    ),
          SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Type     , tr("Type"       ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Measurement::PhysicalQuantity::Mass      ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Amount Type"),           NonPhysicalQuantity::Bool      ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Inventory"  ), Measurement::PhysicalQuantity::Mass      ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Measurement::PhysicalQuantity::Mass      ), // .:TODO:. Mass or Volume
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Amount Type"),           NonPhysicalQuantity::Bool      ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Inventory"  ), Measurement::PhysicalQuantity::Mass      ), // .:TODO:. Mass or Volume
          SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsMashed , tr("Method"     ),           NonPhysicalQuantity::String    ),
          SMART_COLUMN_HEADER_DEFN(FermentableTableModel, AfterBoil, tr("Addition"   ),           NonPhysicalQuantity::String    ),
          SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Yield    , tr("Yield %"    ),           NonPhysicalQuantity::Percentage),

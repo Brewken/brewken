@@ -2704,11 +2704,11 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
    QString tmp;
    QList<QString> reagents;
 
-   for (int i = 0; i < hops.size(); ++i) {
-      if (firstWort && (hops[i]->use() == Hop::Use::First_Wort)) {
+   for (int ii = 0; ii < hops.size(); ++ii) {
+      if (firstWort && (hops[ii]->use() == Hop::Use::First_Wort)) {
          tmp = QString("%1 %2,")
-               .arg(Measurement::displayAmount(Measurement::Amount{hops[i]->amount_kg(), Measurement::Units::kilograms}))
-               .arg(hops[i]->name());
+               .arg(Measurement::displayAmount(Measurement::Amount{hops[ii]->amount_kg(), Measurement::Units::kilograms}))
+               .arg(hops[ii]->name());
          reagents.append(tmp);
       }
    }
@@ -2718,20 +2718,20 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
 QList<QString> Recipe::getReagents(QList< std::shared_ptr<MashStep> > msteps) {
    QList<QString> reagents;
 
-   for (int i = 0; i < msteps.size(); ++i) {
-      if (!msteps[i]->isInfusion()) {
+   for (int ii = 0; ii < msteps.size(); ++ii) {
+      if (!msteps[ii]->isInfusion()) {
          continue;
       }
 
       QString tmp;
-      if (i + 1 < msteps.size()) {
+      if (ii + 1 < msteps.size()) {
          tmp = tr("%1 water to %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters}))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius}));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c(), Measurement::Units::celsius}));
       } else {
          tmp = tr("%1 water to %2 ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseAmount_l(), Measurement::Units::liters}))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[i]->infuseTemp_c(), Measurement::Units::celsius}));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c(), Measurement::Units::celsius}));
       }
       reagents.append(tmp);
    }
@@ -2745,26 +2745,26 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
    QString tmp;
    QStringList reagents = QStringList();
 
-   for (int i = 0; i < salts.size(); ++i) {
-      Salt::WhenToAdd what = salts[i]->whenToAdd();
-      Measurement::Unit const & rightUnit = salts[i]->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters;
+   for (int ii = 0; ii < salts.size(); ++ii) {
+      Salt::WhenToAdd what = salts[ii]->whenToAdd();
+      Measurement::Unit const & rightUnit = salts[ii]->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters;
       if (what == wanted) {
          tmp = tr("%1 %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit}))
-               .arg(salts[i]->name());
+               .arg(Measurement::displayAmount(Measurement::Amount{salts[ii]->amount(), rightUnit}))
+               .arg(salts[ii]->name());
       } else if (what == Salt::WhenToAdd::EQUAL) {
          tmp = tr("%1 %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{salts[i]->amount(), rightUnit}))
-               .arg(salts[i]->name());
+               .arg(Measurement::displayAmount(Measurement::Amount{salts[ii]->amount(), rightUnit}))
+               .arg(salts[ii]->name());
       } else if (what == Salt::WhenToAdd::RATIO) {
          double ratio = 1.0;
          if (wanted == Salt::WhenToAdd::SPARGE) {
             ratio = mash()->totalSpargeAmount_l() / mash()->totalInfusionAmount_l();
          }
-         double amt = salts[i]->amount() * ratio;
+         double amt = salts[ii]->amount() * ratio;
          tmp = tr("%1 %2, ")
                .arg(Measurement::displayAmount(Measurement::Amount{amt, rightUnit}))
-               .arg(salts[i]->name());
+               .arg(salts[ii]->name());
       } else {
          continue;
       }
