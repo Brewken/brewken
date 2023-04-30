@@ -25,7 +25,7 @@
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
 #include "utils/OptionalHelpers.h"
-#include "SmartAmounts.h"
+#include "widgets/SmartAmounts.h"
 #include "widgets/UnitAndScalePopUpMenu.h"
 
 BtTableModelRecipeObserver::BtTableModelRecipeObserver(QTableView * parent,

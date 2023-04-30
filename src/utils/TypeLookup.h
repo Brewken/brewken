@@ -53,12 +53,16 @@
  *        (at the simple end of things!) is somewhat inspired by the examples at:
  *        https://www.boost.org/doc/libs/1_81_0/libs/type_traits/doc/html/boost_typetraits/background.html
  *
- *        Normally we shouldn't need to use these templates directly outside of the \c TypeLookup class because the
+ *        Mostly we shouldn't need to use these templates directly outside of the \c TypeLookup class because the
  *        \c PROPERTY_TYPE_LOOKUP_ENTRY macro below takes care of everything for constructor calls where you would
- *        otherwise need them.
+ *        otherwise need them.  However, they are sometimes useful for, eg, declaring templated functions where we need
+ *        different versions for optional and non-optional, such as \c SmartField::setAmount.
  */
 template <typename T> struct is_optional : public std::false_type{};
 template <typename T> struct is_optional< std::optional<T> > : public std::true_type{};
+
+template <typename T> struct is_not_optional : public std::true_type{};
+template <typename T> struct is_not_optional< std::optional<T> > : public std::false_type{};
 
 template <typename T> struct is_optional_enum : public std::false_type{};
 template <typename T> struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};
@@ -86,7 +90,9 @@ template <typename T> concept IsOptionalOther = !is_optional_enum<T>::value && i
  */
 struct TypeInfo {
    /**
-    * \brief \c std::type_index is essentially a wrapper around pointer to \c std::type_info.  It is guaranteed unique
+    * \brief This is the type ID of the \b underlying type, eg should be the same for \c int and \c std::optional<int>.
+    *
+    *        \c std::type_index is essentially a wrapper around pointer to \c std::type_info.  It is guaranteed unique
     *        for each different type and guaranteed to compare equal for two properties of the same type.  (This is
     *        better than using raw pointers as they are not guaranteed to be identical for two properties of the same
     *        type.)
@@ -139,12 +145,14 @@ struct TypeInfo {
 
    /**
     * \brief Factory functions to construct a \c TypeInfo for a given type.
+    *
+    *        Note that if \c T is \c std::optional<U> then U can be extracted by \c typename \c T::value_type.
     */
    template<typename T>        const static TypeInfo construct(std::optional<BtFieldType> fieldType);  // No general case, only specialisations
    template<IsRequiredEnum  T> const static TypeInfo construct(std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T), Classification::RequiredEnum , fieldType}; }
    template<IsRequiredOther T> const static TypeInfo construct(std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T), Classification::RequiredOther, fieldType}; }
-   template<IsOptionalEnum  T> const static TypeInfo construct(std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T), Classification::OptionalEnum , fieldType}; }
-   template<IsOptionalOther T> const static TypeInfo construct(std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T), Classification::OptionalOther, fieldType}; }
+   template<IsOptionalEnum  T> const static TypeInfo construct(std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalEnum , fieldType}; }
+   template<IsOptionalOther T> const static TypeInfo construct(std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalOther, fieldType}; }
 
 };
 
@@ -230,6 +238,19 @@ S & operator<<(S & stream, TypeInfo const & typeInfo) {
    stream <<
       "TypeInfo " << (typeInfo.isOptional() ? "" : "non-") << "optional \"" << typeInfo.typeIndex.name() <<
       "\" fieldType:" << typeInfo.fieldType;
+   return stream;
+}
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, TypeInfo const * typeInfo) {
+   if (!typeInfo) {
+      stream << "nullptr";
+   } else {
+      stream << *typeInfo;
+   }
    return stream;
 }
 

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SmartField.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartField.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "SmartField.h"
+#include "widgets/SmartField.h"
 
 #include <tuple>
 
@@ -34,6 +34,21 @@
 #include "utils/OptionalHelpers.h"
 #include "utils/TypeLookup.h"
 #include "widgets/SmartLabel.h"
+
+namespace {
+   /**
+    * \return \c true if \c input is empty or blank (ie contains only whitespace), \c false otherwise
+    */
+   [[nodiscard]] bool isEmptyOrBlank(QString const & input) {
+      if (input.isEmpty()) {
+         return true;
+      }
+      if (input.trimmed().isEmpty()) {
+         return true;
+      }
+      return false;
+   }
+}
 
 // This private implementation class holds all private non-virtual members of SmartField
 class SmartField::impl {
@@ -370,15 +385,24 @@ SmartAmounts::ScaleInfo SmartField::getScaleInfo() const {
                                      ConvertToPhysicalQuantities(*this->pimpl->m_typeInfo->fieldType));
 }
 
-template<typename T>
-void SmartField::setAmount(std::optional<T> amount) {
+// Note that, because partial specialisation of _functions_ is not allowed, we actually have two overloads of setAmount
+// This shouldn't make any difference to callers.
+//
+// It looks a bit funky disabling this specialisation for a T that is optional, but the point is that we don't want the
+// compiler to ever create a std::optional<std::optional<T>> type.  (Eg, we don't want to write
+// `setAmount<std::optional<T>>(std::nullopt)` when we mean `setAmount<T>(std::optional<T>{std::nullopt})` (or actually
+// `setAmount<T>()`).
+//
+template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void SmartField::setAmount(std::optional<T> amount) {
    Q_ASSERT(this->pimpl->m_initialised);
 
    if (this->pimpl->m_typeInfo->typeIndex != typeid(T)) {
+      // This is a coding error
       qCritical() <<
          Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Trying to set wrong type; m_typeInfo=" <<
-         this->pimpl->m_typeInfo;
-   }
+         this->pimpl->m_typeInfo << ", typeid(T)=" << typeid(T).name();
+      Q_ASSERT(false);
+  }
 
    if (!amount) {
       this->setRawText("");
@@ -389,26 +413,16 @@ void SmartField::setAmount(std::optional<T> amount) {
    return;
 }
 
-//
-// Instantiate the above template function for the types that are going to use it
-// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
-// saves having to put a bunch of std::string stuff there.)
-//
-template void SmartField::setAmount(std::optional<int         > amount);
-template void SmartField::setAmount(std::optional<unsigned int> amount);
-template void SmartField::setAmount(std::optional<double      > amount);
-
-template<typename T> void SmartField::setAmount(T amount) {
-   // Only need next bit for debugging!
-//   if (!this->pimpl->m_initialised) {
-//      qCritical().noquote() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "Stack trace:" << Logging::getStackTrace();
-//   }
+template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void SmartField::setAmount(T amount) {
    Q_ASSERT(this->pimpl->m_initialised);
    qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "amount =" << amount;
 
    if (this->pimpl->m_typeInfo->typeIndex != typeid(T)) {
+      // This is a coding error
       qCritical() <<
-         Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Trying to set wrong type; m_typeInfo=" << this->pimpl->m_typeInfo;
+         Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Trying to set wrong type; m_typeInfo=" <<
+         this->pimpl->m_typeInfo << ", typeid(T)=" << typeid(T).name();
+      Q_ASSERT(false);
    }
 
    if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
@@ -440,24 +454,71 @@ template<typename T> void SmartField::setAmount(T amount) {
    return;
 }
 
-template void SmartField::setAmount(int          amount);
-template void SmartField::setAmount(unsigned int amount);
-template void SmartField::setAmount(double       amount);
-
-template<typename T> T SmartField::getValueAs() const {
-   qDebug() <<
-      Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Converting" << this->getRawText() << "to" <<
-      Measurement::extractRawFromString<T>(this->getRawText());
-   return Measurement::extractRawFromString<T>(this->getRawText());
-}
-//
-// Instantiate the above template function for the types that are going to use it
+// Instantiate the above template functions for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // saves having to put a bunch of std::string stuff there.)
-//
-template int          SmartField::getValueAs<int         >() const;
-template unsigned int SmartField::getValueAs<unsigned int>() const;
-template double       SmartField::getValueAs<double      >() const;
+template void SmartField::setAmount(std::optional<int         > amount);
+template void SmartField::setAmount(std::optional<unsigned int> amount);
+template void SmartField::setAmount(std::optional<double      > amount);
+template void SmartField::setAmount(int                         amount);
+template void SmartField::setAmount(unsigned int                amount);
+template void SmartField::setAmount(double                      amount);
+
+// We can't do the same trick on get-value-as as we do for set-amount because we can't overload base on return type,
+// hence two different function names.
+template<typename T> T SmartField::getNonOptValueAs(bool * const ok) const {
+   Q_ASSERT(this->pimpl->m_initialised);
+
+   QString const rawText = this->getRawText();
+   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Converting" << rawText;
+
+   // It's a coding error to call this for ann optional value.  We put the assert after the log statement to help
+   // with debugging!
+   Q_ASSERT(!this->pimpl->m_typeInfo->isOptional());
+
+   // Note that Measurement::extractRawFromString returns 0 if it can't parse the text
+   return Measurement::extractRawFromString<T>(rawText, ok);
+}
+// Instantiate the above template function for the types that are going to use it
+template int          SmartField::getNonOptValueAs<int         >(bool * const ok) const;
+template unsigned int SmartField::getNonOptValueAs<unsigned int>(bool * const ok) const;
+template double       SmartField::getNonOptValueAs<double      >(bool * const ok) const;
+
+template<typename T> std::optional<T> SmartField::getOptValueAs(bool * const ok) const {
+
+   Q_ASSERT(this->pimpl->m_initialised);
+
+   QString const rawText = this->getRawText();
+   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Converting" << rawText;
+
+   // It's a coding error to call this for a non optional value.  We put the assert after the log statement to help
+   // with debugging!
+   Q_ASSERT(this->pimpl->m_typeInfo->isOptional());
+
+   // Optional values are allowed to be blank
+   if (isEmptyOrBlank(rawText)) {
+      if (ok) {
+         *ok = true;
+      }
+      return std::optional<T>{std::nullopt};
+   }
+
+   bool parseOk = false;
+   T amount = Measurement::extractRawFromString<T>(rawText, &parseOk);
+   if (ok) {
+      *ok = parseOk;
+   }
+   // If we couldn't parse something, return null
+   if (!parseOk) {
+      return std::optional<T>{std::nullopt};
+   }
+
+   return std::make_optional<T>(amount);
+}
+// Instantiate the above template function for the types that are going to use it
+template std::optional<int         > SmartField::getOptValueAs<int         >(bool * const ok) const;
+template std::optional<unsigned int> SmartField::getOptValueAs<unsigned int>(bool * const ok) const;
+template std::optional<double      > SmartField::getOptValueAs<double      >(bool * const ok) const;
 
 
 Measurement::PhysicalQuantity SmartField::getPhysicalQuantity() const {
@@ -482,52 +543,6 @@ void SmartField::selectPhysicalQuantity(Measurement::PhysicalQuantity const phys
    this->pimpl->m_currentPhysicalQuantity = physicalQuantity;
    return;
 }
-
-///void SmartField::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
-///   qDebug() <<
-///      Q_FUNC_INFO << "Measurement system" << systemOfMeasurement << "for" << this->pimpl->m_configSection << ">" <<
-///      this->pimpl->m_editField;
-///   Measurement::setForcedSystemOfMeasurementForField(this->pimpl->m_editField,
-///                                                     this->pimpl->m_configSection,
-///                                                     systemOfMeasurement);
-///   return;
-///}
-///
-///std::optional<Measurement::SystemOfMeasurement> SmartField::getForcedSystemOfMeasurement() const {
-///   return Measurement::getForcedSystemOfMeasurementForField(this->pimpl->m_editField, this->pimpl->m_configSection);
-///}
-///
-///void SmartField::setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
-///   qDebug() <<
-///      Q_FUNC_INFO << "Scale" << relativeScale << "for" << this->pimpl->m_configSection << ">" <<
-///      this->pimpl->m_editField;
-///   Measurement::setForcedRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_configSection, relativeScale);
-///   return;
-///}
-///
-///std::optional<Measurement::UnitSystem::RelativeScale> SmartField::getForcedRelativeScale() const {
-///   return Measurement::getForcedRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_configSection);
-///}
-///
-///SmartAmounts::ScaleInfo SmartField::getPreviousScaleInfo() const {
-///   qDebug() <<
-///      Q_FUNC_INFO << "Edit Field / Property Name:" << this->pimpl->m_editField << ", Config Section" <<
-///      this->pimpl->m_configSection;
-///
-///
-///   SmartAmounts::ScaleInfo previousScaleInfo{
-///      Measurement::getSystemOfMeasurementForField(this->pimpl->m_editField, this->pimpl->m_configSection, this->pimpl->m_currentPhysicalQuantity),
-///      Measurement::getForcedRelativeScaleForField(this->pimpl->m_editField, this->pimpl->m_configSection)
-///   };
-///   return previousScaleInfo;
-///}
-
-///Measurement::Amount SmartField::rawToCanonical(QString const & rawValue) const {
-///   return Measurement::qStringToSI(rawValue,
-///                                   this->pimpl->m_currentPhysicalQuantity,
-///                                   this->getForcedSystemOfMeasurement(),
-///                                   this->getForcedRelativeScale());
-///}
 
 QString SmartField::displayAmount(double amount) const {
    // It's a coding error to call this for NonPhysicalQuantity
@@ -582,27 +597,25 @@ void SmartField::correctEnteredText() {
    NonPhysicalQuantity const nonPhysicalQuantity =
       std::get<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType);
    if (nonPhysicalQuantity != NonPhysicalQuantity::String) {
+      QString const rawText = this->getRawText();
+
+      auto const type = this->pimpl->m_typeInfo->typeIndex;
+      bool const optional = this->pimpl->m_typeInfo->isOptional();
       bool ok = false;
-      if (this->pimpl->m_typeInfo->typeIndex == typeid(double)) {
-         double amount = Measurement::extractRawFromString<double>(this->getRawText(), &ok);
-         this->setAmount(amount);
-      } else if (this->pimpl->m_typeInfo->typeIndex == typeid(int)) {
-         int amount = Measurement::extractRawFromString<int>(this->getRawText(), &ok);
-         this->setAmount(amount);
-      } else if (this->pimpl->m_typeInfo->typeIndex == typeid(unsigned int)) {
-         unsigned int amount = Measurement::extractRawFromString<unsigned int>(this->getRawText(), &ok);
-         this->setAmount(amount);
-      } else {
+      if (type == typeid(double      )) { if (optional) { this->setAmount(this->getOptValueAs<double      >(&ok)); } else { this->setAmount(this->getNonOptValueAs<double      >(&ok)); } } else
+      if (type == typeid(int         )) { if (optional) { this->setAmount(this->getOptValueAs<int         >(&ok)); } else { this->setAmount(this->getNonOptValueAs<int         >(&ok)); } } else
+      if (type == typeid(unsigned int)) { if (optional) { this->setAmount(this->getOptValueAs<unsigned int>(&ok)); } else { this->setAmount(this->getNonOptValueAs<unsigned int>(&ok)); } } else {
          // It's a coding error if we get here
          qCritical() <<
             Q_FUNC_INFO << this->getFqFieldName() << ": Don't know how to parse" << this->pimpl->m_typeInfo;
          Q_ASSERT(false);
       }
+
       if (!ok) {
          qWarning() <<
-            Q_FUNC_INFO << this->getFqFieldName() << ": Unable to extract number from" << this->getRawText() <<
-            "for" << this->pimpl->m_typeInfo;
-         this->setAmount(0);
+            Q_FUNC_INFO << this->getFqFieldName() << ": Unable to extract number from" << rawText << "for" <<
+            this->pimpl->m_typeInfo;
+         // setAmount will already have been called with 0 or std::nullopt as appropriate
       }
    }
 

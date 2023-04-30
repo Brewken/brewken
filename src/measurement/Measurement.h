@@ -36,7 +36,10 @@ namespace Measurement {
 
    /**
     * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
-    *        symbols)
+    *        symbols).  Valid specialisations are \c int, \c unsigned \c int, and \c double.
+    *
+    * \param ok If set, used to return \c true if parsing of raw text went OK and \c false otherwise (in which case,
+    *           function return value will be 0).
     */
    template<typename T> T extractRawFromString(QString const & input, bool * ok = nullptr);
 

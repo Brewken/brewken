@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SmartAmounts.cpp is part of Brewken, and is copyright the following authors 2023:
+ * widgets/SmartAmounts.cpp is part of Brewken, and is copyright the following authors 2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "SmartAmounts.h"
+#include "widgets/SmartAmounts.h"
 
 #include <QLabel>
 
@@ -21,7 +21,7 @@
 #include "PersistentSettings.h"
 #include "utils/TypeLookup.h"
 #include "widgets/SmartLabel.h"
-#include "SmartField.h"
+#include "widgets/SmartField.h"
 
 template<> void SmartAmounts::Init<SmartLabel>(char const * const editorName,
                                                char const * const labelName,

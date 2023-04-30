@@ -291,21 +291,21 @@ Hop::Hop(Hop const & other) :
 Hop::~Hop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-Hop::Use              Hop::use()                   const { return this->m_use;                   }
-QString               Hop::notes()                 const { return this->m_notes;                 }
-Hop::Type             Hop::type()                  const { return this->m_type;                  }
-Hop::Form             Hop::form()                  const { return this->m_form;                  }
-QString               Hop::origin()                const { return this->m_origin;                }
-QString               Hop::substitutes()           const { return this->m_substitutes;           }
-double                Hop::alpha_pct()             const { return this->m_alpha_pct;             }
-double                Hop::amount_kg()             const { return this->m_amount_kg;             }
-double                Hop::time_min()              const { return this->m_time_min;              }
-double                Hop::beta_pct()              const { return this->m_beta_pct;              }
-double                Hop::hsi_pct()               const { return this->m_hsi_pct;               }
-double                Hop::humulene_pct()          const { return this->m_humulene_pct;          }
-double                Hop::caryophyllene_pct()     const { return this->m_caryophyllene_pct;     }
-double                Hop::cohumulone_pct()        const { return this->m_cohumulone_pct;        }
-double                Hop::myrcene_pct()           const { return this->m_myrcene_pct;           }
+Hop::Use                    Hop::use()                   const { return this->m_use;                   }
+QString                     Hop::notes()                 const { return this->m_notes;                 }
+Hop::Type                   Hop::type()                  const { return this->m_type;                  }
+Hop::Form                   Hop::form()                  const { return this->m_form;                  }
+QString                     Hop::origin()                const { return this->m_origin;                }
+QString                     Hop::substitutes()           const { return this->m_substitutes;           }
+double                      Hop::alpha_pct()             const { return this->m_alpha_pct;             }
+double                      Hop::amount_kg()             const { return this->m_amount_kg;             }
+double                      Hop::time_min()              const { return this->m_time_min;              }
+double                      Hop::beta_pct()              const { return this->m_beta_pct;              }
+double                      Hop::hsi_pct()               const { return this->m_hsi_pct;               }
+double                      Hop::humulene_pct()          const { return this->m_humulene_pct;          }
+double                      Hop::caryophyllene_pct()     const { return this->m_caryophyllene_pct;     }
+double                      Hop::cohumulone_pct()        const { return this->m_cohumulone_pct;        }
+double                      Hop::myrcene_pct()           const { return this->m_myrcene_pct;           }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 QString                     Hop::producer()              const { return this->m_producer;              }
 QString                     Hop::product_id()            const { return this->m_product_id;            }

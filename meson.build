@@ -16,9 +16,8 @@
 
 #-----------------------------------------------------------------------------------------------------------------------
 #
-# ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
-# ⭐⭐⭐ THIS IS EXPERIMENTAL - YOU CAN ALSO STILL USE TRIED-AND-TESTED CMAKE TO BUILD THE PRODUCT
-# ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+# NB: This is now the primary way of building and packaging the software.  You can also still CMake to compile the
+#     product and install it locally, but we no longer support using CMake to do packaging.
 #
 # STEP 1: Ensure Python is installed:
 # -----------------------------------
@@ -690,8 +689,6 @@ commonSourceFiles = files([
    'src/RefractoDialog.cpp',
    'src/ScaleRecipeTool.cpp',
    'src/SimpleUndoableUpdate.cpp',
-   'src/SmartAmounts.cpp',
-   'src/SmartField.cpp',
    'src/StrikeWaterDialog.cpp',
    'src/StyleButton.cpp',
    'src/StyleEditor.cpp',
@@ -726,7 +723,9 @@ commonSourceFiles = files([
    'src/WaterTableWidget.cpp',
    'src/widgets/Animator.cpp',
    'src/widgets/SelectionControl.cpp',
+   'src/widgets/SmartAmounts.cpp',
    'src/widgets/SmartDigitWidget.cpp',
+   'src/widgets/SmartField.cpp',
    'src/widgets/SmartLabel.cpp',
    'src/widgets/SmartLineEdit.cpp',
    'src/widgets/ToggleSwitch.cpp',

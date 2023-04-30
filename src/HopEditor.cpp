@@ -107,18 +107,18 @@ void HopEditor::save() {
       return;
    }
 
-   this->obsHop->setName             (this->lineEdit_name         ->text                  ());
-   this->obsHop->setAlpha_pct        (this->lineEdit_alpha        ->getValueAs<double>    ());
-   this->obsHop->setTime_min         (this->lineEdit_time         ->toCanonical().quantity());
-   this->obsHop->setBeta_pct         (this->lineEdit_beta         ->getValueAs<double>    ());
-   this->obsHop->setHsi_pct          (this->lineEdit_HSI          ->getValueAs<double>    ());
-   this->obsHop->setOrigin           (this->lineEdit_origin       ->text                  ());
-   this->obsHop->setHumulene_pct     (this->lineEdit_humulene     ->getValueAs<double>    ());
-   this->obsHop->setCaryophyllene_pct(this->lineEdit_caryophyllene->getValueAs<double>    ());
-   this->obsHop->setCohumulone_pct   (this->lineEdit_cohumulone   ->getValueAs<double>    ());
-   this->obsHop->setMyrcene_pct      (this->lineEdit_myrcene      ->getValueAs<double>    ());
-   this->obsHop->setSubstitutes      (this->textEdit_substitutes  ->toPlainText           ());
-   this->obsHop->setNotes            (this->textEdit_notes        ->toPlainText           ());
+   this->obsHop->setName             (this->lineEdit_name         ->text                    ());
+   this->obsHop->setAlpha_pct        (this->lineEdit_alpha        ->getNonOptValueAs<double>());
+   this->obsHop->setTime_min         (this->lineEdit_time         ->toCanonical().quantity  ());
+   this->obsHop->setBeta_pct         (this->lineEdit_beta         ->getNonOptValueAs<double>());
+   this->obsHop->setHsi_pct          (this->lineEdit_HSI          ->getNonOptValueAs<double>());
+   this->obsHop->setOrigin           (this->lineEdit_origin       ->text                    ());
+   this->obsHop->setHumulene_pct     (this->lineEdit_humulene     ->getNonOptValueAs<double>());
+   this->obsHop->setCaryophyllene_pct(this->lineEdit_caryophyllene->getNonOptValueAs<double>());
+   this->obsHop->setCohumulone_pct   (this->lineEdit_cohumulone   ->getNonOptValueAs<double>());
+   this->obsHop->setMyrcene_pct      (this->lineEdit_myrcene      ->getNonOptValueAs<double>());
+   this->obsHop->setSubstitutes      (this->textEdit_substitutes  ->toPlainText             ());
+   this->obsHop->setNotes            (this->textEdit_notes        ->toPlainText             ());
 
    //
    // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
@@ -129,19 +129,19 @@ void HopEditor::save() {
    this->obsHop->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   this->obsHop->setProducer             (this->lineEdit_producer             ->text                  ());
-   this->obsHop->setProduct_id           (this->lineEdit_product_id           ->text                  ());
-   this->obsHop->setYear                 (this->lineEdit_year                 ->getValueAs<int>       ());
-   this->obsHop->setTotal_oil_ml_per_100g(this->lineEdit_total_oil_ml_per_100g->getValueAs<double>    ());
-   this->obsHop->setFarnesene_pct        (this->lineEdit_farnesene            ->getValueAs<double>    ());
-   this->obsHop->setGeraniol_pct         (this->lineEdit_geraniol             ->getValueAs<double>    ());
-   this->obsHop->setB_pinene_pct         (this->lineEdit_b_pinene             ->getValueAs<double>    ());
-   this->obsHop->setLinalool_pct         (this->lineEdit_linalool             ->getValueAs<double>    ());
-   this->obsHop->setLimonene_pct         (this->lineEdit_limonene             ->getValueAs<double>    ());
-   this->obsHop->setNerol_pct            (this->lineEdit_nerol                ->getValueAs<double>    ());
-   this->obsHop->setPinene_pct           (this->lineEdit_pinene               ->getValueAs<double>    ());
-   this->obsHop->setPolyphenols_pct      (this->lineEdit_polyphenols          ->getValueAs<double>    ());
-   this->obsHop->setXanthohumol_pct      (this->lineEdit_xanthohumol          ->getValueAs<double>    ());
+   this->obsHop->setProducer             (this->lineEdit_producer             ->text                 ());
+   this->obsHop->setProduct_id           (this->lineEdit_product_id           ->text                 ());
+   this->obsHop->setYear                 (this->lineEdit_year                 ->getOptValueAs<int>   ());
+   this->obsHop->setTotal_oil_ml_per_100g(this->lineEdit_total_oil_ml_per_100g->getOptValueAs<double>());
+   this->obsHop->setFarnesene_pct        (this->lineEdit_farnesene            ->getOptValueAs<double>());
+   this->obsHop->setGeraniol_pct         (this->lineEdit_geraniol             ->getOptValueAs<double>());
+   this->obsHop->setB_pinene_pct         (this->lineEdit_b_pinene             ->getOptValueAs<double>());
+   this->obsHop->setLinalool_pct         (this->lineEdit_linalool             ->getOptValueAs<double>());
+   this->obsHop->setLimonene_pct         (this->lineEdit_limonene             ->getOptValueAs<double>());
+   this->obsHop->setNerol_pct            (this->lineEdit_nerol                ->getOptValueAs<double>());
+   this->obsHop->setPinene_pct           (this->lineEdit_pinene               ->getOptValueAs<double>());
+   this->obsHop->setPolyphenols_pct      (this->lineEdit_polyphenols          ->getOptValueAs<double>());
+   this->obsHop->setXanthohumol_pct      (this->lineEdit_xanthohumol          ->getOptValueAs<double>());
 
    if (this->obsHop->key() < 0) {
       ObjectStoreWrapper::insert(*this->obsHop);

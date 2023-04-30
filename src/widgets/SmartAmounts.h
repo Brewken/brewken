@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SmartAmounts.h is part of Brewken, and is copyright the following authors 2023:
+ * widgets/SmartAmounts.h is part of Brewken, and is copyright the following authors 2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License

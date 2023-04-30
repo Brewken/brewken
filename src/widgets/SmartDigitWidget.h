@@ -29,7 +29,7 @@
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
-#include "SmartField.h"
+#include "widgets/SmartField.h"
 
 /*!
  * \class SmartDigitWidget
