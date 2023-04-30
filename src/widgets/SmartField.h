@@ -202,7 +202,11 @@ public:
    /**
     * \brief Version of \c setAmount, for an optional amount.
     *
-    *        See comments in the .cpp file for why we have the enable_if here with is_not_optional.  It is intentional!
+    *        It looks a bit funky disabling this specialisation for a T that is optional, but the point is that we don't
+    *        want the compiler to ever create a \c std::optional<std::optional<T>> type.  (Eg, we don't want to write
+    *        `\c setAmount<std::optional<T>>(\c std::nullopt)` when we mean
+    *        `\c setAmount<T>(\c std::optional<T>{std::nullopt})`.
+    *
     */
    template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(std::optional<T> amount);
 

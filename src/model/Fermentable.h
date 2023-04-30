@@ -267,7 +267,7 @@ public:
     *        degree of malt modification. A value above 35% is desired for simple single infusion mashing, undermodified
     *        malt may require multiple step mashes or decoction.
     */
-   Q_PROPERTY(std::optional<double> kolbachIndex_pct        READ kolbachIndex_pct        WRITE setKolbachIndex_pct      )
+   Q_PROPERTY(std::optional<double> kolbachIndex_pct   READ kolbachIndex_pct   WRITE setKolbachIndex_pct      )
 
    /**
     * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
@@ -275,7 +275,7 @@ public:
     * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
     * for BeerXML.
     */
-   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits                  READ amountWithUnits                  WRITE setAmountWithUnits                   )
+   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
 
    /**
     * \brief Percentage of malt that is "glassy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
@@ -337,13 +337,13 @@ public:
     *            the malt will crush. Any lot of malt that will crush reasonably well must have kernels that are at
     *            least 90% adjacent sizes, regardless of the plumpness.
     */
-   Q_PROPERTY(std::optional<double> kernelSizePrpPlump_pct      READ kernelSizePrpPlump_pct      WRITE setKernelSizePrpPlump_pct    )
+   Q_PROPERTY(std::optional<double> kernelSizePrpPlump_pct  READ kernelSizePrpPlump_pct  WRITE setKernelSizePrpPlump_pct)
 
    /**
     * \brief The Percentage of grain that is "tine", ie makes it through a thin mesh screen, typically 5/64 inch.
     *        Values less than 3% are desired.  (In BeerJSON this is called "thru".)
     */
-   Q_PROPERTY(std::optional<double> kernelSizePrpThin_pct       READ kernelSizePrpThin_pct       WRITE setKernelSizePrpThin_pct     )
+   Q_PROPERTY(std::optional<double> kernelSizePrpThin_pct   READ kernelSizePrpThin_pct   WRITE setKernelSizePrpThin_pct)
 
    /**
     * \brief Friability is the relative ease of crumbling when a malt is milled.  It is related to mealiness, and may be
@@ -396,6 +396,9 @@ public:
     *        Measurement of DMS-P is often performed by heating "congress wort" samples (see above) in closed vials,
     *        sampling the headspace after incubation, and quantifying DMS using gas chromatography.
     */
+///   Q_PROPERTY(std::optional<double> dmsP_ppm                   READ dmsP_ppm                WRITE setDmsP_ppm     )
+
+
 //   dmsP_XXXunitXXX           //conc units
 //fan             //conc units
 //fermentability_pct

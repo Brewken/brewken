@@ -72,7 +72,7 @@ template <typename T> struct is_optional_enum< std::optional<T> > : public std::
 // Older versions of GCC (eg as shipped with Ubuntu 20.04 LTS) have a sort of pre-release support for concepts so we
 // have to use non-standard syntax there
 //
-#if defined(__GNUC__) && (__GNUC__ < 10)
+#if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
 template <typename T> concept bool IsRequiredEnum  = std::is_enum<T>::value;
 template <typename T> concept bool IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
 template <typename T> concept bool IsOptionalEnum  = is_optional_enum<T>::value;

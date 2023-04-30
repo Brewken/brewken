@@ -387,13 +387,7 @@ SmartAmounts::ScaleInfo SmartField::getScaleInfo() const {
 
 // Note that, because partial specialisation of _functions_ is not allowed, we actually have two overloads of setAmount
 // This shouldn't make any difference to callers.
-//
-// It looks a bit funky disabling this specialisation for a T that is optional, but the point is that we don't want the
-// compiler to ever create a std::optional<std::optional<T>> type.  (Eg, we don't want to write
-// `setAmount<std::optional<T>>(std::nullopt)` when we mean `setAmount<T>(std::optional<T>{std::nullopt})` (or actually
-// `setAmount<T>()`).
-//
-template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void SmartField::setAmount(std::optional<T> amount) {
+template<typename T, typename> void SmartField::setAmount(std::optional<T> amount) {
    Q_ASSERT(this->pimpl->m_initialised);
 
    if (this->pimpl->m_typeInfo->typeIndex != typeid(T)) {
@@ -413,7 +407,7 @@ template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > vo
    return;
 }
 
-template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void SmartField::setAmount(T amount) {
+template<typename T, typename> void SmartField::setAmount(T amount) {
    Q_ASSERT(this->pimpl->m_initialised);
    qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "amount =" << amount;
 
@@ -621,71 +615,3 @@ void SmartField::correctEnteredText() {
 
    return;
 }
-
-///void SmartField::textOrUnitsChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
-///   // This is where it gets hard
-///   //
-///   // We may need to fix the text that the user entered, eg if this field is set to show US Customary volumes and user
-///   // enters an amount in litres then we need to convert it to display in pints or quarts etc.
-///   QString correctedText;
-///
-///   QString rawValue = this->getWidgetRawText();
-///   qDebug() << Q_FUNC_INFO << "rawValue:" << rawValue;
-///
-///   if (rawValue.isEmpty()) {
-///      return;
-///   }
-///
-///   // The idea here is we need to first translate the field into a known
-///   // amount (aka to SI) and then into the unit we want.
-///   Measurement::Amount amountAsCanonical = this->convertToSI(previousScaleInfo);
-///
-///   Measurement::PhysicalQuantity physicalQuantity = this->getPhysicalQuantity();
-///   int precision = 3;
-///   if (physicalQuantity == Measurement::PhysicalQuantity::Color) {
-///      precision = 0;
-///   }
-///   correctedText = this->displayAmount(amountAsCanonical.quantity(), precision);
-///   qDebug() <<
-///      Q_FUNC_INFO << "Interpreted" << rawValue << "as" << amountAsCanonical << "and corrected to" << correctedText;
-///
-///   this->setWidgetRawText(correctedText);
-///   return;
-///}
-
-///Measurement::Amount SmartField::convertToSI(SmartAmounts::ScaleInfo previousScaleInfo) {
-///   QString rawValue = this->getWidgetRawText();
-///   qDebug() <<
-///      Q_FUNC_INFO << "rawValue:" << rawValue <<  ", old SystemOfMeasurement:" <<
-///      previousScaleInfo.oldSystemOfMeasurement << ", old ForcedScale: " << previousScaleInfo.oldForcedScale;
-///
-///   Measurement::UnitSystem const & oldUnitSystem =
-///      Measurement::UnitSystem::getInstance(previousScaleInfo.oldSystemOfMeasurement, this->pimpl->m_currentPhysicalQuantity);
-///
-///   Measurement::Unit const * defaultUnit{
-///      previousScaleInfo.oldForcedScale ? oldUnitSystem.scaleUnit(*previousScaleInfo.oldForcedScale) : oldUnitSystem.unit()
-///   };
-///
-///   // It's a coding error if defaultUnit is null, because it means previousScaleInfo.oldForcedScale was not valid for
-///   // oldUnitSystem.  However, we can recover.
-///   if (!defaultUnit) {
-///      qWarning() << Q_FUNC_INFO << "previousScaleInfo.oldForcedScale invalid?" << previousScaleInfo.oldForcedScale;
-///      defaultUnit = oldUnitSystem.unit();
-///   }
-///
-///   //
-///   // Normally, we display units with the text.  If the user just edits the number, then the units will still be there.
-///   // Alternatively, if the user specifies different units in the text, we should try to honour those.  Otherwise, if,
-///   // no units are specified in the text, we need to go to defaults.  Defaults are either what is "forced" for this
-///   // specific field or, failing that, what is configured globally.
-///   //
-///   // Measurement::UnitSystem::qStringToSI will handle all the logic to deal with any units specified by the user in the
-///   // string.  (In theory, we just grab the units that the user has specified in the input text.  In reality, it's not
-///   // that easy as we sometimes need to disambiguate - eg between Imperial gallons and US customary ones.  So, if we
-///   // have old or current units then that helps with this - eg, if current units are US customary cups and user enters
-///   // gallons, then we'll go with US customary gallons over Imperial ones.)
-///   //
-///   auto amount = oldUnitSystem.qstringToSI(rawValue, *defaultUnit);
-///   qDebug() << Q_FUNC_INFO << "Converted to" << amount;
-///   return amount;
-///}
