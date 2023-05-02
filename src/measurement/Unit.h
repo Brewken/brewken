@@ -107,6 +107,12 @@ namespace Measurement {
       Measurement::Unit const & getCanonical() const;
 
       /**
+       * \brief In certain circumstances, we expect things to be in canonical units, so this is a useful function for
+       *        checking or asserting that.
+       */
+      bool isCanonical() const;
+
+      /**
        * \brief Convert an amount of this unit to its canonical system of measurement (usually, but not always, an SI or
        *        other metric measure)
        */

@@ -292,12 +292,12 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "mealy"           , PropertyNames::Fermentable::hardnessPrpMealy_pct  , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "thru"            , PropertyNames::Fermentable::kernelSizePrpThin_pct , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "friability"      , PropertyNames::Fermentable::friability_pct        , &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "di_ph"           , BtString::NULL_STR,                                 &BEER_JSON_ACIDITY_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "viscosity"       , BtString::NULL_STR,                                 &BEER_JSON_VISCOSITY_UNIT_MAPPER      }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "dms_p"           , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "fan"             , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "fermentability"  , BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "beta_glucan"     , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "di_ph"           , PropertyNames::Fermentable::di_ph                 , &BEER_JSON_ACIDITY_UNIT               },
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "viscosity"       , PropertyNames::Fermentable::viscosity_cP          , &BEER_JSON_VISCOSITY_UNIT_MAPPER      },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "dms_p"           , PropertyNames::Fermentable::dmsPWithUnits         , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "fan"             , PropertyNames::Fermentable::fanWithUnits          , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "fermentability"  , PropertyNames::Fermentable::fermentability_pct    , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "beta_glucan"     , PropertyNames::Fermentable::betaGlucanWithUnits   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
    };
    // .:TODO.JSON:.  Extend Recipe to have an enum for this
    EnumStringMapping const BEER_JSON_RECIPE_ADDITION_POINT_MAPPER {

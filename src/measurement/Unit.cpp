@@ -263,6 +263,10 @@ Measurement::Unit const & Measurement::Unit::getCanonical() const {
    return Measurement::Unit::getCanonicalUnit(this->getPhysicalQuantity());
 }
 
+bool Measurement::Unit::isCanonical() const {
+   return &this->getCanonical() == this;
+}
+
 Measurement::Amount Measurement::Unit::toCanonical(double amt) const {
    return Measurement::Amount{this->pimpl->convertToCanonical(amt), this->getCanonical()};
 }

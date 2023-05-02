@@ -119,7 +119,7 @@ public:
     * \param precision For a decimal field, this determines the number of decimal places to show.  If not specified, we
     *                  show 3 decimal places.  TBD: IDK if one day we might need to be more sophisticated about this, ie
     *                  with number of decimal places dependent on the units that the user has chosen, but for now we
-    *                  assume it's the same for everything.
+    *                  assume it's the same for everything, but allow modification via \c setPrecision.
     *
     * \param maximalDisplayString Used for determining the width of the widget (because a fixed pixel width isn't great
     *                             in a world where there are varying display DPIs).
@@ -217,6 +217,14 @@ public:
     */
    template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(T amount);
 
+   /**
+    * \brief Normally, you set precision once when \c init is called via \c SMART_FIELD_INIT or similar.  However, if
+    *        you really want to modify it on the fly, eg to have different precision for different units, this is what
+    *        you call.  Note that you should call this before calling \c setAmount.
+    */
+   void setPrecision(unsigned int const precision);
+   [[nodiscard]] unsigned int getPrecision() const;
+
    void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
    void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
    std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurement() const;
@@ -266,13 +274,6 @@ public:
     *        constructor.
     */
    void selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity);
-
-   /**
-    * \brief Use this when you want to do something with the returned QString
-    *
-    * \param amount Must be in canonical units eg kilograms for mass, liters for volume
-    */
-   [[nodiscard]] QString displayAmount(double amount) const;
 
    /**
     * \brief When the user has finished entering some text, this function does the corrections, eg if the field is set

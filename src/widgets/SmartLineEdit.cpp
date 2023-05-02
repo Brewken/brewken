@@ -115,9 +115,7 @@ SmartLineEdit::SmartLineEdit(QWidget * parent) :
    QLineEdit(parent),
    SmartField{},
    pimpl{std::make_unique<impl>(*this)} {
-
    connect(this, &QLineEdit::editingFinished, this, &SmartLineEdit::onLineChanged);
-
    return;
 }
 

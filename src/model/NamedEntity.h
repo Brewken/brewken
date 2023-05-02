@@ -380,6 +380,49 @@ protected:
     */
    virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
 
+   // Depending on who created the bundle, the "either-or" amounts can be set either via their individual properties (eg
+   // if we're reading from the database) or via their composite attributes (eg if we're reading from a BeerJSON file).
+
+   /**
+    * \brief Some "either-or" attributes can be measured and stored in two ways, eg the amount of a \c Fermentable can
+    *        be measured either by \c Mass or by \c Volume (typically depending on what type of fermentable it is).  In
+    *        these cases, our internal storage is two fields, a \c double measuring the quantity and a \c bool
+    *        indicating whether it is the "first" or the "second" type.  Eg for something that's either \c Mass or
+    *        \c Volume, we always have \c Mass as the "first" type and \c Volume as the "second". This is formalised
+    *        somewhat in instances of \c Measurement::ConstrainedAmount (specifically \c MassOrVolumeAmt
+    *        and \c MassOrVolumeConcentrationAmt).
+    *
+    *        When constructing an object from a \c NamedParameterBundle, there are two ways that an "either-or"
+    *        attribute can be specified.  If we're reading from the database, or from BeerXML, then each of the
+    *        underlying fields will be specified individually.  Eg, \c PropertyNames::Fermentable::amount and
+    *        \c PropertyNames::Fermentable::amountIsWeight will each be specified in the bundle.  However, if we're
+    *        reading from BeerJSON, we'll get a combined quantity-and-units parameter,
+    *        eg \c PropertyNames::Fermentable::amountWithUnits.
+    *
+    *        This templated function does the generic work for initialising such either-or parameters from a
+    *        \c NamedParameterBundle.
+    *
+    *        Valid instantiations of this template are with \c MassOrVolumeAmt and \c MassOrVolumeConcentrationAmt.
+    */
+   template<typename T>
+   void setEitherOrReqParams(NamedParameterBundle const & namedParameterBundle,
+                             BtStringConst const & quantityParameterName,
+                             BtStringConst const & isFirstUnitParameterName,
+                             BtStringConst const & combinedWithUnitsParameterName,
+                             double & quantityReturn,
+                             bool & isFirstUnitReturn);
+
+   /**
+    * \brief As \c setEitherOrReqParams but for when the attribute is optional
+    */
+   template<typename T>
+   void setEitherOrOptParams(NamedParameterBundle const & namedParameterBundle,
+                             BtStringConst const & quantityParameterName,
+                             BtStringConst const & isFirstUnitParameterName,
+                             BtStringConst const & combinedWithUnitsParameterName,
+                             std::optional<double> & quantityReturn,
+                             bool & isFirstUnitReturn);
+
    /**
     * \brief Used by setters to force a value not to be below a certain amount
     *

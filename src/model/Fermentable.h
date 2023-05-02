@@ -43,40 +43,50 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Fermentable { BtStringConst const property{#property}; }
-AddPropertyName(addAfterBoil          )
-AddPropertyName(alphaAmylase_dextUnits)
-AddPropertyName(amount                )
-AddPropertyName(amountIsWeight        )
-AddPropertyName(amountWithUnits       )
-AddPropertyName(coarseFineDiff_pct    )
-AddPropertyName(coarseGrindYield_pct  )
-AddPropertyName(color_srm             )
-AddPropertyName(diastaticPower_lintner)
-AddPropertyName(di_ph                 )
-AddPropertyName(fineGrindYield_pct    )
-AddPropertyName(friability_pct        )
-AddPropertyName(grainGroup            )
-AddPropertyName(hardnessPrpGlassy_pct )
-AddPropertyName(hardnessPrpHalf_pct   )
-AddPropertyName(hardnessPrpMealy_pct  )
-AddPropertyName(ibuGalPerLb           )
-AddPropertyName(isMashed              )
-AddPropertyName(kernelSizePrpPlump_pct)
-AddPropertyName(kernelSizePrpThin_pct )
-AddPropertyName(kolbachIndex_pct      )
-AddPropertyName(maxInBatch_pct        )
-AddPropertyName(moisture_pct          )
-AddPropertyName(notes                 )
-AddPropertyName(origin                )
-AddPropertyName(potentialYield_sg     )
-AddPropertyName(producer              )
-AddPropertyName(productId             )
-AddPropertyName(protein_pct           )
-AddPropertyName(recommendMash         )
-AddPropertyName(supplier              )
-AddPropertyName(type                  )
-AddPropertyName(viscosity_cP          )
-AddPropertyName(yield_pct             )
+AddPropertyName(addAfterBoil             )
+AddPropertyName(alphaAmylase_dextUnits   )
+AddPropertyName(amount                   )
+AddPropertyName(amountIsWeight           )
+AddPropertyName(amountWithUnits          )
+AddPropertyName(betaGlucan               )
+AddPropertyName(betaGlucanIsMassPerVolume)
+AddPropertyName(betaGlucanWithUnits      )
+AddPropertyName(coarseFineDiff_pct       )
+AddPropertyName(coarseGrindYield_pct     )
+AddPropertyName(color_srm                )
+AddPropertyName(diastaticPower_lintner   )
+AddPropertyName(di_ph                    )
+AddPropertyName(dmsP                     )
+AddPropertyName(dmsPIsMassPerVolume      )
+AddPropertyName(dmsPWithUnits            )
+AddPropertyName(fan                      )
+AddPropertyName(fanIsMassPerVolume       )
+AddPropertyName(fanWithUnits             )
+AddPropertyName(fermentability_pct       )
+AddPropertyName(fineGrindYield_pct       )
+AddPropertyName(friability_pct           )
+AddPropertyName(grainGroup               )
+AddPropertyName(hardnessPrpGlassy_pct    )
+AddPropertyName(hardnessPrpHalf_pct      )
+AddPropertyName(hardnessPrpMealy_pct     )
+AddPropertyName(ibuGalPerLb              )
+AddPropertyName(isMashed                 )
+AddPropertyName(kernelSizePrpPlump_pct   )
+AddPropertyName(kernelSizePrpThin_pct    )
+AddPropertyName(kolbachIndex_pct         )
+AddPropertyName(maxInBatch_pct           )
+AddPropertyName(moisture_pct             )
+AddPropertyName(notes                    )
+AddPropertyName(origin                   )
+AddPropertyName(potentialYield_sg        )
+AddPropertyName(producer                 )
+AddPropertyName(productId                )
+AddPropertyName(protein_pct              )
+AddPropertyName(recommendMash            )
+AddPropertyName(supplier                 )
+AddPropertyName(type                     )
+AddPropertyName(viscosity_cP             )
+AddPropertyName(yield_pct                )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -354,11 +364,6 @@ public:
     */
    Q_PROPERTY(std::optional<double> friability_pct       READ friability_pct       WRITE setFriability_pct     )
 
-/**
-    * .:TODO JSON:. Finish adding the other BeerJSON fields to \c Fermentable
-    *           ...
-    *
-    */
    /**
     * \brief DI pH is the pH of the resultant wort for 40 grams of grain mashed in 100 mL of distilled water (or 1 lb of
     *        grain mashed in 1 gallon of distilled water).  Can be used in water chemistry and/or mash pH prediction
@@ -395,54 +400,108 @@ public:
     *
     *        Measurement of DMS-P is often performed by heating "congress wort" samples (see above) in closed vials,
     *        sampling the headspace after incubation, and quantifying DMS using gas chromatography.
+    *
+    *        BeerJSON allows this attribute to be specified as either volume concentration (ppm or ppb) or mass
+    *        concentration (mg / L)
+    *
+    *        You might argue that, strictly speaking, \c dmsPIsMassPerVolume should also be optional and set
+    *        if-and-only-if \c dmsP is set.  However, that would be a whole bunch of additional complexity for almost no
+    *        gain.  Instead, we say the value of \c dmsPIsMassPerVolume is ignored as meaningless when \c dmsP is not
+    *        set.  Same applies for \c fan / \c fanIsMassPerVolume and \c betaGlucan / \c betaGlucanIsMassPerVolume.
     */
-///   Q_PROPERTY(std::optional<double> dmsP_ppm                   READ dmsP_ppm                WRITE setDmsP_ppm     )
+   Q_PROPERTY(std::optional<double>                       dmsP                  READ dmsP                  WRITE setDmsP               )
+   Q_PROPERTY(bool                                        dmsPIsMassPerVolume   READ dmsPIsMassPerVolume   WRITE setDmsPIsMassPerVolume)
+   Q_PROPERTY(std::optional<MassOrVolumeConcentrationAmt> dmsPWithUnits         READ dmsPWithUnits         WRITE setDmsPWithUnits      )
 
+   /**
+    * \brief Free Amino Nitrogen (FAN) is a measure of the concentration of nitrogen-containing compounds -- including
+    *        amino acids, ammonia and small peptides (one to three units) -- which can be metabolized by yeast for cell
+    *        growth and proliferation.  As with some of the other measures here, this is a measure of the wort, so, in
+    *        the context of a fermentable, it is measure of a congress wort produced from this malt.
+    *
+    *        As a diagnostic test, low FAN measurements indicate slow or incomplete fermentation, while high FAN
+    *        measurements may indicate haze issues and/or diacetyl formation.
+    *
+    *        BeerJSON allows this attribute to be specified as either volume concentration (ppm or ppb) or mass
+    *        concentration (mg / L)
+    */
+   Q_PROPERTY(std::optional<double>                       fan                  READ fan                  WRITE setFan               )
+   Q_PROPERTY(bool                                        fanIsMassPerVolume   READ fanIsMassPerVolume   WRITE setFanIsMassPerVolume)
+   Q_PROPERTY(std::optional<MassOrVolumeConcentrationAmt> fanWithUnits         READ fanWithUnits         WRITE setFanWithUnits      )
 
-//   dmsP_XXXunitXXX           //conc units
-//fan             //conc units
-//fermentability_pct
-//beta_glucan     //conc units
+   /**
+    * \brief Fermentability is used in Extracts to indicate a baseline typical apparent attenuation for a typical medium
+    *        attenuation yeast.
+    */
+   Q_PROPERTY(std::optional<double> fermentability_pct   READ fermentability_pct   WRITE setFermentability_pct)
 
-
+   /**
+    * \brief Beta-glucans (β-glucans) are polysaccharides of D-glucose monomers linked by beta-glycosidic bonds.
+    *        β-glucans are present in the cell walls of various cereals and are capable of clogging process filters; so,
+    *        too high a concentration of β-glucans in the wort may cause result in haze in the end product beer.
+    *
+    *        As with some of the other measures here, the concentration of β-glucans is measured in the wort, so, in the
+    *        context of a fermentable, it is measure of a congress wort produced from this malt.
+    *
+    *        BeerJSON allows this attribute to be specified as either volume concentration (ppm or ppb) or mass
+    *        concentration (mg / L)
+    *
+    *        Yes, it would be neat to include β in the property, variable and function names etc, but I think the Qt MOC
+    *        doesn't like it.
+    */
+   Q_PROPERTY(std::optional<double>                         betaGlucan                  READ betaGlucan                  WRITE setBetaGlucan               )
+   Q_PROPERTY(bool                                          betaGlucanIsMassPerVolume   READ betaGlucanIsMassPerVolume   WRITE setBetaGlucanIsMassPerVolume)
+   Q_PROPERTY(std::optional<MassOrVolumeConcentrationAmt>   betaGlucanWithUnits         READ betaGlucanWithUnits         WRITE setBetaGlucanWithUnits      )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   Type    type                                    () const;
-   double  amount                                  () const;
-   bool    amountIsWeight                          () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   double  yield_pct                               () const;
-   double  color_srm                               () const;
-   bool    addAfterBoil                            () const;
-   QString origin                                  () const;
-   QString supplier                                () const;
-   QString notes                                   () const;
-   double  coarseFineDiff_pct                      () const;
-   double  moisture_pct                            () const;
-   double  diastaticPower_lintner                  () const;
-   double  protein_pct                             () const;
-   double  maxInBatch_pct                          () const;
-   bool    recommendMash                           () const;
-   double  ibuGalPerLb                             () const;
-   bool    isMashed                                () const;
+   Type    type                                       () const;
+   double  amount                                     () const;
+   bool    amountIsWeight                             () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   double  yield_pct                                  () const;
+   double  color_srm                                  () const;
+   bool    addAfterBoil                               () const;
+   QString origin                                     () const;
+   QString supplier                                   () const;
+   QString notes                                      () const;
+   double  coarseFineDiff_pct                         () const;
+   double  moisture_pct                               () const;
+   double  diastaticPower_lintner                     () const;
+   double  protein_pct                                () const;
+   double  maxInBatch_pct                             () const;
+   bool    recommendMash                              () const;
+   double  ibuGalPerLb                                () const;
+   bool    isMashed                                   () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<GrainGroup> grainGroup            () const;
-   std::optional<int>        grainGroupAsInt       () const;
-   QString                   producer              () const;
-   QString                   productId             () const;
-   std::optional<double>     fineGrindYield_pct    () const;
-   std::optional<double>     coarseGrindYield_pct  () const;
-   std::optional<double>     potentialYield_sg     () const;
-   std::optional<double>     alphaAmylase_dextUnits() const;
-   std::optional<double>     kolbachIndex_pct      () const;
-   MassOrVolumeAmt           amountWithUnits       () const;
-   std::optional<double>     hardnessPrpGlassy_pct () const;
-   std::optional<double>     hardnessPrpHalf_pct   () const;
-   std::optional<double>     hardnessPrpMealy_pct  () const;
-   std::optional<double>     kernelSizePrpPlump_pct() const;
-   std::optional<double>     kernelSizePrpThin_pct () const;
-   std::optional<double>     friability_pct        () const;
-   std::optional<double>     di_ph                 () const;
-   std::optional<double>     viscosity_cP          () const;
+   std::optional<GrainGroup> grainGroup               () const;
+   std::optional<int>        grainGroupAsInt          () const;
+   QString                   producer                 () const;
+   QString                   productId                () const;
+   std::optional<double>     fineGrindYield_pct       () const;
+   std::optional<double>     coarseGrindYield_pct     () const;
+   std::optional<double>     potentialYield_sg        () const;
+   std::optional<double>     alphaAmylase_dextUnits   () const;
+   std::optional<double>     kolbachIndex_pct         () const;
+   std::optional<double>     hardnessPrpGlassy_pct    () const;
+   std::optional<double>     hardnessPrpHalf_pct      () const;
+   std::optional<double>     hardnessPrpMealy_pct     () const;
+   std::optional<double>     kernelSizePrpPlump_pct   () const;
+   std::optional<double>     kernelSizePrpThin_pct    () const;
+   std::optional<double>     friability_pct           () const;
+   std::optional<double>     di_ph                    () const;
+   std::optional<double>     viscosity_cP             () const;
+   std::optional<double>     dmsP                     () const;
+   bool                      dmsPIsMassPerVolume      () const;
+   std::optional<double>     fan                      () const;
+   bool                      fanIsMassPerVolume       () const;
+   std::optional<double>     fermentability_pct       () const;
+   std::optional<double>     betaGlucan               () const;
+   bool                      betaGlucanIsMassPerVolume() const;
+
+   // Combined getters (all added for BeerJSON support)
+   MassOrVolumeAmt                             amountWithUnits    () const;
+   std::optional<MassOrVolumeConcentrationAmt> dmsPWithUnits      () const;
+   std::optional<MassOrVolumeConcentrationAmt> fanWithUnits       () const;
+   std::optional<MassOrVolumeConcentrationAmt> betaGlucanWithUnits() const;
 
    // Calculated getters.
    double  equivSucrose_kg       () const;
@@ -452,42 +511,54 @@ public:
    virtual double inventory() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setType                  (Type                      const   val);
-   void setAmount                (double                    const   val);
-   void setAmountIsWeight        (bool                      const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   void setYield_pct             (double                    const   val);
-   void setColor_srm             (double                    const   val);
-   void setAddAfterBoil          (bool                      const   val);
-   void setOrigin                (QString                   const & val);
-   void setSupplier              (QString                   const & val);
-   void setNotes                 (QString                   const & val);
-   void setCoarseFineDiff_pct    (double                    const   val);
-   void setMoisture_pct          (double                    const   val);
-   void setDiastaticPower_lintner(double                    const   val);
-   void setProtein_pct           (double                    const   val);
-   void setMaxInBatch_pct        (double                    const   val);
-   void setRecommendMash         (bool                      const   val);
-   void setIbuGalPerLb           (double                    const   val);
-   void setIsMashed              (bool                      const   val);
+   void setType                     (Type                      const   val);
+   void setAmount                   (double                    const   val);
+   void setAmountIsWeight           (bool                      const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   void setYield_pct                (double                    const   val);
+   void setColor_srm                (double                    const   val);
+   void setAddAfterBoil             (bool                      const   val);
+   void setOrigin                   (QString                   const & val);
+   void setSupplier                 (QString                   const & val);
+   void setNotes                    (QString                   const & val);
+   void setCoarseFineDiff_pct       (double                    const   val);
+   void setMoisture_pct             (double                    const   val);
+   void setDiastaticPower_lintner   (double                    const   val);
+   void setProtein_pct              (double                    const   val);
+   void setMaxInBatch_pct           (double                    const   val);
+   void setRecommendMash            (bool                      const   val);
+   void setIbuGalPerLb              (double                    const   val);
+   void setIsMashed                 (bool                      const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setGrainGroup            (std::optional<GrainGroup> const   val);
-   void setGrainGroupAsInt       (std::optional<int>        const   val);
-   void setProducer              (QString                   const & val);
-   void setProductId             (QString                   const & val);
-   void setFineGrindYield_pct    (std::optional<double>     const   val);
-   void setCoarseGrindYield_pct  (std::optional<double>     const   val);
-   void setPotentialYield_sg     (std::optional<double>     const   val);
-   void setAlphaAmylase_dextUnits(std::optional<double>     const   val);
-   void setKolbachIndex_pct      (std::optional<double>     const   val);
-   void setAmountWithUnits       (MassOrVolumeAmt           const   val);
-   void setHardnessPrpGlassy_pct (std::optional<double>     const   val);
-   void setHardnessPrpHalf_pct   (std::optional<double>     const   val);
-   void setHardnessPrpMealy_pct  (std::optional<double>     const   val);
-   void setKernelSizePrpPlump_pct(std::optional<double>     const   val);
-   void setKernelSizePrpThin_pct (std::optional<double>     const   val);
-   void setFriability_pct        (std::optional<double>     const   val);
-   void setDi_ph                 (std::optional<double>     const   val);
-   void setViscosity_cP          (std::optional<double>     const   val);
+   void setGrainGroup               (std::optional<GrainGroup> const   val);
+   void setGrainGroupAsInt          (std::optional<int>        const   val);
+   void setProducer                 (QString                   const & val);
+   void setProductId                (QString                   const & val);
+   void setFineGrindYield_pct       (std::optional<double>     const   val);
+   void setCoarseGrindYield_pct     (std::optional<double>     const   val);
+   void setPotentialYield_sg        (std::optional<double>     const   val);
+   void setAlphaAmylase_dextUnits   (std::optional<double>     const   val);
+   void setKolbachIndex_pct         (std::optional<double>     const   val);
+   void setHardnessPrpGlassy_pct    (std::optional<double>     const   val);
+   void setHardnessPrpHalf_pct      (std::optional<double>     const   val);
+   void setHardnessPrpMealy_pct     (std::optional<double>     const   val);
+   void setKernelSizePrpPlump_pct   (std::optional<double>     const   val);
+   void setKernelSizePrpThin_pct    (std::optional<double>     const   val);
+   void setFriability_pct           (std::optional<double>     const   val);
+   void setDi_ph                    (std::optional<double>     const   val);
+   void setViscosity_cP             (std::optional<double>     const   val);
+   void setDmsP                     (std::optional<double>     const   val);
+   void setDmsPIsMassPerVolume      (bool                      const   val);
+   void setFan                      (std::optional<double>     const   val);
+   void setFanIsMassPerVolume       (bool                      const   val);
+   void setFermentability_pct       (std::optional<double>     const   val);
+   void setBetaGlucan               (std::optional<double>     const   val);
+   void setBetaGlucanIsMassPerVolume(bool                      const   val);
+
+   // Combined setters (all added for BeerJSON support)
+   void setAmountWithUnits    (MassOrVolumeAmt                             const   val);
+   void setDmsPWithUnits      (std::optional<MassOrVolumeConcentrationAmt> const   val);
+   void setFanWithUnits       (std::optional<MassOrVolumeConcentrationAmt> const   val);
+   void setBetaGlucanWithUnits(std::optional<MassOrVolumeConcentrationAmt> const   val);
 
    virtual void setInventoryAmount(double amount);
 
@@ -500,41 +571,47 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Type                      m_type                  ;
-   double                    m_amount                ; // Primarily valid in "Use Of" instance
-   bool                      m_amountIsWeight        ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   double                    m_yield_pct             ;
-   double                    m_color_srm             ;
-   bool                      m_addAfterBoil          ; // Primarily valid in "Use Of" instance
-   QString                   m_origin                ;
-   QString                   m_supplier              ;
-   QString                   m_notes                 ;
-   double                    m_coarseFineDiff_pct    ;
-   double                    m_moisture_pct          ;
-   double                    m_diastaticPower_lintner;
-   double                    m_protein_pct           ;
-   double                    m_maxInBatch_pct        ;
-   bool                      m_recommendMash         ;
-   double                    m_ibuGalPerLb           ;
-   bool                      m_isMashed              ; // Primarily valid in "Use Of" instance
+   Type                      m_type                     ;
+   double                    m_amount                   ; // Primarily valid in "Use Of" instance
+   bool                      m_amountIsWeight           ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   double                    m_yield_pct                ;
+   double                    m_color_srm                ;
+   bool                      m_addAfterBoil             ; // Primarily valid in "Use Of" instance
+   QString                   m_origin                   ;
+   QString                   m_supplier                 ;
+   QString                   m_notes                    ;
+   double                    m_coarseFineDiff_pct       ;
+   double                    m_moisture_pct             ;
+   double                    m_diastaticPower_lintner   ;
+   double                    m_protein_pct              ;
+   double                    m_maxInBatch_pct           ;
+   bool                      m_recommendMash            ;
+   double                    m_ibuGalPerLb              ;
+   bool                      m_isMashed                 ; // Primarily valid in "Use Of" instance
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<GrainGroup> m_grainGroup            ;
-   QString                   m_producer              ;
-   QString                   m_productId             ;
-   std::optional<double>     m_fineGrindYield_pct    ;
-   std::optional<double>     m_coarseGrindYield_pct  ;
-   std::optional<double>     m_potentialYield_sg     ;
-   std::optional<double>     m_alphaAmylase_dextUnits;
-   std::optional<double>     m_kolbachIndex_pct      ;
-   std::optional<double>     m_hardnessPrpGlassy_pct ;
-   std::optional<double>     m_hardnessPrpHalf_pct   ;
-   std::optional<double>     m_hardnessPrpMealy_pct  ;
-   std::optional<double>     m_kernelSizePrpPlump_pct;
-   std::optional<double>     m_kernelSizePrpThin_pct ;
-   std::optional<double>     m_friability_pct        ;
-   std::optional<double>     m_di_ph                 ;
-   std::optional<double>     m_viscosity_cP          ;
-
+   std::optional<GrainGroup> m_grainGroup               ;
+   QString                   m_producer                 ;
+   QString                   m_productId                ;
+   std::optional<double>     m_fineGrindYield_pct       ;
+   std::optional<double>     m_coarseGrindYield_pct     ;
+   std::optional<double>     m_potentialYield_sg        ;
+   std::optional<double>     m_alphaAmylase_dextUnits   ;
+   std::optional<double>     m_kolbachIndex_pct         ;
+   std::optional<double>     m_hardnessPrpGlassy_pct    ;
+   std::optional<double>     m_hardnessPrpHalf_pct      ;
+   std::optional<double>     m_hardnessPrpMealy_pct     ;
+   std::optional<double>     m_kernelSizePrpPlump_pct   ;
+   std::optional<double>     m_kernelSizePrpThin_pct    ;
+   std::optional<double>     m_friability_pct           ;
+   std::optional<double>     m_di_ph                    ;
+   std::optional<double>     m_viscosity_cP             ;
+   std::optional<double>     m_dmsP                     ;
+   bool                      m_dmsPIsMassPerVolume      ;
+   std::optional<double>     m_fan                      ;
+   bool                      m_fanIsMassPerVolume       ;
+   std::optional<double>     m_fermentability_pct       ;
+   std::optional<double>     m_betaGlucan               ;
+   bool                      m_betaGlucanIsMassPerVolume;
 };
 
 Q_DECLARE_METATYPE(QList<Fermentable*>)

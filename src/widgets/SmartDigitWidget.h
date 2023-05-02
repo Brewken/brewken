@@ -48,7 +48,7 @@ class SmartDigitWidget : public QLabel, public SmartField {
    Q_OBJECT
 
 public:
-   enum ColorType{NONE, LOW, GOOD, HIGH, BLACK};
+   enum class ColorType{None, Low, Good, High, Black};
 
    SmartDigitWidget(QWidget * parent);
    virtual ~SmartDigitWidget();
@@ -58,16 +58,16 @@ public:
    virtual void connectSmartLabelSignal(SmartLabel & smartLabel);
    virtual void doPostInitWork();
 
-   //! \brief Displays the given \c num with precision \c prec.
-   void display(double num, int prec = 0);
-
-   //! \brief Display a QString.
-   void display(QString str);
-
-   //! \brief Set the lower limit of the "good" range.
+   /**
+    * \brief Set the lower limit of the "good" range.  NB: If we are displaying a \c PhysicalQuantity then num must be
+    *        in canonical units.
+    */
    void setLowLim(double num);
 
-   //! \brief Set the upper limit of the "good" range.
+   /**
+    * \brief Set the upper limit of the "good" range.  NB: If we are displaying a \c PhysicalQuantity then num must be
+    *        in canonical units.
+    */
    void setHighLim(double num);
 
    /**
@@ -83,17 +83,8 @@ public:
    void setGoodMsg(QString msg);
    void setHighMsg(QString msg);
 
-   //! \brief the array needs to be low, good, high
-   void setMessages(QStringList msgs);
-
-   void setText(QString amount, int precision = 2);
-   void setText(double  amount, int precision = 2);
-
-   /**
-    * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
-    *        symbols)
-    */
-   template<typename T> T getValueAs() const;
+   //! \brief Set all the messages
+   void setMessages(QString lowMsg, QString goodMsg, QString highMsg);
 
 public slots:
    /**
@@ -103,20 +94,10 @@ public slots:
     */
    void displayChanged(SmartAmounts::ScaleInfo previousScaleInfo);
 
-protected:
-   int getPrecision() const;
-
-   BtFieldType fieldType;
-
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;
 };
-
-//
-// See comment in widgets/BtAmountDigitWidget.h for why we need these trivial child classes to use in .ui files
-//
-class BtGenericDigit : public SmartDigitWidget { Q_OBJECT public: BtGenericDigit(QWidget * parent); };
 
 #endif

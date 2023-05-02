@@ -215,7 +215,6 @@ namespace {
 
       return;
    }
-
 }
 
 // This private implementation class holds all private non-virtual members of MainWindow
@@ -1150,8 +1149,7 @@ void MainWindow::setBrewNote(BrewNote* bNote)
    QString tabname;
    BrewNoteWidget* ni = findBrewNoteWidget(bNote);
 
-   if ( ni )
-   {
+   if ( ni ) {
       tabWidget_recipeView->setCurrentWidget(ni);
       return;
    }
@@ -1159,8 +1157,9 @@ void MainWindow::setBrewNote(BrewNote* bNote)
    ni = new BrewNoteWidget(tabWidget_recipeView);
    ni->setBrewNote(bNote);
 
-   tabWidget_recipeView->addTab(ni,bNote->brewDate_short());
-   tabWidget_recipeView->setCurrentWidget(ni);
+   this->tabWidget_recipeView->addTab(ni,bNote->brewDate_short());
+   this->tabWidget_recipeView->setCurrentWidget(ni);
+   return;
 }
 
 void MainWindow::setAncestor()
@@ -1390,11 +1389,14 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    this->lineEdit_boilSg->setAmount(this->recipeObs->boilGrav());
 
    Style const * style = this->recipeObs->style();
-
-   updateDensitySlider(*this->styleRangeWidget_og, *this->oGLabel, style->ogMin(), style->ogMax(), 1.120);
+   if (style) {
+      updateDensitySlider(*this->styleRangeWidget_og, *this->oGLabel, style->ogMin(), style->ogMax(), 1.120);
+   }
    this->styleRangeWidget_og->setValue(this->oGLabel->getAmountToDisplay(recipeObs->og()));
 
-   updateDensitySlider(*this->styleRangeWidget_fg, *this->fGLabel, style->fgMin(), style->fgMax(), 1.030);
+   if (style) {
+      updateDensitySlider(*this->styleRangeWidget_fg, *this->fGLabel, style->fgMin(), style->fgMax(), 1.030);
+   }
    this->styleRangeWidget_fg->setValue(this->fGLabel->getAmountToDisplay(recipeObs->fg()));
 
    this->styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
@@ -1413,10 +1415,12 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    this->rangeWidget_boilsize->setValue         (this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
 
    /* Colors need the same basic treatment as gravity */
-   updateColorSlider(*this->styleRangeWidget_srm,
-                     *this->colorSRMLabel,
-                     style->colorMin_srm(),
-                     style->colorMax_srm());
+   if (style) {
+      updateColorSlider(*this->styleRangeWidget_srm,
+                        *this->colorSRMLabel,
+                        style->colorMin_srm(),
+                        style->colorMax_srm());
+   }
    this->styleRangeWidget_srm->setValue(this->colorSRMLabel->getAmountToDisplay(this->recipeObs->color_srm()));
 
    // In some, incomplete, recipes, OG is approximately 1.000, which then makes GU close to 0 and thus IBU/GU insanely
@@ -2399,8 +2403,8 @@ void MainWindow::newBrewNote() {
       bIndex = treeView_recipe->findElement(bNote.get());
       if ( bIndex.isValid() )
          setTreeSelection(bIndex);
+      }
    }
-}
 
 void MainWindow::reBrewNote() {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();

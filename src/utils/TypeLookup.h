@@ -231,6 +231,22 @@ private:
 #define PROPERTY_TYPE_LOOKUP_ENTRY(propNameConstVar, memberVar, ...) {&propNameConstVar, TypeInfo::construct<decltype(memberVar)>(__VA_OPT__ (__VA_ARGS__))}
 
 /**
+ * \brief Similar to \c PROPERTY_TYPE_LOOKUP_ENTRY but used when we do not have a member variable and instead must use
+ *        the return value of a getter member function.  This is usually when we have some combo getters/setters that
+ *        exist primarily for the benefit of BeerJSON.  Eg, The \c Fermentable::betaGlucanWithUnits member function
+ *        combines \c Fermentable::m_betaGlucan and \c Fermentable::betaGlucanIsMassPerVolume into a
+ *        \c std::optional<MassOrVolumeConcentrationAmt> return value, so, in \c Fermentable::typeLookup, we include the
+ *        following:
+ *
+ *           PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits, Measurement::PqEitherMassOrVolumeConcentration),
+ *
+ *        Note that, although very similar to \c PROPERTY_TYPE_LOOKUP_ENTRY, the macro is slightly different.  We need
+ *        an & in front of MyClass::memberFunction to pass it to decltype (to get the type of the return type of that
+ *        function), whereas we can pass MyClass::memberVariable in direct.
+ */
+#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, getterFunction, ...) {&propNameConstVar, TypeInfo::construct< decltype(&getterFunction)>(__VA_OPT__ (__VA_ARGS__))}
+
+/**
  * \brief Convenience function for logging
  */
 template<class S>

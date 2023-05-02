@@ -38,6 +38,10 @@ NamedParameterBundle::iterator NamedParameterBundle::insert(BtStringConst const 
    return this->QHash<QString, QVariant>::insert(QString{*parameterName}, value);
 }
 
+bool NamedParameterBundle::contains(BtStringConst const & parameterName) const {
+   return this->QHash<QString, QVariant>::contains(*parameterName);
+}
+
 
 QVariant NamedParameterBundle::get(BtStringConst const & parameterName) const {
    if (!this->contains(*parameterName)) {

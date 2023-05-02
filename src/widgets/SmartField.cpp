@@ -196,6 +196,26 @@ public:
       return amount;
    }
 
+   /**
+    * \brief Use this when you want to do something with the returned QString
+    *
+    * \param amount Must be in canonical units eg kilograms for mass, liters for volume
+    */
+   [[nodiscard]] QString displayAmount(double amount) const {
+      // It's a coding error to call this for NonPhysicalQuantity
+      Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->m_typeInfo->fieldType));
+
+      // I find this a nice level of abstraction. This lets all of the setText()
+      // methods make a single call w/o having to do the logic for finding the
+      // unit and scale.
+      return Measurement::displayAmount(
+         Measurement::Amount{amount, Measurement::Unit::getCanonicalUnit(*this->m_currentPhysicalQuantity)},
+         this->m_precision,
+         this->m_self.getForcedSystemOfMeasurement(),
+         this->m_self.getForcedRelativeScale()
+      );
+   }
+
    SmartField &              m_self;
    bool                      m_initialised;
    char const *              m_editorName;
@@ -396,7 +416,7 @@ template<typename T, typename> void SmartField::setAmount(std::optional<T> amoun
          Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Trying to set wrong type; m_typeInfo=" <<
          this->pimpl->m_typeInfo << ", typeid(T)=" << typeid(T).name();
       Q_ASSERT(false);
-  }
+   }
 
    if (!amount) {
       this->setRawText("");
@@ -442,7 +462,7 @@ template<typename T, typename> void SmartField::setAmount(T amount) {
          Q_FUNC_INFO << this->pimpl->m_fieldFqName << "forcedSystemOfMeasurement:" <<
          this->getForcedSystemOfMeasurement() << ", forcedRelativeScale:" <<
          this->getForcedRelativeScale();
-      this->setRawText(this->displayAmount(amount));
+      this->setRawText(this->pimpl->displayAmount(amount));
    }
 
    return;
@@ -454,9 +474,18 @@ template<typename T, typename> void SmartField::setAmount(T amount) {
 template void SmartField::setAmount(std::optional<int         > amount);
 template void SmartField::setAmount(std::optional<unsigned int> amount);
 template void SmartField::setAmount(std::optional<double      > amount);
-template void SmartField::setAmount(int                         amount);
-template void SmartField::setAmount(unsigned int                amount);
-template void SmartField::setAmount(double                      amount);
+template void SmartField::setAmount(int          amount);
+template void SmartField::setAmount(unsigned int amount);
+template void SmartField::setAmount(double       amount);
+
+void SmartField::setPrecision(unsigned int const precision) {
+   this->pimpl->m_precision = precision;
+   return;
+}
+
+[[nodiscard]] unsigned int SmartField::getPrecision() const {
+   return this->pimpl->m_precision;
+}
 
 // We can't do the same trick on get-value-as as we do for set-amount because we can't overload base on return type,
 // hence two different function names.
@@ -538,21 +567,6 @@ void SmartField::selectPhysicalQuantity(Measurement::PhysicalQuantity const phys
    return;
 }
 
-QString SmartField::displayAmount(double amount) const {
-   // It's a coding error to call this for NonPhysicalQuantity
-   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
-
-   // I find this a nice level of abstraction. This lets all of the setText()
-   // methods make a single call w/o having to do the logic for finding the
-   // unit and scale.
-   return Measurement::displayAmount(
-      Measurement::Amount{amount, Measurement::Unit::getCanonicalUnit(*this->pimpl->m_currentPhysicalQuantity)},
-      this->pimpl->m_precision,
-      this->getForcedSystemOfMeasurement(),
-      this->getForcedRelativeScale()
-   );
-}
-
 void SmartField::correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo) {
    Q_ASSERT(this->pimpl->m_initialised);
 
@@ -571,7 +585,7 @@ void SmartField::correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo) {
    // amount (aka to SI) and then into the unit we want.
    Measurement::Amount amountAsCanonical = this->pimpl->toCanonical(enteredText, previousScaleInfo);
 
-   QString const correctedText = this->displayAmount(amountAsCanonical.quantity());
+   QString const correctedText = this->pimpl->displayAmount(amountAsCanonical.quantity());
    qDebug() <<
       Q_FUNC_INFO << this->getFqFieldName() << "Interpreted" << enteredText << "as" << amountAsCanonical <<
       "and corrected to" << correctedText;

@@ -58,9 +58,14 @@ Q_DECLARE_METATYPE(std::optional<QDate       >)
 Q_DECLARE_METATYPE(std::optional<QString     >)
 Q_DECLARE_METATYPE(std::optional<unsigned int>)
 
-// Need these to be able to use MassOrVolumeAmt in Qt Properties system
+// Need these to be able to use MassOrVolumeAmt and MassOrVolumeConcentrationAmt in Qt Properties system
 Q_DECLARE_METATYPE(MassOrVolumeAmt               )
 Q_DECLARE_METATYPE(std::optional<MassOrVolumeAmt>)
+Q_DECLARE_METATYPE(MassOrVolumeConcentrationAmt               )
+Q_DECLARE_METATYPE(std::optional<MassOrVolumeConcentrationAmt>)
+
+
+
 
 /**
  * \brief This allows constructors to be called without a long list of positional parameters and, more importantly, for
@@ -80,6 +85,13 @@ public:
     * \brief Override of \c insert to support \c BtStringConst
     */
    QHash::iterator insert(BtStringConst const & parameterName, QVariant const & value);
+
+   using QHash<QString, QVariant>::contains;
+
+   /**
+    * \brief Overload of QHash<QString, QVariant>::contains to support passing \c BtStringConst
+    */
+   bool contains(BtStringConst const & parameterName) const;
 
    /**
     * \brief Get the value of a parameter that is required to be present in the DB.  In "strict" mode, throw an

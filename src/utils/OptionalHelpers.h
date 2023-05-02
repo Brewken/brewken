@@ -93,6 +93,51 @@ namespace Optional {
       return true;
    }
 
+   /**
+    * \brief Create an \c std::optional wrapped type \c T (eg \c MassOrVolumeAmt or \c MassOrVolumeConcentrationAmt)
+    *        from an optional \c double and a flag that chooses between two possibilities for the second parameter (of
+    *        type \c U) to construct a \c T.  \c U is typically \c Measurement::Unit.
+    *
+    *        In a lot of model objects, where we allow an optional amount to be measured two ways -- eg by Mass or by
+    *        Volume -- the underlying storage has two fields: an optional double (for the quantity if it's set) and a
+    *        boolean flag (to say which way is being measured -- eg whether the quantity is a Mass or a Volume).  We
+    *        sometimes need a single getter to be able to return an optional \c Measurement::ConstrainedAmount derived
+    *        from the two underlying fields.
+    */
+   template<typename T, typename U>
+   std::optional<T> eitherOr(std::optional<double> const & quantity,
+                             bool const isFirstUnit,
+                             U const & firstUnit,
+                             U const & secondUnit) {
+      if (!quantity) {
+         return std::nullopt;
+      }
+      return std::make_optional<T>(*quantity, isFirstUnit ? firstUnit : secondUnit);
+   }
+
+   /**
+    * \brief This is the inverse of the other \c eitherOr!
+    *
+    *        Note that the template here does not need to know about the \c Measurement::Unit type.  It suffices that
+    *        type \c T (typically \c MassOrVolumeAmt or \c MassOrVolumeConcentrationAmt) implements member functions
+    *        \c quantity() and \c isFirst().
+    *
+    * \param constrainedAmount Input
+    * \param quantity Output (along with return value)
+    *
+    * \return isFirstUnit
+    */
+   template<typename T>
+   bool eitherOr(std::optional<T> const & constrainedAmount, std::optional<double> & quantity) {
+      if (!constrainedAmount) {
+         quantity = std::nullopt;
+         // The return value is not really meaningful here, but by convention the default is \c true
+         return true;
+      }
+      quantity = constrainedAmount->quantity();
+      return constrainedAmount->isFirst();
+   }
+
 }
 
 /**
