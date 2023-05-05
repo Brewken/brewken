@@ -81,27 +81,27 @@
 #include "ConverterTool.h"
 #include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
-#include "EquipmentEditor.h"
+#include "editors/EquipmentEditor.h"
 #include "EquipmentListModel.h"
 #include "FermentableDialog.h"
-#include "FermentableEditor.h"
+#include "editors/FermentableEditor.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "HelpDialog.h"
 #include "HopDialog.h"
-#include "HopEditor.h"
+#include "editors/HopEditor.h"
 #include "HopSortFilterProxyModel.h"
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "ImportExport.h"
 #include "InventoryFormatter.h"
 #include "MashDesigner.h"
-#include "MashEditor.h"
+#include "editors/MashEditor.h"
 #include "MashListModel.h"
-#include "MashStepEditor.h"
+#include "editors/MashStepEditor.h"
 #include "MashWizard.h"
 #include "measurement/Unit.h"
 #include "MiscDialog.h"
-#include "MiscEditor.h"
+#include "editors/MiscEditor.h"
 #include "MiscSortFilterProxyModel.h"
 #include "measurement/Measurement.h"
 #include "model/BrewNote.h"
@@ -111,7 +111,7 @@
 #include "model/Recipe.h"
 #include "model/Style.h"
 #include "model/Yeast.h"
-#include "NamedMashEditor.h"
+#include "editors/NamedMashEditor.h"
 #include "OgAdjuster.h"
 #include "OptionDialog.h"
 #include "PersistentSettings.h"
@@ -124,7 +124,7 @@
 #include "RelationalUndoableUpdate.h"
 #include "ScaleRecipeTool.h"
 #include "StrikeWaterDialog.h"
-#include "StyleEditor.h"
+#include "editors/StyleEditor.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
 #include "tableModels/FermentableTableModel.h"
@@ -138,10 +138,10 @@
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
 #include "WaterDialog.h"
-#include "WaterEditor.h"
+#include "editors/WaterEditor.h"
 #include "WaterListModel.h"
 #include "YeastDialog.h"
-#include "YeastEditor.h"
+#include "editors/YeastEditor.h"
 #include "YeastSortFilterProxyModel.h"
 
 namespace {
@@ -1022,7 +1022,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Hop* h = active->getItem<Hop>(index);
                if (h) {
-                  hopEditor->setHop(h);
+                  hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
                   hopEditor->show();
                }
             }
@@ -2034,14 +2034,15 @@ void MainWindow::editSelectedMisc() {
    miscEditor->show();
 }
 
-void MainWindow::editSelectedHop()
-{
+void MainWindow::editSelectedHop() {
    Hop* h = selectedHop();
-   if( h == nullptr )
+   if (h == nullptr) {
       return;
+   }
 
-   hopEditor->setHop(h);
+   hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
    hopEditor->show();
+   return;
 }
 
 void MainWindow::editSelectedYeast()

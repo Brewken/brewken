@@ -5525,6 +5525,34 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Kontrollera om mängden är listad i kg istället för L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished">Mängden är i vikt?</translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished">Markera denna om värdet indikerar vikt istället för volym</translation>
+    </message>
+    <message>
+        <source>x1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x4</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>hopEditor</name>

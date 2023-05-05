@@ -93,7 +93,7 @@ public:
 
    virtual ~Water();
 
-   // It is useful to be able to assign one Water to another - see eg WaterEditor.cpp
+   // It is useful to be able to assign one Water to another - see eg editors/WaterEditor.cpp
    Water & operator=(Water other);
 
 protected:

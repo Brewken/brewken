@@ -169,7 +169,7 @@ TypeLookup const Hop::typeLookup {
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::producer             , Hop::m_producer             ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::product_id           , Hop::m_product_id           ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ,           NonPhysicalQuantity::Dimensionless),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::total_oil_ml_per_100g, Hop::m_total_oil_ml_per_100g,           NonPhysicalQuantity::Dimensionless), // Not really dimensionless...
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::farnesene_pct        , Hop::m_farnesene_pct        ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::geraniol_pct         , Hop::m_geraniol_pct         ,           NonPhysicalQuantity::Percentage   ),
@@ -206,7 +206,7 @@ Hop::Hop(QString name) :
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_producer             {"" },
    m_product_id           {"" },
-   m_year                 {std::nullopt},
+   m_year                 {"" },
    m_total_oil_ml_per_100g{std::nullopt},
    m_farnesene_pct        {std::nullopt},
    m_geraniol_pct         {std::nullopt},
@@ -240,7 +240,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_producer             {namedParameterBundle.val<QString              >(PropertyNames::Hop::producer             )},
    m_product_id           {namedParameterBundle.val<QString              >(PropertyNames::Hop::product_id           )},
-   m_year                 {namedParameterBundle.val<std::optional<int>   >(PropertyNames::Hop::year                 )},
+   m_year                 {namedParameterBundle.val<QString              >(PropertyNames::Hop::year                 )},
    m_total_oil_ml_per_100g{namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::total_oil_ml_per_100g)},
    m_farnesene_pct        {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::farnesene_pct        )},
    m_geraniol_pct         {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::geraniol_pct         )},
@@ -309,7 +309,7 @@ double                      Hop::myrcene_pct()           const { return this->m_
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 QString                     Hop::producer()              const { return this->m_producer;              }
 QString                     Hop::product_id()            const { return this->m_product_id;            }
-std::optional<unsigned int> Hop::year()                  const { return this->m_year;                  }
+QString                     Hop::year()                  const { return this->m_year;                  }
 std::optional<double>       Hop::total_oil_ml_per_100g() const { return this->m_total_oil_ml_per_100g; }
 std::optional<double>       Hop::farnesene_pct()         const { return this->m_farnesene_pct;         }
 std::optional<double>       Hop::geraniol_pct()          const { return this->m_geraniol_pct;          }
@@ -344,7 +344,7 @@ void Hop::setMyrcene_pct          (double                      const   val) { th
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Hop::setProducer             (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::producer,              this->m_producer,              val                                                             ); }
 void Hop::setProduct_id           (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::product_id,            this->m_product_id,            val                                                             ); }
-void Hop::setYear                 (std::optional<unsigned int> const   val) { this->setAndNotify(PropertyNames::Hop::year,                  this->m_year,                  val                                                             ); }
+void Hop::setYear                 (QString                     const   val) { this->setAndNotify(PropertyNames::Hop::year,                  this->m_year,                  val                                                             ); }
 void Hop::setTotal_oil_ml_per_100g(std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::total_oil_ml_per_100g, this->m_total_oil_ml_per_100g, this->enforceMinAndMax(val, "total_oil_ml_per_100g", 0.0, 100.0)); }
 void Hop::setFarnesene_pct        (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::farnesene_pct,         this->m_farnesene_pct,         this->enforceMinAndMax(val, "farnesene_pct",         0.0, 100.0)); }
 void Hop::setGeraniol_pct         (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::geraniol_pct,          this->m_geraniol_pct,          this->enforceMinAndMax(val, "geraniol_pct",          0.0, 100.0)); }

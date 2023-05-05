@@ -212,7 +212,7 @@ namespace {
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::String, "producer",              PropertyNames::Hop::producer                          },
          {ObjectStore::FieldType::String, "product_id",            PropertyNames::Hop::product_id                        },
-         {ObjectStore::FieldType::Int,    "year",                  PropertyNames::Hop::year                              },
+         {ObjectStore::FieldType::String, "year",                  PropertyNames::Hop::year                              },
          {ObjectStore::FieldType::Double, "total_oil_ml_per_100g", PropertyNames::Hop::total_oil_ml_per_100g             },
          {ObjectStore::FieldType::Double, "farnesene_pct",         PropertyNames::Hop::farnesene_pct                     },
          {ObjectStore::FieldType::Double, "geraniol_pct",          PropertyNames::Hop::geraniol_pct                      },

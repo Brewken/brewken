@@ -939,20 +939,8 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          break;
 
       case JsonRecordDefinition::FieldType::String:
-         //
-         // Unless and until we get a fix for https://github.com/beerjson/beerjson/issues/196, there is a slightly
-         // ugly special case we have to handle where WE store Hop Year internally as an optional int but BeerJSON
-         // stores it as a string.
-         //
-         // .:TODO JSON:. Need to make PropertyNames::Hop::year optional and update UI to support this
-         if (*fieldDefinition.propertyName == PropertyNames::Hop::year) {
-            if (Optional::removeOptionalWrapperIfPresent<int>(value, propertyIsOptional)) {
-               // QVariant knows how to convert an int to a QString so calling `value.toString()` is OK here
-               std::string yearAsString = value.toString().toStdString();
-               recordDataAsObject.emplace(key, yearAsString);
-            }
-            break;
-         }
+         // We mostly don't bother making string fields optional because empty string will suffice for a string value
+         // that is not specified.  But we keep the logic consistent here anyway.
          if (Optional::removeOptionalWrapperIfPresent<QString>(value, propertyIsOptional)) {
 
             std::string valueAsString = value.toString().toStdString();

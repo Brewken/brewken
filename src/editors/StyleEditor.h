@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * MashEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * editors/StyleEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,50 +16,53 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MASHEDITOR_H
-#define MASHEDITOR_H
+#ifndef EDITORS_STYLEEDITOR_H
+#define EDITORS_STYLEEDITOR_H
 #pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
-#include "ui_mashEditor.h"
+#include "ui_styleEditor.h"
 
 // Forward declarations.
-class Recipe;
-class Mash;
-class Equipment;
+class Style;
+class StyleListModel;
+class StyleSortFilterProxyModel;
 
 /*!
- * \class MashEditor
+ * \class StyleEditor
  *
- * \brief View/controller dialog for editing a mash.
- *
- *        See also \c NamedMashEditor
+ * \brief View/controller dialog to modify styles.
  */
-class MashEditor : public QDialog, public Ui::mashEditor {
+class StyleEditor : public QDialog, public Ui::styleEditor {
    Q_OBJECT
+
 public:
-   MashEditor( QWidget *parent = nullptr );
+   StyleEditor(QWidget *parent = nullptr, bool singleSyleEditor = false);
+   virtual ~StyleEditor();
+
+   void setStyle(Style * s);
 
 public slots:
-   void showEditor();
-   void closeEditor();
-   void saveAndClose();
-   //! Get the tun mass and sp. heat from the equipment.
-   void fromEquipment();
-   //! Set the mash we wish to view/edit.
-   void setMash(Mash* mash);
-   void setRecipe(Recipe* r);
-
-   void changed(QMetaProperty,QVariant);
-private:
-   void showChanges(QMetaProperty* prop = nullptr);
+   void save();
+   void newStyle(QString folder = "");
+   void removeStyle();
    void clear();
-   Recipe* m_rec;
-   Mash* mashObs;
-   Equipment* m_equip;
+   void clearAndClose();
 
+   void styleSelected(QString const & text);
+
+   /**
+    * \brief Receives the \c NamedEntity::changed signal emitted by the \c Style (or its base class)
+    */
+   void changed(QMetaProperty const property, QVariant const value);
+
+private:
+   Style * obsStyle;
+   StyleListModel * styleListModel;
+   StyleSortFilterProxyModel * styleProxyModel;
+   void showChanges(QMetaProperty const * prop = nullptr);
 };
 
 #endif

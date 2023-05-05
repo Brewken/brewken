@@ -30,7 +30,7 @@
 #include "model/Recipe.h"
 #include "MainWindow.h"
 #include "model/Misc.h"
-#include "MiscEditor.h"
+#include "editors/MiscEditor.h"
 #include "MiscSortFilterProxyModel.h"
 #include "tableModels/MiscTableModel.h"
 

@@ -5561,6 +5561,34 @@ El volum final al primari és de %1.</translation>
         <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x4</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>hopEditor</name>

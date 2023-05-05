@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * StyleEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/YeastEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,53 +16,44 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef STYLEEDITOR_H
-#define STYLEEDITOR_H
+#ifndef EDITORS_YEASTEDITOR_H
+#define EDITORS_YEASTEDITOR_H
 #pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
-#include "ui_styleEditor.h"
+#include "ui_yeastEditor.h"
 
 // Forward declarations.
-class Style;
-class StyleListModel;
-class StyleSortFilterProxyModel;
+class Yeast;
 
 /*!
- * \class StyleEditor
+ * \class YeastEditor
  *
- * \brief View/controller dialog to modify styles.
+ *
+ * \brief View/controller dialog for modifying yeasts.
  */
-class StyleEditor : public QDialog, public Ui::styleEditor {
+class YeastEditor : public QDialog, private Ui::yeastEditor {
    Q_OBJECT
 
 public:
-   StyleEditor(QWidget *parent = nullptr, bool singleSyleEditor = false);
-   virtual ~StyleEditor();
+   YeastEditor(QWidget * parent = nullptr);
+   virtual ~YeastEditor();
 
-   void setStyle(Style * s);
+   //! Set the yeast we want to modify.
+   void setYeast(Yeast * y);
+   void newYeast(QString folder = "");
 
 public slots:
    void save();
-   void newStyle(QString folder = "");
-   void removeStyle();
-   void clear();
    void clearAndClose();
-
-   void styleSelected(QString const & text);
-
-   /**
-    * \brief Receives the \c NamedEntity::changed signal emitted by the \c Style (or its base class)
-    */
-   void changed(QMetaProperty const property, QVariant const value);
+   void changed(QMetaProperty, QVariant);
 
 private:
-   Style * obsStyle;
-   StyleListModel * styleListModel;
-   StyleSortFilterProxyModel * styleProxyModel;
-   void showChanges(QMetaProperty const * prop = nullptr);
+   Yeast* obsYeast;
+
+   void showChanges(QMetaProperty* prop = nullptr);
 };
 
 #endif

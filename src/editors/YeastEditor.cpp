@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "YeastEditor.h"
+#include "editors/YeastEditor.h"
 
 #include <cmath>
 

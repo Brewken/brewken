@@ -547,7 +547,7 @@ namespace {
          {QString(     "UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'"  )},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<int    >())},
+         {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN total_oil_ml_per_100g %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN farnesene_pct         %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN geraniol_pct          %1").arg(db.getDbNativeTypeName<double >())},

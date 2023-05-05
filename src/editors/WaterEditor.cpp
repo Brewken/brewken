@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "WaterEditor.h"
+#include "editors/WaterEditor.h"
 
 #include <QDebug>
 #include <QInputDialog>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/MashStepEditor.h is part of Brewken, and is copyright the following authors 2009-2020:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,53 +16,56 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef WATEREDITOR_H
-#define WATEREDITOR_H
+#ifndef EDITORS_MASHSTEPEDITOR_H
+#define EDITORS_MASHSTEPEDITOR_H
 #pragma once
 
-#include <memory> // For PImpl
-#include <optional>
+#include <memory>
 
 #include <QDialog>
+#include <QWidget>
 #include <QMetaProperty>
 #include <QVariant>
 
-#include "ui_waterEditor.h"
+#include "ui_mashStepEditor.h"
 
 // Forward declarations.
-class Water;
+class MashStep;
+class Mash;
 
 /*!
- * \class WaterEditor
+ * \class MashStepEditor
  *
- * \brief View/controller class for creating and modifying water records.
+ * \brief View/controller dialog for editing mash steps.
  */
-class WaterEditor : public QDialog, public Ui::waterEditor {
+class MashStepEditor : public QDialog, public Ui::mashStepEditor
+{
    Q_OBJECT
 public:
-   WaterEditor(QWidget *parent = nullptr, QString const editorName = "Unnamed");
-   virtual ~WaterEditor();
+   MashStepEditor(QWidget* parent=nullptr);
+   virtual ~MashStepEditor() {}
 
-   /*!
-    * Sets the water we want to observe.
-    *
-    * \param water If \c std::nullopt then stop observing
-    */
-   void setWater(std::optional<std::shared_ptr<Water>> water);
-
-   void newWater(QString folder);
+   void setMashStep(std::shared_ptr<MashStep> step);
 
 public slots:
-   void showChanges(QMetaProperty const * prop = nullptr);
-   void inputFieldModified();
-   void changed(QMetaProperty, QVariant);
    void saveAndClose();
-   void clearAndClose();
+   //! View/edit the given mash step.
+   void close();
+   /*!
+    * Grays out irrelevant portions of the dialog.
+    * \param text - one of {"Infusion","Decoction","Temperature"} describing the mash step.
+    */
+   void grayOutStuff(const QString& text);
+   void changed(QMetaProperty, QVariant);
 
 private:
-   // Private implementation details - see https://herbsutter.com/gotw/_100/
-   class impl;
-   std::unique_ptr<impl> pimpl;
+   /*! Updates the UI elements effected by the \b metaProp of
+    *  the step we are watching. If \b metaProp is null,
+    *  then update all the UI elements at once.
+    */
+   void showChanges(QMetaProperty* metaProp = 0);
+   void clear();
+   std::shared_ptr<MashStep> obs;
 };
 
 #endif

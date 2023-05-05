@@ -1158,7 +1158,7 @@ def doPackage():
          #
          # Debian and RPM both want the debugging information stripped from the executable.
          #
-         # .:TBD:. One day perhaps we could be friendlyi and still ship the debugging info, just in a separate .dbg
+         # .:TBD:. One day perhaps we could be friendly and still ship the debugging info, just in a separate .dbg
          # file.  The procedure to do this is described in the 'only-keep-debug' section of `man objcopy`.  However, we
          # need to work out where to put the .dbg file so that it remains usable but lintian does not complain about it.
          #

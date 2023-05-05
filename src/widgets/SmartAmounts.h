@@ -168,7 +168,7 @@ namespace SmartAmounts {
  *
  *           SMART_FIELD_INIT(FermentableEditor, label_color, field_color, Fermentable, PropertyNames::Fermentable::color_srm, 0);
  *
- * \param editorClass The class name of the class holding the field we're initialising, eg \c HopEditor.  (In theory we
+ * \param editorClass The class name of the class holding the field we're initialising, eg \c editors/HopEditor.  (In theory we
  *                    could pick this up via \c staticMetaObject.className(), but then we wouldn't be able to do the
  *                    macro concatenation here.)
  * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop

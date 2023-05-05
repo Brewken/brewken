@@ -1,6 +1,5 @@
 /*======================================================================================================================
- * YeastEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
- *   • Jeff Bailey <skydvr38@verizon.net>
+ * editors/MashEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -16,44 +15,50 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef YEASTEDITOR_H
-#define YEASTEDITOR_H
+#ifndef EDITORS_MASHEDITOR_H
+#define EDITORS_MASHEDITOR_H
 #pragma once
 
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
-#include "ui_yeastEditor.h"
+#include "ui_mashEditor.h"
 
 // Forward declarations.
-class Yeast;
+class Recipe;
+class Mash;
+class Equipment;
 
 /*!
- * \class YeastEditor
+ * \class MashEditor
  *
+ * \brief View/controller dialog for editing a mash.
  *
- * \brief View/controller dialog for modifying yeasts.
+ *        See also \c NamedMashEditor
  */
-class YeastEditor : public QDialog, private Ui::yeastEditor {
+class MashEditor : public QDialog, public Ui::mashEditor {
    Q_OBJECT
-
 public:
-   YeastEditor(QWidget * parent = nullptr);
-   virtual ~YeastEditor();
-
-   //! Set the yeast we want to modify.
-   void setYeast(Yeast * y);
-   void newYeast(QString folder = "");
+   MashEditor( QWidget *parent = nullptr );
 
 public slots:
-   void save();
-   void clearAndClose();
-   void changed(QMetaProperty, QVariant);
+   void showEditor();
+   void closeEditor();
+   void saveAndClose();
+   //! Get the tun mass and sp. heat from the equipment.
+   void fromEquipment();
+   //! Set the mash we wish to view/edit.
+   void setMash(Mash* mash);
+   void setRecipe(Recipe* r);
 
+   void changed(QMetaProperty,QVariant);
 private:
-   Yeast* obsYeast;
-
    void showChanges(QMetaProperty* prop = nullptr);
+   void clear();
+   Recipe* m_rec;
+   Mash* mashObs;
+   Equipment* m_equip;
+
 };
 
 #endif

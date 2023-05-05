@@ -5565,6 +5565,34 @@ Il Volume finale del primo è %1.</translation>
         <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Controllare se l&apos;importo indicato è in kg invece di L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished">Controlla se la data quantità è peso invece di volume</translation>
+    </message>
+    <message>
+        <source>x1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x4</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>hopEditor</name>

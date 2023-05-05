@@ -30,7 +30,7 @@
 #include "model/Recipe.h"
 #include "model/Yeast.h"
 #include "tableModels/YeastTableModel.h"
-#include "YeastEditor.h"
+#include "editors/YeastEditor.h"
 #include "YeastSortFilterProxyModel.h"
 
 YeastDialog::YeastDialog(MainWindow* parent)

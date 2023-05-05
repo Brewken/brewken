@@ -5567,6 +5567,34 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <source>Fermantable Type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Vérifier que la quantité est exprimée en kg et non en L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished">Exprimée en poids</translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished">À cocher si la quantité est exprimée en poids et non en volume</translation>
+    </message>
+    <message>
+        <source>x1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x4</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>hopEditor</name>

@@ -225,7 +225,12 @@ public:
    // .:TODO JSON:. Some of these should be optional
    Q_PROPERTY(QString producer              READ producer              WRITE setProducer             )
    Q_PROPERTY(QString product_id            READ product_id            WRITE setProduct_id           )
-   Q_PROPERTY(std::optional<unsigned int> year                  READ year                  WRITE setYear                 )
+   /**
+    * \brief It might seem odd to store year as a string rather than, say, std::optional<unsigned int>, but this is
+    *        deliberate and for two reasons.  Firstly BeerJSON treats it as a string.  Secondly, we don't want it
+    *        formatted as a number when we display it.  Nobody writes "2,023" or "2 023" for the year 2023.
+    */
+   Q_PROPERTY(QString                     year                  READ year                  WRITE setYear                 )
    Q_PROPERTY(std::optional<double      > total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
    Q_PROPERTY(std::optional<double      > farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
    Q_PROPERTY(std::optional<double      > geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
@@ -256,7 +261,7 @@ public:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString                     producer             () const;
    QString                     product_id           () const;
-   std::optional<unsigned int> year                 () const;
+   QString                     year                 () const;
    std::optional<double      > total_oil_ml_per_100g() const;
    std::optional<double      > farnesene_pct        () const;
    std::optional<double      > geraniol_pct         () const;
@@ -287,9 +292,9 @@ public:
    void setCohumulone_pct       (double  const   val);
    void setMyrcene_pct          (double  const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setProducer             (QString                     const & val);
-   void setProduct_id           (QString                     const & val);
-   void setYear                 (std::optional<unsigned int> const   val);
+   void setProducer             (QString                      const & val);
+   void setProduct_id           (QString                      const & val);
+   void setYear                 (QString                      const   val);
    void setTotal_oil_ml_per_100g(std::optional<double      >  const   val);
    void setFarnesene_pct        (std::optional<double      >  const   val);
    void setGeraniol_pct         (std::optional<double      >  const   val);
@@ -328,7 +333,7 @@ private:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString m_producer;
    QString m_product_id;
-   std::optional<unsigned int> m_year;
+   QString m_year;
    std::optional<double      > m_total_oil_ml_per_100g;
    std::optional<double      > m_farnesene_pct;
    std::optional<double      > m_geraniol_pct;

@@ -386,7 +386,7 @@ namespace {
       {JsonRecordDefinition::FieldType::String,       "producer",                          PropertyNames::Hop::producer,          },
       {JsonRecordDefinition::FieldType::String,       "product_id",                        PropertyNames::Hop::product_id,        },
       {JsonRecordDefinition::FieldType::String,       "origin",                            PropertyNames::Hop::origin,            },
-      {JsonRecordDefinition::FieldType::String,       "year",                              PropertyNames::Hop::year,              }, // Yes, year really is a string, not an integer in BeerJSON.  .:TODO.JSON:. Decide int vs string ****
+      {JsonRecordDefinition::FieldType::String,       "year",                              PropertyNames::Hop::year,              },
       {JsonRecordDefinition::FieldType::Enum,         "form",                              PropertyNames::Hop::form,              &Hop::formStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopType_ExclBase {

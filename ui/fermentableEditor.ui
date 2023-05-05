@@ -242,6 +242,41 @@
          </property>
         </widget>
        </item>
+       <item row="7" column="3">
+        <widget class="QLabel" name="label_isWeight">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Check it if the amount listed is in kg instead of L.</string>
+         </property>
+         <property name="text">
+          <string>Amount is weight?</string>
+         </property>
+         <property name="buddy">
+          <cstring>checkBox_isWeight</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="4">
+        <widget class="QCheckBox" name="checkBox_isWeight">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Checked if the given amount is weight instead of volume</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="SmartLabel" name="label_color">
          <property name="contextMenuPolicy">
@@ -567,7 +602,76 @@
          </property>
         </widget>
        </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_x1">
+         <property name="text">
+          <string>x1</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x1</cstring>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x1">
+         <property name="toolTip">
+          <string>x1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <widget class="QLabel" name="label_x2">
+         <property name="text">
+          <string>x2</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x2</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x2">
+         <property name="toolTip">
+          <string>x2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_x3">
+         <property name="text">
+          <string>x3</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x3</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x3">
+         <property name="toolTip">
+          <string>x3</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="3">
+        <widget class="QLabel" name="label_x4">
+         <property name="text">
+          <string>x4</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x4</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x4">
+         <property name="toolTip">
+          <string>x4</string>
+         </property>
+        </widget>
+       </item>
+¥¥¥ Keep going to x23! ¥¥¥
+       <item row="6" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

@@ -1,6 +1,5 @@
 /*======================================================================================================================
- * FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
- *   • Brian Rower <brian.rower@gmail.com>
+ * editors/MiscEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,41 +16,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef FERMENTABLEEDITOR_H
-#define FERMENTABLEEDITOR_H
+#ifndef EDITORS_MISCEDITOR_H
+#define EDITORS_MISCEDITOR_H
 #pragma once
+
+#include "ui_miscEditor.h"
 
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
-#include "ui_fermentableEditor.h"
 
 // Forward declarations.
-class Fermentable;
+class Misc;
 
 /*!
- * \class FermentableEditor
+ * \class MiscEditor
  *
- * \brief Fermentable view/controller dialog that allows you to edit Fermentables.
+ * \brief View/controller dialog for editing miscs.
  */
-class FermentableEditor : public QDialog, private Ui::fermentableEditor {
+class MiscEditor : public QDialog, private Ui::miscEditor {
    Q_OBJECT
 
 public:
-   FermentableEditor(QWidget *parent=nullptr);
-   virtual ~FermentableEditor();
-   void setFermentable(Fermentable* f);
-   void newFermentable(QString folder);
+   MiscEditor( QWidget *parent=nullptr );
+   virtual ~MiscEditor();
+   //! Set the misc we wish to view/edit.
+   void setMisc( Misc* m );
+  //! Create a misc with folders
 
 public slots:
+   //! Save changes.
    void save();
+   //! Clear dialog and close.
    void clearAndClose();
-   void clickedNewFermentable();
+   //! Add a new misc
+   void newMisc(QString folder = "");
+   void changed(QMetaProperty, QVariant);
+   void setIsWeight(bool state);
 
 private:
-   Fermentable* obsFerm;
+   Misc* obsMisc;
    /*! Updates the UI elements effected by the \b metaProp of
-    *  the fermentable we are watching. If \b metaProp is null,
+    *  the misc we are watching. If \b metaProp is null,
     *  then update all the UI elements at once.
     */
    void showChanges(QMetaProperty* metaProp = nullptr);

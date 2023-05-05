@@ -27,7 +27,7 @@
 
 //#include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
-#include "FermentableEditor.h"
+#include "editors/FermentableEditor.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "MainWindow.h"
 #include "model/Fermentable.h"

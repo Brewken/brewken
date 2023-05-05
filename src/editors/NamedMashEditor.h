@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * editors/NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef NAMEDMASHEDITOR_H
-#define NAMEDMASHEDITOR_H
+#ifndef EDITORS_NAMEDMASHEDITOR_H
+#define EDITORS_NAMEDMASHEDITOR_H
 #pragma once
 
 #include <QDialog>
@@ -27,7 +27,7 @@
 
 #include "ui_namedMashEditor.h"
 #include "MashListModel.h"
-#include "MashStepEditor.h"
+#include "editors/MashStepEditor.h"
 #include "EquipmentListModel.h"
 #include "NamedEntitySortProxyModel.h"
 #include "tableModels/MashStepTableModel.h"

@@ -1,6 +1,8 @@
 /*======================================================================================================================
- * HopEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * editors/FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -15,48 +17,46 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef HOPEDITOR_H
-#define HOPEDITOR_H
+#ifndef EDITORS_FERMENTABLEEDITOR_H
+#define EDITORS_FERMENTABLEEDITOR_H
 #pragma once
 
-#include "ui_hopEditor.h"
+#include "ui_fermentableEditor.h"
+
+#include <QDialog>
 #include <QMetaProperty>
-#include <QVariant>
+#include <QString>
 
 // Forward declarations.
-class Hop;
+class Fermentable;
 
 /*!
- * \class HopEditor
+ * \class FermentableEditor
  *
- * \brief View/controller class for modifying hops.
+ * \brief Fermentable view/controller dialog that allows you to edit Fermentables.
  */
-class HopEditor : public QDialog, private Ui::hopEditor {
+class FermentableEditor : public QDialog, private Ui::fermentableEditor {
    Q_OBJECT
 
 public:
-   HopEditor(QWidget * parent = nullptr);
-   virtual ~HopEditor();
-   //! Edit the given hop.
-   void setHop(Hop * h);
-   //! Create a new hop
-   void newHop(QString folder);
+   FermentableEditor(QWidget *parent=nullptr);
+   virtual ~FermentableEditor();
+   void setFermentable(Fermentable* f);
+   void newFermentable(QString folder);
 
 public slots:
-   //! Save the changes.
    void save();
-   //! Clear the dialog and close it.
    void clearAndClose();
-   void changed(QMetaProperty,QVariant);
-   void clickedNewHop();
+   void clickedNewFermentable();
+   void setIsWeight(bool state);
 
 private:
-   Hop* obsHop;
-
-   /*! Updates the UI elements based on \b prop.
-    *  If null, updates all UI elements.
+   Fermentable* obsFerm;
+   /*! Updates the UI elements effected by the \b metaProp of
+    *  the fermentable we are watching. If \b metaProp is null,
+    *  then update all the UI elements at once.
     */
-   void showChanges(QMetaProperty* prop = nullptr);
+   void showChanges(QMetaProperty* metaProp = nullptr);
 };
 
 #endif

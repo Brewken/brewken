@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,51 +16,53 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MISCEDITOR_H
-#define MISCEDITOR_H
+#ifndef EDITORS_WATEREDITOR_H
+#define EDITORS_WATEREDITOR_H
 #pragma once
 
-#include "ui_miscEditor.h"
+#include <memory> // For PImpl
+#include <optional>
 
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
 
+#include "ui_waterEditor.h"
+
 // Forward declarations.
-class Misc;
+class Water;
 
 /*!
- * \class MiscEditor
+ * \class WaterEditor
  *
- * \brief View/controller dialog for editing miscs.
+ * \brief View/controller class for creating and modifying water records.
  */
-class MiscEditor : public QDialog, private Ui::miscEditor {
+class WaterEditor : public QDialog, public Ui::waterEditor {
    Q_OBJECT
-
 public:
-   MiscEditor( QWidget *parent=nullptr );
-   virtual ~MiscEditor();
-   //! Set the misc we wish to view/edit.
-   void setMisc( Misc* m );
-  //! Create a misc with folders
+   WaterEditor(QWidget *parent = nullptr, QString const editorName = "Unnamed");
+   virtual ~WaterEditor();
+
+   /*!
+    * Sets the water we want to observe.
+    *
+    * \param water If \c std::nullopt then stop observing
+    */
+   void setWater(std::optional<std::shared_ptr<Water>> water);
+
+   void newWater(QString folder);
 
 public slots:
-   //! Save changes.
-   void save();
-   //! Clear dialog and close.
-   void clearAndClose();
-   //! Add a new misc
-   void newMisc(QString folder = "");
+   void showChanges(QMetaProperty const * prop = nullptr);
+   void inputFieldModified();
    void changed(QMetaProperty, QVariant);
-   void setIsWeight(bool state);
+   void saveAndClose();
+   void clearAndClose();
 
 private:
-   Misc* obsMisc;
-   /*! Updates the UI elements effected by the \b metaProp of
-    *  the misc we are watching. If \b metaProp is null,
-    *  then update all the UI elements at once.
-    */
-   void showChanges(QMetaProperty* metaProp = nullptr);
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
 #endif

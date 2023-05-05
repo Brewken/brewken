@@ -17,6 +17,7 @@
 #define TABLEMODELS_BTTABLEMODEL_H
 #pragma once
 
+#include <memory>
 #include <optional>
 #include <vector>
 

@@ -32,7 +32,7 @@
 #include "BtFolder.h"
 #include "BtTreeFilterProxyModel.h"
 #include "BtTreeModel.h"
-#include "EquipmentEditor.h"
+#include "editors/EquipmentEditor.h"
 #include "FermentableDialog.h"
 #include "HopDialog.h"
 #include "MiscDialog.h"
@@ -45,8 +45,8 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
-#include "StyleEditor.h"
-#include "WaterEditor.h"
+#include "editors/StyleEditor.h"
+#include "editors/WaterEditor.h"
 #include "YeastDialog.h"
 
 BtTreeView::BtTreeView(QWidget * parent, BtTreeModel::TypeMasks type) :

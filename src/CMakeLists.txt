@@ -67,16 +67,23 @@ set(filesToCompile_cpp
     ${repoDir}/src/database/DbTransaction.cpp
     ${repoDir}/src/database/ObjectStore.cpp
     ${repoDir}/src/database/ObjectStoreTyped.cpp
+    ${repoDir}/src/editors/EquipmentEditor.cpp
+    ${repoDir}/src/editors/FermentableEditor.cpp
+    ${repoDir}/src/editors/HopEditor.cpp
+    ${repoDir}/src/editors/MashEditor.cpp
+    ${repoDir}/src/editors/MashStepEditor.cpp
+    ${repoDir}/src/editors/MiscEditor.cpp
+    ${repoDir}/src/editors/NamedMashEditor.cpp
+    ${repoDir}/src/editors/StyleEditor.cpp
+    ${repoDir}/src/editors/WaterEditor.cpp
+    ${repoDir}/src/editors/YeastEditor.cpp
     ${repoDir}/src/EquipmentButton.cpp
-    ${repoDir}/src/EquipmentEditor.cpp
     ${repoDir}/src/EquipmentListModel.cpp
     ${repoDir}/src/FermentableDialog.cpp
-    ${repoDir}/src/FermentableEditor.cpp
     ${repoDir}/src/FermentableSortFilterProxyModel.cpp
     ${repoDir}/src/HeatCalculations.cpp
     ${repoDir}/src/HelpDialog.cpp
     ${repoDir}/src/HopDialog.cpp
-    ${repoDir}/src/HopEditor.cpp
     ${repoDir}/src/HopSortFilterProxyModel.cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
@@ -98,9 +105,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/MashButton.cpp
     ${repoDir}/src/MashComboBox.cpp
     ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashEditor.cpp
     ${repoDir}/src/MashListModel.cpp
-    ${repoDir}/src/MashStepEditor.cpp
     ${repoDir}/src/MashStepTableWidget.cpp
     ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/matrix.cpp
@@ -115,7 +120,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/measurement/Unit.cpp
     ${repoDir}/src/measurement/UnitSystem.cpp
     ${repoDir}/src/MiscDialog.cpp
-    ${repoDir}/src/MiscEditor.cpp
     ${repoDir}/src/MiscSortFilterProxyModel.cpp
     ${repoDir}/src/model/BrewNote.cpp
     ${repoDir}/src/model/Equipment.cpp
@@ -135,7 +139,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Water.cpp
     ${repoDir}/src/model/Yeast.cpp
     ${repoDir}/src/NamedEntitySortProxyModel.cpp
-    ${repoDir}/src/NamedMashEditor.cpp
     ${repoDir}/src/OgAdjuster.cpp
     ${repoDir}/src/OptionDialog.cpp
     ${repoDir}/src/PersistentSettings.cpp
@@ -152,7 +155,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/SimpleUndoableUpdate.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
     ${repoDir}/src/StyleButton.cpp
-    ${repoDir}/src/StyleEditor.cpp
     ${repoDir}/src/StyleListModel.cpp
     ${repoDir}/src/StyleRangeWidget.cpp
     ${repoDir}/src/StyleSortFilterProxyModel.cpp
@@ -178,7 +180,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/TypeLookup.cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
-    ${repoDir}/src/WaterEditor.cpp
     ${repoDir}/src/WaterListModel.cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/WaterTableWidget.cpp
@@ -200,6 +201,5 @@ set(filesToCompile_cpp
     ${repoDir}/src/xml/XmlRecipeRecord.cpp
     ${repoDir}/src/xml/XmlRecord.cpp
     ${repoDir}/src/YeastDialog.cpp
-    ${repoDir}/src/YeastEditor.cpp
     ${repoDir}/src/YeastSortFilterProxyModel.cpp
 )

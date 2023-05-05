@@ -28,7 +28,7 @@
 #include <QWidget>
 
 #include "database/ObjectStoreWrapper.h"
-#include "HopEditor.h"
+#include "editors/HopEditor.h"
 #include "HopSortFilterProxyModel.h"
 #include "MainWindow.h"
 #include "model/Hop.h"
@@ -106,8 +106,7 @@ void HopDialog::doLayout() {
    QMetaObject::connectSlotsByName(this);
 }
 
-void HopDialog::retranslateUi()
-{
+void HopDialog::retranslateUi() {
    setWindowTitle(tr("Hop Database"));
    pushButton_addToRecipe->setText(tr("Add to Recipe"));
    pushButton_new->setText(tr("New"));
@@ -119,25 +118,24 @@ void HopDialog::retranslateUi()
    pushButton_edit->setToolTip(tr("Edit selected ingredient"));
    pushButton_remove->setToolTip(tr("Remove selected ingredient"));
 #endif // QT_NO_TOOLTIP
+   return;
 }
 
 void HopDialog::removeHop() {
-   QModelIndex modelIndex, viewIndex;
    QModelIndexList selected = tableWidget->selectionModel()->selectedIndexes();
-   int row, size, i;
-
-   size = selected.size();
-   if (size == 0)
+   auto size = selected.size();
+   if (size == 0) {
       return;
+   }
 
    // Make sure only one row is selected.
-   row = selected[0].row();
-   for (i = 1; i < size; ++i)
-   {
-      if (selected[i].row() != row)
+   auto row = selected[0].row();
+   for (int i = 1; i < size; ++i) {
+      if (selected[i].row() != row) {
          return;
+      }
    }
-   modelIndex = hopTableProxy->mapToSource(selected[0]);
+   QModelIndex modelIndex = hopTableProxy->mapToSource(selected[0]);
    auto hop = hopTableModel->getRow(modelIndex.row());
    if (hop) {
       ObjectStoreWrapper::softDelete(*hop);
@@ -200,31 +198,18 @@ void HopDialog::editSelected()
 
    translated = hopTableProxy->mapToSource(selected.value(0));
    auto hop = hopTableModel->getRow(translated.row());
-   hopEditor->setHop(hop.get());
+   hopEditor->setEditItem(hop);
    hopEditor->show();
    return;
 }
 
 void HopDialog::newHop(QString folder) {
-   QString name = QInputDialog::getText(this, tr("Hop name"),
-                                          tr("Hop name:"));
-   if( name.isEmpty() ) {
-      return;
-   }
-
-   // .:TODO:. Change to shared_ptr as potential memory leak
-   Hop* hop = new Hop(name);
-   if ( ! folder.isEmpty() ) {
-      hop->setFolder(folder);
-   }
-
-   hopEditor->setHop(hop);
-   hopEditor->show();
+   hopEditor->newEditItem(folder);
    return;
 }
 
-void HopDialog::filterHops(QString searchExpression)
-{
-    hopTableProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    hopTableProxy->setFilterFixedString(searchExpression);
+void HopDialog::filterHops(QString searchExpression) {
+   hopTableProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+   hopTableProxy->setFilterFixedString(searchExpression);
+   return;
 }

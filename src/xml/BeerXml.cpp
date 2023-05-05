@@ -127,10 +127,10 @@ namespace {
       {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",        BtString::NULL_STR,                    nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "INVENTORY",             BtString::NULL_STR,                    nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_TIME",          BtString::NULL_STR,                    nullptr}, // Extension tag
-      // Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
       {XmlRecord::FieldType::String,           "PRODUCER",              PropertyNames::Hop::producer                  },
       {XmlRecord::FieldType::String,           "PRODUCT_ID",            PropertyNames::Hop::product_id                },
-      {XmlRecord::FieldType::Int,              "YEAR",                  PropertyNames::Hop::year                      },
+      {XmlRecord::FieldType::String,           "YEAR",                  PropertyNames::Hop::year                      },
       {XmlRecord::FieldType::Double,           "TOTAL_OIL_ML_PER_100G", PropertyNames::Hop::total_oil_ml_per_100g     },
       {XmlRecord::FieldType::Double,           "FARNESENE",             PropertyNames::Hop::farnesene_pct             },
       {XmlRecord::FieldType::Double,           "GERANIOL",              PropertyNames::Hop::geraniol_pct              },
@@ -161,32 +161,56 @@ namespace {
       {"Adjunct<!--Honey-->", Fermentable::Type::Honey},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
-      // Type                                  XPath               Q_PROPERTY                                          Enum Mapper
-      {XmlRecord::FieldType::String,           "NAME",             PropertyNames::NamedEntity::name,                   nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION",          VERSION1,                                           nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",             PropertyNames::Fermentable::type,                   &BEER_XML_FERMENTABLE_TYPE_MAPPER},
-      {XmlRecord::FieldType::Double,           "AMOUNT",           PropertyNames::Fermentable::amount,                 nullptr},
-      {XmlRecord::FieldType::Double,           "YIELD",            PropertyNames::Fermentable::yield_pct,              nullptr},
-      {XmlRecord::FieldType::Double,           "COLOR",            PropertyNames::Fermentable::color_srm,              nullptr},
-      {XmlRecord::FieldType::Bool,             "ADD_AFTER_BOIL",   PropertyNames::Fermentable::addAfterBoil,           nullptr},
-      {XmlRecord::FieldType::String,           "ORIGIN",           PropertyNames::Fermentable::origin,                 nullptr},
-      {XmlRecord::FieldType::String,           "SUPPLIER",         PropertyNames::Fermentable::supplier,               nullptr},
-      {XmlRecord::FieldType::String,           "NOTES",            PropertyNames::Fermentable::notes,                  nullptr},
-      {XmlRecord::FieldType::Double,           "COARSE_FINE_DIFF", PropertyNames::Fermentable::coarseFineDiff_pct,     nullptr},
-      {XmlRecord::FieldType::Double,           "MOISTURE",         PropertyNames::Fermentable::moisture_pct,           nullptr},
-      {XmlRecord::FieldType::Double,           "DIASTATIC_POWER",  PropertyNames::Fermentable::diastaticPower_lintner, nullptr},
-      {XmlRecord::FieldType::Double,           "PROTEIN",          PropertyNames::Fermentable::protein_pct,            nullptr},
-      {XmlRecord::FieldType::Double,           "MAX_IN_BATCH",     PropertyNames::Fermentable::maxInBatch_pct,         nullptr},
-      {XmlRecord::FieldType::Bool,             "RECOMMEND_MASH",   PropertyNames::Fermentable::recommendMash,          nullptr},
-      {XmlRecord::FieldType::Double,           "IBU_GAL_PER_LB",   PropertyNames::Fermentable::ibuGalPerLb,            nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",   BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "POTENTIAL",        BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_COLOR",    BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::Bool,             "IS_MASHED",        PropertyNames::Fermentable::isMashed,               nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
-      // Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML .:TODO:. Add the rest here
-      {XmlRecord::FieldType::Enum,             "GRAIN_GROUP",      PropertyNames::Fermentable::grainGroup,             &Fermentable::grainGroupStringMapping},
-      {XmlRecord::FieldType::Bool,             "AMOUNT_IS_WEIGHT", PropertyNames::Fermentable::amountIsWeight,         nullptr},
+      // Type                                  XPath                             Q_PROPERTY                                             Enum Mapper
+      {XmlRecord::FieldType::String          , "NAME"                          , PropertyNames::NamedEntity::name                     },
+      {XmlRecord::FieldType::RequiredConstant, "VERSION"                       , VERSION1                                             },
+      {XmlRecord::FieldType::Enum            , "TYPE"                          , PropertyNames::Fermentable::type                     , &BEER_XML_FERMENTABLE_TYPE_MAPPER},
+      {XmlRecord::FieldType::Double          , "AMOUNT"                        , PropertyNames::Fermentable::amount                   },
+      {XmlRecord::FieldType::Double          , "YIELD"                         , PropertyNames::Fermentable::yield_pct                },
+      {XmlRecord::FieldType::Double          , "COLOR"                         , PropertyNames::Fermentable::color_srm                },
+      {XmlRecord::FieldType::Bool            , "ADD_AFTER_BOIL"                , PropertyNames::Fermentable::addAfterBoil             },
+      {XmlRecord::FieldType::String          , "ORIGIN"                        , PropertyNames::Fermentable::origin                   },
+      {XmlRecord::FieldType::String          , "SUPPLIER"                      , PropertyNames::Fermentable::supplier                 },
+      {XmlRecord::FieldType::String          , "NOTES"                         , PropertyNames::Fermentable::notes                    },
+      {XmlRecord::FieldType::Double          , "COARSE_FINE_DIFF"              , PropertyNames::Fermentable::coarseFineDiff_pct       },
+      {XmlRecord::FieldType::Double          , "MOISTURE"                      , PropertyNames::Fermentable::moisture_pct             },
+      {XmlRecord::FieldType::Double          , "DIASTATIC_POWER"               , PropertyNames::Fermentable::diastaticPower_lintner   },
+      {XmlRecord::FieldType::Double          , "PROTEIN"                       , PropertyNames::Fermentable::protein_pct              },
+      {XmlRecord::FieldType::Double          , "MAX_IN_BATCH"                  , PropertyNames::Fermentable::maxInBatch_pct           },
+      {XmlRecord::FieldType::Bool            , "RECOMMEND_MASH"                , PropertyNames::Fermentable::recommendMash            },
+      {XmlRecord::FieldType::Double          , "IBU_GAL_PER_LB"                , PropertyNames::Fermentable::ibuGalPerLb              },
+      {XmlRecord::FieldType::String          , "DISPLAY_AMOUNT"                , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::String          , "POTENTIAL"                     , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::String          , "INVENTORY"                     , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_COLOR"                 , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::Bool            , "IS_MASHED"                     , PropertyNames::Fermentable::isMashed                 }, // Non-standard tag, not part of BeerXML 1.0 standard
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Enum            , "GRAIN_GROUP"                   , PropertyNames::Fermentable::grainGroup               , &Fermentable::grainGroupStringMapping},
+      {XmlRecord::FieldType::Bool            , "AMOUNT_IS_WEIGHT"              , PropertyNames::Fermentable::amountIsWeight           },
+      {XmlRecord::FieldType::String          , "PRODUCER"                      , PropertyNames::Fermentable::producer                 },
+      {XmlRecord::FieldType::String          , "PRODUCT_ID"                    , PropertyNames::Fermentable::productId                },
+      {XmlRecord::FieldType::Double          , "FINE_GRIND_YIELD"              , PropertyNames::Fermentable::fineGrindYield_pct       },
+      {XmlRecord::FieldType::Double          , "COARSE_GRIND_YIELD"            , PropertyNames::Fermentable::coarseGrindYield_pct     },
+      {XmlRecord::FieldType::Double          , "POTENTIAL_YIELD"               , PropertyNames::Fermentable::potentialYield_sg        },
+      {XmlRecord::FieldType::Double          , "ALPHA_AMYLASE"                 , PropertyNames::Fermentable::alphaAmylase_dextUnits   },
+      {XmlRecord::FieldType::Double          , "KOLBACH_INDEX"                 , PropertyNames::Fermentable::kolbachIndex_pct         },
+      {XmlRecord::FieldType::Double          , "HARDNESS_PRP_GLASSY"           , PropertyNames::Fermentable::hardnessPrpGlassy_pct    },
+      {XmlRecord::FieldType::Double          , "HARDNESS_PRP_HALF"             , PropertyNames::Fermentable::hardnessPrpHalf_pct      },
+      {XmlRecord::FieldType::Double          , "HARDNESS_PRP_MEALY"            , PropertyNames::Fermentable::hardnessPrpMealy_pct     },
+      {XmlRecord::FieldType::Double          , "KERNEL_SIZE_PRP_PLUMP"         , PropertyNames::Fermentable::kernelSizePrpPlump_pct   },
+      {XmlRecord::FieldType::Double          , "KERNEL_SIZE_PRP_THIN"          , PropertyNames::Fermentable::kernelSizePrpThin_pct    },
+      {XmlRecord::FieldType::Double          , "FRIABILITY"                    , PropertyNames::Fermentable::friability_pct           },
+      {XmlRecord::FieldType::Double          , "DI"                            , PropertyNames::Fermentable::di_ph                    },
+      {XmlRecord::FieldType::Double          , "VISCOSITY"                     , PropertyNames::Fermentable::viscosity_cP             },
+      {XmlRecord::FieldType::Double          , "DMS_P"                         , PropertyNames::Fermentable::dmsP                     },
+      {XmlRecord::FieldType::Bool            , "DMS_PIS_MASS_PER_VOLUME"       , PropertyNames::Fermentable::dmsPIsMassPerVolume      },
+      {XmlRecord::FieldType::Double          , "FAN"                           , PropertyNames::Fermentable::fan                      },
+      {XmlRecord::FieldType::Bool            , "FAN_IS_MASS_PER_VOLUME"        , PropertyNames::Fermentable::fanIsMassPerVolume       },
+      {XmlRecord::FieldType::Double          , "FERMENTABILITY"                , PropertyNames::Fermentable::fermentability_pct       },
+      {XmlRecord::FieldType::Double          , "BETA_GLUCAN"                   , PropertyNames::Fermentable::betaGlucan               },
+      {XmlRecord::FieldType::Bool            , "BETA_GLUCAN_IS_MASS_PER_VOLUME", PropertyNames::Fermentable::betaGlucanIsMassPerVolume},
+
+
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,7 @@
 #include "tableModels/SaltTableModel.h"
 #include "tableModels/WaterTableModel.h"
 #include "WaterButton.h"
-#include "WaterEditor.h"
+#include "editors/WaterEditor.h"
 #include "WaterListModel.h"
 #include "WaterSortFilterProxyModel.h"
 #include "widgets/SmartDigitWidget.h"
