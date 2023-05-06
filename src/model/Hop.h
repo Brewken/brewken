@@ -113,6 +113,11 @@ public:
    static EnumStringMapping const typeStringMapping;
 
    /*!
+    * \brief Localised names of \c Hop::Type values suitable for displaying to the end user
+    */
+   static EnumStringMapping const typeDisplayNames;
+
+   /*!
     * \brief The form of the hop.
     */
    enum class Form {Leaf,
@@ -136,6 +141,11 @@ public:
     *        BeerXML)
     */
    static EnumStringMapping const formStringMapping;
+
+   /*!
+    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
+    */
+   static EnumStringMapping const formDisplayNames;
 
    /*!
     * \brief The way the hop is used.
@@ -162,19 +172,9 @@ public:
    static EnumStringMapping const useStringMapping;
 
    /*!
-    * \brief Localised names of \c Hop::Type values suitable for displaying to the end user
-    */
-   static QMap<Hop::Type, QString> const typeDisplayNames;
-
-   /*!
-    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
-    */
-   static QMap<Hop::Form, QString> const formDisplayNames;
-
-   /*!
     * \brief Localised names of \c Hop::Use values suitable for displaying to the end user
     */
-   static QMap<Hop::Use, QString> const useDisplayNames;
+   static EnumStringMapping const useDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more

@@ -48,16 +48,16 @@
 
 namespace {
    EnumStringMapping const itemTypeToName {
-      {"RECIPE"     , BtTreeItem::Type::RECIPE     },
-      {"EQUIPMENT"  , BtTreeItem::Type::EQUIPMENT  },
-      {"FERMENTABLE", BtTreeItem::Type::FERMENTABLE},
-      {"HOP"        , BtTreeItem::Type::HOP        },
-      {"MISC"       , BtTreeItem::Type::MISC       },
-      {"YEAST"      , BtTreeItem::Type::YEAST      },
-      {"BREWNOTE"   , BtTreeItem::Type::BREWNOTE   },
-      {"STYLE"      , BtTreeItem::Type::STYLE      },
-      {"FOLDER"     , BtTreeItem::Type::FOLDER     },
-      {"WATER"      , BtTreeItem::Type::WATER      }
+      {BtTreeItem::Type::RECIPE     , "RECIPE"     },
+      {BtTreeItem::Type::EQUIPMENT  , "EQUIPMENT"  },
+      {BtTreeItem::Type::FERMENTABLE, "FERMENTABLE"},
+      {BtTreeItem::Type::HOP        , "HOP"        },
+      {BtTreeItem::Type::MISC       , "MISC"       },
+      {BtTreeItem::Type::YEAST      , "YEAST"      },
+      {BtTreeItem::Type::BREWNOTE   , "BREWNOTE"   },
+      {BtTreeItem::Type::STYLE      , "STYLE"      },
+      {BtTreeItem::Type::FOLDER     , "FOLDER"     },
+      {BtTreeItem::Type::WATER      , "WATER"      },
    };
 }
 

@@ -1013,7 +1013,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Fermentable * ferm = active->getItem<Fermentable>(index);
                if (ferm) {
-                  fermEditor->setFermentable(ferm);
+                  fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(ferm));
                   fermEditor->show();
                }
             }
@@ -2018,11 +2018,13 @@ void MainWindow::removeSelectedFermentable() {
 
 void MainWindow::editSelectedFermentable() {
    Fermentable* f = selectedFermentable();
-   if( f == nullptr )
+   if (!f) {
       return;
+   }
 
-   fermEditor->setFermentable(f);
+   fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(f));
    fermEditor->show();
+   return;
 }
 
 void MainWindow::editSelectedMisc() {

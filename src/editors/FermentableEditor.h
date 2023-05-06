@@ -27,36 +27,35 @@
 #include <QMetaProperty>
 #include <QString>
 
+#include "editors/EditorBase.h"
+
 // Forward declarations.
 class Fermentable;
 
 /*!
  * \class FermentableEditor
  *
- * \brief Fermentable view/controller dialog that allows you to edit Fermentables.
+ * \brief View/controller class for creating and editing Fermentables.
  */
-class FermentableEditor : public QDialog, private Ui::fermentableEditor {
+class FermentableEditor : public QDialog, private Ui::fermentableEditor, public EditorBase<Fermentable, FermentableEditor> {
    Q_OBJECT
 
 public:
    FermentableEditor(QWidget *parent=nullptr);
    virtual ~FermentableEditor();
-   void setFermentable(Fermentable* f);
-   void newFermentable(QString folder);
+
+   void writeFieldsToEditItem();
+   void writeLateFieldsToEditItem();
+   void readFieldsFromEditItem(std::optional<QString> propName);
 
 public slots:
+   // Standard editor slots
    void save();
    void clearAndClose();
-   void clickedNewFermentable();
+   void changed(QMetaProperty, QVariant);
+   void clickedNew();
+   // Extra slots
    void setIsWeight(bool state);
-
-private:
-   Fermentable* obsFerm;
-   /*! Updates the UI elements effected by the \b metaProp of
-    *  the fermentable we are watching. If \b metaProp is null,
-    *  then update all the UI elements at once.
-    */
-   void showChanges(QMetaProperty* metaProp = nullptr);
 };
 
 #endif

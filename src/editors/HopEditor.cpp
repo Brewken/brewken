@@ -63,24 +63,12 @@ HopEditor::HopEditor(QWidget * parent) :
    SMART_FIELD_INIT(HopEditor, label_polyphenols          , lineEdit_polyphenols          , Hop, PropertyNames::Hop::polyphenols_pct      , 0);
    SMART_FIELD_INIT(HopEditor, label_xanthohumol          , lineEdit_xanthohumol          , Hop, PropertyNames::Hop::xanthohumol_pct      , 0);
 
-   //
-   // According to https://bugreports.qt.io/browse/QTBUG-50823 it is never going to be possible to specify the data (as
-   // opposed to display text) for a combo box via the .ui file.  So we have to do it in code instead.
-   // We could use the raw enum values as the data, but it would be a bit painful to debug if we ever had to, so for
-   // small extra effort we use the same serialisation strings that we use for BeerJSON and the DB.
-   //
-   for (auto ii : Hop::allTypes) {
-      this->comboBox_hopType->addItem(Hop::typeDisplayNames[ii], Hop::typeStringMapping.enumToString(ii));
-   }
-   for (auto ii : Hop::allForms) {
-      this->comboBox_hopForm->addItem(Hop::formDisplayNames[ii], Hop::formStringMapping.enumToString(ii));
-   }
-   for (auto ii : Hop::allUses) {
-      this->comboBox_hopUse->addItem (Hop::useDisplayNames[ii],  Hop::useStringMapping.enumToString(ii));
-   }
+   EditorHelpers::initialiseComboBox(*this->comboBox_hopType, Hop::allTypes, Hop::typeStringMapping, Hop::typeDisplayNames);
+   EditorHelpers::initialiseComboBox(*this->comboBox_hopForm, Hop::allForms, Hop::formStringMapping, Hop::formDisplayNames);
+   EditorHelpers::initialiseComboBox(*this->comboBox_hopUse , Hop::allUses , Hop:: useStringMapping, Hop:: useDisplayNames);
 
-   connect(this->pushButton_new,    &QAbstractButton::clicked, this, &HopEditor::clickedNew);
-   connect(this->pushButton_save,   &QAbstractButton::clicked, this, &HopEditor::save);
+   connect(this->pushButton_new,    &QAbstractButton::clicked, this, &HopEditor::clickedNew   );
+   connect(this->pushButton_save,   &QAbstractButton::clicked, this, &HopEditor::save         );
    connect(this->pushButton_cancel, &QAbstractButton::clicked, this, &HopEditor::clearAndClose);
 
    return;
@@ -106,9 +94,9 @@ void HopEditor::writeFieldsToEditItem() {
    // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
    // std::bad_optional_access exception in such a case
    //
-   this->m_editItem->setType(Hop::typeStringMapping.stringToEnum<Hop::Type>(comboBox_hopType->currentData().toString()));
-   this->m_editItem->setForm(Hop::formStringMapping.stringToEnum<Hop::Form>(comboBox_hopForm->currentData().toString()));
-   this->m_editItem->setUse (Hop::useStringMapping.stringToEnum<Hop::Use>  (comboBox_hopUse->currentData().toString()));
+   this->m_editItem->setType(EditorHelpers::getComboBoxVal<Hop::Type>(*this->comboBox_hopType, Hop::typeStringMapping));
+   this->m_editItem->setForm(EditorHelpers::getComboBoxVal<Hop::Form>(*this->comboBox_hopForm, Hop::formStringMapping));
+   this->m_editItem->setUse (EditorHelpers::getComboBoxVal<Hop::Use >(*this->comboBox_hopUse , Hop:: useStringMapping));
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    this->m_editItem->setProducer             (this->lineEdit_producer             ->text                 ());

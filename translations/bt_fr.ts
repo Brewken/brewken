@@ -1266,11 +1266,11 @@ Log file may contain more details.</source>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">Nom du fermentescible</translation>
+        <translation type="obsolete">Nom du fermentescible</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">Nom du fermentescible :</translation>
+        <translation type="obsolete">Nom du fermentescible :</translation>
     </message>
 </context>
 <context>
@@ -1541,11 +1541,11 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>Nom du houblon</translation>
+        <translation type="vanished">Nom du houblon</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>Nom du houblon :</translation>
+        <translation type="vanished">Nom du houblon :</translation>
     </message>
     <message>
         <source>Hop Database</source>
@@ -1580,11 +1580,11 @@ Log file may contain more details.</source>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">Nom du houblon</translation>
+        <translation type="obsolete">Nom du houblon</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">Nom du houblon :</translation>
+        <translation type="obsolete">Nom du houblon :</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -3558,6 +3558,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

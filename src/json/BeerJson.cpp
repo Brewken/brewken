@@ -332,13 +332,13 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const BEER_JSON_MISC_TYPE_MAPPER {
       // .:TODO.JSON:.  Add missing values here to Misc::Type
-      {"spice",       Misc::Type::Spice},
-      {"fining",      Misc::Type::Fining},
-      {"water agent", Misc::Type::Water_Agent},
-      {"herb",        Misc::Type::Herb},
-      {"flavor",      Misc::Type::Flavor},
-///      {"wood",        Misc::Type::Wood},
-      {"other",       Misc::Type::Other}
+      {Misc::Type::Spice      , "spice"      },
+      {Misc::Type::Fining     , "fining"     },
+      {Misc::Type::Water_Agent, "water agent"},
+      {Misc::Type::Herb       , "herb"       },
+      {Misc::Type::Flavor     , "flavor"     },
+///   {Misc::Type::Wood       , "wood"       },
+      {Misc::Type::Other      , "other"      },
    };
    // .:TBD.JSON:. There is no equivalent of the Misc::Use enum in BeerJSON, just the use_for string
 //   EnumStringMapping const BEER_JSON_MISC_USE_MAPPER {
@@ -428,40 +428,39 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const BEER_JSON_YEAST_TYPE_MAPPER {
       // .:TODO.JSON:.  Add missing values here to Yeast::Type, and decide what to do about Yeast::Type::Wheat - maybe it becomes Other?
-//      {"??",     Yeast::Type::Wheat}, BeerJSON doesn't have a type corresponding to this
-      {"ale",           Yeast::Type::Ale},
-//      {"bacteria",      Yeast::Type::},
-//      {"brett",         Yeast::Type::},
-      {"champagne",     Yeast::Type::Champagne},
-//      {"kveik",         Yeast::Type::},
-//      {"lacto",         Yeast::Type::},
-      {"lager",         Yeast::Type::Lager},
-//      {"malolactic",    Yeast::Type::},
-//      {"mixed-culture", Yeast::Type::},
-//      {"other",         Yeast::Type::},
-//      {"pedio",         Yeast::Type::},
-//      {"spontaneous",   Yeast::Type::},
-      {"wine",          Yeast::Type::Wine},
+      {Yeast::Type::Ale      , "ale"          },
+      {Yeast::Type::Lager    , "lager"        },
+      {Yeast::Type::Wheat    , "other"        }, // NOTE BeerJSON doesn't have a type directly corresponding to Wheat
+      {Yeast::Type::Wine     , "wine"         },
+      {Yeast::Type::Champagne, "champagne"    },
+//    {Yeast::Type::         , "bacteria"     },
+//    {Yeast::Type::         , "brett"        },
+//    {Yeast::Type::         , "kveik"        },
+//    {Yeast::Type::         , "lacto"        },
+//    {Yeast::Type::         , "malolactic"   },
+//    {Yeast::Type::         , "mixed-culture"},
+//    {Yeast::Type::         , "pedio"        },
+//    {Yeast::Type::         , "spontaneous"  },
    };
    EnumStringMapping const BEER_JSON_YEAST_FORM_MAPPER {
       // .:TODO.JSON:.  Add missing value here to Yeast::Form
-      {"liquid",  Yeast::Form::Liquid},
-      {"dry",     Yeast::Form::Dry},
-      {"slant",   Yeast::Form::Slant},
-      {"culture", Yeast::Form::Culture}
-//      {"dregs",   Yeast::Form::}
+      {Yeast::Form::Liquid , "liquid",  },
+      {Yeast::Form::Dry    , "dry",     },
+      {Yeast::Form::Slant  , "slant",   },
+      {Yeast::Form::Culture, "culture", },
+//    {Yeast::Form::       , "dregs",   },
    };
    EnumStringMapping const BEER_JSON_YEAST_FLOCCULATION_MAPPER {
       // BeerJSON has an entire type called QualitativeRangeType, but it's only used for this field, so, for now, we
       // treat it as an enum
       // .:TODO.JSON:.  Add missing value here to Yeast::Flocculation
-//      {"very low",    Yeast::Flocculation::},
-      {"low",         Yeast::Flocculation::Low},
-//      {"medium low",  Yeast::Flocculation::},
-      {"medium",      Yeast::Flocculation::Medium},
-//      {"medium high", Yeast::Flocculation::},
-      {"high",        Yeast::Flocculation::High},
-      {"very high",   Yeast::Flocculation::Very_High},
+//    {Yeast::Flocculation::         , "very low"   },
+      {Yeast::Flocculation::Low      , "low"        },
+//    {Yeast::Flocculation::         , "medium low" },
+      {Yeast::Flocculation::Medium   , "medium"     },
+//    {Yeast::Flocculation::         , "medium high"},
+      {Yeast::Flocculation::High     , "high"       },
+      {Yeast::Flocculation::Very_High, "very high"  },
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
       "cultures",
@@ -538,13 +537,16 @@ namespace {
    EnumStringMapping const BEER_JSON_STYLE_TYPE_MAPPER {
       // .:TBD.JSON:. BeerJSON doesn't have style types matching Style::Type::Lager, Style::Type::Ale, Style::Type::Wheat, Style::Type::Mixed
       // .:TODO.JSON:.  Add missing values here to Style::Type
-//      {"beer",     Style::Type::},
-      {"cider",    Style::Type::Cider},
-//      {"kombucha", Style::Type::},
-      {"mead",     Style::Type::Mead},
-//      {"other",    Style::Type::},
-//      {"soda",     Style::Type::},
-//      {"wine",     Style::Type::}
+      {Style::Type::Lager, "?lager?"  },
+      {Style::Type::Ale  , "?ale?"    },
+      {Style::Type::Mead , "mead"    },
+      {Style::Type::Wheat, "?wheat?"  },
+      {Style::Type::Mixed, "other"   }, // ??
+//    {Style::Type::     , "beer"    },
+      {Style::Type::Cider, "cider"   },
+//    {Style::Type::     , "kombucha"},
+//    {Style::Type::     , "soda"    },
+//    {Style::Type::     , "wine"    },
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
       "styles",

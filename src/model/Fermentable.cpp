@@ -33,38 +33,38 @@
 #include "model/Recipe.h"
 
 std::array<Fermentable::Type, 8> const Fermentable::allTypes {
-   Fermentable::Type::Dry_Extract,
-   Fermentable::Type::Extract,
-   Fermentable::Type::Grain,
-   Fermentable::Type::Sugar,
-   Fermentable::Type::Fruit,
-   Fermentable::Type::Juice,
-   Fermentable::Type::Honey,
-   Fermentable::Type::Other_Adjunct
+   Fermentable::Type::Grain        ,
+   Fermentable::Type::Sugar        ,
+   Fermentable::Type::Extract      ,
+   Fermentable::Type::Dry_Extract  ,
+   Fermentable::Type::Other_Adjunct,
+   Fermentable::Type::Fruit        ,
+   Fermentable::Type::Juice        ,
+   Fermentable::Type::Honey        ,
 };
 
 // Note that Fermentable::typeStringMapping and Fermentable::FormMapping are as defined by BeerJSON, but we also use
 // them for the DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Fermentable::typeStringMapping {
-   {"dry extract", Fermentable::Type::Dry_Extract},
-   {"extract",     Fermentable::Type::Extract},
-   {"grain",       Fermentable::Type::Grain},
-   {"sugar",       Fermentable::Type::Sugar},
-   {"fruit",       Fermentable::Type::Fruit},
-   {"juice",       Fermentable::Type::Juice},
-   {"honey",       Fermentable::Type::Honey},
-   {"other",       Fermentable::Type::Other_Adjunct}
+   {Fermentable::Type::Grain        , "grain"      },
+   {Fermentable::Type::Sugar        , "sugar"      },
+   {Fermentable::Type::Extract      , "extract"    },
+   {Fermentable::Type::Dry_Extract  , "dry extract"},
+   {Fermentable::Type::Other_Adjunct, "other"      },
+   {Fermentable::Type::Fruit        , "fruit"      },
+   {Fermentable::Type::Juice        , "juice"      },
+   {Fermentable::Type::Honey        , "honey"      },
 };
 
-QMap<Fermentable::Type, QString> const Fermentable::typeDisplayNames {
-   {Fermentable::Type::Dry_Extract,   tr("Dry Extract"  )},
-   {Fermentable::Type::Extract,       tr("Extract"      )},
-   {Fermentable::Type::Grain,         tr("Grain"        )},
-   {Fermentable::Type::Sugar,         tr("Sugar"        )},
-   {Fermentable::Type::Fruit,         tr("Fruit"        )},
-   {Fermentable::Type::Juice,         tr("Juice"        )},
-   {Fermentable::Type::Honey,         tr("Honey"        )},
+EnumStringMapping const Fermentable::typeDisplayNames {
+   {Fermentable::Type::Grain        , tr("Grain"        )},
+   {Fermentable::Type::Sugar        , tr("Sugar"        )},
+   {Fermentable::Type::Extract      , tr("Extract"      )},
+   {Fermentable::Type::Dry_Extract  , tr("Dry Extract"  )},
    {Fermentable::Type::Other_Adjunct, tr("Other Adjunct")},
+   {Fermentable::Type::Fruit        , tr("Fruit"        )},
+   {Fermentable::Type::Juice        , tr("Juice"        )},
+   {Fermentable::Type::Honey        , tr("Honey"        )},
 };
 
 std::array<Fermentable::GrainGroup, 7> const Fermentable::allGrainGroups {
@@ -79,13 +79,13 @@ std::array<Fermentable::GrainGroup, 7> const Fermentable::allGrainGroups {
 
 // This is based on the BeerJSON encoding
 EnumStringMapping const Fermentable::grainGroupStringMapping {
-   {"base",       Fermentable::GrainGroup::Base     },
-   {"caramel",    Fermentable::GrainGroup::Caramel  },
-   {"flaked",     Fermentable::GrainGroup::Flaked   },
-   {"roasted",    Fermentable::GrainGroup::Roasted  },
-   {"specialty",  Fermentable::GrainGroup::Specialty},
-   {"smoked",     Fermentable::GrainGroup::Smoked   },
-   {"adjunct",    Fermentable::GrainGroup::Adjunct  }
+   {Fermentable::GrainGroup::Base     , "base"     },
+   {Fermentable::GrainGroup::Caramel  , "caramel"  },
+   {Fermentable::GrainGroup::Flaked   , "flaked"   },
+   {Fermentable::GrainGroup::Roasted  , "roasted"  },
+   {Fermentable::GrainGroup::Specialty, "specialty"},
+   {Fermentable::GrainGroup::Smoked   , "smoked"   },
+   {Fermentable::GrainGroup::Adjunct  , "adjunct"  },
 };
 
 bool Fermentable::isEqualTo(NamedEntity const & other) const {

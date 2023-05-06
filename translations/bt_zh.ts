@@ -1203,11 +1203,11 @@ Log file may contain more details.</source>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">可发酵的名字</translation>
+        <translation type="obsolete">可发酵的名字</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">可发酵的名称:</translation>
+        <translation type="obsolete">可发酵的名称:</translation>
     </message>
 </context>
 <context>
@@ -1466,11 +1466,11 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>合名Hop name</translation>
+        <translation type="vanished">合名Hop name</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>合名称合名</translation>
+        <translation type="vanished">合名称合名</translation>
     </message>
     <message>
         <source>Hop Database</source>
@@ -1505,11 +1505,11 @@ Log file may contain more details.</source>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">合名Hop name</translation>
+        <translation type="obsolete">合名Hop name</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">合名称合名</translation>
+        <translation type="obsolete">合名称合名</translation>
     </message>
     <message>
         <source>Flavor</source>
@@ -3447,6 +3447,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

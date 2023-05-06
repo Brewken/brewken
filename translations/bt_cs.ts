@@ -1207,11 +1207,11 @@ Log file may contain more details.</source>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">Název suroviny</translation>
+        <translation type="obsolete">Název suroviny</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">Název suroviny:</translation>
+        <translation type="obsolete">Název suroviny:</translation>
     </message>
 </context>
 <context>
@@ -1470,11 +1470,11 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>Název chmele</translation>
+        <translation type="vanished">Název chmele</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>Název chmele:</translation>
+        <translation type="vanished">Název chmele:</translation>
     </message>
     <message>
         <source>Hop Database</source>
@@ -1509,11 +1509,11 @@ Log file may contain more details.</source>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">Název chmele</translation>
+        <translation type="obsolete">Název chmele</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">Název chmele:</translation>
+        <translation type="obsolete">Název chmele:</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -3479,6 +3479,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -161,7 +161,7 @@ void FermentableDialog::editSelected() {
 
    QModelIndex translated = fermTableProxy->mapToSource(selected[0]);
    auto ferm = fermTableModel->getRow(translated.row());
-   fermEdit->setFermentable(ferm.get());
+   fermEdit->setEditItem(ferm);
    fermEdit->show();
    return;
 }
@@ -210,12 +210,12 @@ void FermentableDialog::newFermentable(QString folder) {
       return;
    }
 
-   Fermentable* ferm = new Fermentable(name);
+   auto ferm = std::make_shared<Fermentable>(name);
    if (!folder.isEmpty()) {
       ferm->setFolder(folder);
    }
 
-   fermEdit->setFermentable(ferm);
+   fermEdit->setEditItem(ferm);
    fermEdit->show();
    return;
 }

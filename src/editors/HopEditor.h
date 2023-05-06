@@ -31,9 +31,8 @@ class Hop;
 /*!
  * \class HopEditor
  *
- * \brief View/controller class for modifying hops.
+ * \brief View/controller class for creating and editing Hops.
  */
-///class HopEditor : public QDialog, private Ui::hopEditor {
 class HopEditor : public QDialog, private Ui::hopEditor, public EditorBase<Hop, HopEditor>  {
    Q_OBJECT
 
@@ -46,6 +45,7 @@ public:
    void readFieldsFromEditItem(std::optional<QString> propName);
 
 public slots:
+   // Standard editor slots
    void save();
    void clearAndClose();
    void changed(QMetaProperty, QVariant);

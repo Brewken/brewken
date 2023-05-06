@@ -46,12 +46,12 @@ namespace {
    // std::string and QString.  For the moment, this more manual approach seems appropriate to the scale of what we
    // need.
    EnumStringMapping const relativeScaleToName {
-      {"scaleExtraSmall", Measurement::UnitSystem::RelativeScale::ExtraSmall},
-      {"scaleSmall"     , Measurement::UnitSystem::RelativeScale::Small     },
-      {"scaleMedium"    , Measurement::UnitSystem::RelativeScale::Medium    },
-      {"scaleLarge"     , Measurement::UnitSystem::RelativeScale::Large     },
-      {"scaleExtraLarge", Measurement::UnitSystem::RelativeScale::ExtraLarge},
-      {"scaleHuge"      , Measurement::UnitSystem::RelativeScale::Huge      }
+      {Measurement::UnitSystem::RelativeScale::ExtraSmall, "scaleExtraSmall"},
+      {Measurement::UnitSystem::RelativeScale::Small     , "scaleSmall"     },
+      {Measurement::UnitSystem::RelativeScale::Medium    , "scaleMedium"    },
+      {Measurement::UnitSystem::RelativeScale::Large     , "scaleLarge"     },
+      {Measurement::UnitSystem::RelativeScale::ExtraLarge, "scaleExtraLarge"},
+      {Measurement::UnitSystem::RelativeScale::Huge      , "scaleHuge"      },
    };
 }
 

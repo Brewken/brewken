@@ -1250,11 +1250,11 @@ Log file may contain more details.</source>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">naam vergistbare</translation>
+        <translation type="obsolete">naam vergistbare</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">naam vergistbare:</translation>
+        <translation type="obsolete">naam vergistbare:</translation>
     </message>
 </context>
 <context>
@@ -1525,11 +1525,11 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>Hop naam</translation>
+        <translation type="vanished">Hop naam</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>Hop naam:</translation>
+        <translation type="vanished">Hop naam:</translation>
     </message>
     <message>
         <source>Hop Database</source>
@@ -1564,11 +1564,11 @@ Log file may contain more details.</source>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">Hop naam</translation>
+        <translation type="obsolete">Hop naam</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">Hop naam:</translation>
+        <translation type="obsolete">Hop naam:</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -3540,6 +3540,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

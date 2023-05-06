@@ -1246,11 +1246,11 @@ Log file may contain more details.</source>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">Erjeszthető anyag neve</translation>
+        <translation type="obsolete">Erjeszthető anyag neve</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">Erjeszthető anyag neve:</translation>
+        <translation type="obsolete">Erjeszthető anyag neve:</translation>
     </message>
 </context>
 <context>
@@ -1513,11 +1513,11 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>Komló neve</translation>
+        <translation type="vanished">Komló neve</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>Komló neve:</translation>
+        <translation type="vanished">Komló neve:</translation>
     </message>
     <message>
         <source>Hop Database</source>
@@ -1552,11 +1552,11 @@ Log file may contain more details.</source>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">Komló neve</translation>
+        <translation type="obsolete">Komló neve</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">Komló neve:</translation>
+        <translation type="obsolete">Komló neve:</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -3526,6 +3526,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonRecordDefinition.cpp is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonRecordDefinition.cpp is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,18 +21,18 @@
 
 namespace {
    EnumStringMapping const fieldTypeToName {
-      {QObject::tr("Bool"                      ), JsonRecordDefinition::FieldType::Bool                      },
-      {QObject::tr("Int"                       ), JsonRecordDefinition::FieldType::Int                       },
-      {QObject::tr("UInt"                      ), JsonRecordDefinition::FieldType::UInt                      },
-      {QObject::tr("Double"                    ), JsonRecordDefinition::FieldType::Double                    },
-      {QObject::tr("String"                    ), JsonRecordDefinition::FieldType::String                    },
-      {QObject::tr("Enum"                      ), JsonRecordDefinition::FieldType::Enum                      },
-      {QObject::tr("Array"                     ), JsonRecordDefinition::FieldType::Array                     },
-      {QObject::tr("Date"                      ), JsonRecordDefinition::FieldType::Date                      },
-      {QObject::tr("MeasurementWithUnits"      ), JsonRecordDefinition::FieldType::MeasurementWithUnits      },
-      {QObject::tr("OneOfMeasurementsWithUnits"), JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits},
-      {QObject::tr("SingleUnitValue"           ), JsonRecordDefinition::FieldType::SingleUnitValue           },
-      {QObject::tr("RequiredConstant"          ), JsonRecordDefinition::FieldType::RequiredConstant          }
+      {JsonRecordDefinition::FieldType::Bool                      , QObject::tr("Bool"                      )},
+      {JsonRecordDefinition::FieldType::Int                       , QObject::tr("Int"                       )},
+      {JsonRecordDefinition::FieldType::UInt                      , QObject::tr("UInt"                      )},
+      {JsonRecordDefinition::FieldType::Double                    , QObject::tr("Double"                    )},
+      {JsonRecordDefinition::FieldType::String                    , QObject::tr("String"                    )},
+      {JsonRecordDefinition::FieldType::Enum                      , QObject::tr("Enum"                      )},
+      {JsonRecordDefinition::FieldType::Array                     , QObject::tr("Array"                     )},
+      {JsonRecordDefinition::FieldType::Date                      , QObject::tr("Date"                      )},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , QObject::tr("MeasurementWithUnits"      )},
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, QObject::tr("OneOfMeasurementsWithUnits")},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , QObject::tr("SingleUnitValue"           )},
+      {JsonRecordDefinition::FieldType::RequiredConstant          , QObject::tr("RequiredConstant"          )},
    };
 }
 

@@ -136,7 +136,7 @@ public:
    /*!
     * \brief Localised names of \c Fermentable::Type values suitable for displaying to the end user
     */
-   static QMap<Fermentable::Type, QString> const typeDisplayNames;
+   static EnumStringMapping const typeDisplayNames;
 
    /**
     * \brief An additional classification of \c Fermentable introduced in BeerJSON

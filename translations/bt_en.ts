@@ -835,17 +835,6 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
-    <name>FermentableEditor</name>
-    <message>
-        <source>Fermentable name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentable name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FermentableTableModel</name>
     <message>
         <source>Name</source>
@@ -1057,14 +1046,6 @@ Log file may contain more details.</source>
 <context>
     <name>HopDialog</name>
     <message>
-        <source>Hop name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hop name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Hop Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1090,17 +1071,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>HopEditor</name>
-    <message>
-        <source>Hop name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hop name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2852,6 +2822,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

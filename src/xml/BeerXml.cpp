@@ -83,27 +83,27 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Hop>{"HOP"};
    EnumStringMapping const BEER_XML_HOP_TYPE_MAPPER {
-      {"Bittering",                          Hop::Type::Bittering},
-      {"Aroma",                              Hop::Type::Aroma},
-      {"Both",                               Hop::Type::AromaAndBittering},
+      {Hop::Type::Bittering              , "Bittering"                         },
+      {Hop::Type::Aroma                  , "Aroma"                             },
+      {Hop::Type::AromaAndBittering      , "Both"                              },
       // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
-      {"Aroma<!--Flavor-->",                 Hop::Type::Flavor},
-      {"Both<!--BitteringAndFlavor-->",      Hop::Type::BitteringAndFlavor},
-      {"Aroma<!--AromaAndFlavor-->",         Hop::Type::AromaAndFlavor},
-      {"Both<!--AromaBitteringAndFlavor-->", Hop::Type::AromaBitteringAndFlavor}
+      {Hop::Type::Flavor                 , "Aroma<!--Flavor-->"                },
+      {Hop::Type::BitteringAndFlavor     , "Both<!--BitteringAndFlavor-->"     },
+      {Hop::Type::AromaAndFlavor         , "Aroma<!--AromaAndFlavor-->"        },
+      {Hop::Type::AromaBitteringAndFlavor, "Both<!--AromaBitteringAndFlavor-->"},
    };
    EnumStringMapping const BEER_XML_HOP_FORM_MAPPER {
-      {"Pellet", Hop::Form::Pellet},
-      {"Plug",   Hop::Form::Plug},
-      {"Leaf",   Hop::Form::Leaf},
+      {Hop::Form::Leaf   , "Leaf"                },
+      {Hop::Form::Pellet , "Pellet"              },
+      {Hop::Form::Plug   , "Plug"                },
       // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
-      {"Pellet<!--Extract-->", Hop::Form::Extract},
-      {"Leaf<!--WetLeaf-->",   Hop::Form::WetLeaf},
-      {"Pellet<!--Powder-->",  Hop::Form::Powder}
+      {Hop::Form::Extract, "Pellet<!--Extract-->"},
+      {Hop::Form::WetLeaf, "Leaf<!--WetLeaf-->"  },
+      {Hop::Form::Powder , "Pellet<!--Powder-->" },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type                                  XPath                    Q_PROPERTY                             Enum Mapper
@@ -148,17 +148,17 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Fermentable>{"FERMENTABLE"};
    EnumStringMapping const BEER_XML_FERMENTABLE_TYPE_MAPPER {
-      {"Grain",               Fermentable::Type::Grain},
-      {"Sugar",               Fermentable::Type::Sugar},
-      {"Extract",             Fermentable::Type::Extract},
-      {"Dry Extract",         Fermentable::Type::Dry_Extract},
-      {"Adjunct",             Fermentable::Type::Other_Adjunct},
+      {Fermentable::Type::Grain        , "Grain"              },
+      {Fermentable::Type::Sugar        , "Sugar"              },
+      {Fermentable::Type::Extract      , "Extract"            },
+      {Fermentable::Type::Dry_Extract  , "Dry Extract"        },
+      {Fermentable::Type::Other_Adjunct, "Adjunct"            },
       // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
-      {"Adjunct<!--Fruit-->", Fermentable::Type::Fruit},
-      {"Adjunct<!--Juice-->", Fermentable::Type::Juice},
-      {"Adjunct<!--Honey-->", Fermentable::Type::Honey},
+      {Fermentable::Type::Fruit        , "Adjunct<!--Fruit-->"},
+      {Fermentable::Type::Juice        , "Adjunct<!--Juice-->"},
+      {Fermentable::Type::Honey        , "Adjunct<!--Honey-->"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
       // Type                                  XPath                             Q_PROPERTY                                             Enum Mapper
@@ -218,23 +218,23 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Yeast>{"YEAST"};
    EnumStringMapping const BEER_XML_YEAST_TYPE_MAPPER {
-      {"Ale",       Yeast::Type::Ale},
-      {"Lager",     Yeast::Type::Lager},
-      {"Wheat",     Yeast::Type::Wheat},
-      {"Wine",      Yeast::Type::Wine},
-      {"Champagne", Yeast::Type::Champagne}
+      {Yeast::Type::Ale      , "Ale"      },
+      {Yeast::Type::Lager    , "Lager"    },
+      {Yeast::Type::Wheat    , "Wheat"    },
+      {Yeast::Type::Wine     , "Wine"     },
+      {Yeast::Type::Champagne, "Champagne"},
    };
    EnumStringMapping const BEER_XML_YEAST_FORM_MAPPER {
-      {"Liquid",  Yeast::Form::Liquid},
-      {"Dry",     Yeast::Form::Dry},
-      {"Slant",   Yeast::Form::Slant},
-      {"Culture", Yeast::Form::Culture}
+      {Yeast::Form::Liquid , "Liquid" },
+      {Yeast::Form::Dry    , "Dry"    },
+      {Yeast::Form::Slant  , "Slant"  },
+      {Yeast::Form::Culture, "Culture"},
    };
    EnumStringMapping const BEER_XML_YEAST_FLOCCULATION_MAPPER {
-      {"Low",       Yeast::Flocculation::Low},
-      {"Medium",    Yeast::Flocculation::Medium},
-      {"High",      Yeast::Flocculation::High},
-      {"Very High", Yeast::Flocculation::Very_High}
+      {Yeast::Flocculation::Low      , "Low"      },
+      {Yeast::Flocculation::Medium   , "Medium"   },
+      {Yeast::Flocculation::High     , "High"     },
+      {Yeast::Flocculation::Very_High, "Very High"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
       // Type                                  XPath               Q_PROPERTY                              Enum Mapper
@@ -267,19 +267,19 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Misc>{"MISC"};
    EnumStringMapping const BEER_XML_MISC_TYPE_MAPPER {
-      {"Spice",       Misc::Type::Spice},
-      {"Fining",      Misc::Type::Fining},
-      {"Water Agent", Misc::Type::Water_Agent},
-      {"Herb",        Misc::Type::Herb},
-      {"Flavor",      Misc::Type::Flavor},
-      {"Other",       Misc::Type::Other}
+      {Misc::Type::Spice      , "Spice"      },
+      {Misc::Type::Fining     , "Fining"     },
+      {Misc::Type::Water_Agent, "Water Agent"},
+      {Misc::Type::Herb       , "Herb"       },
+      {Misc::Type::Flavor     , "Flavor"     },
+      {Misc::Type::Other      , "Other"      },
    };
    EnumStringMapping const BEER_XML_MISC_USE_MAPPER {
-      {"Boil",      Misc::Use::Boil},
-      {"Mash",      Misc::Use::Mash},
-      {"Primary",   Misc::Use::Primary},
-      {"Secondary", Misc::Use::Secondary},
-      {"Bottling",  Misc::Use::Bottling}
+      {Misc::Use::Boil     , "Boil"     },
+      {Misc::Use::Mash     , "Mash"     },
+      {Misc::Use::Primary  , "Primary"  },
+      {Misc::Use::Secondary, "Secondary"},
+      {Misc::Use::Bottling , "Bottling" },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Misc> {
       // Type                                  XPath               Q_PROPERTY                           Enum Mapper
@@ -322,12 +322,12 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Style>{"STYLE"};
    EnumStringMapping const BEER_XML_STYLE_TYPE_MAPPER {
-      {"Lager", Style::Type::Lager},
-      {"Ale",   Style::Type::Ale},
-      {"Mead",  Style::Type::Mead},
-      {"Wheat", Style::Type::Wheat},
-      {"Mixed", Style::Type::Mixed},
-      {"Cider", Style::Type::Cider}
+      {Style::Type::Lager, "Lager"},
+      {Style::Type::Ale  , "Ale"  },
+      {Style::Type::Mead , "Mead" },
+      {Style::Type::Wheat, "Wheat"},
+      {Style::Type::Mixed, "Mixed"},
+      {Style::Type::Cider, "Cider"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Style> {
       // Type                                  XPath                Q_PROPERTY                            Enum Mapper
@@ -373,14 +373,14 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<MashStep>{"MASH_STEP"};
    EnumStringMapping const BEER_XML_MASH_STEP_TYPE_MAPPER {
-      {"Infusion",                      MashStep::Type::Infusion},
-      {"Temperature",                   MashStep::Type::Temperature},
-      {"Decoction",                     MashStep::Type::Decoction},
+      {MashStep::Type::Infusion   , "Infusion"                     },
+      {MashStep::Type::Temperature, "Temperature"                  },
+      {MashStep::Type::Decoction  , "Decoction"                    },
       // Inside Brewken we also have MashStep::flySparge and MashStep::batchSparge which are not mentioned in the
       // BeerXML 1.0 Standard.  They get treated as "Infusion" when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings from "Infusion"
-      {"Infusion<!-- Fly Sparge -->",   MashStep::Type::flySparge},
-      {"Infusion<!-- Batch Sparge -->", MashStep::Type::batchSparge}
+      {MashStep::Type::flySparge  , "Infusion<!-- Fly Sparge -->"  },
+      {MashStep::Type::batchSparge, "Infusion<!-- Batch Sparge -->"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<MashStep> {
       // Type                                  XPath                 Q_PROPERTY                                  Enum Mapper
@@ -523,9 +523,9 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Recipe>{"RECIPE"};
    EnumStringMapping const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
-      {"Extract",      Recipe::Type::Extract},
-      {"Partial Mash", Recipe::Type::PartialMash},
-      {"All Grain",    Recipe::Type::AllGrain}
+      {Recipe::Type::Extract    , "Extract"     },
+      {Recipe::Type::PartialMash, "Partial Mash"},
+      {Recipe::Type::AllGrain   , "All Grain"   },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Recipe> {
       // Type                                  XPath                       Q_PROPERTY                                 Enum Mapper

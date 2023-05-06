@@ -30,86 +30,86 @@
 #include "model/Recipe.h"
 
 std::array<Hop::Type, 7> const Hop::allTypes {
-   Hop::Type::Aroma,
-   Hop::Type::Bittering,
-   Hop::Type::Flavor,
-   Hop::Type::AromaAndBittering,
-   Hop::Type::BitteringAndFlavor,
-   Hop::Type::AromaAndFlavor,
+   Hop::Type::Bittering              ,
+   Hop::Type::Aroma                  ,
+   Hop::Type::AromaAndBittering      ,
+   Hop::Type::Flavor                 ,
+   Hop::Type::BitteringAndFlavor     ,
+   Hop::Type::AromaAndFlavor         ,
    Hop::Type::AromaBitteringAndFlavor,
 };
 
 // Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
 // for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Hop::typeStringMapping {
-   {"aroma",                  Hop::Type::Aroma},
-   {"bittering",              Hop::Type::Bittering},
-   {"flavor",                 Hop::Type::Flavor},
-   {"aroma/bittering",        Hop::Type::AromaAndBittering}, // Previous seralisation (still used for BeerXML) was "Both"
-   {"bittering/flavor",       Hop::Type::BitteringAndFlavor},
-   {"aroma/flavor",           Hop::Type::AromaAndFlavor},
-   {"aroma/bittering/flavor", Hop::Type::AromaBitteringAndFlavor},
+   {Hop::Type::Bittering              , "bittering"              },
+   {Hop::Type::Aroma                  , "aroma"                  },
+   {Hop::Type::AromaAndBittering      , "aroma/bittering"        }, // Previous seralisation (still used for BeerXML) was "Both"
+   {Hop::Type::Flavor                 , "flavor"                 },
+   {Hop::Type::BitteringAndFlavor     , "bittering/flavor"       },
+   {Hop::Type::AromaAndFlavor         , "aroma/flavor"           },
+   {Hop::Type::AromaBitteringAndFlavor, "aroma/bittering/flavor" },
 };
 
-QMap<Hop::Type, QString> const Hop::typeDisplayNames {
-   {Hop::Type::Aroma,                   tr("Aroma"                    )},
-   {Hop::Type::Bittering,               tr("Bittering"                )},
-   {Hop::Type::Flavor,                  tr("Flavor"                   )},
-   {Hop::Type::AromaAndBittering,       tr("Aroma & Bittering"        )},
-   {Hop::Type::BitteringAndFlavor,      tr("Bittering & Flavor"       )},
-   {Hop::Type::AromaAndFlavor,          tr("Aroma & Flavor"           )},
+EnumStringMapping const Hop::typeDisplayNames {
+   {Hop::Type::Bittering              , tr("Bittering"                )},
+   {Hop::Type::Aroma                  , tr("Aroma"                    )},
+   {Hop::Type::AromaAndBittering      , tr("Aroma & Bittering"        )},
+   {Hop::Type::Flavor                 , tr("Flavor"                   )},
+   {Hop::Type::BitteringAndFlavor     , tr("Bittering & Flavor"       )},
+   {Hop::Type::AromaAndFlavor         , tr("Aroma & Flavor"           )},
    {Hop::Type::AromaBitteringAndFlavor, tr("Aroma, Bittering & Flavor")},
 };
 
 std::array<Hop::Form, 6> const Hop::allForms {
+   Hop::Form::Leaf   ,
+   Hop::Form::Pellet ,
+   Hop::Form::Plug   ,
    Hop::Form::Extract,
-   Hop::Form::Leaf,
    Hop::Form::WetLeaf,
-   Hop::Form::Pellet,
-   Hop::Form::Powder,
-   Hop::Form::Plug
+   Hop::Form::Powder ,
 };
 
 EnumStringMapping const Hop::formStringMapping {
-   {"extract",    Hop::Form::Extract},
-   {"leaf",       Hop::Form::Leaf},
-   {"leaf (wet)", Hop::Form::WetLeaf},
-   {"pellet",     Hop::Form::Pellet},
-   {"powder",     Hop::Form::Powder},
-   {"plug",       Hop::Form::Plug}
+   {Hop::Form::Leaf   , "leaf"      },
+   {Hop::Form::Pellet , "pellet"    },
+   {Hop::Form::Plug   , "plug"      },
+   {Hop::Form::Extract, "extract"   },
+   {Hop::Form::WetLeaf, "leaf (wet)"},
+   {Hop::Form::Powder , "powder"    },
 };
 
-QMap<Hop::Form, QString> const Hop::formDisplayNames {
-   {Hop::Form::Leaf,    tr("Leaf"   )},
-   {Hop::Form::Pellet,  tr("Pellet" )},
-   {Hop::Form::Plug,    tr("Plug"   )},
+EnumStringMapping const Hop::formDisplayNames {
+   {Hop::Form::Leaf   , tr("Leaf"   )},
+   {Hop::Form::Pellet , tr("Pellet" )},
+   {Hop::Form::Plug   , tr("Plug"   )},
    {Hop::Form::Extract, tr("Extract")},
    {Hop::Form::WetLeaf, tr("WetLeaf")},
-   {Hop::Form::Powder,  tr("Powder" )},
+   {Hop::Form::Powder , tr("Powder" )},
 };
 
 std::array<Hop::Use, 5> const Hop::allUses {
-   Hop::Use::Mash,
+   Hop::Use::Mash      ,
    Hop::Use::First_Wort,
-   Hop::Use::Boil,
-   Hop::Use::Aroma,
-   Hop::Use::Dry_Hop,
+   Hop::Use::Boil      ,
+   Hop::Use::Aroma     ,
+   Hop::Use::Dry_Hop   ,
 };
 
 EnumStringMapping const Hop::useStringMapping {
-   {"Mash",       Hop::Use::Mash},
-   {"First Wort", Hop::Use::First_Wort},
-   {"Boil",       Hop::Use::Boil},
-   {"Aroma",      Hop::Use::Aroma},
-   {"Dry Hop",    Hop::Use::Dry_Hop},
+   {Hop::Use::Mash      , "Mash"      },
+   {Hop::Use::First_Wort, "First Wort"},
+   {Hop::Use::Boil      , "Boil"      },
+   {Hop::Use::Aroma     , "Aroma"     },
+   {Hop::Use::Dry_Hop   , "Dry Hop"   },
 };
 
-QMap<Hop::Use, QString> const Hop::useDisplayNames {
-   {Hop::Use::Mash,       tr("Mash"      )},
+EnumStringMapping const Hop::useDisplayNames {
+   {Hop::Use::Mash      , tr("Mash"      )},
    {Hop::Use::First_Wort, tr("First Wort")},
-   {Hop::Use::Boil,       tr("Boil"      )},
-   {Hop::Use::Aroma,      tr("Post-Boil" )},
-   {Hop::Use::Dry_Hop,    tr("Dry Hop"   )},
+   {Hop::Use::Boil      , tr("Boil"      )},
+   {Hop::Use::Aroma     , tr("Post-Boil" )},
+   {Hop::Use::Dry_Hop   , tr("Dry Hop"   )},
 };
 
 bool Hop::isEqualTo(NamedEntity const & other) const {

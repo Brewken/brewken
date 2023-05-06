@@ -287,11 +287,11 @@ namespace {
    // NB: MashSteps don't get folders, because they don't separate from their Mash
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const MASH_STEP_TYPE_ENUM {
-      {"Infusion",     MashStep::Type::Infusion},
-      {"Temperature",  MashStep::Type::Temperature},
-      {"Decoction",    MashStep::Type::Decoction},
-      {"FlySparge",    MashStep::Type::flySparge},
-      {"BatchSparge",  MashStep::Type::batchSparge}
+      {MashStep::Type::Infusion   , "Infusion"   },
+      {MashStep::Type::Temperature, "Temperature"},
+      {MashStep::Type::Decoction  , "Decoction"  },
+      {MashStep::Type::flySparge  , "FlySparge"  },
+      {MashStep::Type::batchSparge, "BatchSparge"}
    };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<MashStep> {
       "mashstep",
@@ -332,19 +332,19 @@ namespace {
    // Database field mappings for Misc
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const MISC_TYPE_ENUM {
-      {"Spice",       Misc::Type::Spice},
-      {"Fining",      Misc::Type::Fining},
-      {"Water Agent", Misc::Type::Water_Agent},
-      {"Herb",        Misc::Type::Herb},
-      {"Flavor",      Misc::Type::Flavor},
-      {"Other",       Misc::Type::Other}
+      {Misc::Type::Spice      , "Spice"      },
+      {Misc::Type::Fining     , "Fining"     },
+      {Misc::Type::Water_Agent, "Water Agent"},
+      {Misc::Type::Herb       , "Herb"       },
+      {Misc::Type::Flavor     , "Flavor"     },
+      {Misc::Type::Other      , "Other"      }
    };
    EnumStringMapping const MISC_USE_ENUM {
-      {"Boil",      Misc::Use::Boil},
-      {"Mash",      Misc::Use::Mash},
-      {"Primary",   Misc::Use::Primary},
-      {"Secondary", Misc::Use::Secondary},
-      {"Bottling",  Misc::Use::Bottling}
+      {Misc::Use::Boil     , "Boil"     },
+      {Misc::Use::Mash     , "Mash"     },
+      {Misc::Use::Primary  , "Primary"  },
+      {Misc::Use::Secondary, "Secondary"},
+      {Misc::Use::Bottling , "Bottling" }
    };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Misc> {
       "misc",
@@ -402,12 +402,12 @@ namespace {
    // Database field mappings for Style
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const STYLE_TYPE_ENUM {
-      {"Lager", Style::Type::Lager},
-      {"Ale",   Style::Type::Ale},
-      {"Mead",  Style::Type::Mead},
-      {"Wheat", Style::Type::Wheat},
-      {"Mixed", Style::Type::Mixed},
-      {"Cider", Style::Type::Cider}
+      {Style::Type::Lager, "Lager"},
+      {Style::Type::Ale  , "Ale"  },
+      {Style::Type::Mead , "Mead" },
+      {Style::Type::Wheat, "Wheat"},
+      {Style::Type::Mixed, "Mixed"},
+      {Style::Type::Cider, "Cider"},
    };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Style> {
       "style",
@@ -508,23 +508,23 @@ namespace {
    // Database field mappings for Yeast
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const DB_YEAST_TYPE_ENUM {
-      {"Ale",       Yeast::Type::Ale},
-      {"Lager",     Yeast::Type::Lager},
-      {"Wheat",     Yeast::Type::Wheat},
-      {"Wine",      Yeast::Type::Wine},
-      {"Champagne", Yeast::Type::Champagne}
+      {Yeast::Type::Ale      , "Ale"      },
+      {Yeast::Type::Lager    , "Lager"    },
+      {Yeast::Type::Wheat    , "Wheat"    },
+      {Yeast::Type::Wine     , "Wine"     },
+      {Yeast::Type::Champagne, "Champagne"},
    };
    EnumStringMapping const DB_YEAST_FORM_ENUM {
-      {"Liquid",  Yeast::Form::Liquid},
-      {"Dry",     Yeast::Form::Dry},
-      {"Slant",   Yeast::Form::Slant},
-      {"Culture", Yeast::Form::Culture}
+      {Yeast::Form::Liquid , "Liquid" },
+      {Yeast::Form::Dry    , "Dry"    },
+      {Yeast::Form::Slant  , "Slant"  },
+      {Yeast::Form::Culture, "Culture"},
    };
    EnumStringMapping const DB_YEAST_FLOCCULATION_ENUM {
-      {"Low",       Yeast::Flocculation::Low},
-      {"Medium",    Yeast::Flocculation::Medium},
-      {"High",      Yeast::Flocculation::High},
-      {"Very High", Yeast::Flocculation::Very_High}
+      {Yeast::Flocculation::Low      , "Low"      },
+      {Yeast::Flocculation::Medium   , "Medium"   },
+      {Yeast::Flocculation::High     , "High"     },
+      {Yeast::Flocculation::Very_High, "Very High"},
    };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Yeast> {
       "yeast",
@@ -568,9 +568,9 @@ namespace {
    // Database field mappings for Recipe
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const RECIPE_STEP_TYPE_ENUM {
-      {"Extract",      Recipe::Type::Extract},
-      {"Partial Mash", Recipe::Type::PartialMash},
-      {"All Grain",    Recipe::Type::AllGrain}
+      {Recipe::Type::Extract    , "Extract"     },
+      {Recipe::Type::PartialMash, "Partial Mash"},
+      {Recipe::Type::AllGrain   , "All Grain"   },
    };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Recipe> {
       "recipe",

@@ -65,10 +65,10 @@
 
 namespace {
    EnumStringMapping const dbTypeToName {
-      {Database::tr("NODB"  ), Database::DbType::NODB  },
-      {Database::tr("SQLITE"), Database::DbType::SQLITE},
-      {Database::tr("PGSQL" ), Database::DbType::PGSQL },
-      {Database::tr("ALLDB" ), Database::DbType::ALLDB },
+      {Database::DbType::NODB  , Database::tr("NODB"  )},
+      {Database::DbType::SQLITE, Database::tr("SQLITE")},
+      {Database::DbType::PGSQL , Database::tr("PGSQL" )},
+      {Database::DbType::ALLDB , Database::tr("ALLDB" )},
    };
 
    //
