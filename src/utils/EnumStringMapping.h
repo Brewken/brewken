@@ -68,6 +68,11 @@ struct EnumAndItsString {
  *        by the compiler when it's an array of structs), and the extra "cost" of a vector here is negligible.
  *
  *        TBD: Could look at Boost Bimap
+ *
+ *        NOTE: We can get the number of values in the mapping by calling \c size (inherited from \c QVector).  By
+ *              virtue of the fact that we always start our enums at 0 and don't skip any values, this also tells us
+ *              the number of values in the enum (subject to the assumption that every value in the enum was given a
+ *              mapping entry).
  */
 class EnumStringMapping : public QVector<EnumAndItsString> {
 public:

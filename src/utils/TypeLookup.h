@@ -138,6 +138,12 @@ struct TypeInfo {
    std::optional<BtFieldType> fieldType;
 
    /**
+    * \return \c true if \c classification is \c RequiredEnum or \c OptionalEnum, \c false otherwise (ie if
+    *         \c classification is \c RequiredOther or \c OptionalOther
+    */
+   bool isEnum() const;
+
+   /**
     * \return \c true if \c classification is \c OptionalEnum or \c OptionalOther, \c false otherwise (ie if
     *         \c classification is \c RequiredEnum or \c RequiredOther
     */

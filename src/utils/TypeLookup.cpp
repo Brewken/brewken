@@ -25,6 +25,14 @@
 #include "Logging.h"
 #include "measurement/Amount.h"
 
+bool TypeInfo::isEnum() const {
+   if (this->classification == TypeInfo::Classification::RequiredEnum ||
+       this->classification == TypeInfo::Classification::OptionalEnum) {
+      return true;
+   }
+   return false;
+}
+
 bool TypeInfo::isOptional() const {
    if (this->classification == TypeInfo::Classification::OptionalEnum ||
        this->classification == TypeInfo::Classification::OptionalOther) {

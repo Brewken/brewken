@@ -115,10 +115,6 @@ void SmartLabel::init(char const * const   editorName,
    this->pimpl->m_labelName   = labelName  ;
    this->pimpl->m_labelFqName = labelFqName;
    this->pimpl->m_typeInfo    = &typeInfo  ;
-///   if (smartField) {
-///      this->pimpl->m_buddies.append(smartField);
-///      this->setBuddy(smartField);
-///   }
    this->pimpl->m_initialised = true;
    return;
 }

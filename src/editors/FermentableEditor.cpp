@@ -36,12 +36,6 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-   // See comment in editors/HopEditor.cpp about combo box setup in Qt
-   for (auto ii : Fermentable::allTypes) {
-      this->comboBox_fermentableType->addItem(Fermentable::typeDisplayNames[ii],
-                                              Fermentable::typeStringMapping.enumToString(ii));
-   }
-
    SMART_FIELD_INIT(FermentableEditor, label_name          , lineEdit_name          , Fermentable, PropertyNames::NamedEntity::name                     );
    SMART_FIELD_INIT(FermentableEditor, label_color         , lineEdit_color         , Fermentable, PropertyNames::Fermentable::color_srm             , 0);
    SMART_FIELD_INIT(FermentableEditor, label_diastaticPower, lineEdit_diastaticPower, Fermentable, PropertyNames::Fermentable::diastaticPower_lintner   );
@@ -55,6 +49,9 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    SMART_FIELD_INIT(FermentableEditor, label_origin        , lineEdit_origin        , Fermentable, PropertyNames::Fermentable::origin                   );
    SMART_FIELD_INIT(FermentableEditor, label_supplier      , lineEdit_supplier      , Fermentable, PropertyNames::Fermentable::supplier                 );
 
+   BT_COMBO_BOX_INIT(FermentableEditor, comboBox_type      , Fermentable, type      );
+   BT_COMBO_BOX_INIT(FermentableEditor, comboBox_grainGroup, Fermentable, grainGroup);
+
    connect(this->pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNew   );
    connect(this->pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save         );
    connect(this->pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose);
@@ -66,7 +63,7 @@ FermentableEditor::~FermentableEditor() = default;
 
 void FermentableEditor::writeFieldsToEditItem() {
 
-   this->m_editItem->setType(EditorHelpers::getComboBoxVal<Fermentable::Type>(*this->comboBox_fermentableType, Fermentable::typeStringMapping));
+   this->m_editItem->setType(this->comboBox_type      ->getNonOptValue<Fermentable::Type      >());
 
    this->m_editItem->setName                  (this->lineEdit_name          ->text                    ());
    this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValueAs<double>());
@@ -85,6 +82,7 @@ void FermentableEditor::writeFieldsToEditItem() {
    this->m_editItem->setNotes                 (this->textEdit_notes         ->toPlainText             ());
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    this->m_editItem->setAmountIsWeight        (this->checkBox_isWeight      ->checkState() == Qt::Checked);
+   this->m_editItem->setGrainGroup            (this->comboBox_grainGroup->getOptValue   <Fermentable::GrainGroup>());
 
    return;
 }
@@ -97,7 +95,7 @@ void FermentableEditor::writeLateFieldsToEditItem() {
 }
 
 void FermentableEditor::readFieldsFromEditItem(std::optional<QString> propName) {
-   if (!propName || *propName == PropertyNames::Fermentable::type) { EditorHelpers::setComboBoxVal(*this->comboBox_fermentableType, Fermentable::typeStringMapping, m_editItem->type()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::type                  ) { this->comboBox_type          ->setValue     (m_editItem->type                 ()); if (propName) { return; } }
 
    if (!propName || *propName == PropertyNames::NamedEntity::name                  ) { this->lineEdit_name          ->setText      (m_editItem->name()                  ); // Continues to next line
                                                                                       this->lineEdit_name->setCursorPosition(0); tabWidget_editor->setTabText(0, m_editItem->name());                               if (propName) { return; } }
@@ -118,6 +116,7 @@ void FermentableEditor::readFieldsFromEditItem(std::optional<QString> propName) 
    if (!propName || *propName == PropertyNames::Fermentable::notes                 ) { this->textEdit_notes         ->setPlainText (m_editItem->notes()                 );                                          if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    if (!propName || *propName == PropertyNames::Fermentable::amountIsWeight        ) { this->checkBox_isWeight      ->setCheckState(m_editItem->amountIsWeight() ? Qt::Checked : Qt::Unchecked);                    if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::grainGroup            ) { this->comboBox_grainGroup    ->setValue     (m_editItem->grainGroup            ()); if (propName) { return; } }
    return;
 }
 

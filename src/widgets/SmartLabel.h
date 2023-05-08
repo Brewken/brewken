@@ -237,14 +237,6 @@ signals:
     */
    void changedSystemOfMeasurementOrScale(SmartAmounts::ScaleInfo previousScaleInfo);
 
-/// // Using protected instead of private allows me to not use the friends
-/// // declaration
-/// protected:
-///
-///   void initializeSection();
-///   void initializeProperty();
-///   void initializeMenu();
-
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;

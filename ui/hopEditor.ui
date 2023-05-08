@@ -112,7 +112,7 @@
         </spacer>
        </item>
        <item row="0" column="3">
-        <widget class="QComboBox" name="comboBox_hopUse">
+        <widget class="BtComboBox" name="comboBox_hopUse">
          <property name="toolTip">
           <string>Use</string>
          </property>
@@ -129,7 +129,7 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QComboBox" name="comboBox_hopType">
+        <widget class="BtComboBox" name="comboBox_hopType">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -152,7 +152,7 @@
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QComboBox" name="comboBox_hopForm">
+        <widget class="BtComboBox" name="comboBox_hopForm">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -904,6 +904,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>BtComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/BtComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>SmartLabel</class>
    <extends>QLabel</extends>

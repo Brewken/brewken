@@ -63,9 +63,9 @@ HopEditor::HopEditor(QWidget * parent) :
    SMART_FIELD_INIT(HopEditor, label_polyphenols          , lineEdit_polyphenols          , Hop, PropertyNames::Hop::polyphenols_pct      , 0);
    SMART_FIELD_INIT(HopEditor, label_xanthohumol          , lineEdit_xanthohumol          , Hop, PropertyNames::Hop::xanthohumol_pct      , 0);
 
-   EditorHelpers::initialiseComboBox(*this->comboBox_hopType, Hop::allTypes, Hop::typeStringMapping, Hop::typeDisplayNames);
-   EditorHelpers::initialiseComboBox(*this->comboBox_hopForm, Hop::allForms, Hop::formStringMapping, Hop::formDisplayNames);
-   EditorHelpers::initialiseComboBox(*this->comboBox_hopUse , Hop::allUses , Hop:: useStringMapping, Hop:: useDisplayNames);
+   BT_COMBO_BOX_INIT(HopEditor, comboBox_hopType, Hop, type);
+   BT_COMBO_BOX_INIT(HopEditor, comboBox_hopForm, Hop, form);
+   BT_COMBO_BOX_INIT(HopEditor, comboBox_hopUse , Hop, use );
 
    connect(this->pushButton_new,    &QAbstractButton::clicked, this, &HopEditor::clickedNew   );
    connect(this->pushButton_save,   &QAbstractButton::clicked, this, &HopEditor::save         );
@@ -90,13 +90,9 @@ void HopEditor::writeFieldsToEditItem() {
    this->m_editItem->setSubstitutes      (this->textEdit_substitutes  ->toPlainText             ());
    this->m_editItem->setNotes            (this->textEdit_notes        ->toPlainText             ());
 
-   //
-   // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
-   // std::bad_optional_access exception in such a case
-   //
-   this->m_editItem->setType(EditorHelpers::getComboBoxVal<Hop::Type>(*this->comboBox_hopType, Hop::typeStringMapping));
-   this->m_editItem->setForm(EditorHelpers::getComboBoxVal<Hop::Form>(*this->comboBox_hopForm, Hop::formStringMapping));
-   this->m_editItem->setUse (EditorHelpers::getComboBoxVal<Hop::Use >(*this->comboBox_hopUse , Hop:: useStringMapping));
+   this->m_editItem->setType             (this->comboBox_hopType      ->getNonOptValue<Hop::Type>());
+   this->m_editItem->setForm             (this->comboBox_hopForm      ->getNonOptValue<Hop::Form>());
+   this->m_editItem->setUse              (this->comboBox_hopUse       ->getNonOptValue<Hop::Use >());
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    this->m_editItem->setProducer             (this->lineEdit_producer             ->text                 ());
@@ -122,9 +118,9 @@ void HopEditor::writeLateFieldsToEditItem() {
 }
 
 void HopEditor::readFieldsFromEditItem(std::optional<QString> propName) {
-   if (!propName || *propName == PropertyNames::Hop::use ) { EditorHelpers::setComboBoxVal(*this->comboBox_hopUse , Hop:: useStringMapping, m_editItem->use ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::type) { EditorHelpers::setComboBoxVal(*this->comboBox_hopType, Hop::typeStringMapping, m_editItem->type()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::form) { EditorHelpers::setComboBoxVal(*this->comboBox_hopForm, Hop::formStringMapping, m_editItem->form()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Hop::type                          ) { this->comboBox_hopType              ->setValue    (m_editItem->type                 ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Hop::form                          ) { this->comboBox_hopForm              ->setValue    (m_editItem->form                 ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Hop::use                           ) { this->comboBox_hopUse               ->setValue    (m_editItem->use                  ()); if (propName) { return; } }
 
    if (!propName || *propName == PropertyNames::NamedEntity::name                  ) { this->lineEdit_name                 ->setText     (m_editItem->name                 ()); // Continues to next line
                                                                                        this->lineEdit_name                 ->setCursorPosition(0);                          // Continues to next line

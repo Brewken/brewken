@@ -207,13 +207,14 @@ public:
     *        `\c setAmount<std::optional<T>>(\c std::nullopt)` when we mean
     *        `\c setAmount<T>(\c std::optional<T>{std::nullopt})`.
     *
+    * \param amount is the amount to display
     */
    template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(std::optional<T> amount);
 
    /**
     * \brief Set the amount for a non-optional numeric field
     *
-    * \param amount is the amount to display, which may be optional
+    * \param amount is the amount to display
     */
    template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(T amount);
 

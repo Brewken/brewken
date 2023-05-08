@@ -184,6 +184,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/WaterTableWidget.cpp
     ${repoDir}/src/widgets/Animator.cpp
+    ${repoDir}/src/widgets/BtComboBox.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/SmartAmounts.cpp
     ${repoDir}/src/widgets/SmartDigitWidget.cpp

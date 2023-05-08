@@ -10,6 +10,12 @@
     <height>348</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Fermentable Editor</string>
   </property>
@@ -83,7 +89,7 @@
         </spacer>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="comboBox_fermentableType">
+        <widget class="BtComboBox" name="comboBox_type">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -169,7 +175,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_fermentableType">
          <property name="toolTip">
           <string>Required</string>
          </property>
@@ -177,7 +183,7 @@
           <string>Type</string>
          </property>
          <property name="buddy">
-          <cstring>comboBox_fermentableType</cstring>
+          <cstring>comboBox_type</cstring>
          </property>
         </widget>
        </item>
@@ -341,6 +347,38 @@
          </property>
          <property name="toolTip">
           <string>Yield as compared to glucose</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="3">
+        <widget class="QLabel" name="label_fermentableGrainGroup">
+         <property name="toolTip">
+          <string>Required</string>
+         </property>
+         <property name="text">
+          <string>GrainGroup</string>
+         </property>
+         <property name="buddy">
+          <cstring>comboBox_grainGroup</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="4">
+        <widget class="BtComboBox" name="comboBox_grainGroup">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Fermantable Grain Group</string>
          </property>
         </widget>
        </item>
@@ -670,8 +708,348 @@
          </property>
         </widget>
        </item>
-¥¥¥ Keep going to x23! ¥¥¥
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_x5">
+         <property name="text">
+          <string>x5</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x5</cstring>
+         </property>
+        </widget>
+       </item>
        <item row="6" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x5">
+         <property name="toolTip">
+          <string>x5</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="3">
+        <widget class="QLabel" name="label_x6">
+         <property name="text">
+          <string>x6</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x6</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x6">
+         <property name="toolTip">
+          <string>x6</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_x7">
+         <property name="text">
+          <string>x7</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x7</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x7">
+         <property name="toolTip">
+          <string>x7</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="3">
+        <widget class="QLabel" name="label_x8">
+         <property name="text">
+          <string>x8</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x8</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x8">
+         <property name="toolTip">
+          <string>x8</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_x9">
+         <property name="text">
+          <string>x9</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x9</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x9">
+         <property name="toolTip">
+          <string>x9</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="3">
+        <widget class="QLabel" name="label_x10">
+         <property name="text">
+          <string>x10</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x10</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x10">
+         <property name="toolTip">
+          <string>x10</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_x11">
+         <property name="text">
+          <string>x11</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x11</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x11">
+         <property name="toolTip">
+          <string>x11</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="3">
+        <widget class="QLabel" name="label_x12">
+         <property name="text">
+          <string>x12</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x12</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x12">
+         <property name="toolTip">
+          <string>x12</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_x13">
+         <property name="text">
+          <string>x13</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x13</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x13">
+         <property name="toolTip">
+          <string>x13</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="3">
+        <widget class="QLabel" name="label_x14">
+         <property name="text">
+          <string>x14</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x14</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x14">
+         <property name="toolTip">
+          <string>x14</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_x15">
+         <property name="text">
+          <string>x15</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x15</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x15">
+         <property name="toolTip">
+          <string>x15</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="3">
+        <widget class="QLabel" name="label_x16">
+         <property name="text">
+          <string>x16</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x16</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x16">
+         <property name="toolTip">
+          <string>x16</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="label_x17">
+         <property name="text">
+          <string>x17</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x17</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x17">
+         <property name="toolTip">
+          <string>x17</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="3">
+        <widget class="QLabel" name="label_x18">
+         <property name="text">
+          <string>x18</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x18</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x18">
+         <property name="toolTip">
+          <string>x18</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QLabel" name="label_x19">
+         <property name="text">
+          <string>x19</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x19</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x19">
+         <property name="toolTip">
+          <string>x19</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="3">
+        <widget class="QLabel" name="label_x20">
+         <property name="text">
+          <string>x20</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x20</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x20">
+         <property name="toolTip">
+          <string>x20</string>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="0">
+        <widget class="QLabel" name="label_x21">
+         <property name="text">
+          <string>x21</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x21</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x21">
+         <property name="toolTip">
+          <string>x21</string>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="3">
+        <widget class="QLabel" name="label_x22">
+         <property name="text">
+          <string>x22</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x22</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x22">
+         <property name="toolTip">
+          <string>x22</string>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="0">
+        <widget class="QLabel" name="label_x23">
+         <property name="text">
+          <string>x23</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x23</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_x23">
+         <property name="toolTip">
+          <string>x23</string>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="3">
+        <widget class="QLabel" name="label_x24">
+         <property name="text">
+          <string>x24</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_x24</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_x24">
+         <property name="toolTip">
+          <string>x24</string>
+         </property>
+        </widget>
+       </item>
+
+       <item row="16" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -768,6 +1146,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>BtComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/BtComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>SmartLabel</class>
    <extends>QLabel</extends>
    <header>widgets/SmartLabel.h</header>
@@ -790,7 +1173,7 @@
  <tabstops>
   <tabstop>tabWidget_editor</tabstop>
   <tabstop>lineEdit_name</tabstop>
-  <tabstop>comboBox_fermentableType</tabstop>
+  <tabstop>comboBox_type</tabstop>
   <tabstop>lineEdit_color</tabstop>
   <tabstop>lineEdit_yield</tabstop>
   <tabstop>lineEdit_inventory</tabstop>

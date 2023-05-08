@@ -187,46 +187,4 @@ protected:
    void EditorName::changed(QMetaProperty prop, QVariant val) { this->doChanged(this->sender(), prop, val); return; } \
    void EditorName::clickedNew() { this->newEditItem(); return;}
 
-
-namespace EditorHelpers {
-   /**
-    * \brief Initialise a combo box from an enum
-    *
-    *        According to https://bugreports.qt.io/browse/QTBUG-50823 it is never going to be possible to specify the
-    *        data (as opposed to display text) for a combo box via the .ui file.  So we have to do it in code instead.
-    *        We could use the raw enum values as the data, but it would be a bit painful to debug if we ever had to, so
-    *        for small extra effort we use the same serialisation strings that we use for BeerJSON and the DB.
-    */
-   template<typename EE, size_t N>
-   void initialiseComboBox(QComboBox & comboBox,
-                           std::array<EE, N> const & allEnumVals,
-                           EnumStringMapping const & nameMapping,
-                           EnumStringMapping const & displayNameMapping) {
-      for (auto ii : allEnumVals) {
-         comboBox.addItem(displayNameMapping[ii], nameMapping[ii]);
-      }
-      return;
-   }
-
-   /**
-    * \brief Set value of a combo box from an enum val
-    */
-   template<typename EE>
-   void setComboBoxVal(QComboBox & comboBox, EnumStringMapping const & enumStringMapping, EE const enumVal) {
-      // It's a coding error if there isn't a combo box entry corresponding to the Hop type
-      comboBox.setCurrentIndex(comboBox.findData(enumStringMapping.enumToString(enumVal)));
-      return;
-   }
-
-   /**
-    * \brief Get an enum val from a combo box setting
-    */
-   template<typename EE>
-   EE getComboBoxVal(QComboBox & comboBox, EnumStringMapping const & enumStringMapping) {
-      // It's a coding error if we don't recognise the values in our own combo boxes, so it's OK that we'd get a
-      // std::bad_optional_access exception in such a case
-      return enumStringMapping.stringToEnum<EE>(comboBox.currentData().toString());
-   }
-}
-
 #endif

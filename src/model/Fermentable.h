@@ -171,6 +171,11 @@ public:
     */
    static EnumStringMapping const grainGroupStringMapping;
 
+   /*!
+    * \brief Localised names of \c Fermentable::GrainGroup values suitable for displaying to the end user
+    */
+   static EnumStringMapping const grainGroupDisplayNames;
+
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.

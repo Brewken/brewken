@@ -4789,6 +4789,94 @@ The final volume in the primary is %1.</source>
         <source>x4</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>GrainGroup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Grain Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x7</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x8</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x9</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x10</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x11</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x12</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x13</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x14</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x15</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x16</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x17</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x18</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x19</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x20</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x21</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x22</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x23</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x24</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>hopEditor</name>

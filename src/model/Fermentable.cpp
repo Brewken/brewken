@@ -88,6 +88,16 @@ EnumStringMapping const Fermentable::grainGroupStringMapping {
    {Fermentable::GrainGroup::Adjunct  , "adjunct"  },
 };
 
+EnumStringMapping const Fermentable::grainGroupDisplayNames {
+   {Fermentable::GrainGroup::Base     , tr("Base"     )},
+   {Fermentable::GrainGroup::Caramel  , tr("Caramel"  )},
+   {Fermentable::GrainGroup::Flaked   , tr("Flaked"   )},
+   {Fermentable::GrainGroup::Roasted  , tr("Roasted"  )},
+   {Fermentable::GrainGroup::Specialty, tr("Specialty")},
+   {Fermentable::GrainGroup::Smoked   , tr("Smoked"   )},
+   {Fermentable::GrainGroup::Adjunct  , tr("Adjunct"  )},
+};
+
 bool Fermentable::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Fermentable const & rhs = static_cast<Fermentable const &>(other);
