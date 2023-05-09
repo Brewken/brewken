@@ -144,9 +144,15 @@ void SmartLineEdit::doPostInitWork() {
    return;
 }
 
+void SmartLineEdit::setTextCursor(QString const & text, int cursorPosition) {
+   this->QLineEdit::setText(text);
+   this->QLineEdit::setCursorPosition(cursorPosition);
+   return;
+}
+
 void SmartLineEdit::onLineChanged() {
-   Q_ASSERT(this->isInitialised());
    qDebug() << Q_FUNC_INFO;
+   Q_ASSERT(this->isInitialised());
 
    if (std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType)) {
       // The field is not measuring a physical quantity so there are no units or unit conversions to handle

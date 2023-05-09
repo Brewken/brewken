@@ -50,12 +50,39 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    SMART_FIELD_INIT(FermentableEditor, label_supplier      , lineEdit_supplier      , Fermentable, PropertyNames::Fermentable::supplier                 );
 
    BT_COMBO_BOX_INIT(FermentableEditor, comboBox_type      , Fermentable, type      );
+
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    BT_COMBO_BOX_INIT(FermentableEditor, comboBox_grainGroup, Fermentable, grainGroup);
+
+   SMART_FIELD_INIT(FermentableEditor, label_producer              , lineEdit_producer              , Fermentable, PropertyNames::Fermentable::producer              );
+   SMART_FIELD_INIT(FermentableEditor, label_productId             , lineEdit_productId             , Fermentable, PropertyNames::Fermentable::productId             );
+   SMART_FIELD_INIT(FermentableEditor, label_fineGrindYield_pct    , lineEdit_fineGrindYield_pct    , Fermentable, PropertyNames::Fermentable::fineGrindYield_pct    );
+   SMART_FIELD_INIT(FermentableEditor, label_coarseGrindYield_pct  , lineEdit_coarseGrindYield_pct  , Fermentable, PropertyNames::Fermentable::coarseGrindYield_pct  );
+   SMART_FIELD_INIT(FermentableEditor, label_potentialYield_sg     , lineEdit_potentialYield_sg     , Fermentable, PropertyNames::Fermentable::potentialYield_sg     );
+   SMART_FIELD_INIT(FermentableEditor, label_alphaAmylase_dextUnits, lineEdit_alphaAmylase_dextUnits, Fermentable, PropertyNames::Fermentable::alphaAmylase_dextUnits);
+   SMART_FIELD_INIT(FermentableEditor, label_kolbachIndex_pct      , lineEdit_kolbachIndex_pct      , Fermentable, PropertyNames::Fermentable::kolbachIndex_pct      );
+   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpGlassy_pct , lineEdit_hardnessPrpGlassy_pct , Fermentable, PropertyNames::Fermentable::hardnessPrpGlassy_pct );
+   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpHalf_pct   , lineEdit_hardnessPrpHalf_pct   , Fermentable, PropertyNames::Fermentable::hardnessPrpHalf_pct   );
+   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpMealy_pct  , lineEdit_hardnessPrpMealy_pct  , Fermentable, PropertyNames::Fermentable::hardnessPrpMealy_pct  );
+   SMART_FIELD_INIT(FermentableEditor, label_kernelSizePrpPlump_pct, lineEdit_kernelSizePrpPlump_pct, Fermentable, PropertyNames::Fermentable::kernelSizePrpPlump_pct);
+   SMART_FIELD_INIT(FermentableEditor, label_kernelSizePrpThin_pct , lineEdit_kernelSizePrpThin_pct , Fermentable, PropertyNames::Fermentable::kernelSizePrpThin_pct );
+   SMART_FIELD_INIT(FermentableEditor, label_friability_pct        , lineEdit_friability_pct        , Fermentable, PropertyNames::Fermentable::friability_pct        );
+   SMART_FIELD_INIT(FermentableEditor, label_di_ph                 , lineEdit_di_ph                 , Fermentable, PropertyNames::Fermentable::di_ph                 );
+   SMART_FIELD_INIT(FermentableEditor, label_viscosity_cP          , lineEdit_viscosity_cP          , Fermentable, PropertyNames::Fermentable::viscosity_cP          );
+   SMART_FIELD_INIT(FermentableEditor, label_dmsP                  , lineEdit_dmsP                  , Fermentable, PropertyNames::Fermentable::dmsP                  );
+   SMART_FIELD_INIT(FermentableEditor, label_fan                   , lineEdit_fan                   , Fermentable, PropertyNames::Fermentable::fan                   );
+   SMART_FIELD_INIT(FermentableEditor, label_fermentability_pct    , lineEdit_fermentability_pct    , Fermentable, PropertyNames::Fermentable::fermentability_pct    );
+   SMART_FIELD_INIT(FermentableEditor, label_betaGlucan            , lineEdit_betaGlucan            , Fermentable, PropertyNames::Fermentable::betaGlucan            );
+
+   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Fermentable, amountIsWeight           );
+
+   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_dmsPIsMassPerVolume      , label_dmsPIsMassPerVolume      , lineEdit_dmsP      , Fermentable, dmsPIsMassPerVolume      );
+   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_fanIsMassPerVolume       , label_fanIsMassPerVolume       , lineEdit_fan       , Fermentable, fanIsMassPerVolume       );
+   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_betaGlucanIsMassPerVolume, label_betaGlucanIsMassPerVolume, lineEdit_betaGlucan, Fermentable, betaGlucanIsMassPerVolume);
 
    connect(this->pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNew   );
    connect(this->pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save         );
    connect(this->pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose);
-   connect(this->checkBox_isWeight, &QCheckBox::toggled,       this, &FermentableEditor::setIsWeight  ); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    return;
 }
 
@@ -67,13 +94,13 @@ void FermentableEditor::writeFieldsToEditItem() {
 
    this->m_editItem->setName                  (this->lineEdit_name          ->text                    ());
    this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValueAs<double>());
-   this->m_editItem->setColor_srm             (this->lineEdit_color         ->toCanonical().quantity  ());
+   this->m_editItem->setColor_srm             (this->lineEdit_color         ->getNonOptValueAs<double>());
    this->m_editItem->setAddAfterBoil          (this->checkBox_addAfterBoil  ->checkState() == Qt::Checked);
    this->m_editItem->setOrigin                (this->lineEdit_origin        ->text                    ());
    this->m_editItem->setSupplier              (this->lineEdit_supplier      ->text                    ());
    this->m_editItem->setCoarseFineDiff_pct    (this->lineEdit_coarseFineDiff->getNonOptValueAs<double>());
    this->m_editItem->setMoisture_pct          (this->lineEdit_moisture      ->getNonOptValueAs<double>());
-   this->m_editItem->setDiastaticPower_lintner(this->lineEdit_diastaticPower->toCanonical().quantity  ());
+   this->m_editItem->setDiastaticPower_lintner(this->lineEdit_diastaticPower->getNonOptValueAs<double>());
    this->m_editItem->setProtein_pct           (this->lineEdit_protein       ->getNonOptValueAs<double>());
    this->m_editItem->setMaxInBatch_pct        (this->lineEdit_maxInBatch    ->getNonOptValueAs<double>());
    this->m_editItem->setRecommendMash         (this->checkBox_recommendMash ->checkState() == Qt::Checked);
@@ -81,8 +108,30 @@ void FermentableEditor::writeFieldsToEditItem() {
    this->m_editItem->setIbuGalPerLb           (this->lineEdit_ibuGalPerLb   ->getNonOptValueAs<double>()); // .:TBD:. No metric measure?
    this->m_editItem->setNotes                 (this->textEdit_notes         ->toPlainText             ());
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   this->m_editItem->setAmountIsWeight        (this->checkBox_isWeight      ->checkState() == Qt::Checked);
-   this->m_editItem->setGrainGroup            (this->comboBox_grainGroup->getOptValue   <Fermentable::GrainGroup>());
+   this->m_editItem->setAmountIsWeight           (this->checkBox_amountIsWeight           ->isChecked                           ());
+   this->m_editItem->setGrainGroup               (this->comboBox_grainGroup               ->getOptValue<Fermentable::GrainGroup>());
+   this->m_editItem->setProducer                 (this->lineEdit_producer                 ->text                                ());
+   this->m_editItem->setProductId                (this->lineEdit_productId                ->text                                ());
+   this->m_editItem->setFineGrindYield_pct       (this->lineEdit_fineGrindYield_pct       ->getOptValueAs<double>               ());
+   this->m_editItem->setCoarseGrindYield_pct     (this->lineEdit_coarseGrindYield_pct     ->getOptValueAs<double>               ());
+   this->m_editItem->setPotentialYield_sg        (this->lineEdit_potentialYield_sg        ->getOptValueAs<double>               ());
+   this->m_editItem->setAlphaAmylase_dextUnits   (this->lineEdit_alphaAmylase_dextUnits   ->getOptValueAs<double>               ());
+   this->m_editItem->setKolbachIndex_pct         (this->lineEdit_kolbachIndex_pct         ->getOptValueAs<double>               ());
+   this->m_editItem->setHardnessPrpGlassy_pct    (this->lineEdit_hardnessPrpGlassy_pct    ->getOptValueAs<double>               ());
+   this->m_editItem->setHardnessPrpHalf_pct      (this->lineEdit_hardnessPrpHalf_pct      ->getOptValueAs<double>               ());
+   this->m_editItem->setHardnessPrpMealy_pct     (this->lineEdit_hardnessPrpMealy_pct     ->getOptValueAs<double>               ());
+   this->m_editItem->setKernelSizePrpPlump_pct   (this->lineEdit_kernelSizePrpPlump_pct   ->getOptValueAs<double>               ());
+   this->m_editItem->setKernelSizePrpThin_pct    (this->lineEdit_kernelSizePrpThin_pct    ->getOptValueAs<double>               ());
+   this->m_editItem->setFriability_pct           (this->lineEdit_friability_pct           ->getOptValueAs<double>               ());
+   this->m_editItem->setDi_ph                    (this->lineEdit_di_ph                    ->getOptValueAs<double>               ());
+   this->m_editItem->setViscosity_cP             (this->lineEdit_viscosity_cP             ->getOptValueAs<double>               ());
+   this->m_editItem->setDmsP                     (this->lineEdit_dmsP                     ->getOptValueAs<double>               ());
+   this->m_editItem->setDmsPIsMassPerVolume      (this->checkBox_dmsPIsMassPerVolume      ->isChecked                           ());
+   this->m_editItem->setFan                      (this->lineEdit_fan                      ->getOptValueAs<double>               ());
+   this->m_editItem->setFanIsMassPerVolume       (this->checkBox_fanIsMassPerVolume       ->isChecked                           ());
+   this->m_editItem->setFermentability_pct       (this->lineEdit_fermentability_pct       ->getOptValueAs<double>               ());
+   this->m_editItem->setBetaGlucan               (this->lineEdit_betaGlucan               ->getOptValueAs<double>               ());
+   this->m_editItem->setBetaGlucanIsMassPerVolume(this->checkBox_betaGlucanIsMassPerVolume->isChecked                           ());
 
    return;
 }
@@ -95,45 +144,50 @@ void FermentableEditor::writeLateFieldsToEditItem() {
 }
 
 void FermentableEditor::readFieldsFromEditItem(std::optional<QString> propName) {
-   if (!propName || *propName == PropertyNames::Fermentable::type                  ) { this->comboBox_type          ->setValue     (m_editItem->type                 ()); if (propName) { return; } }
-
-   if (!propName || *propName == PropertyNames::NamedEntity::name                  ) { this->lineEdit_name          ->setText      (m_editItem->name()                  ); // Continues to next line
-                                                                                      this->lineEdit_name->setCursorPosition(0); tabWidget_editor->setTabText(0, m_editItem->name());                               if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory     ->setAmount    (m_editItem->inventory()             );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::yield_pct             ) { this->lineEdit_yield         ->setAmount    (m_editItem->yield_pct()             );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::color_srm             ) { this->lineEdit_color         ->setAmount    (m_editItem->color_srm()             );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::addAfterBoil          ) { this->checkBox_addAfterBoil  ->setCheckState(m_editItem->addAfterBoil() ? Qt::Checked : Qt::Unchecked);                      if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::origin                ) { this->lineEdit_origin        ->setText      (m_editItem->origin()                ); lineEdit_origin  ->setCursorPosition(0); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::supplier              ) { this->lineEdit_supplier      ->setText      (m_editItem->supplier()              ); lineEdit_supplier->setCursorPosition(0); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::coarseFineDiff_pct    ) { this->lineEdit_coarseFineDiff->setAmount    (m_editItem->coarseFineDiff_pct()    );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::moisture_pct          ) { this->lineEdit_moisture      ->setAmount    (m_editItem->moisture_pct()          );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::diastaticPower_lintner) { this->lineEdit_diastaticPower->setAmount    (m_editItem->diastaticPower_lintner());                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::protein_pct           ) { this->lineEdit_protein       ->setAmount    (m_editItem->protein_pct()           );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::maxInBatch_pct        ) { this->lineEdit_maxInBatch    ->setAmount    (m_editItem->maxInBatch_pct()        );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::recommendMash         ) { this->checkBox_recommendMash ->setCheckState(m_editItem->recommendMash() ? Qt::Checked : Qt::Unchecked);                     if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::isMashed              ) { this->checkBox_isMashed      ->setCheckState(m_editItem->isMashed()      ? Qt::Checked : Qt::Unchecked);                     if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::ibuGalPerLb           ) { this->lineEdit_ibuGalPerLb   ->setAmount    (m_editItem->ibuGalPerLb()           );                                          if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::notes                 ) { this->textEdit_notes         ->setPlainText (m_editItem->notes()                 );                                          if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::NamedEntity::name                  ) { this->lineEdit_name          ->setTextCursor(m_editItem->name                  ()); // Continues to next line
+                                                                                       this->tabWidget_editor->setTabText(0, m_editItem->name());                                               if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::type                  ) { this->comboBox_type          ->setValue     (m_editItem->type                  ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory     ->setAmount    (m_editItem->inventory             ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::yield_pct             ) { this->lineEdit_yield         ->setAmount    (m_editItem->yield_pct             ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::color_srm             ) { this->lineEdit_color         ->setAmount    (m_editItem->color_srm             ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::addAfterBoil          ) { this->checkBox_addAfterBoil  ->setCheckState(m_editItem->addAfterBoil() ? Qt::Checked : Qt::Unchecked);  if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::origin                ) { this->lineEdit_origin        ->setTextCursor(m_editItem->origin                ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::supplier              ) { this->lineEdit_supplier      ->setTextCursor(m_editItem->supplier              ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::coarseFineDiff_pct    ) { this->lineEdit_coarseFineDiff->setAmount    (m_editItem->coarseFineDiff_pct    ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::moisture_pct          ) { this->lineEdit_moisture      ->setAmount    (m_editItem->moisture_pct          ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::diastaticPower_lintner) { this->lineEdit_diastaticPower->setAmount    (m_editItem->diastaticPower_lintner());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::protein_pct           ) { this->lineEdit_protein       ->setAmount    (m_editItem->protein_pct           ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::maxInBatch_pct        ) { this->lineEdit_maxInBatch    ->setAmount    (m_editItem->maxInBatch_pct        ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::recommendMash         ) { this->checkBox_recommendMash ->setCheckState(m_editItem->recommendMash() ? Qt::Checked : Qt::Unchecked); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::isMashed              ) { this->checkBox_isMashed      ->setCheckState(m_editItem->isMashed()      ? Qt::Checked : Qt::Unchecked); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::ibuGalPerLb           ) { this->lineEdit_ibuGalPerLb   ->setAmount    (m_editItem->ibuGalPerLb           ());                      if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::notes                 ) { this->textEdit_notes         ->setPlainText (m_editItem->notes                 ());                      if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   if (!propName || *propName == PropertyNames::Fermentable::amountIsWeight        ) { this->checkBox_isWeight      ->setCheckState(m_editItem->amountIsWeight() ? Qt::Checked : Qt::Unchecked);                    if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::grainGroup            ) { this->comboBox_grainGroup    ->setValue     (m_editItem->grainGroup            ()); if (propName) { return; } }
-   return;
-}
+   if (!propName || *propName == PropertyNames::Fermentable::amountIsWeight           ) { this->checkBox_amountIsWeight           ->setChecked   (m_editItem->amountIsWeight           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::grainGroup               ) { this->comboBox_grainGroup               ->setValue     (m_editItem->grainGroup               ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::producer                 ) { this->lineEdit_producer                 ->setTextCursor(m_editItem->producer                 ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::productId                ) { this->lineEdit_productId                ->setTextCursor(m_editItem->productId                ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::fineGrindYield_pct       ) { this->lineEdit_fineGrindYield_pct       ->setAmount    (m_editItem->fineGrindYield_pct       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::coarseGrindYield_pct     ) { this->lineEdit_coarseGrindYield_pct     ->setAmount    (m_editItem->coarseGrindYield_pct     ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::potentialYield_sg        ) { this->lineEdit_potentialYield_sg        ->setAmount    (m_editItem->potentialYield_sg        ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::alphaAmylase_dextUnits   ) { this->lineEdit_alphaAmylase_dextUnits   ->setAmount    (m_editItem->alphaAmylase_dextUnits   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::kolbachIndex_pct         ) { this->lineEdit_kolbachIndex_pct         ->setAmount    (m_editItem->kolbachIndex_pct         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::hardnessPrpGlassy_pct    ) { this->lineEdit_hardnessPrpGlassy_pct    ->setAmount    (m_editItem->hardnessPrpGlassy_pct    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::hardnessPrpHalf_pct      ) { this->lineEdit_hardnessPrpHalf_pct      ->setAmount    (m_editItem->hardnessPrpHalf_pct      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::hardnessPrpMealy_pct     ) { this->lineEdit_hardnessPrpMealy_pct     ->setAmount    (m_editItem->hardnessPrpMealy_pct     ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::kernelSizePrpPlump_pct   ) { this->lineEdit_kernelSizePrpPlump_pct   ->setAmount    (m_editItem->kernelSizePrpPlump_pct   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::kernelSizePrpThin_pct    ) { this->lineEdit_kernelSizePrpThin_pct    ->setAmount    (m_editItem->kernelSizePrpThin_pct    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::friability_pct           ) { this->lineEdit_friability_pct           ->setAmount    (m_editItem->friability_pct           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::di_ph                    ) { this->lineEdit_di_ph                    ->setAmount    (m_editItem->di_ph                    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::viscosity_cP             ) { this->lineEdit_viscosity_cP             ->setAmount    (m_editItem->viscosity_cP             ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::dmsP                     ) { this->lineEdit_dmsP                     ->setAmount    (m_editItem->dmsP                     ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::dmsPIsMassPerVolume      ) { this->checkBox_dmsPIsMassPerVolume      ->setChecked   (m_editItem->dmsPIsMassPerVolume      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::fan                      ) { this->lineEdit_fan                      ->setAmount    (m_editItem->fan                      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::fanIsMassPerVolume       ) { this->checkBox_fanIsMassPerVolume       ->setChecked   (m_editItem->fanIsMassPerVolume       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::fermentability_pct       ) { this->lineEdit_fermentability_pct       ->setAmount    (m_editItem->fermentability_pct       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::betaGlucan               ) { this->lineEdit_betaGlucan               ->setAmount    (m_editItem->betaGlucan               ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::betaGlucanIsMassPerVolume) { this->checkBox_betaGlucanIsMassPerVolume->setChecked   (m_editItem->betaGlucanIsMassPerVolume()); if (propName) { return; } }
 
-void FermentableEditor::setIsWeight(bool const state) {
-   qDebug() << Q_FUNC_INFO << "state is" << state;
-   // But you have to admit, this is clever
-   this->lineEdit_inventory->selectPhysicalQuantity(
-      state ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume
-   );
-
-   // maybe? My head hurts now
-   this->lineEdit_inventory->onLineChanged();
-
-   // Strictly, if we change a Fermentable to be measured by mass instead of volume (or vice versa) we should also somehow tell
-   // any other bit of the UI that is showing that Fermentable (eg a RecipeEditor or MainWindow) to redisplay the relevant
-   // field.  Currently we don't do this, on the assumption that it's rare you will change how a Fermentable is measured after
-   // you started using it in recipes.
    return;
 }
 

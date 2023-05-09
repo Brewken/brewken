@@ -70,7 +70,6 @@ class SmartLineEdit : public QLineEdit, public SmartField {
    Q_OBJECT
 
 public:
-
    SmartLineEdit(QWidget* parent = nullptr);
    virtual ~SmartLineEdit();
 
@@ -78,6 +77,11 @@ public:
    virtual void setRawText(QString const & text);
    virtual void connectSmartLabelSignal(SmartLabel & smartLabel);
    virtual void doPostInitWork();
+
+   /**
+    * \brief This combines \c QLineEdit::setText and \c QLineEdit::setCursorPosition
+    */
+   void setTextCursor(QString const & text, int cursorPosition = 0);
 
 public slots:
    /**

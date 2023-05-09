@@ -54,8 +54,6 @@ public slots:
    void clearAndClose();
    void changed(QMetaProperty, QVariant);
    void clickedNew();
-   // Extra slots
-   void setIsWeight(bool state);
 };
 
 #endif

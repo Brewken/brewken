@@ -153,7 +153,9 @@ public:
     * \param enteredText
     * \param previousScaleInfo
     */
-   Measurement::Amount toCanonical(QString const & enteredText, SmartAmounts::ScaleInfo previousScaleInfo) {
+   Measurement::Amount toCanonical(QString const & enteredText,
+                                   SmartAmounts::ScaleInfo previousScaleInfo,
+                                   bool * const ok = nullptr) {
       Q_ASSERT(this->m_initialised);
 
       // It's a coding error to call this for a NonPhysicalQuantity
@@ -177,6 +179,9 @@ public:
       if (!defaultUnit) {
          qWarning() << Q_FUNC_INFO << "previousScaleInfo.relativeScale invalid?" << previousScaleInfo.relativeScale;
          defaultUnit = oldUnitSystem.unit();
+         if (ok) {
+            *ok = false;
+         }
       }
 
       //
@@ -193,6 +198,9 @@ public:
       //
       auto amount = oldUnitSystem.qstringToSI(enteredText, *defaultUnit);
       qDebug() << Q_FUNC_INFO << "Converted to" << amount;
+      if (ok) {
+         *ok = true;
+      }
       return amount;
    }
 
@@ -332,11 +340,6 @@ char const * SmartField::getFqFieldName() const {
    return this->pimpl->m_fieldFqName;
 }
 
-Measurement::Amount SmartField::toCanonical() const {
-   Q_ASSERT(this->pimpl->m_initialised);
-   return this->pimpl->toCanonical(this->getRawText(), this->getScaleInfo());
-}
-
 void SmartField::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement) {
    Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this when we have a fixed display unit
@@ -392,6 +395,12 @@ std::optional<Measurement::UnitSystem::RelativeScale> SmartField::getForcedRelat
 }
 
 SmartAmounts::ScaleInfo SmartField::getScaleInfo() const {
+   Q_ASSERT(this->pimpl->m_initialised);
+   // Uncomment the next command for diagnosing asserts!
+//   qDebug().noquote() <<
+//      Q_FUNC_INFO << this->pimpl->m_fieldFqName << ":" << this->pimpl->m_typeInfo << "Stack trace:" <<
+//      Logging::getStackTrace();
+
    Q_ASSERT(this->pimpl->m_initialised);
    if (this->pimpl->m_smartBuddyLabel) {
       return this->pimpl->m_smartBuddyLabel->getScaleInfo();
@@ -487,6 +496,15 @@ void SmartField::setPrecision(unsigned int const precision) {
    return this->pimpl->m_precision;
 }
 
+Measurement::Amount SmartField::toCanonical() const {
+   Q_ASSERT(this->pimpl->m_initialised);
+   // It's a coding error to call this for a NonPhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+   // It's a coding error to call this for an optional value
+   Q_ASSERT(!this->pimpl->m_typeInfo->isOptional());
+   return this->pimpl->toCanonical(this->getRawText(), this->getScaleInfo());
+}
+
 // We can't do the same trick on get-value-as as we do for set-amount because we can't overload base on return type,
 // hence two different function names.
 template<typename T> T SmartField::getNonOptValueAs(bool * const ok) const {
@@ -499,8 +517,12 @@ template<typename T> T SmartField::getNonOptValueAs(bool * const ok) const {
    // with debugging!
    Q_ASSERT(!this->pimpl->m_typeInfo->isOptional());
 
-   // Note that Measurement::extractRawFromString returns 0 if it can't parse the text
-   return Measurement::extractRawFromString<T>(rawText, ok);
+   if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
+      // Note that Measurement::extractRawFromString returns 0 if it can't parse the text
+      return Measurement::extractRawFromString<T>(rawText, ok);
+   }
+
+   return static_cast<T>(this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity());
 }
 // Instantiate the above template function for the types that are going to use it
 template int          SmartField::getNonOptValueAs<int         >(bool * const ok) const;
@@ -526,17 +548,25 @@ template<typename T> std::optional<T> SmartField::getOptValueAs(bool * const ok)
       return std::optional<T>{std::nullopt};
    }
 
-   bool parseOk = false;
-   T amount = Measurement::extractRawFromString<T>(rawText, &parseOk);
-   if (ok) {
-      *ok = parseOk;
-   }
-   // If we couldn't parse something, return null
-   if (!parseOk) {
-      return std::optional<T>{std::nullopt};
+   if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
+      bool parseOk = false;
+      T amount = Measurement::extractRawFromString<T>(rawText, &parseOk);
+      if (ok) {
+         *ok = parseOk;
+      }
+      // If we couldn't parse something, return null
+      if (!parseOk) {
+         return std::optional<T>{std::nullopt};
+      }
+
+      return std::make_optional<T>(amount);
    }
 
-   return std::make_optional<T>(amount);
+   return std::make_optional<T>(
+      static_cast<T>(
+         this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity()
+      )
+   );
 }
 // Instantiate the above template function for the types that are going to use it
 template std::optional<int         > SmartField::getOptValueAs<int         >(bool * const ok) const;
@@ -558,12 +588,34 @@ void SmartField::selectPhysicalQuantity(Measurement::PhysicalQuantity const phys
    // It's a coding error to call this if we only hold one PhysicalQuantity
    Q_ASSERT(!std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
 
+   auto const previousScaleInfo = this->getScaleInfo();
+
    // It's a coding error to try to select a PhysicalQuantity that was not specified in the constructor
    auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(*this->pimpl->m_typeInfo->fieldType);
    Q_ASSERT(std::get<0>(tupleOfPqs) == physicalQuantity ||
             std::get<1>(tupleOfPqs) == physicalQuantity);
 
    this->pimpl->m_currentPhysicalQuantity = physicalQuantity;
+
+   this->correctEnteredText(previousScaleInfo);
+
+   return;
+}
+
+void SmartField::selectPhysicalQuantity(bool const isFirst) {
+   // It's a coding error to call this for NonPhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+
+   // It's a coding error to call this if we only hold one PhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+
+   auto const previousScaleInfo = this->getScaleInfo();
+
+   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(*this->pimpl->m_typeInfo->fieldType);
+   this->pimpl->m_currentPhysicalQuantity = isFirst ? std::get<0>(tupleOfPqs) : std::get<1>(tupleOfPqs);
+
+   this->correctEnteredText(previousScaleInfo);
+
    return;
 }
 

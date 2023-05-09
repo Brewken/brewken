@@ -60,7 +60,7 @@ class TypeInfo;
  *                                              /       SmartField    \
  *                                        QLabel        /        \     \
  *                                       /       \     /          \     \
- *                             SmartLabel      SmartDigitWidget    SmartField
+ *                             SmartLabel      SmartDigitWidget    SmartLineEdit
  *
  *        A number of helper functions exist in the \c SmartAmounts namespace.
  *
@@ -92,17 +92,17 @@ public:
     *                   uniquely identify this field.
     *
     * \param fieldName Name of the member variable of this field in its owning editor (eg "field_color").
-    *                     Together with \c editorName, should uniquely identify this field.
+    *                  Together with \c editorName, should uniquely identify this field.
     *
-    * \param fieldlFqName This should uniquely identify this field in the application.  (Usually, it's a combination
-    *                        of the owning widget and the member variable, eg "FermentableEditor->field_color".)
-    *                        This is mainly used for logging, where it helps a lot with debugging.  (We have hundreds of
-    *                        instances of this object and if we detect that one of them is misconfigured, it's very
-    *                        useful to be able to log which one!)
-    *                           We \b could construct this at run-time from \c editorName and \c fieldName, but,
-    *                        since we're being invoked via a macro (\c SMART_FIELD_INIT etc), we might as well have the
-    *                        compiler/preprocessor do the necessary concatenation at compile-time and hand the results
-    *                        in via this parameter.
+    * \param fieldFqName This should uniquely identify this field in the application.  (Usually, it's a combination
+    *                    of the owning widget and the member variable, eg "FermentableEditor->field_color".)
+    *                    This is mainly used for logging, where it helps a lot with debugging.  (We have hundreds of
+    *                    instances of this object and if we detect that one of them is misconfigured, it's very useful
+    *                    to be able to log which one!)
+    *                       We \b could construct this at run-time from \c editorName and \c fieldName, but, since we're
+    *                    being invoked via a macro (\c SMART_FIELD_INIT etc), we might as well have the
+    *                    compiler/preprocessor do the necessary concatenation at compile-time and hand the results in
+    *                    via this parameter.
     *
     * \param typeInfo Tells us what data type we use to store the contents of the field (when converted to canonical
     *                 units if it is a \c PhysicalQuantity) and, whether this is an optional field (in which case we
@@ -193,13 +193,6 @@ public:
    char const * getFqFieldName() const;
 
    /**
-    * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the field converted to canonical
-    *        units for the relevant \c Measurement::PhysicalQuantity.  (It is a coding error to call this function if
-    *        our field type \c is \c NonPhysicalQuantity.)
-    */
-   Measurement::Amount toCanonical() const;
-
-   /**
     * \brief Version of \c setAmount, for an optional amount.
     *
     *        It looks a bit funky disabling this specialisation for a T that is optional, but the point is that we don't
@@ -238,8 +231,18 @@ public:
    SmartAmounts::ScaleInfo getScaleInfo() const;
 
    /**
+    * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the field converted to canonical
+    *        units for the relevant \c Measurement::PhysicalQuantity.  (It is a coding error to call this function if
+    *        our field type \c is \c NonPhysicalQuantity.)
+    */
+   Measurement::Amount toCanonical() const;
+
+   /**
     * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
     *        symbols).
+    *
+    *        NOTE: If the field holds a \c PhysicalQuantity or \c PhysicalQuantities then this will return the same
+    *              value as \c this->toCanonical().quantity().
     *
     *        This version is for non-optional (aka required) values.
     *
@@ -252,6 +255,10 @@ public:
 
    /**
     * \brief As \c getNonOptValueAs but for std::optional values
+    *
+    *        NOTE: If the field holds a \c PhysicalQuantity or \c PhysicalQuantities then this will return the same
+    *              value as \c this->toCanonical().quantity() for a non-blank field and \c std::nullopt for a blank
+    *              field.
     *
     *        Valid instantiations are \c int, \c unsigned \c int, \c double
     *
@@ -275,6 +282,15 @@ public:
     *        constructor.
     */
    void selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity);
+
+   /**
+    * \brief Alternative version of \c selectPhysicalQuantity for generic usage.  By convention, whenever we have a
+    *        checkbox for "Amount is weight?" or "Amount is mass concentration?", \c true (ie box checked) is selecting
+    *        the first of the two values in the \c Mixed2PhysicalQuantities pair (eg \c Mass in \c PqEitherMassOrVolume
+    *        or \c MassConcentration in \c PqEitherMassOrVolumeConcentration).  So, passing in the boolean state of the
+    *        checkbox to this function selects the correct option.
+    */
+   void selectPhysicalQuantity(bool const isFirst);
 
    /**
     * \brief When the user has finished entering some text, this function does the corrections, eg if the field is set

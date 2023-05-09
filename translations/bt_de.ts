@@ -1198,6 +1198,34 @@ Log file may contain more details.</source>
         <source>Other Adjunct</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caramel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flaked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roasted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specialty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smoked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjunct</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
@@ -5534,22 +5562,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished">Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
     </message>
     <message>
-        <source>x1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>GrainGroup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5558,83 +5570,99 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>x5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x6</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x7</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x8</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x9</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x11</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x12</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x13</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x14</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x15</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x16</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x17</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x18</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x19</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x20</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x21</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x22</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>x23</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>x24</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Coarse Grind (DBCG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Potential yield</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount of alpha-amylase in the malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kolbach Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;glassy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;half glassy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;mealy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of grain that is &quot;plump&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of grain that is &quot;tine&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DI pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity of this malt in a &quot;congress mash&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors measured as mass concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen measured as mass concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans measured as mass concentration</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -355,17 +355,17 @@ public:
    Q_PROPERTY(std::optional<double> kernelSizePrpPlump_pct  READ kernelSizePrpPlump_pct  WRITE setKernelSizePrpPlump_pct)
 
    /**
-    * \brief The Percentage of grain that is "tine", ie makes it through a thin mesh screen, typically 5/64 inch.
+    * \brief Percentage of grain that is "tine", ie makes it through a thin mesh screen, typically 5/64 inch.
     *        Values less than 3% are desired.  (In BeerJSON this is called "thru".)
     */
    Q_PROPERTY(std::optional<double> kernelSizePrpThin_pct   READ kernelSizePrpThin_pct   WRITE setKernelSizePrpThin_pct)
 
    /**
     * \brief Friability is the relative ease of crumbling when a malt is milled.  It is related to mealiness, and may be
-    *        reported in its place.  It is used as an indicator for  easy gelatinization of the grain and starches, as
+    *        reported in its place.  It is used as an indicator for easy gelatinization of the grain and starches, as
     *        well as modification of the malt.  All malt should be at least 80% friable.  A value of 85% of higher
     *        indicates a well modified malt and is suitable for single step / infusion mashes. Lower values may require
-    *         a step mash.
+    *        a step mash.
     */
    Q_PROPERTY(std::optional<double> friability_pct       READ friability_pct       WRITE setFriability_pct     )
 
