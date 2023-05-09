@@ -94,8 +94,6 @@ void SmartCheckBox::init(char const *  const   editorName,
 void SmartCheckBox::onToggled(bool const state) {
    Q_ASSERT(this->pimpl->m_initialised);
 
-//   qDebug() << Q_FUNC_INFO << this->pimpl->m_checkBoxFqName << ": State" << state;
-
    // SmartField does all the heavy lifting here
    this->pimpl->m_controlledField->selectPhysicalQuantity(state);
 

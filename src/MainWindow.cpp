@@ -1712,14 +1712,14 @@ void MainWindow::updateRecipeBoilTime() {
 }
 
 void MainWindow::updateRecipeEfficiency() {
-   qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getNonOptValueAs<double>();
+   qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getNonOptValue<double>();
    if (!this->recipeObs) {
       return;
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
                         PropertyNames::Recipe::efficiency_pct,
-                        lineEdit_efficiency->getNonOptValueAs<unsigned int>(),
+                        lineEdit_efficiency->getNonOptValue<unsigned int>(),
                         tr("Change Recipe Efficiency"));
    return;
 }

@@ -54,25 +54,25 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    BT_COMBO_BOX_INIT(FermentableEditor, comboBox_grainGroup, Fermentable, grainGroup);
 
-   SMART_FIELD_INIT(FermentableEditor, label_producer              , lineEdit_producer              , Fermentable, PropertyNames::Fermentable::producer              );
-   SMART_FIELD_INIT(FermentableEditor, label_productId             , lineEdit_productId             , Fermentable, PropertyNames::Fermentable::productId             );
-   SMART_FIELD_INIT(FermentableEditor, label_fineGrindYield_pct    , lineEdit_fineGrindYield_pct    , Fermentable, PropertyNames::Fermentable::fineGrindYield_pct    );
-   SMART_FIELD_INIT(FermentableEditor, label_coarseGrindYield_pct  , lineEdit_coarseGrindYield_pct  , Fermentable, PropertyNames::Fermentable::coarseGrindYield_pct  );
-   SMART_FIELD_INIT(FermentableEditor, label_potentialYield_sg     , lineEdit_potentialYield_sg     , Fermentable, PropertyNames::Fermentable::potentialYield_sg     );
-   SMART_FIELD_INIT(FermentableEditor, label_alphaAmylase_dextUnits, lineEdit_alphaAmylase_dextUnits, Fermentable, PropertyNames::Fermentable::alphaAmylase_dextUnits);
-   SMART_FIELD_INIT(FermentableEditor, label_kolbachIndex_pct      , lineEdit_kolbachIndex_pct      , Fermentable, PropertyNames::Fermentable::kolbachIndex_pct      );
-   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpGlassy_pct , lineEdit_hardnessPrpGlassy_pct , Fermentable, PropertyNames::Fermentable::hardnessPrpGlassy_pct );
-   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpHalf_pct   , lineEdit_hardnessPrpHalf_pct   , Fermentable, PropertyNames::Fermentable::hardnessPrpHalf_pct   );
-   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpMealy_pct  , lineEdit_hardnessPrpMealy_pct  , Fermentable, PropertyNames::Fermentable::hardnessPrpMealy_pct  );
-   SMART_FIELD_INIT(FermentableEditor, label_kernelSizePrpPlump_pct, lineEdit_kernelSizePrpPlump_pct, Fermentable, PropertyNames::Fermentable::kernelSizePrpPlump_pct);
-   SMART_FIELD_INIT(FermentableEditor, label_kernelSizePrpThin_pct , lineEdit_kernelSizePrpThin_pct , Fermentable, PropertyNames::Fermentable::kernelSizePrpThin_pct );
-   SMART_FIELD_INIT(FermentableEditor, label_friability_pct        , lineEdit_friability_pct        , Fermentable, PropertyNames::Fermentable::friability_pct        );
-   SMART_FIELD_INIT(FermentableEditor, label_di_ph                 , lineEdit_di_ph                 , Fermentable, PropertyNames::Fermentable::di_ph                 );
-   SMART_FIELD_INIT(FermentableEditor, label_viscosity_cP          , lineEdit_viscosity_cP          , Fermentable, PropertyNames::Fermentable::viscosity_cP          );
-   SMART_FIELD_INIT(FermentableEditor, label_dmsP                  , lineEdit_dmsP                  , Fermentable, PropertyNames::Fermentable::dmsP                  );
-   SMART_FIELD_INIT(FermentableEditor, label_fan                   , lineEdit_fan                   , Fermentable, PropertyNames::Fermentable::fan                   );
-   SMART_FIELD_INIT(FermentableEditor, label_fermentability_pct    , lineEdit_fermentability_pct    , Fermentable, PropertyNames::Fermentable::fermentability_pct    );
-   SMART_FIELD_INIT(FermentableEditor, label_betaGlucan            , lineEdit_betaGlucan            , Fermentable, PropertyNames::Fermentable::betaGlucan            );
+   SMART_FIELD_INIT(FermentableEditor, label_producer              , lineEdit_producer              , Fermentable, PropertyNames::Fermentable::producer                 );
+   SMART_FIELD_INIT(FermentableEditor, label_productId             , lineEdit_productId             , Fermentable, PropertyNames::Fermentable::productId                );
+   SMART_FIELD_INIT(FermentableEditor, label_fineGrindYield_pct    , lineEdit_fineGrindYield_pct    , Fermentable, PropertyNames::Fermentable::fineGrindYield_pct    , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_coarseGrindYield_pct  , lineEdit_coarseGrindYield_pct  , Fermentable, PropertyNames::Fermentable::coarseGrindYield_pct  , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_potentialYield_sg     , lineEdit_potentialYield_sg     , Fermentable, PropertyNames::Fermentable::potentialYield_sg        );
+   SMART_FIELD_INIT(FermentableEditor, label_alphaAmylase_dextUnits, lineEdit_alphaAmylase_dextUnits, Fermentable, PropertyNames::Fermentable::alphaAmylase_dextUnits   );
+   SMART_FIELD_INIT(FermentableEditor, label_kolbachIndex_pct      , lineEdit_kolbachIndex_pct      , Fermentable, PropertyNames::Fermentable::kolbachIndex_pct      , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpGlassy_pct , lineEdit_hardnessPrpGlassy_pct , Fermentable, PropertyNames::Fermentable::hardnessPrpGlassy_pct , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpHalf_pct   , lineEdit_hardnessPrpHalf_pct   , Fermentable, PropertyNames::Fermentable::hardnessPrpHalf_pct   , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_hardnessPrpMealy_pct  , lineEdit_hardnessPrpMealy_pct  , Fermentable, PropertyNames::Fermentable::hardnessPrpMealy_pct  , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_kernelSizePrpPlump_pct, lineEdit_kernelSizePrpPlump_pct, Fermentable, PropertyNames::Fermentable::kernelSizePrpPlump_pct, 1);
+   SMART_FIELD_INIT(FermentableEditor, label_kernelSizePrpThin_pct , lineEdit_kernelSizePrpThin_pct , Fermentable, PropertyNames::Fermentable::kernelSizePrpThin_pct , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_friability_pct        , lineEdit_friability_pct        , Fermentable, PropertyNames::Fermentable::friability_pct        , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_di_ph                 , lineEdit_di_ph                 , Fermentable, PropertyNames::Fermentable::di_ph                 , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_viscosity_cP          , lineEdit_viscosity_cP          , Fermentable, PropertyNames::Fermentable::viscosity_cP             );
+   SMART_FIELD_INIT(FermentableEditor, label_dmsP                  , lineEdit_dmsP                  , Fermentable, PropertyNames::Fermentable::dmsP                  , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_fan                   , lineEdit_fan                   , Fermentable, PropertyNames::Fermentable::fan                   , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_fermentability_pct    , lineEdit_fermentability_pct    , Fermentable, PropertyNames::Fermentable::fermentability_pct    , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_betaGlucan            , lineEdit_betaGlucan            , Fermentable, PropertyNames::Fermentable::betaGlucan            , 1);
 
    SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Fermentable, amountIsWeight           );
 
@@ -92,46 +92,46 @@ void FermentableEditor::writeFieldsToEditItem() {
 
    this->m_editItem->setType(this->comboBox_type      ->getNonOptValue<Fermentable::Type      >());
 
-   this->m_editItem->setName                  (this->lineEdit_name          ->text                    ());
-   this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValueAs<double>());
-   this->m_editItem->setColor_srm             (this->lineEdit_color         ->getNonOptValueAs<double>());
+   this->m_editItem->setName                  (this->lineEdit_name          ->text                  ());
+   this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValue<double>());
+   this->m_editItem->setColor_srm             (this->lineEdit_color         ->getNonOptValue<double>());
    this->m_editItem->setAddAfterBoil          (this->checkBox_addAfterBoil  ->checkState() == Qt::Checked);
-   this->m_editItem->setOrigin                (this->lineEdit_origin        ->text                    ());
-   this->m_editItem->setSupplier              (this->lineEdit_supplier      ->text                    ());
-   this->m_editItem->setCoarseFineDiff_pct    (this->lineEdit_coarseFineDiff->getNonOptValueAs<double>());
-   this->m_editItem->setMoisture_pct          (this->lineEdit_moisture      ->getNonOptValueAs<double>());
-   this->m_editItem->setDiastaticPower_lintner(this->lineEdit_diastaticPower->getNonOptValueAs<double>());
-   this->m_editItem->setProtein_pct           (this->lineEdit_protein       ->getNonOptValueAs<double>());
-   this->m_editItem->setMaxInBatch_pct        (this->lineEdit_maxInBatch    ->getNonOptValueAs<double>());
+   this->m_editItem->setOrigin                (this->lineEdit_origin        ->text                  ());
+   this->m_editItem->setSupplier              (this->lineEdit_supplier      ->text                  ());
+   this->m_editItem->setCoarseFineDiff_pct    (this->lineEdit_coarseFineDiff->getNonOptValue<double>());
+   this->m_editItem->setMoisture_pct          (this->lineEdit_moisture      ->getNonOptValue<double>());
+   this->m_editItem->setDiastaticPower_lintner(this->lineEdit_diastaticPower->getNonOptValue<double>());
+   this->m_editItem->setProtein_pct           (this->lineEdit_protein       ->getNonOptValue<double>());
+   this->m_editItem->setMaxInBatch_pct        (this->lineEdit_maxInBatch    ->getNonOptValue<double>());
    this->m_editItem->setRecommendMash         (this->checkBox_recommendMash ->checkState() == Qt::Checked);
    this->m_editItem->setIsMashed              (this->checkBox_isMashed      ->checkState() == Qt::Checked);
-   this->m_editItem->setIbuGalPerLb           (this->lineEdit_ibuGalPerLb   ->getNonOptValueAs<double>()); // .:TBD:. No metric measure?
-   this->m_editItem->setNotes                 (this->textEdit_notes         ->toPlainText             ());
+   this->m_editItem->setIbuGalPerLb           (this->lineEdit_ibuGalPerLb   ->getNonOptValue<double>()); // .:TBD:. No metric measure?
+   this->m_editItem->setNotes                 (this->textEdit_notes         ->toPlainText           ());
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   this->m_editItem->setAmountIsWeight           (this->checkBox_amountIsWeight           ->isChecked                           ());
+   this->m_editItem->setAmountIsWeight           (this->checkBox_amountIsWeight           ->isChecked          ());
    this->m_editItem->setGrainGroup               (this->comboBox_grainGroup               ->getOptValue<Fermentable::GrainGroup>());
-   this->m_editItem->setProducer                 (this->lineEdit_producer                 ->text                                ());
-   this->m_editItem->setProductId                (this->lineEdit_productId                ->text                                ());
-   this->m_editItem->setFineGrindYield_pct       (this->lineEdit_fineGrindYield_pct       ->getOptValueAs<double>               ());
-   this->m_editItem->setCoarseGrindYield_pct     (this->lineEdit_coarseGrindYield_pct     ->getOptValueAs<double>               ());
-   this->m_editItem->setPotentialYield_sg        (this->lineEdit_potentialYield_sg        ->getOptValueAs<double>               ());
-   this->m_editItem->setAlphaAmylase_dextUnits   (this->lineEdit_alphaAmylase_dextUnits   ->getOptValueAs<double>               ());
-   this->m_editItem->setKolbachIndex_pct         (this->lineEdit_kolbachIndex_pct         ->getOptValueAs<double>               ());
-   this->m_editItem->setHardnessPrpGlassy_pct    (this->lineEdit_hardnessPrpGlassy_pct    ->getOptValueAs<double>               ());
-   this->m_editItem->setHardnessPrpHalf_pct      (this->lineEdit_hardnessPrpHalf_pct      ->getOptValueAs<double>               ());
-   this->m_editItem->setHardnessPrpMealy_pct     (this->lineEdit_hardnessPrpMealy_pct     ->getOptValueAs<double>               ());
-   this->m_editItem->setKernelSizePrpPlump_pct   (this->lineEdit_kernelSizePrpPlump_pct   ->getOptValueAs<double>               ());
-   this->m_editItem->setKernelSizePrpThin_pct    (this->lineEdit_kernelSizePrpThin_pct    ->getOptValueAs<double>               ());
-   this->m_editItem->setFriability_pct           (this->lineEdit_friability_pct           ->getOptValueAs<double>               ());
-   this->m_editItem->setDi_ph                    (this->lineEdit_di_ph                    ->getOptValueAs<double>               ());
-   this->m_editItem->setViscosity_cP             (this->lineEdit_viscosity_cP             ->getOptValueAs<double>               ());
-   this->m_editItem->setDmsP                     (this->lineEdit_dmsP                     ->getOptValueAs<double>               ());
-   this->m_editItem->setDmsPIsMassPerVolume      (this->checkBox_dmsPIsMassPerVolume      ->isChecked                           ());
-   this->m_editItem->setFan                      (this->lineEdit_fan                      ->getOptValueAs<double>               ());
-   this->m_editItem->setFanIsMassPerVolume       (this->checkBox_fanIsMassPerVolume       ->isChecked                           ());
-   this->m_editItem->setFermentability_pct       (this->lineEdit_fermentability_pct       ->getOptValueAs<double>               ());
-   this->m_editItem->setBetaGlucan               (this->lineEdit_betaGlucan               ->getOptValueAs<double>               ());
-   this->m_editItem->setBetaGlucanIsMassPerVolume(this->checkBox_betaGlucanIsMassPerVolume->isChecked                           ());
+   this->m_editItem->setProducer                 (this->lineEdit_producer                 ->text               ());
+   this->m_editItem->setProductId                (this->lineEdit_productId                ->text               ());
+   this->m_editItem->setFineGrindYield_pct       (this->lineEdit_fineGrindYield_pct       ->getOptValue<double>());
+   this->m_editItem->setCoarseGrindYield_pct     (this->lineEdit_coarseGrindYield_pct     ->getOptValue<double>());
+   this->m_editItem->setPotentialYield_sg        (this->lineEdit_potentialYield_sg        ->getOptValue<double>());
+   this->m_editItem->setAlphaAmylase_dextUnits   (this->lineEdit_alphaAmylase_dextUnits   ->getOptValue<double>());
+   this->m_editItem->setKolbachIndex_pct         (this->lineEdit_kolbachIndex_pct         ->getOptValue<double>());
+   this->m_editItem->setHardnessPrpGlassy_pct    (this->lineEdit_hardnessPrpGlassy_pct    ->getOptValue<double>());
+   this->m_editItem->setHardnessPrpHalf_pct      (this->lineEdit_hardnessPrpHalf_pct      ->getOptValue<double>());
+   this->m_editItem->setHardnessPrpMealy_pct     (this->lineEdit_hardnessPrpMealy_pct     ->getOptValue<double>());
+   this->m_editItem->setKernelSizePrpPlump_pct   (this->lineEdit_kernelSizePrpPlump_pct   ->getOptValue<double>());
+   this->m_editItem->setKernelSizePrpThin_pct    (this->lineEdit_kernelSizePrpThin_pct    ->getOptValue<double>());
+   this->m_editItem->setFriability_pct           (this->lineEdit_friability_pct           ->getOptValue<double>());
+   this->m_editItem->setDi_ph                    (this->lineEdit_di_ph                    ->getOptValue<double>());
+   this->m_editItem->setViscosity_cP             (this->lineEdit_viscosity_cP             ->getOptValue<double>());
+   this->m_editItem->setDmsP                     (this->lineEdit_dmsP                     ->getOptValue<double>());
+   this->m_editItem->setDmsPIsMassPerVolume      (this->checkBox_dmsPIsMassPerVolume      ->isChecked          ());
+   this->m_editItem->setFan                      (this->lineEdit_fan                      ->getOptValue<double>());
+   this->m_editItem->setFanIsMassPerVolume       (this->checkBox_fanIsMassPerVolume       ->isChecked          ());
+   this->m_editItem->setFermentability_pct       (this->lineEdit_fermentability_pct       ->getOptValue<double>());
+   this->m_editItem->setBetaGlucan               (this->lineEdit_betaGlucan               ->getOptValue<double>());
+   this->m_editItem->setBetaGlucanIsMassPerVolume(this->checkBox_betaGlucanIsMassPerVolume->isChecked          ());
 
    return;
 }

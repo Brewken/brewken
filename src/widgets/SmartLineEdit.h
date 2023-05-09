@@ -80,6 +80,9 @@ public:
 
    /**
     * \brief This combines \c QLineEdit::setText and \c QLineEdit::setCursorPosition
+    *
+    *        Maybe should be called setTextAndCursor, but that's a bit long next to setValue and setAmount.  And, say,
+    *        setTxtAndCrsr just looks horrible to me!
     */
    void setTextCursor(QString const & text, int cursorPosition = 0);
 

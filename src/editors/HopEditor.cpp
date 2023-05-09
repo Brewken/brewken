@@ -77,37 +77,37 @@ HopEditor::HopEditor(QWidget * parent) :
 HopEditor::~HopEditor() = default;
 
 void HopEditor::writeFieldsToEditItem() {
-   this->m_editItem->setName             (this->lineEdit_name         ->text                    ());
-   this->m_editItem->setAlpha_pct        (this->lineEdit_alpha        ->getNonOptValueAs<double>());
-   this->m_editItem->setTime_min         (this->lineEdit_time         ->toCanonical().quantity  ());
-   this->m_editItem->setBeta_pct         (this->lineEdit_beta         ->getNonOptValueAs<double>());
-   this->m_editItem->setHsi_pct          (this->lineEdit_HSI          ->getNonOptValueAs<double>());
-   this->m_editItem->setOrigin           (this->lineEdit_origin       ->text                    ());
-   this->m_editItem->setHumulene_pct     (this->lineEdit_humulene     ->getNonOptValueAs<double>());
-   this->m_editItem->setCaryophyllene_pct(this->lineEdit_caryophyllene->getNonOptValueAs<double>());
-   this->m_editItem->setCohumulone_pct   (this->lineEdit_cohumulone   ->getNonOptValueAs<double>());
-   this->m_editItem->setMyrcene_pct      (this->lineEdit_myrcene      ->getNonOptValueAs<double>());
-   this->m_editItem->setSubstitutes      (this->textEdit_substitutes  ->toPlainText             ());
-   this->m_editItem->setNotes            (this->textEdit_notes        ->toPlainText             ());
+   this->m_editItem->setName             (this->lineEdit_name         ->text                  ());
+   this->m_editItem->setAlpha_pct        (this->lineEdit_alpha        ->getNonOptValue<double>());
+   this->m_editItem->setTime_min         (this->lineEdit_time         ->toCanonical().quantity());
+   this->m_editItem->setBeta_pct         (this->lineEdit_beta         ->getNonOptValue<double>());
+   this->m_editItem->setHsi_pct          (this->lineEdit_HSI          ->getNonOptValue<double>());
+   this->m_editItem->setOrigin           (this->lineEdit_origin       ->text                  ());
+   this->m_editItem->setHumulene_pct     (this->lineEdit_humulene     ->getNonOptValue<double>());
+   this->m_editItem->setCaryophyllene_pct(this->lineEdit_caryophyllene->getNonOptValue<double>());
+   this->m_editItem->setCohumulone_pct   (this->lineEdit_cohumulone   ->getNonOptValue<double>());
+   this->m_editItem->setMyrcene_pct      (this->lineEdit_myrcene      ->getNonOptValue<double>());
+   this->m_editItem->setSubstitutes      (this->textEdit_substitutes  ->toPlainText           ());
+   this->m_editItem->setNotes            (this->textEdit_notes        ->toPlainText           ());
 
    this->m_editItem->setType             (this->comboBox_hopType      ->getNonOptValue<Hop::Type>());
    this->m_editItem->setForm             (this->comboBox_hopForm      ->getNonOptValue<Hop::Form>());
    this->m_editItem->setUse              (this->comboBox_hopUse       ->getNonOptValue<Hop::Use >());
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   this->m_editItem->setProducer             (this->lineEdit_producer             ->text                 ());
-   this->m_editItem->setProduct_id           (this->lineEdit_product_id           ->text                 ());
-   this->m_editItem->setYear                 (this->lineEdit_year                 ->text                 ());
-   this->m_editItem->setTotal_oil_ml_per_100g(this->lineEdit_total_oil_ml_per_100g->getOptValueAs<double>());
-   this->m_editItem->setFarnesene_pct        (this->lineEdit_farnesene            ->getOptValueAs<double>());
-   this->m_editItem->setGeraniol_pct         (this->lineEdit_geraniol             ->getOptValueAs<double>());
-   this->m_editItem->setB_pinene_pct         (this->lineEdit_b_pinene             ->getOptValueAs<double>());
-   this->m_editItem->setLinalool_pct         (this->lineEdit_linalool             ->getOptValueAs<double>());
-   this->m_editItem->setLimonene_pct         (this->lineEdit_limonene             ->getOptValueAs<double>());
-   this->m_editItem->setNerol_pct            (this->lineEdit_nerol                ->getOptValueAs<double>());
-   this->m_editItem->setPinene_pct           (this->lineEdit_pinene               ->getOptValueAs<double>());
-   this->m_editItem->setPolyphenols_pct      (this->lineEdit_polyphenols          ->getOptValueAs<double>());
-   this->m_editItem->setXanthohumol_pct      (this->lineEdit_xanthohumol          ->getOptValueAs<double>());
+   this->m_editItem->setProducer             (this->lineEdit_producer             ->text               ());
+   this->m_editItem->setProduct_id           (this->lineEdit_product_id           ->text               ());
+   this->m_editItem->setYear                 (this->lineEdit_year                 ->text               ());
+   this->m_editItem->setTotal_oil_ml_per_100g(this->lineEdit_total_oil_ml_per_100g->getOptValue<double>());
+   this->m_editItem->setFarnesene_pct        (this->lineEdit_farnesene            ->getOptValue<double>());
+   this->m_editItem->setGeraniol_pct         (this->lineEdit_geraniol             ->getOptValue<double>());
+   this->m_editItem->setB_pinene_pct         (this->lineEdit_b_pinene             ->getOptValue<double>());
+   this->m_editItem->setLinalool_pct         (this->lineEdit_linalool             ->getOptValue<double>());
+   this->m_editItem->setLimonene_pct         (this->lineEdit_limonene             ->getOptValue<double>());
+   this->m_editItem->setNerol_pct            (this->lineEdit_nerol                ->getOptValue<double>());
+   this->m_editItem->setPinene_pct           (this->lineEdit_pinene               ->getOptValue<double>());
+   this->m_editItem->setPolyphenols_pct      (this->lineEdit_polyphenols          ->getOptValue<double>());
+   this->m_editItem->setXanthohumol_pct      (this->lineEdit_xanthohumol          ->getOptValue<double>());
    return;
 }
 

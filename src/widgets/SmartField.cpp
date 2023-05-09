@@ -507,7 +507,7 @@ Measurement::Amount SmartField::toCanonical() const {
 
 // We can't do the same trick on get-value-as as we do for set-amount because we can't overload base on return type,
 // hence two different function names.
-template<typename T> T SmartField::getNonOptValueAs(bool * const ok) const {
+template<typename T> T SmartField::getNonOptValue(bool * const ok) const {
    Q_ASSERT(this->pimpl->m_initialised);
 
    QString const rawText = this->getRawText();
@@ -525,11 +525,11 @@ template<typename T> T SmartField::getNonOptValueAs(bool * const ok) const {
    return static_cast<T>(this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity());
 }
 // Instantiate the above template function for the types that are going to use it
-template int          SmartField::getNonOptValueAs<int         >(bool * const ok) const;
-template unsigned int SmartField::getNonOptValueAs<unsigned int>(bool * const ok) const;
-template double       SmartField::getNonOptValueAs<double      >(bool * const ok) const;
+template int          SmartField::getNonOptValue<int         >(bool * const ok) const;
+template unsigned int SmartField::getNonOptValue<unsigned int>(bool * const ok) const;
+template double       SmartField::getNonOptValue<double      >(bool * const ok) const;
 
-template<typename T> std::optional<T> SmartField::getOptValueAs(bool * const ok) const {
+template<typename T> std::optional<T> SmartField::getOptValue(bool * const ok) const {
 
    Q_ASSERT(this->pimpl->m_initialised);
 
@@ -569,9 +569,9 @@ template<typename T> std::optional<T> SmartField::getOptValueAs(bool * const ok)
    );
 }
 // Instantiate the above template function for the types that are going to use it
-template std::optional<int         > SmartField::getOptValueAs<int         >(bool * const ok) const;
-template std::optional<unsigned int> SmartField::getOptValueAs<unsigned int>(bool * const ok) const;
-template std::optional<double      > SmartField::getOptValueAs<double      >(bool * const ok) const;
+template std::optional<int         > SmartField::getOptValue<int         >(bool * const ok) const;
+template std::optional<unsigned int> SmartField::getOptValue<unsigned int>(bool * const ok) const;
+template std::optional<double      > SmartField::getOptValue<double      >(bool * const ok) const;
 
 
 Measurement::PhysicalQuantity SmartField::getPhysicalQuantity() const {
@@ -662,9 +662,9 @@ void SmartField::correctEnteredText() {
       auto const type = this->pimpl->m_typeInfo->typeIndex;
       bool const optional = this->pimpl->m_typeInfo->isOptional();
       bool ok = false;
-      if (type == typeid(double      )) { if (optional) { this->setAmount(this->getOptValueAs<double      >(&ok)); } else { this->setAmount(this->getNonOptValueAs<double      >(&ok)); } } else
-      if (type == typeid(int         )) { if (optional) { this->setAmount(this->getOptValueAs<int         >(&ok)); } else { this->setAmount(this->getNonOptValueAs<int         >(&ok)); } } else
-      if (type == typeid(unsigned int)) { if (optional) { this->setAmount(this->getOptValueAs<unsigned int>(&ok)); } else { this->setAmount(this->getNonOptValueAs<unsigned int>(&ok)); } } else {
+      if (type == typeid(double      )) { if (optional) { this->setAmount(this->getOptValue<double      >(&ok)); } else { this->setAmount(this->getNonOptValue<double      >(&ok)); } } else
+      if (type == typeid(int         )) { if (optional) { this->setAmount(this->getOptValue<int         >(&ok)); } else { this->setAmount(this->getNonOptValue<int         >(&ok)); } } else
+      if (type == typeid(unsigned int)) { if (optional) { this->setAmount(this->getOptValue<unsigned int>(&ok)); } else { this->setAmount(this->getNonOptValue<unsigned int>(&ok)); } } else {
          // It's a coding error if we get here
          qCritical() <<
             Q_FUNC_INFO << this->getFqFieldName() << ": Don't know how to parse" << this->pimpl->m_typeInfo;

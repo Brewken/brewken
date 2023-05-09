@@ -85,14 +85,14 @@ public:
       return;
    }
 
-   SmartLabel &             m_self       ;
-   bool                     m_initialised;
-   char const *             m_editorName ;
-   char const *             m_labelName  ;
-   char const *             m_labelFqName;
-   TypeInfo const *         m_typeInfo   ;
-   QWidget *                m_parent     ;
-   QMenu *                  m_contextMenu;
+   SmartLabel &     m_self       ;
+   bool             m_initialised;
+   char const *     m_editorName ;
+   char const *     m_labelName  ;
+   char const *     m_labelFqName;
+   TypeInfo const * m_typeInfo   ;
+   QWidget *        m_parent     ;
+   QMenu *          m_contextMenu;
 };
 
 SmartLabel::SmartLabel(QWidget * parent) :
@@ -122,24 +122,6 @@ void SmartLabel::init(char const * const   editorName,
 [[nodiscard]] bool SmartLabel::isInitialised() const {
   return this->pimpl->m_initialised;
 }
-
-///SmartField & SmartLabel::getBuddy() const {
-///   Q_ASSERT(this->pimpl->m_initialised);
-///
-///   // Call QLabel's built-in function to get the buddy
-///   QWidget * buddy = this->buddy();
-///
-///   // We assert that it's a coding error for there not to be a buddy!
-///   Q_ASSERT(buddy);
-///
-///   auto & smartBuddy = static_cast<SmartField &>(*buddy);
-///
-///   // We assert that the buddy was set via our init function.  (It's OK if it was also set directly via the QLabel
-///   // buddy property.)
-///   Q_ASSERT(this->pimpl->m_buddies.contains(&smartBuddy));
-///
-///   return smartBuddy;
-///}
 
 void SmartLabel::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
    SmartAmounts::setForcedSystemOfMeasurement(this->pimpl->m_editorName, this->pimpl->m_labelName, systemOfMeasurement);
@@ -246,58 +228,6 @@ void SmartLabel::textEffect(bool enabled) {
    this->setFont(myFont);
    return;
 }
-
-///void SmartLabel::initializeSection() {
-///   if (!this->pimpl->m_configSection.isEmpty()) {
-///      // We're already initialised
-///      return;
-///   }
-///
-///   //
-///   // If the label has the pimpl->m_configSection defined, use it
-///   // otherwise, if the paired field has a pimpl->m_configSection, use it
-///   // otherwise, if the parent object has a pimpl->m_configSection, use it
-///   // if all else fails, get the parent's object name
-///   //
-///   if (this->property(*PropertyNames::SmartField::configSection).isValid()) {
-///      this->pimpl->m_configSection = this->property(*PropertyNames::SmartField::configSection).toString();
-///      return;
-///   }
-///
-///   // As much as I dislike it, dynamic properties can't be referenced on initialization.
-///   QWidget const * mybuddy = this->buddy();
-///   if (mybuddy && mybuddy->property(*PropertyNames::SmartField::configSection).isValid() ) {
-///      this->pimpl->m_configSection = mybuddy->property(*PropertyNames::SmartField::configSection).toString();
-///      return;
-///   }
-///
-///   if (this->pimpl->m_parent->property(*PropertyNames::SmartField::configSection).isValid() ) {
-///      this->pimpl->m_configSection =
-///         this->pimpl->m_parent->property(*PropertyNames::SmartField::configSection).toString();
-///      return;
-///   }
-///
-///   qWarning() << Q_FUNC_INFO << "this failed" << this;
-///   this->pimpl->m_configSection = this->pimpl->m_parent->objectName();
-///   return;
-///}
-///
-///void SmartLabel::initializeProperty() {
-///
-///   if (!this->pimpl->m_propertyName.isEmpty()) {
-///      return;
-///   }
-///
-///   QWidget* mybuddy = this->buddy();
-///   if (this->property("editField").isValid()) {
-///      this->pimpl->m_propertyName = this->property("editField").toString();
-///   } else if (mybuddy && mybuddy->property("editField").isValid()) {
-///      this->pimpl->m_propertyName = mybuddy->property("editField").toString();
-///   } else {
-///      qWarning() << Q_FUNC_INFO  << "That failed miserably";
-///   }
-///   return;
-///}
 
 void SmartLabel::popContextMenu(const QPoint& point) {
    Q_ASSERT(this->pimpl->m_initialised);

@@ -251,10 +251,10 @@ public:
     * \param ok If set, used to return \c true if parsing of raw text went OK and \c false otherwise (in which case,
     *           function return value will be 0).
     */
-   template<typename T> T getNonOptValueAs(bool * const ok = nullptr) const;
+   template<typename T> T getNonOptValue(bool * const ok = nullptr) const;
 
    /**
-    * \brief As \c getNonOptValueAs but for std::optional values
+    * \brief As \c getNonOptValue but for std::optional values
     *
     *        NOTE: If the field holds a \c PhysicalQuantity or \c PhysicalQuantities then this will return the same
     *              value as \c this->toCanonical().quantity() for a non-blank field and \c std::nullopt for a blank
@@ -265,7 +265,7 @@ public:
     * \param ok If set, used to return \c true if parsing of raw text went OK and \c false otherwise (in which case,
     *           function return value will be \c std::nullopt).
     */
-   template<typename T> std::optional<T> getOptValueAs(bool * const ok = nullptr) const;
+   template<typename T> std::optional<T> getOptValue(bool * const ok = nullptr) const;
 
    /**
     * \brief Returns what type of field this is - except that, if it is \c Mixed2PhysicalQuantities, will one of the two
