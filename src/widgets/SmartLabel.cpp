@@ -40,10 +40,8 @@ public:
         QWidget * parent) :
       m_self        {self   },
       m_initialised {false},
-      m_editorName  {"Uninitialised m_editorName!" },
-      m_labelName   {"Uninitialised m_labelName!"  },
       m_labelFqName {"Uninitialised m_labelFqName!"},
-      m_typeInfo    {nullptr},
+      m_settings    {nullptr},
       m_parent      {parent },
       m_contextMenu {nullptr} {
       return;
@@ -52,32 +50,30 @@ public:
    ~impl() = default;
 
    void initializeMenu() {
-      // TODO: Change this to a smart pointer
+      Q_ASSERT(this->m_initialised);
+      Q_ASSERT(this->m_settings);
+
       //
       // If a context menu already exists, we need to delete it and recreate it.  We can't always reuse an existing menu
-      // because the sub-menu for relative scale needs to change when a different unit system is selected.  (In theory we
-      // could only recreate the context menu when a different unit system is selected, but that adds complication.)
-      if (this->m_contextMenu) {
-         // NB: Although the existing menu is "owned" by this->m_parent, it is fine for us to delete it here.  The Qt
-         // ownership in this context merely guarantees that this->m_parent will, in its own destructor, delete the menu if
-         // it still exists.
-         delete this->m_contextMenu;
-         this->m_contextMenu = nullptr;
-      }
+      // because the sub-menu for relative scale needs to change when a different unit system is selected.  (In theory
+      // we could only recreate the context menu when a different unit system is selected, but that adds complication.)
+      //
+      // NB: Although the existing menu is "owned" by this->m_parent, it is fine for us (or rather the smart pointer) to
+      // delete it here.  The Qt ownership in this context merely guarantees that this->m_parent will, in its own
+      // destructor, delete the menu if it still exists.
+      //
 
       auto forcedSystemOfMeasurement = this->m_self.getForcedSystemOfMeasurement();
       auto forcedRelativeScale       = this->m_self.getForcedRelativeScale();
       qDebug() <<
-         Q_FUNC_INFO << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement << ", forcedRelativeScale=" <<
-         forcedRelativeScale;
+         Q_FUNC_INFO << this->m_labelFqName << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement <<
+         ", forcedRelativeScale=" << forcedRelativeScale;
 
-      if (std::holds_alternative<NonPhysicalQuantity>(*this->m_typeInfo->fieldType)) {
+      if (std::holds_alternative<NonPhysicalQuantity>(*this->m_self.getTypeInfo().fieldType)) {
          return;
       }
 
-      // Since fieldType is not NonPhysicalQuantity this cast should be safe
-      Measurement::PhysicalQuantity const physicalQuantity =
-         std::get<Measurement::PhysicalQuantity>(*this->m_typeInfo->fieldType);
+      auto const physicalQuantity = this->m_self.getPhysicalQuantity();
       this->m_contextMenu = UnitAndScalePopUpMenu::create(this->m_parent,
                                                           physicalQuantity,
                                                           forcedSystemOfMeasurement,
@@ -87,12 +83,10 @@ public:
 
    SmartLabel &     m_self       ;
    bool             m_initialised;
-   char const *     m_editorName ;
-   char const *     m_labelName  ;
    char const *     m_labelFqName;
-   TypeInfo const * m_typeInfo   ;
+   std::unique_ptr<SmartAmountSettings> m_settings;
    QWidget *        m_parent     ;
-   QMenu *          m_contextMenu;
+   std::unique_ptr<QMenu> m_contextMenu;
 };
 
 SmartLabel::SmartLabel(QWidget * parent) :
@@ -111,10 +105,8 @@ void SmartLabel::init(char const * const   editorName,
                       TypeInfo     const & typeInfo) {
    qDebug() << Q_FUNC_INFO << labelFqName << ":" << typeInfo;
 
-   this->pimpl->m_editorName  = editorName ;
-   this->pimpl->m_labelName   = labelName  ;
    this->pimpl->m_labelFqName = labelFqName;
-   this->pimpl->m_typeInfo    = &typeInfo  ;
+   this->pimpl->m_settings    = std::make_unique<SmartAmountSettings>(editorName, labelName, typeInfo, nullptr);
    this->pimpl->m_initialised = true;
    return;
 }
@@ -123,50 +115,25 @@ void SmartLabel::init(char const * const   editorName,
   return this->pimpl->m_initialised;
 }
 
-void SmartLabel::setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
-   SmartAmounts::setForcedSystemOfMeasurement(this->pimpl->m_editorName, this->pimpl->m_labelName, systemOfMeasurement);
-   return;
-}
-
-void SmartLabel::setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
-   SmartAmounts::setForcedRelativeScale(this->pimpl->m_editorName, this->pimpl->m_labelName, relativeScale);
-   return;
-}
-
-std::optional<Measurement::SystemOfMeasurement> SmartLabel::getForcedSystemOfMeasurement() const {
-   return SmartAmounts::getForcedSystemOfMeasurement(this->pimpl->m_editorName, this->pimpl->m_labelName);
-}
-
-std::optional<Measurement::UnitSystem::RelativeScale> SmartLabel::getForcedRelativeScale() const {
-   return SmartAmounts::getForcedRelativeScale(this->pimpl->m_editorName, this->pimpl->m_labelName);
-}
-
-SmartAmounts::ScaleInfo SmartLabel::getScaleInfo() const {
+[[nodiscard]] SmartAmountSettings & SmartLabel::settings() {
    Q_ASSERT(this->pimpl->m_initialised);
-   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
-   return SmartAmounts::getScaleInfo(this->pimpl->m_editorName,
-                                     this->pimpl->m_labelName,
-                                     ConvertToPhysicalQuantities(*this->pimpl->m_typeInfo->fieldType));
+   Q_ASSERT(this->pimpl->m_settings);
+   return *this->pimpl->m_settings.get();
 }
 
-Measurement::UnitSystem const & SmartLabel::getDisplayUnitSystem() const {
-   Q_ASSERT(this->pimpl->m_initialised);
-   // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
-   // for a SmartLabel that has no associated SmartField.
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
-   return SmartAmounts::getUnitSystem(this->pimpl->m_editorName,
-                                      this->pimpl->m_labelName,
-                                      std::get<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+void SmartLabel::correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo) {
+   emit changedSystemOfMeasurementOrScale(previousScaleInfo);
+   return;
 }
 
 double SmartLabel::getAmountToDisplay(double const canonicalValue) const {
    Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
    // for a SmartLabel that has no associated SmartField.
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->getTypeInfo().fieldType));
 
    auto const & canonicalUnit{
-      Measurement::Unit::getCanonicalUnit(std::get<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType))
+      Measurement::Unit::getCanonicalUnit(std::get<Measurement::PhysicalQuantity>(*this->getTypeInfo().fieldType))
    };
    return Measurement::amountDisplay(
       Measurement::Amount{canonicalValue, canonicalUnit},
@@ -185,9 +152,9 @@ QPair<double,double> SmartLabel::getRangeToDisplay(double const canonicalValueMi
    Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
    // for a SmartLabel that has no associated SmartField.
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->getTypeInfo().fieldType));
    auto const & canonicalUnit{
-      Measurement::Unit::getCanonicalUnit(std::get<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType))
+      Measurement::Unit::getCanonicalUnit(std::get<Measurement::PhysicalQuantity>(*this->getTypeInfo().fieldType))
    };
    auto const forcedSystemOfMeasurement = this->getForcedSystemOfMeasurement();
    auto const forcedRelativeScale       = this->getForcedRelativeScale();
@@ -219,7 +186,7 @@ void SmartLabel::textEffect(bool enabled) {
 
    // If we are a label for a NonPhysicalQuantity, then we don't want the underline effect as there are no scale choices
    // for the user to make.
-   if (std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
+   if (std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType)) {
       return;
    }
 
@@ -235,7 +202,7 @@ void SmartLabel::popContextMenu(const QPoint& point) {
    // For the moment, at least, we do not allow people to choose date formats per-field.  (Although you might want to
    // mix and match metric and imperial systems in certain circumstances, it's less clear that there's a benefit to
    // mixing and matching date formats.)
-   if (!std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType)) {
+   if (std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType)) {
       return;
    }
 
@@ -251,6 +218,11 @@ void SmartLabel::popContextMenu(const QPoint& point) {
 
    this->pimpl->initializeMenu();
 
+   // If the pop-up menu has no entries, then we can bail out here
+   if (this->pimpl->m_contextMenu->actions().size() == 0) {
+      qDebug() << Q_FUNC_INFO << "Nothing to show for" << this->getPhysicalQuantity();
+   }
+
    // Show the pop-up menu and get back whatever the user seleted
    QAction * invoked = this->pimpl->m_contextMenu->exec(widgie->mapToGlobal(point));
    if (invoked == nullptr) {
@@ -258,17 +230,17 @@ void SmartLabel::popContextMenu(const QPoint& point) {
    }
 
    // Save the current settings (which may come from system-wide defaults) for the signal below
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
    SmartAmounts::ScaleInfo const previousScaleInfo = this->getScaleInfo();
 
    // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
    // whether it's the menu or the sub-menu that it came from.
-   bool isTopMenu{invoked->parentWidget() == this->pimpl->m_contextMenu};
+   bool isTopMenu{invoked->parentWidget() == this->pimpl->m_contextMenu.get()};
    if (isTopMenu) {
       // It's the menu, so SystemOfMeasurement
       std::optional<Measurement::SystemOfMeasurement> whatSelected =
          UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
-      qDebug() << Q_FUNC_INFO << "Selected SystemOfMeasurement" << whatSelected;
+      qDebug() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Selected SystemOfMeasurement" << whatSelected;
       // This stores the new SystemOfMeasurement (if any), but modification of the field contents
       // won't happen until it receives the signal sent below.
       this->setForcedSystemOfMeasurement(whatSelected);
@@ -278,7 +250,7 @@ void SmartLabel::popContextMenu(const QPoint& point) {
       // It's the sub-menu, so UnitSystem::RelativeScale
       std::optional<Measurement::UnitSystem::RelativeScale> whatSelected =
          UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
-      qDebug() << Q_FUNC_INFO << "Selected RelativeScale" << whatSelected;
+      qDebug() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Selected RelativeScale" << whatSelected;
       // This stores the new SystemOfMeasurement (if any), but modification of the field contents
       // won't happen until it receives the signal sent below.
       this->setForcedRelativeScale(whatSelected);

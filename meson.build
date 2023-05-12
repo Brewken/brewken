@@ -726,6 +726,7 @@ commonSourceFiles = files([
    'src/widgets/BtComboBox.cpp',
    'src/widgets/SelectionControl.cpp',
    'src/widgets/SmartAmounts.cpp',
+   'src/widgets/SmartAmountSettings.cpp',
    'src/widgets/SmartCheckBox.cpp',
    'src/widgets/SmartDigitWidget.cpp',
    'src/widgets/SmartField.cpp',

@@ -31,8 +31,8 @@
 
 #include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
-#include "widgets/SmartField.h" // For SmartAmounts::ScaleInfo
 #include "widgets/SmartAmounts.h"
+#include "widgets/SmartBase.h"
 
 class SmartField;
 
@@ -103,7 +103,7 @@ class SmartField;
  *          \c SmartLabel does not currently know its name, so we'd need to inject it via an additional parameter on
  *          \c SmartField::init and some more work in the \c SMART_FIELD_INIT and related macros.
  */
-class SmartLabel : public QLabel {
+class SmartLabel : public QLabel, public SmartBase<SmartLabel> {
    Q_OBJECT
 
 public:
@@ -150,25 +150,15 @@ public:
     */
    [[nodiscard]] bool isInitialised() const;
 
-   void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
-   void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
-   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurement() const;
-   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScale() const;
-   SmartAmounts::ScaleInfo getScaleInfo() const;
+   /**
+    * \brief Maybe for consistency this should be \c getSettings() but that jars somewhat!
+    */
+   [[nodiscard]] SmartAmountSettings & settings();
 
    /**
-    * \brief Returns the \c SystemOfMeasurement that should be used to display this field, based on the forced
-    *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-    *        \c UnitSystem for the field's \c PhysicalQuantity.
+    * \brief This is called by \c SmartBase and just wraps \c changedSystemOfMeasurementOrScale
     */
-   Measurement::SystemOfMeasurement getDisplaySystemOfMeasurement() const;
-
-   /**
-    * \brief Returns the \c UnitSystem that should be used to display this field, based on the forced
-    *        \c SystemOfMeasurement for the field if there is one or otherwise on the the system-wide default
-    *        \c UnitSystem for the field's \c PhysicalQuantity.
-    */
-   Measurement::UnitSystem const & getDisplayUnitSystem() const;
+   void correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo);
 
    /**
     * \brief Converts a measurement (aka amount) to its numerical equivalent in whatever units are configured for this
@@ -228,12 +218,6 @@ signals:
     *
     *        There will always be an old \c SystemOfMeasurement, even if it's the global default for this field's
     *        \c PhysicalQuantity.  There might not be an old \c RelativeScale though, hence the \c std::optional.
-    *
-    *          .:TODO:. Fix this comment and/or the code
-    *        Note that we are OK to use std::optional here as, per https://doc.qt.io/qt-5/signalsandslots.html, "Signals
-    *        and slots can take any number of arguments of any type. They are completely type safe."  HOWEVER, when
-    *        referring to the function signature in .ui files, we need to remember to escape '<' to "&lt;" and '>' to
-    *        "&gt;" because .ui files are XML.
     */
    void changedSystemOfMeasurementOrScale(SmartAmounts::ScaleInfo previousScaleInfo);
 

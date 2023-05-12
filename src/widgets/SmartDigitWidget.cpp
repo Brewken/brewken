@@ -64,7 +64,7 @@ public:
       // If we don't hold NonPhysicalQuantity, then we need to ensure we're using canonical units to do the limit
       // comparisons.
       double const displayedValueAsCanonical{
-         std::holds_alternative<NonPhysicalQuantity>(this->m_self.getFieldType()) ?
+         std::holds_alternative<NonPhysicalQuantity>(*this->m_self.getTypeInfo().fieldType) ?
             this->m_self.getNonOptValue<double>() : this->m_self.toCanonical().quantity()
       };
 

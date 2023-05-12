@@ -19,6 +19,7 @@
 #define WIDGETS_UNITANDSCALEPOPUPMENU_H
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include <QMenu>
@@ -45,12 +46,14 @@ namespace UnitAndScalePopUpMenu {
     * \param forcedRelativeScale the forced scale, if any, for displaying the field.  (NB: Should always be
     *                            \c std::nullopt_t if \c physicalQuantity is \c Mixed2PhysicalQuantities.)
     *
-    * \return New \c QMenu owned by \c parent
+    * \return New \c QMenu "owned" by \c parent, but see comment in \c widgets/SmartLabel.cpp for why we return
+    *         unique pointer so that caller really owns the object -- essentially the returned object typically has a
+    *         much shorter lifetime than the parent.
     */
-   QMenu * create(QWidget * parent,
-                  Measurement::PhysicalQuantities physicalQuantities,
-                  std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                  std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale);
+   std::unique_ptr<QMenu> create(QWidget * parent,
+                                 Measurement::PhysicalQuantities physicalQuantities,
+                                 std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
+                                 std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale);
 
    /**
     * \brief When a pop-up \c QMenu is displayed, by calling its \c exec function, the return value is a \c QAction

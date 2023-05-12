@@ -100,13 +100,15 @@ std::optional<T> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action) 
 template std::optional<Measurement::SystemOfMeasurement> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action);
 template std::optional<Measurement::UnitSystem::RelativeScale> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action);
 
-QMenu * UnitAndScalePopUpMenu::create(QWidget * parent,
-                                      Measurement::PhysicalQuantities physicalQuantities,
-                                      std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                                      std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale) {
-   QMenu * menu = new QMenu{parent};
+std::unique_ptr<QMenu> UnitAndScalePopUpMenu::create(QWidget * parent,
+                                                     Measurement::PhysicalQuantities physicalQuantities,
+                                                     std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
+                                                     std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale) {
+   std::unique_ptr<QMenu> menu = std::make_unique<QMenu>(parent);
 
-   QActionGroup * actionGroup = new QActionGroup{parent};
+   // We are OK to use raw pointers here because menu will own actionGroup and menu's destructor will destroy it.  Since
+   // we want actionGroup and menu to have the same lifetime, there is no mileage in adding a smart pointer wrapper.
+   QActionGroup * actionGroup = new QActionGroup{menu.get()};
 
    //
    // In most circumstances, for a given PhysicalQuantity, it would be simplest to largely ignore SystemOfMeasurement
@@ -142,13 +144,13 @@ QMenu * UnitAndScalePopUpMenu::create(QWidget * parent,
          std::get<0>(std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities));
    auto unitSystems = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
    if (unitSystems.size() > 1) {
-      generateAction(menu,
+      generateAction(menu.get(),
                      QApplication::translate("UnitAndScalePopUpMenu", "Default"),
                      std::optional<Measurement::SystemOfMeasurement>{std::nullopt},
                      forcedSystemOfMeasurement,
                      actionGroup);
       for (auto system : unitSystems) {
-         generateAction(menu,
+         generateAction(menu.get(),
                         Measurement::getDisplayName(system->systemOfMeasurement),
                         std::optional<Measurement::SystemOfMeasurement>{system->systemOfMeasurement},
                         forcedSystemOfMeasurement,
@@ -156,7 +158,8 @@ QMenu * UnitAndScalePopUpMenu::create(QWidget * parent,
       }
    }
 
-   // Don't even think about a scale menu for "mixed" as there isn't a sensible way to combine the Mass and Volume scales!
+   // Don't even think about a scale menu for "mixed" as there isn't a sensible way to combine the Mass and Volume
+   // scales (or the MassConcentration and VolumeConcentration ones)!
    if (std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(physicalQuantities)) {
       return menu;
    }
@@ -170,7 +173,7 @@ QMenu * UnitAndScalePopUpMenu::create(QWidget * parent,
    };
    auto relativeScales = unitSystem.getRelativeScales();
    if (relativeScales.size() > 1) {
-      QMenu * subMenu = new QMenu(menu);
+      QMenu * subMenu = new QMenu(menu.get());
       generateAction(subMenu,
                      QApplication::translate("UnitAndScalePopUpMenu", "Default"),
                      std::optional<Measurement::UnitSystem::RelativeScale>{std::nullopt},

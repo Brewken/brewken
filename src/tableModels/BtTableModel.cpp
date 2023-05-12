@@ -127,11 +127,12 @@ void BtTableModel::contextMenu(QPoint const & point) {
    // Only makes sense to offer the pop-up "select scale" menu for physical quantities
    BtFieldType const fieldType = this->getColumnInfo(selected).fieldType;
    if (std::holds_alternative<Measurement::PhysicalQuantity>(fieldType)) {
-      QMenu * menu = UnitAndScalePopUpMenu::create(parentTableWidget,
-                                                   std::get<Measurement::PhysicalQuantity>(fieldType),
-                                                   this->getColumnInfo(selected).getForcedSystemOfMeasurement(),
-                                                   this->getColumnInfo(selected).getForcedRelativeScale());
-      this->doContextMenu(point, hView, menu, selected);
+      std::unique_ptr<QMenu> menu =
+         UnitAndScalePopUpMenu::create(parentTableWidget,
+                                       std::get<Measurement::PhysicalQuantity>(fieldType),
+                                       this->getColumnInfo(selected).getForcedSystemOfMeasurement(),
+                                       this->getColumnInfo(selected).getForcedRelativeScale());
+      this->doContextMenu(point, hView, menu.get(), selected);
    }
    return;
 }

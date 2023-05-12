@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef SMARTFIELD_H
-#define SMARTFIELD_H
+#ifndef WIDGETS_SMARTFIELD_H
+#define WIDGETS_SMARTFIELD_H
 #pragma once
 
 #include <memory> // For PImpl
@@ -35,9 +35,11 @@
 #include "utils/BtStringConst.h"
 #include "utils/TypeLookup.h"
 #include "widgets/SmartAmounts.h"
+#include "widgets/SmartBase.h"
 
 class QWidget;
 
+class SmartAmountSettings;
 class SmartLabel;
 class TypeInfo;
 
@@ -55,12 +57,14 @@ class TypeInfo;
  *
  *                                                   QWidget
  *                                                  /       \
- *                                               ...        QLineEdit
- *                                               /                   \
- *                                              /       SmartField    \
- *                                        QLabel        /        \     \
- *                                       /       \     /          \     \
- *                             SmartLabel      SmartDigitWidget    SmartLineEdit
+ *                                               ...         QLineEdit
+ *                                              /                     \
+ *                                             /        SmartBase      \
+ *                                        QLabel        /      \        \
+ *                                         \    \      /    SmartField   \
+ *                                          \  SmartLabel    /      \     \
+ *                                           \              /        \     \
+ *                                          SmartDigitWidget        SmartLineEdit
  *
  *        A number of helper functions exist in the \c SmartAmounts namespace.
  *
@@ -70,12 +74,31 @@ class TypeInfo;
  *        other hand shows the value of a field, eg the total amount of NaCl in a water profile.
  *
  *        A \c SmartLabel and a \c SmartField typically work in conjunction with each other, but there are a number of
- *        edge cases.  See comment in \c widgets/SmartLabel.h for more details.
+ *        edge cases.  You cannot assume that a \c SmartLabel will always have a \c SmartField or vice versa.  See
+ *        comment in \c widgets/SmartLabel.h for more details.  This is why \c SmartAmountSettings exists to hold the
+ *        information that is usually in \c SmartLabel but can be held in \c SmartField if there is no \c SmartLabel.
+ *        The \c SmartBase class mostly just provides a convenient way to access \c SmartAmountSettings member
+ *        functions.
  *
  *        .:TBD:. There is still a certain amount of code duplication between \c SmartLabel and \c SmartField, which it
- *        would be nice to eliminate somehow.
+ *        would be nice to eliminate somehow:
+ *              setForcedSystemOfMeasurement
+ *              setForcedRelativeScale
+ *              getForcedSystemOfMeasurement
+ *              getForcedRelativeScale
+ *              getScaleInfo
+ *
+ *              getPhysicalQuantity
+ *              selectPhysicalQuantity
+ *
+ *        ××× SmartWidgetSettings or something.  One is the interface, other is the implementation/storage.  Logic is,
+ *        if Field has a Label then ask the Label; otherwise use our own.  The storage is:
+ *              TypeInfo const *          m_typeInfo
+ *              std::optional<Measurement::PhysicalQuantity> m_currentPhysicalQuantity
+ *
+ *              Measurement::Unit const * m_fixedDisplayUnit       BUT ONLY IN SMART_fIELD
  */
-class SmartField {
+class SmartField : public SmartBase<SmartField> {
 public:
    SmartField();
    virtual ~SmartField();
@@ -184,9 +207,14 @@ public:
     */
    virtual void doPostInitWork() = 0;
 
-   BtFieldType const getFieldType() const;
+//   BtFieldType const getFieldType() const;
 
-   TypeInfo const & getTypeInfo() const;
+//   TypeInfo const & getTypeInfo() const;
+
+   /**
+    * \brief Maybe for consistency this should be \c getSettings() but that jars somewhat!
+    */
+   [[nodiscard]] SmartAmountSettings & settings();
 
    QString const & getMaximalDisplayString() const;
 
@@ -218,17 +246,6 @@ public:
     */
    void setPrecision(unsigned int const precision);
    [[nodiscard]] unsigned int getPrecision() const;
-
-   void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
-   void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
-   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurement() const;
-   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScale() const;
-
-   /**
-    * \brief Get the current settings (which may come from system-wide defaults) for \c SystemOfMeasurement and
-    *        \c RelativeScale.
-    */
-   SmartAmounts::ScaleInfo getScaleInfo() const;
 
    /**
     * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the field converted to canonical
@@ -266,31 +283,6 @@ public:
     *           function return value will be \c std::nullopt).
     */
    template<typename T> std::optional<T> getOptValue(bool * const ok = nullptr) const;
-
-   /**
-    * \brief Returns what type of field this is - except that, if it is \c Mixed2PhysicalQuantities, will one of the two
-    *        possible \c Measurement::PhysicalQuantity values depending on the value of \c this->units.
-    *
-    *        It is a coding error to call this function if our field type \c is \c NonPhysicalQuantity.)
-    */
-   Measurement::PhysicalQuantity getPhysicalQuantity() const;
-
-   /**
-    * \brief If the \c Measurement::PhysicalQuantities supplied in the \c init call was not a single
-    *        \c Measurement::PhysicalQuantity, then this member function permits selecting the current
-    *        \c Measurement::PhysicalQuantity from two in the \c Measurement::Mixed2PhysicalQuantities supplied in the
-    *        constructor.
-    */
-   void selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity);
-
-   /**
-    * \brief Alternative version of \c selectPhysicalQuantity for generic usage.  By convention, whenever we have a
-    *        checkbox for "Amount is weight?" or "Amount is mass concentration?", \c true (ie box checked) is selecting
-    *        the first of the two values in the \c Mixed2PhysicalQuantities pair (eg \c Mass in \c PqEitherMassOrVolume
-    *        or \c MassConcentration in \c PqEitherMassOrVolumeConcentration).  So, passing in the boolean state of the
-    *        checkbox to this function selects the correct option.
-    */
-   void selectPhysicalQuantity(bool const isFirst);
 
    /**
     * \brief When the user has finished entering some text, this function does the corrections, eg if the field is set

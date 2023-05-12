@@ -5566,14 +5566,6 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>x23</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x24</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Producer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5591,10 +5583,6 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Potential yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total amount of alpha-amylase in the malted grain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5642,23 +5630,43 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DMS precursors measured as mass concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Free Amino Nitrogen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Free Amino Nitrogen measured as mass concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Beta-glucans</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Beta-glucans measured as mass concentration</source>
+        <source>Extract Yield Dry Basis Fine Grind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Coarse Grind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total alpha-amylase in malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total alpha-amylase in the malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen (FAN)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FAN is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans is mass concentration?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
