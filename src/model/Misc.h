@@ -60,7 +60,12 @@ class Misc : public NamedEntityWithInventory {
 public:
 
    //! \brief The type of ingredient.
-   enum class Type {Spice, Fining, Water_Agent, Herb, Flavor, Other};
+   enum class Type {Spice,
+                    Fining,
+                    Water_Agent,
+                    Herb,
+                    Flavor,
+                    Other};
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Type)
 

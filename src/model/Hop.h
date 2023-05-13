@@ -96,19 +96,12 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Type)
 
-   /**
-    * \brief Array of all possible values of \c Hop::Type.  NB: This is \b not guaranteed to be in the same order as the
-    *        values of the enum.
-    *
-    *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
-    *        of enum class \c Type.   Hopefully, if Reflection makes it into C++23, then this will ultimately be
-    *        unnecessary.
-    */
-   static std::array<Type, 7> const allTypes;
-
    /*!
     * \brief Mapping between \c Hop::Type and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
     *        BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
    static EnumStringMapping const typeStringMapping;
 
@@ -130,15 +123,12 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Form)
 
-   /**
-    * \brief Array of all possible values of \c Hop::Form.  NB: This is \b not guaranteed to be in the same order as the
-    *        values of the enum.
-    */
-   static std::array<Form, 6> const allForms;
-
    /*!
     * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
     *        BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
    static EnumStringMapping const formStringMapping;
 
@@ -159,15 +149,12 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Use)
 
-   /**
-    * \brief Array of all possible values of \c Hop::Use.  NB: This is \b not guaranteed to be in the same order as the
-    *        values of the enum.
-    */
-   static std::array<Use, 5> const allUses;
-
    /*!
     * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerXML, etc (but \b not
     *        used in BeerJSON)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
    static EnumStringMapping const useStringMapping;
 

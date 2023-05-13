@@ -29,16 +29,6 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-std::array<Hop::Type, 7> const Hop::allTypes {
-   Hop::Type::Bittering              ,
-   Hop::Type::Aroma                  ,
-   Hop::Type::AromaAndBittering      ,
-   Hop::Type::Flavor                 ,
-   Hop::Type::BitteringAndFlavor     ,
-   Hop::Type::AromaAndFlavor         ,
-   Hop::Type::AromaBitteringAndFlavor,
-};
-
 // Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
 // for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Hop::typeStringMapping {
@@ -61,15 +51,6 @@ EnumStringMapping const Hop::typeDisplayNames {
    {Hop::Type::AromaBitteringAndFlavor, tr("Aroma, Bittering & Flavor")},
 };
 
-std::array<Hop::Form, 6> const Hop::allForms {
-   Hop::Form::Leaf   ,
-   Hop::Form::Pellet ,
-   Hop::Form::Plug   ,
-   Hop::Form::Extract,
-   Hop::Form::WetLeaf,
-   Hop::Form::Powder ,
-};
-
 EnumStringMapping const Hop::formStringMapping {
    {Hop::Form::Leaf   , "leaf"      },
    {Hop::Form::Pellet , "pellet"    },
@@ -86,14 +67,6 @@ EnumStringMapping const Hop::formDisplayNames {
    {Hop::Form::Extract, tr("Extract")},
    {Hop::Form::WetLeaf, tr("WetLeaf")},
    {Hop::Form::Powder , tr("Powder" )},
-};
-
-std::array<Hop::Use, 5> const Hop::allUses {
-   Hop::Use::Mash      ,
-   Hop::Use::First_Wort,
-   Hop::Use::Boil      ,
-   Hop::Use::Aroma     ,
-   Hop::Use::Dry_Hop   ,
 };
 
 EnumStringMapping const Hop::useStringMapping {

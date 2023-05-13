@@ -51,6 +51,7 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
+#include "widgets/BtComboBox.h"
 
 namespace {
    //
@@ -608,16 +609,13 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
                                                QModelIndex const & index) const {
    auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
    if (columnIndex == FermentableTableModel::ColumnIndex::Type) {
-      QComboBox *box = new QComboBox(parent);
-      for (auto ii : Fermentable::allTypes) {
-         box->addItem(Fermentable::typeDisplayNames[ii]);
-      }
+      BtComboBox * typeBox = new BtComboBox(parent);
+      BT_COMBO_BOX_INIT_NOMV(FermentableItemDelegate::createEditor, typeBox, Fermentable, type);
+      typeBox->setMinimumWidth(typeBox->minimumSizeHint().width());
+      typeBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+      typeBox->setFocusPolicy(Qt::StrongFocus);
 
-      box->setMinimumWidth(box->minimumSizeHint().width());
-      box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      box->setFocusPolicy(Qt::StrongFocus);
-
-      return box;
+      return typeBox;
    } else if (columnIndex == FermentableTableModel::ColumnIndex::IsMashed) {
       QComboBox* box = new QComboBox(parent);
       QListWidget* list = new QListWidget(parent);
@@ -652,8 +650,8 @@ QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
 void FermentableItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
    auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
    if (columnIndex == FermentableTableModel::ColumnIndex::Type) {
-      QComboBox* box = static_cast<QComboBox*>(editor);
-      box->setCurrentIndex(index.model()->data(index, Qt::UserRole).toInt());
+      BtComboBox * typeBox = static_cast<BtComboBox *>(editor);
+      typeBox->setValue(static_cast<Fermentable::Type>(index.model()->data(index, Qt::UserRole).toInt()));
    } else if (columnIndex == FermentableTableModel::ColumnIndex::IsMashed ||
               columnIndex == FermentableTableModel::ColumnIndex::AfterBoil) {
       QComboBox* box = static_cast<QComboBox*>(editor);
@@ -669,13 +667,13 @@ void FermentableItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
 void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
    auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
    if (columnIndex == FermentableTableModel::ColumnIndex::Type) {
-      QComboBox* box = qobject_cast<QComboBox*>(editor);
-      int value = box->currentIndex();
-      int ndx = model->data(index, Qt::UserRole).toInt();
+      BtComboBox* typeBox = qobject_cast<BtComboBox *>(editor);
+      Fermentable::Type value = typeBox->getNonOptValue<Fermentable::Type>();
+      Fermentable::Type ndx = static_cast<Fermentable::Type>(model->data(index, Qt::UserRole).toInt());
 
       // Only do something when something needs to be done
       if (value != ndx) {
-         model->setData(index, value, Qt::EditRole);
+         model->setData(index, static_cast<int>(value), Qt::EditRole);
       }
    } else if (columnIndex == FermentableTableModel::ColumnIndex::IsMashed ||
               columnIndex == FermentableTableModel::ColumnIndex::AfterBoil) {

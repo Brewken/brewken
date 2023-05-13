@@ -176,4 +176,16 @@ private:
                             modelClass::propertyName##DisplayNames, \
                             modelClass::typeLookup.getType(PropertyNames::modelClass::propertyName))
 
+/**
+ * \brief Alternate version of \c BT_COMBO_BOX_INIT for when the variable we are initialising is not a member variable
+ *        (eg see FermentableItemDelegate::createEditor)
+ */
+#define BT_COMBO_BOX_INIT_NOMV(functionName, comboBoxName, modelClass, propertyName) \
+   comboBoxName->init(#functionName, \
+                      #comboBoxName, \
+                      #functionName "..." #comboBoxName, \
+                      modelClass::propertyName##StringMapping, \
+                      modelClass::propertyName##DisplayNames, \
+                      modelClass::typeLookup.getType(PropertyNames::modelClass::propertyName))
+
 #endif

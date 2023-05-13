@@ -32,19 +32,8 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-std::array<Fermentable::Type, 8> const Fermentable::allTypes {
-   Fermentable::Type::Grain        ,
-   Fermentable::Type::Sugar        ,
-   Fermentable::Type::Extract      ,
-   Fermentable::Type::Dry_Extract  ,
-   Fermentable::Type::Other_Adjunct,
-   Fermentable::Type::Fruit        ,
-   Fermentable::Type::Juice        ,
-   Fermentable::Type::Honey        ,
-};
-
-// Note that Fermentable::typeStringMapping and Fermentable::FormMapping are as defined by BeerJSON, but we also use
-// them for the DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+// Note that Fermentable::typeStringMapping and Fermentable::grainGroupStringMapping are as defined by BeerJSON, but we
+// also use them for the DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Fermentable::typeStringMapping {
    {Fermentable::Type::Grain        , "grain"      },
    {Fermentable::Type::Sugar        , "sugar"      },
@@ -65,16 +54,6 @@ EnumStringMapping const Fermentable::typeDisplayNames {
    {Fermentable::Type::Fruit        , tr("Fruit"        )},
    {Fermentable::Type::Juice        , tr("Juice"        )},
    {Fermentable::Type::Honey        , tr("Honey"        )},
-};
-
-std::array<Fermentable::GrainGroup, 7> const Fermentable::allGrainGroups {
-   Fermentable::GrainGroup::Base,
-   Fermentable::GrainGroup::Caramel,
-   Fermentable::GrainGroup::Flaked,
-   Fermentable::GrainGroup::Roasted,
-   Fermentable::GrainGroup::Specialty,
-   Fermentable::GrainGroup::Smoked,
-   Fermentable::GrainGroup::Adjunct
 };
 
 // This is based on the BeerJSON encoding
