@@ -372,7 +372,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for hop_varieties BeerJSON records - see schemas/beerjson/1.0/hop.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/* This isn't used with BeerJSON
+/* This isn't used with BeerJSON .:TODO.JSON:. Maybe make this an optional field in Hop
  * EnumStringMapping const BEER_JSON_HOP_USE_MAPPER {
       {"Boil",       Hop::Use::Boil},
       {"Dry Hop",    Hop::Use::Dry_Hop},
