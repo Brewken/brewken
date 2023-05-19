@@ -592,6 +592,23 @@ namespace {
          {QString("ALTER TABLE fermentable ADD COLUMN betaGlucan                %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN betaGlucanIsMassPerVolume %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("     UPDATE fermentable SET amountIsWeight = ?"), {QVariant{true}}}, // All existing amounts will be weights
+         //
+         // Misc: Extended and additional fields for BeerJSON
+         //
+         // We only need to update the old Misc type mappings.  The new ones should "just work".
+         {QString("     UPDATE misc SET mtype = 'spice'       WHERE mtype = 'Spice'      ")},
+         {QString("     UPDATE misc SET mtype = 'fining'      WHERE mtype = 'Fining'     ")},
+         {QString("     UPDATE misc SET mtype = 'water agent' WHERE mtype = 'Water Agent'")},
+         {QString("     UPDATE misc SET mtype = 'herb'        WHERE mtype = 'Herb'       ")},
+         {QString("     UPDATE misc SET mtype = 'flavor'      WHERE mtype = 'Flavor'     ")},
+         {QString("     UPDATE misc SET mtype = 'other'       WHERE mtype = 'Other'      ")},
+         {QString("ALTER TABLE misc ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE misc ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
+
+
+
+
+
       };
       return executeSqlQueries(q, migrationQueries);
    }

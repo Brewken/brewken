@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * UndoableAddOrRemove.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * undoRedo/UndoableAddOrRemove.h is part of Brewken, and is copyright the following authors 2020-2022:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *

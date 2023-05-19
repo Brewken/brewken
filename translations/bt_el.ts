@@ -2164,10 +2164,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2299,11 +2295,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Βάρος</translation>
+        <translation type="obsolete">Βάρος</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Όγκος</translation>
+        <translation type="obsolete">Όγκος</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2349,58 +2349,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Ονομασία είδους</translation>
+        <translation type="obsolete">Ονομασία είδους</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Ονομασία είδους</translation>
+        <translation type="obsolete">Ονομασία είδους</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Μπαχαρικά</translation>
+        <translation type="vanished">Μπαχαρικά</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Βελτιωτικά</translation>
+        <translation type="vanished">Βελτιωτικά</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Ρυθμιστής νερού</translation>
+        <translation type="vanished">Ρυθμιστής νερού</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Βότανα</translation>
+        <translation type="vanished">Βότανα</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Άρωματικές Ύλες</translation>
+        <translation type="vanished">Άρωματικές Ύλες</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>&apos;Αλλο</translation>
+        <translation type="vanished">&apos;Αλλο</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Στο Βράσιμο</translation>
+        <translation type="vanished">Στο Βράσιμο</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Στο σκεύος σακχαροποίησης</translation>
+        <translation type="vanished">Στο σκεύος σακχαροποίησης</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Κατά την πρώτη ζύμωση</translation>
+        <translation type="vanished">Κατά την πρώτη ζύμωση</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>κατά την δεύτερη ζύμωση</translation>
+        <translation type="vanished">κατά την δεύτερη ζύμωση</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Κατά την εμφιάλωση</translation>
+        <translation type="vanished">Κατά την εμφιάλωση</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6861,27 +6861,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Μπαχαρικά</translation>
+        <translation type="vanished">Μπαχαρικά</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Βελτιωτικά</translation>
+        <translation type="vanished">Βελτιωτικά</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Ρυθμιστής νερού</translation>
+        <translation type="vanished">Ρυθμιστής νερού</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Βότανα</translation>
+        <translation type="vanished">Βότανα</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Άρωματικές Ύλες</translation>
+        <translation type="vanished">Άρωματικές Ύλες</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>&apos;Αλλο</translation>
+        <translation type="vanished">&apos;Αλλο</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6889,23 +6889,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Στο Βράσιμο</translation>
+        <translation type="vanished">Στο Βράσιμο</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Στο σκεύος σακχ/σης</translation>
+        <translation type="vanished">Στο σκεύος σακχ/σης</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Κατά την πρώτη ζύμωση</translation>
+        <translation type="vanished">Κατά την πρώτη ζύμωση</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>κατά την δεύτερη ζύμωση</translation>
+        <translation type="vanished">κατά την δεύτερη ζύμωση</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Κατά την εμφιάλωση</translation>
+        <translation type="vanished">Κατά την εμφιάλωση</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6970,6 +6970,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Κωδικός προιόντος</translation>
     </message>
 </context>
 <context>

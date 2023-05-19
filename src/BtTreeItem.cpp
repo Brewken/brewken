@@ -330,12 +330,13 @@ QVariant BtTreeItem::dataMisc(int column) {
          }
       case MISCTYPECOL:
          if (misc) {
-            return QVariant(misc->typeStringTr());
+            return QVariant(Misc::typeDisplayNames[misc->type()]);
          }
          break;
       case MISCUSECOL:
          if (misc) {
-            return QVariant(misc->useStringTr());
+            auto const use = misc->use();
+            return use ? QVariant(Misc::useDisplayNames[*use]) : "";
          }
          break;
       default :

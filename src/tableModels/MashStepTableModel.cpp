@@ -39,7 +39,6 @@
 #include "measurement/Unit.h"
 #include "model/MashStep.h"
 #include "PersistentSettings.h"
-#include "SimpleUndoableUpdate.h"
 
 MashStepTableModel::MashStepTableModel(QTableView* parent) :
    BtTableModel{
@@ -343,9 +342,9 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
       case MashStepTableModel::ColumnIndex::Name:
          if (value.canConvert(QVariant::String)) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                     PropertyNames::NamedEntity::name,
-                                                     value.toString(),
-                                                     tr("Change Mash Step Name"));
+                                                  TYPE_INFO(MashStep, NamedEntity, name),
+                                                  value.toString(),
+                                                  tr("Change Mash Step Name"));
             return true;
          }
          return false;
@@ -353,7 +352,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
       case MashStepTableModel::ColumnIndex::Type:
          if (value.canConvert(QVariant::Int)) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::MashStep::type,
+                                                  TYPE_INFO(MashStep, type),
                                                   value.toInt(),
                                                   tr("Change Mash Step Type"));
             return true;
@@ -365,7 +364,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
             if (row->type() == MashStep::Type::Decoction ) {
                MainWindow::instance().doOrRedoUpdate(
                   *row,
-                  PropertyNames::MashStep::decoctionAmount_l,
+                  TYPE_INFO(MashStep, decoctionAmount_l),
                   Measurement::qStringToSI(value.toString(),
                                            Measurement::PhysicalQuantity::Volume,
                                            this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -375,7 +374,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
             } else {
                MainWindow::instance().doOrRedoUpdate(
                   *row,
-                  PropertyNames::MashStep::infuseAmount_l,
+                  TYPE_INFO(MashStep, infuseAmount_l),
                   Measurement::qStringToSI(value.toString(),
                                            Measurement::PhysicalQuantity::Volume,
                                            this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -391,7 +390,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
          if (value.canConvert(QVariant::String) && row->type() != MashStep::Type::Decoction) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::MashStep::infuseTemp_c,
+               TYPE_INFO(MashStep, infuseTemp_c),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Temperature,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -410,21 +409,13 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
             // constructor, it gets linked to the first one, which then "owns" it.
             auto targetTempUpdate = new SimpleUndoableUpdate(
                *row,
-               PropertyNames::MashStep::stepTemp_c,
+               TYPE_INFO(MashStep, stepTemp_c),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Temperature,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
                                         this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
                tr("Change Mash Step Temp")
             );
-            new SimpleUndoableUpdate(*row,
-                                     PropertyNames::MashStep::endTemp_c,
-                                     Measurement::qStringToSI(value.toString(),
-                                                              Measurement::PhysicalQuantity::Temperature,
-                                                              this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                                              this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
-                                     tr("Change Mash Step End Temp"),
-                                     targetTempUpdate);
             MainWindow::instance().doOrRedoUpdate(targetTempUpdate);
             return true;
          }
@@ -434,7 +425,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
          if (value.canConvert(QVariant::String)) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::MashStep::stepTime_min,
+               TYPE_INFO(MashStep, stepTime_min),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Time,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),

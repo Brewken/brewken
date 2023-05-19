@@ -31,142 +31,67 @@
 
 MiscEditor::MiscEditor(QWidget * parent) :
    QDialog(parent),
-   obsMisc(nullptr) {
+   EditorBase<Misc, MiscEditor>() {
    setupUi(this);
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
    SMART_FIELD_INIT(MiscEditor, label_name     , lineEdit_name     , Misc, PropertyNames::NamedEntity::name);
    SMART_FIELD_INIT(MiscEditor, label_inventory, lineEdit_inventory, Misc, PropertyNames::Misc::amount     );
-   SMART_FIELD_INIT(MiscEditor, label_time     , lineEdit_time     , Misc, PropertyNames::Misc::time       );
+   SMART_FIELD_INIT(MiscEditor, label_time     , lineEdit_time     , Misc, PropertyNames::Misc::time_min   );
 
-   // Note, per https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, the use of a trivial lambda
-   // function to allow use of default argument on newStyle() slot
-   connect(pushButton_new   , &QAbstractButton::clicked, this, [this]() { this->newMisc(); return; } );
-   connect(pushButton_save,   &QAbstractButton::clicked, this, &MiscEditor::save                     );
-   connect(pushButton_cancel, &QAbstractButton::clicked, this, &MiscEditor::clearAndClose            );
-   connect(checkBox_isWeight, &QCheckBox::toggled,       this, &MiscEditor::setIsWeight              );
+   BT_COMBO_BOX_INIT(MiscEditor, comboBox_type,  Misc, type);
+   BT_COMBO_BOX_INIT(MiscEditor, comboBox_use ,  Misc, use );
 
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   SMART_FIELD_INIT(MiscEditor, label_producer , lineEdit_producer , Misc, PropertyNames::Misc::producer   );
+   SMART_FIELD_INIT(MiscEditor, label_productId, lineEdit_productId, Misc, PropertyNames::Misc::productId  );
+
+   this->connectSignalsAndSlots();
    return;
 }
 
 MiscEditor::~MiscEditor() = default;
 
-void MiscEditor::setMisc(Misc * m) {
-   if (obsMisc) {
-      disconnect(obsMisc, nullptr, this, nullptr);
-   }
+void MiscEditor::writeFieldsToEditItem() {
 
-   obsMisc = m;
-   if (obsMisc) {
-      connect(obsMisc, &NamedEntity::changed, this, &MiscEditor::changed);
-      showChanges();
-   }
+   this->m_editItem->setType(this->comboBox_type->getNonOptValue<Misc::Type>());
+   this->m_editItem->setUse (this->comboBox_use ->getOptValue   <Misc::Use >());
+
+   this->m_editItem->setName          (this->lineEdit_name          ->text                  ());
+   this->m_editItem->setTime_min      (this->lineEdit_time          ->getNonOptValue<double>());
+   this->m_editItem->setAmountIsWeight(this->checkBox_amountIsWeight->isChecked             ());
+   this->m_editItem->setUseFor        (this->textEdit_useFor        ->toPlainText           ());
+   this->m_editItem->setNotes         (this->textEdit_notes         ->toPlainText           ());
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   this->m_editItem->setProducer      (this->lineEdit_producer      ->text                  ());
+   this->m_editItem->setProductId     (this->lineEdit_productId     ->text                  ());
    return;
 }
 
-void MiscEditor::save() {
-   if (this->obsMisc == nullptr) {
-      setVisible(false);
-      return;
-   }
-
-   qDebug() << Q_FUNC_INFO << comboBox_type->currentIndex();
-   qDebug() << Q_FUNC_INFO << comboBox_use->currentIndex();
-
-   this->obsMisc->setName          (lineEdit_name->text());
-   this->obsMisc->setType          (static_cast<Misc::Type>(comboBox_type->currentIndex()));
-   this->obsMisc->setUse           (static_cast<Misc::Use>(comboBox_use->currentIndex()));
-   this->obsMisc->setTime          (lineEdit_time->toCanonical().quantity());
-   this->obsMisc->setAmountIsWeight(checkBox_isWeight->checkState() == Qt::Checked);
-   this->obsMisc->setUseFor        (textEdit_useFor->toPlainText());
-   this->obsMisc->setNotes         (textEdit_notes->toPlainText());
-
-   if (this->obsMisc->key() < 0) {
-      qDebug() << Q_FUNC_INFO << "Inserting into database";
-      ObjectStoreWrapper::insert(*this->obsMisc);
-   }
-   // do this late to make sure we've the row in the inventory table
-   this->obsMisc->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
-   setVisible(false);
+void MiscEditor::writeLateFieldsToEditItem() {
+   // Since inventory amount isn't really an attribute of the Misc, it's best to store it after we know the
+   // Misc has a DB record.
+   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
    return;
 }
 
-void MiscEditor::clearAndClose() {
-   setMisc(nullptr);
-   setVisible(false); // Hide the window.
-}
+void MiscEditor::readFieldsFromEditItem(std::optional<QString> propName) {
+   if (!propName || *propName == PropertyNames::NamedEntity::name                  ) { this->lineEdit_name          ->setTextCursor(m_editItem->name          ()); // Continues to next line
+                                                                                       this->tabWidget_editor->setTabText(0, m_editItem->name());                  if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::type                         ) { this->comboBox_type          ->setValue     (m_editItem->type          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::use                          ) { this->comboBox_use           ->setValue     (m_editItem->use           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory     ->setAmount    (m_editItem->inventory     ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::time_min                     ) { this->lineEdit_time          ->setAmount    (m_editItem->time_min      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::amountIsWeight               ) { this->checkBox_amountIsWeight->setChecked   (m_editItem->amountIsWeight()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::useFor                       ) { this->textEdit_useFor        ->setPlainText (m_editItem->useFor        ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::notes                        ) { this->textEdit_notes         ->setPlainText (m_editItem->notes         ()); if (propName) { return; } }
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   if (!propName || *propName == PropertyNames::Misc::producer                     ) { this->lineEdit_producer      ->setTextCursor(m_editItem->producer      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::productId                    ) { this->lineEdit_productId     ->setTextCursor(m_editItem->productId     ()); if (propName) { return; } }
 
-void MiscEditor::changed(QMetaProperty prop, QVariant /*val*/) {
-   if (sender() == obsMisc) {
-      showChanges(&prop);
-   }
-}
-
-void MiscEditor::showChanges(QMetaProperty * metaProp) {
-   if (obsMisc == nullptr) {
-      return;
-   }
-
-   QString propName;
-   QVariant value;
-   bool updateAll = false;
-   if (metaProp == nullptr) {
-      updateAll = true;
-   } else {
-      propName = metaProp->name();
-      value = metaProp->read(obsMisc);
-   }
-
-   if (propName == PropertyNames::NamedEntity::name || updateAll) {
-      lineEdit_name->setText(obsMisc->name());
-      lineEdit_name->setCursorPosition(0);
-      tabWidget_editor->setTabText(0, obsMisc->name());
-      if (!updateAll) {
-         return;
-      }
-   }
-   if (updateAll || propName == PropertyNames::Misc::type                         ) { this->comboBox_type     ->setCurrentIndex(static_cast<int>(this->obsMisc->type())); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Misc::use                          ) { this->comboBox_use      ->setCurrentIndex(static_cast<int>(this->obsMisc->use()) ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Misc::time                         ) { this->lineEdit_time     ->setAmount      (obsMisc->time()                        ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Misc::amountIsWeight               ) { this->checkBox_isWeight ->setCheckState  (obsMisc->amountIsWeight() ? // Continues to next line
-                                                                                                                                Qt::Checked : Qt::Unchecked            ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory->setAmount      (obsMisc->inventory()                   ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Misc::useFor                       ) { this->textEdit_useFor   ->setPlainText   (obsMisc->useFor()                      ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Misc::notes                        ) { this->textEdit_notes    ->setPlainText   (obsMisc->notes()                       ); if (!updateAll) { return; } }
-}
-
-void MiscEditor::newMisc(QString folder) {
-   QString name = QInputDialog::getText(this, tr("Misc name"), tr("Misc name:"));
-   if (name.isEmpty()) {
-      return;
-   }
-
-   // .:TODO:. This leads to a memory leak in clearAndClose().  Change to shared_ptr
-   Misc * m = new Misc(name);
-
-   if (! folder.isEmpty()) {
-      m->setFolder(folder);
-   }
-
-   setMisc(m);
-   show();
    return;
 }
 
-void MiscEditor::setIsWeight(bool const state) {
-   qDebug() << Q_FUNC_INFO << "state is" << state;
-   // But you have to admit, this is clever
-   this->lineEdit_inventory->selectPhysicalQuantity(
-      state ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume
-   );
-
-   // maybe? My head hurts now
-   this->lineEdit_inventory->onLineChanged();
-
-   // Strictly, if we change a Misc to be measured by mass instead of volume (or vice versa) we should also somehow tell
-   // any other bit of the UI that is showing that Misc (eg a RecipeEditor or MainWindow) to redisplay the relevant
-   // field.  Currently we don't do this, on the assumption that it's rare you will change how a Misc is measured after
-   // you started using it in recipes.
-   return;
-}
+// Insert the boiler-plate stuff that we cannot do in EditorBase
+EDITOR_COMMON_SLOT_DEFINITIONS(MiscEditor)

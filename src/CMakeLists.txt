@@ -79,16 +79,18 @@ set(filesToCompile_cpp
     ${repoDir}/src/editors/YeastEditor.cpp
     ${repoDir}/src/EquipmentButton.cpp
     ${repoDir}/src/EquipmentListModel.cpp
-    ${repoDir}/src/FermentableDialog.cpp
     ${repoDir}/src/FermentableSortFilterProxyModel.cpp
     ${repoDir}/src/HeatCalculations.cpp
     ${repoDir}/src/HelpDialog.cpp
-    ${repoDir}/src/HopDialog.cpp
     ${repoDir}/src/HopSortFilterProxyModel.cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
     ${repoDir}/src/ImportExport.cpp
+    ${repoDir}/src/ingredientDialogs/FermentableDialog.cpp
+    ${repoDir}/src/ingredientDialogs/HopDialog.cpp
+    ${repoDir}/src/ingredientDialogs/MiscDialog.cpp
+    ${repoDir}/src/ingredientDialogs/YeastDialog.cpp
     ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/json/BeerJson.cpp
@@ -119,7 +121,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/measurement/SystemOfMeasurement.cpp
     ${repoDir}/src/measurement/Unit.cpp
     ${repoDir}/src/measurement/UnitSystem.cpp
-    ${repoDir}/src/MiscDialog.cpp
     ${repoDir}/src/MiscSortFilterProxyModel.cpp
     ${repoDir}/src/model/BrewNote.cpp
     ${repoDir}/src/model/Equipment.cpp
@@ -152,7 +153,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/RecipeFormatter.cpp
     ${repoDir}/src/RefractoDialog.cpp
     ${repoDir}/src/ScaleRecipeTool.cpp
-    ${repoDir}/src/SimpleUndoableUpdate.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
     ${repoDir}/src/StyleButton.cpp
     ${repoDir}/src/StyleListModel.cpp
@@ -170,6 +170,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/TimerListDialog.cpp
     ${repoDir}/src/TimerMainDialog.cpp
     ${repoDir}/src/TimerWidget.cpp
+    ${repoDir}/src/undoRedo/SimpleUndoableUpdate.cpp
     ${repoDir}/src/utils/BtException.cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
@@ -203,6 +204,5 @@ set(filesToCompile_cpp
     ${repoDir}/src/xml/XmlMashStepRecord.cpp
     ${repoDir}/src/xml/XmlRecipeRecord.cpp
     ${repoDir}/src/xml/XmlRecord.cpp
-    ${repoDir}/src/YeastDialog.cpp
     ${repoDir}/src/YeastSortFilterProxyModel.cpp
 )

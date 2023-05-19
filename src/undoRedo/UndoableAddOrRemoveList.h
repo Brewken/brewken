@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * UndoableAddOrRemoveList.h is part of Brewken, and is copyright the following authors 2021:
+ * undoRedo/UndoableAddOrRemoveList.h is part of Brewken, and is copyright the following authors 2021:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -23,7 +23,7 @@
 #include <QUndoCommand>
 #include <QVariant>
 
-#include "UndoableAddOrRemove.h"
+#include "undoRedo/UndoableAddOrRemove.h"
 
 /*!
  * \class UndoableAddOrRemoveList

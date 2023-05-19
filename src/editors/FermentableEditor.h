@@ -36,8 +36,11 @@ class Fermentable;
  * \class FermentableEditor
  *
  * \brief View/controller class for creating and editing Fermentables.
+ *
+ *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
+ *        inheritance from the Ui base.
  */
-class FermentableEditor : public QDialog, private Ui::fermentableEditor, public EditorBase<Fermentable, FermentableEditor> {
+class FermentableEditor : public QDialog, public Ui::fermentableEditor, public EditorBase<Fermentable, FermentableEditor> {
    Q_OBJECT
 
 public:

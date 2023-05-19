@@ -2203,10 +2203,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2338,11 +2334,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Gewicht</translation>
+        <translation type="vanished">Gewicht</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volumen</translation>
+        <translation type="vanished">Volumen</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2388,58 +2388,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Sonstiges Name</translation>
+        <translation type="obsolete">Sonstiges Name</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Sonstiges Name:</translation>
+        <translation type="obsolete">Sonstiges Name:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Gewürz</translation>
+        <translation type="vanished">Gewürz</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Schönung</translation>
+        <translation type="vanished">Schönung</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Wasserzusatzmittel</translation>
+        <translation type="vanished">Wasserzusatzmittel</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Kraut</translation>
+        <translation type="vanished">Kraut</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aroma</translation>
+        <translation type="vanished">Aroma</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Sonstiges</translation>
+        <translation type="vanished">Sonstiges</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Kochen</translation>
+        <translation type="vanished">Kochen</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maische</translation>
+        <translation type="vanished">Maische</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Hauptgärung</translation>
+        <translation type="vanished">Hauptgärung</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Nachgärung</translation>
+        <translation type="vanished">Nachgärung</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Abfüllung</translation>
+        <translation type="vanished">Abfüllung</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6887,27 +6887,27 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Gewürz</translation>
+        <translation type="vanished">Gewürz</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Schönung</translation>
+        <translation type="vanished">Schönung</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Wasserzusatzmittel</translation>
+        <translation type="vanished">Wasserzusatzmittel</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Gewürz</translation>
+        <translation type="vanished">Gewürz</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aroma</translation>
+        <translation type="vanished">Aroma</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Andere</translation>
+        <translation type="vanished">Andere</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6915,23 +6915,23 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Kochen</translation>
+        <translation type="vanished">Kochen</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maische</translation>
+        <translation type="vanished">Maische</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Hauptgärung</translation>
+        <translation type="vanished">Hauptgärung</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Nachgärung</translation>
+        <translation type="vanished">Nachgärung</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Abfüllung</translation>
+        <translation type="vanished">Abfüllung</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6995,6 +6995,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

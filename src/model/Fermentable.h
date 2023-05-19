@@ -241,7 +241,9 @@ public:
     *
     *        Note that type has to be std::optional<int> in the interface rather than std::optional<GrainGroup>,
     *        otherwise generic code (for serialisation to/from DB, BeerJSON, BeerXML) will not be able to access the
-    *        value.
+    *        value.  We don't need to do this trick for non-optional enum fields, as the Qt property system will do the
+    *        necessary casting for us.  But, you can't "just cast" between std::optional<GrainGroup> and
+    *        std::optional<int>.
     */
    Q_PROPERTY(std::optional<int>    grainGroup              READ grainGroupAsInt         WRITE setGrainGroupAsInt       )
    Q_PROPERTY(QString               producer                READ producer                WRITE setProducer              )

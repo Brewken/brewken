@@ -1,7 +1,8 @@
 /*======================================================================================================================
- * YeastDialog.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * ingredientDialogs/YeastDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,78 +17,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef YEASTDIALOG_H
-#define YEASTDIALOG_H
+#ifndef INGREDIENTDIALOGS_YEASTDIALOG_H
+#define INGREDIENTDIALOGS_YEASTDIALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QEvent>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QSpacerItem>
-#include <QTableView>
-#include <QVBoxLayout>
-#include <QWidget>
+
+#include "editors/YeastEditor.h"
+#include "ingredientDialogs/IngredientDialog.h"
+#include "model/Yeast.h"
 
 // Forward declarations.
 class MainWindow;
-class YeastEditor;
-class YeastEditor;
 class YeastTableModel;
 class YeastSortFilterProxyModel;
 
 /*!
  * \class YeastDialog
  *
- * \brief View/controller dialog for displaying all the yeasts in the database.
+ * \brief View/controller class for showing/editing the list of yeasts in the database.
  */
-class YeastDialog : public QDialog
-{
+class YeastDialog : public QDialog, public IngredientDialog<Yeast,
+                                                            YeastDialog,
+                                                            YeastTableModel,
+                                                            YeastSortFilterProxyModel,
+                                                            YeastEditor> {
    Q_OBJECT
 
 public:
    YeastDialog(MainWindow* parent);
-   virtual ~YeastDialog() {}
+   virtual ~YeastDialog();
 
-   //! \name Public UI Variables
-   //! @{
-   QVBoxLayout *verticalLayout;
-   QTableView *tableWidget;
-   QHBoxLayout *horizontalLayout;
-   QLineEdit *qLineEdit_searchBox;
-   QSpacerItem *horizontalSpacer;
-   QPushButton *pushButton_addToRecipe;
-   QPushButton *pushButton_new;
-   QPushButton *pushButton_edit;
-   QPushButton *pushButton_remove;
-   //! @}
-
-   void newYeast(QString folder);
 public slots:
-   void addYeast(const QModelIndex& = QModelIndex());
-   void removeYeast();
+   void addIngredient(QModelIndex const & index);
+   void removeIngredient();
    void editSelected();
-   void newYeast();
-   void filterYeasts(QString searchExpression);
+   void newIngredient();
+   void filterIngredients(QString searchExpression);
 
 protected:
+   virtual void changeEvent(QEvent* event);
 
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QDialog::changeEvent(event);
-   }
-
-private:
-   MainWindow* mainWindow;
-   YeastTableModel* yeastTableModel;
-   YeastSortFilterProxyModel* yeastTableProxy;
-   YeastEditor* yeastEditor;
-   int numYeasts;
-
-   void doLayout();
-   void retranslateUi();
 };
 
 #endif

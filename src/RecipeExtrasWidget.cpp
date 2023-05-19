@@ -89,14 +89,14 @@ void RecipeExtrasWidget::setRecipe(Recipe* rec) {
 
 void RecipeExtrasWidget::updateBrewer() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::brewer, lineEdit_brewer->text(), tr("Change Brewer"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, brewer), lineEdit_brewer->text(), tr("Change Brewer"));
    return;
 }
 
 void RecipeExtrasWidget::updateBrewerAsst() {
    if (!this->recipe) { return;}
    if ( lineEdit_asstBrewer->isModified() ) {
-      MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::asstBrewer, lineEdit_asstBrewer->text(), tr("Change Assistant Brewer"));
+      MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, asstBrewer), lineEdit_asstBrewer->text(), tr("Change Assistant Brewer"));
    }
    return;
 }
@@ -107,7 +107,7 @@ void RecipeExtrasWidget::updateTasteRating() {
    if (!this->recipe) { return;}
    if ( ratingChanged )
    {
-      MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::tasteRating, spinBox_tasteRating->value(), tr("Change Taste Rating"));
+      MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tasteRating), spinBox_tasteRating->value(), tr("Change Taste Rating"));
       ratingChanged = false;
    }
    return;
@@ -115,55 +115,55 @@ void RecipeExtrasWidget::updateTasteRating() {
 
 void RecipeExtrasWidget::updatePrimaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::primaryAge_days, lineEdit_primaryAge->toCanonical().quantity(), tr("Change Primary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->toCanonical().quantity(), tr("Change Primary Age"));
 }
 
 void RecipeExtrasWidget::updatePrimaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::primaryTemp_c, lineEdit_primaryTemp->toCanonical().quantity(), tr("Change Primary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryTemp_c), lineEdit_primaryTemp->toCanonical().quantity(), tr("Change Primary Temp"));
 }
 
 void RecipeExtrasWidget::updateSecondaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::secondaryAge_days, lineEdit_secAge->toCanonical().quantity(), tr("Change Secondary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->toCanonical().quantity(), tr("Change Secondary Age"));
 }
 
 void RecipeExtrasWidget::updateSecondaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::secondaryTemp_c, lineEdit_secTemp->toCanonical().quantity(), tr("Change Secondary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryTemp_c), lineEdit_secTemp->toCanonical().quantity(), tr("Change Secondary Temp"));
 }
 
 void RecipeExtrasWidget::updateTertiaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::tertiaryAge_days, lineEdit_tertAge->toCanonical().quantity(), tr("Change Tertiary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->toCanonical().quantity(), tr("Change Tertiary Age"));
 }
 
 void RecipeExtrasWidget::updateTertiaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::tertiaryTemp_c, lineEdit_tertTemp->toCanonical().quantity(), tr("Change Tertiary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryTemp_c), lineEdit_tertTemp->toCanonical().quantity(), tr("Change Tertiary Temp"));
 }
 
 void RecipeExtrasWidget::updateAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::age_days, lineEdit_age->toCanonical().quantity(), tr("Change Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->toCanonical().quantity(), tr("Change Age"));
 }
 
 void RecipeExtrasWidget::updateAgeTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::ageTemp_c, lineEdit_ageTemp->toCanonical().quantity(), tr("Change Age Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->toCanonical().quantity(), tr("Change Age Temp"));
 }
 
 void RecipeExtrasWidget::updateDate(QDate const & date) {
    if (!this->recipe) { return;}
 
    if (date.isNull()) {
-      MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::date, dateEdit_date->date(), tr("Change Date"));
+      MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, date), dateEdit_date->date(), tr("Change Date"));
    } else {
       // We have to be careful to avoid going round in circles here.  When we call
       // this->dateEdit_date->setDate(this->recipe->date()) to show the Recipe date in the UI, that will generate a
       // signal that ends up calling this function to say the date on the Recipe has changed, which it hasn't.
       if (date != this->recipe->date()) {
-         MainWindow::instance().doOrRedoUpdate(*recipe, PropertyNames::Recipe::date, date, tr("Change Date"));
+         MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, date), date, tr("Change Date"));
       }
    }
    return;
@@ -173,7 +173,7 @@ void RecipeExtrasWidget::updateCarbonation() {
    if (!this->recipe) { return;}
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
-                                         PropertyNames::Recipe::carbonation_vols,
+                                         TYPE_INFO(Recipe, carbonation_vols),
                                          lineEdit_carbVols->toCanonical().quantity(),
                                          tr("Change Carbonation"));
 }
@@ -182,7 +182,7 @@ void RecipeExtrasWidget::updateTasteNotes() {
    if (!this->recipe) { return;}
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
-                                         PropertyNames::Recipe::tasteNotes,
+                                         TYPE_INFO(Recipe, tasteNotes),
                                          btTextEdit_tasteNotes->toPlainText(),
                                          tr("Edit Taste Notes"));
 }
@@ -191,7 +191,7 @@ void RecipeExtrasWidget::updateNotes() {
    if (!this->recipe) { return;}
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
-                                         PropertyNames::Recipe::notes,
+                                         TYPE_INFO(Recipe, notes),
                                          btTextEdit_notes->toPlainText(),
                                          tr("Edit Notes"));
 }

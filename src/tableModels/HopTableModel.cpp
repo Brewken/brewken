@@ -374,7 +374,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::NamedEntity::name,
+                                                  TYPE_INFO(Hop, NamedEntity, name),
                                                   value.toString(),
                                                   tr("Change Hop Name"));
          }
@@ -387,7 +387,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
                qWarning() << Q_FUNC_INFO << "Could not convert" << value.toString() << "to double";
             }
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Hop::alpha_pct,
+                                                  TYPE_INFO(Hop, alpha_pct),
                                                   amt,
                                                   tr("Change Hop Alpha %"));
          }
@@ -398,7 +398,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::NamedEntityWithInventory::inventory,
+               TYPE_INFO(Hop, NamedEntityWithInventory, inventory),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Mass,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -412,7 +412,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::Hop::amount_kg,
+               TYPE_INFO(Hop, amount_kg),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Mass,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -425,7 +425,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Hop::use,
+                                                  TYPE_INFO(Hop, use),
                                                   value.toInt(),
                                                   tr("Change Hop Use"));
          }
@@ -434,7 +434,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          retVal = value.canConvert(QVariant::Int);
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Hop::form,
+                                                  TYPE_INFO(Hop, form),
                                                   value.toInt(),
                                                   tr("Change Hop Form"));
          }
@@ -444,7 +444,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::Hop::time_min,
+               TYPE_INFO(Hop, time_min),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Time,
                                         std::nullopt,

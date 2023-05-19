@@ -2211,10 +2211,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2346,11 +2342,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Вес</translation>
+        <translation type="obsolete">Вес</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Объём</translation>
+        <translation type="obsolete">Объём</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2396,58 +2396,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Разное имя</translation>
+        <translation type="obsolete">Разное имя</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Разное имя:</translation>
+        <translation type="obsolete">Разное имя:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Специя</translation>
+        <translation type="vanished">Специя</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Очистка</translation>
+        <translation type="vanished">Очистка</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Агент воды</translation>
+        <translation type="vanished">Агент воды</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Трава</translation>
+        <translation type="vanished">Трава</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Вкус</translation>
+        <translation type="vanished">Вкус</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Иное</translation>
+        <translation type="vanished">Иное</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Кипячение</translation>
+        <translation type="vanished">Кипячение</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Затор</translation>
+        <translation type="vanished">Затор</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Первичный</translation>
+        <translation type="vanished">Первичный</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Вторичный</translation>
+        <translation type="vanished">Вторичный</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Бутылирование</translation>
+        <translation type="vanished">Бутылирование</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6915,27 +6915,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Специя</translation>
+        <translation type="vanished">Специя</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Очистка</translation>
+        <translation type="vanished">Очистка</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Агент воды</translation>
+        <translation type="vanished">Агент воды</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Трава</translation>
+        <translation type="vanished">Трава</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Аромат</translation>
+        <translation type="vanished">Аромат</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Другое</translation>
+        <translation type="vanished">Другое</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6943,23 +6943,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Кипячение</translation>
+        <translation type="vanished">Кипячение</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Затор</translation>
+        <translation type="vanished">Затор</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Главное брожение</translation>
+        <translation type="vanished">Главное брожение</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Дображивание</translation>
+        <translation type="vanished">Дображивание</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Бутылирование</translation>
+        <translation type="vanished">Бутылирование</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7024,6 +7024,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID продукта</translation>
     </message>
 </context>
 <context>

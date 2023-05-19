@@ -198,6 +198,14 @@ namespace Measurement {
     */
    extern Mixed2PhysicalQuantities const PqEitherMassOrVolumeConcentration;
 
+   /**
+    * \brief We have a number of places where we have a boolean \c amountIsWeight.  This array converts such a flag to
+    *        a localised displayable string, relying on the fact that static_cast<int>(false) == 0 and
+    *        static_cast<int>(true) == 1.
+    */
+   extern std::array<QString const, 2> descAmountIsWeight;;
+
+
 }
 
 /**

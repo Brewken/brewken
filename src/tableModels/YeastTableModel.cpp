@@ -339,7 +339,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::NamedEntity::name,
+                                               TYPE_INFO(Yeast, NamedEntity, name),
                                                value.toString(),
                                                tr("Change Yeast Name"));
          break;
@@ -348,7 +348,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Yeast::laboratory,
+                                               TYPE_INFO(Yeast, laboratory),
                                                value.toString(),
                                                tr("Change Yeast Laboratory"));
          break;
@@ -357,7 +357,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Yeast::productID,
+                                               TYPE_INFO(Yeast, productID),
                                                value.toString(),
                                                tr("Change Yeast Product ID"));
          break;
@@ -366,7 +366,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Yeast::type,
+                                               TYPE_INFO(Yeast, type),
                                                value.toInt(),
                                                tr("Change Yeast Type"));
          break;
@@ -375,7 +375,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Yeast::form,
+                                               TYPE_INFO(Yeast, form),
                                                value.toInt(),
                                                tr("Change Yeast Form"));
          break;
@@ -384,7 +384,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::NamedEntityWithInventory::inventory,
+                                               TYPE_INFO(Yeast, NamedEntityWithInventory, inventory),
                                                value.toInt(),
                                                tr("Change Yeast Inventory Unit Size"));
          break;
@@ -395,7 +395,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
 
          MainWindow::instance().doOrRedoUpdate(
             *row,
-            PropertyNames::Yeast::amount,
+            TYPE_INFO(Yeast, amount),
             Measurement::qStringToSI(
                value.toString(),
                row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume,

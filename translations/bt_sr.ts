@@ -2056,10 +2056,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2191,11 +2187,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Тежина</translation>
+        <translation type="obsolete">Тежина</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Запремина</translation>
+        <translation type="obsolete">Запремина</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2241,58 +2241,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Назив разног</translation>
+        <translation type="obsolete">Назив разног</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Назив разног:</translation>
+        <translation type="obsolete">Назив разног:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Зачин</translation>
+        <translation type="vanished">Зачин</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Додатак</translation>
+        <translation type="vanished">Додатак</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Третирање воде</translation>
+        <translation type="vanished">Третирање воде</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Биљни зачин</translation>
+        <translation type="vanished">Биљни зачин</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Укус</translation>
+        <translation type="vanished">Укус</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Друго</translation>
+        <translation type="vanished">Друго</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Кључање</translation>
+        <translation type="vanished">Кључање</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Укомљавање</translation>
+        <translation type="vanished">Укомљавање</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Примарна</translation>
+        <translation type="vanished">Примарна</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Секундарна</translation>
+        <translation type="vanished">Секундарна</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Флаширање</translation>
+        <translation type="vanished">Флаширање</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6430,27 +6430,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Зачин</translation>
+        <translation type="vanished">Зачин</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Додатак</translation>
+        <translation type="vanished">Додатак</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Третирање воде</translation>
+        <translation type="vanished">Третирање воде</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Биљни зачин</translation>
+        <translation type="vanished">Биљни зачин</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Укус</translation>
+        <translation type="vanished">Укус</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Друго</translation>
+        <translation type="vanished">Друго</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6458,23 +6458,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Кључање</translation>
+        <translation type="vanished">Кључање</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Укомљавање</translation>
+        <translation type="vanished">Укомљавање</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Примарна</translation>
+        <translation type="vanished">Примарна</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Секундарна</translation>
+        <translation type="vanished">Секундарна</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Флаширање</translation>
+        <translation type="vanished">Флаширање</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6526,6 +6526,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

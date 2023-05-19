@@ -82,28 +82,33 @@
 #include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
 #include "editors/EquipmentEditor.h"
-#include "EquipmentListModel.h"
-#include "FermentableDialog.h"
 #include "editors/FermentableEditor.h"
+#include "editors/HopEditor.h"
+#include "editors/MashEditor.h"
+#include "editors/MashStepEditor.h"
+#include "editors/MiscEditor.h"
+#include "editors/NamedMashEditor.h"
+#include "editors/StyleEditor.h"
+#include "editors/WaterEditor.h"
+#include "editors/YeastEditor.h"
+#include "EquipmentListModel.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "HelpDialog.h"
-#include "HopDialog.h"
-#include "editors/HopEditor.h"
 #include "HopSortFilterProxyModel.h"
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "ImportExport.h"
+#include "ingredientDialogs/FermentableDialog.h"
+#include "ingredientDialogs/HopDialog.h"
+#include "ingredientDialogs/MiscDialog.h"
+#include "ingredientDialogs/YeastDialog.h"
 #include "InventoryFormatter.h"
 #include "MashDesigner.h"
-#include "editors/MashEditor.h"
 #include "MashListModel.h"
-#include "editors/MashStepEditor.h"
 #include "MashWizard.h"
-#include "measurement/Unit.h"
-#include "MiscDialog.h"
-#include "editors/MiscEditor.h"
-#include "MiscSortFilterProxyModel.h"
 #include "measurement/Measurement.h"
+#include "measurement/Unit.h"
+#include "MiscSortFilterProxyModel.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -111,7 +116,6 @@
 #include "model/Recipe.h"
 #include "model/Style.h"
 #include "model/Yeast.h"
-#include "editors/NamedMashEditor.h"
 #include "OgAdjuster.h"
 #include "OptionDialog.h"
 #include "PersistentSettings.h"
@@ -121,10 +125,8 @@
 #include "RangedSlider.h"
 #include "RecipeFormatter.h"
 #include "RefractoDialog.h"
-#include "RelationalUndoableUpdate.h"
 #include "ScaleRecipeTool.h"
 #include "StrikeWaterDialog.h"
-#include "editors/StyleEditor.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
 #include "tableModels/FermentableTableModel.h"
@@ -133,15 +135,13 @@
 #include "tableModels/MiscTableModel.h"
 #include "tableModels/YeastTableModel.h"
 #include "TimerMainDialog.h"
-#include "UndoableAddOrRemove.h"
-#include "UndoableAddOrRemoveList.h"
+#include "undoRedo/RelationalUndoableUpdate.h"
+#include "undoRedo/UndoableAddOrRemove.h"
+#include "undoRedo/UndoableAddOrRemoveList.h"
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
 #include "WaterDialog.h"
-#include "editors/WaterEditor.h"
 #include "WaterListModel.h"
-#include "YeastDialog.h"
-#include "editors/YeastEditor.h"
 #include "YeastSortFilterProxyModel.h"
 
 namespace {
@@ -1020,18 +1020,18 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             break;
          case BtTreeItem::Type::HOP:
             {
-               Hop* h = active->getItem<Hop>(index);
-               if (h) {
-                  hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
+               Hop* hop = active->getItem<Hop>(index);
+               if (hop) {
+                  hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(hop));
                   hopEditor->show();
                }
             }
             break;
          case BtTreeItem::Type::MISC:
             {
-               Misc * m = active->getItem<Misc>(index);
-               if (m) {
-                  miscEditor->setMisc(m);
+               Misc * misc = active->getItem<Misc>(index);
+               if (misc) {
+                  miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(misc));
                   miscEditor->show();
                }
             }
@@ -1047,9 +1047,9 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             break;
          case BtTreeItem::Type::YEAST:
             {
-               Yeast * y = active->getItem<Yeast>(index);
-               if (y) {
-                  yeastEditor->setYeast(y);
+               Yeast * yeast = active->getItem<Yeast>(index);
+               if (yeast) {
+                  yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(yeast));
                   yeastEditor->show();
                }
             }
@@ -1263,16 +1263,16 @@ void MainWindow::setRecipe(Recipe* recipe) {
 }
 
 // When a recipe is locked, many fields need to be disabled.
-void MainWindow::lockRecipe(int state)
-{
-   if ( this->recipeObs == nullptr )
+void MainWindow::lockRecipe(int state) {
+   if (!this->recipeObs) {
       return;
+   }
 
    // If I am locking a recipe (lock == true ), I want to disable fields
    // (enable == false). If I am unlocking (lock == false), I want to enable
    // fields (enable == true). This just makes that easy
-   bool lockIt = state == Qt::Checked;
-   bool enabled = ! lockIt;
+   bool const lockIt = state == Qt::Checked;
+   bool const enabled = ! lockIt;
 
    // Lock/unlock the recipe, then disable/enable the fields. I am leaving the
    // name field as editable. I may regret that, but if you are defining an
@@ -1317,13 +1317,13 @@ void MainWindow::lockRecipe(int state)
    pushButton_removeYeast->setEnabled(enabled);
    pushButton_editYeast->setEnabled(enabled);
 
-   fermDialog->pushButton_addToRecipe->setEnabled(enabled);
-   hopDialog->pushButton_addToRecipe->setEnabled(enabled);
-   miscDialog->pushButton_addToRecipe->setEnabled(enabled);
-   yeastDialog->pushButton_addToRecipe->setEnabled(enabled);
+   fermDialog ->setEnableAddToRecipe(enabled);
+   hopDialog  ->setEnableAddToRecipe(enabled);
+   miscDialog ->setEnableAddToRecipe(enabled);
+   yeastDialog->setEnableAddToRecipe(enabled);
    // mashes still need dealing with
    //
-
+   return;
 }
 
 void MainWindow::changed(QMetaProperty prop, QVariant val) {
@@ -1456,7 +1456,10 @@ void MainWindow::updateRecipeName() {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs, PropertyNames::NamedEntity::name, lineEdit_name->text(), tr("Change Recipe Name"));
+   this->doOrRedoUpdate(*this->recipeObs,
+                        TYPE_INFO(Recipe, NamedEntity, name),
+                        lineEdit_name->text(),
+                        tr("Change Recipe Name"));
    return;
 }
 
@@ -1552,8 +1555,8 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
    // Keep the mash tun weight and specific heat up to date.
    Mash * m = recipeObs->mash();
    if (m) {
-      new SimpleUndoableUpdate(*m, PropertyNames::Mash::tunWeight_kg, kit->tunWeight_kg(), tr("Change Tun Weight"), equipmentUpdate);
-      new SimpleUndoableUpdate(*m, PropertyNames::Mash::tunSpecificHeat_calGC, kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
+      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunWeight_kg         ), kit->tunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
+      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunSpecificHeat_calGC), kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
    }
 
    if (QMessageBox::question(this,
@@ -1567,9 +1570,9 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
       // won't ever be seen by the user, but there's no harm in setting them.
       // (The previous call here to mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
       // setTunSpecificHeat_calGC() on the mash.)
-      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::batchSize_l, kit->batchSize_l(), tr("Change Batch Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::boilSize_l, kit->boilSize_l(), tr("Change Boil Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::boilTime_min, kit->boilTime_min(), tr("Change Boil Time"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->batchSize_l() , tr("Change Batch Size"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->boilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), kit->boilTime_min(), tr("Change Boil Time") , equipmentUpdate);
    }
 
    // This will do the equipment update and any related updates - see above
@@ -1675,7 +1678,7 @@ void MainWindow::updateRecipeBatchSize() {
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
-                        PropertyNames::Recipe::batchSize_l,
+                        TYPE_INFO(Recipe, batchSize_l),
                         lineEdit_batchSize->toCanonical().quantity(),
                         tr("Change Batch Size"));
 }
@@ -1686,7 +1689,7 @@ void MainWindow::updateRecipeBoilSize() {
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
-                        PropertyNames::Recipe::boilSize_l,
+                        TYPE_INFO(Recipe, boilSize_l),
                         lineEdit_boilSize->toCanonical().quantity(),
                         tr("Change Boil Size"));
 }
@@ -1703,9 +1706,9 @@ void MainWindow::updateRecipeBoilTime() {
    // recipeObs->boilSize_l
    // NOTE: This works because kit is the recipe's equipment, not the generic equipment in the recipe drop down.
    if (kit) {
-      this->doOrRedoUpdate(*kit, PropertyNames::Equipment::boilTime_min, boilTime, tr("Change Boil Time"));
+      this->doOrRedoUpdate(*kit, TYPE_INFO(Equipment, boilTime_min), boilTime, tr("Change Boil Time"));
    } else {
-      this->doOrRedoUpdate(*this->recipeObs, PropertyNames::Recipe::boilTime_min, boilTime, tr("Change Boil Time"));
+      this->doOrRedoUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), boilTime, tr("Change Boil Time"));
    }
 
    return;
@@ -1718,13 +1721,13 @@ void MainWindow::updateRecipeEfficiency() {
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
-                        PropertyNames::Recipe::efficiency_pct,
+                        TYPE_INFO(Recipe, efficiency_pct),
                         lineEdit_efficiency->getNonOptValue<unsigned int>(),
                         tr("Change Recipe Efficiency"));
    return;
 }
 
-void MainWindow::addFermentableToRecipe(std::shared_ptr<Fermentable> ferm) {
+void MainWindow::addToRecipe(std::shared_ptr<Fermentable> ferm) {
    Q_ASSERT(ferm);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1738,7 +1741,7 @@ void MainWindow::addFermentableToRecipe(std::shared_ptr<Fermentable> ferm) {
    return;
 }
 
-void MainWindow::addHopToRecipe(std::shared_ptr<Hop> hop) {
+void MainWindow::addToRecipe(std::shared_ptr<Hop> hop) {
    Q_ASSERT(hop);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1751,7 +1754,7 @@ void MainWindow::addHopToRecipe(std::shared_ptr<Hop> hop) {
    // triggered the necessary updates to hopTableModel.
 }
 
-void MainWindow::addMiscToRecipe(std::shared_ptr<Misc> misc) {
+void MainWindow::addToRecipe(std::shared_ptr<Misc> misc) {
    Q_ASSERT(misc);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1765,7 +1768,7 @@ void MainWindow::addMiscToRecipe(std::shared_ptr<Misc> misc) {
    return;
 }
 
-void MainWindow::addYeastToRecipe(std::shared_ptr<Yeast> yeast) {
+void MainWindow::addToRecipe(std::shared_ptr<Yeast> yeast) {
    Q_ASSERT(yeast);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1838,20 +1841,17 @@ void MainWindow::doOrRedoUpdate(QUndoCommand * update) {
    return;
 }
 
-void MainWindow::doOrRedoUpdate(QObject & updatee,
-                                BtStringConst const & propertyName,
+void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
+                                TypeInfo const & typeInfo,
                                 QVariant newValue,
                                 QString const & description,
                                 [[maybe_unused]] QUndoCommand * parent) {
-///   qDebug() << Q_FUNC_INFO << "Updating" << propertyName << "on" << updatee.metaObject()->className();
-///   qDebug() << Q_FUNC_INFO << "this=" << static_cast<void *>(this);
-   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyName, newValue, description));
+   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
    return;
 }
 
 // For undo/redo, we use Qt's Undo framework
-void MainWindow::editUndo()
-{
+void MainWindow::editUndo() {
    Q_ASSERT(this->undoStack != 0);
    if ( !this->undoStack->canUndo() ) {
       qDebug() << "Undo called but nothing to undo";
@@ -1863,8 +1863,7 @@ void MainWindow::editUndo()
    return;
 }
 
-void MainWindow::editRedo()
-{
+void MainWindow::editRedo() {
    Q_ASSERT(this->undoStack != 0);
    if ( !this->undoStack->canRedo() ) {
       qDebug() << "Redo called but nothing to redo";
@@ -2029,16 +2028,17 @@ void MainWindow::editSelectedFermentable() {
 
 void MainWindow::editSelectedMisc() {
    Misc* m = selectedMisc();
-   if( m == nullptr )
+   if (!m) {
       return;
+   }
 
-   miscEditor->setMisc(m);
+   miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(m));
    miscEditor->show();
 }
 
 void MainWindow::editSelectedHop() {
    Hop* h = selectedHop();
-   if (h == nullptr) {
+   if (!h) {
       return;
    }
 
@@ -2047,14 +2047,15 @@ void MainWindow::editSelectedHop() {
    return;
 }
 
-void MainWindow::editSelectedYeast()
-{
+void MainWindow::editSelectedYeast() {
    Yeast* y = selectedYeast();
-   if( y == nullptr )
+   if (!y) {
       return;
+   }
 
-   yeastEditor->setYeast(y);
+   yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(y));
    yeastEditor->show();
+   return;
 }
 
 void MainWindow::removeSelectedHop() {

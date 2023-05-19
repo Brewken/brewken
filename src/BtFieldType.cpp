@@ -27,6 +27,7 @@ QString GetDisplayName(NonPhysicalQuantity nonPhysicalQuantity) {
       case NonPhysicalQuantity::Count        : return "Count"        ;
       case NonPhysicalQuantity::Percentage   : return "Percentage"   ;
       case NonPhysicalQuantity::Bool         : return "Bool"         ;
+      case NonPhysicalQuantity::Enum         : return "Enum"         ;
       case NonPhysicalQuantity::Dimensionless: return "Dimensionless";
       // In C++23, we'd add:
       // default: std::unreachable();

@@ -20,10 +20,13 @@
 #define EDITORS_YEASTEDITOR_H
 #pragma once
 
+#include "ui_yeastEditor.h"
+
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
-#include "ui_yeastEditor.h"
+
+#include "editors/EditorBase.h"
 
 // Forward declarations.
 class Yeast;
@@ -31,29 +34,28 @@ class Yeast;
 /*!
  * \class YeastEditor
  *
- *
  * \brief View/controller dialog for modifying yeasts.
+ *
+ *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
+ *        inheritance from the Ui base.
  */
-class YeastEditor : public QDialog, private Ui::yeastEditor {
+class YeastEditor : public QDialog, public Ui::yeastEditor, public EditorBase<Yeast, YeastEditor> {
    Q_OBJECT
 
 public:
    YeastEditor(QWidget * parent = nullptr);
    virtual ~YeastEditor();
 
-   //! Set the yeast we want to modify.
-   void setYeast(Yeast * y);
-   void newYeast(QString folder = "");
+   void writeFieldsToEditItem();
+   void writeLateFieldsToEditItem();
+   void readFieldsFromEditItem(std::optional<QString> propName);
 
 public slots:
+   // Standard editor slots
    void save();
    void clearAndClose();
    void changed(QMetaProperty, QVariant);
-
-private:
-   Yeast* obsYeast;
-
-   void showChanges(QMetaProperty* prop = nullptr);
+   void clickedNew();
 };
 
 #endif

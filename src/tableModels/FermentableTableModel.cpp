@@ -72,10 +72,6 @@ namespace {
       QObject::tr("Not mashed"), // isMashed() == false
       QObject::tr("Mashed")      // isMashed() == true
    };
-   std::array<QString const, 2> descAmountIsWeight {
-      QObject::tr("Volume"), // amountIsWeight() == false
-      QObject::tr("Weight")      // amountIsWeight() == true
-   };
 
 }
 
@@ -376,7 +372,7 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
          break;
       case FermentableTableModel::ColumnIndex::IsWeight:
          if (role == Qt::DisplayRole) {
-            return QVariant(descAmountIsWeight[static_cast<int>(row->amountIsWeight())]);
+            return QVariant(Measurement::descAmountIsWeight[static_cast<int>(row->amountIsWeight())]);
          }
          if (role == Qt::UserRole) {
             return QVariant(row->amountIsWeight());
@@ -488,7 +484,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
          retVal = value.canConvert(QVariant::String);
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::NamedEntity::name,
+                                                  TYPE_INFO(Fermentable, NamedEntity, name),
                                                   value.toString(),
                                                   tr("Change Fermentable Name"));
          }
@@ -499,7 +495,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::Type>() here (as the
             // Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::type,
+                                                  TYPE_INFO(Fermentable, type),
                                                   value.toInt(),
                                                   tr("Change Fermentable Type"));
          }
@@ -509,7 +505,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::NamedEntityWithInventory::inventory,
+               TYPE_INFO(Fermentable, NamedEntityWithInventory, inventory),
                Measurement::qStringToSI(value.toString(),
                                         physicalQuantity,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -525,7 +521,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             // We need to refer back to the MainWindow to make this an undoable operation
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::Fermentable::amount,
+               TYPE_INFO(Fermentable, amount),
                Measurement::qStringToSI(value.toString(),
                                         physicalQuantity,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -542,7 +538,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Fermentable::amountIsWeight,
+                                               TYPE_INFO(Fermentable, amountIsWeight),
                                                value.toBool(),
                                                tr("Change Fermentable Amount Type"));
          break;
@@ -552,7 +548,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionMethod>() here
             // (as the Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::isMashed,
+                                                  TYPE_INFO(Fermentable, isMashed),
                                                   value.toBool(),
                                                   tr("Change Fermentable Is Mashed"));
          }
@@ -563,7 +559,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
             // Doing the set via doOrRedoUpdate() saves us from doing a static_cast<Fermentable::AdditionTime>() here
             // (as the Q_PROPERTY system will do the casting for us).
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::addAfterBoil,
+                                                  TYPE_INFO(Fermentable, addAfterBoil),
                                                   value.toBool(),
                                                   tr("Change Add After Boil"));
          }
@@ -572,7 +568,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
          retVal = value.canConvert(QVariant::Double);
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::Fermentable::yield_pct,
+                                                  TYPE_INFO(Fermentable, yield_pct),
                                                   value.toDouble(),
                                                   tr("Change Yield"));
          }
@@ -582,7 +578,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
          if (retVal) {
             MainWindow::instance().doOrRedoUpdate(
                *row,
-               PropertyNames::Fermentable::color_srm,
+               TYPE_INFO(Fermentable, color_srm),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Color,
                                         this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),

@@ -78,6 +78,21 @@ public:
    virtual ~EditorBase() = default;
 
    /**
+    * \brief Call this at the end of derived class's constructor (in particular, after the call to \c setupUi).
+    *
+    *        NOTE: This relies on derived classes having \c public, not the usual \c private, inheritance from the Ui
+    *              base class (eg \c Ui::hopEditor in the example above), as otherwise \c pushButton_new etc would be
+    *              inaccessible from this function.
+    */
+   void connectSignalsAndSlots() {
+      // Standard editor slot connections
+      m_derived->connect(this->m_derived->pushButton_new,    &QAbstractButton::clicked, m_derived, &Derived::clickedNew   );
+      m_derived->connect(this->m_derived->pushButton_save,   &QAbstractButton::clicked, m_derived, &Derived::save         );
+      m_derived->connect(this->m_derived->pushButton_cancel, &QAbstractButton::clicked, m_derived, &Derived::clearAndClose);
+      return;
+   }
+
+   /**
     * \brief Edit the given Hop, Fermentable, etc.
     *
     *        Calling with no parameter clears the current item.

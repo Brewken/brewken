@@ -80,9 +80,7 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_fanIsMassPerVolume       , label_fanIsMassPerVolume       , lineEdit_fan       , Fermentable, fanIsMassPerVolume       );
    SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_betaGlucanIsMassPerVolume, label_betaGlucanIsMassPerVolume, lineEdit_betaGlucan, Fermentable, betaGlucanIsMassPerVolume);
 
-   connect(this->pushButton_new,    &QAbstractButton::clicked, this, &FermentableEditor::clickedNew   );
-   connect(this->pushButton_save,   &QAbstractButton::clicked, this, &FermentableEditor::save         );
-   connect(this->pushButton_cancel, &QAbstractButton::clicked, this, &FermentableEditor::clearAndClose);
+   this->connectSignalsAndSlots();
    return;
 }
 

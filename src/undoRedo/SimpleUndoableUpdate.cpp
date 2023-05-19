@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020-2022:
+ * undoRedo/SimpleUndoableUpdate.cpp is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -14,28 +14,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "SimpleUndoableUpdate.h"
-
-// Uncomment the following and the stacktrace stuff below to debug issues tripping the isValid assert below
-//#include <boost/stacktrace.hpp>
-//#include <sstream>      // std::ostringstream
+#include "undoRedo/SimpleUndoableUpdate.h"
 
 #include <QDebug>
 
 #include "Logging.h"
 
-SimpleUndoableUpdate::SimpleUndoableUpdate(QObject & updatee,
-                                           BtStringConst const & propertyName,
+SimpleUndoableUpdate::SimpleUndoableUpdate(NamedEntity & updatee,
+                                           TypeInfo const & typeInfo,
                                            QVariant newValue,
                                            QString const & description,
-                                           QUndoCommand * parent)
-   : QUndoCommand(parent), updatee(updatee), propertyName(propertyName), newValue(newValue) {
-   this->oldValue = this->updatee.property(*this->propertyName);
+                                           QUndoCommand * parent) :
+   QUndoCommand{parent},
+   updatee     {updatee},
+   typeInfo    {typeInfo},
+   oldValue    {updatee.property(*typeInfo.propertyName)},
+   newValue    {newValue} {
 
-// Uncomment this block if the assert below is tripping, as it will usually help find the bug quickly
-//   std::ostringstream stacktrace;
-//   stacktrace << boost::stacktrace::stacktrace();
-//   qDebug().noquote() << Q_FUNC_INFO << this->propertyName << " " << QString::fromStdString(stacktrace.str());
+// Uncomment this log message if the assert below is tripping, as it will usually help find the bug quickly
+   qDebug().noquote() <<
+      Q_FUNC_INFO << "Type Info:" << this->typeInfo << ", Old Value:" << oldValue << ", Stack trace:" <<
+      Logging::getStackTrace();
    Q_ASSERT(this->oldValue.isValid() && "Trying to update non-existent property");
 
    this->setText(description);
@@ -58,17 +57,16 @@ void SimpleUndoableUpdate::undo() {
    return;
 }
 
-bool SimpleUndoableUpdate::undoOrRedo(bool const isUndo)
-{
+bool SimpleUndoableUpdate::undoOrRedo(bool const isUndo) {
    // This is where we call the setter for propertyName on updatee, via the magic of the Qt Property System
-   bool success = this->updatee.setProperty(*this->propertyName, isUndo ? this->oldValue : this->newValue);
+   bool success = this->updatee.setProperty(*this->typeInfo.propertyName, isUndo ? this->oldValue : this->newValue);
 
    // It's a coding error if we tried to update a non-existent property
    Q_ASSERT(success && "Trying to update non-existent property");
    if (!success) {
       qCritical() <<
          Q_FUNC_INFO << "Could not" << (isUndo ? "undo" : "redo") << " update of " <<
-         this->updatee.metaObject()->className() << "property" << this->propertyName;
+         this->updatee.metaObject()->className() << "property" << this->typeInfo.propertyName;
    }
    return success;
 }

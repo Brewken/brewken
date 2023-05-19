@@ -826,9 +826,9 @@ QVector<PreInstruction> Recipe::miscSteps(Misc::Use type) {
                                                       misc->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
                                                    }))
                .arg(misc->name())
-               .arg(Measurement::displayAmount(Measurement::Amount{misc->time(), Measurement::Units::minutes}));
+               .arg(Measurement::displayAmount(Measurement::Amount{misc->time_min(), Measurement::Units::minutes}));
 
-         preins.push_back(PreInstruction(str, tr("Misc addition"), misc->time()));
+         preins.push_back(PreInstruction(str, tr("Misc addition"), misc->time_min()));
       }
    }
    return preins;
@@ -1199,19 +1199,15 @@ void Recipe::generateInstructions() {
 }
 
 QString Recipe::nextAddToBoil(double & time) {
-   int i, size;
    double max = 0;
    bool foundSomething = false;
-   Hop * h;
-   QList<Hop *> hhops = hops();
-   Misc * m;
-   QList<Misc *> mmiscs = miscs();
    QString ret;
 
    // Search hops
-   size = hhops.size();
-   for (i = 0; i < size; ++i) {
-      h = hhops[i];
+   QList<Hop *> hhops = hops();
+   int size = hhops.size();
+   for (int i = 0; i < size; ++i) {
+      Hop * h = hhops[i];
       if (h->use() != Hop::Use::Boil) {
          continue;
       }
@@ -1227,13 +1223,14 @@ QString Recipe::nextAddToBoil(double & time) {
    }
 
    // Search miscs
+   QList<Misc *> mmiscs = miscs();
    size = mmiscs.size();
-   for (i = 0; i < size; ++i) {
-      m = mmiscs[i];
+   for (int i = 0; i < size; ++i) {
+      Misc * m = mmiscs[i];
       if (m->use() != Misc::Use::Boil) {
          continue;
       }
-      if (m->time() < time && m->time() > max) {
+      if (m->time_min() < time && m->time_min() > max) {
          ret = tr("Add %1 %2 to boil at %3.");
          if (m->amountIsWeight()) {
             ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::kilograms}));
@@ -1242,8 +1239,8 @@ QString Recipe::nextAddToBoil(double & time) {
          }
 
          ret = ret.arg(m->name());
-         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time(), Measurement::Units::minutes}));
-         max = m->time();
+         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time_min(), Measurement::Units::minutes}));
+         max = m->time_min();
          foundSomething = true;
       }
    }

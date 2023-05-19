@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HopDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * ingredientDialogs/HopDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,22 +17,19 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef HOPDIALOG_H
-#define HOPDIALOG_H
+#ifndef INGREDIENTDIALOGS_HOPDIALOG_H
+#define INGREDIENTDIALOGS_HOPDIALOG_H
 #pragma once
 
-#include <QWidget>
 #include <QDialog>
 #include <QEvent>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTableView>
-#include <QSpacerItem>
-#include <QPushButton>
+
+#include "editors/HopEditor.h"
+#include "ingredientDialogs/IngredientDialog.h"
+#include "model/Hop.h"
 
 // Forward declarations.
 class MainWindow;
-class HopEditor;
 class HopTableModel;
 class HopSortFilterProxyModel;
 
@@ -41,58 +38,27 @@ class HopSortFilterProxyModel;
  *
  * \brief View/controller class for showing/editing the list of hops in the database.
  */
-class HopDialog : public QDialog
-{
+class HopDialog : public QDialog, public IngredientDialog<Hop,
+                                                          HopDialog,
+                                                          HopTableModel,
+                                                          HopSortFilterProxyModel,
+                                                          HopEditor> {
    Q_OBJECT
 
 public:
    HopDialog(MainWindow* parent);
-   virtual ~HopDialog() {}
-
-   //! \name Public UI Variables
-   //! @{
-   QVBoxLayout *verticalLayout;
-   QTableView *tableWidget;
-   QHBoxLayout *horizontalLayout;
-   QSpacerItem *horizontalSpacer;
-   QPushButton *pushButton_addToRecipe;
-   QPushButton *pushButton_new;
-   QPushButton *pushButton_edit;
-   QPushButton *pushButton_remove;
-   QLineEdit *qLineEdit_searchBox;
-   //! @}
-
+   virtual ~HopDialog();
 
 public slots:
-   //! Add selected hop to current recipe.
-   void addHop(const QModelIndex& = QModelIndex());
-   //! Delete the selected hop from the database.
-   void removeHop();
-   //! Bring up the editor for the selected hop.
+   void addIngredient(QModelIndex const & index);
+   void removeIngredient();
    void editSelected();
-   //! Create a new hop.
-   void newHop(QString folder = "");
-   //! FIlters the shown hops
-   void filterHops(QString searchExpression);
+   void newIngredient();
+   void filterIngredients(QString searchExpression);
 
 protected:
+   virtual void changeEvent(QEvent* event);
 
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QDialog::changeEvent(event);
-   }
-
-private:
-   MainWindow* mainWindow;
-   HopEditor* hopEditor;
-   HopTableModel* hopTableModel;
-   HopSortFilterProxyModel* hopTableProxy;
-   int numHops;
-
-   void doLayout();
-   void retranslateUi();
 };
 
 #endif

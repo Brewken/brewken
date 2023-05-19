@@ -1741,10 +1741,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1875,11 +1871,7 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Weight</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume</source>
+        <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1923,62 +1915,7 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
-    <name>MiscEditor</name>
-    <message>
-        <source>Misc name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Misc name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MiscItemDelegate</name>
-    <message>
-        <source>Spice</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fining</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water Agent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Herb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Primary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Secondary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottling</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Weight</source>
         <translation type="unfinished"></translation>
@@ -5934,52 +5871,8 @@ The final volume in the primary is %1.</source>
         <translation>Veids</translation>
     </message>
     <message>
-        <source>Spice</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fining</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water Agent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Herb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flavor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use</source>
         <translation>Lietot</translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Primary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Secondary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottling</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Time</source>
@@ -6035,6 +5928,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

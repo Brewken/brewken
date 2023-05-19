@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * ingredientDialogs/MiscDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -17,75 +17,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MISCDIALOG_H
-#define MISCDIALOG_H
+#ifndef INGREDIENTDIALOGS_MISCDIALOG_H
+#define INGREDIENTDIALOGS_MISCDIALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QEvent>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QSpacerItem>
-#include <QTableView>
-#include <QVBoxLayout>
-#include <QWidget>
+
+#include "editors/MiscEditor.h"
+#include "ingredientDialogs/IngredientDialog.h"
+#include "model/Misc.h"
 
 // Forward declarations.
 class MainWindow;
-class MiscEditor;
 class MiscTableModel;
 class MiscSortFilterProxyModel;
 
 /*!
  * \class MiscDialog
  *
- * \brief View/controller dialog for the miscs in the database.
+ * \brief View/controller class for showing/editing the list of miscs in the database.
  */
-class MiscDialog : public QDialog {
+class MiscDialog : public QDialog, public IngredientDialog<Misc,
+                                                           MiscDialog,
+                                                           MiscTableModel,
+                                                           MiscSortFilterProxyModel,
+                                                           MiscEditor> {
    Q_OBJECT
 
 public:
    MiscDialog(MainWindow* parent);
-   virtual ~MiscDialog() {}
-
-   //! \name Public UI Variables
-   //! @{
-   QVBoxLayout *verticalLayout;
-   QTableView *tableWidget;
-   QHBoxLayout *horizontalLayout;
-   QLineEdit *qLineEdit_searchBox;
-   QSpacerItem *horizontalSpacer;
-   QPushButton *pushButton_addToRecipe;
-   QPushButton *pushButton_new;
-   QPushButton *pushButton_edit;
-   QPushButton *pushButton_remove;
-   //! @}
+   virtual ~MiscDialog();
 
 public slots:
-   //! Add the selected misc to the current recipe.
-   void addMisc(const QModelIndex& = QModelIndex());
-   //! Delete selected misc from the database.
-   void removeMisc();
-   //! Bring up the editor for the selected misc.
+   void addIngredient(QModelIndex const & index);
+   void removeIngredient();
    void editSelected();
-   //! Add a new misc to the database.
-   void newMisc(QString folder = "");
-   //! Filter out the matching miscs.
-   void filterMisc(QString searchExpression);
+   void newIngredient();
+   void filterIngredients(QString searchExpression);
 
 protected:
-
    virtual void changeEvent(QEvent* event);
 
-private:
-   MainWindow* mainWindow;
-   MiscTableModel* miscTableModel;
-   MiscSortFilterProxyModel* miscTableProxy;
-   int numMiscs;
-   MiscEditor* miscEdit;
-
-   void doLayout();
-   void retranslateUi();
 };
 
 #endif

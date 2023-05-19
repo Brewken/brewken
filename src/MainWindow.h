@@ -44,7 +44,7 @@
 #include <QWidget>
 
 #include "ui_mainWindow.h"
-#include "SimpleUndoableUpdate.h"
+#include "undoRedo/SimpleUndoableUpdate.h"
 
 
 // Forward Declarations
@@ -140,6 +140,14 @@ public:
    void setBrewNoteByIndex(const QModelIndex &index);
    void setBrewNote(BrewNote* bNote);
 
+   //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
+   //         which suffices for modifications to most individual non-relational attributes.
+   void doOrRedoUpdate(NamedEntity & updatee,
+                       TypeInfo const & typeInfo,
+                       QVariant newValue,
+                       QString const & description,
+                       QUndoCommand * parent = nullptr);
+
 public slots:
 
    //! \brief Accepts Recipe changes, and takes appropriate action to show the changes.
@@ -174,7 +182,7 @@ public slots:
    //! \brief Close a brewnote tab if we must (because of the BrewNote being deleted)
    void closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object);
    //! \brief Add given Fermentable to the Recipe.
-   void addFermentableToRecipe(std::shared_ptr<Fermentable> ferm);
+   void addToRecipe(std::shared_ptr<Fermentable> ferm);
    //! \brief Remove selected Fermentable(s) from the Recipe.
    void removeSelectedFermentable();
    //! \brief Edit selected Fermentable.
@@ -184,21 +192,21 @@ public slots:
    void showPitchDialog();
 
    //! \brief Add given Hop to the Recipe.
-   void addHopToRecipe(std::shared_ptr<Hop> hop);
+   void addToRecipe(std::shared_ptr<Hop> hop);
    //! \brief Remove selected Hop(s) from the Recipe.
    void removeSelectedHop();
    //! \brief Edit selected Hop.
    void editSelectedHop();
 
    //! \brief Add given Misc to the Recipe.
-   void addMiscToRecipe(std::shared_ptr<Misc> misc);
+   void addToRecipe(std::shared_ptr<Misc> misc);
    //! \brief Remove selected Misc(s) from the Recipe.
    void removeSelectedMisc();
    //! \brief Edit selected Misc.
    void editSelectedMisc();
 
    //! \brief Add given Yeast to the Recipe.
-   void addYeastToRecipe(std::shared_ptr<Yeast> yeast);
+   void addToRecipe(std::shared_ptr<Yeast> yeast);
    //! \brief Remove selected Yeast(s) from the Recipe.
    void removeSelectedYeast();
    //! \brief Edit selected Yeast
@@ -301,15 +309,6 @@ public slots:
     * \param prop Not yet used. Will indicate which Recipe property has changed.
     */
    void showChanges(QMetaProperty* prop = nullptr);
-
-public:
-   //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
-   //         which suffices for modifications to most individual non-relational attributes.
-   void doOrRedoUpdate(QObject & updatee,
-                       BtStringConst const & propertyName,
-                       QVariant newValue,
-                       QString const & description,
-                       QUndoCommand * parent = nullptr);
 
 protected:
    virtual void closeEvent(QCloseEvent* event);

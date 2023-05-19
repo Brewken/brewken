@@ -2160,10 +2160,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2295,11 +2291,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Waga</translation>
+        <translation type="obsolete">Waga</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objętość</translation>
+        <translation type="obsolete">Objętość</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2345,58 +2345,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Nazwa dodatku</translation>
+        <translation type="obsolete">Nazwa dodatku</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Nazwa dodatku:</translation>
+        <translation type="obsolete">Nazwa dodatku:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Przyprawa</translation>
+        <translation type="vanished">Przyprawa</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Substancja klarująca</translation>
+        <translation type="vanished">Substancja klarująca</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Uzdatnianie wody</translation>
+        <translation type="vanished">Uzdatnianie wody</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Zioło</translation>
+        <translation type="vanished">Zioło</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aromat</translation>
+        <translation type="vanished">Aromat</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Inny</translation>
+        <translation type="vanished">Inny</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Gotowanie</translation>
+        <translation type="vanished">Gotowanie</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Zacieranie</translation>
+        <translation type="vanished">Zacieranie</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Fermentacja burzliwa</translation>
+        <translation type="vanished">Fermentacja burzliwa</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Fermentacja Cicha</translation>
+        <translation type="vanished">Fermentacja Cicha</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Butlekowanie</translation>
+        <translation type="vanished">Butlekowanie</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6853,27 +6853,27 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Przyprawa</translation>
+        <translation type="vanished">Przyprawa</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Substancja klarująca</translation>
+        <translation type="vanished">Substancja klarująca</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Uzdatnianie wody</translation>
+        <translation type="vanished">Uzdatnianie wody</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Zioło</translation>
+        <translation type="vanished">Zioło</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aromat</translation>
+        <translation type="vanished">Aromat</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Inny</translation>
+        <translation type="vanished">Inny</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6881,23 +6881,23 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Gotowanie</translation>
+        <translation type="vanished">Gotowanie</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Zacieranie</translation>
+        <translation type="vanished">Zacieranie</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Fermentacja Burzliwa</translation>
+        <translation type="vanished">Fermentacja Burzliwa</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Fermentacja Cicha</translation>
+        <translation type="vanished">Fermentacja Cicha</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Butlekowanie</translation>
+        <translation type="vanished">Butlekowanie</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6962,6 +6962,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID produktu</translation>
     </message>
 </context>
 <context>

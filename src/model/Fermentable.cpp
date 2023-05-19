@@ -174,7 +174,7 @@ Fermentable::Fermentable(QString name) :
    m_recommendMash            {false                   },
    m_ibuGalPerLb              {0.0                     },
    m_isMashed                 {false                   },
-   // ⮜⮜⮜ All below added f   or BeerJSON support ⮞⮞⮞
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup               {std::nullopt            },
    m_producer                 {""                      },
    m_productId                {""                      },
@@ -293,48 +293,48 @@ Fermentable::Fermentable(Fermentable const & other) :
 Fermentable::~Fermentable() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-Fermentable::Type                      Fermentable::type                     () const { return              this->m_type                     ; }
-double                                 Fermentable::amount                   () const { return              this->m_amount                   ; }
-bool                                   Fermentable::amountIsWeight           () const { return              this->m_amountIsWeight           ; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-double                                 Fermentable::yield_pct                () const { return              this->m_yield_pct                ; }
-double                                 Fermentable::color_srm                () const { return              this->m_color_srm                ; }
-bool                                   Fermentable::addAfterBoil             () const { return              this->m_addAfterBoil             ; }
-QString                                Fermentable::origin                   () const { return              this->m_origin                   ; }
-QString                                Fermentable::supplier                 () const { return              this->m_supplier                 ; }
-QString                                Fermentable::notes                    () const { return              this->m_notes                    ; }
-double                                 Fermentable::coarseFineDiff_pct       () const { return              this->m_coarseFineDiff_pct       ; }
-double                                 Fermentable::moisture_pct             () const { return              this->m_moisture_pct             ; }
-double                                 Fermentable::diastaticPower_lintner   () const { return              this->m_diastaticPower_lintner   ; }
-double                                 Fermentable::protein_pct              () const { return              this->m_protein_pct              ; }
-double                                 Fermentable::maxInBatch_pct           () const { return              this->m_maxInBatch_pct           ; }
-bool                                   Fermentable::recommendMash            () const { return              this->m_recommendMash            ; }
-double                                 Fermentable::ibuGalPerLb              () const { return              this->m_ibuGalPerLb              ; }
-bool                                   Fermentable::isMashed                 () const { return              this->m_isMashed                 ; }
+Fermentable::Type                      Fermentable::type                     () const { return                    this->m_type                     ; }
+double                                 Fermentable::amount                   () const { return                    this->m_amount                   ; }
+bool                                   Fermentable::amountIsWeight           () const { return                    this->m_amountIsWeight           ; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+double                                 Fermentable::yield_pct                () const { return                    this->m_yield_pct                ; }
+double                                 Fermentable::color_srm                () const { return                    this->m_color_srm                ; }
+bool                                   Fermentable::addAfterBoil             () const { return                    this->m_addAfterBoil             ; }
+QString                                Fermentable::origin                   () const { return                    this->m_origin                   ; }
+QString                                Fermentable::supplier                 () const { return                    this->m_supplier                 ; }
+QString                                Fermentable::notes                    () const { return                    this->m_notes                    ; }
+double                                 Fermentable::coarseFineDiff_pct       () const { return                    this->m_coarseFineDiff_pct       ; }
+double                                 Fermentable::moisture_pct             () const { return                    this->m_moisture_pct             ; }
+double                                 Fermentable::diastaticPower_lintner   () const { return                    this->m_diastaticPower_lintner   ; }
+double                                 Fermentable::protein_pct              () const { return                    this->m_protein_pct              ; }
+double                                 Fermentable::maxInBatch_pct           () const { return                    this->m_maxInBatch_pct           ; }
+bool                                   Fermentable::recommendMash            () const { return                    this->m_recommendMash            ; }
+double                                 Fermentable::ibuGalPerLb              () const { return                    this->m_ibuGalPerLb              ; }
+bool                                   Fermentable::isMashed                 () const { return                    this->m_isMashed                 ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-std::optional<Fermentable::GrainGroup> Fermentable::grainGroup               () const { return              this->m_grainGroup               ; }
-std::optional<int>                     Fermentable::grainGroupAsInt          () const { return castToOptInt(this->m_grainGroup)              ; }
-QString                                Fermentable::producer                 () const { return              this->m_producer                 ; }
-QString                                Fermentable::productId                () const { return              this->m_productId                ; }
-std::optional<double>                  Fermentable::fineGrindYield_pct       () const { return              this->m_fineGrindYield_pct       ; }
-std::optional<double>                  Fermentable::coarseGrindYield_pct     () const { return              this->m_coarseGrindYield_pct     ; }
-std::optional<double>                  Fermentable::potentialYield_sg        () const { return              this->m_potentialYield_sg        ; }
-std::optional<double>                  Fermentable::alphaAmylase_dextUnits   () const { return              this->m_alphaAmylase_dextUnits   ; }
-std::optional<double>                  Fermentable::kolbachIndex_pct         () const { return              this->m_kolbachIndex_pct         ; }
-std::optional<double>                  Fermentable::hardnessPrpGlassy_pct    () const { return              this->m_hardnessPrpGlassy_pct    ; }
-std::optional<double>                  Fermentable::hardnessPrpHalf_pct      () const { return              this->m_hardnessPrpHalf_pct      ; }
-std::optional<double>                  Fermentable::hardnessPrpMealy_pct     () const { return              this->m_hardnessPrpMealy_pct     ; }
-std::optional<double>                  Fermentable::kernelSizePrpPlump_pct   () const { return              this->m_kernelSizePrpPlump_pct   ; }
-std::optional<double>                  Fermentable::kernelSizePrpThin_pct    () const { return              this->m_kernelSizePrpThin_pct    ; }
-std::optional<double>                  Fermentable::friability_pct           () const { return              this->m_friability_pct           ; }
-std::optional<double>                  Fermentable::di_ph                    () const { return              this->m_di_ph                    ; }
-std::optional<double>                  Fermentable::viscosity_cP             () const { return              this->m_viscosity_cP             ; }
-std::optional<double>                  Fermentable::dmsP                     () const { return              this->m_dmsP                     ; }
-bool                                   Fermentable::dmsPIsMassPerVolume      () const { return              this->m_dmsPIsMassPerVolume      ; }
-std::optional<double>                  Fermentable::fan                      () const { return              this->m_fan                      ; }
-bool                                   Fermentable::fanIsMassPerVolume       () const { return              this->m_fanIsMassPerVolume       ; }
-std::optional<double>                  Fermentable::fermentability_pct       () const { return              this->m_fermentability_pct       ; }
-std::optional<double>                  Fermentable::betaGlucan               () const { return              this->m_betaGlucan               ; }
-bool                                   Fermentable::betaGlucanIsMassPerVolume() const { return              this->m_betaGlucanIsMassPerVolume; }
+std::optional<Fermentable::GrainGroup> Fermentable::grainGroup               () const { return                    this->m_grainGroup               ; }
+std::optional<int>                     Fermentable::grainGroupAsInt          () const { return Optional::toOptInt(this->m_grainGroup)              ; }
+QString                                Fermentable::producer                 () const { return                    this->m_producer                 ; }
+QString                                Fermentable::productId                () const { return                    this->m_productId                ; }
+std::optional<double>                  Fermentable::fineGrindYield_pct       () const { return                    this->m_fineGrindYield_pct       ; }
+std::optional<double>                  Fermentable::coarseGrindYield_pct     () const { return                    this->m_coarseGrindYield_pct     ; }
+std::optional<double>                  Fermentable::potentialYield_sg        () const { return                    this->m_potentialYield_sg        ; }
+std::optional<double>                  Fermentable::alphaAmylase_dextUnits   () const { return                    this->m_alphaAmylase_dextUnits   ; }
+std::optional<double>                  Fermentable::kolbachIndex_pct         () const { return                    this->m_kolbachIndex_pct         ; }
+std::optional<double>                  Fermentable::hardnessPrpGlassy_pct    () const { return                    this->m_hardnessPrpGlassy_pct    ; }
+std::optional<double>                  Fermentable::hardnessPrpHalf_pct      () const { return                    this->m_hardnessPrpHalf_pct      ; }
+std::optional<double>                  Fermentable::hardnessPrpMealy_pct     () const { return                    this->m_hardnessPrpMealy_pct     ; }
+std::optional<double>                  Fermentable::kernelSizePrpPlump_pct   () const { return                    this->m_kernelSizePrpPlump_pct   ; }
+std::optional<double>                  Fermentable::kernelSizePrpThin_pct    () const { return                    this->m_kernelSizePrpThin_pct    ; }
+std::optional<double>                  Fermentable::friability_pct           () const { return                    this->m_friability_pct           ; }
+std::optional<double>                  Fermentable::di_ph                    () const { return                    this->m_di_ph                    ; }
+std::optional<double>                  Fermentable::viscosity_cP             () const { return                    this->m_viscosity_cP             ; }
+std::optional<double>                  Fermentable::dmsP                     () const { return                    this->m_dmsP                     ; }
+bool                                   Fermentable::dmsPIsMassPerVolume      () const { return                    this->m_dmsPIsMassPerVolume      ; }
+std::optional<double>                  Fermentable::fan                      () const { return                    this->m_fan                      ; }
+bool                                   Fermentable::fanIsMassPerVolume       () const { return                    this->m_fanIsMassPerVolume       ; }
+std::optional<double>                  Fermentable::fermentability_pct       () const { return                    this->m_fermentability_pct       ; }
+std::optional<double>                  Fermentable::betaGlucan               () const { return                    this->m_betaGlucan               ; }
+bool                                   Fermentable::betaGlucanIsMassPerVolume() const { return                    this->m_betaGlucanIsMassPerVolume; }
 
 // Combined getters (all added for BeerJSON support)
 MassOrVolumeAmt                             Fermentable::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
@@ -385,7 +385,7 @@ void Fermentable::setProtein_pct              (double                    const  
 void Fermentable::setMaxInBatch_pct           (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct           , this->m_maxInBatch_pct           , this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Fermentable::setGrainGroup               (std::optional<GrainGroup> const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup               , this->m_grainGroup               , val                            ); }
-void Fermentable::setGrainGroupAsInt          (std::optional<int>        const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup               , this->m_grainGroup               , castFromOptInt<GrainGroup>(val)); }
+void Fermentable::setGrainGroupAsInt          (std::optional<int>        const   val) { this->setAndNotify(PropertyNames::Fermentable::grainGroup               , this->m_grainGroup               , Optional::fromOptInt<GrainGroup>(val)); }
 void Fermentable::setProducer                 (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::producer                 , this->m_producer                 , val                            ); }
 void Fermentable::setProductId                (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::productId                , this->m_productId                , val                            ); }
 void Fermentable::setFineGrindYield_pct       (std::optional<double>     const   val) { this->setAndNotify(PropertyNames::Fermentable::fineGrindYield_pct       , this->m_fineGrindYield_pct       , val                            ); }

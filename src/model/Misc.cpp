@@ -32,18 +32,42 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-namespace {
-   QStringList uses = QStringList() << "Boil" << "Mash" << "Primary" << "Secondary" << "Bottling";
-   QStringList types = QStringList() << "Spice" << "Fining" << "Water Agent" << "Herb" << "Flavor" << "Other";
-   QStringList amountTypes = QStringList() << "Weight" << "Volume";
-   QStringList typesTr =
-      QStringList() << Misc::tr("Spice") << Misc::tr("Fining") << Misc::tr("Water Agent") << Misc::tr("Herb") <<
-      Misc::tr("Flavor") << Misc::tr("Other");
-   QStringList usesTr =
-      QStringList() << Misc::tr("Boil") << Misc::tr("Mash") << Misc::tr("Primary") << Misc::tr("Secondary") <<
-      Misc::tr("Bottling");
-   QStringList amountTypesTr = QStringList() << Misc::tr("Weight") << Misc::tr("Volume");
-}
+EnumStringMapping const Misc::typeStringMapping {
+   {Misc::Type::Spice      , "spice"      },
+   {Misc::Type::Fining     , "fining"     },
+   {Misc::Type::Water_Agent, "water agent"},
+   {Misc::Type::Herb       , "herb"       },
+   {Misc::Type::Flavor     , "flavor"     },
+   {Misc::Type::Other      , "other"      },
+   {Misc::Type::Wood       , "wood"       },
+};
+
+EnumStringMapping const Misc::typeDisplayNames {
+   {Misc::Type::Spice      , tr("Spice"      )},
+   {Misc::Type::Fining     , tr("Fining"     )},
+   {Misc::Type::Water_Agent, tr("Water Agent")},
+   {Misc::Type::Herb       , tr("Herb"       )},
+   {Misc::Type::Flavor     , tr("Flavor"     )},
+   {Misc::Type::Other      , tr("Other"      )},
+   {Misc::Type::Wood       , tr("Wood"       )},
+};
+
+// This is not stored in BeerJSON, so we leave the original capitalisation
+EnumStringMapping const Misc::useStringMapping {
+   {Misc::Use::Boil     , "Boil"     },
+   {Misc::Use::Mash     , "Mash"     },
+   {Misc::Use::Primary  , "Primary"  },
+   {Misc::Use::Secondary, "Secondary"},
+   {Misc::Use::Bottling , "Bottling" }
+};
+
+EnumStringMapping const Misc::useDisplayNames {
+   {Misc::Use::Boil     , tr("Boil"     )},
+   {Misc::Use::Mash     , tr("Mash"     )},
+   {Misc::Use::Primary  , tr("Primary"  )},
+   {Misc::Use::Secondary, tr("Secondary")},
+   {Misc::Use::Bottling , tr("Bottling" )}
+};
 
 bool Misc::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -63,14 +87,15 @@ TypeLookup const Misc::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::PqEitherMassOrVolume),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountType    , Misc::m_amountType    ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time          , Misc::m_time          , Measurement::PhysicalQuantity::Time),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::typeString    , Misc::m_typeString    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time_min      , Misc::m_time_min      , Measurement::PhysicalQuantity::Time),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type          , Misc::m_type          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useString     , Misc::m_useString     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ),
+      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      , NonPhysicalQuantity::String         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     , NonPhysicalQuantity::String         ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    &NamedEntityWithInventory::typeLookup
@@ -82,24 +107,31 @@ static_assert(std::is_base_of<NamedEntityWithInventory, Misc>::value);
 Misc::Misc(QString name) :
    NamedEntityWithInventory{name, true},
    m_type          {Misc::Type::Spice},
-   m_use           {Misc::Use::Boil  },
-   m_time          {0.0              },
+   m_use           {std::nullopt     },
+   m_time_min      {0.0              },
    m_amount        {0.0              },
    m_amountIsWeight{false            },
    m_useFor        {""               },
-   m_notes         {""               } {
+   m_notes         {""               },
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   m_producer      {""               },
+   m_productId     {""               } {
    return;
 }
 
 Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_type                  {namedParameterBundle.val<Misc::Type>(PropertyNames::Misc::type          )},
-   m_use                   {namedParameterBundle.val<Misc::Use >(PropertyNames::Misc::use           )},
-   m_time                  {namedParameterBundle.val<double    >(PropertyNames::Misc::time          )},
-   m_amount                {namedParameterBundle.val<double    >(PropertyNames::Misc::amount        )},
-   m_amountIsWeight        {namedParameterBundle.val<bool      >(PropertyNames::Misc::amountIsWeight)},
-   m_useFor                {namedParameterBundle.val<QString   >(PropertyNames::Misc::useFor        )},
-   m_notes                 {namedParameterBundle.val<QString   >(PropertyNames::Misc::notes         )} {
+   m_type                  {namedParameterBundle.val<Misc::Type      >(PropertyNames::Misc::type     )},
+   m_use                   {namedParameterBundle.optEnumVal<Misc::Use>(PropertyNames::Misc::use      )},
+   m_time_min              {namedParameterBundle.val<double          >(PropertyNames::Misc::time_min )},
+   m_useFor                {namedParameterBundle.val<QString         >(PropertyNames::Misc::useFor   )},
+   m_notes                 {namedParameterBundle.val<QString         >(PropertyNames::Misc::notes    )},
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   m_producer              {namedParameterBundle.val<QString         >(PropertyNames::Misc::producer )},
+   m_productId             {namedParameterBundle.val<QString         >(PropertyNames::Misc::productId)} {
+
+   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle, PropertyNames::Misc::amount, PropertyNames::Misc::amountIsWeight, PropertyNames::Misc::amountWithUnits, this->m_amount, this->m_amountIsWeight);
+
    return;
 }
 
@@ -107,129 +139,62 @@ Misc::Misc(Misc const & other) :
    NamedEntityWithInventory{other                 },
    m_type                  {other.m_type          },
    m_use                   {other.m_use           },
-   m_time                  {other.m_time          },
+   m_time_min              {other.m_time_min      },
    m_amount                {other.m_amount        },
    m_amountIsWeight        {other.m_amountIsWeight},
    m_useFor                {other.m_useFor        },
-   m_notes                 {other.m_notes         } {
+   m_notes                 {other.m_notes         },
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   m_producer              {other.m_producer      },
+   m_productId             {other.m_productId     } {
    return;
 }
 
 Misc::~Misc() = default;
 
 //============================"GET" METHODS=====================================
-Misc::Type Misc::type() const { return m_type; }
+Misc::Type               Misc::type          () const { return                    m_type          ; }
+std::optional<Misc::Use> Misc::use           () const { return                    m_use           ; }
+std::optional<int>       Misc::useAsInt      () const { return Optional::toOptInt(m_use)          ; }
+double                   Misc::amount        () const { return                    m_amount        ; }
+double                   Misc::time_min      () const { return                    m_time_min      ; }
+bool                     Misc::amountIsWeight() const { return                    m_amountIsWeight; }
+QString                  Misc::useFor        () const { return                    m_useFor        ; }
+QString                  Misc::notes         () const { return                    m_notes         ; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+QString                  Misc::producer      () const { return                    m_producer      ; }
+QString                  Misc::productId     () const { return                    m_productId     ; }
 
-const QString Misc::typeString() const { return types.at(static_cast<int>(m_type)); }
-
-Misc::Use Misc::use() const { return m_use; }
-
-const QString Misc::useString() const { return uses.at(static_cast<int>(m_use)); }
-
-double Misc::amount() const { return m_amount; }
-
-double Misc::time() const { return m_time; }
-
-bool Misc::amountIsWeight() const { return m_amountIsWeight; }
-
-QString Misc::useFor() const { return m_useFor; }
-
-QString Misc::notes() const { return m_notes; }
-
-double Misc::inventory() const {
-   return InventoryUtils::getAmount(*this);
-}
-
-Misc::AmountType Misc::amountType() const { return m_amountIsWeight ? Misc::AmountType::Weight : Misc::AmountType::Volume; }
-
-const QString Misc::amountTypeString() const { return amountTypes.at(static_cast<int>(this->amountType())); }
-
-const QString Misc::typeStringTr() const {
-   int myType = static_cast<int>(this->m_type);
-   if (myType >= 0 && myType < typesTr.size()  ) {
-      return typesTr.at(myType);
-   }
-   // It's most likely a coding error if we get here
-   return "???";
-}
-
-const QString Misc::useStringTr() const {
-   int myUse = static_cast<int>(this->m_use);
-   if (myUse >= 0 && myUse < usesTr.size() ) {
-      return usesTr.at(myUse);
-   }
-   // It's most likely a coding error if we get here
-   return "???";
-}
-
-const QString Misc::amountTypeStringTr() const {
-   return amountTypesTr.at(static_cast<int>(this->amountType()));
-}
+MassOrVolumeAmt Misc::amountWithUnits() const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
 //============================"SET" METHODS=====================================
-void Misc::setType(Type t) {
-   this->setAndNotify( PropertyNames::Misc::type, this->m_type, t);
+void Misc::setType          (Type                     const   val) { this->setAndNotify( PropertyNames::Misc::type          , this->m_type          , val); }
+void Misc::setUse           (std::optional<Misc::Use> const   val) { this->setAndNotify( PropertyNames::Misc::use           , this->m_use           , val); }
+void Misc::setUseAsInt      (std::optional<int>       const   val) { this->setAndNotify( PropertyNames::Misc::use           , this->m_use           , Optional::fromOptInt<Use>(val)); }
+void Misc::setUseFor        (QString                  const & val) { this->setAndNotify( PropertyNames::Misc::useFor        , this->m_useFor        , val); }
+void Misc::setNotes         (QString                  const & val) { this->setAndNotify( PropertyNames::Misc::notes         , this->m_notes         , val); }
+void Misc::setAmountIsWeight(bool                     const   val) { this->setAndNotify( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val); }
+void Misc::setAmount        (double                   const   val) { this->setAndNotify( PropertyNames::Misc::amount        , this->m_amount        , this->enforceMin(val, "amount")); }
+void Misc::setTime_min      (double                   const   val) { this->setAndNotify( PropertyNames::Misc::time_min      , this->m_time_min      , this->enforceMin(val, "time_min"  )); }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+void Misc::setProducer      (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::producer       , this->m_producer      , val); }
+void Misc::setProductId     (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::productId      , this->m_productId     , val); }
+
+
+void Misc::setAmountWithUnits(MassOrVolumeAmt const   val) {
+   this->setAndNotify(PropertyNames::Misc::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
+   return;
 }
 
-void Misc::setUse(Use u) {
-   this->setAndNotify( PropertyNames::Misc::use, this->m_use, u);
-}
-
-void Misc::setUseFor(QString const & var) {
-   this->setAndNotify( PropertyNames::Misc::useFor, this->m_useFor, var );
-}
-
-void Misc::setNotes(QString const & var) {
-   this->setAndNotify( PropertyNames::Misc::notes, this->m_notes, var );
-}
-
-void Misc::setAmountType(Misc::AmountType t) {
-   this->setAmountIsWeight(t == Misc::AmountType::Weight);
-}
-
-void Misc::setAmountIsWeight(bool var) {
-   this->setAndNotify( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, var);
-}
-
-void Misc::setAmount(double var) {
-   this->setAndNotify( PropertyNames::Misc::amount, this->m_amount, this->enforceMin(var, "amount"));
+//========================OTHER METHODS=========================================
+double     Misc::inventory() const {
+   return InventoryUtils::getAmount(*this);
 }
 
 void Misc::setInventoryAmount(double var) {
    InventoryUtils::setAmount(*this, var);
    return;
-}
-
-void Misc::setTime(double var) {
-   this->setAndNotify( PropertyNames::Misc::time, this->m_time, this->enforceMin(var, "time"));
-}
-
-//========================OTHER METHODS=========================================
-
-bool Misc::isValidUse( const QString& var )
-{
-   static const QString uses[] = {"Boil", "Mash", "Primary", "Secondary", "Bottling"};
-   static const unsigned int size = 5;
-   unsigned int i;
-
-   for( i = 0; i < size; ++i )
-      if (var == uses[i] )
-         return true;
-
-   return false;
-}
-
-bool Misc::isValidType( const QString& var )
-{
-   static const QString types[] = {"Spice", "Fining", "Water Agent", "Herb", "Flavor", "Other"};
-   static const unsigned int size = 6;
-   unsigned int i;
-
-   for( i = 0; i < size; ++i )
-      if (var == types[i] )
-         return true;
-
-   return false;
 }
 
 Recipe * Misc::getOwningRecipe() {

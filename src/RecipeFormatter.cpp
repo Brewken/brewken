@@ -643,14 +643,10 @@ public:
 
          mtable += QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td></tr>")
                .arg(misc->name())
-               .arg(misc->typeStringTr())
-               .arg(misc->useStringTr())
-               .arg(Measurement::displayAmount(Measurement::Amount{
-                                                  misc->amount(),
-                                                  misc->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-                                               },
-                                               3))
-               .arg(Measurement::displayAmount(Measurement::Amount{misc->time(), Measurement::Units::minutes}));
+               .arg(Misc::typeDisplayNames[misc->type()])
+               .arg(Misc::useDisplayNames[misc->use()])
+               .arg(Measurement::displayAmount(misc->amountWithUnits()))
+               .arg(Measurement::displayAmount(Measurement::Amount{misc->time_min(), Measurement::Units::minutes}));
       }
       mtable += "</table>";
       return mtable;
@@ -677,15 +673,10 @@ public:
          for (int ii = 0; ii < size; ++ii) {
             Misc* misc = miscs[ii];
             names.append(misc->name());
-            types.append(misc->typeStringTr());
-            uses.append(misc->useStringTr());
-            amounts.append(
-               Measurement::displayAmount(Measurement::Amount{
-                                             misc->amount(),
-                                             misc->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-                                          }, 3)
-            );
-            times.append(Measurement::displayAmount(Measurement::Amount{misc->time(),  Measurement::Units::minutes}));
+            types.append(Misc::typeDisplayNames[misc->type()]);
+            uses.append(Misc::useDisplayNames[misc->use()]);
+            amounts.append(Measurement::displayAmount(misc->amountWithUnits()));
+            times.append(Measurement::displayAmount(Measurement::Amount{misc->time_min(),  Measurement::Units::minutes}));
          }
 
          padAllToMaxLength(&names);
@@ -1407,14 +1398,13 @@ QString RecipeFormatter::getToolTip(Misc* misc) {
    body += QString("<table id=\"tooltip\">");
    body += QString("<caption>%1</caption>")
          .arg( misc->name() );
-
    // First row -- type and use
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Type"))
-           .arg(misc->typeStringTr());
+           .arg(Misc::typeDisplayNames[misc->type()]);
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Use"))
-           .arg(misc->useStringTr());
+           .arg(Misc::useDisplayNames[misc->use()]);
 
    body += "</table></body></html>";
 

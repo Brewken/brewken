@@ -67,10 +67,7 @@ HopEditor::HopEditor(QWidget * parent) :
    BT_COMBO_BOX_INIT(HopEditor, comboBox_hopForm, Hop, form);
    BT_COMBO_BOX_INIT(HopEditor, comboBox_hopUse , Hop, use );
 
-   connect(this->pushButton_new,    &QAbstractButton::clicked, this, &HopEditor::clickedNew   );
-   connect(this->pushButton_save,   &QAbstractButton::clicked, this, &HopEditor::save         );
-   connect(this->pushButton_cancel, &QAbstractButton::clicked, this, &HopEditor::clearAndClose);
-
+   this->connectSignalsAndSlots();
    return;
 }
 

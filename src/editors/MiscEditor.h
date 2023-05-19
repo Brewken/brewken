@@ -26,6 +26,8 @@
 #include <QMetaProperty>
 #include <QVariant>
 
+#include "editors/EditorBase.h"
+
 // Forward declarations.
 class Misc;
 
@@ -33,34 +35,27 @@ class Misc;
  * \class MiscEditor
  *
  * \brief View/controller dialog for editing miscs.
+ *
+ *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
+ *        inheritance from the Ui base.
  */
-class MiscEditor : public QDialog, private Ui::miscEditor {
+class MiscEditor : public QDialog, public Ui::miscEditor, public EditorBase<Misc, MiscEditor> {
    Q_OBJECT
 
 public:
-   MiscEditor( QWidget *parent=nullptr );
+   MiscEditor(QWidget * parent = nullptr);
    virtual ~MiscEditor();
-   //! Set the misc we wish to view/edit.
-   void setMisc( Misc* m );
-  //! Create a misc with folders
+
+   void writeFieldsToEditItem();
+   void writeLateFieldsToEditItem();
+   void readFieldsFromEditItem(std::optional<QString> propName);
 
 public slots:
-   //! Save changes.
+   // Standard editor slots
    void save();
-   //! Clear dialog and close.
    void clearAndClose();
-   //! Add a new misc
-   void newMisc(QString folder = "");
    void changed(QMetaProperty, QVariant);
-   void setIsWeight(bool state);
-
-private:
-   Misc* obsMisc;
-   /*! Updates the UI elements effected by the \b metaProp of
-    *  the misc we are watching. If \b metaProp is null,
-    *  then update all the UI elements at once.
-    */
-   void showChanges(QMetaProperty* metaProp = nullptr);
+   void clickedNew();
 };
 
 #endif

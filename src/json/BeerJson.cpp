@@ -328,38 +328,20 @@ namespace {
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json TODO
+   // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const BEER_JSON_MISC_TYPE_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Misc::Type
-      {Misc::Type::Spice      , "spice"      },
-      {Misc::Type::Fining     , "fining"     },
-      {Misc::Type::Water_Agent, "water agent"},
-      {Misc::Type::Herb       , "herb"       },
-      {Misc::Type::Flavor     , "flavor"     },
-///   {Misc::Type::Wood       , "wood"       },
-      {Misc::Type::Other      , "other"      },
-   };
-   // .:TBD.JSON:. There is no equivalent of the Misc::Use enum in BeerJSON, just the use_for string
-//   EnumStringMapping const BEER_JSON_MISC_USE_MAPPER {
-//      {"Boil",      Misc::Use::Boil},
-//      {"Mash",      Misc::Use::Mash},
-//      {"Primary",   Misc::Use::Primary},
-//      {"Secondary", Misc::Use::Secondary},
-//      {"Bottling",  Misc::Use::Bottling}
-//   };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousBase {
       // Type                                         XPath               Q_PROPERTY                        Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,       "name",             PropertyNames::NamedEntity::name, },
-      {JsonRecordDefinition::FieldType::String,       "producer",         BtString::NULL_STR,               }, // .:TODO.JSON:. Add this to Misc
-      {JsonRecordDefinition::FieldType::String,       "product_id",       BtString::NULL_STR,               }, // .:TODO.JSON:. Add this to Misc
-      {JsonRecordDefinition::FieldType::Enum,         "type",             PropertyNames::Fermentable::type, &BEER_JSON_MISC_TYPE_MAPPER},
+      {JsonRecordDefinition::FieldType::String,       "producer",         PropertyNames::Misc::producer   , },
+      {JsonRecordDefinition::FieldType::String,       "product_id",       PropertyNames::Misc::productId  , },
+      {JsonRecordDefinition::FieldType::Enum,         "type",             PropertyNames::Fermentable::type, &Misc::typeStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousType_ExclBase {
-      // Type                                         XPath                             Q_PROPERTY                    Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::String,       "use_for",                        PropertyNames::Misc::useFor,  },
-      {JsonRecordDefinition::FieldType::String,       "notes",                          PropertyNames::Misc::notes,   },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Misc::amount,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Also need to reference Misc::amountIsWeight PLUS we need to cope with UnitType
+      // Type                                                       XPath               Q_PROPERTY                            Enum/Unit Mapper
+      {JsonRecordDefinition::FieldType::String,                     "use_for"         , PropertyNames::Misc::useFor         , },
+      {JsonRecordDefinition::FieldType::String,                     "notes"           , PropertyNames::Misc::notes          , },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Misc::amountWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       "miscellaneous_ingredients",

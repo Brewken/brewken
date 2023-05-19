@@ -2235,10 +2235,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2370,11 +2366,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Massa</translation>
+        <translation type="vanished">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volum</translation>
+        <translation type="vanished">Volum</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2420,58 +2420,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Nom d&apos;ingredient extra</translation>
+        <translation type="obsolete">Nom d&apos;ingredient extra</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Nom d&apos;ingredient extra:</translation>
+        <translation type="obsolete">Nom d&apos;ingredient extra:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Especie</translation>
+        <translation type="vanished">Especie</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Clarificador</translation>
+        <translation type="vanished">Clarificador</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Agent per l&apos;aigua</translation>
+        <translation type="vanished">Agent per l&apos;aigua</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Herba</translation>
+        <translation type="vanished">Herba</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Sabor</translation>
+        <translation type="vanished">Sabor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Altre</translation>
+        <translation type="vanished">Altre</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Bullit</translation>
+        <translation type="vanished">Bullit</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceració</translation>
+        <translation type="vanished">Maceració</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primari</translation>
+        <translation type="vanished">Primari</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundari</translation>
+        <translation type="vanished">Secundari</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Embotellar</translation>
+        <translation type="vanished">Embotellar</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6939,27 +6939,27 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Especie</translation>
+        <translation type="vanished">Especie</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Clarificador</translation>
+        <translation type="vanished">Clarificador</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Agent per a aigua</translation>
+        <translation type="vanished">Agent per a aigua</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Herba</translation>
+        <translation type="vanished">Herba</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Sabor</translation>
+        <translation type="vanished">Sabor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Altres</translation>
+        <translation type="vanished">Altres</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6967,23 +6967,23 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ebullició</translation>
+        <translation type="vanished">Ebullició</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceració</translation>
+        <translation type="vanished">Maceració</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primari</translation>
+        <translation type="vanished">Primari</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundari</translation>
+        <translation type="vanished">Secundari</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Embotellar</translation>
+        <translation type="vanished">Embotellar</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7048,6 +7048,14 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID del producte</translation>
     </message>
 </context>
 <context>

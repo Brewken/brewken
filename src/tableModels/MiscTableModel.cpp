@@ -35,7 +35,7 @@
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
-
+#include "widgets/BtComboBox.h"
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    BtTableModelInventory{
@@ -43,8 +43,8 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
       editable,
       {
        SMART_COLUMN_HEADER_DEFN(MiscTableModel, Name     , tr("Name"       ),           NonPhysicalQuantity::String),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Type     , tr("Type"       ),           NonPhysicalQuantity::String),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Use      , tr("Use"        ),           NonPhysicalQuantity::String),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Type     , tr("Type"       ),           NonPhysicalQuantity::Enum  ),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Use      , tr("Use"        ),           NonPhysicalQuantity::Enum  ),
        SMART_COLUMN_HEADER_DEFN(MiscTableModel, Time     , tr("Time"       ), Measurement::PhysicalQuantity::Time  ),
        SMART_COLUMN_HEADER_DEFN(MiscTableModel, Amount   , tr("Amount"     ), Measurement::PqEitherMassOrVolume    ),
        SMART_COLUMN_HEADER_DEFN(MiscTableModel, Inventory, tr("Inventory"  ), Measurement::PqEitherMassOrVolume    ),
@@ -212,7 +212,7 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
          break;
       case MiscTableModel::ColumnIndex::Type:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->typeStringTr());
+            return QVariant(Misc::typeDisplayNames[row->type()]);
          }
          if (role == Qt::UserRole) {
             return QVariant(static_cast<int>(row->type()));
@@ -220,15 +220,15 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
          break;
       case MiscTableModel::ColumnIndex::Use:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->useStringTr());
+            return QVariant(Misc::useDisplayNames[row->use()]);
          }
          if (role == Qt::UserRole) {
-            return QVariant(static_cast<int>(row->use()));
+            return QVariant::fromValue(Optional::toOptInt(row->use()));
          }
          return QVariant();
       case MiscTableModel::ColumnIndex::Time:
          if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayAmount(Measurement::Amount{row->time(), Measurement::Units::minutes},
+            return QVariant(Measurement::displayAmount(Measurement::Amount{row->time_min(), Measurement::Units::minutes},
                                                        3,
                                                        std::nullopt,
                                                        this->getColumnInfo(columnIndex).getForcedRelativeScale()));
@@ -264,10 +264,10 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
          break;
       case MiscTableModel::ColumnIndex::IsWeight:
          if (role == Qt::DisplayRole) {
-            return QVariant(row->amountTypeStringTr());
+            return QVariant(Measurement::descAmountIsWeight[static_cast<int>(row->amountIsWeight())]);
          }
          if (role == Qt::UserRole) {
-            return QVariant(static_cast<int>(row->amountType()));
+            return QVariant(row->amountIsWeight());
          }
          break;
       default:
@@ -314,7 +314,7 @@ bool MiscTableModel::setData(QModelIndex const & index,
       case MiscTableModel::ColumnIndex::Name:
          if (value.canConvert(QVariant::String)) {
             MainWindow::instance().doOrRedoUpdate(*row,
-                                                  PropertyNames::NamedEntity::name,
+                                                  TYPE_INFO(Misc, NamedEntity, name),
                                                   value.toString(),
                                                   tr("Change Misc Name"));
          } else {
@@ -325,19 +325,23 @@ bool MiscTableModel::setData(QModelIndex const & index,
          if (!value.canConvert(QVariant::Int)) {
             return false;
          }
-         MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Misc::type,
-                                               value.toInt(),
-                                               tr("Change Misc Type"));
+         MainWindow::instance().doOrRedoUpdate(
+            new SimpleUndoableUpdate(*row,
+                                     TYPE_INFO(Misc, type),
+                                     value.toInt(),
+                                     tr("Change Misc Type"))
+         );
          break;
       case MiscTableModel::ColumnIndex::Use:
-         if (!value.canConvert(QVariant::Int)) {
+         if (!value.canConvert<std::optional<int>>()) {
             return false;
          }
-         MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Misc::use,
-                                               value.toInt(),
-                                               tr("Change Misc Use"));
+         MainWindow::instance().doOrRedoUpdate(
+            new SimpleUndoableUpdate(*row,
+                                     TYPE_INFO(Misc, use),
+                                     value,
+                                     tr("Change Misc Use"))
+         );
          break;
       case MiscTableModel::ColumnIndex::Time:
          if (!value.canConvert(QVariant::String)) {
@@ -345,7 +349,7 @@ bool MiscTableModel::setData(QModelIndex const & index,
          }
          MainWindow::instance().doOrRedoUpdate(
             *row,
-            PropertyNames::Misc::time,
+            TYPE_INFO(Misc, time_min),
             Measurement::qStringToSI(value.toString(),
                                      Measurement::PhysicalQuantity::Time,
                                      this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -359,7 +363,7 @@ bool MiscTableModel::setData(QModelIndex const & index,
          }
          MainWindow::instance().doOrRedoUpdate(
             *row,
-            PropertyNames::NamedEntityWithInventory::inventory,
+            TYPE_INFO(Misc, NamedEntityWithInventory, inventory),
             Measurement::qStringToSI(value.toString(),
                                      physicalQuantity,
                                      this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -373,7 +377,7 @@ bool MiscTableModel::setData(QModelIndex const & index,
          }
          MainWindow::instance().doOrRedoUpdate(
             *row,
-            PropertyNames::Misc::amount,
+            TYPE_INFO(Misc, amount),
             Measurement::qStringToSI(value.toString(),
                                      physicalQuantity,
                                      this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
@@ -382,12 +386,12 @@ bool MiscTableModel::setData(QModelIndex const & index,
          );
          break;
       case MiscTableModel::ColumnIndex::IsWeight:
-         if (!value.canConvert(QVariant::Int)) {
+         if (!value.canConvert(QVariant::Bool)) {
             return false;
          }
          MainWindow::instance().doOrRedoUpdate(*row,
-                                               PropertyNames::Misc::amountType,
-                                               value.toInt(),
+                                               TYPE_INFO(Misc, amountIsWeight),
+                                               value.toBool(),
                                                tr("Change Misc Amount Type"));
          break;
       default:
@@ -448,29 +452,19 @@ QWidget* MiscItemDelegate::createEditor(QWidget *parent,
                                         QModelIndex const & index) const {
    auto const columnIndex = static_cast<MiscTableModel::ColumnIndex>(index.column());
    if (columnIndex == MiscTableModel::ColumnIndex::Type) {
-      QComboBox *box = new QComboBox(parent);
-      box->addItem(tr("Spice"));
-      box->addItem(tr("Fining"));
-      box->addItem(tr("Water Agent"));
-      box->addItem(tr("Herb"));
-      box->addItem(tr("Flavor"));
-      box->addItem(tr("Other"));
-      box->setMinimumWidth(box->minimumSizeHint().width());
-      box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      return box;
+      BtComboBox * typeBox = new BtComboBox(parent);
+      BT_COMBO_BOX_INIT_NOMV(MiscItemDelegate::createEditor, typeBox, Misc, type);
+      typeBox->setMinimumWidth(typeBox->minimumSizeHint().width());
+      typeBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+      return typeBox;
    }
 
    if (columnIndex == MiscTableModel::ColumnIndex::Use) {
-      QComboBox *box = new QComboBox(parent);
-
-      box->addItem(tr("Boil"));
-      box->addItem(tr("Mash"));
-      box->addItem(tr("Primary"));
-      box->addItem(tr("Secondary"));
-      box->addItem(tr("Bottling"));
-      box->setMinimumWidth(box->minimumSizeHint().width());
-      box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      return box;
+      BtComboBox * useBox = new BtComboBox(parent);
+      BT_COMBO_BOX_INIT_NOMV(MiscItemDelegate::createEditor, useBox, Misc, use);
+      useBox->setMinimumWidth(useBox->minimumSizeHint().width());
+      useBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+      return useBox;
    }
 
    if (columnIndex == MiscTableModel::ColumnIndex::IsWeight) {
@@ -490,10 +484,19 @@ void MiscItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
    auto const columnIndex = static_cast<MiscTableModel::ColumnIndex>(index.column());
 
    if (columnIndex == MiscTableModel::ColumnIndex::Type ||
-       columnIndex == MiscTableModel::ColumnIndex::Use ||
-       columnIndex == MiscTableModel::ColumnIndex::IsWeight) {
+       columnIndex == MiscTableModel::ColumnIndex::Use) {
+      BtComboBox * box = qobject_cast<BtComboBox *>(editor);
+      if (!box) {
+         return;
+      }
+      if (columnIndex == MiscTableModel::ColumnIndex::Type) {
+         box->setValue(static_cast<Misc::Type>(index.model()->data(index, Qt::UserRole).toInt()));
+      } else {
+         box->setValue(Optional::fromOptInt<Misc::Use>(index.model()->data(index, Qt::UserRole).value<std::optional<int> >()));
+      }
+   } else if (columnIndex == MiscTableModel::ColumnIndex::IsWeight) {
       QComboBox* box = qobject_cast<QComboBox*>(editor);
-      if (box == nullptr) {
+      if (!box) {
          return;
       }
       box->setCurrentIndex(index.model()->data(index, Qt::UserRole).toInt());
@@ -508,6 +511,7 @@ void MiscItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
 void MiscItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
    auto const columnIndex = static_cast<MiscTableModel::ColumnIndex>(index.column());
+///   ××× AND OBVIOUSL THIS IS WRONG TOO!
    if (columnIndex == MiscTableModel::ColumnIndex::Type ||
        columnIndex == MiscTableModel::ColumnIndex::Use ||
        columnIndex == MiscTableModel::ColumnIndex::IsWeight) {

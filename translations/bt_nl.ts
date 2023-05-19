@@ -2235,10 +2235,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2370,11 +2366,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Gewicht</translation>
+        <translation type="vanished">Gewicht</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volume</translation>
+        <translation type="vanished">Volume</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2420,58 +2420,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">naam Diversen</translation>
+        <translation type="obsolete">naam Diversen</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">naam Diversen:</translation>
+        <translation type="obsolete">naam Diversen:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Specerij</translation>
+        <translation type="vanished">Specerij</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Fining</translation>
+        <translation type="vanished">Fining</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Waterbehandeling</translation>
+        <translation type="vanished">Waterbehandeling</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Kruid</translation>
+        <translation type="vanished">Kruid</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Smaak</translation>
+        <translation type="vanished">Smaak</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Overig</translation>
+        <translation type="vanished">Overig</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Koken</translation>
+        <translation type="vanished">Koken</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maisch</translation>
+        <translation type="vanished">Maisch</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Hoofdvergisting</translation>
+        <translation type="vanished">Hoofdvergisting</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundaire</translation>
+        <translation type="vanished">Secundaire</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Bottelen</translation>
+        <translation type="vanished">Bottelen</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6853,27 +6853,27 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Specerij</translation>
+        <translation type="vanished">Specerij</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Fining</translation>
+        <translation type="vanished">Fining</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Waterbehandeling</translation>
+        <translation type="vanished">Waterbehandeling</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Kruid</translation>
+        <translation type="vanished">Kruid</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Smaak</translation>
+        <translation type="vanished">Smaak</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Overig</translation>
+        <translation type="vanished">Overig</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6881,23 +6881,23 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Koken</translation>
+        <translation type="vanished">Koken</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maisch</translation>
+        <translation type="vanished">Maisch</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Hoofdvergististing</translation>
+        <translation type="vanished">Hoofdvergististing</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundair</translation>
+        <translation type="vanished">Secundair</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Bottelen</translation>
+        <translation type="vanished">Bottelen</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6962,6 +6962,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Product ID</translation>
     </message>
 </context>
 <context>

@@ -2160,10 +2160,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2295,11 +2291,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Hmotnost</translation>
+        <translation type="obsolete">Hmotnost</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objem</translation>
+        <translation type="obsolete">Objem</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2345,58 +2345,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Název přípravku</translation>
+        <translation type="obsolete">Název přípravku</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Název přípravku:</translation>
+        <translation type="obsolete">Název přípravku:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Koření</translation>
+        <translation type="vanished">Koření</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Čeření</translation>
+        <translation type="vanished">Čeření</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Úprava vody</translation>
+        <translation type="vanished">Úprava vody</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Bylina</translation>
+        <translation type="vanished">Bylina</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Příchuť</translation>
+        <translation type="vanished">Příchuť</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Jiný</translation>
+        <translation type="vanished">Jiný</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Chmelovar</translation>
+        <translation type="vanished">Chmelovar</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Rmutování</translation>
+        <translation type="vanished">Rmutování</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Hlavní kvašení</translation>
+        <translation type="vanished">Hlavní kvašení</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Dokvašování</translation>
+        <translation type="vanished">Dokvašování</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Stáčení</translation>
+        <translation type="vanished">Stáčení</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6859,27 +6859,27 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Koření</translation>
+        <translation type="vanished">Koření</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Čeření</translation>
+        <translation type="vanished">Čeření</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Úprava vody</translation>
+        <translation type="vanished">Úprava vody</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Bylina</translation>
+        <translation type="vanished">Bylina</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Příchuť</translation>
+        <translation type="vanished">Příchuť</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Jiný</translation>
+        <translation type="vanished">Jiný</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6887,23 +6887,23 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Chmelovar</translation>
+        <translation type="vanished">Chmelovar</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Rmutování</translation>
+        <translation type="vanished">Rmutování</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Hlavní kvašení</translation>
+        <translation type="vanished">Hlavní kvašení</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Dokvašování</translation>
+        <translation type="vanished">Dokvašování</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Stáčení</translation>
+        <translation type="vanished">Stáčení</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6968,6 +6968,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID produktu</translation>
     </message>
 </context>
 <context>

@@ -119,4 +119,10 @@ BtStringConst const & Measurement::getSettingsName(PhysicalQuantity const physic
 namespace Measurement {
    Mixed2PhysicalQuantities const PqEitherMassOrVolume              {std::make_tuple(PhysicalQuantity::Mass,              PhysicalQuantity::Volume             )};
    Mixed2PhysicalQuantities const PqEitherMassOrVolumeConcentration {std::make_tuple(PhysicalQuantity::MassConcentration, PhysicalQuantity::VolumeConcentration)};
+
+   std::array<QString const, 2> descAmountIsWeight {
+      QObject::tr("Volume"), // amountIsWeight() == false
+      QObject::tr("Weight")  // amountIsWeight() == true
+   };
+
 }

@@ -25,6 +25,7 @@
 #include <QVector>
 
 #include "Logging.h"
+#include "utils/TypeLookup.h"
 
 /**
  * \brief Associates an enum value with a string representation (eg in the DB or BeerXML or BeerJSON).  Storing a
@@ -125,10 +126,17 @@ public:
     *
     *        (We could do similar for stringToEnum, but it would be a bit more clunky as the compiler wouldn't be able
     *        to deduce the enum type automatically.)
+    *
+    *        See comments in widgets/SmartField.h for why we have the enable_if_t here
     */
-   template<typename E>
+   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
    QString operator[](E const enumValue) const {
       return this->enumToString(enumValue);
+   }
+
+   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+   QString operator[](std::optional<E> const optionalEnumValue) const {
+      return optionalEnumValue ? this->enumToString(*optionalEnumValue) : "";
    }
 
    /**

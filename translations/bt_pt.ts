@@ -2187,10 +2187,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2322,11 +2318,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Peso</translation>
+        <translation type="obsolete">Peso</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Volume</translation>
+        <translation type="obsolete">Volume</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2372,58 +2372,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Nome do Adjunto</translation>
+        <translation type="obsolete">Nome do Adjunto</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Nome do Adjunto</translation>
+        <translation type="obsolete">Nome do Adjunto</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Tempero</translation>
+        <translation type="vanished">Tempero</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Refinação</translation>
+        <translation type="vanished">Refinação</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Corretor de água</translation>
+        <translation type="vanished">Corretor de água</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Erva</translation>
+        <translation type="vanished">Erva</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aroma</translation>
+        <translation type="vanished">Aroma</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Outro</translation>
+        <translation type="vanished">Outro</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ferver</translation>
+        <translation type="vanished">Ferver</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mosto</translation>
+        <translation type="vanished">Mosto</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primário</translation>
+        <translation type="vanished">Primário</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundário</translation>
+        <translation type="vanished">Secundário</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Engarrafamento</translation>
+        <translation type="vanished">Engarrafamento</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6887,27 +6887,27 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Tempero</translation>
+        <translation type="vanished">Tempero</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Ajustes</translation>
+        <translation type="vanished">Ajustes</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Corretor de água</translation>
+        <translation type="vanished">Corretor de água</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Erva</translation>
+        <translation type="vanished">Erva</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Sabor</translation>
+        <translation type="vanished">Sabor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Outro</translation>
+        <translation type="vanished">Outro</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6915,23 +6915,23 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ferver</translation>
+        <translation type="vanished">Ferver</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mosto</translation>
+        <translation type="vanished">Mosto</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primário</translation>
+        <translation type="vanished">Primário</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundário</translation>
+        <translation type="vanished">Secundário</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Engarrafamento</translation>
+        <translation type="vanished">Engarrafamento</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6995,6 +6995,14 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

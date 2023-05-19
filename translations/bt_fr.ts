@@ -2239,10 +2239,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2374,11 +2370,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Poids</translation>
+        <translation type="vanished">Poids</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volume</translation>
+        <translation type="vanished">Volume</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2424,58 +2424,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Nom divers</translation>
+        <translation type="obsolete">Nom divers</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Nom divers :</translation>
+        <translation type="obsolete">Nom divers :</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Épice</translation>
+        <translation type="vanished">Épice</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Clarifiant</translation>
+        <translation type="vanished">Clarifiant</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Agent d&apos;eau</translation>
+        <translation type="vanished">Agent d&apos;eau</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Herbes</translation>
+        <translation type="vanished">Herbes</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Saveur</translation>
+        <translation type="vanished">Saveur</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Autres</translation>
+        <translation type="vanished">Autres</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ébullition</translation>
+        <translation type="vanished">Ébullition</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Empâtage</translation>
+        <translation type="vanished">Empâtage</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primaire</translation>
+        <translation type="vanished">Primaire</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secondaire</translation>
+        <translation type="vanished">Secondaire</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Embouteillage</translation>
+        <translation type="vanished">Embouteillage</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6945,27 +6945,27 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Épices</translation>
+        <translation type="vanished">Épices</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Clarifiant</translation>
+        <translation type="vanished">Clarifiant</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Agent d&apos;eau</translation>
+        <translation type="vanished">Agent d&apos;eau</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Herbes</translation>
+        <translation type="vanished">Herbes</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Saveur</translation>
+        <translation type="vanished">Saveur</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Autres</translation>
+        <translation type="vanished">Autres</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6973,23 +6973,23 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ébullition</translation>
+        <translation type="vanished">Ébullition</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Empâtage</translation>
+        <translation type="vanished">Empâtage</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primaire</translation>
+        <translation type="vanished">Primaire</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secondaire</translation>
+        <translation type="vanished">Secondaire</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Embouteillage</translation>
+        <translation type="vanished">Embouteillage</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7054,6 +7054,14 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID du produit</translation>
     </message>
 </context>
 <context>

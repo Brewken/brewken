@@ -32,8 +32,11 @@ class Hop;
  * \class HopEditor
  *
  * \brief View/controller class for creating and editing Hops.
+ *
+ *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
+ *        inheritance from the Ui base.
  */
-class HopEditor : public QDialog, private Ui::hopEditor, public EditorBase<Hop, HopEditor>  {
+class HopEditor : public QDialog, public Ui::hopEditor, public EditorBase<Hop, HopEditor>  {
    Q_OBJECT
 
 public:

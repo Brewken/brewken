@@ -2128,10 +2128,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2263,10 +2259,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">重量</translation>
+        <translation type="obsolete">重量</translation>
     </message>
     <message>
-        <source>Volume</source>
+        <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2313,58 +2309,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">其他名称</translation>
+        <translation type="obsolete">其他名称</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">其他名称：</translation>
+        <translation type="obsolete">其他名称：</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>香料Spice</translation>
+        <translation type="vanished">香料Spice</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>罚款Fining</translation>
+        <translation type="vanished">罚款Fining</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>水剂Water Agent</translation>
+        <translation type="vanished">水剂Water Agent</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>草本植物Herb</translation>
+        <translation type="vanished">草本植物Herb</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>味Flavor</translation>
+        <translation type="vanished">味Flavor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>其他</translation>
+        <translation type="vanished">其他</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>熬Boil</translation>
+        <translation type="vanished">熬Boil</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>糖化Mash</translation>
+        <translation type="vanished">糖化Mash</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>主要</translation>
+        <translation type="vanished">主要</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>次要Secondary</translation>
+        <translation type="vanished">次要Secondary</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>装瓶</translation>
+        <translation type="vanished">装瓶</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6805,27 +6801,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Spice</source>
-        <translation>香料Spice</translation>
+        <translation type="vanished">香料Spice</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>罚款Fining</translation>
+        <translation type="vanished">罚款Fining</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>水剂Water Agent</translation>
+        <translation type="vanished">水剂Water Agent</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>草本植物Herb</translation>
+        <translation type="vanished">草本植物Herb</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>味Flavor</translation>
+        <translation type="vanished">味Flavor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>其他</translation>
+        <translation type="vanished">其他</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6833,23 +6829,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation>熬Boil</translation>
+        <translation type="vanished">熬Boil</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>糖化Mash</translation>
+        <translation type="vanished">糖化Mash</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>主要</translation>
+        <translation type="vanished">主要</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>次要Secondary</translation>
+        <translation type="vanished">次要Secondary</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>装瓶</translation>
+        <translation type="vanished">装瓶</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6910,6 +6906,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">产品IDProduct ID</translation>
     </message>
 </context>
 <context>

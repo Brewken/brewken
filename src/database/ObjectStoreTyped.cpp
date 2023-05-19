@@ -54,28 +54,28 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Equipment> {
       "equipment",
       {
-         {ObjectStore::FieldType::Int,    "id",                PropertyNames::NamedEntity::key},
-         {ObjectStore::FieldType::String, "name",              PropertyNames::NamedEntity::name},
-         {ObjectStore::FieldType::Bool,   "display",           PropertyNames::NamedEntity::display},
-         {ObjectStore::FieldType::Bool,   "deleted",           PropertyNames::NamedEntity::deleted},
-         {ObjectStore::FieldType::String, "folder",            PropertyNames::NamedEntity::folder},
-         {ObjectStore::FieldType::Double, "batch_size",        PropertyNames::Equipment::batchSize_l},
-         {ObjectStore::FieldType::Double, "boiling_point",     PropertyNames::Equipment::boilingPoint_c},
-         {ObjectStore::FieldType::Double, "boil_size",         PropertyNames::Equipment::boilSize_l},
-         {ObjectStore::FieldType::Double, "boil_time",         PropertyNames::Equipment::boilTime_min},
-         {ObjectStore::FieldType::Bool,   "calc_boil_volume",  PropertyNames::Equipment::calcBoilVolume},
-         {ObjectStore::FieldType::Double, "real_evap_rate",    PropertyNames::Equipment::evapRate_lHr},
-         {ObjectStore::FieldType::Double, "evap_rate",         PropertyNames::Equipment::evapRate_pctHr},
-         {ObjectStore::FieldType::Double, "absorption",        PropertyNames::Equipment::grainAbsorption_LKg},
-         {ObjectStore::FieldType::Double, "hop_utilization",   PropertyNames::Equipment::hopUtilization_pct},
-         {ObjectStore::FieldType::Double, "lauter_deadspace",  PropertyNames::Equipment::lauterDeadspace_l},
-         {ObjectStore::FieldType::String, "notes",             PropertyNames::Equipment::notes},
-         {ObjectStore::FieldType::Double, "top_up_kettle",     PropertyNames::Equipment::topUpKettle_l},
-         {ObjectStore::FieldType::Double, "top_up_water",      PropertyNames::Equipment::topUpWater_l},
-         {ObjectStore::FieldType::Double, "trub_chiller_loss", PropertyNames::Equipment::trubChillerLoss_l},
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key                },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name               },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display            },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted            },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder             },
+         {ObjectStore::FieldType::Double, "batch_size"       , PropertyNames::Equipment::batchSize_l          },
+         {ObjectStore::FieldType::Double, "boiling_point"    , PropertyNames::Equipment::boilingPoint_c       },
+         {ObjectStore::FieldType::Double, "boil_size"        , PropertyNames::Equipment::boilSize_l           },
+         {ObjectStore::FieldType::Double, "boil_time"        , PropertyNames::Equipment::boilTime_min         },
+         {ObjectStore::FieldType::Bool  , "calc_boil_volume" , PropertyNames::Equipment::calcBoilVolume       },
+         {ObjectStore::FieldType::Double, "real_evap_rate"   , PropertyNames::Equipment::evapRate_lHr         },
+         {ObjectStore::FieldType::Double, "evap_rate"        , PropertyNames::Equipment::evapRate_pctHr       },
+         {ObjectStore::FieldType::Double, "absorption"       , PropertyNames::Equipment::grainAbsorption_LKg  },
+         {ObjectStore::FieldType::Double, "hop_utilization"  , PropertyNames::Equipment::hopUtilization_pct   },
+         {ObjectStore::FieldType::Double, "lauter_deadspace" , PropertyNames::Equipment::lauterDeadspace_l    },
+         {ObjectStore::FieldType::String, "notes"            , PropertyNames::Equipment::notes                },
+         {ObjectStore::FieldType::Double, "top_up_kettle"    , PropertyNames::Equipment::topUpKettle_l        },
+         {ObjectStore::FieldType::Double, "top_up_water"     , PropertyNames::Equipment::topUpWater_l         },
+         {ObjectStore::FieldType::Double, "trub_chiller_loss", PropertyNames::Equipment::trubChillerLoss_l    },
          {ObjectStore::FieldType::Double, "tun_specific_heat", PropertyNames::Equipment::tunSpecificHeat_calGC},
-         {ObjectStore::FieldType::Double, "tun_volume",        PropertyNames::Equipment::tunVolume_l},
-         {ObjectStore::FieldType::Double, "tun_weight",        PropertyNames::Equipment::tunWeight_kg}
+         {ObjectStore::FieldType::Double, "tun_volume"       , PropertyNames::Equipment::tunVolume_l          },
+         {ObjectStore::FieldType::Double, "tun_weight"       , PropertyNames::Equipment::tunWeight_kg         },
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Equipment> {
@@ -85,7 +85,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                  },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Equipment>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Equipment>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Equipment>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -164,7 +164,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                    },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Fermentable>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Fermentable>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Fermentable>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -176,8 +176,8 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryHop> {
       "hop_in_inventory",
       {
-         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id},
-         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount}
+         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id    },
+         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount},
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryHop> {};
@@ -231,7 +231,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                            },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Hop>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Hop>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Hop>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -252,7 +252,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "hasTimer",   PropertyNames::Instruction::hasTimer  },
          {ObjectStore::FieldType::String, "timervalue", PropertyNames::Instruction::timerValue},
          {ObjectStore::FieldType::Bool,   "completed",  PropertyNames::Instruction::completed },
-         {ObjectStore::FieldType::Double, "interval",   PropertyNames::Instruction::interval  }
+         {ObjectStore::FieldType::Double, "interval",   PropertyNames::Instruction::interval  },
       }
    };
    // Instructions don't have children
@@ -310,7 +310,7 @@ namespace {
          {ObjectStore::FieldType::Double,  "ramp_time",        PropertyNames::MashStep::rampTime_min     },
          {ObjectStore::FieldType::Int,     "step_number",      PropertyNames::MashStep::stepNumber       },
          {ObjectStore::FieldType::Double,  "step_temp",        PropertyNames::MashStep::stepTemp_c       },
-         {ObjectStore::FieldType::Double,  "step_time",        PropertyNames::MashStep::stepTime_min     }
+         {ObjectStore::FieldType::Double,  "step_time",        PropertyNames::MashStep::stepTime_min     },
       }
    };
    // MashSteps don't have children
@@ -322,8 +322,8 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryMisc> {
       "misc_in_inventory",
       {
-         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id},
-         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount}
+         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id    },
+         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount},
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryMisc> {};
@@ -331,21 +331,6 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Misc
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const MISC_TYPE_ENUM {
-      {Misc::Type::Spice      , "Spice"      },
-      {Misc::Type::Fining     , "Fining"     },
-      {Misc::Type::Water_Agent, "Water Agent"},
-      {Misc::Type::Herb       , "Herb"       },
-      {Misc::Type::Flavor     , "Flavor"     },
-      {Misc::Type::Other      , "Other"      }
-   };
-   EnumStringMapping const MISC_USE_ENUM {
-      {Misc::Use::Boil     , "Boil"     },
-      {Misc::Use::Mash     , "Mash"     },
-      {Misc::Use::Primary  , "Primary"  },
-      {Misc::Use::Secondary, "Secondary"},
-      {Misc::Use::Bottling , "Bottling" }
-   };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Misc> {
       "misc",
       {
@@ -355,13 +340,16 @@ namespace {
          {ObjectStore::FieldType::Bool,   "display",          PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::String, "folder",           PropertyNames::NamedEntity::folder                  },
          {ObjectStore::FieldType::Int,    "inventory_id",     PropertyNames::NamedEntityWithInventory::inventoryId, nullptr,         &PRIMARY_TABLE<InventoryMisc>},
-         {ObjectStore::FieldType::Enum,   "mtype",            PropertyNames::Misc::type,                            &MISC_TYPE_ENUM},
-         {ObjectStore::FieldType::Enum,   "use",              PropertyNames::Misc::use,                             &MISC_USE_ENUM},
-         {ObjectStore::FieldType::Double, "time",             PropertyNames::Misc::time                           },
+         {ObjectStore::FieldType::Enum,   "mtype",            PropertyNames::Misc::type,                            &Misc::typeStringMapping},
+         {ObjectStore::FieldType::Enum,   "use",              PropertyNames::Misc::use,                             &Misc::useStringMapping},
+         {ObjectStore::FieldType::Double, "time",             PropertyNames::Misc::time_min                       },
          {ObjectStore::FieldType::Double, "amount",           PropertyNames::Misc::amount                         },
          {ObjectStore::FieldType::Bool,   "amount_is_weight", PropertyNames::Misc::amountIsWeight                 },
          {ObjectStore::FieldType::String, "use_for",          PropertyNames::Misc::useFor                         },
-         {ObjectStore::FieldType::String, "notes",            PropertyNames::Misc::notes                          }
+         {ObjectStore::FieldType::String, "notes",            PropertyNames::Misc::notes                          },
+         // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+         {ObjectStore::FieldType::String, "producer",         PropertyNames::Misc::producer                       },
+         {ObjectStore::FieldType::String, "product_id",       PropertyNames::Misc::productId                      },
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Misc> {
@@ -370,7 +358,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                             },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Misc>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Misc>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Misc>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -392,7 +380,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "amount_is_weight", PropertyNames::Salt::amountIsWeight },
          {ObjectStore::FieldType::Bool,   "is_acid",          PropertyNames::Salt::isAcid         },
          {ObjectStore::FieldType::Double, "percent_acid",     PropertyNames::Salt::percentAcid    },
-         {ObjectStore::FieldType::Int,    "stype",            PropertyNames::Salt::type           }  // TODO: Really an Enum.  Would be less fragile to store this as text than a number
+         {ObjectStore::FieldType::Int,    "stype",            PropertyNames::Salt::type           },  // TODO: Really an Enum.  Would be less fragile to store this as text than a number
       }
    };
    // Salts don't have children
@@ -437,7 +425,7 @@ namespace {
          {ObjectStore::FieldType::String, "profile",         PropertyNames::Style::profile       },
          {ObjectStore::FieldType::String, "style_guide",     PropertyNames::Style::styleGuide    },
          {ObjectStore::FieldType::String, "style_letter",    PropertyNames::Style::styleLetter   },
-         {ObjectStore::FieldType::Enum,   "s_type",          PropertyNames::Style::type,           &STYLE_TYPE_ENUM}
+         {ObjectStore::FieldType::Enum,   "s_type",          PropertyNames::Style::type,           &STYLE_TYPE_ENUM},
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Style> {
@@ -446,7 +434,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                              },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Style>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Style>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Style>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -476,7 +464,7 @@ namespace {
          {ObjectStore::FieldType::Int,    "wtype",       PropertyNames::Water::type            }, // TODO: Would be less fragile to store this as text than a number
          {ObjectStore::FieldType::Double, "mash_ro",     PropertyNames::Water::mashRO          },
          {ObjectStore::FieldType::Double, "sparge_ro",   PropertyNames::Water::spargeRO        },
-         {ObjectStore::FieldType::Bool,   "as_hco3",     PropertyNames::Water::alkalinityAsHCO3}
+         {ObjectStore::FieldType::Bool,   "as_hco3",     PropertyNames::Water::alkalinityAsHCO3},
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Water> {
@@ -485,7 +473,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                              },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Water>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Water>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Water>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -549,7 +537,7 @@ namespace {
          {ObjectStore::FieldType::String, "best_for",         PropertyNames::Yeast::bestFor                       },
          {ObjectStore::FieldType::String, "laboratory",       PropertyNames::Yeast::laboratory                    },
          {ObjectStore::FieldType::String, "notes",            PropertyNames::Yeast::notes                         },
-         {ObjectStore::FieldType::String, "product_id",       PropertyNames::Yeast::productID                     } // Manufacturer's product ID, so, unlike other blah_id fields, not a foreign key!
+         {ObjectStore::FieldType::String, "product_id",       PropertyNames::Yeast::productID                     }, // Manufacturer's product ID, so, unlike other blah_id fields, not a foreign key!
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Yeast> {
@@ -558,7 +546,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                              },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Yeast>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Yeast>}
+            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Yeast>},
          },
          ObjectStore::MAX_ONE_ENTRY
       }
@@ -580,7 +568,7 @@ namespace {
          {ObjectStore::FieldType::Bool,   "deleted",             PropertyNames::NamedEntity::deleted        },
          {ObjectStore::FieldType::Bool,   "display",             PropertyNames::NamedEntity::display        },
          {ObjectStore::FieldType::String, "folder",              PropertyNames::NamedEntity::folder         },
-         {ObjectStore::FieldType::Double, "age",                 PropertyNames::Recipe::age_days                 },
+         {ObjectStore::FieldType::Double, "age",                 PropertyNames::Recipe::age_days            },
          {ObjectStore::FieldType::Double, "age_temp",            PropertyNames::Recipe::ageTemp_c           },
          {ObjectStore::FieldType::String, "assistant_brewer",    PropertyNames::Recipe::asstBrewer          },
          {ObjectStore::FieldType::Double, "batch_size",          PropertyNames::Recipe::batchSize_l         },
@@ -612,7 +600,7 @@ namespace {
          {ObjectStore::FieldType::Double, "tertiary_temp",       PropertyNames::Recipe::tertiaryTemp_c      },
          {ObjectStore::FieldType::Enum,   "type",                PropertyNames::Recipe::type,           &RECIPE_STEP_TYPE_ENUM},
          {ObjectStore::FieldType::Int,    "ancestor_id",         PropertyNames::Recipe::ancestorId,           nullptr,                &PRIMARY_TABLE<Recipe>},
-         {ObjectStore::FieldType::Bool,   "locked",              PropertyNames::Recipe::locked              }
+         {ObjectStore::FieldType::Bool,   "locked",              PropertyNames::Recipe::locked              },
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Recipe> {
@@ -624,7 +612,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "fermentable_id",    PropertyNames::Recipe::fermentableIds, nullptr, &PRIMARY_TABLE<Fermentable>}
+            {ObjectStore::FieldType::Int, "fermentable_id",    PropertyNames::Recipe::fermentableIds, nullptr, &PRIMARY_TABLE<Fermentable>},
          }
       },
       {
@@ -632,7 +620,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "hop_id",            PropertyNames::Recipe::hopIds,         nullptr, &PRIMARY_TABLE<Hop>        }
+            {ObjectStore::FieldType::Int, "hop_id",            PropertyNames::Recipe::hopIds,         nullptr, &PRIMARY_TABLE<Hop>        },
          }
       },
       {
@@ -641,7 +629,7 @@ namespace {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
             {ObjectStore::FieldType::Int, "instruction_id",    PropertyNames::Recipe::instructionIds, nullptr, &PRIMARY_TABLE<Instruction>},
-            {ObjectStore::FieldType::Int, "instruction_number"                                                                            }
+            {ObjectStore::FieldType::Int, "instruction_number"                                                                            },
          }
       },
       {
@@ -649,7 +637,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "misc_id",           PropertyNames::Recipe::miscIds,        nullptr, &PRIMARY_TABLE<Misc>       }
+            {ObjectStore::FieldType::Int, "misc_id",           PropertyNames::Recipe::miscIds,        nullptr, &PRIMARY_TABLE<Misc>       },
          }
       },
       {
@@ -657,7 +645,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "salt_id",           PropertyNames::Recipe::saltIds,        nullptr, &PRIMARY_TABLE<Salt>       }
+            {ObjectStore::FieldType::Int, "salt_id",           PropertyNames::Recipe::saltIds,        nullptr, &PRIMARY_TABLE<Salt>       },
          }
       },
       {
@@ -665,7 +653,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "water_id",          PropertyNames::Recipe::waterIds,       nullptr, &PRIMARY_TABLE<Water>      }
+            {ObjectStore::FieldType::Int, "water_id",          PropertyNames::Recipe::waterIds,       nullptr, &PRIMARY_TABLE<Water>      },
          }
       },
       {
@@ -673,7 +661,7 @@ namespace {
          {
             {ObjectStore::FieldType::Int, "id"                                                                                            },
             {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       nullptr, &PRIMARY_TABLE<Yeast>      }
+            {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       nullptr, &PRIMARY_TABLE<Yeast>      },
          }
       },
    };
@@ -720,7 +708,7 @@ namespace {
          {ObjectStore::FieldType::Double, "strike_temp",             PropertyNames::BrewNote::strikeTemp_c     },
          {ObjectStore::FieldType::Double, "volume_into_bk",          PropertyNames::BrewNote::volumeIntoBK_l   },
          {ObjectStore::FieldType::Double, "volume_into_fermenter",   PropertyNames::BrewNote::volumeIntoFerm_l },
-         {ObjectStore::FieldType::Int,    "recipe_id",               PropertyNames::BrewNote::recipeId,          nullptr, &PRIMARY_TABLE<Recipe>}
+         {ObjectStore::FieldType::Int,    "recipe_id",               PropertyNames::BrewNote::recipeId,          nullptr, &PRIMARY_TABLE<Recipe>},
       }
    };
    // BrewNotes don't have children
@@ -748,43 +736,43 @@ ObjectStoreTyped<NE> & ObjectStoreTyped<NE>::getInstance() {
 }
 
 // We have to make sure that each version of the above function gets instantiated
-template ObjectStoreTyped<BrewNote> &             ObjectStoreTyped<BrewNote>::getInstance();
-template ObjectStoreTyped<Equipment> &            ObjectStoreTyped<Equipment>::getInstance();
-template ObjectStoreTyped<Fermentable> &          ObjectStoreTyped<Fermentable>::getInstance();
-template ObjectStoreTyped<Hop> &                  ObjectStoreTyped<Hop>::getInstance();
-template ObjectStoreTyped<Instruction> &          ObjectStoreTyped<Instruction>::getInstance();
+template ObjectStoreTyped<BrewNote> &             ObjectStoreTyped<BrewNote            >::getInstance();
+template ObjectStoreTyped<Equipment> &            ObjectStoreTyped<Equipment           >::getInstance();
+template ObjectStoreTyped<Fermentable> &          ObjectStoreTyped<Fermentable         >::getInstance();
+template ObjectStoreTyped<Hop> &                  ObjectStoreTyped<Hop                 >::getInstance();
+template ObjectStoreTyped<Instruction> &          ObjectStoreTyped<Instruction         >::getInstance();
 template ObjectStoreTyped<InventoryFermentable> & ObjectStoreTyped<InventoryFermentable>::getInstance();
-template ObjectStoreTyped<InventoryHop> &         ObjectStoreTyped<InventoryHop>::getInstance();
-template ObjectStoreTyped<InventoryMisc> &        ObjectStoreTyped<InventoryMisc>::getInstance();
-template ObjectStoreTyped<InventoryYeast> &       ObjectStoreTyped<InventoryYeast>::getInstance();
-template ObjectStoreTyped<Mash> &                 ObjectStoreTyped<Mash>::getInstance();
-template ObjectStoreTyped<MashStep> &             ObjectStoreTyped<MashStep>::getInstance();
-template ObjectStoreTyped<Misc> &                 ObjectStoreTyped<Misc>::getInstance();
-template ObjectStoreTyped<Recipe> &               ObjectStoreTyped<Recipe>::getInstance();
-template ObjectStoreTyped<Salt> &                 ObjectStoreTyped<Salt>::getInstance();
-template ObjectStoreTyped<Style> &                ObjectStoreTyped<Style>::getInstance();
-template ObjectStoreTyped<Water> &                ObjectStoreTyped<Water>::getInstance();
-template ObjectStoreTyped<Yeast> &                ObjectStoreTyped<Yeast>::getInstance();
+template ObjectStoreTyped<InventoryHop> &         ObjectStoreTyped<InventoryHop        >::getInstance();
+template ObjectStoreTyped<InventoryMisc> &        ObjectStoreTyped<InventoryMisc       >::getInstance();
+template ObjectStoreTyped<InventoryYeast> &       ObjectStoreTyped<InventoryYeast      >::getInstance();
+template ObjectStoreTyped<Mash> &                 ObjectStoreTyped<Mash                >::getInstance();
+template ObjectStoreTyped<MashStep> &             ObjectStoreTyped<MashStep            >::getInstance();
+template ObjectStoreTyped<Misc> &                 ObjectStoreTyped<Misc                >::getInstance();
+template ObjectStoreTyped<Recipe> &               ObjectStoreTyped<Recipe              >::getInstance();
+template ObjectStoreTyped<Salt> &                 ObjectStoreTyped<Salt                >::getInstance();
+template ObjectStoreTyped<Style> &                ObjectStoreTyped<Style               >::getInstance();
+template ObjectStoreTyped<Water> &                ObjectStoreTyped<Water               >::getInstance();
+template ObjectStoreTyped<Yeast> &                ObjectStoreTyped<Yeast               >::getInstance();
 
 namespace {
    QVector<ObjectStore const *> AllObjectStores {
-      &ostSingleton<BrewNote>,
-      &ostSingleton<Equipment>,
-      &ostSingleton<Fermentable>,
-      &ostSingleton<Hop>,
-      &ostSingleton<Instruction>,
+      &ostSingleton<BrewNote            >,
+      &ostSingleton<Equipment           >,
+      &ostSingleton<Fermentable         >,
+      &ostSingleton<Hop                 >,
+      &ostSingleton<Instruction         >,
       &ostSingleton<InventoryFermentable>,
-      &ostSingleton<InventoryHop>,
-      &ostSingleton<InventoryMisc>,
-      &ostSingleton<InventoryYeast>,
-      &ostSingleton<Mash>,
-      &ostSingleton<MashStep>,
-      &ostSingleton<Misc>,
-      &ostSingleton<Recipe>,
-      &ostSingleton<Salt>,
-      &ostSingleton<Style>,
-      &ostSingleton<Water>,
-      &ostSingleton<Yeast>
+      &ostSingleton<InventoryHop        >,
+      &ostSingleton<InventoryMisc       >,
+      &ostSingleton<InventoryYeast      >,
+      &ostSingleton<Mash                >,
+      &ostSingleton<MashStep            >,
+      &ostSingleton<Misc                >,
+      &ostSingleton<Recipe              >,
+      &ostSingleton<Salt                >,
+      &ostSingleton<Style               >,
+      &ostSingleton<Water               >,
+      &ostSingleton<Yeast               >,
    };
 }
 

@@ -19,7 +19,12 @@
 
 #include <optional>
 
+#include <QDebug>
 #include <QVariant>
+
+#include "Logging.h"
+#include "utils/TypeTraits.h"
+
 
 /**
  * \brief A set of utilities that help us deal with std::optional values
@@ -137,6 +142,63 @@ namespace Optional {
       quantity = constrainedAmount->quantity();
       return constrainedAmount->isFirst();
    }
+
+   /**
+    * \brief Convenience function for, in effect, casting std::optional<int> to std::optional<E> where E is an enum class
+    */
+   template <class E, typename = std::enable_if_t<is_non_optional_enum<E>::value> >
+   std::optional<E> fromOptInt(std::optional<int> const & val) {
+      if (val.has_value()) {
+         return static_cast<E>(val.value());
+      }
+      return std::nullopt;
+   }
+
+   /**
+    * \brief Convenience function for, in effect, casting std::optional<E> to std::optional<int> where E is an enum class
+    */
+   template <class E, typename = std::enable_if_t<is_non_optional_enum<E>::value> >
+   std::optional<int> toOptInt(std::optional<E> const & val) {
+      if (val.has_value()) {
+         return static_cast<int>(val.value());
+      }
+      return std::nullopt;
+   }
+
+//   /**
+//    * \brief Mostly we don't convert enums to ints for serialisation (to database, BeerJSON, BeerXML, etc).  But we do
+//    *        sometimes do this internally, eg in the xxxTableModel classes.  In such cases, we need something for
+//    *        the \c std::nullopt value of an optional enum.  By default QVariant will treat null int as 0, which isn't
+//    *        what we want, so use \c QVariant<std::optional<int>>, ie put an optional inside the QVariant.
+//    */
+//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+//   QVariant intVariantFromEnum(std::optional<E> val) {
+//      return val ? QVariant::fromValue(std::optional<int>(static_cast<int>(*val))) :
+//                   QVariant::fromValue(std::optional<int>());
+//   }
+//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+//   QVariant intVariantFromEnum(E val) {
+//      return QVariant::fromValue(static_cast<int>(val));
+//   }
+//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+//   std::optional<E> intVariantToOptEnum(QVariant const & val) {
+//      auto optInt = val.value<std::optional<int> >();
+//      if (!optInt) {
+//         return std::nullopt;
+//      }
+//      return std::make_optional<E>(static_cast<E>(*optInt));
+//   }
+//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+//   E intVariantToNonOptEnum(QVariant const & val) {
+//      int const valAsInt = val.toInt();
+//      if (valAsInt < 0) {
+//         // It's a coding error if we get here
+//         qCritical().noquote() <<
+//            Q_FUNC_INFO << "Trying to convert " << val << " to non-optional enum " << Logging::getStackTrace();
+//         Q_ASSERT(false);
+//      }
+//      return static_cast<E>(valAsInt);
+//   }
 
 }
 

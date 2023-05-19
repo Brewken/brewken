@@ -2211,10 +2211,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2346,11 +2342,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Súly</translation>
+        <translation type="obsolete">Súly</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Mennyiség</translation>
+        <translation type="obsolete">Mennyiség</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2396,58 +2396,58 @@ Log file may contain more details.</source>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Egyéb név</translation>
+        <translation type="obsolete">Egyéb név</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Egyéb név:</translation>
+        <translation type="obsolete">Egyéb név:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Fűszer</translation>
+        <translation type="vanished">Fűszer</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Derítőszer</translation>
+        <translation type="vanished">Derítőszer</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Vízkezelő anyag</translation>
+        <translation type="vanished">Vízkezelő anyag</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Gyógynövény</translation>
+        <translation type="vanished">Gyógynövény</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Ízanyag</translation>
+        <translation type="vanished">Ízanyag</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Egyéb anyag</translation>
+        <translation type="vanished">Egyéb anyag</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Forralás</translation>
+        <translation type="vanished">Forralás</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Cefre</translation>
+        <translation type="vanished">Cefre</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Elsődleges</translation>
+        <translation type="vanished">Elsődleges</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Másodlagos</translation>
+        <translation type="vanished">Másodlagos</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Palackozás</translation>
+        <translation type="vanished">Palackozás</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -6883,27 +6883,27 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Fűszer</translation>
+        <translation type="vanished">Fűszer</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Derítőszer</translation>
+        <translation type="vanished">Derítőszer</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Vízkezelő anyag</translation>
+        <translation type="vanished">Vízkezelő anyag</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Gyógynövény</translation>
+        <translation type="vanished">Gyógynövény</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Ízanyag</translation>
+        <translation type="vanished">Ízanyag</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Egyéb anyag</translation>
+        <translation type="vanished">Egyéb anyag</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6911,23 +6911,23 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Forralás</translation>
+        <translation type="vanished">Forralás</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Cefre</translation>
+        <translation type="vanished">Cefre</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Elsődleges</translation>
+        <translation type="vanished">Elsődleges</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Másodlagos</translation>
+        <translation type="vanished">Másodlagos</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Palackozás</translation>
+        <translation type="vanished">Palackozás</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6988,6 +6988,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Termékazonosító</translation>
     </message>
 </context>
 <context>
