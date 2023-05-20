@@ -42,13 +42,13 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
       parent,
       editable,
       {
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Name     , tr("Name"       ),           NonPhysicalQuantity::String),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Type     , tr("Type"       ),           NonPhysicalQuantity::Enum  ),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Use      , tr("Use"        ),           NonPhysicalQuantity::Enum  ),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Time     , tr("Time"       ), Measurement::PhysicalQuantity::Time  ),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Amount   , tr("Amount"     ), Measurement::PqEitherMassOrVolume    ),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Inventory, tr("Inventory"  ), Measurement::PqEitherMassOrVolume    ),
-       SMART_COLUMN_HEADER_DEFN(MiscTableModel, IsWeight , tr("Amount Type"),           NonPhysicalQuantity::String),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Name     , tr("Name"       ), Misc, PropertyNames::NamedEntity::name   ),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Type     , tr("Type"       ), Misc, PropertyNames::Misc::type          ),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Use      , tr("Use"        ), Misc, PropertyNames::Misc::use           ),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Time     , tr("Time"       ), Misc, PropertyNames::Misc::time_min      ),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Amount   , tr("Amount"     ), Misc, PropertyNames::Misc::amount        ),
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, Inventory, tr("Inventory"  ), Misc, PropertyNames::Misc::amount        ), // No inventory property name
+       SMART_COLUMN_HEADER_DEFN(MiscTableModel, IsWeight , tr("Amount Type"), Misc, PropertyNames::Misc::amountIsWeight),
       }
    },
    BtTableModelData<Misc>{} {
@@ -511,7 +511,7 @@ void MiscItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
 void MiscItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
    auto const columnIndex = static_cast<MiscTableModel::ColumnIndex>(index.column());
-///   ××× AND OBVIOUSL THIS IS WRONG TOO!
+///   ××× AND OBVIOUSLY THIS IS WRONG TOO!
    if (columnIndex == MiscTableModel::ColumnIndex::Type ||
        columnIndex == MiscTableModel::ColumnIndex::Use ||
        columnIndex == MiscTableModel::ColumnIndex::IsWeight) {

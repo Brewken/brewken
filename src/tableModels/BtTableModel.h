@@ -72,11 +72,11 @@ class Recipe;
  *                                   MiscTableModel
  *                                   YeastTableModel
  *
- *        (I did start trying to do something clever with a common base class to try to expose functions from
+ *        TBD: I did start trying to do something clever with a common base class to try to expose functions from
  *        \c BtTableModelData to the implementation of \c BtTableModel / \c BtTableModelRecipeObserver /
  *        \c BtTableModelInventory, but it quickly gets more complicated than it's worth IMHO because (a)
  *        \c BtTableModelData is templated but a common base class cannot be and (b) templated functions cannot be
- *        virtual.)
+ *        virtual.  Maybe we can do something the other way around with the curiously recurring template pattern.
  */
 template<class NE>
 class BtTableModelData {
@@ -215,10 +215,11 @@ public:
        * \brief The localised text to display in this column header
        */
       QString const label;
+
       /**
        * \brief What type of data is shown in this column
        */
-      BtFieldType const fieldType;
+      TypeInfo const * typeInfo;
 
       /**
        *
@@ -231,7 +232,6 @@ public:
       void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const;
       std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurement() const;
       std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScale() const;
-
    };
 
    /**
@@ -287,11 +287,35 @@ protected:
    Recipe* recObs;
 };
 
-#define SMART_COLUMN_HEADER_DEFN(tableModelClass, columnName, labelText, btFieldType, ...) \
+/**
+ * \brief This macro saves a bit of copy-and-paste when calling the \c BtTableModel::ColumnInfo constructor.  Eg instead
+ *        of writing:
+ *
+ *           BtTableModel::ColumnInfo{"HopTableModel",
+ *                                    "Alpha",
+ *                                    "HopTableModel::ColumnIndex::Alpha",
+ *                                    static_cast<size_t>(HopTableModel::ColumnIndex::Alpha),
+ *                                    tr("Alpha %"),
+ *                                    Hop::typeLookup.getType(PropertyNames::Hop::alpha)}
+ *
+ *        you write:
+ *
+ *           SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha, tr("Alpha %"), Hop, PropertyNames::Hop::alpha);
+ *
+ * \param tableModelClass The class name of the class holding the field we're initialising, eg \c HopTableModel.
+ * \param columnName
+ * \param labelText
+ * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop
+ * \param propertyName The name of the property to which this field relates, eg in \c HopEditor, this could be
+ *                     \c PropertyNames::NamedEntity::name, \c PropertyNames::Hop::alpha_pct, etc.  (Note, as per
+ *                     comments in \c widgets/SmartAmounts.h, we intentionally do \b not automatically insert the
+ *                     \c PropertyNames:: prefix.)
+ */
+#define SMART_COLUMN_HEADER_DEFN(tableModelClass, columnName, labelText, modelClass, propertyName) \
    BtTableModel::ColumnInfo{#tableModelClass, \
                             #columnName, \
                             #tableModelClass "::ColumnIndex::" #columnName, \
                             static_cast<size_t>(tableModelClass::ColumnIndex::columnName), \
                             labelText, \
-                            btFieldType}
+                            &modelClass::typeLookup.getType(propertyName)}
 #endif

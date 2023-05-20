@@ -88,8 +88,7 @@ public:
       m_pushButton_edit       {new QPushButton(m_derived)               },
       m_pushButton_remove     {new QPushButton(m_derived)               },
       m_neTableModel          {new NeTableModel(m_tableWidget, false)   },
-      m_neTableProxy          {new NeSortFilterProxyModel(m_tableWidget)},
-      m_numNes                {0                                        } {
+      m_neTableProxy          {new NeSortFilterProxyModel(m_tableWidget)} {
 
       m_neTableModel->setInventoryEditable(true);
       m_neTableProxy->setSourceModel(m_neTableModel);
@@ -175,8 +174,8 @@ public:
    /**
     * \brief Subclass should call this from its \c addIngredient slot
     *
-    *         If \b index is the default, will add the selected ingredient to list. Otherwise, will add the ingredient
-    *         at the specified index.
+    *        If \b index is the default, will add the selected ingredient to list. Otherwise, will add the ingredient
+    *        at the specified index.
     */
    void add(QModelIndex const & index = QModelIndex()) {
       QModelIndex translated;
@@ -314,7 +313,6 @@ public:
 
    NeEditor *   m_neEditor;
 
-
    //! \name Public UI Variables
    //! @{
    QVBoxLayout * m_verticalLayout;
@@ -330,8 +328,6 @@ public:
 
    NeTableModel *           m_neTableModel;
    NeSortFilterProxyModel * m_neTableProxy;
-
-   int m_numNes;
 };
 
 /**

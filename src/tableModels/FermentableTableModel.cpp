@@ -84,15 +84,15 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
       parent,
       editable,
       {
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Name     , tr("Name"       ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Type     , tr("Type"       ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Measurement::PhysicalQuantity::Mass      ), // .:TODO:. Mass or Volume
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Inventory"  ), Measurement::PhysicalQuantity::Mass      ), // .:TODO:. Mass or Volume
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Amount Type"),           NonPhysicalQuantity::Bool      ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsMashed , tr("Method"     ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, AfterBoil, tr("Addition"   ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Yield    , tr("Yield %"    ),           NonPhysicalQuantity::Percentage),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Color    , tr("Color"      ), Measurement::PhysicalQuantity::Color     ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Name     , tr("Name"       ), Fermentable, PropertyNames::NamedEntity::name          ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Type     , tr("Type"       ), Fermentable, PropertyNames::Fermentable::type          ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Fermentable, PropertyNames::Fermentable::amount        ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Inventory"  ), Fermentable, PropertyNames::Fermentable::amount        ), // No inventory property name
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Amount Type"), Fermentable, PropertyNames::Fermentable::amountIsWeight),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsMashed , tr("Method"     ), Fermentable, PropertyNames::Fermentable::isMashed      ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, AfterBoil, tr("Addition"   ), Fermentable, PropertyNames::Fermentable::addAfterBoil  ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Yield    , tr("Yield %"    ), Fermentable, PropertyNames::Fermentable::yield_pct     ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Color    , tr("Color"      ), Fermentable, PropertyNames::Fermentable::color_srm     ),
       }
    },
    BtTableModelData<Fermentable>{},

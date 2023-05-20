@@ -45,12 +45,12 @@ MashStepTableModel::MashStepTableModel(QTableView* parent) :
       parent,
       false,
       {
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Name      , tr("Name"         ),           NonPhysicalQuantity::String     ),
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Type      , tr("Type"         ),           NonPhysicalQuantity::String     ),
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Amount    , tr("Amount"       ), Measurement::PhysicalQuantity::Volume     ),
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Temp      , tr("Infusion Temp"), Measurement::PhysicalQuantity::Temperature),
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, TargetTemp, tr("Target Temp"  ), Measurement::PhysicalQuantity::Temperature),
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Time      , tr("Time"         ), Measurement::PhysicalQuantity::Time       ),
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Name      , tr("Name"         ), MashStep, PropertyNames::NamedEntity::name       ),
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Type      , tr("Type"         ), MashStep, PropertyNames::MashStep::type          ),
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Amount    , tr("Amount"       ), MashStep, PropertyNames::MashStep::infuseAmount_l), // decoctionAmount_l is same type
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Temp      , tr("Infusion Temp"), MashStep, PropertyNames::MashStep::infuseTemp_c  ),
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, TargetTemp, tr("Target Temp"  ), MashStep, PropertyNames::MashStep::stepTemp_c    ),
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Time      , tr("Time"         ), MashStep, PropertyNames::MashStep::stepTime_min  ),
       }
    },
    mashObs(nullptr) {

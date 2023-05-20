@@ -24,7 +24,7 @@
 TypeLookup const NamedEntityWithInventory::typeLookup {
    "NamedEntityWithInventory",
    {
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventory, NamedEntityWithInventory::m_inventory   ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventory,   NamedEntityWithInventory::m_inventory   , Measurement::PqEitherMassOrVolume      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventoryId, NamedEntityWithInventory::m_inventory_id),
    },
    // Parent class lookup

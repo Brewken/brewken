@@ -103,7 +103,7 @@ ObjectStore & Fermentable::getObjectStoreTypedInstance() const {
 TypeLookup const Fermentable::typeLookup {
    "Fermentable",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                     , Fermentable::m_type                     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                     , Fermentable::m_type                     ,           NonPhysicalQuantity::Enum           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount                   , Fermentable::m_amount                   , Measurement::PqEitherMassOrVolume             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amountIsWeight           , Fermentable::m_amountIsWeight           ,           NonPhysicalQuantity::Bool           ), // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::yield_pct                , Fermentable::m_yield_pct                ,           NonPhysicalQuantity::Percentage     ),
@@ -121,7 +121,7 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::ibuGalPerLb              , Fermentable::m_ibuGalPerLb              ,           NonPhysicalQuantity::Dimensionless  ), // Not really dimensionless...
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::isMashed                 , Fermentable::m_isMashed                 ,           NonPhysicalQuantity::Bool           ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::grainGroup               , Fermentable::m_grainGroup               ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::grainGroup               , Fermentable::m_grainGroup               ,           NonPhysicalQuantity::Enum           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::producer                 , Fermentable::m_producer                 ,           NonPhysicalQuantity::String         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::productId                , Fermentable::m_productId                ,           NonPhysicalQuantity::String         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fineGrindYield_pct       , Fermentable::m_fineGrindYield_pct       ,           NonPhysicalQuantity::Percentage     ),

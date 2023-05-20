@@ -44,14 +44,14 @@ WaterTableModel::WaterTableModel(WaterTableWidget * parent) :
       parent,
       false,
       {
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Name       , tr("Name"             ), NonPhysicalQuantity::String                       ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Amount     , tr("Amount"           ), Measurement::PhysicalQuantity::Volume             ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Calcium    , tr("Calcium (ppm)"    ), Measurement::PhysicalQuantity::VolumeConcentration),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Bicarbonate, tr("Bicarbonate (ppm)"), Measurement::PhysicalQuantity::VolumeConcentration),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Sulfate    , tr("Sulfate (ppm)"    ), Measurement::PhysicalQuantity::VolumeConcentration),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Chloride   , tr("Chloride (ppm)"   ), Measurement::PhysicalQuantity::VolumeConcentration),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Sodium     , tr("Sodium (ppm)"     ), Measurement::PhysicalQuantity::VolumeConcentration),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Magnesium  , tr("Magnesium (ppm)"  ), Measurement::PhysicalQuantity::VolumeConcentration),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Name       , tr("Name"             ), Water, PropertyNames::NamedEntity::name     ),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Amount     , tr("Amount"           ), Water, PropertyNames::Water::amount         ),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Calcium    , tr("Calcium (ppm)"    ), Water, PropertyNames::Water::calcium_ppm    ),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Bicarbonate, tr("Bicarbonate (ppm)"), Water, PropertyNames::Water::bicarbonate_ppm),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Sulfate    , tr("Sulfate (ppm)"    ), Water, PropertyNames::Water::sulfate_ppm    ),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Chloride   , tr("Chloride (ppm)"   ), Water, PropertyNames::Water::chloride_ppm   ),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Sodium     , tr("Sodium (ppm)"     ), Water, PropertyNames::Water::sodium_ppm     ),
+         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Magnesium  , tr("Magnesium (ppm)"  ), Water, PropertyNames::Water::magnesium_ppm  ),
       }
    },
    BtTableModelData<Water>{} {

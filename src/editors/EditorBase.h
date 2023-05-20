@@ -190,7 +190,6 @@ protected:
     *        of the editor classes.
     */
    std::shared_ptr<NE> m_editItem;
-
 };
 
 /**

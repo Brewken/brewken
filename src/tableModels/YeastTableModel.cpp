@@ -50,13 +50,13 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
       parent,
       editable,
       {
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Name     , tr("Name"      ), NonPhysicalQuantity::String      ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Lab      , tr("Laboratory"), NonPhysicalQuantity::String      ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, ProdId   , tr("Product ID"), NonPhysicalQuantity::String      ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Type     , tr("Type"      ), NonPhysicalQuantity::String      ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Form     , tr("Form"      ), NonPhysicalQuantity::String      ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Amount   , tr("Amount"    ), Measurement::PqEitherMassOrVolume),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Inventory, tr("Inventory" ), NonPhysicalQuantity::Count       ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Name     , tr("Name"      ), Yeast, PropertyNames::NamedEntity::name),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Lab      , tr("Laboratory"), Yeast, PropertyNames::Yeast::laboratory),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, ProdId   , tr("Product ID"), Yeast, PropertyNames::Yeast::productID ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Type     , tr("Type"      ), Yeast, PropertyNames::Yeast::type      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Form     , tr("Form"      ), Yeast, PropertyNames::Yeast::form      ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Amount   , tr("Amount"    ), Yeast, PropertyNames::Yeast::amount    ),
+         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Inventory, tr("Inventory" ), Yeast, PropertyNames::Yeast::amount    ), // No inventory property name
       }
    },
    BtTableModelData<Yeast>{} {

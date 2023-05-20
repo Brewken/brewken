@@ -85,17 +85,17 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
 TypeLookup const Misc::typeLookup {
    "Misc",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::PqEitherMassOrVolume),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time_min      , Misc::m_time_min      , Measurement::PhysicalQuantity::Time),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type          , Misc::m_type          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::PqEitherMassOrVolume      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight,           NonPhysicalQuantity::Bool    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ,           NonPhysicalQuantity::String  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time_min      , Misc::m_time_min      , Measurement::PhysicalQuantity::Time    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type          , Misc::m_type          ,           NonPhysicalQuantity::Enum    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ,           NonPhysicalQuantity::String  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ,           NonPhysicalQuantity::Enum    ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::PqEitherMassOrVolume),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      , NonPhysicalQuantity::String         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     , NonPhysicalQuantity::String         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      ,           NonPhysicalQuantity::String  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     ,           NonPhysicalQuantity::String  ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    &NamedEntityWithInventory::typeLookup

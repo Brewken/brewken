@@ -67,10 +67,10 @@ SaltTableModel::SaltTableModel(QTableView* parent) :
       parent,
       false,
       {
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, Name   , tr("Name"    ), NonPhysicalQuantity::String                   ),
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, Amount , tr("Amount"  ), Measurement::PqEitherMassOrVolumeConcentration),
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, AddTo  , tr("Added To"), NonPhysicalQuantity::String                   ),
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, PctAcid, tr("% Acid"  ), NonPhysicalQuantity::Percentage               ),
+         SMART_COLUMN_HEADER_DEFN(SaltTableModel, Name   , tr("Name"    ), Salt, PropertyNames::NamedEntity::name),
+         SMART_COLUMN_HEADER_DEFN(SaltTableModel, Amount , tr("Amount"  ), Salt, PropertyNames::Salt::amount     ),
+         SMART_COLUMN_HEADER_DEFN(SaltTableModel, AddTo  , tr("Added To"), Salt, PropertyNames::Salt::whenToAdd  ),
+         SMART_COLUMN_HEADER_DEFN(SaltTableModel, PctAcid, tr("% Acid"  ), Salt, PropertyNames::Salt::percentAcid),
       }
    },
    BtTableModelData<Salt>{} {

@@ -125,7 +125,7 @@ void BtTableModel::contextMenu(QPoint const & point) {
    QHeaderView* hView = qobject_cast<QHeaderView*>(this->sender());
    int selected = hView->logicalIndexAt(point);
    // Only makes sense to offer the pop-up "select scale" menu for physical quantities
-   BtFieldType const fieldType = this->getColumnInfo(selected).fieldType;
+   BtFieldType const fieldType = *this->getColumnInfo(selected).typeInfo->fieldType;
    if (std::holds_alternative<Measurement::PhysicalQuantity>(fieldType)) {
       std::unique_ptr<QMenu> menu =
          UnitAndScalePopUpMenu::create(parentTableWidget,

@@ -72,9 +72,9 @@ TypeLookup const Yeast::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight    , Yeast::m_amountIsWeight    ,           NonPhysicalQuantity::Bool         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct   , Yeast::m_attenuation_pct   ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor           , Yeast::m_bestFor           ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ,           NonPhysicalQuantity::Enum         ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculationString, Yeast::m_flocculationString),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ,           NonPhysicalQuantity::Enum         ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::formString        , Yeast::m_formString        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory        , Yeast::m_laboratory        ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse          , Yeast::m_maxReuse          ,           NonPhysicalQuantity::Count        ),
@@ -84,7 +84,7 @@ TypeLookup const Yeast::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID         , Yeast::m_productID         ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured     , Yeast::m_timesCultured     ,           NonPhysicalQuantity::Count        ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::typeString        , Yeast::m_typeString        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ,           NonPhysicalQuantity::Enum         ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    &NamedEntityWithInventory::typeLookup

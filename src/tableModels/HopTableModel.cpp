@@ -53,13 +53,13 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
       parent,
       editable,
       {
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Name     , tr("Name"     ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha    , tr("Alpha %"  ),           NonPhysicalQuantity::Percentage),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Amount   , tr("Amount"   ), Measurement::PhysicalQuantity::Mass      ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Inventory, tr("Inventory"), Measurement::PhysicalQuantity::Mass      ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Form     , tr("Form"     ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Use      , tr("Use"      ),           NonPhysicalQuantity::String    ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Time     , tr("Time"     ), Measurement::PhysicalQuantity::Time      ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Name     , tr("Name"     ), Hop, PropertyNames::NamedEntity::name),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha    , tr("Alpha %"  ), Hop, PropertyNames::Hop::alpha_pct   ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Amount   , tr("Amount"   ), Hop, PropertyNames::Hop::amount_kg   ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Inventory, tr("Inventory"), Hop, PropertyNames::Hop::amount_kg   ), // No inventory property name
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Form     , tr("Form"     ), Hop, PropertyNames::Hop::form        ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Use      , tr("Use"      ), Hop, PropertyNames::Hop::use         ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Time     , tr("Time"     ), Hop, PropertyNames::Hop::time_min    ),
       }
    },
    showIBUs(false) {

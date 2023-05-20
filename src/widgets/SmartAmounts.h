@@ -171,7 +171,6 @@ namespace SmartAmounts {
  * \param editorClass The class name of the class holding the field we're initialising, eg \c editors/HopEditor.  (In theory we
  *                    could pick this up via \c staticMetaObject.className(), but then we wouldn't be able to do the
  *                    macro concatenation here.)
- * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop
  * \param labelName  The name of the member variable for the corresponding label (\c QLabel or \c SmartLabel) for this
  *                   field.  NB we cannot always deduce this from fieldName, as sometimes two fields share a label, eg
  *                   for a min/max range on a \c Style.
@@ -183,6 +182,7 @@ namespace SmartAmounts {
  *                       always include their canonical unit names (eg \c PropertyNames::Fermentable::color_srm) whereas
  *                       the former do not (eg \c field_color) because the user can enter data in any supported
  *                       units.
+ * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop
  * \param propertyName The name of the property to which this field relates, eg in \c HopEditor, this could be
  *                     \c PropertyNames::NamedEntity::name, \c PropertyNames::Hop::alpha_pct, etc.  (Note, as above, we
  *                     intentionally do \b not automatically insert the \c PropertyNames:: prefix.)
