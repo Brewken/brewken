@@ -1239,39 +1239,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>naam vergistbare</translation>
+        <translation type="vanished">naam vergistbare</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>naam vergistbare:</translation>
+        <translation type="vanished">naam vergistbare:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Database met vergistbaren</translation>
+        <translation type="vanished">Database met vergistbaren</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Toevoegen aan recept</translation>
+        <translation type="vanished">Toevoegen aan recept</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nieuw</translation>
+        <translation type="vanished">Nieuw</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Voeg geselecteerde ingredient aan het recept toe</translation>
+        <translation type="vanished">Voeg geselecteerde ingredient aan het recept toe</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Creëer nieuw ingrediënt</translation>
+        <translation type="vanished">Creëer nieuw ingrediënt</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edit geselecteerde ingrediënt</translation>
+        <translation type="vanished">Edit geselecteerde ingrediënt</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Verwijder geselecteerde ingrediënt</translation>
+        <translation type="vanished">Verwijder geselecteerde ingrediënt</translation>
     </message>
 </context>
 <context>
@@ -1561,31 +1561,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Hop Database</translation>
+        <translation type="vanished">Hop Database</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Toevoegen aan recept</translation>
+        <translation type="vanished">Toevoegen aan recept</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nieuw</translation>
+        <translation type="vanished">Nieuw</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Voeg geselecteerde ingredient aan het recept toe</translation>
+        <translation type="vanished">Voeg geselecteerde ingredient aan het recept toe</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Creëer nieuw ingrediënt</translation>
+        <translation type="vanished">Creëer nieuw ingrediënt</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edit geselecteerde ingrediënt</translation>
+        <translation type="vanished">Edit geselecteerde ingrediënt</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Verwijder geselecteerde ingrediënt</translation>
+        <translation type="vanished">Verwijder geselecteerde ingrediënt</translation>
     </message>
 </context>
 <context>
@@ -2381,39 +2381,39 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>naam Diversen</translation>
+        <translation type="vanished">naam Diversen</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>naam Diversen:</translation>
+        <translation type="vanished">naam Diversen:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Database Diversen</translation>
+        <translation type="vanished">Database Diversen</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Toevoegen aan recept</translation>
+        <translation type="vanished">Toevoegen aan recept</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nieuw</translation>
+        <translation type="vanished">Nieuw</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Voeg geselecteerde ingredient aan het recept toe</translation>
+        <translation type="vanished">Voeg geselecteerde ingredient aan het recept toe</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Creëer nieuw ingrediënt</translation>
+        <translation type="vanished">Creëer nieuw ingrediënt</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edit geselecteerde ingrediënt</translation>
+        <translation type="vanished">Edit geselecteerde ingrediënt</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Verwijder geselecteerde ingrediënt</translation>
+        <translation type="vanished">Verwijder geselecteerde ingrediënt</translation>
     </message>
 </context>
 <context>
@@ -3577,6 +3577,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Creëer nieuw ingrediënt</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Edit geselecteerde ingrediënt</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Verwijder geselecteerde ingrediënt</translation>
     </message>
 </context>
 <context>
@@ -4774,50 +4802,50 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Gist naam</translation>
+        <translation type="vanished">Gist naam</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Gist naam:</translation>
+        <translation type="vanished">Gist naam:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Gist Databank</translation>
+        <translation type="vanished">Gist Databank</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Voeg toe aan recept</translation>
+        <translation type="vanished">Voeg toe aan recept</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nieuw</translation>
+        <translation type="vanished">Nieuw</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Voeg geselecteerde ingredient toe aan het recept</translation>
+        <translation type="vanished">Voeg geselecteerde ingredient toe aan het recept</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Creëer nieuw ingrediënt</translation>
+        <translation type="vanished">Creëer nieuw ingrediënt</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edit geselecteerde ingrediënt</translation>
+        <translation type="vanished">Edit geselecteerde ingrediënt</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Verwijder geselecteerde ingrediënt</translation>
+        <translation type="vanished">Verwijder geselecteerde ingrediënt</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Gist naam</translation>
+        <translation type="obsolete">Gist naam</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Gist naam:</translation>
+        <translation type="obsolete">Gist naam:</translation>
     </message>
 </context>
 <context>

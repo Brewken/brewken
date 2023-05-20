@@ -1196,39 +1196,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Gjærbar råvares navn</translation>
+        <translation type="vanished">Gjærbar råvares navn</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Gjærbar råvares navn:</translation>
+        <translation type="vanished">Gjærbar råvares navn:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Database gjærbart</translation>
+        <translation type="vanished">Database gjærbart</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Legg til oppskrift</translation>
+        <translation type="vanished">Legg til oppskrift</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Ny</translation>
+        <translation type="vanished">Ny</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Legg til valgt ingrediens til oppskrift</translation>
+        <translation type="vanished">Legg til valgt ingrediens til oppskrift</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Opprett ny ingrediens</translation>
+        <translation type="vanished">Opprett ny ingrediens</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Rediger valgt ingrediens</translation>
+        <translation type="vanished">Rediger valgt ingrediens</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Fjern valgt ingrediens</translation>
+        <translation type="vanished">Fjern valgt ingrediens</translation>
     </message>
 </context>
 <context>
@@ -1506,31 +1506,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Humledatabase</translation>
+        <translation type="vanished">Humledatabase</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Legg til oppskrift</translation>
+        <translation type="vanished">Legg til oppskrift</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Ny</translation>
+        <translation type="vanished">Ny</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Legg til valgt ingrediens til oppskrift</translation>
+        <translation type="vanished">Legg til valgt ingrediens til oppskrift</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Opprett ny ingrediens</translation>
+        <translation type="vanished">Opprett ny ingrediens</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Rediger valgt ingrediens</translation>
+        <translation type="vanished">Rediger valgt ingrediens</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Fjern valgt ingrediens</translation>
+        <translation type="vanished">Fjern valgt ingrediens</translation>
     </message>
 </context>
 <context>
@@ -2306,39 +2306,39 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Diverse navn</translation>
+        <translation type="vanished">Diverse navn</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Diverse navn:</translation>
+        <translation type="vanished">Diverse navn:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Database diverse</translation>
+        <translation type="vanished">Database diverse</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Legg til oppskrift</translation>
+        <translation type="vanished">Legg til oppskrift</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Ny</translation>
+        <translation type="vanished">Ny</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Legg til valgt ingrediens til oppskrift</translation>
+        <translation type="vanished">Legg til valgt ingrediens til oppskrift</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Opprett ny ingrediens</translation>
+        <translation type="vanished">Opprett ny ingrediens</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Rediger valgt ingrediens</translation>
+        <translation type="vanished">Rediger valgt ingrediens</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Fjern valgt ingrediens</translation>
+        <translation type="vanished">Fjern valgt ingrediens</translation>
     </message>
 </context>
 <context>
@@ -3516,6 +3516,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Legg til oppskrift</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Legg til valgt ingrediens til oppskrift</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Opprett ny ingrediens</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Rediger valgt ingrediens</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Fjern valgt ingrediens</translation>
     </message>
 </context>
 <context>
@@ -4718,50 +4746,50 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Gjærnavn</translation>
+        <translation type="vanished">Gjærnavn</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Gjærnavn:</translation>
+        <translation type="vanished">Gjærnavn:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Gjærdatabase</translation>
+        <translation type="vanished">Gjærdatabase</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Legg til oppskrift</translation>
+        <translation type="vanished">Legg til oppskrift</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Ny</translation>
+        <translation type="vanished">Ny</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Legg til valgt ingrediens til oppskrift</translation>
+        <translation type="vanished">Legg til valgt ingrediens til oppskrift</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Opprett ny ingrediens</translation>
+        <translation type="vanished">Opprett ny ingrediens</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Rediger valgt ingrediens</translation>
+        <translation type="vanished">Rediger valgt ingrediens</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Fjern valgt ingrediens</translation>
+        <translation type="vanished">Fjern valgt ingrediens</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Gjærnavn</translation>
+        <translation type="obsolete">Gjærnavn</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Gjærnavn:</translation>
+        <translation type="obsolete">Gjærnavn:</translation>
     </message>
 </context>
 <context>

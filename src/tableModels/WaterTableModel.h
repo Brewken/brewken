@@ -35,7 +35,6 @@
 
 // Forward declarations.
 class Water;
-class WaterTableWidget;
 class Recipe;
 
 class WaterItemDelegate;
@@ -59,7 +58,7 @@ public:
       Sodium     ,
       Magnesium  ,
    };
-   WaterTableModel(WaterTableWidget* parent = nullptr);
+   WaterTableModel(QTableView * parent = nullptr);
    virtual ~WaterTableModel();
 
    //! \brief Casting wrapper for \c BtTableModel::getColumnInfo

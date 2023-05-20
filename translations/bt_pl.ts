@@ -1196,39 +1196,27 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Składnik fermentacji</translation>
+        <translation type="vanished">Składnik fermentacji</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Składnik fermentacji:</translation>
+        <translation type="vanished">Składnik fermentacji:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Baza składników fermentacji</translation>
+        <translation type="vanished">Baza składników fermentacji</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
@@ -1506,31 +1494,19 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Baza chmieli</translation>
+        <translation type="vanished">Baza chmieli</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
@@ -2306,39 +2282,27 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Nazwa dodatku</translation>
+        <translation type="vanished">Nazwa dodatku</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Nazwa dodatku:</translation>
+        <translation type="vanished">Nazwa dodatku:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Baza dodatków</translation>
+        <translation type="vanished">Baza dodatków</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
@@ -3515,6 +3479,34 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Dodaj do receptury</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nowy</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Utwórz nowy składnik</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4718,50 +4710,38 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Nazwa drożdży</translation>
+        <translation type="vanished">Nazwa drożdży</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Nazwa drożdży:</translation>
+        <translation type="vanished">Nazwa drożdży:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Baza drożdży</translation>
+        <translation type="vanished">Baza drożdży</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Nazwa drożdży</translation>
+        <translation type="obsolete">Nazwa drożdży</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Nazwa drożdży:</translation>
+        <translation type="obsolete">Nazwa drożdży:</translation>
     </message>
 </context>
 <context>

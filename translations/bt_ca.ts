@@ -1255,39 +1255,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Nom ingredient fermentable</translation>
+        <translation type="vanished">Nom ingredient fermentable</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Nom ingredient fermentable:</translation>
+        <translation type="vanished">Nom ingredient fermentable:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Base de dades ingredients fermentables</translation>
+        <translation type="vanished">Base de dades ingredients fermentables</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
@@ -1577,31 +1577,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Base de dades de llúpols</translation>
+        <translation type="vanished">Base de dades de llúpols</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
@@ -2381,39 +2381,39 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Nom d&apos;ingredient extra</translation>
+        <translation type="vanished">Nom d&apos;ingredient extra</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Nom d&apos;ingredient extra:</translation>
+        <translation type="vanished">Nom d&apos;ingredient extra:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Base de dades d&apos;ingredients extres</translation>
+        <translation type="vanished">Base de dades d&apos;ingredients extres</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
@@ -3591,6 +3591,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Afegeix a la recepta</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Crear un ingredient nou</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Edita ingredient seleccionat</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
@@ -4804,50 +4832,50 @@ El volum final al primari és de %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Nom del llevat</translation>
+        <translation type="vanished">Nom del llevat</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Nom del llevat:</translation>
+        <translation type="vanished">Nom del llevat:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Base de dades de llevats</translation>
+        <translation type="vanished">Base de dades de llevats</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Nom del llevat</translation>
+        <translation type="obsolete">Nom del llevat</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Nom del llevat:</translation>
+        <translation type="obsolete">Nom del llevat:</translation>
     </message>
 </context>
 <context>

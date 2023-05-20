@@ -1235,39 +1235,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Erjeszthető anyag neve</translation>
+        <translation type="vanished">Erjeszthető anyag neve</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Erjeszthető anyag neve:</translation>
+        <translation type="vanished">Erjeszthető anyag neve:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Erjesztendő anyagok (adatbázis)</translation>
+        <translation type="vanished">Erjesztendő anyagok (adatbázis)</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Hozzáadás a recepthez</translation>
+        <translation type="vanished">Hozzáadás a recepthez</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Új</translation>
+        <translation type="vanished">Új</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Kiválasztott hozzávaló hozzáadása a recepthez</translation>
+        <translation type="vanished">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Új elem hozzáadása</translation>
+        <translation type="vanished">Új elem hozzáadása</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Kiválasztott elem szerkesztése</translation>
+        <translation type="vanished">Kiválasztott elem szerkesztése</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Kiválasztott elem törlése</translation>
+        <translation type="vanished">Kiválasztott elem törlése</translation>
     </message>
 </context>
 <context>
@@ -1549,31 +1549,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Komló adatbázis</translation>
+        <translation type="vanished">Komló adatbázis</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Hozzáadás a recepthez</translation>
+        <translation type="vanished">Hozzáadás a recepthez</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Új</translation>
+        <translation type="vanished">Új</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Kiválasztott hozzávaló hozzáadása a recepthez</translation>
+        <translation type="vanished">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Új elem hozzáadása</translation>
+        <translation type="vanished">Új elem hozzáadása</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Kiválasztott elem szerkesztése</translation>
+        <translation type="vanished">Kiválasztott elem szerkesztése</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Kiválasztott elem törlése</translation>
+        <translation type="vanished">Kiválasztott elem törlése</translation>
     </message>
 </context>
 <context>
@@ -2357,39 +2357,35 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Egyéb név</translation>
+        <translation type="vanished">Egyéb név</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Egyéb név:</translation>
-    </message>
-    <message>
-        <source>Misc Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Egyéb név:</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Hozzáadás a recepthez</translation>
+        <translation type="vanished">Hozzáadás a recepthez</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Új</translation>
+        <translation type="vanished">Új</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Kiválasztott hozzávaló hozzáadása a recepthez</translation>
+        <translation type="vanished">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Új elem hozzáadása</translation>
+        <translation type="vanished">Új elem hozzáadása</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Kiválasztott elem szerkesztése</translation>
+        <translation type="vanished">Kiválasztott elem szerkesztése</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Kiválasztott elem törlése</translation>
+        <translation type="vanished">Kiválasztott elem törlése</translation>
     </message>
 </context>
 <context>
@@ -3563,6 +3559,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Hozzáadás a recepthez</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Új elem hozzáadása</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Kiválasztott elem szerkesztése</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Kiválasztott elem törlése</translation>
     </message>
 </context>
 <context>
@@ -4752,50 +4776,46 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Élesztőtörzs neve</translation>
+        <translation type="vanished">Élesztőtörzs neve</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Élesztő neve:</translation>
-    </message>
-    <message>
-        <source>Yeast Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Élesztő neve:</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Hozzáadás a recepthez</translation>
+        <translation type="vanished">Hozzáadás a recepthez</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Új</translation>
+        <translation type="vanished">Új</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Kiválasztott hozzávaló hozzáadása a recepthez</translation>
+        <translation type="vanished">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Új elem hozzáadása</translation>
+        <translation type="vanished">Új elem hozzáadása</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Kiválasztott elem szerkesztése</translation>
+        <translation type="vanished">Kiválasztott elem szerkesztése</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Kiválasztott elem törlése</translation>
+        <translation type="vanished">Kiválasztott elem törlése</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Élesztőtörzs neve</translation>
+        <translation type="obsolete">Élesztőtörzs neve</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Élesztő neve:</translation>
+        <translation type="obsolete">Élesztő neve:</translation>
     </message>
 </context>
 <context>

@@ -183,7 +183,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/WaterListModel.cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
-    ${repoDir}/src/WaterTableWidget.cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp

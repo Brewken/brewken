@@ -1231,39 +1231,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Gärgut Name</translation>
+        <translation type="vanished">Gärgut Name</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Gärgut Name:</translation>
+        <translation type="vanished">Gärgut Name:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Gärgutdatenbank</translation>
+        <translation type="vanished">Gärgutdatenbank</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Zum Rezept hinzufügen</translation>
+        <translation type="vanished">Zum Rezept hinzufügen</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation type="vanished">Neu</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Füge ausgewählte Zutaten dem Rezept hinzu</translation>
+        <translation type="vanished">Füge ausgewählte Zutaten dem Rezept hinzu</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Erstelle neue Zutat</translation>
+        <translation type="vanished">Erstelle neue Zutat</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Bearbeite ausgewählte Zutat</translation>
+        <translation type="vanished">Bearbeite ausgewählte Zutat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>ausgewählte Zutat entfernen</translation>
+        <translation type="vanished">ausgewählte Zutat entfernen</translation>
     </message>
 </context>
 <context>
@@ -1545,31 +1545,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Hopfendatenbank</translation>
+        <translation type="vanished">Hopfendatenbank</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Zum Rezept hinzufügen</translation>
+        <translation type="vanished">Zum Rezept hinzufügen</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation type="vanished">Neu</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Füge ausgewählte Zutaten dem Rezept hinzu</translation>
+        <translation type="vanished">Füge ausgewählte Zutaten dem Rezept hinzu</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Erstelle neue Zutat</translation>
+        <translation type="vanished">Erstelle neue Zutat</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Bearbeite ausgewählte Zutat</translation>
+        <translation type="vanished">Bearbeite ausgewählte Zutat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>ausgewählte Zutat entfernen</translation>
+        <translation type="vanished">ausgewählte Zutat entfernen</translation>
     </message>
 </context>
 <context>
@@ -2349,39 +2349,39 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Sonstiges Name</translation>
+        <translation type="vanished">Sonstiges Name</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Sonstiges Name:</translation>
+        <translation type="vanished">Sonstiges Name:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Sonstiges Datenbank</translation>
+        <translation type="vanished">Sonstiges Datenbank</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Zum Rezept hinzufügen</translation>
+        <translation type="vanished">Zum Rezept hinzufügen</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation type="vanished">Neu</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Füge ausgewählte Zutaten dem Rezept hinzu</translation>
+        <translation type="vanished">Füge ausgewählte Zutaten dem Rezept hinzu</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Erstelle neue Zutat</translation>
+        <translation type="vanished">Erstelle neue Zutat</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Bearbeite ausgewählte Zutat</translation>
+        <translation type="vanished">Bearbeite ausgewählte Zutat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>ausgewählte Zutat entfernen</translation>
+        <translation type="vanished">ausgewählte Zutat entfernen</translation>
     </message>
 </context>
 <context>
@@ -3559,6 +3559,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Zum Rezept hinzufügen</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Füge ausgewählte Zutaten dem Rezept hinzu</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Erstelle neue Zutat</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Bearbeite ausgewählte Zutat</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">ausgewählte Zutat entfernen</translation>
     </message>
 </context>
 <context>
@@ -4772,50 +4800,50 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Hefename</translation>
+        <translation type="vanished">Hefename</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Hefename:</translation>
+        <translation type="vanished">Hefename:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Hefedatenbank</translation>
+        <translation type="vanished">Hefedatenbank</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Zum Rezept hinzufügen</translation>
+        <translation type="vanished">Zum Rezept hinzufügen</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation type="vanished">Neu</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Füge ausgewählte Zutaten dem Rezept hinzu</translation>
+        <translation type="vanished">Füge ausgewählte Zutaten dem Rezept hinzu</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Erstelle neue Zutat</translation>
+        <translation type="vanished">Erstelle neue Zutat</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Bearbeite ausgewählte Zutat</translation>
+        <translation type="vanished">Bearbeite ausgewählte Zutat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished">ausgewählte Zutat entfernen</translation>
+        <translation type="obsolete">ausgewählte Zutat entfernen</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Hefename</translation>
+        <translation type="obsolete">Hefename</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Hefename:</translation>
+        <translation type="obsolete">Hefename:</translation>
     </message>
 </context>
 <context>

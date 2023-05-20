@@ -1196,39 +1196,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Ονομασία ζυμώσιμων</translation>
+        <translation type="vanished">Ονομασία ζυμώσιμων</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Ονομασία ζυμώσιμων</translation>
+        <translation type="vanished">Ονομασία ζυμώσιμων</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Αρχείο ζυμώσιμων</translation>
+        <translation type="vanished">Αρχείο ζυμώσιμων</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Προσθήκη στην συνταγή</translation>
+        <translation type="vanished">Προσθήκη στην συνταγή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Νέα</translation>
+        <translation type="vanished">Νέα</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
+        <translation type="vanished">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Δημιουργείστε ένα νέο συστατικό</translation>
+        <translation type="vanished">Δημιουργείστε ένα νέο συστατικό</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Διόρθωση επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διόρθωση επιλεγμένου συστατικού</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Διαγραφή επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διαγραφή επιλεγμένου συστατικού</translation>
     </message>
 </context>
 <context>
@@ -1506,31 +1506,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Κατάλογος λυκίσκων</translation>
+        <translation type="vanished">Κατάλογος λυκίσκων</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Προσθήκη στην συνταγή</translation>
+        <translation type="vanished">Προσθήκη στην συνταγή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Νέα</translation>
+        <translation type="vanished">Νέα</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
+        <translation type="vanished">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Δημιουργείστε ένα νέο συστατικό</translation>
+        <translation type="vanished">Δημιουργείστε ένα νέο συστατικό</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Διόρθωση επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διόρθωση επιλεγμένου συστατικού</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Διαγραφή επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διαγραφή επιλεγμένου συστατικού</translation>
     </message>
 </context>
 <context>
@@ -2310,39 +2310,39 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Ονομασία είδους</translation>
+        <translation type="vanished">Ονομασία είδους</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Ονομασία είδους</translation>
+        <translation type="vanished">Ονομασία είδους</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Βάση δεδομένων διαφόρων</translation>
+        <translation type="vanished">Βάση δεδομένων διαφόρων</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Προσθήκη στην συνταγή</translation>
+        <translation type="vanished">Προσθήκη στην συνταγή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Νέα</translation>
+        <translation type="vanished">Νέα</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
+        <translation type="vanished">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Δημιουργείστε ένα νέο συστατικό</translation>
+        <translation type="vanished">Δημιουργείστε ένα νέο συστατικό</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Διόρθωση επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διόρθωση επιλεγμένου συστατικού</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Διαγραφή επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διαγραφή επιλεγμένου συστατικού</translation>
     </message>
 </context>
 <context>
@@ -3520,6 +3520,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Προσθήκη στην συνταγή</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Δημιουργείστε ένα νέο συστατικό</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Διόρθωση επιλεγμένου συστατικού</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Διαγραφή επιλεγμένου συστατικού</translation>
     </message>
 </context>
 <context>
@@ -4726,50 +4754,50 @@ The final volume in the primary is %1.</source>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Ονομασία μαγιάς</translation>
+        <translation type="vanished">Ονομασία μαγιάς</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Ονομασία μαγιάς</translation>
+        <translation type="vanished">Ονομασία μαγιάς</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Βάση δεδομένων μαγιάς</translation>
+        <translation type="vanished">Βάση δεδομένων μαγιάς</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Προσθήκη στην συνταγή</translation>
+        <translation type="vanished">Προσθήκη στην συνταγή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Νέα</translation>
+        <translation type="vanished">Νέα</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
+        <translation type="vanished">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Δημιουργείστε ένα νέο συστατικό</translation>
+        <translation type="vanished">Δημιουργείστε ένα νέο συστατικό</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Διόρθωση επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διόρθωση επιλεγμένου συστατικού</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Διαγραφή επιλεγμένου συστατικού</translation>
+        <translation type="vanished">Διαγραφή επιλεγμένου συστατικού</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Ονομασία μαγιάς</translation>
+        <translation type="obsolete">Ονομασία μαγιάς</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Ονομασία μαγιάς</translation>
+        <translation type="obsolete">Ονομασία μαγιάς</translation>
     </message>
 </context>
 <context>

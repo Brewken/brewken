@@ -1243,39 +1243,39 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Название сбраживаемого</translation>
+        <translation type="vanished">Название сбраживаемого</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Название сбраживаемого</translation>
+        <translation type="vanished">Название сбраживаемого</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>База сбраживаемых ингридиентов</translation>
+        <translation type="vanished">База сбраживаемых ингридиентов</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Добавить в рецепт</translation>
+        <translation type="vanished">Добавить в рецепт</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Новый</translation>
+        <translation type="vanished">Новый</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Добавить выбранный ингредиент в рецепт</translation>
+        <translation type="vanished">Добавить выбранный ингредиент в рецепт</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Создать новый ингредиент</translation>
+        <translation type="vanished">Создать новый ингредиент</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Изменить выбранный ингредиент</translation>
+        <translation type="vanished">Изменить выбранный ингредиент</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Удалить выбранный ингредиент</translation>
+        <translation type="vanished">Удалить выбранный ингредиент</translation>
     </message>
 </context>
 <context>
@@ -1553,31 +1553,31 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>База данных сортов хмеля</translation>
+        <translation type="vanished">База данных сортов хмеля</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Добавить в рецепт</translation>
+        <translation type="vanished">Добавить в рецепт</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Новый</translation>
+        <translation type="vanished">Новый</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Добавить выбранный ингредиент в рецепт</translation>
+        <translation type="vanished">Добавить выбранный ингредиент в рецепт</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Создать новый ингредиент</translation>
+        <translation type="vanished">Создать новый ингредиент</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Изменить выбранный ингредиент</translation>
+        <translation type="vanished">Изменить выбранный ингредиент</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Удалить выбранный ингредиент</translation>
+        <translation type="vanished">Удалить выбранный ингредиент</translation>
     </message>
 </context>
 <context>
@@ -2357,39 +2357,39 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Разное имя</translation>
+        <translation type="vanished">Разное имя</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Разное имя:</translation>
+        <translation type="vanished">Разное имя:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>База данных прочих ингредиентов</translation>
+        <translation type="vanished">База данных прочих ингредиентов</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Добавить в рецепт</translation>
+        <translation type="vanished">Добавить в рецепт</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Новый</translation>
+        <translation type="vanished">Новый</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Добавить выбранный ингредиент в рецепт</translation>
+        <translation type="vanished">Добавить выбранный ингредиент в рецепт</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Создать новый ингредиент</translation>
+        <translation type="vanished">Создать новый ингредиент</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Изменить выбранный ингредиент</translation>
+        <translation type="vanished">Изменить выбранный ингредиент</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Удалить выбранный ингредиент</translation>
+        <translation type="vanished">Удалить выбранный ингредиент</translation>
     </message>
 </context>
 <context>
@@ -3575,6 +3575,34 @@ Log file may contain more details.</source>
     <message>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Добавить в рецепт</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Добавить выбранный ингредиент в рецепт</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Создать новый ингредиент</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Изменить выбранный ингредиент</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Удалить выбранный ингредиент</translation>
     </message>
 </context>
 <context>
@@ -4784,50 +4812,50 @@ The final volume in the primary is %1.</source>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Название дрожжей</translation>
+        <translation type="vanished">Название дрожжей</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Название дрожжей:</translation>
+        <translation type="vanished">Название дрожжей:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>База данных дрожжей</translation>
+        <translation type="vanished">База данных дрожжей</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Добавить в рецепт</translation>
+        <translation type="vanished">Добавить в рецепт</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Новый</translation>
+        <translation type="vanished">Новый</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Добавить выбранный ингредиент в рецепт</translation>
+        <translation type="vanished">Добавить выбранный ингредиент в рецепт</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Создать новый ингредиент</translation>
+        <translation type="vanished">Создать новый ингредиент</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Изменить выбранный ингредиент</translation>
+        <translation type="vanished">Изменить выбранный ингредиент</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Удалить выбранный ингредиент</translation>
+        <translation type="vanished">Удалить выбранный ингредиент</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Название дрожжей</translation>
+        <translation type="obsolete">Название дрожжей</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Название дрожжей:</translation>
+        <translation type="obsolete">Название дрожжей:</translation>
     </message>
 </context>
 <context>

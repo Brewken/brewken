@@ -37,9 +37,8 @@
 #include "measurement/Unit.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
-#include "WaterTableWidget.h"
 
-WaterTableModel::WaterTableModel(WaterTableWidget * parent) :
+WaterTableModel::WaterTableModel(QTableView * parent) :
    BtTableModelRecipeObserver{
       parent,
       false,

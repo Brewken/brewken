@@ -1080,39 +1080,15 @@ Log file may contain more details.</source>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Назив житарице</translation>
+        <translation type="vanished">Назив житарице</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Назив житарице:</translation>
-    </message>
-    <message>
-        <source>Fermentable Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Назив житарице:</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Нов</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Нов</translation>
     </message>
 </context>
 <context>
@@ -1389,32 +1365,8 @@ Log file may contain more details.</source>
         <translation type="vanished">Назив хмеља:</translation>
     </message>
     <message>
-        <source>Hop Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>New</source>
-        <translation>Нов</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Нов</translation>
     </message>
 </context>
 <context>
@@ -2202,39 +2154,15 @@ Log file may contain more details.</source>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Назив разног</translation>
+        <translation type="vanished">Назив разног</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Назив разног:</translation>
-    </message>
-    <message>
-        <source>Misc Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Назив разног:</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Нов</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Нов</translation>
     </message>
 </context>
 <context>
@@ -3391,6 +3319,34 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Нов</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4558,51 +4514,8 @@ The final volume in the primary is %1.</source>
 <context>
     <name>YeastDialog</name>
     <message>
-        <source>Yeast name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yeast name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yeast Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>New</source>
-        <translation>Нов</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>YeastEditor</name>
-    <message>
-        <source>Yeast name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yeast name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Нов</translation>
     </message>
 </context>
 <context>

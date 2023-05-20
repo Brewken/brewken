@@ -879,45 +879,6 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
-    <name>FermentableDialog</name>
-    <message>
-        <source>Fermentable name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentable name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentable Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FermentableTableModel</name>
     <message>
         <source>Name</source>
@@ -1123,37 +1084,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>HopDialog</name>
-    <message>
-        <source>Hop Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1813,45 +1743,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Wood</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MiscDialog</name>
-    <message>
-        <source>Misc name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Misc name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Misc Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2850,6 +2741,34 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4007,56 +3926,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Very High</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>YeastDialog</name>
-    <message>
-        <source>Yeast name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yeast name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yeast Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>YeastEditor</name>
-    <message>
-        <source>Yeast name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yeast name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
