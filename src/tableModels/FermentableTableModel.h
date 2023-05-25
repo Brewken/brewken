@@ -34,22 +34,20 @@
 #include "measurement/Unit.h"
 #include "model/Fermentable.h"
 #include "tableModels/BtTableModelInventory.h"
+#include "tableModels/ItemDelegate.h"
+#include "tableModels/TableModelBase.h"
 
 // Forward declarations.
 class BtStringConst;
 class Fermentable;
 class Recipe;
-class FermentableItemDelegate;
 
-/*!
- * \class FermentableTableModel
- *
- * \brief A table model for a list of fermentables.
- */
-class FermentableTableModel : public BtTableModelInventory, public BtTableModelData<Fermentable> {
-   Q_OBJECT
-
-public:
+//
+// You have to get the order of everything right with traits classes, but the end result is that we can refer to
+// FermentableTableModel::ColumnIndex::Color etc.
+//
+class FermentableTableModel;
+template <> struct TableModelTraits<FermentableTableModel> {
    enum class ColumnIndex {
       Name     ,
       Type     ,
@@ -61,12 +59,33 @@ public:
       Yield    ,
       Color    ,
    };
+};
 
+/*!
+ * \class FermentableTableModel
+ *
+ * \brief A table model for a list of fermentables.
+ */
+class FermentableTableModel : public BtTableModelInventory, public TableModelBase<FermentableTableModel, Fermentable> {
+   Q_OBJECT
+
+public:
    FermentableTableModel(QTableView* parent=nullptr, bool editable=true);
    virtual ~FermentableTableModel();
 
+   //
+   // This block of functions is implemented in the TABLE_MODEL_COMMON_CODE macro included from
+   // tableModels/TableModelBase.h
+   //
    //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
-   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
+///   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
+
+   //
+   // This block of functions is called from the TableModelBase class
+   //
+   void added  (std::shared_ptr<Fermentable> item);
+   void removed(std::shared_ptr<Fermentable> item);
+   void removedAll();
 
    //! \brief Observe a recipe's list of fermentables.
    void observeRecipe(Recipe* rec);
@@ -76,24 +95,24 @@ private:
    //! \brief Watch all the \b ferms for changes.
    void addFermentables(QList<std::shared_ptr< Fermentable> > ferms);
 public:
-   //! \brief Clear the model.
-   void removeAll();
+///   //! \brief Clear the model.
+///   void removeAll();
    //! \brief True if you want to display percent of each grain in the row header.
    void setDisplayPercentages( bool var );
 
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+   virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
+   virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;
    //! \brief Reimplemented from QAbstractTableModel
    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual Qt::ItemFlags flags(const QModelIndex& index ) const;
+   virtual Qt::ItemFlags flags(const QModelIndex& index) const;
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
+   virtual bool setData(QModelIndex const & index, QVariant const & value, int role = Qt::EditRole);
 
-   //! \returns true if "ferm" is successfully found and removed.
-   bool remove(std::shared_ptr<Fermentable> ferm);
+///   //! \returns true if "ferm" is successfully found and removed.
+///   bool remove(std::shared_ptr<Fermentable> ferm);
 
 public slots:
    //! \brief Watch \b ferm for changes.
@@ -101,9 +120,13 @@ public slots:
 
    void removeFermentable(int fermId, std::shared_ptr<QObject> object);
 
-private slots:
-   //! \brief Catch changes to Recipe, Database, and Fermentable.
+   /**
+    * \brief Catch changes to Recipe, Database, and Fermentable.
+    *        NB: Needs to be public, not private, as accessed from \c TableModelBase
+    */
    void changed(QMetaProperty, QVariant);
+
+private slots:
    //! \brief Catches changes to inventory
    void changedInventory(int invKey, BtStringConst const & propertyName);
 
@@ -113,18 +136,24 @@ private:
 
 private:
    bool displayPercentages;
+
+   // .:TODO:.:JSON:.  Now that fermentables can also be measured by volume, we need to rethink this
    double totalFermMass_kg;
 };
+
+//=========================================== CLASS FermentableItemDelegate ============================================
 
 /*!
  * \brief An item delegate for Fermentable tables.
  * \sa FermentableTableModel.
  */
-class FermentableItemDelegate : public QItemDelegate {
-   Q_OBJECT
+class FermentableItemDelegate : public QItemDelegate,
+                                public ItemDelegate<FermentableItemDelegate, FermentableTableModel> {
+Q_OBJECT
 
 public:
-   FermentableItemDelegate(QObject* parent = nullptr);
+   FermentableItemDelegate(QTableView * parent, FermentableTableModel & tableModel);
+   virtual ~FermentableItemDelegate();
 
    //! \brief Reimplemented from QItemDelegate.
    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -134,11 +163,6 @@ public:
    virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
    //! \brief Reimplemented from QItemDelegate.
    virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-   //virtual void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-
-//public slots:
-//   void destroyWidget(QWidget* widget, QAbstractItemDelegate::EndEditHint hint);
-private:
 };
 
 #endif

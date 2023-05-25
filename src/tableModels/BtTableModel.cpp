@@ -67,6 +67,18 @@ BtTableModel::BtTableModel(QTableView * parent,
    parentTableWidget{parent},
    editable{editable},
    m_columnInfos{columnInfos} {
+
+   QHeaderView * rowHeaderView = this->parentTableWidget->verticalHeader();
+   rowHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
+   QHeaderView * columnHeaderView = this->parentTableWidget->horizontalHeader();
+   columnHeaderView->setContextMenuPolicy(Qt::CustomContextMenu);
+   this->parentTableWidget->setWordWrap(false);
+   // We use QHeaderView::Interactive here because it's the only option that allows the user to resize the columns
+   // (In theory, QHeaderView::ResizeToContents automatically sets a fixed size that's right for all the data, but, in
+   // practice it doesn't always do what you want, so it's better to give the user some control).
+   columnHeaderView->setSectionResizeMode(QHeaderView::Interactive);
+//   columnHeaderView->setMinimumSectionSize(parent->width()/this->columnCount()); SaltTableModel
+
    return;
 }
 
@@ -92,21 +104,75 @@ int BtTableModel::columnCount(QModelIndex const & /*parent*/) const {
    return this->m_columnInfos.size();
 }
 
-void BtTableModel::doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected) {
+///void BtTableModel::doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected) {
+///   QAction* invoked = menu->exec(hView->mapToGlobal(point));
+///   if (invoked == nullptr) {
+///      return;
+///   }
+///
+///   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
+///   // whether it's the menu or the sub-menu that it came from.
+///   bool isTopMenu{invoked->parentWidget() == menu};
+///   if (isTopMenu) {
+///      // It's the menu, so SystemOfMeasurement
+///      std::optional<Measurement::SystemOfMeasurement> const whatSelected =
+///         UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
+///      qDebug() << Q_FUNC_INFO << "Column" << selected << ", selected SystemOfMeasurement" << whatSelected;
+///      this->getColumnInfo(selected).setForcedSystemOfMeasurement(whatSelected);
+///      // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale, but this is handled by
+///      // unsetForcedSystemOfMeasurementForColumn() and setForcedSystemOfMeasurementForColumn()
+///   } else {
+///      // It's the sub-menu, so UnitSystem::RelativeScale
+///      std::optional<Measurement::UnitSystem::RelativeScale> whatSelected =
+///         UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
+///      qDebug() << Q_FUNC_INFO << "Column" << selected << ", selected RelativeScale" << whatSelected;
+///      this->getColumnInfo(selected).setForcedRelativeScale(whatSelected);
+///   }
+///   return;
+///}
+
+// oofrab
+void BtTableModel::contextMenu(QPoint const & point) {
+   qDebug() << Q_FUNC_INFO;
+   QHeaderView* hView = qobject_cast<QHeaderView*>(this->sender());
+   int selected = hView->logicalIndexAt(point);
+   BtTableModel::ColumnInfo const & columnInfo = this->getColumnInfo(selected);
+
+   // .:TBD:. The logic from here on is similar to that in SmartLabel::popContextMenu, but I didn't yet figure out how
+   // to have more of the code be shared.
+
+   // Only makes sense to offer the pop-up "select scale" menu for physical quantities
+   BtFieldType const fieldType = *columnInfo.typeInfo.fieldType;
+   if (std::holds_alternative<NonPhysicalQuantity>(fieldType)) {
+      return;
+   }
+
+   //
+   // Note that UnitAndScalePopUpMenu::create handles the case where there are two possible physical quantities
+   //
+   std::unique_ptr<QMenu> menu =
+      UnitAndScalePopUpMenu::create(this->parentTableWidget,
+                                    ConvertToPhysicalQuantities(fieldType),
+                                    columnInfo.getForcedSystemOfMeasurement(),
+                                    columnInfo.getForcedRelativeScale());
+///      this->doContextMenu(point, hView, menu.get(), selected);
+   //
+   // This shows the context menu and returns when the user either selects something or dismisses the menu
+   //
    QAction* invoked = menu->exec(hView->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }
 
-   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
-   // whether it's the menu or the sub-menu that it came from.
-   bool isTopMenu{invoked->parentWidget() == menu};
+   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based
+   // on whether it's the menu or the sub-menu that it came from.
+   bool isTopMenu{invoked->parentWidget() == menu.get()};
    if (isTopMenu) {
       // It's the menu, so SystemOfMeasurement
       std::optional<Measurement::SystemOfMeasurement> const whatSelected =
          UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
       qDebug() << Q_FUNC_INFO << "Column" << selected << ", selected SystemOfMeasurement" << whatSelected;
-      this->getColumnInfo(selected).setForcedSystemOfMeasurement(whatSelected);
+      columnInfo.setForcedSystemOfMeasurement(whatSelected);
       // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale, but this is handled by
       // unsetForcedSystemOfMeasurementForColumn() and setForcedSystemOfMeasurementForColumn()
    } else {
@@ -114,25 +180,8 @@ void BtTableModel::doContextMenu(QPoint const & point, QHeaderView * hView, QMen
       std::optional<Measurement::UnitSystem::RelativeScale> whatSelected =
          UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
       qDebug() << Q_FUNC_INFO << "Column" << selected << ", selected RelativeScale" << whatSelected;
-      this->getColumnInfo(selected).setForcedRelativeScale(whatSelected);
+      columnInfo.setForcedRelativeScale(whatSelected);
    }
-   return;
-}
 
-// oofrab
-void BtTableModel::contextMenu(QPoint const & point) {
-   qDebug() << Q_FUNC_INFO;
-   QHeaderView* hView = qobject_cast<QHeaderView*>(this->sender());
-   int selected = hView->logicalIndexAt(point);
-   // Only makes sense to offer the pop-up "select scale" menu for physical quantities
-   BtFieldType const fieldType = *this->getColumnInfo(selected).typeInfo->fieldType;
-   if (std::holds_alternative<Measurement::PhysicalQuantity>(fieldType)) {
-      std::unique_ptr<QMenu> menu =
-         UnitAndScalePopUpMenu::create(parentTableWidget,
-                                       std::get<Measurement::PhysicalQuantity>(fieldType),
-                                       this->getColumnInfo(selected).getForcedSystemOfMeasurement(),
-                                       this->getColumnInfo(selected).getForcedRelativeScale());
-      this->doContextMenu(point, hView, menu.get(), selected);
-   }
    return;
 }

@@ -202,7 +202,7 @@ public:
 
 
 SmartField::SmartField() :
-   SmartBase<SmartField>(),
+   SmartBase<SmartField>{},
    pimpl{std::make_unique<impl>(*this)} {
    return;
 }
@@ -328,7 +328,8 @@ template<typename T, typename> void SmartField::setAmount(std::optional<T> amoun
 
 template<typename T, typename> void SmartField::setAmount(T amount) {
    Q_ASSERT(this->pimpl->m_initialised);
-   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "amount =" << amount;
+   // Usually leave this debug log commented out unless trouble-shooting as it generates a lot of logging
+//   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "amount =" << amount;
 
    if (this->getTypeInfo().typeIndex != typeid(T)) {
       // This is a coding error
@@ -357,10 +358,11 @@ template<typename T, typename> void SmartField::setAmount(T amount) {
       );
    } else {
       // The field is measuring a physical quantity
-      qDebug() <<
-         Q_FUNC_INFO << this->pimpl->m_fieldFqName << "forcedSystemOfMeasurement:" <<
-         this->getForcedSystemOfMeasurement() << ", forcedRelativeScale:" <<
-         this->getForcedRelativeScale();
+      // Usually leave this debug log commented out unless trouble-shooting as it generates a lot of logging
+//      qDebug() <<
+//         Q_FUNC_INFO << this->pimpl->m_fieldFqName << "forcedSystemOfMeasurement:" <<
+//         this->getForcedSystemOfMeasurement() << ", forcedRelativeScale:" <<
+//         this->getForcedRelativeScale();
       this->setRawText(this->displayAmount(amount, this->pimpl->m_precision));
    }
 

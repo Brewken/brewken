@@ -60,7 +60,7 @@
  *        The following protected function overload is also needed:
  *           virtual void changeEvent(QEvent* event)
  *
- *        The code for the definitions of all these functions is "the same" for all editors) can be inserted in
+ *        The code for the definitions of all these functions is "the same" for all editors, and should be inserted in
  *        the implementation file using the INGREDIENT_DIALOG_COMMON_CODE macro.  Eg, in HopDialog, we need:
  *
  *          INGREDIENT_DIALOG_COMMON_CODE(HopDialog)

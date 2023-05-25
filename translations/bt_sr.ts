@@ -1215,6 +1215,30 @@ Log file may contain more details.</source>
         <source>Change Fermentable Is Mashed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Запремина</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Тежина</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">За комљење</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">Касно</translation>
+    </message>
 </context>
 <context>
     <name>HelpDialog</name>

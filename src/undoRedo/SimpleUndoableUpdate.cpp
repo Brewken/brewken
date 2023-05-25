@@ -32,9 +32,9 @@ SimpleUndoableUpdate::SimpleUndoableUpdate(NamedEntity & updatee,
    newValue    {newValue} {
 
 // Uncomment this log message if the assert below is tripping, as it will usually help find the bug quickly
-   qDebug().noquote() <<
-      Q_FUNC_INFO << "Type Info:" << this->typeInfo << ", Old Value:" << oldValue << ", Stack trace:" <<
-      Logging::getStackTrace();
+//   qDebug().noquote() <<
+//      Q_FUNC_INFO << "Type Info:" << this->typeInfo << ", Old Value:" << oldValue << ", Stack trace:" <<
+//      Logging::getStackTrace();
    Q_ASSERT(this->oldValue.isValid() && "Trying to update non-existent property");
 
    this->setText(description);

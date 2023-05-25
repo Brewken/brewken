@@ -36,9 +36,11 @@
 #include "Localization.h"
 #include "Logging.h"
 #include "PersistentSettings.h"
+#include "utils/MetaTypes.h"
 #include "xml/BeerXml.h"
 
 namespace {
+
    /*!
     * \brief Imports the content of an xml file to the database.
     *
@@ -232,6 +234,8 @@ int main(int argc, char **argv) {
       qInfo() << "Resource directory:" << Application::getResourceDir().absolutePath();
 
       qDebug() << Q_FUNC_INFO << "Library Paths:" << qApp->libraryPaths();
+
+      registerMetaTypes();
 
       auto mainAppReturnValue = Application::run();
 

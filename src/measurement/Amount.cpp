@@ -26,6 +26,10 @@ namespace Measurement {
       return;
    }
 
+   Amount::Amount() : m_quantity{-1.0}, m_unit{nullptr} {
+      return;
+   }
+
    //! Copy constructor
    Amount::Amount(Amount const & other) = default;
 

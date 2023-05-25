@@ -33,6 +33,12 @@ namespace Measurement {
       //! Regular constructor
       Amount(double const quantity, Unit const & unit);
 
+      /**
+       * Default constructor is required if we are passing things through the Qt Property system.
+       * NOTE that this will construct an invalid amount
+       */
+      Amount();
+
       //! Copy constructor
       Amount(Amount const & other);
 

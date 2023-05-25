@@ -77,10 +77,7 @@ SaltTableModel::SaltTableModel(QTableView* parent) :
    setObjectName("saltTable");
 
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
-   headerView->setContextMenuPolicy(Qt::CustomContextMenu);
    headerView->setMinimumSectionSize(parent->width()/this->columnCount());
-   headerView->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->setWordWrap(false);
 
    connect(headerView, &QWidget::customContextMenuRequested, this, &SaltTableModel::contextMenu);
    return;

@@ -1355,6 +1355,30 @@ Log file may contain more details.</source>
         <source>Change Fermentable Is Mashed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Όγκος</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Βάρος</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">στο σκεύος σακχαροποίησης</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">Στο τέλος</translation>
+    </message>
 </context>
 <context>
     <name>HelpDialog</name>

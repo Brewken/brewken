@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * CustomComboBox.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * widgets/CustomComboBox.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,28 +14,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "widgets/CustomComboBox.h"
 
-#include "CustomComboBox.h"
 #include <QListView>
-
-#include <QStylePainter>
 #include <QStyle>
 #include <QStyleOptionButton>
 #include <QStyleOptionComboBox>
+#include <QStylePainter>
 
-CustomComboBox::CustomComboBox(QWidget* parent)
-   : QComboBox(parent)
-{
+CustomComboBox::CustomComboBox(QWidget* parent) : QComboBox(parent) {
+   return;
 }
 
-void CustomComboBox::showPopup()
-{
+CustomComboBox::~CustomComboBox() = default;
+
+void CustomComboBox::showPopup() {
    view()->setFixedWidth(300);
    QComboBox::showPopup();
+   return;
 }
 
-void CustomComboBox::paintEvent(QPaintEvent*)
-{
+void CustomComboBox::paintEvent(QPaintEvent*) {
    QStylePainter painter(this);
 
    QStyleOptionComboBox opts;
@@ -46,4 +46,6 @@ void CustomComboBox::paintEvent(QPaintEvent*)
    painter.drawComplexControl(QStyle::CC_ComboBox, opts);
    // Have to draw label separately? Stupid.
    //painter.drawControl(QStyle::CE_ComboBoxLabel, opts);
+
+   return;
 }

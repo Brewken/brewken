@@ -73,7 +73,7 @@ public:
     *        `\c setAmount<std::optional<T>>(\c std::nullopt)` when we mean
     *        `\c setAmount<T>(\c std::optional<T>{std::nullopt})`.
     *
-    * \param amount is the amount to display
+    * \param value
     */
    template<typename EE, typename = std::enable_if_t<is_not_optional<EE>::value> > void setValue(std::optional<EE> value) {
       Q_ASSERT(this->isOptional());
@@ -88,7 +88,7 @@ public:
    /**
     * \brief Set value of a combo box from a non-optional enum val
     *
-    * \param amount is the amount to display
+    * \param value
     */
    template<typename EE, typename = std::enable_if_t<is_not_optional<EE>::value> > void setValue(EE value) {
       Q_ASSERT(!this->isOptional());
@@ -101,7 +101,7 @@ public:
     */
    template<typename EE> [[nodiscard]] std::optional<EE> getOptValue() const {
       Q_ASSERT(this->isOptional());
-      auto value = this->getIntValue();
+      auto value = this->getOptIntValue();
       if (!value) {
          return std::nullopt;
       }
@@ -113,22 +113,26 @@ public:
     */
    template<typename EE> [[nodiscard]] EE getNonOptValue() const {
       Q_ASSERT(!this->isOptional());
-      return static_cast<EE>(*this->getIntValue());
+      return static_cast<EE>(this->getNonOptIntValue());
    }
 
-private:
-
    /**
-    * \brief Called from public templated version of \c setValue
+    * \brief Called from templated version of \c setValue, but also used in generic code (eg \c ItemDelegate) where we
+    *        cannot use strongly-typed enums.
     */
    void setNull();
 
    /**
-    * \brief Called from public templated version of \c setValue
+    * \brief Called from templated version of \c setValue, but also used in generic code (eg \c ItemDelegate) where we
+    *        cannot use strongly-typed enums.
     */
    void setValue(int value);
 
-   [[nodiscard]] std::optional<int> getIntValue() const;
+   [[nodiscard]] std::optional<int> getOptIntValue() const;
+
+   [[nodiscard]] int getNonOptIntValue() const;
+
+private:
 
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;

@@ -57,7 +57,6 @@ MashStepTableModel::MashStepTableModel(QTableView* parent) :
    setObjectName("mashStepTableModel");
 
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
-   headerView->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(headerView, &QWidget::customContextMenuRequested, this, &MashStepTableModel::contextMenu);
    //
    // Whilst, in principle, we could connect to ObjectStoreTyped<MashStep>::getInstance() to listen for signals

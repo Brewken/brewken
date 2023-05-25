@@ -50,6 +50,7 @@
 #include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
+#include "tableModels/ItemDelegate.h"
 #include "utils/BtStringConst.h"
 #include "widgets/BtComboBox.h"
 
@@ -84,30 +85,27 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
       parent,
       editable,
       {
+         // NB: Need PropertyNames::Fermentable::amountWithUnits not PropertyNames::Fermentable::amount below so we can
+         //     handle mass-or-volume generically in TableModelBase.
          SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Name     , tr("Name"       ), Fermentable, PropertyNames::NamedEntity::name          ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Type     , tr("Type"       ), Fermentable, PropertyNames::Fermentable::type          ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Fermentable, PropertyNames::Fermentable::amount        ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Inventory"  ), Fermentable, PropertyNames::Fermentable::amount        ), // No inventory property name
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Amount Type"), Fermentable, PropertyNames::Fermentable::amountIsWeight),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsMashed , tr("Method"     ), Fermentable, PropertyNames::Fermentable::isMashed      ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, AfterBoil, tr("Addition"   ), Fermentable, PropertyNames::Fermentable::addAfterBoil  ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Yield    , tr("Yield %"    ), Fermentable, PropertyNames::Fermentable::yield_pct     ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Color    , tr("Color"      ), Fermentable, PropertyNames::Fermentable::color_srm     ),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Type     , tr("Type"       ), Fermentable, PropertyNames::Fermentable::type          , EnumInfo{Fermentable::typeStringMapping, Fermentable::typeDisplayNames}),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Fermentable, PropertyNames::Fermentable::amountWithUnits),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Inventory"  ), Fermentable, PropertyNames::Fermentable::amount        ), // No inventory property name TODO Fix this!
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Amount Type"), Fermentable, PropertyNames::Fermentable::amountIsWeight, BoolInfo{tr("Volume"    ), tr("Weight")}),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsMashed , tr("Method"     ), Fermentable, PropertyNames::Fermentable::isMashed      , BoolInfo{tr("Not mashed"), tr("Mashed")}),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, AfterBoil, tr("Addition"   ), Fermentable, PropertyNames::Fermentable::addAfterBoil  , BoolInfo{tr("Normal"    ), tr("Late"  )}),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Yield    , tr("Yield %"    ), Fermentable, PropertyNames::Fermentable::yield_pct     , PrecisionInfo{1}),
+         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Color    , tr("Color"      ), Fermentable, PropertyNames::Fermentable::color_srm     , PrecisionInfo{1}),
       }
    },
-   BtTableModelData<Fermentable>{},
+   TableModelBase<FermentableTableModel, Fermentable>{},
    displayPercentages(false),
    totalFermMass_kg(0) {
 
    // for units and scales
    setObjectName("fermentableTable");
 
-   // Will this work here? Yes. Yes it will. Bwahahahahahaha
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
-   headerView->setContextMenuPolicy(Qt::CustomContextMenu);
-   parentTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->setWordWrap(false);
    connect(headerView, &QWidget::customContextMenuRequested, this, &FermentableTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryFermentable>::getInstance(), &ObjectStoreTyped<InventoryFermentable>::signalPropertyChanged, this, &FermentableTableModel::changedInventory);
    return;
@@ -115,9 +113,10 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
 
 FermentableTableModel::~FermentableTableModel() = default;
 
-BtTableModel::ColumnInfo const & FermentableTableModel::getColumnInfo(FermentableTableModel::ColumnIndex const columnIndex) const {
-   return this->BtTableModel::getColumnInfo(static_cast<size_t>(columnIndex));
-}
+// .:TODO:.:JSON:.  Now that fermentables can also be measured by volume, we might need to rethink this
+void FermentableTableModel::added  (std::shared_ptr<Fermentable> item) { if (item->amountIsWeight()) { this->totalFermMass_kg += item->amount(); } return; }
+void FermentableTableModel::removed(std::shared_ptr<Fermentable> item) { if (item->amountIsWeight()) { this->totalFermMass_kg -= item->amount(); } return; }
+void FermentableTableModel::removedAll() { this->totalFermMass_kg = 0; return; };
 
 void FermentableTableModel::observeRecipe(Recipe* rec) {
    if (this->recObs) {
@@ -149,6 +148,7 @@ void FermentableTableModel::observeDatabase(bool val) {
       disconnect(&ObjectStoreTyped<Fermentable>::getInstance(), nullptr, this, nullptr);
       this->removeAll();
    }
+   return;
 }
 
 void FermentableTableModel::addFermentable(int fermId) {
@@ -176,15 +176,7 @@ void FermentableTableModel::addFermentable(int fermId) {
       }
    }
 
-   int size = this->rows.size();
-   beginInsertRows(QModelIndex(), size, size);
-   this->rows.append(ferm);
-   connect(ferm.get(), &NamedEntity::changed, this, &FermentableTableModel::changed);
-   if (ferm->amountIsWeight()) {
-      this->totalFermMass_kg += ferm->amount();
-   }
-   //reset(); // Tell everybody that the table has changed.
-   endInsertRows();
+   this->add(ferm);
    return;
 }
 
@@ -217,40 +209,6 @@ void FermentableTableModel::removeFermentable([[maybe_unused]] int fermId,
    return;
 }
 
-bool FermentableTableModel::remove(std::shared_ptr<Fermentable> ferm) {
-   int rowNum = this->rows.indexOf(ferm);
-   if (rowNum >= 0)  {
-      beginRemoveRows( QModelIndex(), rowNum, rowNum);
-      disconnect(ferm.get(), nullptr, this, nullptr);
-      this->rows.removeAt(rowNum);
-
-      if (ferm->amountIsWeight()) {
-         this->totalFermMass_kg -= ferm->amount();
-      }
-      //reset(); // Tell everybody the table has changed.
-      endRemoveRows();
-
-      return true;
-   }
-
-   return false;
-}
-
-void FermentableTableModel::removeAll() {
-
-   int size = this->rows.size();
-   if (size > 0) {
-      beginRemoveRows(QModelIndex(), 0, size - 1);
-      while (!this->rows.empty()) {
-         disconnect(this->rows.takeLast().get(), nullptr, this, nullptr );
-      }
-      endRemoveRows();
-   }
-   // I think we need to zero this out
-   this->totalFermMass_kg = 0;
-   return;
-}
-
 void FermentableTableModel::updateTotalGrains() {
    this->totalFermMass_kg = 0;
    for (auto const & ferm : this->rows) {
@@ -280,7 +238,7 @@ void FermentableTableModel::changedInventory(int invKey, BtStringConst const & p
 }
 
 void FermentableTableModel::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {
-   qDebug() << Q_FUNC_INFO << prop.name();
+//   qDebug() << Q_FUNC_INFO << prop.name();
 
    // Is sender one of our fermentables?
    Fermentable* fermSender = qobject_cast<Fermentable*>(sender());
@@ -314,34 +272,23 @@ int FermentableTableModel::rowCount(QModelIndex const & /*parent*/) const {
 }
 
 QVariant FermentableTableModel::data(QModelIndex const & index, int role) const {
-   // Ensure the row is OK
-   if (index.row() >= static_cast<int>(this->rows.size())) {
-      qCritical() << Q_FUNC_INFO << "Bad model index. row = " << index.row();
+   if (!this->isIndexOk(index)) {
       return QVariant();
    }
 
    auto row = this->rows[index.row()];
-   if (!row) {
-      // This is almost certainly a coding error
-      qCritical() << Q_FUNC_INFO << "Null pointer at row" << index.row();
-      return QVariant();
-   }
-
    auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case FermentableTableModel::ColumnIndex::Name:
-         if (role == Qt::DisplayRole) {
-            return QVariant(row->name());
-         }
-         break;
       case FermentableTableModel::ColumnIndex::Type:
-         if (role == Qt::DisplayRole) {
-            return QVariant(Fermentable::typeDisplayNames[row->type()]);
-         }
-         if (role == Qt::UserRole) {
-            return QVariant(static_cast<int>(row->type()));
-         }
-         break;
+      case FermentableTableModel::ColumnIndex::IsWeight:
+      case FermentableTableModel::ColumnIndex::IsMashed:
+      case FermentableTableModel::ColumnIndex::AfterBoil:
+      case FermentableTableModel::ColumnIndex::Yield:
+      case FermentableTableModel::ColumnIndex::Color:
+      case FermentableTableModel::ColumnIndex::Amount:
+         return this->readDataFromModel(index, role);
+
       case FermentableTableModel::ColumnIndex::Inventory:
          if (role == Qt::DisplayRole) {
             return QVariant(
@@ -351,65 +298,26 @@ QVariant FermentableTableModel::data(QModelIndex const & index, int role) const 
                                                                      Measurement::Units::liters
                                           },
                                           3,
-                                          this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+                                          this->get_ColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
                                           std::nullopt)
             );
          }
          break;
-      case FermentableTableModel::ColumnIndex::Amount:
-         if (role == Qt::DisplayRole) {
-            return QVariant(
-               Measurement::displayAmount(Measurement::Amount{
-                                             row->amount(),
-                                             row->amountIsWeight() ? Measurement::Units::kilograms :
-                                                                     Measurement::Units::liters
-                                          },
-                                          3,
-                                          this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                          std::nullopt)
-            );
-         }
-         break;
-      case FermentableTableModel::ColumnIndex::IsWeight:
-         if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::descAmountIsWeight[static_cast<int>(row->amountIsWeight())]);
-         }
-         if (role == Qt::UserRole) {
-            return QVariant(row->amountIsWeight());
-         }
-         break;
-      case FermentableTableModel::ColumnIndex::IsMashed:
-         if (role == Qt::DisplayRole) {
-            return QVariant(descIsMashed[static_cast<int>(row->isMashed())]);
-         }
-         if (role == Qt::UserRole) {
-            return QVariant(row->isMashed());
-         }
-         break;
-      case FermentableTableModel::ColumnIndex::AfterBoil:
-         if (role == Qt::DisplayRole) {
-            return QVariant(descAddAfterBoil[static_cast<int>(row->addAfterBoil())]);
-         }
-         if (role == Qt::UserRole) {
-            return QVariant(row->addAfterBoil());
-         }
-         break;
-      case FermentableTableModel::ColumnIndex::Yield:
-         if (role == Qt::DisplayRole) {
-            return QVariant(Measurement::displayQuantity(row->yield_pct(), 3));
-         }
-         break;
-      case FermentableTableModel::ColumnIndex::Color:
-         if (role == Qt::DisplayRole) {
-            return QVariant(
-               Measurement::displayAmount(Measurement::Amount{row->color_srm(), Measurement::Units::srm},
-                                          0,
-                                          this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                          std::nullopt)
-            );
-         }
-         break;
-      default :
+///      case FermentableTableModel::ColumnIndex::Amount:
+///         if (role == Qt::DisplayRole) {
+///            return QVariant(
+///               Measurement::displayAmount(Measurement::Amount{
+///                                             row->amount(),
+///                                             row->amountIsWeight() ? Measurement::Units::kilograms :
+///                                                                     Measurement::Units::liters
+///                                          },
+///                                          3,
+///                                          this->get_ColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+///                                          std::nullopt)
+///            );
+///         }
+///         break;
+      default:
          qCritical() << Q_FUNC_INFO << "Bad column: " << index.column();
          break;
    }
@@ -437,7 +345,7 @@ QVariant FermentableTableModel::headerData( int section, Qt::Orientation orienta
    return QVariant();
 }
 
-Qt::ItemFlags FermentableTableModel::flags(const QModelIndex& index ) const {
+Qt::ItemFlags FermentableTableModel::flags(QModelIndex const & index) const {
    Qt::ItemFlags constexpr defaults = Qt::ItemIsEnabled;
    auto row = this->rows[index.row()];
 
@@ -508,8 +416,8 @@ bool FermentableTableModel::setData(QModelIndex const & index,
                TYPE_INFO(Fermentable, NamedEntityWithInventory, inventory),
                Measurement::qStringToSI(value.toString(),
                                         physicalQuantity,
-                                        this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                        this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
+                                        this->get_ColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+                                        this->get_ColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
                tr("Change Fermentable Inventory Amount")
             );
          }
@@ -524,8 +432,8 @@ bool FermentableTableModel::setData(QModelIndex const & index,
                TYPE_INFO(Fermentable, amount),
                Measurement::qStringToSI(value.toString(),
                                         physicalQuantity,
-                                        this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                        this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
+                                        this->get_ColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+                                        this->get_ColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
                tr("Change Fermentable Amount")
             );
             if (rowCount() > 0) {
@@ -581,8 +489,8 @@ bool FermentableTableModel::setData(QModelIndex const & index,
                TYPE_INFO(Fermentable, color_srm),
                Measurement::qStringToSI(value.toString(),
                                         Measurement::PhysicalQuantity::Color,
-                                        this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                        this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
+                                        this->get_ColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+                                        this->get_ColumnInfo(columnIndex).getForcedRelativeScale()).quantity(),
                tr("Change Color")
             );
          }
@@ -594,107 +502,10 @@ bool FermentableTableModel::setData(QModelIndex const & index,
    return retVal;
 }
 
-//======================CLASS FermentableItemDelegate===========================
+// Insert the boiler-plate stuff that we cannot do in TableModelBase
+TABLE_MODEL_COMMON_CODE(Fermentable)
 
-FermentableItemDelegate::FermentableItemDelegate(QObject* parent) : QItemDelegate(parent) {
-   return;
-}
+//=========================================== CLASS FermentableItemDelegate ============================================
 
-QWidget* FermentableItemDelegate::createEditor(QWidget *parent,
-                                               [[maybe_unused]] QStyleOptionViewItem const & option,
-                                               QModelIndex const & index) const {
-   auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
-   if (columnIndex == FermentableTableModel::ColumnIndex::Type) {
-      BtComboBox * typeBox = new BtComboBox(parent);
-      BT_COMBO_BOX_INIT_NOMV(FermentableItemDelegate::createEditor, typeBox, Fermentable, type);
-      typeBox->setMinimumWidth(typeBox->minimumSizeHint().width());
-      typeBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      typeBox->setFocusPolicy(Qt::StrongFocus);
-
-      return typeBox;
-   } else if (columnIndex == FermentableTableModel::ColumnIndex::IsMashed) {
-      QComboBox* box = new QComboBox(parent);
-      QListWidget* list = new QListWidget(parent);
-      list->setResizeMode(QListWidget::Adjust);
-
-      list->addItem(descIsMashed[0]);
-      list->addItem(descIsMashed[1]);
-      box->setModel(list->model());
-      box->setView(list);
-
-      box->setMinimumWidth(box->minimumSizeHint().width());
-      box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      box->setFocusPolicy(Qt::StrongFocus);
-
-      return box;
-   } else if (columnIndex == FermentableTableModel::ColumnIndex::AfterBoil) {
-      QComboBox* box = new QComboBox(parent);
-
-      box->addItem(descAddAfterBoil[0]);
-      box->addItem(descAddAfterBoil[1]);
-
-      box->setMinimumWidth(box->minimumSizeHint().width());
-      box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      box->setFocusPolicy(Qt::StrongFocus);
-
-      return box;
-   }
-
-   return new QLineEdit(parent);
-}
-
-void FermentableItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-   auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
-   if (columnIndex == FermentableTableModel::ColumnIndex::Type) {
-      BtComboBox * typeBox = static_cast<BtComboBox *>(editor);
-      typeBox->setValue(static_cast<Fermentable::Type>(index.model()->data(index, Qt::UserRole).toInt()));
-   } else if (columnIndex == FermentableTableModel::ColumnIndex::IsMashed ||
-              columnIndex == FermentableTableModel::ColumnIndex::AfterBoil) {
-      QComboBox* box = static_cast<QComboBox*>(editor);
-      box->setCurrentIndex(static_cast<int>(index.model()->data(index, Qt::UserRole).toBool()));
-   } else {
-      QLineEdit* line = qobject_cast<QLineEdit*>(editor);
-      line->setText(index.model()->data(index, Qt::DisplayRole).toString());
-   }
-
-   return;
-}
-
-void FermentableItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-   auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
-   if (columnIndex == FermentableTableModel::ColumnIndex::Type) {
-      BtComboBox* typeBox = qobject_cast<BtComboBox *>(editor);
-      Fermentable::Type value = typeBox->getNonOptValue<Fermentable::Type>();
-      Fermentable::Type ndx = static_cast<Fermentable::Type>(model->data(index, Qt::UserRole).toInt());
-
-      // Only do something when something needs to be done
-      if (value != ndx) {
-         model->setData(index, static_cast<int>(value), Qt::EditRole);
-      }
-   } else if (columnIndex == FermentableTableModel::ColumnIndex::IsMashed ||
-              columnIndex == FermentableTableModel::ColumnIndex::AfterBoil) {
-      QComboBox* box = qobject_cast<QComboBox*>(editor);
-      bool value = box->currentIndex() > 0;
-      bool ndx = model->data(index, Qt::UserRole).toBool();
-
-      // Only do something when something needs to be done
-      if (value != ndx) {
-         model->setData(index, value, Qt::EditRole);
-      }
-   } else {
-      QLineEdit* line = qobject_cast<QLineEdit*>(editor);
-
-      if (line->isModified()) {
-         model->setData(index, line->text(), Qt::EditRole);
-      }
-   }
-
-   return;
-}
-
-void FermentableItemDelegate::updateEditorGeometry(QWidget * editor,
-                                                   QStyleOptionViewItem const & option,
-                                                   [[maybe_unused]] QModelIndex const & index) const {
-   editor->setGeometry(option.rect);
-   return;
-}
+// Insert the boiler-plate stuff that we cannot do in ItemDelegate
+ITEM_DELEGATE_COMMON_CODE(Fermentable)

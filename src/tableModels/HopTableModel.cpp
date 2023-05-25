@@ -67,11 +67,6 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    this->setObjectName("hopTable");
 
    QHeaderView * headerView = parentTableWidget->horizontalHeader();
-   headerView->setContextMenuPolicy(Qt::CustomContextMenu);
-   parentTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->setWordWrap(false);
-
    connect(headerView, &QWidget::customContextMenuRequested, this, &HopTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryHop>::getInstance(), &ObjectStoreTyped<InventoryHop>::signalPropertyChanged, this,
            &HopTableModel::changedInventory);

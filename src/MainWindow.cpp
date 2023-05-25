@@ -185,7 +185,6 @@ namespace {
                             double const minCanonicalValue,
                             double const maxCanonicalValue,
                             double const maxPossibleCanonicalValue) {
-      qDebug() << Q_FUNC_INFO << "label" << &label;
       slider.setPreferredRange(label.getRangeToDisplay(minCanonicalValue, maxCanonicalValue        ));
       slider.setRange         (label.getRangeToDisplay(1.000            , maxPossibleCanonicalValue));
 
@@ -629,10 +628,10 @@ void MainWindow::setupTables()
 {
    // Set table models.
    // Fermentables
-   fermTableModel = new FermentableTableModel(fermentableTable);
-   fermTableProxy = new FermentableSortFilterProxyModel(fermentableTable,false);
+   fermTableModel = new FermentableTableModel(this->fermentableTable);
+   fermTableProxy = new FermentableSortFilterProxyModel(fermentableTable, false);
    fermTableProxy->setSourceModel(fermTableModel);
-   fermentableTable->setItemDelegate(new FermentableItemDelegate(fermentableTable));
+   fermentableTable->setItemDelegate(new FermentableItemDelegate(fermentableTable, *fermTableModel));
    fermentableTable->setModel(fermTableProxy);
    // Make the fermentable table show grain percentages in row headers.
    fermTableModel->setDisplayPercentages(true);

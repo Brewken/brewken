@@ -56,11 +56,6 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    setObjectName("miscTableModel");
 
    QHeaderView* headerView = parentTableWidget->horizontalHeader();
-   headerView->setContextMenuPolicy(Qt::CustomContextMenu);
-   parentTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->setWordWrap(false);
-
    connect(headerView, &QWidget::customContextMenuRequested, this, &MiscTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryMisc>::getInstance(),
            &ObjectStoreTyped<InventoryMisc>::signalPropertyChanged,

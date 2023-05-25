@@ -202,12 +202,14 @@ private:
  *
  *           PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits, Measurement::PqEitherMassOrVolumeConcentration),
  *
- *        Note that, although very similar to \c PROPERTY_TYPE_LOOKUP_ENTRY, the macro is slightly different.  We need
- *        an & in front of MyClass::memberFunction to pass it to decltype (to get the type of the return type of that
- *        function), whereas we can pass MyClass::memberVariable in direct.
+ *        I did try a version of this with 2nd and 3rd parameters combined (`Fermentable::betaGlucanWithUnits` instead
+ *        of `Fermentable, betaGlucanWithUnits`).  However, although you can get the type ID of a pointer to a member
+ *        function, I did not yet find a way to get from said pointer to member function to the type ID of the
+ *        function's return value.
  */
-#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, getterFunction, ...) \
-   {&propNameConstVar, TypeInfo::construct< decltype(&getterFunction)>(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
+#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, className, getterFunction, ...) \
+   {&propNameConstVar, TypeInfo::construct<  decltype(std::declval<className&>().getterFunction())   >(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
+///   {&propNameConstVar, TypeInfo::construct<  decltype(&getterFunction)>(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
 
 /**
  * \brief Convenience function for logging

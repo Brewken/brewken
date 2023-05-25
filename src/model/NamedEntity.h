@@ -34,6 +34,7 @@
 #include <QVariant>
 
 #include "utils/BtStringConst.h"
+#include "utils/MetaTypes.h"
 #include "utils/TypeLookup.h"
 
 class NamedParameterBundle;

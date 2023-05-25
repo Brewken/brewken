@@ -64,11 +64,6 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
    setObjectName("yeastTableModel");
 
    QHeaderView * headerView = parentTableWidget->horizontalHeader();
-   headerView->setContextMenuPolicy(Qt::CustomContextMenu);
-   parentTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-   parentTableWidget->setWordWrap(false);
-
    connect(headerView, &QWidget::customContextMenuRequested, this, &YeastTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryYeast>::getInstance(), &ObjectStoreTyped<InventoryYeast>::signalPropertyChanged,
            this, &YeastTableModel::changedInventory);

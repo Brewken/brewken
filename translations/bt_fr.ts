@@ -1426,6 +1426,30 @@ Log file may contain more details.</source>
         <source>Change Fermentable Is Mashed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volume</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Poids</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
+        <translation type="unfinished">Non empâté</translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">Empâté</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">Standard</translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">Tardif</translation>
+    </message>
 </context>
 <context>
     <name>HelpDialog</name>

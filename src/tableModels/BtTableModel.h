@@ -32,6 +32,8 @@
 #include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
+#include "utils/BtStringConst.h"
+#include "utils/EnumStringMapping.h"
 
 class Recipe;
 
@@ -42,7 +44,8 @@ class Recipe;
  *        compiler (moc) can't handle templated classes in QObject-derived classes (though it is fine with templated
  *        member functions in such classes, as long as they are not signals or slots).  We might one day look at
  *        https://github.com/woboq/verdigris, which overcomes these limitations, but, for now, we live within Qt's
- *        constraints and try to pull out as much common code as possible using a limited form of multiple inheritance.
+ *        constraints and try to pull out as much common code as possible using a limited form of multiple inheritance
+ *        and the Curiously Recurring Template Pattern.
  *
  *              QObject
  *                   \
@@ -51,7 +54,7 @@ class Recipe;
  *              QAbstractTableModel
  *                           \
  *                            \
- *                          BtTableModel               BtTableModelData<NE>
+ *                          BtTableModel               TableModelBase<NE, xxxTableModel>
  *                                /   \                /     /     /
  *                               /     \              /     /     /
  *                              /      MashStepTableModel  /     /
@@ -71,6 +74,11 @@ class Recipe;
  *                                    HopTableModel
  *                                   MiscTableModel
  *                                   YeastTableModel
+ *
+ *        Eg HopTableModel inherits from BtTableModelInventory and TableModelBase<Hop, HopTableModel>
+ *
+ *        The \c BtTableModelRecipeObserver class adds a pointer to a \c Recipe to \c BtTableModel.
+ *        The \c BtTableModelInventory class adds a boolean \c inventoryEditable flag to \c BtTableModelRecipeObserver.
  *
  *        TBD: I did start trying to do something clever with a common base class to try to expose functions from
  *        \c BtTableModelData to the implementation of \c BtTableModel / \c BtTableModelRecipeObserver /
@@ -180,6 +188,41 @@ class BtTableModel : public QAbstractTableModel {
    Q_OBJECT
 public:
    /**
+    * \brief Extra info stored in \c ColumnInfo (see below) for enum types
+    */
+   struct EnumInfo {
+      /**
+       * \brief Values to store in combo box
+       */
+      EnumStringMapping const & stringMapping;
+
+      /**
+       * \brief Localised display names to show on combo box
+       */
+      EnumStringMapping const & displayNames;
+   };
+
+   /**
+    * \brief Extra info stored in \c ColumnInfo (see below) for boolean types
+    *
+    *        For most boolean types, we show a combo box (eg "Not mashed" / "Mashed"; "Weight" / "Volume")
+    *
+    *        These are QString rather than reference to QString as typically initialised with an rvalue (the result of
+    *        calling \c QObject::tr).
+    */
+   struct BoolInfo {
+      QString const unsetDisplay;
+      QString const setDisplay;
+   };
+
+   /**
+    * \brief I know we don't need a struct for this, but it's more consistent to use one
+    */
+   struct PrecisionInfo {
+      unsigned int const precision;
+   };
+
+   /**
     * \brief This per-column struct / mini-class holds basic info about each column in the table.  It also plays a
     *        slightly similar role as \c SmartLabel.  However, there are several important differences, including that
     *        \c ColumnInfo is \b not a \c QWidget and therefore not a signal emitter.  (As mentioned below, it is
@@ -217,14 +260,19 @@ public:
       QString const label;
 
       /**
-       * \brief What type of data is shown in this column
+       * \brief
        */
-      TypeInfo const * typeInfo;
+      BtStringConst const & propertyName;
 
       /**
-       *
+       * \brief What type of data is shown in this column
        */
-      std::optional<unsigned int> const precision = std::nullopt;
+      TypeInfo const & typeInfo;
+
+      /**
+       * \brief Extra info, dependent on the type of value in the column
+       */
+      std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras = std::nullopt;
 
       // Stuff for setting display units and scales -- per column
       // I know it looks odd to have const setters, but they are const because they do not change the data in the struct
@@ -258,8 +306,15 @@ public:
    //! \brief Reimplemented from QAbstractTableModel
    virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
 
-private:
-   void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
+   // These are protected member functions of QAbstractItemModel that we need to make public so that
+   // TableModelBase::removeAll() can access them
+   using QAbstractItemModel::beginInsertRows;
+   using QAbstractItemModel::endInsertRows;
+   using QAbstractItemModel::beginRemoveRows;
+   using QAbstractItemModel::endRemoveRows;
+
+///private:
+///   void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
 
 public slots:
    //! \brief Receives the \c QWidget::customContextMenuRequested signal from \c QHeaderView to pops the context menu
@@ -271,7 +326,8 @@ protected:
    bool editable;
 private:
    /**
-    * \brief The order of
+    * \brief We're using a \c std::vector here because it's easier for constant lists.  (With \c QVector, at last in
+    *        Qt 5, the items stored even in a const instance still need to be default constructable and copyable.)
     */
    std::vector<ColumnInfo> const m_columnInfos;
 };
@@ -302,6 +358,8 @@ protected:
  *
  *           SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha, tr("Alpha %"), Hop, PropertyNames::Hop::alpha);
  *
+ *        Arguments not specified below are passed in to initialise \c BtTableModel::ColumnInfo::extra.
+ *
  * \param tableModelClass The class name of the class holding the field we're initialising, eg \c HopTableModel.
  * \param columnName
  * \param labelText
@@ -311,11 +369,13 @@ protected:
  *                     comments in \c widgets/SmartAmounts.h, we intentionally do \b not automatically insert the
  *                     \c PropertyNames:: prefix.)
  */
-#define SMART_COLUMN_HEADER_DEFN(tableModelClass, columnName, labelText, modelClass, propertyName) \
+#define SMART_COLUMN_HEADER_DEFN(tableModelClass, columnName, labelText, modelClass, propertyName, ...) \
    BtTableModel::ColumnInfo{#tableModelClass, \
                             #columnName, \
                             #tableModelClass "::ColumnIndex::" #columnName, \
                             static_cast<size_t>(tableModelClass::ColumnIndex::columnName), \
                             labelText, \
-                            &modelClass::typeLookup.getType(propertyName)}
+                            propertyName, \
+                            modelClass::typeLookup.getType(propertyName) \
+                            __VA_OPT__(, __VA_ARGS__)}
 #endif

@@ -42,55 +42,22 @@ public:
       m_initialised {false},
       m_labelFqName {"Uninitialised m_labelFqName!"},
       m_settings    {nullptr},
-      m_parent      {parent },
-      m_contextMenu {nullptr} {
+      m_parent      {parent } {
       return;
    }
 
    ~impl() = default;
-
-   void initializeMenu() {
-      Q_ASSERT(this->m_initialised);
-      Q_ASSERT(this->m_settings);
-
-      //
-      // If a context menu already exists, we need to delete it and recreate it.  We can't always reuse an existing menu
-      // because the sub-menu for relative scale needs to change when a different unit system is selected.  (In theory
-      // we could only recreate the context menu when a different unit system is selected, but that adds complication.)
-      //
-      // NB: Although the existing menu is "owned" by this->m_parent, it is fine for us (or rather the smart pointer) to
-      // delete it here.  The Qt ownership in this context merely guarantees that this->m_parent will, in its own
-      // destructor, delete the menu if it still exists.
-      //
-
-      auto forcedSystemOfMeasurement = this->m_self.getForcedSystemOfMeasurement();
-      auto forcedRelativeScale       = this->m_self.getForcedRelativeScale();
-      qDebug() <<
-         Q_FUNC_INFO << this->m_labelFqName << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement <<
-         ", forcedRelativeScale=" << forcedRelativeScale;
-
-      if (std::holds_alternative<NonPhysicalQuantity>(*this->m_self.getTypeInfo().fieldType)) {
-         return;
-      }
-
-      auto const physicalQuantity = this->m_self.getPhysicalQuantity();
-      this->m_contextMenu = UnitAndScalePopUpMenu::create(this->m_parent,
-                                                          physicalQuantity,
-                                                          forcedSystemOfMeasurement,
-                                                          forcedRelativeScale);
-      return;
-   }
 
    SmartLabel &     m_self       ;
    bool             m_initialised;
    char const *     m_labelFqName;
    std::unique_ptr<SmartAmountSettings> m_settings;
    QWidget *        m_parent     ;
-   std::unique_ptr<QMenu> m_contextMenu;
 };
 
 SmartLabel::SmartLabel(QWidget * parent) :
    QLabel{parent},
+   SmartBase<SmartLabel>{},
    pimpl {std::make_unique<impl>(*this, parent)} {
    connect(this, &QWidget::customContextMenuRequested, this, &SmartLabel::popContextMenu);
    return;
@@ -216,15 +183,34 @@ void SmartLabel::popContextMenu(const QPoint& point) {
       return;
    }
 
-   this->pimpl->initializeMenu();
+   //
+   // We always make a new context menu.  It's simpler as we couldn't always reuse an existing menu because the
+   // sub-menu for relative scale needs to change when a different unit system is selected.
+   //
+   // NB: Although the existing menu is "owned" by this->m_parent, it is fine for us (or rather the smart pointer) to
+   // delete it here.  The Qt ownership in this context merely guarantees that this->m_parent will, in its own
+   // destructor, delete the menu if it still exists.
+   //
+
+   auto forcedSystemOfMeasurement = this->getForcedSystemOfMeasurement();
+   auto forcedRelativeScale       = this->getForcedRelativeScale();
+   qDebug() <<
+      Q_FUNC_INFO << this->pimpl->m_labelFqName << "forcedSystemOfMeasurement=" << forcedSystemOfMeasurement <<
+      ", forcedRelativeScale=" << forcedRelativeScale;
+
+   auto const physicalQuantity = this->getPhysicalQuantity();
+   std::unique_ptr<QMenu> menu = UnitAndScalePopUpMenu::create(this->pimpl->m_parent,
+                                                               physicalQuantity,
+                                                               forcedSystemOfMeasurement,
+                                                               forcedRelativeScale);
 
    // If the pop-up menu has no entries, then we can bail out here
-   if (this->pimpl->m_contextMenu->actions().size() == 0) {
+   if (menu->actions().size() == 0) {
       qDebug() << Q_FUNC_INFO << "Nothing to show for" << this->getPhysicalQuantity();
    }
 
    // Show the pop-up menu and get back whatever the user seleted
-   QAction * invoked = this->pimpl->m_contextMenu->exec(widgie->mapToGlobal(point));
+   QAction * invoked = menu->exec(widgie->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }
@@ -235,7 +221,7 @@ void SmartLabel::popContextMenu(const QPoint& point) {
 
    // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
    // whether it's the menu or the sub-menu that it came from.
-   bool isTopMenu{invoked->parentWidget() == this->pimpl->m_contextMenu.get()};
+   bool isTopMenu{invoked->parentWidget() == menu.get()};
    if (isTopMenu) {
       // It's the menu, so SystemOfMeasurement
       std::optional<Measurement::SystemOfMeasurement> whatSelected =

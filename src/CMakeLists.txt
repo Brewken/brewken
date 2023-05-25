@@ -60,7 +60,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtTreeModel.cpp
     ${repoDir}/src/BtTreeView.cpp
     ${repoDir}/src/ConverterTool.cpp
-    ${repoDir}/src/CustomComboBox.cpp
     ${repoDir}/src/database/BtSqlQuery.cpp
     ${repoDir}/src/database/Database.cpp
     ${repoDir}/src/database/DatabaseSchemaHelper.cpp
@@ -105,7 +104,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
     ${repoDir}/src/MashButton.cpp
-    ${repoDir}/src/MashComboBox.cpp
     ${repoDir}/src/MashDesigner.cpp
     ${repoDir}/src/MashListModel.cpp
     ${repoDir}/src/MashStepTableWidget.cpp
@@ -176,6 +174,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
+    ${repoDir}/src/utils/MetaTypes.cpp
+    ${repoDir}/src/utils/OptionalHelpers.cpp
     ${repoDir}/src/utils/OStreamWriterForQFile.cpp
     ${repoDir}/src/utils/TimerUtils.cpp
     ${repoDir}/src/utils/TypeLookup.cpp
@@ -184,7 +184,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterListModel.cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/widgets/Animator.cpp
+    ${repoDir}/src/widgets/BtBoolComboBox.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp
+    ${repoDir}/src/widgets/CustomComboBox.cpp
+    ${repoDir}/src/widgets/MashComboBox.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/SmartAmounts.cpp
     ${repoDir}/src/widgets/SmartAmountSettings.cpp

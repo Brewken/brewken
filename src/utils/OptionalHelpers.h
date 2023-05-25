@@ -25,6 +25,8 @@
 #include "Logging.h"
 #include "utils/TypeTraits.h"
 
+// Note that we cannot include utils/TypeLookup.h because it includes this header
+struct TypeInfo;
 
 /**
  * \brief A set of utilities that help us deal with std::optional values
@@ -33,10 +35,17 @@ namespace Optional {
    /**
     * \brief Helper function called from \c ObjectStore::impl::unwrapAndMapAsNeeded and other places to convert a
     *        \c QVariant containing \c std::optional<T> to either a \c QVariant containing \c T or a null \c QVariant
+    *
+    * \param propertyValue the QVariant to be modified
+    * \param hasValue If set, used to return \c false if the supplied \c std::optional<T> is \c std::nullopt, \c true
+    *                 otherwise
     */
    template<typename T>
-   void removeOptionalWrapper(QVariant & propertyValue) {
+   void removeOptionalWrapper(QVariant & propertyValue, bool * hasValue = nullptr) {
       auto val = propertyValue.value<std::optional<T> >();
+      if (hasValue) {
+         *hasValue = val.has_value();
+      }
       if (val.has_value()) {
          propertyValue = QVariant::fromValue<T>(val.value());
       } else {
@@ -44,6 +53,17 @@ namespace Optional {
       }
       return;
    }
+
+   /**
+    * \brief This version of \c removeOptionalWrapper handles all the different types internally.  Valid types are
+    *        \c double, \c int, \c unsigned \c int, \c bool.
+    *
+    * \param propertyValue the QVariant to be modified
+    * \param typeInfo
+    * \param hasValue If set, used to return \c false if the supplied \c std::optional is \c std::nullopt, \c true
+    *                 otherwise
+    */
+   void removeOptionalWrapper(QVariant & propertyValue, TypeInfo const & typeInfo, bool * hasValue = nullptr);
 
    /**
     * \brief Helper function called from \c ObjectStore::impl::wrapAndUnmapAsNeeded and other places to convert a
@@ -164,41 +184,6 @@ namespace Optional {
       }
       return std::nullopt;
    }
-
-//   /**
-//    * \brief Mostly we don't convert enums to ints for serialisation (to database, BeerJSON, BeerXML, etc).  But we do
-//    *        sometimes do this internally, eg in the xxxTableModel classes.  In such cases, we need something for
-//    *        the \c std::nullopt value of an optional enum.  By default QVariant will treat null int as 0, which isn't
-//    *        what we want, so use \c QVariant<std::optional<int>>, ie put an optional inside the QVariant.
-//    */
-//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
-//   QVariant intVariantFromEnum(std::optional<E> val) {
-//      return val ? QVariant::fromValue(std::optional<int>(static_cast<int>(*val))) :
-//                   QVariant::fromValue(std::optional<int>());
-//   }
-//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
-//   QVariant intVariantFromEnum(E val) {
-//      return QVariant::fromValue(static_cast<int>(val));
-//   }
-//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
-//   std::optional<E> intVariantToOptEnum(QVariant const & val) {
-//      auto optInt = val.value<std::optional<int> >();
-//      if (!optInt) {
-//         return std::nullopt;
-//      }
-//      return std::make_optional<E>(static_cast<E>(*optInt));
-//   }
-//   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
-//   E intVariantToNonOptEnum(QVariant const & val) {
-//      int const valAsInt = val.toInt();
-//      if (valAsInt < 0) {
-//         // It's a coding error if we get here
-//         qCritical().noquote() <<
-//            Q_FUNC_INFO << "Trying to convert " << val << " to non-optional enum " << Logging::getStackTrace();
-//         Q_ASSERT(false);
-//      }
-//      return static_cast<E>(valAsInt);
-//   }
 
 }
 

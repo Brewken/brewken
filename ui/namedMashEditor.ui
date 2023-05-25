@@ -611,7 +611,7 @@
   <customwidget>
    <class>CustomComboBox</class>
    <extends>QComboBox</extends>
-   <header>CustomComboBox.h</header>
+   <header>widgets/CustomComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

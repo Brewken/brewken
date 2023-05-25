@@ -109,9 +109,9 @@ void BtComboBox::setValue(int value) {
    return;
 }
 
-[[nodiscard]] std::optional<int> BtComboBox::getIntValue() const {
+[[nodiscard]] std::optional<int> BtComboBox::getOptIntValue() const {
    Q_ASSERT(this->pimpl->m_initialised);
-   QString rawValue = this->currentData().toString();
+   QString const rawValue = this->currentData().toString();
    if (rawValue.isEmpty()) {
       Q_ASSERT(this->isOptional());
       return std::nullopt;
@@ -121,4 +121,15 @@ void BtComboBox::setValue(int value) {
    auto value = this->pimpl->m_nameMapping->stringToEnumAsInt(rawValue);
    Q_ASSERT(value);
    return value;
+}
+
+[[nodiscard]] int BtComboBox::getNonOptIntValue() const {
+   Q_ASSERT(this->pimpl->m_initialised);
+   QString const rawValue = this->currentData().toString();
+   Q_ASSERT(!rawValue.isEmpty());
+
+   // It's a coding error if we don't recognise the values in our own combo boxes
+   auto value = this->pimpl->m_nameMapping->stringToEnumAsInt(rawValue);
+   Q_ASSERT(value);
+   return *value;
 }
