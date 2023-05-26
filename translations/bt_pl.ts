@@ -3498,6 +3498,18 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Dodaj do receptury</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nowy</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Utwórz nowy składnik</translation>
+    </message>
+    <message>
         <source>%1 name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3510,20 +3522,8 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to Recipe</source>
-        <translation type="unfinished">Dodaj do receptury</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished">Nowy</translation>
-    </message>
-    <message>
         <source>Add selected ingredient to recipe</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished">Utwórz nowy składnik</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>

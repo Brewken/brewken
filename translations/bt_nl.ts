@@ -3595,6 +3595,22 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Creëer nieuw ingrediënt</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Edit geselecteerde ingrediënt</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Verwijder geselecteerde ingrediënt</translation>
+    </message>
+    <message>
         <source>%1 name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3611,24 +3627,8 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New</source>
-        <translation type="unfinished">Nieuw</translation>
-    </message>
-    <message>
         <source>Add selected ingredient to recipe</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new ingredient</source>
-        <translation type="unfinished">Creëer nieuw ingrediënt</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished">Edit geselecteerde ingrediënt</translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished">Verwijder geselecteerde ingrediënt</translation>
     </message>
 </context>
 <context>

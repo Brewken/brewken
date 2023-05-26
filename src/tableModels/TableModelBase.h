@@ -54,7 +54,10 @@ template<class Derived, class NE>
 class TableModelBase {
 public:
    // This gets round the fact that we would not be able to access Derived::ColumnIndex directly
-   using ColumnIndex = TableModelTraits<Derived>::ColumnIndex;
+   //
+   // In theory, in C++20, we don't need the `typename` here, but, per comment in BtTableModel::ColumnInfo, we need to
+   // retain it until our Mac build environment is using a more recent version of Clang.
+   using ColumnIndex = typename TableModelTraits<Derived>::ColumnIndex;
 
 protected:
    TableModelBase() : m_derived{static_cast<Derived *>(this)}, rows{} {

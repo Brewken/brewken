@@ -63,7 +63,10 @@ public:
 
 private:
    BtTableModel::ColumnInfo const & getColumnInfo(QModelIndex const & index) const {
-      auto const columnIndex = static_cast<NeTableModel::ColumnIndex>(index.column());
+      // In theory, in C++20, we don't need the `typename` here, but as of 2023-05-26, Apple C++ compiler is Clang
+      // 14.0.0, and we need Clang 16 before support for
+      // https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html is implemented.
+      auto const columnIndex = static_cast<typename NeTableModel::ColumnIndex>(index.column());
       //
       // In theory we can get `QAbstractItemModel const *` from `index.model()` and downcast it via QAbstractTableModel
       // to NeTableModel (ie HopTableModel, FermentableTableModel, etc).  In practice, this is a bit painful, eg

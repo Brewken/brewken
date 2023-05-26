@@ -104,34 +104,6 @@ int BtTableModel::columnCount(QModelIndex const & /*parent*/) const {
    return this->m_columnInfos.size();
 }
 
-///void BtTableModel::doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected) {
-///   QAction* invoked = menu->exec(hView->mapToGlobal(point));
-///   if (invoked == nullptr) {
-///      return;
-///   }
-///
-///   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
-///   // whether it's the menu or the sub-menu that it came from.
-///   bool isTopMenu{invoked->parentWidget() == menu};
-///   if (isTopMenu) {
-///      // It's the menu, so SystemOfMeasurement
-///      std::optional<Measurement::SystemOfMeasurement> const whatSelected =
-///         UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
-///      qDebug() << Q_FUNC_INFO << "Column" << selected << ", selected SystemOfMeasurement" << whatSelected;
-///      this->getColumnInfo(selected).setForcedSystemOfMeasurement(whatSelected);
-///      // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale, but this is handled by
-///      // unsetForcedSystemOfMeasurementForColumn() and setForcedSystemOfMeasurementForColumn()
-///   } else {
-///      // It's the sub-menu, so UnitSystem::RelativeScale
-///      std::optional<Measurement::UnitSystem::RelativeScale> whatSelected =
-///         UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
-///      qDebug() << Q_FUNC_INFO << "Column" << selected << ", selected RelativeScale" << whatSelected;
-///      this->getColumnInfo(selected).setForcedRelativeScale(whatSelected);
-///   }
-///   return;
-///}
-
-// oofrab
 void BtTableModel::contextMenu(QPoint const & point) {
    qDebug() << Q_FUNC_INFO;
    QHeaderView* hView = qobject_cast<QHeaderView*>(this->sender());
@@ -155,11 +127,16 @@ void BtTableModel::contextMenu(QPoint const & point) {
                                     ConvertToPhysicalQuantities(fieldType),
                                     columnInfo.getForcedSystemOfMeasurement(),
                                     columnInfo.getForcedRelativeScale());
-///      this->doContextMenu(point, hView, menu.get(), selected);
+
+   // If the pop-up menu has no entries, then we can bail out here
+   if (menu->actions().size() == 0) {
+      qDebug() << Q_FUNC_INFO << "Nothing to show for" << fieldType;
+   }
+
    //
    // This shows the context menu and returns when the user either selects something or dismisses the menu
    //
-   QAction* invoked = menu->exec(hView->mapToGlobal(point));
+   QAction * invoked = menu->exec(hView->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }

@@ -3538,24 +3538,8 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add to Recipe</source>
         <translation type="unfinished">Προσθήκη στην συνταγή</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
@@ -3572,6 +3556,22 @@ Log file may contain more details.</source>
     <message>
         <source>Remove selected ingredient</source>
         <translation type="unfinished">Διαγραφή επιλεγμένου συστατικού</translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -3534,18 +3534,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add to Recipe</source>
         <translation type="unfinished">Přidat do receptu</translation>
     </message>
@@ -3568,6 +3556,18 @@ Log file may contain more details.</source>
     <message>
         <source>Remove selected ingredient</source>
         <translation type="unfinished">Odebrat zvolenou přísadu</translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

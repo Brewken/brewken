@@ -2840,6 +2840,10 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>New</source>
+        <translation type="unfinished">Jauns</translation>
+    </message>
+    <message>
         <source>%1 name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2854,10 +2858,6 @@ Log file may contain more details.</source>
     <message>
         <source>Add to Recipe</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished">Jauns</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>

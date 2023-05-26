@@ -3498,18 +3498,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add to Recipe</source>
         <translation type="unfinished">添加到配方Add to Recipe</translation>
     </message>
@@ -3532,6 +3520,18 @@ Log file may contain more details.</source>
     <message>
         <source>Remove selected ingredient</source>
         <translation type="unfinished">删除选定的成分Remove selected ingredient</translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
