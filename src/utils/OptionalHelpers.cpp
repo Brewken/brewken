@@ -25,29 +25,42 @@ void Optional::removeOptionalWrapper(QVariant & propertyValue, TypeInfo const & 
 
    // Most common field type is double, so check it first
    // QString is also pretty common, but it's never optional because an empty string suffices for "no data"
-   if (typeInfo.typeIndex == typeid(double)) {
-      removeOptionalWrapper<double>(propertyValue, hasValue);
-      return;
-   }
+   if (typeInfo.typeIndex == typeid(double      )) { removeOptionalWrapper<double      >(propertyValue, hasValue); return; }
+   if (typeInfo.typeIndex == typeid(int         )) { removeOptionalWrapper<int         >(propertyValue, hasValue); return; }
+   if (typeInfo.typeIndex == typeid(unsigned int)) { removeOptionalWrapper<unsigned int>(propertyValue, hasValue); return; }
+   if (typeInfo.typeIndex == typeid(bool        )) { removeOptionalWrapper<bool        >(propertyValue, hasValue); return; }
 
-   if (typeInfo.typeIndex == typeid(int)) {
-      removeOptionalWrapper<int>(propertyValue, hasValue);
-      return;
-   }
-
-   if (typeInfo.typeIndex == typeid(unsigned int)) {
-      removeOptionalWrapper<unsigned int>(propertyValue, hasValue);
-      return;
-   }
-
-   if (typeInfo.typeIndex == typeid(bool)) {
-      removeOptionalWrapper<bool>(propertyValue, hasValue);
-      return;
-   }
-
+   // It's a coding error if we reached here
    qCritical().noquote() <<
       Q_FUNC_INFO << "Unexpected type" << typeInfo << ".  Call stack:" << Logging::getStackTrace();
    Q_ASSERT(false);
 
    return;
+}
+
+QVariant Optional::makeNullOpt(TypeInfo const & typeInfo) {
+   if (typeInfo.typeIndex == typeid(double      )) { return QVariant::fromValue<std::optional<double      >>(std::nullopt); }
+   if (typeInfo.typeIndex == typeid(int         )) { return QVariant::fromValue<std::optional<int         >>(std::nullopt); }
+   if (typeInfo.typeIndex == typeid(unsigned int)) { return QVariant::fromValue<std::optional<unsigned int>>(std::nullopt); }
+   if (typeInfo.typeIndex == typeid(bool        )) { return QVariant::fromValue<std::optional<bool        >>(std::nullopt); }
+
+   // It's a coding error if we reached here
+   qCritical().noquote() <<
+      Q_FUNC_INFO << "Unexpected type" << typeInfo << ".  Call stack:" << Logging::getStackTrace();
+   Q_ASSERT(false);
+
+   return QVariant{};
+}
+
+/**
+ * \return \c true if \c input is empty or blank (ie contains only whitespace), \c false otherwise
+ */
+[[nodiscard]] bool Optional::isEmptyOrBlank(QString const & input) {
+   if (input.isEmpty()) {
+      return true;
+   }
+   if (input.trimmed().isEmpty()) {
+      return true;
+   }
+   return false;
 }

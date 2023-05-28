@@ -645,7 +645,7 @@ void MainWindow::setupTables()
    hopTableModel = new HopTableModel(hopTable);
    hopTableProxy = new HopSortFilterProxyModel(hopTable, false);
    hopTableProxy->setSourceModel(hopTableModel);
-   hopTable->setItemDelegate(new HopItemDelegate(hopTable));
+   hopTable->setItemDelegate(new HopItemDelegate(hopTable, *hopTableModel));
    hopTable->setModel(hopTableProxy);
    // Hop table show IBUs in row headers.
    hopTableModel->setShowIBUs(true);

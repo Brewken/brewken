@@ -74,13 +74,6 @@ public:
    virtual ~FermentableTableModel();
 
    //
-   // This block of functions is implemented in the TABLE_MODEL_COMMON_CODE macro included from
-   // tableModels/TableModelBase.h
-   //
-   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
-///   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
-
-   //
    // This block of functions is called from the TableModelBase class
    //
    void added  (std::shared_ptr<Fermentable> item);
@@ -95,8 +88,6 @@ private:
    //! \brief Watch all the \b ferms for changes.
    void addFermentables(QList<std::shared_ptr< Fermentable> > ferms);
 public:
-///   //! \brief Clear the model.
-///   void removeAll();
    //! \brief True if you want to display percent of each grain in the row header.
    void setDisplayPercentages( bool var );
 
@@ -110,9 +101,6 @@ public:
    virtual Qt::ItemFlags flags(const QModelIndex& index) const;
    //! \brief Reimplemented from QAbstractTableModel.
    virtual bool setData(QModelIndex const & index, QVariant const & value, int role = Qt::EditRole);
-
-///   //! \returns true if "ferm" is successfully found and removed.
-///   bool remove(std::shared_ptr<Fermentable> ferm);
 
 public slots:
    //! \brief Watch \b ferm for changes.
@@ -149,7 +137,7 @@ private:
  */
 class FermentableItemDelegate : public QItemDelegate,
                                 public ItemDelegate<FermentableItemDelegate, FermentableTableModel> {
-Q_OBJECT
+   Q_OBJECT
 
 public:
    FermentableItemDelegate(QTableView * parent, FermentableTableModel & tableModel);

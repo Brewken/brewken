@@ -19,6 +19,7 @@
 
 #include <QLineEdit>
 
+#include "measurement/Measurement.h"
 #include "utils/NoCopy.h"
 #include "widgets/BtBoolComboBox.h"
 #include "widgets/BtComboBox.h"
@@ -186,16 +187,18 @@ public:
          }
       }
 
-      // For everything else, apart from handling optional, we can trust QVariant to know how to convert things to text
+      // For everything else, TableModelBase::readDataFromModel (called from HopTableModel::data,
+      // FermentableTableModel::data, etc) will have done all the work for us (including handling optional and forced
+      // units etc) and provided a suitable QString in the QVariant.
       QLineEdit * line = qobject_cast<QLineEdit *>(editor);
-      if (typeInfo.isOptional()) {
-         bool hasValue = false;
-         Optional::removeOptionalWrapper(modelData, typeInfo, &hasValue);
-         if (!hasValue) {
-            line->setText("");
-            return;
-         }
-      }
+///      if (typeInfo.isOptional()) {
+///         bool hasValue = false;
+///         Optional::removeOptionalWrapper(modelData, typeInfo, &hasValue);
+///         if (!hasValue) {
+///            line->setText("");
+///            return;
+///         }
+///      }
       line->setText(modelData.toString());
       return;
 
@@ -236,6 +239,23 @@ public:
             }
             return;
          }
+
+         //
+         // For strings and pure numbers there is no additional processing to do.  It is just percentages where we need
+         // to strip the '%' off the end.  But, in reality, it's better to just strip any non-numeric stuff off the end
+         // of anything that's a number without units.
+         //
+         // We do parsing in double here, even if it's going to end up in an int as (a) it's reasonably safe and (b)
+         // that's what's happening under the hood in Measurement::extractRawFromString anyway.
+         //
+         QLineEdit* line = qobject_cast<QLineEdit*>(editor);
+         QString rawValue = line->text();
+         if (fieldType != NonPhysicalQuantity::String) {
+            model->setData(index, Measurement::extractRawFromString(rawValue, typeInfo), Qt::EditRole);
+         } else {
+            model->setData(index, rawValue, Qt::EditRole);
+         }
+         return;
       }
 
       // Note that we handle any conversions to and from canonical amounts in the table model class, as we sometimes

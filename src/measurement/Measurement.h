@@ -28,9 +28,11 @@
 
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "BtFieldType.h"
 
 class BtStringConst;
 class NamedEntity;
+struct TypeInfo;
 
 namespace Measurement {
 
@@ -41,7 +43,12 @@ namespace Measurement {
     * \param ok If set, used to return \c true if parsing of raw text went OK and \c false otherwise (in which case,
     *           function return value will be 0).
     */
-   template<typename T> T extractRawFromString(QString const & input, bool * ok = nullptr);
+   template<typename T> [[nodiscard]] T extractRawFromString(QString const & input, bool * ok = nullptr);
+
+   /**
+    * \brief Alternate version of \c extractRawFromString for when you need a \c QVariant
+    */
+   [[nodiscard]] QVariant extractRawFromString(QString const & input, TypeInfo const & typeInfo, bool * ok = nullptr);
 
    void loadDisplayScales();
    void saveDisplayScales();
@@ -69,6 +76,8 @@ namespace Measurement {
     * \param precision how many decimal places
     */
    QString displayQuantity(double quantity, int precision);
+
+   QString displayQuantity(double quantity, int precision, NonPhysicalQuantity const nonPhysicalQuantity);
 
    /*!
     * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Markus Mårtensson <mackan.90@gmail.com>
@@ -26,26 +26,20 @@
 #include <QMetaProperty>
 #include <QModelIndex>
 #include <QVariant>
-#include <QVector>
 #include <QWidget>
 
-#include "model/Hop.h"
-#include "model/Recipe.h"
 #include "tableModels/BtTableModelInventory.h"
+#include "tableModels/ItemDelegate.h"
+#include "tableModels/TableModelBase.h"
 
 class BtStringConst;
+class Hop;
+class Recipe;
+
+// You have to get the order of everything right with traits classes, but the end result is that we can refer to
+// HopTableModel::ColumnIndex::Alpha etc.
 class HopTableModel;
-class HopItemDelegate;
-
-/*!
- * \class HopTableModel
- *
- * \brief Model class for a list of hops.
- */
-class HopTableModel : public BtTableModelInventory, public BtTableModelData<Hop> {
-   Q_OBJECT
-
-public:
+template <> struct TableModelTraits<HopTableModel> {
    enum class ColumnIndex {
       Name     ,
       Alpha    ,
@@ -55,37 +49,49 @@ public:
       Use      ,
       Time     ,
    };
+};
+
+/*!
+ * \class HopTableModel
+ *
+ * \brief Model class for a list of hops.
+ */
+class HopTableModel : public BtTableModelInventory, public TableModelBase<HopTableModel, Hop> {
+   Q_OBJECT
+
+public:
 
    HopTableModel(QTableView* parent=nullptr, bool editable=true);
    virtual ~HopTableModel();
 
-   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
-   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
+   //
+   // This block of functions is called from the TableModelBase class
+   //
+   void added  (std::shared_ptr<Hop> item);
+   void removed(std::shared_ptr<Hop> item);
+   void removedAll();
 
-   //! \brief Observe a recipe's list of fermentables.
+   //! \brief Observe a recipe's list of hops.
    void observeRecipe(Recipe* rec);
    //! \brief If true, we model the database's list of hops.
    void observeDatabase(bool val);
    //! \brief Show ibus in the vertical header.
    void setShowIBUs( bool var );
+private:
    //! \brief Watch all the \c hops for changes.
    void addHops(QList< std::shared_ptr<Hop> > hops);
-   //! \brief Clear the model.
-   void removeAll();
 
+public:
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+   virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
+   virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;
+   //! \brief Reimplemented from QAbstractTableModel
+   virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+   virtual Qt::ItemFlags flags(const QModelIndex& index) const;
    //! \brief Reimplemented from QAbstractTableModel.
-   virtual Qt::ItemFlags flags(const QModelIndex& index ) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
-
-   //! \returns true if "hop" is successfully found and removed.
-   bool remove(std::shared_ptr<Hop> hop);
+   virtual bool setData(QModelIndex const & index, QVariant const & value, int role = Qt::EditRole);
 
 public slots:
    void changed(QMetaProperty, QVariant);
@@ -98,25 +104,30 @@ private:
    bool showIBUs; // True if you want to show the IBU contributions in the table rows.
 };
 
+//=============================================== CLASS HopItemDelegate ================================================
+
 /*!
  *  \class HopItemDelegate
  *
  *  \brief An item delegate for hop tables.
  *  \sa HopTableModel
  */
-class HopItemDelegate : public QItemDelegate {
+class HopItemDelegate : public QItemDelegate,
+                               public ItemDelegate<HopItemDelegate, HopTableModel> {
    Q_OBJECT
 
 public:
-   HopItemDelegate(QObject* parent = nullptr);
+   HopItemDelegate(QTableView * parent, HopTableModel & tableModel);
+   virtual ~HopItemDelegate();
 
-   // Inherited functions.
+   //! \brief Reimplemented from QItemDelegate.
    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+   //! \brief Reimplemented from QItemDelegate.
    virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
+   //! \brief Reimplemented from QItemDelegate.
    virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+   //! \brief Reimplemented from QItemDelegate.
    virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
 };
 
 #endif

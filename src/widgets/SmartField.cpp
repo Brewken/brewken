@@ -36,21 +36,6 @@
 #include "widgets/SmartAmountSettings.h"
 #include "widgets/SmartLabel.h"
 
-namespace {
-   /**
-    * \return \c true if \c input is empty or blank (ie contains only whitespace), \c false otherwise
-    */
-   [[nodiscard]] bool isEmptyOrBlank(QString const & input) {
-      if (input.isEmpty()) {
-         return true;
-      }
-      if (input.trimmed().isEmpty()) {
-         return true;
-      }
-      return false;
-   }
-}
-
 // This private implementation class holds all private non-virtual members of SmartField
 class SmartField::impl {
 public:
@@ -347,14 +332,9 @@ template<typename T, typename> void SmartField::setAmount(T amount) {
       // It's a coding error if we're trying to pass a number in to a string field
       Q_ASSERT(nonPhysicalQuantity != NonPhysicalQuantity::String);
 
-      // For percentages, we'd like to show the % symbol after the number
-      QString symbol{""};
-      if (NonPhysicalQuantity::Percentage == nonPhysicalQuantity) {
-         symbol = " %";
-      }
-
       this->setRawText(
-         Measurement::displayQuantity(amount, this->pimpl->m_precision) + symbol
+         // This handles showing the % symbol after the number
+         Measurement::displayQuantity(amount, this->pimpl->m_precision, nonPhysicalQuantity)
       );
    } else {
       // The field is measuring a physical quantity
@@ -433,7 +413,7 @@ template<typename T> std::optional<T> SmartField::getOptValue(bool * const ok) c
    Q_ASSERT(this->getTypeInfo().isOptional());
 
    // Optional values are allowed to be blank
-   if (isEmptyOrBlank(rawText)) {
+   if (Optional::isEmptyOrBlank(rawText)) {
       if (ok) {
          *ok = true;
       }

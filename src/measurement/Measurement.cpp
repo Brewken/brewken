@@ -31,6 +31,7 @@
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
+#include "utils/TypeLookup.h"
 
 namespace {
 
@@ -114,13 +115,50 @@ namespace {
 // separators etc.  So, we always convert everything to double first and then, if needed, convert the double
 // to an int / unsigned int, as this will give the behaviour we want.
 //
-template<typename T> T Measurement::extractRawFromString(QString const & input, bool * ok) {
+template<typename T> [[nodiscard]] T Measurement::extractRawFromString(QString const & input, bool * ok) {
    // This compile-time assert relies on the fact that no type has size 0
    static_assert(sizeof(T) == 0, "Only specializations of stringTo() can be used");
 }
-template<> int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(extractRawDoubleFromString(input, ok)); }
-template<> unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(extractRawDoubleFromString(input, ok)); }
-template<> double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           extractRawDoubleFromString(input, ok);  }
+template<> [[nodiscard]] int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(extractRawDoubleFromString(input, ok)); }
+template<> [[nodiscard]] unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(extractRawDoubleFromString(input, ok)); }
+template<> [[nodiscard]] double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           extractRawDoubleFromString(input, ok ); }
+
+[[nodiscard]] QVariant Measurement::extractRawFromString(QString const & input, TypeInfo const & typeInfo, bool * ok) {
+   // Optional values are allowed to be blank
+   if (typeInfo.isOptional() && Optional::isEmptyOrBlank(input)) {
+      return Optional::makeNullOpt(typeInfo);
+   }
+
+   bool myOk = false;
+   double valueAsDouble = extractRawDoubleFromString(input, &myOk);
+   if (ok) {
+      *ok = myOk;
+   }
+
+   if (typeInfo.isOptional()) {
+      // If we couldn't parse an optional value, we'll unset it.  I think this is better than setting it to 0 (which is
+      // about the only, ah, option for non-optional values).
+      if (!myOk) {
+         return Optional::makeNullOpt(typeInfo);
+      }
+
+      // We do have something to return, so just make sure it's the right type
+      if (typeInfo.typeIndex == typeid(double      )) { return QVariant::fromValue<std::optional<double      >>(                          valueAsDouble ); }
+      if (typeInfo.typeIndex == typeid(int         )) { return QVariant::fromValue<std::optional<int         >>(static_cast<int         >(valueAsDouble)); }
+      if (typeInfo.typeIndex == typeid(unsigned int)) { return QVariant::fromValue<std::optional<unsigned int>>(static_cast<unsigned int>(valueAsDouble)); }
+   } else {
+      if (typeInfo.typeIndex == typeid(double      )) { return QVariant::fromValue(                          valueAsDouble ); }
+      if (typeInfo.typeIndex == typeid(int         )) { return QVariant::fromValue(static_cast<int         >(valueAsDouble)); }
+      if (typeInfo.typeIndex == typeid(unsigned int)) { return QVariant::fromValue(static_cast<unsigned int>(valueAsDouble)); }
+   }
+
+   // It's a coding error if we reached here
+   qCritical().noquote() <<
+      Q_FUNC_INFO << "Unexpected type" << typeInfo << ".  Call stack:" << Logging::getStackTrace();
+   Q_ASSERT(false);
+   return QVariant{};
+}
+
 
 void Measurement::loadDisplayScales() {
    for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
@@ -175,6 +213,16 @@ Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::P
 
 QString Measurement::displayQuantity(double quantity, int precision) {
    return QString("%L1").arg(quantity, fieldWidth, format, precision);
+}
+
+QString Measurement::displayQuantity(double quantity, int precision, NonPhysicalQuantity const nonPhysicalQuantity) {
+   // For percentages, we'd like to show the % symbol after the number
+   QString symbol{""};
+   if (NonPhysicalQuantity::Percentage == nonPhysicalQuantity) {
+      symbol = " %";
+   }
+
+   return Measurement::displayQuantity(quantity, precision) + symbol;
 }
 
 QString Measurement::displayAmount(Measurement::Amount const & amount,

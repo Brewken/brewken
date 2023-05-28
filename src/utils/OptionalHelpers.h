@@ -66,6 +66,12 @@ namespace Optional {
    void removeOptionalWrapper(QVariant & propertyValue, TypeInfo const & typeInfo, bool * hasValue = nullptr);
 
    /**
+    * \brief Creates a QVariant containing null \c std::optional<int>, \c std::optional<double>, etc according to
+    *        \c typeInfo
+    */
+   QVariant makeNullOpt(TypeInfo const & typeInfo);
+
+   /**
     * \brief Helper function called from \c ObjectStore::impl::wrapAndUnmapAsNeeded and other places to convert a
     *        \c QVariant that is either null or contains \c T to a \c QVariant containing \c std::optional<T>
     */
@@ -184,6 +190,14 @@ namespace Optional {
       }
       return std::nullopt;
    }
+
+   /**
+    * \brief Not strictly about whether something is optional, but often somewhat related
+    *
+    * \return \c true if \c input is empty or blank (ie contains only whitespace), \c false otherwise
+    */
+   [[nodiscard]] bool isEmptyOrBlank(QString const & input);
+
 
 }
 

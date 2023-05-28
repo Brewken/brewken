@@ -20,6 +20,7 @@
 #include <QList>
 #include <QModelIndex>
 
+#include "MainWindow.h"
 #include "measurement/Measurement.h"
 #include "tableModels/BtTableModel.h"
 #include "utils/MetaTypes.h"
@@ -288,8 +289,8 @@ protected:
       }
 
       if (std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
-         auto const fieldType = std::get<NonPhysicalQuantity>(*typeInfo.fieldType);
-         if (fieldType == NonPhysicalQuantity::Enum) {
+         auto const nonPhysicalQuantity = std::get<NonPhysicalQuantity>(*typeInfo.fieldType);
+         if (nonPhysicalQuantity == NonPhysicalQuantity::Enum) {
             if (role != Qt::DisplayRole) {
                return modelData;
             }
@@ -304,7 +305,7 @@ protected:
             return *displayText;
          }
 
-         if (fieldType == NonPhysicalQuantity::Bool) {
+         if (nonPhysicalQuantity == NonPhysicalQuantity::Bool) {
             if (role != Qt::DisplayRole) {
                return modelData;
             }
@@ -316,16 +317,16 @@ protected:
             return modelData.toBool() ? boolInfo.setDisplay : boolInfo.unsetDisplay;
          }
 
-         if (fieldType == NonPhysicalQuantity::Percentage) {
+         if (nonPhysicalQuantity == NonPhysicalQuantity::Percentage) {
             unsigned int precision = 3;
             if (columnInfo.extras) {
                Q_ASSERT(std::holds_alternative<BtTableModel::PrecisionInfo>(*columnInfo.extras));
-               BtTableModel::PrecisionInfo const & boolInfo = std::get<BtTableModel::PrecisionInfo>(*columnInfo.extras);
-               precision = boolInfo.precision;
+               BtTableModel::PrecisionInfo const & precisionInfo = std::get<BtTableModel::PrecisionInfo>(*columnInfo.extras);
+               precision = precisionInfo.precision;
             }
             // We assert that percentages are numbers and therefore either are double or convertible to double
             Q_ASSERT(modelData.canConvert<double>());
-            return QVariant(Measurement::displayQuantity(modelData.toDouble(), precision));
+            return QVariant(Measurement::displayQuantity(modelData.toDouble(), precision, nonPhysicalQuantity));
          }
       } else {
          // Most of the handling for Measurement::Mixed2PhysicalQuantities and Measurement::PhysicalQuantity is the
@@ -391,6 +392,61 @@ protected:
       return modelData;
    }
 
+   /**
+    * \brief Child classes should call this from their \c setData() member function (overriding
+    *        \c QAbstractTableModel::setData()) to write data for any column that does not require special handling
+    *
+    * \return \c true if successful, \c false otherwise
+    */
+   bool writeDataToModel(QModelIndex const & index, QVariant const & value, int const role) const {
+//      qDebug().noquote() << Q_FUNC_INFO << "role = " << role << Logging::getStackTrace();
+      auto row = this->rows[index.row()];
+      auto const columnIndex = static_cast<ColumnIndex>(index.column());
+      auto const & columnInfo = this->get_ColumnInfo(columnIndex);
+
+      TypeInfo const & typeInfo = columnInfo.typeInfo;
+
+      // For all non physical quantities, including enums and bools, ItemDelegate::writeDataToModel will already have
+      // created the right type of QVariant for us, including handling whether or not it is optional.
+      QVariant processedValue;
+      if (std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
+         processedValue = value;
+      } else  {
+         // For physical quantities, we need to handle any conversions to and from canonical amounts, as well as deal
+         // with optional values.
+         //
+         // ItemDelegate::writeDataToModel should have just given us a raw string
+         Q_ASSERT(value.canConvert(QVariant::String));
+
+         if (std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType)) {
+            Measurement::Amount amount =
+               Measurement::qStringToSI(value.toString(),
+                                        std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType),
+                                        columnInfo.getForcedSystemOfMeasurement(),
+                                        columnInfo.getForcedRelativeScale());
+            if (typeInfo.typeIndex == typeid(double)) {
+               processedValue = QVariant::fromValue<double>(amount.quantity());
+            } else {
+               processedValue = QVariant::fromValue(amount);
+            }
+
+         } else {
+            // We need Derived to have handled the case where its a Mixed2PhysicalQuantities such as MassOrVolumeAmt,
+            // so it's a coding error if we get here.
+            qCritical().noquote() <<
+               Q_FUNC_INFO << "Unexpected type" << typeInfo << ".  Call stack:" << Logging::getStackTrace();
+            Q_ASSERT(false);
+         }
+      }
+
+      MainWindow::instance().doOrRedoUpdate(*row,
+                                            typeInfo,
+                                            processedValue,
+                                            NE::tr("Change %1 %2").arg(NE::staticMetaObject.className()).arg(columnInfo.columnName));
+
+      return true;
+   }
+
    //================================================ Member Variables =================================================
 
    /**
@@ -401,15 +457,5 @@ protected:
 
    QList< std::shared_ptr<NE> > rows;
 };
-
-/**
- * .:TODO:. Can we bin this?
- * \brief Derived classes should include this in their implementation file
- *
- *        We can't define getColumnInfo in TableModelBase because it needs access to Derived::ColumnIndex, which is not
- *        yet declared when the TableModelBase template is instantiated.  There are limits to CRTP!
- */
-#define TABLE_MODEL_COMMON_CODE(NeName) \
-
 
 #endif
