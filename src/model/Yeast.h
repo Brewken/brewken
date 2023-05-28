@@ -178,7 +178,7 @@ public:
    bool addToSecondary() const;
 
    // Insert boiler-plate declarations for inventory
-   INVENTORY_COMMON_HEADER_DEFNS
+   INVENTORY_COMMON_HEADER_DECLS
 
    virtual Recipe * getOwningRecipe();
 

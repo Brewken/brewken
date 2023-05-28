@@ -88,7 +88,7 @@ protected:
 /**
  * \brief Derived classes should include this in their header file
  */
-#define    INVENTORY_COMMON_HEADER_DEFNS \
+#define    INVENTORY_COMMON_HEADER_DECLS \
    virtual double inventory() const; \
    virtual MassOrVolumeAmt inventoryWithUnits() const; \
    virtual void setInventoryAmount(double amount); \
