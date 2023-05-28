@@ -34,6 +34,7 @@
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
+// See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
 AddPropertyName(alpha_pct            )
 AddPropertyName(amount_kg            )
@@ -95,21 +96,19 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Type)
 
-   /**
-    * \brief Array of all possible values of \c Hop::Type.  NB: This is \b not guaranteed to be in the same order as the
-    *        values of the enum.
-    *
-    *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
-    *        of enum class \c Type.   Hopefully, if Reflection makes it into C++23, then this will ultimately be
-    *        unnecessary.
-    */
-   static std::array<Type, 7> const allTypes;
-
    /*!
     * \brief Mapping between \c Hop::Type and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
     *        BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
    static EnumStringMapping const typeStringMapping;
+
+   /*!
+    * \brief Localised names of \c Hop::Type values suitable for displaying to the end user
+    */
+   static EnumStringMapping const typeDisplayNames;
 
    /*!
     * \brief The form of the hop.
@@ -124,17 +123,19 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Form)
 
-   /**
-    * \brief Array of all possible values of \c Hop::Form.  NB: This is \b not guaranteed to be in the same order as the
-    *        values of the enum.
-    */
-   static std::array<Form, 6> const allForms;
-
    /*!
     * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
     *        BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
    static EnumStringMapping const formStringMapping;
+
+   /*!
+    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
+    */
+   static EnumStringMapping const formDisplayNames;
 
    /*!
     * \brief The way the hop is used.
@@ -148,32 +149,19 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Use)
 
-   /**
-    * \brief Array of all possible values of \c Hop::Use.  NB: This is \b not guaranteed to be in the same order as the
-    *        values of the enum.
-    */
-   static std::array<Use, 5> const allUses;
-
    /*!
     * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerXML, etc (but \b not
     *        used in BeerJSON)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
    static EnumStringMapping const useStringMapping;
 
    /*!
-    * \brief Localised names of \c Hop::Type values suitable for displaying to the end user
-    */
-   static QMap<Hop::Type, QString> const typeDisplayNames;
-
-   /*!
-    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
-    */
-   static QMap<Hop::Form, QString> const formDisplayNames;
-
-   /*!
     * \brief Localised names of \c Hop::Use values suitable for displaying to the end user
     */
-   static QMap<Hop::Use, QString> const useDisplayNames;
+   static EnumStringMapping const useDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -224,17 +212,22 @@ public:
    // .:TODO JSON:. Some of these should be optional
    Q_PROPERTY(QString producer              READ producer              WRITE setProducer             )
    Q_PROPERTY(QString product_id            READ product_id            WRITE setProduct_id           )
-   Q_PROPERTY(std::optional<int>     year                  READ year                  WRITE setYear                 )
-   Q_PROPERTY(std::optional<double>  total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
-   Q_PROPERTY(std::optional<double>  farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
-   Q_PROPERTY(std::optional<double>  geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
-   Q_PROPERTY(std::optional<double>  b_pinene_pct          READ b_pinene_pct          WRITE setB_pinene_pct         )
-   Q_PROPERTY(std::optional<double>  linalool_pct          READ linalool_pct          WRITE setLinalool_pct         )
-   Q_PROPERTY(std::optional<double>  limonene_pct          READ limonene_pct          WRITE setLimonene_pct         )
-   Q_PROPERTY(std::optional<double>  nerol_pct             READ nerol_pct             WRITE setNerol_pct            )
-   Q_PROPERTY(std::optional<double>  pinene_pct            READ pinene_pct            WRITE setPinene_pct           )
-   Q_PROPERTY(std::optional<double>  polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
-   Q_PROPERTY(std::optional<double>  xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
+   /**
+    * \brief It might seem odd to store year as a string rather than, say, std::optional<unsigned int>, but this is
+    *        deliberate and for two reasons.  Firstly BeerJSON treats it as a string.  Secondly, we don't want it
+    *        formatted as a number when we display it.  Nobody writes "2,023" or "2 023" for the year 2023.
+    */
+   Q_PROPERTY(QString                     year                  READ year                  WRITE setYear                 )
+   Q_PROPERTY(std::optional<double      > total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
+   Q_PROPERTY(std::optional<double      > farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
+   Q_PROPERTY(std::optional<double      > geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
+   Q_PROPERTY(std::optional<double      > b_pinene_pct          READ b_pinene_pct          WRITE setB_pinene_pct         )
+   Q_PROPERTY(std::optional<double      > linalool_pct          READ linalool_pct          WRITE setLinalool_pct         )
+   Q_PROPERTY(std::optional<double      > limonene_pct          READ limonene_pct          WRITE setLimonene_pct         )
+   Q_PROPERTY(std::optional<double      > nerol_pct             READ nerol_pct             WRITE setNerol_pct            )
+   Q_PROPERTY(std::optional<double      > pinene_pct            READ pinene_pct            WRITE setPinene_pct           )
+   Q_PROPERTY(std::optional<double      > polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
+   Q_PROPERTY(std::optional<double      > xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    double  alpha_pct            () const;
@@ -253,21 +246,19 @@ public:
    double  cohumulone_pct       () const;
    double  myrcene_pct          () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   QString producer             () const;
-   QString product_id           () const;
-   std::optional<int>     year                 () const;
-   std::optional<double>  total_oil_ml_per_100g() const;
-   std::optional<double>  farnesene_pct        () const;
-   std::optional<double>  geraniol_pct         () const;
-   std::optional<double>  b_pinene_pct         () const;
-   std::optional<double>  linalool_pct         () const;
-   std::optional<double>  limonene_pct         () const;
-   std::optional<double>  nerol_pct            () const;
-   std::optional<double>  pinene_pct           () const;
-   std::optional<double>  polyphenols_pct      () const;
-   std::optional<double>  xanthohumol_pct      () const;
-
-   virtual double inventory() const;
+   QString                     producer             () const;
+   QString                     product_id           () const;
+   QString                     year                 () const;
+   std::optional<double      > total_oil_ml_per_100g() const;
+   std::optional<double      > farnesene_pct        () const;
+   std::optional<double      > geraniol_pct         () const;
+   std::optional<double      > b_pinene_pct         () const;
+   std::optional<double      > linalool_pct         () const;
+   std::optional<double      > limonene_pct         () const;
+   std::optional<double      > nerol_pct            () const;
+   std::optional<double      > pinene_pct           () const;
+   std::optional<double      > polyphenols_pct      () const;
+   std::optional<double      > xanthohumol_pct      () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setAlpha_pct            (double  const   val);
@@ -286,21 +277,22 @@ public:
    void setCohumulone_pct       (double  const   val);
    void setMyrcene_pct          (double  const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setProducer             (QString const & val);
-   void setProduct_id           (QString const & val);
-   void setYear                 (std::optional<int>     const   val);
-   void setTotal_oil_ml_per_100g(std::optional<double>  const   val);
-   void setFarnesene_pct        (std::optional<double>  const   val);
-   void setGeraniol_pct         (std::optional<double>  const   val);
-   void setB_pinene_pct         (std::optional<double>  const   val);
-   void setLinalool_pct         (std::optional<double>  const   val);
-   void setLimonene_pct         (std::optional<double>  const   val);
-   void setNerol_pct            (std::optional<double>  const   val);
-   void setPinene_pct           (std::optional<double>  const   val);
-   void setPolyphenols_pct      (std::optional<double>  const   val);
-   void setXanthohumol_pct      (std::optional<double>  const   val);
+   void setProducer             (QString                      const & val);
+   void setProduct_id           (QString                      const & val);
+   void setYear                 (QString                      const   val);
+   void setTotal_oil_ml_per_100g(std::optional<double      >  const   val);
+   void setFarnesene_pct        (std::optional<double      >  const   val);
+   void setGeraniol_pct         (std::optional<double      >  const   val);
+   void setB_pinene_pct         (std::optional<double      >  const   val);
+   void setLinalool_pct         (std::optional<double      >  const   val);
+   void setLimonene_pct         (std::optional<double      >  const   val);
+   void setNerol_pct            (std::optional<double      >  const   val);
+   void setPinene_pct           (std::optional<double      >  const   val);
+   void setPolyphenols_pct      (std::optional<double      >  const   val);
+   void setXanthohumol_pct      (std::optional<double      >  const   val);
 
-   virtual void setInventoryAmount(double const val);
+   // Insert boiler-plate declarations for inventory
+   INVENTORY_COMMON_HEADER_DEFNS
 
    virtual Recipe * getOwningRecipe();
 
@@ -327,17 +319,17 @@ private:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString m_producer;
    QString m_product_id;
-   std::optional<int>     m_year;
-   std::optional<double>  m_total_oil_ml_per_100g;
-   std::optional<double>  m_farnesene_pct;
-   std::optional<double>  m_geraniol_pct;
-   std::optional<double>  m_b_pinene_pct;
-   std::optional<double>  m_linalool_pct;
-   std::optional<double>  m_limonene_pct;
-   std::optional<double>  m_nerol_pct;
-   std::optional<double>  m_pinene_pct;
-   std::optional<double>  m_polyphenols_pct;
-   std::optional<double>  m_xanthohumol_pct;
+   QString m_year;
+   std::optional<double      > m_total_oil_ml_per_100g;
+   std::optional<double      > m_farnesene_pct;
+   std::optional<double      > m_geraniol_pct;
+   std::optional<double      > m_b_pinene_pct;
+   std::optional<double      > m_linalool_pct;
+   std::optional<double      > m_limonene_pct;
+   std::optional<double      > m_nerol_pct;
+   std::optional<double      > m_pinene_pct;
+   std::optional<double      > m_polyphenols_pct;
+   std::optional<double      > m_xanthohumol_pct;
 
    void setDefaults();
 };

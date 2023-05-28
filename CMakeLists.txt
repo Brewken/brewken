@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
-# CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2022:
+# CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2023:
 #   • Chris Pavetto <chrispavetto@gmail.com>
 #   • Dan Cavanagh <dan@dancavanagh.com>
 #   • Daniel Moreno <danielm5@users.noreply.github.com>
@@ -24,6 +24,13 @@
 # <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
+# ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+# NB: Meson and the `bt` build tool Python script are now the primary way of building and packaging the software.  You
+#     can also still CMake to compile the product and install it locally, but we no longer support using CMake to do
+#     packaging.  (Over time the intention is to remove packaging-specific code from this script, not least as it does
+#     not work properly on Mac and Windows.)
+# ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+
 #
 # Creates a Makefile in the build directory, from where you can do builds and installs.
 #
@@ -46,26 +53,11 @@
 #   * make clean            -  Delete compiled objects so next build starts from scratch
 #   * sudo make install     -  Install locally
 #   * make test             -  Run unit tests via CTest
-#   * make package          -  Makes .deb, .rpm, NSIS Installer, and .tar.bz2 binary packages.  (TBD What about Mac?)
-#
-#                              On Linux, after make package, it's one of the following to install, if you want to
-#                              install from the package rather than direct from the build tree (with sudo make install).
-#                              (This would typically be for installing the package on a different machine then where the
-#                              build was done.)
-#                                 $ sudo dpkg -i brewken*.deb
-#                                 $ sudo rpm -i brewken*.rpm
-#
-#                              On Mac and Windows environments, the `package` target will create an installer
-#                              that may be executed to finish the installation.
-#
-#   * make package_source   -  Makes a .tar.bz2 source package.
 #
 # Custom make targets:
 #   * make source_doc       -  Makes Doxygen HTML documentation of the source in doc/html
 #   * make install-data
 #   * make install-runtime
-#   * make package_lint     -  Runs lintian and rpmlint on packages
-#
 #
 # CMake options
 #   * CMAKE_INSTALL_PREFIX  - /usr/local by default. Set this to /usr on Debian-based systems like Ubuntu.
@@ -189,13 +181,6 @@ if(UNIX AND NOT APPLE)
 elseif(WIN32)
    #============================================ Windows Install Directories ===========================================
 
-   # For some damn reason, for the NSIS installer,
-   # the prefix needs to be empty. Also, seems that the .exe
-   # needs to be in bin/. Fucking piece of shit CPack...
-   # Can anybody shed some light on this situation?
-   #set(CMAKE_INSTALL_PREFIX "")
-   set(CPACK_INSTALL_PREFIX "")
-
    set(installSubDir_data "data")
    set(installSubDir_doc  "doc")
    set(installSubDir_bin  "bin")
@@ -242,8 +227,8 @@ set(RUNTIME_INSTALL_COMPONENT "Runtime")
 # We use different compilers on different platforms.  Where possible, we want to let CMake handle the actual compiler
 # settings
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# We need C++20 for std::map::contains(), C++17 or later for nested namespaces and structured bindings, and C++11 or
-# later for lambdas.
+# We need C++20 for std::map::contains() and concepts, C++17 or later for nested namespaces and structured bindings, and
+# C++11 or later for lambdas.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -285,6 +270,7 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       else()
          set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g3 -no-pie -fno-pie")
       endif()
+
    endif()
 
    # Speed up compilation if using gcc.
@@ -292,6 +278,13 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -pipe")
       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pipe")
    endif()
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX)
+   #
+   # On older versions of GCC, it is not sufficient to specify C++20 to enable concepts, you also have to set a
+   # special compiler flag.
+   #
+   add_compile_options(-fconcepts)
 endif()
 
 # Windows-specific compilation settings

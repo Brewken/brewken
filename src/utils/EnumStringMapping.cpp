@@ -17,9 +17,31 @@
 
 #include <algorithm>
 
-EnumAndItsString::EnumAndItsString(QString string, int native) :
-   string{string},
-   native{native} {
+EnumAndItsString::EnumAndItsString() :
+   native{-1},
+   string{""} {
+   return;
+}
+
+EnumAndItsString::EnumAndItsString(int native, QString string) :
+   native{native},
+   string{string} {
+   return;
+}
+
+EnumStringMapping::EnumStringMapping(std::initializer_list<EnumAndItsString> args) {
+   this->reserve(args.size());
+   for (auto arg : args) {
+      // Uncomment this debug statement for debugging -- eg if you are hitting the assert at start-up!
+//      qDebug().noquote() <<
+//         Q_FUNC_INFO << "Inserting at" << arg.native << ". Size=" << this->size() <<
+//         Logging::getStackTrace();
+      // Essentially we are asserting here that args are passed in enum order and that our enum values always start from
+      // 0 and never skip any numbers.  If we ever pass things in in the wrong order, we'll get an assert at start-up,
+      // so it's pretty immediate feedback of the coding error.
+      Q_ASSERT(arg.native == this->size());
+      this->append(arg);
+   }
    return;
 }
 
@@ -48,12 +70,12 @@ std::optional<int> EnumStringMapping::stringToEnumAsInt(QString const & stringVa
 }
 
 std::optional<QString> EnumStringMapping::enumAsIntToString(int const enumValue) const {
-   auto match = std::find_if(this->begin(),
-                             this->end(),
-                             [enumValue](EnumAndItsString const & ii){return enumValue == ii.native;});
-   if (match == this->end()) {
+   // So here's the advantage of forcing construction to be in enum order
+   if (enumValue < 0 || enumValue >= this->size()) {
       return std::nullopt;
    }
+   EnumAndItsString const & match = this->at(enumValue);
+   Q_ASSERT(match.native == enumValue);
 
-   return std::optional<QString>{match->string};
+   return std::optional<QString>{match.string};
 }

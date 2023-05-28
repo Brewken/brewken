@@ -83,27 +83,27 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Hop>{"HOP"};
    EnumStringMapping const BEER_XML_HOP_TYPE_MAPPER {
-      {"Bittering",                          Hop::Type::Bittering},
-      {"Aroma",                              Hop::Type::Aroma},
-      {"Both",                               Hop::Type::AromaAndBittering},
+      {Hop::Type::Bittering              , "Bittering"                         },
+      {Hop::Type::Aroma                  , "Aroma"                             },
+      {Hop::Type::AromaAndBittering      , "Both"                              },
       // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
-      {"Aroma<!--Flavor-->",                 Hop::Type::Flavor},
-      {"Both<!--BitteringAndFlavor-->",      Hop::Type::BitteringAndFlavor},
-      {"Aroma<!--AromaAndFlavor-->",         Hop::Type::AromaAndFlavor},
-      {"Both<!--AromaBitteringAndFlavor-->", Hop::Type::AromaBitteringAndFlavor}
+      {Hop::Type::Flavor                 , "Aroma<!--Flavor-->"                },
+      {Hop::Type::BitteringAndFlavor     , "Both<!--BitteringAndFlavor-->"     },
+      {Hop::Type::AromaAndFlavor         , "Aroma<!--AromaAndFlavor-->"        },
+      {Hop::Type::AromaBitteringAndFlavor, "Both<!--AromaBitteringAndFlavor-->"},
    };
    EnumStringMapping const BEER_XML_HOP_FORM_MAPPER {
-      {"Pellet", Hop::Form::Pellet},
-      {"Plug",   Hop::Form::Plug},
-      {"Leaf",   Hop::Form::Leaf},
+      {Hop::Form::Leaf   , "Leaf"                },
+      {Hop::Form::Pellet , "Pellet"              },
+      {Hop::Form::Plug   , "Plug"                },
       // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
-      {"Pellet<!--Extract-->", Hop::Form::Extract},
-      {"Leaf<!--WetLeaf-->",   Hop::Form::WetLeaf},
-      {"Pellet<!--Powder-->",  Hop::Form::Powder}
+      {Hop::Form::Extract, "Pellet<!--Extract-->"},
+      {Hop::Form::WetLeaf, "Leaf<!--WetLeaf-->"  },
+      {Hop::Form::Powder , "Pellet<!--Powder-->" },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type                                  XPath                    Q_PROPERTY                             Enum Mapper
@@ -127,10 +127,10 @@ namespace {
       {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",        BtString::NULL_STR,                    nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "INVENTORY",             BtString::NULL_STR,                    nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_TIME",          BtString::NULL_STR,                    nullptr}, // Extension tag
-      // Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
       {XmlRecord::FieldType::String,           "PRODUCER",              PropertyNames::Hop::producer                  },
       {XmlRecord::FieldType::String,           "PRODUCT_ID",            PropertyNames::Hop::product_id                },
-      {XmlRecord::FieldType::Int,              "YEAR",                  PropertyNames::Hop::year                      },
+      {XmlRecord::FieldType::String,           "YEAR",                  PropertyNames::Hop::year                      },
       {XmlRecord::FieldType::Double,           "TOTAL_OIL_ML_PER_100G", PropertyNames::Hop::total_oil_ml_per_100g     },
       {XmlRecord::FieldType::Double,           "FARNESENE",             PropertyNames::Hop::farnesene_pct             },
       {XmlRecord::FieldType::Double,           "GERANIOL",              PropertyNames::Hop::geraniol_pct              },
@@ -148,45 +148,69 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Fermentable>{"FERMENTABLE"};
    EnumStringMapping const BEER_XML_FERMENTABLE_TYPE_MAPPER {
-      {"Grain",               Fermentable::Type::Grain},
-      {"Sugar",               Fermentable::Type::Sugar},
-      {"Extract",             Fermentable::Type::Extract},
-      {"Dry Extract",         Fermentable::Type::Dry_Extract},
-      {"Adjunct",             Fermentable::Type::Other_Adjunct},
+      {Fermentable::Type::Grain        , "Grain"              },
+      {Fermentable::Type::Sugar        , "Sugar"              },
+      {Fermentable::Type::Extract      , "Extract"            },
+      {Fermentable::Type::Dry_Extract  , "Dry Extract"        },
+      {Fermentable::Type::Other_Adjunct, "Adjunct"            },
       // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
-      {"Adjunct<!--Fruit-->", Fermentable::Type::Fruit},
-      {"Adjunct<!--Juice-->", Fermentable::Type::Juice},
-      {"Adjunct<!--Honey-->", Fermentable::Type::Honey},
+      {Fermentable::Type::Fruit        , "Adjunct<!--Fruit-->"},
+      {Fermentable::Type::Juice        , "Adjunct<!--Juice-->"},
+      {Fermentable::Type::Honey        , "Adjunct<!--Honey-->"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Fermentable> {
-      // Type                                  XPath               Q_PROPERTY                                          Enum Mapper
-      {XmlRecord::FieldType::String,           "NAME",             PropertyNames::NamedEntity::name,                   nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION",          VERSION1,                                           nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",             PropertyNames::Fermentable::type,                   &BEER_XML_FERMENTABLE_TYPE_MAPPER},
-      {XmlRecord::FieldType::Double,           "AMOUNT",           PropertyNames::Fermentable::amount,                 nullptr},
-      {XmlRecord::FieldType::Double,           "YIELD",            PropertyNames::Fermentable::yield_pct,              nullptr},
-      {XmlRecord::FieldType::Double,           "COLOR",            PropertyNames::Fermentable::color_srm,              nullptr},
-      {XmlRecord::FieldType::Bool,             "ADD_AFTER_BOIL",   PropertyNames::Fermentable::addAfterBoil,           nullptr},
-      {XmlRecord::FieldType::String,           "ORIGIN",           PropertyNames::Fermentable::origin,                 nullptr},
-      {XmlRecord::FieldType::String,           "SUPPLIER",         PropertyNames::Fermentable::supplier,               nullptr},
-      {XmlRecord::FieldType::String,           "NOTES",            PropertyNames::Fermentable::notes,                  nullptr},
-      {XmlRecord::FieldType::Double,           "COARSE_FINE_DIFF", PropertyNames::Fermentable::coarseFineDiff_pct,     nullptr},
-      {XmlRecord::FieldType::Double,           "MOISTURE",         PropertyNames::Fermentable::moisture_pct,           nullptr},
-      {XmlRecord::FieldType::Double,           "DIASTATIC_POWER",  PropertyNames::Fermentable::diastaticPower_lintner, nullptr},
-      {XmlRecord::FieldType::Double,           "PROTEIN",          PropertyNames::Fermentable::protein_pct,            nullptr},
-      {XmlRecord::FieldType::Double,           "MAX_IN_BATCH",     PropertyNames::Fermentable::maxInBatch_pct,         nullptr},
-      {XmlRecord::FieldType::Bool,             "RECOMMEND_MASH",   PropertyNames::Fermentable::recommendMash,          nullptr},
-      {XmlRecord::FieldType::Double,           "IBU_GAL_PER_LB",   PropertyNames::Fermentable::ibuGalPerLb,            nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",   BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "POTENTIAL",        BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_COLOR",    BtString::NULL_STR,                                 nullptr}, // Extension tag
-      {XmlRecord::FieldType::Bool,             "IS_MASHED",        PropertyNames::Fermentable::isMashed,               nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
-      // Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML .:TODO:. Add the rest here
-      {XmlRecord::FieldType::Enum,             "GRAIN_GROUP",      PropertyNames::Fermentable::grainGroup,             &Fermentable::grainGroupStringMapping},
-      {XmlRecord::FieldType::Bool,             "AMOUNT_IS_WEIGHT", PropertyNames::Fermentable::amountIsWeight,         nullptr},
+      // Type                                  XPath                             Q_PROPERTY                                             Enum Mapper
+      {XmlRecord::FieldType::String          , "NAME"                          , PropertyNames::NamedEntity::name                     },
+      {XmlRecord::FieldType::RequiredConstant, "VERSION"                       , VERSION1                                             },
+      {XmlRecord::FieldType::Enum            , "TYPE"                          , PropertyNames::Fermentable::type                     , &BEER_XML_FERMENTABLE_TYPE_MAPPER},
+      {XmlRecord::FieldType::Double          , "AMOUNT"                        , PropertyNames::Fermentable::amount                   },
+      {XmlRecord::FieldType::Double          , "YIELD"                         , PropertyNames::Fermentable::yield_pct                },
+      {XmlRecord::FieldType::Double          , "COLOR"                         , PropertyNames::Fermentable::color_srm                },
+      {XmlRecord::FieldType::Bool            , "ADD_AFTER_BOIL"                , PropertyNames::Fermentable::addAfterBoil             },
+      {XmlRecord::FieldType::String          , "ORIGIN"                        , PropertyNames::Fermentable::origin                   },
+      {XmlRecord::FieldType::String          , "SUPPLIER"                      , PropertyNames::Fermentable::supplier                 },
+      {XmlRecord::FieldType::String          , "NOTES"                         , PropertyNames::Fermentable::notes                    },
+      {XmlRecord::FieldType::Double          , "COARSE_FINE_DIFF"              , PropertyNames::Fermentable::coarseFineDiff_pct       },
+      {XmlRecord::FieldType::Double          , "MOISTURE"                      , PropertyNames::Fermentable::moisture_pct             },
+      {XmlRecord::FieldType::Double          , "DIASTATIC_POWER"               , PropertyNames::Fermentable::diastaticPower_lintner   },
+      {XmlRecord::FieldType::Double          , "PROTEIN"                       , PropertyNames::Fermentable::protein_pct              },
+      {XmlRecord::FieldType::Double          , "MAX_IN_BATCH"                  , PropertyNames::Fermentable::maxInBatch_pct           },
+      {XmlRecord::FieldType::Bool            , "RECOMMEND_MASH"                , PropertyNames::Fermentable::recommendMash            },
+      {XmlRecord::FieldType::Double          , "IBU_GAL_PER_LB"                , PropertyNames::Fermentable::ibuGalPerLb              },
+      {XmlRecord::FieldType::String          , "DISPLAY_AMOUNT"                , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::String          , "POTENTIAL"                     , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::String          , "INVENTORY"                     , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_COLOR"                 , BtString::NULL_STR                                   }, // Extension tag
+      {XmlRecord::FieldType::Bool            , "IS_MASHED"                     , PropertyNames::Fermentable::isMashed                 }, // Non-standard tag, not part of BeerXML 1.0 standard
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Enum            , "GRAIN_GROUP"                   , PropertyNames::Fermentable::grainGroup               , &Fermentable::grainGroupStringMapping},
+      {XmlRecord::FieldType::Bool            , "AMOUNT_IS_WEIGHT"              , PropertyNames::Fermentable::amountIsWeight           },
+      {XmlRecord::FieldType::String          , "PRODUCER"                      , PropertyNames::Fermentable::producer                 },
+      {XmlRecord::FieldType::String          , "PRODUCT_ID"                    , PropertyNames::Fermentable::productId                },
+      {XmlRecord::FieldType::Double          , "FINE_GRIND_YIELD"              , PropertyNames::Fermentable::fineGrindYield_pct       },
+      {XmlRecord::FieldType::Double          , "COARSE_GRIND_YIELD"            , PropertyNames::Fermentable::coarseGrindYield_pct     },
+      {XmlRecord::FieldType::Double          , "POTENTIAL_YIELD"               , PropertyNames::Fermentable::potentialYield_sg        },
+      {XmlRecord::FieldType::Double          , "ALPHA_AMYLASE"                 , PropertyNames::Fermentable::alphaAmylase_dextUnits   },
+      {XmlRecord::FieldType::Double          , "KOLBACH_INDEX"                 , PropertyNames::Fermentable::kolbachIndex_pct         },
+      {XmlRecord::FieldType::Double          , "HARDNESS_PRP_GLASSY"           , PropertyNames::Fermentable::hardnessPrpGlassy_pct    },
+      {XmlRecord::FieldType::Double          , "HARDNESS_PRP_HALF"             , PropertyNames::Fermentable::hardnessPrpHalf_pct      },
+      {XmlRecord::FieldType::Double          , "HARDNESS_PRP_MEALY"            , PropertyNames::Fermentable::hardnessPrpMealy_pct     },
+      {XmlRecord::FieldType::Double          , "KERNEL_SIZE_PRP_PLUMP"         , PropertyNames::Fermentable::kernelSizePrpPlump_pct   },
+      {XmlRecord::FieldType::Double          , "KERNEL_SIZE_PRP_THIN"          , PropertyNames::Fermentable::kernelSizePrpThin_pct    },
+      {XmlRecord::FieldType::Double          , "FRIABILITY"                    , PropertyNames::Fermentable::friability_pct           },
+      {XmlRecord::FieldType::Double          , "DI"                            , PropertyNames::Fermentable::di_ph                    },
+      {XmlRecord::FieldType::Double          , "VISCOSITY"                     , PropertyNames::Fermentable::viscosity_cP             },
+      {XmlRecord::FieldType::Double          , "DMS_P"                         , PropertyNames::Fermentable::dmsP                     },
+      {XmlRecord::FieldType::Bool            , "DMS_PIS_MASS_PER_VOLUME"       , PropertyNames::Fermentable::dmsPIsMassPerVolume      },
+      {XmlRecord::FieldType::Double          , "FAN"                           , PropertyNames::Fermentable::fan                      },
+      {XmlRecord::FieldType::Bool            , "FAN_IS_MASS_PER_VOLUME"        , PropertyNames::Fermentable::fanIsMassPerVolume       },
+      {XmlRecord::FieldType::Double          , "FERMENTABILITY"                , PropertyNames::Fermentable::fermentability_pct       },
+      {XmlRecord::FieldType::Double          , "BETA_GLUCAN"                   , PropertyNames::Fermentable::betaGlucan               },
+      {XmlRecord::FieldType::Bool            , "BETA_GLUCAN_IS_MASS_PER_VOLUME", PropertyNames::Fermentable::betaGlucanIsMassPerVolume},
+
+
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,23 +218,23 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Yeast>{"YEAST"};
    EnumStringMapping const BEER_XML_YEAST_TYPE_MAPPER {
-      {"Ale",       Yeast::Type::Ale},
-      {"Lager",     Yeast::Type::Lager},
-      {"Wheat",     Yeast::Type::Wheat},
-      {"Wine",      Yeast::Type::Wine},
-      {"Champagne", Yeast::Type::Champagne}
+      {Yeast::Type::Ale      , "Ale"      },
+      {Yeast::Type::Lager    , "Lager"    },
+      {Yeast::Type::Wheat    , "Wheat"    },
+      {Yeast::Type::Wine     , "Wine"     },
+      {Yeast::Type::Champagne, "Champagne"},
    };
    EnumStringMapping const BEER_XML_YEAST_FORM_MAPPER {
-      {"Liquid",  Yeast::Form::Liquid},
-      {"Dry",     Yeast::Form::Dry},
-      {"Slant",   Yeast::Form::Slant},
-      {"Culture", Yeast::Form::Culture}
+      {Yeast::Form::Liquid , "Liquid" },
+      {Yeast::Form::Dry    , "Dry"    },
+      {Yeast::Form::Slant  , "Slant"  },
+      {Yeast::Form::Culture, "Culture"},
    };
    EnumStringMapping const BEER_XML_YEAST_FLOCCULATION_MAPPER {
-      {"Low",       Yeast::Flocculation::Low},
-      {"Medium",    Yeast::Flocculation::Medium},
-      {"High",      Yeast::Flocculation::High},
-      {"Very High", Yeast::Flocculation::Very_High}
+      {Yeast::Flocculation::Low      , "Low"      },
+      {Yeast::Flocculation::Medium   , "Medium"   },
+      {Yeast::Flocculation::High     , "High"     },
+      {Yeast::Flocculation::Very_High, "Very High"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
       // Type                                  XPath               Q_PROPERTY                              Enum Mapper
@@ -235,7 +259,7 @@ namespace {
       {XmlRecord::FieldType::String,           "DISP_MIN_TEMP",    BtString::NULL_STR,                     nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISP_MAX_TEMP",    BtString::NULL_STR,                     nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR,                     nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "CULTURE_DATE",     BtString::NULL_STR,                     nullptr}  // Extension tag
+      {XmlRecord::FieldType::String,           "CULTURE_DATE",     BtString::NULL_STR,                     nullptr}, // Extension tag
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,34 +267,46 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Misc>{"MISC"};
    EnumStringMapping const BEER_XML_MISC_TYPE_MAPPER {
-      {"Spice",       Misc::Type::Spice},
-      {"Fining",      Misc::Type::Fining},
-      {"Water Agent", Misc::Type::Water_Agent},
-      {"Herb",        Misc::Type::Herb},
-      {"Flavor",      Misc::Type::Flavor},
-      {"Other",       Misc::Type::Other}
+      {Misc::Type::Spice      , "Spice"           },
+      {Misc::Type::Fining     , "Fining"          },
+      {Misc::Type::Water_Agent, "Water Agent"     },
+      {Misc::Type::Herb       , "Herb"            },
+      {Misc::Type::Flavor     , "Flavor"          },
+      {Misc::Type::Other      , "Other"           },
+      // This other types is in BeerJSON but is not mentioned in the BeerXML 1.0 Standard.  It gets an approximate
+      // mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {Misc::Type::Wood       , "Other<!--Wood-->"},
    };
+   // The `use` field of Misc is not part of BeerJSON and becomes an optional value now that we support BeerJSON.
+   // Strictly speaking, in BeerXML, it remains a required field.  That means that, if we export a Misc that has no
+   // value for `use` it will not be "correct" BeerXML.  For the moment, I think this is just something we live with.
+   // However, if it turns out to create a lot of problems in real life then we'll need some special case handling to
+   // force a default value in XML files.
    EnumStringMapping const BEER_XML_MISC_USE_MAPPER {
-      {"Boil",      Misc::Use::Boil},
-      {"Mash",      Misc::Use::Mash},
-      {"Primary",   Misc::Use::Primary},
-      {"Secondary", Misc::Use::Secondary},
-      {"Bottling",  Misc::Use::Bottling}
+      {Misc::Use::Boil     , "Boil"     },
+      {Misc::Use::Mash     , "Mash"     },
+      {Misc::Use::Primary  , "Primary"  },
+      {Misc::Use::Secondary, "Secondary"},
+      {Misc::Use::Bottling , "Bottling" },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Misc> {
       // Type                                  XPath               Q_PROPERTY                           Enum Mapper
-      {XmlRecord::FieldType::String,           "NAME",             PropertyNames::NamedEntity::name,    nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION",          VERSION1,                            nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",             PropertyNames::Misc::type,           &BEER_XML_MISC_TYPE_MAPPER},
-      {XmlRecord::FieldType::Enum,             "USE",              PropertyNames::Misc::use,            &BEER_XML_MISC_USE_MAPPER},
-      {XmlRecord::FieldType::Double,           "TIME",             PropertyNames::Misc::time,           nullptr},
-      {XmlRecord::FieldType::Double,           "AMOUNT",           PropertyNames::Misc::amount,         nullptr},
-      {XmlRecord::FieldType::Bool,             "AMOUNT_IS_WEIGHT", PropertyNames::Misc::amountIsWeight, nullptr},
-      {XmlRecord::FieldType::String,           "USE_FOR",          PropertyNames::Misc::useFor,         nullptr},
-      {XmlRecord::FieldType::String,           "NOTES",            PropertyNames::Misc::notes,          nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",   BtString::NULL_STR,                  nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR,                  nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_TIME",     BtString::NULL_STR,                  nullptr}  // Extension tag
+      {XmlRecord::FieldType::String,           "NAME",             PropertyNames::NamedEntity::name   },
+      {XmlRecord::FieldType::RequiredConstant, "VERSION",          VERSION1                           },
+      {XmlRecord::FieldType::Enum,             "TYPE",             PropertyNames::Misc::type          , &BEER_XML_MISC_TYPE_MAPPER},
+      {XmlRecord::FieldType::Enum,             "USE",              PropertyNames::Misc::use           , &BEER_XML_MISC_USE_MAPPER },
+      {XmlRecord::FieldType::Double,           "TIME",             PropertyNames::Misc::time_min      },
+      {XmlRecord::FieldType::Double,           "AMOUNT",           PropertyNames::Misc::amount        },
+      {XmlRecord::FieldType::Bool,             "AMOUNT_IS_WEIGHT", PropertyNames::Misc::amountIsWeight},
+      {XmlRecord::FieldType::String,           "USE_FOR",          PropertyNames::Misc::useFor        },
+      {XmlRecord::FieldType::String,           "NOTES",            PropertyNames::Misc::notes         },
+      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",   BtString::NULL_STR                 }, // Extension tag
+      {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR                 }, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_TIME",     BtString::NULL_STR                 }, // Extension tag
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::String          , "PRODUCER"        , PropertyNames::Misc::producer      },
+      {XmlRecord::FieldType::String          , "PRODUCT_ID"      , PropertyNames::Misc::productId     },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,7 +326,7 @@ namespace {
       {XmlRecord::FieldType::Double,           "MAGNESIUM",      PropertyNames::Water::magnesium_ppm,   nullptr},
       {XmlRecord::FieldType::Double,           "PH",             PropertyNames::Water::ph,              nullptr},
       {XmlRecord::FieldType::String,           "NOTES",          PropertyNames::Water::notes,           nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT", BtString::NULL_STR,                    nullptr}  // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT", BtString::NULL_STR,                    nullptr}, // Extension tag
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,12 +334,12 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Style>{"STYLE"};
    EnumStringMapping const BEER_XML_STYLE_TYPE_MAPPER {
-      {"Lager", Style::Type::Lager},
-      {"Ale",   Style::Type::Ale},
-      {"Mead",  Style::Type::Mead},
-      {"Wheat", Style::Type::Wheat},
-      {"Mixed", Style::Type::Mixed},
-      {"Cider", Style::Type::Cider}
+      {Style::Type::Lager, "Lager"},
+      {Style::Type::Ale  , "Ale"  },
+      {Style::Type::Mead , "Mead" },
+      {Style::Type::Wheat, "Wheat"},
+      {Style::Type::Mixed, "Mixed"},
+      {Style::Type::Cider, "Cider"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Style> {
       // Type                                  XPath                Q_PROPERTY                            Enum Mapper
@@ -341,7 +377,7 @@ namespace {
       {XmlRecord::FieldType::String,           "IBU_RANGE",         BtString::NULL_STR,                   nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "CARB_RANGE",        BtString::NULL_STR,                   nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "COLOR_RANGE",       BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "ABV_RANGE",         BtString::NULL_STR,                   nullptr}  // Extension tag
+      {XmlRecord::FieldType::String,           "ABV_RANGE",         BtString::NULL_STR,                   nullptr}, // Extension tag
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -349,14 +385,14 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<MashStep>{"MASH_STEP"};
    EnumStringMapping const BEER_XML_MASH_STEP_TYPE_MAPPER {
-      {"Infusion",                      MashStep::Type::Infusion},
-      {"Temperature",                   MashStep::Type::Temperature},
-      {"Decoction",                     MashStep::Type::Decoction},
+      {MashStep::Type::Infusion   , "Infusion"                     },
+      {MashStep::Type::Temperature, "Temperature"                  },
+      {MashStep::Type::Decoction  , "Decoction"                    },
       // Inside Brewken we also have MashStep::flySparge and MashStep::batchSparge which are not mentioned in the
       // BeerXML 1.0 Standard.  They get treated as "Infusion" when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings from "Infusion"
-      {"Infusion<!-- Fly Sparge -->",   MashStep::Type::flySparge},
-      {"Infusion<!-- Batch Sparge -->", MashStep::Type::batchSparge}
+      {MashStep::Type::flySparge  , "Infusion<!-- Fly Sparge -->"  },
+      {MashStep::Type::batchSparge, "Infusion<!-- Batch Sparge -->"},
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<MashStep> {
       // Type                                  XPath                 Q_PROPERTY                                  Enum Mapper
@@ -374,7 +410,7 @@ namespace {
       {XmlRecord::FieldType::String,           "INFUSE_TEMP",        PropertyNames::MashStep::infuseTemp_c,      nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_STEP_TEMP",  BtString::NULL_STR,                         nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_INFUSE_AMT", BtString::NULL_STR,                         nullptr}, // Extension tag
-      {XmlRecord::FieldType::Double,           "DECOCTION_AMOUNT",   PropertyNames::MashStep::decoctionAmount_l, nullptr}  // Non-standard tag, not part of BeerXML 1.0 standard
+      {XmlRecord::FieldType::Double,           "DECOCTION_AMOUNT",   PropertyNames::MashStep::decoctionAmount_l, nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +433,7 @@ namespace {
       {XmlRecord::FieldType::String,           "DISPLAY_GRAIN_TEMP",   BtString::NULL_STR,                         nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_TUN_TEMP",     BtString::NULL_STR,                         nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_SPARGE_TEMP",  BtString::NULL_STR,                         nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_TUN_WEIGHT",   BtString::NULL_STR,                         nullptr}  // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_TUN_WEIGHT",   BtString::NULL_STR,                         nullptr}, // Extension tag
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -432,7 +468,7 @@ namespace {
       {XmlRecord::FieldType::String,           "DISPLAY_TOP_UP_KETTLE",     BtString::NULL_STR,                              nullptr}, // Extension tag
       {XmlRecord::FieldType::Double,           "REAL_EVAP_RATE",            PropertyNames::Equipment::evapRate_lHr,          nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
       {XmlRecord::FieldType::Double,           "ABSORPTION",                PropertyNames::Equipment::grainAbsorption_LKg,   nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
-      {XmlRecord::FieldType::Double,           "BOILING_POINT",             PropertyNames::Equipment::boilingPoint_c,        nullptr}  // Non-standard tag, not part of BeerXML 1.0 standard
+      {XmlRecord::FieldType::Double,           "BOILING_POINT",             PropertyNames::Equipment::boilingPoint_c,        nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +483,7 @@ namespace {
       {XmlRecord::FieldType::Bool,             "hasTimer",   PropertyNames::Instruction::hasTimer,   nullptr},
       {XmlRecord::FieldType::String,           "timervalue", PropertyNames::Instruction::timerValue, nullptr}, // NB XPath is lowercase and property is camelCase
       {XmlRecord::FieldType::Bool,             "completed",  PropertyNames::Instruction::completed,  nullptr},
-      {XmlRecord::FieldType::Double,           "interval",   PropertyNames::Instruction::interval,   nullptr}
+      {XmlRecord::FieldType::Double,           "interval",   PropertyNames::Instruction::interval,   nullptr},
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -491,7 +527,7 @@ namespace {
       {XmlRecord::FieldType::Double,           "PROJECTED_ABV",           PropertyNames::BrewNote::projABV_pct,          nullptr},
       {XmlRecord::FieldType::Double,           "PROJECTED_POINTS",        PropertyNames::BrewNote::projPoints,           nullptr},
       {XmlRecord::FieldType::Double,           "PROJECTED_FERM_POINTS",   PropertyNames::BrewNote::projFermPoints,       nullptr},
-      {XmlRecord::FieldType::Double,           "PROJECTED_ATTEN",         PropertyNames::BrewNote::projAtten,            nullptr}
+      {XmlRecord::FieldType::Double,           "PROJECTED_ATTEN",         PropertyNames::BrewNote::projAtten,            nullptr},
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -499,9 +535,9 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Recipe>{"RECIPE"};
    EnumStringMapping const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
-      {"Extract",      Recipe::Type::Extract},
-      {"Partial Mash", Recipe::Type::PartialMash},
-      {"All Grain",    Recipe::Type::AllGrain}
+      {Recipe::Type::Extract    , "Extract"     },
+      {Recipe::Type::PartialMash, "Partial Mash"},
+      {Recipe::Type::AllGrain   , "All Grain"   },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Recipe> {
       // Type                                  XPath                       Q_PROPERTY                                 Enum Mapper
@@ -563,7 +599,7 @@ namespace {
       {XmlRecord::FieldType::String,           "DISPLAY_TERTIARY_TEMP",    BtString::NULL_STR,                        nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "DISPLAY_AGE_TEMP",         BtString::NULL_STR,                        nullptr}, // Extension tag
       {XmlRecord::FieldType::String,           "CARBONATION_USED",         BtString::NULL_STR,                        nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_CARB_TEMP",        BtString::NULL_STR,                        nullptr}  // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_CARB_TEMP",        BtString::NULL_STR,                        nullptr}, // Extension tag
    };
 }
 
@@ -593,7 +629,7 @@ public:
                   {BEER_XML_RECORD_NAME<Equipment>  , {&XmlCoding::construct<Equipment>,   &BEER_XML_RECORD_FIELDS<Equipment>  } },
                   {BEER_XML_RECORD_NAME<Instruction>, {&XmlCoding::construct<Instruction>, &BEER_XML_RECORD_FIELDS<Instruction>} },
                   {BEER_XML_RECORD_NAME<BrewNote>   , {&XmlCoding::construct<BrewNote>,    &BEER_XML_RECORD_FIELDS<BrewNote>   } },
-                  {BEER_XML_RECORD_NAME<Recipe>     , {&XmlCoding::construct<Recipe>,      &BEER_XML_RECORD_FIELDS<Recipe>     } }
+                  {BEER_XML_RECORD_NAME<Recipe>     , {&XmlCoding::construct<Recipe>,      &BEER_XML_RECORD_FIELDS<Recipe>     } },
                }
             } {
       return;

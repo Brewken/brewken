@@ -24,6 +24,19 @@
 
 #include "Logging.h"
 #include "measurement/Amount.h"
+#include "utils/BtStringConst.h"
+
+namespace PropertyNames::None {
+   BtStringConst const none{"none"};
+}
+
+bool TypeInfo::isEnum() const {
+   if (this->classification == TypeInfo::Classification::RequiredEnum ||
+       this->classification == TypeInfo::Classification::OptionalEnum) {
+      return true;
+   }
+   return false;
+}
 
 bool TypeInfo::isOptional() const {
    if (this->classification == TypeInfo::Classification::OptionalEnum ||

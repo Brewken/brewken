@@ -471,22 +471,15 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Za niska wartość dla stylu.</translation>
+        <translation type="vanished">Za niska wartość dla stylu.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Wartość mieści się w stylu.</translation>
+        <translation type="vanished">Wartość mieści się w stylu.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Za wysoka wartość dla stylu.</translation>
-    </message>
-</context>
-<context>
-    <name>BtLabel</name>
-    <message>
-        <source>Color (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Za wysoka wartość dla stylu.</translation>
     </message>
 </context>
 <context>
@@ -1170,55 +1163,71 @@ Log file may contain more details.</source>
         <source>Other Adjunct</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caramel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flaked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roasted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specialty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smoked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjunct</source>
+        <translation type="unfinished">Dodatek</translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Składnik fermentacji</translation>
+        <translation type="vanished">Składnik fermentacji</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Składnik fermentacji:</translation>
+        <translation type="vanished">Składnik fermentacji:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Baza składników fermentacji</translation>
+        <translation type="vanished">Baza składników fermentacji</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">Składnik fermentacji</translation>
+        <translation type="obsolete">Składnik fermentacji</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">Składnik fermentacji:</translation>
+        <translation type="obsolete">Składnik fermentacji:</translation>
     </message>
 </context>
 <context>
@@ -1295,44 +1304,32 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Fermentable Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Add After Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Rodzaj kwoty</translation>
     </message>
     <message>
-        <source>Change Fermentable Inventory Amount</source>
+        <source>Volume</source>
+        <translation type="unfinished">Objętość</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Waga</translation>
+    </message>
+    <message>
+        <source>Not mashed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Fermentable Amount Type</source>
+        <source>Mashed</source>
+        <translation type="unfinished">Zacierany</translation>
+    </message>
+    <message>
+        <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Fermentable Is Mashed</source>
-        <translation type="unfinished"></translation>
+        <source>Late</source>
+        <translation type="unfinished">Dodawany późno</translation>
     </message>
 </context>
 <context>
@@ -1477,50 +1474,38 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>Nazwa chmielu</translation>
+        <translation type="vanished">Nazwa chmielu</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>Nazwa chmielu:</translation>
+        <translation type="vanished">Nazwa chmielu:</translation>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Baza chmieli</translation>
+        <translation type="vanished">Baza chmieli</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">Nazwa chmielu</translation>
+        <translation type="obsolete">Nazwa chmielu</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">Nazwa chmielu:</translation>
+        <translation type="obsolete">Nazwa chmielu:</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -1559,35 +1544,35 @@ Log file may contain more details.</source>
     <name>HopItemDelegate</name>
     <message>
         <source>Boil</source>
-        <translation>Goryczka</translation>
+        <translation type="vanished">Goryczka</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>Chmielenie na zimno</translation>
+        <translation type="vanished">Chmielenie na zimno</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Do zacierania</translation>
+        <translation type="vanished">Do zacierania</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>Chmielenie przedniej brzeczki</translation>
+        <translation type="vanished">Chmielenie przedniej brzeczki</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation>Aromat</translation>
+        <translation type="vanished">Aromat</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Szyszka</translation>
+        <translation type="vanished">Szyszka</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Granulat</translation>
+        <translation type="vanished">Granulat</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Tabletka</translation>
+        <translation type="vanished">Tabletka</translation>
     </message>
 </context>
 <context>
@@ -1619,34 +1604,6 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Magazyn</translation>
-    </message>
-    <message>
-        <source>Change Hop Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2139,10 +2096,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2274,116 +2227,108 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Waga</translation>
+        <translation type="obsolete">Waga</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objętość</translation>
+        <translation type="obsolete">Objętość</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Nazwa dodatku</translation>
+        <translation type="vanished">Nazwa dodatku</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Nazwa dodatku:</translation>
+        <translation type="vanished">Nazwa dodatku:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Baza dodatków</translation>
+        <translation type="vanished">Baza dodatków</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Nazwa dodatku</translation>
+        <translation type="obsolete">Nazwa dodatku</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Nazwa dodatku:</translation>
+        <translation type="obsolete">Nazwa dodatku:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Przyprawa</translation>
+        <translation type="vanished">Przyprawa</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Substancja klarująca</translation>
+        <translation type="vanished">Substancja klarująca</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Uzdatnianie wody</translation>
+        <translation type="vanished">Uzdatnianie wody</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Zioło</translation>
+        <translation type="vanished">Zioło</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aromat</translation>
+        <translation type="vanished">Aromat</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Inny</translation>
+        <translation type="vanished">Inny</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Gotowanie</translation>
+        <translation type="vanished">Gotowanie</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Zacieranie</translation>
+        <translation type="vanished">Zacieranie</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Fermentacja burzliwa</translation>
+        <translation type="vanished">Fermentacja burzliwa</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Fermentacja Cicha</translation>
+        <translation type="vanished">Fermentacja Cicha</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Butlekowanie</translation>
+        <translation type="vanished">Butlekowanie</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Waga</translation>
+        <translation type="obsolete">Waga</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objętość</translation>
+        <translation type="obsolete">Objętość</translation>
     </message>
 </context>
 <context>
@@ -2417,31 +2362,18 @@ Log file may contain more details.</source>
         <translation>Magazyn</translation>
     </message>
     <message>
-        <source>Change Misc Name</source>
-        <translation type="unfinished"></translation>
+        <source>Volume</source>
+        <translation type="unfinished">Objętość</translation>
     </message>
     <message>
-        <source>Change Misc Type</source>
-        <translation type="unfinished"></translation>
+        <source>Weight</source>
+        <translation type="unfinished">Waga</translation>
     </message>
+</context>
+<context>
+    <name>NE</name>
     <message>
-        <source>Change Misc Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount Type</source>
+        <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3438,15 +3370,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Dodawany późno</translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Dodawany późno</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Zacierany</translation>
+        <translation type="obsolete">Zacierany</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -3486,6 +3414,42 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Dodaj do receptury</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nowy</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Utwórz nowy składnik</translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4208,10 +4172,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Bad column: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -4252,6 +4212,21 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>The equipment and mash have been reset due to the fact that mash temperatures do not scale easily. Please re-run the mash wizard.</source>
         <translation>Ustawienia sprzętu i zacierania zostały zresetowane z uwagi na fakt, że skalowanie temeratury zacieru jest trudne. Proszę ponownie uruchomić kreator zacierania.</translation>
+    </message>
+</context>
+<context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Za niska wartość dla stylu.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Wartość mieści się w stylu.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Za wysoka wartość dla stylu.</translation>
     </message>
 </context>
 <context>
@@ -4678,50 +4653,38 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Nazwa drożdży</translation>
+        <translation type="vanished">Nazwa drożdży</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Nazwa drożdży:</translation>
+        <translation type="vanished">Nazwa drożdży:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Baza drożdży</translation>
+        <translation type="vanished">Baza drożdży</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Dodaj do receptury</translation>
+        <translation type="vanished">Dodaj do receptury</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nowy</translation>
-    </message>
-    <message>
-        <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nowy</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Utwórz nowy składnik</translation>
-    </message>
-    <message>
-        <source>Edit selected ingredient</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Utwórz nowy składnik</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Nazwa drożdży</translation>
+        <translation type="obsolete">Nazwa drożdży</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Nazwa drożdży:</translation>
+        <translation type="obsolete">Nazwa drożdży:</translation>
     </message>
 </context>
 <context>
@@ -5193,19 +5156,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Required</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>boilSize_l</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>batchSize_l</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5225,35 +5176,15 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished">Szybkość parowania (na godz.)</translation>
     </message>
     <message>
-        <source>evapRate_lHr</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Final top-up water</source>
         <translation type="unfinished">Początkowa ilość wody w fermentorze</translation>
-    </message>
-    <message>
-        <source>topUpWater_l</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Kettle top-up water</source>
         <translation type="unfinished">Początkowa ilość wody w kotle</translation>
     </message>
     <message>
-        <source>topUpKettle_l</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Kettle to Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>trubChillerLoss_l</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>lauterDeadspace_l</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5273,10 +5204,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>grainAbsorption_LKg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boiling Point of Water</source>
         <translation type="unfinished">Temperatura wrzenia wody</translation>
     </message>
@@ -5293,23 +5220,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished">Pojemność kadzi zaciernej</translation>
     </message>
     <message>
-        <source>hopUtilization_pct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>boilingPoint_c</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>tunWeight_kg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Specific Heat (Cal/(g*C))</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>tunSpecificHeat_calGC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5492,10 +5403,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Yield %</source>
         <translation type="unfinished">Ekstraktywność %</translation>
     </message>
@@ -5504,15 +5411,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished">Szczegóły</translation>
     </message>
     <message>
-        <source>origin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Diastatic power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>supplier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5533,6 +5432,130 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Fermantable Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished">Czy ilość jest wagą?</translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
+    </message>
+    <message>
+        <source>GrainGroup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Grain Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID produktu</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Coarse Grind (DBCG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Potential yield</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kolbach Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;glassy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;half glassy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;mealy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of grain that is &quot;plump&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of grain that is &quot;tine&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DI pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity of this malt in a &quot;congress mash&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Coarse Grind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total alpha-amylase in malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total alpha-amylase in the malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen (FAN)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FAN is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans is mass concentration?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6753,27 +6776,27 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Przyprawa</translation>
+        <translation type="vanished">Przyprawa</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Substancja klarująca</translation>
+        <translation type="vanished">Substancja klarująca</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Uzdatnianie wody</translation>
+        <translation type="vanished">Uzdatnianie wody</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Zioło</translation>
+        <translation type="vanished">Zioło</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Aromat</translation>
+        <translation type="vanished">Aromat</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Inny</translation>
+        <translation type="vanished">Inny</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6781,23 +6804,23 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Gotowanie</translation>
+        <translation type="vanished">Gotowanie</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Zacieranie</translation>
+        <translation type="vanished">Zacieranie</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Fermentacja Burzliwa</translation>
+        <translation type="vanished">Fermentacja Burzliwa</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Fermentacja Cicha</translation>
+        <translation type="vanished">Fermentacja Cicha</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Butlekowanie</translation>
+        <translation type="vanished">Butlekowanie</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6862,6 +6885,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID produktu</translation>
     </message>
 </context>
 <context>
@@ -7909,26 +7940,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>styleLetter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>styleGuide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>categoryNumber</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>category</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ranges</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8034,31 +8045,11 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>nappm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ca</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>so4ppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>cappm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>hco3ppm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8078,14 +8069,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>mgppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>clppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8098,15 +8081,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>cacl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>MgSO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>mgso4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8114,15 +8089,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>caco3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>NaCl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>nacl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8130,15 +8097,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>caso4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>NaHCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>nahco3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8170,6 +8129,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

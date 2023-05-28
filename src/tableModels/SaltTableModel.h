@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -39,11 +39,6 @@ class Recipe;
 class SaltItemDelegate;
 class WaterDialog;
 
-enum{ SALTNAMECOL,
-      SALTAMOUNTCOL,
-      SALTADDTOCOL,
-      SALTPCTACIDCOL,
-      SALTNUMCOLS /*This one MUST be last*/};
 /*!
  * \class SaltTableModel
  *
@@ -53,8 +48,19 @@ class SaltTableModel : public BtTableModelRecipeObserver, public BtTableModelDat
    Q_OBJECT
 
 public:
+   enum class ColumnIndex {
+      Name   ,
+      Amount ,
+      AddTo  ,
+      PctAcid,
+   };
+
    SaltTableModel(QTableView* parent = nullptr);
    ~SaltTableModel();
+
+   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
+   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
+
    void observeRecipe(Recipe* rec);
 private:
    void addSalt(std::shared_ptr<Salt> salt);

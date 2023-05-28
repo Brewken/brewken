@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -48,16 +48,16 @@
 
 namespace {
    EnumStringMapping const itemTypeToName {
-      {"RECIPE"     , BtTreeItem::Type::RECIPE     },
-      {"EQUIPMENT"  , BtTreeItem::Type::EQUIPMENT  },
-      {"FERMENTABLE", BtTreeItem::Type::FERMENTABLE},
-      {"HOP"        , BtTreeItem::Type::HOP        },
-      {"MISC"       , BtTreeItem::Type::MISC       },
-      {"YEAST"      , BtTreeItem::Type::YEAST      },
-      {"BREWNOTE"   , BtTreeItem::Type::BREWNOTE   },
-      {"STYLE"      , BtTreeItem::Type::STYLE      },
-      {"FOLDER"     , BtTreeItem::Type::FOLDER     },
-      {"WATER"      , BtTreeItem::Type::WATER      }
+      {BtTreeItem::Type::RECIPE     , "RECIPE"     },
+      {BtTreeItem::Type::EQUIPMENT  , "EQUIPMENT"  },
+      {BtTreeItem::Type::FERMENTABLE, "FERMENTABLE"},
+      {BtTreeItem::Type::HOP        , "HOP"        },
+      {BtTreeItem::Type::MISC       , "MISC"       },
+      {BtTreeItem::Type::YEAST      , "YEAST"      },
+      {BtTreeItem::Type::BREWNOTE   , "BREWNOTE"   },
+      {BtTreeItem::Type::STYLE      , "STYLE"      },
+      {BtTreeItem::Type::FOLDER     , "FOLDER"     },
+      {BtTreeItem::Type::WATER      , "WATER"      },
    };
 }
 
@@ -283,10 +283,8 @@ QVariant BtTreeItem::dataFermentable(int column) {
          break;
       case FERMENTABLECOLORCOL:
          if (ferm) {
-            return QVariant(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm},
-                                                       BtString::EMPTY_STR,
-                                                       PropertyNames::Fermentable::color_srm,
-                                                       0));
+            return QVariant(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(),
+                                                                           Measurement::Units::srm}, 0));
          }
          break;
       default :
@@ -332,12 +330,13 @@ QVariant BtTreeItem::dataMisc(int column) {
          }
       case MISCTYPECOL:
          if (misc) {
-            return QVariant(misc->typeStringTr());
+            return QVariant(Misc::typeDisplayNames[misc->type()]);
          }
          break;
       case MISCUSECOL:
          if (misc) {
-            return QVariant(misc->useStringTr());
+            auto const use = misc->use();
+            return use ? QVariant(Misc::useDisplayNames[*use]) : "";
          }
          break;
       default :

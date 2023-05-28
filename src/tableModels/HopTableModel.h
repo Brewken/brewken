@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Markus Mårtensson <mackan.90@gmail.com>
@@ -26,66 +26,50 @@
 #include <QMetaProperty>
 #include <QModelIndex>
 #include <QVariant>
-#include <QVector>
 #include <QWidget>
 
-#include "model/Hop.h"
-#include "model/Recipe.h"
 #include "tableModels/BtTableModelInventory.h"
+#include "tableModels/ItemDelegate.h"
+#include "tableModels/TableModelBase.h"
 
 class BtStringConst;
-class HopTableModel;
-class HopItemDelegate;
+class Hop;
+class Recipe;
 
-enum{HOPNAMECOL, HOPALPHACOL, HOPAMOUNTCOL, HOPINVENTORYCOL, HOPFORMCOL, HOPUSECOL, HOPTIMECOL, HOPNUMCOLS /*This one MUST be last*/};
+// You have to get the order of everything right with traits classes, but the end result is that we can refer to
+// HopTableModel::ColumnIndex::Alpha etc.
+class HopTableModel;
+template <> struct TableModelTraits<HopTableModel> {
+   enum class ColumnIndex {
+      Name     ,
+      Alpha    ,
+      Amount   ,
+      Inventory,
+      Form     ,
+      Use      ,
+      Time     ,
+   };
+};
 
 /*!
  * \class HopTableModel
  *
  * \brief Model class for a list of hops.
  */
-class HopTableModel : public BtTableModelInventory, public BtTableModelData<Hop> {
+class HopTableModel : public BtTableModelInventory, public TableModelBase<HopTableModel, Hop> {
    Q_OBJECT
 
-public:
-   HopTableModel(QTableView* parent=nullptr, bool editable=true);
-   virtual ~HopTableModel();
+   TABLE_MODEL_COMMON_DECL(Hop)
 
-   //! \brief Observe a recipe's list of fermentables.
-   void observeRecipe(Recipe* rec);
-   //! \brief If true, we model the database's list of hops.
-   void observeDatabase(bool val);
+public:
    //! \brief Show ibus in the vertical header.
    void setShowIBUs( bool var );
-   //! \brief Watch all the \c hops for changes.
-   void addHops(QList< std::shared_ptr<Hop> > hops);
-   //! \brief Clear the model.
-   void removeAll();
-
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual Qt::ItemFlags flags(const QModelIndex& index ) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
-
-   //! \returns true if "hop" is successfully found and removed.
-   bool remove(std::shared_ptr<Hop> hop);
-
-public slots:
-   void changed(QMetaProperty, QVariant);
-   void changedInventory(int invKey, BtStringConst const & propertyName);
-   //! \brief Add a hop to the model.
-   void addHop(int hopId);
-   void removeHop(int hopId, std::shared_ptr<QObject> object);
 
 private:
    bool showIBUs; // True if you want to show the IBU contributions in the table rows.
 };
+
+//=============================================== CLASS HopItemDelegate ================================================
 
 /*!
  *  \class HopItemDelegate
@@ -93,19 +77,11 @@ private:
  *  \brief An item delegate for hop tables.
  *  \sa HopTableModel
  */
-class HopItemDelegate : public QItemDelegate {
+class HopItemDelegate : public QItemDelegate,
+                               public ItemDelegate<HopItemDelegate, HopTableModel> {
    Q_OBJECT
 
-public:
-   HopItemDelegate(QObject* parent = nullptr);
-
-   // Inherited functions.
-   virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-   virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
-   virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-   virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
+   ITEM_DELEGATE_COMMON_DECL(Hop)
 };
 
 #endif

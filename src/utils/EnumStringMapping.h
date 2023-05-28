@@ -25,6 +25,7 @@
 #include <QVector>
 
 #include "Logging.h"
+#include "utils/TypeLookup.h"
 
 /**
  * \brief Associates an enum value with a string representation (eg in the DB or BeerXML or BeerJSON).  Storing a
@@ -32,20 +33,25 @@
  *        is more robust than just storing the raw numerical value of the enum.
  */
 struct EnumAndItsString {
-   QString string;
    int     native;
+   QString string;
+
+   /**
+    * \brief Need a default constructor for storing in a vector
+    */
+   EnumAndItsString();
 
    /**
     * \brief Standard constructor, which we need to declare explicitly in order to have the templated version below
     */
-   EnumAndItsString(QString string, int native);
+   EnumAndItsString(int native, QString string);
 
    /**
     * \brief Convenience constructor for creating \c EnumAndItsString using strongly typed enums (ie those declared as
     *        "enum class")
     */
    template<typename E>
-   EnumAndItsString(QString string, E native) : EnumAndItsString(string, static_cast<int>(native)) {
+   EnumAndItsString(E native, QString string) : EnumAndItsString(static_cast<int>(native), string) {
       return;
    }
 };
@@ -63,11 +69,21 @@ struct EnumAndItsString {
  *        by the compiler when it's an array of structs), and the extra "cost" of a vector here is negligible.
  *
  *        TBD: Could look at Boost Bimap
+ *
+ *        NOTE: We can get the number of values in the mapping by calling \c size (inherited from \c QVector).  By
+ *              virtue of the fact that we always start our enums at 0 and don't skip any values, this also tells us
+ *              the number of values in the enum (subject to the assumption that every value in the enum was given a
+ *              mapping entry).
  */
 class EnumStringMapping : public QVector<EnumAndItsString> {
 public:
-   // We're not adding data members so we can just use the base class constructors
-   using QVector::QVector;
+   /**
+    * \brief We could just use the \c QVector constructor, but this way allows us to do some extra optimisation and
+    *        checking.
+    *
+    * \param args \b must be in enum order.  This is a small burden but it rather simplifies the code.
+    */
+   EnumStringMapping(std::initializer_list<EnumAndItsString> args);
 
    /**
     * \brief Convert data that \b might not be a valid string representation of an enum to the \c int value of that
@@ -76,14 +92,14 @@ public:
     * \param caseInensitiveFallback If \c true (the default), this means we'll do a case-insensitive search if we didn't
     *                               find \c stringValue as a case-sensitive match.
     */
-   std::optional<int>     stringToEnumAsInt(QString const & stringValue, bool const caseInensitiveFallback = true) const;
+   std::optional<int> stringToEnumAsInt(QString const & stringValue, bool const caseInensitiveFallback = true) const;
 
    /**
     * \brief Convert data that \b might not be a valid \c int value of an enum to the string representation of that
     *        enum.  This is possibly useful in some circumstances when we are reading a Qt property of an object and we
     *        can't be 100% certain that the object is of the class we expect
     */
-   std::optional<QString> enumAsIntToString(int     const   enumValue) const;
+   std::optional<QString> enumAsIntToString(int const enumValue) const;
 
    /**
     * \brief Convenience function for using \c enumToString with strongly typed enums (ie those declared as
@@ -103,6 +119,24 @@ public:
          throw std::out_of_range("Missing string value in EnumStringMapping");
       }
       return *result;
+   }
+
+   /**
+    * \brief A more concise version of \c enumToString
+    *
+    *        (We could do similar for stringToEnum, but it would be a bit more clunky as the compiler wouldn't be able
+    *        to deduce the enum type automatically.)
+    *
+    *        See comments in widgets/SmartField.h for why we have the enable_if_t here
+    */
+   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+   QString operator[](E const enumValue) const {
+      return this->enumToString(enumValue);
+   }
+
+   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+   QString operator[](std::optional<E> const optionalEnumValue) const {
+      return optionalEnumValue ? this->enumToString(*optionalEnumValue) : "";
    }
 
    /**
@@ -131,7 +165,6 @@ public:
       std::optional<int> result = this->stringToEnumAsInt(stringValue);
       return result ? std::optional<E>{static_cast<E>(*result)} : std::optional<E>{std::nullopt};
    }
-
 };
 
 #endif

@@ -633,7 +633,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "9" << decimalSeparator << "994 P";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI(testInput, // "9.994 P"
-                                                                          Measurement::Units::sp_grav).quantity(),
+                                                                          Measurement::Units::specificGravity).quantity(),
                       1.040,
                       0.001),
             "Unit conversion error (Plato to SG)");
@@ -721,9 +721,9 @@ void Testing::testNamedParameterBundle() {
 void Testing::testNumberDisplayAndParsing() {
    // Per comment above, we should be seeing number formats in French locale here
    // Eg: 1,234.56 in US locale = 1.234,56 in French locale
-   QVERIFY(1.23 == Measurement::extractRawFromString<double>("1,23 %"));
-   QVERIFY(3.45 == Measurement::extractRawFromString<double>("  03,45 srm  "));
-   QVERIFY(6.78 == Measurement::extractRawFromString<double>("\t6,78000000    bananas!"));
+   QVERIFY(fuzzyComp(1.23, Measurement::extractRawFromString<double>("1,23 %"                  ), 0.0000000001));
+   QVERIFY(fuzzyComp(3.45, Measurement::extractRawFromString<double>("  03,45 srm  "           ), 0.0000000001));
+   QVERIFY(fuzzyComp(6.78, Measurement::extractRawFromString<double>("\t6,78000000    bananas!"), 0.0000000001));
    QVERIFY(1    == Measurement::extractRawFromString<int>   ("1,23 %"));
    QVERIFY(3    == Measurement::extractRawFromString<int>   ("  03,45 srm  "));
    QVERIFY(6    == Measurement::extractRawFromString<int>   ("\t6,78000000    bananas!"));

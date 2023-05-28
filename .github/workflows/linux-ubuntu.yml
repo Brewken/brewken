@@ -91,8 +91,6 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
-          pwd
-          find ../third-party
           make
 
       - name: Build (with Meson)
@@ -122,25 +120,14 @@ jobs:
           export QT_QPA_PLATFORM=offscreen
           meson test
 
-      - name: Package (via CMake/CPack)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: |
-          umask 022
-          make package
-
-      - name: Package (New)
+      # Note that, although we continue to support CMake for local builds and installs, we no longer support packaging
+      # with CPack/CMake.  The bt build script packaging gives us better control over the packaging process.
+      - name: Package
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
           umask 022
           ../bt package
-
-      - name: LintianAndRpmLint
-        continue-on-error: true
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: make package_lint
 
       - name: Upload Linux Packages (Installers)
         if: ${{ success() }}
@@ -148,12 +135,6 @@ jobs:
         with:
           name: brewken-${{matrix.os}}
           path: |
-            build/brewken*.rpm
-            build/brewken*.rpm.sha256
-            build/brewken*.deb
-            build/brewken*.deb.sha256
-            build/brewken*.tar.bz2
-            build/brewken*.tar.bz2.sha256
             mbuild/packages/source/brewken*.tar.xz
             mbuild/packages/source/brewken*.tar.xz.sha256sum
             mbuild/packages/linux/brewken*.deb

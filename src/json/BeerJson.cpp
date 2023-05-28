@@ -292,12 +292,12 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "mealy"           , PropertyNames::Fermentable::hardnessPrpMealy_pct  , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "thru"            , PropertyNames::Fermentable::kernelSizePrpThin_pct , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "friability"      , PropertyNames::Fermentable::friability_pct        , &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "di_ph"           , BtString::NULL_STR,                                 &BEER_JSON_ACIDITY_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "viscosity"       , BtString::NULL_STR,                                 &BEER_JSON_VISCOSITY_UNIT_MAPPER      }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "dms_p"           , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "fan"             , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "fermentability"  , BtString::NULL_STR,                                 &BEER_JSON_PERCENT_UNIT               }, // .:TODO.JSON:. Add this to Fermentable
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "beta_glucan"     , BtString::NULL_STR,                                 &BEER_JSON_CONCENTRATION_UNIT_MAPPER  }, // .:TODO.JSON:. Add this to Fermentable
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "di_ph"           , PropertyNames::Fermentable::di_ph                 , &BEER_JSON_ACIDITY_UNIT               },
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "viscosity"       , PropertyNames::Fermentable::viscosity_cP          , &BEER_JSON_VISCOSITY_UNIT_MAPPER      },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "dms_p"           , PropertyNames::Fermentable::dmsPWithUnits         , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "fan"             , PropertyNames::Fermentable::fanWithUnits          , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "fermentability"  , PropertyNames::Fermentable::fermentability_pct    , &BEER_JSON_PERCENT_UNIT               },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "beta_glucan"     , PropertyNames::Fermentable::betaGlucanWithUnits   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
    };
    // .:TODO.JSON:.  Extend Recipe to have an enum for this
    EnumStringMapping const BEER_JSON_RECIPE_ADDITION_POINT_MAPPER {
@@ -328,38 +328,20 @@ namespace {
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json TODO
+   // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const BEER_JSON_MISC_TYPE_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Misc::Type
-      {"spice",       Misc::Type::Spice},
-      {"fining",      Misc::Type::Fining},
-      {"water agent", Misc::Type::Water_Agent},
-      {"herb",        Misc::Type::Herb},
-      {"flavor",      Misc::Type::Flavor},
-///      {"wood",        Misc::Type::Wood},
-      {"other",       Misc::Type::Other}
-   };
-   // .:TBD.JSON:. There is no equivalent of the Misc::Use enum in BeerJSON, just the use_for string
-//   EnumStringMapping const BEER_JSON_MISC_USE_MAPPER {
-//      {"Boil",      Misc::Use::Boil},
-//      {"Mash",      Misc::Use::Mash},
-//      {"Primary",   Misc::Use::Primary},
-//      {"Secondary", Misc::Use::Secondary},
-//      {"Bottling",  Misc::Use::Bottling}
-//   };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousBase {
       // Type                                         XPath               Q_PROPERTY                        Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,       "name",             PropertyNames::NamedEntity::name, },
-      {JsonRecordDefinition::FieldType::String,       "producer",         BtString::NULL_STR,               }, // .:TODO.JSON:. Add this to Misc
-      {JsonRecordDefinition::FieldType::String,       "product_id",       BtString::NULL_STR,               }, // .:TODO.JSON:. Add this to Misc
-      {JsonRecordDefinition::FieldType::Enum,         "type",             PropertyNames::Fermentable::type, &BEER_JSON_MISC_TYPE_MAPPER},
+      {JsonRecordDefinition::FieldType::String,       "producer",         PropertyNames::Misc::producer   , },
+      {JsonRecordDefinition::FieldType::String,       "product_id",       PropertyNames::Misc::productId  , },
+      {JsonRecordDefinition::FieldType::Enum,         "type",             PropertyNames::Fermentable::type, &Misc::typeStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousType_ExclBase {
-      // Type                                         XPath                             Q_PROPERTY                    Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::String,       "use_for",                        PropertyNames::Misc::useFor,  },
-      {JsonRecordDefinition::FieldType::String,       "notes",                          PropertyNames::Misc::notes,   },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Misc::amount,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Also need to reference Misc::amountIsWeight PLUS we need to cope with UnitType
+      // Type                                                       XPath               Q_PROPERTY                            Enum/Unit Mapper
+      {JsonRecordDefinition::FieldType::String,                     "use_for"         , PropertyNames::Misc::useFor         , },
+      {JsonRecordDefinition::FieldType::String,                     "notes"           , PropertyNames::Misc::notes          , },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Misc::amountWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       "miscellaneous_ingredients",
@@ -372,7 +354,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for hop_varieties BeerJSON records - see schemas/beerjson/1.0/hop.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/* This isn't used with BeerJSON
+/* This isn't used with BeerJSON .:TODO.JSON:. Maybe make this an optional field in Hop
  * EnumStringMapping const BEER_JSON_HOP_USE_MAPPER {
       {"Boil",       Hop::Use::Boil},
       {"Dry Hop",    Hop::Use::Dry_Hop},
@@ -386,7 +368,7 @@ namespace {
       {JsonRecordDefinition::FieldType::String,       "producer",                          PropertyNames::Hop::producer,          },
       {JsonRecordDefinition::FieldType::String,       "product_id",                        PropertyNames::Hop::product_id,        },
       {JsonRecordDefinition::FieldType::String,       "origin",                            PropertyNames::Hop::origin,            },
-      {JsonRecordDefinition::FieldType::String,       "year",                              PropertyNames::Hop::year,              }, // Yes, year really is a string, not an integer in BeerJSON.  .:TODO.JSON:. Decide int vs string ****
+      {JsonRecordDefinition::FieldType::String,       "year",                              PropertyNames::Hop::year,              },
       {JsonRecordDefinition::FieldType::Enum,         "form",                              PropertyNames::Hop::form,              &Hop::formStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopType_ExclBase {
@@ -428,40 +410,39 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const BEER_JSON_YEAST_TYPE_MAPPER {
       // .:TODO.JSON:.  Add missing values here to Yeast::Type, and decide what to do about Yeast::Type::Wheat - maybe it becomes Other?
-//      {"??",     Yeast::Type::Wheat}, BeerJSON doesn't have a type corresponding to this
-      {"ale",           Yeast::Type::Ale},
-//      {"bacteria",      Yeast::Type::},
-//      {"brett",         Yeast::Type::},
-      {"champagne",     Yeast::Type::Champagne},
-//      {"kveik",         Yeast::Type::},
-//      {"lacto",         Yeast::Type::},
-      {"lager",         Yeast::Type::Lager},
-//      {"malolactic",    Yeast::Type::},
-//      {"mixed-culture", Yeast::Type::},
-//      {"other",         Yeast::Type::},
-//      {"pedio",         Yeast::Type::},
-//      {"spontaneous",   Yeast::Type::},
-      {"wine",          Yeast::Type::Wine},
+      {Yeast::Type::Ale      , "ale"          },
+      {Yeast::Type::Lager    , "lager"        },
+      {Yeast::Type::Wheat    , "other"        }, // NOTE BeerJSON doesn't have a type directly corresponding to Wheat
+      {Yeast::Type::Wine     , "wine"         },
+      {Yeast::Type::Champagne, "champagne"    },
+//    {Yeast::Type::         , "bacteria"     },
+//    {Yeast::Type::         , "brett"        },
+//    {Yeast::Type::         , "kveik"        },
+//    {Yeast::Type::         , "lacto"        },
+//    {Yeast::Type::         , "malolactic"   },
+//    {Yeast::Type::         , "mixed-culture"},
+//    {Yeast::Type::         , "pedio"        },
+//    {Yeast::Type::         , "spontaneous"  },
    };
    EnumStringMapping const BEER_JSON_YEAST_FORM_MAPPER {
       // .:TODO.JSON:.  Add missing value here to Yeast::Form
-      {"liquid",  Yeast::Form::Liquid},
-      {"dry",     Yeast::Form::Dry},
-      {"slant",   Yeast::Form::Slant},
-      {"culture", Yeast::Form::Culture}
-//      {"dregs",   Yeast::Form::}
+      {Yeast::Form::Liquid , "liquid",  },
+      {Yeast::Form::Dry    , "dry",     },
+      {Yeast::Form::Slant  , "slant",   },
+      {Yeast::Form::Culture, "culture", },
+//    {Yeast::Form::       , "dregs",   },
    };
    EnumStringMapping const BEER_JSON_YEAST_FLOCCULATION_MAPPER {
       // BeerJSON has an entire type called QualitativeRangeType, but it's only used for this field, so, for now, we
       // treat it as an enum
       // .:TODO.JSON:.  Add missing value here to Yeast::Flocculation
-//      {"very low",    Yeast::Flocculation::},
-      {"low",         Yeast::Flocculation::Low},
-//      {"medium low",  Yeast::Flocculation::},
-      {"medium",      Yeast::Flocculation::Medium},
-//      {"medium high", Yeast::Flocculation::},
-      {"high",        Yeast::Flocculation::High},
-      {"very high",   Yeast::Flocculation::Very_High},
+//    {Yeast::Flocculation::         , "very low"   },
+      {Yeast::Flocculation::Low      , "low"        },
+//    {Yeast::Flocculation::         , "medium low" },
+      {Yeast::Flocculation::Medium   , "medium"     },
+//    {Yeast::Flocculation::         , "medium high"},
+      {Yeast::Flocculation::High     , "high"       },
+      {Yeast::Flocculation::Very_High, "very high"  },
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
       "cultures",
@@ -538,13 +519,16 @@ namespace {
    EnumStringMapping const BEER_JSON_STYLE_TYPE_MAPPER {
       // .:TBD.JSON:. BeerJSON doesn't have style types matching Style::Type::Lager, Style::Type::Ale, Style::Type::Wheat, Style::Type::Mixed
       // .:TODO.JSON:.  Add missing values here to Style::Type
-//      {"beer",     Style::Type::},
-      {"cider",    Style::Type::Cider},
-//      {"kombucha", Style::Type::},
-      {"mead",     Style::Type::Mead},
-//      {"other",    Style::Type::},
-//      {"soda",     Style::Type::},
-//      {"wine",     Style::Type::}
+      {Style::Type::Lager, "?lager?"  },
+      {Style::Type::Ale  , "?ale?"    },
+      {Style::Type::Mead , "mead"    },
+      {Style::Type::Wheat, "?wheat?"  },
+      {Style::Type::Mixed, "other"   }, // ??
+//    {Style::Type::     , "beer"    },
+      {Style::Type::Cider, "cider"   },
+//    {Style::Type::     , "kombucha"},
+//    {Style::Type::     , "soda"    },
+//    {Style::Type::     , "wine"    },
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
       "styles",

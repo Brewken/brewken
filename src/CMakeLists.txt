@@ -48,13 +48,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
-    ${repoDir}/src/BtAmountEdit.cpp
     ${repoDir}/src/BtColor.cpp
     ${repoDir}/src/BtDatePopup.cpp
     ${repoDir}/src/BtFieldType.cpp
     ${repoDir}/src/BtFolder.cpp
-    ${repoDir}/src/BtLabel.cpp
-    ${repoDir}/src/BtLineEdit.cpp
     ${repoDir}/src/BtSplashScreen.cpp
     ${repoDir}/src/BtTabWidget.cpp
     ${repoDir}/src/BtTextEdit.cpp
@@ -63,28 +60,36 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtTreeModel.cpp
     ${repoDir}/src/BtTreeView.cpp
     ${repoDir}/src/ConverterTool.cpp
-    ${repoDir}/src/CustomComboBox.cpp
     ${repoDir}/src/database/BtSqlQuery.cpp
     ${repoDir}/src/database/Database.cpp
     ${repoDir}/src/database/DatabaseSchemaHelper.cpp
     ${repoDir}/src/database/DbTransaction.cpp
     ${repoDir}/src/database/ObjectStore.cpp
     ${repoDir}/src/database/ObjectStoreTyped.cpp
+    ${repoDir}/src/editors/EquipmentEditor.cpp
+    ${repoDir}/src/editors/FermentableEditor.cpp
+    ${repoDir}/src/editors/HopEditor.cpp
+    ${repoDir}/src/editors/MashEditor.cpp
+    ${repoDir}/src/editors/MashStepEditor.cpp
+    ${repoDir}/src/editors/MiscEditor.cpp
+    ${repoDir}/src/editors/NamedMashEditor.cpp
+    ${repoDir}/src/editors/StyleEditor.cpp
+    ${repoDir}/src/editors/WaterEditor.cpp
+    ${repoDir}/src/editors/YeastEditor.cpp
     ${repoDir}/src/EquipmentButton.cpp
-    ${repoDir}/src/EquipmentEditor.cpp
     ${repoDir}/src/EquipmentListModel.cpp
-    ${repoDir}/src/FermentableDialog.cpp
-    ${repoDir}/src/FermentableEditor.cpp
     ${repoDir}/src/FermentableSortFilterProxyModel.cpp
     ${repoDir}/src/HeatCalculations.cpp
     ${repoDir}/src/HelpDialog.cpp
-    ${repoDir}/src/HopDialog.cpp
-    ${repoDir}/src/HopEditor.cpp
     ${repoDir}/src/HopSortFilterProxyModel.cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
     ${repoDir}/src/ImportExport.cpp
+    ${repoDir}/src/ingredientDialogs/FermentableDialog.cpp
+    ${repoDir}/src/ingredientDialogs/HopDialog.cpp
+    ${repoDir}/src/ingredientDialogs/MiscDialog.cpp
+    ${repoDir}/src/ingredientDialogs/YeastDialog.cpp
     ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/json/BeerJson.cpp
@@ -99,11 +104,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
     ${repoDir}/src/MashButton.cpp
-    ${repoDir}/src/MashComboBox.cpp
     ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashEditor.cpp
     ${repoDir}/src/MashListModel.cpp
-    ${repoDir}/src/MashStepEditor.cpp
     ${repoDir}/src/MashStepTableWidget.cpp
     ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/matrix.cpp
@@ -117,8 +119,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/measurement/SystemOfMeasurement.cpp
     ${repoDir}/src/measurement/Unit.cpp
     ${repoDir}/src/measurement/UnitSystem.cpp
-    ${repoDir}/src/MiscDialog.cpp
-    ${repoDir}/src/MiscEditor.cpp
     ${repoDir}/src/MiscSortFilterProxyModel.cpp
     ${repoDir}/src/model/BrewNote.cpp
     ${repoDir}/src/model/Equipment.cpp
@@ -138,7 +138,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Water.cpp
     ${repoDir}/src/model/Yeast.cpp
     ${repoDir}/src/NamedEntitySortProxyModel.cpp
-    ${repoDir}/src/NamedMashEditor.cpp
     ${repoDir}/src/OgAdjuster.cpp
     ${repoDir}/src/OptionDialog.cpp
     ${repoDir}/src/PersistentSettings.cpp
@@ -152,10 +151,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/RecipeFormatter.cpp
     ${repoDir}/src/RefractoDialog.cpp
     ${repoDir}/src/ScaleRecipeTool.cpp
-    ${repoDir}/src/SimpleUndoableUpdate.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
     ${repoDir}/src/StyleButton.cpp
-    ${repoDir}/src/StyleEditor.cpp
     ${repoDir}/src/StyleListModel.cpp
     ${repoDir}/src/StyleRangeWidget.cpp
     ${repoDir}/src/StyleSortFilterProxyModel.cpp
@@ -171,25 +168,34 @@ set(filesToCompile_cpp
     ${repoDir}/src/TimerListDialog.cpp
     ${repoDir}/src/TimerMainDialog.cpp
     ${repoDir}/src/TimerWidget.cpp
-    ${repoDir}/src/UiAmountWithUnits.cpp
+    ${repoDir}/src/undoRedo/SimpleUndoableUpdate.cpp
     ${repoDir}/src/utils/BtException.cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
+    ${repoDir}/src/utils/MetaTypes.cpp
+    ${repoDir}/src/utils/OptionalHelpers.cpp
     ${repoDir}/src/utils/OStreamWriterForQFile.cpp
     ${repoDir}/src/utils/TimerUtils.cpp
     ${repoDir}/src/utils/TypeLookup.cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
-    ${repoDir}/src/WaterEditor.cpp
     ${repoDir}/src/WaterListModel.cpp
     ${repoDir}/src/WaterSortFilterProxyModel.cpp
-    ${repoDir}/src/WaterTableWidget.cpp
     ${repoDir}/src/widgets/Animator.cpp
-    ${repoDir}/src/widgets/BtAmountDigitWidget.cpp
-    ${repoDir}/src/widgets/BtDigitWidget.cpp
+    ${repoDir}/src/widgets/BtBoolComboBox.cpp
+    ${repoDir}/src/widgets/BtComboBox.cpp
+    ${repoDir}/src/widgets/CustomComboBox.cpp
+    ${repoDir}/src/widgets/MashComboBox.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
+    ${repoDir}/src/widgets/SmartAmounts.cpp
+    ${repoDir}/src/widgets/SmartAmountSettings.cpp
+    ${repoDir}/src/widgets/SmartCheckBox.cpp
+    ${repoDir}/src/widgets/SmartDigitWidget.cpp
+    ${repoDir}/src/widgets/SmartField.cpp
+    ${repoDir}/src/widgets/SmartLabel.cpp
+    ${repoDir}/src/widgets/SmartLineEdit.cpp
     ${repoDir}/src/widgets/ToggleSwitch.cpp
     ${repoDir}/src/widgets/UnitAndScalePopUpMenu.cpp
     ${repoDir}/src/xml/BeerXml.cpp
@@ -200,7 +206,5 @@ set(filesToCompile_cpp
     ${repoDir}/src/xml/XmlMashStepRecord.cpp
     ${repoDir}/src/xml/XmlRecipeRecord.cpp
     ${repoDir}/src/xml/XmlRecord.cpp
-    ${repoDir}/src/YeastDialog.cpp
-    ${repoDir}/src/YeastEditor.cpp
     ${repoDir}/src/YeastSortFilterProxyModel.cpp
 )

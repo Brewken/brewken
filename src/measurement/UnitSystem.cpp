@@ -37,6 +37,8 @@ namespace {
    // Used by UnitSystem::getInstanceByName()
    QMap<QString, Measurement::UnitSystem const *> nameToUnitSystem;
 
+   // .:TBD:. See if we can eliminate all this and get compile-time checking benefits
+   //
    // We sometimes want to be able to access RelativeScale enum values via a string name (eg code generated from .ui
    // files) so it's useful to be able to map between them.  There is some functionality built in to Qt to do this via
    // QMetaEnum, but this is at the cost of inheriting from QObject, which seems overkill here.  Alternatively, we could
@@ -44,12 +46,12 @@ namespace {
    // std::string and QString.  For the moment, this more manual approach seems appropriate to the scale of what we
    // need.
    EnumStringMapping const relativeScaleToName {
-      {"scaleExtraSmall", Measurement::UnitSystem::RelativeScale::ExtraSmall},
-      {"scaleSmall"     , Measurement::UnitSystem::RelativeScale::Small     },
-      {"scaleMedium"    , Measurement::UnitSystem::RelativeScale::Medium    },
-      {"scaleLarge"     , Measurement::UnitSystem::RelativeScale::Large     },
-      {"scaleExtraLarge", Measurement::UnitSystem::RelativeScale::ExtraLarge},
-      {"scaleHuge"      , Measurement::UnitSystem::RelativeScale::Huge      }
+      {Measurement::UnitSystem::RelativeScale::ExtraSmall, "scaleExtraSmall"},
+      {Measurement::UnitSystem::RelativeScale::Small     , "scaleSmall"     },
+      {Measurement::UnitSystem::RelativeScale::Medium    , "scaleMedium"    },
+      {Measurement::UnitSystem::RelativeScale::Large     , "scaleLarge"     },
+      {Measurement::UnitSystem::RelativeScale::ExtraLarge, "scaleExtraLarge"},
+      {Measurement::UnitSystem::RelativeScale::Huge      , "scaleHuge"      },
    };
 }
 
@@ -212,23 +214,23 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
       // match to a unit in another UnitSystem for the same PhysicalQuantity.  If there are no matches that way, it will
       // return nullptr;
       unitToUse = Unit::getUnit(unitName, *this, true);
-      if (unitToUse) {
-         qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "interpreted as" << unitToUse->name;
-      } else {
-         qDebug() <<
-            Q_FUNC_INFO << this->uniqueName << ":" << unitName << "not recognised for" << this->pimpl->physicalQuantity;
-      }
+//      if (unitToUse) {
+//         qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "interpreted as" << unitToUse->name;
+//      } else {
+//         qDebug() <<
+//            Q_FUNC_INFO << this->uniqueName << ":" << unitName << "not recognised for" << this->pimpl->physicalQuantity;
+//      }
    }
 
    if (!unitToUse) {
-      qDebug() << Q_FUNC_INFO << "Defaulting to" << defUnit;
+//      qDebug() << Q_FUNC_INFO << "Defaulting to" << defUnit;
       unitToUse = &defUnit;
    }
 
    Measurement::Amount siAmount = unitToUse->toCanonical(amt);
-   qDebug() <<
-      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" <<
-      siAmount.quantity() << "in" << siAmount.unit()->name;
+//   qDebug() <<
+//      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" <<
+//      siAmount.quantity() << "in" << siAmount.unit()->name;
 
    return siAmount;
 }
@@ -456,7 +458,7 @@ namespace Measurement::UnitSystems {
                                    Measurement::SystemOfMeasurement::Lovibond};
 
    UnitSystem const density_SpecificGravity{PhysicalQuantity::Density,
-                                            &Measurement::Units::sp_grav,
+                                            &Measurement::Units::specificGravity,
                                             "density_SpecificGravity",
                                             Measurement::SystemOfMeasurement::SpecificGravity};
 

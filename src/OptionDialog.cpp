@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -40,7 +40,6 @@
 #include <QVector>
 #include <QWidget>
 
-#include "BtLineEdit.h"
 #include "database/Database.h"
 #include "Localization.h"
 #include "Logging.h"

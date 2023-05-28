@@ -19,13 +19,13 @@
  =====================================================================================================================*/
 #include "model/NamedEntity.h"
 
-#include <map>
 #include <typeinfo>
 
 #include <QDebug>
 #include <QMetaProperty>
 
 #include "database/ObjectStore.h"
+#include "measurement/ConstrainedAmount.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
@@ -104,12 +104,12 @@ TypeLookup const NamedEntity::typeLookup {
       // everything else out.  The only exception is that, for enums, we have to pretend they are stored as int, because
       // that's what's going to come out of the Qt property system (and it would significantly complicate other bits of
       // the code to separately register every different enum that we use.)
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_display),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::display  , NamedEntity::m_display),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::folder   , NamedEntity::m_folder ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::key      , NamedEntity::m_key    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::name     , NamedEntity::m_name   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::parentKey, NamedEntity::parentKey),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_deleted                             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::display  , NamedEntity::m_display                             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::folder   , NamedEntity::m_folder                              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::key      , NamedEntity::m_key                                 ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::name     , NamedEntity::m_name   , NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::parentKey, NamedEntity::parentKey                             ),
    },
    // Parent class lookup - none as we're top of the tree
    nullptr
@@ -340,6 +340,99 @@ QVector<int> NamedEntity::getParentAndChildrenIds() const {
 QMetaProperty NamedEntity::metaProperty(char const * const name) const {
    return this->metaObject()->property(this->metaObject()->indexOfProperty(name));
 }
+
+template<typename T>
+void NamedEntity::setEitherOrReqParams(NamedParameterBundle const & namedParameterBundle,
+                                       BtStringConst const & quantityParameterName,
+                                       BtStringConst const & isFirstUnitParameterName,
+                                       BtStringConst const & combinedWithUnitsParameterName,
+                                       double & quantityReturn,
+                                       bool & isFirstUnitReturn) {
+   if (namedParameterBundle.contains(quantityParameterName)) {
+      quantityReturn    = namedParameterBundle.val<double>(quantityParameterName   );
+      isFirstUnitReturn = namedParameterBundle.val<bool  >(isFirstUnitParameterName);
+   } else {
+      auto const combinedWithUnits = namedParameterBundle.val<T>(combinedWithUnitsParameterName);
+      // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
+      // happen.  Asserting without the diagnostic info is not much use, so we do the check first, then the assert.
+      auto const * suppliedUnit = combinedWithUnits.unit();
+      if (!suppliedUnit->isCanonical()) {
+         qCritical() <<
+            Q_FUNC_INFO << this->name() << "CODING ERROR:" << combinedWithUnitsParameterName << "supplied in" <<
+            suppliedUnit << "instead of" << suppliedUnit->getCanonical();
+         Q_ASSERT(false);
+      } else {
+         quantityReturn    = combinedWithUnits.quantity();
+         isFirstUnitReturn = combinedWithUnits.isFirst();
+      }
+   }
+   return;
+}
+// Instantiate the above template function for the types that are going to use them
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+template void NamedEntity::setEitherOrReqParams<MassOrVolumeAmt>(NamedParameterBundle const & namedParameterBundle,
+                                                                 BtStringConst const & quantityParameterName,
+                                                                 BtStringConst const & isFirstUnitParameterName,
+                                                                 BtStringConst const & combinedWithUnitsParameterName,
+                                                                 double & quantityReturn,
+                                                                 bool & isFirstUnitReturn);
+template void NamedEntity::setEitherOrReqParams<MassOrVolumeConcentrationAmt>(NamedParameterBundle const & namedParameterBundle,
+                                                                              BtStringConst const & quantityParameterName,
+                                                                              BtStringConst const & isFirstUnitParameterName,
+                                                                              BtStringConst const & combinedWithUnitsParameterName,
+                                                                              double & quantityReturn,
+                                                                              bool & isFirstUnitReturn);
+
+template<typename T>
+void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParameterBundle,
+                                       BtStringConst const & quantityParameterName,
+                                       BtStringConst const & isFirstUnitParameterName,
+                                       BtStringConst const & combinedWithUnitsParameterName,
+                                       std::optional<double> & quantityReturn,
+                                       bool & isFirstUnitReturn) {
+   if (namedParameterBundle.contains(quantityParameterName)) {
+      quantityReturn    = namedParameterBundle.val<std::optional<double>>(quantityParameterName   );
+      isFirstUnitReturn = namedParameterBundle.val<bool                 >(isFirstUnitParameterName);
+      return;
+   }
+
+   auto const combinedWithUnits = namedParameterBundle.val<std::optional<T>>(combinedWithUnitsParameterName);
+   if (!combinedWithUnits) {
+      // Strictly the isFirstUnitReturn is meaningless / ignored in this case, but we use true as the "default" value
+      // by convention.  (Other than increased complexity, having it std::optional<bool> wouldn't buy us much.)
+      quantityReturn    = std::nullopt;
+      isFirstUnitReturn = true;
+      return;
+   }
+
+   // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
+   // happen.  Asserting without the diagnostic info is not much use, so we do the check first, then the assert.
+   auto const * suppliedUnit = combinedWithUnits->unit();
+   if (!suppliedUnit->isCanonical()) {
+      qCritical() <<
+         Q_FUNC_INFO << this->name() << "CODING ERROR:" << combinedWithUnitsParameterName << "supplied in" <<
+         suppliedUnit << "instead of" << suppliedUnit->getCanonical();
+      Q_ASSERT(false);
+   }
+   quantityReturn    = combinedWithUnits->quantity();
+   isFirstUnitReturn = combinedWithUnits->isFirst();
+
+   return;
+}
+// Instantiate the above template function for the types that are going to use them
+template void NamedEntity::setEitherOrOptParams<MassOrVolumeAmt>(NamedParameterBundle const & namedParameterBundle,
+                                                                 BtStringConst const & quantityParameterName,
+                                                                 BtStringConst const & isFirstUnitParameterName,
+                                                                 BtStringConst const & combinedWithUnitsParameterName,
+                                                                 std::optional<double> & quantityReturn,
+                                                                 bool & isFirstUnitReturn);
+template void NamedEntity::setEitherOrOptParams<MassOrVolumeConcentrationAmt>(NamedParameterBundle const & namedParameterBundle,
+                                                                              BtStringConst const & quantityParameterName,
+                                                                              BtStringConst const & isFirstUnitParameterName,
+                                                                              BtStringConst const & combinedWithUnitsParameterName,
+                                                                              std::optional<double> & quantityReturn,
+                                                                              bool & isFirstUnitReturn);
+
 
 void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
    //

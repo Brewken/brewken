@@ -547,7 +547,7 @@ namespace {
          {QString(     "UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'"  )},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<int    >())},
+         {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN total_oil_ml_per_100g %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN farnesene_pct         %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN geraniol_pct          %1").arg(db.getDbNativeTypeName<double >())},
@@ -567,24 +567,48 @@ namespace {
          {QString("     UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'"    )},
          {QString("     UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
          {QString("     UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'"    )},
-         {QString("ALTER TABLE fermentable ADD COLUMN grain_group            %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE fermentable ADD COLUMN producer               %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE fermentable ADD COLUMN productId              %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE fermentable ADD COLUMN fineGrindYield_pct     %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN coarseGrindYield_pct   %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN potentialYield_sg      %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN alphaAmylase_dextUnits %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN kolbachIndex_pct       %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN amountIsWeight         %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpGlassy_pct  %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpHalf_pct    %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpMealy_pct   %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpPlump_pct %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpThin_pct  %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN friability_pct         %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN di_ph                  %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN viscosity_cP           %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN grain_group               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN producer                  %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN productId                 %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fineGrindYield_pct        %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN coarseGrindYield_pct      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN potentialYield_sg         %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN alphaAmylase_dextUnits    %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kolbachIndex_pct          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN amountIsWeight            %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpGlassy_pct     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpHalf_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN hardnessPrpMealy_pct      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpPlump_pct    %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN kernelSizePrpThin_pct     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN friability_pct            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN di_ph                     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN viscosity_cP              %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN dmsP                      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN dmsPIsMassPerVolume       %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fan                       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fanIsMassPerVolume        %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fermentability_pct        %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN betaGlucan                %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN betaGlucanIsMassPerVolume %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("     UPDATE fermentable SET amountIsWeight = ?"), {QVariant{true}}}, // All existing amounts will be weights
+         //
+         // Misc: Extended and additional fields for BeerJSON
+         //
+         // We only need to update the old Misc type mappings.  The new ones should "just work".
+         {QString("     UPDATE misc SET mtype = 'spice'       WHERE mtype = 'Spice'      ")},
+         {QString("     UPDATE misc SET mtype = 'fining'      WHERE mtype = 'Fining'     ")},
+         {QString("     UPDATE misc SET mtype = 'water agent' WHERE mtype = 'Water Agent'")},
+         {QString("     UPDATE misc SET mtype = 'herb'        WHERE mtype = 'Herb'       ")},
+         {QString("     UPDATE misc SET mtype = 'flavor'      WHERE mtype = 'Flavor'     ")},
+         {QString("     UPDATE misc SET mtype = 'other'       WHERE mtype = 'Other'      ")},
+         {QString("ALTER TABLE misc ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE misc ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
+
+
+
+
+
       };
       return executeSqlQueries(q, migrationQueries);
    }

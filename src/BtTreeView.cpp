@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -32,10 +32,13 @@
 #include "BtFolder.h"
 #include "BtTreeFilterProxyModel.h"
 #include "BtTreeModel.h"
-#include "EquipmentEditor.h"
-#include "FermentableDialog.h"
-#include "HopDialog.h"
-#include "MiscDialog.h"
+#include "editors/EquipmentEditor.h"
+#include "editors/StyleEditor.h"
+#include "editors/WaterEditor.h"
+#include "ingredientDialogs/FermentableDialog.h"
+#include "ingredientDialogs/HopDialog.h"
+#include "ingredientDialogs/MiscDialog.h"
+#include "ingredientDialogs/YeastDialog.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -45,9 +48,6 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
-#include "StyleEditor.h"
-#include "WaterEditor.h"
-#include "YeastDialog.h"
 
 BtTreeView::BtTreeView(QWidget * parent, BtTreeModel::TypeMasks type) :
    QTreeView{parent},
@@ -321,19 +321,19 @@ void BtTreeView::newNamedEntity() {
          qobject_cast<EquipmentEditor *>(m_editor)->newEquipment(folder);
          break;
       case BtTreeModel::FERMENTMASK:
-         qobject_cast<FermentableDialog *>(m_editor)->newFermentable(folder);
+         qobject_cast<FermentableDialog *>(m_editor)->newItem(folder);
          break;
       case BtTreeModel::HOPMASK:
-         qobject_cast<HopDialog *>(m_editor)->newHop(folder);
+         qobject_cast<HopDialog *>(m_editor)->newItem(folder);
          break;
       case BtTreeModel::MISCMASK:
-         qobject_cast<MiscDialog *>(m_editor)->newMisc(folder);
+         qobject_cast<MiscDialog *>(m_editor)->newItem(folder);
          break;
       case BtTreeModel::STYLEMASK:
          qobject_cast<StyleEditor *>(m_editor)->newStyle(folder);
          break;
       case BtTreeModel::YEASTMASK:
-         qobject_cast<YeastDialog *>(m_editor)->newYeast(folder);
+         qobject_cast<YeastDialog *>(m_editor)->newItem(folder);
          break;
       case BtTreeModel::WATERMASK:
          qobject_cast<WaterEditor *>(m_editor)->newWater(folder);

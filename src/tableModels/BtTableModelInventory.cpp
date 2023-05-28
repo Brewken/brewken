@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/BtTableModelInventory.cpp is part of Brewken, and is copyright the following authors 2022:
+ * tableModels/BtTableModelInventory.cpp is part of Brewken, and is copyright the following authors 2022-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,8 +17,8 @@
 
 BtTableModelInventory::BtTableModelInventory(QTableView * parent,
                                              bool editable,
-                                             std::initializer_list<std::pair<int const, ColumnInfo> > columnIdToInfo) :
-   BtTableModelRecipeObserver{parent, editable, columnIdToInfo},
+                                             std::initializer_list<BtTableModel::ColumnInfo> columnInfos) :
+   BtTableModelRecipeObserver{parent, editable, columnInfos},
    inventoryEditable{false} {
    return;
 }

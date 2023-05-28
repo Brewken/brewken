@@ -54,7 +54,7 @@ namespace {
    template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {
       misc.setAmount        (npb.val<double>(PropertyNames::Misc::amount        ));
       misc.setAmountIsWeight(npb.val<bool  >(PropertyNames::Misc::amountIsWeight));
-      misc.setTime          (npb.val<double>(PropertyNames::Misc::time          ));
+      misc.setTime_min      (npb.val<double>(PropertyNames::Misc::time_min      ));
       return;
    }
    template<> void setAmountsEtc(Yeast & yeast, NamedParameterBundle const & npb) {

@@ -24,12 +24,14 @@
 
 #include "Algorithms.h"
 #include "Localization.h"
+#include "measurement/PhysicalQuantity.h"
 #include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
 #include "model/Style.h" // For PropertyNames::Style::colorMin_srm, PropertyNames::Style::colorMax_srm
 #include "PersistentSettings.h"
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
+#include "utils/TypeLookup.h"
 
 namespace {
 
@@ -113,13 +115,50 @@ namespace {
 // separators etc.  So, we always convert everything to double first and then, if needed, convert the double
 // to an int / unsigned int, as this will give the behaviour we want.
 //
-template<typename T> T Measurement::extractRawFromString(QString const & input, bool * ok) {
+template<typename T> [[nodiscard]] T Measurement::extractRawFromString(QString const & input, bool * ok) {
    // This compile-time assert relies on the fact that no type has size 0
    static_assert(sizeof(T) == 0, "Only specializations of stringTo() can be used");
 }
-template<> int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(extractRawDoubleFromString(input, ok)); }
-template<> unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(extractRawDoubleFromString(input, ok)); }
-template<> double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           extractRawDoubleFromString(input, ok);  }
+template<> [[nodiscard]] int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(extractRawDoubleFromString(input, ok)); }
+template<> [[nodiscard]] unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(extractRawDoubleFromString(input, ok)); }
+template<> [[nodiscard]] double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           extractRawDoubleFromString(input, ok ); }
+
+[[nodiscard]] QVariant Measurement::extractRawFromString(QString const & input, TypeInfo const & typeInfo, bool * ok) {
+   // Optional values are allowed to be blank
+   if (typeInfo.isOptional() && Optional::isEmptyOrBlank(input)) {
+      return Optional::makeNullOpt(typeInfo);
+   }
+
+   bool myOk = false;
+   double valueAsDouble = extractRawDoubleFromString(input, &myOk);
+   if (ok) {
+      *ok = myOk;
+   }
+
+   if (typeInfo.isOptional()) {
+      // If we couldn't parse an optional value, we'll unset it.  I think this is better than setting it to 0 (which is
+      // about the only, ah, option for non-optional values).
+      if (!myOk) {
+         return Optional::makeNullOpt(typeInfo);
+      }
+
+      // We do have something to return, so just make sure it's the right type
+      if (typeInfo.typeIndex == typeid(double      )) { return QVariant::fromValue<std::optional<double      >>(                          valueAsDouble ); }
+      if (typeInfo.typeIndex == typeid(int         )) { return QVariant::fromValue<std::optional<int         >>(static_cast<int         >(valueAsDouble)); }
+      if (typeInfo.typeIndex == typeid(unsigned int)) { return QVariant::fromValue<std::optional<unsigned int>>(static_cast<unsigned int>(valueAsDouble)); }
+   } else {
+      if (typeInfo.typeIndex == typeid(double      )) { return QVariant::fromValue(                          valueAsDouble ); }
+      if (typeInfo.typeIndex == typeid(int         )) { return QVariant::fromValue(static_cast<int         >(valueAsDouble)); }
+      if (typeInfo.typeIndex == typeid(unsigned int)) { return QVariant::fromValue(static_cast<unsigned int>(valueAsDouble)); }
+   }
+
+   // It's a coding error if we reached here
+   qCritical().noquote() <<
+      Q_FUNC_INFO << "Unexpected type" << typeInfo << ".  Call stack:" << Logging::getStackTrace();
+   Q_ASSERT(false);
+   return QVariant{};
+}
+
 
 void Measurement::loadDisplayScales() {
    for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
@@ -176,6 +215,16 @@ QString Measurement::displayQuantity(double quantity, int precision) {
    return QString("%L1").arg(quantity, fieldWidth, format, precision);
 }
 
+QString Measurement::displayQuantity(double quantity, int precision, NonPhysicalQuantity const nonPhysicalQuantity) {
+   // For percentages, we'd like to show the % symbol after the number
+   QString symbol{""};
+   if (NonPhysicalQuantity::Percentage == nonPhysicalQuantity) {
+      symbol = " %";
+   }
+
+   return Measurement::displayQuantity(quantity, precision) + symbol;
+}
+
 QString Measurement::displayAmount(Measurement::Amount const & amount,
                                    int precision,
                                    std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
@@ -192,45 +241,7 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
 
-//      qDebug() << Q_FUNC_INFO << "Display" << amount << units->getUnitName() << "in" << temp->unitType();
    return displayUnitSystem.displayAmount(amount, precision, forcedScale);
-}
-
-QString Measurement::displayAmount(NamedEntity * namedEntity,
-                                   QObject * guiObject,
-                                   BtStringConst const & propertyName,
-                                   Measurement::Unit const & units,
-                                   int precision ) {
-
-   if (namedEntity->property(*propertyName).canConvert(QVariant::Double)) {
-      // Get the amount
-      QString value = namedEntity->property(*propertyName).toString();
-      bool ok = false;
-      double quantity = Localization::toDouble(value, &ok);
-      if (!ok) {
-         qWarning() << Q_FUNC_INFO << "Could not convert " << value << " to double";
-      }
-
-      return Measurement::displayAmount(
-         Measurement::Amount{quantity, units},
-         precision,
-         Measurement::getForcedSystemOfMeasurementForField(*propertyName, guiObject->objectName()),
-         Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName())
-      );
-   }
-
-   return "?";
-}
-
-QString Measurement::displayAmount(Measurement::Amount const & amount,
-                                   BtStringConst const & section,
-                                   BtStringConst const & propertyName,
-                                   int precision) {
-   return Measurement::displayAmount(amount,
-                                     precision,
-                                     Measurement::getForcedSystemOfMeasurementForField(*propertyName, *section),
-                                     Measurement::getForcedRelativeScaleForField(*propertyName, *section));
-
 }
 
 double Measurement::amountDisplay(Measurement::Amount const & amount,
@@ -250,68 +261,6 @@ double Measurement::amountDisplay(Measurement::Amount const & amount,
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
 
    return displayUnitSystem.amountDisplay(amount, forcedScale);
-}
-
-double Measurement::amountDisplay(NamedEntity * namedEntity,
-                                  QObject * guiObject,
-                                  BtStringConst const & propertyName,
-                                  Measurement::Unit const * units) {
-
-   if (namedEntity->property(*propertyName).canConvert(QVariant::Double)) {
-      // Get the amount
-      QString value = namedEntity->property(*propertyName).toString();
-      bool ok = false;
-      double amount = Localization::toDouble(value, &ok);
-      if (!ok) {
-         qWarning() << Q_FUNC_INFO << "Could not convert" << value << "to double";
-      }
-
-      // Special case: we don't know the units of the supplied amount, so just return it as is
-      if (units == nullptr) {
-         return amount;
-      }
-
-      return Measurement::amountDisplay(
-         Measurement::Amount{amount, *units},
-         Measurement::getForcedSystemOfMeasurementForField(*propertyName, guiObject->objectName()),
-         Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName())
-      );
-   }
-
-   return -1.0;
-}
-
-QPair<double,double> Measurement::displayRange(NamedEntity* namedEntity,
-                                               QObject *guiObject,
-                                               BtStringConst const & propertyNameMin,
-                                               BtStringConst const & propertyNameMax,
-                                               Unit const * units) {
-   QPair<double,double> range;
-
-   if (!namedEntity) {
-      range.first  = 0.0;
-      range.second = 100.0;
-   } else {
-      range.first  = amountDisplay(namedEntity, guiObject, propertyNameMin, units);
-      range.second = amountDisplay(namedEntity, guiObject, propertyNameMax, units);
-   }
-
-   return range;
-}
-
-QPair<double,double> Measurement::displayRange(QObject *guiObject,
-                                               BtStringConst const & propertyName,
-                                               double min,
-                                               double max,
-                                               Unit const & units) {
-   auto forcedSystemOfMeasurement = Measurement::getForcedSystemOfMeasurementForField(*propertyName,
-                                                                                      guiObject->objectName());
-   auto forcedRelativeScale = Measurement::getForcedRelativeScaleForField(*propertyName, guiObject->objectName());
-
-   QPair<double,double> range;
-   range.first  = Measurement::amountDisplay(Measurement::Amount{min, units}, forcedSystemOfMeasurement, forcedRelativeScale);
-   range.second = Measurement::amountDisplay(Measurement::Amount{max, units}, forcedSystemOfMeasurement, forcedRelativeScale);
-   return range;
 }
 
 void Measurement::getThicknessUnits(Unit const ** volumeUnit, Unit const ** weightUnit) {
@@ -368,99 +317,4 @@ Measurement::Amount Measurement::qStringToSI(QString qstr,
    }
 
    return displayUnitSystem.qstringToSI(qstr, *defaultUnit);
-}
-
-std::optional<Measurement::SystemOfMeasurement> Measurement::getForcedSystemOfMeasurementForField(QString const & field,
-                                                                                                  QString const & section) {
-   if (field.isEmpty()) {
-      return std::nullopt;
-   }
-   return Measurement::getFromUniqueName(
-      PersistentSettings::value(field,
-                                "None", // This, or any invalid name, will give "no value" return from getFromUniqueName()
-                                section,
-                                PersistentSettings::Extension::UNIT).toString()
-   );
-}
-
-std::optional<Measurement::UnitSystem::RelativeScale> Measurement::getForcedRelativeScaleForField(QString const & field,
-                                                                                                  QString const & section) {
-   if (field.isEmpty()) {
-      return std::nullopt;
-   }
-   return Measurement::UnitSystem::getScaleFromUniqueName(
-      PersistentSettings::value(field,
-                                "None", // This, or any invalid name, will give "no value" return from getFromUniqueName()
-                                section,
-                                PersistentSettings::Extension::SCALE).toString()
-   );
-}
-
-void Measurement::setForcedSystemOfMeasurementForField(QString const & field,
-                                                       QString const & section,
-                                                       std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement) {
-   if (field.isEmpty()) {
-      return;
-   }
-   if (forcedSystemOfMeasurement) {
-      PersistentSettings::insert(field,
-                                 Measurement::getUniqueName(*forcedSystemOfMeasurement),
-                                 section,
-                                 PersistentSettings::Extension::UNIT);
-   } else {
-      PersistentSettings::remove(field,
-                                 section,
-                                 PersistentSettings::Extension::UNIT);
-   }
-   return;
-}
-
-void Measurement::setForcedRelativeScaleForField(QString const & field,
-                                                 QString const & section,
-                                                 std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
-   if (field.isEmpty()) {
-      return;
-   }
-   if (forcedScale) {
-      PersistentSettings::insert(field,
-                                 Measurement::UnitSystem::getUniqueName(*forcedScale),
-                                 section,
-                                 PersistentSettings::Extension::SCALE);
-   } else {
-      PersistentSettings::remove(field,
-                                 section,
-                                 PersistentSettings::Extension::SCALE);
-   }
-   return;
-}
-
-Measurement::SystemOfMeasurement Measurement::getSystemOfMeasurementForField(QString const & field,
-                                                                             QString const & section,
-                                                                             Measurement::PhysicalQuantities physicalQuantities) {
-   auto forcedSystemOfMeasurement = Measurement::getForcedSystemOfMeasurementForField(field, section);
-   if (forcedSystemOfMeasurement) {
-      return *forcedSystemOfMeasurement;
-   }
-
-   // If there is no forced System Of Measurement for the field, then we can look to the globally-set UnitSystem for
-   // this PhysicalQuantity -- except that, if there are two values of PhysicalQuantity, we have to
-   // choose one arbitrarily.  The end result should be the same, because Mass & Volume share the same
-   // SystemOfMeasurement, as do MassConcentration & VolumeConcentration.
-   Measurement::PhysicalQuantity const physicalQuantity =
-      std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) ?
-         std::get<Measurement::PhysicalQuantity>(physicalQuantities) :
-         std::get<0>(std::get<Mixed2PhysicalQuantities>(physicalQuantities));
-
-   return Measurement::getDisplayUnitSystem(physicalQuantity).systemOfMeasurement;
-}
-
-
-Measurement::UnitSystem const & Measurement::getUnitSystemForField(QString const & field,
-                                                                   QString const & section,
-                                                                   Measurement::PhysicalQuantity physicalQuantity) {
-   auto forcedSystemOfMeasurement = Measurement::getForcedSystemOfMeasurementForField(field, section);
-   if (forcedSystemOfMeasurement) {
-      return Measurement::UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity);
-   }
-   return Measurement::getDisplayUnitSystem(physicalQuantity);
 }

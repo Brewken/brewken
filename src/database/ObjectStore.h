@@ -29,6 +29,7 @@
 #include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/NoCopy.h"
 #include "utils/TypeLookup.h"
 
 class Database;
@@ -495,15 +496,8 @@ private:
    class impl;
    std::unique_ptr<impl> pimpl;
 
-   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
-   ObjectStore(ObjectStore const &) = delete;
-   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
-   ObjectStore & operator=(ObjectStore const &) = delete;
-   //! No move constructor
-   ObjectStore(ObjectStore &&) = delete;
-   //! No move assignment
-   ObjectStore & operator=(ObjectStore &&) = delete;
-
+   // Insert all the usual boilerplate to prevent copy/assignment/move
+   NO_COPY_DECLARATIONS(ObjectStore)
 };
 
 

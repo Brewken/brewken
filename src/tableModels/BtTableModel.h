@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/BtTableModel.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * tableModels/BtTableModel.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,7 +17,9 @@
 #define TABLEMODELS_BTTABLEMODEL_H
 #pragma once
 
+#include <memory>
 #include <optional>
+#include <vector>
 
 #include <QAbstractTableModel>
 #include <QDebug>
@@ -30,6 +32,8 @@
 #include "BtFieldType.h"
 #include "measurement/UnitSystem.h"
 #include "model/NamedEntity.h"
+#include "utils/BtStringConst.h"
+#include "utils/EnumStringMapping.h"
 
 class Recipe;
 
@@ -38,9 +42,10 @@ class Recipe;
  *
  * \brief Unfortunately we can't template \c BtTableModel because it inherits from a \c QObject and the Qt meta-object
  *        compiler (moc) can't handle templated classes in QObject-derived classes (though it is fine with templated
- *        member functions in such classes, as long as the are not signals or slots).  We might one day look at
+ *        member functions in such classes, as long as they are not signals or slots).  We might one day look at
  *        https://github.com/woboq/verdigris, which overcomes these limitations, but, for now, we live within Qt's
- *        limitations and try to pull out as much common code as possible using a limited form of multiple inheritance.
+ *        constraints and try to pull out as much common code as possible using a limited form of multiple inheritance
+ *        and the Curiously Recurring Template Pattern.
  *
  *              QObject
  *                   \
@@ -49,7 +54,7 @@ class Recipe;
  *              QAbstractTableModel
  *                           \
  *                            \
- *                          BtTableModel               BtTableModelData
+ *                          BtTableModel               TableModelBase<NE, xxxTableModel>
  *                                /   \                /     /     /
  *                               /     \              /     /     /
  *                              /      MashStepTableModel  /     /
@@ -70,11 +75,16 @@ class Recipe;
  *                                   MiscTableModel
  *                                   YeastTableModel
  *
- *        (I did start trying to do something clever with a common base class to try to expose functions from
+ *        Eg HopTableModel inherits from BtTableModelInventory and TableModelBase<Hop, HopTableModel>
+ *
+ *        The \c BtTableModelRecipeObserver class adds a pointer to a \c Recipe to \c BtTableModel.
+ *        The \c BtTableModelInventory class adds a boolean \c inventoryEditable flag to \c BtTableModelRecipeObserver.
+ *
+ *        TBD: I did start trying to do something clever with a common base class to try to expose functions from
  *        \c BtTableModelData to the implementation of \c BtTableModel / \c BtTableModelRecipeObserver /
  *        \c BtTableModelInventory, but it quickly gets more complicated than it's worth IMHO because (a)
  *        \c BtTableModelData is templated but a common base class cannot be and (b) templated functions cannot be
- *        virtual.)
+ *        virtual.  Maybe we can do something the other way around with the curiously recurring template pattern.
  */
 template<class NE>
 class BtTableModelData {
@@ -177,27 +187,117 @@ protected:
 class BtTableModel : public QAbstractTableModel {
    Q_OBJECT
 public:
-   struct ColumnInfo {
-      QString headerName;
-      BtFieldType fieldType;
-      QString attribute;
+   /**
+    * \brief Extra info stored in \c ColumnInfo (see below) for enum types
+    */
+   struct EnumInfo {
+      /**
+       * \brief Values to store in combo box
+       */
+      EnumStringMapping const & stringMapping;
+
+      /**
+       * \brief Localised display names to show on combo box
+       */
+      EnumStringMapping const & displayNames;
    };
 
+   /**
+    * \brief Extra info stored in \c ColumnInfo (see below) for boolean types
+    *
+    *        For most boolean types, we show a combo box (eg "Not mashed" / "Mashed"; "Weight" / "Volume")
+    *
+    *        These are QString rather than reference to QString as typically initialised with an rvalue (the result of
+    *        calling \c QObject::tr).
+    */
+   struct BoolInfo {
+      QString const unsetDisplay;
+      QString const setDisplay;
+   };
+
+   /**
+    * \brief I know we don't need a struct for this, but it's more consistent to use one
+    */
+   struct PrecisionInfo {
+      unsigned int const precision;
+   };
+
+   /**
+    * \brief This per-column struct / mini-class holds basic info about each column in the table.  It also plays a
+    *        slightly similar role as \c SmartLabel.  However, there are several important differences, including that
+    *        \c ColumnInfo is \b not a \c QWidget and therefore not a signal emitter.  (As mentioned below, it is
+    *        \c QHeaderView that sends us the signal about the user having right-clicked on a column header.  We then
+    *        act on the pop-up menu selections directly, rather than \c SmartLabel sending a signal that
+    *        \c SmartLineEdit (and sometimes others) pick up.
+    *
+    *        NOTE that you usually want to use the SMART_COLUMN_HEADER_INIT macro when constructing
+    */
+   struct ColumnInfo {
+      /**
+       * \brief By analogy with \c editorName in \c SmartLabel and \c SmartLineEdit
+       */
+      char const * const tableModelName;
+
+      /**
+       * \brief By analogy with \c labelName in \c SmartLabel and \c lineEditName in \c SmartLineEdit
+       */
+      char const * const columnName;
+
+      /**
+       * \brief By analogy with \c labelFqName in \c SmartLabel and \c lineEditFqName in \c SmartLineEdit
+       */
+      char const * const columnFqName;
+
+      /**
+       * \brief Each subclass should normally declare its own \c enum \c class \c ColumnIndex to identify its columns.
+       *        We store the column index here as a cross-check that we've got everything in the right order.
+       */
+      size_t const index;
+
+      /**
+       * \brief The localised text to display in this column header
+       */
+      QString const label;
+
+      /**
+       * \brief
+       */
+      BtStringConst const & propertyName;
+
+      /**
+       * \brief What type of data is shown in this column
+       */
+      TypeInfo const & typeInfo;
+
+      /**
+       * \brief Extra info, dependent on the type of value in the column
+       */
+      std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras = std::nullopt;
+
+      // Stuff for setting display units and scales -- per column
+      // I know it looks odd to have const setters, but they are const because they do not change the data in the struct
+      void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement) const;
+      void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const;
+      std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurement() const;
+      std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScale() const;
+   };
+
+   /**
+    * \brief
+    *
+    * \param parent
+    * \param editable
+    * \param columnInfos Needs to be in order
+    */
    BtTableModel(QTableView * parent,
                 bool editable,
-                std::initializer_list<std::pair<int const, ColumnInfo> > columnIdToInfo);
+                std::initializer_list<ColumnInfo> columnInfos);
    virtual ~BtTableModel();
 
-   // Stuff for setting display units and scales -- per cell column
-   std::optional<Measurement::SystemOfMeasurement> getForcedSystemOfMeasurementForColumn(int column) const;
-   std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScaleForColumn(int column) const;
-   void setForcedSystemOfMeasurementForColumn(int column,
-                                              std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement);
-   void setForcedRelativeScaleForColumn(int column,
-                                        std::optional<Measurement::UnitSystem::RelativeScale> relativeScale);
+   ColumnInfo const & getColumnInfo(size_t const columnIndex) const;
 
    //! \brief Called from \c headerData()
-   QVariant getColumName(int column) const;
+   QVariant getColumnLabel(size_t const columnIndex) const;
 
    // Per https://doc.qt.io/qt-5/qabstracttablemodel.html, when subclassing QAbstractTableModel, you must implement
    // rowCount(), columnCount(), and data(). Default implementations of the index() and parent() functions are provided
@@ -206,31 +306,76 @@ public:
    //! \brief Reimplemented from QAbstractTableModel
    virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
 
-private:
-   QString     columnGetAttribute(int column) const;
-   BtFieldType columnGetFieldType(int column) const;
-   void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
+   // These are protected member functions of QAbstractItemModel that we need to make public so that
+   // TableModelBase::removeAll() can access them
+   using QAbstractItemModel::beginInsertRows;
+   using QAbstractItemModel::endInsertRows;
+   using QAbstractItemModel::beginRemoveRows;
+   using QAbstractItemModel::endRemoveRows;
+
+///private:
+///   void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
 
 public slots:
-   //! \brief pops the context menu for changing units and scales
+   //! \brief Receives the \c QWidget::customContextMenuRequested signal from \c QHeaderView to pops the context menu
+   // for changing units and scales
    void contextMenu(QPoint const & point);
 
 protected:
    QTableView* parentTableWidget;
    bool editable;
 private:
-   QMap<int, ColumnInfo> columnIdToInfo;
-
+   /**
+    * \brief We're using a \c std::vector here because it's easier for constant lists.  (With \c QVector, at last in
+    *        Qt 5, the items stored even in a const instance still need to be default constructable and copyable.)
+    */
+   std::vector<ColumnInfo> const m_columnInfos;
 };
 
 class BtTableModelRecipeObserver : public BtTableModel {
 public:
    BtTableModelRecipeObserver(QTableView * parent,
                               bool editable,
-                              std::initializer_list<std::pair<int const, ColumnInfo> > columnIdToInfo);
+                              std::initializer_list<ColumnInfo> columnInfos);
    ~BtTableModelRecipeObserver();
 
-protected:
-   Recipe* recObs;
+   // Normally this would be protected, but it needs to be public for TableModelBase to access
+   Recipe * recObs;
 };
+
+/**
+ * \brief This macro saves a bit of copy-and-paste when calling the \c BtTableModel::ColumnInfo constructor.  Eg instead
+ *        of writing:
+ *
+ *           BtTableModel::ColumnInfo{"HopTableModel",
+ *                                    "Alpha",
+ *                                    "HopTableModel::ColumnIndex::Alpha",
+ *                                    static_cast<size_t>(HopTableModel::ColumnIndex::Alpha),
+ *                                    tr("Alpha %"),
+ *                                    Hop::typeLookup.getType(PropertyNames::Hop::alpha)}
+ *
+ *        you write:
+ *
+ *           SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha, tr("Alpha %"), Hop, PropertyNames::Hop::alpha);
+ *
+ *        Arguments not specified below are passed in to initialise \c BtTableModel::ColumnInfo::extra.
+ *
+ * \param tableModelClass The class name of the class holding the field we're initialising, eg \c HopTableModel.
+ * \param columnName
+ * \param labelText
+ * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop
+ * \param propertyName The name of the property to which this field relates, eg in \c HopEditor, this could be
+ *                     \c PropertyNames::NamedEntity::name, \c PropertyNames::Hop::alpha_pct, etc.  (Note, as per
+ *                     comments in \c widgets/SmartAmounts.h, we intentionally do \b not automatically insert the
+ *                     \c PropertyNames:: prefix.)
+ */
+#define SMART_COLUMN_HEADER_DEFN(tableModelClass, columnName, labelText, modelClass, propertyName, ...) \
+   BtTableModel::ColumnInfo{#tableModelClass, \
+                            #columnName, \
+                            #tableModelClass "::ColumnIndex::" #columnName, \
+                            static_cast<size_t>(tableModelClass::ColumnIndex::columnName), \
+                            labelText, \
+                            propertyName, \
+                            modelClass::typeLookup.getType(propertyName) \
+                            __VA_OPT__(, __VA_ARGS__)}
 #endif

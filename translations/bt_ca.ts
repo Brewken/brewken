@@ -511,22 +511,22 @@
     <name>BtDigitWidget</name>
     <message>
         <source>Too low for style.</source>
-        <translation>Massa baix per l&apos;estil.</translation>
+        <translation type="vanished">Massa baix per l&apos;estil.</translation>
     </message>
     <message>
         <source>In range for style.</source>
-        <translation>Correcte per l&apos;estil.</translation>
+        <translation type="vanished">Correcte per l&apos;estil.</translation>
     </message>
     <message>
         <source>Too high for style.</source>
-        <translation>Massa alt per l&apos;estil.</translation>
+        <translation type="vanished">Massa alt per l&apos;estil.</translation>
     </message>
 </context>
 <context>
     <name>BtLabel</name>
     <message>
         <source>Color (%1)</source>
-        <translation>Color (%1)</translation>
+        <translation type="vanished">Color (%1)</translation>
     </message>
 </context>
 <context>
@@ -1222,55 +1222,83 @@ Log file may contain more details.</source>
         <source>Other Adjunct</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caramel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flaked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roasted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specialty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smoked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjunct</source>
+        <translation type="unfinished">Adjunt</translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
     <message>
         <source>Fermentable name</source>
-        <translation>Nom ingredient fermentable</translation>
+        <translation type="vanished">Nom ingredient fermentable</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation>Nom ingredient fermentable:</translation>
+        <translation type="vanished">Nom ingredient fermentable:</translation>
     </message>
     <message>
         <source>Fermentable Database</source>
-        <translation>Base de dades ingredients fermentables</translation>
+        <translation type="vanished">Base de dades ingredients fermentables</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
     <name>FermentableEditor</name>
     <message>
         <source>Fermentable name</source>
-        <translation type="unfinished">Nom ingredient fermentable</translation>
+        <translation type="obsolete">Nom ingredient fermentable</translation>
     </message>
     <message>
         <source>Fermentable name:</source>
-        <translation type="unfinished">Nom ingredient fermentable:</translation>
+        <translation type="obsolete">Nom ingredient fermentable:</translation>
     </message>
 </context>
 <context>
@@ -1359,44 +1387,32 @@ Log file may contain more details.</source>
         <translation>Addició</translation>
     </message>
     <message>
-        <source>Change Fermentable Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Add After Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Tipus de quantitat</translation>
     </message>
     <message>
-        <source>Change Fermentable Inventory Amount</source>
-        <translation type="unfinished"></translation>
+        <source>Volume</source>
+        <translation type="unfinished">Volum</translation>
     </message>
     <message>
-        <source>Change Fermentable Amount Type</source>
-        <translation type="unfinished"></translation>
+        <source>Weight</source>
+        <translation type="unfinished">Massa</translation>
     </message>
     <message>
-        <source>Change Fermentable Is Mashed</source>
-        <translation type="unfinished"></translation>
+        <source>Not mashed</source>
+        <translation type="unfinished">No macerat</translation>
+    </message>
+    <message>
+        <source>Mashed</source>
+        <translation type="unfinished">Macerat</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">Normal</translation>
+    </message>
+    <message>
+        <source>Late</source>
+        <translation type="unfinished">Més tard</translation>
     </message>
 </context>
 <context>
@@ -1541,50 +1557,50 @@ Log file may contain more details.</source>
     <name>HopDialog</name>
     <message>
         <source>Hop name</source>
-        <translation>Nom del llúpol</translation>
+        <translation type="vanished">Nom del llúpol</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation>Nom del llúpol:</translation>
+        <translation type="vanished">Nom del llúpol:</translation>
     </message>
     <message>
         <source>Hop Database</source>
-        <translation>Base de dades de llúpols</translation>
+        <translation type="vanished">Base de dades de llúpols</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
     <name>HopEditor</name>
     <message>
         <source>Hop name</source>
-        <translation type="unfinished">Nom del llúpol</translation>
+        <translation type="obsolete">Nom del llúpol</translation>
     </message>
     <message>
         <source>Hop name:</source>
-        <translation type="unfinished">Nom del llúpol:</translation>
+        <translation type="obsolete">Nom del llúpol:</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -1627,35 +1643,35 @@ Log file may contain more details.</source>
     <name>HopItemDelegate</name>
     <message>
         <source>Boil</source>
-        <translation>Bullit</translation>
+        <translation type="vanished">Bullit</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>«Dry Hop»</translation>
+        <translation type="vanished">«Dry Hop»</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceració</translation>
+        <translation type="vanished">Maceració</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>Primer most</translation>
+        <translation type="vanished">Primer most</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation>Aroma</translation>
+        <translation type="vanished">Aroma</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Flor</translation>
+        <translation type="vanished">Flor</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Pèl·let</translation>
+        <translation type="vanished">Pèl·let</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>«Plug»</translation>
+        <translation type="vanished">«Plug»</translation>
     </message>
 </context>
 <context>
@@ -1687,34 +1703,6 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Existències</translation>
-    </message>
-    <message>
-        <source>Change Hop Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2207,10 +2195,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Mash Step End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Mash Step Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2342,116 +2326,120 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Massa</translation>
+        <translation type="vanished">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volum</translation>
+        <translation type="vanished">Volum</translation>
+    </message>
+    <message>
+        <source>Wood</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MiscDialog</name>
     <message>
         <source>Misc name</source>
-        <translation>Nom d&apos;ingredient extra</translation>
+        <translation type="vanished">Nom d&apos;ingredient extra</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation>Nom d&apos;ingredient extra:</translation>
+        <translation type="vanished">Nom d&apos;ingredient extra:</translation>
     </message>
     <message>
         <source>Misc Database</source>
-        <translation>Base de dades d&apos;ingredients extres</translation>
+        <translation type="vanished">Base de dades d&apos;ingredients extres</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
     <name>MiscEditor</name>
     <message>
         <source>Misc name</source>
-        <translation type="unfinished">Nom d&apos;ingredient extra</translation>
+        <translation type="obsolete">Nom d&apos;ingredient extra</translation>
     </message>
     <message>
         <source>Misc name:</source>
-        <translation type="unfinished">Nom d&apos;ingredient extra:</translation>
+        <translation type="obsolete">Nom d&apos;ingredient extra:</translation>
     </message>
 </context>
 <context>
     <name>MiscItemDelegate</name>
     <message>
         <source>Spice</source>
-        <translation>Especie</translation>
+        <translation type="vanished">Especie</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Clarificador</translation>
+        <translation type="vanished">Clarificador</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Agent per l&apos;aigua</translation>
+        <translation type="vanished">Agent per l&apos;aigua</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Herba</translation>
+        <translation type="vanished">Herba</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Sabor</translation>
+        <translation type="vanished">Sabor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Altre</translation>
+        <translation type="vanished">Altre</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Bullit</translation>
+        <translation type="vanished">Bullit</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceració</translation>
+        <translation type="vanished">Maceració</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primari</translation>
+        <translation type="vanished">Primari</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundari</translation>
+        <translation type="vanished">Secundari</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Embotellar</translation>
+        <translation type="vanished">Embotellar</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Massa</translation>
+        <translation type="vanished">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volum</translation>
+        <translation type="vanished">Volum</translation>
     </message>
 </context>
 <context>
@@ -2485,31 +2473,18 @@ Log file may contain more details.</source>
         <translation>Existències</translation>
     </message>
     <message>
-        <source>Change Misc Name</source>
-        <translation type="unfinished"></translation>
+        <source>Volume</source>
+        <translation type="unfinished">Volum</translation>
     </message>
     <message>
-        <source>Change Misc Type</source>
-        <translation type="unfinished"></translation>
+        <source>Weight</source>
+        <translation type="unfinished">Massa</translation>
     </message>
+</context>
+<context>
+    <name>NE</name>
     <message>
-        <source>Change Misc Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount Type</source>
+        <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3506,15 +3481,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Més tard</translation>
+        <translation type="obsolete">Més tard</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation type="unfinished">No macerat</translation>
+        <translation type="obsolete">No macerat</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Macerat</translation>
+        <translation type="obsolete">Macerat</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -3554,6 +3529,42 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Metric Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Recipe</source>
+        <translation type="unfinished">Afegeix a la recepta</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Add selected ingredient to recipe</source>
+        <translation type="unfinished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+    </message>
+    <message>
+        <source>Create new ingredient</source>
+        <translation type="unfinished">Crear un ingredient nou</translation>
+    </message>
+    <message>
+        <source>Edit selected ingredient</source>
+        <translation type="unfinished">Edita ingredient seleccionat</translation>
+    </message>
+    <message>
+        <source>Remove selected ingredient</source>
+        <translation type="unfinished">Borra l&apos;ingredient seleccionat</translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Database</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4278,7 +4289,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation type="unfinished">Columna errònia: %1</translation>
+        <translation type="obsolete">Columna errònia: %1</translation>
     </message>
 </context>
 <context>
@@ -4320,6 +4331,28 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>The equipment and mash have been reset due to the fact that mash temperatures do not scale easily. Please re-run the mash wizard.</source>
         <translation>L&apos;equip i el macerat s&apos;han reiniciat a causa de que les temperatures del macerat no s&apos;escalen fàcilment. Cal reiniciar l&apos;assistent del macerat.</translation>
+    </message>
+</context>
+<context>
+    <name>SmartDigitWidget</name>
+    <message>
+        <source>Too low for style.</source>
+        <translation type="unfinished">Massa baix per l&apos;estil.</translation>
+    </message>
+    <message>
+        <source>In range for style.</source>
+        <translation type="unfinished">Correcte per l&apos;estil.</translation>
+    </message>
+    <message>
+        <source>Too high for style.</source>
+        <translation type="unfinished">Massa alt per l&apos;estil.</translation>
+    </message>
+</context>
+<context>
+    <name>SmartLabel</name>
+    <message>
+        <source>Color (%1)</source>
+        <translation type="obsolete">Color (%1)</translation>
     </message>
 </context>
 <context>
@@ -4746,50 +4779,50 @@ El volum final al primari és de %1.</translation>
     <name>YeastDialog</name>
     <message>
         <source>Yeast name</source>
-        <translation>Nom del llevat</translation>
+        <translation type="vanished">Nom del llevat</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation>Nom del llevat:</translation>
+        <translation type="vanished">Nom del llevat:</translation>
     </message>
     <message>
         <source>Yeast Database</source>
-        <translation>Base de dades de llevats</translation>
+        <translation type="vanished">Base de dades de llevats</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation>Afegeix a la recepta</translation>
+        <translation type="vanished">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Nou</translation>
+        <translation type="vanished">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation>Afegeix l&apos;ingredient seleccionat a la recepta</translation>
+        <translation type="vanished">Afegeix l&apos;ingredient seleccionat a la recepta</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation>Crear un ingredient nou</translation>
+        <translation type="vanished">Crear un ingredient nou</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation>Edita ingredient seleccionat</translation>
+        <translation type="vanished">Edita ingredient seleccionat</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation>Borra l&apos;ingredient seleccionat</translation>
+        <translation type="vanished">Borra l&apos;ingredient seleccionat</translation>
     </message>
 </context>
 <context>
     <name>YeastEditor</name>
     <message>
         <source>Yeast name</source>
-        <translation type="unfinished">Nom del llevat</translation>
+        <translation type="obsolete">Nom del llevat</translation>
     </message>
     <message>
         <source>Yeast name:</source>
-        <translation type="unfinished">Nom del llevat:</translation>
+        <translation type="obsolete">Nom del llevat:</translation>
     </message>
 </context>
 <context>
@@ -5261,19 +5294,7 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Nom</translation>
     </message>
     <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Required</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>boilSize_l</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>batchSize_l</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5293,35 +5314,15 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Tassa d&apos;evaporació (per hora)</translation>
     </message>
     <message>
-        <source>evapRate_lHr</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Final top-up water</source>
         <translation type="unfinished">Aigua agregada al final</translation>
-    </message>
-    <message>
-        <source>topUpWater_l</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Kettle top-up water</source>
         <translation type="unfinished">Aigua agregada a l&apos;olla</translation>
     </message>
     <message>
-        <source>topUpKettle_l</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Kettle to Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>trubChillerLoss_l</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>lauterDeadspace_l</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5341,10 +5342,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>grainAbsorption_LKg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boiling Point of Water</source>
         <translation type="unfinished">Punt d&apos;ebullició</translation>
     </message>
@@ -5361,23 +5358,7 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Volum del macerador</translation>
     </message>
     <message>
-        <source>hopUtilization_pct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>boilingPoint_c</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>tunWeight_kg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Specific Heat (Cal/(g*C))</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>tunSpecificHeat_calGC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5560,10 +5541,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Yield %</source>
         <translation type="unfinished">Rendiment %</translation>
     </message>
@@ -5572,15 +5549,7 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Extres</translation>
     </message>
     <message>
-        <source>origin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Diastatic power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>supplier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5601,6 +5570,130 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Fermantable Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GrainGroup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermantable Grain Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID del producte</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Coarse Grind (DBCG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Potential yield</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kolbach Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;glassy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;half glassy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of malt that is &quot;mealy&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of grain that is &quot;plump&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of grain that is &quot;tine&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DI pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viscosity of this malt in a &quot;congress mash&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Coarse Grind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total alpha-amylase in malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total alpha-amylase in the malted grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DMS precursors is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen (FAN)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FAN is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Amino Nitrogen is mass concentration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta-glucans is mass concentration?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6821,27 +6914,27 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Spice</source>
-        <translation>Especie</translation>
+        <translation type="vanished">Especie</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation>Clarificador</translation>
+        <translation type="vanished">Clarificador</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation>Agent per a aigua</translation>
+        <translation type="vanished">Agent per a aigua</translation>
     </message>
     <message>
         <source>Herb</source>
-        <translation>Herba</translation>
+        <translation type="vanished">Herba</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation>Sabor</translation>
+        <translation type="vanished">Sabor</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Altres</translation>
+        <translation type="vanished">Altres</translation>
     </message>
     <message>
         <source>Use</source>
@@ -6849,23 +6942,23 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ebullició</translation>
+        <translation type="vanished">Ebullició</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceració</translation>
+        <translation type="vanished">Maceració</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primari</translation>
+        <translation type="vanished">Primari</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundari</translation>
+        <translation type="vanished">Secundari</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Embotellar</translation>
+        <translation type="vanished">Embotellar</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6930,6 +7023,14 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID del producte</translation>
     </message>
 </context>
 <context>
@@ -7993,26 +8094,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>styleLetter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>styleGuide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>categoryNumber</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>category</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ranges</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8118,31 +8199,11 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>nappm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ca</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>so4ppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>cappm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>hco3ppm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8162,14 +8223,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>mgppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>clppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8182,15 +8235,7 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>cacl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>MgSO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>mgso4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8198,15 +8243,7 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>caco3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>NaCl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>nacl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8214,15 +8251,7 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>caso4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>NaHCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>nahco3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8254,6 +8283,14 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

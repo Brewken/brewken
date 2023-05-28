@@ -17,6 +17,7 @@
 #define MEASUREMENT_PHYSICALQUANTITY_H
 #pragma once
 
+#include <array>
 #include <tuple>
 #include <utility>
 #include <variant>
@@ -94,7 +95,7 @@ namespace Measurement {
       Mass,           // Elsewhere we use weight instead of mass because it's more idiomatic (despite being,
                       // strictly speaking, not the same thing)
       Volume,
-      Time,           // Note this is durations of time, NOT dates or times of day
+      Time,           // Note this is durations of time, NOT dates or times of day  .:TBD:. Rename to TimeDuration
       Temperature,
       Color,
       // Density is sometimes referred to as "gravity" as a shorthand for "specific gravity".  Strictly, what we're
@@ -137,6 +138,8 @@ namespace Measurement {
       Viscosity,
       // Specific heat capacity -- see https://en.wikipedia.org/wiki/Specific_heat_capacity
       SpecificHeatCapacity,
+      // .:TBD:. Should we add Energy for PropertyNames::Recipe::calories (in which case, should canonical measure be
+      //         Joules)?
    };
 
    /**
@@ -194,6 +197,14 @@ namespace Measurement {
     * \brief It's more concise to have a constant for MassConcentration & VolumeConcentration
     */
    extern Mixed2PhysicalQuantities const PqEitherMassOrVolumeConcentration;
+
+   /**
+    * \brief We have a number of places where we have a boolean \c amountIsWeight.  This array converts such a flag to
+    *        a localised displayable string, relying on the fact that static_cast<int>(false) == 0 and
+    *        static_cast<int>(true) == 1.
+    */
+   extern std::array<QString const, 2> descAmountIsWeight;;
+
 
 }
 

@@ -67,24 +67,24 @@ ObjectStore & Yeast::getObjectStoreTypedInstance() const {
 TypeLookup const Yeast::typeLookup {
    "Yeast",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary    , Yeast::m_addToSecondary    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount            , Yeast::m_amount            ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight    , Yeast::m_amountIsWeight    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct   , Yeast::m_attenuation_pct   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor           , Yeast::m_bestFor           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary    , Yeast::m_addToSecondary    ,           NonPhysicalQuantity::Bool         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount            , Yeast::m_amount            ,           NonPhysicalQuantity::Dimensionless), // Not really Dimensionless
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight    , Yeast::m_amountIsWeight    ,           NonPhysicalQuantity::Bool         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct   , Yeast::m_attenuation_pct   ,           NonPhysicalQuantity::Percentage   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor           , Yeast::m_bestFor           ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ,           NonPhysicalQuantity::Enum         ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculationString, Yeast::m_flocculationString),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ,           NonPhysicalQuantity::Enum         ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::formString        , Yeast::m_formString        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory        , Yeast::m_laboratory        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse          , Yeast::m_maxReuse          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c  , Yeast::m_maxTemperature_c  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c  , Yeast::m_minTemperature_c  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes             , Yeast::m_notes             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID         , Yeast::m_productID         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured     , Yeast::m_timesCultured     ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory        , Yeast::m_laboratory        ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse          , Yeast::m_maxReuse          ,           NonPhysicalQuantity::Count        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c  , Yeast::m_maxTemperature_c  , Measurement::PhysicalQuantity::Temperature  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c  , Yeast::m_minTemperature_c  , Measurement::PhysicalQuantity::Temperature  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes             , Yeast::m_notes             ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID         , Yeast::m_productID         ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured     , Yeast::m_timesCultured     ,           NonPhysicalQuantity::Count        ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::typeString        , Yeast::m_typeString        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ,           NonPhysicalQuantity::Enum         ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    &NamedEntityWithInventory::typeLookup
@@ -179,10 +179,6 @@ double Yeast::maxTemperature_c() const { return m_maxTemperature_c; }
 
 double Yeast::attenuation_pct() const { return m_attenuation_pct; }
 
-double Yeast::inventory() const {
-   return InventoryUtils::getAmount(*this);
-}
-
 int Yeast::timesCultured() const { return m_timesCultured; }
 
 int Yeast::maxReuse() const { return m_maxReuse; }
@@ -232,11 +228,6 @@ void Yeast::setAmount(double var) {
    this->setAndNotify(PropertyNames::Yeast::amount,
                       this->m_amount,
                       this->enforceMin(var, "amount", 0.0));
-}
-
-void Yeast::setInventoryAmount(double var) {
-   InventoryUtils::setAmount(*this, var);
-   return;
 }
 
 // .:TBD:. I'm not wild about using "quanta" here (presumably to mean number of packets or number of cultures)
@@ -312,3 +303,6 @@ void Yeast::setAddToSecondary( bool var ) {
 Recipe * Yeast::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
+
+// Insert the boiler-plate stuff for inventory
+INVENTORY_COMMON_CODE(Yeast)

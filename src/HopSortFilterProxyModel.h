@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * HopSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * HopSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -25,16 +26,15 @@
  *
  * \brief Proxy model for sorting hops.
  */
-class HopSortFilterProxyModel : public QSortFilterProxyModel
-{
+class HopSortFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
 public:
-   HopSortFilterProxyModel(QObject *parent = 0, bool filt = true);
+   HopSortFilterProxyModel(QObject * parent = 0, bool filt = true);
 
 protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+   bool lessThan(QModelIndex const & left, QModelIndex const & right) const;
+   bool filterAcceptsRow(int source_row, QModelIndex const & source_parent) const;
 
 private:
    bool filter;

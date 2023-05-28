@@ -528,6 +528,7 @@ bool BtTreeModel::removeRows(int row, int count, const QModelIndex & parent) {
 
 // One find method for all things. This .. is nice
 QModelIndex BtTreeModel::findElement(NamedEntity * thing, BtTreeItem * parent) {
+   qDebug() << Q_FUNC_INFO << "Find" << thing << "in" << parent;
    BtTreeItem * pItem;
    QList<BtTreeItem *> folders;
 
@@ -551,6 +552,7 @@ QModelIndex BtTreeModel::findElement(NamedEntity * thing, BtTreeItem * parent) {
       for (i = 0; i < target->childCount(); ++i) {
          // If we've found what we are looking for, return
          if (target->child(i)->thing() == thing) {
+            qDebug() << Q_FUNC_INFO << "Found at" << i;
             return createIndex(i, 0, target->child(i));
          }
 

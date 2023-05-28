@@ -33,10 +33,29 @@
        <string>Main</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="5" column="1">
-        <widget class="BtTimeEdit" name="lineEdit_time">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_name">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Name</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_name</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_name">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>100</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -54,10 +73,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Time</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">time</string>
+          <string>Name</string>
          </property>
         </widget>
        </item>
@@ -80,6 +96,49 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="BtComboBox" name="comboBox_type">
+         <property name="toolTip">
+          <string>Type</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_amountIsWeight">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Check it if the amount listed is in kg instead of L.</string>
+         </property>
+         <property name="text">
+          <string>Amount is weight?</string>
+         </property>
+         <property name="buddy">
+          <cstring>checkBox_amountIsWeight</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QCheckBox" name="checkBox_amountIsWeight">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Checked if the given amount is weight instead of volume</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+
        <item row="4" column="0">
         <widget class="QLabel" name="label_use">
          <property name="sizePolicy">
@@ -99,45 +158,47 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="comboBox_type">
+       <item row="4" column="1">
+        <widget class="BtComboBox" name="comboBox_use">
          <property name="toolTip">
-          <string>Type</string>
+          <string>Use</string>
          </property>
-         <item>
-          <property name="text">
-           <string>Spice</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Fining</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Water Agent</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Herb</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Flavor</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Other</string>
-          </property>
-         </item>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="SmartLabel" name="label_inventory">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="text">
+          <string>Amount in Inventory</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_inventory</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_inventory">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Amount in inventory</string>
+         </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="BtTimeLabel" name="label_time">
+        <widget class="SmartLabel" name="label_time">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -158,10 +219,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="BtStringEdit" name="lineEdit_name">
+       <item row="5" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_time">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>100</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -179,62 +240,45 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Name</string>
+          <string>Time</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="comboBox_use">
-         <property name="toolTip">
-          <string>Use</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>Boil</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Mash</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Primary</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Secondary</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Bottling</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_name">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_producer">
          <property name="text">
-          <string>Name</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          <string>Producer</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_name</cstring>
+          <cstring>lineEdit_producer</cstring>
          </property>
         </widget>
        </item>
        <item row="6" column="1">
+        <widget class="SmartLineEdit" name="lineEdit_producer">
+         <property name="toolTip">
+          <string>Producer</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="3">
+        <widget class="QLabel" name="label_productId">
+         <property name="text">
+          <string>Product ID</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEdit_productId</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="4">
+        <widget class="SmartLineEdit" name="lineEdit_productId">
+         <property name="toolTip">
+          <string>Product ID</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -246,76 +290,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="4" column="2">
-        <widget class="BtMixedMassOrVolumeLabel" name="label_inventory">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="text">
-          <string>Amount in Inventory</string>
-         </property>
-         <property name="buddy">
-          <cstring>lineEdit_inventory</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="4">
-        <widget class="BtMixedMassOrVolumeEdit" name="lineEdit_inventory">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Amount in inventory</string>
-         </property>
-         <property name="editField" stdset="0">
-          <string notr="true">inventory</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QLabel" name="label_isWeight">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="toolTip">
-          <string>Check it if the amount listed is in kg instead of L.</string>
-         </property>
-         <property name="text">
-          <string>Amount is weight?</string>
-         </property>
-         <property name="buddy">
-          <cstring>checkBox_isWeight</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="4">
-        <widget class="QCheckBox" name="checkBox_isWeight">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="toolTip">
-          <string>Checked if the given amount is weight instead of volume</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -404,41 +378,24 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BtStringEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtLineEdit.h</header>
+   <class>BtComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/BtComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>BtTimeEdit</class>
-   <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
-   <slots>
-    <slot>lineChanged(PreviousScaleInfo)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtTimeLabel</class>
+   <class>SmartLabel</class>
    <extends>QLabel</extends>
-   <header>BtLabel.h</header>
+   <header>widgets/SmartLabel.h</header>
    <slots>
     <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
    </slots>
   </customwidget>
   <customwidget>
-   <class>BtMixedMassOrVolumeLabel</class>
-   <extends>QLabel</extends>
-   <header>BtLabel.h</header>
-   <slots>
-    <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>BtMixedMassOrVolumeEdit</class>
+   <class>SmartLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>BtAmountEdit.h</header>
+   <header>widgets/SmartLineEdit.h</header>
    <slots>
     <slot>lineChanged(PreviousScaleInfo)</slot>
-    <slot>setIsWeight(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -458,54 +415,4 @@
  <resources>
   <include location="../brewken.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>label_time</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_time</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>108</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>186</x>
-     <y>108</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>label_inventory</sender>
-   <signal>changedSystemOfMeasurementOrScale(PreviousScaleInfo)</signal>
-   <receiver>lineEdit_inventory</receiver>
-   <slot>lineChanged(PreviousScaleInfo)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>108</x>
-     <y>195</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>151</x>
-     <y>195</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_isWeight</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>lineEdit_inventory</receiver>
-   <slot>setIsWeight(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>231</x>
-     <y>168</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>227</x>
-     <y>197</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

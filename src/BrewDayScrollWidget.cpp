@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Carles Muñoz Gorriz <carlesmu@internautas.org>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -54,9 +54,7 @@ namespace {
          return "unknown";
       }
 
-      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min(), Measurement::Units::minutes},
-                                        PersistentSettings::Sections::tab_recipe,
-                                        PropertyNames::Recipe::boilTime_min);
+      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min(), Measurement::Units::minutes});
    }
 }
 
@@ -66,14 +64,13 @@ BrewDayScrollWidget::BrewDayScrollWidget(QWidget* parent) : QWidget{parent},
    this->setupUi(this);
    this->setObjectName("BrewDayScrollWidget");
 
-   connect(listWidget,                      &QListWidget::currentRowChanged, this, &BrewDayScrollWidget::showInstruction          );
-   connect(btTextEdit,                      SIGNAL(textModified()),          this, SLOT(saveInstruction())                        );
-//   connect(btTextEdit,                      &BtLineEdit::textModified,       this, &BrewDayScrollWidget::saveInstruction          );
-   connect(pushButton_insert,               &QAbstractButton::clicked,       this, &BrewDayScrollWidget::insertInstruction        );
-   connect(pushButton_remove,               &QAbstractButton::clicked,       this, &BrewDayScrollWidget::removeSelectedInstruction);
-   connect(pushButton_up,                   &QAbstractButton::clicked,       this, &BrewDayScrollWidget::pushInstructionUp        );
-   connect(pushButton_down,                 &QAbstractButton::clicked,       this, &BrewDayScrollWidget::pushInstructionDown      );
-   connect(pushButton_generateInstructions, &QAbstractButton::clicked,       this, &BrewDayScrollWidget::generateInstructions     );
+   connect(this->listWidget,                      &QListWidget::currentRowChanged, this, &BrewDayScrollWidget::showInstruction          );
+   connect(this->btTextEdit,                      &BtTextEdit::textModified,       this, &BrewDayScrollWidget::saveInstruction          );
+   connect(this->pushButton_insert,               &QAbstractButton::clicked,       this, &BrewDayScrollWidget::insertInstruction        );
+   connect(this->pushButton_remove,               &QAbstractButton::clicked,       this, &BrewDayScrollWidget::removeSelectedInstruction);
+   connect(this->pushButton_up,                   &QAbstractButton::clicked,       this, &BrewDayScrollWidget::pushInstructionUp        );
+   connect(this->pushButton_down,                 &QAbstractButton::clicked,       this, &BrewDayScrollWidget::pushInstructionDown      );
+   connect(this->pushButton_generateInstructions, &QAbstractButton::clicked,       this, &BrewDayScrollWidget::generateInstructions     );
 
    return;
 }
@@ -82,6 +79,7 @@ BrewDayScrollWidget::~BrewDayScrollWidget() = default;
 
 void BrewDayScrollWidget::saveInstruction() {
   this->recObs->instructions()[ listWidget->currentRow() ]->setDirections( btTextEdit->toPlainText() );
+  return;
 }
 
 void BrewDayScrollWidget::showInstruction(int insNdx) {
@@ -273,7 +271,7 @@ void BrewDayScrollWidget::insertInstruction() {
    // After updating the model, this is the simplest way to update the display
    this->setRecipe(this->recObs);
 
-   listWidget->setCurrentRow(pos-1);
+   listWidget->setCurrentRow(pos - 1);
    return;
 }
 
@@ -316,7 +314,7 @@ void BrewDayScrollWidget::showChanges() {
       return;
    }
 
-   repopulateListWidget();
+   this->repopulateListWidget();
    return;
 }
 
@@ -376,38 +374,23 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
    // third row: pre-Boil Volume and Preboil Gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Boil Volume"))
-            .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters},
-                                            PersistentSettings::Sections::tab_recipe,
-                                            PropertyNames::Recipe::boilVolume_l,
-                                            2))
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilVolume_l(), Measurement::Units::liters}, 2))
             .arg(tr("Preboil Gravity"))
-            .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::sp_grav},
-                                            PersistentSettings::Sections::tab_recipe,
-                                            PropertyNames::Recipe::og,
-                                            3));
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->boilGrav(), Measurement::Units::specificGravity}, 3));
 
    // fourth row: Final volume and starting gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Final Volume"))
-            .arg(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters},
-                                            PersistentSettings::Sections::tab_recipe,
-                                            PropertyNames::Recipe::finalVolume_l,
-                                            2))
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->finalVolume_l(), Measurement::Units::liters}, 2))
             .arg(tr("Starting Gravity"))
-            .arg(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::sp_grav},
-                                            PersistentSettings::Sections::tab_recipe,
-                                            PropertyNames::Recipe::og,
-                                            3));
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->og(), Measurement::Units::specificGravity}, 3));
 
    // fifth row: IBU and Final gravity
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
             .arg(tr("IBU"))
             .arg( Measurement::displayQuantity(recObs->IBU(), 1))
             .arg(tr("Final Gravity"))
-            .arg(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::sp_grav},
-                                            PersistentSettings::Sections::tab_recipe,
-                                            PropertyNames::Recipe::fg,
-                                            3));
+            .arg(Measurement::displayAmount(Measurement::Amount{recObs->fg(), Measurement::Units::specificGravity}, 3));
 
    // sixth row: ABV and estimate calories
    bool metricVolume = (

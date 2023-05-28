@@ -81,29 +81,34 @@
 #include "ConverterTool.h"
 #include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
-#include "EquipmentEditor.h"
+#include "editors/EquipmentEditor.h"
+#include "editors/FermentableEditor.h"
+#include "editors/HopEditor.h"
+#include "editors/MashEditor.h"
+#include "editors/MashStepEditor.h"
+#include "editors/MiscEditor.h"
+#include "editors/NamedMashEditor.h"
+#include "editors/StyleEditor.h"
+#include "editors/WaterEditor.h"
+#include "editors/YeastEditor.h"
 #include "EquipmentListModel.h"
-#include "FermentableDialog.h"
-#include "FermentableEditor.h"
 #include "FermentableSortFilterProxyModel.h"
 #include "HelpDialog.h"
-#include "HopDialog.h"
-#include "HopEditor.h"
 #include "HopSortFilterProxyModel.h"
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "ImportExport.h"
+#include "ingredientDialogs/FermentableDialog.h"
+#include "ingredientDialogs/HopDialog.h"
+#include "ingredientDialogs/MiscDialog.h"
+#include "ingredientDialogs/YeastDialog.h"
 #include "InventoryFormatter.h"
 #include "MashDesigner.h"
-#include "MashEditor.h"
 #include "MashListModel.h"
-#include "MashStepEditor.h"
 #include "MashWizard.h"
-#include "measurement/Unit.h"
-#include "MiscDialog.h"
-#include "MiscEditor.h"
-#include "MiscSortFilterProxyModel.h"
 #include "measurement/Measurement.h"
+#include "measurement/Unit.h"
+#include "MiscSortFilterProxyModel.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -111,7 +116,6 @@
 #include "model/Recipe.h"
 #include "model/Style.h"
 #include "model/Yeast.h"
-#include "NamedMashEditor.h"
 #include "OgAdjuster.h"
 #include "OptionDialog.h"
 #include "PersistentSettings.h"
@@ -121,10 +125,8 @@
 #include "RangedSlider.h"
 #include "RecipeFormatter.h"
 #include "RefractoDialog.h"
-#include "RelationalUndoableUpdate.h"
 #include "ScaleRecipeTool.h"
 #include "StrikeWaterDialog.h"
-#include "StyleEditor.h"
 #include "StyleListModel.h"
 #include "StyleSortFilterProxyModel.h"
 #include "tableModels/FermentableTableModel.h"
@@ -133,15 +135,13 @@
 #include "tableModels/MiscTableModel.h"
 #include "tableModels/YeastTableModel.h"
 #include "TimerMainDialog.h"
-#include "UndoableAddOrRemove.h"
-#include "UndoableAddOrRemoveList.h"
+#include "undoRedo/RelationalUndoableUpdate.h"
+#include "undoRedo/UndoableAddOrRemove.h"
+#include "undoRedo/UndoableAddOrRemoveList.h"
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
 #include "WaterDialog.h"
-#include "WaterEditor.h"
 #include "WaterListModel.h"
-#include "YeastDialog.h"
-#include "YeastEditor.h"
 #include "YeastSortFilterProxyModel.h"
 
 namespace {
@@ -176,6 +176,44 @@ namespace {
       mainWindowInstance = new MainWindow();
       return;
    }
+
+   /**
+    *
+    */
+   void updateDensitySlider(RangedSlider & slider,
+                            SmartLabel const & label,
+                            double const minCanonicalValue,
+                            double const maxCanonicalValue,
+                            double const maxPossibleCanonicalValue) {
+      slider.setPreferredRange(label.getRangeToDisplay(minCanonicalValue, maxCanonicalValue        ));
+      slider.setRange         (label.getRangeToDisplay(1.000            , maxPossibleCanonicalValue));
+
+      Measurement::UnitSystem const & displayUnitSystem = label.getDisplayUnitSystem();
+      if (displayUnitSystem == Measurement::UnitSystems::density_Plato) {
+         slider.setPrecision(1);
+         slider.setTickMarks(2, 5);
+      } else {
+         slider.setPrecision(3);
+         slider.setTickMarks(0.010, 2);
+      }
+      return;
+   }
+
+   /**
+    *
+    */
+   void updateColorSlider(RangedSlider & slider,
+                          SmartLabel const & label,
+                          double const minCanonicalValue,
+                          double const maxCanonicalValue) {
+      slider.setPreferredRange(label.getRangeToDisplay(minCanonicalValue, maxCanonicalValue));
+      slider.setRange         (label.getRangeToDisplay(1                , 44               ));
+
+      Measurement::UnitSystem const & displayUnitSystem = label.getDisplayUnitSystem();
+      slider.setTickMarks(displayUnitSystem == Measurement::UnitSystems::color_StandardReferenceMethod ? 10 : 40, 2);
+
+      return;
+   }
 }
 
 // This private implementation class holds all private non-virtual members of MainWindow
@@ -190,9 +228,10 @@ public:
 
    ~impl() = default;
 
-
    // TODO Try making this a smart pointer
    HelpDialog * helpDialog;
+
+
 
 private:
    MainWindow & self;
@@ -203,10 +242,26 @@ private:
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_unique<impl>(*this)} {
    qDebug() << Q_FUNC_INFO;
 
-   undoStack = new QUndoStack(this);
+   this->undoStack = new QUndoStack(this);
 
    // Need to call this parent class method to get all the widgets added (I think).
    this->setupUi(this);
+
+   // Initialise smart labels etc early, but after call to this->setupUi() because otherwise member variables such as
+   // label_name will not yet be set.
+   // .:TBD:. We should fix some of these inconsistently-named labels
+   SMART_FIELD_INIT(MainWindow, label_name           , lineEdit_name      , Recipe, PropertyNames::NamedEntity::name        );
+   SMART_FIELD_INIT(MainWindow, label_targetBatchSize, lineEdit_batchSize , Recipe, PropertyNames::Recipe::batchSize_l   , 2);
+   SMART_FIELD_INIT(MainWindow, label_targetBoilSize , lineEdit_boilSize  , Recipe, PropertyNames::Recipe::boilSize_l    , 2);
+   SMART_FIELD_INIT(MainWindow, label_efficiency     , lineEdit_efficiency, Recipe, PropertyNames::Recipe::efficiency_pct, 1);
+   SMART_FIELD_INIT(MainWindow, label_boilTime       , lineEdit_boilTime  , Recipe, PropertyNames::Recipe::boilTime_min  , 1);
+   SMART_FIELD_INIT(MainWindow, label_boilSg         , lineEdit_boilSg    , Recipe, PropertyNames::Recipe::boilGrav      , 3);
+
+   SMART_FIELD_INIT_NO_SF(MainWindow, oGLabel        , Recipe, PropertyNames::Recipe::og        );
+   SMART_FIELD_INIT_NO_SF(MainWindow, fGLabel        , Recipe, PropertyNames::Recipe::fg        );
+   SMART_FIELD_INIT_NO_SF(MainWindow, colorSRMLabel  , Recipe, PropertyNames::Recipe::color_srm );
+   SMART_FIELD_INIT_NO_SF(MainWindow, label_batchSize, Recipe, PropertyNames::Recipe::boilSize_l);
+   SMART_FIELD_INIT_NO_SF(MainWindow, label_boilSize , Recipe, PropertyNames::Recipe::boilSize_l);
 
    // Stop things looking ridiculously tiny on high DPI displays
    this->setSizesInPixelsBasedOnDpi();
@@ -240,11 +295,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
 #else
    printer->setPageSize(QPageSize(QPageSize::Letter));
 #endif
+
    return;
 }
 
 void MainWindow::init() {
    qDebug() << Q_FUNC_INFO;
+
+
    this->setupCSS();
    // initialize all of the dialog windows
    this->setupDialogs();
@@ -261,11 +319,6 @@ void MainWindow::init() {
    // do all the work for checkboxes (just one right now)
    this->setUpStateChanges();
 
-   // This sets up things that might have been 'remembered' (ie stored in the config file) from a previous run of the
-   // program - eg window size, which is stored in MainWindow::closeEvent().
-   // Breaks the naming convention, doesn't it?
-   this->restoreSavedState();
-
    // Connect menu item slots to triggered() signals
    this->setupTriggers();
    // Connect pushbutton slots to clicked() signals
@@ -279,6 +332,11 @@ void MainWindow::init() {
    // set up the drag/drop parts
    this->setupDrops();
 
+   // This sets up things that might have been 'remembered' (ie stored in the config file) from a previous run of the
+   // program - eg window size, which is stored in MainWindow::closeEvent().
+   // Breaks the naming convention, doesn't it?
+   this->restoreSavedState();
+
    // Moved from Database class
    Recipe::connectSignalsForAllRecipes();
    qDebug() << Q_FUNC_INFO << "Recipe signals connected";
@@ -286,9 +344,9 @@ void MainWindow::init() {
    qDebug() << Q_FUNC_INFO << "Mash signals connected";
 
    // I do not like this connection here.
-   connect(ancestorDialog, &AncestorDialog::ancestoryChanged, treeView_recipe->model(), &BtTreeModel::versionedRecipe);
-   connect(optionDialog, &OptionDialog::showAllAncestors, treeView_recipe->model(), &BtTreeModel::catchAncestors);
-   connect(treeView_recipe, &BtTreeView::recipeSpawn, this, &MainWindow::versionedRecipe);
+   connect(this->ancestorDialog,  &AncestorDialog::ancestoryChanged, treeView_recipe->model(), &BtTreeModel::versionedRecipe);
+   connect(this->optionDialog,    &OptionDialog::showAllAncestors,   treeView_recipe->model(), &BtTreeModel::catchAncestors );
+   connect(this->treeView_recipe, &BtTreeView::recipeSpawn,          this,                     &MainWindow::versionedRecipe );
 
    // No connections from the database yet? Oh FSM, that probably means I'm
    // doing it wrong again.
@@ -430,52 +488,48 @@ void MainWindow::setupCSS()
 
 // Most dialogs are initialized in here. That should include any initial
 // configurations as well
-void MainWindow::setupDialogs()
-{
-   dialog_about = new AboutDialog(this);
-   this->pimpl->helpDialog = new HelpDialog(this);
-   equipEditor = new EquipmentEditor(this);
-   singleEquipEditor = new EquipmentEditor(this, true);
-   fermDialog = new FermentableDialog(this);
-   fermEditor = new FermentableEditor(this);
-   hopDialog = new HopDialog(this);
-   hopEditor = new HopEditor(this);
-   mashEditor = new MashEditor(this);
-   mashStepEditor = new MashStepEditor(this);
-   mashWizard = new MashWizard(this);
-   miscDialog = new MiscDialog(this);
-   miscEditor = new MiscEditor(this);
-   styleEditor = new StyleEditor(this);
-   singleStyleEditor = new StyleEditor(this,true);
-   yeastDialog = new YeastDialog(this);
-   yeastEditor = new YeastEditor(this);
-   optionDialog = new OptionDialog(this);
-   recipeScaler = new ScaleRecipeTool(this);
-   recipeFormatter = new RecipeFormatter(this);
-   printAndPreviewDialog = new PrintAndPreviewDialog(this);
-   ogAdjuster = new OgAdjuster(this);
-   converterTool = new ConverterTool(this);
-   hydrometerTool = new HydrometerTool(this);
-   alcoholTool = new AlcoholTool(this);
-   timerMainDialog = new TimerMainDialog(this);
-   primingDialog = new PrimingDialog(this);
-   strikeWaterDialog = new StrikeWaterDialog(this);
-   refractoDialog = new RefractoDialog(this);
-   mashDesigner = new MashDesigner(this);
-   pitchDialog = new PitchDialog(this);
-   btDatePopup = new BtDatePopup(this);
+void MainWindow::setupDialogs() {
+   this->dialog_about          = new AboutDialog(this);
+   this->pimpl->helpDialog     = new HelpDialog(this);
+   this->equipEditor           = new EquipmentEditor(this);
+   this->singleEquipEditor     = new EquipmentEditor(this, true);
+   this->fermDialog            = new FermentableDialog(this);
+   this->fermEditor            = new FermentableEditor(this);
+   this->hopDialog             = new HopDialog(this);
+   this->hopEditor             = new HopEditor(this);
+   this->mashEditor            = new MashEditor(this);
+   this->mashStepEditor        = new MashStepEditor(this);
+   this->mashWizard            = new MashWizard(this);
+   this->miscDialog            = new MiscDialog(this);
+   this->miscEditor            = new MiscEditor(this);
+   this->styleEditor           = new StyleEditor(this);
+   this->singleStyleEditor     = new StyleEditor(this,true);
+   this->yeastDialog           = new YeastDialog(this);
+   this->yeastEditor           = new YeastEditor(this);
+   this->optionDialog          = new OptionDialog(this);
+   this->recipeScaler          = new ScaleRecipeTool(this);
+   this->recipeFormatter       = new RecipeFormatter(this);
+   this->printAndPreviewDialog = new PrintAndPreviewDialog(this);
+   this->ogAdjuster            = new OgAdjuster(this);
+   this->converterTool         = new ConverterTool(this);
+   this->hydrometerTool        = new HydrometerTool(this);
+   this->alcoholTool           = new AlcoholTool(this);
+   this->timerMainDialog       = new TimerMainDialog(this);
+   this->primingDialog         = new PrimingDialog(this);
+   this->strikeWaterDialog     = new StrikeWaterDialog(this);
+   this->refractoDialog        = new RefractoDialog(this);
+   this->mashDesigner          = new MashDesigner(this);
+   this->pitchDialog           = new PitchDialog(this);
+   this->btDatePopup           = new BtDatePopup(this);
+   this->waterDialog           = new WaterDialog(this);
+   this->waterEditor           = new WaterEditor(this);
+   this->ancestorDialog        = new AncestorDialog(this);
 
-   waterDialog = new WaterDialog(this);
-   waterEditor = new WaterEditor(this);
-
-   ancestorDialog = new AncestorDialog(this);
-
-
+   return;
 }
 
 // Configures the range widgets for the bubbles
-void MainWindow::setupRanges()
-{
+void MainWindow::setupRanges() {
    styleRangeWidget_og->setRange(1.000, 1.120);
    styleRangeWidget_og->setPrecision(3);
    styleRangeWidget_og->setTickMarks(0.010, 2);
@@ -494,13 +548,13 @@ void MainWindow::setupRanges()
 
    // definitely cheating, but I don't feel like making a whole subclass just to support this
    // or the next.
-   rangeWidget_batchsize->setRange(0, recipeObs == nullptr ? 19.0 : recipeObs->batchSize_l());
-   rangeWidget_batchsize->setPrecision(1);
-   rangeWidget_batchsize->setTickMarks(2,5);
+   rangeWidget_batchSize->setRange(0, recipeObs == nullptr ? 19.0 : recipeObs->batchSize_l());
+   rangeWidget_batchSize->setPrecision(1);
+   rangeWidget_batchSize->setTickMarks(2,5);
 
-   rangeWidget_batchsize->setBackgroundBrush(QColor(255,255,255));
-   rangeWidget_batchsize->setPreferredRangeBrush(QColor(55,138,251));
-   rangeWidget_batchsize->setMarkerBrush(QBrush(Qt::NoBrush));
+   rangeWidget_batchSize->setBackgroundBrush(QColor(255,255,255));
+   rangeWidget_batchSize->setPreferredRangeBrush(QColor(55,138,251));
+   rangeWidget_batchSize->setMarkerBrush(QBrush(Qt::NoBrush));
 
    rangeWidget_boilsize->setRange(0, recipeObs == nullptr? 24.0 : recipeObs->boilVolume_l());
    rangeWidget_boilsize->setPrecision(1);
@@ -574,10 +628,10 @@ void MainWindow::setupTables()
 {
    // Set table models.
    // Fermentables
-   fermTableModel = new FermentableTableModel(fermentableTable);
-   fermTableProxy = new FermentableSortFilterProxyModel(fermentableTable,false);
+   fermTableModel = new FermentableTableModel(this->fermentableTable);
+   fermTableProxy = new FermentableSortFilterProxyModel(fermentableTable, false);
    fermTableProxy->setSourceModel(fermTableModel);
-   fermentableTable->setItemDelegate(new FermentableItemDelegate(fermentableTable));
+   fermentableTable->setItemDelegate(new FermentableItemDelegate(fermentableTable, *fermTableModel));
    fermentableTable->setModel(fermTableProxy);
    // Make the fermentable table show grain percentages in row headers.
    fermTableModel->setDisplayPercentages(true);
@@ -591,7 +645,7 @@ void MainWindow::setupTables()
    hopTableModel = new HopTableModel(hopTable);
    hopTableProxy = new HopSortFilterProxyModel(hopTable, false);
    hopTableProxy->setSourceModel(hopTableModel);
-   hopTable->setItemDelegate(new HopItemDelegate(hopTable));
+   hopTable->setItemDelegate(new HopItemDelegate(hopTable, *hopTableModel));
    hopTable->setModel(hopTableProxy);
    // Hop table show IBUs in row headers.
    hopTableModel->setShowIBUs(true);
@@ -604,7 +658,7 @@ void MainWindow::setupTables()
    miscTableModel = new MiscTableModel(miscTable);
    miscTableProxy = new MiscSortFilterProxyModel(miscTable,false);
    miscTableProxy->setSourceModel(miscTableModel);
-   miscTable->setItemDelegate(new MiscItemDelegate(miscTable));
+   miscTable->setItemDelegate(new MiscItemDelegate(miscTable, *miscTableModel));
    miscTable->setModel(miscTableProxy);
    connect( miscTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
        if (idx.column() == 0)
@@ -632,16 +686,16 @@ void MainWindow::setupTables()
    });
 
    // Enable sorting in the main tables.
-   fermentableTable->horizontalHeader()->setSortIndicator( FERMAMOUNTCOL, Qt::DescendingOrder );
+   fermentableTable->horizontalHeader()->setSortIndicator(static_cast<int>(FermentableTableModel::ColumnIndex::Amount), Qt::DescendingOrder );
    fermentableTable->setSortingEnabled(true);
    fermTableProxy->setDynamicSortFilter(true);
-   hopTable->horizontalHeader()->setSortIndicator( HOPTIMECOL, Qt::DescendingOrder );
+   hopTable->horizontalHeader()->setSortIndicator(static_cast<int>(HopTableModel::ColumnIndex::Time), Qt::DescendingOrder );
    hopTable->setSortingEnabled(true);
    hopTableProxy->setDynamicSortFilter(true);
-   miscTable->horizontalHeader()->setSortIndicator( MISCUSECOL, Qt::DescendingOrder );
+   miscTable->horizontalHeader()->setSortIndicator(static_cast<int>(MiscTableModel::ColumnIndex::Use), Qt::DescendingOrder );
    miscTable->setSortingEnabled(true);
    miscTableProxy->setDynamicSortFilter(true);
-   yeastTable->horizontalHeader()->setSortIndicator( YEASTNAMECOL, Qt::DescendingOrder );
+   yeastTable->horizontalHeader()->setSortIndicator(static_cast<int>(YeastTableModel::ColumnIndex::Name), Qt::DescendingOrder );
    yeastTable->setSortingEnabled(true);
    yeastTableProxy->setDynamicSortFilter(true);
 }
@@ -843,20 +897,20 @@ void MainWindow::setupActivate() {
 // lineEdits with either an editingFinished() or a textModified() should go in
 // here
 void MainWindow::setupTextEdit() {
-   connect(this->lineEdit_name,       &QLineEdit::editingFinished, this, &MainWindow::updateRecipeName);
-   connect(this->lineEdit_batchSize,  &BtLineEdit::textModified,   this, &MainWindow::updateRecipeBatchSize);
-   connect(this->lineEdit_boilSize,   &BtLineEdit::textModified,   this, &MainWindow::updateRecipeBoilSize);
-   connect(this->lineEdit_boilTime,   &BtLineEdit::textModified,   this, &MainWindow::updateRecipeBoilTime);
-   connect(this->lineEdit_efficiency, &BtLineEdit::textModified,   this, &MainWindow::updateRecipeEfficiency);
+   connect(this->lineEdit_name      , &QLineEdit::editingFinished,  this, &MainWindow::updateRecipeName);
+   connect(this->lineEdit_batchSize , &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBatchSize);
+   connect(this->lineEdit_boilSize  , &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBoilSize);
+   connect(this->lineEdit_boilTime  , &SmartLineEdit::textModified, this, &MainWindow::updateRecipeBoilTime);
+   connect(this->lineEdit_efficiency, &SmartLineEdit::textModified, this, &MainWindow::updateRecipeEfficiency);
    return;
 }
 
-// anything using a BtLabel::changedSystemOfMeasurementOrScale signal should go in here
+// anything using a SmartLabel::changedSystemOfMeasurementOrScale signal should go in here
 void MainWindow::setupLabels() {
    // These are the sliders. I need to consider these harder, but small steps
-   connect(this->oGLabel,       &BtLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
-   connect(this->fGLabel,       &BtLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
-   connect(this->colorSRMLabel, &BtLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
+   connect(this->oGLabel,       &SmartLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
+   connect(this->fGLabel,       &SmartLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
+   connect(this->colorSRMLabel, &SmartLabel::changedSystemOfMeasurementOrScale, this, &MainWindow::redisplayLabel);
    return;
 }
 
@@ -958,25 +1012,25 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Fermentable * ferm = active->getItem<Fermentable>(index);
                if (ferm) {
-                  fermEditor->setFermentable(ferm);
+                  fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(ferm));
                   fermEditor->show();
                }
             }
             break;
          case BtTreeItem::Type::HOP:
             {
-               Hop* h = active->getItem<Hop>(index);
-               if (h) {
-                  hopEditor->setHop(h);
+               Hop* hop = active->getItem<Hop>(index);
+               if (hop) {
+                  hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(hop));
                   hopEditor->show();
                }
             }
             break;
          case BtTreeItem::Type::MISC:
             {
-               Misc * m = active->getItem<Misc>(index);
-               if (m) {
-                  miscEditor->setMisc(m);
+               Misc * misc = active->getItem<Misc>(index);
+               if (misc) {
+                  miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(misc));
                   miscEditor->show();
                }
             }
@@ -992,9 +1046,9 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             break;
          case BtTreeItem::Type::YEAST:
             {
-               Yeast * y = active->getItem<Yeast>(index);
-               if (y) {
-                  yeastEditor->setYeast(y);
+               Yeast * yeast = active->getItem<Yeast>(index);
+               if (yeast) {
+                  yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(yeast));
                   yeastEditor->show();
                }
             }
@@ -1094,8 +1148,7 @@ void MainWindow::setBrewNote(BrewNote* bNote)
    QString tabname;
    BrewNoteWidget* ni = findBrewNoteWidget(bNote);
 
-   if ( ni )
-   {
+   if ( ni ) {
       tabWidget_recipeView->setCurrentWidget(ni);
       return;
    }
@@ -1103,8 +1156,9 @@ void MainWindow::setBrewNote(BrewNote* bNote)
    ni = new BrewNoteWidget(tabWidget_recipeView);
    ni->setBrewNote(bNote);
 
-   tabWidget_recipeView->addTab(ni,bNote->brewDate_short());
-   tabWidget_recipeView->setCurrentWidget(ni);
+   this->tabWidget_recipeView->addTab(ni,bNote->brewDate_short());
+   this->tabWidget_recipeView->setCurrentWidget(ni);
+   return;
 }
 
 void MainWindow::setAncestor()
@@ -1208,16 +1262,16 @@ void MainWindow::setRecipe(Recipe* recipe) {
 }
 
 // When a recipe is locked, many fields need to be disabled.
-void MainWindow::lockRecipe(int state)
-{
-   if ( this->recipeObs == nullptr )
+void MainWindow::lockRecipe(int state) {
+   if (!this->recipeObs) {
       return;
+   }
 
    // If I am locking a recipe (lock == true ), I want to disable fields
    // (enable == false). If I am unlocking (lock == false), I want to enable
    // fields (enable == true). This just makes that easy
-   bool lockIt = state == Qt::Checked;
-   bool enabled = ! lockIt;
+   bool const lockIt = state == Qt::Checked;
+   bool const enabled = ! lockIt;
 
    // Lock/unlock the recipe, then disable/enable the fields. I am leaving the
    // name field as editable. I may regret that, but if you are defining an
@@ -1262,13 +1316,13 @@ void MainWindow::lockRecipe(int state)
    pushButton_removeYeast->setEnabled(enabled);
    pushButton_editYeast->setEnabled(enabled);
 
-   fermDialog->pushButton_addToRecipe->setEnabled(enabled);
-   hopDialog->pushButton_addToRecipe->setEnabled(enabled);
-   miscDialog->pushButton_addToRecipe->setEnabled(enabled);
-   yeastDialog->pushButton_addToRecipe->setEnabled(enabled);
+   fermDialog ->setEnableAddToRecipe(enabled);
+   hopDialog  ->setEnableAddToRecipe(enabled);
+   miscDialog ->setEnableAddToRecipe(enabled);
+   yeastDialog->setEnableAddToRecipe(enabled);
    // mashes still need dealing with
    //
-
+   return;
 }
 
 void MainWindow::changed(QMetaProperty prop, QVariant val) {
@@ -1287,60 +1341,6 @@ void MainWindow::changed(QMetaProperty prop, QVariant val) {
    return;
 }
 
-void MainWindow::updateDensitySlider(BtStringConst const & propertyNameMin,
-                                     BtStringConst const & propertyNameMax,
-                                     BtStringConst const & propertyNameCurrent,
-                                     RangedSlider* slider,
-                                     double max) {
-   Measurement::UnitSystem const & displayUnitSystem =
-      Measurement::getUnitSystemForField(*propertyNameCurrent,
-                                         *PersistentSettings::Sections::tab_recipe,
-                                         Measurement::PhysicalQuantity::Density);
-   slider->setPreferredRange(Measurement::displayRange(recStyle,
-                                                       this->tab_recipe,
-                                                       propertyNameMin,
-                                                       propertyNameMax,
-                                                       &Measurement::Units::sp_grav));
-   slider->setRange(Measurement::displayRange(this->tab_recipe,
-                                              propertyNameCurrent,
-                                              1.000,
-                                              max,
-                                              Measurement::Units::sp_grav));
-
-   if (displayUnitSystem == Measurement::UnitSystems::density_Plato) {
-      slider->setPrecision(1);
-      slider->setTickMarks(2,5);
-   } else {
-      slider->setPrecision(3);
-      slider->setTickMarks(0.010, 2);
-   }
-   return;
-}
-
-void MainWindow::updateColorSlider(BtStringConst const & propertyNameMin,
-                                   BtStringConst const & propertyNameMax,
-                                   BtStringConst const & propertyNameCurrent,
-                                   RangedSlider * slider) {
-   Measurement::UnitSystem const & displayUnitSystem =
-      Measurement::getUnitSystemForField(*propertyNameCurrent,
-                                         *PersistentSettings::Sections::tab_recipe,
-                                         Measurement::PhysicalQuantity::Color);
-
-   slider->setPreferredRange(Measurement::displayRange(recStyle,
-                                                       this->tab_recipe,
-                                                       propertyNameMin,
-                                                       propertyNameMax,
-                                                       &Measurement::Units::srm));
-   slider->setRange(Measurement::displayRange(this->tab_recipe,
-                                              propertyNameCurrent,
-                                              1,
-                                              44,
-                                              Measurement::Units::srm));
-   slider->setTickMarks(displayUnitSystem == Measurement::UnitSystems::color_StandardReferenceMethod ? 10 : 40, 2);
-
-   return;
-}
-
 void MainWindow::showChanges(QMetaProperty* prop) {
    if (recipeObs == nullptr) {
       return;
@@ -1354,16 +1354,16 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    }
 
    // May St. Stevens preserve me
-   lineEdit_name      ->setText(recipeObs->name          ());
-   lineEdit_batchSize ->setText(recipeObs->batchSize_l   ());
-   lineEdit_boilSize  ->setText(recipeObs->boilSize_l    ());
-   lineEdit_efficiency->setText(recipeObs->efficiency_pct());
-   lineEdit_boilTime  ->setText(recipeObs->boilTime_min  ());
-   lineEdit_name      ->setCursorPosition(0);
-   lineEdit_batchSize ->setCursorPosition(0);
-   lineEdit_boilSize  ->setCursorPosition(0);
-   lineEdit_efficiency->setCursorPosition(0);
-   lineEdit_boilTime  ->setCursorPosition(0);
+   this->lineEdit_name      ->setText  (this->recipeObs->name          ());
+   this->lineEdit_batchSize ->setAmount(this->recipeObs->batchSize_l   ());
+   this->lineEdit_boilSize  ->setAmount(this->recipeObs->boilSize_l    ());
+   this->lineEdit_efficiency->setAmount(this->recipeObs->efficiency_pct());
+   this->lineEdit_boilTime  ->setAmount(this->recipeObs->boilTime_min  ());
+   this->lineEdit_name      ->setCursorPosition(0);
+   this->lineEdit_batchSize ->setCursorPosition(0);
+   this->lineEdit_boilSize  ->setCursorPosition(0);
+   this->lineEdit_efficiency->setCursorPosition(0);
+   this->lineEdit_boilTime  ->setCursorPosition(0);
 /*
    lineEdit_calcBatchSize->setText(recipeObs);
    lineEdit_calcBoilSize->setText(recipeObs);
@@ -1385,31 +1385,42 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    else
       lineEdit_calcBoilSize->setStyleSheet(highSS);
 */
-   lineEdit_boilSg->setText(recipeObs);
+   this->lineEdit_boilSg->setAmount(this->recipeObs->boilGrav());
 
-   updateDensitySlider(PropertyNames::Style::ogMin, PropertyNames::Style::ogMax, PropertyNames::Recipe::og, styleRangeWidget_og, 1.120);
-   styleRangeWidget_og->setValue(Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::og, &Measurement::Units::sp_grav));
+   Style const * style = this->recipeObs->style();
+   if (style) {
+      updateDensitySlider(*this->styleRangeWidget_og, *this->oGLabel, style->ogMin(), style->ogMax(), 1.120);
+   }
+   this->styleRangeWidget_og->setValue(this->oGLabel->getAmountToDisplay(recipeObs->og()));
 
-   updateDensitySlider(PropertyNames::Style::fgMin, PropertyNames::Style::fgMax, PropertyNames::Recipe::fg, styleRangeWidget_fg, 1.03);
-   styleRangeWidget_fg->setValue(Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::fg, &Measurement::Units::sp_grav));
+   if (style) {
+      updateDensitySlider(*this->styleRangeWidget_fg, *this->fGLabel, style->fgMin(), style->fgMax(), 1.030);
+   }
+   this->styleRangeWidget_fg->setValue(this->fGLabel->getAmountToDisplay(recipeObs->fg()));
 
-   styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
-   styleRangeWidget_ibu->setValue(recipeObs->IBU());
+   this->styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
+   this->styleRangeWidget_ibu->setValue(recipeObs->IBU());
 
-   rangeWidget_batchsize->setRange(0, Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::batchSize_l, &Measurement::Units::liters));
-   rangeWidget_batchsize->setPreferredRange(0, Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::finalVolume_l, &Measurement::Units::liters));
-   rangeWidget_batchsize->setValue(Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::finalVolume_l, &Measurement::Units::liters));
+   this->rangeWidget_batchSize->setRange         (0,
+                                                  this->label_batchSize->getAmountToDisplay(this->recipeObs->batchSize_l()));
+   this->rangeWidget_batchSize->setPreferredRange(0,
+                                                  this->label_batchSize->getAmountToDisplay(this->recipeObs->finalVolume_l()));
+   this->rangeWidget_batchSize->setValue         (this->label_batchSize->getAmountToDisplay(this->recipeObs->finalVolume_l()));
 
-   rangeWidget_boilsize->setRange(0, Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::boilSize_l, &Measurement::Units::liters));
-   rangeWidget_boilsize->setPreferredRange(0, Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::boilVolume_l, &Measurement::Units::liters));
-   rangeWidget_boilsize->setValue(Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::boilVolume_l, &Measurement::Units::liters));
+   this->rangeWidget_boilsize->setRange         (0,
+                                                 this->label_boilSize->getAmountToDisplay(this->recipeObs->boilSize_l()));
+   this->rangeWidget_boilsize->setPreferredRange(0,
+                                                 this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
+   this->rangeWidget_boilsize->setValue         (this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
 
    /* Colors need the same basic treatment as gravity */
-   updateColorSlider(PropertyNames::Style::colorMin_srm,
-                     PropertyNames::Style::colorMax_srm,
-                     PropertyNames::Recipe::color_srm,
-                     styleRangeWidget_srm);
-   styleRangeWidget_srm->setValue(Measurement::amountDisplay(recipeObs, tab_recipe, PropertyNames::Recipe::color_srm, &Measurement::Units::srm));
+   if (style) {
+      updateColorSlider(*this->styleRangeWidget_srm,
+                        *this->colorSRMLabel,
+                        style->colorMin_srm(),
+                        style->colorMax_srm());
+   }
+   this->styleRangeWidget_srm->setValue(this->colorSRMLabel->getAmountToDisplay(this->recipeObs->color_srm()));
 
    // In some, incomplete, recipes, OG is approximately 1.000, which then makes GU close to 0 and thus IBU/GU insanely
    // large.  Besides being meaningless, such a large number takes up a lot of space.  So, where gravity units are
@@ -1444,7 +1455,10 @@ void MainWindow::updateRecipeName() {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs, PropertyNames::NamedEntity::name, lineEdit_name->text(), tr("Change Recipe Name"));
+   this->doOrRedoUpdate(*this->recipeObs,
+                        TYPE_INFO(Recipe, NamedEntity, name),
+                        lineEdit_name->text(),
+                        tr("Change Recipe Name"));
    return;
 }
 
@@ -1458,25 +1472,14 @@ void MainWindow::displayRangesEtcForCurrentRecipeStyle() {
       return;
    }
 
-   styleRangeWidget_og->setPreferredRange(Measurement::displayRange(style,
-                                                                    this->tab_recipe,
-                                                                    PropertyNames::Style::ogMin,
-                                                                    PropertyNames::Style::ogMax,
-                                                                    &Measurement::Units::sp_grav));
-   styleRangeWidget_fg->setPreferredRange(Measurement::displayRange(style,
-                                                                    this->tab_recipe,
-                                                                    PropertyNames::Style::fgMin,
-                                                                    PropertyNames::Style::fgMax,
-                                                                    &Measurement::Units::sp_grav));
+   this->styleRangeWidget_og->setPreferredRange(this->oGLabel->getRangeToDisplay(style->ogMin(), style->ogMax()));
 
-   styleRangeWidget_abv->setPreferredRange(style->abvMin_pct(), style->abvMax_pct());
-   styleRangeWidget_ibu->setPreferredRange(style->ibuMin(), style->ibuMax());
-   styleRangeWidget_srm->setPreferredRange(Measurement::displayRange(style,
-                                                                     this->tab_recipe,
-                                                                     PropertyNames::Style::colorMin_srm,
-                                                                     PropertyNames::Style::colorMax_srm,
-                                                                     &Measurement::Units::srm));
+   this->styleRangeWidget_fg->setPreferredRange(this->fGLabel->getRangeToDisplay(style->ogMin(), style->ogMax()));
 
+   this->styleRangeWidget_abv->setPreferredRange(style->abvMin_pct(), style->abvMax_pct());
+   this->styleRangeWidget_ibu->setPreferredRange(style->ibuMin(), style->ibuMax());
+   this->styleRangeWidget_srm->setPreferredRange(this->colorSRMLabel->getRangeToDisplay(style->colorMin_srm(),
+                                                                                        style->colorMax_srm()));
    this->styleButton->setStyle(style);
 
    return;
@@ -1551,8 +1554,8 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
    // Keep the mash tun weight and specific heat up to date.
    Mash * m = recipeObs->mash();
    if (m) {
-      new SimpleUndoableUpdate(*m, PropertyNames::Mash::tunWeight_kg, kit->tunWeight_kg(), tr("Change Tun Weight"), equipmentUpdate);
-      new SimpleUndoableUpdate(*m, PropertyNames::Mash::tunSpecificHeat_calGC, kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
+      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunWeight_kg         ), kit->tunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
+      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunSpecificHeat_calGC), kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
    }
 
    if (QMessageBox::question(this,
@@ -1566,9 +1569,9 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
       // won't ever be seen by the user, but there's no harm in setting them.
       // (The previous call here to mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
       // setTunSpecificHeat_calGC() on the mash.)
-      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::batchSize_l, kit->batchSize_l(), tr("Change Batch Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::boilSize_l, kit->boilSize_l(), tr("Change Boil Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, PropertyNames::Recipe::boilTime_min, kit->boilTime_min(), tr("Change Boil Time"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->batchSize_l() , tr("Change Batch Size"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->boilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), kit->boilTime_min(), tr("Change Boil Time") , equipmentUpdate);
    }
 
    // This will do the equipment update and any related updates - see above
@@ -1674,7 +1677,7 @@ void MainWindow::updateRecipeBatchSize() {
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
-                        PropertyNames::Recipe::batchSize_l,
+                        TYPE_INFO(Recipe, batchSize_l),
                         lineEdit_batchSize->toCanonical().quantity(),
                         tr("Change Batch Size"));
 }
@@ -1685,7 +1688,7 @@ void MainWindow::updateRecipeBoilSize() {
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
-                        PropertyNames::Recipe::boilSize_l,
+                        TYPE_INFO(Recipe, boilSize_l),
                         lineEdit_boilSize->toCanonical().quantity(),
                         tr("Change Boil Size"));
 }
@@ -1702,28 +1705,28 @@ void MainWindow::updateRecipeBoilTime() {
    // recipeObs->boilSize_l
    // NOTE: This works because kit is the recipe's equipment, not the generic equipment in the recipe drop down.
    if (kit) {
-      this->doOrRedoUpdate(*kit, PropertyNames::Equipment::boilTime_min, boilTime, tr("Change Boil Time"));
+      this->doOrRedoUpdate(*kit, TYPE_INFO(Equipment, boilTime_min), boilTime, tr("Change Boil Time"));
    } else {
-      this->doOrRedoUpdate(*this->recipeObs, PropertyNames::Recipe::boilTime_min, boilTime, tr("Change Boil Time"));
+      this->doOrRedoUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), boilTime, tr("Change Boil Time"));
    }
 
    return;
 }
 
 void MainWindow::updateRecipeEfficiency() {
-   qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getValueAs<double>();
+   qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getNonOptValue<double>();
    if (!this->recipeObs) {
       return;
    }
 
    this->doOrRedoUpdate(*this->recipeObs,
-                        PropertyNames::Recipe::efficiency_pct,
-                        lineEdit_efficiency->getValueAs<unsigned int>(),
+                        TYPE_INFO(Recipe, efficiency_pct),
+                        lineEdit_efficiency->getNonOptValue<unsigned int>(),
                         tr("Change Recipe Efficiency"));
    return;
 }
 
-void MainWindow::addFermentableToRecipe(std::shared_ptr<Fermentable> ferm) {
+void MainWindow::addToRecipe(std::shared_ptr<Fermentable> ferm) {
    Q_ASSERT(ferm);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1737,7 +1740,7 @@ void MainWindow::addFermentableToRecipe(std::shared_ptr<Fermentable> ferm) {
    return;
 }
 
-void MainWindow::addHopToRecipe(std::shared_ptr<Hop> hop) {
+void MainWindow::addToRecipe(std::shared_ptr<Hop> hop) {
    Q_ASSERT(hop);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1750,7 +1753,7 @@ void MainWindow::addHopToRecipe(std::shared_ptr<Hop> hop) {
    // triggered the necessary updates to hopTableModel.
 }
 
-void MainWindow::addMiscToRecipe(std::shared_ptr<Misc> misc) {
+void MainWindow::addToRecipe(std::shared_ptr<Misc> misc) {
    Q_ASSERT(misc);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1764,7 +1767,7 @@ void MainWindow::addMiscToRecipe(std::shared_ptr<Misc> misc) {
    return;
 }
 
-void MainWindow::addYeastToRecipe(std::shared_ptr<Yeast> yeast) {
+void MainWindow::addToRecipe(std::shared_ptr<Yeast> yeast) {
    Q_ASSERT(yeast);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
@@ -1837,20 +1840,17 @@ void MainWindow::doOrRedoUpdate(QUndoCommand * update) {
    return;
 }
 
-void MainWindow::doOrRedoUpdate(QObject & updatee,
-                                BtStringConst const & propertyName,
+void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
+                                TypeInfo const & typeInfo,
                                 QVariant newValue,
                                 QString const & description,
                                 [[maybe_unused]] QUndoCommand * parent) {
-///   qDebug() << Q_FUNC_INFO << "Updating" << propertyName << "on" << updatee.metaObject()->className();
-///   qDebug() << Q_FUNC_INFO << "this=" << static_cast<void *>(this);
-   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyName, newValue, description));
+   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
    return;
 }
 
 // For undo/redo, we use Qt's Undo framework
-void MainWindow::editUndo()
-{
+void MainWindow::editUndo() {
    Q_ASSERT(this->undoStack != 0);
    if ( !this->undoStack->canUndo() ) {
       qDebug() << "Undo called but nothing to undo";
@@ -1862,8 +1862,7 @@ void MainWindow::editUndo()
    return;
 }
 
-void MainWindow::editRedo()
-{
+void MainWindow::editRedo() {
    Q_ASSERT(this->undoStack != 0);
    if ( !this->undoStack->canRedo() ) {
       qDebug() << "Redo called but nothing to redo";
@@ -2017,40 +2016,45 @@ void MainWindow::removeSelectedFermentable() {
 
 void MainWindow::editSelectedFermentable() {
    Fermentable* f = selectedFermentable();
-   if( f == nullptr )
+   if (!f) {
       return;
+   }
 
-   fermEditor->setFermentable(f);
+   fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(f));
    fermEditor->show();
+   return;
 }
 
 void MainWindow::editSelectedMisc() {
    Misc* m = selectedMisc();
-   if( m == nullptr )
+   if (!m) {
       return;
+   }
 
-   miscEditor->setMisc(m);
+   miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(m));
    miscEditor->show();
 }
 
-void MainWindow::editSelectedHop()
-{
+void MainWindow::editSelectedHop() {
    Hop* h = selectedHop();
-   if( h == nullptr )
+   if (!h) {
       return;
+   }
 
-   hopEditor->setHop(h);
+   hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
    hopEditor->show();
+   return;
 }
 
-void MainWindow::editSelectedYeast()
-{
+void MainWindow::editSelectedYeast() {
    Yeast* y = selectedYeast();
-   if( y == nullptr )
+   if (!y) {
       return;
+   }
 
-   yeastEditor->setYeast(y);
+   yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(y));
    yeastEditor->show();
+   return;
 }
 
 void MainWindow::removeSelectedHop() {
@@ -2402,8 +2406,8 @@ void MainWindow::newBrewNote() {
       bIndex = treeView_recipe->findElement(bNote.get());
       if ( bIndex.isValid() )
          setTreeSelection(bIndex);
+      }
    }
-}
 
 void MainWindow::reBrewNote() {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
