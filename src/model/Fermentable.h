@@ -505,8 +505,6 @@ public:
    bool    isExtract             () const;
    bool    isSugar               () const;
 
-   virtual double inventory() const;
-
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                     (Type                      const   val);
    void setAmount                   (double                    const   val);
@@ -557,9 +555,8 @@ public:
    void setFanWithUnits       (std::optional<MassOrVolumeConcentrationAmt> const   val);
    void setBetaGlucanWithUnits(std::optional<MassOrVolumeConcentrationAmt> const   val);
 
-   virtual void setInventoryAmount(double amount);
-
-   void save();
+   // Insert boiler-plate declarations for inventory
+   INVENTORY_COMMON_HEADER_DEFNS
 
    virtual Recipe * getOwningRecipe();
 

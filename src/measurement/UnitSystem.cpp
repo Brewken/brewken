@@ -214,23 +214,23 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
       // match to a unit in another UnitSystem for the same PhysicalQuantity.  If there are no matches that way, it will
       // return nullptr;
       unitToUse = Unit::getUnit(unitName, *this, true);
-      if (unitToUse) {
-         qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "interpreted as" << unitToUse->name;
-      } else {
-         qDebug() <<
-            Q_FUNC_INFO << this->uniqueName << ":" << unitName << "not recognised for" << this->pimpl->physicalQuantity;
-      }
+//      if (unitToUse) {
+//         qDebug() << Q_FUNC_INFO << this->uniqueName << ":" << unitName << "interpreted as" << unitToUse->name;
+//      } else {
+//         qDebug() <<
+//            Q_FUNC_INFO << this->uniqueName << ":" << unitName << "not recognised for" << this->pimpl->physicalQuantity;
+//      }
    }
 
    if (!unitToUse) {
-      qDebug() << Q_FUNC_INFO << "Defaulting to" << defUnit;
+//      qDebug() << Q_FUNC_INFO << "Defaulting to" << defUnit;
       unitToUse = &defUnit;
    }
 
    Measurement::Amount siAmount = unitToUse->toCanonical(amt);
-   qDebug() <<
-      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" <<
-      siAmount.quantity() << "in" << siAmount.unit()->name;
+//   qDebug() <<
+//      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" <<
+//      siAmount.quantity() << "in" << siAmount.unit()->name;
 
    return siAmount;
 }

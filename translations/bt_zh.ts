@@ -1312,44 +1312,8 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Fermentable Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Add After Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Change Fermentable Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Is Mashed</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Volume</source>
@@ -1576,35 +1540,35 @@ Log file may contain more details.</source>
     <name>HopItemDelegate</name>
     <message>
         <source>Boil</source>
-        <translation>熬Boil</translation>
+        <translation type="vanished">熬Boil</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>干Dry Hop</translation>
+        <translation type="vanished">干Dry Hop</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>糖化Mash</translation>
+        <translation type="vanished">糖化Mash</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>第一次麦芽汁First Wort</translation>
+        <translation type="vanished">第一次麦芽汁First Wort</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation>香气Aroma</translation>
+        <translation type="vanished">香气Aroma</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>叶Leaf</translation>
+        <translation type="vanished">叶Leaf</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>丸Pellet</translation>
+        <translation type="vanished">丸Pellet</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>插头Plug</translation>
+        <translation type="vanished">插头Plug</translation>
     </message>
 </context>
 <context>
@@ -1635,34 +1599,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Time</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2388,11 +2324,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">重量</translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">重量</translation>
     </message>
 </context>
 <context>
@@ -2426,31 +2358,18 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Misc Name</source>
+        <source>Volume</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Misc Type</source>
-        <translation type="unfinished"></translation>
+        <source>Weight</source>
+        <translation type="unfinished">重量</translation>
     </message>
+</context>
+<context>
+    <name>NE</name>
     <message>
-        <source>Change Misc Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount Type</source>
+        <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3447,15 +3366,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">晚Late</translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">晚Late</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">捣碎Mashed</translation>
+        <translation type="obsolete">捣碎Mashed</translation>
     </message>
     <message>
         <source>Weight</source>

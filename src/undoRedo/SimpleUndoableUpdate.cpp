@@ -62,11 +62,11 @@ bool SimpleUndoableUpdate::undoOrRedo(bool const isUndo) {
    bool success = this->updatee.setProperty(*this->typeInfo.propertyName, isUndo ? this->oldValue : this->newValue);
 
    // It's a coding error if we tried to update a non-existent property
-   Q_ASSERT(success && "Trying to update non-existent property");
    if (!success) {
       qCritical() <<
-         Q_FUNC_INFO << "Could not" << (isUndo ? "undo" : "redo") << " update of " <<
+         Q_FUNC_INFO << "Could not" << (isUndo ? "undo" : "(re)do") << " update of " <<
          this->updatee.metaObject()->className() << "property" << this->typeInfo.propertyName;
    }
+   Q_ASSERT(success && "Trying to update non-existent property");
    return success;
 }

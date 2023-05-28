@@ -140,7 +140,6 @@ public:
    void setType( Type t);
    void setForm( Form f);
    void setAmount( double var);
-   virtual void setInventoryAmount(double var);
    void setInventoryQuanta(int var);
    void setAmountIsWeight( bool var);
    void setLaboratory( const QString& var);
@@ -163,7 +162,6 @@ public:
    const QString formString() const;
    const QString formStringTr() const;
    double amount() const;
-   virtual double inventory() const;
    bool amountIsWeight() const;
    QString laboratory() const;
    QString productID() const;
@@ -178,6 +176,9 @@ public:
    int timesCultured() const;
    int maxReuse() const;
    bool addToSecondary() const;
+
+   // Insert boiler-plate declarations for inventory
+   INVENTORY_COMMON_HEADER_DEFNS
 
    virtual Recipe * getOwningRecipe();
 

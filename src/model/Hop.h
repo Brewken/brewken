@@ -260,8 +260,6 @@ public:
    std::optional<double      > polyphenols_pct      () const;
    std::optional<double      > xanthohumol_pct      () const;
 
-   virtual double inventory() const;
-
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setAlpha_pct            (double  const   val);
    void setAmount_kg            (double  const   val);
@@ -293,7 +291,8 @@ public:
    void setPolyphenols_pct      (std::optional<double      >  const   val);
    void setXanthohumol_pct      (std::optional<double      >  const   val);
 
-   virtual void setInventoryAmount(double const val);
+   // Insert boiler-plate declarations for inventory
+   INVENTORY_COMMON_HEADER_DEFNS
 
    virtual Recipe * getOwningRecipe();
 

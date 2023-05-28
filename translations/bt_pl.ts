@@ -1304,44 +1304,8 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Fermentable Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Add After Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Rodzaj kwoty</translation>
-    </message>
-    <message>
-        <source>Change Fermentable Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Is Mashed</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Volume</source>
@@ -1580,35 +1544,35 @@ Log file may contain more details.</source>
     <name>HopItemDelegate</name>
     <message>
         <source>Boil</source>
-        <translation>Goryczka</translation>
+        <translation type="vanished">Goryczka</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>Chmielenie na zimno</translation>
+        <translation type="vanished">Chmielenie na zimno</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Do zacierania</translation>
+        <translation type="vanished">Do zacierania</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>Chmielenie przedniej brzeczki</translation>
+        <translation type="vanished">Chmielenie przedniej brzeczki</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation>Aromat</translation>
+        <translation type="vanished">Aromat</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Szyszka</translation>
+        <translation type="vanished">Szyszka</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Granulat</translation>
+        <translation type="vanished">Granulat</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Tabletka</translation>
+        <translation type="vanished">Tabletka</translation>
     </message>
 </context>
 <context>
@@ -1640,34 +1604,6 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Magazyn</translation>
-    </message>
-    <message>
-        <source>Change Hop Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2388,11 +2324,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Waga</translation>
+        <translation type="obsolete">Waga</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objętość</translation>
+        <translation type="obsolete">Objętość</translation>
     </message>
 </context>
 <context>
@@ -2426,31 +2362,18 @@ Log file may contain more details.</source>
         <translation>Magazyn</translation>
     </message>
     <message>
-        <source>Change Misc Name</source>
-        <translation type="unfinished"></translation>
+        <source>Volume</source>
+        <translation type="unfinished">Objętość</translation>
     </message>
     <message>
-        <source>Change Misc Type</source>
-        <translation type="unfinished"></translation>
+        <source>Weight</source>
+        <translation type="unfinished">Waga</translation>
     </message>
+</context>
+<context>
+    <name>NE</name>
     <message>
-        <source>Change Misc Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount Type</source>
+        <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3447,15 +3370,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Dodawany późno</translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Dodawany późno</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Zacierany</translation>
+        <translation type="obsolete">Zacierany</translation>
     </message>
     <message>
         <source>Weight</source>

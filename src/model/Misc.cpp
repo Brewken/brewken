@@ -189,15 +189,10 @@ void Misc::setAmountWithUnits(MassOrVolumeAmt const   val) {
 }
 
 //========================OTHER METHODS=========================================
-double     Misc::inventory() const {
-   return InventoryUtils::getAmount(*this);
-}
-
-void Misc::setInventoryAmount(double var) {
-   InventoryUtils::setAmount(*this, var);
-   return;
-}
 
 Recipe * Misc::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
+
+// Insert the boiler-plate stuff for inventory
+INVENTORY_COMMON_CODE(Misc)

@@ -22,6 +22,8 @@
 #include "utils/TypeLookup.h"
 
 void Optional::removeOptionalWrapper(QVariant & propertyValue, TypeInfo const & typeInfo, bool * hasValue) {
+   // It's a coding error to call this for a non-optional type
+   Q_ASSERT(typeInfo.isOptional());
 
    // Most common field type is double, so check it first
    // QString is also pretty common, but it's never optional because an empty string suffices for "no data"
@@ -30,9 +32,16 @@ void Optional::removeOptionalWrapper(QVariant & propertyValue, TypeInfo const & 
    if (typeInfo.typeIndex == typeid(unsigned int)) { removeOptionalWrapper<unsigned int>(propertyValue, hasValue); return; }
    if (typeInfo.typeIndex == typeid(bool        )) { removeOptionalWrapper<bool        >(propertyValue, hasValue); return; }
 
+   // If the native type is an enum, then the QVariant should actually contain an int
+   if (typeInfo.isEnum() && propertyValue.canConvert<std::optional<int>>()) {
+      removeOptionalWrapper<int>(propertyValue, hasValue);
+      return;
+   }
+
    // It's a coding error if we reached here
    qCritical().noquote() <<
-      Q_FUNC_INFO << "Unexpected type" << typeInfo << ".  Call stack:" << Logging::getStackTrace();
+      Q_FUNC_INFO << "Unexpected type" << typeInfo << ", propertyValue" << propertyValue << ".  Call stack:" <<
+      Logging::getStackTrace();
    Q_ASSERT(false);
 
    return;

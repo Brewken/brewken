@@ -26,6 +26,9 @@ TypeLookup const NamedEntityWithInventory::typeLookup {
    {
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventory,   NamedEntityWithInventory::m_inventory   , Measurement::PqEitherMassOrVolume      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntityWithInventory::inventoryId, NamedEntityWithInventory::m_inventory_id),
+
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::NamedEntityWithInventory::inventoryWithUnits, NamedEntityWithInventory, inventoryWithUnits, Measurement::PqEitherMassOrVolume             ),
+
    },
    // Parent class lookup
    &NamedEntity::typeLookup

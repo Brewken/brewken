@@ -191,14 +191,6 @@ public:
       // FermentableTableModel::data, etc) will have done all the work for us (including handling optional and forced
       // units etc) and provided a suitable QString in the QVariant.
       QLineEdit * line = qobject_cast<QLineEdit *>(editor);
-///      if (typeInfo.isOptional()) {
-///         bool hasValue = false;
-///         Optional::removeOptionalWrapper(modelData, typeInfo, &hasValue);
-///         if (!hasValue) {
-///            line->setText("");
-///            return;
-///         }
-///      }
       line->setText(modelData.toString());
       return;
 
@@ -282,6 +274,28 @@ public:
    // Insert all the usual boilerplate to prevent copy/assignment/move
    NO_COPY_DECLARATIONS(ItemDelegate)
 };
+
+/**
+ * \brief Derived classes should include this in their header file, right after Q_OBJECT
+ *
+ *        Note:
+ *          - As elsewhere, we have to be careful about comment formats in macro definitions
+ *          - We cannot put the whole class declaration in the macro as (I think) it confuses the Qt MOC
+ */
+#define ITEM_DELEGATE_COMMON_DECL(NeName) \
+   public:                                                                                                                    \
+      NeName##ItemDelegate(QTableView * parent, NeName##TableModel & tableModel);                                             \
+      virtual ~NeName##ItemDelegate();                                                                                        \
+                                                                                                                              \
+      /** \brief Reimplemented from QItemDelegate. */                                                                         \
+      virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;     \
+      /** \brief Reimplemented from QItemDelegate. */                                                                         \
+      virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;                                            \
+      /** \brief Reimplemented from QItemDelegate. */                                                                         \
+      virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;                  \
+      /** \brief Reimplemented from QItemDelegate. */                                                                         \
+      virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const; \
+
 
 /**
  * \brief Derived classes should include this in their implementation file

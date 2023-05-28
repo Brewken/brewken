@@ -179,10 +179,6 @@ double Yeast::maxTemperature_c() const { return m_maxTemperature_c; }
 
 double Yeast::attenuation_pct() const { return m_attenuation_pct; }
 
-double Yeast::inventory() const {
-   return InventoryUtils::getAmount(*this);
-}
-
 int Yeast::timesCultured() const { return m_timesCultured; }
 
 int Yeast::maxReuse() const { return m_maxReuse; }
@@ -232,11 +228,6 @@ void Yeast::setAmount(double var) {
    this->setAndNotify(PropertyNames::Yeast::amount,
                       this->m_amount,
                       this->enforceMin(var, "amount", 0.0));
-}
-
-void Yeast::setInventoryAmount(double var) {
-   InventoryUtils::setAmount(*this, var);
-   return;
 }
 
 // .:TBD:. I'm not wild about using "quanta" here (presumably to mean number of packets or number of cultures)
@@ -312,3 +303,6 @@ void Yeast::setAddToSecondary( bool var ) {
 Recipe * Yeast::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
+
+// Insert the boiler-plate stuff for inventory
+INVENTORY_COMMON_CODE(Yeast)

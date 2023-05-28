@@ -441,15 +441,6 @@ void Fermentable::setBetaGlucanWithUnits(std::optional<MassOrVolumeConcentration
    return;
 }
 
-void Fermentable::setInventoryAmount(double num) {
-   InventoryUtils::setAmount(*this, num);
-   return;
-}
-
-double Fermentable::inventory() const {
-   return InventoryUtils::getAmount(*this);
-}
-
 Recipe * Fermentable::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
@@ -465,3 +456,6 @@ bool fermentablesLessThanByWeight(Fermentable const * const lhs, Fermentable con
    // Yes. I know. This seems silly, but I want the returned list in descending not ascending order.
    return lhs->amount() > rhs->amount();
 }
+
+// Insert the boiler-plate stuff for inventory
+INVENTORY_COMMON_CODE(Fermentable)

@@ -161,8 +161,6 @@ public:
    QString            producer       () const;
    QString            productId      () const;
 
-   virtual double inventory() const;
-
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType           (Type               const   val);
    void setUse            (std::optional<Use> const   val);
@@ -177,9 +175,8 @@ public:
    void setProducer       (QString            const & val);
    void setProductId      (QString            const & val);
 
-   //! \brief The amount in inventory in either kg or L, depending on \c amountIsWeight().
-   virtual void setInventoryAmount( double var );
-
+   // Insert boiler-plate declarations for inventory
+   INVENTORY_COMMON_HEADER_DEFNS
 
    virtual Recipe * getOwningRecipe();
 

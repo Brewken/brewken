@@ -1316,44 +1316,8 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Fermentable Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Add After Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Druh množství</translation>
-    </message>
-    <message>
-        <source>Change Fermentable Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Is Mashed</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Volume</source>
@@ -1604,35 +1568,35 @@ Log file may contain more details.</source>
     <name>HopItemDelegate</name>
     <message>
         <source>Boil</source>
-        <translation>Chmelovar</translation>
+        <translation type="vanished">Chmelovar</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>Dry hop</translation>
+        <translation type="vanished">Dry hop</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Do vystírky (mash hop)</translation>
+        <translation type="vanished">Do vystírky (mash hop)</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>Při vyslazování (first wort)</translation>
+        <translation type="vanished">Při vyslazování (first wort)</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation>Aromatický</translation>
+        <translation type="vanished">Aromatický</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Hlávkový</translation>
+        <translation type="vanished">Hlávkový</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Granulovaný</translation>
+        <translation type="vanished">Granulovaný</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Lisovaný</translation>
+        <translation type="vanished">Lisovaný</translation>
     </message>
 </context>
 <context>
@@ -1664,34 +1628,6 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Sklad</translation>
-    </message>
-    <message>
-        <source>Change Hop Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2424,11 +2360,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Hmotnost</translation>
+        <translation type="obsolete">Hmotnost</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objem</translation>
+        <translation type="obsolete">Objem</translation>
     </message>
 </context>
 <context>
@@ -2462,31 +2398,18 @@ Log file may contain more details.</source>
         <translation>Sklad</translation>
     </message>
     <message>
-        <source>Change Misc Name</source>
-        <translation type="unfinished"></translation>
+        <source>Volume</source>
+        <translation type="unfinished">Objem</translation>
     </message>
     <message>
-        <source>Change Misc Type</source>
-        <translation type="unfinished"></translation>
+        <source>Weight</source>
+        <translation type="unfinished">Hmotnost</translation>
     </message>
+</context>
+<context>
+    <name>NE</name>
     <message>
-        <source>Change Misc Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount Type</source>
+        <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3483,15 +3406,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Pozdní</translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Pozdní</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Šrotovaný</translation>
+        <translation type="obsolete">Šrotovaný</translation>
     </message>
     <message>
         <source>Weight</source>

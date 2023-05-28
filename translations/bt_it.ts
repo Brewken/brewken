@@ -1399,44 +1399,8 @@ Log file may contain more details.</source>
         <translation>Aggiungi</translation>
     </message>
     <message>
-        <source>Change Fermentable Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Add After Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Tipo di Quantità</translation>
-    </message>
-    <message>
-        <source>Change Fermentable Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Amount Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Fermentable Is Mashed</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Volume</source>
@@ -1683,35 +1647,35 @@ Log file may contain more details.</source>
     <name>HopItemDelegate</name>
     <message>
         <source>Boil</source>
-        <translation>Bollire</translation>
+        <translation type="vanished">Bollire</translation>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>Dry Hop</translation>
+        <translation type="vanished">Dry Hop</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Ammostamento</translation>
+        <translation type="vanished">Ammostamento</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>Primo mosto</translation>
+        <translation type="vanished">Primo mosto</translation>
     </message>
     <message>
         <source>Aroma</source>
-        <translation>Aroma</translation>
+        <translation type="vanished">Aroma</translation>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>foglia</translation>
+        <translation type="vanished">foglia</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Pellet</translation>
+        <translation type="vanished">Pellet</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Plug</translation>
+        <translation type="vanished">Plug</translation>
     </message>
 </context>
 <context>
@@ -1743,34 +1707,6 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Magazzino</translation>
-    </message>
-    <message>
-        <source>Change Hop Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Hop Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2503,11 +2439,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Peso</translation>
+        <translation type="vanished">Peso</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volume</translation>
+        <translation type="vanished">Volume</translation>
     </message>
 </context>
 <context>
@@ -2541,31 +2477,18 @@ Log file may contain more details.</source>
         <translation>Magazzino</translation>
     </message>
     <message>
-        <source>Change Misc Name</source>
-        <translation type="unfinished"></translation>
+        <source>Volume</source>
+        <translation type="unfinished">Volume</translation>
     </message>
     <message>
-        <source>Change Misc Type</source>
+        <source>Weight</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>NE</name>
     <message>
-        <source>Change Misc Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Inventory Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Misc Amount Type</source>
+        <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3562,15 +3485,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Tardivo</translation>
+        <translation type="obsolete">Tardivo</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation type="unfinished">Non usato in Mash</translation>
-    </message>
-    <message>
-        <source>Mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Non usato in Mash</translation>
     </message>
     <message>
         <source>Weight</source>

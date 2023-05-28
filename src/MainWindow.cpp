@@ -658,7 +658,7 @@ void MainWindow::setupTables()
    miscTableModel = new MiscTableModel(miscTable);
    miscTableProxy = new MiscSortFilterProxyModel(miscTable,false);
    miscTableProxy->setSourceModel(miscTableModel);
-   miscTable->setItemDelegate(new MiscItemDelegate(miscTable));
+   miscTable->setItemDelegate(new MiscItemDelegate(miscTable, *miscTableModel));
    miscTable->setModel(miscTableProxy);
    connect( miscTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
        if (idx.column() == 0)

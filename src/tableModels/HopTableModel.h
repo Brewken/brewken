@@ -59,46 +59,11 @@ template <> struct TableModelTraits<HopTableModel> {
 class HopTableModel : public BtTableModelInventory, public TableModelBase<HopTableModel, Hop> {
    Q_OBJECT
 
+   TABLE_MODEL_COMMON_DECL(Hop)
+
 public:
-
-   HopTableModel(QTableView* parent=nullptr, bool editable=true);
-   virtual ~HopTableModel();
-
-   //
-   // This block of functions is called from the TableModelBase class
-   //
-   void added  (std::shared_ptr<Hop> item);
-   void removed(std::shared_ptr<Hop> item);
-   void removedAll();
-
-   //! \brief Observe a recipe's list of hops.
-   void observeRecipe(Recipe* rec);
-   //! \brief If true, we model the database's list of hops.
-   void observeDatabase(bool val);
    //! \brief Show ibus in the vertical header.
    void setShowIBUs( bool var );
-private:
-   //! \brief Watch all the \c hops for changes.
-   void addHops(QList< std::shared_ptr<Hop> > hops);
-
-public:
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;
-   //! \brief Reimplemented from QAbstractTableModel
-   virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual Qt::ItemFlags flags(const QModelIndex& index) const;
-   //! \brief Reimplemented from QAbstractTableModel.
-   virtual bool setData(QModelIndex const & index, QVariant const & value, int role = Qt::EditRole);
-
-public slots:
-   void changed(QMetaProperty, QVariant);
-   void changedInventory(int invKey, BtStringConst const & propertyName);
-   //! \brief Add a hop to the model.
-   void addHop(int hopId);
-   void removeHop(int hopId, std::shared_ptr<QObject> object);
 
 private:
    bool showIBUs; // True if you want to show the IBU contributions in the table rows.
@@ -116,18 +81,7 @@ class HopItemDelegate : public QItemDelegate,
                                public ItemDelegate<HopItemDelegate, HopTableModel> {
    Q_OBJECT
 
-public:
-   HopItemDelegate(QTableView * parent, HopTableModel & tableModel);
-   virtual ~HopItemDelegate();
-
-   //! \brief Reimplemented from QItemDelegate.
-   virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-   //! \brief Reimplemented from QItemDelegate.
-   virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
-   //! \brief Reimplemented from QItemDelegate.
-   virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-   //! \brief Reimplemented from QItemDelegate.
-   virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+   ITEM_DELEGATE_COMMON_DECL(Hop)
 };
 
 #endif

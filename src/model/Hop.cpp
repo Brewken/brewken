@@ -294,10 +294,6 @@ std::optional<double>       Hop::pinene_pct()            const { return this->m_
 std::optional<double>       Hop::polyphenols_pct()       const { return this->m_polyphenols_pct;       }
 std::optional<double>       Hop::xanthohumol_pct()       const { return this->m_xanthohumol_pct;       }
 
-double Hop::inventory() const {
-   return InventoryUtils::getAmount(*this);
-}
-
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Hop::setAlpha_pct            (double                      const   val) { this->setAndNotify(PropertyNames::Hop::alpha_pct,             this->m_alpha_pct,             this->enforceMinAndMax(val, "alpha",                 0.0, 100.0)); }
 void Hop::setAmount_kg            (double                      const   val) { this->setAndNotify(PropertyNames::Hop::amount_kg,             this->m_amount_kg,             this->enforceMin      (val, "amount")                           ); }
@@ -329,9 +325,6 @@ void Hop::setPinene_pct           (std::optional<double      > const   val) { th
 void Hop::setPolyphenols_pct      (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::polyphenols_pct,       this->m_polyphenols_pct,       this->enforceMinAndMax(val, "polyphenols_pct",       0.0, 100.0)); }
 void Hop::setXanthohumol_pct      (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::xanthohumol_pct,       this->m_xanthohumol_pct,       this->enforceMinAndMax(val, "xanthohumol_pct",       0.0, 100.0)); }
 
-void Hop::setInventoryAmount(double num) { InventoryUtils::setAmount(*this, num); }
-
-
 Recipe * Hop::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
@@ -345,3 +338,6 @@ bool hopLessThanByTime(Hop const * const lhs, Hop const * const rhs) {
    }
    return lhs->use() < rhs->use();
 }
+
+// Insert the boiler-plate stuff for inventory
+INVENTORY_COMMON_CODE_MO(Hop)
