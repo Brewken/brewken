@@ -105,6 +105,8 @@ namespace {
       {Hop::Form::WetLeaf, "Leaf<!--WetLeaf-->"  },
       {Hop::Form::Powder , "Pellet<!--Powder-->" },
    };
+   // The `use` field of Hop is not part of BeerJSON and becomes an optional value now that we support BeerJSON.
+   // See comment on BEER_XML_RECORD_FIELDS<Misc> for the consequences of this
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Hop> {
       // Type                                  XPath                    Q_PROPERTY                             Enum Mapper
       {XmlRecord::FieldType::String,           "NAME",                  PropertyNames::NamedEntity::name,      nullptr},
@@ -273,7 +275,7 @@ namespace {
       {Misc::Type::Herb       , "Herb"            },
       {Misc::Type::Flavor     , "Flavor"          },
       {Misc::Type::Other      , "Other"           },
-      // This other types is in BeerJSON but is not mentioned in the BeerXML 1.0 Standard.  It gets an approximate
+      // This other type is in BeerJSON but is not mentioned in the BeerXML 1.0 Standard.  It gets an approximate
       // mapping when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
       {Misc::Type::Wood       , "Other<!--Wood-->"},

@@ -149,8 +149,8 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type               type           () const;
-   std::optional<Use> use            () const;
-   std::optional<int> useAsInt       () const;
+   std::optional<Use> use            () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
+   std::optional<int> useAsInt       () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    double             amount         () const;
    double             time_min       () const;
    bool               amountIsWeight () const;
@@ -163,8 +163,8 @@ public:
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType           (Type               const   val);
-   void setUse            (std::optional<Use> const   val);
-   void setUseAsInt       (std::optional<int> const   val);
+   void setUse            (std::optional<Use> const   val); // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
+   void setUseAsInt       (std::optional<int> const   val); // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    void setAmount         (double             const   val);
    void setTime_min       (double             const   val);
    void setAmountIsWeight (bool               const   val);
@@ -192,7 +192,7 @@ protected:
 
 private:
    Type               m_type          ;
-   std::optional<Use> m_use           ;
+   std::optional<Use> m_use           ; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    double             m_time_min      ;
    double             m_amount        ;
    bool               m_amountIsWeight;

@@ -332,15 +332,15 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousBase {
       // Type                                         XPath               Q_PROPERTY                        Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::String,       "name",             PropertyNames::NamedEntity::name, },
-      {JsonRecordDefinition::FieldType::String,       "producer",         PropertyNames::Misc::producer   , },
-      {JsonRecordDefinition::FieldType::String,       "product_id",       PropertyNames::Misc::productId  , },
-      {JsonRecordDefinition::FieldType::Enum,         "type",             PropertyNames::Fermentable::type, &Misc::typeStringMapping},
+      {JsonRecordDefinition::FieldType::String,       "name"      ,       PropertyNames::NamedEntity::name},
+      {JsonRecordDefinition::FieldType::String,       "producer"  ,       PropertyNames::Misc::producer   },
+      {JsonRecordDefinition::FieldType::String,       "product_id",       PropertyNames::Misc::productId  },
+      {JsonRecordDefinition::FieldType::Enum  ,       "type"      ,       PropertyNames::Fermentable::type, &Misc::typeStringMapping},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousType_ExclBase {
       // Type                                                       XPath               Q_PROPERTY                            Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::String,                     "use_for"         , PropertyNames::Misc::useFor         , },
-      {JsonRecordDefinition::FieldType::String,                     "notes"           , PropertyNames::Misc::notes          , },
+      {JsonRecordDefinition::FieldType::String,                     "use_for"         , PropertyNames::Misc::useFor         },
+      {JsonRecordDefinition::FieldType::String,                     "notes"           , PropertyNames::Misc::notes          },
       {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::Misc::amountWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {

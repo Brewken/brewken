@@ -161,9 +161,9 @@ static_assert(std::is_base_of<NamedEntityWithInventory, Hop>::value);
 
 Hop::Hop(QString name) :
    NamedEntityWithInventory{name, true},
-   m_use                  {Hop::Use::Mash},
+   m_use                  {std::nullopt        },
    m_type                 {Hop::Type::Bittering},
-   m_form                 {Hop::Form::Leaf},
+   m_form                 {Hop::Form::Leaf     },
    m_alpha_pct            {0.0},
    m_amount_kg            {0.0},
    m_time_min             {0.0},
@@ -195,7 +195,7 @@ Hop::Hop(QString name) :
 
 Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_use                  {namedParameterBundle.val<Hop::Use             >(PropertyNames::Hop::use                  )},
+   m_use                  {namedParameterBundle.optEnumVal<Hop::Use      >(PropertyNames::Hop::use                  )},
    m_type                 {namedParameterBundle.val<Hop::Type            >(PropertyNames::Hop::type                 )},
    m_form                 {namedParameterBundle.val<Hop::Form            >(PropertyNames::Hop::form                 )},
    m_alpha_pct            {namedParameterBundle.val<double               >(PropertyNames::Hop::alpha_pct            )},
@@ -264,66 +264,68 @@ Hop::Hop(Hop const & other) :
 Hop::~Hop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-Hop::Use                    Hop::use()                   const { return this->m_use;                   }
-QString                     Hop::notes()                 const { return this->m_notes;                 }
-Hop::Type                   Hop::type()                  const { return this->m_type;                  }
-Hop::Form                   Hop::form()                  const { return this->m_form;                  }
-QString                     Hop::origin()                const { return this->m_origin;                }
-QString                     Hop::substitutes()           const { return this->m_substitutes;           }
-double                      Hop::alpha_pct()             const { return this->m_alpha_pct;             }
-double                      Hop::amount_kg()             const { return this->m_amount_kg;             }
-double                      Hop::time_min()              const { return this->m_time_min;              }
-double                      Hop::beta_pct()              const { return this->m_beta_pct;              }
-double                      Hop::hsi_pct()               const { return this->m_hsi_pct;               }
-double                      Hop::humulene_pct()          const { return this->m_humulene_pct;          }
-double                      Hop::caryophyllene_pct()     const { return this->m_caryophyllene_pct;     }
-double                      Hop::cohumulone_pct()        const { return this->m_cohumulone_pct;        }
-double                      Hop::myrcene_pct()           const { return this->m_myrcene_pct;           }
+std::optional<Hop::Use> Hop::use                  () const { return this->m_use                  ; }
+std::optional<int>      Hop::useAsInt             () const { return Optional::toOptInt(m_use)    ; }
+QString                 Hop::notes                () const { return this->m_notes                ; }
+Hop::Type               Hop::type                 () const { return this->m_type                 ; }
+Hop::Form               Hop::form                 () const { return this->m_form                 ; }
+QString                 Hop::origin               () const { return this->m_origin               ; }
+QString                 Hop::substitutes          () const { return this->m_substitutes          ; }
+double                  Hop::alpha_pct            () const { return this->m_alpha_pct            ; }
+double                  Hop::amount_kg            () const { return this->m_amount_kg            ; }
+double                  Hop::time_min             () const { return this->m_time_min             ; }
+double                  Hop::beta_pct             () const { return this->m_beta_pct             ; }
+double                  Hop::hsi_pct              () const { return this->m_hsi_pct              ; }
+double                  Hop::humulene_pct         () const { return this->m_humulene_pct         ; }
+double                  Hop::caryophyllene_pct    () const { return this->m_caryophyllene_pct    ; }
+double                  Hop::cohumulone_pct       () const { return this->m_cohumulone_pct       ; }
+double                  Hop::myrcene_pct          () const { return this->m_myrcene_pct          ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-QString                     Hop::producer()              const { return this->m_producer;              }
-QString                     Hop::product_id()            const { return this->m_product_id;            }
-QString                     Hop::year()                  const { return this->m_year;                  }
-std::optional<double>       Hop::total_oil_ml_per_100g() const { return this->m_total_oil_ml_per_100g; }
-std::optional<double>       Hop::farnesene_pct()         const { return this->m_farnesene_pct;         }
-std::optional<double>       Hop::geraniol_pct()          const { return this->m_geraniol_pct;          }
-std::optional<double>       Hop::b_pinene_pct()          const { return this->m_b_pinene_pct;          }
-std::optional<double>       Hop::linalool_pct()          const { return this->m_linalool_pct;          }
-std::optional<double>       Hop::limonene_pct()          const { return this->m_limonene_pct;          }
-std::optional<double>       Hop::nerol_pct()             const { return this->m_nerol_pct;             }
-std::optional<double>       Hop::pinene_pct()            const { return this->m_pinene_pct;            }
-std::optional<double>       Hop::polyphenols_pct()       const { return this->m_polyphenols_pct;       }
-std::optional<double>       Hop::xanthohumol_pct()       const { return this->m_xanthohumol_pct;       }
+QString                 Hop::producer             () const { return this->m_producer             ; }
+QString                 Hop::product_id           () const { return this->m_product_id           ; }
+QString                 Hop::year                 () const { return this->m_year                 ; }
+std::optional<double>   Hop::total_oil_ml_per_100g() const { return this->m_total_oil_ml_per_100g; }
+std::optional<double>   Hop::farnesene_pct        () const { return this->m_farnesene_pct        ; }
+std::optional<double>   Hop::geraniol_pct         () const { return this->m_geraniol_pct         ; }
+std::optional<double>   Hop::b_pinene_pct         () const { return this->m_b_pinene_pct         ; }
+std::optional<double>   Hop::linalool_pct         () const { return this->m_linalool_pct         ; }
+std::optional<double>   Hop::limonene_pct         () const { return this->m_limonene_pct         ; }
+std::optional<double>   Hop::nerol_pct            () const { return this->m_nerol_pct            ; }
+std::optional<double>   Hop::pinene_pct           () const { return this->m_pinene_pct           ; }
+std::optional<double>   Hop::polyphenols_pct      () const { return this->m_polyphenols_pct      ; }
+std::optional<double>   Hop::xanthohumol_pct      () const { return this->m_xanthohumol_pct      ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Hop::setAlpha_pct            (double                      const   val) { this->setAndNotify(PropertyNames::Hop::alpha_pct,             this->m_alpha_pct,             this->enforceMinAndMax(val, "alpha",                 0.0, 100.0)); }
-void Hop::setAmount_kg            (double                      const   val) { this->setAndNotify(PropertyNames::Hop::amount_kg,             this->m_amount_kg,             this->enforceMin      (val, "amount")                           ); }
-void Hop::setUse                  (Hop::Use                    const   val) { this->setAndNotify(PropertyNames::Hop::use,                   this->m_use,                   val                                                             ); }
-void Hop::setTime_min             (double                      const   val) { this->setAndNotify(PropertyNames::Hop::time_min,              this->m_time_min,              this->enforceMin      (val, "time")                             ); }
-void Hop::setNotes                (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::notes,                 this->m_notes,                 val                                                             ); }
-void Hop::setType                 (Hop::Type                   const   val) { this->setAndNotify(PropertyNames::Hop::type,                  this->m_type,                  val                                                             ); }
-void Hop::setForm                 (Hop::Form                   const   val) { this->setAndNotify(PropertyNames::Hop::form,                  this->m_form,                  val                                                             ); }
-void Hop::setBeta_pct             (double                      const   val) { this->setAndNotify(PropertyNames::Hop::beta_pct,              this->m_beta_pct,              this->enforceMinAndMax(val, "beta",                  0.0, 100.0)); }
-void Hop::setHsi_pct              (double                      const   val) { this->setAndNotify(PropertyNames::Hop::hsi_pct,               this->m_hsi_pct,               this->enforceMinAndMax(val, "hsi",                   0.0, 100.0)); }
-void Hop::setOrigin               (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::origin,                this->m_origin,                val                                                             ); }
-void Hop::setSubstitutes          (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::substitutes,           this->m_substitutes,           val                                                             ); }
-void Hop::setHumulene_pct         (double                      const   val) { this->setAndNotify(PropertyNames::Hop::humulene_pct,          this->m_humulene_pct,          this->enforceMinAndMax(val, "humulene",              0.0, 100.0)); }
-void Hop::setCaryophyllene_pct    (double                      const   val) { this->setAndNotify(PropertyNames::Hop::caryophyllene_pct,     this->m_caryophyllene_pct,     this->enforceMinAndMax(val, "caryophyllene",         0.0, 100.0)); }
-void Hop::setCohumulone_pct       (double                      const   val) { this->setAndNotify(PropertyNames::Hop::cohumulone_pct,        this->m_cohumulone_pct,        this->enforceMinAndMax(val, "cohumulone",            0.0, 100.0)); }
-void Hop::setMyrcene_pct          (double                      const   val) { this->setAndNotify(PropertyNames::Hop::myrcene_pct,           this->m_myrcene_pct,           this->enforceMinAndMax(val, "myrcene",               0.0, 100.0)); }
+void Hop::setAlpha_pct            (double                  const   val) { this->setAndNotify(PropertyNames::Hop::alpha_pct            , this->m_alpha_pct            , this->enforceMinAndMax(val, "alpha",                 0.0, 100.0)); }
+void Hop::setAmount_kg            (double                  const   val) { this->setAndNotify(PropertyNames::Hop::amount_kg            , this->m_amount_kg            , this->enforceMin      (val, "amount")                           ); }
+void Hop::setUse                  (std::optional<Hop::Use> const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , val                                                             ); }
+void Hop::setUseAsInt             (std::optional<int>      const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , Optional::fromOptInt<Use>(val)); }
+void Hop::setTime_min             (double                  const   val) { this->setAndNotify(PropertyNames::Hop::time_min             , this->m_time_min             , this->enforceMin      (val, "time")                             ); }
+void Hop::setNotes                (QString                 const & val) { this->setAndNotify(PropertyNames::Hop::notes                , this->m_notes                , val                                                             ); }
+void Hop::setType                 (Hop::Type               const   val) { this->setAndNotify(PropertyNames::Hop::type                 , this->m_type                 , val                                                             ); }
+void Hop::setForm                 (Hop::Form               const   val) { this->setAndNotify(PropertyNames::Hop::form                 , this->m_form                 , val                                                             ); }
+void Hop::setBeta_pct             (double                  const   val) { this->setAndNotify(PropertyNames::Hop::beta_pct             , this->m_beta_pct             , this->enforceMinAndMax(val, "beta",                  0.0, 100.0)); }
+void Hop::setHsi_pct              (double                  const   val) { this->setAndNotify(PropertyNames::Hop::hsi_pct              , this->m_hsi_pct              , this->enforceMinAndMax(val, "hsi",                   0.0, 100.0)); }
+void Hop::setOrigin               (QString                 const & val) { this->setAndNotify(PropertyNames::Hop::origin               , this->m_origin               , val                                                             ); }
+void Hop::setSubstitutes          (QString                 const & val) { this->setAndNotify(PropertyNames::Hop::substitutes          , this->m_substitutes          , val                                                             ); }
+void Hop::setHumulene_pct         (double                  const   val) { this->setAndNotify(PropertyNames::Hop::humulene_pct         , this->m_humulene_pct         , this->enforceMinAndMax(val, "humulene",              0.0, 100.0)); }
+void Hop::setCaryophyllene_pct    (double                  const   val) { this->setAndNotify(PropertyNames::Hop::caryophyllene_pct    , this->m_caryophyllene_pct    , this->enforceMinAndMax(val, "caryophyllene",         0.0, 100.0)); }
+void Hop::setCohumulone_pct       (double                  const   val) { this->setAndNotify(PropertyNames::Hop::cohumulone_pct       , this->m_cohumulone_pct       , this->enforceMinAndMax(val, "cohumulone",            0.0, 100.0)); }
+void Hop::setMyrcene_pct          (double                  const   val) { this->setAndNotify(PropertyNames::Hop::myrcene_pct          , this->m_myrcene_pct          , this->enforceMinAndMax(val, "myrcene",               0.0, 100.0)); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Hop::setProducer             (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::producer,              this->m_producer,              val                                                             ); }
-void Hop::setProduct_id           (QString                     const & val) { this->setAndNotify(PropertyNames::Hop::product_id,            this->m_product_id,            val                                                             ); }
-void Hop::setYear                 (QString                     const   val) { this->setAndNotify(PropertyNames::Hop::year,                  this->m_year,                  val                                                             ); }
-void Hop::setTotal_oil_ml_per_100g(std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::total_oil_ml_per_100g, this->m_total_oil_ml_per_100g, this->enforceMinAndMax(val, "total_oil_ml_per_100g", 0.0, 100.0)); }
-void Hop::setFarnesene_pct        (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::farnesene_pct,         this->m_farnesene_pct,         this->enforceMinAndMax(val, "farnesene_pct",         0.0, 100.0)); }
-void Hop::setGeraniol_pct         (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::geraniol_pct,          this->m_geraniol_pct,          this->enforceMinAndMax(val, "geraniol_pct",          0.0, 100.0)); }
-void Hop::setB_pinene_pct         (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::b_pinene_pct,          this->m_b_pinene_pct,          this->enforceMinAndMax(val, "b_pinene_pct",          0.0, 100.0)); }
-void Hop::setLinalool_pct         (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::linalool_pct,          this->m_linalool_pct,          this->enforceMinAndMax(val, "linalool_pct",          0.0, 100.0)); }
-void Hop::setLimonene_pct         (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::limonene_pct,          this->m_limonene_pct,          this->enforceMinAndMax(val, "limonene_pct",          0.0, 100.0)); }
-void Hop::setNerol_pct            (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::nerol_pct,             this->m_nerol_pct,             this->enforceMinAndMax(val, "nerol_pct",             0.0, 100.0)); }
-void Hop::setPinene_pct           (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::pinene_pct,            this->m_pinene_pct,            this->enforceMinAndMax(val, "pinene_pct",            0.0, 100.0)); }
-void Hop::setPolyphenols_pct      (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::polyphenols_pct,       this->m_polyphenols_pct,       this->enforceMinAndMax(val, "polyphenols_pct",       0.0, 100.0)); }
-void Hop::setXanthohumol_pct      (std::optional<double      > const   val) { this->setAndNotify(PropertyNames::Hop::xanthohumol_pct,       this->m_xanthohumol_pct,       this->enforceMinAndMax(val, "xanthohumol_pct",       0.0, 100.0)); }
+void Hop::setProducer             (QString                 const & val) { this->setAndNotify(PropertyNames::Hop::producer             , this->m_producer             , val                                                             ); }
+void Hop::setProduct_id           (QString                 const & val) { this->setAndNotify(PropertyNames::Hop::product_id           , this->m_product_id           , val                                                             ); }
+void Hop::setYear                 (QString                 const   val) { this->setAndNotify(PropertyNames::Hop::year                 , this->m_year                 , val                                                             ); }
+void Hop::setTotal_oil_ml_per_100g(std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::total_oil_ml_per_100g, this->m_total_oil_ml_per_100g, this->enforceMinAndMax(val, "total_oil_ml_per_100g", 0.0, 100.0)); }
+void Hop::setFarnesene_pct        (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::farnesene_pct        , this->m_farnesene_pct        , this->enforceMinAndMax(val, "farnesene_pct",         0.0, 100.0)); }
+void Hop::setGeraniol_pct         (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::geraniol_pct         , this->m_geraniol_pct         , this->enforceMinAndMax(val, "geraniol_pct",          0.0, 100.0)); }
+void Hop::setB_pinene_pct         (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::b_pinene_pct         , this->m_b_pinene_pct         , this->enforceMinAndMax(val, "b_pinene_pct",          0.0, 100.0)); }
+void Hop::setLinalool_pct         (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::linalool_pct         , this->m_linalool_pct         , this->enforceMinAndMax(val, "linalool_pct",          0.0, 100.0)); }
+void Hop::setLimonene_pct         (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::limonene_pct         , this->m_limonene_pct         , this->enforceMinAndMax(val, "limonene_pct",          0.0, 100.0)); }
+void Hop::setNerol_pct            (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::nerol_pct            , this->m_nerol_pct            , this->enforceMinAndMax(val, "nerol_pct",             0.0, 100.0)); }
+void Hop::setPinene_pct           (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::pinene_pct           , this->m_pinene_pct           , this->enforceMinAndMax(val, "pinene_pct",            0.0, 100.0)); }
+void Hop::setPolyphenols_pct      (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::polyphenols_pct      , this->m_polyphenols_pct      , this->enforceMinAndMax(val, "polyphenols_pct",       0.0, 100.0)); }
+void Hop::setXanthohumol_pct      (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::xanthohumol_pct      , this->m_xanthohumol_pct      , this->enforceMinAndMax(val, "xanthohumol_pct",       0.0, 100.0)); }
 
 Recipe * Hop::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
