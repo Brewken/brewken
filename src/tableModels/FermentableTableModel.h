@@ -39,7 +39,6 @@
 
 // Forward declarations.
 class BtStringConst;
-class Fermentable;
 class Recipe;
 
 // You have to get the order of everything right with traits classes, but the end result is that we can refer to

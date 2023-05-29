@@ -27,12 +27,12 @@
 #include <QVariant>
 #include <QWidget>
 
+#include "model/Misc.h"
 #include "tableModels/BtTableModelInventory.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 
 class BtStringConst;
-class Misc;
 class Recipe;
 
 // You have to get the order of everything right with traits classes, but the end result is that we can refer to

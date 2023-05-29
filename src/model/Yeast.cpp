@@ -28,24 +28,93 @@
 #include "model/Recipe.h"
 #include "PhysicalConstants.h"
 
-namespace {
-   QStringList const types{"Ale", "Lager", "Wheat", "Wine", "Champagne"};
-   QStringList const forms{"Liquid", "Dry", "Slant", "Culture"};
-   QStringList const flocculations{"Low", "Medium", "High", "Very High"};
-   QStringList const typesTr{Yeast::tr("Ale"),
-                             Yeast::tr("Lager"),
-                             Yeast::tr("Wheat"),
-                             Yeast::tr("Wine"),
-                             Yeast::tr("Champagne")};
-   QStringList const formsTr {Yeast::tr("Liquid"),
-                              Yeast::tr("Dry"),
-                              Yeast::tr("Slant"),
-                              Yeast::tr("Culture")};
-   QStringList const flocculationsTr{Yeast::tr("Low"),
-                                     Yeast::tr("Medium"),
-                                     Yeast::tr("High"),
-                                     Yeast::tr("Very High")};
-}
+///namespace {
+///   QStringList const types{"Ale", "Lager", "Wheat", "Wine", "Champagne"};
+///   QStringList const forms{"Liquid", "Dry", "Slant", "Culture"};
+///   QStringList const flocculations{"Low", "Medium", "High", "Very High"};
+///   QStringList const typesTr{Yeast::tr("Ale"),
+///                             Yeast::tr("Lager"),
+///                             Yeast::tr("Wheat"),
+///                             Yeast::tr("Wine"),
+///                             Yeast::tr("Champagne")};
+///   QStringList const formsTr {Yeast::tr("Liquid"),
+///                              Yeast::tr("Dry"),
+///                              Yeast::tr("Slant"),
+///                              Yeast::tr("Culture")};
+///   QStringList const flocculationsTr{Yeast::tr("Low"),
+///                                     Yeast::tr("Medium"),
+///                                     Yeast::tr("High"),
+///                                     Yeast::tr("Very High")};
+///}
+
+EnumStringMapping const Yeast::typeStringMapping {
+   {Yeast::Type::Ale         , "ale"          },
+   {Yeast::Type::Lager       , "lager"        },
+   {Yeast::Type::Other       , "other"        },  // Was Wheat / wheat
+   {Yeast::Type::Wine        , "wine"         },
+   {Yeast::Type::Champagne   , "champagne"    },
+   {Yeast::Type::Bacteria    , "bacteria"     },
+   {Yeast::Type::Brett       , "brett"        },
+   {Yeast::Type::Kveik       , "kveik"        },
+   {Yeast::Type::Lacto       , "lacto"        },
+   {Yeast::Type::Malolactic  , "malolactic"   },
+   {Yeast::Type::MixedCulture, "mixed-culture"},
+   {Yeast::Type::Pedio       , "pedio"        },
+   {Yeast::Type::Spontaneous , "spontaneous"  },
+};
+
+EnumStringMapping const Yeast::typeDisplayNames {
+   {Yeast::Type::Ale         , tr("Ale"          )},
+   {Yeast::Type::Lager       , tr("Lager"        )},
+   {Yeast::Type::Other       , tr("Other"        )},
+   {Yeast::Type::Wine        , tr("Wine"         )},
+   {Yeast::Type::Champagne   , tr("Champagne"    )},
+   {Yeast::Type::Bacteria    , tr("Bacteria"     )},
+   {Yeast::Type::Brett       , tr("Brett"        )},
+   {Yeast::Type::Kveik       , tr("Kveik"        )},
+   {Yeast::Type::Lacto       , tr("Lacto"        )},
+   {Yeast::Type::Malolactic  , tr("Malolactic"   )},
+   {Yeast::Type::MixedCulture, tr("Mixed-culture")},
+   {Yeast::Type::Pedio       , tr("Pedio"        )},
+   {Yeast::Type::Spontaneous , tr("Spontaneous"  )},
+};
+
+EnumStringMapping const Yeast::formStringMapping {
+   {Yeast::Form::Liquid , "liquid" },
+   {Yeast::Form::Dry    , "dry"    },
+   {Yeast::Form::Slant  , "slant"  },
+   {Yeast::Form::Culture, "culture"},
+   {Yeast::Form::Dregs  , "dregs"  },
+};
+
+EnumStringMapping const Yeast::formDisplayNames  {
+   {Yeast::Form::Liquid , tr("Liquid" )},
+   {Yeast::Form::Dry    , tr("Dry"    )},
+   {Yeast::Form::Slant  , tr("Slant"  )},
+   {Yeast::Form::Culture, tr("Culture")},
+   {Yeast::Form::Dregs  , tr("Dregs"  )},
+};
+
+EnumStringMapping const Yeast::flocculationStringMapping {
+   {Yeast::Flocculation::VeryLow   , "very low"   },
+   {Yeast::Flocculation::Low       , "low"        },
+   {Yeast::Flocculation::MediumLow , "medium low" },
+   {Yeast::Flocculation::Medium    , "medium"     },
+   {Yeast::Flocculation::MediumHigh, "medium high"},
+   {Yeast::Flocculation::High      , "high"       },
+   {Yeast::Flocculation::VeryHigh  , "very high"  },
+};
+
+EnumStringMapping const Yeast::flocculationDisplayNames {
+   {Yeast::Flocculation::VeryLow   , tr("Very Low"   )},
+   {Yeast::Flocculation::Low       , tr("Low"        )},
+   {Yeast::Flocculation::MediumLow , tr("Medium Low" )},
+   {Yeast::Flocculation::Medium    , tr("Medium"     )},
+   {Yeast::Flocculation::MediumHigh, tr("Medium High")},
+   {Yeast::Flocculation::High      , tr("High"       )},
+   {Yeast::Flocculation::VeryHigh  , tr("Very High"  )},
+};
+
 
 bool Yeast::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -67,24 +136,28 @@ ObjectStore & Yeast::getObjectStoreTypedInstance() const {
 TypeLookup const Yeast::typeLookup {
    "Yeast",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary    , Yeast::m_addToSecondary    ,           NonPhysicalQuantity::Bool         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ,           NonPhysicalQuantity::Enum         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ,           NonPhysicalQuantity::Enum         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount            , Yeast::m_amount            ,           NonPhysicalQuantity::Dimensionless), // Not really Dimensionless
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight    , Yeast::m_amountIsWeight    ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct   , Yeast::m_attenuation_pct   ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor           , Yeast::m_bestFor           ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation      , Yeast::m_flocculation      ,           NonPhysicalQuantity::Enum         ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculationString, Yeast::m_flocculationString),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form              , Yeast::m_form              ,           NonPhysicalQuantity::Enum         ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::formString        , Yeast::m_formString        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory        , Yeast::m_laboratory        ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse          , Yeast::m_maxReuse          ,           NonPhysicalQuantity::Count        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c  , Yeast::m_maxTemperature_c  , Measurement::PhysicalQuantity::Temperature  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c  , Yeast::m_minTemperature_c  , Measurement::PhysicalQuantity::Temperature  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes             , Yeast::m_notes             ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID         , Yeast::m_productID         ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c  , Yeast::m_minTemperature_c  , Measurement::PhysicalQuantity::Temperature  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c  , Yeast::m_maxTemperature_c  , Measurement::PhysicalQuantity::Temperature  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct   , Yeast::m_attenuation_pct   ,           NonPhysicalQuantity::Percentage   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes             , Yeast::m_notes             ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor           , Yeast::m_bestFor           ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured     , Yeast::m_timesCultured     ,           NonPhysicalQuantity::Count        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse          , Yeast::m_maxReuse          ,           NonPhysicalQuantity::Count        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary    , Yeast::m_addToSecondary    ,           NonPhysicalQuantity::Bool         ),
+      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Yeast::amountWithUnits    , Yeast, amountWithUnits            , Measurement::PqEitherMassOrVolume             ),
+
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculationString, Yeast::m_flocculationString),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::formString        , Yeast::m_formString        ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::typeString        , Yeast::m_typeString        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type              , Yeast::m_type              ,           NonPhysicalQuantity::Enum         ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    &NamedEntityWithInventory::typeLookup
@@ -156,152 +229,83 @@ Yeast::Yeast(Yeast const & other) :
 
 Yeast::~Yeast() = default;
 
-//============================="GET" METHODS====================================
-QString Yeast::laboratory() const { return m_laboratory; }
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+Yeast::Type         Yeast::type            () const { return m_type            ; }
+Yeast::Form         Yeast::form            () const { return m_form            ; }
+Yeast::Flocculation Yeast::flocculation    () const { return m_flocculation    ; }
+double              Yeast::amount          () const { return m_amount          ; }
+bool                Yeast::amountIsWeight  () const { return m_amountIsWeight  ; }
+QString             Yeast::laboratory      () const { return m_laboratory      ; }
+QString             Yeast::productID       () const { return m_productID       ; }
+double              Yeast::minTemperature_c() const { return m_minTemperature_c; }
+double              Yeast::maxTemperature_c() const { return m_maxTemperature_c; }
+double              Yeast::attenuation_pct () const { return m_attenuation_pct ; }
+QString             Yeast::notes           () const { return m_notes           ; }
+QString             Yeast::bestFor         () const { return m_bestFor         ; }
+int                 Yeast::timesCultured   () const { return m_timesCultured   ; }
+int                 Yeast::maxReuse        () const { return m_maxReuse        ; }
+bool                Yeast::addToSecondary  () const { return m_addToSecondary  ; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+MassOrVolumeAmt     Yeast::amountWithUnits () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
-QString Yeast::productID() const { return m_productID; }
+///const QString Yeast::typeString() const { return types.at(static_cast<int>(this->m_type)); }
+///
+///const QString Yeast::formString() const { return forms.at(static_cast<int>(this->m_form)); }
+///
+///const QString Yeast::flocculationString() const { return flocculations.at(static_cast<int>(this->m_flocculation)); }
+///const QString Yeast::typeStringTr() const {
+///   int myType = static_cast<int>(this->m_type);
+///   Q_ASSERT(myType >= 0);
+///   Q_ASSERT(myType < typesTr.size());
+///   return typesTr.at(myType);
+///}
+///
+///const QString Yeast::formStringTr() const {
+///   int myForm = static_cast<int>(this->m_form);
+///   Q_ASSERT(myForm >= 0);
+///   Q_ASSERT(myForm < formsTr.size());
+///   return formsTr.at(myForm);
+///}
+///
+///const QString Yeast::flocculationStringTr() const {
+///   int myFlocculation = static_cast<int>(this->m_flocculation);
+///   Q_ASSERT(myFlocculation >= 0);
+///   Q_ASSERT(myFlocculation < flocculationsTr.size());
+///   return flocculationsTr.at(myFlocculation);
+///}
 
-QString Yeast::notes() const { return m_notes; }
-
-QString Yeast::bestFor() const { return m_bestFor; }
-
-const QString Yeast::typeString() const { return types.at(static_cast<int>(this->m_type)); }
-
-const QString Yeast::formString() const { return forms.at(static_cast<int>(this->m_form)); }
-
-const QString Yeast::flocculationString() const { return flocculations.at(static_cast<int>(this->m_flocculation)); }
-
-double Yeast::amount() const { return m_amount; }
-
-double Yeast::minTemperature_c() const { return m_minTemperature_c; }
-
-double Yeast::maxTemperature_c() const { return m_maxTemperature_c; }
-
-double Yeast::attenuation_pct() const { return m_attenuation_pct; }
-
-int Yeast::timesCultured() const { return m_timesCultured; }
-
-int Yeast::maxReuse() const { return m_maxReuse; }
-
-bool Yeast::addToSecondary() const { return m_addToSecondary; }
-
-bool Yeast::amountIsWeight() const { return m_amountIsWeight; }
-
-Yeast::Form Yeast::form() const { return  m_form; }
-
-Yeast::Flocculation Yeast::flocculation() const { return m_flocculation; }
-
-Yeast::Type Yeast::type() const { return m_type; }
-
-const QString Yeast::typeStringTr() const {
-   int myType = static_cast<int>(this->m_type);
-   Q_ASSERT(myType >= 0);
-   Q_ASSERT(myType < typesTr.size());
-   return typesTr.at(myType);
-}
-
-const QString Yeast::formStringTr() const {
-   int myForm = static_cast<int>(this->m_form);
-   Q_ASSERT(myForm >= 0);
-   Q_ASSERT(myForm < formsTr.size());
-   return formsTr.at(myForm);
-}
-
-const QString Yeast::flocculationStringTr() const {
-   int myFlocculation = static_cast<int>(this->m_flocculation);
-   Q_ASSERT(myFlocculation >= 0);
-   Q_ASSERT(myFlocculation < flocculationsTr.size());
-   return flocculationsTr.at(myFlocculation);
-}
-
-//============================="SET" METHODS====================================
-void Yeast::setType(Yeast::Type t) {
-   this->setAndNotify(PropertyNames::Yeast::type, this->m_type, t);
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
+// It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
+void Yeast::setType            (Yeast::Type         const   val) { this->setAndNotify(PropertyNames::Yeast::type            , this->m_type            , val); return; }
+void Yeast::setForm            (Yeast::Form         const   val) { this->setAndNotify(PropertyNames::Yeast::form            , this->m_form            , val); return; }
+void Yeast::setAmount          (double              const   val) { this->setAndNotify(PropertyNames::Yeast::amount          , this->m_amount          , this->enforceMin      (val, "amount"         , 0.0)); return; }
+void Yeast::setAmountIsWeight  (bool                const   val) { this->setAndNotify(PropertyNames::Yeast::amountIsWeight  , this->m_amountIsWeight  , val); return; }
+void Yeast::setLaboratory      (QString             const & val) { this->setAndNotify(PropertyNames::Yeast::laboratory      , this->m_laboratory      , val); return; }
+void Yeast::setProductID       (QString             const & val) { this->setAndNotify(PropertyNames::Yeast::productID       , this->m_productID       , val); return; }
+void Yeast::setMinTemperature_c(double              const   val) { this->setAndNotify(PropertyNames::Yeast::minTemperature_c, this->m_minTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
+void Yeast::setMaxTemperature_c(double              const   val) { this->setAndNotify(PropertyNames::Yeast::maxTemperature_c, this->m_maxTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
+void Yeast::setFlocculation    (Yeast::Flocculation const   val) { this->setAndNotify(PropertyNames::Yeast::flocculation    , this->m_flocculation    , val); return; }
+void Yeast::setAttenuation_pct (double              const   val) { this->setAndNotify(PropertyNames::Yeast::attenuation_pct , this->m_attenuation_pct , this->enforceMinAndMax(val, "pct attenuation", 0.0                            , 100.0, 0.0)); return; }
+void Yeast::setNotes           (QString             const & val) { this->setAndNotify(PropertyNames::Yeast::notes           , this->m_notes           , val); return; }
+void Yeast::setBestFor         (QString             const & val) { this->setAndNotify(PropertyNames::Yeast::bestFor         , this->m_bestFor         , val); return; }
+void Yeast::setTimesCultured   (int                 const   val) { this->setAndNotify(PropertyNames::Yeast::timesCultured   , this->m_timesCultured   , this->enforceMin      (val, "times cultured" )); return; }
+void Yeast::setMaxReuse        (int                 const   val) { this->setAndNotify(PropertyNames::Yeast::maxReuse        , this->m_maxReuse        , this->enforceMin      (val, "max reuse"      )); return; }
+void Yeast::setAddToSecondary  (bool                const   val) { this->setAndNotify(PropertyNames::Yeast::addToSecondary  , this->m_addToSecondary  , val); return; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+void Yeast::setAmountWithUnits (MassOrVolumeAmt     const   val) {
+   this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
    return;
 }
 
-void Yeast::setForm(Yeast::Form f) {
-   this->setAndNotify(PropertyNames::Yeast::form, this->m_form, f);
-}
-
-void Yeast::setAmount(double var) {
-   this->setAndNotify(PropertyNames::Yeast::amount,
-                      this->m_amount,
-                      this->enforceMin(var, "amount", 0.0));
-}
-
-// .:TBD:. I'm not wild about using "quanta" here (presumably to mean number of packets or number of cultures)
-//         Storing an int in a double is safe, so, for now, just leave this in place but as a wrapper around the more
-//         generic setInventoryAmount().
-void Yeast::setInventoryQuanta(int var) {
-   this->setInventoryAmount(var);
-   return;
-}
-
-void Yeast::setAmountIsWeight(bool var) {
-   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, var);
-}
-
-void Yeast::setLaboratory(QString const & var) {
-   this->setAndNotify(PropertyNames::Yeast::laboratory, this->m_laboratory, var);
-}
-
-void Yeast::setProductID(QString const & var) {
-   this->setAndNotify(PropertyNames::Yeast::productID, this->m_productID, var);
-}
-
-void Yeast::setMinTemperature_c(double var){
-   // It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
-   this->setAndNotify(PropertyNames::Yeast::minTemperature_c,
-                      this->m_minTemperature_c,
-                      this->enforceMin(var, "max temp", PhysicalConstants::absoluteZero, 0.0));
-}
-
-void Yeast::setMaxTemperature_c(double var) {
-   // It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
-   this->setAndNotify(PropertyNames::Yeast::maxTemperature_c,
-                      this->m_maxTemperature_c,
-                      this->enforceMin(var, "max temp", PhysicalConstants::absoluteZero, 0.0));
-}
-
-// Remember -- always make sure the value is in range before we set
-// coredumps happen otherwise
-void Yeast::setFlocculation(Yeast::Flocculation f) {
-   this->setAndNotify(PropertyNames::Yeast::flocculation, this->m_flocculation, f);
-}
-
-void Yeast::setAttenuation_pct(double var) {
-   this->setAndNotify(PropertyNames::Yeast::attenuation_pct,
-                      this->m_attenuation_pct,
-                      this->enforceMinAndMax(var, "pct attenuation", 0.0, 100.0, 0.0));
-}
-
-void Yeast::setNotes(QString const & var) {
-   this->setAndNotify(PropertyNames::Yeast::notes, this->m_notes, var);
-}
-
-void Yeast::setBestFor(QString const & var) {
-   this->setAndNotify(PropertyNames::Yeast::bestFor, this->m_bestFor, var);
-}
-
-void Yeast::setTimesCultured(int var) {
-   this->setAndNotify(PropertyNames::Yeast::timesCultured,
-                      this->m_timesCultured,
-                      this->enforceMin(var, "times cultured"));
-}
-
-void Yeast::setMaxReuse(int var) {
-   this->setAndNotify(PropertyNames::Yeast::maxReuse,
-                      this->m_maxReuse,
-                      this->enforceMin(var, "max reuse"));
-}
-
-void Yeast::setAddToSecondary( bool var ) {
-   this->setAndNotify(PropertyNames::Yeast::addToSecondary, this->m_addToSecondary, var);
-}
 
 Recipe * Yeast::getOwningRecipe() {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+}
+
+void Yeast::setInventoryQuanta(int var) {
+   this->setInventoryAmount(var);
+   return;
 }
 
 // Insert the boiler-plate stuff for inventory

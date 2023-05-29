@@ -28,12 +28,12 @@
 #include <QVariant>
 #include <QWidget>
 
+#include "model/Hop.h"
 #include "tableModels/BtTableModelInventory.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 
 class BtStringConst;
-class Hop;
 class Recipe;
 
 // You have to get the order of everything right with traits classes, but the end result is that we can refer to
@@ -71,11 +71,11 @@ private:
 
 //=============================================== CLASS HopItemDelegate ================================================
 
-/*!
- *  \class HopItemDelegate
+/**
+ * \class HopItemDelegate
  *
- *  \brief An item delegate for hop tables.
- *  \sa HopTableModel
+ * \brief An item delegate for hop tables.
+ * \sa HopTableModel
  */
 class HopItemDelegate : public QItemDelegate,
                                public ItemDelegate<HopItemDelegate, HopTableModel> {

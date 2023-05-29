@@ -41,7 +41,6 @@
 #include "MainWindow.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "model/Hop.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
 #include "PersistentSettings.h"
@@ -102,7 +101,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
       return QVariant();
    }
 
-   auto row = this->rows[index.row()];
+///   auto row = this->rows[index.row()];
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case HopTableModel::ColumnIndex::Name:
@@ -151,9 +150,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
    }
 
    bool retVal = false;
-   auto row = this->rows[index.row()];
-///   double amt;
-
+///   auto row = this->rows[index.row()];
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case HopTableModel::ColumnIndex::Name:
@@ -162,10 +159,10 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Time:
       case HopTableModel::ColumnIndex::Amount:
-         return this->writeDataToModel(index, value, role);
+         retVal = this->writeDataToModel(index, value, role);
 
       case HopTableModel::ColumnIndex::Inventory:
-         return this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
+         retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
 
       // No default case as we want the compiler to warn us if we missed one
    }

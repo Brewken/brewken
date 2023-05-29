@@ -495,25 +495,6 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Yeast
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const DB_YEAST_TYPE_ENUM {
-      {Yeast::Type::Ale      , "Ale"      },
-      {Yeast::Type::Lager    , "Lager"    },
-      {Yeast::Type::Wheat    , "Wheat"    },
-      {Yeast::Type::Wine     , "Wine"     },
-      {Yeast::Type::Champagne, "Champagne"},
-   };
-   EnumStringMapping const DB_YEAST_FORM_ENUM {
-      {Yeast::Form::Liquid , "Liquid" },
-      {Yeast::Form::Dry    , "Dry"    },
-      {Yeast::Form::Slant  , "Slant"  },
-      {Yeast::Form::Culture, "Culture"},
-   };
-   EnumStringMapping const DB_YEAST_FLOCCULATION_ENUM {
-      {Yeast::Flocculation::Low      , "Low"      },
-      {Yeast::Flocculation::Medium   , "Medium"   },
-      {Yeast::Flocculation::High     , "High"     },
-      {Yeast::Flocculation::Very_High, "Very High"},
-   };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Yeast> {
       "yeast",
       {
@@ -529,9 +510,9 @@ namespace {
          {ObjectStore::FieldType::Double, "attenuation"     , PropertyNames::Yeast::attenuation_pct               },
          {ObjectStore::FieldType::Double, "max_temperature" , PropertyNames::Yeast::maxTemperature_c              },
          {ObjectStore::FieldType::Double, "min_temperature" , PropertyNames::Yeast::minTemperature_c              },
-         {ObjectStore::FieldType::Enum  , "flocculation"    , PropertyNames::Yeast::flocculation                  , &DB_YEAST_FLOCCULATION_ENUM},
-         {ObjectStore::FieldType::Enum  , "form"            , PropertyNames::Yeast::form                          , &DB_YEAST_FORM_ENUM        },
-         {ObjectStore::FieldType::Enum  , "ytype"           , PropertyNames::Yeast::type                          , &DB_YEAST_TYPE_ENUM        },
+         {ObjectStore::FieldType::Enum  , "flocculation"    , PropertyNames::Yeast::flocculation                  , &Yeast::flocculationStringMapping},
+         {ObjectStore::FieldType::Enum  , "form"            , PropertyNames::Yeast::form                          , &Yeast::formStringMapping        },
+         {ObjectStore::FieldType::Enum  , "ytype"           , PropertyNames::Yeast::type                          , &Yeast::typeStringMapping        },
          {ObjectStore::FieldType::Int   , "max_reuse"       , PropertyNames::Yeast::maxReuse                      },
          {ObjectStore::FieldType::Int   , "times_cultured"  , PropertyNames::Yeast::timesCultured                 },
          {ObjectStore::FieldType::String, "best_for"        , PropertyNames::Yeast::bestFor                       },

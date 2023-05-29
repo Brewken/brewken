@@ -356,12 +356,12 @@ QVariant BtTreeItem::dataYeast(int column) {
          }
       case YEASTTYPECOL:
          if (yeast) {
-            return QVariant(yeast->typeStringTr());
+            return QVariant(Yeast::typeDisplayNames[yeast->type()]);
          }
          break;
       case YEASTFORMCOL:
          if (yeast) {
-            return QVariant(yeast->formStringTr());
+            return QVariant(Yeast::formDisplayNames[yeast->form()]);
          }
          break;
       default :

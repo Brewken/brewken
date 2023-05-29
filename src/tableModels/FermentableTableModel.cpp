@@ -195,7 +195,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
 
    auto row = this->rows[index.row()];
    Measurement::PhysicalQuantity physicalQuantity =
-      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass: Measurement::PhysicalQuantity::Volume;
+      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume;
 
    auto const columnIndex = static_cast<FermentableTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {

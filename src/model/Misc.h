@@ -139,9 +139,6 @@ public:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    /**
     * \brief Amounts of a \c Misc can be measured by mass or by volume (depending usually on what it is)
-    *
-    * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
-    * for BeerXML.
     */
    Q_PROPERTY(MassOrVolumeAmt    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
    Q_PROPERTY(QString            producer          READ producer          WRITE setProducer       )

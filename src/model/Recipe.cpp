@@ -1156,7 +1156,7 @@ void Recipe::generateInstructions() {
    for (int ii = 0; ii < ylist.size(); ++ii) {
       Yeast * yeast = ylist[ii];
       if (! yeast->addToSecondary()) {
-         str += tr("%1 %2 yeast, ").arg(yeast->name()).arg(yeast->typeStringTr());
+         str += tr("%1 %2 yeast, ").arg(yeast->name()).arg(Yeast::typeDisplayNames[yeast->type()]);
       }
    }
    str += tr("to the primary.");

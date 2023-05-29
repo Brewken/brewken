@@ -354,14 +354,6 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for hop_varieties BeerJSON records - see schemas/beerjson/1.0/hop.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/* This isn't used with BeerJSON .:TODO.JSON:. Maybe make this an optional field in Hop
- * EnumStringMapping const BEER_JSON_HOP_USE_MAPPER {
-      {"Boil",       Hop::Use::Boil},
-      {"Dry Hop",    Hop::Use::Dry_Hop},
-      {"Mash",       Hop::Use::Mash},
-      {"First Wort", Hop::Use::First_Wort},
-      {"Aroma",      Hop::Use::Aroma}
-   };*/
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopBase {
       // Type                                         XPath                                Q_PROPERTY                             Enum/Unit Mapper
       {JsonRecordDefinition::FieldType::String,       "name",                              PropertyNames::NamedEntity::name,      },
@@ -408,22 +400,6 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for cultures BeerJSON records - see schemas/beerjson/1.0/culture.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const BEER_JSON_YEAST_TYPE_MAPPER {
-      // .:TODO.JSON:.  Add missing values here to Yeast::Type, and decide what to do about Yeast::Type::Wheat - maybe it becomes Other?
-      {Yeast::Type::Ale      , "ale"          },
-      {Yeast::Type::Lager    , "lager"        },
-      {Yeast::Type::Wheat    , "other"        }, // NOTE BeerJSON doesn't have a type directly corresponding to Wheat
-      {Yeast::Type::Wine     , "wine"         },
-      {Yeast::Type::Champagne, "champagne"    },
-//    {Yeast::Type::         , "bacteria"     },
-//    {Yeast::Type::         , "brett"        },
-//    {Yeast::Type::         , "kveik"        },
-//    {Yeast::Type::         , "lacto"        },
-//    {Yeast::Type::         , "malolactic"   },
-//    {Yeast::Type::         , "mixed-culture"},
-//    {Yeast::Type::         , "pedio"        },
-//    {Yeast::Type::         , "spontaneous"  },
-   };
    EnumStringMapping const BEER_JSON_YEAST_FORM_MAPPER {
       // .:TODO.JSON:.  Add missing value here to Yeast::Form
       {Yeast::Form::Liquid , "liquid",  },
@@ -431,18 +407,6 @@ namespace {
       {Yeast::Form::Slant  , "slant",   },
       {Yeast::Form::Culture, "culture", },
 //    {Yeast::Form::       , "dregs",   },
-   };
-   EnumStringMapping const BEER_JSON_YEAST_FLOCCULATION_MAPPER {
-      // BeerJSON has an entire type called QualitativeRangeType, but it's only used for this field, so, for now, we
-      // treat it as an enum
-      // .:TODO.JSON:.  Add missing value here to Yeast::Flocculation
-//    {Yeast::Flocculation::         , "very low"   },
-      {Yeast::Flocculation::Low      , "low"        },
-//    {Yeast::Flocculation::         , "medium low" },
-      {Yeast::Flocculation::Medium   , "medium"     },
-//    {Yeast::Flocculation::         , "medium high"},
-      {Yeast::Flocculation::High     , "high"       },
-      {Yeast::Flocculation::Very_High, "very high"  },
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
       "cultures",
@@ -452,14 +416,14 @@ namespace {
       {
          // Type                                                 XPath                        Q_PROPERTY                              Enum/Unit Mapper
          {JsonRecordDefinition::FieldType::String,               "name",                      PropertyNames::NamedEntity::name,       },
-         {JsonRecordDefinition::FieldType::Enum,                 "type",                      PropertyNames::Yeast::type,             &BEER_JSON_YEAST_TYPE_MAPPER},
-         {JsonRecordDefinition::FieldType::Enum,                 "form",                      PropertyNames::Yeast::form,             &BEER_JSON_YEAST_FORM_MAPPER},
+         {JsonRecordDefinition::FieldType::Enum,                 "type",                      PropertyNames::Yeast::type,             &Yeast::typeStringMapping},
+         {JsonRecordDefinition::FieldType::Enum,                 "form",                      PropertyNames::Yeast::form,             &Yeast::formStringMapping},
          {JsonRecordDefinition::FieldType::String,               "producer",                  PropertyNames::Yeast::laboratory,       },
          {JsonRecordDefinition::FieldType::String,               "product_id",                PropertyNames::Yeast::productID,        },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "temperature_range/minimum", PropertyNames::Yeast::minTemperature_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "temperature_range/maximum", PropertyNames::Yeast::maxTemperature_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_tolerance",         BtString::NULL_STR,                     &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Add this to Yeast
-         {JsonRecordDefinition::FieldType::Enum,                 "flocculation",              PropertyNames::Yeast::flocculation,     &BEER_JSON_YEAST_FLOCCULATION_MAPPER},
+         {JsonRecordDefinition::FieldType::Enum,                 "flocculation",              PropertyNames::Yeast::flocculation,     &Yeast::flocculationStringMapping},
          {JsonRecordDefinition::FieldType::SingleUnitValue,      "attenuation_range/minimum", BtString::NULL_STR,                     &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Convert/extend PropertyNames::Yeast::attenuation_pct to a range
          {JsonRecordDefinition::FieldType::SingleUnitValue,      "attenuation_range/maximum", BtString::NULL_STR,                     &BEER_JSON_PERCENT_UNIT}, // .:TODO.JSON:. Convert/extend PropertyNames::Yeast::attenuation_pct to a range
          {JsonRecordDefinition::FieldType::String,               "notes",                     PropertyNames::Yeast::notes,            },

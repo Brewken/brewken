@@ -669,7 +669,7 @@ void MainWindow::setupTables()
    yeastTableModel = new YeastTableModel(yeastTable);
    yeastTableProxy = new YeastSortFilterProxyModel(yeastTable,false);
    yeastTableProxy->setSourceModel(yeastTableModel);
-   yeastTable->setItemDelegate(new YeastItemDelegate(yeastTable));
+   yeastTable->setItemDelegate(new YeastItemDelegate(yeastTable, *yeastTableModel));
    yeastTable->setModel(yeastTableProxy);
    connect( yeastTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
        if (idx.column() == 0)

@@ -222,21 +222,45 @@ namespace {
    EnumStringMapping const BEER_XML_YEAST_TYPE_MAPPER {
       {Yeast::Type::Ale      , "Ale"      },
       {Yeast::Type::Lager    , "Lager"    },
-      {Yeast::Type::Wheat    , "Wheat"    },
+      {Yeast::Type::Other    , "Wheat"    }, // Wheat doesn't exist in BeerJSON and Other doesn't exist in BeerXML.  This is a bit of a bodge.
       {Yeast::Type::Wine     , "Wine"     },
       {Yeast::Type::Champagne, "Champagne"},
+      // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an (extremely)
+      // approximate mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {Yeast::Type::Bacteria    , "Ale<!--Bacteria-->"     },
+      {Yeast::Type::Brett       , "Ale<!--Brett-->"        },
+      {Yeast::Type::Kveik       , "Ale<!--Kveik-->"        },
+      {Yeast::Type::Lacto       , "Ale<!--Lacto-->"        },
+      {Yeast::Type::Malolactic  , "Ale<!--Malolactic-->"   },
+      {Yeast::Type::MixedCulture, "Ale<!--Mixed-culture-->"},
+      {Yeast::Type::Pedio       , "Ale<!--Pedio-->"        },
+      {Yeast::Type::Spontaneous , "Ale<!--Spontaneous-->"  },
    };
    EnumStringMapping const BEER_XML_YEAST_FORM_MAPPER {
-      {Yeast::Form::Liquid , "Liquid" },
-      {Yeast::Form::Dry    , "Dry"    },
-      {Yeast::Form::Slant  , "Slant"  },
-      {Yeast::Form::Culture, "Culture"},
+      {Yeast::Form::Liquid , "Liquid"            },
+      {Yeast::Form::Dry    , "Dry"               },
+      {Yeast::Form::Slant  , "Slant"             },
+      {Yeast::Form::Culture, "Culture"           },
+      // This other form is in BeerJSON but is not mentioned in the BeerXML 1.0 Standard.  It gets an approximate
+      // mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {Yeast::Form::Dregs  , "Liquid<!--dregs-->"},
    };
    EnumStringMapping const BEER_XML_YEAST_FLOCCULATION_MAPPER {
-      {Yeast::Flocculation::Low      , "Low"      },
-      {Yeast::Flocculation::Medium   , "Medium"   },
-      {Yeast::Flocculation::High     , "High"     },
-      {Yeast::Flocculation::Very_High, "Very High"},
+      // The flocculations below with comments (both types!) are in BeerJSON but are not mentioned in the BeerXML 1.0
+      // Standard.  They get an approximate mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      //
+      // Note that we have to maintain the entries here in numerical order, otherwise we'll get an assert from
+      // EnumStringMapping (because it relies on that ordering for an optimisation in how it works).
+      {Yeast::Flocculation::VeryLow   , "Low<!--very low-->"     }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+      {Yeast::Flocculation::Low       , "Low"                    },
+      {Yeast::Flocculation::MediumLow , "Medium<!--medium low-->"}, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+      {Yeast::Flocculation::Medium    , "Medium"                 },
+      {Yeast::Flocculation::MediumHigh, "High<!--medium high-->" }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+      {Yeast::Flocculation::High      , "High"                   },
+      {Yeast::Flocculation::VeryHigh  , "Very High"              },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
       // Type                                  XPath               Q_PROPERTY                              Enum Mapper

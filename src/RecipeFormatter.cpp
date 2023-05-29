@@ -719,18 +719,18 @@ public:
             .arg(tr("Amount"))
             .arg(tr("Stage"));
       for (int ii = 0; ii < size; ++ii) {
-         Yeast* y = yeasts[ii];
+         Yeast * yeast = yeasts[ii];
 
          ytable += QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td></tr>")
-               .arg( y->name())
-               .arg( y->typeStringTr())
-               .arg( y->formStringTr())
-               .arg( Measurement::displayAmount(Measurement::Amount{
-                                                   y->amount(),
-                                                   y->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+               .arg(yeast->name())
+               .arg(Yeast::typeDisplayNames[yeast->type()])
+               .arg(Yeast::formDisplayNames[yeast->form()])
+               .arg(Measurement::displayAmount(Measurement::Amount{
+                                                   yeast->amount(),
+                                                   yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
                                                 },
                                                 2) )
-               .arg( y->addToSecondary() ? tr("Secondary") : tr("Primary"));
+               .arg( yeast->addToSecondary() ? tr("Secondary") : tr("Primary"));
       }
       ytable += "</table>";
       return ytable;
@@ -754,16 +754,16 @@ public:
          stages.append(tr("Stage"));
 
          for (int ii = 0; ii < size; ++ii) {
-            Yeast* y = yeasts[ii];
-            names.append(y->name());
-            types.append(y->typeStringTr());
-            forms.append(y->formStringTr());
+            Yeast* yeast = yeasts[ii];
+            names.append(yeast->name());
+            types.append(Yeast::typeDisplayNames[yeast->type()]);
+            forms.append(Yeast::formDisplayNames[yeast->form()]);
             amounts.append(Measurement::displayAmount(Measurement::Amount{
-                                                         y->amount(),
-                                                         y->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+                                                         yeast->amount(),
+                                                         yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
                                                       },
                                                       2));
-            stages.append(y->addToSecondary() ? tr("Secondary") : tr("Primary"));
+            stages.append(yeast->addToSecondary() ? tr("Secondary") : tr("Primary"));
          }
 
          padAllToMaxLength(&names);
@@ -1431,10 +1431,10 @@ QString RecipeFormatter::getToolTip(Yeast* yeast) {
    // First row -- type and form
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Type"))
-           .arg(yeast->typeStringTr());
+           .arg(Yeast::typeDisplayNames[yeast->type()]);
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Form"))
-           .arg(yeast->formStringTr());
+           .arg(Yeast::formDisplayNames[yeast->form()]);
    // Second row -- lab and prod id
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Lab"))
@@ -1449,7 +1449,7 @@ QString RecipeFormatter::getToolTip(Yeast* yeast) {
            .arg(yeast->productID());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Flocculation"))
-           .arg( yeast->flocculationStringTr());
+           .arg(Yeast::flocculationDisplayNames[yeast->flocculation()]);
 
 
    body += "</table></body></html>";

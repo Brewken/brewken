@@ -537,14 +537,13 @@ namespace {
          //
          // Hop: Extended and additional fields for BeerJSON
          //
-         // We only need to update the old Hop type mappings.  The new ones should "just work".
+         // We only need to update the old Hop type and form mappings.  The new ones should "just work".
          {QString(     "UPDATE hop SET htype = 'aroma'           WHERE htype = 'Aroma'"    )},
          {QString(     "UPDATE hop SET htype = 'bittering'       WHERE htype = 'Bittering'")},
          {QString(     "UPDATE hop SET htype = 'aroma/bittering' WHERE htype = 'Both'"     )},
-         // Same applies for Hop form mappings
-         {QString(     "UPDATE hop SET form = 'pellet'           WHERE form = 'Pellet'")},
-         {QString(     "UPDATE hop SET form = 'plug'             WHERE form = 'Plug'"  )},
-         {QString(     "UPDATE hop SET form = 'leaf'             WHERE form = 'Leaf'"  )},
+         {QString(     "UPDATE hop SET form = 'pellet' WHERE form = 'Pellet'")},
+         {QString(     "UPDATE hop SET form = 'plug'   WHERE form = 'Plug'"  )},
+         {QString(     "UPDATE hop SET form = 'leaf'   WHERE form = 'Leaf'"  )},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<QString>())},
@@ -562,11 +561,11 @@ namespace {
          // Fermentable: Extended and additional fields for BeerJSON
          //
          // We only need to update the old Fermentable type mappings.  The new ones should "just work".
-         {QString("     UPDATE fermentable SET ftype = 'grain'           WHERE ftype = 'Grain'"      )},
-         {QString("     UPDATE fermentable SET ftype = 'sugar'           WHERE ftype = 'Sugar'"      )},
-         {QString("     UPDATE fermentable SET ftype = 'extract'         WHERE ftype = 'Extract'"    )},
-         {QString("     UPDATE fermentable SET ftype = 'dry extract'     WHERE ftype = 'Dry Extract'")},
-         {QString("     UPDATE fermentable SET ftype = 'other'           WHERE ftype = 'Adjunct'"    )},
+         {QString("     UPDATE fermentable SET ftype = 'grain'       WHERE ftype = 'Grain'"      )},
+         {QString("     UPDATE fermentable SET ftype = 'sugar'       WHERE ftype = 'Sugar'"      )},
+         {QString("     UPDATE fermentable SET ftype = 'extract'     WHERE ftype = 'Extract'"    )},
+         {QString("     UPDATE fermentable SET ftype = 'dry extract' WHERE ftype = 'Dry Extract'")},
+         {QString("     UPDATE fermentable SET ftype = 'other'       WHERE ftype = 'Adjunct'"    )},
          {QString("ALTER TABLE fermentable ADD COLUMN grain_group               %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable ADD COLUMN producer                  %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable ADD COLUMN productId                 %1").arg(db.getDbNativeTypeName<QString>())},
@@ -604,10 +603,23 @@ namespace {
          {QString("     UPDATE misc SET mtype = 'other'       WHERE mtype = 'Other'      ")},
          {QString("ALTER TABLE misc ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE misc ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
-
-
-
-
+         //
+         // Yeast: Extended and additional fields for BeerJSON
+         //
+         // We only need to update the old Yeast type, form and flocculation mappings.  The new ones should "just work".
+         {QString("     UPDATE yeast SET ytype = 'ale'       WHERE ytype = 'Ale'      ")},
+         {QString("     UPDATE yeast SET ytype = 'lager'     WHERE ytype = 'Lager'    ")},
+         {QString("     UPDATE yeast SET ytype = 'other'     WHERE ytype = 'Wheat'    ")}, // NB: Wheat becomes Other
+         {QString("     UPDATE yeast SET ytype = 'wine'      WHERE ytype = 'Wine'     ")},
+         {QString("     UPDATE yeast SET ytype = 'champagne' WHERE ytype = 'Champagne'")},
+         {QString("     UPDATE yeast SET form = 'liquid'  WHERE form = 'Liquid' ")},
+         {QString("     UPDATE yeast SET form = 'dry'     WHERE form = 'Dry'    ")},
+         {QString("     UPDATE yeast SET form = 'slant'   WHERE form = 'Slant'  ")},
+         {QString("     UPDATE yeast SET form = 'culture' WHERE form = 'Culture'")},
+         {QString("     UPDATE yeast SET flocculation = 'low'       WHERE flocculation = 'Low'      ")},
+         {QString("     UPDATE yeast SET flocculation = 'medium'    WHERE flocculation = 'Medium'   ")},
+         {QString("     UPDATE yeast SET flocculation = 'high'      WHERE flocculation = 'High'     ")},
+         {QString("     UPDATE yeast SET flocculation = 'very high' WHERE flocculation = 'Very High'")},
 
       };
       return executeSqlQueries(q, migrationQueries);
