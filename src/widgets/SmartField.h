@@ -252,7 +252,30 @@ public:
     *        units for the relevant \c Measurement::PhysicalQuantity.  (It is a coding error to call this function if
     *        our field type \c is \c NonPhysicalQuantity.)
     */
+   Measurement::Amount getNonOptCanonicalAmt() const;
+
+   /**
+    * \brief See \c getNonOptCanonicalAmt
+    */
+   // Uncomment next line to find all the places we need to change calls
+//   [[deprecated("Replaced by getNonOptCanonicalAmt, for more consistent naming")]]
    Measurement::Amount toCanonical() const;
+
+   /**
+    * \brief As \c getNonOptCanonicalAmt but for optional fields
+    */
+   std::optional<Measurement::Amount> getOptCanonicalAmt() const;
+
+   /**
+    * \brief Same as calling \c quantity() on the result of \c getNonOptCanonicalAmt().
+    */
+   double getNonOptCanonicalQty() const;
+
+   /**
+    * \brief As \c getNonOptCanonicalQty but (with the obvious changes) for optional fields
+    */
+   std::optional<double> getOptCanonicalQty() const;
+
 
    /**
     * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or

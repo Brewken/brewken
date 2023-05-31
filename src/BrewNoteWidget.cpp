@@ -84,11 +84,7 @@ BrewNoteWidget::~BrewNoteWidget() = default;
 
 //.:TBD:. See comment in PitchDialog::updateProductionDate() for how we might re-implement per-field date format
 // selection
-// I should really do this better, but I really cannot bring myself to do
-// another UnitSystem for one input field.
 void BrewNoteWidget::updateDateFormat() {
-//   auto dateFormat = Localization::getDateFormatForField(PersistentSettings::BrewNote::fermentDate,
-//                                                         PersistentSettings::Sections::page_postferment);
    auto dateFormat = Localization::getDateFormat();
    QString format = Localization::numericToStringDateFormat(dateFormat);
    this->lineEdit_fermentDate->setDisplayFormat(format);

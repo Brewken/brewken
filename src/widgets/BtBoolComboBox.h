@@ -25,7 +25,17 @@
 #include "utils/TypeLookup.h"
 
 /**
- * \class BtBoolComboBox extends \c QComboBox to handle booleans
+ * \class BtBoolComboBox extends \c QComboBox to handle booleans.
+ *
+ *        There are a couple of reasons for using what Qt calls a combo box (but is more commonly a Drop-down list, eg
+ *        per https://en.wikipedia.org/wiki/Drop-down_list) rather than a checkbox or a radio button:
+ *           - Drop-down list typically takes less screen space than a radio button (important in table views, but also
+ *             useful in editors where we have quite a lot of fields)
+ *           - Drop-down list is more self-explanatory than a checkbox, which is important in table views where the row
+ *             being edited may be far from the column headers.
+ *           - Checkbox is not great for dealing with optional booleans because there isn't an obvious "NULL" value.
+ *             (There are tri-state checkboxes, but typically the additional state is used to mean "no change" rather
+ *             than "NULL", which is not what we need.)
  */
 class BtBoolComboBox : public QComboBox {
 Q_OBJECT
@@ -100,15 +110,36 @@ private:
 };
 
 /**
- * \brief This macro saves a bit of copy-and-paste when invoking \c BtBoolBoolComboBox::Init.  See \c BT_COMBO_BOX_INIT
- *        for details.
+ * \brief These macro sometimes saves a bit of copy-and-paste when invoking \c BtBoolBoolComboBox::Init.  (See
+ *        \c BT_COMBO_BOX_INIT for more details.)
+ *
+ *        The version with fewer parameters is for when the options are "Yes" and "No".
+ *
+ *        As with \c TYPE_INFO_GET_OVERLOAD in \c undoRedo/SimpleUndoableUpdate.h, the
+ *        \c BT_BOOL_COMBO_BOX_INIT_GET_OVERLOAD definition is a standard macro "trick" to allow us to have two
+ *        "overloads" of BT_BOOL_COMBO_BOX_INIT that
+ *        actually resolve down to BT_BOOL_COMBO_BOX_INIT_6 and BT_BOOL_COMBO_BOX_INIT_4 (where the subscript is the
+ *        number of parameters).
  */
-#define BT_BOOL_COMBO_BOX_INIT(editorClass, comboBoxName, unsetDisplay, setDisplay, modelClass, propertyName) \
+#define BT_BOOL_COMBO_BOX_INIT_6(editorClass, comboBoxName, unsetDisplay, setDisplay, modelClass, propertyName) \
    this->comboBoxName->init(#editorClass, \
                             #comboBoxName, \
                             #editorClass "->" #comboBoxName, \
                             unsetDisplay, \
                             setDisplay, \
                             modelClass::typeLookup.getType(PropertyNames::modelClass::propertyName))
-
+#define BT_BOOL_COMBO_BOX_INIT_5(...) static_assert(false)
+#define BT_BOOL_COMBO_BOX_INIT_4(editorClass, comboBoxName, modelClass, propertyName) \
+   this->comboBoxName->init(#editorClass, \
+                            #comboBoxName, \
+                            #editorClass "->" #comboBoxName, \
+                            editorClass::tr("No"), \
+                            editorClass::tr("Yes"), \
+                            modelClass::typeLookup.getType(PropertyNames::modelClass::propertyName))
+#define BT_BOOL_COMBO_BOX_INIT_GET_OVERLOAD(param1, param2, param3, param4, param5, param6, NAME, ...) NAME
+#define BT_BOOL_COMBO_BOX_INIT(...) \
+   BT_BOOL_COMBO_BOX_INIT_GET_OVERLOAD(__VA_ARGS__, \
+                                       BT_BOOL_COMBO_BOX_INIT_6, \
+                                       BT_BOOL_COMBO_BOX_INIT_5, \
+                                       BT_BOOL_COMBO_BOX_INIT_4)(__VA_ARGS__)
 #endif

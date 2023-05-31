@@ -211,8 +211,6 @@ namespace {
       {XmlRecord::FieldType::Double          , "FERMENTABILITY"                , PropertyNames::Fermentable::fermentability_pct       },
       {XmlRecord::FieldType::Double          , "BETA_GLUCAN"                   , PropertyNames::Fermentable::betaGlucan               },
       {XmlRecord::FieldType::Bool            , "BETA_GLUCAN_IS_MASS_PER_VOLUME", PropertyNames::Fermentable::betaGlucanIsMassPerVolume},
-
-
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -263,29 +261,40 @@ namespace {
       {Yeast::Flocculation::VeryHigh  , "Very High"              },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Yeast> {
-      // Type                                  XPath               Q_PROPERTY                              Enum Mapper
-      {XmlRecord::FieldType::String,           "NAME",             PropertyNames::NamedEntity::name,       nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION",          VERSION1,                               nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",             PropertyNames::Yeast::type,             &BEER_XML_YEAST_TYPE_MAPPER},
-      {XmlRecord::FieldType::Enum,             "FORM",             PropertyNames::Yeast::form,             &BEER_XML_YEAST_FORM_MAPPER},
-      {XmlRecord::FieldType::Double,           "AMOUNT",           PropertyNames::Yeast::amount,           nullptr},
-      {XmlRecord::FieldType::Bool,             "AMOUNT_IS_WEIGHT", PropertyNames::Yeast::amountIsWeight,   nullptr},
-      {XmlRecord::FieldType::String,           "LABORATORY",       PropertyNames::Yeast::laboratory,       nullptr},
-      {XmlRecord::FieldType::String,           "PRODUCT_ID",       PropertyNames::Yeast::productID,        nullptr},
-      {XmlRecord::FieldType::Double,           "MIN_TEMPERATURE",  PropertyNames::Yeast::minTemperature_c, nullptr},
-      {XmlRecord::FieldType::Double,           "MAX_TEMPERATURE",  PropertyNames::Yeast::maxTemperature_c, nullptr},
-      {XmlRecord::FieldType::Enum,             "FLOCCULATION",     PropertyNames::Yeast::flocculation,     &BEER_XML_YEAST_FLOCCULATION_MAPPER},
-      {XmlRecord::FieldType::Double,           "ATTENUATION",      PropertyNames::Yeast::attenuation_pct,  nullptr},
-      {XmlRecord::FieldType::String,           "NOTES",            PropertyNames::Yeast::notes,            nullptr},
-      {XmlRecord::FieldType::String,           "BEST_FOR",         PropertyNames::Yeast::bestFor,          nullptr},
-      {XmlRecord::FieldType::Int,              "TIMES_CULTURED",   PropertyNames::Yeast::timesCultured,    nullptr},
-      {XmlRecord::FieldType::Int,              "MAX_REUSE",        PropertyNames::Yeast::maxReuse,         nullptr},
-      {XmlRecord::FieldType::Bool,             "ADD_TO_SECONDARY", PropertyNames::Yeast::addToSecondary,   nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_AMOUNT",   BtString::NULL_STR,                     nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISP_MIN_TEMP",    BtString::NULL_STR,                     nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISP_MAX_TEMP",    BtString::NULL_STR,                     nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "INVENTORY",        BtString::NULL_STR,                     nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "CULTURE_DATE",     BtString::NULL_STR,                     nullptr}, // Extension tag
+      // Type                                  XPath                           Q_PROPERTY                                       Enum Mapper
+      {XmlRecord::FieldType::String          , "NAME"                        , PropertyNames::NamedEntity::name               , nullptr},
+      {XmlRecord::FieldType::RequiredConstant, "VERSION"                     , VERSION1                                       , nullptr},
+      {XmlRecord::FieldType::Enum            , "TYPE"                        , PropertyNames::Yeast::type                     , &BEER_XML_YEAST_TYPE_MAPPER},
+      {XmlRecord::FieldType::Enum            , "FORM"                        , PropertyNames::Yeast::form                     , &BEER_XML_YEAST_FORM_MAPPER},
+      {XmlRecord::FieldType::Double          , "AMOUNT"                      , PropertyNames::Yeast::amount                   , nullptr},
+      {XmlRecord::FieldType::Bool            , "AMOUNT_IS_WEIGHT"            , PropertyNames::Yeast::amountIsWeight           , nullptr},
+      {XmlRecord::FieldType::String          , "LABORATORY"                  , PropertyNames::Yeast::laboratory               , nullptr},
+      {XmlRecord::FieldType::String          , "PRODUCT_ID"                  , PropertyNames::Yeast::productID                , nullptr},
+      {XmlRecord::FieldType::Double          , "MIN_TEMPERATURE"             , PropertyNames::Yeast::minTemperature_c         , nullptr}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Double          , "MAX_TEMPERATURE"             , PropertyNames::Yeast::maxTemperature_c         , nullptr}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Enum            , "FLOCCULATION"                , PropertyNames::Yeast::flocculation             , &BEER_XML_YEAST_FLOCCULATION_MAPPER}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Double          , "ATTENUATION"                 , PropertyNames::Yeast::attenuation_pct          , nullptr}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::String          , "NOTES"                       , PropertyNames::Yeast::notes                    , nullptr},
+      {XmlRecord::FieldType::String          , "BEST_FOR"                    , PropertyNames::Yeast::bestFor                  , nullptr},
+      {XmlRecord::FieldType::Int             , "TIMES_CULTURED"              , PropertyNames::Yeast::timesCultured            , nullptr}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Int             , "MAX_REUSE"                   , PropertyNames::Yeast::maxReuse                 , nullptr}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Bool            , "ADD_TO_SECONDARY"            , PropertyNames::Yeast::addToSecondary           , nullptr}, // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::String          , "DISPLAY_AMOUNT"              , BtString::NULL_STR                             , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISP_MIN_TEMP"               , BtString::NULL_STR                             , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISP_MAX_TEMP"               , BtString::NULL_STR                             , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "INVENTORY"                   , BtString::NULL_STR                             , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "CULTURE_DATE"                , BtString::NULL_STR                             , nullptr}, // Extension tag
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::Double          , "ALCOHOL_TOLERANCE"           , PropertyNames::Yeast::alcoholTolerance_pct     },
+      {XmlRecord::FieldType::Double          , "ATTENUATION_MIN"             , PropertyNames::Yeast::attenuationMin_pct       },
+      {XmlRecord::FieldType::Double          , "ATTENUATION_MAX"             , PropertyNames::Yeast::attenuationMax_pct       },
+      {XmlRecord::FieldType::Bool            , "PHENOLIC_OFF_FLAVOR_POSITIVE", PropertyNames::Yeast::phenolicOffFlavorPositive},
+      {XmlRecord::FieldType::Bool            , "GLUCOAMYLASE_POSITIVE"       , PropertyNames::Yeast::glucoamylasePositive     },
+      {XmlRecord::FieldType::Bool            , "KILLER_PRODUCING_K1_TOXIN"   , PropertyNames::Yeast::killerProducingK1Toxin   },
+      {XmlRecord::FieldType::Bool            , "KILLER_PRODUCING_K2_TOXIN"   , PropertyNames::Yeast::killerProducingK2Toxin   },
+      {XmlRecord::FieldType::Bool            , "KILLER_PRODUCING_K28_TOXIN"  , PropertyNames::Yeast::killerProducingK28Toxin  },
+      {XmlRecord::FieldType::Bool            , "KILLER_PRODUCING_KLUS_TOXIN" , PropertyNames::Yeast::killerProducingKlusToxin },
+      {XmlRecord::FieldType::Bool            , "KILLER_NEUTRAL"              , PropertyNames::Yeast::killerNeutral            },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -368,13 +368,41 @@ void SmartField::setPrecision(unsigned int const precision) {
    return this->pimpl->m_precision;
 }
 
-Measurement::Amount SmartField::toCanonical() const {
+Measurement::Amount SmartField::getNonOptCanonicalAmt() const {
    Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this for a NonPhysicalQuantity
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
    // It's a coding error to call this for an optional value
    Q_ASSERT(!this->getTypeInfo().isOptional());
    return this->pimpl->toCanonical(this->getRawText(), this->getScaleInfo());
+}
+
+Measurement::Amount SmartField::toCanonical() const {
+   return this->getNonOptCanonicalAmt();
+}
+
+std::optional<Measurement::Amount> SmartField::getOptCanonicalAmt() const {
+   Q_ASSERT(this->pimpl->m_initialised);
+   // It's a coding error to call this for a NonPhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
+   // It's a coding error to call this for an non-optional value
+   Q_ASSERT(this->getTypeInfo().isOptional());
+
+   QString const rawText = this->getRawText();
+   if (Optional::isEmptyOrBlank(rawText)) {
+      return std::nullopt;
+   }
+
+   return this->pimpl->toCanonical(rawText, this->getScaleInfo());
+}
+
+double SmartField::getNonOptCanonicalQty() const {
+   return this->getNonOptCanonicalAmt().quantity();
+}
+
+std::optional<double> SmartField::getOptCanonicalQty() const {
+   auto amount = this->getOptCanonicalAmt();
+   return amount ? std::optional<double>{amount->quantity()} : std::optional<double>{std::nullopt};
 }
 
 // We can't do the same trick on get-value-as as we do for set-amount because we can't overload base on return type,

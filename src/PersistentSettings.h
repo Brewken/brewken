@@ -89,6 +89,7 @@ AddSettingName(windowState)
 //======================================================================================================================
 //======================================================================================================================
 //======================================== Start of setting SECTION constants ==========================================
+// .:TODO:. I think most of these are no longer used and can be deleted
 #define AddSettingSection(section) namespace PersistentSettings::Sections { BtStringConst const section{#section}; }
 AddSettingSection(alcoholTool)
 AddSettingSection(backups)
@@ -98,12 +99,7 @@ AddSettingSection(MainWindow)
 AddSettingSection(mashStepTableModel)
 AddSettingSection(miscTable)
 AddSettingSection(miscTableModel)
-AddSettingSection(page_postboil)
-AddSettingSection(page_postferment)
-AddSettingSection(page_preboil)
-AddSettingSection(pitchRateCalc)
 AddSettingSection(saltTable)
-AddSettingSection(tab_recipe)
 AddSettingSection(yeastTable)
 AddSettingSection(yeastTableModel)
 #undef AddSettingName

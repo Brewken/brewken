@@ -335,8 +335,8 @@ QVariant BtTreeItem::dataMisc(int column) {
          break;
       case MISCUSECOL:
          if (misc) {
-            auto const use = misc->use();
-            return use ? QVariant(Misc::useDisplayNames[*use]) : "";
+            // Note that EnumStringMapping::operator[] already handles returning blank string for unset optional enums
+            return QVariant(Misc::useDisplayNames[misc->use()]);
          }
          break;
       default :

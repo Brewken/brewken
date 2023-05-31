@@ -188,8 +188,7 @@ BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
 
 BrewNote::~BrewNote() = default;
 
-void BrewNote::populateNote(Recipe* parent)
-{
+void BrewNote::populateNote(Recipe* parent) {
    this->m_recipeId = parent->key();
 
    // Since we have the recipe, lets set some defaults The order in which
@@ -262,12 +261,12 @@ void BrewNote::populateNote(Recipe* parent)
    auto yeasts = parent->yeasts();
    for (auto yeast : yeasts) {
       if ( yeast->attenuation_pct() > atten_pct ) {
-         atten_pct = yeast->attenuation_pct();
+         atten_pct = yeast->getTypicalAttenuation_pct();
       }
    }
 
    if ( yeasts.size() == 0 || atten_pct < 0.0 ) {
-      atten_pct = 75;
+      atten_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation;
    }
    setProjAtten(atten_pct);
    return;

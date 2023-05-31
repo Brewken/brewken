@@ -1441,7 +1441,7 @@ QString RecipeFormatter::getToolTip(Yeast* yeast) {
            .arg(yeast->laboratory());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Attenuation"))
-           .arg(Measurement::displayQuantity(yeast->attenuation_pct(), 3));
+           .arg(Measurement::displayQuantity(yeast->getTypicalAttenuation_pct(), 3));
 
    // third row -- atten and floc
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")

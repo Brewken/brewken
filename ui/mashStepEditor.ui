@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Mash Step Editor</string>
   </property>
-  <property name="configSection" stdset="0">
-   <string notr="true">mashStepEditor</string>
-  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_8">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">

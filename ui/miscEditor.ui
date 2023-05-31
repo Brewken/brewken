@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Misc Editor</string>
   </property>
-  <property name="configSection" stdset="0">
-   <string notr="true">miscEditor</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget_editor">

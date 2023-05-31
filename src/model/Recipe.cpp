@@ -2556,12 +2556,12 @@ void Recipe::recalcOgFg() {
       yeast = yeasties[i];
       // Get the yeast with the greatest attenuation.
       if (yeast->attenuation_pct() > attenuation_pct) {
-         attenuation_pct = yeast->attenuation_pct();
+         attenuation_pct = yeast->getTypicalAttenuation_pct();
       }
    }
    // This means we have yeast, but they neglected to provide attenuation percentages.
    if (yeasties.size() > 0 && attenuation_pct <= 0.0)  {
-      attenuation_pct = 75.0; // 75% is an average attenuation.
+      attenuation_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation.
    }
 
    if (nonFermentableSugars_kg != 0.0) {

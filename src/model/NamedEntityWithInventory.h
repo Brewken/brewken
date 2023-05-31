@@ -35,6 +35,8 @@ AddPropertyName(inventoryWithUnits)
  * \class NamedEntityWithInventory
  *
  * \brief Extends \c NamedEntity to provide functionality for storing in Inventory
+ *
+ *        .:TBD:. Should we combine with amount?  But what about Salt?
  */
 class NamedEntityWithInventory : public NamedEntity {
    Q_OBJECT

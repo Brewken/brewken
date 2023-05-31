@@ -19,9 +19,6 @@
   <property name="windowTitle">
    <string>Equipment Editor</string>
   </property>
-  <property name="configSection" stdset="0">
-   <string notr="true">equipmentEditor</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_equipments">
@@ -88,9 +85,6 @@
      </property>
      <property name="movable">
       <bool>true</bool>
-     </property>
-     <property name="configSection" stdset="0">
-      <string>equipmentEditor</string>
      </property>
      <widget class="QWidget" name="tabWidget_editorPage1">
       <attribute name="title">

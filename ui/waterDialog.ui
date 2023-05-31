@@ -158,9 +158,6 @@
          <property name="title">
           <string>PPM</string>
          </property>
-         <property name="configSection" stdset="0">
-          <string>totalSalts</string>
-         </property>
          <layout class="QGridLayout" name="gridLayout_ppm" rowstretch="0,0,0,0">
           <item row="0" column="3">
            <widget class="SmartDigitWidget" name="btDigit_na">
@@ -246,9 +243,6 @@
         <widget class="QGroupBox" name="groupBox_total">
          <property name="title">
           <string>Total Salts</string>
-         </property>
-         <property name="configSection" stdset="0">
-          <string>totalSalts</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_total">
           <item row="0" column="0">

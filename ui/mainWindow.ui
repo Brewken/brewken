@@ -279,9 +279,6 @@
              <property name="acceptDrops">
               <bool>true</bool>
              </property>
-             <property name="configSection" stdset="0">
-              <string>tab_recipe</string>
-             </property>
              <attribute name="title">
               <string>Recipe</string>
              </attribute>

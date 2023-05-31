@@ -160,9 +160,11 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HopTableModel::ColumnIndex::Time:
       case HopTableModel::ColumnIndex::Amount:
          retVal = this->writeDataToModel(index, value, role);
+         break;
 
       case HopTableModel::ColumnIndex::Inventory:
          retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
+         break;
 
       // No default case as we want the compiler to warn us if we missed one
    }
