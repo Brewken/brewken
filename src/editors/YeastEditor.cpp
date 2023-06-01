@@ -61,11 +61,11 @@ YeastEditor::YeastEditor(QWidget * parent) :
 
    BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_phenolicOffFlavorPositive, Yeast, phenolicOffFlavorPositive);
    BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_glucoamylasePositive     , Yeast, glucoamylasePositive     );
-//   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingK1Toxin   , Yeast, killerProducingK1Toxin   );
-//   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingK2Toxin   , Yeast, killerProducingK2Toxin   );
-//   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingK28Toxin  , Yeast, killerProducingK28Toxin  );
-//   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingKlusToxin , Yeast, killerProducingKlusToxin );
-//   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerNeutral            , Yeast, killerNeutral            );
+   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingK1Toxin   , Yeast, killerProducingK1Toxin   );
+   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingK2Toxin   , Yeast, killerProducingK2Toxin   );
+   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingK28Toxin  , Yeast, killerProducingK28Toxin  );
+   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerProducingKlusToxin , Yeast, killerProducingKlusToxin );
+   BT_BOOL_COMBO_BOX_INIT(YeastEditor, boolCombo_killerNeutral            , Yeast, killerNeutral            );
 
    this->connectSignalsAndSlots();
    return;

@@ -241,7 +241,15 @@ public:
     *        low FG.  This is positive in some saison/brett yeasts as well as the new gulo hybrid by Omega yeast labs.
     */
    Q_PROPERTY(std::optional<bool>    glucoamylasePositive      READ glucoamylasePositive      WRITE setGlucoamylasePositive     )
-   //! \brief See https://www.milkthefunk.com/wiki/Saccharomyces#Killer_Wine_Yeast for more on this
+   /**
+    * \brief See https://www.milkthefunk.com/wiki/Saccharomyces#Killer_Wine_Yeast for more on "killer" yeasts and
+    *        "killer neutral" yeasts.  BeerJSON calls these killer yeast properties "zymocide", but AFAICT "killer" is
+    *        still the more widely used term, at least in relation to brewing.
+    *
+    *        Technically, \c killerNeutral being \c true implies all the other \c killerProducingXxxToxin properties are
+    *        false, because "neutral strains do not produce toxins, nor are they killed by them".  But, for now at
+    *        least, we do not enforce that logic.
+    */
    Q_PROPERTY(std::optional<bool>    killerProducingK1Toxin    READ killerProducingK1Toxin     WRITE setKillerProducingK1Toxin  )
    Q_PROPERTY(std::optional<bool>    killerProducingK2Toxin    READ killerProducingK2Toxin     WRITE setKillerProducingK2Toxin  )
    Q_PROPERTY(std::optional<bool>    killerProducingK28Toxin   READ killerProducingK28Toxin    WRITE setKillerProducingK28Toxin )
