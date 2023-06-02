@@ -125,9 +125,9 @@ void WaterTableModel::addWater(int waterId) {
    connect(water.get(), &NamedEntity::changed, this, &WaterTableModel::changed);
    endInsertRows();
 
-   if (parentTableWidget) {
-      parentTableWidget->resizeColumnsToContents();
-      parentTableWidget->resizeRowsToContents();
+   if (m_parentTableWidget) {
+      m_parentTableWidget->resizeColumnsToContents();
+      m_parentTableWidget->resizeRowsToContents();
    }
 }
 
@@ -146,9 +146,9 @@ void WaterTableModel::addWaters(QList<std::shared_ptr<Water> > waters) {
       endInsertRows();
    }
 
-   if (parentTableWidget) {
-      parentTableWidget->resizeColumnsToContents();
-      parentTableWidget->resizeRowsToContents();
+   if (m_parentTableWidget) {
+      m_parentTableWidget->resizeColumnsToContents();
+      m_parentTableWidget->resizeRowsToContents();
    }
 
 }
@@ -163,9 +163,9 @@ void WaterTableModel::removeWater([[maybe_unused]] int waterId,
       rows.removeAt(i);
       endRemoveRows();
 
-      if (parentTableWidget) {
-         parentTableWidget->resizeColumnsToContents();
-         parentTableWidget->resizeRowsToContents();
+      if (m_parentTableWidget) {
+         m_parentTableWidget->resizeColumnsToContents();
+         m_parentTableWidget->resizeRowsToContents();
       }
    }
 }

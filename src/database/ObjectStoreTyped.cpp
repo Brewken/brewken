@@ -467,10 +467,10 @@ namespace {
          {ObjectStore::FieldType::Double, "chloride"   , PropertyNames::Water::chloride_ppm    },
          {ObjectStore::FieldType::Double, "magnesium"  , PropertyNames::Water::magnesium_ppm   },
          {ObjectStore::FieldType::Double, "ph"         , PropertyNames::Water::ph              },
-         {ObjectStore::FieldType::Double, "alkalinity" , PropertyNames::Water::alkalinity      },
+         {ObjectStore::FieldType::Double, "alkalinity" , PropertyNames::Water::alkalinity_ppm  },
          {ObjectStore::FieldType::Int   , "wtype"      , PropertyNames::Water::type            }, // TODO: Would be less fragile to store this as text than a number
-         {ObjectStore::FieldType::Double, "mash_ro"    , PropertyNames::Water::mashRO          },
-         {ObjectStore::FieldType::Double, "sparge_ro"  , PropertyNames::Water::spargeRO        },
+         {ObjectStore::FieldType::Double, "mash_ro"    , PropertyNames::Water::mashRo_pct      },
+         {ObjectStore::FieldType::Double, "sparge_ro"  , PropertyNames::Water::spargeRo_pct    },
          {ObjectStore::FieldType::Bool  , "as_hco3"    , PropertyNames::Water::alkalinityAsHCO3},
       }
    };

@@ -67,7 +67,7 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
    this->rows.clear();
    this->setObjectName("hopTable");
 
-   QHeaderView * headerView = parentTableWidget->horizontalHeader();
+   QHeaderView * headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &HopTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryHop>::getInstance(), &ObjectStoreTyped<InventoryHop>::signalPropertyChanged, this,
            &HopTableModel::changedInventory);
@@ -84,24 +84,11 @@ void HopTableModel::setShowIBUs(bool var) {
    showIBUs = var;
 }
 
-void HopTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
-   if (propertyName == PropertyNames::Inventory::amount) {
-      for (int ii = 0; ii < this->rows.size(); ++ii) {
-         if (invKey == this->rows.at(ii)->inventoryId()) {
-            emit dataChanged(QAbstractItemModel::createIndex(ii, static_cast<int>(HopTableModel::ColumnIndex::Inventory)),
-                             QAbstractItemModel::createIndex(ii, static_cast<int>(HopTableModel::ColumnIndex::Inventory)));
-         }
-      }
-   }
-   return;
-}
-
 QVariant HopTableModel::data(const QModelIndex & index, int role) const {
    if (!this->isIndexOk(index)) {
       return QVariant();
    }
 
-///   auto row = this->rows[index.row()];
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case HopTableModel::ColumnIndex::Name:
@@ -141,7 +128,7 @@ Qt::ItemFlags HopTableModel::flags(const QModelIndex & index) const {
       return Qt::ItemIsEnabled | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags);
    }
    return Qt::ItemIsSelectable |
-          (this->editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
+          (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
 
 bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, int role) {

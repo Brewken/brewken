@@ -57,7 +57,7 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
    this->rows.clear();
    setObjectName("miscTableModel");
 
-   QHeaderView* headerView = parentTableWidget->horizontalHeader();
+   QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &MiscTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryMisc>::getInstance(),
            &ObjectStoreTyped<InventoryMisc>::signalPropertyChanged,
@@ -112,7 +112,7 @@ Qt::ItemFlags MiscTableModel::flags(QModelIndex const & index) const {
    if (columnIndex == MiscTableModel::ColumnIndex::Inventory) {
       return (defaults | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags));
    }
-   return defaults | (this->editable ? Qt::ItemIsEditable : Qt::NoItemFlags);
+   return defaults | (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags);
 }
 
 bool MiscTableModel::setData(QModelIndex const & index,
@@ -143,20 +143,9 @@ bool MiscTableModel::setData(QModelIndex const & index,
       // No default case as we want the compiler to warn us if we missed one
    }
 
+   // Should be unreachable
    emit dataChanged(index, index);
    return true;
-}
-
-void MiscTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
-   if (propertyName == PropertyNames::Inventory::amount) {
-      for (int ii = 0; ii < this->rows.size(); ++ii) {
-         if (invKey == this->rows.at(ii)->inventoryId()) {
-            emit dataChanged(QAbstractItemModel::createIndex(ii, static_cast<int>(MiscTableModel::ColumnIndex::Inventory)),
-                             QAbstractItemModel::createIndex(ii, static_cast<int>(MiscTableModel::ColumnIndex::Inventory)));
-         }
-      }
-   }
-   return;
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase

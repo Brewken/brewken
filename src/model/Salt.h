@@ -26,17 +26,19 @@
 #include <QSqlRecord>
 
 #include "model/NamedEntity.h"
+#include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Salt { BtStringConst const property{#property}; }
-AddPropertyName(amount        )
-AddPropertyName(amountIsWeight)
-AddPropertyName(isAcid        )
-AddPropertyName(percentAcid   )
-AddPropertyName(type          )
-AddPropertyName(whenToAdd     )
+AddPropertyName(amount         )
+AddPropertyName(amountIsWeight )
+AddPropertyName(amountWithUnits)
+AddPropertyName(isAcid         )
+AddPropertyName(percentAcid    )
+AddPropertyName(type           )
+AddPropertyName(whenToAdd      )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -53,31 +55,46 @@ class Salt : public NamedEntity {
 
 public:
 
+   enum class Type {
+      CaCl2         , // Calcium chloride
+      CaCO3         , // Calcium carbonate
+      CaSO4         , // Calcium sulfate.    See also Gypsum = CaSO4·2H2O
+      MgSO4         , // Magnesium sulfate.  See also Epsom salt = MgSO4·7H2O
+      NaCl          , // Sodium chloride  aka  "regular" salt
+      NaHCO3        , // Sodium bicarbonate
+      LacticAcid    , // Lactic acid = CH3CH(OH)COOH
+      H3PO4         , // Phosphoric acid
+      AcidulatedMalt,
+   };
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Type)
+
+   /*!
+    * \brief Mapping between \c Salt::Type and string values suitable for serialisation in DB
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
+    */
+   static EnumStringMapping const typeStringMapping;
+
+   /*!
+    * \brief Localised names of \c Water::Type values suitable for displaying to the end user
+    */
+   static EnumStringMapping const typeDisplayNames;
+
+   // .:TBD:. I think we can eliminate the 'NEVER' option as it's not very useful!
    enum class WhenToAdd {
-      NEVER,
-      MASH,
+      NEVER ,
+      MASH  ,
       SPARGE,
-      RATIO,
-      EQUAL
+      RATIO ,
+      EQUAL ,
    };
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(WhenToAdd)
 
-   enum class Types {
-      NONE,
-      CACL2,
-      CACO3,
-      CASO4,
-      MGSO4,
-      NACL,
-      NAHCO3,
-      LACTIC,
-      H3PO4,
-      ACIDMLT,
-      numTypes
-   };
-   // This allows us to store the above enum class in a QVariant
-   Q_ENUM(Types)
+   static EnumStringMapping const whenToAddStringMapping;
+   static EnumStringMapping const whenToAddDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -97,7 +114,7 @@ public:
    //! \brief When to add the salt (mash or sparge)
    Q_PROPERTY(WhenToAdd whenToAdd      READ whenToAdd      WRITE setWhenToAdd       )
    //! \brief What kind of salt this is
-   Q_PROPERTY(Types     type           READ type           WRITE setType            )
+   Q_PROPERTY(Type      type           READ type           WRITE setType            )
    //! \brief Is this a weight (like CaCO3) or a volume (like H3PO3)
    Q_PROPERTY(bool      amountIsWeight READ amountIsWeight WRITE setAmountIsWeight  )
    //! \brief What percent is acid (used for lactic acid, H3PO4 and acid malts)
@@ -105,20 +122,26 @@ public:
    //! \brief Is this an acid or salt?
    Q_PROPERTY(bool      isAcid         READ isAcid         WRITE setIsAcid          )
 
+   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
+
    double          amount()         const;
    Salt::WhenToAdd whenToAdd()      const;
-   Salt::Types     type()           const;
+   Salt::Type     type()           const;
    bool            amountIsWeight() const;
    double          percentAcid()    const;
    bool            isAcid()         const;
    int             miscId()         const;
 
+   MassOrVolumeAmt                             amountWithUnits    () const;
+
    void setAmount        (double          val);
    void setWhenToAdd     (Salt::WhenToAdd val);
-   void setType          (Salt::Types     val);
+   void setType          (Salt::Type     val);
    void setAmountIsWeight(bool            val);
    void setPercentAcid   (double          val);
    void setIsAcid        (bool            val);
+
+   void setAmountWithUnits    (MassOrVolumeAmt                             const   val);
 
    double Ca  () const;
    double Cl  () const;
@@ -139,8 +162,8 @@ protected:
 private:
    double m_amount;
    Salt::WhenToAdd m_whenToAdd;
-   Salt::Types m_type;
-   bool m_amount_is_weight;
+   Salt::Type m_type;
+   bool m_amountIsWeight;
    double m_percent_acid;
    bool m_is_acid;
 };

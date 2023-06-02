@@ -69,7 +69,7 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
    // for units and scales
    setObjectName("fermentableTable");
 
-   QHeaderView* headerView = parentTableWidget->horizontalHeader();
+   QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &FermentableTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryFermentable>::getInstance(), &ObjectStoreTyped<InventoryFermentable>::signalPropertyChanged, this, &FermentableTableModel::changedInventory);
    return;
@@ -95,19 +95,6 @@ void FermentableTableModel::updateTotals() {
 
 void FermentableTableModel::setDisplayPercentages(bool var) {
    this->displayPercentages = var;
-   return;
-}
-
-void FermentableTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
-
-   if (propertyName == PropertyNames::Inventory::amount) {
-      for (int ii = 0; ii < this->rows.size(); ++ii) {
-         if (invKey == this->rows.at(ii)->inventoryId()) {
-            emit dataChanged(QAbstractItemModel::createIndex(ii, static_cast<int>(FermentableTableModel::ColumnIndex::Inventory)),
-                             QAbstractItemModel::createIndex(ii, static_cast<int>(FermentableTableModel::ColumnIndex::Inventory)));
-         }
-      }
-   }
    return;
 }
 
@@ -165,21 +152,21 @@ Qt::ItemFlags FermentableTableModel::flags(QModelIndex const & index) const {
       case FermentableTableModel::ColumnIndex::IsMashed:
          // Ensure that being mashed and being a late addition are mutually exclusive.
          if (!row->addAfterBoil()) {
-            return (defaults | Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled);
+            return (defaults | Qt::ItemIsSelectable | (m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled);
          }
-         return Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled;
+         return Qt::ItemIsSelectable | (m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled;
       case FermentableTableModel::ColumnIndex::AfterBoil:
          // Ensure that being mashed and being a late addition are mutually exclusive.
          if (!row->isMashed()) {
-            return (defaults | Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled);
+            return (defaults | Qt::ItemIsSelectable | (m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled);
          }
-         return Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled;
+         return Qt::ItemIsSelectable | (m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled;
       case FermentableTableModel::ColumnIndex::Name:
          return (defaults | Qt::ItemIsSelectable);
       case FermentableTableModel::ColumnIndex::Inventory:
          return (defaults | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags));
       default:
-         return (defaults | Qt::ItemIsSelectable | (editable ? Qt::ItemIsEditable : Qt::NoItemFlags) );
+         return (defaults | Qt::ItemIsSelectable | (m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) );
    }
 }
 

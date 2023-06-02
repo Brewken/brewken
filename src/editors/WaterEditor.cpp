@@ -57,13 +57,13 @@ WaterEditor::WaterEditor(QWidget *parent,
                                                      pimpl{std::make_unique<impl>(editorName)} {
    setupUi(this);
 
-   SMART_FIELD_INIT(WaterEditor, label_ca , lineEdit_ca , Water, PropertyNames::Water::calcium_ppm  , 2);
-   SMART_FIELD_INIT(WaterEditor, label_cl , lineEdit_cl , Water, PropertyNames::Water::chloride_ppm , 2);
-   SMART_FIELD_INIT(WaterEditor, label_mg , lineEdit_mg , Water, PropertyNames::Water::magnesium_ppm, 2);
-   SMART_FIELD_INIT(WaterEditor, label_so4, lineEdit_so4, Water, PropertyNames::Water::sulfate_ppm  , 2);
-   SMART_FIELD_INIT(WaterEditor, label_na , lineEdit_na , Water, PropertyNames::Water::sodium_ppm   , 2);
-   SMART_FIELD_INIT(WaterEditor, label_alk, lineEdit_alk, Water, PropertyNames::Water::alkalinity   , 2);
-   SMART_FIELD_INIT(WaterEditor, label_pH , lineEdit_ph , Water, PropertyNames::Water::ph           , 2);
+   SMART_FIELD_INIT(WaterEditor, label_ca , lineEdit_ca , Water, PropertyNames::Water::calcium_ppm   , 2);
+   SMART_FIELD_INIT(WaterEditor, label_cl , lineEdit_cl , Water, PropertyNames::Water::chloride_ppm  , 2);
+   SMART_FIELD_INIT(WaterEditor, label_mg , lineEdit_mg , Water, PropertyNames::Water::magnesium_ppm , 2);
+   SMART_FIELD_INIT(WaterEditor, label_so4, lineEdit_so4, Water, PropertyNames::Water::sulfate_ppm   , 2);
+   SMART_FIELD_INIT(WaterEditor, label_na , lineEdit_na , Water, PropertyNames::Water::sodium_ppm    , 2);
+   SMART_FIELD_INIT(WaterEditor, label_alk, lineEdit_alk, Water, PropertyNames::Water::alkalinity_ppm, 2);
+   SMART_FIELD_INIT(WaterEditor, label_pH , lineEdit_ph , Water, PropertyNames::Water::ph            , 2);
 
    // .:TBD:. The QLineEdit::textEdited and QPlainTextEdit::textChanged signals below are sent somewhat more frequently
    // than we really need - ie every time you type a character in the name or notes field.  We should perhaps look at
@@ -222,7 +222,7 @@ void WaterEditor::inputFieldModified() {
       //         about what exactly correct behaviour should be.
       if      (signalSender == this->comboBox_alk)         {this->pimpl->editedWater->setAlkalinityAsHCO3(this->comboBox_alk ->currentText() == QString("HCO3"));}
       else if (signalSender == this->lineEdit_alk)         {this->pimpl->editedWater->setBicarbonate_ppm (this->lineEdit_alk ->toCanonical().quantity());  // NB continues on next line!
-                                                            this->pimpl->editedWater->setAlkalinity      (this->lineEdit_alk ->toCanonical().quantity());        }
+                                                            this->pimpl->editedWater->setAlkalinity_ppm  (this->lineEdit_alk ->toCanonical().quantity());        }
       else if (signalSender == this->lineEdit_ca)          {this->pimpl->editedWater->setCalcium_ppm     (this->lineEdit_ca  ->toCanonical().quantity());        }
       else if (signalSender == this->lineEdit_cl)          {this->pimpl->editedWater->setChloride_ppm    (this->lineEdit_cl  ->toCanonical().quantity());        }
       else if (signalSender == this->lineEdit_mg)          {this->pimpl->editedWater->setMagnesium_ppm   (this->lineEdit_mg  ->toCanonical().quantity());        }

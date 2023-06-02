@@ -56,7 +56,7 @@ MashStepTableModel::MashStepTableModel(QTableView* parent) :
    mashObs(nullptr) {
    setObjectName("mashStepTableModel");
 
-   QHeaderView* headerView = parentTableWidget->horizontalHeader();
+   QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &MashStepTableModel::contextMenu);
    //
    // Whilst, in principle, we could connect to ObjectStoreTyped<MashStep>::getInstance() to listen for signals
@@ -135,9 +135,9 @@ void MashStepTableModel::setMash(Mash * m) {
      }
    }
 
-   if (parentTableWidget) {
-      parentTableWidget->resizeColumnsToContents();
-      parentTableWidget->resizeRowsToContents();
+   if (m_parentTableWidget) {
+      m_parentTableWidget->resizeColumnsToContents();
+      m_parentTableWidget->resizeRowsToContents();
    }
    return;
 }
@@ -232,9 +232,9 @@ void MashStepTableModel::mashStepChanged(QMetaProperty prop,
 
    }
 
-    if (this->parentTableWidget) {
-      this->parentTableWidget->resizeColumnsToContents();
-      this->parentTableWidget->resizeRowsToContents();
+    if (this->m_parentTableWidget) {
+      this->m_parentTableWidget->resizeColumnsToContents();
+      this->m_parentTableWidget->resizeRowsToContents();
    }
    return;
 }

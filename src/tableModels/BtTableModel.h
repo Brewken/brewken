@@ -36,6 +36,7 @@
 #include "utils/EnumStringMapping.h"
 
 class Recipe;
+template<class Derived, class NE> class TableModelBase; // This forward declaration is so we can make it a friend
 
 /**
  * \class BtTableModelData
@@ -80,12 +81,11 @@ class Recipe;
  *        The \c BtTableModelRecipeObserver class adds a pointer to a \c Recipe to \c BtTableModel.
  *        The \c BtTableModelInventory class adds a boolean \c inventoryEditable flag to \c BtTableModelRecipeObserver.
  *
- *        TBD: I did start trying to do something clever with a common base class to try to expose functions from
- *        \c BtTableModelData to the implementation of \c BtTableModel / \c BtTableModelRecipeObserver /
- *        \c BtTableModelInventory, but it quickly gets more complicated than it's worth IMHO because (a)
- *        \c BtTableModelData is templated but a common base class cannot be and (b) templated functions cannot be
- *        virtual.  Maybe we can do something the other way around with the curiously recurring template pattern.
+ *        You might be wondering why there isn't a corresponding inheritance hierarchy in \c TableModelBase.  This is
+ *        because, by the magic of template metaprogramming \c TableModelBase "knows" whether its derived class inherits
+ *        from \c BtTableModelRecipeObserver or \c BtTableModelInventory, and can therefore adapt accordingly.
  */
+// TODO: Need to kill off BtTableModelData once we have switched everything over to using TableModelBase
 template<class NE>
 class BtTableModelData {
 protected:
@@ -186,6 +186,12 @@ protected:
  */
 class BtTableModel : public QAbstractTableModel {
    Q_OBJECT
+
+   // There are quite a few protected members of this class (including many inherited from QAbstractItemModel) that
+   // TableModelBase needs to access (to save copy-and-pasting code in all the derived classes.  It's better to make it
+   // a friend than make all those members public.
+   template<class Derived, class NE> friend class TableModelBase;
+
 public:
    /**
     * \brief Extra info stored in \c ColumnInfo (see below) for enum types
@@ -306,24 +312,14 @@ public:
    //! \brief Reimplemented from QAbstractTableModel
    virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
 
-   // These are protected member functions of QAbstractItemModel that we need to make public so that
-   // TableModelBase::removeAll() can access them
-   using QAbstractItemModel::beginInsertRows;
-   using QAbstractItemModel::endInsertRows;
-   using QAbstractItemModel::beginRemoveRows;
-   using QAbstractItemModel::endRemoveRows;
-
-///private:
-///   void doContextMenu(QPoint const & point, QHeaderView * hView, QMenu * menu, int selected);
-
 public slots:
    //! \brief Receives the \c QWidget::customContextMenuRequested signal from \c QHeaderView to pops the context menu
    // for changing units and scales
    void contextMenu(QPoint const & point);
 
 protected:
-   QTableView* parentTableWidget;
-   bool editable;
+   QTableView * m_parentTableWidget;
+   bool m_editable;
 private:
    /**
     * \brief We're using a \c std::vector here because it's easier for constant lists.  (With \c QVector, at last in

@@ -64,15 +64,15 @@ BtTableModel::BtTableModel(QTableView * parent,
                            bool editable,
                            std::initializer_list<BtTableModel::ColumnInfo> columnInfos) :
    QAbstractTableModel{parent},
-   parentTableWidget{parent},
-   editable{editable},
+   m_parentTableWidget{parent},
+   m_editable{editable},
    m_columnInfos{columnInfos} {
 
-   QHeaderView * rowHeaderView = this->parentTableWidget->verticalHeader();
+   QHeaderView * rowHeaderView = this->m_parentTableWidget->verticalHeader();
    rowHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
-   QHeaderView * columnHeaderView = this->parentTableWidget->horizontalHeader();
+   QHeaderView * columnHeaderView = this->m_parentTableWidget->horizontalHeader();
    columnHeaderView->setContextMenuPolicy(Qt::CustomContextMenu);
-   this->parentTableWidget->setWordWrap(false);
+   this->m_parentTableWidget->setWordWrap(false);
    // We use QHeaderView::Interactive here because it's the only option that allows the user to resize the columns
    // (In theory, QHeaderView::ResizeToContents automatically sets a fixed size that's right for all the data, but, in
    // practice it doesn't always do what you want, so it's better to give the user some control).
@@ -123,7 +123,7 @@ void BtTableModel::contextMenu(QPoint const & point) {
    // Note that UnitAndScalePopUpMenu::create handles the case where there are two possible physical quantities
    //
    std::unique_ptr<QMenu> menu =
-      UnitAndScalePopUpMenu::create(this->parentTableWidget,
+      UnitAndScalePopUpMenu::create(this->m_parentTableWidget,
                                     ConvertToPhysicalQuantities(fieldType),
                                     columnInfo.getForcedSystemOfMeasurement(),
                                     columnInfo.getForcedRelativeScale());

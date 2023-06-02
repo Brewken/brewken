@@ -61,7 +61,7 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
 
    setObjectName("yeastTableModel");
 
-   QHeaderView * headerView = parentTableWidget->horizontalHeader();
+   QHeaderView * headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &YeastTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryYeast>::getInstance(), &ObjectStoreTyped<InventoryYeast>::signalPropertyChanged,
            this, &YeastTableModel::changedInventory);
@@ -74,24 +74,11 @@ void YeastTableModel::added  ([[maybe_unused]] std::shared_ptr<Yeast> item) { re
 void YeastTableModel::removed([[maybe_unused]] std::shared_ptr<Yeast> item) { return; }
 void YeastTableModel::updateTotals()                                        { return; }
 
-void YeastTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
-   if (propertyName == PropertyNames::Inventory::amount) {
-      for (int ii = 0; ii < this->rows.size(); ++ii) {
-         if (invKey == this->rows.at(ii)->inventoryId()) {
-            emit dataChanged(QAbstractItemModel::createIndex(ii, static_cast<int>(YeastTableModel::ColumnIndex::Inventory)),
-                             QAbstractItemModel::createIndex(ii, static_cast<int>(YeastTableModel::ColumnIndex::Inventory)));
-         }
-      }
-   }
-   return;
-}
-
 QVariant YeastTableModel::data(QModelIndex const & index, int role) const {
    if (!this->isIndexOk(index)) {
       return QVariant();
    }
 
-///   auto row = this->rows[index.row()];
    auto const columnIndex = static_cast<YeastTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case YeastTableModel::ColumnIndex::Name:
@@ -125,7 +112,7 @@ Qt::ItemFlags YeastTableModel::flags(const QModelIndex & index) const {
       return (Qt::ItemIsEnabled | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags));
    }
    return Qt::ItemIsSelectable |
-          (this->editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
+          (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
 
 bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {

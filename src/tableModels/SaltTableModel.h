@@ -32,53 +32,36 @@
 #include "model/Salt.h"
 #include "model/Water.h"
 #include "tableModels/BtTableModel.h"
+#include "tableModels/ItemDelegate.h"
+#include "tableModels/TableModelBase.h"
 
 // Forward declarations.
 class Mash;
 class Recipe;
-class SaltItemDelegate;
-class WaterDialog;
 
-/*!
- * \class SaltTableModel
- *
- * \brief Table model for salts.
- */
-class SaltTableModel : public BtTableModelRecipeObserver, public BtTableModelData<Salt> {
-   Q_OBJECT
-
-public:
+// You have to get the order of everything right with traits classes, but the end result is that we can refer to
+// SaltTableModel::ColumnIndex::AddTo etc.
+class SaltTableModel;
+template <> struct TableModelTraits<SaltTableModel> {
    enum class ColumnIndex {
       Name   ,
       Amount ,
       AddTo  ,
       PctAcid,
    };
+};
 
-   SaltTableModel(QTableView* parent = nullptr);
-   ~SaltTableModel();
+/*!
+ * \class SaltTableModel
+ *
+ * \brief Table model for salts.
+ */
+class SaltTableModel : public BtTableModelRecipeObserver, public TableModelBase<SaltTableModel, Salt> {
+   Q_OBJECT
 
-   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
-   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
+   TABLE_MODEL_COMMON_DECL(Salt)
 
-   void observeRecipe(Recipe* rec);
-private:
-   void addSalt(std::shared_ptr<Salt> salt);
 public:
-   void addSalts(QList<std::shared_ptr<Salt> > salts);
-   void removeAll();
-
-   //! Reimplemented from QAbstractTableModel.
-   virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
-   //! Reimplemented from QAbstractTableModel.
-   virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
-   //! Reimplemented from QAbstractTableModel.
-   virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
-   //! Reimplemented from QAbstractTableModel.
-   virtual Qt::ItemFlags flags(const QModelIndex& index ) const;
-   //! Reimplemented from QAbstractTableModel.
-   virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
-
    double total_Ca() const;
    double total_Cl() const;
    double total_CO3() const;
@@ -87,47 +70,34 @@ public:
    double total_Na() const;
    double total_SO4() const;
 
-   double total(Water::Ions ion) const;
-   double total( Salt::Types type ) const;
-   double totalAcidWeight(Salt::Types type) const;
+   double total(Water::Ion ion) const;
+   double total( Salt::Type type ) const;
+   double totalAcidWeight(Salt::Type type) const;
 
-   void removeSalts(QList<int>deadSalts);
    void saveAndClose();
 
 public slots:
-   void changed(QMetaProperty,QVariant);
-   void remove(std::shared_ptr<Salt> salt);
    void catchSalt();
 
 signals:
    void newTotals();
 
 private:
-   double spargePct;
+///   double spargePct;
    double multiplier(Salt & salt) const;
 };
 
+//=============================================== CLASS SaltItemDelegate ===============================================
+
 /*!
- * \class SaltItemDelegate Item delegate for salt tables.
+ * \brief An item delegate for Salt tables.
+ * \sa SaltTableModel.
  */
-class SaltItemDelegate : public QItemDelegate {
+class SaltItemDelegate : public QItemDelegate,
+                                public ItemDelegate<SaltItemDelegate, SaltTableModel> {
    Q_OBJECT
 
-public:
-   SaltItemDelegate(QObject* parent = nullptr);
-
-   // Inherited functions.
-   virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-   virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
-   virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-   virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-   void observeRecipe(Recipe *rec);
-
-private:
-   Mash* m_mash;
-   // I really dislike this
-
+   ITEM_DELEGATE_COMMON_DECL(Salt)
 };
 
 #endif

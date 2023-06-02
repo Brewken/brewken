@@ -17,6 +17,8 @@
 #define TABLEMODELS_TABLEMODELBASE_H
 #pragma once
 
+#include  <type_traits>
+
 #include <QList>
 #include <QModelIndex>
 
@@ -24,8 +26,24 @@
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "measurement/Measurement.h"
+#include "model/Inventory.h"
 #include "tableModels/BtTableModel.h"
+#include "tableModels/BtTableModelInventory.h"
 #include "utils/MetaTypes.h"
+
+//
+// Using concepts allows us to tailor the templated TableModelTraits class without having the same inheritance
+// structure as BtTableModel / BtTableModelRecipeObserver / BtTableModelInventory.
+//
+// See comment in utils/TypeTraits.h for why we need two versions of this
+#if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
+template <typename Derived> concept bool HasInventory   =  std::is_base_of_v<BtTableModelInventory, Derived>;
+template <typename Derived> concept bool HasNoInventory = !std::is_base_of_v<BtTableModelInventory, Derived>;
+#else
+template <typename Derived> concept      HasInventory   =  std::is_base_of_v<BtTableModelInventory, Derived>;
+template <typename Derived> concept      HasNoInventory = !std::is_base_of_v<BtTableModelInventory, Derived>;
+#endif
+
 
 /**
  * \brief We want, eg, \c HopTableModel to inherit from \c TableModelBase<HopTableModel, Hop> and to have its own enum
@@ -238,6 +256,20 @@ public:
       return;
    }
 
+   void addById(int itemId) {
+      auto itemToAdd = ObjectStoreWrapper::getById<NE>(itemId);
+      if (!itemToAdd) {
+         // Not sure this should ever happen in practice, but, if there ever is no item with the
+         // specified ID, there's not a lot we can do.
+         qWarning() <<
+            Q_FUNC_INFO << "Received signal that" << NE::staticMetaObject.className() <<  "ID" <<
+            itemId << "added, but unable to retrieve the" << NE::staticMetaObject.className();
+         return;
+      }
+      this->add(itemToAdd);
+      return;
+   }
+
    //! \returns true if \c item is successfully found and removed.
    bool remove(std::shared_ptr<NE> item) {
       int rowNum = this->rows.indexOf(item);
@@ -251,10 +283,26 @@ public:
          //reset(); // Tell everybody the table has changed.
          m_derived->endRemoveRows();
 
+         if (m_derived->m_parentTableWidget) {
+            m_derived->m_parentTableWidget->resizeColumnsToContents();
+            m_derived->m_parentTableWidget->resizeRowsToContents();
+         }
+
          return true;
       }
 
       return false;
+   }
+
+   /**
+    * \brief Currently only used on SaltTableModel I think
+    */
+   bool remove(QModelIndex const & index) {
+      if (!this->isIndexOk(index)) {
+         return false;
+      }
+
+      return this->remove(this->rows[index.row()]);
    }
 
 protected:
@@ -446,23 +494,8 @@ protected:
             precision = boolInfo.precision;
          }
 
-         if (typeInfo.typeIndex == typeid(double)) {
-            Q_ASSERT(modelData.canConvert<double>());
-            double rawValue = modelData.value<double>();
-            // This is one of the points where it's important that NamedEntity classes always store data in canonical
-            // units.  For any properties where that's _not_ the case, we need to ensure we're passing
-            // Measurement::Amount, ie the units are always included.
-            Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType));
-            auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
-            Measurement::Amount amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
-            return QVariant(
-               Measurement::displayAmount(amount,
-                                          precision,
-                                          columnInfo.getForcedSystemOfMeasurement(),
-                                          columnInfo.getForcedRelativeScale())
-            );
-         } else if (std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(*typeInfo.fieldType) ||
-                    typeInfo.typeIndex == typeid(Measurement::Amount)) {
+         if (std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(*typeInfo.fieldType) ||
+             typeInfo.typeIndex == typeid(Measurement::Amount)) {
             //
             // This is pretty useful for handling mass-or-volume amounts etc
             //
@@ -486,6 +519,21 @@ protected:
                   "TypeInfo:" << typeInfo << ", modelData:" << modelData;
                Q_ASSERT(false);
             }
+            return QVariant(
+               Measurement::displayAmount(amount,
+                                          precision,
+                                          columnInfo.getForcedSystemOfMeasurement(),
+                                          columnInfo.getForcedRelativeScale())
+            );
+         } else if (typeInfo.typeIndex == typeid(double)) {
+            Q_ASSERT(modelData.canConvert<double>());
+            double rawValue = modelData.value<double>();
+            // This is one of the points where it's important that NamedEntity classes always store data in canonical
+            // units.  For any properties where that's _not_ the case, we need to ensure we're passing
+            // Measurement::Amount, ie the units are always included.
+            Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType));
+            auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
+            Measurement::Amount amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
             return QVariant(
                Measurement::displayAmount(amount,
                                           precision,
@@ -583,6 +631,23 @@ protected:
       return true;
    }
 
+   void updateInventory(int invKey, BtStringConst const & propertyName) requires HasInventory<Derived> {
+      if (propertyName == PropertyNames::Inventory::amount) {
+         for (int ii = 0; ii < this->rows.size(); ++ii) {
+            if (invKey == this->rows.at(ii)->inventoryId()) {
+               emit m_derived->dataChanged(m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
+                                           m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
+            }
+         }
+      }
+      return;
+   }
+
+   void updateInventory([[maybe_unused]] int invKey,
+                        [[maybe_unused]] BtStringConst const & propertyName) requires HasNoInventory<Derived> {
+      return;
+   }
+
    //================================================ Member Variables =================================================
 
    /**
@@ -636,22 +701,17 @@ protected:
  * \brief Derived classes should include this in their .cpp file
  *
  *        Note we have to be careful about comment formats in macro definitions
+ *
+ *        TODO: Mostly I have tried to make these macro-included function bodies trivial, but \c changed() needs
+ *        PropertyNames::Recipe::LcNeName##Ids, which would need a bit more work to do in \c TableModelBase.
+ *        (Probably the way to do it is a templated function that returns the property name.)
  */
 #define TABLE_MODEL_COMMON_CODE(NeName, LcNeName) \
    int NeName##TableModel::rowCount([[maybe_unused]] QModelIndex const & parent) const {                \
       return this->rows.size();                                                                         \
    }                                                                                                    \
    void NeName##TableModel::addItem(int itemId) {                                                       \
-      auto itemToAdd = ObjectStoreWrapper::getById<NeName>(itemId);                                     \
-      if (!itemToAdd) {                                                                                 \
-         /* Not sure this should ever happen in practice, but, if there ever is no item with the */     \
-         /* specified ID, there's not a lot we can do.                                           */     \
-         qWarning() <<                                                                                  \
-            Q_FUNC_INFO << "Received signal that" << NeName::staticMetaObject.className() <<  "ID" <<   \
-            itemId << "added, but unable to retrieve the" << NeName::staticMetaObject.className();      \
-         return;                                                                                        \
-      }                                                                                                 \
-      this->add(itemToAdd);                                                                             \
+      this->addById(itemId);                                                                            \
       return;                                                                                           \
    }                                                                                                    \
    void NeName##TableModel::removeItem([[maybe_unused]] int itemId, std::shared_ptr<QObject> object) {  \
@@ -684,6 +744,10 @@ protected:
          }                                                                                              \
       }                                                                                                 \
                                                                                                         \
+      return;                                                                                           \
+   }                                                                                                    \
+   void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {          \
+      this->updateInventory(invKey, propertyName);                                                      \
       return;                                                                                           \
    }                                                                                                    \
 

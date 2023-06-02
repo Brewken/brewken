@@ -22,6 +22,46 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
+EnumStringMapping const Salt::typeStringMapping {
+   {Salt::Type::CaCl2         , "CaCl2"         },
+   {Salt::Type::CaCO3         , "CaCO3"         },
+   {Salt::Type::CaSO4         , "CaSO4"         },
+   {Salt::Type::MgSO4         , "MgSO4"         },
+   {Salt::Type::NaCl          , "NaCl"          },
+   {Salt::Type::NaHCO3        , "NaHCO3"        },
+   {Salt::Type::LacticAcid    , "LacticAcid"    },
+   {Salt::Type::H3PO4         , "H3PO4"         },
+   {Salt::Type::AcidulatedMalt, "AcidulatedMalt"},
+};
+
+EnumStringMapping const Salt::typeDisplayNames {
+   {Salt::Type::CaCl2                  , tr("CaCl2"           " (Calcium chloride)"  )},
+   {Salt::Type::CaCO3                  , tr("CaCO3"           " (Calcium carbonate)" )},
+   {Salt::Type::CaSO4                  , tr("CaSO4"           " (Calcium sulfate)"   )},
+   {Salt::Type::MgSO4                  , tr("MgSO4"           " (Magnesium sulfate)" )},
+   {Salt::Type::NaCl                   , tr("NaCl"            " (Sodium chloride)"   )},
+   {Salt::Type::NaHCO3                 , tr("NaHCO3"          " (Sodium bicarbonate)")},
+   {Salt::Type::LacticAcid             , tr("Lactic Acid"                            )},
+   {Salt::Type::H3PO4                  , tr("H3PO4"           " (Phosphoric acid)"   )},
+   {Salt::Type::AcidulatedMalt         , tr("Acidulated Malt"                        )},
+};
+
+EnumStringMapping const Salt::whenToAddStringMapping {
+   {Salt::WhenToAdd::NEVER , "never" },
+   {Salt::WhenToAdd::MASH  , "mash"  },
+   {Salt::WhenToAdd::SPARGE, "sparge"},
+   {Salt::WhenToAdd::RATIO , "ratio" },
+   {Salt::WhenToAdd::EQUAL , "equal" },
+};
+
+EnumStringMapping const Salt::whenToAddDisplayNames {
+   {Salt::WhenToAdd::NEVER , tr("Never" )},
+   {Salt::WhenToAdd::MASH  , tr("Mash"  )},
+   {Salt::WhenToAdd::SPARGE, tr("Sparge")},
+   {Salt::WhenToAdd::RATIO , tr("Ratio" )},
+   {Salt::WhenToAdd::EQUAL , tr("Equal" )},
+};
+
 bool Salt::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Salt const & rhs = static_cast<Salt const &>(other);
@@ -39,36 +79,38 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
 TypeLookup const Salt::typeLookup {
    "Salt",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::PqEitherMassOrVolume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amount_is_weight,           NonPhysicalQuantity::Bool      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::isAcid        , Salt::m_is_acid         ,           NonPhysicalQuantity::Bool      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::percentAcid   , Salt::m_percent_acid    ,           NonPhysicalQuantity::Percentage),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type            ,           NonPhysicalQuantity::Enum      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,           NonPhysicalQuantity::Enum      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::PqEitherMassOrVolume      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amountIsWeight  ,         NonPhysicalQuantity::Bool      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::isAcid        , Salt::m_is_acid         ,         NonPhysicalQuantity::Bool      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::percentAcid   , Salt::m_percent_acid    ,         NonPhysicalQuantity::Percentage),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type            ,         NonPhysicalQuantity::Enum      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,         NonPhysicalQuantity::Enum      ),
+
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits    , Salt, amountWithUnits            , Measurement::PqEitherMassOrVolume             ),
    },
    // Parent class lookup
    &NamedEntity::typeLookup
 };
 
 Salt::Salt(QString name) :
-   NamedEntity       {name, true},
-   m_amount          {0.0},
-   m_whenToAdd       {Salt::WhenToAdd::NEVER},
-   m_type            {Salt::Types::NONE},
-   m_amount_is_weight{true},
-   m_percent_acid    {0.0},
-   m_is_acid         {false} {
+   NamedEntity      {name, true},
+   m_amount         {0.0},
+   m_whenToAdd      {Salt::WhenToAdd::NEVER},
+   m_type           {Salt::Type::CaCl2},
+   m_amountIsWeight{true},
+   m_percent_acid   {0.0},
+   m_is_acid        {false} {
    return;
 }
 
 Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity       {namedParameterBundle},
-   m_amount          {namedParameterBundle.val<double         >(PropertyNames::Salt::amount        )},
    m_whenToAdd       {namedParameterBundle.val<Salt::WhenToAdd>(PropertyNames::Salt::whenToAdd     )},
-   m_type            {namedParameterBundle.val<Salt::Types    >(PropertyNames::Salt::type          )},
-   m_amount_is_weight{namedParameterBundle.val<bool           >(PropertyNames::Salt::amountIsWeight)},
+   m_type            {namedParameterBundle.val<Salt::Type     >(PropertyNames::Salt::type          )},
    m_percent_acid    {namedParameterBundle.val<double         >(PropertyNames::Salt::percentAcid   )},
    m_is_acid         {namedParameterBundle.val<bool           >(PropertyNames::Salt::isAcid        )} {
+
+   this->setEitherOrReqParams<MassOrVolumeAmt             >(namedParameterBundle, PropertyNames::Salt::amount    , PropertyNames::Salt::amountIsWeight           , PropertyNames::Salt::amountWithUnits    , this->m_amount    , this->m_amountIsWeight           );
    return;
 }
 
@@ -77,7 +119,7 @@ Salt::Salt(Salt const & other) :
    m_amount          {other.m_amount          },
    m_whenToAdd       {other.m_whenToAdd       },
    m_type            {other.m_type            },
-   m_amount_is_weight{other.m_amount_is_weight},
+   m_amountIsWeight{other.m_amountIsWeight},
    m_percent_acid    {other.m_percent_acid    },
    m_is_acid         {other.m_is_acid         } {
    return;
@@ -85,7 +127,17 @@ Salt::Salt(Salt const & other) :
 
 Salt::~Salt() = default;
 
-//================================"SET" METHODS=================================
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+double          Salt::amount        () const { return this->m_amount          ; }
+Salt::WhenToAdd Salt::whenToAdd     () const { return this->m_whenToAdd       ; }
+Salt::Type      Salt::type          () const { return this->m_type            ; }
+bool            Salt::isAcid        () const { return this->m_is_acid         ; }
+bool            Salt::amountIsWeight() const { return this->m_amountIsWeight; }
+double          Salt::percentAcid   () const { return this->m_percent_acid    ; }
+
+MassOrVolumeAmt                             Salt::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Salt::setAmount(double val) {
    this->setAndNotify(PropertyNames::Salt::amount, this->m_amount, val);
 }
@@ -96,14 +148,37 @@ void Salt::setWhenToAdd(Salt::WhenToAdd val) {
 
 // This may come to haunt me, but I am setting the isAcid flag and the
 // amount_is_weight flags here.
-void Salt::setType(Salt::Types type) {
-   this->setAndNotify(PropertyNames::Salt::type,           this->m_type, type);
-   this->setAndNotify(PropertyNames::Salt::isAcid,         this->m_is_acid, (type > Salt::Types::NAHCO3));
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amount_is_weight, !(type == Salt::Types::LACTIC || type == Salt::Types::H3PO4));
+//
+// 2023-06-02: MY: In for a penny, in for a pound.  I've moved the logic that "automatically" works out the acidity from
+// SaltTableModel to here too.  But TBD I think we want to take another look at this at some point.
+void Salt::setType(Salt::Type type) {
+   bool isAcid = false;
+   double newPercentAcid = m_percent_acid;
+   if (type == Salt::Type::LacticAcid ||
+       type == Salt::Type::H3PO4      ||
+       type == Salt::Type::AcidulatedMalt) {
+      isAcid = true;
+   } else {
+      newPercentAcid = 0.0;
+   }
+   this->setAndNotify(PropertyNames::Salt::type,           this->m_type,    type);
+   this->setAndNotify(PropertyNames::Salt::isAcid,         this->m_is_acid, isAcid);
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, !(type == Salt::Type::LacticAcid || type == Salt::Type::H3PO4));
+   if (isAcid && newPercentAcid == 0.0) {
+      switch (type) {
+         case Salt::Type::LacticAcid    : newPercentAcid = 88; break;
+         case Salt::Type::H3PO4         : newPercentAcid = 10; break;
+         case Salt::Type::AcidulatedMalt: newPercentAcid =  2; break;
+         // The next line should be unreachable!
+         default                        : Q_ASSERT(false); break;
+      }
+   }
+   this->setPercentAcid(newPercentAcid);
+   return;
 }
 
 void Salt::setAmountIsWeight(bool val) {
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amount_is_weight, val);
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val);
 }
 
 void Salt::setIsAcid(bool val) {
@@ -111,16 +186,15 @@ void Salt::setIsAcid(bool val) {
 }
 
 void Salt::setPercentAcid(double val) {
+   // .:TBD:. Maybe we should check here that we are an acid...
    this->setAndNotify(PropertyNames::Salt::percentAcid, this->m_percent_acid, val);
 }
 
-//=========================="GET" METHODS=======================================
-double          Salt::amount        () const { return this->m_amount          ; }
-Salt::WhenToAdd Salt::whenToAdd     () const { return this->m_whenToAdd       ; }
-Salt::Types     Salt::type          () const { return this->m_type            ; }
-bool            Salt::isAcid        () const { return this->m_is_acid         ; }
-bool            Salt::amountIsWeight() const { return this->m_amount_is_weight; }
-double          Salt::percentAcid   () const { return this->m_percent_acid    ; }
+void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
+   this->setAndNotify(PropertyNames::Salt::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
+   return;
+}
 
 //====== maths ===========
 // All of these the per gram, per liter
@@ -143,9 +217,9 @@ double Salt::Ca() const {
    }
 
    switch (m_type) {
-      case Salt::Types::CACL2: return 272.0 * m_amount * 1000.0;
-      case Salt::Types::CACO3: return 200.0 * m_amount * 1000.0;
-      case Salt::Types::CASO4: return 232.0 * m_amount * 1000.0;
+      case Salt::Type::CaCl2: return 272.0 * m_amount * 1000.0;
+      case Salt::Type::CaCO3: return 200.0 * m_amount * 1000.0;
+      case Salt::Type::CaSO4: return 232.0 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
@@ -156,8 +230,8 @@ double Salt::Cl() const {
    }
 
    switch (m_type) {
-      case Salt::Types::CACL2: return 483 * m_amount * 1000.0;
-      case Salt::Types::NACL: return 607 * m_amount * 1000.0;
+      case Salt::Type::CaCl2: return 483 * m_amount * 1000.0;
+      case Salt::Type::NaCl: return 607 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
@@ -167,7 +241,7 @@ double Salt::CO3() const {
       return 0.0;
    }
 
-   return m_type == Salt::Types::CACO3 ? 610.0  * m_amount * 1000.0: 0.0;
+   return m_type == Salt::Type::CaCO3 ? 610.0  * m_amount * 1000.0: 0.0;
 }
 
 double Salt::HCO3() const {
@@ -175,14 +249,14 @@ double Salt::HCO3() const {
       return 0.0;
    }
 
-   return m_type == Salt::Types::NAHCO3 ? 726.0 * m_amount * 1000.0: 0.0;
+   return m_type == Salt::Type::NaHCO3 ? 726.0 * m_amount * 1000.0: 0.0;
 }
 
 double Salt::Mg() const {
    if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
       return 0.0;
    }
-   return m_type == Salt::Types::MGSO4 ? 99.0 * m_amount * 1000.0: 0.0;
+   return m_type == Salt::Type::MgSO4 ? 99.0 * m_amount * 1000.0: 0.0;
 }
 
 double Salt::Na() const {
@@ -190,8 +264,8 @@ double Salt::Na() const {
       return 0.0;
    }
    switch (m_type) {
-      case Salt::Types::NACL: return 393.0 * m_amount * 1000.0;
-      case Salt::Types::NAHCO3: return 274.0 * m_amount * 1000.0;
+      case Salt::Type::NaCl: return 393.0 * m_amount * 1000.0;
+      case Salt::Type::NaHCO3: return 274.0 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
@@ -201,8 +275,8 @@ double Salt::SO4() const {
       return 0.0;
    }
    switch (m_type) {
-      case Salt::Types::CASO4: return 558.0 * m_amount * 1000.0;
-      case Salt::Types::MGSO4: return 389.0 * m_amount * 1000.0;
+      case Salt::Type::CaSO4: return 558.0 * m_amount * 1000.0;
+      case Salt::Type::MgSO4: return 389.0 * m_amount * 1000.0;
       default: return 0.0;
    }
 }
