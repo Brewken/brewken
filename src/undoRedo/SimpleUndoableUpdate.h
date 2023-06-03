@@ -108,8 +108,6 @@ private:
    QVariant newValue;
 };
 
-#endif
-
 /**
  * \brief Convenience macros for the second parameter to the constructor.  Instead of writing:
  *           Misc::typeLookup.getType(PropertyNames::Misc::use)
@@ -128,3 +126,5 @@ private:
 #define TYPE_INFO_3(className, baseClassName, property) className::typeLookup.getType(PropertyNames::baseClassName::property)
 #define TYPE_INFO_GET_OVERLOAD(param1, param2, param3, NAME, ...) NAME
 #define TYPE_INFO(...) TYPE_INFO_GET_OVERLOAD(__VA_ARGS__, TYPE_INFO_3, TYPE_INFO_2)(__VA_ARGS__)
+
+#endif

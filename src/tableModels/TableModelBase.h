@@ -631,6 +631,43 @@ protected:
       return true;
    }
 
+   /**
+    * \brief Called from \c Derived::changed slot
+    */
+   void propertyChanged(QMetaProperty prop,
+                        [[maybe_unused]] QVariant val,
+                        BtStringConst const & propNameOfOurIdsInRecipe) {
+      // Is sender one of our items?
+      NE * itemSender = qobject_cast<NE *>(m_derived->sender());
+      if (itemSender) {
+         int ii = this->findIndexOf(itemSender);
+         if (ii < 0) {
+            return;
+         }
+
+         m_derived->updateTotals();
+         emit m_derived->dataChanged(m_derived->createIndex(ii, 0),
+                                     m_derived->createIndex(ii, m_derived->columnCount() - 1));
+         emit m_derived->headerDataChanged(Qt::Vertical, ii, ii);
+         return;
+      }
+
+      // See if our recipe gained or lost items.
+      Recipe * recSender = qobject_cast<Recipe *>(m_derived->sender());
+      if (recSender && recSender == m_derived->recObs && prop.name() == propNameOfOurIdsInRecipe) {
+         this->removeAll();
+         // TBD: Commented out version doesn't compile on GCC
+         // this->addItems(m_derived->recObs->getAll<NE>());
+         this->addItems(recSender->getAll<NE>());
+         if (m_derived->rowCount() > 0) {
+            emit m_derived->headerDataChanged(Qt::Vertical, 0, m_derived->rowCount() - 1);
+         }
+      }
+
+      return;
+   }
+
+
    //
    // At this point, we would like to have two versions of an updateInventory() member function: a substantive one for
    // when Derived inherits from BtTableModelInventory and a no-op one for when it doesn't.  On GCC, we can do the
@@ -656,7 +693,7 @@ protected:
          for (int ii = 0; ii < this->rows.size(); ++ii) {
             if (invKey == this->rows.at(ii)->inventoryId()) {
                emit m_derived->dataChanged(m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
-                                             m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
+                                           m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
             }
          }
       }
@@ -686,46 +723,50 @@ protected:
  *        Note we have to be careful about comment formats in macro definitions
  */
 #define TABLE_MODEL_COMMON_DECL(NeName) \
-   public:                                                                                                                                 \
-      NeName##TableModel(QTableView * parent = nullptr, bool editable = true);                                                             \
-      virtual ~NeName##TableModel();                                                                                                       \
-                                                                                                                                           \
-      /* This block of functions is called from the TableModelBase class */                                                                \
-      void added  (std::shared_ptr<NeName> item);                                                                                          \
-      void removed(std::shared_ptr<NeName> item);                                                                                          \
-      void updateTotals();                                                                                                                 \
-                                                                                                                                           \
-      /** \brief Reimplemented from QAbstractTableModel. */                                                                                \
-      virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;                                                              \
-      /** \brief Reimplemented from QAbstractTableModel. */                                                                                \
-      virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;                                                  \
-      /** \brief Reimplemented from QAbstractTableModel. */                                                                                \
-      virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;                             \
-      /** \brief Reimplemented from QAbstractTableModel. */                                                                                \
-      virtual Qt::ItemFlags flags(const QModelIndex& index) const;                                                                         \
-      /** \brief Reimplemented from QAbstractTableModel. */                                                                                \
-      virtual bool setData(QModelIndex const & index, QVariant const & value, int role = Qt::EditRole);                                    \
-                                                                                                                                           \
-   public slots:                                                                                                                           \
-      /** \brief Watch \b NeName for changes. */                                                                                           \
-      void addItem(int itemId);                                                                                                            \
-                                                                                                                                           \
-      void removeItem(int itemId, std::shared_ptr<QObject> object);                                                                        \
-                                                                                                                                           \
-      /** \brief Catch changes to Recipe, Database, and NeName. NB: Needs to be public, not private, as accessed from \c TableModelBase */ \
-      void changed(QMetaProperty, QVariant);                                                                                               \
-                                                                                                                                           \
-      /** \brief Catches changes to inventory.  NOTE This is not implemented where not relevant (eg \c MashStepTableModel). */             \
-      void changedInventory(int invKey, BtStringConst const & propertyName);                                                               \
+   /* This allows TableModelBase to call protected and private members of Derived */                            \
+   friend class TableModelBase<NeName##TableModel, NeName>;                                                     \
+                                                                                                                \
+   public:                                                                                                      \
+      NeName##TableModel(QTableView * parent = nullptr, bool editable = true);                                  \
+      virtual ~NeName##TableModel();                                                                            \
+                                                                                                                \
+   protected:                                                                                                   \
+      /* This block of functions is called from the TableModelBase class */                                     \
+      void added  (std::shared_ptr<NeName> item);                                                               \
+      void removed(std::shared_ptr<NeName> item);                                                               \
+      void updateTotals();                                                                                      \
+                                                                                                                \
+   public:                                                                                                      \
+      /** \brief Reimplemented from QAbstractTableModel. */                                                     \
+      virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;                                   \
+      /** \brief Reimplemented from QAbstractTableModel. */                                                     \
+      virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;                       \
+      /** \brief Reimplemented from QAbstractTableModel. */                                                     \
+      virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;  \
+      /** \brief Reimplemented from QAbstractTableModel. */                                                     \
+      virtual Qt::ItemFlags flags(const QModelIndex& index) const;                                              \
+      /** \brief Reimplemented from QAbstractTableModel. */                                                     \
+      virtual bool setData(QModelIndex const & index, QVariant const & value, int role = Qt::EditRole);         \
+                                                                                                                \
+   private slots:                                                                                               \
+      /** \brief Watch \b NeName for changes. */                                                                \
+      void addItem(int itemId);                                                                                 \
+                                                                                                                \
+      void removeItem(int itemId, std::shared_ptr<QObject> object);                                             \
+                                                                                                                \
+      /** \brief Catch changes to Recipe, Database, and NeName. */                                              \
+      void changed(QMetaProperty, QVariant);                                                                    \
+                                                                                                                \
+      /** \brief Catches changes to inventory.  (Can be no-op where not relevant (eg \c MashStepTableModel). */ \
+      void changedInventory(int invKey, BtStringConst const & propertyName);                                    \
 
 /**
  * \brief Derived classes should include this in their .cpp file
  *
  *        Note we have to be careful about comment formats in macro definitions
  *
- *        TODO: Mostly I have tried to make these macro-included function bodies trivial, but \c changed() needs
- *        PropertyNames::Recipe::LcNeName##Ids, which would need a bit more work to do in \c TableModelBase.
- *        (Probably the way to do it is a templated function that returns the property name.)
+ *        NB: Mostly I have tried to make these macro-included function bodies trivial.  Macros are a bit clunky, so we
+ *            only really want to use them for the things that are hard to do other ways.
  */
 #define TABLE_MODEL_COMMON_CODE(NeName, LcNeName) \
    int NeName##TableModel::rowCount([[maybe_unused]] QModelIndex const & parent) const {                \
@@ -739,36 +780,12 @@ protected:
       this->remove(std::static_pointer_cast<NeName>(object));                                           \
       return;                                                                                           \
    }                                                                                                    \
-   void NeName##TableModel::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {                \
-      /* Is sender one of our items? */                                                                 \
-      NeName* itemSender = qobject_cast<NeName*>(sender());                                             \
-      if (itemSender) {                                                                                 \
-         int ii = this->findIndexOf(itemSender);                                                        \
-         if (ii < 0) {                                                                                  \
-            return;                                                                                     \
-         }                                                                                              \
-                                                                                                        \
-         this->updateTotals();                                                                          \
-         emit dataChanged(QAbstractItemModel::createIndex(ii, 0),                                       \
-                          QAbstractItemModel::createIndex(ii, this->columnCount() - 1));                \
-         emit headerDataChanged(Qt::Vertical, ii, ii);                                                  \
-         return;                                                                                        \
-      }                                                                                                 \
-                                                                                                        \
-      /* See if our recipe gained or lost items. */                                                     \
-      Recipe* recSender = qobject_cast<Recipe*>(sender());                                              \
-      if (recSender && recSender == recObs && prop.name() == PropertyNames::Recipe::LcNeName##Ids) {    \
-         this->removeAll();                                                                             \
-         this->addItems(this->recObs->getAll<NeName>());                                                \
-         if (rowCount() > 0) {                                                                          \
-            emit headerDataChanged(Qt::Vertical, 0, rowCount() - 1);                                    \
-         }                                                                                              \
-      }                                                                                                 \
-                                                                                                        \
+   void NeName##TableModel::changed(QMetaProperty prop, QVariant val) {                                 \
+      this->propertyChanged(prop, val, PropertyNames::Recipe::LcNeName##Ids);                           \
       return;                                                                                           \
    }                                                                                                    \
    void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {          \
-      this->updateInventory<decltype(*this)>(invKey, propertyName);                                                      \
+      this->updateInventory<decltype(*this)>(invKey, propertyName);                                     \
       return;                                                                                           \
    }                                                                                                    \
 
