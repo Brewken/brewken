@@ -667,7 +667,6 @@ protected:
       return;
    }
 
-
    //
    // At this point, we would like to have two versions of an updateInventory() member function: a substantive one for
    // when Derived inherits from BtTableModelInventory and a no-op one for when it doesn't.  On GCC, we can do the

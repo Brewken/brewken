@@ -1269,7 +1269,7 @@ QString RecipeFormatter::getToolTip(Style* style) {
            .arg(style->styleGuide());
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Type"))
-           .arg(style->typeString());
+           .arg(Style::typeDisplayNames[style->type()]);
 
    body += "</table></body></html>";
 

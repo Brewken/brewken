@@ -1476,7 +1476,8 @@ void MainWindow::displayRangesEtcForCurrentRecipeStyle() {
 
    this->styleRangeWidget_fg->setPreferredRange(this->fGLabel->getRangeToDisplay(style->ogMin(), style->ogMax()));
 
-   this->styleRangeWidget_abv->setPreferredRange(style->abvMin_pct(), style->abvMax_pct());
+   // If min and/or max ABV is not set on the Style, then use some sensible outer limit(s)
+   this->styleRangeWidget_abv->setPreferredRange(style->abvMin_pct().value_or(0.0), style->abvMax_pct().value_or(50.0));
    this->styleRangeWidget_ibu->setPreferredRange(style->ibuMin(), style->ibuMax());
    this->styleRangeWidget_srm->setPreferredRange(this->colorSRMLabel->getRangeToDisplay(style->colorMin_srm(),
                                                                                         style->colorMax_srm()));

@@ -27,6 +27,7 @@
 #include <QSqlRecord>
 
 #include "model/NamedEntity.h"
+#include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -66,114 +67,150 @@ AddPropertyName(typeString    )
  */
 class Style : public NamedEntity {
    Q_OBJECT
-   Q_CLASSINFO("signal", "styles")
+///   Q_CLASSINFO("signal", "styles")
 
 public:
+   /**
+    * \brief The type of beverage.
+    *
+    *        Note that this has changed a fair bit from BeerXML to BeerJSON.  We map as follows:
+    *
+    *           BeerXML         BeerJSON
+    *           -------         --------
+    *           Lager    ────>  beer
+    *           Ale     <────>  beer
+    *           Wheat    ────>  beer
+    *           Cider   <────>  cider
+    *           Mead    <────>  mead
+    *           Mixed   <────>  other
+    *           Mixed   <────   kombucha
+    *           Mixed   <────   soda
+    *           Mixed   <────   wine
+    */
+   enum class Type {
+      Lager,
+      Ale  ,
+      Mead ,
+      Wheat,
+      Mixed,
+      Cider,
+   };
+   Q_ENUM(Type)
+
+   /*!
+    * \brief Mapping between \c Style::Type and string values suitable for serialisation in DB, BeerJSON, etc (but
+    *        \b not BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
+    */
+   static EnumStringMapping const typeStringMapping;
+
+   /*!
+    * \brief Localised names of \c Style::Type values suitable for displaying to the end user
+    */
+   static EnumStringMapping const typeDisplayNames;
+
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.
     */
    static TypeLookup const typeLookup;
 
-   Style(QString t_name = "");
+   Style(QString name = "");
    Style(NamedParameterBundle const & namedParameterBundle);
    Style(Style const & other);
 
    virtual ~Style();
 
-   //! \brief The type of beverage.
-   enum class Type {Lager, Ale, Mead, Wheat, Mixed, Cider};
-   Q_ENUM(Type)
-
    //! \brief The category.
-   Q_PROPERTY( QString category READ category WRITE setCategory /*NOTIFY changed*/ /*changedCategory*/ )
+   Q_PROPERTY(QString category                       READ category        WRITE setCategory       )
    //! \brief The category number.
-   Q_PROPERTY( QString categoryNumber READ categoryNumber WRITE setCategoryNumber /*NOTIFY changed*/ /*changedCategoryNumber*/ )
+   Q_PROPERTY(QString categoryNumber                 READ categoryNumber  WRITE setCategoryNumber )
    //! \brief The style letter
-   Q_PROPERTY( QString styleLetter READ styleLetter WRITE setStyleLetter /*NOTIFY changed*/ /*changedStyleLetter*/ )
+   Q_PROPERTY(QString styleLetter                    READ styleLetter     WRITE setStyleLetter    )
    //! \brief Which style guide the description belongs to.
-   Q_PROPERTY( QString styleGuide READ styleGuide WRITE setStyleGuide /*NOTIFY changed*/ /*changedStyleGuide*/ )
+   Q_PROPERTY(QString styleGuide                     READ styleGuide      WRITE setStyleGuide     )
    //! \brief The \c Type.
-   Q_PROPERTY( Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/ )
-   //! \brief The untranslated \c Type string.
-   Q_PROPERTY( QString typeString READ typeString /* WRITE setUse NOTIFY changed*/ /*changedUse*/ )
+   Q_PROPERTY(Type type                              READ type            WRITE setType           )
    //! \brief The minimum og.
-   Q_PROPERTY( double ogMin READ ogMin WRITE setOgMin /*NOTIFY changed*/ /*changedOgMin*/ )
+   Q_PROPERTY(double ogMin                           READ ogMin           WRITE setOgMin          )
    //! \brief The maximum og.
-   Q_PROPERTY( double ogMax READ ogMax WRITE setOgMax /*NOTIFY changed*/ /*changedOgMax*/ )
+   Q_PROPERTY(double ogMax                           READ ogMax           WRITE setOgMax          )
    //! \brief The minimum fg.
-   Q_PROPERTY( double fgMin READ fgMin WRITE setFgMin /*NOTIFY changed*/ /*changedFgMin*/ )
+   Q_PROPERTY(double fgMin                           READ fgMin           WRITE setFgMin          )
    //! \brief The maximum fg.
-   Q_PROPERTY( double fgMax READ fgMax WRITE setFgMax /*NOTIFY changed*/ /*changedFgMax*/ )
+   Q_PROPERTY(double fgMax                           READ fgMax           WRITE setFgMax          )
    //! \brief The minimum ibus.
-   Q_PROPERTY( double ibuMin READ ibuMin WRITE setIbuMin /*NOTIFY changed*/ /*changedIbuMin*/ )
+   Q_PROPERTY(double ibuMin                          READ ibuMin          WRITE setIbuMin         )
    //! \brief The maximum ibus.
-   Q_PROPERTY( double ibuMax READ ibuMax WRITE setIbuMax /*NOTIFY changed*/ /*changedIbuMax*/ )
+   Q_PROPERTY(double ibuMax                          READ ibuMax          WRITE setIbuMax         )
    //! \brief The minimum color in SRM.
-   Q_PROPERTY( double colorMin_srm READ colorMin_srm WRITE setColorMin_srm /*NOTIFY changed*/ /*changedColorMin_srm*/ )
+   Q_PROPERTY(double colorMin_srm                    READ colorMin_srm    WRITE setColorMin_srm   )
    //! \brief The maximum color in SRM.
-   Q_PROPERTY( double colorMax_srm READ colorMax_srm WRITE setColorMax_srm /*NOTIFY changed*/ /*changedColorMax_srm*/ )
-   //! \brief The mininum carbonation in volumes at STP.
-   Q_PROPERTY( double carbMin_vol READ carbMin_vol WRITE setCarbMin_vol /*NOTIFY changed*/ /*changedCarbMin_vol*/ )
-   //! \brief The maximum carbonation in volumes at STP.
-   Q_PROPERTY( double carbMax_vol READ carbMax_vol WRITE setCarbMax_vol /*NOTIFY changed*/ /*changedCarbMax_vol*/ )
-   //! \brief The minimum ABV in percent.
-   Q_PROPERTY( double abvMin_pct READ abvMin_pct WRITE setAbvMin_pct /*NOTIFY changed*/ /*changedAbvMin_pct*/ )
-   //! \brief The maximum ABV in percent.
-   Q_PROPERTY( double abvMax_pct READ abvMax_pct WRITE setAbvMax_pct /*NOTIFY changed*/ /*changedAbvMax_pct*/ )
+   Q_PROPERTY(double colorMax_srm                    READ colorMax_srm    WRITE setColorMax_srm   )
+   //! \brief The mininum carbonation in volumes at STP.   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> carbMin_vol      READ carbMin_vol     WRITE setCarbMin_vol    )
+   //! \brief The maximum carbonation in volumes at STP.   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> carbMax_vol      READ carbMax_vol     WRITE setCarbMax_vol    )
+   //! \brief The minimum ABV in percent.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> abvMin_pct       READ abvMin_pct      WRITE setAbvMin_pct     )
+   //! \brief The maximum ABV in percent.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> abvMax_pct       READ abvMax_pct      WRITE setAbvMax_pct     )
    //! \brief The notes.
-   Q_PROPERTY( QString notes READ notes WRITE setNotes /*NOTIFY changed*/ /*changedNotes*/ )
+   Q_PROPERTY(QString notes                          READ notes           WRITE setNotes          )
    //! \brief The profile.
-   Q_PROPERTY( QString profile READ profile WRITE setProfile /*NOTIFY changed*/ /*changedProfile*/ )
+   Q_PROPERTY(QString profile                        READ profile         WRITE setProfile        )
    //! \brief The ingredients.
-   Q_PROPERTY( QString ingredients READ ingredients WRITE setIngredients /*NOTIFY changed*/ /*changedIngredients*/ )
+   Q_PROPERTY(QString ingredients                    READ ingredients     WRITE setIngredients    )
    //! \brief The commercial examples.
-   Q_PROPERTY( QString examples READ examples WRITE setExamples /*NOTIFY changed*/ /*changedExamples*/ )
+   Q_PROPERTY(QString examples                       READ examples        WRITE setExamples       )
 
-   void setCategory( const QString& var);
-   void setCategoryNumber( const QString& var);
-   void setStyleLetter( const QString& var);
-   void setStyleGuide( const QString& var);
-   void setType( Type t);
-   void setOgMin( double var);
-   void setOgMax( double var);
-   void setFgMin( double var);
-   void setFgMax( double var);
-   void setIbuMin( double var);
-   void setIbuMax( double var);
-   void setColorMin_srm( double var);
-   void setColorMax_srm( double var);
-   void setCarbMin_vol( double var);
-   void setCarbMax_vol( double var);
-   void setAbvMin_pct( double var);
-   void setAbvMax_pct( double var);
-   void setNotes( const QString& var);
-   void setProfile( const QString& var);
-   void setIngredients( const QString& var);
-   void setExamples( const QString& var);
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   QString               category      () const;
+   QString               categoryNumber() const;
+   QString               styleLetter   () const;
+   QString               styleGuide    () const;
+   Type                  type          () const;
+   double                ogMin         () const;
+   double                ogMax         () const;
+   double                fgMin         () const;
+   double                fgMax         () const;
+   double                ibuMin        () const;
+   double                ibuMax        () const;
+   double                colorMin_srm  () const;
+   double                colorMax_srm  () const;
+   std::optional<double> carbMin_vol   () const;
+   std::optional<double> carbMax_vol   () const;
+   std::optional<double> abvMin_pct    () const;
+   std::optional<double> abvMax_pct    () const;
+   QString               notes         () const;
+   QString               profile       () const;
+   QString               ingredients   () const;
+   QString               examples      () const;
 
-   QString category() const;
-   QString categoryNumber() const;
-   QString styleLetter() const;
-   QString styleGuide() const;
-   Type type() const;
-   const QString typeString() const;
-   double ogMin() const;
-   double ogMax() const;
-   double fgMin() const;
-   double fgMax() const;
-   double ibuMin() const;
-   double ibuMax() const;
-   double colorMin_srm() const;
-   double colorMax_srm() const;
-   double carbMin_vol() const;
-   double carbMax_vol() const;
-   double abvMin_pct() const;
-   double abvMax_pct() const;
-   QString notes() const;
-   QString profile() const;
-   QString ingredients() const;
-   QString examples() const;
+   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
+   void setCategory      (QString               const & val);
+   void setCategoryNumber(QString               const & val);
+   void setStyleLetter   (QString               const & val);
+   void setStyleGuide    (QString               const & val);
+   void setType          (Type                  const   val);
+   void setOgMin         (double                const   val);
+   void setOgMax         (double                const   val);
+   void setFgMin         (double                const   val);
+   void setFgMax         (double                const   val);
+   void setIbuMin        (double                const   val);
+   void setIbuMax        (double                const   val);
+   void setColorMin_srm  (double                const   val);
+   void setColorMax_srm  (double                const   val);
+   void setCarbMin_vol   (std::optional<double> const   val);
+   void setCarbMax_vol   (std::optional<double> const   val);
+   void setAbvMin_pct    (std::optional<double> const   val);
+   void setAbvMax_pct    (std::optional<double> const   val);
+   void setNotes         (QString               const & val);
+   void setProfile       (QString               const & val);
+   void setIngredients   (QString               const & val);
+   void setExamples      (QString               const & val);
 
    virtual Recipe * getOwningRecipe();
 
@@ -184,27 +221,27 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString m_category;
-   QString m_categoryNumber;
-   QString m_styleLetter;
-   QString m_styleGuide;
-   Type m_type;
-   double m_ogMin;
-   double m_ogMax;
-   double m_fgMin;
-   double m_fgMax;
-   double m_ibuMin;
-   double m_ibuMax;
-   double m_colorMin_srm;
-   double m_colorMax_srm;
-   double m_carbMin_vol;
-   double m_carbMax_vol;
-   double m_abvMin_pct;
-   double m_abvMax_pct;
-   QString m_notes;
-   QString m_profile;
-   QString m_ingredients;
-   QString m_examples;
+   QString               m_category      ;
+   QString               m_categoryNumber;
+   QString               m_styleLetter   ;
+   QString               m_styleGuide    ;
+   Type                  m_type          ;
+   double                m_ogMin         ;
+   double                m_ogMax         ;
+   double                m_fgMin         ;
+   double                m_fgMax         ;
+   double                m_ibuMin        ;
+   double                m_ibuMax        ;
+   double                m_colorMin_srm  ;
+   double                m_colorMax_srm  ;
+   std::optional<double> m_carbMin_vol   ;
+   std::optional<double> m_carbMax_vol   ;
+   std::optional<double> m_abvMin_pct    ;
+   std::optional<double> m_abvMax_pct    ;
+   QString               m_notes         ;
+   QString               m_profile       ;
+   QString               m_ingredients   ;
+   QString               m_examples      ;
 };
 
 Q_DECLARE_METATYPE( Style* )

@@ -127,15 +127,15 @@ public:
     */
    Q_PROPERTY(std::optional<int> use   READ useAsInt   WRITE setUseAsInt)
    //! \brief The time used in minutes.
-   Q_PROPERTY(double  time_min              READ time_min              WRITE setTime_min             )
+   Q_PROPERTY(double time_min              READ time_min              WRITE setTime_min             )
    //! \brief The amount in either kg or L, depending on \c amountIsWeight().
-   Q_PROPERTY( double amount READ amount WRITE setAmount)
+   Q_PROPERTY(double amount READ amount WRITE setAmount)
    //! \brief Whether the amount is weight (kg), or volume (L).
-   Q_PROPERTY( bool amountIsWeight READ amountIsWeight WRITE setAmountIsWeight)
+   Q_PROPERTY(bool amountIsWeight READ amountIsWeight WRITE setAmountIsWeight)
    //! \brief What to use it for.
-   Q_PROPERTY( QString useFor READ useFor WRITE setUseFor)
+   Q_PROPERTY(QString useFor READ useFor WRITE setUseFor)
    //! \brief The notes.
-   Q_PROPERTY( QString notes READ notes WRITE setNotes)
+   Q_PROPERTY(QString notes READ notes WRITE setNotes)
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    /**
     * \brief Amounts of a \c Misc can be measured by mass or by volume (depending usually on what it is)
