@@ -75,8 +75,8 @@ TypeLookup const Equipment::typeLookup {
 };
 
 //=============================CONSTRUCTORS=====================================
-Equipment::Equipment(QString t_name) :
-   NamedEntity            {t_name, true},
+Equipment::Equipment(QString name) :
+   NamedEntity            {name, true},
    m_boilSize_l           {22.927},
    m_batchSize_l          {18.927},
    m_tunVolume_l          {0.0   },
@@ -149,78 +149,98 @@ Equipment::Equipment(Equipment const & other) :
 
 Equipment::~Equipment() = default;
 
-//============================"SET" METHODS=====================================
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+
+QString Equipment::notes                () const { return m_notes                ; }
+bool    Equipment::calcBoilVolume       () const { return m_calcBoilVolume       ; }
+double  Equipment::boilSize_l           () const { return m_boilSize_l           ; }
+double  Equipment::batchSize_l          () const { return m_batchSize_l          ; }
+double  Equipment::tunVolume_l          () const { return m_tunVolume_l          ; }
+double  Equipment::tunWeight_kg         () const { return m_tunWeight_kg         ; }
+double  Equipment::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
+double  Equipment::topUpWater_l         () const { return m_topUpWater_l         ; }
+double  Equipment::trubChillerLoss_l    () const { return m_trubChillerLoss_l    ; }
+double  Equipment::evapRate_pctHr       () const { return m_evapRate_pctHr       ; }
+double  Equipment::evapRate_lHr         () const { return m_evapRate_lHr         ; }
+double  Equipment::boilTime_min         () const { return m_boilTime_min         ; }
+double  Equipment::lauterDeadspace_l    () const { return m_lauterDeadspace_l    ; }
+double  Equipment::topUpKettle_l        () const { return m_topUpKettle_l        ; }
+double  Equipment::hopUtilization_pct   () const { return m_hopUtilization_pct   ; }
+double  Equipment::grainAbsorption_LKg  () const { return m_grainAbsorption_LKg  ; }
+double  Equipment::boilingPoint_c       () const { return m_boilingPoint_c       ; }
+
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 
 // The logic through here is similar to what's in Hop. Unfortunately, the additional signals don't allow quite the
 // compactness.
-void Equipment::setBoilSize_l( double var ) {
+void Equipment::setBoilSize_l(double const val) {
    this->setAndNotify(PropertyNames::Equipment::boilSize_l,
                       this->m_boilSize_l,
-                      this->enforceMin(var, "boil size"));
+                      this->enforceMin(val, "boil size"));
    if (this->key() > 0) {
       // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
-      emit changedBoilSize_l(var);
+      emit changedBoilSize_l(val);
    }
 }
 
-void Equipment::setBatchSize_l( double var ) {
+void Equipment::setBatchSize_l(double const val) {
    this->setAndNotify(PropertyNames::Equipment::batchSize_l,
                       this->m_batchSize_l,
-                      this->enforceMin(var, "batch size"));
+                      this->enforceMin(val, "batch size"));
    if (this->key() > 0) {
       doCalculations();
    }
 }
 
-void Equipment::setTunVolume_l( double var ) {
+void Equipment::setTunVolume_l(double const val) {
    this->setAndNotify(PropertyNames::Equipment::tunVolume_l,
                       this->m_tunVolume_l,
-                      this->enforceMin(var, "tun volume"));
+                      this->enforceMin(val, "tun volume"));
 }
 
-void Equipment::setTunWeight_kg( double var ) {
+void Equipment::setTunWeight_kg(double const val) {
    this->setAndNotify(PropertyNames::Equipment::tunWeight_kg,
                       this->m_tunWeight_kg,
-                      this->enforceMin(var, "tun weight"));
+                      this->enforceMin(val, "tun weight"));
 }
 
-void Equipment::setTunSpecificHeat_calGC( double var ) {
+void Equipment::setTunSpecificHeat_calGC(double const val) {
    this->setAndNotify(PropertyNames::Equipment::tunSpecificHeat_calGC,
                       this->m_tunSpecificHeat_calGC,
-                      this->enforceMin(var, "tun specific heat"));
+                      this->enforceMin(val, "tun specific heat"));
 }
 
-void Equipment::setTopUpWater_l( double var ) {
+void Equipment::setTopUpWater_l(double const val) {
    this->setAndNotify(PropertyNames::Equipment::topUpWater_l,
                       this->m_topUpWater_l,
-                      this->enforceMin(var, "top-up water"));
+                      this->enforceMin(val, "top-up water"));
    if (this->key() > 0) {
       doCalculations();
    }
 }
 
-void Equipment::setTrubChillerLoss_l( double var ) {
+void Equipment::setTrubChillerLoss_l(double const val) {
    this->setAndNotify(PropertyNames::Equipment::trubChillerLoss_l,
                       this->m_trubChillerLoss_l,
-                      this->enforceMin(var, "trub chiller loss"));
+                      this->enforceMin(val, "trub chiller loss"));
    if (this->key() > 0) {
       doCalculations();
    }
 }
 
-void Equipment::setEvapRate_pctHr( double var ) {
+void Equipment::setEvapRate_pctHr(double const val) {
    // NOTE: We never use evapRate_pctHr, but we do use evapRate_lHr. So keep them
    //       synced, and implement the former in terms of the latter.
-   this->setEvapRate_lHr(var/100.0 * batchSize_l());
+   this->setEvapRate_lHr(val/100.0 * batchSize_l());
    return;
 }
 
-void Equipment::setEvapRate_lHr( double var ) {
+void Equipment::setEvapRate_lHr(double const val) {
    // NOTE: We never use evapRate_pctHr, but we maintain here anyway.
    // Because both values are stored in the DB, and because we only want to call prepareForPropertyChange() once, we
    // can't use the setAndNotify() helper function
    this->prepareForPropertyChange(PropertyNames::Equipment::evapRate_lHr);
-   this->m_evapRate_lHr = this->enforceMin(var, "evap rate");
+   this->m_evapRate_lHr = this->enforceMin(val, "evap rate");
    this->m_evapRate_pctHr = this->m_evapRate_lHr/batchSize_l() * 100.0; // We don't use it, but keep it current.
    this->propagatePropertyChange(PropertyNames::Equipment::evapRate_lHr);
    this->propagatePropertyChange(PropertyNames::Equipment::evapRate_pctHr);
@@ -230,67 +250,48 @@ void Equipment::setEvapRate_lHr( double var ) {
    doCalculations();
 }
 
-void Equipment::setBoilTime_min( double var ) {
+void Equipment::setBoilTime_min(double const val) {
    this->setAndNotify(PropertyNames::Equipment::boilTime_min,
                       this->m_boilTime_min,
-                      this->enforceMin(var, "boil time"));
+                      this->enforceMin(val, "boil time"));
    if (this->key() > 0) {
       // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
-      emit changedBoilTime_min(var);
+      emit changedBoilTime_min(val);
    }
    doCalculations();
 }
 
-void Equipment::setCalcBoilVolume( bool var ) {
-   this->setAndNotify(PropertyNames::Equipment::calcBoilVolume, this->m_calcBoilVolume, var);
-   if ( var ) {
+void Equipment::setCalcBoilVolume(bool const val) {
+   this->setAndNotify(PropertyNames::Equipment::calcBoilVolume, this->m_calcBoilVolume, val);
+   if ( val ) {
       doCalculations();
    }
 }
 
-void Equipment::setLauterDeadspace_l( double var ) {
-   this->setAndNotify(PropertyNames::Equipment::lauterDeadspace_l, this->m_lauterDeadspace_l, this->enforceMin(var, "deadspace"));
+void Equipment::setLauterDeadspace_l(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::lauterDeadspace_l, this->m_lauterDeadspace_l, this->enforceMin(val, "deadspace"));
 }
 
-void Equipment::setTopUpKettle_l( double var ) {
-   this->setAndNotify(PropertyNames::Equipment::topUpKettle_l, this->m_topUpKettle_l, this->enforceMin(var, "top-up kettle"));
+void Equipment::setTopUpKettle_l(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::topUpKettle_l, this->m_topUpKettle_l, this->enforceMin(val, "top-up kettle"));
 }
 
-void Equipment::setHopUtilization_pct( double var ) {
-   this->setAndNotify(PropertyNames::Equipment::hopUtilization_pct, this->m_hopUtilization_pct, this->enforceMin(var, "hop utilization"));
+void Equipment::setHopUtilization_pct(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::hopUtilization_pct, this->m_hopUtilization_pct, this->enforceMin(val, "hop utilization"));
 }
 
-void Equipment::setNotes( const QString &var ) {
-   this->setAndNotify(PropertyNames::Equipment::notes, this->m_notes, var);
+void Equipment::setNotes( const QString &val ) {
+   this->setAndNotify(PropertyNames::Equipment::notes, this->m_notes, val);
 }
 
-void Equipment::setGrainAbsorption_LKg(double var) {
-   this->setAndNotify(PropertyNames::Equipment::grainAbsorption_LKg, this->m_grainAbsorption_LKg, this->enforceMin(var, "absorption"));
+void Equipment::setGrainAbsorption_LKg(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::grainAbsorption_LKg, this->m_grainAbsorption_LKg, this->enforceMin(val, "absorption"));
 }
 
-void Equipment::setBoilingPoint_c(double var) {
-   this->setAndNotify(PropertyNames::Equipment::boilingPoint_c, this->m_boilingPoint_c, this->enforceMin(var, "boiling point of water"));
+void Equipment::setBoilingPoint_c(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::boilingPoint_c, this->m_boilingPoint_c, this->enforceMin(val, "boiling point of water"));
 }
 
-//============================"GET" METHODS=====================================
-
-QString Equipment::notes() const { return m_notes; }
-bool Equipment::calcBoilVolume() const { return m_calcBoilVolume; }
-double Equipment::boilSize_l() const { return m_boilSize_l; }
-double Equipment::batchSize_l() const { return m_batchSize_l; }
-double Equipment::tunVolume_l() const { return m_tunVolume_l; }
-double Equipment::tunWeight_kg() const { return m_tunWeight_kg; }
-double Equipment::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
-double Equipment::topUpWater_l() const { return m_topUpWater_l; }
-double Equipment::trubChillerLoss_l() const { return m_trubChillerLoss_l; }
-double Equipment::evapRate_pctHr() const { return m_evapRate_pctHr; }
-double Equipment::evapRate_lHr() const { return m_evapRate_lHr; }
-double Equipment::boilTime_min() const { return m_boilTime_min; }
-double Equipment::lauterDeadspace_l() const { return m_lauterDeadspace_l; }
-double Equipment::topUpKettle_l() const { return m_topUpKettle_l; }
-double Equipment::hopUtilization_pct() const { return m_hopUtilization_pct; }
-double Equipment::grainAbsorption_LKg() { return m_grainAbsorption_LKg; }
-double Equipment::boilingPoint_c() const { return m_boilingPoint_c; }
 
 void Equipment::doCalculations() {
    // Only do the calculation if we're asked to.

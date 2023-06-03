@@ -60,7 +60,7 @@ AddPropertyName(tunWeight_kg         )
  */
 class Equipment : public NamedEntity {
    Q_OBJECT
-   Q_CLASSINFO("signal", "equipments")
+///   Q_CLASSINFO("signal", "equipments")
 
 public:
    /**
@@ -75,61 +75,95 @@ public:
 
    virtual ~Equipment();
 
-   //! \brief The boil size in liters.
-   Q_PROPERTY( double boilSize_l            READ boilSize_l            WRITE setBoilSize_l            NOTIFY changedBoilSize_l )
-   //! \brief The batch size in liters.
-   Q_PROPERTY( double batchSize_l           READ batchSize_l           WRITE setBatchSize_l           NOTIFY changedBatchSize_l )
-   //! \brief The tun volume in liters.
-   Q_PROPERTY( double tunVolume_l           READ tunVolume_l           WRITE setTunVolume_l           NOTIFY changedTunVolume_l )
-   //! \brief Set the tun mass in kg.
-   Q_PROPERTY( double tunWeight_kg          READ tunWeight_kg          WRITE setTunWeight_kg          NOTIFY changedTunWeight_kg )
-   //! \brief Set the tun specific heat in cal/(g*C)
-   Q_PROPERTY( double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC NOTIFY changedTunSpecificHeat_calGC )
-   //! \brief Set the top-up water in liters.
-   Q_PROPERTY( double topUpWater_l          READ topUpWater_l          WRITE setTopUpWater_l          NOTIFY changedTopUpWater_l )
-   //! \brief Set the loss to trub and chiller in liters.
-   Q_PROPERTY( double trubChillerLoss_l     READ trubChillerLoss_l     WRITE setTrubChillerLoss_l     NOTIFY changedTrubChillerLoss_l )
-   //! \brief Set the evaporation rate in percent of the boil size per hour. DO NOT USE. Only for BeerXML compatibility.
-   Q_PROPERTY( double evapRate_pctHr        READ evapRate_pctHr        WRITE setEvapRate_pctHr        NOTIFY changedEvapRate_pctHr )
-   //! \brief Set the evaporation rate in liters/hr.
-   Q_PROPERTY( double evapRate_lHr          READ evapRate_lHr          WRITE setEvapRate_lHr          NOTIFY changedEvapRate_lHr )
-   //! \brief Set the boil time in minutes.
-   Q_PROPERTY( double boilTime_min          READ boilTime_min          WRITE setBoilTime_min          NOTIFY changedBoilTime_min )
-   //! \brief Set whether you want the boil volume to be automatically calculated.
-   Q_PROPERTY( bool   calcBoilVolume        READ calcBoilVolume        WRITE setCalcBoilVolume        NOTIFY changedCalcBoilVolume )
-   //! \brief Set the lauter tun's deadspace in liters.
-   Q_PROPERTY( double lauterDeadspace_l     READ lauterDeadspace_l     WRITE setLauterDeadspace_l     NOTIFY changedLauterDeadspace_l )
-   //! \brief Set the kettle top up in liters.
-   Q_PROPERTY( double topUpKettle_l         READ topUpKettle_l         WRITE setTopUpKettle_l         NOTIFY changedTopUpKettle_l )
-   //! \brief Set the hop utilization factor. I do not believe this is used.
-   Q_PROPERTY( double hopUtilization_pct    READ hopUtilization_pct    WRITE setHopUtilization_pct    NOTIFY changedHopUtilization_pct )
-   //! \brief Set the notes.
-   Q_PROPERTY( QString notes                READ notes                 WRITE setNotes                 NOTIFY changedNotes )
-   //! \brief Set how much water the grains absorb in liters/kg.
-   Q_PROPERTY( double grainAbsorption_LKg   READ grainAbsorption_LKg   WRITE setGrainAbsorption_LKg   NOTIFY changedGrainAbsorption_LKg )
-   //! \brief Set the boiling point of water in Celsius.
-   Q_PROPERTY( double boilingPoint_c        READ boilingPoint_c        WRITE setBoilingPoint_c        NOTIFY changedBoilingPoint_c )
+   /**
+    * \brief The boil size in liters: the pre-boil volume used in this particular instance for this equipment setup.
+    *        Note that this may be a calculated value depending on the calcBoilVolume property.
+    */
+   Q_PROPERTY(double boilSize_l            READ boilSize_l            WRITE setBoilSize_l            NOTIFY changedBoilSize_l )
+   /**
+    * \brief The batch size in liters, aka the target volume of the batch at the start of fermentation.
+    */
+   Q_PROPERTY(double batchSize_l           READ batchSize_l           WRITE setBatchSize_l           NOTIFY changedBatchSize_l )
+   /**
+    * \brief The mash tun volume in liters.                ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        This parameter can be used to calculate if a particular mash and grain profile will fit in the mash tun.
+    *        It may also be used for thermal calculations in the case of a partially full mash tun.
+    */
+   Q_PROPERTY(double tunVolume_l           READ tunVolume_l           WRITE setTunVolume_l           NOTIFY changedTunVolume_l )
+   /**
+    * \brief The tun mass in kg.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        Used primarily to calculate the thermal parameters of the mash tun – in conjunction with the volume and
+    *        specific heat.
+    */
+   Q_PROPERTY(double tunWeight_kg          READ tunWeight_kg          WRITE setTunWeight_kg          NOTIFY changedTunWeight_kg )
+   /**
+    * \brief The mash tun specific heat in cal/(g*C)   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        This is usually a function of the material the mash tun is made of.  Typical ranges are 0.1-0.25 for metal
+    *        and 0.2-0.5 for plastic materials.
+    */
+   Q_PROPERTY(double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC NOTIFY changedTunSpecificHeat_calGC )
+   /**
+    * \brief The top-up water in liters.               ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        The amount of top up water normally added just prior to starting fermentation.  Usually used for extract
+    *        brewing.
+    */
+   Q_PROPERTY(double topUpWater_l          READ topUpWater_l          WRITE setTopUpWater_l          NOTIFY changedTopUpWater_l )
+   /**
+    * \brief The loss to trub and chiller in liters.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        The amount of wort normally lost during transition from the boiler to the fermentation vessel.  Includes
+    *        both unusable wort due to trub and wort lost to the chiller and transfer systems.
+    */
+   Q_PROPERTY(double trubChillerLoss_l     READ trubChillerLoss_l     WRITE setTrubChillerLoss_l     NOTIFY changedTrubChillerLoss_l )
+   /**
+    * \brief The evaporation rate in percent of the boil size per hour. *** DO NOT USE. *** Only for BeerXML compatibility.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    */
+   Q_PROPERTY(double evapRate_pctHr        READ evapRate_pctHr        WRITE setEvapRate_pctHr        NOTIFY changedEvapRate_pctHr )
+   /**
+    * \brief The evaporation rate in liters/hr.  NB: Not part of BeerXML
+    */
+   Q_PROPERTY(double evapRate_lHr          READ evapRate_lHr          WRITE setEvapRate_lHr          NOTIFY changedEvapRate_lHr )
+   /**
+    * \brief The boil time in minutes: the normal amount of time one boils for this equipment setup.  This can be used
+    *        with the evaporation rate to calculate the evaporation loss.         ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    */
+   Q_PROPERTY(double boilTime_min          READ boilTime_min          WRITE setBoilTime_min          NOTIFY changedBoilTime_min )
+   /**
+    * \brief Whether you want the boil volume to be automatically calculated.    ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    */
+   Q_PROPERTY(bool calcBoilVolume        READ calcBoilVolume        WRITE setCalcBoilVolume        NOTIFY changedCalcBoilVolume )
+   /**
+    * \brief The lauter tun's deadspace in liters.                              ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        Amount lost to the lauter tun and equipment associated with the lautering process.
+    */
+   Q_PROPERTY(double lauterDeadspace_l     READ lauterDeadspace_l     WRITE setLauterDeadspace_l     NOTIFY changedLauterDeadspace_l )
+   /**
+    * \brief The kettle top up in liters.                                       ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        Amount normally added to the boil kettle before the boil.
+    */
+   Q_PROPERTY(double  topUpKettle_l         READ topUpKettle_l         WRITE setTopUpKettle_l         NOTIFY changedTopUpKettle_l )
+   /**
+    * \brief The hop utilization factor. I do not believe this is used.         ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+    *        Large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher
+    *        (200% or more) for very large batch equipment.
+    */
+   Q_PROPERTY(double hopUtilization_pct    READ hopUtilization_pct    WRITE setHopUtilization_pct    NOTIFY changedHopUtilization_pct )
+   /**
+    * \brief The notes.
+    */
+   Q_PROPERTY(QString notes                READ notes                 WRITE setNotes                 NOTIFY changedNotes )
+   /**
+    * \brief How much water the grains absorb in liters/kg.  NB: Not part of BeerXML (but is part of BeerJSON)
+    *
+    *        The apparent volume absorbed by grain, typical values are 0.125 qt/lb (1.04 L/kg) for a mashtun,
+    *        0.08 gal/lb (0.66 L/kg) for BIAB.
+    */
+   Q_PROPERTY(double grainAbsorption_LKg   READ grainAbsorption_LKg   WRITE setGrainAbsorption_LKg   NOTIFY changedGrainAbsorption_LKg )
+   /**
+    * \brief The boiling point of water in Celsius.  NB: Not part of BeerXML
+    */
+   Q_PROPERTY(double boilingPoint_c        READ boilingPoint_c        WRITE setBoilingPoint_c        NOTIFY changedBoilingPoint_c )
 
-   // Set
-   void setBoilSize_l( double var );
-   void setBatchSize_l( double var );
-   void setTunVolume_l( double var );
-   void setTunWeight_kg( double var );
-   void setTunSpecificHeat_calGC( double var );
-   void setTopUpWater_l( double var );
-   void setTrubChillerLoss_l( double var );
-   void setEvapRate_pctHr( double var );
-   void setEvapRate_lHr( double var );
-   void setBoilTime_min( double var );
-   void setCalcBoilVolume( bool var );
-   void setLauterDeadspace_l( double var );
-   void setTopUpKettle_l( double var );
-   void setHopUtilization_pct( double var );
-   void setNotes( const QString &var );
-   void setGrainAbsorption_LKg(double var);
-   void setBoilingPoint_c(double var);
-
-   // Get
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    double  boilSize_l           () const;
    double  batchSize_l          () const;
    double  tunVolume_l          () const;
@@ -145,8 +179,27 @@ public:
    double  topUpKettle_l        () const;
    double  hopUtilization_pct   () const;
    QString notes                () const;
-   double  grainAbsorption_LKg  ();
+   double  grainAbsorption_LKg  () const;
    double  boilingPoint_c       () const;
+
+   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
+   void setBoilSize_l           (double  const   val);
+   void setBatchSize_l          (double  const   val);
+   void setTunVolume_l          (double  const   val);
+   void setTunWeight_kg         (double  const   val);
+   void setTunSpecificHeat_calGC(double  const   val);
+   void setTopUpWater_l         (double  const   val);
+   void setTrubChillerLoss_l    (double  const   val);
+   void setEvapRate_pctHr       (double  const   val);
+   void setEvapRate_lHr         (double  const   val);
+   void setBoilTime_min         (double  const   val);
+   void setCalcBoilVolume       (bool    const   val);
+   void setLauterDeadspace_l    (double  const   val);
+   void setTopUpKettle_l        (double  const   val);
+   void setHopUtilization_pct   (double  const   val);
+   void setNotes                (QString const & val);
+   void setGrainAbsorption_LKg  (double  const   val);
+   void setBoilingPoint_c       (double  const   val);
 
    //! \brief Calculate how much wort is left immediately at knockout.
    double wortEndOfBoil_l( double kettleWort_l ) const;
@@ -177,23 +230,23 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   double m_boilSize_l;
-   double m_batchSize_l;
-   double m_tunVolume_l;
-   double m_tunWeight_kg;
-   double m_tunSpecificHeat_calGC;
-   double m_topUpWater_l;
-   double m_trubChillerLoss_l;
-   double m_evapRate_pctHr;
-   double m_evapRate_lHr;
-   double m_boilTime_min;
-   bool m_calcBoilVolume;
-   double m_lauterDeadspace_l;
-   double m_topUpKettle_l;
-   double m_hopUtilization_pct;
-   QString m_notes;
-   double m_grainAbsorption_LKg;
-   double m_boilingPoint_c;
+   double  m_boilSize_l           ;
+   double  m_batchSize_l          ;
+   double  m_tunVolume_l          ;
+   double  m_tunWeight_kg         ;
+   double  m_tunSpecificHeat_calGC;
+   double  m_topUpWater_l         ;
+   double  m_trubChillerLoss_l    ;
+   double  m_evapRate_pctHr       ;
+   double  m_evapRate_lHr         ;
+   double  m_boilTime_min         ;
+   bool    m_calcBoilVolume       ;
+   double  m_lauterDeadspace_l    ;
+   double  m_topUpKettle_l        ;
+   double  m_hopUtilization_pct   ;
+   QString m_notes                ;
+   double  m_grainAbsorption_LKg  ;
+   double  m_boilingPoint_c       ;
 
    // Calculate the boil size.
    void doCalculations();

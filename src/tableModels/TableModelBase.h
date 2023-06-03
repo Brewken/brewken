@@ -631,20 +631,41 @@ protected:
       return true;
    }
 
-   void updateInventory(int invKey, BtStringConst const & propertyName) requires HasInventory<Derived> {
+   //
+   // At this point, we would like to have two versions of an updateInventory() member function: a substantive one for
+   // when Derived inherits from BtTableModelInventory and a no-op one for when it doesn't.  On GCC, we can do the
+   // following:
+   //    void updateInventory(...) requires HasInventory<Derived> { ... } // Substantive version
+   //    void updateInventory(...) requires HasNoInventory<Derived> { ... } // No-op version
+   //
+   // HOWEVER, other compilers (eg Clang) do not permit this and give an error along the lines of "incomplete type ...
+   // used in type trait expression ... definition of ...  is not complete until the closing '}'".  This is annoying but
+   // correct because the C++ standard says we are not allowed to use `HasInventory<Derived>` or
+   // `HasNoInventory<Derived>` until `Derived` is fully defined, which won't be until the closing brace of its class
+   // definition (and the `TableModelBase` template is being instantiated before that because `Derived` inherits from
+   // it).
+   //
+   // The way round this is to template the member function so that the evaluation of the constraint is deferred until
+   // after the class declaration of `Derived` is complete.  Now, in `Derived` we can call the right version via:
+   //    this->updateInventory<decltype(*this)>(...);
+   //
+   template<class Caller>
+   void updateInventory(int invKey, BtStringConst const & propertyName) requires HasInventory<Caller> {
+      // Substantive version
       if (propertyName == PropertyNames::Inventory::amount) {
          for (int ii = 0; ii < this->rows.size(); ++ii) {
             if (invKey == this->rows.at(ii)->inventoryId()) {
                emit m_derived->dataChanged(m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
-                                           m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
+                                             m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
             }
          }
       }
       return;
    }
-
+   template<class Caller>
    void updateInventory([[maybe_unused]] int invKey,
-                        [[maybe_unused]] BtStringConst const & propertyName) requires HasNoInventory<Derived> {
+                        [[maybe_unused]] BtStringConst const & propertyName) requires HasNoInventory<Caller> {
+      // No-op version
       return;
    }
 
@@ -747,7 +768,7 @@ protected:
       return;                                                                                           \
    }                                                                                                    \
    void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {          \
-      this->updateInventory(invKey, propertyName);                                                      \
+      this->updateInventory<decltype(*this)>(invKey, propertyName);                                                      \
       return;                                                                                           \
    }                                                                                                    \
 
