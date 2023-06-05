@@ -23,6 +23,7 @@
 #include "utils/NoCopy.h"
 #include "widgets/BtBoolComboBox.h"
 #include "widgets/BtComboBox.h"
+#include "tableModels/BtTableModel.h"
 
 /**
  * \class ItemDelegate

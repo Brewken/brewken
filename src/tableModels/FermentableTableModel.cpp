@@ -213,7 +213,7 @@ bool FermentableTableModel::setData(QModelIndex const & index,
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Fermentable, fermentable)
+TABLE_MODEL_COMMON_CODE(Fermentable, fermentable, PropertyNames::Recipe::fermentableIds)
 //=========================================== CLASS FermentableItemDelegate ============================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

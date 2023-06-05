@@ -369,50 +369,65 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Style>{"STYLE"};
    EnumStringMapping const BEER_XML_STYLE_TYPE_MAPPER {
-      {Style::Type::Lager, "Lager"},
-      {Style::Type::Ale  , "Ale"  },
-      {Style::Type::Mead , "Mead" },
-      {Style::Type::Wheat, "Wheat"},
-      {Style::Type::Mixed, "Mixed"},
-      {Style::Type::Cider, "Cider"},
+      // See comment in model/Style.h for more on the mapping here.  TLDR is that our style types are now based on those
+      // in BeerJSON, which are somewhat different than those in BeerXML.  This is tricky as we still need to be able to
+      // map in both directions, ie to and from BeerXML.  The least inaccurate way to do this would be to have two
+      // mappings: one for each direction.  However, I'm loathe to extend the BeerXML code to add support for dual
+      // mappings just for this one field.  So, for the moment at least, we make do with a suboptimal bidirectional mapping
+      {Style::Type::Beer    , "Ale"             },
+      {Style::Type::Cider   , "Cider"           },
+      {Style::Type::Mead    , "Mead"            },
+      {Style::Type::Kombucha, "Wheat"           },
+      {Style::Type::Soda    , "Mixed"           },
+      {Style::Type::Wine    , "Mixed<!--Wine-->"},
+      {Style::Type::Other   , "Lager"           },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Style> {
-      // Type                                  XPath                Q_PROPERTY                            Enum Mapper
-      {XmlRecord::FieldType::String,           "NAME",              PropertyNames::NamedEntity::name,     nullptr},
-      {XmlRecord::FieldType::String,           "CATEGORY",          PropertyNames::Style::category,       nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION",           VERSION1,                             nullptr},
-      {XmlRecord::FieldType::String,           "CATEGORY_NUMBER",   PropertyNames::Style::categoryNumber, nullptr}, // NB: Despite the name, this is specified as Text in the BeerXML 1.0 standard
-      {XmlRecord::FieldType::String,           "STYLE_LETTER",      PropertyNames::Style::styleLetter,    nullptr},
-      {XmlRecord::FieldType::String,           "STYLE_GUIDE",       PropertyNames::Style::styleGuide,     nullptr},
-      {XmlRecord::FieldType::Enum,             "TYPE",              PropertyNames::Style::type,           &BEER_XML_STYLE_TYPE_MAPPER},
-      {XmlRecord::FieldType::Double,           "OG_MIN",            PropertyNames::Style::ogMin,          nullptr},
-      {XmlRecord::FieldType::Double,           "OG_MAX",            PropertyNames::Style::ogMax,          nullptr},
-      {XmlRecord::FieldType::Double,           "FG_MIN",            PropertyNames::Style::fgMin,          nullptr},
-      {XmlRecord::FieldType::Double,           "FG_MAX",            PropertyNames::Style::fgMax,          nullptr},
-      {XmlRecord::FieldType::Double,           "IBU_MIN",           PropertyNames::Style::ibuMin,         nullptr},
-      {XmlRecord::FieldType::Double,           "IBU_MAX",           PropertyNames::Style::ibuMax,         nullptr},
-      {XmlRecord::FieldType::Double,           "COLOR_MIN",         PropertyNames::Style::colorMin_srm,   nullptr},
-      {XmlRecord::FieldType::Double,           "COLOR_MAX",         PropertyNames::Style::colorMax_srm,   nullptr},
-      {XmlRecord::FieldType::Double,           "CARB_MIN",          PropertyNames::Style::carbMin_vol,    nullptr},
-      {XmlRecord::FieldType::Double,           "CARB_MAX",          PropertyNames::Style::carbMax_vol,    nullptr},
-      {XmlRecord::FieldType::Double,           "ABV_MIN",           PropertyNames::Style::abvMin_pct,     nullptr},
-      {XmlRecord::FieldType::Double,           "ABV_MAX",           PropertyNames::Style::abvMax_pct,     nullptr},
-      {XmlRecord::FieldType::String,           "NOTES",             PropertyNames::Style::notes,          nullptr},
-      {XmlRecord::FieldType::String,           "PROFILE",           PropertyNames::Style::profile,        nullptr},
-      {XmlRecord::FieldType::String,           "INGREDIENTS",       PropertyNames::Style::ingredients,    nullptr},
-      {XmlRecord::FieldType::String,           "EXAMPLES",          PropertyNames::Style::examples,       nullptr},
-      {XmlRecord::FieldType::String,           "DISPLAY_OG_MIN",    BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_OG_MAX",    BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_FG_MIN",    BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_FG_MAX",    BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_COLOR_MIN", BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "DISPLAY_COLOR_MAX", BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "OG_RANGE",          BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "FG_RANGE",          BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "IBU_RANGE",         BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "CARB_RANGE",        BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "COLOR_RANGE",       BtString::NULL_STR,                   nullptr}, // Extension tag
-      {XmlRecord::FieldType::String,           "ABV_RANGE",         BtString::NULL_STR,                   nullptr}, // Extension tag
+      // Type                                  XPath                 Q_PROPERTY                               Enum Mapper
+      {XmlRecord::FieldType::String,           "NAME"              , PropertyNames::NamedEntity::name       },
+      {XmlRecord::FieldType::String,           "CATEGORY"          , PropertyNames::Style::category         },
+      {XmlRecord::FieldType::RequiredConstant, "VERSION"           , VERSION1                               },
+      {XmlRecord::FieldType::String,           "CATEGORY_NUMBER"   , PropertyNames::Style::categoryNumber   }, // NB: Despite the name, this is specified as Text in the BeerXML 1.0 standard
+      {XmlRecord::FieldType::String,           "STYLE_LETTER"      , PropertyNames::Style::styleLetter      },
+      {XmlRecord::FieldType::String,           "STYLE_GUIDE"       , PropertyNames::Style::styleGuide       },
+      {XmlRecord::FieldType::Enum,             "TYPE"              , PropertyNames::Style::type             , &BEER_XML_STYLE_TYPE_MAPPER},
+      {XmlRecord::FieldType::Double,           "OG_MIN"            , PropertyNames::Style::ogMin            },
+      {XmlRecord::FieldType::Double,           "OG_MAX"            , PropertyNames::Style::ogMax            },
+      {XmlRecord::FieldType::Double,           "FG_MIN"            , PropertyNames::Style::fgMin            },
+      {XmlRecord::FieldType::Double,           "FG_MAX"            , PropertyNames::Style::fgMax            },
+      {XmlRecord::FieldType::Double,           "IBU_MIN"           , PropertyNames::Style::ibuMin           },
+      {XmlRecord::FieldType::Double,           "IBU_MAX"           , PropertyNames::Style::ibuMax           },
+      {XmlRecord::FieldType::Double,           "COLOR_MIN"         , PropertyNames::Style::colorMin_srm     },
+      {XmlRecord::FieldType::Double,           "COLOR_MAX"         , PropertyNames::Style::colorMax_srm     },
+      {XmlRecord::FieldType::Double,           "CARB_MIN"          , PropertyNames::Style::carbMin_vol      },
+      {XmlRecord::FieldType::Double,           "CARB_MAX"          , PropertyNames::Style::carbMax_vol      },
+      {XmlRecord::FieldType::Double,           "ABV_MIN"           , PropertyNames::Style::abvMin_pct       },
+      {XmlRecord::FieldType::Double,           "ABV_MAX"           , PropertyNames::Style::abvMax_pct       },
+      {XmlRecord::FieldType::String,           "NOTES"             , PropertyNames::Style::notes            },
+      // BeerXML's profile field becomes two fields, aroma and flavor, in BeerJSON (which our properties now follow).
+      // Strictly, when writing to BeerXML we should concatenate our aroma and flavour properties into profile.  But
+      // that's not an easily-reversible operation.  So, for now, we map profile to flavor and treat aroma as an
+      // extension tag.
+      {XmlRecord::FieldType::String,           "PROFILE"           , PropertyNames::Style::flavor           }, // Was PropertyNames::Style::profile -- see comment immediately above
+      {XmlRecord::FieldType::String,           "INGREDIENTS"       , PropertyNames::Style::ingredients      },
+      {XmlRecord::FieldType::String,           "EXAMPLES"          , PropertyNames::Style::examples         },
+      {XmlRecord::FieldType::String,           "DISPLAY_OG_MIN"    , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_OG_MAX"    , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_FG_MIN"    , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_FG_MAX"    , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_COLOR_MIN" , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "DISPLAY_COLOR_MAX" , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "OG_RANGE"          , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "FG_RANGE"          , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "IBU_RANGE"         , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "CARB_RANGE"        , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "COLOR_RANGE"       , BtString::NULL_STR                     }, // Extension tag
+      {XmlRecord::FieldType::String,           "ABV_RANGE"         , BtString::NULL_STR                     }, // Extension tag
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::String,           "AROMA"             , PropertyNames::Style::aroma            },
+      {XmlRecord::FieldType::String,           "APPEARANCE"        , PropertyNames::Style::appearance       },
+      {XmlRecord::FieldType::String,           "MOUTHFEEL"         , PropertyNames::Style::mouthfeel        },
+      {XmlRecord::FieldType::String,           "OVERALL_IMPRESSION", PropertyNames::Style::overallImpression},
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

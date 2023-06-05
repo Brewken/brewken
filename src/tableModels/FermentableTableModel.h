@@ -83,6 +83,10 @@ private:
    double totalFermMass_kg;
 };
 
+// Check that concepts are working!
+static_assert(ObservesRecipe<FermentableTableModel>);
+static_assert(HasInventory<FermentableTableModel>);
+
 //=========================================== CLASS FermentableItemDelegate ============================================
 
 /*!

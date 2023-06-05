@@ -33,28 +33,33 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Style { BtStringConst const property{#property}; }
-AddPropertyName(abvMax_pct    )
-AddPropertyName(abvMin_pct    )
-AddPropertyName(carbMax_vol   )
-AddPropertyName(carbMin_vol   )
-AddPropertyName(category      )
-AddPropertyName(categoryNumber)
-AddPropertyName(colorMax_srm  )
-AddPropertyName(colorMin_srm  )
-AddPropertyName(examples      )
-AddPropertyName(fgMax         )
-AddPropertyName(fgMin         )
-AddPropertyName(ibuMax        )
-AddPropertyName(ibuMin        )
-AddPropertyName(ingredients   )
-AddPropertyName(notes         )
-AddPropertyName(ogMax         )
-AddPropertyName(ogMin         )
-AddPropertyName(profile       )
-AddPropertyName(styleGuide    )
-AddPropertyName(styleLetter   )
-AddPropertyName(type          )
-AddPropertyName(typeString    )
+AddPropertyName(abvMax_pct       )
+AddPropertyName(abvMin_pct       )
+AddPropertyName(appearance       )
+AddPropertyName(aroma            )
+AddPropertyName(carbMax_vol      )
+AddPropertyName(carbMin_vol      )
+AddPropertyName(category         )
+AddPropertyName(categoryNumber   )
+AddPropertyName(colorMax_srm     )
+AddPropertyName(colorMin_srm     )
+AddPropertyName(examples         )
+AddPropertyName(fgMax            )
+AddPropertyName(fgMin            )
+AddPropertyName(flavor           )
+AddPropertyName(ibuMax           )
+AddPropertyName(ibuMin           )
+AddPropertyName(ingredients      )
+AddPropertyName(mouthfeel        )
+AddPropertyName(notes            )
+AddPropertyName(ogMax            )
+AddPropertyName(ogMin            )
+AddPropertyName(overallImpression)
+///AddPropertyName(profile          )
+AddPropertyName(styleGuide       )
+AddPropertyName(styleLetter      )
+AddPropertyName(type             )
+AddPropertyName(typeString       )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -75,25 +80,30 @@ public:
     *
     *        Note that this has changed a fair bit from BeerXML to BeerJSON.  We map as follows:
     *
-    *           BeerXML         BeerJSON
-    *           -------         --------
-    *           Lager    ────>  beer
-    *           Ale     <────>  beer
-    *           Wheat    ────>  beer
-    *           Cider   <────>  cider
-    *           Mead    <────>  mead
-    *           Mixed   <────>  other
-    *           Mixed   <────   kombucha
+    *                Ideal Mapping                               Bidirectional Mapping
+    *                -------------                               ---------------------
+    *           BeerXML         BeerJSON                        BeerXML         BeerJSON
+    *           -------         --------                        -------         --------
+    *           Lager    ────>  beer                            Lager   <────>  other
+    *           Ale     <────>  beer                            Ale     <────>  beer
+    *           Wheat    ────>  beer                            Wheat   <────>  kombucha
+    *           Cider   <────>  cider                           Cider   <────>  cider
+    *           Mead    <────>  mead                            Mead    <────>  mead
+    *           Mixed   <────>  other                           Mixed   <────>  soda
+    *           Mixed   <────   kombucha                        Mixed   <────   wine
     *           Mixed   <────   soda
     *           Mixed   <────   wine
+    *
+    *        The bidirectional mapping is a compromise to avoid adding complexity to reading & writing BeerXML files.
     */
    enum class Type {
-      Lager,
-      Ale  ,
-      Mead ,
-      Wheat,
-      Mixed,
-      Cider,
+      Beer    ,
+      Cider   ,
+      Mead    ,
+      Kombucha,
+      Soda    ,
+      Wine    ,
+      Other   ,
    };
    Q_ENUM(Type)
 
@@ -124,47 +134,53 @@ public:
    virtual ~Style();
 
    //! \brief The category.
-   Q_PROPERTY(QString category                       READ category        WRITE setCategory       )
+   Q_PROPERTY(QString category                       READ category           WRITE setCategory         )
    //! \brief The category number.
-   Q_PROPERTY(QString categoryNumber                 READ categoryNumber  WRITE setCategoryNumber )
+   Q_PROPERTY(QString categoryNumber                 READ categoryNumber     WRITE setCategoryNumber   )
    //! \brief The style letter
-   Q_PROPERTY(QString styleLetter                    READ styleLetter     WRITE setStyleLetter    )
+   Q_PROPERTY(QString styleLetter                    READ styleLetter        WRITE setStyleLetter      )
    //! \brief Which style guide the description belongs to.
-   Q_PROPERTY(QString styleGuide                     READ styleGuide      WRITE setStyleGuide     )
+   Q_PROPERTY(QString styleGuide                     READ styleGuide         WRITE setStyleGuide       )
    //! \brief The \c Type.
-   Q_PROPERTY(Type type                              READ type            WRITE setType           )
+   Q_PROPERTY(Type type                              READ type               WRITE setType             )
    //! \brief The minimum og.
-   Q_PROPERTY(double ogMin                           READ ogMin           WRITE setOgMin          )
+   Q_PROPERTY(double ogMin                           READ ogMin              WRITE setOgMin            )
    //! \brief The maximum og.
-   Q_PROPERTY(double ogMax                           READ ogMax           WRITE setOgMax          )
+   Q_PROPERTY(double ogMax                           READ ogMax              WRITE setOgMax            )
    //! \brief The minimum fg.
-   Q_PROPERTY(double fgMin                           READ fgMin           WRITE setFgMin          )
+   Q_PROPERTY(double fgMin                           READ fgMin              WRITE setFgMin            )
    //! \brief The maximum fg.
-   Q_PROPERTY(double fgMax                           READ fgMax           WRITE setFgMax          )
+   Q_PROPERTY(double fgMax                           READ fgMax              WRITE setFgMax            )
    //! \brief The minimum ibus.
-   Q_PROPERTY(double ibuMin                          READ ibuMin          WRITE setIbuMin         )
+   Q_PROPERTY(double ibuMin                          READ ibuMin             WRITE setIbuMin           )
    //! \brief The maximum ibus.
-   Q_PROPERTY(double ibuMax                          READ ibuMax          WRITE setIbuMax         )
+   Q_PROPERTY(double ibuMax                          READ ibuMax             WRITE setIbuMax           )
    //! \brief The minimum color in SRM.
-   Q_PROPERTY(double colorMin_srm                    READ colorMin_srm    WRITE setColorMin_srm   )
+   Q_PROPERTY(double colorMin_srm                    READ colorMin_srm       WRITE setColorMin_srm     )
    //! \brief The maximum color in SRM.
-   Q_PROPERTY(double colorMax_srm                    READ colorMax_srm    WRITE setColorMax_srm   )
+   Q_PROPERTY(double colorMax_srm                    READ colorMax_srm       WRITE setColorMax_srm     )
    //! \brief The mininum carbonation in volumes at STP.   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> carbMin_vol      READ carbMin_vol     WRITE setCarbMin_vol    )
+   Q_PROPERTY(std::optional<double> carbMin_vol      READ carbMin_vol        WRITE setCarbMin_vol      )
    //! \brief The maximum carbonation in volumes at STP.   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> carbMax_vol      READ carbMax_vol     WRITE setCarbMax_vol    )
+   Q_PROPERTY(std::optional<double> carbMax_vol      READ carbMax_vol        WRITE setCarbMax_vol      )
    //! \brief The minimum ABV in percent.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> abvMin_pct       READ abvMin_pct      WRITE setAbvMin_pct     )
+   Q_PROPERTY(std::optional<double> abvMin_pct       READ abvMin_pct         WRITE setAbvMin_pct       )
    //! \brief The maximum ABV in percent.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> abvMax_pct       READ abvMax_pct      WRITE setAbvMax_pct     )
+   Q_PROPERTY(std::optional<double> abvMax_pct       READ abvMax_pct         WRITE setAbvMax_pct       )
    //! \brief The notes.
-   Q_PROPERTY(QString notes                          READ notes           WRITE setNotes          )
-   //! \brief The profile.
-   Q_PROPERTY(QString profile                        READ profile         WRITE setProfile        )
+   Q_PROPERTY(QString notes                          READ notes              WRITE setNotes            )
+   //! \brief Flavor and aroma profile for this style.  NB: This is not part of BeerJSON        TODO This should go to flavor probably
+///   Q_PROPERTY(QString profile                        READ profile            WRITE setProfile          )
    //! \brief The ingredients.
-   Q_PROPERTY(QString ingredients                    READ ingredients     WRITE setIngredients    )
+   Q_PROPERTY(QString ingredients                    READ ingredients        WRITE setIngredients      )
    //! \brief The commercial examples.
-   Q_PROPERTY(QString examples                       READ examples        WRITE setExamples       )
+   Q_PROPERTY(QString examples                       READ examples           WRITE setExamples         )
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   Q_PROPERTY(QString aroma                          READ aroma              WRITE setAroma            )
+   Q_PROPERTY(QString appearance                     READ appearance         WRITE setAppearance       )
+   Q_PROPERTY(QString flavor                         READ flavor             WRITE setFlavor           )
+   Q_PROPERTY(QString mouthfeel                      READ mouthfeel          WRITE setMouthfeel        )
+   Q_PROPERTY(QString overallImpression              READ overallImpression  WRITE setOverallImpression)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QString               category      () const;
@@ -185,32 +201,44 @@ public:
    std::optional<double> abvMin_pct    () const;
    std::optional<double> abvMax_pct    () const;
    QString               notes         () const;
-   QString               profile       () const;
+///   QString               profile       () const;
    QString               ingredients   () const;
    QString               examples      () const;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   QString               aroma            () const;
+   QString               appearance       () const;
+   QString               flavor           () const;
+   QString               mouthfeel        () const;
+   QString               overallImpression() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setCategory      (QString               const & val);
-   void setCategoryNumber(QString               const & val);
-   void setStyleLetter   (QString               const & val);
-   void setStyleGuide    (QString               const & val);
-   void setType          (Type                  const   val);
-   void setOgMin         (double                const   val);
-   void setOgMax         (double                const   val);
-   void setFgMin         (double                const   val);
-   void setFgMax         (double                const   val);
-   void setIbuMin        (double                const   val);
-   void setIbuMax        (double                const   val);
-   void setColorMin_srm  (double                const   val);
-   void setColorMax_srm  (double                const   val);
-   void setCarbMin_vol   (std::optional<double> const   val);
-   void setCarbMax_vol   (std::optional<double> const   val);
-   void setAbvMin_pct    (std::optional<double> const   val);
-   void setAbvMax_pct    (std::optional<double> const   val);
-   void setNotes         (QString               const & val);
-   void setProfile       (QString               const & val);
-   void setIngredients   (QString               const & val);
-   void setExamples      (QString               const & val);
+   void setCategory         (QString               const & val);
+   void setCategoryNumber   (QString               const & val);
+   void setStyleLetter      (QString               const & val);
+   void setStyleGuide       (QString               const & val);
+   void setType             (Type                  const   val);
+   void setOgMin            (double                const   val);
+   void setOgMax            (double                const   val);
+   void setFgMin            (double                const   val);
+   void setFgMax            (double                const   val);
+   void setIbuMin           (double                const   val);
+   void setIbuMax           (double                const   val);
+   void setColorMin_srm     (double                const   val);
+   void setColorMax_srm     (double                const   val);
+   void setCarbMin_vol      (std::optional<double> const   val);
+   void setCarbMax_vol      (std::optional<double> const   val);
+   void setAbvMin_pct       (std::optional<double> const   val);
+   void setAbvMax_pct       (std::optional<double> const   val);
+   void setNotes            (QString               const & val);
+///   void setProfile          (QString               const & val);
+   void setIngredients      (QString               const & val);
+   void setExamples         (QString               const & val);
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   void setAroma            (QString               const & val);
+   void setAppearance       (QString               const & val);
+   void setFlavor           (QString               const & val);
+   void setMouthfeel        (QString               const & val);
+   void setOverallImpression(QString               const & val);
 
    virtual Recipe * getOwningRecipe();
 
@@ -221,27 +249,33 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString               m_category      ;
-   QString               m_categoryNumber;
-   QString               m_styleLetter   ;
-   QString               m_styleGuide    ;
-   Type                  m_type          ;
-   double                m_ogMin         ;
-   double                m_ogMax         ;
-   double                m_fgMin         ;
-   double                m_fgMax         ;
-   double                m_ibuMin        ;
-   double                m_ibuMax        ;
-   double                m_colorMin_srm  ;
-   double                m_colorMax_srm  ;
-   std::optional<double> m_carbMin_vol   ;
-   std::optional<double> m_carbMax_vol   ;
-   std::optional<double> m_abvMin_pct    ;
-   std::optional<double> m_abvMax_pct    ;
-   QString               m_notes         ;
-   QString               m_profile       ;
-   QString               m_ingredients   ;
-   QString               m_examples      ;
+   QString               m_category         ;
+   QString               m_categoryNumber   ;
+   QString               m_styleLetter      ;
+   QString               m_styleGuide       ;
+   Type                  m_type             ;
+   double                m_ogMin            ;
+   double                m_ogMax            ;
+   double                m_fgMin            ;
+   double                m_fgMax            ;
+   double                m_ibuMin           ;
+   double                m_ibuMax           ;
+   double                m_colorMin_srm     ;
+   double                m_colorMax_srm     ;
+   std::optional<double> m_carbMin_vol      ;
+   std::optional<double> m_carbMax_vol      ;
+   std::optional<double> m_abvMin_pct       ;
+   std::optional<double> m_abvMax_pct       ;
+   QString               m_notes            ;
+///   QString               m_profile          ;
+   QString               m_ingredients      ;
+   QString               m_examples         ;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   QString               m_aroma            ;
+   QString               m_appearance       ;
+   QString               m_flavor           ;
+   QString               m_mouthfeel        ;
+   QString               m_overallImpression;
 };
 
 Q_DECLARE_METATYPE( Style* )

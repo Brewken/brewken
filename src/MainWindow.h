@@ -39,13 +39,12 @@
 #include <QPrinter>
 #include <QString>
 #include <QTimer>
-#include <QUndoStack>
 #include <QVariant>
 #include <QWidget>
 
 #include "ui_mainWindow.h"
 #include "undoRedo/SimpleUndoableUpdate.h"
-
+#include "utils/NoCopy.h"
 
 // Forward Declarations
 
@@ -59,11 +58,9 @@ class BtDatePopup;
 class ConverterTool;
 class EquipmentEditor;
 class EquipmentListModel;
-class FermentableDialog;
 class FermentableEditor;
 class FermentableSortFilterProxyModel;
 class FermentableTableModel;
-class HopDialog;
 class HopEditor;
 class HopSortFilterProxyModel;
 class HopTableModel;
@@ -75,7 +72,6 @@ class MashListModel;
 class MashStepEditor;
 class MashStepTableModel;
 class MashWizard;
-class MiscDialog;
 class MiscEditor;
 class MiscSortFilterProxyModel;
 class MiscTableModel;
@@ -98,7 +94,6 @@ class TimerMainDialog;
 class WaterDialog;
 class WaterEditor;
 class WaterListModel;
-class YeastDialog;
 class YeastEditor;
 class YeastSortFilterProxyModel;
 class YeastTableModel;
@@ -115,6 +110,19 @@ class MainWindow : public QMainWindow, public Ui::mainWindow {
 public:
    MainWindow(QWidget* parent=nullptr);
    virtual ~MainWindow();
+
+   //
+   // This is a short-term trick to save me adding .get() to lots of calls
+   //
+   using QObject::connect;
+   template<typename A, typename B, typename C, typename D>
+   void connect(std::unique_ptr<A> & a, B b, C c, D d) {
+      this->connect(a.get(), b, c, d);
+   }
+   template<typename A, typename B, typename C, typename D>
+   void connect(A a, B b, std::unique_ptr<C> & c, D d) {
+      this->connect(a, b, c.get(), d);
+   }
 
    static MainWindow & instance();
    /**
@@ -322,14 +330,8 @@ private:
    class impl;
    std::unique_ptr<impl> pimpl;
 
-   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton
-   MainWindow(MainWindow const&) = delete;
-   //! No assignment operator , as never want anyone, not even our friends, to make copies of a singleton.
-   MainWindow& operator=(MainWindow const&) = delete;
-   //! No move constructor
-   MainWindow(MainWindow &&) = delete;
-   //! No move assignment
-   MainWindow & operator=(MainWindow &&) = delete;
+   // Insert all the usual boilerplate to prevent copy/assignment/move
+   NO_COPY_DECLARATIONS(MainWindow)
 
    void removeHop(std::shared_ptr<Hop> itemToRemove);
    void removeFermentable(std::shared_ptr<Fermentable> itemToRemove);
@@ -345,73 +347,14 @@ private:
 
    QString highSS, lowSS, goodSS, boldSS; // Palette replacements
 
-   AboutDialog* dialog_about;
    QList<QMenu*> contextMenus;
-   EquipmentEditor* equipEditor;
-   EquipmentEditor* singleEquipEditor;
-   FermentableDialog* fermDialog;
-   FermentableEditor* fermEditor;
-   HopDialog* hopDialog;
-   HopEditor* hopEditor;
-   MashEditor* mashEditor;
-   MashStepEditor* mashStepEditor;
-   MashWizard* mashWizard;
-   MiscDialog* miscDialog;
-   MiscEditor* miscEditor;
-   StyleEditor* styleEditor;
-   StyleEditor* singleStyleEditor;
-   YeastDialog* yeastDialog;
-   YeastEditor* yeastEditor;
-   OptionDialog* optionDialog;
    QDialog* brewDayDialog;
-   ScaleRecipeTool* recipeScaler;
-   RecipeFormatter* recipeFormatter;
-   PrintAndPreviewDialog* printAndPreviewDialog;
-   OgAdjuster* ogAdjuster;
-   ConverterTool* converterTool;
-   HydrometerTool* hydrometerTool;
-   AlcoholTool* alcoholTool;
-   TimerMainDialog* timerMainDialog;
-   PrimingDialog* primingDialog;
-   StrikeWaterDialog* strikeWaterDialog;
-   RefractoDialog* refractoDialog;
-   MashDesigner* mashDesigner;
-   PitchDialog* pitchDialog;
    QPrinter *printer;
 
-   WaterDialog* waterDialog;
-   WaterEditor* waterEditor;
 
-   AncestorDialog* ancestorDialog;
 
-   // all things tables should go here.
-   FermentableTableModel* fermTableModel;
-   HopTableModel* hopTableModel;
-   MashStepTableModel* mashStepTableModel;
-   MiscTableModel* miscTableModel;
-   YeastTableModel* yeastTableModel;
 
-   // all things lists should go here
-   EquipmentListModel* equipmentListModel;
-   MashListModel* mashListModel;
-   StyleListModel* styleListModel;
-//   WaterListModel* waterListModel;  Appears to be unused...
-
-   // all things sort/filter proxy go here
-   FermentableSortFilterProxyModel* fermTableProxy;
-   HopSortFilterProxyModel* hopTableProxy;
-   MiscSortFilterProxyModel* miscTableProxy;
-   StyleSortFilterProxyModel* styleProxyModel;
-   YeastSortFilterProxyModel* yeastTableProxy;
-
-   NamedMashEditor* namedMashEditor;
-   NamedMashEditor* singleNamedMashEditor;
-
-   BtDatePopup* btDatePopup;
    int confirmDelete;
-
-   // Undo / Redo, using the Qt Undo framework
-   QUndoStack * undoStack = nullptr;
 
    //! \brief Fix pixel dimensions according to dots-per-inch (DPI) of screen we're on.
    void setSizesInPixelsBasedOnDpi();
@@ -437,14 +380,8 @@ private:
    void setupContextMenu();
    //! \brief Create the CSS strings
    void setupCSS();
-   //! \brief Create the dialogs, including the file dialogs
-   void setupDialogs();
    //! \brief Configure the range sliders
    void setupRanges();
-   //! \brief Configure combo boxes and their list models
-   void setupComboBoxes();
-   //! \brief Configure the tables and their proxies
-   void setupTables();
    //! \brief Restore any saved states
    void restoreSavedState();
    //! \brief Connect the signal/slots for actions

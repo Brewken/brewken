@@ -36,6 +36,8 @@
 #include <QSqlDatabase>
 #include <QString>
 
+#include "utils/NoCopy.h"
+
 class BtStringConst;
 
 /*!
@@ -220,16 +222,11 @@ private:
 
    //! Hidden constructor.
    Database(DbType dbType);
-   //! No copy constructor, as never want anyone, not even our friends, to make copies of a singleton.
-   Database(Database const&) = delete;
-   //! No assignment operator, as never want anyone, not even our friends, to make copies of a singleton.
-   Database& operator=(Database const&) = delete;
-   //! No move constructor.
-   Database(Database &&) = delete;
-   //! No move assignment.
-   Database& operator=(Database &&) = delete;
    //! Destructor hidden.
    ~Database();
+
+   // Insert all the usual boilerplate to prevent copy/assignment/move
+   NO_COPY_DECLARATIONS(Database)
 
    //! Load database from file.
    bool load();

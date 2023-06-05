@@ -35,10 +35,10 @@
 #include "editors/EquipmentEditor.h"
 #include "editors/StyleEditor.h"
 #include "editors/WaterEditor.h"
-#include "ingredientDialogs/FermentableDialog.h"
-#include "ingredientDialogs/HopDialog.h"
-#include "ingredientDialogs/MiscDialog.h"
-#include "ingredientDialogs/YeastDialog.h"
+#include "catalogs/FermentableCatalog.h"
+#include "catalogs/HopCatalog.h"
+#include "catalogs/MiscCatalog.h"
+#include "catalogs/YeastCatalog.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -321,19 +321,19 @@ void BtTreeView::newNamedEntity() {
          qobject_cast<EquipmentEditor *>(m_editor)->newEquipment(folder);
          break;
       case BtTreeModel::FERMENTMASK:
-         qobject_cast<FermentableDialog *>(m_editor)->newItem(folder);
+         qobject_cast<FermentableCatalog *>(m_editor)->makeNew(folder);
          break;
       case BtTreeModel::HOPMASK:
-         qobject_cast<HopDialog *>(m_editor)->newItem(folder);
+         qobject_cast<HopCatalog *>(m_editor)->makeNew(folder);
          break;
       case BtTreeModel::MISCMASK:
-         qobject_cast<MiscDialog *>(m_editor)->newItem(folder);
+         qobject_cast<MiscCatalog *>(m_editor)->makeNew(folder);
          break;
       case BtTreeModel::STYLEMASK:
-         qobject_cast<StyleEditor *>(m_editor)->newStyle(folder);
+         qobject_cast<StyleEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::YEASTMASK:
-         qobject_cast<YeastDialog *>(m_editor)->newItem(folder);
+         qobject_cast<YeastCatalog *>(m_editor)->makeNew(folder);
          break;
       case BtTreeModel::WATERMASK:
          qobject_cast<WaterEditor *>(m_editor)->newWater(folder);

@@ -207,10 +207,6 @@ public:
     */
    virtual void doPostInitWork() = 0;
 
-//   BtFieldType const getFieldType() const;
-
-//   TypeInfo const & getTypeInfo() const;
-
    /**
     * \brief Maybe for consistency this should be \c getSettings() but that jars somewhat!
     */

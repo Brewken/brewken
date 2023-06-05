@@ -164,7 +164,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Hop, hop)
+TABLE_MODEL_COMMON_CODE(Hop, hop, PropertyNames::Recipe::hopIds)
 //=============================================== CLASS HopItemDelegate ================================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

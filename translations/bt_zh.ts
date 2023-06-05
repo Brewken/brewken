@@ -2879,64 +2879,8 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Never</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Both</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>None</source>
-        <translation type="unfinished">无None</translation>
-    </message>
-    <message>
-        <source>CaCl2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CaCO3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CaSO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MgSO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NaCl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NaHCO3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lactic acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H3PO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acid malt</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">无None</translation>
     </message>
     <message>
         <source>kg</source>
@@ -3445,7 +3389,7 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 Database</source>
+        <source>%1 Catalog / Database</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4088,45 +4032,41 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>SaltItemDelegate</name>
+    <name>Salt</name>
     <message>
-        <source>NONE</source>
+        <source>CaCl2 (Calcium chloride)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>CaCl2</source>
+        <source>CaCO3 (Calcium carbonate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>CaCO3</source>
+        <source>CaSO4 (Calcium sulfate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>CaSO4</source>
+        <source>MgSO4 (Magnesium sulfate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>MgSO4</source>
+        <source>NaCl (Sodium chloride)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NaCl</source>
+        <source>NaHCO3 (Sodium bicarbonate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NaHCO3</source>
+        <source>Lactic Acid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lactic acid</source>
+        <source>H3PO4 (Phosphoric acid)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>H3PO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acid malt</source>
+        <source>Acidulated Malt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4226,14 +4166,72 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>Style</name>
+    <message>
+        <source>Beer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cider</source>
+        <translation type="unfinished">苹果汁Cider</translation>
+    </message>
+    <message>
+        <source>Mead</source>
+        <translation type="unfinished">蜂蜜酒Mead</translation>
+    </message>
+    <message>
+        <source>Kombucha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soda</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished">其他</translation>
+    </message>
+</context>
+<context>
     <name>StyleEditor</name>
     <message>
         <source>Style name</source>
-        <translation>样式名</translation>
+        <translation type="vanished">样式名</translation>
     </message>
     <message>
         <source>Style name:</source>
-        <translation>风格名称：</translation>
+        <translation type="vanished">风格名称：</translation>
+    </message>
+</context>
+<context>
+    <name>StyleTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="unfinished">类别</translation>
+    </message>
+    <message>
+        <source>Category Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Letter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Guide</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4463,6 +4461,41 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>Water</name>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ca  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cl  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mg  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Na  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO4 </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>WaterDialog</name>
     <message>
         <source>Too low for target profile.</source>
@@ -4602,7 +4635,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Wheat</source>
-        <translation type="unfinished">小麦Wheat</translation>
+        <translation type="obsolete">小麦Wheat</translation>
     </message>
     <message>
         <source>Wine</source>
@@ -4643,6 +4676,58 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Very High</source>
         <translation type="unfinished">Very High非常高</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished">其他</translation>
+    </message>
+    <message>
+        <source>Bacteria</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brett</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kveik</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lacto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malolactic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mixed-culture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pedio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spontaneous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dregs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium High</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4699,39 +4784,39 @@ The final volume in the primary is %1.</source>
     <name>YeastItemDelegate</name>
     <message>
         <source>Ale</source>
-        <translation>爱尔Ale</translation>
+        <translation type="vanished">爱尔Ale</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>拉格Lager</translation>
+        <translation type="vanished">拉格Lager</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>小麦Wheat</translation>
+        <translation type="vanished">小麦Wheat</translation>
     </message>
     <message>
         <source>Wine</source>
-        <translation>酒Wine</translation>
+        <translation type="vanished">酒Wine</translation>
     </message>
     <message>
         <source>Champagne</source>
-        <translation>香槟Champagne</translation>
+        <translation type="vanished">香槟Champagne</translation>
     </message>
     <message>
         <source>Liquid</source>
-        <translation>Liquid液体</translation>
+        <translation type="vanished">Liquid液体</translation>
     </message>
     <message>
         <source>Dry</source>
-        <translation>Dry干</translation>
+        <translation type="vanished">Dry干</translation>
     </message>
     <message>
         <source>Slant</source>
-        <translation>Slant偏</translation>
+        <translation type="vanished">Slant偏</translation>
     </message>
     <message>
         <source>Culture</source>
-        <translation>Culture文化</translation>
+        <translation type="vanished">Culture文化</translation>
     </message>
 </context>
 <context>
@@ -4770,34 +4855,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Laboratory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Product ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Inventory Unit Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Amount</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5110,6 +5167,17 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>editorClass</name>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">否</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">是</translation>
+    </message>
+</context>
+<context>
     <name>equipmentEditor</name>
     <message>
         <source>Specific heat (cal/(g*K))</source>
@@ -5126,10 +5194,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Lauter deadspace</source>
         <translation>纯净的死亡空间Lauter deadspace</translation>
-    </message>
-    <message>
-        <source>equipmentEditor</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Equipment Editor</source>
@@ -6356,10 +6420,6 @@ The final volume in the primary is %1.</source>
         <translation>1.0</translation>
     </message>
     <message>
-        <source>tab_recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export to &amp;BBCode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7047,10 +7107,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Calculate</source>
         <translation>计算Calculate</translation>
-    </message>
-    <message>
-        <source>ogAdjuster</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8029,10 +8085,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>totalSalts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ca</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8148,23 +8200,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Ale</source>
-        <translation>爱尔Ale</translation>
+        <translation type="vanished">爱尔Ale</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>拉格Lager</translation>
+        <translation type="vanished">拉格Lager</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>小麦Wheat</translation>
+        <translation type="vanished">小麦Wheat</translation>
     </message>
     <message>
         <source>Wine</source>
-        <translation>酒Wine</translation>
+        <translation type="vanished">酒Wine</translation>
     </message>
     <message>
         <source>Champagne</source>
-        <translation>香槟Champagne</translation>
+        <translation type="vanished">香槟Champagne</translation>
     </message>
     <message>
         <source>Form</source>
@@ -8172,19 +8224,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Liquid</source>
-        <translation>Liquid液体</translation>
+        <translation type="vanished">Liquid液体</translation>
     </message>
     <message>
         <source>Dry</source>
-        <translation>Dry干</translation>
+        <translation type="vanished">Dry干</translation>
     </message>
     <message>
         <source>Slant</source>
-        <translation>Slant偏</translation>
+        <translation type="vanished">Slant偏</translation>
     </message>
     <message>
         <source>Culture</source>
-        <translation>Culture文化</translation>
+        <translation type="vanished">Culture文化</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -8232,19 +8284,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Low</source>
-        <translation>低</translation>
+        <translation type="vanished">低</translation>
     </message>
     <message>
         <source>Medium</source>
-        <translation>Medium中</translation>
+        <translation type="vanished">Medium中</translation>
     </message>
     <message>
         <source>High</source>
-        <translation>High高</translation>
+        <translation type="vanished">High高</translation>
     </message>
     <message>
         <source>Very High</source>
-        <translation>Very High非常高</translation>
+        <translation type="vanished">Very High非常高</translation>
     </message>
     <message>
         <source>Attenuation (%)</source>
@@ -8276,7 +8328,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Checked means add this yeast to secondary instead of primary</source>
-        <translation>检查手段添加酵母二次代替原Checked means add this yeast to secondary instead of primary</translation>
+        <translation type="vanished">检查手段添加酵母二次代替原Checked means add this yeast to secondary instead of primary</translation>
     </message>
     <message>
         <source>Best For:</source>
@@ -8320,6 +8372,90 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Min Attenuation (%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum apparent attenuation as percentage of OG points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max Attenuation (%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum apparent attenuation as percentage of OG points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether to add this yeast to secondary instead of primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alcohol Tolerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recommended limit of ABV by the culture producer before attenuation stops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Phenolic Off-Flavor Positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether culture is capable of producing phenols, which is a common distinctive property of saison, and brett yeasts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Glucoamylase Positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A glucoamylase positive culture is capable of producing glucoamylase, the enzyme produced through expression of the diastatic gene, which allows yeast to attenuate dextrins and starches leading to a very low FG. This is positive in some saison/brett yeasts as well as the new gulo hybrid by Omega yeast labs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>K1 Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces K1 killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>K2 Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces K2 killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>K28 Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces K28 killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Klus Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces Klus killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Killer Neutral</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

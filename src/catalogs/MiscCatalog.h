@@ -1,7 +1,7 @@
 /*======================================================================================================================
- * ingredientDialogs/YeastDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
- *   • Brian Rower <brian.rower@gmail.com>
+ * catalogs/MiscCatalog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
+ *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -17,24 +17,34 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "ingredientDialogs/YeastDialog.h"
+#ifndef CATALOGS_MISCCATALOG_H
+#define CATALOGS_MISCCATALOG_H
+#pragma once
 
-#include "editors/YeastEditor.h"
-#include "YeastSortFilterProxyModel.h"
-#include "MainWindow.h"
-#include "tableModels/YeastTableModel.h"
+#include <QDialog>
+#include <QEvent>
 
-YeastDialog::YeastDialog(MainWindow* parent) :
-   QDialog(parent),
-   IngredientDialog<Yeast,
-                    YeastDialog,
-                    YeastTableModel,
-                    YeastSortFilterProxyModel,
-                    YeastEditor>(parent) {
-   return;
-}
+#include "editors/MiscEditor.h"
+#include "model/Misc.h"
+#include "tableModels/MiscTableModel.h"
 
-YeastDialog::~YeastDialog() = default;
+// This needs to be the last include.  (I know, I know...)
+#include "catalogs/CatalogBase.h"
 
-// Insert the boiler-plate stuff that we cannot do in IngredientDialog
-INGREDIENT_DIALOG_COMMON_CODE(YeastDialog)
+/*!
+ * \class MiscCatalog
+ *
+ * \brief View/controller class for showing/editing the list of miscs in the database.
+ */
+class MiscCatalog : public QDialog, public CatalogBase<MiscCatalog,
+                                                       Misc,
+                                                       MiscTableModel,
+                                                       MiscSortFilterProxyModel,
+                                                       MiscEditor> {
+   Q_OBJECT
+
+   CATALOG_COMMON_DECL(Misc)
+
+};
+
+#endif

@@ -149,7 +149,7 @@ bool MiscTableModel::setData(QModelIndex const & index,
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Misc, misc)
+TABLE_MODEL_COMMON_CODE(Misc, misc, PropertyNames::Recipe::miscIds)
 //=============================================== CLASS MiscItemDelegate ===============================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

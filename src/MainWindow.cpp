@@ -62,6 +62,7 @@
 #include <QTextStream>
 #include <QtGui>
 #include <QToolButton>
+#include <QUndoStack>
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QVector>
@@ -98,10 +99,11 @@
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "ImportExport.h"
-#include "ingredientDialogs/FermentableDialog.h"
-#include "ingredientDialogs/HopDialog.h"
-#include "ingredientDialogs/MiscDialog.h"
-#include "ingredientDialogs/YeastDialog.h"
+#include "catalogs/FermentableCatalog.h"
+#include "catalogs/HopCatalog.h"
+#include "catalogs/MiscCatalog.h"
+#include "catalogs/StyleCatalog.h"
+#include "catalogs/YeastCatalog.h"
 #include "InventoryFormatter.h"
 #include "MashDesigner.h"
 #include "MashListModel.h"
@@ -221,28 +223,260 @@ class MainWindow::impl {
 public:
 
    impl(MainWindow & self) :
-      self{self},
-      fileOpener{} {
+      m_self{self},
+      fileOpener{},
+      m_undoStack{std::make_unique<QUndoStack>(&m_self)},
+      m_fermTableModel    {nullptr},
+      m_hopTableModel     {nullptr},
+      m_mashStepTableModel{nullptr},
+      m_miscTableModel    {nullptr},
+      m_yeastTableModel   {nullptr},
+      m_fermTableProxy    {nullptr},
+      m_hopTableProxy     {nullptr},
+      m_miscTableProxy    {nullptr},
+      m_styleProxyModel   {nullptr},
+      m_yeastTableProxy   {nullptr} {
       return;
    }
 
    ~impl() = default;
 
-   // TODO Try making this a smart pointer
-   HelpDialog * helpDialog;
+   /**
+    * \brief Configure the tables and their proxies
+    *
+    *        Anything creating new tables models, filter proxies and configuring the two should go in here
+    */
+   void setupTables() {
+      // Set table models.
+      // Fermentables
+      m_fermTableModel = std::make_unique<FermentableTableModel>(m_self.fermentableTable);
+      m_fermTableProxy = std::make_unique<FermentableSortFilterProxyModel>(m_self.fermentableTable, false);
+      m_fermTableProxy->setSourceModel(m_fermTableModel.get());
+      m_self.fermentableTable->setItemDelegate(new FermentableItemDelegate(m_self.fermentableTable, *m_fermTableModel));
+      m_self.fermentableTable->setModel(m_fermTableProxy.get());
+      // Make the fermentable table show grain percentages in row headers.
+      m_fermTableModel->setDisplayPercentages(true);
+      // Double clicking the name column pops up an edit dialog for the selected item
+      connect(m_self.fermentableTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedFermentable();
+         }
+      });
+
+      // Hops
+      m_hopTableModel = std::make_unique<HopTableModel>(m_self.hopTable);
+      m_hopTableProxy = std::make_unique<HopSortFilterProxyModel>(m_self.hopTable, false);
+      m_hopTableProxy->setSourceModel(m_hopTableModel.get());
+      m_self.hopTable->setItemDelegate(new HopItemDelegate(m_self.hopTable, *m_hopTableModel));
+      m_self.hopTable->setModel(m_hopTableProxy.get());
+      // Hop table show IBUs in row headers.
+      m_hopTableModel->setShowIBUs(true);
+      connect(m_self.hopTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedHop();
+         }
+      });
+
+      // Misc
+      m_miscTableModel = std::make_unique<MiscTableModel>(m_self.miscTable);
+      m_miscTableProxy = std::make_unique<MiscSortFilterProxyModel>(m_self.miscTable, false);
+      m_miscTableProxy->setSourceModel(m_miscTableModel.get());
+      m_self.miscTable->setItemDelegate(new MiscItemDelegate(m_self.miscTable, *m_miscTableModel));
+      m_self.miscTable->setModel(m_miscTableProxy.get());
+      connect(m_self.miscTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedMisc();
+         }
+      });
+
+      // Yeast
+      m_yeastTableModel = std::make_unique<YeastTableModel>(m_self.yeastTable);
+      m_yeastTableProxy = std::make_unique<YeastSortFilterProxyModel>(m_self.yeastTable, false);
+      m_yeastTableProxy->setSourceModel(m_yeastTableModel.get());
+      m_self.yeastTable->setItemDelegate(new YeastItemDelegate(m_self.yeastTable, *m_yeastTableModel));
+      m_self.yeastTable->setModel(m_yeastTableProxy.get());
+      connect(m_self.yeastTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedYeast();
+         }
+      });
+
+      // Mashes
+      m_mashStepTableModel = std::make_unique<MashStepTableModel>(m_self.mashStepTableWidget);
+      m_self.mashStepTableWidget->setItemDelegate(new MashStepItemDelegate());
+      m_self.mashStepTableWidget->setModel(m_mashStepTableModel.get());
+      connect(m_self.mashStepTableWidget, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedMashStep();
+         }
+      });
+
+      // Enable sorting in the main tables.
+      m_self.fermentableTable->horizontalHeader()->setSortIndicator(static_cast<int>(FermentableTableModel::ColumnIndex::Amount), Qt::DescendingOrder );
+      m_self.fermentableTable->setSortingEnabled(true);
+      m_fermTableProxy->setDynamicSortFilter(true);
+      m_self.hopTable->horizontalHeader()->setSortIndicator(static_cast<int>(HopTableModel::ColumnIndex::Time), Qt::DescendingOrder );
+      m_self.hopTable->setSortingEnabled(true);
+      m_hopTableProxy->setDynamicSortFilter(true);
+      m_self.miscTable->horizontalHeader()->setSortIndicator(static_cast<int>(MiscTableModel::ColumnIndex::Use), Qt::DescendingOrder );
+      m_self.miscTable->setSortingEnabled(true);
+      m_miscTableProxy->setDynamicSortFilter(true);
+      m_self.yeastTable->horizontalHeader()->setSortIndicator(static_cast<int>(YeastTableModel::ColumnIndex::Name), Qt::DescendingOrder );
+      m_self.yeastTable->setSortingEnabled(true);
+      m_yeastTableProxy->setDynamicSortFilter(true);
+   }
+
+   /**
+    * \brief Create the dialogs, including the file dialogs
+    *
+    *        Most dialogs are initialized in here. That should include any initial configurations as well.
+    */
+   void setupDialogs() {
+      m_aboutDialog           = std::make_unique<AboutDialog          >(&m_self);
+      m_helpDialog            = std::make_unique<HelpDialog           >(&m_self);
+      m_equipEditor           = std::make_unique<EquipmentEditor      >(&m_self);
+      m_singleEquipEditor     = std::make_unique<EquipmentEditor      >(&m_self, true);
+      m_fermCatalog           = std::make_unique<FermentableCatalog   >(&m_self);
+      m_fermEditor            = std::make_unique<FermentableEditor    >(&m_self);
+      m_hopCatalog            = std::make_unique<HopCatalog           >(&m_self);
+      m_hopEditor             = std::make_unique<HopEditor            >(&m_self);
+      m_mashEditor            = std::make_unique<MashEditor           >(&m_self);
+      m_mashStepEditor        = std::make_unique<MashStepEditor       >(&m_self);
+      m_mashWizard            = std::make_unique<MashWizard           >(&m_self);
+      m_miscCatalog           = std::make_unique<MiscCatalog          >(&m_self);
+      m_miscEditor            = std::make_unique<MiscEditor           >(&m_self);
+      m_styleEditor           = std::make_unique<StyleEditor          >(&m_self);
+      m_singleStyleEditor     = std::make_unique<StyleEditor          >(&m_self /*, true*/);
+      m_yeastCatalog          = std::make_unique<YeastCatalog         >(&m_self);
+      m_yeastEditor           = std::make_unique<YeastEditor          >(&m_self);
+      m_optionDialog          = std::make_unique<OptionDialog         >(&m_self);
+      m_recipeScaler          = std::make_unique<ScaleRecipeTool      >(&m_self);
+      m_recipeFormatter       = std::make_unique<RecipeFormatter      >(&m_self);
+      m_printAndPreviewDialog = std::make_unique<PrintAndPreviewDialog>(&m_self);
+      m_ogAdjuster            = std::make_unique<OgAdjuster           >(&m_self);
+      m_converterTool         = std::make_unique<ConverterTool        >(&m_self);
+      m_hydrometerTool        = std::make_unique<HydrometerTool       >(&m_self);
+      m_alcoholTool           = std::make_unique<AlcoholTool          >(&m_self);
+      m_timerMainDialog       = std::make_unique<TimerMainDialog      >(&m_self);
+      m_primingDialog         = std::make_unique<PrimingDialog        >(&m_self);
+      m_strikeWaterDialog     = std::make_unique<StrikeWaterDialog    >(&m_self);
+      m_refractoDialog        = std::make_unique<RefractoDialog       >(&m_self);
+      m_mashDesigner          = std::make_unique<MashDesigner         >(&m_self);
+      m_pitchDialog           = std::make_unique<PitchDialog          >(&m_self);
+      m_btDatePopup           = std::make_unique<BtDatePopup          >(&m_self);
+      m_waterDialog           = std::make_unique<WaterDialog          >(&m_self);
+      m_waterEditor           = std::make_unique<WaterEditor          >(&m_self);
+      m_ancestorDialog        = std::make_unique<AncestorDialog       >(&m_self);
+      m_styleCatalog          = std::make_unique<StyleCatalog         >(&m_self);
+
+      return;
+   }
+
+   /**
+    * \brief Configure combo boxes and their list models
+    *
+    *        Any new combo boxes, along with their list models, should be initialized here
+    */
+   void setupComboBoxes() {
+      // Set equipment combo box model.
+      m_equipmentListModel = std::make_unique<EquipmentListModel>(m_self.equipmentComboBox);
+      m_self.equipmentComboBox->setModel(m_equipmentListModel.get());
+
+      // Set the style combo box
+      m_styleListModel = std::make_unique<StyleListModel>(m_self.styleComboBox);
+      m_styleProxyModel = std::make_unique<StyleSortFilterProxyModel>(m_self.styleComboBox);
+      m_styleProxyModel->setDynamicSortFilter(true);
+      m_styleProxyModel->setSortLocaleAware(true);
+      m_styleProxyModel->setSourceModel(m_styleListModel.get());
+      m_styleProxyModel->sort(0);
+      m_self.styleComboBox->setModel(m_styleProxyModel.get());
+
+      // Set the mash combo box
+      m_mashListModel = std::make_unique<MashListModel>(m_self.mashComboBox);
+      m_self.mashComboBox->setModel(m_mashListModel.get());
+
+      // Nothing to say.
+      m_namedMashEditor = std::make_unique<NamedMashEditor>(&m_self, m_mashStepEditor.get());
+      // I don't think this is used yet
+      m_singleNamedMashEditor = std::make_unique<NamedMashEditor>(&m_self, m_mashStepEditor.get(), true);
+   }
 
 
 
-private:
-   MainWindow & self;
+   //================================================ MEMBER VARIABLES =================================================
+
+   MainWindow & m_self;
    QFileDialog* fileOpener;
+
+   // Undo / Redo, using the Qt Undo framework
+   std::unique_ptr<QUndoStack> m_undoStack;
+
+   // all things tables should go here.
+   std::unique_ptr<FermentableTableModel> m_fermTableModel    ;
+   std::unique_ptr<HopTableModel        > m_hopTableModel     ;
+   std::unique_ptr<MashStepTableModel   > m_mashStepTableModel;
+   std::unique_ptr<MiscTableModel       > m_miscTableModel    ;
+   std::unique_ptr<YeastTableModel      > m_yeastTableModel   ;
+
+   // all things sort/filter proxy go here
+   std::unique_ptr<FermentableSortFilterProxyModel> m_fermTableProxy ;
+   std::unique_ptr<HopSortFilterProxyModel        > m_hopTableProxy  ;
+   std::unique_ptr<MiscSortFilterProxyModel       > m_miscTableProxy ;
+   std::unique_ptr<StyleSortFilterProxyModel      > m_styleProxyModel;
+   std::unique_ptr<YeastSortFilterProxyModel      > m_yeastTableProxy;
+
+   // All initialised in setupDialogs
+   std::unique_ptr<AboutDialog          > m_aboutDialog          ;
+   std::unique_ptr<HelpDialog           > m_helpDialog           ;
+   std::unique_ptr<EquipmentEditor      > m_equipEditor          ;
+   std::unique_ptr<EquipmentEditor      > m_singleEquipEditor    ;
+   std::unique_ptr<FermentableCatalog   > m_fermCatalog          ;
+   std::unique_ptr<FermentableEditor    > m_fermEditor           ;
+   std::unique_ptr<HopCatalog           > m_hopCatalog           ;
+   std::unique_ptr<HopEditor            > m_hopEditor            ;
+   std::unique_ptr<MashEditor           > m_mashEditor           ;
+   std::unique_ptr<MashStepEditor       > m_mashStepEditor       ;
+   std::unique_ptr<MashWizard           > m_mashWizard           ;
+   std::unique_ptr<MiscCatalog          > m_miscCatalog          ;
+   std::unique_ptr<MiscEditor           > m_miscEditor           ;
+   std::unique_ptr<StyleEditor          > m_styleEditor          ;
+   std::unique_ptr<StyleEditor          > m_singleStyleEditor    ;
+   std::unique_ptr<YeastCatalog         > m_yeastCatalog         ;
+   std::unique_ptr<YeastEditor          > m_yeastEditor          ;
+   std::unique_ptr<OptionDialog         > m_optionDialog         ;
+   std::unique_ptr<ScaleRecipeTool      > m_recipeScaler         ;
+   std::unique_ptr<RecipeFormatter      > m_recipeFormatter      ;
+   std::unique_ptr<PrintAndPreviewDialog> m_printAndPreviewDialog;
+   std::unique_ptr<OgAdjuster           > m_ogAdjuster           ;
+   std::unique_ptr<ConverterTool        > m_converterTool        ;
+   std::unique_ptr<HydrometerTool       > m_hydrometerTool       ;
+   std::unique_ptr<AlcoholTool          > m_alcoholTool          ;
+   std::unique_ptr<TimerMainDialog      > m_timerMainDialog      ;
+   std::unique_ptr<PrimingDialog        > m_primingDialog        ;
+   std::unique_ptr<StrikeWaterDialog    > m_strikeWaterDialog    ;
+   std::unique_ptr<RefractoDialog       > m_refractoDialog       ;
+   std::unique_ptr<MashDesigner         > m_mashDesigner         ;
+   std::unique_ptr<PitchDialog          > m_pitchDialog          ;
+   std::unique_ptr<BtDatePopup          > m_btDatePopup          ;
+   std::unique_ptr<WaterDialog          > m_waterDialog          ;
+   std::unique_ptr<WaterEditor          > m_waterEditor          ;
+   std::unique_ptr<AncestorDialog       > m_ancestorDialog       ;
+   std::unique_ptr<StyleCatalog         > m_styleCatalog         ;
+
+   // all things lists should go here
+   std::unique_ptr<EquipmentListModel> m_equipmentListModel;
+   std::unique_ptr<MashListModel     > m_mashListModel     ;
+   std::unique_ptr<StyleListModel    > m_styleListModel    ;
+//   std::unique_ptr<WaterListModel> waterListModel;  Appears to be unused...
+   std::unique_ptr<NamedMashEditor> m_namedMashEditor;
+   std::unique_ptr<NamedMashEditor> m_singleNamedMashEditor;
+
+
 };
 
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_unique<impl>(*this)} {
    qDebug() << Q_FUNC_INFO;
-
-   this->undoStack = new QUndoStack(this);
 
    // Need to call this parent class method to get all the widgets added (I think).
    this->setupUi(this);
@@ -305,13 +539,13 @@ void MainWindow::init() {
 
    this->setupCSS();
    // initialize all of the dialog windows
-   this->setupDialogs();
+   this->pimpl->setupDialogs();
    // initialize the ranged sliders
    this->setupRanges();
    // the dialogs have to be setup before this is called
-   this->setupComboBoxes();
+   this->pimpl->setupComboBoxes();
    // do all the work to configure the tables models and their proxies
-   this->setupTables();
+   this->pimpl->setupTables();
    // Create the keyboard shortcuts
    this->setupShortCuts();
    // Once more with the context menus too
@@ -344,8 +578,8 @@ void MainWindow::init() {
    qDebug() << Q_FUNC_INFO << "Mash signals connected";
 
    // I do not like this connection here.
-   connect(this->ancestorDialog,  &AncestorDialog::ancestoryChanged, treeView_recipe->model(), &BtTreeModel::versionedRecipe);
-   connect(this->optionDialog,    &OptionDialog::showAllAncestors,   treeView_recipe->model(), &BtTreeModel::catchAncestors );
+   connect(this->pimpl->m_ancestorDialog,  &AncestorDialog::ancestoryChanged, treeView_recipe->model(), &BtTreeModel::versionedRecipe);
+   connect(this->pimpl->m_optionDialog,    &OptionDialog::showAllAncestors,   treeView_recipe->model(), &BtTreeModel::catchAncestors );
    connect(this->treeView_recipe, &BtTreeView::recipeSpawn,          this,                     &MainWindow::versionedRecipe );
 
    // No connections from the database yet? Oh FSM, that probably means I'm
@@ -486,48 +720,6 @@ void MainWindow::setupCSS()
 
 }
 
-// Most dialogs are initialized in here. That should include any initial
-// configurations as well
-void MainWindow::setupDialogs() {
-   this->dialog_about          = new AboutDialog(this);
-   this->pimpl->helpDialog     = new HelpDialog(this);
-   this->equipEditor           = new EquipmentEditor(this);
-   this->singleEquipEditor     = new EquipmentEditor(this, true);
-   this->fermDialog            = new FermentableDialog(this);
-   this->fermEditor            = new FermentableEditor(this);
-   this->hopDialog             = new HopDialog(this);
-   this->hopEditor             = new HopEditor(this);
-   this->mashEditor            = new MashEditor(this);
-   this->mashStepEditor        = new MashStepEditor(this);
-   this->mashWizard            = new MashWizard(this);
-   this->miscDialog            = new MiscDialog(this);
-   this->miscEditor            = new MiscEditor(this);
-   this->styleEditor           = new StyleEditor(this);
-   this->singleStyleEditor     = new StyleEditor(this,true);
-   this->yeastDialog           = new YeastDialog(this);
-   this->yeastEditor           = new YeastEditor(this);
-   this->optionDialog          = new OptionDialog(this);
-   this->recipeScaler          = new ScaleRecipeTool(this);
-   this->recipeFormatter       = new RecipeFormatter(this);
-   this->printAndPreviewDialog = new PrintAndPreviewDialog(this);
-   this->ogAdjuster            = new OgAdjuster(this);
-   this->converterTool         = new ConverterTool(this);
-   this->hydrometerTool        = new HydrometerTool(this);
-   this->alcoholTool           = new AlcoholTool(this);
-   this->timerMainDialog       = new TimerMainDialog(this);
-   this->primingDialog         = new PrimingDialog(this);
-   this->strikeWaterDialog     = new StrikeWaterDialog(this);
-   this->refractoDialog        = new RefractoDialog(this);
-   this->mashDesigner          = new MashDesigner(this);
-   this->pitchDialog           = new PitchDialog(this);
-   this->btDatePopup           = new BtDatePopup(this);
-   this->waterDialog           = new WaterDialog(this);
-   this->waterEditor           = new WaterEditor(this);
-   this->ancestorDialog        = new AncestorDialog(this);
-
-   return;
-}
-
 // Configures the range widgets for the bubbles
 void MainWindow::setupRanges() {
    styleRangeWidget_og->setRange(1.000, 1.120);
@@ -593,111 +785,6 @@ void MainWindow::setupRanges() {
       grad.setColorAt( 1, QColor(255,255,255,0) );
       styleRangeWidget_srm->setMarkerBrush(grad);
    }
-}
-
-// Any new combo boxes, along with their list models, should be initialized
-// here
-void MainWindow::setupComboBoxes()
-{
-   // Set equipment combo box model.
-   equipmentListModel = new EquipmentListModel(equipmentComboBox);
-   equipmentComboBox->setModel(equipmentListModel);
-
-   // Set the style combo box
-   styleListModel = new StyleListModel(styleComboBox);
-   styleProxyModel = new StyleSortFilterProxyModel(styleComboBox);
-   styleProxyModel->setDynamicSortFilter(true);
-   styleProxyModel->setSortLocaleAware(true);
-   styleProxyModel->setSourceModel(styleListModel);
-   styleProxyModel->sort(0);
-   styleComboBox->setModel(styleProxyModel);
-
-   // Set the mash combo box
-   mashListModel =  new MashListModel(mashComboBox);
-   mashComboBox->setModel(mashListModel);
-
-   // Nothing to say.
-   namedMashEditor = new NamedMashEditor(this, mashStepEditor);
-   // I don't think this is used yet
-   singleNamedMashEditor = new NamedMashEditor(this,mashStepEditor,true);
-}
-
-// Anything creating new tables models, filter proxies and configuring the two
-// should go in here
-void MainWindow::setupTables()
-{
-   // Set table models.
-   // Fermentables
-   fermTableModel = new FermentableTableModel(this->fermentableTable);
-   fermTableProxy = new FermentableSortFilterProxyModel(fermentableTable, false);
-   fermTableProxy->setSourceModel(fermTableModel);
-   fermentableTable->setItemDelegate(new FermentableItemDelegate(fermentableTable, *fermTableModel));
-   fermentableTable->setModel(fermTableProxy);
-   // Make the fermentable table show grain percentages in row headers.
-   fermTableModel->setDisplayPercentages(true);
-   // Double clicking the name column pops up an edit dialog for the selected item
-   connect( fermentableTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
-       if (idx.column() == 0)
-           MainWindow::editSelectedFermentable();
-   });
-
-   // Hops
-   hopTableModel = new HopTableModel(hopTable);
-   hopTableProxy = new HopSortFilterProxyModel(hopTable, false);
-   hopTableProxy->setSourceModel(hopTableModel);
-   hopTable->setItemDelegate(new HopItemDelegate(hopTable, *hopTableModel));
-   hopTable->setModel(hopTableProxy);
-   // Hop table show IBUs in row headers.
-   hopTableModel->setShowIBUs(true);
-   connect( hopTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
-       if (idx.column() == 0)
-           MainWindow::editSelectedHop();
-   });
-
-   // Misc
-   miscTableModel = new MiscTableModel(miscTable);
-   miscTableProxy = new MiscSortFilterProxyModel(miscTable,false);
-   miscTableProxy->setSourceModel(miscTableModel);
-   miscTable->setItemDelegate(new MiscItemDelegate(miscTable, *miscTableModel));
-   miscTable->setModel(miscTableProxy);
-   connect( miscTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
-       if (idx.column() == 0)
-           MainWindow::editSelectedMisc();
-   });
-
-   // Yeast
-   yeastTableModel = new YeastTableModel(yeastTable);
-   yeastTableProxy = new YeastSortFilterProxyModel(yeastTable,false);
-   yeastTableProxy->setSourceModel(yeastTableModel);
-   yeastTable->setItemDelegate(new YeastItemDelegate(yeastTable, *yeastTableModel));
-   yeastTable->setModel(yeastTableProxy);
-   connect( yeastTable, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
-       if (idx.column() == 0)
-           MainWindow::editSelectedYeast();
-   });
-
-   // Mashes
-   mashStepTableModel = new MashStepTableModel(mashStepTableWidget);
-   mashStepTableWidget->setItemDelegate(new MashStepItemDelegate());
-   mashStepTableWidget->setModel(mashStepTableModel);
-   connect( mashStepTableWidget, &QTableView::doubleClicked, this, [&](const QModelIndex &idx) {
-       if (idx.column() == 0)
-           MainWindow::editSelectedMashStep();
-   });
-
-   // Enable sorting in the main tables.
-   fermentableTable->horizontalHeader()->setSortIndicator(static_cast<int>(FermentableTableModel::ColumnIndex::Amount), Qt::DescendingOrder );
-   fermentableTable->setSortingEnabled(true);
-   fermTableProxy->setDynamicSortFilter(true);
-   hopTable->horizontalHeader()->setSortIndicator(static_cast<int>(HopTableModel::ColumnIndex::Time), Qt::DescendingOrder );
-   hopTable->setSortingEnabled(true);
-   hopTableProxy->setDynamicSortFilter(true);
-   miscTable->horizontalHeader()->setSortIndicator(static_cast<int>(MiscTableModel::ColumnIndex::Use), Qt::DescendingOrder );
-   miscTable->setSortingEnabled(true);
-   miscTableProxy->setDynamicSortFilter(true);
-   yeastTable->horizontalHeader()->setSortIndicator(static_cast<int>(YeastTableModel::ColumnIndex::Name), Qt::DescendingOrder );
-   yeastTable->setSortingEnabled(true);
-   yeastTableProxy->setDynamicSortFilter(true);
 }
 
 // Anything resulting in a restoreState() should go in here
@@ -805,43 +892,43 @@ void MainWindow::restoreSavedState() {
 // menu items with a SIGNAL of triggered() should go in here.
 void MainWindow::setupTriggers() {
    // Connect actions defined in *.ui files to methods in code
-   connect( actionExit, &QAction::triggered, this, &QWidget::close );                                                   // > File > Exit
-   connect(actionAbout_Brewken,              &QAction::triggered, dialog_about,            &QWidget::show);                    // > About > About Brewken
-   connect(actionHelp,                       &QAction::triggered, this->pimpl->helpDialog, &QWidget::show);                    // > About > Help
+   connect(actionExit                      , &QAction::triggered, this                                      , &QWidget::close                  ); // > File > Exit
+   connect(actionAbout_Brewken             , &QAction::triggered, this->pimpl->m_aboutDialog.get()          , &QWidget::show                   ); // > About > About Brewken
+   connect(actionHelp                      , &QAction::triggered, this->pimpl->m_helpDialog.get()           , &QWidget::show                   ); // > About > Help
 
-   connect( actionNewRecipe, &QAction::triggered, this, &MainWindow::newRecipe );                                       // > File > New Recipe
-   connect( actionImportFromXml, &QAction::triggered, this, &MainWindow::importFiles );                                // > File > Import Recipes
-   connect( actionExportToXml, &QAction::triggered, this, &MainWindow::exportRecipe );                                 // > File > Export Recipes
-   connect( actionUndo, &QAction::triggered, this, &MainWindow::editUndo );                                             // > Edit > Undo
-   connect( actionRedo, &QAction::triggered, this, &MainWindow::editRedo );                                             // > Edit > Redo
+   connect(actionNewRecipe                 , &QAction::triggered, this                                      , &MainWindow::newRecipe           ); // > File > New Recipe
+   connect(actionImportFromXml             , &QAction::triggered, this                                      , &MainWindow::importFiles         ); // > File > Import Recipes
+   connect(actionExportToXml               , &QAction::triggered, this                                      , &MainWindow::exportRecipe        ); // > File > Export Recipes
+   connect(actionUndo                      , &QAction::triggered, this                                      , &MainWindow::editUndo            ); // > Edit > Undo
+   connect(actionRedo                      , &QAction::triggered, this                                      , &MainWindow::editRedo            ); // > Edit > Redo
    setUndoRedoEnable();
-   connect( actionEquipments, &QAction::triggered, equipEditor, &QWidget::show );                                       // > View > Equipments
-   connect( actionMashs, &QAction::triggered, namedMashEditor, &QWidget::show );                                        // > View > Mashs
-   connect( actionStyles, &QAction::triggered, styleEditor, &QWidget::show );                                           // > View > Styles
-   connect( actionFermentables, &QAction::triggered, fermDialog, &QWidget::show );                                      // > View > Fermentables
-   connect( actionHops, &QAction::triggered, hopDialog, &QWidget::show );                                               // > View > Hops
-   connect( actionMiscs, &QAction::triggered, miscDialog, &QWidget::show );                                             // > View > Miscs
-   connect( actionYeasts, &QAction::triggered, yeastDialog, &QWidget::show );                                           // > View > Yeasts
-   connect( actionOptions, &QAction::triggered, optionDialog, &OptionDialog::show );                                    // > Tools > Options
+   connect(actionEquipments                , &QAction::triggered, this->pimpl->m_equipEditor.get()          , &QWidget::show                   ); // > View > Equipments
+   connect(actionMashs                     , &QAction::triggered, this->pimpl->m_namedMashEditor.get()      , &QWidget::show                   ); // > View > Mashs
+   connect(actionStyles                    , &QAction::triggered, this->pimpl->m_styleCatalog.get()         , &QWidget::show                   ); // > View > Styles
+   connect(actionFermentables              , &QAction::triggered, this->pimpl->m_fermCatalog.get()          , &QWidget::show                   ); // > View > Fermentables
+   connect(actionHops                      , &QAction::triggered, this->pimpl->m_hopCatalog.get()           , &QWidget::show                   ); // > View > Hops
+   connect(actionMiscs                     , &QAction::triggered, this->pimpl->m_miscCatalog.get()          , &QWidget::show                   ); // > View > Miscs
+   connect(actionYeasts                    , &QAction::triggered, this->pimpl->m_yeastCatalog.get()         , &QWidget::show                   ); // > View > Yeasts
+   connect(actionOptions                   , &QAction::triggered, this->pimpl->m_optionDialog.get()         , &OptionDialog::show              ); // > Tools > Options
 //   connect( actionManual, &QAction::triggered, this, &MainWindow::openManual);                                               // > About > Manual
-   connect( actionScale_Recipe, &QAction::triggered, recipeScaler, &QWidget::show );                                    // > Tools > Scale Recipe
-   connect( action_recipeToTextClipboard, &QAction::triggered, recipeFormatter, &RecipeFormatter::toTextClipboard );    // > Tools > Recipe to Clipboard as Text
-   connect( actionConvert_Units, &QAction::triggered, converterTool, &QWidget::show );                                  // > Tools > Convert Units
-   connect( actionHydrometer_Temp_Adjustment, &QAction::triggered, hydrometerTool, &QWidget::show );                    // > Tools > Hydrometer Temp Adjustment
-   connect( actionAlcohol_Percentage_Tool, &QAction::triggered, alcoholTool, &QWidget::show );                          // > Tools > Alcohol
-   connect( actionOG_Correction_Help, &QAction::triggered, ogAdjuster, &QWidget::show );                                // > Tools > OG Correction Help
-   connect( actionCopy_Recipe, &QAction::triggered, this, &MainWindow::copyRecipe );                                    // > File > Copy Recipe
-   connect( actionPriming_Calculator, &QAction::triggered, primingDialog, &QWidget::show );                             // > Tools > Priming Calculator
-   connect( actionStrikeWater_Calculator, &QAction::triggered, strikeWaterDialog, &QWidget::show );                     // > Tools > Strike Water Calculator
-   connect( actionRefractometer_Tools, &QAction::triggered, refractoDialog, &QWidget::show );                           // > Tools > Refractometer Tools
-   connect( actionPitch_Rate_Calculator, &QAction::triggered, this, &MainWindow::showPitchDialog);                      // > Tools > Pitch Rate Calculator
-   connect( actionTimers, &QAction::triggered, timerMainDialog, &QWidget::show );                                       // > Tools > Timers
-   connect( actionDeleteSelected, &QAction::triggered, this, &MainWindow::deleteSelected );
-   connect( actionWater_Chemistry, &QAction::triggered, this, &MainWindow::popChemistry);                               // > Tools > Water Chemistry
-   connect( actionAncestors, &QAction::triggered, this, &MainWindow::setAncestor);                                      // > Tools > Ancestors
-   connect( action_brewit, &QAction::triggered, this, &MainWindow::brewItHelper );
+   connect(actionScale_Recipe              , &QAction::triggered, this->pimpl->m_recipeScaler.get()         , &QWidget::show                   ); // > Tools > Scale Recipe
+   connect(action_recipeToTextClipboard    , &QAction::triggered, this->pimpl->m_recipeFormatter.get()      , &RecipeFormatter::toTextClipboard); // > Tools > Recipe to Clipboard as Text
+   connect(actionConvert_Units             , &QAction::triggered, this->pimpl->m_converterTool.get()        , &QWidget::show                   ); // > Tools > Convert Units
+   connect(actionHydrometer_Temp_Adjustment, &QAction::triggered, this->pimpl->m_hydrometerTool.get()       , &QWidget::show                   ); // > Tools > Hydrometer Temp Adjustment
+   connect(actionAlcohol_Percentage_Tool   , &QAction::triggered, this->pimpl->m_alcoholTool.get()          , &QWidget::show                   ); // > Tools > Alcohol
+   connect(actionOG_Correction_Help        , &QAction::triggered, this->pimpl->m_ogAdjuster.get()           , &QWidget::show                   ); // > Tools > OG Correction Help
+   connect(actionCopy_Recipe               , &QAction::triggered, this                                      , &MainWindow::copyRecipe          ); // > File > Copy Recipe
+   connect(actionPriming_Calculator        , &QAction::triggered, this->pimpl->m_primingDialog.get()        , &QWidget::show                   ); // > Tools > Priming Calculator
+   connect(actionStrikeWater_Calculator    , &QAction::triggered, this->pimpl->m_strikeWaterDialog.get()    , &QWidget::show                   ); // > Tools > Strike Water Calculator
+   connect(actionRefractometer_Tools       , &QAction::triggered, this->pimpl->m_refractoDialog.get()       , &QWidget::show                   ); // > Tools > Refractometer Tools
+   connect(actionPitch_Rate_Calculator     , &QAction::triggered, this                                      , &MainWindow::showPitchDialog     ); // > Tools > Pitch Rate Calculator
+   connect(actionTimers                    , &QAction::triggered, this->pimpl->m_timerMainDialog.get()      , &QWidget::show                   ); // > Tools > Timers
+   connect(actionDeleteSelected            , &QAction::triggered, this                                      , &MainWindow::deleteSelected      );
+   connect(actionWater_Chemistry           , &QAction::triggered, this                                      , &MainWindow::popChemistry        ); // > Tools > Water Chemistry
+   connect(actionAncestors                 , &QAction::triggered, this                                      , &MainWindow::setAncestor         ); // > Tools > Ancestors
+   connect(action_brewit                   , &QAction::triggered, this                                      , &MainWindow::brewItHelper        );
    //One Dialog to rule them all, at least all printing and export.
-   connect( actionPrint, &QAction::triggered, printAndPreviewDialog, &QWidget::show);                                   // > File > Print and Preview
+   connect(actionPrint                     , &QAction::triggered, this->pimpl->m_printAndPreviewDialog.get(), &QWidget::show                   ); // > File > Print and Preview
 
    // postgresql cannot backup or restore yet. I would like to find some way
    // around this, but for now just disable
@@ -858,31 +945,31 @@ void MainWindow::setupTriggers() {
 
 // pushbuttons with a SIGNAL of clicked() should go in here.
 void MainWindow::setupClicks() {
-   connect(this->equipmentButton,           &QAbstractButton::clicked, this,         &MainWindow::showEquipmentEditor);
-   connect(this->styleButton,               &QAbstractButton::clicked, this,         &MainWindow::showStyleEditor );
-   connect(this->mashButton,                &QAbstractButton::clicked, mashEditor,   &MashEditor::showEditor );
-   connect(this->pushButton_addFerm,        &QAbstractButton::clicked, fermDialog,   &QWidget::show );
-   connect(this->pushButton_addHop,         &QAbstractButton::clicked, hopDialog,    &QWidget::show );
-   connect(this->pushButton_addMisc,        &QAbstractButton::clicked, miscDialog,   &QWidget::show );
-   connect(this->pushButton_addYeast,       &QAbstractButton::clicked, yeastDialog,  &QWidget::show );
-   connect(this->pushButton_removeFerm,     &QAbstractButton::clicked, this,         &MainWindow::removeSelectedFermentable );
-   connect(this->pushButton_removeHop,      &QAbstractButton::clicked, this,         &MainWindow::removeSelectedHop );
-   connect(this->pushButton_removeMisc,     &QAbstractButton::clicked, this,         &MainWindow::removeSelectedMisc );
-   connect(this->pushButton_removeYeast,    &QAbstractButton::clicked, this,         &MainWindow::removeSelectedYeast );
-   connect(this->pushButton_editFerm,       &QAbstractButton::clicked, this,         &MainWindow::editSelectedFermentable );
-   connect(this->pushButton_editMisc,       &QAbstractButton::clicked, this,         &MainWindow::editSelectedMisc );
-   connect(this->pushButton_editHop,        &QAbstractButton::clicked, this,         &MainWindow::editSelectedHop );
-   connect(this->pushButton_editYeast,      &QAbstractButton::clicked, this,         &MainWindow::editSelectedYeast );
-   connect(this->pushButton_editMash,       &QAbstractButton::clicked, mashEditor,   &MashEditor::showEditor );
-   connect(this->pushButton_addMashStep,    &QAbstractButton::clicked, this,         &MainWindow::addMashStep );
-   connect(this->pushButton_removeMashStep, &QAbstractButton::clicked, this,         &MainWindow::removeSelectedMashStep );
-   connect(this->pushButton_editMashStep,   &QAbstractButton::clicked, this,         &MainWindow::editSelectedMashStep );
-   connect(this->pushButton_mashWizard,     &QAbstractButton::clicked, mashWizard,   &MashWizard::show );
-   connect(this->pushButton_saveMash,       &QAbstractButton::clicked, this,         &MainWindow::saveMash );
-   connect(this->pushButton_mashDes,        &QAbstractButton::clicked, mashDesigner, &MashDesigner::show );
-   connect(this->pushButton_mashUp,         &QAbstractButton::clicked, this,         &MainWindow::moveSelectedMashStepUp );
-   connect(this->pushButton_mashDown,       &QAbstractButton::clicked, this,         &MainWindow::moveSelectedMashStepDown );
-   connect(this->pushButton_mashRemove,     &QAbstractButton::clicked, this,         &MainWindow::removeMash );
+   connect(this->equipmentButton          , &QAbstractButton::clicked, this        , &MainWindow::showEquipmentEditor      );
+   connect(this->styleButton              , &QAbstractButton::clicked, this        , &MainWindow::showStyleEditor          );
+   connect(this->mashButton               , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor               );
+   connect(this->pushButton_addFerm       , &QAbstractButton::clicked, this->pimpl->m_fermCatalog  , &QWidget::show                        );
+   connect(this->pushButton_addHop        , &QAbstractButton::clicked, this->pimpl->m_hopCatalog   , &QWidget::show                        );
+   connect(this->pushButton_addMisc       , &QAbstractButton::clicked, this->pimpl->m_miscCatalog  , &QWidget::show                        );
+   connect(this->pushButton_addYeast      , &QAbstractButton::clicked, this->pimpl->m_yeastCatalog , &QWidget::show                        );
+   connect(this->pushButton_removeFerm    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedFermentable);
+   connect(this->pushButton_removeHop     , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedHop        );
+   connect(this->pushButton_removeMisc    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMisc       );
+   connect(this->pushButton_removeYeast   , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedYeast      );
+   connect(this->pushButton_editFerm      , &QAbstractButton::clicked, this        , &MainWindow::editSelectedFermentable  );
+   connect(this->pushButton_editMisc      , &QAbstractButton::clicked, this        , &MainWindow::editSelectedMisc         );
+   connect(this->pushButton_editHop       , &QAbstractButton::clicked, this        , &MainWindow::editSelectedHop          );
+   connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this        , &MainWindow::editSelectedYeast        );
+   connect(this->pushButton_editMash      , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor               );
+   connect(this->pushButton_addMashStep   , &QAbstractButton::clicked, this        , &MainWindow::addMashStep              );
+   connect(this->pushButton_removeMashStep, &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMashStep   );
+   connect(this->pushButton_editMashStep  , &QAbstractButton::clicked, this        , &MainWindow::editSelectedMashStep     );
+   connect(this->pushButton_mashWizard    , &QAbstractButton::clicked, this->pimpl->m_mashWizard  , &MashWizard::show                     );
+   connect(this->pushButton_saveMash      , &QAbstractButton::clicked, this        , &MainWindow::saveMash                 );
+   connect(this->pushButton_mashDes       , &QAbstractButton::clicked, this->pimpl->m_mashDesigner, &MashDesigner::show                   );
+   connect(this->pushButton_mashUp        , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedMashStepUp   );
+   connect(this->pushButton_mashDown      , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedMashStepDown );
+   connect(this->pushButton_mashRemove    , &QAbstractButton::clicked, this        , &MainWindow::removeMash               );
    return;
 }
 
@@ -1003,8 +1090,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Equipment * kit = active->getItem<Equipment>(index);
                if ( kit ) {
-                  singleEquipEditor->setEquipment(kit);
-                  singleEquipEditor->show();
+                  this->pimpl->m_singleEquipEditor->setEquipment(kit);
+                  this->pimpl->m_singleEquipEditor->show();
                }
             }
             break;
@@ -1012,8 +1099,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Fermentable * ferm = active->getItem<Fermentable>(index);
                if (ferm) {
-                  fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(ferm));
-                  fermEditor->show();
+                  this->pimpl->m_fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(ferm));
+                  this->pimpl->m_fermEditor->show();
                }
             }
             break;
@@ -1021,8 +1108,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Hop* hop = active->getItem<Hop>(index);
                if (hop) {
-                  hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(hop));
-                  hopEditor->show();
+                  this->pimpl->m_hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(hop));
+                  this->pimpl->m_hopEditor->show();
                }
             }
             break;
@@ -1030,17 +1117,17 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Misc * misc = active->getItem<Misc>(index);
                if (misc) {
-                  miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(misc));
-                  miscEditor->show();
+                  this->pimpl->m_miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(misc));
+                  this->pimpl->m_miscEditor->show();
                }
             }
             break;
          case BtTreeItem::Type::STYLE:
             {
-               Style * s = active->getItem<Style>(index);
-               if ( s ) {
-                  singleStyleEditor->setStyle(s);
-                  singleStyleEditor->show();
+               Style * style = active->getItem<Style>(index);
+               if (style) {
+                  this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(style));
+                  this->pimpl->m_singleStyleEditor->show();
                }
             }
             break;
@@ -1048,8 +1135,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Yeast * yeast = active->getItem<Yeast>(index);
                if (yeast) {
-                  yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(yeast));
-                  yeastEditor->show();
+                  this->pimpl->m_yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(yeast));
+                  this->pimpl->m_yeastEditor->show();
                }
             }
             break;
@@ -1062,8 +1149,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Water * w = active->getItem<Water>(index);
                if (w) {
-                  waterEditor->setWater(ObjectStoreWrapper::getSharedFromRaw(w));
-                  waterEditor->show();
+                  this->pimpl->m_waterEditor->setWater(ObjectStoreWrapper::getSharedFromRaw(w));
+                  this->pimpl->m_waterEditor->show();
                }
             }
             break;
@@ -1171,8 +1258,8 @@ void MainWindow::setAncestor()
       rec = treeView_recipe->getItem<Recipe>(indexes[0]);
    }
 
-   ancestorDialog->setAncestor(rec);
-   ancestorDialog->show();
+   this->pimpl->m_ancestorDialog->setAncestor(rec);
+   this->pimpl->m_ancestorDialog->show();
 }
 
 
@@ -1198,11 +1285,11 @@ void MainWindow::setRecipe(Recipe* recipe) {
    this->displayRangesEtcForCurrentRecipeStyle();
 
    // Reset all previous recipe shit.
-   fermTableModel->observeRecipe(recipe);
-   hopTableModel->observeRecipe(recipe);
-   miscTableModel->observeRecipe(recipe);
-   yeastTableModel->observeRecipe(recipe);
-   mashStepTableModel->setMash(recipeObs->mash());
+   this->pimpl->m_fermTableModel->observeRecipe(recipe);
+   this->pimpl->m_hopTableModel->observeRecipe(recipe);
+   this->pimpl->m_miscTableModel->observeRecipe(recipe);
+   this->pimpl->m_yeastTableModel->observeRecipe(recipe);
+   this->pimpl->m_mashStepTableModel->setMash(recipeObs->mash());
 
    // Clean out any brew notes
    tabWidget_recipeView->setCurrentIndex(0);
@@ -1215,23 +1302,25 @@ void MainWindow::setRecipe(Recipe* recipe) {
    }
 
    // Tell some of our other widgets to observe the new recipe.
-   mashWizard->setRecipe(recipe);
+   this->pimpl->m_mashWizard->setRecipe(recipe);
    brewDayScrollWidget->setRecipe(recipe);
-   equipmentListModel->observeRecipe(recipe);
-   recipeFormatter->setRecipe(recipe);
-   ogAdjuster->setRecipe(recipe);
+   this->pimpl->m_equipmentListModel->observeRecipe(recipe);
+   this->pimpl->m_recipeFormatter->setRecipe(recipe);
+   this->pimpl->m_ogAdjuster->setRecipe(recipe);
    recipeExtrasWidget->setRecipe(recipe);
-   mashDesigner->setRecipe(recipe);
+   this->pimpl->m_mashDesigner->setRecipe(recipe);
    equipmentButton->setRecipe(recipe);
-   singleEquipEditor->setEquipment(recEquip);
+   this->pimpl->m_singleEquipEditor->setEquipment(recEquip);
    styleButton->setRecipe(recipe);
-   singleStyleEditor->setStyle(recipe->style());
+   if (recipe->style()) {
+      this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipe->style()));
+   }
 
-   mashEditor->setMash(recipeObs->mash());
-   mashEditor->setRecipe(recipeObs);
+   this->pimpl->m_mashEditor->setMash(recipeObs->mash());
+   this->pimpl->m_mashEditor->setRecipe(recipeObs);
 
    mashButton->setMash(recipeObs->mash());
-   recipeScaler->setRecipe(recipeObs);
+   this->pimpl->m_recipeScaler->setRecipe(recipeObs);
 
    // Set the locked flag as required
    checkBox_locked->setCheckState( recipe->locked() ? Qt::Checked : Qt::Unchecked );
@@ -1316,10 +1405,10 @@ void MainWindow::lockRecipe(int state) {
    pushButton_removeYeast->setEnabled(enabled);
    pushButton_editYeast->setEnabled(enabled);
 
-   fermDialog ->setEnableAddToRecipe(enabled);
-   hopDialog  ->setEnableAddToRecipe(enabled);
-   miscDialog ->setEnableAddToRecipe(enabled);
-   yeastDialog->setEnableAddToRecipe(enabled);
+   this->pimpl->m_fermCatalog ->setEnableAddToRecipe(enabled);
+   this->pimpl->m_hopCatalog  ->setEnableAddToRecipe(enabled);
+   this->pimpl->m_miscCatalog ->setEnableAddToRecipe(enabled);
+   this->pimpl->m_yeastCatalog->setEnableAddToRecipe(enabled);
    // mashes still need dealing with
    //
    return;
@@ -1330,11 +1419,11 @@ void MainWindow::changed(QMetaProperty prop, QVariant val) {
 
    if (propName == PropertyNames::Recipe::equipment) {
       this->recEquip = val.value<Equipment *>();
-      this->singleEquipEditor->setEquipment(this->recEquip);
+      this->pimpl->m_singleEquipEditor->setEquipment(this->recEquip);
    } else if (propName == PropertyNames::Recipe::style) {
       //recStyle = recipeObs->style();
       this->recStyle = val.value<Style*>();
-      this->singleStyleEditor->setStyle(this->recStyle);
+      this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recStyle));
    }
 
    this->showChanges(&prop);
@@ -1438,14 +1527,14 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    // See if we need to change the mash in the table.
    if ((updateAll && recipeObs->mash()) ||
        (propName == "mash" && recipeObs->mash())) {
-      mashStepTableModel->setMash(recipeObs->mash());
+      this->pimpl->m_mashStepTableModel->setMash(recipeObs->mash());
    }
 
    // Not sure about this, but I am annoyed that modifying the hop usage
    // modifiers isn't automatically updating my display
    if (updateAll) {
      recipeObs->recalcIBU();
-     hopTableProxy->invalidate();
+     this->pimpl->m_hopTableProxy->invalidate();
    }
    return;
 }
@@ -1491,9 +1580,9 @@ void MainWindow::updateRecipeStyle() {
       return;
    }
 
-   QModelIndex proxyIndex( styleProxyModel->index(styleComboBox->currentIndex(),0) );
-   QModelIndex sourceIndex( styleProxyModel->mapToSource(proxyIndex) );
-   Style * selected = styleListModel->at(sourceIndex.row());
+   QModelIndex proxyIndex( this->pimpl->m_styleProxyModel->index(styleComboBox->currentIndex(),0) );
+   QModelIndex sourceIndex( this->pimpl->m_styleProxyModel->mapToSource(proxyIndex) );
+   Style * selected = this->pimpl->m_styleListModel->at(sourceIndex.row());
    if (selected) {
       this->doOrRedoUpdate(
          newRelationalUndoableUpdate(*this->recipeObs,
@@ -1512,18 +1601,18 @@ void MainWindow::updateRecipeMash() {
       return;
    }
 
-   Mash* selected = mashListModel->at(mashComboBox->currentIndex());
+   Mash* selected = this->pimpl->m_mashListModel->at(mashComboBox->currentIndex());
    if (selected) {
       // The Recipe will decide whether it needs to make a copy of the Mash, hence why we don't reuse "selected" below
       this->recipeObs->setMash(selected);
-      mashEditor->setMash(this->recipeObs->mash());
+      this->pimpl->m_mashEditor->setMash(this->recipeObs->mash());
       mashButton->setMash(this->recipeObs->mash());
    }
    return;
 }
 
 void MainWindow::updateRecipeEquipment() {
-  droppedRecipeEquipment(equipmentListModel->at(equipmentComboBox->currentIndex()));
+  droppedRecipeEquipment(this->pimpl->m_equipmentListModel->at(equipmentComboBox->currentIndex()));
   return;
 }
 
@@ -1568,7 +1657,7 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
       // if and when the equipment change is undone/redone.  Setting the parent field on a QUndoCommand makes that
       // parent the owner, responsible for invoking, deleting, etc.  Technically the descriptions of these subcommands
       // won't ever be seen by the user, but there's no harm in setting them.
-      // (The previous call here to mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
+      // (The previous call here to this->pimpl->m_mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
       // setTunSpecificHeat_calGC() on the mash.)
       new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->batchSize_l() , tr("Change Batch Size"), equipmentUpdate);
       new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->boilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
@@ -1736,8 +1825,8 @@ void MainWindow::addToRecipe(std::shared_ptr<Fermentable> ferm) {
                              &Recipe::remove<Fermentable>,
                              tr("Add fermentable to recipe"))
    );
-   // We don't need to call fermTableModel->addFermentable(ferm) here because the change to the recipe will already have
-   // triggered the necessary updates to fermTableModel.
+   // We don't need to call this->pimpl->m_fermTableModel->addFermentable(ferm) here because the change to the recipe will already have
+   // triggered the necessary updates to this->pimpl->m_fermTableModel.
    return;
 }
 
@@ -1750,8 +1839,8 @@ void MainWindow::addToRecipe(std::shared_ptr<Hop> hop) {
                              &Recipe::remove<Hop>,
                              tr("Add hop to recipe"))
    );
-   // We don't need to call hopTableModel->addHop(hop) here because the change to the recipe will already have
-   // triggered the necessary updates to hopTableModel.
+   // We don't need to call this->pimpl->m_hopTableModel->addHop(hop) here because the change to the recipe will already have
+   // triggered the necessary updates to this->pimpl->m_hopTableModel.
 }
 
 void MainWindow::addToRecipe(std::shared_ptr<Misc> misc) {
@@ -1763,8 +1852,8 @@ void MainWindow::addToRecipe(std::shared_ptr<Misc> misc) {
                              &Recipe::remove<Misc>,
                              tr("Add misc to recipe"))
    );
-   // We don't need to call miscTableModel->addMisc(misc) here because the change to the recipe will already have
-   // triggered the necessary updates to miscTableModel.
+   // We don't need to call this->pimpl->m_miscTableModel->addMisc(misc) here because the change to the recipe will already have
+   // triggered the necessary updates to this->pimpl->m_miscTableModel.
    return;
 }
 
@@ -1777,8 +1866,8 @@ void MainWindow::addToRecipe(std::shared_ptr<Yeast> yeast) {
                              &Recipe::remove<Yeast>,
                              tr("Add yeast to recipe"))
    );
-   // We don't need to call yeastTableModel->addYeast(yeast) here because the change to the recipe will already have
-   // triggered the necessary updates to yeastTableModel.
+   // We don't need to call this->pimpl->m_yeastTableModel->addYeast(yeast) here because the change to the recipe will already have
+   // triggered the necessary updates to this->pimpl->m_yeastTableModel.
    return;
 }
 
@@ -1798,8 +1887,8 @@ void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
                              &Mash::removeMashStep,
                              tr("Add mash step to recipe"))
    );
-   // We don't need to call mashStepTableModel->addMashStep(mashStep) here because the change to the mash will already
-   // have triggered the necessary updates to mashStepTableModel.
+   // We don't need to call this->pimpl->m_mashStepTableModel->addMashStep(mashStep) here because the change to the mash will already
+   // have triggered the necessary updates to this->pimpl->m_mashStepTableModel.
    return;
 }
 
@@ -1823,20 +1912,20 @@ Recipe* MainWindow::currentRecipe() {
 }
 
 void MainWindow::setUndoRedoEnable() {
-   Q_ASSERT(this->undoStack != 0);
-   actionUndo->setEnabled(this->undoStack->canUndo());
-   actionRedo->setEnabled(this->undoStack->canRedo());
+   Q_ASSERT(this->pimpl->m_undoStack != 0);
+   actionUndo->setEnabled(this->pimpl->m_undoStack->canUndo());
+   actionRedo->setEnabled(this->pimpl->m_undoStack->canRedo());
 
-   actionUndo->setText(QString(tr("Undo %1").arg(this->undoStack->undoText())));
-   actionRedo->setText(QString(tr("Redo %1").arg(this->undoStack->redoText())));
+   actionUndo->setText(QString(tr("Undo %1").arg(this->pimpl->m_undoStack->undoText())));
+   actionRedo->setText(QString(tr("Redo %1").arg(this->pimpl->m_undoStack->redoText())));
 
    return;
 }
 
 void MainWindow::doOrRedoUpdate(QUndoCommand * update) {
-   Q_ASSERT(this->undoStack != nullptr);
+   Q_ASSERT(this->pimpl->m_undoStack != nullptr);
    Q_ASSERT(update != nullptr);
-   this->undoStack->push(update);
+   this->pimpl->m_undoStack->push(update);
    this->setUndoRedoEnable();
    return;
 }
@@ -1852,11 +1941,11 @@ void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
 
 // For undo/redo, we use Qt's Undo framework
 void MainWindow::editUndo() {
-   Q_ASSERT(this->undoStack != 0);
-   if ( !this->undoStack->canUndo() ) {
+   Q_ASSERT(this->pimpl->m_undoStack != 0);
+   if ( !this->pimpl->m_undoStack->canUndo() ) {
       qDebug() << "Undo called but nothing to undo";
    } else {
-      this->undoStack->undo();
+      this->pimpl->m_undoStack->undo();
    }
 
    setUndoRedoEnable();
@@ -1864,11 +1953,11 @@ void MainWindow::editUndo() {
 }
 
 void MainWindow::editRedo() {
-   Q_ASSERT(this->undoStack != 0);
-   if ( !this->undoStack->canRedo() ) {
+   Q_ASSERT(this->pimpl->m_undoStack != 0);
+   if ( !this->pimpl->m_undoStack->canRedo() ) {
       qDebug() << "Redo called but nothing to redo";
    } else {
-      this->undoStack->redo();
+      this->pimpl->m_undoStack->redo();
    }
 
    setUndoRedoEnable();
@@ -1892,8 +1981,8 @@ Fermentable* MainWindow::selectedFermentable() {
       }
    }
 
-   QModelIndex modelIndex = fermTableProxy->mapToSource(viewIndex);
-   return fermTableModel->getRow(modelIndex.row()).get();
+   QModelIndex modelIndex = this->pimpl->m_fermTableProxy->mapToSource(viewIndex);
+   return this->pimpl->m_fermTableModel->getRow(modelIndex.row()).get();
 }
 
 Hop* MainWindow::selectedHop() {
@@ -1913,8 +2002,8 @@ Hop* MainWindow::selectedHop() {
       }
    }
 
-   QModelIndex modelIndex = hopTableProxy->mapToSource(viewIndex);
-   return hopTableModel->getRow(modelIndex.row()).get();
+   QModelIndex modelIndex = this->pimpl->m_hopTableProxy->mapToSource(viewIndex);
+   return this->pimpl->m_hopTableModel->getRow(modelIndex.row()).get();
 }
 
 Misc* MainWindow::selectedMisc() {
@@ -1934,8 +2023,8 @@ Misc* MainWindow::selectedMisc() {
       }
    }
 
-   QModelIndex modelIndex = miscTableProxy->mapToSource(viewIndex);
-   return miscTableModel->getRow(modelIndex.row()).get();
+   QModelIndex modelIndex = this->pimpl->m_miscTableProxy->mapToSource(viewIndex);
+   return this->pimpl->m_miscTableModel->getRow(modelIndex.row()).get();
 }
 
 Yeast* MainWindow::selectedYeast() {
@@ -1955,29 +2044,29 @@ Yeast* MainWindow::selectedYeast() {
       }
    }
 
-   QModelIndex modelIndex = yeastTableProxy->mapToSource(viewIndex);
-   return yeastTableModel->getRow(modelIndex.row()).get();
+   QModelIndex modelIndex = this->pimpl->m_yeastTableProxy->mapToSource(viewIndex);
+   return this->pimpl->m_yeastTableModel->getRow(modelIndex.row()).get();
 }
 
 void MainWindow::removeHop(std::shared_ptr<Hop> itemToRemove) {
-   this->hopTableModel->remove(itemToRemove);
+   this->pimpl->m_hopTableModel->remove(itemToRemove);
    return;
 }
 void MainWindow::removeFermentable(std::shared_ptr<Fermentable> itemToRemove) {
-   this->fermTableModel->remove(itemToRemove);
+   this->pimpl->m_fermTableModel->remove(itemToRemove);
    return;
 }
 void MainWindow::removeMisc(std::shared_ptr<Misc> itemToRemove) {
-   this->miscTableModel->remove(itemToRemove);
+   this->pimpl->m_miscTableModel->remove(itemToRemove);
    return;
 }
 void MainWindow::removeYeast(std::shared_ptr<Yeast> itemToRemove) {
-   this->yeastTableModel->remove(itemToRemove);
+   this->pimpl->m_yeastTableModel->remove(itemToRemove);
    return;
 }
 
 void MainWindow::removeMashStep(std::shared_ptr<MashStep> itemToRemove) {
-   this->mashStepTableModel->remove(itemToRemove);
+   this->pimpl->m_mashStepTableModel->remove(itemToRemove);
    return;
 }
 
@@ -1995,9 +2084,9 @@ void MainWindow::removeSelectedFermentable() {
    QList< std::shared_ptr<Fermentable> > itemsToRemove;
    for(int i = 0; i < size; i++) {
       QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = fermTableProxy->mapToSource(viewIndex);
+      QModelIndex modelIndex = this->pimpl->m_fermTableProxy->mapToSource(viewIndex);
 
-      itemsToRemove.append(fermTableModel->getRow(modelIndex.row()));
+      itemsToRemove.append(this->pimpl->m_fermTableModel->getRow(modelIndex.row()));
    }
 
    for (auto item : itemsToRemove) {
@@ -2021,8 +2110,8 @@ void MainWindow::editSelectedFermentable() {
       return;
    }
 
-   fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(f));
-   fermEditor->show();
+   this->pimpl->m_fermEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(f));
+   this->pimpl->m_fermEditor->show();
    return;
 }
 
@@ -2032,8 +2121,8 @@ void MainWindow::editSelectedMisc() {
       return;
    }
 
-   miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(m));
-   miscEditor->show();
+   this->pimpl->m_miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(m));
+   this->pimpl->m_miscEditor->show();
 }
 
 void MainWindow::editSelectedHop() {
@@ -2042,8 +2131,8 @@ void MainWindow::editSelectedHop() {
       return;
    }
 
-   hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
-   hopEditor->show();
+   this->pimpl->m_hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
+   this->pimpl->m_hopEditor->show();
    return;
 }
 
@@ -2053,8 +2142,8 @@ void MainWindow::editSelectedYeast() {
       return;
    }
 
-   yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(y));
-   yeastEditor->show();
+   this->pimpl->m_yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(y));
+   this->pimpl->m_yeastEditor->show();
    return;
 }
 
@@ -2069,8 +2158,8 @@ void MainWindow::removeSelectedHop() {
 
    for (int i = 0; i < size; i++) {
       QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = hopTableProxy->mapToSource(viewIndex);
-      itemsToRemove.append(hopTableModel->getRow(modelIndex.row()));
+      QModelIndex modelIndex = this->pimpl->m_hopTableProxy->mapToSource(viewIndex);
+      itemsToRemove.append(this->pimpl->m_hopTableModel->getRow(modelIndex.row()));
    }
 
    for (auto item : itemsToRemove) {
@@ -2099,9 +2188,9 @@ void MainWindow::removeSelectedMisc() {
 
    for (int i = 0; i < size; i++) {
       QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = miscTableProxy->mapToSource(viewIndex);
+      QModelIndex modelIndex = this->pimpl->m_miscTableProxy->mapToSource(viewIndex);
 
-      itemsToRemove.append(miscTableModel->getRow(modelIndex.row()));
+      itemsToRemove.append(this->pimpl->m_miscTableModel->getRow(modelIndex.row()));
    }
 
    for (auto item : itemsToRemove) {
@@ -2128,9 +2217,9 @@ void MainWindow::removeSelectedYeast() {
 
    for(int i = 0; i < size; i++) {
       QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = yeastTableProxy->mapToSource(viewIndex);
+      QModelIndex modelIndex = this->pimpl->m_yeastTableProxy->mapToSource(viewIndex);
 
-      itemsToRemove.append(yeastTableModel->getRow(modelIndex.row()));
+      itemsToRemove.append(this->pimpl->m_yeastTableModel->getRow(modelIndex.row()));
    }
 
    for (auto item : itemsToRemove) {
@@ -2504,8 +2593,8 @@ void MainWindow::addMashStep() {
 
    // This ultimately gets stored in MainWindow::addMashStepToMash()
    auto step = std::make_shared<MashStep>("");
-   this->mashStepEditor->setMashStep(step);
-   this->mashStepEditor->setVisible(true);
+   this->pimpl->m_mashStepEditor->setMashStep(step);
+   this->pimpl->m_mashStepEditor->setVisible(true);
    return;
 }
 
@@ -2533,7 +2622,7 @@ void MainWindow::removeSelectedMashStep() {
       }
    }
 
-   auto step = mashStepTableModel->getRow(row);
+   auto step = this->pimpl->m_mashStepTableModel->getRow(row);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs->mash(),
                               &Mash::removeMashStep,
@@ -2569,7 +2658,7 @@ void MainWindow::moveSelectedMashStepUp()
       return;
    }
 
-   this->mashStepTableModel->moveStepUp(row);
+   this->pimpl->m_mashStepTableModel->moveStepUp(row);
    return;
 }
 
@@ -2591,11 +2680,11 @@ void MainWindow::moveSelectedMashStepDown()
    }
 
    // Make sure it's not the last row so we can move it down.
-   if( row >= mashStepTableModel->rowCount() - 1 ) {
+   if( row >= this->pimpl->m_mashStepTableModel->rowCount() - 1 ) {
       return;
    }
 
-   this->mashStepTableModel->moveStepDown(row);
+   this->pimpl->m_mashStepTableModel->moveStepDown(row);
    return;
 }
 
@@ -2619,9 +2708,9 @@ void MainWindow::editSelectedMashStep() {
       }
    }
 
-   auto step = mashStepTableModel->getRow(static_cast<unsigned int>(row));
-   mashStepEditor->setMashStep(step);
-   mashStepEditor->setVisible(true);
+   auto step = this->pimpl->m_mashStepTableModel->getRow(static_cast<unsigned int>(row));
+   this->pimpl->m_mashStepEditor->setMashStep(step);
+   this->pimpl->m_mashStepEditor->setVisible(true);
    return;
 }
 
@@ -2644,7 +2733,7 @@ void MainWindow::removeMash() {
    ObjectStoreWrapper::insert(defaultMash);
    this->recipeObs->setMash(defaultMash.get());
 
-   mashStepTableModel->setMash(defaultMash.get());
+   this->pimpl->m_mashStepTableModel->setMash(defaultMash.get());
 
    //remove from combobox handled automatically by qt
    mashButton->setMash(defaultMash.get());
@@ -2743,18 +2832,17 @@ void MainWindow::contextMenu(const QPoint &point)
       tempMenu->exec(active->mapToGlobal(point));
 }
 
-void MainWindow::setupContextMenu()
-{
+void MainWindow::setupContextMenu() {
 
-   treeView_recipe->setupContextMenu(this,this);
-   treeView_equip->setupContextMenu(this,singleEquipEditor);
+   treeView_recipe->setupContextMenu(this, this);
+   treeView_equip->setupContextMenu(this, this->pimpl->m_singleEquipEditor.get());
 
-   treeView_ferm->setupContextMenu(this,fermDialog);
-   treeView_hops->setupContextMenu(this,hopDialog);
-   treeView_misc->setupContextMenu(this,miscDialog);
-   treeView_style->setupContextMenu(this,singleStyleEditor);
-   treeView_yeast->setupContextMenu(this,yeastDialog);
-   treeView_water->setupContextMenu(this,waterEditor);
+   treeView_ferm ->setupContextMenu(this, this->pimpl->m_fermCatalog.get()      );
+   treeView_hops ->setupContextMenu(this, this->pimpl->m_hopCatalog.get()       );
+   treeView_misc ->setupContextMenu(this, this->pimpl->m_miscCatalog.get()      );
+   treeView_style->setupContextMenu(this, this->pimpl->m_singleStyleEditor.get());
+   treeView_yeast->setupContextMenu(this, this->pimpl->m_yeastCatalog.get()     );
+   treeView_water->setupContextMenu(this, this->pimpl->m_waterEditor.get()      );
 
    // TreeView for clicks, both double and right
    connect( treeView_recipe, &QAbstractItemView::doubleClicked, this, &MainWindow::treeActivated);
@@ -2905,12 +2993,12 @@ void MainWindow::showPitchDialog()
    // First, copy the current recipe og and volume.
    if( recipeObs )
    {
-      pitchDialog->setWortVolume_l( recipeObs->finalVolume_l() );
-      pitchDialog->setWortDensity( recipeObs->og() );
-      pitchDialog->calculate();
+      this->pimpl->m_pitchDialog->setWortVolume_l( recipeObs->finalVolume_l() );
+      this->pimpl->m_pitchDialog->setWortDensity( recipeObs->og() );
+      this->pimpl->m_pitchDialog->calculate();
    }
 
-   pitchDialog->show();
+   this->pimpl->m_pitchDialog->show();
 }
 
 void MainWindow::showEquipmentEditor()
@@ -2921,22 +3009,19 @@ void MainWindow::showEquipmentEditor()
    }
    else
    {
-      singleEquipEditor->setEquipment(recipeObs->equipment());
-      singleEquipEditor->show();
+      this->pimpl->m_singleEquipEditor->setEquipment(recipeObs->equipment());
+      this->pimpl->m_singleEquipEditor->show();
    }
 }
 
-void MainWindow::showStyleEditor()
-{
-   if ( recipeObs && ! recipeObs->style() )
-   {
+void MainWindow::showStyleEditor() {
+   if ( recipeObs && ! recipeObs->style() ) {
       QMessageBox::warning( this, tr("No style"), tr("You must select a style first."));
+   } else {
+      this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->style()));
+      this->pimpl->m_singleStyleEditor->show();
    }
-   else
-   {
-      singleStyleEditor->setStyle(recipeObs->style());
-      singleStyleEditor->show();
-   }
+   return;
 }
 
 void MainWindow::changeBrewDate() {
@@ -2950,9 +3035,9 @@ void MainWindow::changeBrewDate() {
          continue;
 
       // Pop the calendar, get the date.
-      if ( btDatePopup->exec() == QDialog::Accepted )
+      if ( this->pimpl->m_btDatePopup->exec() == QDialog::Accepted )
       {
-         QDate newDate = btDatePopup->selectedDate();
+         QDate newDate = this->pimpl->m_btDatePopup->selectedDate();
          target->setBrewDate(newDate);
 
          // If this note is open in a tab
@@ -3036,8 +3121,8 @@ void MainWindow::popChemistry()
 
    // late binding for the win?
    if (allow ) {
-      waterDialog->setRecipe(recipeObs);
-      waterDialog->show();
+      this->pimpl->m_waterDialog->setRecipe(recipeObs);
+      this->pimpl->m_waterDialog->show();
    }
    else {
       QMessageBox::warning( this, tr("No Mash"), tr("You must define a mash first."));

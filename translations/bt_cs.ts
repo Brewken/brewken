@@ -2919,64 +2919,12 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Never</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Both</source>
-        <translation type="unfinished">Oboje</translation>
+        <translation type="obsolete">Oboje</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Žádný</translation>
-    </message>
-    <message>
-        <source>CaCl2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CaCO3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CaSO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MgSO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NaCl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NaHCO3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lactic acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H3PO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acid malt</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Žádný</translation>
     </message>
     <message>
         <source>kg</source>
@@ -3485,7 +3433,7 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 Database</source>
+        <source>%1 Catalog / Database</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4128,45 +4076,41 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
-    <name>SaltItemDelegate</name>
+    <name>Salt</name>
     <message>
-        <source>NONE</source>
+        <source>CaCl2 (Calcium chloride)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>CaCl2</source>
+        <source>CaCO3 (Calcium carbonate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>CaCO3</source>
+        <source>CaSO4 (Calcium sulfate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>CaSO4</source>
+        <source>MgSO4 (Magnesium sulfate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>MgSO4</source>
+        <source>NaCl (Sodium chloride)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NaCl</source>
+        <source>NaHCO3 (Sodium bicarbonate)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NaHCO3</source>
+        <source>Lactic Acid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lactic acid</source>
+        <source>H3PO4 (Phosphoric acid)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>H3PO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acid malt</source>
+        <source>Acidulated Malt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4270,14 +4214,72 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
+    <name>Style</name>
+    <message>
+        <source>Beer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cider</source>
+        <translation type="unfinished">Cider</translation>
+    </message>
+    <message>
+        <source>Mead</source>
+        <translation type="unfinished">Medovina</translation>
+    </message>
+    <message>
+        <source>Kombucha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soda</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine</source>
+        <translation type="unfinished">Víno</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished">Jiný</translation>
+    </message>
+</context>
+<context>
     <name>StyleEditor</name>
     <message>
         <source>Style name</source>
-        <translation>Název stylu</translation>
+        <translation type="vanished">Název stylu</translation>
     </message>
     <message>
         <source>Style name:</source>
-        <translation>Název stylu:</translation>
+        <translation type="vanished">Název stylu:</translation>
+    </message>
+</context>
+<context>
+    <name>StyleTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Název</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Druh</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="unfinished">Kategorie</translation>
+    </message>
+    <message>
+        <source>Category Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Letter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Guide</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4507,6 +4509,41 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
+    <name>Water</name>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ca  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cl  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mg  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Na  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO4 </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>WaterDialog</name>
     <message>
         <source>Too low for target profile.</source>
@@ -4646,7 +4683,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation type="unfinished">Pšenice</translation>
+        <translation type="obsolete">Pšenice</translation>
     </message>
     <message>
         <source>Wine</source>
@@ -4686,6 +4723,58 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Very High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished">Jiný</translation>
+    </message>
+    <message>
+        <source>Bacteria</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brett</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kveik</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lacto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malolactic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mixed-culture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pedio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spontaneous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dregs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium High</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4743,39 +4832,39 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>YeastItemDelegate</name>
     <message>
         <source>Ale</source>
-        <translation>Ale</translation>
+        <translation type="vanished">Ale</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>Ležák</translation>
+        <translation type="vanished">Ležák</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>Pšenice</translation>
+        <translation type="vanished">Pšenice</translation>
     </message>
     <message>
         <source>Wine</source>
-        <translation>Víno</translation>
+        <translation type="vanished">Víno</translation>
     </message>
     <message>
         <source>Champagne</source>
-        <translation>Šampaňské</translation>
+        <translation type="vanished">Šampaňské</translation>
     </message>
     <message>
         <source>Liquid</source>
-        <translation>Tekuté</translation>
+        <translation type="vanished">Tekuté</translation>
     </message>
     <message>
         <source>Dry</source>
-        <translation>Sušené</translation>
+        <translation type="vanished">Sušené</translation>
     </message>
     <message>
         <source>Slant</source>
-        <translation>Agar</translation>
+        <translation type="vanished">Agar</translation>
     </message>
     <message>
         <source>Culture</source>
-        <translation>Kultura</translation>
+        <translation type="vanished">Kultura</translation>
     </message>
 </context>
 <context>
@@ -4815,34 +4904,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Inventory</source>
         <translation>Sklad</translation>
-    </message>
-    <message>
-        <source>Change Yeast Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Laboratory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Product ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Inventory Unit Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Yeast Amount</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5158,6 +5219,17 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
+    <name>editorClass</name>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">Ne</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Ano</translation>
+    </message>
+</context>
+<context>
     <name>equipmentEditor</name>
     <message>
         <source>Specific heat (cal/(g*K))</source>
@@ -5174,10 +5246,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Lauter deadspace</source>
         <translation>Mrtvý objem zcezovačky</translation>
-    </message>
-    <message>
-        <source>equipmentEditor</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Equipment Editor</source>
@@ -6418,10 +6486,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="vanished">Výpočet nálevu</translation>
     </message>
     <message>
-        <source>tab_recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export to &amp;BBCode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7113,10 +7177,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Spočítat</translation>
-    </message>
-    <message>
-        <source>ogAdjuster</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8095,10 +8155,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>totalSalts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ca</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8214,23 +8270,23 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Ale</source>
-        <translation>Ale</translation>
+        <translation type="vanished">Ale</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>Ležák</translation>
+        <translation type="vanished">Ležák</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>Pšenice</translation>
+        <translation type="vanished">Pšenice</translation>
     </message>
     <message>
         <source>Wine</source>
-        <translation>Víno</translation>
+        <translation type="vanished">Víno</translation>
     </message>
     <message>
         <source>Champagne</source>
-        <translation>Šampaňské</translation>
+        <translation type="vanished">Šampaňské</translation>
     </message>
     <message>
         <source>Form</source>
@@ -8238,19 +8294,19 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Liquid</source>
-        <translation>Tekuté</translation>
+        <translation type="vanished">Tekuté</translation>
     </message>
     <message>
         <source>Dry</source>
-        <translation>Sušené</translation>
+        <translation type="vanished">Sušené</translation>
     </message>
     <message>
         <source>Slant</source>
-        <translation>Agar</translation>
+        <translation type="vanished">Agar</translation>
     </message>
     <message>
         <source>Culture</source>
-        <translation>Kultura</translation>
+        <translation type="vanished">Kultura</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -8298,19 +8354,19 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Low</source>
-        <translation>Nízká</translation>
+        <translation type="vanished">Nízká</translation>
     </message>
     <message>
         <source>Medium</source>
-        <translation>Střední</translation>
+        <translation type="vanished">Střední</translation>
     </message>
     <message>
         <source>High</source>
-        <translation>Vysoká</translation>
+        <translation type="vanished">Vysoká</translation>
     </message>
     <message>
         <source>Very High</source>
-        <translation>Velmi vysoké</translation>
+        <translation type="vanished">Velmi vysoké</translation>
     </message>
     <message>
         <source>Attenuation (%)</source>
@@ -8342,7 +8398,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Checked means add this yeast to secondary instead of primary</source>
-        <translation>Zaškrtněte, pokud přidáváte tyto kvasnice do dokvašování místo hlavního kvašení</translation>
+        <translation type="vanished">Zaškrtněte, pokud přidáváte tyto kvasnice do dokvašování místo hlavního kvašení</translation>
     </message>
     <message>
         <source>Best For:</source>
@@ -8390,6 +8446,90 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Min Attenuation (%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum apparent attenuation as percentage of OG points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max Attenuation (%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum apparent attenuation as percentage of OG points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether to add this yeast to secondary instead of primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alcohol Tolerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recommended limit of ABV by the culture producer before attenuation stops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Phenolic Off-Flavor Positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether culture is capable of producing phenols, which is a common distinctive property of saison, and brett yeasts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Glucoamylase Positive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A glucoamylase positive culture is capable of producing glucoamylase, the enzyme produced through expression of the diastatic gene, which allows yeast to attenuate dextrins and starches leading to a very low FG. This is positive in some saison/brett yeasts as well as the new gulo hybrid by Omega yeast labs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>K1 Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces K1 killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>K2 Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces K2 killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>K28 Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces K28 killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Klus Killer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Produces Klus killer toxin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Killer Neutral</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

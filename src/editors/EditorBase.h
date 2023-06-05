@@ -193,6 +193,30 @@ protected:
 };
 
 /**
+ * \brief Derived classes should include this in their header file, right after Q_OBJECT
+ *
+ *        Note we have to be careful about comment formats in macro definitions
+ */
+#define EDITOR_COMMON_DECL(NeName)                                                   \
+   /* This allows TableModelBase to call protected and private members of Derived */ \
+   friend class EditorBase<NeName##Editor, NeName>;                                  \
+                                                                                     \
+   public:                                                                           \
+      NeName##Editor(QWidget * parent = nullptr);                                    \
+      virtual ~NeName##Editor();                                                     \
+                                                                                     \
+      void writeFieldsToEditItem();                                                  \
+      void writeLateFieldsToEditItem();                                              \
+      void readFieldsFromEditItem(std::optional<QString> propName);                  \
+                                                                                     \
+   public slots:                                                                     \
+      /* Standard editor slots */                                                    \
+      void save();                                                                   \
+      void clearAndClose();                                                          \
+      void changed(QMetaProperty, QVariant);                                         \
+      void clickedNew();                                                             \
+
+/**
  * \brief Derived classes should include this in their implementation file
  */
 #define EDITOR_COMMON_SLOT_DEFINITIONS(EditorName) \

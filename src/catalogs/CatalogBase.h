@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ingredientDialogs/IngredientDialog.h is part of Brewken, and is copyright the following authors 2023:
+ * catalogs/CatalogBase.h is part of Brewken, and is copyright the following authors 2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef INGREDIENTDIALOGS_INGREDIENTDIALOG_H
-#define INGREDIENTDIALOGS_INGREDIENTDIALOG_H
+#ifndef CATALOGS_CATALOGBASE_H
+#define CATALOGS_CATALOGBASE_H
 #pragma once
 
 #include <QHBoxLayout>
@@ -33,9 +33,18 @@
 #include "MainWindow.h"
 
 /**
- * \class IngredientDialog
+ * \class CatalogBase
  *
- * \brief See editors/EditorBase.h for the idea behind what we're doing with the class structure here.  The ingredient
+ * \brief This is one of the base classes for \c HopCatalog, \c FermentableCatalog, etc.  Essentially each of these
+ *        classes is a UI element that shows a list of all model items of a certain type, eg all hops or all
+ *        fermentables, etc.
+ *
+ *        (The classes used to be called \c HopDialog, \c FermentableDialog, etc, which wasn't incorrect, but hopefully
+ *        the new names are more descriptive.  In the UI, we also use phrases such as "hop database" for "list of all
+ *        types of hop we know about", but that's confusing in the code, where \c Database has a more technical meaning.
+ *        So, in the code, we prefer "hop catalog" as a more old-school synonym for "list/directory of all hops" etc.)
+ *
+ *        See editors/EditorBase.h for the idea behind what we're doing with the class structure here.  The ingredient
  *        dialog classes are "simpler" in that they don't have .ui files, but the use of the of the Curiously Recurring
  *        Template Pattern to minimise code duplication is the same.
  *
@@ -43,35 +52,43 @@
  *                \
  *                ...
  *                  \
- *                  QDialog       IngredientDialog<Hop, HopDialog, HopTableModel, HopSortFilterProxyModel, HopEditor>
+ *                  QDialog       CatalogBase<Hop, HopDialog, HopTableModel, HopSortFilterProxyModel, HopEditor>
  *                        \       /
  *                         \     /
- *                        HopDialog
+ *                        HopCatalog
+ *
+ *        Because the TableModel classes (\c HopTableModel, \c FermentableTableModel, etc) are doing most of the work,
+ *        these Catalog classes are relatively simple.
+ *
+ *        Classes inheriting from this one need to include the CATALOG_COMMON_DECL macro in their header file and
+ *        the CATALOG_COMMON_CODE macro in their .cpp file.
  *
  *        Besides inheriting from \c QDialog, the derived class (eg \c HopDialog in the example above) needs to
  *        implement the following trivial public slots:
  *
- *           void addIngredient(QModelIndex const &)          -- should call IngredientDialog::add
- *           void removeIngredient()                          -- should call IngredientDialog::remove
- *           void editSelected()                              -- should call IngredientDialog::edit
- *           void newIngredient()                             -- should call IngredientDialog::newItem
- *           void filterIngredients(QString searchExpression) -- should call IngredientDialog::filter
+ *           void addItem(QModelIndex const &)          -- should call CatalogBase::add
+ *           void removeItem()                          -- should call CatalogBase::remove
+ *           void editSelected()                        -- should call CatalogBase::edit
+ *           void newItem()                             -- should call CatalogBase::makeNew †
+ *           void filterItems(QString searchExpression) -- should call CatalogBase::filter
  *
  *        The following protected function overload is also needed:
  *           virtual void changeEvent(QEvent* event)
  *
- *        The code for the definitions of all these functions is "the same" for all editors, and should be inserted in
- *        the implementation file using the INGREDIENT_DIALOG_COMMON_CODE macro.  Eg, in HopDialog, we need:
+ *        the code for the definitions of all these functions is "the same" for all editors, and should be inserted in
+ *        the implementation file using the CATALOG_COMMON_CODE macro.  Eg, in HopDialog, we need:
  *
- *          INGREDIENT_DIALOG_COMMON_CODE(HopDialog)
+ *          CATALOG_COMMON_CODE(HopDialog)
  *
  *        There is not much to the rest of the derived class (eg HopDialog).
+ *
+ *        † Not the greatest name, but `new` is a reserved word and `create` is already taken by QWidget
  */
-template<class NE, class Derived, class NeTableModel, class NeSortFilterProxyModel, class NeEditor>
-class IngredientDialog {
+template<class Derived, class NE, class NeTableModel, class NeSortFilterProxyModel, class NeEditor>
+class CatalogBase {
 public:
 
-   IngredientDialog(MainWindow * parent) :
+   CatalogBase(MainWindow * parent) :
       m_derived               {static_cast<Derived *>(this)             },
       m_parent                {parent                                   },
       m_neEditor              {new NeEditor(m_derived)                  },
@@ -90,7 +107,7 @@ public:
       m_neTableModel          {new NeTableModel(m_tableWidget, false)   },
       m_neTableProxy          {new NeSortFilterProxyModel(m_tableWidget)} {
 
-      m_neTableModel->setInventoryEditable(true);
+      this->enableEditableInventory();
       m_neTableProxy->setSourceModel(m_neTableModel);
 
       m_tableWidget->setModel(m_neTableProxy);
@@ -139,19 +156,20 @@ public:
       // FermentableDialog, etc, but I'm not sure it buys us much.
       m_derived->connect(m_pushButton_addToRecipe, &QAbstractButton::clicked,         m_derived, [this]() { this->add(); return; } );
       m_derived->connect(m_pushButton_edit       , &QAbstractButton::clicked,         m_derived, &Derived::editSelected     );
-      m_derived->connect(m_pushButton_remove     , &QAbstractButton::clicked,         m_derived, &Derived::removeIngredient );
-      m_derived->connect(m_pushButton_new        , &QAbstractButton::clicked,         m_derived, &Derived::newIngredient    );
-      m_derived->connect(m_tableWidget           , &QAbstractItemView::doubleClicked, m_derived, &Derived::addIngredient    );
-      m_derived->connect(m_qLineEdit_searchBox   , &QLineEdit::textEdited,            m_derived, &Derived::filterIngredients);
+      m_derived->connect(m_pushButton_remove     , &QAbstractButton::clicked,         m_derived, &Derived::removeItem );
+      m_derived->connect(m_pushButton_new        , &QAbstractButton::clicked,         m_derived, &Derived::newItem    );
+      m_derived->connect(m_tableWidget           , &QAbstractItemView::doubleClicked, m_derived, &Derived::addItem    );
+      m_derived->connect(m_qLineEdit_searchBox   , &QLineEdit::textEdited,            m_derived, &Derived::filterItems);
 
       m_neTableModel->observeDatabase(true);
 
       return;
    }
-   virtual ~IngredientDialog() = default;
+   virtual ~CatalogBase() = default;
 
    void retranslateUi() {
-      m_derived->setWindowTitle(QString(QObject::tr("%1 Database")).arg(NE::staticMetaObject.className()));
+                              // TODO: This doesn't work for translators.  Need to add a localisedName static member variable to each NamedEntity.
+      m_derived->setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::staticMetaObject.className()));
       m_pushButton_addToRecipe->setText(QObject::tr("Add to Recipe"));
       m_pushButton_new        ->setText(QObject::tr("New"));
       m_pushButton_edit       ->setText(QString());
@@ -165,19 +183,28 @@ public:
       return;
    }
 
-
    void setEnableAddToRecipe(bool enabled) {
       m_pushButton_addToRecipe->setEnabled(enabled);
       return;
    }
 
+   void enableEditableInventory() requires HasInventory<NeTableModel> {
+      m_neTableModel->setInventoryEditable(true);
+      return;
+   }
+   void enableEditableInventory() requires HasNoInventory<NeTableModel> {
+      // No-op version
+      return;
+   }
+
+
    /**
-    * \brief Subclass should call this from its \c addIngredient slot
+    * \brief Subclass should call this from its \c addItem slot
     *
     *        If \b index is the default, will add the selected ingredient to list. Otherwise, will add the ingredient
     *        at the specified index.
     */
-   void add(QModelIndex const & index = QModelIndex()) {
+   void add(QModelIndex const & index = QModelIndex()) requires ObservesRecipe<NeTableModel> {
       QModelIndex translated;
 
       // If there is no provided index, get the selected index.
@@ -211,11 +238,14 @@ public:
       m_parent->addToRecipe(m_neTableModel->getRow(translated.row()));
 
       return;
-
+   }
+   void add([[maybe_unused]] QModelIndex const & index = QModelIndex()) requires DoesNotObserveRecipe<NeTableModel> {
+      // No-op version
+      return;
    }
 
    /**
-    * \brief Subclass should call this from its \c removeIngredient slot
+    * \brief Subclass should call this from its \c removeItem slot
     */
    void remove() {
       QModelIndexList selected = m_tableWidget->selectionModel()->selectedIndexes();
@@ -240,7 +270,7 @@ public:
    }
 
    /**
-    * \brief Subclass should call this from its \c editIngredient slot
+    * \brief Subclass should call this from its \c editItem slot
     */
    void edit() {
       QModelIndexList selected = m_tableWidget->selectionModel()->selectedIndexes();
@@ -266,15 +296,15 @@ public:
    }
 
    /**
-    * \brief Subclass should call this from its \c newIngredient slot.  This is also called directly, eg from
+    * \brief Subclass should call this from its \c newItem slot.  This is also called directly, eg from
     *        \c BtTreeView::newNamedEntity.
     *
-    *        Note that the \c newIngredient slot doesn't take a parameter and always relies on the default folder
+    *        Note that the \c newItem slot doesn't take a parameter and always relies on the default folder
     *        parameter here, whereas direct callers can specify a folder.
     *
     * \param folder
     */
-   void newItem(QString folder = "") {
+   void makeNew(QString folder = "") {
       QString name = QInputDialog::getText(this->m_derived,
                                            QString(QObject::tr("%1 name")).arg(NE::staticMetaObject.className()),
                                            QString(QObject::tr("%1 name:")).arg(NE::staticMetaObject.className()));
@@ -293,7 +323,7 @@ public:
    }
 
    /**
-    * \brief Subclass should call this from its \c filterIngredients slot
+    * \brief Subclass should call this from its \c filterItems slot
     */
    void filter(QString searchExpression) {
       m_neTableProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -331,26 +361,67 @@ public:
 };
 
 /**
+ * \brief Derived classes should include this in their header file, right after Q_OBJECT
+ *
+ *        Note we have to be careful about comment formats in macro definitions
+ */
+#define CATALOG_COMMON_DECL(NeName) \
+   /* This allows CatalogBase to call protected and private members of Derived */  \
+   friend class CatalogBase<NeName##Catalog,                                       \
+                            NeName,                                                \
+                            NeName##TableModel,                                    \
+                            NeName##SortFilterProxyModel,                          \
+                            NeName##Editor>;                                       \
+                                                                                   \
+                                                                                   \
+   public:                                                                         \
+      NeName##Catalog(MainWindow * parent);                                        \
+      virtual ~NeName##Catalog();                                                  \
+                                                                                   \
+   public slots:                                                                   \
+      void addItem(QModelIndex const & index);                                     \
+      void removeItem();                                                           \
+      void editSelected();                                                         \
+      void newItem();                                                              \
+      void filterItems(QString searchExpression);                                  \
+                                                                                   \
+   protected:                                                                      \
+      virtual void changeEvent(QEvent* event);                                     \
+
+
+/**
  * \brief Derived classes should include this in their implementation file
  *
- *        Note that we cannot implement changeEvent in the base class (\c IngredientDialog) because it needs access to
+ *        Note that we cannot implement changeEvent in the base class (\c CatalogBase) because it needs access to
  *        \c QDialog::changeEvent, which is \c protected.
  *
  *        With a bit of name concatenation, we could also do the constructor and destructor for the derived class in
  *        this macro.  But, for the moment, I don't think it's worth the extra complexity.
  */
-#define INGREDIENT_DIALOG_COMMON_CODE(EditorName) \
-   void EditorName::addIngredient(QModelIndex const & index)    { this->add(index);               return; } \
-   void EditorName::removeIngredient()                          { this->remove();                 return; } \
-   void EditorName::editSelected()                              { this->edit  ();                 return; } \
-   void EditorName::newIngredient()                             { this->newItem();                return; } \
-   void EditorName::filterIngredients(QString searchExpression) { this->filter(searchExpression); return; } \
-   void EditorName::changeEvent(QEvent* event) {     \
-      if (event->type() == QEvent::LanguageChange) { \
-         this->retranslateUi();                      \
-      }                                              \
-      this->QDialog::changeEvent(event);             \
-      return;                                        \
+#define CATALOG_COMMON_CODE(NeName) \
+   NeName##Catalog::NeName##Catalog(MainWindow* parent) : \
+      QDialog(parent),                                    \
+      CatalogBase<NeName##Catalog,                        \
+                  NeName,                                 \
+                  NeName##TableModel,                     \
+                  NeName##SortFilterProxyModel,           \
+                  NeName##Editor>(parent) {               \
+      return;                                             \
+   }                                                      \
+                                                          \
+   NeName##Catalog::~NeName##Catalog() = default;         \
+                                                          \
+   void NeName##Catalog::addItem(QModelIndex const & index)    { this->add(index);               return; } \
+   void NeName##Catalog::removeItem()                          { this->remove();                 return; } \
+   void NeName##Catalog::editSelected()                        { this->edit  ();                 return; } \
+   void NeName##Catalog::newItem()                             { this->makeNew();                return; } \
+   void NeName##Catalog::filterItems(QString searchExpression) { this->filter(searchExpression); return; } \
+   void NeName##Catalog::changeEvent(QEvent* event) { \
+      if (event->type() == QEvent::LanguageChange) {  \
+         this->retranslateUi();                       \
+      }                                               \
+      this->QDialog::changeEvent(event);              \
+      return;                                         \
    }
 
 #endif

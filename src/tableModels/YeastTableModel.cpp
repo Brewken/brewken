@@ -144,7 +144,7 @@ bool YeastTableModel::setData(QModelIndex const & index, QVariant const & value,
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Yeast, yeast)
+TABLE_MODEL_COMMON_CODE(Yeast, yeast, PropertyNames::Recipe::yeastIds)
 //============================================== CLASS YeastItemDelegate ===============================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

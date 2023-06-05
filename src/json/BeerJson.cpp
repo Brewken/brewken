@@ -468,54 +468,39 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for styles BeerJSON records - see schemas/beerjson/1.0/style.json TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const BEER_JSON_STYLE_TYPE_MAPPER {
-      // .:TBD.JSON:. BeerJSON doesn't have style types matching Style::Type::Lager, Style::Type::Ale, Style::Type::Wheat, Style::Type::Mixed
-      // .:TODO.JSON:.  Add missing values here to Style::Type
-      {Style::Type::Lager, "?lager?"  },
-      {Style::Type::Ale  , "?ale?"    },
-      {Style::Type::Mead , "mead"    },
-      {Style::Type::Wheat, "?wheat?"  },
-      {Style::Type::Mixed, "other"   }, // ??
-//    {Style::Type::     , "beer"    },
-      {Style::Type::Cider, "cider"   },
-//    {Style::Type::     , "kombucha"},
-//    {Style::Type::     , "soda"    },
-//    {Style::Type::     , "wine"    },
-   };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
       "styles",
       &Style::typeLookup,
       "Style",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
       {
-         // Type                                                 XPath                                     Q_PROPERTY                            Enum/Unit Mapper
-         {JsonRecordDefinition::FieldType::String,               "name",                                   PropertyNames::NamedEntity::name,     },
-         {JsonRecordDefinition::FieldType::String,               "category",                               PropertyNames::Style::category,       },
-         {JsonRecordDefinition::FieldType::Int,                  "category_number",                        PropertyNames::Style::categoryNumber, },
-         {JsonRecordDefinition::FieldType::String,               "style_letter",                           PropertyNames::Style::styleLetter,    },
-         {JsonRecordDefinition::FieldType::String,               "style_guide",                            PropertyNames::Style::styleGuide,     },
-         {JsonRecordDefinition::FieldType::Enum,                 "type",                                   PropertyNames::Style::type,           &BEER_JSON_STYLE_TYPE_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/minimum",               PropertyNames::Style::ogMin,          &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/maximum",               PropertyNames::Style::ogMax,          &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/minimum",                  PropertyNames::Style::fgMin,          &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/maximum",                  PropertyNames::Style::fgMax,          &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "international_bitterness_units/minimum", PropertyNames::Style::ibuMin,         &BEER_JSON_BITTERNESS_UNIT},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "international_bitterness_units/maximum", PropertyNames::Style::ibuMax,         &BEER_JSON_BITTERNESS_UNIT},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/minimum",                          PropertyNames::Style::colorMin_srm,   &BEER_JSON_COLOR_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/maximum",                          PropertyNames::Style::colorMax_srm,   &BEER_JSON_COLOR_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/minimum",                    PropertyNames::Style::carbMin_vol,    &BEER_JSON_CARBONATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/maximum",                    PropertyNames::Style::carbMax_vol,    &BEER_JSON_CARBONATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_by_volume/minimum",              PropertyNames::Style::abvMin_pct,     &BEER_JSON_PERCENT_UNIT},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_by_volume/maximum",              PropertyNames::Style::abvMax_pct,     &BEER_JSON_PERCENT_UNIT},
-         {JsonRecordDefinition::FieldType::String,               "notes",                                  PropertyNames::Style::notes,          },
-         {JsonRecordDefinition::FieldType::String,               "aroma",                                  BtString::NULL_STR,                   }, // .:TODO.JSON:. Add this to Style
-         {JsonRecordDefinition::FieldType::String,               "appearance",                             BtString::NULL_STR,                   }, // .:TODO.JSON:. Add this to Style
-         {JsonRecordDefinition::FieldType::String,               "flavor",                                 BtString::NULL_STR,                   }, // .:TODO.JSON:. Add this to Style
-         {JsonRecordDefinition::FieldType::String,               "mouthfeel",                              BtString::NULL_STR,                   }, // .:TODO.JSON:. Add this to Style
-         {JsonRecordDefinition::FieldType::String,               "overall_impression",                     BtString::NULL_STR,                   }, // .:TODO.JSON:. Add this to Style
-         {JsonRecordDefinition::FieldType::String,               "ingredients",                            PropertyNames::Style::ingredients,    },
-         {JsonRecordDefinition::FieldType::String,               "examples",                               PropertyNames::Style::examples,       },
-         // .:TBD.JSON:. Nothing in BeerJSON directly maps to PropertyNames::Style::profile
+         // Type                                                 XPath                                     Q_PROPERTY                               Enum/Unit Mapper
+         {JsonRecordDefinition::FieldType::String,               "name",                                   PropertyNames::NamedEntity::name       },
+         {JsonRecordDefinition::FieldType::String,               "category",                               PropertyNames::Style::category         },
+         {JsonRecordDefinition::FieldType::Int,                  "category_number",                        PropertyNames::Style::categoryNumber   },
+         {JsonRecordDefinition::FieldType::String,               "style_letter",                           PropertyNames::Style::styleLetter      },
+         {JsonRecordDefinition::FieldType::String,               "style_guide",                            PropertyNames::Style::styleGuide       },
+         {JsonRecordDefinition::FieldType::Enum,                 "type",                                   PropertyNames::Style::type             , &Style::typeStringMapping},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/minimum",               PropertyNames::Style::ogMin            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/maximum",               PropertyNames::Style::ogMax            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/minimum",                  PropertyNames::Style::fgMin            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/maximum",                  PropertyNames::Style::fgMax            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::SingleUnitValue,      "international_bitterness_units/minimum", PropertyNames::Style::ibuMin           , &BEER_JSON_BITTERNESS_UNIT},
+         {JsonRecordDefinition::FieldType::SingleUnitValue,      "international_bitterness_units/maximum", PropertyNames::Style::ibuMax           , &BEER_JSON_BITTERNESS_UNIT},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/minimum",                          PropertyNames::Style::colorMin_srm     , &BEER_JSON_COLOR_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/maximum",                          PropertyNames::Style::colorMax_srm     , &BEER_JSON_COLOR_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/minimum",                    PropertyNames::Style::carbMin_vol      , &BEER_JSON_CARBONATION_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/maximum",                    PropertyNames::Style::carbMax_vol      , &BEER_JSON_CARBONATION_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_by_volume/minimum",              PropertyNames::Style::abvMin_pct       , &BEER_JSON_PERCENT_UNIT},
+         {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_by_volume/maximum",              PropertyNames::Style::abvMax_pct       , &BEER_JSON_PERCENT_UNIT},
+         {JsonRecordDefinition::FieldType::String,               "notes",                                  PropertyNames::Style::notes            },
+         {JsonRecordDefinition::FieldType::String,               "aroma",                                  PropertyNames::Style::aroma            },
+         {JsonRecordDefinition::FieldType::String,               "appearance",                             PropertyNames::Style::appearance       },
+         {JsonRecordDefinition::FieldType::String,               "flavor",                                 PropertyNames::Style::flavor           },
+         {JsonRecordDefinition::FieldType::String,               "mouthfeel",                              PropertyNames::Style::mouthfeel        },
+         {JsonRecordDefinition::FieldType::String,               "overall_impression",                     PropertyNames::Style::overallImpression},
+         {JsonRecordDefinition::FieldType::String,               "ingredients",                            PropertyNames::Style::ingredients      },
+         {JsonRecordDefinition::FieldType::String,               "examples",                               PropertyNames::Style::examples         },
       }
    };
 

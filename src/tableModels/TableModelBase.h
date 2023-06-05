@@ -31,18 +31,77 @@
 #include "tableModels/BtTableModelInventory.h"
 #include "utils/MetaTypes.h"
 
+// TODO: We would like to change "Add to Recipe" to "Set for Recipe" for things where the recipe only has one of them, eg Style or Equipment
+
+class Style;
+
 //
 // Using concepts allows us to tailor the templated TableModelTraits class without having the same inheritance
 // structure as BtTableModel / BtTableModelRecipeObserver / BtTableModelInventory.
 //
+// Note that concepts have some limitations:
+//    - Concepts cannot recursively refer to themselves and cannot be constrained, is you cannot define one concept in
+//      terms of another
+//    - You cannot have explicit instantiations, explicit specializations, or partial specializations of concepts
+// An alternative would be to use a traits struct, which has fewer limitations, but is somewhat more clunky.
+//
 // See comment in utils/TypeTraits.h for why we need two versions of this
 #if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
-template <typename Derived> concept bool HasInventory   =  std::is_base_of_v<BtTableModelInventory, Derived>;
-template <typename Derived> concept bool HasNoInventory = !std::is_base_of_v<BtTableModelInventory, Derived>;
+// OLD SYNTAX
+template <typename T> concept bool IsTableModel   = std::is_base_of_v<BtTableModel, T>;
+template <typename T> concept bool HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
+template <typename T> concept bool HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
+template <typename T> concept bool ObservesRecipe       = std::is_base_of_v<BtTableModelRecipeObserver, T>;
+template <typename T> concept bool DoesNotObserveRecipe = std::negation_v<std::is_base_of<BtTableModelRecipeObserver, T>>;
 #else
-template <typename Derived> concept      HasInventory   =  std::is_base_of_v<BtTableModelInventory, Derived>;
-template <typename Derived> concept      HasNoInventory = !std::is_base_of_v<BtTableModelInventory, Derived>;
+// NEW SYNTAX
+template <typename T> concept      IsTableModel   = std::is_base_of_v<BtTableModel, T>;
+template <typename T> concept      HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
+template <typename T> concept      HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
+template <typename T> concept      ObservesRecipe       = std::is_base_of_v<BtTableModelRecipeObserver, T>;
+template <typename T> concept      DoesNotObserveRecipe = std::negation_v<std::is_base_of<BtTableModelRecipeObserver, T>>;
 #endif
+
+//
+// NOTE: At several places below in TableModelBase, we would like to have two versions of a member function depending on
+//       some property of Derived.  Eg for updateInventory() we would like a substantive one for when Derived inherits
+//       from BtTableModelInventory and a no-op one for when it doesn't.  On GCC, we can do the following:
+//          void updateInventory(...) requires HasInventory<Derived> { ... } // Substantive version
+//          void updateInventory(...) requires HasNoInventory<Derived> { ... } // No-op version
+//
+//       HOWEVER, other compilers (eg Clang) do not permit this and give an error along the lines of "incomplete type
+//       ... used in type trait expression ... definition of ...  is not complete until the closing '}'".  This is
+//       annoying but correct.  The C++ standard rules say we are not allowed to use `HasInventory<Derived>` or
+//       `HasNoInventory<Derived>` until `Derived` is fully defined, which won't be until the closing brace of its class
+//       definition (and the `TableModelBase` template is being instantiated before that because `Derived` inherits from
+//       it).
+//
+//       The way round this is to template the member function so that the evaluation of the constraint is deferred
+//       until after the class declaration of `Derived` is complete.  Now, in, eg, HopTableModel we can call the right
+//       version via:
+//          this->updateInventory<HopTableModel>(...);
+//
+//       (I did also try `this->updateInventory<decltype(*this)>(...)`, but I couldn't get it to work.
+//
+//       But what if we want to call one of these templated functions from inside TableModelBase?  Well, then we have to
+//       call down to a wrapper function in Derived that knows which version of the TableModelBase function to call.  Eg
+//       if we want a function that returns "pointer to the observed recipe or null if this class does not observe a
+//       recipe" then, in TableModelBase we have two "doer" member functions:
+//          template<class Caller> Recipe * doGetObservedRecipe() requires ObservesRecipe<Caller> {...} Substantive
+//          template<class Caller> Recipe * doGetObservedRecipe() requires DoesNotObserveRecipe<Caller> {...} No-op
+//       And in each of the Derived classes, such as HopTableModel, we have a (macro-inserted) wrapper function such as:
+//          void HopTableModel::getObservedRecipe() { return this->doGetObservedRecipe<NeName##TableModel>(); }
+//       Then, from TableModel, we call m_derived->getObservedRecipe() and the correct version of doGetObservedRecipe()
+//       ends up being called.
+//
+//       NOTE: The IsTableModel constraint is useful as a belt-and-braces to make sure you're passing in a useful
+//             template parameter (eg `HopTableModel`, not `HopTableModel *` or `TableModelBase<HopTableModel, Hop>`).
+//             Nonetheless, if you change the calls to these functions (or add new ones), logging statements are the
+//             best way to be absolutely sure the right version of each is being called.
+//
+//       Essentially, every time you see `template<class Caller>` below, something along the lines described above is
+//       what is going on.
+//
 
 
 /**
@@ -61,7 +120,7 @@ struct TableModelTraits;
  * \brief See comment in tableModels/BtTableModel.h for more info on inheritance structure
  *
  *        Classes inheriting from this one need to include the TABLE_MODEL_COMMON_DECL macro in their header file and
- *        the TABLE_MODEL_COMMON_CODE macro in their .cpp file:
+ *        the TABLE_MODEL_COMMON_CODE macro in their .cpp file.
  *
  *        Subclasses also need to declare and implement the following functions (with the obvious substitutions for NS):
  *           void added  (std::shared_ptr<NE> item);  // Updates any global info as a result of item being added
@@ -101,9 +160,10 @@ public:
    }
 
    /**
-    * \brief Observe a recipe's list of NE (hops, fermentables. etc_
+    * \brief Observe a recipe's list of NE (hops, fermentables, etc.  Mostly called from Derived::observeRecipe.
     */
-   void observeRecipe(Recipe * rec) {
+   template<class Caller>
+   void doObserveRecipe(Recipe * rec) requires IsTableModel<Caller> && ObservesRecipe<Caller> {
       if (m_derived->recObs) {
          qDebug() <<
             Q_FUNC_INFO << "Unobserve Recipe #" << m_derived->recObs->key() << "(" << m_derived->recObs->name() << ")";
@@ -121,6 +181,13 @@ public:
          // this->addItems(m_derived->recObs->getAll<NE>());
          this->addItems(rec->getAll<NE>());
       }
+      qDebug() << Q_FUNC_INFO << "Now have" << this->rows.size() << "rows";
+      return;
+   }
+   template<class Caller>
+   void doObserveRecipe([[maybe_unused]] Recipe * rec) requires IsTableModel<Caller> && DoesNotObserveRecipe<Caller> {
+      qDebug() << Q_FUNC_INFO << "No-op version";
+      // No-op version
       return;
    }
 
@@ -130,7 +197,7 @@ public:
    void observeDatabase(bool val) {
       if (val) {
          // Observing a database and a recipe are mutually exclusive.
-         this->observeRecipe(nullptr);
+         m_derived->observeRecipe(nullptr);
          this->removeAll();
          m_derived->connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectInserted, m_derived, &Derived::addItem);
          m_derived->connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectDeleted , m_derived, &Derived::removeItem);
@@ -230,18 +297,19 @@ public:
       }
 
       // If we are observing the database, ensure that the item is undeleted and fit to display.
-      if (m_derived->recObs == nullptr && (item->deleted() || !item->display())) {
+      Recipe * observedRecipe = m_derived->getObservedRecipe();
+      if (!observedRecipe && (item->deleted() || !item->display())) {
          return;
       }
 
       // If we are watching a Recipe and the new item does not belong to it then there is nothing for us to do
-      if (m_derived->recObs) {
+      if (observedRecipe) {
          Recipe * recipeOfNewItem = item->getOwningRecipe();
-         if (recipeOfNewItem && m_derived->recObs->key() != recipeOfNewItem->key()) {
+         if (recipeOfNewItem && observedRecipe->key() != recipeOfNewItem->key()) {
             qDebug() <<
                Q_FUNC_INFO << "Ignoring signal about new" << NE::staticMetaObject.className() << "#" << item->key() <<
                "as it belongs to Recipe #" << recipeOfNewItem->key() << "and we are watching Recipe #" <<
-               m_derived->recObs->key();
+               observedRecipe->key();
             return;
          }
       }
@@ -307,6 +375,17 @@ public:
 
 protected:
 
+   template<class Caller>
+   Recipe * doGetObservedRecipe() const requires IsTableModel<Caller> && ObservesRecipe<Caller> {
+      qDebug() << Q_FUNC_INFO << "Substantive version";
+      return m_derived->recObs;
+   }
+   template<class Caller>
+   Recipe * doGetObservedRecipe() const requires IsTableModel<Caller> && DoesNotObserveRecipe<Caller> {
+      qDebug() << Q_FUNC_INFO << "No-op version";
+      return nullptr;
+   }
+
    /**
     * \brief Watch all the \c NE for changes.
     */
@@ -315,7 +394,7 @@ protected:
          Q_FUNC_INFO << "Add up to " << items.size() << "of" << NE::staticMetaObject.className() <<
          "to existing list of" << this->rows.size();
 
-      auto tmp = this->removeDuplicates(items, m_derived->recObs);
+      auto tmp = this->removeDuplicates(items, m_derived->getObservedRecipe());
 
       qDebug() << Q_FUNC_INFO << "After de-duping, adding " << tmp.size() << "of" << NE::staticMetaObject.className();
 
@@ -631,12 +710,62 @@ protected:
       return true;
    }
 
+   template<class Caller>
+   void updateInventory(int invKey, BtStringConst const & propertyName) requires IsTableModel<Caller> && HasInventory<Caller> {
+      // Substantive version
+      if (propertyName == PropertyNames::Inventory::amount) {
+         for (int ii = 0; ii < this->rows.size(); ++ii) {
+            if (invKey == this->rows.at(ii)->inventoryId()) {
+               emit m_derived->dataChanged(m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
+                                           m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
+            }
+         }
+      }
+      return;
+   }
+   template<class Caller>
+   void updateInventory([[maybe_unused]] int invKey,
+                        [[maybe_unused]] BtStringConst const & propertyName) requires IsTableModel<Caller> && HasNoInventory<Caller> {
+      // No-op version
+      return;
+   }
+
+   template<class Caller>
+   void checkRecipeItems(Recipe * recipe) requires IsTableModel<Caller> && ObservesRecipe<Caller>{
+      qDebug() << Q_FUNC_INFO;
+      if (recipe == m_derived->recObs) {
+         this->removeAll();
+         // TBD: Commented out version doesn't compile on GCC
+         // this->addItems(m_derived->recObs->getAll<NE>());
+         this->addItems(recipe->getAll<NE>());
+         if (m_derived->rowCount() > 0) {
+            emit m_derived->headerDataChanged(Qt::Vertical, 0, m_derived->rowCount() - 1);
+         }
+      }
+      return;
+   }
+   template<class Caller>
+   void checkRecipeItems([[maybe_unused]] Recipe * recipe) requires IsTableModel<Caller> && DoesNotObserveRecipe<Caller> {
+      qDebug() << Q_FUNC_INFO;
+      // No-op version
+      return;
+   }
+
    /**
     * \brief Called from \c Derived::changed slot
+    *
+    * \param propNameOfOurIdsInRecipe  This needs to be something valid in all cases, but is only used if Derived is a
+    *                                  recipe observer.
     */
+   template<class Caller>
    void propertyChanged(QMetaProperty prop,
                         [[maybe_unused]] QVariant val,
                         BtStringConst const & propNameOfOurIdsInRecipe) {
+      // Normally leave this logging statement commented out as it generates a lot of logging (because this function is
+      // called a lot!)
+//      qDebug() <<
+//         Q_FUNC_INFO << "Property" << prop.name() << "; val" << val << "; propNameOfOurIdsInRecipe" <<
+//         propNameOfOurIdsInRecipe;
       // Is sender one of our items?
       NE * itemSender = qobject_cast<NE *>(m_derived->sender());
       if (itemSender) {
@@ -654,54 +783,10 @@ protected:
 
       // See if our recipe gained or lost items.
       Recipe * recSender = qobject_cast<Recipe *>(m_derived->sender());
-      if (recSender && recSender == m_derived->recObs && prop.name() == propNameOfOurIdsInRecipe) {
-         this->removeAll();
-         // TBD: Commented out version doesn't compile on GCC
-         // this->addItems(m_derived->recObs->getAll<NE>());
-         this->addItems(recSender->getAll<NE>());
-         if (m_derived->rowCount() > 0) {
-            emit m_derived->headerDataChanged(Qt::Vertical, 0, m_derived->rowCount() - 1);
-         }
+      if (recSender && prop.name() == propNameOfOurIdsInRecipe) {
+         this->checkRecipeItems<Caller>(recSender);
       }
 
-      return;
-   }
-
-   //
-   // At this point, we would like to have two versions of an updateInventory() member function: a substantive one for
-   // when Derived inherits from BtTableModelInventory and a no-op one for when it doesn't.  On GCC, we can do the
-   // following:
-   //    void updateInventory(...) requires HasInventory<Derived> { ... } // Substantive version
-   //    void updateInventory(...) requires HasNoInventory<Derived> { ... } // No-op version
-   //
-   // HOWEVER, other compilers (eg Clang) do not permit this and give an error along the lines of "incomplete type ...
-   // used in type trait expression ... definition of ...  is not complete until the closing '}'".  This is annoying but
-   // correct because the C++ standard says we are not allowed to use `HasInventory<Derived>` or
-   // `HasNoInventory<Derived>` until `Derived` is fully defined, which won't be until the closing brace of its class
-   // definition (and the `TableModelBase` template is being instantiated before that because `Derived` inherits from
-   // it).
-   //
-   // The way round this is to template the member function so that the evaluation of the constraint is deferred until
-   // after the class declaration of `Derived` is complete.  Now, in `Derived` we can call the right version via:
-   //    this->updateInventory<decltype(*this)>(...);
-   //
-   template<class Caller>
-   void updateInventory(int invKey, BtStringConst const & propertyName) requires HasInventory<Caller> {
-      // Substantive version
-      if (propertyName == PropertyNames::Inventory::amount) {
-         for (int ii = 0; ii < this->rows.size(); ++ii) {
-            if (invKey == this->rows.at(ii)->inventoryId()) {
-               emit m_derived->dataChanged(m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
-                                           m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
-            }
-         }
-      }
-      return;
-   }
-   template<class Caller>
-   void updateInventory([[maybe_unused]] int invKey,
-                        [[maybe_unused]] BtStringConst const & propertyName) requires HasNoInventory<Caller> {
-      // No-op version
       return;
    }
 
@@ -728,6 +813,11 @@ protected:
    public:                                                                                                      \
       NeName##TableModel(QTableView * parent = nullptr, bool editable = true);                                  \
       virtual ~NeName##TableModel();                                                                            \
+                                                                                                                \
+      /* This will be a no-op if we do not inherit from BtTableModelRecipeObserver */                           \
+      void observeRecipe(Recipe * rec);                                                                         \
+      /* This will always return nullptr if we do not inherit from BtTableModelRecipeObserver */                \
+      Recipe * getObservedRecipe() const;                                                                       \
                                                                                                                 \
    protected:                                                                                                   \
       /* This block of functions is called from the TableModelBase class */                                     \
@@ -767,7 +857,14 @@ protected:
  *        NB: Mostly I have tried to make these macro-included function bodies trivial.  Macros are a bit clunky, so we
  *            only really want to use them for the things that are hard to do other ways.
  */
-#define TABLE_MODEL_COMMON_CODE(NeName, LcNeName) \
+#define TABLE_MODEL_COMMON_CODE(NeName, LcNeName, RecipePropertyName) \
+   void NeName##TableModel::observeRecipe(Recipe * rec) {                                               \
+      this->doObserveRecipe<NeName##TableModel>(rec);                                                   \
+      return;                                                                                           \
+   }                                                                                                    \
+   Recipe * NeName##TableModel::getObservedRecipe() const {                                             \
+      return this->doGetObservedRecipe<NeName##TableModel>();                                           \
+   }                                                                                                    \
    int NeName##TableModel::rowCount([[maybe_unused]] QModelIndex const & parent) const {                \
       return this->rows.size();                                                                         \
    }                                                                                                    \
@@ -780,11 +877,11 @@ protected:
       return;                                                                                           \
    }                                                                                                    \
    void NeName##TableModel::changed(QMetaProperty prop, QVariant val) {                                 \
-      this->propertyChanged(prop, val, PropertyNames::Recipe::LcNeName##Ids);                           \
+      this->propertyChanged<NeName##TableModel>(prop, val, RecipePropertyName);                         \
       return;                                                                                           \
    }                                                                                                    \
    void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {          \
-      this->updateInventory<decltype(*this)>(invKey, propertyName);                                     \
+      this->updateInventory<NeName##TableModel>(invKey, propertyName);                                  \
       return;                                                                                           \
    }                                                                                                    \
 

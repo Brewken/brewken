@@ -43,20 +43,7 @@ class Fermentable;
 class FermentableEditor : public QDialog, public Ui::fermentableEditor, public EditorBase<Fermentable, FermentableEditor> {
    Q_OBJECT
 
-public:
-   FermentableEditor(QWidget *parent=nullptr);
-   virtual ~FermentableEditor();
-
-   void writeFieldsToEditItem();
-   void writeLateFieldsToEditItem();
-   void readFieldsFromEditItem(std::optional<QString> propName);
-
-public slots:
-   // Standard editor slots
-   void save();
-   void clearAndClose();
-   void changed(QMetaProperty, QVariant);
-   void clickedNew();
+   EDITOR_COMMON_DECL(Fermentable)
 };
 
 #endif

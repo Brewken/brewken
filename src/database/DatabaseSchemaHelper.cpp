@@ -535,6 +535,14 @@ namespace {
    bool migrate_to_11(Database & db, BtSqlQuery q) {
       QVector<QueryAndParameters> const migrationQueries{
          //
+         // There was a bug in an old version of the code that meant inventory_id got stored as a decimal instead of
+         // an integer.
+         //
+         {QString("UPDATE hop         SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
+         {QString("UPDATE fermentable SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
+         {QString("UPDATE misc        SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
+         {QString("UPDATE yeast       SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
+         //
          // Hop: Extended and additional fields for BeerJSON
          //
          // We only need to update the old Hop type and form mappings.  The new ones should "just work".
@@ -630,6 +638,23 @@ namespace {
          {QString("ALTER TABLE yeast ADD COLUMN killer_producing_k28_toxin   %1").arg(db.getDbNativeTypeName<bool  >())},
          {QString("ALTER TABLE yeast ADD COLUMN killer_producing_klus_toxin  %1").arg(db.getDbNativeTypeName<bool  >())},
          {QString("ALTER TABLE yeast ADD COLUMN killer_neutral               %1").arg(db.getDbNativeTypeName<bool  >())},
+         //
+         // Style: Extended and additional fields for BeerJSON.  Plus fix inconsistent column name
+         //
+         {QString("ALTER TABLE style RENAME COLUMN s_type TO stype")},
+         // We only need to update the old Style type mapping.  The new ones should "just work".
+         {QString("     UPDATE style SET stype = 'beer'       WHERE stype = 'Lager'      ")},
+         {QString("     UPDATE style SET stype = 'beer'       WHERE stype = 'Ale  '      ")},
+         {QString("     UPDATE style SET stype = 'beer'       WHERE stype = 'Wheat'      ")},
+         {QString("     UPDATE style SET stype = 'cider'      WHERE stype = 'Cider'      ")},
+         {QString("     UPDATE style SET stype = 'mead'       WHERE stype = 'Mead '      ")},
+         {QString("     UPDATE style SET stype = 'other'      WHERE stype = 'Mixed'      ")},
+         // Profile is split into Flavor and Aroma, so we rename Profile to Flavor before adding the other columns
+         {QString("ALTER TABLE style RENAME COLUMN profile TO flavor")},
+         {QString("ALTER TABLE style ADD COLUMN aroma              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE style ADD COLUMN appearance         %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE style ADD COLUMN mouthfeel          %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE style ADD COLUMN overall_impression %1").arg(db.getDbNativeTypeName<QString>())},
 
       };
       return executeSqlQueries(q, migrationQueries);

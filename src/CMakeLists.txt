@@ -59,6 +59,11 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtTreeItem.cpp
     ${repoDir}/src/BtTreeModel.cpp
     ${repoDir}/src/BtTreeView.cpp
+    ${repoDir}/src/catalogs/FermentableCatalog.cpp
+    ${repoDir}/src/catalogs/HopCatalog.cpp
+    ${repoDir}/src/catalogs/MiscCatalog.cpp
+    ${repoDir}/src/catalogs/StyleCatalog.cpp
+    ${repoDir}/src/catalogs/YeastCatalog.cpp
     ${repoDir}/src/ConverterTool.cpp
     ${repoDir}/src/database/BtSqlQuery.cpp
     ${repoDir}/src/database/Database.cpp
@@ -86,10 +91,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
     ${repoDir}/src/ImportExport.cpp
-    ${repoDir}/src/ingredientDialogs/FermentableDialog.cpp
-    ${repoDir}/src/ingredientDialogs/HopDialog.cpp
-    ${repoDir}/src/ingredientDialogs/MiscDialog.cpp
-    ${repoDir}/src/ingredientDialogs/YeastDialog.cpp
     ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/json/BeerJson.cpp
@@ -163,6 +164,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/tableModels/MashStepTableModel.cpp
     ${repoDir}/src/tableModels/MiscTableModel.cpp
     ${repoDir}/src/tableModels/SaltTableModel.cpp
+    ${repoDir}/src/tableModels/StyleTableModel.cpp
     ${repoDir}/src/tableModels/WaterTableModel.cpp
     ${repoDir}/src/tableModels/YeastTableModel.cpp
     ${repoDir}/src/TimerListDialog.cpp

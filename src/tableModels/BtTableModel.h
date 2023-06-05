@@ -41,7 +41,13 @@ template<class Derived, class NE> class TableModelBase; // This forward declarat
 /**
  * \class BtTableModelData
  *
- * \brief Unfortunately we can't template \c BtTableModel because it inherits from a \c QObject and the Qt meta-object
+ * \brief Typically used to show a grid list of \c Hop or \c Fermentable, etc in one of two contexts:
+ *           * Listing all items of this type in the database
+ *           * Listing all items of this type used in the current \c Recipe
+ *        The grid list shows certain attributes of the item (which can usually be edited in place) and will launch the
+ *        relevant editor (eg \c HopEditor, \c FermentableEditor, etc) when you double-click on the name.
+ *
+ *        Unfortunately we can't template \c BtTableModel because it inherits from a \c QObject and the Qt meta-object
  *        compiler (moc) can't handle templated classes in QObject-derived classes (though it is fine with templated
  *        member functions in such classes, as long as they are not signals or slots).  We might one day look at
  *        https://github.com/woboq/verdigris, which overcomes these limitations, but, for now, we live within Qt's
@@ -55,10 +61,10 @@ template<class Derived, class NE> class TableModelBase; // This forward declarat
  *              QAbstractTableModel
  *                           \
  *                            \
- *                          BtTableModel               TableModelBase<NE, xxxTableModel>
- *                                /   \                /     /     /
- *                               /     \              /     /     /
- *                              /      MashStepTableModel  /     /
+ *                          BtTableModel                TableModelBase<NE, xxxTableModel>
+ *                                /   \                 /    /     /
+ *                               /     \               /    /     /
+ *                              /     MashStepTableModel   /     /
  *                             /                          /     /
  *                            /                          /     /
  *                         BtTableModelRecipeObserver   /     /

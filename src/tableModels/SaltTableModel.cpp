@@ -323,7 +323,7 @@ void SaltTableModel::saveAndClose() {
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Salt, salt)
+TABLE_MODEL_COMMON_CODE(Salt, salt, PropertyNames::Recipe::saltIds)
 //=============================================== CLASS SaltItemDelegate ===============================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

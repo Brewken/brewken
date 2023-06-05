@@ -117,24 +117,6 @@
        </item>
        <item row="5" column="3">
         <widget class="SmartLineEdit" name="lineEdit_styleLetter">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Style letter</string>
          </property>
@@ -232,7 +214,7 @@
         </widget>
        </item>
        <item row="7" column="3">
-        <widget class="QComboBox" name="comboBox_type">
+        <widget class="BtComboBox" name="comboBox_type">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>100</horstretch>
@@ -822,6 +804,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>BtComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/BtComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>SmartLabel</class>
    <extends>QLabel</extends>

@@ -1,7 +1,7 @@
 /*======================================================================================================================
- * ingredientDialogs/FermentableDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
- *   • Brian Rower <brian.rower@gmail.com>
+ * catalogs/HopCatalog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
+ *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -17,25 +17,34 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "ingredientDialogs/FermentableDialog.h"
+#ifndef CATALOGS_HOPCATALOG_H
+#define CATALOGS_HOPCATALOG_H
+#pragma once
 
-#include "editors/FermentableEditor.h"
-#include "FermentableSortFilterProxyModel.h"
-#include "MainWindow.h"
-#include "tableModels/FermentableTableModel.h"
+#include <QDialog>
+#include <QEvent>
 
+#include "editors/HopEditor.h"
+#include "model/Hop.h"
+#include "tableModels/HopTableModel.h"
 
-FermentableDialog::FermentableDialog(MainWindow* parent) :
-   QDialog(parent),
-   IngredientDialog<Fermentable,
-                    FermentableDialog,
-                    FermentableTableModel,
-                    FermentableSortFilterProxyModel,
-                    FermentableEditor>(parent) {
-   return;
-}
+// This needs to be the last include.  (I know, I know...)
+#include "catalogs/CatalogBase.h"
 
-FermentableDialog::~FermentableDialog() = default;
+/*!
+ * \class HopCatalog
+ *
+ * \brief View/controller class for showing/editing the list of hops in the database.
+ */
+class HopCatalog : public QDialog, public CatalogBase<HopCatalog,
+                                                      Hop,
+                                                      HopTableModel,
+                                                      HopSortFilterProxyModel,
+                                                      HopEditor> {
+   Q_OBJECT
 
-// Insert the boiler-plate stuff that we cannot do in IngredientDialog
-INGREDIENT_DIALOG_COMMON_CODE(FermentableDialog)
+   CATALOG_COMMON_DECL(Hop)
+
+};
+
+#endif
