@@ -78,6 +78,7 @@ public:
    double amount;
 };
 
+QString const Inventory::LocalisedName = tr("Inventory");
 
 Inventory::Inventory() : pimpl{std::make_unique<impl>()} {
    return;

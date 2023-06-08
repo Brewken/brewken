@@ -72,9 +72,10 @@ AddPropertyName(typeString       )
  */
 class Style : public NamedEntity {
    Q_OBJECT
-///   Q_CLASSINFO("signal", "styles")
 
 public:
+   static QString const LocalisedName;
+
    /**
     * \brief The type of beverage.
     *

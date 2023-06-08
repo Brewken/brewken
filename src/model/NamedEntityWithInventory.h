@@ -40,7 +40,10 @@ AddPropertyName(inventoryWithUnits)
  */
 class NamedEntityWithInventory : public NamedEntity {
    Q_OBJECT
+
 public:
+   static QString const LocalisedName;
+
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.

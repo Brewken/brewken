@@ -22,6 +22,8 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
+QString const Salt::LocalisedName = tr("Salt");
+
 EnumStringMapping const Salt::typeStringMapping {
    {Salt::Type::CaCl2         , "CaCl2"         },
    {Salt::Type::CaCO3         , "CaCO3"         },

@@ -74,9 +74,10 @@ AddPropertyName(type                     )
  */
 class Yeast : public NamedEntityWithInventory {
    Q_OBJECT
-   Q_CLASSINFO("signal", "yeasts")
 
 public:
+   static QString const LocalisedName;
+
    /**
     * \brief Attenuation figure we use in several places where we wouldn't otherwise have a figure
     *

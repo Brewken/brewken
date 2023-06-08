@@ -32,6 +32,9 @@
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 
+// TBD: Double-click does different things depending on whether you're looking at list of things in a recipe or
+// list of all things.  Propose it should become consistent!
+
 /**
  * \class CatalogBase
  *
@@ -44,15 +47,15 @@
  *        types of hop we know about", but that's confusing in the code, where \c Database has a more technical meaning.
  *        So, in the code, we prefer "hop catalog" as a more old-school synonym for "list/directory of all hops" etc.)
  *
- *        See editors/EditorBase.h for the idea behind what we're doing with the class structure here.  The ingredient
- *        dialog classes are "simpler" in that they don't have .ui files, but the use of the of the Curiously Recurring
+ *        See editors/EditorBase.h for the idea behind what we're doing with the class structure here.  These catalog
+ *        classes are "simpler" in that they don't have .ui files, but the use of the of the Curiously Recurring
  *        Template Pattern to minimise code duplication is the same.
  *
  *           QObject
  *                \
  *                ...
  *                  \
- *                  QDialog       CatalogBase<Hop, HopDialog, HopTableModel, HopSortFilterProxyModel, HopEditor>
+ *                  QDialog       CatalogBase<HopCatalog, Hop, HopTableModel, HopSortFilterProxyModel, HopEditor>
  *                        \       /
  *                         \     /
  *                        HopCatalog
@@ -63,7 +66,7 @@
  *        Classes inheriting from this one need to include the CATALOG_COMMON_DECL macro in their header file and
  *        the CATALOG_COMMON_CODE macro in their .cpp file.
  *
- *        Besides inheriting from \c QDialog, the derived class (eg \c HopDialog in the example above) needs to
+ *        Besides inheriting from \c QDialog, the derived class (eg \c HopCatalog in the example above) needs to
  *        implement the following trivial public slots:
  *
  *           void addItem(QModelIndex const &)          -- should call CatalogBase::add
@@ -100,7 +103,7 @@ public:
                                                20,
                                                QSizePolicy::Expanding,
                                                QSizePolicy::Minimum)    },
-      m_pushButton_addToRecipe{new QPushButton(m_derived)               },
+      m_pushButton_addToRecipe{this->createAddToRecipeButton()          },
       m_pushButton_new        {new QPushButton(m_derived)               },
       m_pushButton_edit       {new QPushButton(m_derived)               },
       m_pushButton_remove     {new QPushButton(m_derived)               },
@@ -118,9 +121,11 @@ public:
 
       m_qLineEdit_searchBox->setMaxLength(30);
       m_qLineEdit_searchBox->setPlaceholderText("Enter filter");
-      m_pushButton_addToRecipe->setObjectName(QStringLiteral("pushButton_addToRecipe"));
-      m_pushButton_addToRecipe->setAutoDefault(false);
-      m_pushButton_addToRecipe->setDefault(true);
+      if (m_pushButton_addToRecipe) {
+         m_pushButton_addToRecipe->setObjectName(QStringLiteral("pushButton_addToRecipe"));
+         m_pushButton_addToRecipe->setAutoDefault(false);
+         m_pushButton_addToRecipe->setDefault(true);
+      }
       m_pushButton_new->setObjectName(QStringLiteral("pushButton_new"));
       m_pushButton_new->setAutoDefault(false);
       m_pushButton_edit->setObjectName(QStringLiteral("pushButton_edit"));
@@ -134,14 +139,18 @@ public:
       m_pushButton_remove->setIcon(icon1);
       m_pushButton_remove->setAutoDefault(false);
 
+      // The order we add things to m_horizontalLayout determines their left-to-right order in that layout
       m_horizontalLayout->addWidget(m_qLineEdit_searchBox);
       m_horizontalLayout->addItem(m_horizontalSpacer);
-      m_horizontalLayout->addWidget(m_pushButton_addToRecipe);
+      if (m_pushButton_addToRecipe) {
+         m_horizontalLayout->addWidget(m_pushButton_addToRecipe);
+      }
       m_horizontalLayout->addWidget(m_pushButton_new);
       m_horizontalLayout->addWidget(m_pushButton_edit);
       m_horizontalLayout->addWidget(m_pushButton_remove);
       m_verticalLayout->addWidget(m_tableWidget);
       m_verticalLayout->addLayout(m_horizontalLayout);
+
 
       this->m_derived->resize(800, 300);
 
@@ -152,9 +161,11 @@ public:
       // https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, use of a trivial lambda function to allow
       // a signal with no arguments to connect to a "slot" function with default arguments.
       //
-      // We could probably use the same or similar trick to avoid having to declare "public slots" at all in HopDialog,
-      // FermentableDialog, etc, but I'm not sure it buys us much.
-      m_derived->connect(m_pushButton_addToRecipe, &QAbstractButton::clicked,         m_derived, [this]() { this->add(); return; } );
+      // We could probably use the same or similar trick to avoid having to declare "public slots" at all in HopCatalog,
+      // FermentableCatalog, etc, but I'm not sure it buys us much.
+      if (m_pushButton_addToRecipe) {
+         m_derived->connect(m_pushButton_addToRecipe, &QAbstractButton::clicked,         m_derived, [this]() { this->add(); return; } );
+      }
       m_derived->connect(m_pushButton_edit       , &QAbstractButton::clicked,         m_derived, &Derived::editSelected     );
       m_derived->connect(m_pushButton_remove     , &QAbstractButton::clicked,         m_derived, &Derived::removeItem );
       m_derived->connect(m_pushButton_new        , &QAbstractButton::clicked,         m_derived, &Derived::newItem    );
@@ -167,36 +178,48 @@ public:
    }
    virtual ~CatalogBase() = default;
 
+   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
+      return new QPushButton(m_derived);
+   }
+   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
+      // No-op version
+      return nullptr;
+   }
+
    void retranslateUi() {
-                              // TODO: This doesn't work for translators.  Need to add a localisedName static member variable to each NamedEntity.
-      m_derived->setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::staticMetaObject.className()));
-      m_pushButton_addToRecipe->setText(QObject::tr("Add to Recipe"));
-      m_pushButton_new        ->setText(QObject::tr("New"));
+      m_derived->setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::LocalisedName));
+      if (m_pushButton_addToRecipe) {
+         m_pushButton_addToRecipe->setText(QString(QObject::tr("Add to Recipe")));
+      }
+      m_pushButton_new        ->setText(QString(QObject::tr("New")));
       m_pushButton_edit       ->setText(QString());
       m_pushButton_remove     ->setText(QString());
 #ifndef QT_NO_TOOLTIP
-      m_pushButton_addToRecipe->setToolTip(QObject::tr("Add selected ingredient to recipe"));
-      m_pushButton_new        ->setToolTip(QObject::tr("Create new ingredient"));
-      m_pushButton_edit       ->setToolTip(QObject::tr("Edit selected ingredient"));
-      m_pushButton_remove     ->setToolTip(QObject::tr("Remove selected ingredient"));
+      if (m_pushButton_addToRecipe) {
+         m_pushButton_addToRecipe->setToolTip(QString(QObject::tr("Add selected %1 to recipe")).arg(NE::LocalisedName));
+      }
+      m_pushButton_new        ->setToolTip(QString(QObject::tr("Create new %1")).arg(NE::LocalisedName));
+      m_pushButton_edit       ->setToolTip(QString(QObject::tr("Edit selected %1")).arg(NE::LocalisedName));
+      m_pushButton_remove     ->setToolTip(QString(QObject::tr("Remove selected %1")).arg(NE::LocalisedName));
 #endif
       return;
    }
 
    void setEnableAddToRecipe(bool enabled) {
-      m_pushButton_addToRecipe->setEnabled(enabled);
+      if (m_pushButton_addToRecipe) {
+         m_pushButton_addToRecipe->setEnabled(enabled);
+      }
       return;
    }
 
-   void enableEditableInventory() requires HasInventory<NeTableModel> {
+   void enableEditableInventory() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
       m_neTableModel->setInventoryEditable(true);
       return;
    }
-   void enableEditableInventory() requires HasNoInventory<NeTableModel> {
+   void enableEditableInventory() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
       // No-op version
       return;
    }
-
 
    /**
     * \brief Subclass should call this from its \c addItem slot
@@ -204,7 +227,8 @@ public:
     *        If \b index is the default, will add the selected ingredient to list. Otherwise, will add the ingredient
     *        at the specified index.
     */
-   void add(QModelIndex const & index = QModelIndex()) requires ObservesRecipe<NeTableModel> {
+   void add(QModelIndex const & index = QModelIndex()) requires IsTableModel<NeTableModel> && ObservesRecipe<NeTableModel> {
+      qDebug() << Q_FUNC_INFO << "Index: " << index;
       QModelIndex translated;
 
       // If there is no provided index, get the selected index.
@@ -235,11 +259,13 @@ public:
          }
       }
 
+      qDebug() << Q_FUNC_INFO << "translated.row(): " << translated.row();
       m_parent->addToRecipe(m_neTableModel->getRow(translated.row()));
 
       return;
    }
-   void add([[maybe_unused]] QModelIndex const & index = QModelIndex()) requires DoesNotObserveRecipe<NeTableModel> {
+   void add([[maybe_unused]] QModelIndex const & index = QModelIndex()) requires IsTableModel<NeTableModel> && DoesNotObserveRecipe<NeTableModel> {
+      qDebug() << Q_FUNC_INFO << "No-op";
       // No-op version
       return;
    }
@@ -339,6 +365,8 @@ public:
     */
    Derived * m_derived;
 
+   // Arguably we don't need to store this pointer as MainWindow is a singleton.  However, we get given it at
+   // construction, so, why not...
    MainWindow * m_parent;
 
    NeEditor *   m_neEditor;
@@ -372,7 +400,6 @@ public:
                             NeName##TableModel,                                    \
                             NeName##SortFilterProxyModel,                          \
                             NeName##Editor>;                                       \
-                                                                                   \
                                                                                    \
    public:                                                                         \
       NeName##Catalog(MainWindow * parent);                                        \

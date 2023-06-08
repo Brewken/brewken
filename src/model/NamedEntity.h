@@ -160,6 +160,14 @@ class NamedEntity : public QObject {
 public:
 
    /**
+    * \brief Subclasses should provide their localised (ie translated) name via this static member, so that templated
+    *        functions can use it.
+    *
+    *        We shouldn't ever need to use the name for \c NamedEntity itself, but it's here for completeness.
+    */
+   static QString const LocalisedName;
+
+   /**
     * \brief Type lookup info for this class.  Note this is intentionally static, public and const.  Subclasses need to
     *        override this member with one that chains to it.  (See \c TypeLookup constructor for more info.)
     *

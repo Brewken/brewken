@@ -52,10 +52,10 @@ AddPropertyName(timerValue)
  */
 class Instruction : public NamedEntity {
    Q_OBJECT
-   Q_CLASSINFO("signal", "instructions")
-
 
 public:
+   static QString const LocalisedName;
+
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.

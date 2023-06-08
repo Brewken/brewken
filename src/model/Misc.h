@@ -59,9 +59,9 @@ AddPropertyName(use            )
  */
 class Misc : public NamedEntityWithInventory {
    Q_OBJECT
-   Q_CLASSINFO("signal", "miscs")
 
 public:
+   static QString const LocalisedName;
 
    /**
     * \brief The type of ingredient.

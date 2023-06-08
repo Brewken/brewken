@@ -156,6 +156,13 @@ public:
                        QString const & description,
                        QUndoCommand * parent = nullptr);
 
+   /**
+    * \brief Add given \c Fermentable / \c Hop / \c Misc / \c Yeast to the Recipe
+    *
+    *        Fortunately this does not need to be a slot function (as slots cannot be templated)
+    */
+   template<class NE> void addToRecipe(std::shared_ptr<NE> ne);
+
 public slots:
 
    //! \brief Accepts Recipe changes, and takes appropriate action to show the changes.
@@ -189,8 +196,7 @@ public slots:
 
    //! \brief Close a brewnote tab if we must (because of the BrewNote being deleted)
    void closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object);
-   //! \brief Add given Fermentable to the Recipe.
-   void addToRecipe(std::shared_ptr<Fermentable> ferm);
+
    //! \brief Remove selected Fermentable(s) from the Recipe.
    void removeSelectedFermentable();
    //! \brief Edit selected Fermentable.
@@ -199,22 +205,16 @@ public slots:
    //! \brief Show the pitch dialog.
    void showPitchDialog();
 
-   //! \brief Add given Hop to the Recipe.
-   void addToRecipe(std::shared_ptr<Hop> hop);
    //! \brief Remove selected Hop(s) from the Recipe.
    void removeSelectedHop();
    //! \brief Edit selected Hop.
    void editSelectedHop();
 
-   //! \brief Add given Misc to the Recipe.
-   void addToRecipe(std::shared_ptr<Misc> misc);
    //! \brief Remove selected Misc(s) from the Recipe.
    void removeSelectedMisc();
    //! \brief Edit selected Misc.
    void editSelectedMisc();
 
-   //! \brief Add given Yeast to the Recipe.
-   void addToRecipe(std::shared_ptr<Yeast> yeast);
    //! \brief Remove selected Yeast(s) from the Recipe.
    void removeSelectedYeast();
    //! \brief Edit selected Yeast

@@ -1719,6 +1719,29 @@ std::shared_ptr<QObject>  ObjectStore::defaultHardDelete(int id) {
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
 
+   // We'll use this in a couple of places below
+   QVariant primaryKey{id};
+
+   //
+   // We need to delete from the junction tables before we delete from the main table, otherwise we'll get a foreign key
+   // constraint violation because entries in the junction tables are referencing the row in the primary table that we
+   // want to remove.  (In SQLite we'll just get a generic "FOREIGN KEY constraint failed" error, which is fun to debug
+   // because the way SQLite works means it cannot tell you which FK is the problem at the point that it detects and
+   // returns the error.)
+   //
+   // So, first remove data in the junction tables
+   //
+   for (auto const & junctionTable : this->pimpl->junctionTables) {
+      if (!deleteFromJunctionTableDefinition(junctionTable, primaryKey, connection)) {
+         // We'll have already logged errors in deleteFromJunctionTableDefinition().  Not much more we can do other than
+         // bail here.
+         return object;
+      }
+   }
+
+   //
+   // Now the main table row we want to remove is no longer referenced in the junction tables, we can delete it from the
+   // primary table.
    //
    // Construct the SQL, which will be of the form
    //
@@ -1738,7 +1761,6 @@ std::shared_ptr<QObject>  ObjectStore::defaultHardDelete(int id) {
    //
    // Bind the value
    //
-   QVariant primaryKey{id};
    BtSqlQuery sqlQuery{connection};
    sqlQuery.prepare(queryString);
    sqlQuery.bindValue(QString{":"} + *primaryKeyColumn, primaryKey);
@@ -1751,17 +1773,6 @@ std::shared_ptr<QObject>  ObjectStore::defaultHardDelete(int id) {
       qCritical() <<
          Q_FUNC_INFO << "Error executing database query " << queryString << ": " << sqlQuery.lastError().text();
       return object;
-   }
-
-   //
-   // Now remove data in the junction tables
-   //
-   for (auto const & junctionTable : this->pimpl->junctionTables) {
-      if (!deleteFromJunctionTableDefinition(junctionTable, primaryKey, connection)) {
-         // We'll have already logged errors in deleteFromJunctionTableDefinition().  Not much more we can do other than
-         // bail here.
-         return object;
-      }
    }
 
    dbTransaction.commit();

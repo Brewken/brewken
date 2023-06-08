@@ -20,6 +20,7 @@
 #include "model/Inventory.h"
 #include "model/NamedParameterBundle.h"
 
+QString const NamedEntityWithInventory::LocalisedName = tr("Named Entity With Inventory");
 
 TypeLookup const NamedEntityWithInventory::typeLookup {
    "NamedEntityWithInventory",

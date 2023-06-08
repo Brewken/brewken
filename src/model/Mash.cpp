@@ -63,6 +63,8 @@ public:
    QVector<int> mashStepIds;
 };
 
+QString const Mash::LocalisedName = tr("Mash");
+
 bool Mash::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Mash const & rhs = static_cast<Mash const &>(other);

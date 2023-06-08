@@ -29,6 +29,9 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
+QString const NamedEntity::LocalisedName = tr("Named Entity");
+
+
 NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
    QObject        {nullptr  },
    m_key          {-1       },

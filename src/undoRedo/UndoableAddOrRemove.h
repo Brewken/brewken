@@ -74,6 +74,10 @@ public:
       doCallback(doCallback),
       undoCallback(undoCallback),
       everDone(false) {
+      // Uncomment this block if you need to diagnose problems that result in hitting the asserts below
+//      if (!whatToAddOrRemove || whatToAddOrRemove->key() <= 0) {
+//         qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
+//      }
       // It's a coding error to add or remove either a null pointer...
       Q_ASSERT(whatToAddOrRemove);
       // ...or something that is not yet stored in its corresponding ObjectStore (ie does not yet have a DB ID)
@@ -132,12 +136,14 @@ private:
       if (!isUndo) {
          qDebug() <<
             Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << this->text() << "for " <<
-            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key();
+            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key() << "(" <<
+            this->whatToAddOrRemove->name() << ")";
 
          this->whatToAddOrRemove = (this->updatee.*(this->doer))(this->whatToAddOrRemove);
          qDebug() <<
             Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << "Returned " <<
-            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key();
+            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key() << "(" <<
+            this->whatToAddOrRemove->name() << ")";
 
          if (this->doCallback != nullptr) {
             (MainWindow::instance().*(this->doCallback))(this->whatToAddOrRemove);
@@ -149,12 +155,12 @@ private:
       } else {
          qDebug() <<
             Q_FUNC_INFO << "Undo" << this->text() << "for " << this->whatToAddOrRemove->metaObject()->className() <<
-            "#" << this->whatToAddOrRemove->key();
+            "#" << this->whatToAddOrRemove->key() << "(" << this->whatToAddOrRemove->name() << ")";
 
          this->whatToAddOrRemove = (this->updatee.*(this->undoer))(this->whatToAddOrRemove);
          qDebug() <<
             Q_FUNC_INFO << "Undo Returned " << this->whatToAddOrRemove->metaObject()->className() << "#" <<
-            this->whatToAddOrRemove->key();
+            this->whatToAddOrRemove->key() << "(" << this->whatToAddOrRemove->name() << ")";
 
          if (this->undoCallback != nullptr) {
             (MainWindow::instance().*(this->undoCallback))(this->whatToAddOrRemove);

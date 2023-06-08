@@ -134,12 +134,13 @@ class Yeast;
  */
 class Recipe : public NamedEntity {
    Q_OBJECT
-   Q_CLASSINFO("signal", "recipes")
 
    // .:TODO:. Would be good to eliminate all these friend declarations, or at least to document why they are needed
    friend class MainWindow;
 
 public:
+   static QString const LocalisedName;
+
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.

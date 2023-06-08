@@ -1118,7 +1118,7 @@
             <property name="mimeAccepted" stdset="0">
              <string notr="true">application/x-brewken-ingredient</string>
             </property>
-            <widget class="QWidget" name="fermentableTab">
+            <widget class="QWidget" name="recipeFermentableTab">
              <attribute name="title">
               <string>Fermentables</string>
              </attribute>
@@ -1197,7 +1197,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="hopsTab">
+            <widget class="QWidget" name="recipeHopTab">
              <attribute name="title">
               <string>Hops</string>
              </attribute>
@@ -1269,7 +1269,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="miscTab">
+            <widget class="QWidget" name="recipeMiscTab">
              <attribute name="title">
               <string>Miscellaneous</string>
              </attribute>
@@ -1345,7 +1345,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="yeastTab">
+            <widget class="QWidget" name="recipeYeastTab">
              <attribute name="title">
               <string>Yeast</string>
              </attribute>

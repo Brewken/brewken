@@ -325,6 +325,8 @@ template<> QVector<int> & Recipe::impl::accessIds<Salt>()        { return this->
 template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->yeastIds; }
 
+QString const Recipe::LocalisedName = tr("Recipe");
+
 bool Recipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Recipe const & rhs = static_cast<Recipe const &>(other);

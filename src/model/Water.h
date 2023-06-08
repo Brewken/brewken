@@ -58,9 +58,9 @@ AddPropertyName(type            )
  */
 class Water : public NamedEntity {
    Q_OBJECT
-   Q_CLASSINFO("signal", "waters")
 
 public:
+   static QString const LocalisedName;
 
    /**
     * \brief

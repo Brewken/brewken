@@ -32,6 +32,8 @@ namespace {
    QStringList typesTr = QStringList() << QObject::tr("Infusion") << QObject::tr("Temperature") << QObject::tr("Decoction") << QObject::tr("Fly Sparge") << QObject::tr("Batch Sparge");
 }
 
+QString const MashStep::LocalisedName = tr("Mash Step");
+
 bool MashStep::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    MashStep const & rhs = static_cast<MashStep const &>(other);

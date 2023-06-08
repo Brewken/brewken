@@ -42,6 +42,7 @@
 static const QString kSugarKg("sugar_kg");
 static const QString kSugarKg_IgnoreEff("sugar_kg_ignoreEfficiency");
 
+QString const BrewNote::LocalisedName = tr("Brew Note");
 
 // BrewNote doesn't use its name field, so we sort by brew date
 // TBD: Could consider copying date into name field and leaving the default ordering

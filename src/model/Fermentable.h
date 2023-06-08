@@ -98,9 +98,9 @@ AddPropertyName(yield_pct                )
  */
 class Fermentable : public NamedEntityWithInventory {
    Q_OBJECT
-   Q_CLASSINFO("signal", "fermentables")
 
 public:
+   static QString const LocalisedName;
 
    /**
     * \brief The type of Fermentable.

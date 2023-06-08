@@ -24,6 +24,8 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
+QString const Equipment::LocalisedName = tr("Equipment");
+
 bool Equipment::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Equipment const & rhs = static_cast<Equipment const &>(other);

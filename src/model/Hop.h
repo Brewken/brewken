@@ -76,9 +76,9 @@ AddPropertyName(year                 )
  */
 class Hop : public NamedEntityWithInventory {
    Q_OBJECT
-   Q_CLASSINFO("signal", "hops")
 
 public:
+   static QString const LocalisedName;
 
    /*!
     * \brief The type of hop, meaning for what properties it is used.  Arguably we should have three binary flags

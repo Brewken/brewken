@@ -24,6 +24,8 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
+QString const Style::LocalisedName = tr("Style");
+
 EnumStringMapping const Style::typeStringMapping {
    {Style::Type::Beer    , "beer"    },
    {Style::Type::Cider   , "cider"   },

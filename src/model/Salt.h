@@ -51,9 +51,9 @@ AddPropertyName(whenToAdd      )
  */
 class Salt : public NamedEntity {
    Q_OBJECT
-   Q_CLASSINFO("signal", "salts")
 
 public:
+   static QString const LocalisedName;
 
    enum class Type {
       CaCl2         , // Calcium chloride

@@ -216,6 +216,7 @@ namespace {
 
       return;
    }
+
 }
 
 // This private implementation class holds all private non-virtual members of MainWindow
@@ -1696,8 +1697,8 @@ void MainWindow::droppedRecipeFermentable(QList<Fermentable*>ferms) {
       return;
    }
 
-   if (tabWidget_ingredients->currentWidget() != fermentableTab) {
-      tabWidget_ingredients->setCurrentWidget(fermentableTab);
+   if (tabWidget_ingredients->currentWidget() != recipeFermentableTab) {
+      tabWidget_ingredients->setCurrentWidget(recipeFermentableTab);
    }
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
@@ -1714,8 +1715,8 @@ void MainWindow::droppedRecipeHop(QList<Hop*>hops) {
       return;
    }
 
-   if (tabWidget_ingredients->currentWidget() != hopsTab) {
-      tabWidget_ingredients->setCurrentWidget(hopsTab);
+   if (tabWidget_ingredients->currentWidget() != recipeHopTab) {
+      tabWidget_ingredients->setCurrentWidget(recipeHopTab);
    }
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
@@ -1732,8 +1733,8 @@ void MainWindow::droppedRecipeMisc(QList<Misc*>miscs) {
       return;
    }
 
-   if (tabWidget_ingredients->currentWidget() != miscTab) {
-      tabWidget_ingredients->setCurrentWidget(miscTab);
+   if (tabWidget_ingredients->currentWidget() != recipeMiscTab) {
+      tabWidget_ingredients->setCurrentWidget(recipeMiscTab);
    }
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
@@ -1750,8 +1751,8 @@ void MainWindow::droppedRecipeYeast(QList<Yeast*>yeasts) {
       return;
    }
 
-   if ( tabWidget_ingredients->currentWidget() != yeastTab )
-      tabWidget_ingredients->setCurrentWidget(yeastTab);
+   if ( tabWidget_ingredients->currentWidget() != recipeYeastTab )
+      tabWidget_ingredients->setCurrentWidget(recipeYeastTab);
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
                                  &Recipe::add<Yeast>,
@@ -1816,60 +1817,41 @@ void MainWindow::updateRecipeEfficiency() {
    return;
 }
 
-void MainWindow::addToRecipe(std::shared_ptr<Fermentable> ferm) {
-   Q_ASSERT(ferm);
+template<class NE>
+void MainWindow::addToRecipe(std::shared_ptr<NE> ne) {
+   Q_ASSERT(ne);
+
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs,
-                             &Recipe::add<Fermentable>,
-                             ferm,
-                             &Recipe::remove<Fermentable>,
-                             tr("Add fermentable to recipe"))
+                             &Recipe::add<NE>,
+                             ne,
+                             &Recipe::remove<NE>,
+                             QString(tr("Add %1 to recipe")).arg(NE::LocalisedName))
    );
-   // We don't need to call this->pimpl->m_fermTableModel->addFermentable(ferm) here because the change to the recipe will already have
-   // triggered the necessary updates to this->pimpl->m_fermTableModel.
+
+   // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here
+   // on the individual tabs following a naming convention (recipeHopTab, recipeFermentableTab, etc)
+   // Note that we want the untranslated class name because this is not for display but to refer to a QWidget inside
+   // tabWidget_ingredients
+   auto const widgetName = QString("recipe%1Tab").arg(NE::staticMetaObject.className());
+   qDebug() << Q_FUNC_INFO << widgetName;
+   QWidget * widget = this->tabWidget_ingredients->findChild<QWidget *>(widgetName);
+   Q_ASSERT(widget);
+   this->tabWidget_ingredients->setCurrentWidget(widget);
+
+   // We don't need to call this->pimpl->m_hopTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
+   // yeast) because the change to the recipe will already have triggered the necessary updates to
+   // this->pimpl->m_hopTableModel/this->pimpl->m_fermentableTableModel/etc.
    return;
 }
-
-void MainWindow::addToRecipe(std::shared_ptr<Hop> hop) {
-   Q_ASSERT(hop);
-   this->doOrRedoUpdate(
-      newUndoableAddOrRemove(*this->recipeObs,
-                             &Recipe::add<Hop>,
-                             hop,
-                             &Recipe::remove<Hop>,
-                             tr("Add hop to recipe"))
-   );
-   // We don't need to call this->pimpl->m_hopTableModel->addHop(hop) here because the change to the recipe will already have
-   // triggered the necessary updates to this->pimpl->m_hopTableModel.
-}
-
-void MainWindow::addToRecipe(std::shared_ptr<Misc> misc) {
-   Q_ASSERT(misc);
-   this->doOrRedoUpdate(
-      newUndoableAddOrRemove(*this->recipeObs,
-                             &Recipe::add<Misc>,
-                             misc,
-                             &Recipe::remove<Misc>,
-                             tr("Add misc to recipe"))
-   );
-   // We don't need to call this->pimpl->m_miscTableModel->addMisc(misc) here because the change to the recipe will already have
-   // triggered the necessary updates to this->pimpl->m_miscTableModel.
-   return;
-}
-
-void MainWindow::addToRecipe(std::shared_ptr<Yeast> yeast) {
-   Q_ASSERT(yeast);
-   this->doOrRedoUpdate(
-      newUndoableAddOrRemove(*this->recipeObs,
-                             &Recipe::add<Yeast>,
-                             yeast,
-                             &Recipe::remove<Yeast>,
-                             tr("Add yeast to recipe"))
-   );
-   // We don't need to call this->pimpl->m_yeastTableModel->addYeast(yeast) here because the change to the recipe will already have
-   // triggered the necessary updates to this->pimpl->m_yeastTableModel.
-   return;
-}
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+//
+template void MainWindow::addToRecipe(std::shared_ptr<Hop        > ne);
+template void MainWindow::addToRecipe(std::shared_ptr<Fermentable> ne);
+template void MainWindow::addToRecipe(std::shared_ptr<Misc       > ne);
+template void MainWindow::addToRecipe(std::shared_ptr<Yeast      > ne);
 
 void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
    qDebug() << Q_FUNC_INFO;
