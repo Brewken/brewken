@@ -277,9 +277,9 @@ public:
    void connectSignals() {
       Equipment * equipment = this->recipe.equipment();
       if (equipment) {
+         // We used to have special signals for changes to Equipment's boilSize_l and boilTime_min properties, but these
+         // are now picked up in Recipe::acceptChangeToContainedObject from the generic `changed` signal
          connect(equipment, &NamedEntity::changed,           &this->recipe, &Recipe::acceptChangeToContainedObject);
-         connect(equipment, &Equipment::changedBoilSize_l,   &this->recipe, &Recipe::setBoilSize_l);
-         connect(equipment, &Equipment::changedBoilTime_min, &this->recipe, &Recipe::setBoilTime_min);
       }
 
       QList<Fermentable *> fermentables = this->recipe.fermentables();
@@ -1538,10 +1538,9 @@ void Recipe::setBrewer(QString const & var) {
 }
 
 void Recipe::setBatchSize_l(double var) {
-   this->setAndNotify(
-                                   PropertyNames::Recipe::batchSize_l,
-                                   this->m_batchSize_l,
-                                   this->enforceMin(var, "batch size"));
+   this->setAndNotify(PropertyNames::Recipe::batchSize_l,
+                      this->m_batchSize_l,
+                      this->enforceMin(var, "batch size"));
 
    // NOTE: this is bad, but we have to call recalcAll(), because the estimated
    // boil/batch volumes depend on the target volumes when there are no mash
@@ -1550,10 +1549,9 @@ void Recipe::setBatchSize_l(double var) {
 }
 
 void Recipe::setBoilSize_l(double var) {
-   this->setAndNotify(
-                                   PropertyNames::Recipe::boilSize_l,
-                                   this->m_boilSize_l,
-                                   this->enforceMin(var, "boil size"));
+   this->setAndNotify(PropertyNames::Recipe::boilSize_l,
+                      this->m_boilSize_l,
+                      this->enforceMin(var, "boil size"));
 
    // NOTE: this is bad, but we have to call recalcAll(), because the estimated
    // boil/batch volumes depend on the target volumes when there are no mash
@@ -1563,18 +1561,16 @@ void Recipe::setBoilSize_l(double var) {
 }
 
 void Recipe::setBoilTime_min(double var) {
-   this->setAndNotify(
-                                   PropertyNames::Recipe::boilTime_min,
-                                   this->m_boilTime_min,
-                                   this->enforceMin(var, "boil time"));
+   this->setAndNotify(PropertyNames::Recipe::boilTime_min,
+                      this->m_boilTime_min,
+                      this->enforceMin(var, "boil time"));
    return;
 }
 
 void Recipe::setEfficiency_pct(double var) {
-   this->setAndNotify(
-                                   PropertyNames::Recipe::efficiency_pct,
-                                   this->m_efficiency_pct,
-                                   this->enforceMinAndMax(var, "efficiency", 0.0, 100.0, 70.0));
+   this->setAndNotify(PropertyNames::Recipe::efficiency_pct,
+                      this->m_efficiency_pct,
+                      this->enforceMinAndMax(var, "efficiency", 0.0, 100.0, 70.0));
 
    // If you change the efficency, you really should recalc. And I'm afraid it
    // means recalc all, since og and fg will change, which means your ratios
@@ -1583,10 +1579,9 @@ void Recipe::setEfficiency_pct(double var) {
 }
 
 void Recipe::setAsstBrewer(const QString & var) {
-   this->setAndNotify(
-                                   PropertyNames::Recipe::asstBrewer,
-                                   this->m_asstBrewer,
-                                   var);
+   this->setAndNotify(PropertyNames::Recipe::asstBrewer,
+                      this->m_asstBrewer,
+                      var);
    return;
 }
 
@@ -2781,13 +2776,26 @@ QStringList Recipe::getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted) {
 
 //==========================Accept changes from ingredients====================
 
-void Recipe::acceptChangeToContainedObject([[maybe_unused]] QMetaProperty prop,
-                                           [[maybe_unused]] QVariant val) {
+void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
    // This tells us which object sent us the signal
    QObject * signalSender = this->sender();
    if (signalSender != nullptr) {
       QString signalSenderClassName = signalSender->metaObject()->className();
-      qDebug() << Q_FUNC_INFO << "Signal received from " << signalSenderClassName;
+      QString propName = prop.name();
+      qDebug() <<
+         Q_FUNC_INFO << "Signal received from " << signalSenderClassName << ": changed" << propName << "to" << val;;
+      Equipment * equipment = qobject_cast<Equipment *>(signalSender);
+      if (equipment) {
+         qDebug() << Q_FUNC_INFO << "Equipment #" << equipment->key() << "(ours=" << this->equipmentId << ")";
+         Q_ASSERT(equipment->key() == this->equipmentId);
+         if (propName == *PropertyNames::Equipment::boilSize_l) {
+            Q_ASSERT(val.canConvert<double>());
+            this->setBoilSize_l(val.value<double>());
+         } else if (propName == PropertyNames::Equipment::boilTime_min) {
+            Q_ASSERT(val.canConvert<double>());
+            this->setBoilTime_min(val.value<double>());
+         }
+      }
       this->recalcIfNeeded(signalSenderClassName);
    } else {
       qDebug() << Q_FUNC_INFO << "No sender";

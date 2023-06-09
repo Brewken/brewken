@@ -80,7 +80,7 @@ public:
     * \brief The boil size in liters: the pre-boil volume used in this particular instance for this equipment setup.
     *        Note that this may be a calculated value depending on the calcBoilVolume property.
     */
-   Q_PROPERTY(double boilSize_l            READ boilSize_l            WRITE setBoilSize_l            NOTIFY changedBoilSize_l )
+   Q_PROPERTY(double boilSize_l            READ boilSize_l            WRITE setBoilSize_l            )
    /**
     * \brief The batch size in liters, aka the target volume of the batch at the start of fermentation.
     */
@@ -127,7 +127,7 @@ public:
     * \brief The boil time in minutes: the normal amount of time one boils for this equipment setup.  This can be used
     *        with the evaporation rate to calculate the evaporation loss.         ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     */
-   Q_PROPERTY(double boilTime_min          READ boilTime_min          WRITE setBoilTime_min          NOTIFY changedBoilTime_min )
+   Q_PROPERTY(double boilTime_min          READ boilTime_min          WRITE setBoilTime_min          )
    /**
     * \brief Whether you want the boil volume to be automatically calculated.    ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     */
@@ -208,8 +208,6 @@ public:
    virtual Recipe * getOwningRecipe();
 
 signals:
-   void changedBoilSize_l(double);
-   void changedBoilTime_min(double);
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;

@@ -164,107 +164,109 @@ public:
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Type)
 
+   //=============================================== REGULAR PROPERTIES ================================================
    //! \brief The \b Type
-   Q_PROPERTY(Type type READ type WRITE setType /*NOTIFY changed*/ /*changedType*/)
+   Q_PROPERTY(Type    type               READ type               WRITE setType             )
    //! \brief The brewer.
-   Q_PROPERTY(QString brewer READ brewer WRITE setBrewer /*NOTIFY changed*/ /*changedBrewer*/)
+   Q_PROPERTY(QString brewer             READ brewer             WRITE setBrewer           )
    //! \brief The batch size in liters.
-   Q_PROPERTY(double batchSize_l READ batchSize_l WRITE setBatchSize_l /*NOTIFY changed*/ /*changedBatchSize_l*/)
+   Q_PROPERTY(double  batchSize_l        READ batchSize_l        WRITE setBatchSize_l      )
    //! \brief The boil size in liters.
-   Q_PROPERTY(double boilSize_l READ boilSize_l WRITE setBoilSize_l /*NOTIFY changed*/ /*changedBoilSize_l*/)
+   Q_PROPERTY(double  boilSize_l         READ boilSize_l         WRITE setBoilSize_l       )
    //! \brief The boil time in minutes.
-   Q_PROPERTY(double boilTime_min READ boilTime_min WRITE setBoilTime_min /*NOTIFY changed*/ /*changedBoilTime_min*/)
+   Q_PROPERTY(double  boilTime_min       READ boilTime_min       WRITE setBoilTime_min     )
    //! \brief The overall efficiency in percent.
-   Q_PROPERTY(double efficiency_pct READ efficiency_pct WRITE setEfficiency_pct /*NOTIFY changed*/ /*changedEfficiency_pct*/)
+   Q_PROPERTY(double  efficiency_pct     READ efficiency_pct     WRITE setEfficiency_pct   )
    //! \brief The assistant brewer.
-   Q_PROPERTY(QString asstBrewer READ asstBrewer WRITE setAsstBrewer /*NOTIFY changed*/ /*changedAsstBrewer*/)
+   Q_PROPERTY(QString asstBrewer         READ asstBrewer         WRITE setAsstBrewer       )
    //! \brief The notes.
-   Q_PROPERTY(QString notes READ notes WRITE setNotes /*NOTIFY changed*/ /*changedNotes*/)
+   Q_PROPERTY(QString notes              READ notes              WRITE setNotes            )
    //! \brief The tasting notes.
-   Q_PROPERTY(QString tasteNotes READ tasteNotes WRITE setTasteNotes /*NOTIFY changed*/ /*changedTasteNotes*/)
-   /** \brief Decimal number between zero and 50.0 denoting the taste rating – corresponds to the 50 point BJCP rating
+   Q_PROPERTY(QString tasteNotes         READ tasteNotes         WRITE setTasteNotes       )
+   /**
+    * \brief Decimal number between zero and 50.0 denoting the taste rating – corresponds to the 50 point BJCP rating
     *         system.
     *         .:TBD:. This is stored as a double but the UI constrains it to an unsigned int.
     */
-   Q_PROPERTY(double tasteRating READ tasteRating WRITE setTasteRating /*NOTIFY changed*/ /*changedTasteRating*/)
+   Q_PROPERTY(double  tasteRating        READ tasteRating        WRITE setTasteRating      )
    //! \brief The number of fermentation stages.
-   Q_PROPERTY(int fermentationStages READ fermentationStages WRITE setFermentationStages /*NOTIFY changed*/ /*changedFermentationStages*/)
+   Q_PROPERTY(int     fermentationStages READ fermentationStages WRITE setFermentationStages)
    //! \brief How many days in primary.
-   Q_PROPERTY(double primaryAge_days READ primaryAge_days WRITE setPrimaryAge_days /*NOTIFY changed*/ /*changedPrimaryAge_days*/)
+   Q_PROPERTY(double  primaryAge_days    READ primaryAge_days    WRITE setPrimaryAge_days  )
    //! \brief The temp in C in the primary.
-   Q_PROPERTY(double primaryTemp_c READ primaryTemp_c WRITE setPrimaryTemp_c /*NOTIFY changed*/ /*changedPrimaryTemp_c*/)
+   Q_PROPERTY(double  primaryTemp_c      READ primaryTemp_c      WRITE setPrimaryTemp_c    )
    //! \brief How many days in secondary.
-   Q_PROPERTY(double secondaryAge_days READ secondaryAge_days WRITE setSecondaryAge_days /*NOTIFY changed*/ /*changedSecondaryAge_days*/)
+   Q_PROPERTY(double  secondaryAge_days  READ secondaryAge_days  WRITE setSecondaryAge_days)
    //! \brief The temp in C in secondary.
-   Q_PROPERTY(double secondaryTemp_c READ secondaryTemp_c WRITE setSecondaryTemp_c /*NOTIFY changed*/ /*changedSecondaryTemp_c*/)
+   Q_PROPERTY(double  secondaryTemp_c    READ secondaryTemp_c    WRITE setSecondaryTemp_c  )
    //! \brief How many days in tertiary.
-   Q_PROPERTY(double tertiaryAge_days READ tertiaryAge_days WRITE setTertiaryAge_days /*NOTIFY changed*/ /*changedTertiaryAge_days*/)
+   Q_PROPERTY(double  tertiaryAge_days   READ tertiaryAge_days   WRITE setTertiaryAge_days )
    //! \brief The temp in C in tertiary.
-   Q_PROPERTY(double tertiaryTemp_c READ tertiaryTemp_c WRITE setTertiaryTemp_c /*NOTIFY changed*/ /*changedTertiaryTemp_c*/)
+   Q_PROPERTY(double  tertiaryTemp_c     READ tertiaryTemp_c     WRITE setTertiaryTemp_c   )
    //! \brief The number of days to age the beer after bottling.
-   Q_PROPERTY(double age_days READ age_days WRITE setAge_days /*NOTIFY changed*/ /*changedAge_days*/)
+   Q_PROPERTY(double  age_days           READ age_days           WRITE setAge_days         )
    //! \brief The temp in C as beer is aging after bottling.
-   Q_PROPERTY(double ageTemp_c READ ageTemp_c WRITE setAgeTemp_c /*NOTIFY changed*/ /*changedAgeTemp_c*/)
+   Q_PROPERTY(double  ageTemp_c          READ ageTemp_c          WRITE setAgeTemp_c        )
    //! \brief The date the recipe was created or brewed. I'm not sure yet.
-   Q_PROPERTY(QDate date READ date WRITE setDate /*NOTIFY changed*/ /*changedDate*/)
+   Q_PROPERTY(QDate   date               READ date               WRITE setDate             )
    //! \brief The carbonation in volumes of CO2 at standard temperature and pressure (STP).
-   Q_PROPERTY(double carbonation_vols READ carbonation_vols WRITE setCarbonation_vols /*NOTIFY changed*/ /*changedCarbonation_vols*/)
+   Q_PROPERTY(double  carbonation_vols   READ carbonation_vols   WRITE setCarbonation_vols )
    //! \brief Whether the beer is force carbonated.
-   Q_PROPERTY(bool forcedCarbonation READ forcedCarbonation WRITE setForcedCarbonation /*NOTIFY changed*/ /*changedForcedCarbonation*/)
+   Q_PROPERTY(bool    forcedCarbonation  READ forcedCarbonation  WRITE setForcedCarbonation)
    //! \brief The name of the priming sugar.
-   Q_PROPERTY(QString primingSugarName READ primingSugarName WRITE setPrimingSugarName /*NOTIFY changed*/ /*changedPrimingSugarName*/)
+   Q_PROPERTY(QString primingSugarName   READ primingSugarName   WRITE setPrimingSugarName )
    //! \brief The temperature in C while carbonating.
-   Q_PROPERTY(double carbonationTemp_c READ carbonationTemp_c WRITE setCarbonationTemp_c /*NOTIFY changed*/ /*changedCarbonationTemp_c*/)
+   Q_PROPERTY(double  carbonationTemp_c  READ carbonationTemp_c  WRITE setCarbonationTemp_c)
    //! \brief The factor required to convert this priming agent to an equivalent amount of glucose monohyrate.
-   Q_PROPERTY(double primingSugarEquiv READ primingSugarEquiv WRITE setPrimingSugarEquiv /*NOTIFY changed*/ /*changedPrimingSugarEquiv*/)
+   Q_PROPERTY(double  primingSugarEquiv  READ primingSugarEquiv  WRITE setPrimingSugarEquiv)
    //! \brief The factor required to convert the amount of sugar required for bottles to keg (usually about 0.5).
-   Q_PROPERTY(double kegPrimingFactor READ kegPrimingFactor WRITE setKegPrimingFactor /*NOTIFY changed*/ /*changedKegPrimingFactor*/)
+   Q_PROPERTY(double  kegPrimingFactor   READ kegPrimingFactor   WRITE setKegPrimingFactor )
    //! \brief Whether the recipe is locked against changes
-   Q_PROPERTY(bool locked READ locked WRITE setLocked /*NOTIFY changed*/ /*changed*/)
+   Q_PROPERTY(bool    locked             READ locked             WRITE setLocked           )
 
-   // Calculated stored properties.
+   //=========================================== CALCULATED STORED PROPERTIES ==========================================
    //! \brief The calculated OG.
-   Q_PROPERTY(double og READ og WRITE setOg /*NOTIFY changed*/ /*changedOg*/)
+   Q_PROPERTY(double  og                 READ og                 WRITE setOg               )
    //! \brief The calculated FG.
-   Q_PROPERTY(double fg READ fg WRITE setFg /*NOTIFY changed*/ /*changedFg*/)
+   Q_PROPERTY(double  fg                 READ fg                 WRITE setFg               )
 
-   // Calculated unstored properties. These need to listen for changes to
-   // the uncalculated properties they depend on, and re-emit changed()
-   // when appropriate.
+   //========================================= CALCULATED UNSTORED PROPERTIES ==========================================
+   // These need to listen for changes to the uncalculated properties they depend on, and re-emit changed() when
+   // appropriate.
    //! \brief The calculated points (1000*(\c og()-1.0)).
-   Q_PROPERTY(double points READ points /*WRITE*/ /*NOTIFY changed*/ /*changedPoints*/ STORED false)
+   Q_PROPERTY(double  points READ points /*WRITE*/ /*NOTIFY changed*/ /*changedPoints*/ STORED false)
    //! \brief The calculated ABV in percent.
-   Q_PROPERTY(double ABV_pct READ ABV_pct /*WRITE*/ /*NOTIFY changed*/ /*changedABV*/ STORED false)
+   Q_PROPERTY(double  ABV_pct READ ABV_pct /*WRITE*/ /*NOTIFY changed*/ /*changedABV*/ STORED false)
    //! \brief The calculated color in SRM.
-   Q_PROPERTY(double color_srm READ color_srm /*WRITE*/ /*NOTIFY changed*/ /*changedColor_srm*/ STORED false)
+   Q_PROPERTY(double  color_srm READ color_srm /*WRITE*/ /*NOTIFY changed*/ /*changedColor_srm*/ STORED false)
    //! \brief The calculated boil gravity. .:TBD:. This should perhaps be renamed boilSg for consistency
-   Q_PROPERTY(double boilGrav READ boilGrav /*WRITE*/ /*NOTIFY changed*/ /*changedBoilGrav*/ STORED false)
+   Q_PROPERTY(double  boilGrav READ boilGrav /*WRITE*/ /*NOTIFY changed*/ /*changedBoilGrav*/ STORED false)
    //! \brief The calculated IBUs.
-   Q_PROPERTY(double IBU READ IBU /*WRITE*/ /*NOTIFY changed*/ /*changedIBU*/)
+   Q_PROPERTY(double  IBU READ IBU /*WRITE*/ /*NOTIFY changed*/ /*changedIBU*/)
    //! \brief IBU contributions from each hop.
    Q_PROPERTY(QList<double> IBUs READ IBUs)
    //! \brief The calculated wort coming from the mash in liters.
-   Q_PROPERTY(double wortFromMash_l READ wortFromMash_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateWortFromMash_l*/ STORED false)
+   Q_PROPERTY(double  wortFromMash_l READ wortFromMash_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateWortFromMash_l*/ STORED false)
    //! \brief The calculated preboil volume in liters.
-   Q_PROPERTY(double boilVolume_l READ boilVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateBoilVolume_l*/ STORED false)
+   Q_PROPERTY(double  boilVolume_l READ boilVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateBoilVolume_l*/ STORED false)
    //! \brief The calculated postboil volume in liters.
-   Q_PROPERTY(double postBoilVolume_l READ postBoilVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimatePostBoilVolume_l*/ STORED false)
+   Q_PROPERTY(double  postBoilVolume_l READ postBoilVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimatePostBoilVolume_l*/ STORED false)
    //! \brief The calculated final volume into the primary in liters.
-   Q_PROPERTY(double finalVolume_l READ finalVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateFinalVolume_l*/ STORED false)
+   Q_PROPERTY(double  finalVolume_l READ finalVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateFinalVolume_l*/ STORED false)
    //! \brief The calculated Calories per 12 oz. (kcal).
-   Q_PROPERTY(double calories READ calories12oz /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateCalories*/ STORED false)
+   Q_PROPERTY(double  calories READ calories12oz /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateCalories*/ STORED false)
    //! \brief The amount of grains in the mash in kg.
-   Q_PROPERTY(double grainsInMash_kg READ grainsInMash_kg /*WRITE*/ /*NOTIFY changed*/ /*changedGrainsInMash_kg*/ STORED false)
+   Q_PROPERTY(double  grainsInMash_kg READ grainsInMash_kg /*WRITE*/ /*NOTIFY changed*/ /*changedGrainsInMash_kg*/ STORED false)
    //! \brief The total amount of grains in the recipe in kg.
-   Q_PROPERTY(double grains_kg READ grains_kg /*WRITE*/ /*NOTIFY changed*/ /*changedGrains_kg*/ STORED false)
+   Q_PROPERTY(double  grains_kg READ grains_kg /*WRITE*/ /*NOTIFY changed*/ /*changedGrains_kg*/ STORED false)
    //! \brief The beer color as a displayable QColor.
-   Q_PROPERTY(QColor SRMColor READ SRMColor /*WRITE*/ /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(QColor  SRMColor READ SRMColor /*WRITE*/ /*NOTIFY changed*/ STORED false)
 
-   // Relational properties.
+   //============================================== RELATIONAL PROPERTIES ==============================================
    // NB: the setBlahId() calls are needed by ObjectStore and are not intended for more general use.
    //! \brief The mash.
-   Q_PROPERTY(Mash * mash   READ mash      WRITE setMash /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(int    mashId READ getMashId WRITE setMashId)
+   Q_PROPERTY(Mash *  mash   READ mash      WRITE setMash /*NOTIFY changed*/ STORED false)
+   Q_PROPERTY(int     mashId READ getMashId WRITE setMashId)
 
    //! \brief The equipment.
    Q_PROPERTY(Equipment * equipment   READ equipment      WRITE setEquipment /*NOTIFY changed*/ STORED false)
@@ -580,34 +582,34 @@ private:
    std::unique_ptr<impl> pimpl;
 
    // Cached properties that are written directly to db
-   Type m_type;
+   Type    m_type;
    QString m_brewer;
    QString m_asstBrewer;
-   double m_batchSize_l;
-   double m_boilSize_l;
-   double m_boilTime_min;
-   double m_efficiency_pct;
-   int m_fermentationStages;
-   double m_primaryAge_days;
-   double m_primaryTemp_c;
-   double m_secondaryAge_days;
-   double m_secondaryTemp_c;
-   double m_tertiaryAge_days;
-   double m_tertiaryTemp_c;
-   double m_age;
-   double m_ageTemp_c;
-   QDate m_date;
-   double m_carbonation_vols;
-   bool m_forcedCarbonation;
+   double  m_batchSize_l;
+   double  m_boilSize_l;
+   double  m_boilTime_min;
+   double  m_efficiency_pct;
+   int     m_fermentationStages;
+   double  m_primaryAge_days;
+   double  m_primaryTemp_c;
+   double  m_secondaryAge_days;
+   double  m_secondaryTemp_c;
+   double  m_tertiaryAge_days;
+   double  m_tertiaryTemp_c;
+   double  m_age;
+   double  m_ageTemp_c;
+   QDate   m_date;
+   double  m_carbonation_vols;
+   bool    m_forcedCarbonation;
    QString m_primingSugarName;
-   double m_carbonationTemp_c;
-   double m_primingSugarEquiv;
-   double m_kegPrimingFactor;
+   double  m_carbonationTemp_c;
+   double  m_primingSugarEquiv;
+   double  m_kegPrimingFactor;
    QString m_notes;
    QString m_tasteNotes;
-   double m_tasteRating;
-   int styleId;
+   double  m_tasteRating;
 
+   int styleId;
    int mashId;
    int equipmentId;
 
@@ -637,7 +639,7 @@ private:
    bool m_locked;
 
    // True when constructed, indicates whether recalcAll has been called.
-   bool m_uninitializedCalcs;
+   bool   m_uninitializedCalcs;
    QMutex m_uninitializedCalcsMutex;
    QMutex m_recalcMutex;
 

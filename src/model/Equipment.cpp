@@ -179,10 +179,6 @@ void Equipment::setBoilSize_l(double const val) {
    this->setAndNotify(PropertyNames::Equipment::boilSize_l,
                       this->m_boilSize_l,
                       this->enforceMin(val, "boil size"));
-   if (this->key() > 0) {
-      // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
-      emit changedBoilSize_l(val);
-   }
 }
 
 void Equipment::setBatchSize_l(double const val) {
@@ -253,14 +249,12 @@ void Equipment::setEvapRate_lHr(double const val) {
 }
 
 void Equipment::setBoilTime_min(double const val) {
-   this->setAndNotify(PropertyNames::Equipment::boilTime_min,
-                      this->m_boilTime_min,
-                      this->enforceMin(val, "boil time"));
-   if (this->key() > 0) {
-      // .:TBD:. Do we need a special-purpose signal here or can we not rely on the generic changed one from NamedEntity?
-      emit changedBoilTime_min(val);
+   if (this->setAndNotify(PropertyNames::Equipment::boilTime_min,
+                          this->m_boilTime_min,
+                          this->enforceMin(val, "boil time"))) {
+      doCalculations();
    }
-   doCalculations();
+   return;
 }
 
 void Equipment::setCalcBoilVolume(bool const val) {

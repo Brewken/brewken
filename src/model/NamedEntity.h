@@ -542,18 +542,22 @@ protected:
 
    /**
     * \brief Convenience function that wraps preparing for a property change, making it and propagating it.
+    *
+    * \return \c true if the property actually changed, \c false if it did not (ie the "set" was in fact setting the
+    *         value to what it already was.  This is useful for the caller if, eg, there might be recalculations
+    *         required when a value changes
     */
    template<typename T>
-   void setAndNotify(BtStringConst const & propertyName,
+   bool setAndNotify(BtStringConst const & propertyName,
                      T & memberVariable,
                      T const newValue) {
       if (this->newValueMatchesExisting(propertyName, memberVariable, newValue)) {
-         return;
+         return false;
       }
       this->prepareForPropertyChange(propertyName);
       memberVariable = newValue;
       this->propagatePropertyChange(propertyName);
-      return;
+      return true;
    }
 
 private:
