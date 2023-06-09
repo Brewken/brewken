@@ -84,45 +84,45 @@ public:
    /**
     * \brief The batch size in liters, aka the target volume of the batch at the start of fermentation.
     */
-   Q_PROPERTY(double batchSize_l           READ batchSize_l           WRITE setBatchSize_l           NOTIFY changedBatchSize_l )
+   Q_PROPERTY(double batchSize_l           READ batchSize_l           WRITE setBatchSize_l           )
    /**
     * \brief The mash tun volume in liters.                ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        This parameter can be used to calculate if a particular mash and grain profile will fit in the mash tun.
     *        It may also be used for thermal calculations in the case of a partially full mash tun.
     */
-   Q_PROPERTY(double tunVolume_l           READ tunVolume_l           WRITE setTunVolume_l           NOTIFY changedTunVolume_l )
+   Q_PROPERTY(double tunVolume_l           READ tunVolume_l           WRITE setTunVolume_l           )
    /**
     * \brief The tun mass in kg.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        Used primarily to calculate the thermal parameters of the mash tun – in conjunction with the volume and
     *        specific heat.
     */
-   Q_PROPERTY(double tunWeight_kg          READ tunWeight_kg          WRITE setTunWeight_kg          NOTIFY changedTunWeight_kg )
+   Q_PROPERTY(double tunWeight_kg          READ tunWeight_kg          WRITE setTunWeight_kg          )
    /**
     * \brief The mash tun specific heat in cal/(g*C)   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        This is usually a function of the material the mash tun is made of.  Typical ranges are 0.1-0.25 for metal
     *        and 0.2-0.5 for plastic materials.
     */
-   Q_PROPERTY(double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC NOTIFY changedTunSpecificHeat_calGC )
+   Q_PROPERTY(double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC )
    /**
     * \brief The top-up water in liters.               ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        The amount of top up water normally added just prior to starting fermentation.  Usually used for extract
     *        brewing.
     */
-   Q_PROPERTY(double topUpWater_l          READ topUpWater_l          WRITE setTopUpWater_l          NOTIFY changedTopUpWater_l )
+   Q_PROPERTY(double topUpWater_l          READ topUpWater_l          WRITE setTopUpWater_l          )
    /**
     * \brief The loss to trub and chiller in liters.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        The amount of wort normally lost during transition from the boiler to the fermentation vessel.  Includes
     *        both unusable wort due to trub and wort lost to the chiller and transfer systems.
     */
-   Q_PROPERTY(double trubChillerLoss_l     READ trubChillerLoss_l     WRITE setTrubChillerLoss_l     NOTIFY changedTrubChillerLoss_l )
+   Q_PROPERTY(double trubChillerLoss_l     READ trubChillerLoss_l     WRITE setTrubChillerLoss_l     )
    /**
     * \brief The evaporation rate in percent of the boil size per hour. *** DO NOT USE. *** Only for BeerXML compatibility.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     */
-   Q_PROPERTY(double evapRate_pctHr        READ evapRate_pctHr        WRITE setEvapRate_pctHr        NOTIFY changedEvapRate_pctHr )
+   Q_PROPERTY(double evapRate_pctHr        READ evapRate_pctHr        WRITE setEvapRate_pctHr        )
    /**
     * \brief The evaporation rate in liters/hr.  NB: Not part of BeerXML
     */
-   Q_PROPERTY(double evapRate_lHr          READ evapRate_lHr          WRITE setEvapRate_lHr          NOTIFY changedEvapRate_lHr )
+   Q_PROPERTY(double evapRate_lHr          READ evapRate_lHr          WRITE setEvapRate_lHr          )
    /**
     * \brief The boil time in minutes: the normal amount of time one boils for this equipment setup.  This can be used
     *        with the evaporation rate to calculate the evaporation loss.         ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -131,38 +131,38 @@ public:
    /**
     * \brief Whether you want the boil volume to be automatically calculated.    ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     */
-   Q_PROPERTY(bool calcBoilVolume        READ calcBoilVolume        WRITE setCalcBoilVolume        NOTIFY changedCalcBoilVolume )
+   Q_PROPERTY(bool calcBoilVolume        READ calcBoilVolume        WRITE setCalcBoilVolume          )
    /**
     * \brief The lauter tun's deadspace in liters.                              ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        Amount lost to the lauter tun and equipment associated with the lautering process.
     */
-   Q_PROPERTY(double lauterDeadspace_l     READ lauterDeadspace_l     WRITE setLauterDeadspace_l     NOTIFY changedLauterDeadspace_l )
+   Q_PROPERTY(double lauterDeadspace_l     READ lauterDeadspace_l     WRITE setLauterDeadspace_l     )
    /**
     * \brief The kettle top up in liters.                                       ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        Amount normally added to the boil kettle before the boil.
     */
-   Q_PROPERTY(double  topUpKettle_l         READ topUpKettle_l         WRITE setTopUpKettle_l         NOTIFY changedTopUpKettle_l )
+   Q_PROPERTY(double  topUpKettle_l         READ topUpKettle_l         WRITE setTopUpKettle_l         )
    /**
     * \brief The hop utilization factor. I do not believe this is used.         ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        Large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher
     *        (200% or more) for very large batch equipment.
     */
-   Q_PROPERTY(double hopUtilization_pct    READ hopUtilization_pct    WRITE setHopUtilization_pct    NOTIFY changedHopUtilization_pct )
+   Q_PROPERTY(double hopUtilization_pct    READ hopUtilization_pct    WRITE setHopUtilization_pct    )
    /**
     * \brief The notes.
     */
-   Q_PROPERTY(QString notes                READ notes                 WRITE setNotes                 NOTIFY changedNotes )
+   Q_PROPERTY(QString notes                READ notes                 WRITE setNotes                 )
    /**
     * \brief How much water the grains absorb in liters/kg.  NB: Not part of BeerXML (but is part of BeerJSON)
     *
     *        The apparent volume absorbed by grain, typical values are 0.125 qt/lb (1.04 L/kg) for a mashtun,
     *        0.08 gal/lb (0.66 L/kg) for BIAB.
     */
-   Q_PROPERTY(double grainAbsorption_LKg   READ grainAbsorption_LKg   WRITE setGrainAbsorption_LKg   NOTIFY changedGrainAbsorption_LKg )
+   Q_PROPERTY(double grainAbsorption_LKg   READ grainAbsorption_LKg   WRITE setGrainAbsorption_LKg   )
    /**
     * \brief The boiling point of water in Celsius.  NB: Not part of BeerXML
     */
-   Q_PROPERTY(double boilingPoint_c        READ boilingPoint_c        WRITE setBoilingPoint_c        NOTIFY changedBoilingPoint_c )
+   Q_PROPERTY(double boilingPoint_c        READ boilingPoint_c        WRITE setBoilingPoint_c        )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    double  boilSize_l           () const;
@@ -209,22 +209,7 @@ public:
 
 signals:
    void changedBoilSize_l(double);
-   void changedBatchSize_l(double);
-   void changedTunVolume_l(double);
-   void changedTunWeight_kg(double);
-   void changedTunSpecificHeat_calGC(double);
-   void changedTopUpWater_l(double);
-   void changedTrubChillerLoss_l(double);
-   void changedEvapRate_pctHr(double);
-   void changedEvapRate_lHr(double);
    void changedBoilTime_min(double);
-   void changedCalcBoilVolume(bool);
-   void changedLauterDeadspace_l(double);
-   void changedTopUpKettle_l(double);
-   void changedHopUtilization_pct(double);
-   void changedNotes(QString);
-   void changedGrainAbsorption_LKg(double);
-   void changedBoilingPoint_c(double);
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
