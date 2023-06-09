@@ -51,6 +51,8 @@
 #include "model/Yeast.h"
 #include "utils/OStreamWriterForQFile.h"
 
+// TODO: WE should upgrade our copy of the BeerJSON schema to the 1.0.2 release at https://github.com/beerjson/beerjson/releases/tag/v1.0.2
+
 namespace {
    // See below for more comments on this.  If and when BeerJSON evolves then we will want separate constants for
    // min/max versions we can read plus whatever version we write.
@@ -62,30 +64,30 @@ namespace {
    JsonMeasureableUnitsMapping const BEER_JSON_MASS_UNIT_MAPPER {
       // MassUnitType in measurable_units.json in BeerJSON schema
       {{"mg",    &Measurement::Units::milligrams},
-       {"mg",    &Measurement::Units::grams},
-       {"kg",    &Measurement::Units::kilograms},
-       {"lb",    &Measurement::Units::pounds},
-       {"oz",    &Measurement::Units::ounces}}
+       {"mg",    &Measurement::Units::grams     },
+       {"kg",    &Measurement::Units::kilograms },
+       {"lb",    &Measurement::Units::pounds    },
+       {"oz",    &Measurement::Units::ounces    }}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_VOLUME_UNIT_MAPPER {
       // VolumeUnitType in measurable_units.json in BeerJSON schema
       // Note that BeerJSON does not support imperial cups, imperial tablespoons or imperial teaspoons
-      {{"ml",    &Measurement::Units::milliliters},
-       {"l",     &Measurement::Units::liters},
-       {"tsp",   &Measurement::Units::us_teaspoons},
-       {"tbsp",  &Measurement::Units::us_tablespoons},
-       {"floz",  &Measurement::Units::us_fluidOunces},
-       {"cup",   &Measurement::Units::us_cups},
-       {"pt",    &Measurement::Units::us_pints},
-       {"qt",    &Measurement::Units::us_quarts},
-       {"gal",   &Measurement::Units::us_gallons},
-       {"bbl",   &Measurement::Units::us_barrels},
+      {{"ml"   , &Measurement::Units::milliliters         },
+       {"l"    , &Measurement::Units::liters              },
+       {"tsp"  , &Measurement::Units::us_teaspoons        },
+       {"tbsp" , &Measurement::Units::us_tablespoons      },
+       {"floz" , &Measurement::Units::us_fluidOunces      },
+       {"cup"  , &Measurement::Units::us_cups             },
+       {"pt"   , &Measurement::Units::us_pints            },
+       {"qt"   , &Measurement::Units::us_quarts           },
+       {"gal"  , &Measurement::Units::us_gallons          },
+       {"bbl"  , &Measurement::Units::us_barrels          },
        {"ifloz", &Measurement::Units::imperial_fluidOunces},
-       {"ipt",   &Measurement::Units::imperial_pints},
-       {"iqt",   &Measurement::Units::imperial_quarts},
-       {"igal",  &Measurement::Units::imperial_gallons},
-       {"ibbl",  &Measurement::Units::imperial_barrels}}
+       {"ipt"  , &Measurement::Units::imperial_pints      },
+       {"iqt"  , &Measurement::Units::imperial_quarts     },
+       {"igal" , &Measurement::Units::imperial_gallons    },
+       {"ibbl" , &Measurement::Units::imperial_barrels    }}
    };
 
    ListOfJsonMeasureableUnitsMappings const BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER {
@@ -94,14 +96,14 @@ namespace {
 
    JsonMeasureableUnitsMapping const BEER_JSON_TEMPERATURE_UNIT_MAPPER {
       // TemperatureUnitType in measurable_units.json in BeerJSON schema
-      {{"C", &Measurement::Units::celsius},
+      {{"C", &Measurement::Units::celsius   },
        {"F", &Measurement::Units::fahrenheit}}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_COLOR_UNIT_MAPPER {
       // ColorUnitType in measurable_units.json in BeerJSON schema
-      {{"EBC", &Measurement::Units::ebc},
-       {"SRM", &Measurement::Units::srm},
+      {{"EBC" , &Measurement::Units::ebc     },
+       {"SRM" , &Measurement::Units::srm     },
        {"Lovi", &Measurement::Units::lovibond}}
    };
 
@@ -116,8 +118,8 @@ namespace {
 
    JsonMeasureableUnitsMapping const BEER_JSON_CARBONATION_UNIT_MAPPER {
       // CarbonationUnitType in measurable_units.json in BeerJSON schema
-      {{"vols", &Measurement::Units::carbonationVolumes},
-       {"g/l",  &Measurement::Units::carbonationGramsPerLiter}}
+      {{"vols", &Measurement::Units::carbonationVolumes      },
+       {"g/l" , &Measurement::Units::carbonationGramsPerLiter}}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_VOLUME_CONCENTRATION_UNIT_MAPPER {
@@ -128,8 +130,8 @@ namespace {
 
    JsonMeasureableUnitsMapping const BEER_JSON_MASS_CONCENTRATION_UNIT_MAPPER {
       // ConcentrationUnitType in measurable_units.json in BeerJSON schema
-      {{"ppm",  &Measurement::Units::partsPerMillion},
-       {"ppb",  &Measurement::Units::partsPerBillion},
+      {{"ppm" , &Measurement::Units::partsPerMillion   },
+       {"ppb" , &Measurement::Units::partsPerBillion   },
        {"mg/l", &Measurement::Units::milligramsPerLiter}}
    };
 
@@ -141,9 +143,11 @@ namespace {
       // GravityUnitType in measurable_units.json in BeerJSON schema
       // (See comments in measurement/Unit.h and measurement/PhysicalQuantity.h for why we stick with "density" in our
       // naming.)
-      {{"ppm",  &Measurement::Units::partsPerMillion},
-       {"ppb",  &Measurement::Units::partsPerBillion},
-       {"mg/l", &Measurement::Units::milligramsPerLiter}}
+      // Note that DensityUnitType is identically defined in measurable_units.json, but does not appear to be referenced
+      // anywhere else.
+      {{"sg"   , &Measurement::Units::specificGravity},
+       {"plato", &Measurement::Units::plato          },
+       {"brix" , &Measurement::Units::brix           }}
    };
 
    // PercentUnitType in measurable_units.json in BeerJSON schema
@@ -154,16 +158,16 @@ namespace {
 
    JsonMeasureableUnitsMapping const BEER_JSON_TIME_UNIT_MAPPER {
       // TimeUnitType in measurable_units.json in BeerJSON schema
-      {{"sec",  &Measurement::Units::seconds},
-       {"min",  &Measurement::Units::minutes},
-       {"hr",   &Measurement::Units::hours  },
-       {"day",  &Measurement::Units::days   },
+      {{"sec" , &Measurement::Units::seconds},
+       {"min" , &Measurement::Units::minutes},
+       {"hr"  , &Measurement::Units::hours  },
+       {"day" , &Measurement::Units::days   },
        {"week", &Measurement::Units::weeks  }}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_VISCOSITY_UNIT_MAPPER {
       // ViscosityUnitType in measurable_units.json in BeerJSON schema
-      {{"cP",    &Measurement::Units::centipoise},
+      {{"cP",    &Measurement::Units::centipoise       },
        {"mPa-s", &Measurement::Units::millipascalSecond}}
    };
 

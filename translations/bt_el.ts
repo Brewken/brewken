@@ -373,6 +373,13 @@
     </message>
 </context>
 <context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Brewken</name>
     <message>
         <source>Default</source>
@@ -927,6 +934,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Equipment</name>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">Εξοπλισμός</translation>
+    </message>
+</context>
+<context>
     <name>EquipmentEditor</name>
     <message>
         <source>Grain absorption (%1/%2)</source>
@@ -1190,6 +1204,10 @@ Log file may contain more details.</source>
     <message>
         <source>Adjunct</source>
         <translation type="unfinished">Πρόσθετα</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished">Ζυμώσιμα</translation>
     </message>
 </context>
 <context>
@@ -1481,6 +1499,10 @@ Log file may contain more details.</source>
         <source>Post-Boil</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished">Λυκίσκος</translation>
+    </message>
 </context>
 <context>
     <name>HopDialog</name>
@@ -1737,6 +1759,20 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Instruction</name>
+    <message>
+        <source>Instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Inventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Ευρετήριο ειδών</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -1955,22 +1991,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add fermentable to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add hop to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add misc to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add yeast to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add mash step to recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2024,6 +2044,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Mash</name>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
@@ -2062,6 +2089,10 @@ Log file may contain more details.</source>
     <name>MashStep</name>
     <message>
         <source>Unnamed Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2265,6 +2296,10 @@ Log file may contain more details.</source>
         <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Διάφορα</translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -2414,6 +2449,24 @@ Log file may contain more details.</source>
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntity</name>
+    <message>
+        <source>Named Entity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntityWithInventory</name>
+    <message>
+        <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3410,19 +3463,19 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
+        <translation type="obsolete">Προσθέστε το επιλεγμένο συστατικό στην συνταγή</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation type="unfinished">Δημιουργείστε ένα νέο συστατικό</translation>
+        <translation type="obsolete">Δημιουργείστε ένα νέο συστατικό</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation type="unfinished">Διόρθωση επιλεγμένου συστατικού</translation>
+        <translation type="obsolete">Διόρθωση επιλεγμένου συστατικού</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished">Διαγραφή επιλεγμένου συστατικού</translation>
+        <translation type="obsolete">Διαγραφή επιλεγμένου συστατικού</translation>
     </message>
     <message>
         <source>%1 name</source>
@@ -3438,6 +3491,22 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3692,6 +3761,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Συνταγή</translation>
     </message>
 </context>
 <context>
@@ -4137,6 +4210,10 @@ The final volume in the primary is %1.</source>
         <source>Equal</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SaltTableModel</name>
@@ -4246,6 +4323,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Other</source>
         <translation type="unfinished">&apos;Αλλο</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Στυλ</translation>
     </message>
 </context>
 <context>
@@ -4546,6 +4627,10 @@ The final volume in the primary is %1.</source>
         <source>SO4 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -4776,6 +4861,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Medium High</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast</source>
+        <translation type="unfinished">Μαγιά</translation>
     </message>
 </context>
 <context>
@@ -7917,11 +8006,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Style</source>
-        <translation>Στυλ</translation>
+        <translation type="vanished">Στυλ</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Διέγραψε το επιλεγμένο στυλ</translation>
+        <translation type="vanished">Διέγραψε το επιλεγμένο στυλ</translation>
     </message>
     <message>
         <source>Basic Information</source>
@@ -7957,27 +8046,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Lager</source>
-        <translation>Lager</translation>
+        <translation type="vanished">Lager</translation>
     </message>
     <message>
         <source>Ale</source>
-        <translation>Ale</translation>
+        <translation type="vanished">Ale</translation>
     </message>
     <message>
         <source>Mead</source>
-        <translation>Υδρόμελο</translation>
+        <translation type="vanished">Υδρόμελο</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>Σιτάρι</translation>
+        <translation type="vanished">Σιτάρι</translation>
     </message>
     <message>
         <source>Mixed</source>
-        <translation>Ανάμεικτη</translation>
+        <translation type="vanished">Ανάμεικτη</translation>
     </message>
     <message>
         <source>Cider</source>
-        <translation>Μηλίτης</translation>
+        <translation type="vanished">Μηλίτης</translation>
     </message>
     <message>
         <source>Vital Statistics</source>
@@ -8017,7 +8106,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Profile</source>
-        <translation>Προφίλ</translation>
+        <translation type="vanished">Προφίλ</translation>
     </message>
     <message>
         <source>Ingredients</source>
@@ -8065,6 +8154,26 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aroma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flavor</source>
+        <translation type="unfinished">Άρωματικές Ύλες</translation>
+    </message>
+    <message>
+        <source>Mouthfeel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Impression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

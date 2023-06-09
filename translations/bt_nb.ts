@@ -373,6 +373,13 @@
     </message>
 </context>
 <context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Brewken</name>
     <message>
         <source>Default</source>
@@ -927,6 +934,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Equipment</name>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">Utstyr</translation>
+    </message>
+</context>
+<context>
     <name>EquipmentEditor</name>
     <message>
         <source>Grain absorption (%1/%2)</source>
@@ -1190,6 +1204,10 @@ Log file may contain more details.</source>
     <message>
         <source>Adjunct</source>
         <translation type="unfinished">Adjunkt</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished">Gjærbar</translation>
     </message>
 </context>
 <context>
@@ -1481,6 +1499,10 @@ Log file may contain more details.</source>
         <source>Post-Boil</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished">Humle</translation>
+    </message>
 </context>
 <context>
     <name>HopDialog</name>
@@ -1733,6 +1755,20 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Instruction</name>
+    <message>
+        <source>Instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Inventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lagerbeholdning</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -1951,22 +1987,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add fermentable to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add hop to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add misc to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add yeast to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add mash step to recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2020,6 +2040,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Mash</name>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Mesk</translation>
+    </message>
+</context>
+<context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
@@ -2058,6 +2085,10 @@ Log file may contain more details.</source>
     <name>MashStep</name>
     <message>
         <source>Unnamed Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2261,6 +2292,10 @@ Log file may contain more details.</source>
         <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Diverse</translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -2410,6 +2445,24 @@ Log file may contain more details.</source>
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntity</name>
+    <message>
+        <source>Named Entity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntityWithInventory</name>
+    <message>
+        <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3414,19 +3467,19 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished">Legg til valgt ingrediens til oppskrift</translation>
+        <translation type="obsolete">Legg til valgt ingrediens til oppskrift</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation type="unfinished">Opprett ny ingrediens</translation>
+        <translation type="obsolete">Opprett ny ingrediens</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation type="unfinished">Rediger valgt ingrediens</translation>
+        <translation type="obsolete">Rediger valgt ingrediens</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished">Fjern valgt ingrediens</translation>
+        <translation type="obsolete">Fjern valgt ingrediens</translation>
     </message>
     <message>
         <source>%1 name</source>
@@ -3438,6 +3491,22 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3692,6 +3761,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Oppskrift</translation>
     </message>
 </context>
 <context>
@@ -4137,6 +4210,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>Equal</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SaltItemDelegate</name>
@@ -4249,6 +4326,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Other</source>
         <translation type="unfinished">Annet</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Øltype</translation>
     </message>
 </context>
 <context>
@@ -4549,6 +4630,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>SO4 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -4783,6 +4868,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Medium High</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast</source>
+        <translation type="unfinished">Gjær</translation>
     </message>
 </context>
 <context>
@@ -7923,11 +8012,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Øltype</translation>
+        <translation type="vanished">Øltype</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Slett valgt øltype</translation>
+        <translation type="vanished">Slett valgt øltype</translation>
     </message>
     <message>
         <source>Basic Information</source>
@@ -7963,27 +8052,27 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>Lager</translation>
+        <translation type="vanished">Lager</translation>
     </message>
     <message>
         <source>Ale</source>
-        <translation>Ale</translation>
+        <translation type="vanished">Ale</translation>
     </message>
     <message>
         <source>Mead</source>
-        <translation>Mjød</translation>
+        <translation type="vanished">Mjød</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>Hvete</translation>
+        <translation type="vanished">Hvete</translation>
     </message>
     <message>
         <source>Mixed</source>
-        <translation>Blandet</translation>
+        <translation type="vanished">Blandet</translation>
     </message>
     <message>
         <source>Cider</source>
-        <translation>Sider</translation>
+        <translation type="vanished">Sider</translation>
     </message>
     <message>
         <source>Vital Statistics</source>
@@ -8023,7 +8112,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation>Profil</translation>
+        <translation type="vanished">Profil</translation>
     </message>
     <message>
         <source>Ingredients</source>
@@ -8071,6 +8160,26 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aroma</source>
+        <translation type="unfinished">Aroma</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flavor</source>
+        <translation type="unfinished">Smak</translation>
+    </message>
+    <message>
+        <source>Mouthfeel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Impression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

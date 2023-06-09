@@ -373,6 +373,13 @@
     </message>
 </context>
 <context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Brewken</name>
     <message>
         <source>Default</source>
@@ -923,6 +930,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Equipment</name>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">设备Equipment</translation>
+    </message>
+</context>
+<context>
     <name>EquipmentEditor</name>
     <message>
         <source>Grain absorption (%1/%2)</source>
@@ -1186,6 +1200,10 @@ Log file may contain more details.</source>
     <message>
         <source>Adjunct</source>
         <translation type="unfinished">附属物</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1477,6 +1495,10 @@ Log file may contain more details.</source>
         <source>Post-Boil</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HopDialog</name>
@@ -1705,6 +1727,20 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Instruction</name>
+    <message>
+        <source>Instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Inventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -1919,22 +1955,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add fermentable to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add hop to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add misc to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add yeast to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add mash step to recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1988,6 +2008,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Mash</name>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
@@ -2026,6 +2053,10 @@ Log file may contain more details.</source>
     <name>MashStep</name>
     <message>
         <source>Unnamed Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2225,6 +2256,10 @@ Log file may contain more details.</source>
         <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">杂项Miscellaneous</translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -2370,6 +2405,24 @@ Log file may contain more details.</source>
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntity</name>
+    <message>
+        <source>Named Entity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntityWithInventory</name>
+    <message>
+        <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3366,19 +3419,19 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished">选择添加成份，配方添加选定的配方成分Add selected ingredient to recipe</translation>
+        <translation type="obsolete">选择添加成份，配方添加选定的配方成分Add selected ingredient to recipe</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation type="unfinished">创建新的成分Create new ingredient</translation>
+        <translation type="obsolete">创建新的成分Create new ingredient</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation type="unfinished">编辑选定的成分Edit selected ingredient</translation>
+        <translation type="obsolete">编辑选定的成分Edit selected ingredient</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished">删除选定的成分Remove selected ingredient</translation>
+        <translation type="obsolete">删除选定的成分Remove selected ingredient</translation>
     </message>
     <message>
         <source>%1 name</source>
@@ -3390,6 +3443,22 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3644,6 +3713,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">食谱</translation>
     </message>
 </context>
 <context>
@@ -4089,6 +4162,10 @@ The final volume in the primary is %1.</source>
         <source>Equal</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SaltTableModel</name>
@@ -4194,6 +4271,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Other</source>
         <translation type="unfinished">其他</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">样式Style</translation>
     </message>
 </context>
 <context>
@@ -4494,6 +4575,10 @@ The final volume in the primary is %1.</source>
         <source>SO4 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -4728,6 +4813,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Medium High</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast</source>
+        <translation type="unfinished">酵母Yeast</translation>
     </message>
 </context>
 <context>
@@ -7849,11 +7938,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Style</source>
-        <translation>样式Style</translation>
+        <translation type="vanished">样式Style</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>删除选定的风格</translation>
+        <translation type="vanished">删除选定的风格</translation>
     </message>
     <message>
         <source>Basic Information</source>
@@ -7889,27 +7978,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Lager</source>
-        <translation>拉格Lager</translation>
+        <translation type="vanished">拉格Lager</translation>
     </message>
     <message>
         <source>Ale</source>
-        <translation>爱尔Ale</translation>
+        <translation type="vanished">爱尔Ale</translation>
     </message>
     <message>
         <source>Mead</source>
-        <translation>蜂蜜酒Mead</translation>
+        <translation type="vanished">蜂蜜酒Mead</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>小麦Wheat</translation>
+        <translation type="vanished">小麦Wheat</translation>
     </message>
     <message>
         <source>Mixed</source>
-        <translation>混合Mixed</translation>
+        <translation type="vanished">混合Mixed</translation>
     </message>
     <message>
         <source>Cider</source>
-        <translation>苹果汁Cider</translation>
+        <translation type="vanished">苹果汁Cider</translation>
     </message>
     <message>
         <source>Vital Statistics</source>
@@ -7949,7 +8038,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Profile</source>
-        <translation>配置文件</translation>
+        <translation type="vanished">配置文件</translation>
     </message>
     <message>
         <source>Ingredients</source>
@@ -7997,6 +8086,26 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aroma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flavor</source>
+        <translation type="unfinished">味Flavor</translation>
+    </message>
+    <message>
+        <source>Mouthfeel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Impression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

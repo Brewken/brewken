@@ -373,6 +373,13 @@
     </message>
 </context>
 <context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Brewken</name>
     <message>
         <source>Default</source>
@@ -927,6 +934,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Equipment</name>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">Vybavení</translation>
+    </message>
+</context>
+<context>
     <name>EquipmentEditor</name>
     <message>
         <source>Grain absorption (%1/%2)</source>
@@ -1190,6 +1204,10 @@ Log file may contain more details.</source>
     <message>
         <source>Adjunct</source>
         <translation type="unfinished">Surogát</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished">Zkvasitelné</translation>
     </message>
 </context>
 <context>
@@ -1481,6 +1499,10 @@ Log file may contain more details.</source>
         <source>Post-Boil</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished">Chmel</translation>
+    </message>
 </context>
 <context>
     <name>HopDialog</name>
@@ -1733,6 +1755,20 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Instruction</name>
+    <message>
+        <source>Instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Inventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Sklad</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -1951,22 +1987,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add fermentable to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add hop to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add misc to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add yeast to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add mash step to recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2020,6 +2040,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Mash</name>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
@@ -2058,6 +2085,10 @@ Log file may contain more details.</source>
     <name>MashStep</name>
     <message>
         <source>Unnamed Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2261,6 +2292,10 @@ Log file may contain more details.</source>
         <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Přípravky</translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -2410,6 +2445,24 @@ Log file may contain more details.</source>
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntity</name>
+    <message>
+        <source>Named Entity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntityWithInventory</name>
+    <message>
+        <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3410,19 +3463,19 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished">Přidat zvolenou přísadu do receptu</translation>
+        <translation type="obsolete">Přidat zvolenou přísadu do receptu</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation type="unfinished">Vytvořit novou přísadu</translation>
+        <translation type="obsolete">Vytvořit novou přísadu</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation type="unfinished">Upravit zvolenou přísadu</translation>
+        <translation type="obsolete">Upravit zvolenou přísadu</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished">Odebrat zvolenou přísadu</translation>
+        <translation type="obsolete">Odebrat zvolenou přísadu</translation>
     </message>
     <message>
         <source>%1 name</source>
@@ -3434,6 +3487,22 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3688,6 +3757,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Recept</translation>
     </message>
 </context>
 <context>
@@ -4133,6 +4206,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Equal</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SaltTableModel</name>
@@ -4242,6 +4319,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Other</source>
         <translation type="unfinished">Jiný</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Styl</translation>
     </message>
 </context>
 <context>
@@ -4542,6 +4623,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>SO4 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -4776,6 +4861,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Medium High</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast</source>
+        <translation type="unfinished">Kvasnice</translation>
     </message>
 </context>
 <context>
@@ -7919,11 +8008,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Styl</translation>
+        <translation type="vanished">Styl</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Odstranit vybraný styl</translation>
+        <translation type="vanished">Odstranit vybraný styl</translation>
     </message>
     <message>
         <source>Basic Information</source>
@@ -7959,27 +8048,27 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>Ležák</translation>
+        <translation type="vanished">Ležák</translation>
     </message>
     <message>
         <source>Ale</source>
-        <translation>Ale</translation>
+        <translation type="vanished">Ale</translation>
     </message>
     <message>
         <source>Mead</source>
-        <translation>Medovina</translation>
+        <translation type="vanished">Medovina</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>Pšenice</translation>
+        <translation type="vanished">Pšenice</translation>
     </message>
     <message>
         <source>Mixed</source>
-        <translation>Mix</translation>
+        <translation type="vanished">Mix</translation>
     </message>
     <message>
         <source>Cider</source>
-        <translation>Cider</translation>
+        <translation type="vanished">Cider</translation>
     </message>
     <message>
         <source>Vital Statistics</source>
@@ -8019,7 +8108,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation>Profil</translation>
+        <translation type="vanished">Profil</translation>
     </message>
     <message>
         <source>Ingredients</source>
@@ -8067,6 +8156,26 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aroma</source>
+        <translation type="unfinished">Aromatický</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flavor</source>
+        <translation type="unfinished">Příchuť</translation>
+    </message>
+    <message>
+        <source>Mouthfeel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Impression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

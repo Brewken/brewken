@@ -373,6 +373,13 @@
     </message>
 </context>
 <context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Brewken</name>
     <message>
         <source>Default</source>
@@ -966,6 +973,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Equipment</name>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">Felszerelés</translation>
+    </message>
+</context>
+<context>
     <name>EquipmentEditor</name>
     <message>
         <source>Grain absorption (%1/%2)</source>
@@ -1229,6 +1243,10 @@ Log file may contain more details.</source>
     <message>
         <source>Adjunct</source>
         <translation type="unfinished">Adalék</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished">Erjeszthető alapanyag</translation>
     </message>
 </context>
 <context>
@@ -1524,6 +1542,10 @@ Log file may contain more details.</source>
         <source>Post-Boil</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished">Komló</translation>
+    </message>
 </context>
 <context>
     <name>HopDialog</name>
@@ -1784,6 +1806,20 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Instruction</name>
+    <message>
+        <source>Instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Inventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Készlet</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2002,22 +2038,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add fermentable to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add hop to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add misc to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add yeast to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add mash step to recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2071,6 +2091,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Mash</name>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Cefre</translation>
+    </message>
+</context>
+<context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
@@ -2109,6 +2136,10 @@ Log file may contain more details.</source>
     <name>MashStep</name>
     <message>
         <source>Unnamed Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2312,6 +2343,10 @@ Log file may contain more details.</source>
         <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Egyebek</translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -2457,6 +2492,24 @@ Log file may contain more details.</source>
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntity</name>
+    <message>
+        <source>Named Entity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NamedEntityWithInventory</name>
+    <message>
+        <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3453,19 +3506,19 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
-        <translation type="unfinished">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
+        <translation type="obsolete">Kiválasztott hozzávaló hozzáadása a recepthez</translation>
     </message>
     <message>
         <source>Create new ingredient</source>
-        <translation type="unfinished">Új elem hozzáadása</translation>
+        <translation type="obsolete">Új elem hozzáadása</translation>
     </message>
     <message>
         <source>Edit selected ingredient</source>
-        <translation type="unfinished">Kiválasztott elem szerkesztése</translation>
+        <translation type="obsolete">Kiválasztott elem szerkesztése</translation>
     </message>
     <message>
         <source>Remove selected ingredient</source>
-        <translation type="unfinished">Kiválasztott elem törlése</translation>
+        <translation type="obsolete">Kiválasztott elem törlése</translation>
     </message>
     <message>
         <source>%1 name</source>
@@ -3477,6 +3530,22 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3731,6 +3800,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Recept</translation>
     </message>
 </context>
 <context>
@@ -4176,6 +4249,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Equal</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SaltItemDelegate</name>
@@ -4299,6 +4376,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Other</source>
         <translation type="unfinished">Egyéb anyag</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Stílus</translation>
     </message>
 </context>
 <context>
@@ -4575,6 +4656,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>SO4 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -4808,6 +4893,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Medium High</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7854,11 +7943,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Stílus</translation>
-    </message>
-    <message>
-        <source>Delete selected style</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Stílus</translation>
     </message>
     <message>
         <source>Name</source>
@@ -7890,27 +7975,15 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Lager</source>
-        <translation>Lager</translation>
+        <translation type="vanished">Lager</translation>
     </message>
     <message>
         <source>Ale</source>
-        <translation>Ale</translation>
-    </message>
-    <message>
-        <source>Mead</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Ale</translation>
     </message>
     <message>
         <source>Wheat</source>
-        <translation>Búza</translation>
-    </message>
-    <message>
-        <source>Mixed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cider</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Búza</translation>
     </message>
     <message>
         <source>Max</source>
@@ -7942,10 +8015,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>ABV (pct)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7994,6 +8063,26 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aroma</source>
+        <translation type="unfinished">Aroma</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flavor</source>
+        <translation type="unfinished">Ízanyag</translation>
+    </message>
+    <message>
+        <source>Mouthfeel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall Impression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
