@@ -519,8 +519,10 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   Q_ASSERT(container->is_object());
                   {
                      std::optional<double> value = readSingleUnitValue(fieldDefinition, container);
+                     qDebug() << Q_FUNC_INFO << "Read:" << value;
                      if (value) {
-                        parsedValue.setValue(*value);
+                        auto rawValue = *value;
+                        parsedValue = Optional::variantFromRaw(rawValue, propertyIsOptional);
                         parsedValueOk = true;
                      }
                   }
@@ -539,9 +541,11 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   Q_ASSERT(!container->is_string());
                   {
                      QString value{container->get_string().c_str()};
-                     QDate date = QDate::fromString(value, Qt::ISODate);
-                     parsedValueOk = date.isValid();
-                     if (!parsedValueOk) {
+                     QDate rawValue = QDate::fromString(value, Qt::ISODate);
+                     parsedValueOk = rawValue.isValid();
+                     if (parsedValueOk) {
+                        parsedValue = Optional::variantFromRaw(rawValue, propertyIsOptional);
+                     } else {
                         // The JSON schema validation doesn't guarantee the date is valid, just that it's the right
                         // digit groupings.  So, we do need to handle cases such as 2022-13-13 which are the right
                         // format but not valid dates.

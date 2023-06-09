@@ -643,12 +643,13 @@ namespace {
          //
          {QString("ALTER TABLE style RENAME COLUMN s_type TO stype")},
          // We only need to update the old Style type mapping.  The new ones should "just work".
-         {QString("     UPDATE style SET stype = 'beer'       WHERE stype = 'Lager'      ")},
-         {QString("     UPDATE style SET stype = 'beer'       WHERE stype = 'Ale  '      ")},
-         {QString("     UPDATE style SET stype = 'beer'       WHERE stype = 'Wheat'      ")},
-         {QString("     UPDATE style SET stype = 'cider'      WHERE stype = 'Cider'      ")},
-         {QString("     UPDATE style SET stype = 'mead'       WHERE stype = 'Mead '      ")},
-         {QString("     UPDATE style SET stype = 'other'      WHERE stype = 'Mixed'      ")},
+         // See comment in model/Style.h for more on the mapping here
+         {QString("     UPDATE style SET stype = 'beer'  WHERE stype = 'Lager'")},
+         {QString("     UPDATE style SET stype = 'beer'  WHERE stype = 'Ale'  ")},
+         {QString("     UPDATE style SET stype = 'beer'  WHERE stype = 'Wheat'")},
+         {QString("     UPDATE style SET stype = 'cider' WHERE stype = 'Cider'")},
+         {QString("     UPDATE style SET stype = 'mead'  WHERE stype = 'Mead' ")},
+         {QString("     UPDATE style SET stype = 'other' WHERE stype = 'Mixed'")},
          // Profile is split into Flavor and Aroma, so we rename Profile to Flavor before adding the other columns
          {QString("ALTER TABLE style RENAME COLUMN profile TO flavor")},
          {QString("ALTER TABLE style ADD COLUMN aroma              %1").arg(db.getDbNativeTypeName<QString>())},
