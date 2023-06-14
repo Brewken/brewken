@@ -74,13 +74,12 @@ namespace {
 //         *recordData;
 
       std::error_code errCode;
-      boost::json::value const * valueRaw = recordData->find_pointer(valueField.asJsonPtr(), errCode);
-      if (errCode) {
+      boost::json::value const * valueRaw = valueField.followPathFrom(recordData, errCode);
+      if (!valueRaw) {
          // Not expecting this to happen given that we've already validated the JSON file against its schema.
          qWarning() << Q_FUNC_INFO << "Error parsing value from" << xPath << " (" << type << "): " << errCode;
          return false;
       }
-      Q_ASSERT(valueRaw);
       // Usually leave next line commented as otherwise generates too much logging
 //      qDebug() << Q_FUNC_INFO << "Raw Value=" << *valueRaw << "(" << valueRaw->kind() << ")";
 
@@ -101,8 +100,8 @@ namespace {
       // Usually leave next line commented as otherwise generates too much logging
 //      qDebug() << Q_FUNC_INFO << "Value=" << value;
 
-      boost::json::value const * unitNameRaw = recordData->find_pointer(unitField.asJsonPtr(), errCode);
-      if (errCode) {
+      boost::json::value const * unitNameRaw = unitField.followPathFrom(recordData, errCode);
+      if (!unitNameRaw) {
          // Not expecting this to happen given that we've already validated the JSON file against its schema.
          qWarning() << Q_FUNC_INFO << "Error parsing units from" << xPath << " (" << type << "): " << errCode;
          return false;
@@ -319,7 +318,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
       // although we only look for nodes we know about, some of these we won't use for one reason or another.
       //
       std::error_code errorCode;
-      boost::json::value * container = this->recordData.find_pointer(fieldDefinition.xPath.asJsonPtr(), errorCode);
+      boost::json::value * container = fieldDefinition.xPath.followPathFrom(&this->recordData, errorCode);
       if (!container) {
          // As noted above this is usually not an error, but _sometimes_ useful to log for debugging.  Usually leave
          // this logging commented out though as otherwise it fills up the log files
@@ -343,6 +342,12 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             //
             Q_ASSERT(container->is_array());
             boost::json::array & childRecordsData = container->get_array();
+            // The XPath of the array (eg "fermentables" or "hop_varieties") tells us which JsonRecordDefinition to use
+            // to read in the contents of that array.  We assume that there are never two different types of array with
+            // the same relative XPath (which certainly seems to be true in BeerJSON).
+            //
+            // Note that there are some arrays that we don't treat as lists-of-things because we use Named Array Item Id
+            // part of a JsonXPath to access a specific "named" member of the array.
             if (!this->loadChildRecords(fieldDefinition,
                                         this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath.asXPath_c_str()),
                                         childRecordsData,
@@ -1110,7 +1115,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
       Q_FUNC_INFO << "Exporting JSON for" << namedEntityToExport.metaObject()->className() << "#" <<
       namedEntityToExport.key();
 
-   boost::json::object & recordDataAsObject = this->recordData.get_object();
+//   boost::json::object & recordDataAsObject = this->recordData.get_object();
 
    // BeerJSON doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
@@ -1195,41 +1200,21 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
 
          QVariant value = namedEntityToExport.property(**fieldDefinition.propertyName);
          Q_ASSERT(value.isValid());
-         // If we have a non-trivial XPath then we'll need to create a sub-object
          //
-         // In C++23, we'll be able to write key.contains('/"), but until then the alternative
-         // is only slightly longer.
-         auto key = fieldDefinition.xPath.asKey();
-         if (key.find('/') != key.npos) {
-            qDebug() << Q_FUNC_INFO <<
-               "Splitting non-trivial XPath (" << fieldDefinition.xPath << ") for output of property" <<
-               *fieldDefinition.propertyName << "of" << namedEntityToExport.metaObject()->className();
-            auto keyList = fieldDefinition.xPath.getElements();
-            // Ensure sub-objects exist.
-            boost::json::object * currentObject = &recordDataAsObject;
-            auto const * currentKey = &keyList[0]; // Strictly we don't need this initialisation, but it
-                                                   // prevents a compiler warning.
-            for (auto const & subKey : keyList) {
-               qDebug() << Q_FUNC_INFO << "Sub-key" << std::string(subKey).c_str();
-               // We want to loop over all but the last items in the vector, as the last subKey is what gets passed to
-               // insertValue.  Easiest way to do this is loop over everything and bail out when we reach the last
-               // element.
-               if (&subKey != &keyList.back()) {
-                  if (!currentObject->if_contains(subKey)) {
-                     qDebug() << Q_FUNC_INFO << "Making sub-object for" << std::string(subKey).c_str();
-                     (*currentObject)[subKey].emplace_object();
-                  }
-                  currentObject = (*currentObject)[subKey].if_object();
-                  Q_ASSERT(currentObject);
-               }
+         // If we have a non-trivial XPath then we'll need to traverse through any sub-objects and sub-arrays (creating
+         // any that are not present) before arriving at the leaf object where we can set the value.
+         // JsonXPath::moveObjectPointerToLeaf() does all the heaving lifting here.
+         //
+         // Note that, although we start and end with an object, we need to pass in the containing value.  (If you have
+         // a boost::json::value, you can trivially get to its contained boost::json::object, but you can't do the
+         // reverse.  So passing the value makes things easier in the function we're calling.)
+         //
+         boost::json::value * valuePointer = &this->recordData;
+         auto key = fieldDefinition.xPath.makePointerToLeaf(&valuePointer);
 
-               currentKey = &subKey;
-            }
-            this->insertValue(fieldDefinition, *currentObject, *currentKey, value);
-            continue;
-         }
-
-         this->insertValue(fieldDefinition, recordDataAsObject, key, value);
+         // valuePointer should now be pointing at an object in which we can insert a key:value pair
+         Q_ASSERT(valuePointer->is_object());
+         this->insertValue(fieldDefinition, valuePointer->get_object(), key, value);
       }
 
    }

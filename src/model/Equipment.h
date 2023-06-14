@@ -57,6 +57,16 @@ AddPropertyName(tunWeight_kg         )
  * \class Equipment
  *
  * \brief Model representing a single equipment record.
+ *
+ *        This is where things get fun.  In BeerXML, Equipment is a single record representing all the hot-side
+ *        equipment used in a recipe.  In BeerJSON however, the model is of a named array of EquipmentItemType objects,
+ *        each of which can be one of "HLT", "Mash Tun", "Lauter Tun", "Brew Kettle", "Fermenter", "Aging Vessel" or
+ *        "Packaging Vessel".
+ *
+ *        We take the view that it is right to have a single Equipment object, but that subdividing it into the 7
+ *        categories of BeerJSON is also useful.  (Although nothing in BeerJSON precludes you from having multiple
+ *        EquipmentItemType objects in a single EquipmentType array, we take the view that this would not be meaningful,
+ *        and so we do not support it.)
  */
 class Equipment : public NamedEntity {
    Q_OBJECT
@@ -70,7 +80,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   Equipment(QString t_name = "");
+   Equipment(QString name = "");
    Equipment(NamedParameterBundle const & namedParameterBundle);
    Equipment(Equipment const & other);
 

@@ -526,7 +526,22 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for equipments BeerJSON records TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//      JsonRecordDefinition::create< JsonNamedEntityRecord< Equipment > >,
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Equipment> {
+      "equipments",              // JSON recordName
+      &Equipment::typeLookup,    // Type Lookup for our corresponding model object
+      "Equipment",               // NamedEntity class name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Equipment > >,
+      {
+         //
+         // In theory, to access the "Mash Tun" entry in an "equipment_items" array, we just use JSONPath equipment_items[?(@.form=="Mash Tun")]
+         //
+
+         // Type                                                 XPath                                     Q_PROPERTY                               Enum/Unit Mapper
+///         {JsonRecordDefinition::FieldType::String,               "name",                                   PropertyNames::NamedEntity::name       },
+         {JsonRecordDefinition::FieldType::String,               "test/fish[face=\"squid\"]/weasel",                                   PropertyNames::NamedEntity::name       },
+///         {JsonRecordDefinition::FieldType::String,               "equipment_items"
+      }
+   };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for boil BeerJSON records TODO
@@ -557,7 +572,7 @@ namespace {
          BEER_JSON_RECORD_DEFINITION<Style>      ,
 //         BEER_JSON_RECORD_DEFINITION<MashStep>   ,
 //         BEER_JSON_RECORD_DEFINITION<Mash>       ,
-//         BEER_JSON_RECORD_DEFINITION<Equipment>  ,
+         BEER_JSON_RECORD_DEFINITION<Equipment>  ,
 //         BEER_JSON_RECORD_DEFINITION<Instruction>,
 //         BEER_JSON_RECORD_DEFINITION<BrewNote>   ,
 //         BEER_JSON_RECORD_DEFINITION<Recipe>

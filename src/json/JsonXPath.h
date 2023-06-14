@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonXPath.h is part of Brewken, and is copyright the following authors 2022:
+ * json/JsonXPath.h is part of Brewken, and is copyright the following authors 2022-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -19,13 +19,17 @@
 
 #include <string>
 #include <string_view>
+#include <variant>
 #include <vector>
+
+#include <boost/json/value.hpp>
 
 /**
  * \brief \c JsonXPath is, essentially, almost the same as a JSON Pointer (see
  *        https://datatracker.ietf.org/doc/html/rfc6901) with the exception that the leading '/' character is optional.
  *
- *        Essentially, this gives us something very akin to XML's XPath.
+ *        Essentially, this gives us something very akin to the simpler parts of XML's XPath.  We add a few other bits
+ *        (see below) but we do not try to replicate the full XPath functionality -- just the small subset that we need.
  *
  *        We have a couple of motivations for omitting the leading '/' character and one motivation for using a rather
  *        different name (XPath rather than Pointer).
@@ -50,8 +54,20 @@
  *        but it seems redundant, especially as, in reality, >90% of the references we make are to direct children of
  *        the current node.
  *
- *        Finally, we prefer XPath over Pointer because the former is unambiguous (and has a valid strong analogy with a
- *        file system path).
+ *        We prefer XPath over Pointer because the former is unambiguous (and has a valid strong analogy with a file
+ *        system path).
+ *
+ *        NOTE: Somewhat after writing this I discovered JSONPath at https://goessner.net/articles/JsonPath/index.html,
+ *              which has a lot richer functionality than JSON Pointers but is only one of many competing proposals for
+ *              querying JSON (including the jq tool at https://jqlang.github.io/jq/).  These are interesting (eg
+ *              `equipment_items[?(@.form=="Mash Tun")]` gives the element(s) of the equipment_items array that have a
+ *              form field equal to "Mash Tun"), but they are not currently supported by Boost.JSON.  So, for now, we
+ *              we continue with our wrapper around JSON Pointer.
+ *
+ *        \b Additions: There are certain places where we need to be able to pick out a named item in an array, eg
+ *        because of the way BeerJSON stores equipment.  The XPath format for, eg, accessing the entry in an
+ *        "equipment_items" array whose "form" field is "Mash Tun", is `equipment_items[form="Mash Tun"]`.  We implement
+ *        this part of XPath too, but in the simplest way possible.
  */
 class JsonXPath {
 public:
@@ -62,9 +78,42 @@ public:
    ~JsonXPath();
 
    /**
-    * \brief This returns a \c string_view because that's what we're going to pass to Boost.JSON
+    * \brief Use this instead of \c boost::json::value::find_pointer to traverse a \c JsonXPath that might contain named
+    *        array item identifiers.
+    *
+    *        Note that we do not offer an equivalent to \c boost::json::value::at_pointer (which does the same as
+    *        \c boost::json::value::find_pointer but uses exceptions rather than an error code to report problems).
+    *
+    * \param startingValue Since this is a pointer, we don't have the same worries as in the \c JsonRecord constructor
+    * \param errorCode If we couldn't follow the path, we (or Boost.JSON) will write an error code into this variable.
+    *                  It usually won't be a lot of help in telling you what the error was. :-/
+    * \return \c nullptr if there was an error (in which case \c errorCode will be non-zero) or else the value that you
+    *         reach by following this path from \c startingValue
     */
-   std::string_view asJsonPtr() const;
+//! @{
+   boost::json::value const * followPathFrom(boost::json::value const * startingValue,
+                                             std::error_code & errorCode) const;
+   boost::json::value * followPathFrom(boost::json::value * startingValue,
+                                       std::error_code & errorCode) const;
+//! @}
+
+   /**
+    * \brief Instead of calling \c boost::json::value::set_at_pointer, use this function to ensure that any "parent"
+    *        objects for a non-trivial key exist, and then call \c boost::json::object::emplace.  Eg, if JsonXPath is
+    *        foo/bar/fruit[type="Banana"]/dog/cat, then this will ensure foo/bar/fruit[type="Banana"]/dog exists, move
+    *        \c objectPointer to this location and return cat.
+    * \param objectPointer Caller passes this in as the starting point and function returns the ending point (which will
+    *                      be the same as the starting point for a trivial XPath).
+    * \return the trivial XPath that can now be used on objectPointer
+    */
+   std::string makePointerToLeaf(boost::json::value ** valuePointer) const;
+
+   /**
+    * \brief This returns a \c string_view because that's what we're going to pass to Boost.JSON
+    *
+    *        TODO: This needs to be replaced with something that talks to Boost.JSON
+    */
+///   std::string_view asJsonPtr() const;
 
    /**
     * \brief For a trivial path, return it without the leading slash (as a \c string_view because that's what we're
@@ -78,34 +127,93 @@ public:
     *         (It's std::string rather than std::string_view in the vector because I couldn't get the splitting code to
     *         compile on all platforms with std::string_view.)
     */
-   std::vector<std::string> getElements() const;
+///   std::vector<std::string> getElements() const;
 
    /**
     * \brief This returns a C-style string as that's most universally usable for logging
     */
    char const * asXPath_c_str() const;
 
-private:
    /**
-    * \brief The (relative) JSON Pointer to which this JsonXPath corresponds (ie same as the JsonXPath but with a / at
-    *        the start).
+    * \brief If we have a JsonXPath of the form foo/bar/fruit[type="Banana"]/hum/bug, then we split it up into bits we
+    *        can represent as JSON Pointers (\c /foo/bar/fruit and \c /hum/bug) and named array item identifiers
+    *        (\c [type="Banana"]).
     *
-    *        Normally we would use \c QString by default, but, since the value is going to be passed to Boost.JSON, it's
-    *        more convenient to store it as \c std::string and convert to char const * for logging.
+    *        Collectively, we call these "path parts" (see \c PathPart below).
     *
-    *        We don't make this const as we want to store \c JsonXPath objects inside (structs inside) a vector, and
-    *        anything you put in a vector needs to be CopyConstructible and Assignable.
+    *        JSON Pointers are stored in \c std::string, because that's easier to pass to Boost.JSON than \c QString.
+    *        A relative JSON Pointer is the same as its corresponding JsonXPath fragment, except that it has a '/' at
+    *        the start.
+    *
+    *        Named array item identifiers need a struct (because Boost.JSON doesn't know about them and we have to do
+    *        the parsing ourselves).
+    *
+    *        NB: These aliases and structs are public to make logging easier, but they are only really used by code in
+    *            json/JsonXPath.cpp.
     */
-   std::string valueAsJsonPointer;
+//! @{
+   using JsonPointer = std::string;
+   struct NamedArrayItemId {
+      std::string key;
+      std::string value;
+   };
+//! @}
+
+   /**
+    * \brief There are other times when we want to break things down to a finer granularity.
+    *
+    *        If we have a JsonXPath of the form foo/bar/fruit[type="Banana"]/hum/bug, then we split it up into bits we
+    *        can represent as JSON keys (\c foo, \c bar, \c fruit, \c hum, \c bug) and named array item identifiers
+    *        (\c [type="Banana"]).
+    *
+    *        Collectively, we call these "path nodes" (see \c PathNode below).
+    */
+   using JsonKey = std::string;
+
+private:
+   // NOTE: We don't make any of our member variables const as we want to store \c JsonXPath objects inside (structs
+   //       inside) a vector, and anything you put in a vector needs to be CopyConstructible and Assignable.
+
+   //
+   // All three of the member variables below store the complete JsonXpath, just in 3 different ways:
+   //    - m_rawXPath is best for logging
+   //    - m_pathParts is best for reading from a document
+   //    - m_pathNodes is best for writing to a document
+   // We accept the storage inefficiency for the benefit of simplifying our algorithms.
+   //
+
+   /**
+    * \brief This is only used for logging (see operator<< below)
+    */
+   char const * m_rawXPath;
+
+   using PathPart = std::variant<JsonPointer, NamedArrayItemId>;
+
+   std::vector<PathPart> m_pathParts;
+
+   // Note that, in JsonXPath::moveObjectPointerToLeaf it is very helpful to have a null state for this variant.  We do
+   // not have the same requirement for PathPart.
+   using PathNode = std::variant<std::monostate, JsonKey, NamedArrayItemId>;
+
+   std::vector<PathNode> m_pathNodes;
 };
 
 /**
- * \brief Convenience function for logging
+ * \brief Convenience functions for logging
  */
+//! @{
 template<class S>
 S & operator<<(S & stream, JsonXPath const & jsonXPath) {
    stream << jsonXPath.asXPath_c_str();
    return stream;
 }
+template<class S>
+S & operator<<(S & stream, JsonXPath::NamedArrayItemId const & namedArrayItemId) {
+   stream << "[" << namedArrayItemId.key.c_str() << "=\"" << namedArrayItemId.value.c_str() << "\"]";
+   return stream;
+}
+//! @}
+
+
 
 #endif
