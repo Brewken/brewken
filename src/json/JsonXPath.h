@@ -109,25 +109,10 @@ public:
    std::string makePointerToLeaf(boost::json::value ** valuePointer) const;
 
    /**
-    * \brief This returns a \c string_view because that's what we're going to pass to Boost.JSON
-    *
-    *        TODO: This needs to be replaced with something that talks to Boost.JSON
-    */
-///   std::string_view asJsonPtr() const;
-
-   /**
     * \brief For a trivial path, return it without the leading slash (as a \c string_view because that's what we're
     *        going to pass to Boost.JSON).  Caller's responsibility to ensure this is indeed a trivial path.
     */
    std::string_view asKey() const;
-
-   /**
-    * \return All the elements of the path as a list (without the '/' separators)
-    *
-    *         (It's std::string rather than std::string_view in the vector because I couldn't get the splitting code to
-    *         compile on all platforms with std::string_view.)
-    */
-///   std::vector<std::string> getElements() const;
 
    /**
     * \brief This returns a C-style string as that's most universally usable for logging
@@ -213,7 +198,5 @@ S & operator<<(S & stream, JsonXPath::NamedArrayItemId const & namedArrayItemId)
    return stream;
 }
 //! @}
-
-
 
 #endif
